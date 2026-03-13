@@ -19,53 +19,70 @@
   {
     "player_id": "S76561197983024493",
     "driver": "Andrei Soldatenkov",
-    "races": 6,
+    "races": 8,
     "wins": 1,
     "podiums": 3,
     "points": 95,
-    "average_finish_sum": 18,
-    "average_finish": 3.0,
+    "average_finish_sum": 87,
+    "average_finish": 10.88,
     "best_lap_ms": 108320,
     "best_lap": "1:48.320",
     "best_lap_track": "monza",
     "best_lap_session_type": "R",
     "last_track": "monza",
-    "last_seen": "2026-03-13T20:20:54",
+    "last_seen": "2026-03-13T21:00:56",
     "rank": 2
   },
   {
     "player_id": "S76561199121481915",
     "driver": "Kirill Bulgakov",
-    "races": 7,
-    "wins": 0,
-    "podiums": 3,
-    "points": 69,
-    "average_finish_sum": 41,
-    "average_finish": 5.86,
+    "races": 8,
+    "wins": 1,
+    "podiums": 4,
+    "points": 94,
+    "average_finish_sum": 42,
+    "average_finish": 5.25,
     "best_lap_ms": 107435,
     "best_lap": "1:47.435",
     "best_lap_track": "monza",
     "best_lap_session_type": "R",
     "last_track": "monza",
-    "last_seen": "2026-03-13T20:20:54",
+    "last_seen": "2026-03-13T21:00:56",
     "rank": 3
   },
   {
     "player_id": "S76561198179725961",
     "driver": "Denis Denalget [ASG]",
-    "races": 4,
+    "races": 5,
     "wins": 1,
     "podiums": 2,
-    "points": 42,
-    "average_finish_sum": 25,
-    "average_finish": 6.25,
+    "points": 55,
+    "average_finish_sum": 29,
+    "average_finish": 5.8,
     "best_lap_ms": 107175,
     "best_lap": "1:47.175",
     "best_lap_track": "monza",
     "best_lap_session_type": "R",
     "last_track": "monza",
-    "last_seen": "2026-03-13T20:20:54",
+    "last_seen": "2026-03-13T21:00:56",
     "rank": 4
+  },
+  {
+    "player_id": "S76561198137531499",
+    "driver": "Tyler Obrian",
+    "races": 2,
+    "wins": 1,
+    "podiums": 2,
+    "points": 44,
+    "average_finish_sum": 3,
+    "average_finish": 1.5,
+    "best_lap_ms": 108102,
+    "best_lap": "1:48.102",
+    "best_lap_track": "monza",
+    "best_lap_session_type": "Q",
+    "last_track": "monza",
+    "last_seen": "2026-03-13T21:00:56",
+    "rank": 5
   },
   {
     "player_id": "S76561198196927845",
@@ -82,23 +99,6 @@
     "best_lap_session_type": "R",
     "last_track": "monza",
     "last_seen": "2026-03-13T15:38:47",
-    "rank": 5
-  },
-  {
-    "player_id": "S76561198137531499",
-    "driver": "Tyler Obrian",
-    "races": 1,
-    "wins": 1,
-    "podiums": 1,
-    "points": 26,
-    "average_finish_sum": 1,
-    "average_finish": 1.0,
-    "best_lap_ms": 108102,
-    "best_lap": "1:48.102",
-    "best_lap_track": "monza",
-    "best_lap_session_type": "Q",
-    "last_track": "monza",
-    "last_seen": "2026-03-13T20:20:54",
     "rank": 6
   },
   {
@@ -187,23 +187,6 @@
     "rank": 11
   },
   {
-    "player_id": "S76561199085700385",
-    "driver": "Arda Eroğlu",
-    "races": 1,
-    "wins": 0,
-    "podiums": 1,
-    "points": 18,
-    "average_finish_sum": 2,
-    "average_finish": 2.0,
-    "best_lap_ms": 108317,
-    "best_lap": "1:48.317",
-    "best_lap_track": "monza",
-    "best_lap_session_type": "R",
-    "last_track": "monza",
-    "last_seen": "2026-03-13T20:20:54",
-    "rank": 12
-  },
-  {
     "player_id": "S76561198127509426",
     "driver": "Ryo Aizawa",
     "races": 1,
@@ -218,7 +201,41 @@
     "best_lap_session_type": "R",
     "last_track": "monza",
     "last_seen": "2026-03-13T12:38:12",
+    "rank": 12
+  },
+  {
+    "player_id": "S76561199085700385",
+    "driver": "Arda Eroğlu",
+    "races": 2,
+    "wins": 0,
+    "podiums": 1,
+    "points": 18,
+    "average_finish_sum": 36,
+    "average_finish": 18.0,
+    "best_lap_ms": 108317,
+    "best_lap": "1:48.317",
+    "best_lap_track": "monza",
+    "best_lap_session_type": "R",
+    "last_track": "monza",
+    "last_seen": "2026-03-13T21:00:56",
     "rank": 13
+  },
+  {
+    "player_id": "S76561198158555421",
+    "driver": "German Johansen",
+    "races": 1,
+    "wins": 0,
+    "podiums": 1,
+    "points": 15,
+    "average_finish_sum": 3,
+    "average_finish": 3.0,
+    "best_lap_ms": 108442,
+    "best_lap": "1:48.442",
+    "best_lap_track": "monza",
+    "best_lap_session_type": "R",
+    "last_track": "monza",
+    "last_seen": "2026-03-13T21:00:56",
+    "rank": 14
   },
   {
     "player_id": "S76561199033319684",
@@ -235,7 +252,7 @@
     "best_lap_session_type": null,
     "last_track": "monza",
     "last_seen": "2026-03-13T20:20:54",
-    "rank": 14
+    "rank": 15
   },
   {
     "player_id": "S76561198972482612",
@@ -252,7 +269,7 @@
     "best_lap_session_type": "R",
     "last_track": "monza",
     "last_seen": "2026-03-13T14:26:39",
-    "rank": 15
+    "rank": 16
   },
   {
     "player_id": "S76561199531568137",
@@ -269,7 +286,7 @@
     "best_lap_session_type": "R",
     "last_track": "monza",
     "last_seen": "2026-03-13T15:38:47",
-    "rank": 16
+    "rank": 17
   },
   {
     "player_id": "S76561198274149511",
@@ -286,7 +303,7 @@
     "best_lap_session_type": "R",
     "last_track": "monza",
     "last_seen": "2026-03-13T14:26:39",
-    "rank": 17
+    "rank": 18
   },
   {
     "player_id": "S76561199798900185",
@@ -303,7 +320,7 @@
     "best_lap_session_type": null,
     "last_track": "monza",
     "last_seen": "2026-03-13T20:20:54",
-    "rank": 18
+    "rank": 19
   },
   {
     "player_id": "S76561198424657316",
@@ -320,7 +337,24 @@
     "best_lap_session_type": "R",
     "last_track": "monza",
     "last_seen": "2026-03-13T15:02:24",
-    "rank": 19
+    "rank": 20
+  },
+  {
+    "player_id": "S76561199231590060",
+    "driver": "alexander chekyshkin",
+    "races": 1,
+    "wins": 0,
+    "podiums": 0,
+    "points": 10,
+    "average_finish_sum": 5,
+    "average_finish": 5.0,
+    "best_lap_ms": 107997,
+    "best_lap": "1:47.997",
+    "best_lap_track": "monza",
+    "best_lap_session_type": "R",
+    "last_track": "monza",
+    "last_seen": "2026-03-13T21:00:56",
+    "rank": 21
   },
   {
     "player_id": "S76561198225400292",
@@ -337,7 +371,7 @@
     "best_lap_session_type": null,
     "last_track": "monza",
     "last_seen": "2026-03-13T12:38:12",
-    "rank": 20
+    "rank": 22
   },
   {
     "player_id": "S76561198784157282",
@@ -354,7 +388,7 @@
     "best_lap_session_type": null,
     "last_track": "monza",
     "last_seen": "2026-03-13T13:13:41",
-    "rank": 21
+    "rank": 23
   },
   {
     "player_id": "S76561198084597681",
@@ -371,7 +405,7 @@
     "best_lap_session_type": "R",
     "last_track": "monza",
     "last_seen": "2026-03-13T15:38:47",
-    "rank": 22
+    "rank": 24
   },
   {
     "player_id": "S76561199080771516",
@@ -388,7 +422,7 @@
     "best_lap_session_type": "Q",
     "last_track": "monza",
     "last_seen": "2026-03-13T15:02:24",
-    "rank": 23
+    "rank": 25
   },
   {
     "player_id": "S76561199472623396",
@@ -405,7 +439,24 @@
     "best_lap_session_type": null,
     "last_track": "monza",
     "last_seen": "2026-03-13T20:20:54",
-    "rank": 24
+    "rank": 26
+  },
+  {
+    "player_id": "S76561199087007139",
+    "driver": "C K",
+    "races": 1,
+    "wins": 0,
+    "podiums": 0,
+    "points": 8,
+    "average_finish_sum": 6,
+    "average_finish": 6.0,
+    "best_lap_ms": 108937,
+    "best_lap": "1:48.937",
+    "best_lap_track": "monza",
+    "best_lap_session_type": "R",
+    "last_track": "monza",
+    "last_seen": "2026-03-13T21:00:56",
+    "rank": 27
   },
   {
     "player_id": "S76561199692395730",
@@ -422,7 +473,7 @@
     "best_lap_session_type": null,
     "last_track": "monza",
     "last_seen": "2026-03-13T13:13:41",
-    "rank": 25
+    "rank": 28
   },
   {
     "player_id": "S76561198786781019",
@@ -439,7 +490,7 @@
     "best_lap_session_type": null,
     "last_track": "monza",
     "last_seen": "2026-03-13T15:02:24",
-    "rank": 26
+    "rank": 29
   },
   {
     "player_id": "S76561199053195409",
@@ -456,7 +507,7 @@
     "best_lap_session_type": null,
     "last_track": "monza",
     "last_seen": "2026-03-13T12:38:12",
-    "rank": 27
+    "rank": 30
   },
   {
     "player_id": "S76561198039882842",
@@ -473,7 +524,7 @@
     "best_lap_session_type": null,
     "last_track": "monza",
     "last_seen": "2026-03-13T20:20:54",
-    "rank": 28
+    "rank": 31
   },
   {
     "player_id": "S76561198849977715",
@@ -490,7 +541,24 @@
     "best_lap_session_type": null,
     "last_track": "monza",
     "last_seen": "2026-03-13T13:51:45",
-    "rank": 29
+    "rank": 32
+  },
+  {
+    "player_id": "S76561199215374615",
+    "driver": "Liam Ford",
+    "races": 1,
+    "wins": 0,
+    "podiums": 0,
+    "points": 6,
+    "average_finish_sum": 7,
+    "average_finish": 7.0,
+    "best_lap_ms": 109450,
+    "best_lap": "1:49.450",
+    "best_lap_track": "monza",
+    "best_lap_session_type": "R",
+    "last_track": "monza",
+    "last_seen": "2026-03-13T21:00:56",
+    "rank": 33
   },
   {
     "player_id": "S76561199229436331",
@@ -507,7 +575,7 @@
     "best_lap_session_type": "R",
     "last_track": "monza",
     "last_seen": "2026-03-13T15:38:47",
-    "rank": 30
+    "rank": 34
   },
   {
     "player_id": "S76561198958980605",
@@ -524,7 +592,7 @@
     "best_lap_session_type": "R",
     "last_track": "monza",
     "last_seen": "2026-03-13T15:02:24",
-    "rank": 31
+    "rank": 35
   },
   {
     "player_id": "S76561198973325776",
@@ -541,7 +609,7 @@
     "best_lap_session_type": "R",
     "last_track": "monza",
     "last_seen": "2026-03-13T15:38:47",
-    "rank": 32
+    "rank": 36
   },
   {
     "player_id": "S76561198746009775",
@@ -558,7 +626,7 @@
     "best_lap_session_type": "Q",
     "last_track": "monza",
     "last_seen": "2026-03-13T14:26:39",
-    "rank": 33
+    "rank": 37
   },
   {
     "player_id": "S76561198858979499",
@@ -575,7 +643,7 @@
     "best_lap_session_type": null,
     "last_track": "monza",
     "last_seen": "2026-03-13T13:51:45",
-    "rank": 34
+    "rank": 38
   },
   {
     "player_id": "S76561199488712223",
@@ -592,7 +660,24 @@
     "best_lap_session_type": null,
     "last_track": "monza",
     "last_seen": "2026-03-13T20:20:54",
-    "rank": 35
+    "rank": 39
+  },
+  {
+    "player_id": "S76561199699277524",
+    "driver": "Michel Van Damme",
+    "races": 1,
+    "wins": 0,
+    "podiums": 0,
+    "points": 4,
+    "average_finish_sum": 8,
+    "average_finish": 8.0,
+    "best_lap_ms": 108437,
+    "best_lap": "1:48.437",
+    "best_lap_track": "monza",
+    "best_lap_session_type": "Q",
+    "last_track": "monza",
+    "last_seen": "2026-03-13T21:00:56",
+    "rank": 40
   },
   {
     "player_id": "S76561198869519365",
@@ -609,7 +694,24 @@
     "best_lap_session_type": null,
     "last_track": "monza",
     "last_seen": "2026-03-13T13:51:45",
-    "rank": 36
+    "rank": 41
+  },
+  {
+    "player_id": "S76561198012234404",
+    "driver": "Vladimir Vidim",
+    "races": 1,
+    "wins": 0,
+    "podiums": 0,
+    "points": 2,
+    "average_finish_sum": 9,
+    "average_finish": 9.0,
+    "best_lap_ms": 108897,
+    "best_lap": "1:48.897",
+    "best_lap_track": "monza",
+    "best_lap_session_type": "R",
+    "last_track": "monza",
+    "last_seen": "2026-03-13T21:00:56",
+    "rank": 42
   },
   {
     "player_id": "S76561199166634483",
@@ -626,7 +728,24 @@
     "best_lap_session_type": null,
     "last_track": "monza",
     "last_seen": "2026-03-13T15:02:24",
-    "rank": 37
+    "rank": 43
+  },
+  {
+    "player_id": "S76561198276952310",
+    "driver": "Artem Bashlykov",
+    "races": 1,
+    "wins": 0,
+    "podiums": 0,
+    "points": 1,
+    "average_finish_sum": 10,
+    "average_finish": 10.0,
+    "best_lap_ms": 108545,
+    "best_lap": "1:48.545",
+    "best_lap_track": "monza",
+    "best_lap_session_type": "R",
+    "last_track": "monza",
+    "last_seen": "2026-03-13T21:00:56",
+    "rank": 44
   },
   {
     "player_id": "S76561198249728486",
@@ -643,24 +762,24 @@
     "best_lap_session_type": "R",
     "last_track": "monza",
     "last_seen": "2026-03-13T15:38:47",
-    "rank": 38
+    "rank": 45
   },
   {
     "player_id": "S76561198273396638",
     "driver": "Vasilii Gyuliaev",
-    "races": 1,
+    "races": 2,
     "wins": 0,
     "podiums": 0,
     "points": 1,
-    "average_finish_sum": 10,
-    "average_finish": 10.0,
-    "best_lap_ms": 109570,
-    "best_lap": "1:49.570",
+    "average_finish_sum": 21,
+    "average_finish": 10.5,
+    "best_lap_ms": 109317,
+    "best_lap": "1:49.317",
     "best_lap_track": "monza",
-    "best_lap_session_type": "Q",
+    "best_lap_session_type": "R",
     "last_track": "monza",
-    "last_seen": "2026-03-13T20:20:54",
-    "rank": 39
+    "last_seen": "2026-03-13T21:00:56",
+    "rank": 46
   },
   {
     "player_id": "S76561198798249929",
@@ -677,7 +796,24 @@
     "best_lap_session_type": "R",
     "last_track": "monza",
     "last_seen": "2026-03-13T15:38:47",
-    "rank": 40
+    "rank": 47
+  },
+  {
+    "player_id": "S76561198423581082",
+    "driver": "Alexandre Capelle",
+    "races": 1,
+    "wins": 0,
+    "podiums": 0,
+    "points": 0,
+    "average_finish_sum": 12,
+    "average_finish": 12.0,
+    "best_lap_ms": 110640,
+    "best_lap": "1:50.640",
+    "best_lap_track": "monza",
+    "best_lap_session_type": "R",
+    "last_track": "monza",
+    "last_seen": "2026-03-13T21:00:56",
+    "rank": 48
   },
   {
     "player_id": "S76561198325026433",
@@ -694,7 +830,7 @@
     "best_lap_session_type": null,
     "last_track": "monza",
     "last_seen": "2026-03-13T15:02:24",
-    "rank": 41
+    "rank": 49
   },
   {
     "player_id": "S76561198242159762",
@@ -711,7 +847,24 @@
     "best_lap_session_type": null,
     "last_track": "monza",
     "last_seen": "2026-03-13T15:02:24",
-    "rank": 42
+    "rank": 50
+  },
+  {
+    "player_id": "S76561198010480035",
+    "driver": "Jay Curcillo",
+    "races": 1,
+    "wins": 0,
+    "podiums": 0,
+    "points": 0,
+    "average_finish_sum": 13,
+    "average_finish": 13.0,
+    "best_lap_ms": 110712,
+    "best_lap": "1:50.712",
+    "best_lap_track": "monza",
+    "best_lap_session_type": "R",
+    "last_track": "monza",
+    "last_seen": "2026-03-13T21:00:56",
+    "rank": 51
   },
   {
     "player_id": "S76561199278582847",
@@ -728,7 +881,7 @@
     "best_lap_session_type": null,
     "last_track": "monza",
     "last_seen": "2026-03-13T15:38:47",
-    "rank": 43
+    "rank": 52
   },
   {
     "player_id": "S76561198224625488",
@@ -745,7 +898,7 @@
     "best_lap_session_type": null,
     "last_track": "monza",
     "last_seen": "2026-03-13T14:26:39",
-    "rank": 44
+    "rank": 53
   },
   {
     "player_id": "S76561198196079429",
@@ -762,7 +915,24 @@
     "best_lap_session_type": null,
     "last_track": "monza",
     "last_seen": "2026-03-13T15:38:47",
-    "rank": 45
+    "rank": 54
+  },
+  {
+    "player_id": "S76561198090533895",
+    "driver": "Tom Mansion",
+    "races": 1,
+    "wins": 0,
+    "podiums": 0,
+    "points": 0,
+    "average_finish_sum": 14,
+    "average_finish": 14.0,
+    "best_lap_ms": 109870,
+    "best_lap": "1:49.870",
+    "best_lap_track": "monza",
+    "best_lap_session_type": "R",
+    "last_track": "monza",
+    "last_seen": "2026-03-13T21:00:56",
+    "rank": 55
   },
   {
     "player_id": "S76561198453035800",
@@ -779,91 +949,499 @@
     "best_lap_session_type": null,
     "last_track": "monza",
     "last_seen": "2026-03-13T15:38:47",
-    "rank": 46
+    "rank": 56
+  },
+  {
+    "player_id": "S76561199626179120",
+    "driver": "vitor Fernandes",
+    "races": 1,
+    "wins": 0,
+    "podiums": 0,
+    "points": 0,
+    "average_finish_sum": 15,
+    "average_finish": 15.0,
+    "best_lap_ms": 111160,
+    "best_lap": "1:51.160",
+    "best_lap_track": "monza",
+    "best_lap_session_type": "R",
+    "last_track": "monza",
+    "last_seen": "2026-03-13T21:00:56",
+    "rank": 57
+  },
+  {
+    "player_id": "S76561198271551755",
+    "driver": "S. Lower",
+    "races": 1,
+    "wins": 0,
+    "podiums": 0,
+    "points": 0,
+    "average_finish_sum": 16,
+    "average_finish": 16.0,
+    "best_lap_ms": 114005,
+    "best_lap": "1:54.005",
+    "best_lap_track": "monza",
+    "best_lap_session_type": "R",
+    "last_track": "monza",
+    "last_seen": "2026-03-13T21:00:56",
+    "rank": 58
+  },
+  {
+    "player_id": "S76561198190430982",
+    "driver": "Matthias Hüning",
+    "races": 1,
+    "wins": 0,
+    "podiums": 0,
+    "points": 0,
+    "average_finish_sum": 17,
+    "average_finish": 17.0,
+    "best_lap_ms": 110807,
+    "best_lap": "1:50.807",
+    "best_lap_track": "monza",
+    "best_lap_session_type": "R",
+    "last_track": "monza",
+    "last_seen": "2026-03-13T21:00:56",
+    "rank": 59
+  },
+  {
+    "player_id": "S76561198860855355",
+    "driver": "Onni Aspelund",
+    "races": 1,
+    "wins": 0,
+    "podiums": 0,
+    "points": 0,
+    "average_finish_sum": 18,
+    "average_finish": 18.0,
+    "best_lap_ms": 112462,
+    "best_lap": "1:52.462",
+    "best_lap_track": "monza",
+    "best_lap_session_type": "R",
+    "last_track": "monza",
+    "last_seen": "2026-03-13T21:00:56",
+    "rank": 60
+  },
+  {
+    "player_id": "S76561199635071543",
+    "driver": "Artem Bryl",
+    "races": 1,
+    "wins": 0,
+    "podiums": 0,
+    "points": 0,
+    "average_finish_sum": 19,
+    "average_finish": 19.0,
+    "best_lap_ms": 113237,
+    "best_lap": "1:53.237",
+    "best_lap_track": "monza",
+    "best_lap_session_type": "R",
+    "last_track": "monza",
+    "last_seen": "2026-03-13T21:00:56",
+    "rank": 61
   },
   {
     "player_id": "S76561199181300213",
     "driver": "ATRIUS MARASIGAN",
-    "races": 0,
+    "races": 1,
     "wins": 0,
     "podiums": 0,
     "points": 0,
-    "average_finish_sum": 0,
-    "average_finish": null,
+    "average_finish_sum": 20,
+    "average_finish": 20.0,
     "best_lap_ms": 110630,
     "best_lap": "1:50.630",
     "best_lap_track": "monza",
     "best_lap_session_type": "Q",
-    "last_track": null,
-    "last_seen": null,
-    "rank": 47
+    "last_track": "monza",
+    "last_seen": "2026-03-13T21:00:56",
+    "rank": 62
   },
   {
-    "player_id": "S76561198158555421",
-    "driver": "German Johansen",
-    "races": 0,
+    "player_id": "S76561199098668784",
+    "driver": "Jonas Hüning",
+    "races": 1,
     "wins": 0,
     "podiums": 0,
     "points": 0,
-    "average_finish_sum": 0,
-    "average_finish": null,
-    "best_lap_ms": 108987,
-    "best_lap": "1:48.987",
+    "average_finish_sum": 21,
+    "average_finish": 21.0,
+    "best_lap_ms": 112740,
+    "best_lap": "1:52.740",
     "best_lap_track": "monza",
-    "best_lap_session_type": "Q",
-    "last_track": null,
-    "last_seen": null,
-    "rank": 48
+    "best_lap_session_type": "R",
+    "last_track": "monza",
+    "last_seen": "2026-03-13T21:00:56",
+    "rank": 63
   },
   {
-    "player_id": "S76561199215374615",
-    "driver": "Liam Ford",
-    "races": 0,
+    "player_id": "S76561199017014344",
+    "driver": "Heiko Schmidt",
+    "races": 1,
     "wins": 0,
     "podiums": 0,
     "points": 0,
-    "average_finish_sum": 0,
-    "average_finish": null,
-    "best_lap_ms": 110410,
-    "best_lap": "1:50.410",
-    "best_lap_track": "monza",
-    "best_lap_session_type": "Q",
-    "last_track": null,
-    "last_seen": null,
-    "rank": 49
+    "average_finish_sum": 22,
+    "average_finish": 22.0,
+    "best_lap_ms": null,
+    "best_lap": null,
+    "best_lap_track": null,
+    "best_lap_session_type": null,
+    "last_track": "monza",
+    "last_seen": "2026-03-13T21:00:56",
+    "rank": 64
   },
   {
-    "player_id": "S76561199699277524",
-    "driver": "Michel Van Damme",
-    "races": 0,
+    "player_id": "S76561198138994408",
+    "driver": "Marco Scotellaro",
+    "races": 1,
     "wins": 0,
     "podiums": 0,
     "points": 0,
-    "average_finish_sum": 0,
-    "average_finish": null,
-    "best_lap_ms": 108437,
-    "best_lap": "1:48.437",
+    "average_finish_sum": 23,
+    "average_finish": 23.0,
+    "best_lap_ms": null,
+    "best_lap": null,
+    "best_lap_track": null,
+    "best_lap_session_type": null,
+    "last_track": "monza",
+    "last_seen": "2026-03-13T21:00:56",
+    "rank": 65
+  },
+  {
+    "player_id": "S76561199590407628",
+    "driver": "Egor Ziyaev",
+    "races": 1,
+    "wins": 0,
+    "podiums": 0,
+    "points": 0,
+    "average_finish_sum": 24,
+    "average_finish": 24.0,
+    "best_lap_ms": 111830,
+    "best_lap": "1:51.830",
     "best_lap_track": "monza",
-    "best_lap_session_type": "Q",
-    "last_track": null,
-    "last_seen": null,
-    "rank": 50
+    "best_lap_session_type": "R",
+    "last_track": "monza",
+    "last_seen": "2026-03-13T21:00:56",
+    "rank": 66
+  },
+  {
+    "player_id": "S76561199346902568",
+    "driver": "Rex Elias",
+    "races": 1,
+    "wins": 0,
+    "podiums": 0,
+    "points": 0,
+    "average_finish_sum": 25,
+    "average_finish": 25.0,
+    "best_lap_ms": 111962,
+    "best_lap": "1:51.962",
+    "best_lap_track": "monza",
+    "best_lap_session_type": "R",
+    "last_track": "monza",
+    "last_seen": "2026-03-13T21:00:56",
+    "rank": 67
+  },
+  {
+    "player_id": "S76561199110300915",
+    "driver": "андрей широковских",
+    "races": 1,
+    "wins": 0,
+    "podiums": 0,
+    "points": 0,
+    "average_finish_sum": 27,
+    "average_finish": 27.0,
+    "best_lap_ms": 110625,
+    "best_lap": "1:50.625",
+    "best_lap_track": "monza",
+    "best_lap_session_type": "R",
+    "last_track": "monza",
+    "last_seen": "2026-03-13T21:00:56",
+    "rank": 68
+  },
+  {
+    "player_id": "S76561198294129016",
+    "driver": "Артем Ходченков",
+    "races": 1,
+    "wins": 0,
+    "podiums": 0,
+    "points": 0,
+    "average_finish_sum": 28,
+    "average_finish": 28.0,
+    "best_lap_ms": null,
+    "best_lap": null,
+    "best_lap_track": null,
+    "best_lap_session_type": null,
+    "last_track": "monza",
+    "last_seen": "2026-03-13T21:00:56",
+    "rank": 69
+  },
+  {
+    "player_id": "S76561198065353791",
+    "driver": "Rizzo Ratiano",
+    "races": 1,
+    "wins": 0,
+    "podiums": 0,
+    "points": 0,
+    "average_finish_sum": 29,
+    "average_finish": 29.0,
+    "best_lap_ms": null,
+    "best_lap": null,
+    "best_lap_track": null,
+    "best_lap_session_type": null,
+    "last_track": "monza",
+    "last_seen": "2026-03-13T21:00:56",
+    "rank": 70
+  },
+  {
+    "player_id": "S76561198286984832",
+    "driver": "Andrey Winter",
+    "races": 1,
+    "wins": 0,
+    "podiums": 0,
+    "points": 0,
+    "average_finish_sum": 30,
+    "average_finish": 30.0,
+    "best_lap_ms": null,
+    "best_lap": null,
+    "best_lap_track": null,
+    "best_lap_session_type": null,
+    "last_track": "monza",
+    "last_seen": "2026-03-13T21:00:56",
+    "rank": 71
+  },
+  {
+    "player_id": "S76561198074058783",
+    "driver": "Alessandro Ghirardini",
+    "races": 1,
+    "wins": 0,
+    "podiums": 0,
+    "points": 0,
+    "average_finish_sum": 31,
+    "average_finish": 31.0,
+    "best_lap_ms": null,
+    "best_lap": null,
+    "best_lap_track": null,
+    "best_lap_session_type": null,
+    "last_track": "monza",
+    "last_seen": "2026-03-13T21:00:56",
+    "rank": 72
+  },
+  {
+    "player_id": "S76561198175353819",
+    "driver": "Olivier Mathieu",
+    "races": 1,
+    "wins": 0,
+    "podiums": 0,
+    "points": 0,
+    "average_finish_sum": 32,
+    "average_finish": 32.0,
+    "best_lap_ms": null,
+    "best_lap": null,
+    "best_lap_track": null,
+    "best_lap_session_type": null,
+    "last_track": "monza",
+    "last_seen": "2026-03-13T21:00:56",
+    "rank": 73
+  },
+  {
+    "player_id": "S76561199044502566",
+    "driver": "Gregory House",
+    "races": 1,
+    "wins": 0,
+    "podiums": 0,
+    "points": 0,
+    "average_finish_sum": 35,
+    "average_finish": 35.0,
+    "best_lap_ms": null,
+    "best_lap": null,
+    "best_lap_track": null,
+    "best_lap_session_type": null,
+    "last_track": "monza",
+    "last_seen": "2026-03-13T21:00:56",
+    "rank": 74
+  },
+  {
+    "player_id": "S76561199201533465",
+    "driver": "Mr .K",
+    "races": 2,
+    "wins": 0,
+    "podiums": 0,
+    "points": 0,
+    "average_finish_sum": 71,
+    "average_finish": 35.5,
+    "best_lap_ms": 107380,
+    "best_lap": "1:47.380",
+    "best_lap_track": "monza",
+    "best_lap_session_type": "R",
+    "last_track": "monza",
+    "last_seen": "2026-03-13T21:00:56",
+    "rank": 75
+  },
+  {
+    "player_id": "S76561199001270992",
+    "driver": "Gerson Schumacher",
+    "races": 1,
+    "wins": 0,
+    "podiums": 0,
+    "points": 0,
+    "average_finish_sum": 37,
+    "average_finish": 37.0,
+    "best_lap_ms": null,
+    "best_lap": null,
+    "best_lap_track": null,
+    "best_lap_session_type": null,
+    "last_track": "monza",
+    "last_seen": "2026-03-13T21:00:56",
+    "rank": 76
   },
   {
     "player_id": "S76561198999323224",
     "driver": "Ryan Hendroff",
-    "races": 0,
+    "races": 1,
     "wins": 0,
     "podiums": 0,
     "points": 0,
-    "average_finish_sum": 0,
-    "average_finish": null,
+    "average_finish_sum": 38,
+    "average_finish": 38.0,
     "best_lap_ms": 110877,
     "best_lap": "1:50.877",
     "best_lap_track": "monza",
     "best_lap_session_type": "Q",
-    "last_track": null,
-    "last_seen": null,
-    "rank": 51
+    "last_track": "monza",
+    "last_seen": "2026-03-13T21:00:56",
+    "rank": 77
+  },
+  {
+    "player_id": "S76561198287937319",
+    "driver": "Sir James Brook",
+    "races": 1,
+    "wins": 0,
+    "podiums": 0,
+    "points": 0,
+    "average_finish_sum": 39,
+    "average_finish": 39.0,
+    "best_lap_ms": null,
+    "best_lap": null,
+    "best_lap_track": null,
+    "best_lap_session_type": null,
+    "last_track": "monza",
+    "last_seen": "2026-03-13T21:00:56",
+    "rank": 78
+  },
+  {
+    "player_id": "S76561198384462162",
+    "driver": "Jean christophe Fonjallaz",
+    "races": 1,
+    "wins": 0,
+    "podiums": 0,
+    "points": 0,
+    "average_finish_sum": 40,
+    "average_finish": 40.0,
+    "best_lap_ms": null,
+    "best_lap": null,
+    "best_lap_track": null,
+    "best_lap_session_type": null,
+    "last_track": "monza",
+    "last_seen": "2026-03-13T21:00:56",
+    "rank": 79
+  },
+  {
+    "player_id": "S76561198091634808",
+    "driver": "Ben Hunter",
+    "races": 1,
+    "wins": 0,
+    "podiums": 0,
+    "points": 0,
+    "average_finish_sum": 41,
+    "average_finish": 41.0,
+    "best_lap_ms": null,
+    "best_lap": null,
+    "best_lap_track": null,
+    "best_lap_session_type": null,
+    "last_track": "monza",
+    "last_seen": "2026-03-13T21:00:56",
+    "rank": 80
+  },
+  {
+    "player_id": "S76561198365451686",
+    "driver": "André Boyer",
+    "races": 1,
+    "wins": 0,
+    "podiums": 0,
+    "points": 0,
+    "average_finish_sum": 42,
+    "average_finish": 42.0,
+    "best_lap_ms": null,
+    "best_lap": null,
+    "best_lap_track": null,
+    "best_lap_session_type": null,
+    "last_track": "monza",
+    "last_seen": "2026-03-13T21:00:56",
+    "rank": 81
+  },
+  {
+    "player_id": "S76561198801103556",
+    "driver": "Emerik YTB",
+    "races": 1,
+    "wins": 0,
+    "podiums": 0,
+    "points": 0,
+    "average_finish_sum": 43,
+    "average_finish": 43.0,
+    "best_lap_ms": null,
+    "best_lap": null,
+    "best_lap_track": null,
+    "best_lap_session_type": null,
+    "last_track": "monza",
+    "last_seen": "2026-03-13T21:00:56",
+    "rank": 82
+  },
+  {
+    "player_id": "S76561198160885621",
+    "driver": "Gleb Blatin",
+    "races": 1,
+    "wins": 0,
+    "podiums": 0,
+    "points": 0,
+    "average_finish_sum": 44,
+    "average_finish": 44.0,
+    "best_lap_ms": null,
+    "best_lap": null,
+    "best_lap_track": null,
+    "best_lap_session_type": null,
+    "last_track": "monza",
+    "last_seen": "2026-03-13T21:00:56",
+    "rank": 83
+  },
+  {
+    "player_id": "S76561198199517787",
+    "driver": "Victor Moyssa",
+    "races": 1,
+    "wins": 0,
+    "podiums": 0,
+    "points": 0,
+    "average_finish_sum": 46,
+    "average_finish": 46.0,
+    "best_lap_ms": null,
+    "best_lap": null,
+    "best_lap_track": null,
+    "best_lap_session_type": null,
+    "last_track": "monza",
+    "last_seen": "2026-03-13T21:00:56",
+    "rank": 84
+  },
+  {
+    "player_id": "S76561199002099068",
+    "driver": "Juan Barragan",
+    "races": 1,
+    "wins": 0,
+    "podiums": 0,
+    "points": 0,
+    "average_finish_sum": 47,
+    "average_finish": 47.0,
+    "best_lap_ms": null,
+    "best_lap": null,
+    "best_lap_track": null,
+    "best_lap_session_type": null,
+    "last_track": "monza",
+    "last_seen": "2026-03-13T21:00:56",
+    "rank": 85
   }
 ]
