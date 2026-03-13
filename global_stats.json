@@ -1,8 +1,8 @@
 {
   "date": "2026-03-13",
-  "unique_players_today": 131,
+  "unique_players_today": 143,
   "races_today": 12,
-  "sessions_today": 24,
+  "sessions_today": 25,
   "points_earned_today": 1081,
   "wins_today": 12,
   "podiums_today": 34,
@@ -11,12 +11,12 @@
     "monza"
   ],
   "best_lap_today": {
-    "lap": "1:46.980",
-    "lap_ms": 106980,
+    "lap": "1:46.845",
+    "lap_ms": 106845,
     "driver": "Man in Tights",
     "player_id": "S76561198345280292",
     "track": "monza",
-    "session_type": "R"
+    "session_type": "Q"
   },
   "most_active_driver_today": {
     "player_id": "S76561197983024493",
@@ -27,5 +27,5 @@
     "driver": "Arsenii Kapustin",
     "points": 171
   },
-  "updated_at": "2026-03-13T22:22:19"
+  "updated_at": "2026-03-13T22:27:19"
 }
