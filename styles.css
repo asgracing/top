@@ -60,7 +60,7 @@ body { min-height: 100vh; }
 
 .hero-grid {
   display: grid;
-  grid-template-columns: 1.3fr 0.8fr;
+  grid-template-columns: 1.4fr 0.6fr;
   gap: 24px;
   align-items: center;
 }
@@ -115,8 +115,8 @@ h1 {
 
 .lang-switch-floating {
   position: absolute;
-  top: 18px;
-  right: 18px;
+  top: 10px;
+  right: 500px;
 }
 
 .lang-btn {
