@@ -1,12 +1,12 @@
 {
   "date": "2026-03-13",
-  "unique_players_today": 45,
-  "races_today": 8,
-  "sessions_today": 17,
-  "points_earned_today": 673,
-  "wins_today": 8,
-  "podiums_today": 22,
-  "avg_players_per_race_today": 8.38,
+  "unique_players_today": 46,
+  "races_today": 9,
+  "sessions_today": 18,
+  "points_earned_today": 775,
+  "wins_today": 9,
+  "podiums_today": 25,
+  "avg_players_per_race_today": 8.67,
   "tracks_raced_today": [
     "monza"
   ],
@@ -27,5 +27,5 @@
     "driver": "Arsenii Kapustin",
     "points": 171
   },
-  "updated_at": "2026-03-13T20:17:46"
+  "updated_at": "2026-03-13T20:22:19"
 }

@@ -40,6 +40,26 @@
     "rank": 4
   },
   {
+    "player_id": "S76561198137531499",
+    "driver": "Tyler Obrian",
+    "best_lap_ms": 108227,
+    "best_lap": "1:48.227",
+    "track": "monza",
+    "session_type": "R",
+    "updated_at": "2026-03-13T20:20:54",
+    "rank": 5
+  },
+  {
+    "player_id": "S76561199085700385",
+    "driver": "Arda Eroğlu",
+    "best_lap_ms": 108317,
+    "best_lap": "1:48.317",
+    "track": "monza",
+    "session_type": "R",
+    "updated_at": "2026-03-13T20:20:54",
+    "rank": 6
+  },
+  {
     "player_id": "S76561197983024493",
     "driver": "Andrei Soldatenkov",
     "best_lap_ms": 108320,
@@ -47,7 +67,7 @@
     "track": "monza",
     "session_type": "R",
     "updated_at": "2026-03-13T13:51:45",
-    "rank": 5
+    "rank": 7
   },
   {
     "player_id": "S76561199627749639",
@@ -57,7 +77,7 @@
     "track": "monza",
     "session_type": "R",
     "updated_at": "2026-03-13T15:38:47",
-    "rank": 6
+    "rank": 8
   },
   {
     "player_id": "S76561199130313785",
@@ -67,7 +87,7 @@
     "track": "monza",
     "session_type": "R",
     "updated_at": "2026-03-13T14:26:39",
-    "rank": 7
+    "rank": 9
   },
   {
     "player_id": "S76561199664057628",
@@ -77,7 +97,7 @@
     "track": "monza",
     "session_type": "R",
     "updated_at": "2026-03-13T13:51:45",
-    "rank": 8
+    "rank": 10
   },
   {
     "player_id": "S76561198249728486",
@@ -87,7 +107,7 @@
     "track": "monza",
     "session_type": "R",
     "updated_at": "2026-03-13T15:38:47",
-    "rank": 9
+    "rank": 11
   },
   {
     "player_id": "S76561198861768068",
@@ -97,7 +117,7 @@
     "track": "monza",
     "session_type": "R",
     "updated_at": "2026-03-13T15:38:47",
-    "rank": 10
+    "rank": 12
   },
   {
     "player_id": "S76561198424657316",
@@ -107,7 +127,7 @@
     "track": "monza",
     "session_type": "R",
     "updated_at": "2026-03-13T15:02:24",
-    "rank": 11
+    "rank": 13
   },
   {
     "player_id": "S76561198972482612",
@@ -117,17 +137,7 @@
     "track": "monza",
     "session_type": "R",
     "updated_at": "2026-03-13T13:51:45",
-    "rank": 12
-  },
-  {
-    "player_id": "S76561199085700385",
-    "driver": "Arda Eroğlu",
-    "best_lap_ms": 109182,
-    "best_lap": "1:49.182",
-    "track": "monza",
-    "session_type": "Q",
-    "updated_at": "2026-03-13T19:57:04",
-    "rank": 13
+    "rank": 14
   },
   {
     "player_id": "S76561198973325776",
@@ -137,7 +147,7 @@
     "track": "monza",
     "session_type": "R",
     "updated_at": "2026-03-13T15:38:47",
-    "rank": 14
+    "rank": 15
   },
   {
     "player_id": "S76561199040357347",
@@ -147,7 +157,7 @@
     "track": "monza",
     "session_type": "Q",
     "updated_at": "2026-03-13T14:38:44",
-    "rank": 15
+    "rank": 16
   },
   {
     "player_id": "S76561199080771516",
@@ -157,7 +167,7 @@
     "track": "monza",
     "session_type": "Q",
     "updated_at": "2026-03-13T14:38:44",
-    "rank": 16
+    "rank": 17
   },
   {
     "player_id": "S76561198084597681",
@@ -167,7 +177,7 @@
     "track": "monza",
     "session_type": "R",
     "updated_at": "2026-03-13T15:38:47",
-    "rank": 17
+    "rank": 18
   },
   {
     "player_id": "S76561199240616264",
@@ -177,7 +187,7 @@
     "track": "monza",
     "session_type": "Q",
     "updated_at": "2026-03-13T15:14:10",
-    "rank": 18
+    "rank": 19
   },
   {
     "player_id": "S76561198274149511",
@@ -187,7 +197,7 @@
     "track": "monza",
     "session_type": "R",
     "updated_at": "2026-03-13T14:26:39",
-    "rank": 19
+    "rank": 20
   },
   {
     "player_id": "S76561199531568137",
@@ -197,7 +207,7 @@
     "track": "monza",
     "session_type": "R",
     "updated_at": "2026-03-13T15:38:47",
-    "rank": 20
+    "rank": 21
   },
   {
     "player_id": "S76561199229436331",
@@ -207,7 +217,7 @@
     "track": "monza",
     "session_type": "R",
     "updated_at": "2026-03-13T15:38:47",
-    "rank": 21
+    "rank": 22
   },
   {
     "player_id": "S76561198127509426",
@@ -217,7 +227,7 @@
     "track": "monza",
     "session_type": "R",
     "updated_at": "2026-03-13T12:38:12",
-    "rank": 22
+    "rank": 23
   },
   {
     "player_id": "S76561198746009775",
@@ -227,7 +237,7 @@
     "track": "monza",
     "session_type": "Q",
     "updated_at": "2026-03-13T14:02:03",
-    "rank": 23
+    "rank": 24
   },
   {
     "player_id": "S76561198798249929",
@@ -237,6 +247,6 @@
     "track": "monza",
     "session_type": "R",
     "updated_at": "2026-03-13T15:38:47",
-    "rank": 24
+    "rank": 25
   }
 ]
