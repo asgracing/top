@@ -1,8 +1,8 @@
 {
   "date": "2026-03-14",
-  "unique_players_today": 38,
+  "unique_players_today": 47,
   "races_today": 1,
-  "sessions_today": 1,
+  "sessions_today": 2,
   "points_earned_today": 102,
   "wins_today": 1,
   "podiums_today": 3,
@@ -11,12 +11,12 @@
     "monza"
   ],
   "best_lap_today": {
-    "lap": "1:47.267",
-    "lap_ms": 107267,
-    "driver": "Kirill Bulgakov",
-    "player_id": "S76561199121481915",
+    "lap": "1:46.765",
+    "lap_ms": 106765,
+    "driver": "S MD",
+    "player_id": "S76561198285982006",
     "track": "monza",
-    "session_type": "R"
+    "session_type": "Q"
   },
   "most_active_driver_today": {
     "player_id": "S76561198113845002",
@@ -27,5 +27,5 @@
     "driver": "Andrei Soldatenkov",
     "points": 25
   },
-  "updated_at": "2026-03-14T00:17:19"
+  "updated_at": "2026-03-14T00:22:19"
 }
