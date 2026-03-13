@@ -1,0 +1,232 @@
+[
+  {
+    "player_id": "S76561198179725961",
+    "driver": "Denis Denalget [ASG]",
+    "best_lap_ms": 107175,
+    "best_lap": "1:47.175",
+    "track": "monza",
+    "session_type": "R",
+    "updated_at": "2026-03-13T13:51:45",
+    "rank": 1
+  },
+  {
+    "player_id": "S76561199121481915",
+    "driver": "Kirill Bulgakov",
+    "best_lap_ms": 107435,
+    "best_lap": "1:47.435",
+    "track": "monza",
+    "session_type": "R",
+    "updated_at": "2026-03-13T14:26:39",
+    "rank": 2
+  },
+  {
+    "player_id": "S76561198196927845",
+    "driver": "I am Kira|ITA",
+    "best_lap_ms": 107632,
+    "best_lap": "1:47.632",
+    "track": "monza",
+    "session_type": "R",
+    "updated_at": "2026-03-13T15:02:24",
+    "rank": 3
+  },
+  {
+    "player_id": "S76561198958980605",
+    "driver": "Lukasz Sambor",
+    "best_lap_ms": 107997,
+    "best_lap": "1:47.997",
+    "track": "monza",
+    "session_type": "R",
+    "updated_at": "2026-03-13T14:26:39",
+    "rank": 4
+  },
+  {
+    "player_id": "S76561197983024493",
+    "driver": "Andrei Soldatenkov",
+    "best_lap_ms": 108320,
+    "best_lap": "1:48.320",
+    "track": "monza",
+    "session_type": "R",
+    "updated_at": "2026-03-13T13:51:45",
+    "rank": 5
+  },
+  {
+    "player_id": "S76561199627749639",
+    "driver": "Wiktor Majka",
+    "best_lap_ms": 108342,
+    "best_lap": "1:48.342",
+    "track": "monza",
+    "session_type": "R",
+    "updated_at": "2026-03-13T15:38:47",
+    "rank": 6
+  },
+  {
+    "player_id": "S76561199130313785",
+    "driver": "包 菜",
+    "best_lap_ms": 108575,
+    "best_lap": "1:48.575",
+    "track": "monza",
+    "session_type": "R",
+    "updated_at": "2026-03-13T14:26:39",
+    "rank": 7
+  },
+  {
+    "player_id": "S76561199664057628",
+    "driver": "Arsenii Kapustin",
+    "best_lap_ms": 108727,
+    "best_lap": "1:48.727",
+    "track": "monza",
+    "session_type": "R",
+    "updated_at": "2026-03-13T13:51:45",
+    "rank": 8
+  },
+  {
+    "player_id": "S76561198249728486",
+    "driver": "P. Hautzinger",
+    "best_lap_ms": 108772,
+    "best_lap": "1:48.772",
+    "track": "monza",
+    "session_type": "R",
+    "updated_at": "2026-03-13T15:38:47",
+    "rank": 9
+  },
+  {
+    "player_id": "S76561198861768068",
+    "driver": "Halil Atakan",
+    "best_lap_ms": 108835,
+    "best_lap": "1:48.835",
+    "track": "monza",
+    "session_type": "R",
+    "updated_at": "2026-03-13T15:38:47",
+    "rank": 10
+  },
+  {
+    "player_id": "S76561198424657316",
+    "driver": "Артём Мозолевский | S24",
+    "best_lap_ms": 108917,
+    "best_lap": "1:48.917",
+    "track": "monza",
+    "session_type": "R",
+    "updated_at": "2026-03-13T15:02:24",
+    "rank": 11
+  },
+  {
+    "player_id": "S76561198972482612",
+    "driver": "Killer Queen",
+    "best_lap_ms": 109022,
+    "best_lap": "1:49.022",
+    "track": "monza",
+    "session_type": "R",
+    "updated_at": "2026-03-13T13:51:45",
+    "rank": 12
+  },
+  {
+    "player_id": "S76561198973325776",
+    "driver": "Baykal Dönmez",
+    "best_lap_ms": 109287,
+    "best_lap": "1:49.287",
+    "track": "monza",
+    "session_type": "R",
+    "updated_at": "2026-03-13T15:38:47",
+    "rank": 13
+  },
+  {
+    "player_id": "S76561199040357347",
+    "driver": "Top G",
+    "best_lap_ms": 109330,
+    "best_lap": "1:49.330",
+    "track": "monza",
+    "session_type": "Q",
+    "updated_at": "2026-03-13T14:38:44",
+    "rank": 14
+  },
+  {
+    "player_id": "S76561199080771516",
+    "driver": "Vladis Art",
+    "best_lap_ms": 109342,
+    "best_lap": "1:49.342",
+    "track": "monza",
+    "session_type": "Q",
+    "updated_at": "2026-03-13T14:38:44",
+    "rank": 15
+  },
+  {
+    "player_id": "S76561198084597681",
+    "driver": "Stollker Fari",
+    "best_lap_ms": 109730,
+    "best_lap": "1:49.730",
+    "track": "monza",
+    "session_type": "R",
+    "updated_at": "2026-03-13T15:38:47",
+    "rank": 16
+  },
+  {
+    "player_id": "S76561199240616264",
+    "driver": "Illyaaa Serg",
+    "best_lap_ms": 109812,
+    "best_lap": "1:49.812",
+    "track": "monza",
+    "session_type": "Q",
+    "updated_at": "2026-03-13T15:14:10",
+    "rank": 17
+  },
+  {
+    "player_id": "S76561198274149511",
+    "driver": "Maximilian Mälk",
+    "best_lap_ms": 110100,
+    "best_lap": "1:50.100",
+    "track": "monza",
+    "session_type": "R",
+    "updated_at": "2026-03-13T14:26:39",
+    "rank": 18
+  },
+  {
+    "player_id": "S76561199531568137",
+    "driver": "Jan Molen",
+    "best_lap_ms": 110215,
+    "best_lap": "1:50.215",
+    "track": "monza",
+    "session_type": "R",
+    "updated_at": "2026-03-13T15:38:47",
+    "rank": 19
+  },
+  {
+    "player_id": "S76561199229436331",
+    "driver": "Mars Mars",
+    "best_lap_ms": 110612,
+    "best_lap": "1:50.612",
+    "track": "monza",
+    "session_type": "R",
+    "updated_at": "2026-03-13T15:38:47",
+    "rank": 20
+  },
+  {
+    "player_id": "S76561198127509426",
+    "driver": "Ryo Aizawa",
+    "best_lap_ms": 111732,
+    "best_lap": "1:51.732",
+    "track": "monza",
+    "session_type": "R",
+    "updated_at": "2026-03-13T12:38:12",
+    "rank": 21
+  },
+  {
+    "player_id": "S76561198746009775",
+    "driver": "Fedor Shishlin",
+    "best_lap_ms": 114070,
+    "best_lap": "1:54.070",
+    "track": "monza",
+    "session_type": "Q",
+    "updated_at": "2026-03-13T14:02:03",
+    "rank": 22
+  },
+  {
+    "player_id": "S76561198798249929",
+    "driver": "Kohei Tessy",
+    "best_lap_ms": 116322,
+    "best_lap": "1:56.322",
+    "track": "monza",
+    "session_type": "R",
+    "updated_at": "2026-03-13T15:38:47",
+    "rank": 23
+  }
+]

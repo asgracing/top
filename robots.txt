@@ -1,0 +1,4 @@
+User-agent: *
+Allow: /
+
+Sitemap: https://itriahon-hash.github.io/asg-acc-leaderboard/sitemap.xml

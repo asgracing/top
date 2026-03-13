@@ -1,0 +1,1536 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+
+  <title>ASG Racing ACC Leaderboard | Assetto Corsa Competizione Stats </title>
+  <meta
+    name="description"
+    content="ASG Racing ACC Leaderboard — race stats, wins, podiums and best laps from the public Assetto Corsa Competizione server."
+  />
+  <meta
+    name="keywords"
+    content="ASG Racing, ACC, Assetto Corsa Competizione, leaderboard, best laps, racing league, Monza, championship"
+  />
+  <meta name="robots" content="index, follow" />
+  <meta name="author" content="ASG Racing" />
+  <meta name="theme-color" content="#0b0f14" />
+
+  <link rel="canonical" href="https://asgracing.github.io/top/" />
+  <link rel="icon" href="./favicon.ico" sizes="any" />
+  <link rel="icon" type="image/png" sizes="32x32" href="./favicon-32x32.png" />
+  <link rel="icon" type="image/png" sizes="16x16" href="./favicon-16x16.png" />
+  <link rel="apple-touch-icon" href="./apple-touch-icon.png" />
+
+  <meta property="og:type" content="website" />
+  <meta property="og:url" content="https://asgracing.github.io/top/" />
+  <meta property="og:title" content="ASG Racing ACC Leaderboard" />
+  <meta
+    property="og:description"
+    content="Race stats, wins, podiums and best laps from the ASG Racing server in Assetto Corsa Competizione."
+  />
+  <meta property="og:image" content="https://asgracing.github.io/top/og-cover.jpg" />
+  <meta property="og:image:alt" content="ASG Racing ACC Leaderboard preview" />
+  <meta property="og:site_name" content="ASG Racing ACC Leaderboard" />
+  <meta property="og:locale" content="en_US" />
+
+  <meta name="twitter:card" content="summary_large_image" />
+  <meta name="twitter:title" content="ASG Racing ACC Leaderboard" />
+  <meta
+    name="twitter:description"
+    content="Races, wins, podiums and best laps from the public ACC server of ASG Racing."
+  />
+  <meta name="twitter:image" content="https://asgracing.github.io/top/og-cover.jpg" />
+
+  <style>
+    :root {
+      --bg: #0b0f14;
+      --bg-soft: #121922;
+      --card: rgba(18, 25, 34, 0.9);
+      --card-2: rgba(25, 34, 46, 0.9);
+      --line: rgba(255,255,255,0.08);
+      --text: #ecf3ff;
+      --muted: #9fb0c5;
+      --accent: #ff5b2e;
+      --accent-2: #ffd166;
+      --gold: #f5c451;
+      --silver: #b8c4d4;
+      --bronze: #d28b5f;
+      --green: #39d98a;
+      --shadow: 0 20px 60px rgba(0,0,0,0.35);
+      --radius: 22px;
+    }
+
+    * { box-sizing: border-box; }
+
+    html, body {
+      margin: 0;
+      padding: 0;
+      background:
+        radial-gradient(circle at top left, rgba(255,91,46,0.18), transparent 28%),
+        radial-gradient(circle at top right, rgba(255,209,102,0.14), transparent 24%),
+        linear-gradient(180deg, #091018 0%, #0b0f14 100%);
+      color: var(--text);
+      font-family: Inter, Arial, sans-serif;
+    }
+
+    body { min-height: 100vh; }
+
+    .container {
+      width: min(1200px, calc(100% - 32px));
+      margin: 0 auto;
+    }
+
+    .hero { padding: 42px 0 24px; }
+
+    .hero-card {
+      position: relative;
+      overflow: hidden;
+      border: 1px solid var(--line);
+      background:
+        linear-gradient(135deg, rgba(255,91,46,0.12), rgba(255,255,255,0.03)),
+        var(--card);
+      border-radius: 30px;
+      box-shadow: var(--shadow);
+      padding: 34px;
+    }
+
+    .hero-card::before {
+      content: "";
+      position: absolute;
+      inset: 0;
+      background: linear-gradient(110deg, transparent 0%, rgba(255,255,255,0.05) 40%, transparent 70%);
+      pointer-events: none;
+    }
+
+    .hero-grid {
+      display: grid;
+      grid-template-columns: 1.3fr 0.8fr;
+      gap: 24px;
+      align-items: center;
+    }
+
+    .eyebrow {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      font-size: 13px;
+      color: var(--accent-2);
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+      margin-bottom: 10px;
+      font-weight: 700;
+    }
+
+    h1 {
+      margin: 0 0 12px;
+      font-size: clamp(34px, 5vw, 58px);
+      line-height: 0.98;
+      letter-spacing: -0.03em;
+    }
+
+    .hero-subtitle {
+      margin: 0 0 18px;
+      color: var(--muted);
+      font-size: 17px;
+      line-height: 1.6;
+      max-width: 720px;
+    }
+
+    .hero-actions {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 12px;
+      margin-top: 18px;
+      align-items: center;
+    }
+
+    .lang-switch {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      padding: 6px;
+      border-radius: 16px;
+      border: 1px solid var(--line);
+      background: rgba(10, 16, 24, 0.78);
+      backdrop-filter: blur(10px);
+      box-shadow: 0 10px 30px rgba(0,0,0,0.22);
+      z-index: 3;
+    }
+
+    .lang-switch-floating {
+      position: absolute;
+      top: 18px;
+      right: 18px;
+    }
+
+    .lang-btn {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      min-width: 82px;
+      height: 42px;
+      padding: 0 14px;
+      border-radius: 12px;
+      border: 1px solid transparent;
+      background: transparent;
+      color: var(--muted);
+      font-weight: 800;
+      font-size: 13px;
+      cursor: pointer;
+      transition: 0.2s ease;
+    }
+
+    .lang-btn:hover {
+      background: rgba(255,255,255,0.05);
+      color: var(--text);
+    }
+
+    .lang-btn.active {
+      background: linear-gradient(135deg, var(--accent), #ff7d57);
+      color: #fff;
+      box-shadow: 0 8px 20px rgba(255,91,46,0.25);
+    }
+
+    .lang-flag {
+      font-size: 16px;
+      line-height: 1;
+    }
+
+    .lang-text { line-height: 1; }
+
+    .btn {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      gap: 10px;
+      padding: 14px 18px;
+      border-radius: 14px;
+      text-decoration: none;
+      font-weight: 700;
+      border: 1px solid transparent;
+      transition: 0.2s ease;
+    }
+
+    .btn-primary {
+      background: linear-gradient(135deg, var(--accent), #ff7d57);
+      color: white;
+      box-shadow: 0 10px 24px rgba(255,91,46,0.25);
+    }
+
+    .btn-secondary {
+      border-color: var(--line);
+      color: var(--text);
+      background: rgba(255,255,255,0.03);
+    }
+
+    .btn:hover {
+      transform: translateY(-1px);
+      opacity: 0.95;
+    }
+
+    .hero-side {
+      display: grid;
+      gap: 14px;
+    }
+
+    .mini-stat {
+      background: var(--card-2);
+      border: 1px solid var(--line);
+      border-radius: 18px;
+      padding: 18px 18px 16px;
+      min-height: 105px;
+    }
+
+    .mini-label {
+      color: var(--muted);
+      font-size: 13px;
+      margin-bottom: 10px;
+    }
+
+    .mini-value {
+      font-size: 28px;
+      font-weight: 800;
+      line-height: 1;
+      margin-bottom: 8px;
+    }
+
+    .mini-note {
+      color: var(--muted);
+      font-size: 13px;
+      line-height: 1.4;
+    }
+
+    .section { padding: 14px 0 10px; }
+
+    .section-header {
+      display: flex;
+      align-items: end;
+      justify-content: space-between;
+      gap: 16px;
+      margin-bottom: 16px;
+      flex-wrap: wrap;
+    }
+
+    .section-title {
+      margin: 0;
+      font-size: 28px;
+      letter-spacing: -0.02em;
+    }
+
+    .section-subtitle {
+      margin: 6px 0 0;
+      color: var(--muted);
+      font-size: 14px;
+    }
+
+    .table-tools {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      flex-wrap: wrap;
+    }
+
+    .search-input {
+      width: min(280px, 100%);
+      padding: 12px 14px;
+      border-radius: 14px;
+      border: 1px solid var(--line);
+      background: rgba(255,255,255,0.04);
+      color: var(--text);
+      outline: none;
+      font-size: 14px;
+    }
+
+    .search-input::placeholder { color: var(--muted); }
+
+    .search-input:focus {
+      border-color: rgba(255,91,46,0.55);
+      box-shadow: 0 0 0 4px rgba(255,91,46,0.10);
+    }
+
+    .cards-top3 {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 16px;
+    }
+
+    .pilot-card {
+      position: relative;
+      overflow: hidden;
+      border-radius: 22px;
+      padding: 22px;
+      border: 1px solid var(--line);
+      background: linear-gradient(180deg, rgba(255,255,255,0.04), rgba(255,255,255,0.02)), var(--card);
+      box-shadow: var(--shadow);
+    }
+
+    .pilot-card.top1 {
+      background: linear-gradient(180deg, rgba(245,196,81,0.16), rgba(255,255,255,0.03)), var(--card);
+    }
+
+    .pilot-card.top2 {
+      background: linear-gradient(180deg, rgba(184,196,212,0.14), rgba(255,255,255,0.03)), var(--card);
+    }
+
+    .pilot-card.top3 {
+      background: linear-gradient(180deg, rgba(210,139,95,0.16), rgba(255,255,255,0.03)), var(--card);
+    }
+
+    .pilot-rank {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      width: 42px;
+      height: 42px;
+      border-radius: 999px;
+      font-weight: 900;
+      font-size: 18px;
+      margin-bottom: 16px;
+      border: 1px solid var(--line);
+      background: rgba(255,255,255,0.06);
+    }
+
+    .top1 .pilot-rank { color: var(--gold); }
+    .top2 .pilot-rank { color: var(--silver); }
+    .top3 .pilot-rank { color: var(--bronze); }
+
+    .pilot-name {
+      font-size: 22px;
+      line-height: 1.15;
+      font-weight: 800;
+      margin: 0 0 12px;
+      letter-spacing: -0.02em;
+    }
+
+    .pilot-meta {
+      display: grid;
+      grid-template-columns: repeat(2, 1fr);
+      gap: 12px;
+      margin-top: 18px;
+    }
+
+    .meta-box {
+      background: rgba(255,255,255,0.03);
+      border: 1px solid var(--line);
+      border-radius: 16px;
+      padding: 12px;
+    }
+
+    .meta-label {
+      font-size: 12px;
+      color: var(--muted);
+      margin-bottom: 6px;
+    }
+
+    .meta-value {
+      font-size: 20px;
+      font-weight: 800;
+    }
+
+    .table-card {
+      border: 1px solid var(--line);
+      border-radius: 24px;
+      overflow: hidden;
+      background: var(--card);
+      box-shadow: var(--shadow);
+    }
+
+    .table-wrap { overflow-x: auto; }
+
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      min-width: 860px;
+    }
+
+    thead tr { background: rgba(255,255,255,0.04); }
+
+    th {
+      text-align: left;
+      padding: 16px 16px;
+      font-size: 13px;
+      color: var(--muted);
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+      border-bottom: 1px solid var(--line);
+      white-space: nowrap;
+    }
+
+    th.sortable {
+      cursor: pointer;
+      user-select: none;
+      position: relative;
+      transition: 0.2s ease;
+    }
+
+    th.sortable:hover { color: var(--text); }
+    th.sortable::after {
+      content: "⇅";
+      font-size: 12px;
+      margin-left: 8px;
+      color: var(--muted);
+    }
+
+    th.sortable.sort-asc::after {
+      content: "↑";
+      color: var(--accent-2);
+    }
+
+    th.sortable.sort-desc::after {
+      content: "↓";
+      color: var(--accent);
+    }
+
+    td {
+      padding: 16px;
+      border-bottom: 1px solid var(--line);
+      font-size: 15px;
+      vertical-align: middle;
+    }
+
+    tbody tr:hover { background: rgba(255,255,255,0.025); }
+    tbody tr:last-child td { border-bottom: none; }
+
+    .rank-badge {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      min-width: 34px;
+      height: 34px;
+      padding: 0 10px;
+      border-radius: 999px;
+      background: rgba(255,255,255,0.06);
+      border: 1px solid var(--line);
+      font-weight: 800;
+    }
+
+    .rank-1 { color: var(--gold); }
+    .rank-2 { color: var(--silver); }
+    .rank-3 { color: var(--bronze); }
+
+    .driver-cell {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+    }
+
+    .driver-avatar {
+      width: 38px;
+      height: 38px;
+      border-radius: 999px;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      background: linear-gradient(135deg, rgba(255,91,46,0.9), rgba(255,209,102,0.9));
+      color: #101418;
+      font-weight: 900;
+      font-size: 14px;
+      flex: 0 0 auto;
+    }
+
+    .driver-name-wrap {
+      display: flex;
+      flex-direction: column;
+      gap: 4px;
+    }
+
+    .driver-name {
+      font-weight: 700;
+      color: var(--text);
+    }
+
+    .pill {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      padding: 7px 10px;
+      border-radius: 999px;
+      font-size: 12px;
+      font-weight: 700;
+      background: rgba(255,255,255,0.05);
+      border: 1px solid var(--line);
+      white-space: nowrap;
+    }
+
+    .pill-session-r { color: var(--green); }
+    .pill-session-q { color: var(--accent-2); }
+
+    .muted { color: var(--muted); }
+
+    .footer {
+      padding: 34px 0 50px;
+      color: var(--muted);
+      font-size: 13px;
+    }
+
+    .footer-card {
+      background: rgba(255,255,255,0.02);
+      border: 1px solid var(--line);
+      border-radius: 20px;
+      padding: 18px 20px;
+    }
+
+    .empty-box {
+      border: 1px dashed var(--line);
+      background: rgba(255,255,255,0.025);
+      border-radius: 22px;
+      padding: 28px;
+      color: var(--muted);
+      text-align: center;
+    }
+
+    .loading {
+      color: var(--muted);
+      padding: 24px 0;
+    }
+
+    .pagination-wrap {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 14px;
+      padding: 16px 18px 18px;
+      border-top: 1px solid var(--line);
+      background: rgba(255,255,255,0.02);
+      flex-wrap: wrap;
+    }
+
+    .pagination-info {
+      color: var(--muted);
+      font-size: 13px;
+    }
+
+    .pagination {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      flex-wrap: wrap;
+    }
+
+    .page-btn {
+      min-width: 40px;
+      height: 40px;
+      padding: 0 12px;
+      border-radius: 12px;
+      border: 1px solid var(--line);
+      background: rgba(255,255,255,0.04);
+      color: var(--text);
+      font-weight: 700;
+      cursor: pointer;
+      transition: 0.2s ease;
+    }
+
+    .page-btn:hover:not(:disabled) {
+      transform: translateY(-1px);
+      background: rgba(255,255,255,0.08);
+    }
+
+    .page-btn.active {
+      background: linear-gradient(135deg, var(--accent), #ff7d57);
+      border-color: transparent;
+      color: #fff;
+      box-shadow: 0 8px 20px rgba(255,91,46,0.25);
+    }
+
+    .page-btn:disabled {
+      opacity: 0.45;
+      cursor: not-allowed;
+    }
+
+    .page-dots {
+      color: var(--muted);
+      padding: 0 2px;
+      font-weight: 700;
+    }
+
+    @media (max-width: 980px) {
+      .hero-grid,
+      .cards-top3 {
+        grid-template-columns: 1fr;
+      }
+
+      .hero-card { padding: 24px; }
+      .section-title { font-size: 24px; }
+      .section-header {
+        flex-direction: column;
+        align-items: stretch;
+      }
+      .table-tools { width: 100%; }
+      .search-input { width: 100%; }
+    }
+
+    @media (max-width: 640px) {
+      .container { width: min(100% - 20px, 1200px); }
+      .hero { padding-top: 18px; }
+      .hero-card {
+        border-radius: 22px;
+        padding: 18px;
+      }
+      h1 { font-size: 34px; }
+      .pilot-name { font-size: 20px; }
+      .mini-value { font-size: 24px; }
+      .pagination-wrap { align-items: stretch; }
+      .pagination { width: 100%; }
+      .page-btn { flex: 1 1 auto; }
+      .lang-switch-floating {
+        top: 14px;
+        right: 14px;
+      }
+      .lang-btn {
+        min-width: 64px;
+        padding: 0 10px;
+      }
+      .lang-text { display: none; }
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <section class="hero">
+      <div class="hero-card">
+        <div class="lang-switch lang-switch-floating" aria-label="Language switcher">
+          <button class="lang-btn" type="button" data-lang="en"><span class="lang-flag">🇬🇧</span><span class="lang-text">EN</span></button>
+          <button class="lang-btn" type="button" data-lang="ru"><span class="lang-flag">🇷🇺</span><span class="lang-text">RU</span></button>
+        </div>
+
+        <div class="hero-grid">
+          <div>
+            <div class="eyebrow">🏁 ASG Racing League</div>
+            <h1 data-i18n="heroTitle">ACC Public Leaderboard</h1>
+            <p class="hero-subtitle" data-i18n="heroSubtitle">
+              Race statistics, wins, podiums and best laps from the
+              <strong>ASG Racing</strong> server. Data is automatically updated
+              based on dedicated server results.
+            </p>
+
+            <div class="hero-actions">
+              <a class="btn btn-primary" href="https://discord.gg/cEPFHXXtTC" target="_blank" rel="noopener noreferrer">Discord</a>
+              <a class="btn btn-primary" href="https://t.me/+JUymrENgddcyMTdi" target="_blank" rel="noopener noreferrer">Telegram</a>
+              <a class="btn btn-secondary" href="#championship" data-i18n="btnChampionship">Championship</a>
+              <a class="btn btn-secondary" href="#bestlaps" data-i18n="btnBestLaps">Best Laps</a>
+              <a class="btn btn-secondary" href="#about-server" data-i18n="btnAboutServer">About Server</a>
+            </div>
+          </div>
+
+          <div class="hero-side" id="hero-stats">
+            <div class="mini-stat">
+              <div class="mini-label" data-i18n="driversCountLabel">Drivers in leaderboard</div>
+              <div class="mini-value" id="drivers-count">—</div>
+              <div class="mini-note" data-i18n="driversCountNote">Unique participants included in the stats.</div>
+            </div>
+            <div class="mini-stat">
+              <div class="mini-label" data-i18n="bestLapHighlightLabel">Best lap record</div>
+              <div class="mini-value" id="best-lap-highlight">—</div>
+              <div class="mini-note" id="best-lap-note">Best lap highlight will appear here.</div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section class="section" id="top3-section">
+      <div class="section-header">
+        <div>
+          <h2 class="section-title" data-i18n="top3Title">Top 3 Drivers</h2>
+          <p class="section-subtitle" data-i18n="top3Subtitle">Current championship leaders by points.</p>
+        </div>
+      </div>
+      <div id="top3-content" class="cards-top3">
+        <div class="loading" data-i18n="loading">Loading...</div>
+      </div>
+    </section>
+
+    <section class="section" id="championship">
+      <div class="section-header">
+        <div>
+          <h2 class="section-title" data-i18n="championshipTitle">Championship Leaderboard</h2>
+          <p class="section-subtitle" data-i18n="championshipSubtitle">Points, wins, podiums, average finish and best lap.</p>
+        </div>
+        <div class="table-tools">
+          <input id="leaderboard-search" class="search-input" type="text" autocomplete="off" />
+        </div>
+      </div>
+
+      <div class="table-card">
+        <div class="table-wrap" id="leaderboard-table">
+          <div class="loading" style="padding:20px;" data-i18n="loadingLeaderboard">Loading leaderboard...</div>
+        </div>
+        <div class="pagination-wrap" id="leaderboard-pagination-wrap" style="display:none;">
+          <div class="pagination-info" id="leaderboard-pagination-info"></div>
+          <div class="pagination" id="leaderboard-pagination"></div>
+        </div>
+      </div>
+    </section>
+
+    <section class="section" id="bestlaps">
+      <div class="section-header">
+        <div>
+          <h2 class="section-title" data-i18n="bestLapsTitle">Best Laps</h2>
+          <p class="section-subtitle" data-i18n="bestLapsSubtitle">Fastest laps recorded during qualifying and race sessions.</p>
+        </div>
+        <div class="table-tools">
+          <input id="bestlaps-search" class="search-input" type="text" autocomplete="off" />
+        </div>
+      </div>
+
+      <div class="table-card">
+        <div class="table-wrap" id="bestlaps-table">
+          <div class="loading" style="padding:20px;" data-i18n="loadingBestLaps">Loading best laps...</div>
+        </div>
+        <div class="pagination-wrap" id="bestlaps-pagination-wrap" style="display:none;">
+          <div class="pagination-info" id="bestlaps-pagination-info"></div>
+          <div class="pagination" id="bestlaps-pagination"></div>
+        </div>
+      </div>
+    </section>
+
+    <section class="section" id="about-server">
+      <div class="section-header">
+        <div>
+          <h2 class="section-title" data-i18n="aboutTitle">About ASG Racing Server</h2>
+          <p class="section-subtitle" data-i18n="aboutSubtitle">Assetto Corsa Competizione public racing server</p>
+        </div>
+      </div>
+
+      <div class="table-card">
+        <div style="padding:28px; line-height:1.7; color:var(--muted);">
+          <p data-i18n="aboutP1">
+            <strong>ASG Racing</strong> is a public <strong>Assetto Corsa Competizione</strong>
+            server where drivers compete on popular GT3 tracks, improve their lap times and compare
+            their statistics with other racers.
+          </p>
+
+          <p data-i18n="aboutP2">
+            This page automatically publishes the server leaderboard including:
+          </p>
+
+          <ul>
+            <li data-i18n="aboutList1">🏁 number of races</li>
+            <li data-i18n="aboutList2">🥇 wins</li>
+            <li data-i18n="aboutList3">🏆 podium finishes</li>
+            <li data-i18n="aboutList4">📊 average finish position</li>
+            <li data-i18n="aboutList5">⚡ best laps</li>
+          </ul>
+
+          <p data-i18n="aboutP3">
+            Statistics are generated automatically from <strong>ACC Dedicated Server</strong>
+            result files. After each race the data is recalculated and published on the website.
+          </p>
+
+          <h3 style="margin-top:26px; color:var(--text);" data-i18n="pointsTitle">How points are calculated</h3>
+
+          <p data-i18n="pointsP1">
+            Points are awarded using a GT-style system:
+          </p>
+
+          <ul>
+            <li data-i18n="pointsList1">1st place — 25 points</li>
+            <li data-i18n="pointsList2">2nd place — 18 points</li>
+            <li data-i18n="pointsList3">3rd place — 15 points</li>
+            <li data-i18n="pointsList4">4th–10th — decreasing points</li>
+          </ul>
+
+          <p data-i18n="pointsP2">
+            Drivers also receive <strong>1 additional point</strong> for the fastest lap in race.
+          </p>
+
+          <h3 style="margin-top:26px; color:var(--text);" data-i18n="bestLapsInfoTitle">Best laps</h3>
+
+          <p data-i18n="bestLapsInfoP1">
+            The <strong>Best Laps</strong> table contains the fastest lap times recorded both in qualifying
+            and in race sessions. This makes it easy to compare the outright pace of the drivers.
+          </p>
+
+          <h3 style="margin-top:26px; color:var(--text);" data-i18n="joinTitle">Join the server</h3>
+
+          <p data-i18n="joinP1">
+            To participate in races and appear in the leaderboard, join the server:
+          </p>
+
+          <p style="font-weight:600; color:var(--text);" data-i18n="serverName">
+            ASG Racing ACC Public Server
+          </p>
+
+          <p data-i18n="joinP2">
+            Community news and communication are available in our channels:
+          </p>
+
+          <ul>
+            <li>Discord</li>
+            <li>Telegram</li>
+          </ul>
+        </div>
+      </div>
+    </section>
+
+    <footer class="footer">
+      <div class="footer-card" data-i18n="footerText">
+        Statistics are generated from ACC Dedicated Server result files and published via GitHub Pages.
+      </div>
+    </footer>
+  </div>
+
+  <script>
+    const leaderboardUrl = "./leaderboard.json";
+    const bestlapsUrl = "./bestlaps.json";
+    const PAGE_SIZE = 10;
+
+    let leaderboardData = [];
+    let bestlapsData = [];
+    let leaderboardPage = 1;
+    let bestlapsPage = 1;
+    let currentLang = localStorage.getItem("asgLang") || "en";
+    let leaderboardSearch = "";
+    let bestlapsSearch = "";
+    let leaderboardSort = { key: null, direction: null };
+    let bestlapsSort = { key: null, direction: null };
+
+    const translations = {
+      en: {
+        htmlLang: "en",
+        pageTitle: "ASG Racing ACC Leaderboard | Assetto Corsa Competizione Stats",
+        metaDescription: "ASG Racing ACC Leaderboard — race stats, wins, podiums and best laps from the public Assetto Corsa Competizione server.",
+        ogDescription: "Race stats, wins, podiums and best laps from the ASG Racing server in Assetto Corsa Competizione.",
+        twitterDescription: "Races, wins, podiums and best laps from the public ACC server of ASG Racing.",
+        ogLocale: "en_US",
+        heroTitle: "ACC Public Leaderboard",
+        heroSubtitle: "Race statistics, wins, podiums and best laps from the <strong>ASG Racing</strong> server. Data is automatically updated based on dedicated server results.",
+        btnChampionship: "Championship",
+        btnBestLaps: "Best Laps",
+        btnAboutServer: "About Server",
+        driversCountLabel: "Drivers in leaderboard",
+        driversCountNote: "Unique participants included in the stats.",
+        bestLapHighlightLabel: "Best lap record",
+        bestLapNoteFallback: "Best lap highlight will appear here.",
+        bestLapNoteTemplate: "{driver} · {track}",
+        top3Title: "Top 3 Drivers",
+        top3Subtitle: "Current championship leaders by points.",
+        championshipTitle: "Championship Leaderboard",
+        championshipSubtitle: "Points, wins, podiums, average finish and best lap.",
+        bestLapsTitle: "Best Laps",
+        bestLapsSubtitle: "Fastest laps recorded during qualifying and race sessions.",
+        aboutTitle: "About ASG Racing Server",
+        aboutSubtitle: "Assetto Corsa Competizione public racing server",
+        aboutP1: "<strong>ASG Racing</strong> is a public <strong>Assetto Corsa Competizione</strong> server where drivers compete on popular GT3 tracks, improve their lap times and compare their statistics with other racers.",
+        aboutP2: "This page automatically publishes the server leaderboard including:",
+        aboutList1: "🏁 number of races",
+        aboutList2: "🥇 wins",
+        aboutList3: "🏆 podium finishes",
+        aboutList4: "📊 average finish position",
+        aboutList5: "⚡ best laps",
+        aboutP3: "Statistics are generated automatically from <strong>ACC Dedicated Server</strong> result files. After each race the data is recalculated and published on the website.",
+        pointsTitle: "How points are calculated",
+        pointsP1: "Points are awarded using a GT-style system:",
+        pointsList1: "1st place — 25 points",
+        pointsList2: "2nd place — 18 points",
+        pointsList3: "3rd place — 15 points",
+        pointsList4: "4th–10th — decreasing points",
+        pointsP2: "Drivers also receive <strong>1 additional point</strong> for the fastest lap in race.",
+        bestLapsInfoTitle: "Best laps",
+        bestLapsInfoP1: "The <strong>Best Laps</strong> table contains the fastest lap times recorded both in qualifying and in race sessions. This makes it easy to compare the outright pace of the drivers.",
+        joinTitle: "Join the server",
+        joinP1: "To participate in races and appear in the leaderboard, join the server:",
+        serverName: "ASG Racing ACC Public Server",
+        joinP2: "Community news and communication are available in our channels:",
+        footerText: "Statistics are generated from ACC Dedicated Server result files and published via GitHub Pages.",
+        loading: "Loading...",
+        loadingLeaderboard: "Loading leaderboard...",
+        loadingBestLaps: "Loading best laps...",
+        emptyTop3: "No top-3 data available yet.",
+        emptyLeaderboard: "No leaderboard data yet.",
+        emptyBestLaps: "No best lap data yet.",
+        emptySearch: "No matching drivers found.",
+        errorLoading: "Data loading error.",
+        errorLeaderboard: "Failed to load leaderboard.json",
+        errorBestlaps: "Failed to load bestlaps.json",
+        leaderboardCols: ["Rank", "Driver", "Points", "Wins", "Podiums", "Races", "Avg Finish", "Best Lap", "Track", "Session"],
+        bestlapsCols: ["Rank", "Driver", "Best Lap", "Track", "Session", "Updated"],
+        leaderboardSearchPlaceholder: "Search driver...",
+        bestlapsSearchPlaceholder: "Search driver...",
+        metaLabels: {
+          points: "Points",
+          wins: "Wins",
+          podiums: "Podiums",
+          races: "Races",
+          bestLap: "Best lap"
+        },
+        sessionRace: "Race",
+        sessionQualifying: "Qualifying",
+        paginationShown: "Showing {start}-{end} of {total}",
+        prev: "← Prev",
+        next: "Next →"
+      },
+      ru: {
+        htmlLang: "ru",
+        pageTitle: "ASG Racing ACC Leaderboard | Статистика Assetto Corsa Competizione",
+        metaDescription: "ASG Racing ACC Leaderboard — статистика гонок, побед, подиумов и лучших кругов на публичном сервере Assetto Corsa Competizione.",
+        ogDescription: "Статистика гонок, побед, подиумов и лучших кругов на сервере ASG Racing в Assetto Corsa Competizione.",
+        twitterDescription: "Гонки, победы, подиумы и лучшие круги на публичном ACC сервере ASG Racing.",
+        ogLocale: "ru_RU",
+        heroTitle: "ACC Public Leaderboard",
+        heroSubtitle: "Статистика гонок, побед, подиумов и лучших кругов на сервере <strong>ASG Racing</strong>. Данные обновляются автоматически на основе результатов dedicated server.",
+        btnChampionship: "Чемпионат",
+        btnBestLaps: "Лучшие круги",
+        btnAboutServer: "О сервере",
+        driversCountLabel: "Пилотов в рейтинге",
+        driversCountNote: "Уникальные участники, попавшие в статистику.",
+        bestLapHighlightLabel: "Лучший круг",
+        bestLapNoteFallback: "Лучший круг будет показан здесь.",
+        bestLapNoteTemplate: "{driver} · {track}",
+        top3Title: "Топ-3 пилота",
+        top3Subtitle: "Текущие лидеры чемпионата по очкам.",
+        championshipTitle: "Таблица чемпионата",
+        championshipSubtitle: "Очки, победы, подиумы, средний финиш и лучший круг.",
+        bestLapsTitle: "Лучшие круги",
+        bestLapsSubtitle: "Быстрейшие круги из квалификаций и гонок.",
+        aboutTitle: "О сервере ASG Racing",
+        aboutSubtitle: "Публичный сервер Assetto Corsa Competizione",
+        aboutP1: "<strong>ASG Racing</strong> — это публичный сервер <strong>Assetto Corsa Competizione</strong>, где пилоты соревнуются на популярных GT3 трассах, улучшают свои времена круга и сравнивают статистику с другими гонщиками.",
+        aboutP2: "На этой странице автоматически публикуется leaderboard сервера, включающий:",
+        aboutList1: "🏁 количество гонок",
+        aboutList2: "🥇 победы",
+        aboutList3: "🏆 подиумы",
+        aboutList4: "📊 средний финиш",
+        aboutList5: "⚡ лучшие круги",
+        aboutP3: "Статистика обновляется автоматически на основе файлов результатов <strong>ACC Dedicated Server</strong>. После каждой гонки данные пересчитываются и публикуются на сайте.",
+        pointsTitle: "Как считается рейтинг",
+        pointsP1: "Очки начисляются по системе, похожей на чемпионаты GT:",
+        pointsList1: "1 место — 25 очков",
+        pointsList2: "2 место — 18 очков",
+        pointsList3: "3 место — 15 очков",
+        pointsList4: "4–10 место — уменьшающиеся очки",
+        pointsP2: "Также пилот получает <strong>1 дополнительное очко</strong> за лучший круг в гонке.",
+        bestLapsInfoTitle: "Лучшие круги",
+        bestLapsInfoP1: "Таблица <strong>Best Laps</strong> содержит лучшие времена круга, показанные как в квалификации, так и в гонках. Это позволяет сравнить абсолютную скорость пилотов.",
+        joinTitle: "Присоединиться к серверу",
+        joinP1: "Чтобы участвовать в гонках и попасть в таблицу лидеров, подключайтесь к серверу:",
+        serverName: "ASG Racing ACC Public Server",
+        joinP2: "Общение и новости сервера доступны в наших сообществах:",
+        footerText: "Данные собираются из файлов результатов ACC Dedicated Server и публикуются через GitHub Pages.",
+        loading: "Загрузка...",
+        loadingLeaderboard: "Загрузка leaderboard...",
+        loadingBestLaps: "Загрузка best laps...",
+        emptyTop3: "Пока нет данных для топ-3.",
+        emptyLeaderboard: "Пока нет данных leaderboard.",
+        emptyBestLaps: "Пока нет данных best laps.",
+        emptySearch: "Совпадений не найдено.",
+        errorLoading: "Ошибка загрузки данных.",
+        errorLeaderboard: "Не удалось загрузить leaderboard.json",
+        errorBestlaps: "Не удалось загрузить bestlaps.json",
+        leaderboardCols: ["Место", "Пилот", "Очки", "Победы", "Подиумы", "Гонки", "Средний финиш", "Лучший круг", "Трасса", "Сессия"],
+        bestlapsCols: ["Место", "Пилот", "Лучший круг", "Трасса", "Сессия", "Обновлено"],
+        leaderboardSearchPlaceholder: "Поиск пилота...",
+        bestlapsSearchPlaceholder: "Поиск пилота...",
+        metaLabels: {
+          points: "Очки",
+          wins: "Победы",
+          podiums: "Подиумы",
+          races: "Гонки",
+          bestLap: "Лучший круг"
+        },
+        sessionRace: "Гонка",
+        sessionQualifying: "Квалификация",
+        paginationShown: "Показано {start}-{end} из {total}",
+        prev: "← Назад",
+        next: "Вперед →"
+      }
+    };
+
+    const leaderboardColumns = [
+      { key: "rank", type: "number" },
+      { key: "driver", type: "string" },
+      { key: "points", type: "number" },
+      { key: "wins", type: "number" },
+      { key: "podiums", type: "number" },
+      { key: "races", type: "number" },
+      { key: "average_finish", type: "number" },
+      { key: "best_lap", type: "time" },
+      { key: "best_lap_track", type: "string" },
+      { key: "best_lap_session_type", type: "string" }
+    ];
+
+    const bestlapsColumns = [
+      { key: "rank", type: "number" },
+      { key: "driver", type: "string" },
+      { key: "best_lap", type: "time" },
+      { key: "track", type: "string" },
+      { key: "session_type", type: "string" },
+      { key: "updated_at", type: "string" }
+    ];
+
+    function t(key) {
+      return translations[currentLang][key] ?? translations.en[key] ?? key;
+    }
+
+    function replaceTokens(template, values = {}) {
+      return String(template).replace(/\{(\w+)\}/g, (_, key) => values[key] ?? "");
+    }
+
+    function escapeHtml(value) {
+      return String(value ?? "")
+        .replace(/&/g, "&amp;")
+        .replace(/</g, "&lt;")
+        .replace(/>/g, "&gt;")
+        .replace(/\"/g, "&quot;");
+    }
+
+    function initials(name) {
+      const parts = String(name || "").trim().split(/\s+/).filter(Boolean);
+      if (!parts.length) return "?";
+      if (parts.length === 1) return parts[0].slice(0, 2).toUpperCase();
+      return (parts[0][0] + parts[1][0]).toUpperCase();
+    }
+
+    function sessionLabel(value) {
+      const v = String(value || "").toUpperCase();
+      if (v === "R") return `<span class="pill pill-session-r">${escapeHtml(t("sessionRace"))}</span>`;
+      if (v === "Q") return `<span class="pill pill-session-q">${escapeHtml(t("sessionQualifying"))}</span>`;
+      return `<span class="pill">${escapeHtml(v || "—")}</span>`;
+    }
+
+    function normalizeString(value) {
+      return String(value ?? "").trim().toLocaleLowerCase(currentLang === "ru" ? "ru" : "en");
+    }
+
+    function parseNumeric(value) {
+      if (value === null || value === undefined || value === "" || value === "—") return Number.POSITIVE_INFINITY;
+      const num = Number(String(value).replace(",", "."));
+      return Number.isFinite(num) ? num : Number.POSITIVE_INFINITY;
+    }
+
+    function parseLapTime(value) {
+      if (!value || value === "—") return Number.POSITIVE_INFINITY;
+      const str = String(value).trim();
+      const parts = str.split(":");
+
+      if (parts.length === 2) {
+        const minutes = Number(parts[0]);
+        const secParts = parts[1].split(".");
+        const seconds = Number(secParts[0] || 0);
+        const millis = Number(secParts[1] || 0);
+        if ([minutes, seconds, millis].every(Number.isFinite)) {
+          return minutes * 60000 + seconds * 1000 + millis;
+        }
+      }
+
+      if (parts.length === 3) {
+        const hours = Number(parts[0]);
+        const minutes = Number(parts[1]);
+        const secParts = parts[2].split(".");
+        const seconds = Number(secParts[0] || 0);
+        const millis = Number(secParts[1] || 0);
+        if ([hours, minutes, seconds, millis].every(Number.isFinite)) {
+          return hours * 3600000 + minutes * 60000 + seconds * 1000 + millis;
+        }
+      }
+
+      return Number.POSITIVE_INFINITY;
+    }
+
+    function getComparableValue(row, column) {
+      const value = row?.[column.key];
+      switch (column.type) {
+        case "number":
+          return parseNumeric(value);
+        case "time":
+          return parseLapTime(value);
+        default:
+          return normalizeString(value);
+      }
+    }
+
+    function filterByDriver(data, search) {
+      const query = normalizeString(search);
+      if (!query) return [...data];
+      return data.filter(row => normalizeString(row.driver).includes(query));
+    }
+
+    function sortData(data, sortState, columns) {
+      if (!sortState.key || !sortState.direction) return [...data];
+      const column = columns.find(col => col.key === sortState.key);
+      if (!column) return [...data];
+
+      return [...data].sort((a, b) => {
+        const av = getComparableValue(a, column);
+        const bv = getComparableValue(b, column);
+        if (av < bv) return sortState.direction === "asc" ? -1 : 1;
+        if (av > bv) return sortState.direction === "asc" ? 1 : -1;
+        return parseNumeric(a.rank) - parseNumeric(b.rank);
+      });
+    }
+
+    function cycleSort(sortState, key) {
+      if (sortState.key !== key) return { key, direction: "asc" };
+      return { key, direction: sortState.direction === "asc" ? "desc" : "asc" };
+    }
+
+    function getSortClass(sortState, key) {
+      if (sortState.key !== key) return "";
+      return sortState.direction === "asc" ? "sort-asc" : "sort-desc";
+    }
+
+    function getProcessedLeaderboard() {
+      return sortData(filterByDriver(leaderboardData, leaderboardSearch), leaderboardSort, leaderboardColumns);
+    }
+
+    function getProcessedBestlaps() {
+      return sortData(filterByDriver(bestlapsData, bestlapsSearch), bestlapsSort, bestlapsColumns);
+    }
+
+    async function loadJson(url) {
+      const res = await fetch(url + "?t=" + Date.now(), { cache: "no-store" });
+      if (!res.ok) throw new Error(`HTTP ${res.status} for ${url}`);
+      return await res.json();
+    }
+
+    function applyStaticTranslations() {
+      document.documentElement.lang = t("htmlLang");
+      document.title = t("pageTitle");
+
+      const descriptionMeta = document.querySelector('meta[name="description"]');
+      const ogDescriptionMeta = document.querySelector('meta[property="og:description"]');
+      const twitterDescriptionMeta = document.querySelector('meta[name="twitter:description"]');
+      const ogLocaleMeta = document.querySelector('meta[property="og:locale"]');
+
+      if (descriptionMeta) descriptionMeta.setAttribute("content", t("metaDescription"));
+      if (ogDescriptionMeta) ogDescriptionMeta.setAttribute("content", t("ogDescription"));
+      if (twitterDescriptionMeta) twitterDescriptionMeta.setAttribute("content", t("twitterDescription"));
+      if (ogLocaleMeta) ogLocaleMeta.setAttribute("content", t("ogLocale"));
+
+      document.querySelectorAll("[data-i18n]").forEach(el => {
+        const key = el.dataset.i18n;
+        const value = t(key);
+        if (value !== undefined) el.innerHTML = value;
+      });
+
+      document.querySelectorAll(".lang-btn").forEach(btn => {
+        btn.classList.toggle("active", btn.dataset.lang === currentLang);
+      });
+
+      const leaderboardInput = document.getElementById("leaderboard-search");
+      const bestlapsInput = document.getElementById("bestlaps-search");
+      if (leaderboardInput) leaderboardInput.placeholder = t("leaderboardSearchPlaceholder");
+      if (bestlapsInput) bestlapsInput.placeholder = t("bestlapsSearchPlaceholder");
+
+      if (bestlapsData.length > 0) {
+        updateBestLapNote(bestlapsData[0].driver, bestlapsData[0].track);
+      } else {
+        document.getElementById("best-lap-note").textContent = t("bestLapNoteFallback");
+      }
+    }
+
+    function updateBestLapNote(driver, track) {
+      document.getElementById("best-lap-note").textContent = replaceTokens(t("bestLapNoteTemplate"), {
+        driver: driver || "Unknown",
+        track: track || "Unknown track"
+      });
+    }
+
+    function renderTop3(data) {
+      if (!Array.isArray(data) || !data.length) {
+        return `<div class="empty-box">${escapeHtml(t("emptyTop3"))}</div>`;
+      }
+
+      const top3 = data.slice(0, 3);
+      const classes = ["top1", "top2", "top3"];
+
+      return top3.map((row, index) => `
+        <article class="pilot-card ${classes[index] || ""}">
+          <div class="pilot-rank">#${escapeHtml(row.rank)}</div>
+          <h3 class="pilot-name">${escapeHtml(row.driver)}</h3>
+          <div class="muted">${escapeHtml(t("metaLabels").bestLap)}: ${escapeHtml(row.best_lap || "—")}</div>
+          <div class="pilot-meta">
+            <div class="meta-box">
+              <div class="meta-label">${escapeHtml(t("metaLabels").points)}</div>
+              <div class="meta-value">${escapeHtml(row.points ?? 0)}</div>
+            </div>
+            <div class="meta-box">
+              <div class="meta-label">${escapeHtml(t("metaLabels").wins)}</div>
+              <div class="meta-value">${escapeHtml(row.wins ?? 0)}</div>
+            </div>
+            <div class="meta-box">
+              <div class="meta-label">${escapeHtml(t("metaLabels").podiums)}</div>
+              <div class="meta-value">${escapeHtml(row.podiums ?? 0)}</div>
+            </div>
+            <div class="meta-box">
+              <div class="meta-label">${escapeHtml(t("metaLabels").races)}</div>
+              <div class="meta-value">${escapeHtml(row.races ?? 0)}</div>
+            </div>
+          </div>
+        </article>
+      `).join("");
+    }
+
+    function paginate(data, page, pageSize) {
+      const totalPages = Math.max(1, Math.ceil(data.length / pageSize));
+      const safePage = Math.min(Math.max(1, page), totalPages);
+      const start = (safePage - 1) * pageSize;
+      const end = start + pageSize;
+      return {
+        items: data.slice(start, end),
+        page: safePage,
+        totalPages,
+        totalItems: data.length,
+        startIndex: data.length ? start + 1 : 0,
+        endIndex: Math.min(end, data.length)
+      };
+    }
+
+    function getPageList(current, total) {
+      if (total <= 7) return Array.from({ length: total }, (_, i) => i + 1);
+      if (current <= 4) return [1, 2, 3, 4, 5, "...", total];
+      if (current >= total - 3) return [1, "...", total - 4, total - 3, total - 2, total - 1, total];
+      return [1, "...", current - 1, current, current + 1, "...", total];
+    }
+
+    function renderPagination(containerId, infoId, wrapId, currentPage, totalPages, totalItems, startIndex, endIndex, onPageChange) {
+      const container = document.getElementById(containerId);
+      const info = document.getElementById(infoId);
+      const wrap = document.getElementById(wrapId);
+
+      if (totalItems <= PAGE_SIZE) {
+        wrap.style.display = "none";
+        container.innerHTML = "";
+        info.textContent = "";
+        return;
+      }
+
+      wrap.style.display = "flex";
+      info.textContent = replaceTokens(t("paginationShown"), {
+        start: startIndex,
+        end: endIndex,
+        total: totalItems
+      });
+
+      const pageList = getPageList(currentPage, totalPages);
+
+      let html = `
+        <button class="page-btn" ${currentPage === 1 ? "disabled" : ""} data-page="${currentPage - 1}">
+          ${escapeHtml(t("prev"))}
+        </button>
+      `;
+
+      pageList.forEach(item => {
+        if (item === "...") {
+          html += `<span class="page-dots">...</span>`;
+        } else {
+          html += `
+            <button class="page-btn ${item === currentPage ? "active" : ""}" data-page="${item}">
+              ${item}
+            </button>
+          `;
+        }
+      });
+
+      html += `
+        <button class="page-btn" ${currentPage === totalPages ? "disabled" : ""} data-page="${currentPage + 1}">
+          ${escapeHtml(t("next"))}
+        </button>
+      `;
+
+      container.innerHTML = html;
+
+      container.querySelectorAll(".page-btn[data-page]").forEach(btn => {
+        btn.addEventListener("click", () => {
+          const nextPage = Number(btn.dataset.page);
+          if (!Number.isNaN(nextPage)) onPageChange(nextPage);
+        });
+      });
+    }
+
+    function renderLeaderboardHeaders() {
+      const cols = t("leaderboardCols");
+      return leaderboardColumns.map((col, index) => `
+        <th class="sortable ${getSortClass(leaderboardSort, col.key)}" data-sort-key="${escapeHtml(col.key)}">
+          ${escapeHtml(cols[index])}
+        </th>
+      `).join("");
+    }
+
+    function renderBestlapsHeaders() {
+      const cols = t("bestlapsCols");
+      return bestlapsColumns.map((col, index) => `
+        <th class="sortable ${getSortClass(bestlapsSort, col.key)}" data-sort-key="${escapeHtml(col.key)}">
+          ${escapeHtml(cols[index])}
+        </th>
+      `).join("");
+    }
+
+    function bindLeaderboardSortHandlers() {
+      document.querySelectorAll("#leaderboard-table th[data-sort-key]").forEach(th => {
+        th.addEventListener("click", () => {
+          leaderboardSort = cycleSort(leaderboardSort, th.dataset.sortKey);
+          leaderboardPage = 1;
+          renderLeaderboardTablePage();
+        });
+      });
+    }
+
+    function bindBestlapsSortHandlers() {
+      document.querySelectorAll("#bestlaps-table th[data-sort-key]").forEach(th => {
+        th.addEventListener("click", () => {
+          bestlapsSort = cycleSort(bestlapsSort, th.dataset.sortKey);
+          bestlapsPage = 1;
+          renderBestLapsTablePage();
+        });
+      });
+    }
+
+    function renderLeaderboardTablePage() {
+      const result = paginate(getProcessedLeaderboard(), leaderboardPage, PAGE_SIZE);
+      leaderboardPage = result.page;
+
+      if (!result.totalItems) {
+        document.getElementById("leaderboard-table").innerHTML = `<div class="empty-box">${escapeHtml(leaderboardSearch ? t("emptySearch") : t("emptyLeaderboard"))}</div>`;
+        document.getElementById("leaderboard-pagination-wrap").style.display = "none";
+        return;
+      }
+
+      let rows = result.items.map(row => `
+        <tr>
+          <td><span class="rank-badge rank-${escapeHtml(row.rank)}">#${escapeHtml(row.rank)}</span></td>
+          <td>
+            <div class="driver-cell">
+              <div class="driver-avatar">${escapeHtml(initials(row.driver))}</div>
+              <div class="driver-name-wrap">
+                <div class="driver-name">${escapeHtml(row.driver)}</div>
+              </div>
+            </div>
+          </td>
+          <td>${escapeHtml(row.points ?? 0)}</td>
+          <td>${escapeHtml(row.wins ?? 0)}</td>
+          <td>${escapeHtml(row.podiums ?? 0)}</td>
+          <td>${escapeHtml(row.races ?? 0)}</td>
+          <td>${escapeHtml(row.average_finish ?? "—")}</td>
+          <td>${escapeHtml(row.best_lap ?? "—")}</td>
+          <td>${escapeHtml(row.best_lap_track ?? "—")}</td>
+          <td>${sessionLabel(row.best_lap_session_type)}</td>
+        </tr>
+      `).join("");
+
+      document.getElementById("leaderboard-table").innerHTML = `
+        <table>
+          <thead>
+            <tr>${renderLeaderboardHeaders()}</tr>
+          </thead>
+          <tbody>${rows}</tbody>
+        </table>
+      `;
+
+      bindLeaderboardSortHandlers();
+
+      renderPagination(
+        "leaderboard-pagination",
+        "leaderboard-pagination-info",
+        "leaderboard-pagination-wrap",
+        result.page,
+        result.totalPages,
+        result.totalItems,
+        result.startIndex,
+        result.endIndex,
+        (page) => {
+          leaderboardPage = page;
+          renderLeaderboardTablePage();
+          document.getElementById("championship").scrollIntoView({ behavior: "smooth", block: "start" });
+        }
+      );
+    }
+
+    function renderBestLapsTablePage() {
+      const result = paginate(getProcessedBestlaps(), bestlapsPage, PAGE_SIZE);
+      bestlapsPage = result.page;
+
+      if (!result.totalItems) {
+        document.getElementById("bestlaps-table").innerHTML = `<div class="empty-box">${escapeHtml(bestlapsSearch ? t("emptySearch") : t("emptyBestLaps"))}</div>`;
+        document.getElementById("bestlaps-pagination-wrap").style.display = "none";
+        return;
+      }
+
+      let rows = result.items.map(row => `
+        <tr>
+          <td><span class="rank-badge rank-${escapeHtml(row.rank)}">#${escapeHtml(row.rank)}</span></td>
+          <td>
+            <div class="driver-cell">
+              <div class="driver-avatar">${escapeHtml(initials(row.driver))}</div>
+              <div class="driver-name-wrap">
+                <div class="driver-name">${escapeHtml(row.driver)}</div>
+              </div>
+            </div>
+          </td>
+          <td>${escapeHtml(row.best_lap ?? "—")}</td>
+          <td>${escapeHtml(row.track ?? "—")}</td>
+          <td>${sessionLabel(row.session_type)}</td>
+          <td>${escapeHtml(row.updated_at ?? "—")}</td>
+        </tr>
+      `).join("");
+
+      document.getElementById("bestlaps-table").innerHTML = `
+        <table>
+          <thead>
+            <tr>${renderBestlapsHeaders()}</tr>
+          </thead>
+          <tbody>${rows}</tbody>
+        </table>
+      `;
+
+      bindBestlapsSortHandlers();
+
+      renderPagination(
+        "bestlaps-pagination",
+        "bestlaps-pagination-info",
+        "bestlaps-pagination-wrap",
+        result.page,
+        result.totalPages,
+        result.totalItems,
+        result.startIndex,
+        result.endIndex,
+        (page) => {
+          bestlapsPage = page;
+          renderBestLapsTablePage();
+          document.getElementById("bestlaps").scrollIntoView({ behavior: "smooth", block: "start" });
+        }
+      );
+    }
+
+    function bindLanguageButtons() {
+      document.querySelectorAll(".lang-btn").forEach(btn => {
+        btn.addEventListener("click", () => {
+          const lang = btn.dataset.lang;
+          if (!translations[lang] || lang === currentLang) return;
+          currentLang = lang;
+          localStorage.setItem("asgLang", currentLang);
+          rerenderUI();
+        });
+      });
+    }
+
+    function bindSearchInputs() {
+      const leaderboardInput = document.getElementById("leaderboard-search");
+      const bestlapsInput = document.getElementById("bestlaps-search");
+
+      if (leaderboardInput) {
+        leaderboardInput.addEventListener("input", (e) => {
+          leaderboardSearch = e.target.value || "";
+          leaderboardPage = 1;
+          renderLeaderboardTablePage();
+        });
+      }
+
+      if (bestlapsInput) {
+        bestlapsInput.addEventListener("input", (e) => {
+          bestlapsSearch = e.target.value || "";
+          bestlapsPage = 1;
+          renderBestLapsTablePage();
+        });
+      }
+    }
+
+    function rerenderUI() {
+      applyStaticTranslations();
+      document.getElementById("top3-content").innerHTML = renderTop3(leaderboardData);
+      renderLeaderboardTablePage();
+      renderBestLapsTablePage();
+    }
+
+    async function init() {
+      const top3Content = document.getElementById("top3-content");
+      bindLanguageButtons();
+      bindSearchInputs();
+      applyStaticTranslations();
+
+      try {
+        const [leaderboard, bestlaps] = await Promise.all([
+          loadJson(leaderboardUrl),
+          loadJson(bestlapsUrl)
+        ]);
+
+        leaderboardData = Array.isArray(leaderboard) ? leaderboard : [];
+        bestlapsData = Array.isArray(bestlaps) ? bestlaps : [];
+
+        document.getElementById("drivers-count").textContent = leaderboardData.length;
+
+        if (bestlapsData.length > 0) {
+          document.getElementById("best-lap-highlight").textContent = bestlapsData[0].best_lap || "—";
+          updateBestLapNote(bestlapsData[0].driver, bestlapsData[0].track);
+        } else {
+          document.getElementById("best-lap-highlight").textContent = "—";
+          document.getElementById("best-lap-note").textContent = t("bestLapNoteFallback");
+        }
+
+        rerenderUI();
+      } catch (error) {
+        console.error(error);
+        top3Content.innerHTML = `<div class="empty-box">${escapeHtml(t("errorLoading"))}</div>`;
+        document.getElementById("leaderboard-table").innerHTML = `<div class="empty-box">${escapeHtml(t("errorLeaderboard"))}</div>`;
+        document.getElementById("bestlaps-table").innerHTML = `<div class="empty-box">${escapeHtml(t("errorBestlaps"))}</div>`;
+        document.getElementById("leaderboard-pagination-wrap").style.display = "none";
+        document.getElementById("bestlaps-pagination-wrap").style.display = "none";
+      }
+    }
+
+    init();
+  </script>
+</body>
+</html>
