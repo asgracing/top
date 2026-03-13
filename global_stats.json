@@ -1,8 +1,8 @@
 {
   "date": "2026-03-14",
-  "unique_players_today": 51,
+  "unique_players_today": 64,
   "races_today": 2,
-  "sessions_today": 3,
+  "sessions_today": 4,
   "points_earned_today": 204,
   "wins_today": 2,
   "podiums_today": 6,
@@ -27,5 +27,5 @@
     "driver": "Sultan Isaev",
     "points": 25
   },
-  "updated_at": "2026-03-14T00:52:19"
+  "updated_at": "2026-03-14T00:57:19"
 }
