@@ -56,8 +56,8 @@
 
         <div class="hero-grid">
           <div>
-            <div class="eyebrow">🏁 ASG Racing League</div>
-            <h1 data-i18n="heroTitle">ACC Public Leaderboard</h1>
+            <div class="eyebrow">ACC Public Leaderboard</div>
+            <h1 data-i18n="heroTitle">🏁 ASG Racing League</h1>
             <p class="hero-subtitle" data-i18n="heroSubtitle">
               Race statistics, wins, podiums and best laps from the
               <strong>ASG Racing</strong> server. Data is automatically updated
@@ -73,18 +73,29 @@
             </div>
           </div>
 
-          <div class="hero-side" id="hero-stats">
-            <div class="mini-stat">
-              <div class="mini-label" data-i18n="driversCountLabel">Drivers in leaderboard</div>
-              <div class="mini-value" id="drivers-count">—</div>
-              <div class="mini-note" data-i18n="driversCountNote">Unique participants included in the stats.</div>
-            </div>
-            <div class="mini-stat">
-              <div class="mini-label" data-i18n="bestLapHighlightLabel">Best lap record</div>
-              <div class="mini-value" id="best-lap-highlight">—</div>
-              <div class="mini-note" id="best-lap-note">Best lap highlight will appear here.</div>
-            </div>
-          </div>
+          <div class="hero-side hero-side-compact" id="hero-stats">
+  <div class="hero-stats-grid">
+    <div class="mini-stat mini-stat-compact">
+      <div class="mini-label" data-i18n="driversCountLabel">Drivers in leaderboard</div>
+      <div class="mini-value" id="drivers-count">—</div>
+    </div>
+
+    <div class="mini-stat mini-stat-compact">
+      <div class="mini-label" data-i18n="bestLapHighlightLabel">Best lap record</div>
+      <div class="mini-value" id="best-lap-highlight">—</div>
+      <div class="mini-note" id="best-lap-note">Best lap highlight will appear here.</div>
+    </div>
+  </div>
+
+  <button
+    class="btn btn-today-stats pulse-attention"
+    id="today-stats-btn"
+    type="button"
+    data-i18n="todayStatsBtn"
+  >
+    Today Stats
+  </button>
+</div>
         </div>
       </div>
     </section>
@@ -223,7 +234,81 @@
         </div>
       </div>
     </section>
+<div class="modal-overlay" id="today-stats-modal" aria-hidden="true">
+  <div class="modal-card" role="dialog" aria-modal="true" aria-labelledby="today-stats-title">
+    <button class="modal-close" id="today-stats-close" type="button" aria-label="Close">✕</button>
 
+    <div class="modal-header">
+      <div>
+        <div class="eyebrow" data-i18n="todayStatsEyebrow">Daily overview</div>
+        <h3 id="today-stats-title" class="modal-title" data-i18n="todayStatsTitle">Статистика за сегодня</h3>
+        <p class="modal-subtitle" id="today-stats-updated">—</p>
+      </div>
+    </div>
+
+    <div class="today-stats-grid">
+      <div class="today-stat-card">
+        <div class="today-stat-label" data-i18n="todayUniquePlayers">Unique drivers today</div>
+        <div class="today-stat-value" id="today-unique-players">—</div>
+      </div>
+
+      <div class="today-stat-card">
+        <div class="today-stat-label" data-i18n="todayRaces">Races today</div>
+        <div class="today-stat-value" id="today-races">—</div>
+      </div>
+
+      <div class="today-stat-card">
+        <div class="today-stat-label" data-i18n="todaySessions">Sessions today</div>
+        <div class="today-stat-value" id="today-sessions">—</div>
+      </div>
+
+      <div class="today-stat-card">
+        <div class="today-stat-label" data-i18n="todayPoints">Points earned today</div>
+        <div class="today-stat-value" id="today-points">—</div>
+      </div>
+
+      <div class="today-stat-card">
+        <div class="today-stat-label" data-i18n="todayWins">Wins today</div>
+        <div class="today-stat-value" id="today-wins">—</div>
+      </div>
+
+      <div class="today-stat-card">
+        <div class="today-stat-label" data-i18n="todayPodiums">Podiums today</div>
+        <div class="today-stat-value" id="today-podiums">—</div>
+      </div>
+
+      <div class="today-stat-card">
+        <div class="today-stat-label" data-i18n="todayAvgPlayers">Avg players per race</div>
+        <div class="today-stat-value" id="today-avg-players">—</div>
+      </div>
+
+      <div class="today-stat-card">
+        <div class="today-stat-label" data-i18n="todayTracks">Tracks raced today</div>
+        <div class="today-stat-value today-stat-value-sm" id="today-tracks">—</div>
+      </div>
+    </div>
+
+    <div class="today-stats-details">
+      <div class="today-detail-card">
+        <div class="today-detail-title" data-i18n="todayBestLap">Best lap today</div>
+        <div class="today-detail-main" id="today-best-lap">—</div>
+        <div class="today-detail-sub" id="today-best-lap-note">—</div>
+      </div>
+
+      <div class="today-detail-card">
+        <div class="today-detail-title" data-i18n="todayMostActive">Most active driver</div>
+        <div class="today-detail-main" id="today-most-active">—</div>
+        <div class="today-detail-sub" id="today-most-active-note">—</div>
+      </div>
+
+      <div class="today-detail-card">
+        <div class="today-detail-title" data-i18n="todayMostSuccessful">Most successful driver</div>
+        <div class="today-detail-main" id="today-most-successful">—</div>
+        <div class="today-detail-sub" id="today-most-successful-note">—</div>
+      </div>
+    </div>
+  </div>
+</div>
     <footer class="footer">
       <div class="footer-card" data-i18n="footerText">
         Statistics are generated from ACC Dedicated Server result files and published via GitHub Pages.

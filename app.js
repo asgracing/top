@@ -14,6 +14,19 @@ let bestlapsSort = { key: null, direction: null };
 
 const translations = {
   en: {
+    todayStatsBtn: "Today Stats",
+todayStatsEyebrow: "Daily overview",
+todayStatsTitle: "Today's Statistics",
+todayUniquePlayers: "Unique drivers today",
+todayRaces: "Races today",
+todaySessions: "Sessions today",
+todayPoints: "Points earned today",
+todayWins: "Wins today",
+todayPodiums: "Podiums today",
+todayAvgPlayers: "Avg players per race",
+todayTracks: "Tracks raced today",
+todayBestLap: "Best lap today",
+todayMostActive: "Most active driver",
     htmlLang: "en",
     pageTitle: "ASG Racing ACC Leaderboard | Assetto Corsa Competizione Stats",
     metaDescription: "ASG Racing ACC Leaderboard — race stats, wins, podiums and best laps from the public Assetto Corsa Competizione server.",
@@ -88,6 +101,20 @@ const translations = {
     next: "Next →"
   },
   ru: {
+    todayStatsBtn: "Статистика за сегодня",
+todayStatsEyebrow: "Сводка дня",
+todayStatsTitle: "Статистика за сегодня",
+todayUniquePlayers: "Уникальных пилотов сегодня",
+todayRaces: "Гонок сегодня",
+todaySessions: "Сессий сегодня",
+todayPoints: "Очков заработано сегодня",
+todayWins: "Побед сегодня",
+todayPodiums: "Подиумов сегодня",
+todayAvgPlayers: "Среднее пилотов на гонку",
+todayTracks: "Трассы сегодня",
+todayBestLap: "Лучший круг сегодня",
+todayMostActive: "Самый активный пилот",
+todayMostSuccessful: "Самый успешный пилот",
     htmlLang: "ru",
     pageTitle: "ASG Racing ACC Leaderboard | Статистика Assetto Corsa Competizione",
     metaDescription: "ASG Racing ACC Leaderboard — статистика гонок, побед, подиумов и лучших кругов на публичном сервере Assetto Corsa Competizione.",
@@ -694,5 +721,191 @@ async function init() {
     document.getElementById("bestlaps-pagination-wrap").style.display = "none";
   }
 }
+const TODAY_STATS = {
+  date: "2026-03-13",
+  unique_players_today: 45,
+  races_today: 8,
+  sessions_today: 17,
+  points_earned_today: 673,
+  wins_today: 8,
+  podiums_today: 22,
+  avg_players_per_race_today: 8.38,
+  tracks_raced_today: ["monza"],
+  best_lap_today: {
+    lap: "1:47.175",
+    lap_ms: 107175,
+    driver: "Denis Denalget [ASG]",
+    player_id: "S76561198179725961",
+    track: "monza",
+    session_type: "R"
+  },
+  most_active_driver_today: {
+    player_id: "S76561199664057628",
+    races: 8
+  },
+  most_successful_driver_today: {
+    player_id: "S76561199664057628",
+    driver: "Arsenii Kapustin",
+    points: 171
+  },
+  updated_at: "2026-03-13T20:12:19"
+};
 
+function escapeHtml(value) {
+  return String(value ?? "")
+    .replaceAll("&", "&amp;")
+    .replaceAll("<", "&lt;")
+    .replaceAll(">", "&gt;")
+    .replaceAll('"', "&quot;")
+    .replaceAll("'", "&#039;");
+}
+
+function formatDateTimeLocal(isoString, lang = "en") {
+  if (!isoString) return "—";
+
+  const locale = lang === "ru" ? "ru-RU" : "en-GB";
+  const date = new Date(isoString);
+
+  return new Intl.DateTimeFormat(locale, {
+    year: "numeric",
+    month: "2-digit",
+    day: "2-digit",
+    hour: "2-digit",
+    minute: "2-digit"
+  }).format(date);
+}
+
+function getCurrentLangSafe() {
+  if (typeof currentLang !== "undefined") return currentLang;
+  return document.documentElement.lang === "ru" ? "ru" : "en";
+}
+
+function findDriverNameByPlayerId(playerId) {
+  if (!playerId) return null;
+
+  if (TODAY_STATS?.most_successful_driver_today?.player_id === playerId && TODAY_STATS?.most_successful_driver_today?.driver) {
+    return TODAY_STATS.most_successful_driver_today.driver;
+  }
+
+  if (window.leaderboardData && Array.isArray(window.leaderboardData)) {
+    const found = window.leaderboardData.find(item => item.player_id === playerId || item.playerId === playerId);
+    if (found) return found.driver || found.name || found.player || null;
+  }
+
+  return null;
+}
+
+function renderTodayStatsModal() {
+  const lang = getCurrentLangSafe();
+  const t = TODAY_STATS;
+
+  const uniquePlayersEl = document.getElementById("today-unique-players");
+  const racesEl = document.getElementById("today-races");
+  const sessionsEl = document.getElementById("today-sessions");
+  const pointsEl = document.getElementById("today-points");
+  const winsEl = document.getElementById("today-wins");
+  const podiumsEl = document.getElementById("today-podiums");
+  const avgPlayersEl = document.getElementById("today-avg-players");
+  const tracksEl = document.getElementById("today-tracks");
+  const bestLapEl = document.getElementById("today-best-lap");
+  const bestLapNoteEl = document.getElementById("today-best-lap-note");
+  const mostActiveEl = document.getElementById("today-most-active");
+  const mostActiveNoteEl = document.getElementById("today-most-active-note");
+  const mostSuccessfulEl = document.getElementById("today-most-successful");
+  const mostSuccessfulNoteEl = document.getElementById("today-most-successful-note");
+  const updatedEl = document.getElementById("today-stats-updated");
+
+  if (!uniquePlayersEl) return;
+
+  uniquePlayersEl.textContent = t.unique_players_today ?? "—";
+  racesEl.textContent = t.races_today ?? "—";
+  sessionsEl.textContent = t.sessions_today ?? "—";
+  pointsEl.textContent = t.points_earned_today ?? "—";
+  winsEl.textContent = t.wins_today ?? "—";
+  podiumsEl.textContent = t.podiums_today ?? "—";
+  avgPlayersEl.textContent =
+    typeof t.avg_players_per_race_today === "number"
+      ? t.avg_players_per_race_today.toFixed(2)
+      : "—";
+  tracksEl.textContent = Array.isArray(t.tracks_raced_today) && t.tracks_raced_today.length
+    ? t.tracks_raced_today.join(", ")
+    : "—";
+
+  bestLapEl.textContent = t.best_lap_today?.lap || "—";
+  bestLapNoteEl.textContent = t.best_lap_today
+    ? `${t.best_lap_today.driver} · ${t.best_lap_today.track}`
+    : "—";
+
+  const mostActiveName =
+    findDriverNameByPlayerId(t.most_active_driver_today?.player_id) ||
+    t.most_successful_driver_today?.driver ||
+    t.most_active_driver_today?.player_id ||
+    "—";
+
+  mostActiveEl.textContent = mostActiveName;
+  mostActiveNoteEl.textContent = t.most_active_driver_today?.races != null
+    ? (lang === "ru"
+        ? `Гонок за сегодня: ${t.most_active_driver_today.races}`
+        : `Races today: ${t.most_active_driver_today.races}`)
+    : "—";
+
+  mostSuccessfulEl.textContent = t.most_successful_driver_today?.driver || "—";
+  mostSuccessfulNoteEl.textContent = t.most_successful_driver_today?.points != null
+    ? (lang === "ru"
+        ? `Очков за сегодня: ${t.most_successful_driver_today.points}`
+        : `Points today: ${t.most_successful_driver_today.points}`)
+    : "—";
+
+  updatedEl.textContent =
+    lang === "ru"
+      ? `Обновлено: ${formatDateTimeLocal(t.updated_at, "ru")}`
+      : `Updated: ${formatDateTimeLocal(t.updated_at, "en")}`;
+}
+
+function openTodayStatsModal() {
+  const modal = document.getElementById("today-stats-modal");
+  if (!modal) return;
+
+  renderTodayStatsModal();
+  modal.classList.add("is-open");
+  modal.setAttribute("aria-hidden", "false");
+  document.body.classList.add("modal-open");
+}
+
+function closeTodayStatsModal() {
+  const modal = document.getElementById("today-stats-modal");
+  if (!modal) return;
+
+  modal.classList.remove("is-open");
+  modal.setAttribute("aria-hidden", "true");
+  document.body.classList.remove("modal-open");
+}
+
+function initTodayStatsModal() {
+  const openBtn = document.getElementById("today-stats-btn");
+  const closeBtn = document.getElementById("today-stats-close");
+  const modal = document.getElementById("today-stats-modal");
+
+  if (!openBtn || !closeBtn || !modal) return;
+
+  openBtn.addEventListener("click", openTodayStatsModal);
+  closeBtn.addEventListener("click", closeTodayStatsModal);
+
+  modal.addEventListener("click", (e) => {
+    if (e.target === modal) {
+      closeTodayStatsModal();
+    }
+  });
+
+  document.addEventListener("keydown", (e) => {
+    if (e.key === "Escape" && modal.classList.contains("is-open")) {
+      closeTodayStatsModal();
+    }
+  });
+}
+
+document.addEventListener("DOMContentLoaded", () => {
+  initTodayStatsModal();
+  renderTodayStatsModal();
+});
 init();
