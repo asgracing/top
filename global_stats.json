@@ -1,12 +1,12 @@
 {
   "date": "2026-03-14",
-  "unique_players_today": 47,
-  "races_today": 1,
-  "sessions_today": 2,
-  "points_earned_today": 102,
-  "wins_today": 1,
-  "podiums_today": 3,
-  "avg_players_per_race_today": 39.0,
+  "unique_players_today": 51,
+  "races_today": 2,
+  "sessions_today": 3,
+  "points_earned_today": 204,
+  "wins_today": 2,
+  "podiums_today": 6,
+  "avg_players_per_race_today": 35.5,
   "tracks_raced_today": [
     "monza"
   ],
@@ -19,13 +19,13 @@
     "session_type": "Q"
   },
   "most_active_driver_today": {
-    "player_id": "S76561198113845002",
-    "races": 2
+    "player_id": "S76561199100853412",
+    "races": 3
   },
   "most_successful_driver_today": {
-    "player_id": "S76561197983024493",
-    "driver": "Andrei Soldatenkov",
+    "player_id": "S76561198453035800",
+    "driver": "Sultan Isaev",
     "points": 25
   },
-  "updated_at": "2026-03-14T00:42:19"
+  "updated_at": "2026-03-14T00:47:19"
 }
