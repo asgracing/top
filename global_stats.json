@@ -1,8 +1,8 @@
 {
   "date": "2026-03-14",
-  "unique_players_today": 87,
+  "unique_players_today": 92,
   "races_today": 8,
-  "sessions_today": 21,
+  "sessions_today": 22,
   "points_earned_today": 684,
   "wins_today": 8,
   "podiums_today": 23,
@@ -27,5 +27,5 @@
     "driver": "Kirill Bulgakov",
     "points": 64
   },
-  "updated_at": "2026-03-14T12:02:19"
+  "updated_at": "2026-03-14T12:07:19"
 }
