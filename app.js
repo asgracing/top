@@ -2,12 +2,14 @@ const leaderboardUrl = "./leaderboard.json";
 const bestlapsUrl = "./bestlaps.json";
 const globalStatsUrl = "./global_stats.json";
 const safetyUrl = "./safety.json";
+const driverOfDayUrl = "./driver_of_the_day.json";
 const PAGE_SIZE = 10;
 
 let leaderboardData = [];
 let bestlapsData = [];
 let todayStatsData = null;
 let safetyData = [];
+let driverOfDayData = null;
 let leaderboardPage = 1;
 let bestlapsPage = 1;
 let safetyPage = 1;
@@ -35,6 +37,17 @@ const translations = {
     todayBestLap: "Best lap today",
     todayMostActive: "Most active driver",
     todayMostSuccessful: "Most successful driver",
+    driverOfDayBtn: "Driver of the day: {driver}",
+    driverOfDayEyebrow: "Top performer today",
+    driverOfDayTitle: "Driver of the Day",
+    driverOfDayName: "Driver",
+    driverOfDayPoints: "Points today",
+    driverOfDayRaces: "Races today",
+    driverOfDayWins: "Wins today",
+    driverOfDayAvgFinish: "Average finish",
+    driverOfDayBestLap: "Best lap today",
+    driverOfDayBestLapTrack: "Track",
+    driverOfDayNoData: "No race data for today yet.",
     htmlLang: "en",
     pageTitle: "ASG Racing ACC Leaderboard | Assetto Corsa Competizione Stats",
     metaDescription:
@@ -148,6 +161,17 @@ const translations = {
     todayBestLap: "Лучший круг сегодня",
     todayMostActive: "Самый активный пилот",
     todayMostSuccessful: "Самый успешный пилот",
+    driverOfDayBtn: "Гонщик дня: {driver}",
+    driverOfDayEyebrow: "Лучший пилот дня",
+    driverOfDayTitle: "Гонщик дня",
+    driverOfDayName: "Пилот",
+    driverOfDayPoints: "Очки за сегодня",
+    driverOfDayRaces: "Гонок сегодня",
+    driverOfDayWins: "Побед сегодня",
+    driverOfDayAvgFinish: "Средний финиш",
+    driverOfDayBestLap: "Лучший круг сегодня",
+    driverOfDayBestLapTrack: "Трасса",
+    driverOfDayNoData: "Сегодня ещё нет данных по гонкам.",
     htmlLang: "ru",
     pageTitle: "ASG Racing ACC Leaderboard | Статистика Assetto Corsa Competizione",
     metaDescription:
@@ -481,6 +505,25 @@ function applyStaticTranslations() {
   } else if (bestLapNoteEl) {
     bestLapNoteEl.textContent = t("bestLapNoteFallback");
   }
+
+  updateDriverOfDayButtonLabel();
+}
+
+function getDriverOfDayName() {
+  return driverOfDayData?.driver || "—";
+}
+
+function updateDriverOfDayButtonLabel() {
+  const btn = document.getElementById("driver-of-day-btn");
+  if (!btn) return;
+
+  btn.textContent = replaceTokens(t("driverOfDayBtn"), {
+    driver: getDriverOfDayName()
+  });
+}
+
+function formatAverageFinish(value) {
+  return typeof value === "number" ? value.toFixed(2) : "—";
 }
 
 function updateBestLapNote(driver, track) {
@@ -1039,6 +1082,93 @@ function renderTodayStatsModal() {
       : `Updated: ${formatDateTimeLocal(stats.updated_at, "en")}`;
 }
 
+function renderDriverOfDayModal() {
+  const data = driverOfDayData;
+  const nameEl = document.getElementById("driver-of-day-name");
+  const pointsEl = document.getElementById("driver-of-day-points");
+  const racesEl = document.getElementById("driver-of-day-races");
+  const winsEl = document.getElementById("driver-of-day-wins");
+  const avgFinishEl = document.getElementById("driver-of-day-avg-finish");
+  const bestLapEl = document.getElementById("driver-of-day-best-lap");
+  const bestLapTrackEl = document.getElementById("driver-of-day-best-lap-track");
+  const updatedEl = document.getElementById("driver-of-day-updated");
+  const emptyEl = document.getElementById("driver-of-day-empty");
+  const contentEl = document.getElementById("driver-of-day-content");
+
+  if (!nameEl) return;
+
+  if (!data || !data.driver) {
+    nameEl.textContent = "—";
+    pointsEl.textContent = "—";
+    racesEl.textContent = "—";
+    winsEl.textContent = "—";
+    avgFinishEl.textContent = "—";
+    bestLapEl.textContent = "—";
+    bestLapTrackEl.textContent = "—";
+    updatedEl.textContent = "—";
+    if (emptyEl) emptyEl.textContent = t("driverOfDayNoData");
+    if (emptyEl) emptyEl.hidden = false;
+    if (contentEl) contentEl.classList.add("is-empty");
+    return;
+  }
+
+  nameEl.textContent = data.driver || "—";
+  pointsEl.textContent = data.points ?? 0;
+  racesEl.textContent = data.races ?? 0;
+  winsEl.textContent = data.wins ?? 0;
+  avgFinishEl.textContent = formatAverageFinish(data.average_finish);
+  bestLapEl.textContent = data.best_lap || "—";
+  bestLapTrackEl.textContent = data.best_lap_track || "—";
+  updatedEl.textContent = currentLang === "ru"
+    ? `Обновлено: ${formatDateTimeLocal(data.updated_at, "ru")}`
+    : `Updated: ${formatDateTimeLocal(data.updated_at, "en")}`;
+
+  if (emptyEl) emptyEl.hidden = true;
+  if (contentEl) contentEl.classList.remove("is-empty");
+}
+
+function openDriverOfDayModal() {
+  const modal = document.getElementById("driver-of-day-modal");
+  if (!modal) return;
+
+  renderDriverOfDayModal();
+  modal.classList.add("is-open");
+  modal.setAttribute("aria-hidden", "false");
+  document.body.classList.add("modal-open");
+}
+
+function closeDriverOfDayModal() {
+  const modal = document.getElementById("driver-of-day-modal");
+  if (!modal) return;
+
+  modal.classList.remove("is-open");
+  modal.setAttribute("aria-hidden", "true");
+  document.body.classList.remove("modal-open");
+}
+
+function initDriverOfDayModal() {
+  const openBtn = document.getElementById("driver-of-day-btn");
+  const closeBtn = document.getElementById("driver-of-day-close");
+  const modal = document.getElementById("driver-of-day-modal");
+
+  if (!openBtn || !closeBtn || !modal) return;
+
+  openBtn.addEventListener("click", openDriverOfDayModal);
+  closeBtn.addEventListener("click", closeDriverOfDayModal);
+
+  modal.addEventListener("click", (e) => {
+    if (e.target === modal) {
+      closeDriverOfDayModal();
+    }
+  });
+
+  document.addEventListener("keydown", (e) => {
+    if (e.key === "Escape" && modal.classList.contains("is-open")) {
+      closeDriverOfDayModal();
+    }
+  });
+}
+
 function openTodayStatsModal() {
   const modal = document.getElementById("today-stats-modal");
   if (!modal) return;
@@ -1091,6 +1221,7 @@ function rerenderUI() {
   renderBestLapsTablePage();
   renderSafetyTablePage();
   renderTodayStatsModal();
+  renderDriverOfDayModal();
 }
 
 async function init() {
@@ -1099,20 +1230,23 @@ async function init() {
   bindLanguageButtons();
   bindSearchInputs();
   initTodayStatsModal();
+  initDriverOfDayModal();
   applyStaticTranslations();
 
   try {
-    const [leaderboard, bestlaps, globalStats, safety] = await Promise.all([
+    const [leaderboard, bestlaps, globalStats, safety, driverOfDay] = await Promise.all([
       loadJson(leaderboardUrl),
       loadJson(bestlapsUrl),
       loadJson(globalStatsUrl),
-      loadJson(safetyUrl)
+      loadJson(safetyUrl),
+      loadJson(driverOfDayUrl)
     ]);
 
     leaderboardData = Array.isArray(leaderboard) ? leaderboard : [];
     bestlapsData = Array.isArray(bestlaps) ? bestlaps : [];
     todayStatsData = globalStats && typeof globalStats === "object" ? globalStats : null;
     safetyData = Array.isArray(safety) ? safety : [];
+    driverOfDayData = driverOfDay && typeof driverOfDay === "object" ? driverOfDay : null;
 
     const driversCountEl = document.getElementById("drivers-count");
     if (driversCountEl) driversCountEl.textContent = leaderboardData.length;

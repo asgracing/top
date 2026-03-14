@@ -97,14 +97,24 @@
               based on dedicated server results.
             </p>
 
-            <button
-              class="btn btn-today-stats pulse-attention"
-              id="today-stats-btn"
-              type="button"
-              data-i18n="todayStatsBtn"
-            >
-              Today Stats
-            </button>
+            <div class="hero-actions hero-actions-stacked-mobile">
+              <button
+                class="btn btn-today-stats pulse-attention"
+                id="today-stats-btn"
+                type="button"
+                data-i18n="todayStatsBtn"
+              >
+                Today Stats
+              </button>
+
+              <button
+                class="btn btn-driver-day"
+                id="driver-of-day-btn"
+                type="button"
+              >
+                Driver of the day: —
+              </button>
+            </div>
           </div>
 
           <div class="hero-side hero-side-compact" id="hero-stats">
@@ -356,7 +366,59 @@
     </div>
   </div>
 </div>
-    <footer class="footer">
+    <div class="modal-overlay" id="driver-of-day-modal" aria-hidden="true">
+  <div class="modal-card modal-card-driver" role="dialog" aria-modal="true" aria-labelledby="driver-of-day-title">
+    <button class="modal-close" id="driver-of-day-close" type="button" aria-label="Close">✕</button>
+
+    <div class="modal-header">
+      <div>
+        <div class="eyebrow" data-i18n="driverOfDayEyebrow">Top performer today</div>
+        <h3 id="driver-of-day-title" class="modal-title" data-i18n="driverOfDayTitle">Driver of the Day</h3>
+        <p class="modal-subtitle" id="driver-of-day-updated">—</p>
+      </div>
+    </div>
+
+    <div id="driver-of-day-empty" class="empty-box" hidden>—</div>
+
+    <div id="driver-of-day-content" class="today-stats-grid driver-day-grid">
+      <div class="today-stat-card driver-day-card driver-day-card-wide">
+        <div class="today-stat-label" data-i18n="driverOfDayName">Driver</div>
+        <div class="today-stat-value" id="driver-of-day-name">—</div>
+      </div>
+
+      <div class="today-stat-card driver-day-card">
+        <div class="today-stat-label" data-i18n="driverOfDayPoints">Points today</div>
+        <div class="today-stat-value" id="driver-of-day-points">—</div>
+      </div>
+
+      <div class="today-stat-card driver-day-card">
+        <div class="today-stat-label" data-i18n="driverOfDayRaces">Races today</div>
+        <div class="today-stat-value" id="driver-of-day-races">—</div>
+      </div>
+
+      <div class="today-stat-card driver-day-card">
+        <div class="today-stat-label" data-i18n="driverOfDayWins">Wins today</div>
+        <div class="today-stat-value" id="driver-of-day-wins">—</div>
+      </div>
+
+      <div class="today-stat-card driver-day-card">
+        <div class="today-stat-label" data-i18n="driverOfDayAvgFinish">Average finish</div>
+        <div class="today-stat-value" id="driver-of-day-avg-finish">—</div>
+      </div>
+
+      <div class="today-stat-card driver-day-card">
+        <div class="today-stat-label" data-i18n="driverOfDayBestLap">Best lap today</div>
+        <div class="today-stat-value" id="driver-of-day-best-lap">—</div>
+      </div>
+
+      <div class="today-stat-card driver-day-card">
+        <div class="today-stat-label" data-i18n="driverOfDayBestLapTrack">Track</div>
+        <div class="today-stat-value today-stat-value-sm" id="driver-of-day-best-lap-track">—</div>
+      </div>
+    </div>
+  </div>
+</div>
+<footer class="footer">
       <div class="footer-inner">
         <div class="footer-left">
           <div class="footer-brand">ASG Racing ACC Leaderboard</div>

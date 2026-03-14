@@ -1102,3 +1102,88 @@ body.modal-open {
     justify-content: center;
   }
 }
+
+
+/* ===== Driver of the day ===== */
+.hero-actions-stacked-mobile {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 12px;
+  margin-top: 18px;
+  align-items: stretch;
+}
+
+.hero-actions-stacked-mobile .btn {
+  flex: 1 1 260px;
+}
+
+.btn-driver-day {
+  position: relative;
+  width: auto;
+  min-width: 260px;
+  align-self: flex-start;
+  text-align: center;
+  font-weight: 900;
+  letter-spacing: 0.01em;
+  color: var(--text);
+  border: 1px solid rgba(255, 184, 77, 0.26);
+  background: linear-gradient(135deg, rgba(255,138,0,0.14), rgba(255,91,46,0.10));
+  box-shadow:
+    0 0 0 1px rgba(255,255,255,0.05) inset,
+    0 12px 28px rgba(255, 91, 46, 0.16);
+}
+
+.btn-driver-day:hover {
+  transform: translateY(-2px);
+  background: linear-gradient(135deg, rgba(255,138,0,0.18), rgba(255,91,46,0.14));
+  box-shadow:
+    0 0 0 1px rgba(255,255,255,0.08) inset,
+    0 16px 34px rgba(255, 91, 46, 0.22);
+}
+
+.driver-day-grid {
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+}
+
+.driver-day-card-wide {
+  grid-column: span 3;
+}
+
+.driver-day-card-wide .today-stat-value {
+  font-size: clamp(1.55rem, 2.4vw, 2.2rem);
+}
+
+#driver-of-day-content.is-empty {
+  opacity: 0.45;
+}
+
+@media (max-width: 900px) {
+  .driver-day-grid {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+
+  .driver-day-card-wide {
+    grid-column: span 2;
+  }
+}
+
+@media (max-width: 640px) {
+  .hero-actions-stacked-mobile {
+    flex-direction: column;
+  }
+
+  .hero-actions-stacked-mobile .btn,
+  .btn-driver-day,
+  .btn-today-stats {
+    width: 100%;
+    min-width: 0;
+  }
+
+  .driver-day-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .driver-day-card-wide {
+    grid-column: span 1;
+  }
+}
