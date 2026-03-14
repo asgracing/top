@@ -1430,3 +1430,37 @@ body {
     font-size: 0.95rem;
   }
 }
+.hero-side-compact {
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+}
+
+.mini-stat-bestlap {
+  min-height: 150px;
+}
+
+.hero-stats-row {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 12px;
+}
+
+.hero-stats-row .mini-stat {
+  min-height: 110px;
+}
+
+.hero-stats-row .mini-value {
+  font-size: clamp(1.3rem, 2vw, 1.8rem);
+  line-height: 1.1;
+}
+
+@media (max-width: 640px) {
+  .hero-stats-row {
+    grid-template-columns: 1fr;
+  }
+}
+.hero-stats-row .mini-stat {
+  padding: 14px 16px;
+  border-radius: 16px;
+}
