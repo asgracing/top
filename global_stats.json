@@ -1,12 +1,12 @@
 {
   "date": "2026-03-14",
-  "unique_players_today": 92,
-  "races_today": 8,
-  "sessions_today": 22,
-  "points_earned_today": 684,
-  "wins_today": 8,
-  "podiums_today": 23,
-  "avg_players_per_race_today": 20.0,
+  "unique_players_today": 95,
+  "races_today": 9,
+  "sessions_today": 23,
+  "points_earned_today": 786,
+  "wins_today": 9,
+  "podiums_today": 26,
+  "avg_players_per_race_today": 19.0,
   "tracks_raced_today": [
     "monza"
   ],
@@ -19,13 +19,13 @@
     "session_type": "R"
   },
   "most_active_driver_today": {
-    "player_id": "S76561198022114236",
+    "player_id": "S76561197983024493",
     "races": 6
   },
   "most_successful_driver_today": {
-    "player_id": "S76561199121481915",
-    "driver": "Kirill Bulgakov",
-    "points": 64
+    "player_id": "S76561199664057628",
+    "driver": "Arsenii Kapustin",
+    "points": 76
   },
-  "updated_at": "2026-03-14T12:27:19"
+  "updated_at": "2026-03-14T12:32:19"
 }
