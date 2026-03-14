@@ -1214,3 +1214,218 @@ body.modal-open {
   opacity:0.7;
   font-size:0.9em;
 }
+/* ===== MOBILE FIXES 2026-03-14 ===== */
+html {
+  scroll-padding-top: 84px;
+}
+
+body {
+  overflow-x: hidden;
+}
+
+.top-nav {
+  position: sticky;
+  top: 0;
+  width: 100%;
+}
+
+.top-nav-inner {
+  gap: 12px;
+}
+
+.top-nav-center {
+  min-width: 0;
+}
+
+.top-nav-menu {
+  min-width: 0;
+}
+
+@media (max-width: 980px) {
+  html {
+    scroll-padding-top: 132px;
+  }
+
+  .top-nav {
+    position: sticky;
+    top: 0;
+  }
+
+  .top-nav-inner {
+    grid-template-columns: 1fr auto;
+    grid-template-areas:
+      "brand actions"
+      "menu menu";
+    align-items: center;
+    padding: 10px 14px 12px;
+    gap: 10px;
+  }
+
+  .top-nav-brand {
+    grid-area: brand;
+    min-width: 0;
+    overflow: hidden;
+    text-overflow: ellipsis;
+  }
+
+  .top-nav-actions {
+    grid-area: actions;
+    justify-content: flex-end;
+  }
+
+  .top-nav-center {
+    grid-area: menu;
+    display: block;
+    min-width: 0;
+    width: 100%;
+  }
+
+  .top-nav-menu {
+    display: flex;
+    flex-wrap: nowrap;
+    justify-content: flex-start;
+    gap: 8px;
+    width: 100%;
+    overflow-x: auto;
+    overflow-y: hidden;
+    -webkit-overflow-scrolling: touch;
+    padding-bottom: 4px;
+    scrollbar-width: thin;
+  }
+
+  .top-nav-menu::-webkit-scrollbar {
+    height: 6px;
+  }
+
+  .top-nav-link-primary,
+  .top-nav-link-secondary {
+    flex: 0 0 auto;
+    padding: 9px 14px;
+    font-size: 0.86rem;
+  }
+
+  .hero {
+    padding-top: 20px;
+  }
+
+  .hero-actions-stacked-mobile {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 10px;
+    align-items: stretch;
+  }
+
+  .hero-actions-stacked-mobile .btn,
+  .btn-today-stats,
+  .btn-driver-day {
+    width: 100%;
+    min-width: 0;
+    max-width: none;
+    align-self: stretch;
+    padding: 13px 14px;
+    font-size: 0.95rem;
+    line-height: 1.2;
+  }
+
+  .modal-overlay {
+    align-items: flex-start;
+    padding: 12px;
+  }
+
+  .modal-card,
+  .modal-card.modal-card-driver {
+    width: 100%;
+    max-width: 100%;
+    max-height: calc(100dvh - 24px);
+    margin: 0;
+    padding: 20px 14px 14px;
+    border-radius: 18px;
+  }
+
+  .modal-header {
+    padding-right: 44px;
+    margin-bottom: 16px;
+  }
+
+  .today-stats-grid,
+  .today-stats-details,
+  .driver-day-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .driver-day-card-wide {
+    grid-column: span 1;
+  }
+
+  .today-stat-card,
+  .today-detail-card,
+  .driver-day-card {
+    min-width: 0;
+    padding: 14px;
+  }
+
+  .today-stat-value,
+  .today-detail-main {
+    overflow-wrap: anywhere;
+    word-break: break-word;
+  }
+
+  .today-detail-sub,
+  .today-stat-label,
+  .modal-subtitle {
+    overflow-wrap: anywhere;
+  }
+}
+
+@media (max-width: 640px) {
+  html {
+    scroll-padding-top: 140px;
+  }
+
+  .top-nav-inner {
+    padding-left: 10px;
+    padding-right: 10px;
+  }
+
+  .top-nav-link-primary,
+  .top-nav-link-secondary {
+    padding: 8px 12px;
+    font-size: 0.82rem;
+  }
+
+  .hero-actions-stacked-mobile {
+    grid-template-columns: 1fr;
+  }
+
+  .btn-today-stats,
+  .btn-driver-day {
+    font-size: 0.92rem;
+  }
+
+  .modal-overlay {
+    padding: 8px;
+  }
+
+  .modal-card,
+  .modal-card.modal-card-driver {
+    max-height: calc(100dvh - 16px);
+    padding: 18px 12px 12px;
+  }
+
+  .modal-close {
+    top: 12px;
+    right: 12px;
+    width: 38px;
+    height: 38px;
+  }
+
+  .today-stat-value {
+    font-size: 1.2rem;
+  }
+
+  .today-stat-value-sm,
+  .today-detail-main,
+  .today-detail-sub {
+    font-size: 0.95rem;
+  }
+}
