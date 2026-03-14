@@ -1461,8 +1461,8 @@ body.modal-open {
   padding: 14px 14px 12px;
   background: rgba(255, 255, 255, 0.035);
   height: 100%;
-  min-height: 220px;
-  max-height: 220px;
+  min-height: 120px;
+  max-height: 120px;
   display: flex;
   flex-direction: column;
   justify-content: space-between;
@@ -1500,7 +1500,7 @@ body.modal-open {
 }
 
 .hero-online-chart {
-  height: 136px;
+  height: 80px;
   display: grid;
   grid-template-columns: repeat(7, minmax(0, 1fr));
   align-items: end;
@@ -1536,7 +1536,7 @@ body.modal-open {
 }
 
 .hero-online-scale {
-  height: 136px;
+  height: 80px;
   display: flex;
   flex-direction: column;
   justify-content: space-between;
