@@ -1,12 +1,12 @@
 {
   "date": "2026-03-14",
   "unique_players_today": 84,
-  "races_today": 5,
-  "sessions_today": 14,
-  "points_earned_today": 510,
-  "wins_today": 5,
-  "podiums_today": 15,
-  "avg_players_per_race_today": 30.2,
+  "races_today": 6,
+  "sessions_today": 15,
+  "points_earned_today": 569,
+  "wins_today": 6,
+  "podiums_today": 18,
+  "avg_players_per_race_today": 25.67,
   "tracks_raced_today": [
     "monza"
   ],
@@ -27,5 +27,5 @@
     "driver": "Kirill Bulgakov",
     "points": 64
   },
-  "updated_at": "2026-03-14T10:02:19"
+  "updated_at": "2026-03-14T10:07:19"
 }
