@@ -89,62 +89,59 @@
     <section class="hero">
       <div class="hero-card">
         
-        <div class="hero-grid">
-          <div>
-            <div class="eyebrow">ACC Public Leaderboard</div>
-            <h1 data-i18n="heroTitle">🏁 ASG Racing League</h1>
-            <p class="hero-subtitle" data-i18n="heroSubtitle">
-              Race statistics, wins, podiums and best laps from the
-              <strong>ASG Racing</strong> server. Data is automatically updated
-              based on dedicated server results.
-            </p>
+<div class="hero-grid">
+  <div>
+    <div class="eyebrow">ACC Public Leaderboard</div>
+    <h1 data-i18n="heroTitle">🏁 ASG Racing League</h1>
+    <p class="hero-subtitle" data-i18n="heroSubtitle">
+      Race statistics, wins, podiums and best laps from the
+      <strong>ASG Racing</strong> server. Data is automatically updated
+      based on dedicated server results.
+    </p>
 
-            <div class="hero-actions hero-actions-stacked-mobile">
-              <button
-                class="btn btn-today-stats pulse-attention"
-                id="today-stats-btn"
-                type="button"
-                data-i18n="todayStatsBtn"
-              >
-                Today Stats
-              </button>
+    <div class="hero-actions hero-actions-stacked-mobile">
+      <button
+        class="btn btn-today-stats pulse-attention"
+        id="today-stats-btn"
+        type="button"
+        data-i18n="todayStatsBtn"
+      >
+        Today Stats
+      </button>
 
-              <button
-                class="btn btn-driver-day"
-                id="driver-of-day-btn"
-                type="button"
-              >
-                Driver of the day: —
-              </button>
-            </div>
-          </div>
+      <button
+        class="btn btn-driver-day"
+        id="driver-of-day-btn"
+        type="button"
+      >
+        Driver of the day: —
+      </button>
+    </div>
+  </div>
 
-          <div class="hero-side hero-side-compact" id="hero-stats">
-            <div class="hero-stats-grid">
-    <div class="mini-stat mini-stat-compact">
-      <div class="mini-label" data-i18n="driversCountLabel">Drivers in leaderboard</div>
-      <div class="mini-value" id="drivers-count">—</div>
+  <div class="hero-side hero-side-compact">
+    <div class="mini-stat mini-stat-bestlap">
+      <div class="mini-label">Best lap record</div>
+      <div class="mini-value" id="best-lap-record">—</div>
+      <div class="mini-note" id="best-lap-record-note">—</div>
     </div>
 
-    <div class="mini-stat mini-stat-compact">
-      <div class="mini-label" data-i18n="bestLapHighlightLabel">Best lap record</div>
-      <div class="mini-value" id="best-lap-highlight">—</div>
-      <div class="mini-note" id="best-lap-note">Best lap highlight will appear here.</div>
+    <div class="hero-stats-row">
+      <div class="mini-stat mini-stat-compact">
+        <div class="mini-label">Server</div>
+        <div class="mini-value server-status-wrap">
+          <span class="server-status" id="server-status">—</span>
+          <span class="server-players" id="server-players">—</span>
+        </div>
+      </div>
+
+      <div class="mini-stat mini-stat-compact">
+        <div class="mini-label">Drivers in leaderboard</div>
+        <div class="mini-value" id="drivers-count">—</div>
+      </div>
     </div>
-    
-
-<div class="mini-stat mini-stat-compact server-stat">
-  <div class="mini-label">Server</div>
-
-  <div class="server-status-wrap">
-    <span id="serverStatusValue" class="server-status">...</span>
-    <span id="serverPlayersValue" class="server-players">--</span>
   </div>
 </div>
-
-  </div>
-          </div>
-        </div>
       </div>
     </section>
 
