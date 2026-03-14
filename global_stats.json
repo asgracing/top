@@ -1,40 +1,31 @@
 {
-  "date": "2026-03-14",
-  "unique_players_today": 496,
-  "races_today": 27,
-  "sessions_today": 60,
-  "points_earned_today": 2622,
-  "wins_today": 27,
-  "podiums_today": 80,
-  "avg_players_per_race_today": 36.93,
-  "tracks_raced_today": [
-    "monza"
-  ],
+  "date": "2026-03-15",
+  "unique_players_today": 0,
+  "races_today": 0,
+  "sessions_today": 0,
+  "points_earned_today": 0,
+  "wins_today": 0,
+  "podiums_today": 0,
+  "avg_players_per_race_today": 0,
+  "tracks_raced_today": [],
   "best_lap_today": {
-    "lap": "1:46.630",
-    "lap_ms": 106630,
-    "driver": "Miso Stubna",
-    "player_id": "S76561198967404615",
-    "track": "monza",
-    "session_type": "R"
+    "lap": null,
+    "lap_ms": null,
+    "driver": null,
+    "player_id": null,
+    "track": null,
+    "session_type": null
   },
-  "most_active_driver_today": {
-    "player_id": "S76561197983024493",
-    "races": 17
-  },
-  "most_successful_driver_today": {
-    "player_id": "S76561199445415102",
-    "driver": "Евгений Майоров",
-    "points": 97
-  },
+  "most_active_driver_today": null,
+  "most_successful_driver_today": null,
   "server": {
     "status": "online",
     "server_online": true,
-    "players_online": 24,
+    "players_online": 23,
     "tcp_listening": null,
     "udp_listening": null,
     "broadcast_listening": null,
-    "updated_at": "2026-03-14T23:57:20"
+    "updated_at": "2026-03-15T00:02:20"
   },
-  "updated_at": "2026-03-14T23:57:20"
+  "updated_at": "2026-03-15T00:02:20"
 }

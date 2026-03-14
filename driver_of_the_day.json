@@ -1,13 +1,13 @@
 {
-  "date": "2026-03-14",
-  "driver": "Евгений Майоров",
-  "player_id": "S76561199445415102",
-  "points": 97,
-  "races": 8,
-  "wins": 3,
-  "average_finish": 11.5,
-  "best_lap": "1:46.760",
-  "best_lap_ms": 106760,
-  "best_lap_track": "monza",
-  "updated_at": "2026-03-14T23:57:20"
+  "date": "2026-03-15",
+  "driver": null,
+  "player_id": null,
+  "points": 0,
+  "races": 0,
+  "wins": 0,
+  "average_finish": null,
+  "best_lap": null,
+  "best_lap_ms": null,
+  "best_lap_track": null,
+  "updated_at": "2026-03-15T00:02:20"
 }
