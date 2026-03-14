@@ -844,35 +844,6 @@ function bindSafetySortHandlers() {
   });
 }
 
-async function loadServerStatus() {
-  const statusEl = document.getElementById('serverStatusValue');
-  const playersEl = document.getElementById('serverPlayersValue');
-
-  if (!statusEl || !playersEl) return;
-
-  try {
-    const response = await fetch('top/server_status.json?_=' + Date.now(), { cache: 'no-store' });
-    if (!response.ok) throw new Error(`HTTP ${response.status}`);
-
-    const data = await response.json();
-
-    const status = data.status ? String(data.status) : 'unknown';
-    const players = Number.isFinite(data.players_online) ? data.players_online : 0;
-
-    statusEl.textContent = status;
-    playersEl.textContent = `Players: ${players}`;
-
-    statusEl.classList.remove('online', 'offline');
-    statusEl.classList.add(status === 'online' ? 'online' : 'offline');
-  } catch (error) {
-    statusEl.textContent = 'unavailable';
-    playersEl.textContent = 'Players: --';
-    statusEl.classList.remove('online');
-    statusEl.classList.add('offline');
-    console.error('Failed to load server status:', error);
-  }
-}
-
 function renderSafetyPenaltyBreakdown(row) {
   const penalties = row?.penalties && typeof row.penalties === "object" ? row.penalties : {};
   const columns = getSafetyColumns().filter(col => col.key.startsWith("penalties."));
