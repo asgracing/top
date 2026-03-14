@@ -844,6 +844,7 @@ function bindSafetySortHandlers() {
   });
 }
 
+
 function renderSafetyPenaltyBreakdown(row) {
   const penalties = row?.penalties && typeof row.penalties === "object" ? row.penalties : {};
   const columns = getSafetyColumns().filter(col => col.key.startsWith("penalties."));
@@ -1234,13 +1235,12 @@ async function init() {
   applyStaticTranslations();
 
   try {
-    const [leaderboard, bestlaps, globalStats, safety, driverOfDay, serverStatus] = await Promise.all([
+    const [leaderboard, bestlaps, globalStats, safety, driverOfDay] = await Promise.all([
       loadJson(leaderboardUrl),
       loadJson(bestlapsUrl),
       loadJson(globalStatsUrl),
       loadJson(safetyUrl),
-      loadJson(driverOfDayUrl),
-      loadJson(serverStatusUrl + "?_=" + Date.now())
+      loadJson(driverOfDayUrl)
     ]);
 
     leaderboardData = Array.isArray(leaderboard) ? leaderboard : [];
@@ -1263,22 +1263,6 @@ async function init() {
       if (bestLapNoteEl) bestLapNoteEl.textContent = t("bestLapNoteFallback");
     }
 
-    const serverStatusEl = document.getElementById("serverStatusValue");
-    const serverPlayersEl = document.getElementById("serverPlayersValue");
-
-    if (serverStatusEl && serverPlayersEl) {
-      const status = serverStatus && typeof serverStatus === "object" ? serverStatus.status : "unavailable";
-      const players = serverStatus && Number.isFinite(serverStatus.players_online)
-        ? serverStatus.players_online
-        : "--";
-
-      serverStatusEl.textContent = status;
-      serverPlayersEl.textContent = `Players: ${players}`;
-
-      serverStatusEl.classList.remove("online", "offline");
-      serverStatusEl.classList.add(status === "online" ? "online" : "offline");
-    }
-
     rerenderUI();
   } catch (error) {
     console.error(error);
@@ -1293,18 +1277,6 @@ async function init() {
     const leaderboardWrapEl = document.getElementById("leaderboard-pagination-wrap");
     const bestlapsWrapEl = document.getElementById("bestlaps-pagination-wrap");
     const safetyWrapEl = document.getElementById("safety-pagination-wrap");
-
-    const serverStatusEl = document.getElementById("serverStatusValue");
-    const serverPlayersEl = document.getElementById("serverPlayersValue");
-
-    if (serverStatusEl) {
-      serverStatusEl.textContent = "unavailable";
-      serverStatusEl.classList.remove("online");
-      serverStatusEl.classList.add("offline");
-    }
-    if (serverPlayersEl) {
-      serverPlayersEl.textContent = "Players: --";
-    }
 
     if (leaderboardTableEl) {
       leaderboardTableEl.innerHTML = `<div class="empty-box">${escapeHtml(t("errorLeaderboard"))}</div>`;
