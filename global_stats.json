@@ -27,5 +27,14 @@
     "driver": "Arsenii Kapustin",
     "points": 82
   },
-  "updated_at": "2026-03-14T13:47:19"
+  "server": {
+    "status": "online",
+    "server_online": true,
+    "players_online": 25,
+    "tcp_listening": null,
+    "udp_listening": null,
+    "broadcast_listening": null,
+    "updated_at": "2026-03-14T13:50:47"
+  },
+  "updated_at": "2026-03-14T13:50:48"
 }
