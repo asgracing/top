@@ -1234,13 +1234,14 @@ async function init() {
   applyStaticTranslations();
 
   try {
-    const [leaderboard, bestlaps, globalStats, safety, driverOfDay] = await Promise.all([
-      loadJson(leaderboardUrl),
-      loadJson(bestlapsUrl),
-      loadJson(globalStatsUrl),
-      loadJson(safetyUrl),
-      loadJson(driverOfDayUrl)
-    ]);
+const [leaderboard, bestlaps, globalStats, safety, driverOfDay, serverStatus] = await Promise.all([
+  loadJson(leaderboardUrl),
+  loadJson(bestlapsUrl),
+  loadJson(globalStatsUrl),
+  loadJson(safetyUrl),
+  loadJson(driverOfDayUrl),
+  loadJson("top/server_status.json?_=" + Date.now())
+]);
 
     leaderboardData = Array.isArray(leaderboard) ? leaderboard : [];
     bestlapsData = Array.isArray(bestlaps) ? bestlaps : [];
@@ -1253,6 +1254,7 @@ async function init() {
 
     const bestLapHighlightEl = document.getElementById("best-lap-highlight");
     const bestLapNoteEl = document.getElementById("best-lap-note");
+    
 
     if (bestlapsData.length > 0) {
       if (bestLapHighlightEl) bestLapHighlightEl.textContent = bestlapsData[0].best_lap || "—";
@@ -1261,6 +1263,25 @@ async function init() {
       if (bestLapHighlightEl) bestLapHighlightEl.textContent = "—";
       if (bestLapNoteEl) bestLapNoteEl.textContent = t("bestLapNoteFallback");
     }
+
+    const serverStatusEl = document.getElementById("serverStatusValue");
+const serverPlayersEl = document.getElementById("serverPlayersValue");
+
+if (serverStatusEl && serverPlayersEl) {
+  const status = serverStatus && typeof serverStatus === "object"
+    ? String(serverStatus.status || "offline").toLowerCase()
+    : "offline";
+
+  const players = serverStatus && Number.isFinite(serverStatus.players_online)
+    ? serverStatus.players_online
+    : 0;
+
+  serverStatusEl.textContent = status.toUpperCase();
+  serverPlayersEl.textContent = players;
+
+  serverStatusEl.classList.remove("online", "offline");
+  serverStatusEl.classList.add(status === "online" ? "online" : "offline");
+}
 
     rerenderUI();
   } catch (error) {
@@ -1289,6 +1310,19 @@ async function init() {
     if (leaderboardWrapEl) leaderboardWrapEl.style.display = "none";
     if (bestlapsWrapEl) bestlapsWrapEl.style.display = "none";
     if (safetyWrapEl) safetyWrapEl.style.display = "none";
+
+    const serverStatusEl = document.getElementById("serverStatusValue");
+const serverPlayersEl = document.getElementById("serverPlayersValue");
+
+if (serverStatusEl) {
+  serverStatusEl.textContent = "OFFLINE";
+  serverStatusEl.classList.remove("online");
+  serverStatusEl.classList.add("offline");
+}
+
+if (serverPlayersEl) {
+  serverPlayersEl.textContent = "--";
+}
   }
 }
 

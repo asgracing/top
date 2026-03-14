@@ -1187,3 +1187,29 @@ body.modal-open {
     grid-column: span 1;
   }
 }
+
+
+.server-status-wrap{
+  display:flex;
+  align-items:center;
+  justify-content:flex-end;
+  gap:8px;
+  height:100%;
+}
+
+.server-status{
+  font-weight:600;
+}
+
+.server-status.online{
+  color:#22c55e;
+}
+
+.server-status.offline{
+  color:#ef4444;
+}
+
+.server-players{
+  opacity:0.7;
+  font-size:0.9em;
+}
