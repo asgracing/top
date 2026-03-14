@@ -58,7 +58,7 @@
 
   <link rel="stylesheet" href="./styles.css" />
 </head>
-<body>
+<body id="top">
   <div class="site-video-bg">
   <iframe
     src="https://www.youtube.com/embed/-OZ1PG9-yM4?autoplay=1&mute=1&controls=0&showinfo=0&rel=0&loop=1&playlist=-OZ1PG9-yM4&modestbranding=1&playsinline=1"
@@ -70,15 +70,31 @@
 
 <div class="site-video-overlay"></div>
 
+
+<nav class="top-nav" id="top-nav">
+  <div class="top-nav-inner">
+    <a class="top-nav-brand" href="#top" aria-label="ASG Racing home">ASG Racing</a>
+
+    <div class="top-nav-menu">
+      <a class="top-nav-link" href="https://discord.gg/cEPFHXXtTC" target="_blank" rel="noopener noreferrer">Discord</a>
+      <a class="top-nav-link" href="https://t.me/+JUymrENgddcyMTdi" target="_blank" rel="noopener noreferrer">Telegram</a>
+      <a class="top-nav-link" href="#championship" data-i18n="btnChampionship">Championship</a>
+      <a class="top-nav-link" href="#bestlaps" data-i18n="btnBestLaps">Best Laps</a>
+      <a class="top-nav-link" href="#about-server" data-i18n="btnAboutServer">About Server</a>
+    </div>
+
+    <div class="top-nav-actions">
+      <div class="lang-switch top-nav-lang" aria-label="Language switcher">
+        <button class="lang-btn" type="button" data-lang="en"><span class="lang-flag">🇬🇧</span><span class="lang-text">EN</span></button>
+        <button class="lang-btn" type="button" data-lang="ru"><span class="lang-flag">🇷🇺</span><span class="lang-text">RU</span></button>
+      </div>
+    </div>
+  </div>
+</nav>
+
   <div class="container">
     <section class="hero">
       <div class="hero-card">
-        <div class="lang-switch lang-switch-floating" aria-label="Language switcher">
-          <button class="lang-btn" type="button" data-lang="en"><span class="lang-flag">🇬🇧</span><span class="lang-text">EN</span></button>
-          <button class="lang-btn" type="button" data-lang="ru"><span class="lang-flag">🇷🇺</span><span class="lang-text">RU</span></button>
-        </div>
-
-
         
         <div class="hero-grid">
           <div>
@@ -90,16 +106,19 @@
               based on dedicated server results.
             </p>
 
-            <div class="hero-actions">
-              <a class="btn btn-primary" href="https://discord.gg/cEPFHXXtTC" target="_blank" rel="noopener noreferrer">Discord</a>
-              <a class="btn btn-primary" href="https://t.me/+JUymrENgddcyMTdi" target="_blank" rel="noopener noreferrer">Telegram</a>
-              <a class="btn btn-secondary" href="#championship" data-i18n="btnChampionship">Championship</a>
-              <a class="btn btn-secondary" href="#bestlaps" data-i18n="btnBestLaps">Best Laps</a>
-              <a class="btn btn-secondary" href="#about-server" data-i18n="btnAboutServer">About Server</a>
-            </div>
           </div>
 
           <div class="hero-side hero-side-compact" id="hero-stats">
+
+  <button
+    class="btn btn-today-stats pulse-attention"
+    id="today-stats-btn"
+    type="button"
+    data-i18n="todayStatsBtn"
+  >
+    Today Stats
+  </button>
+
   <div class="hero-stats-grid">
     <div class="mini-stat mini-stat-compact">
       <div class="mini-label" data-i18n="driversCountLabel">Drivers in leaderboard</div>
@@ -112,15 +131,6 @@
       <div class="mini-note" id="best-lap-note">Best lap highlight will appear here.</div>
     </div>
   </div>
-
-  <button
-    class="btn btn-today-stats pulse-attention"
-    id="today-stats-btn"
-    type="button"
-    data-i18n="todayStatsBtn"
-  >
-    Today Stats
-  </button>
 </div>
         </div>
       </div>
