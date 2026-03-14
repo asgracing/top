@@ -69,6 +69,7 @@
         <a class="top-nav-link top-nav-link-primary" href="https://t.me/+JUymrENgddcyMTdi" target="_blank" rel="noopener noreferrer">Telegram</a>
         <a class="top-nav-link top-nav-link-secondary" href="#championship" data-i18n="btnChampionship">Championship</a>
         <a class="top-nav-link top-nav-link-secondary" href="#bestlaps" data-i18n="btnBestLaps">Best Laps</a>
+        <a class="top-nav-link top-nav-link-secondary" href="#worst-safety" data-i18n="btnWorstSafety">Worst Safety</a>
         <a class="top-nav-link top-nav-link-secondary" href="#about-server" data-i18n="btnAboutServer">About Server</a>
       </div>
     </div>
@@ -176,6 +177,28 @@
         <div class="pagination-wrap" id="bestlaps-pagination-wrap" style="display:none;">
           <div class="pagination-info" id="bestlaps-pagination-info"></div>
           <div class="pagination" id="bestlaps-pagination"></div>
+        </div>
+      </div>
+    </section>
+
+    <section class="section" id="worst-safety">
+      <div class="section-header">
+        <div>
+          <h2 class="section-title" data-i18n="worstSafetyTitle">Worst Safety</h2>
+          <p class="section-subtitle" data-i18n="worstSafetySubtitle">Penalty count, penalty points and breakdown by penalty type.</p>
+        </div>
+        <div class="table-tools">
+          <input id="safety-search" class="search-input" type="text" autocomplete="off" />
+        </div>
+      </div>
+
+      <div class="table-card">
+        <div class="table-wrap" id="safety-table">
+          <div class="loading" style="padding:20px;">Loading safety...</div>
+        </div>
+        <div class="pagination-wrap" id="safety-pagination-wrap" style="display:none;">
+          <div class="pagination-info" id="safety-pagination-info"></div>
+          <div class="pagination" id="safety-pagination"></div>
         </div>
       </div>
     </section>

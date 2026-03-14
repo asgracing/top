@@ -1,18 +1,23 @@
 const leaderboardUrl = "./leaderboard.json";
 const bestlapsUrl = "./bestlaps.json";
 const globalStatsUrl = "./global_stats.json";
+const safetyUrl = "./safety.json";
 const PAGE_SIZE = 10;
 
 let leaderboardData = [];
 let bestlapsData = [];
 let todayStatsData = null;
+let safetyData = [];
 let leaderboardPage = 1;
 let bestlapsPage = 1;
+let safetyPage = 1;
 let currentLang = localStorage.getItem("asgLang") || "en";
 let leaderboardSearch = "";
 let bestlapsSearch = "";
+let safetySearch = "";
 let leaderboardSort = { key: null, direction: null };
 let bestlapsSort = { key: null, direction: null };
+let safetySort = { key: null, direction: null };
 
 const translations = {
   en: {
@@ -44,6 +49,7 @@ const translations = {
       "Race statistics, wins, podiums and best laps from the <strong>ASG Racing</strong> server. Data is automatically updated based on dedicated server results.",
     btnChampionship: "Championship",
     btnBestLaps: "Best Laps",
+    btnWorstSafety: "Worst Safety",
     btnAboutServer: "About Server",
     driversCountLabel: "Drivers in leaderboard",
     driversCountNote: "Unique participants included in the stats.",
@@ -56,6 +62,8 @@ const translations = {
     championshipSubtitle: "Points, wins, podiums, average finish and best lap.",
     bestLapsTitle: "Best Laps",
     bestLapsSubtitle: "Fastest laps recorded during qualifying and race sessions.",
+    worstSafetyTitle: "Worst Safety",
+    worstSafetySubtitle: "Penalty count, penalty points and breakdown by penalty type.",
     aboutTitle: "About ASG Racing Server",
     aboutSubtitle: "Assetto Corsa Competizione public racing server",
     aboutP1:
@@ -108,8 +116,10 @@ const translations = {
       "Session"
     ],
     bestlapsCols: ["Rank", "Driver", "Best Lap", "Track", "Session", "Updated"],
+    safetyBaseCols: ["Rank", "Driver", "Penalties", "Penalty Points"],
     leaderboardSearchPlaceholder: "Search driver...",
     bestlapsSearchPlaceholder: "Search driver...",
+    safetySearchPlaceholder: "Search driver...",
     metaLabels: {
       points: "Points",
       wins: "Wins",
@@ -152,6 +162,7 @@ const translations = {
       "Статистика гонок, побед, подиумов и лучших кругов на сервере <strong>ASG Racing</strong>. Данные обновляются автоматически на основе результатов dedicated server.",
     btnChampionship: "Чемпионат",
     btnBestLaps: "Лучшие круги",
+    btnWorstSafety: "Худшая безопасность",
     btnAboutServer: "О сервере",
     driversCountLabel: "Пилотов в рейтинге",
     driversCountNote: "Уникальные участники, попавшие в статистику.",
@@ -164,6 +175,8 @@ const translations = {
     championshipSubtitle: "Очки, победы, подиумы, средний финиш и лучший круг.",
     bestLapsTitle: "Лучшие круги",
     bestLapsSubtitle: "Быстрейшие круги из квалификаций и гонок.",
+    worstSafetyTitle: "Worst Safety",
+    worstSafetySubtitle: "Количество штрафов, штрафные баллы и разбивка по типам penalty.",
     aboutTitle: "О сервере ASG Racing",
     aboutSubtitle: "Публичный сервер Assetto Corsa Competizione",
     aboutP1:
@@ -216,8 +229,10 @@ const translations = {
       "Сессия"
     ],
     bestlapsCols: ["Место", "Пилот", "Лучший круг", "Трасса", "Сессия", "Обновлено"],
+    safetyBaseCols: ["Место", "Пилот", "Нарушения", "Штрафные баллы"],
     leaderboardSearchPlaceholder: "Поиск пилота...",
     bestlapsSearchPlaceholder: "Поиск пилота...",
+    safetySearchPlaceholder: "Поиск пилота...",
     metaLabels: {
       points: "Очки",
       wins: "Победы",
@@ -254,6 +269,31 @@ const bestlapsColumns = [
   { key: "session_type", type: "string" },
   { key: "updated_at", type: "string" }
 ];
+
+
+function getSafetyPenaltyKeys(data = []) {
+  const keys = new Set();
+  data.forEach(row => {
+    const penalties = row?.penalties && typeof row.penalties === "object" ? row.penalties : {};
+    Object.keys(penalties).forEach(key => keys.add(key));
+  });
+  return Array.from(keys).sort((a, b) => a.localeCompare(b));
+}
+
+function getSafetyColumns() {
+  const dynamicPenaltyKeys = getSafetyPenaltyKeys(safetyData);
+  return [
+    { key: "rank", type: "number", label: t("safetyBaseCols")[0] },
+    { key: "driver", type: "string", label: t("safetyBaseCols")[1] },
+    { key: "penalty_count", type: "number", label: t("safetyBaseCols")[2] },
+    { key: "penalty_points", type: "number", label: t("safetyBaseCols")[3] },
+    ...dynamicPenaltyKeys.map(key => ({
+      key: `penalties.${key}`,
+      type: "number",
+      label: key
+    }))
+  ];
+}
 
 function t(key) {
   return translations[currentLang][key] ?? translations.en[key] ?? key;
@@ -326,8 +366,13 @@ function parseLapTime(value) {
   return Number.POSITIVE_INFINITY;
 }
 
+function getNestedValue(row, key) {
+  if (!key.includes(".")) return row?.[key];
+  return key.split(".").reduce((acc, part) => acc?.[part], row);
+}
+
 function getComparableValue(row, column) {
-  const value = row?.[column.key];
+  const value = getNestedValue(row, column.key);
   switch (column.type) {
     case "number":
       return parseNumeric(value);
@@ -384,6 +429,14 @@ function getProcessedBestlaps() {
   );
 }
 
+function getProcessedSafety() {
+  return sortData(
+    filterByDriver(safetyData, safetySearch),
+    safetySort,
+    getSafetyColumns()
+  );
+}
+
 async function loadJson(url) {
   const res = await fetch(url + "?t=" + Date.now(), { cache: "no-store" });
   if (!res.ok) throw new Error(`HTTP ${res.status} for ${url}`);
@@ -416,9 +469,11 @@ function applyStaticTranslations() {
 
   const leaderboardInput = document.getElementById("leaderboard-search");
   const bestlapsInput = document.getElementById("bestlaps-search");
+  const safetyInput = document.getElementById("safety-search");
 
   if (leaderboardInput) leaderboardInput.placeholder = t("leaderboardSearchPlaceholder");
   if (bestlapsInput) bestlapsInput.placeholder = t("bestlapsSearchPlaceholder");
+  if (safetyInput) safetyInput.placeholder = t("safetySearchPlaceholder");
 
   const bestLapNoteEl = document.getElementById("best-lap-note");
   if (bestlapsData.length > 0 && bestLapNoteEl) {
@@ -727,6 +782,94 @@ function renderBestLapsTablePage() {
   );
 }
 
+function renderSafetyHeaders() {
+  const columns = getSafetyColumns();
+  return columns.map(col => `
+    <th class="sortable ${getSortClass(safetySort, col.key)}" data-sort-key="${escapeHtml(col.key)}">
+      ${escapeHtml(col.label)}
+    </th>
+  `).join("");
+}
+
+function bindSafetySortHandlers() {
+  document.querySelectorAll("#safety-table th[data-sort-key]").forEach(th => {
+    th.addEventListener("click", () => {
+      safetySort = cycleSort(safetySort, th.dataset.sortKey);
+      safetyPage = 1;
+      renderSafetyTablePage();
+    });
+  });
+}
+
+function renderSafetyPenaltyBreakdown(row) {
+  const penalties = row?.penalties && typeof row.penalties === "object" ? row.penalties : {};
+  const columns = getSafetyColumns().filter(col => col.key.startsWith("penalties."));
+  return columns.map(col => {
+    const key = col.key.replace("penalties.", "");
+    return `<td>${escapeHtml(penalties[key] ?? 0)}</td>`;
+  }).join("");
+}
+
+function renderSafetyTablePage() {
+  const result = paginate(getProcessedSafety(), safetyPage, PAGE_SIZE);
+  safetyPage = result.page;
+
+  const tableEl = document.getElementById("safety-table");
+  const wrapEl = document.getElementById("safety-pagination-wrap");
+
+  if (!tableEl || !wrapEl) return;
+
+  if (!result.totalItems) {
+    tableEl.innerHTML = `<div class="empty-box">${escapeHtml(safetySearch ? t("emptySearch") : t("errorLoading"))}</div>`;
+    wrapEl.style.display = "none";
+    return;
+  }
+
+  const rows = result.items.map(row => `
+    <tr>
+      <td><span class="rank-badge rank-${escapeHtml(row.rank)}">#${escapeHtml(row.rank)}</span></td>
+      <td>
+        <div class="driver-cell">
+          <div class="driver-avatar">${escapeHtml(initials(row.driver))}</div>
+          <div class="driver-name-wrap">
+            <div class="driver-name">${escapeHtml(row.driver)}</div>
+          </div>
+        </div>
+      </td>
+      <td>${escapeHtml(row.penalty_count ?? 0)}</td>
+      <td>${escapeHtml(row.penalty_points ?? 0)}</td>
+      ${renderSafetyPenaltyBreakdown(row)}
+    </tr>
+  `).join("");
+
+  tableEl.innerHTML = `
+    <table class="safety-table-dynamic">
+      <thead>
+        <tr>${renderSafetyHeaders()}</tr>
+      </thead>
+      <tbody>${rows}</tbody>
+    </table>
+  `;
+
+  bindSafetySortHandlers();
+
+  renderPagination(
+    "safety-pagination",
+    "safety-pagination-info",
+    "safety-pagination-wrap",
+    result.page,
+    result.totalPages,
+    result.totalItems,
+    result.startIndex,
+    result.endIndex,
+    (page) => {
+      safetyPage = page;
+      renderSafetyTablePage();
+      document.getElementById("worst-safety")?.scrollIntoView({ behavior: "smooth", block: "start" });
+    }
+  );
+}
+
 function bindLanguageButtons() {
   document.querySelectorAll(".lang-btn").forEach(btn => {
     btn.addEventListener("click", () => {
@@ -742,6 +885,7 @@ function bindLanguageButtons() {
 function bindSearchInputs() {
   const leaderboardInput = document.getElementById("leaderboard-search");
   const bestlapsInput = document.getElementById("bestlaps-search");
+  const safetyInput = document.getElementById("safety-search");
 
   if (leaderboardInput) {
     leaderboardInput.addEventListener("input", (e) => {
@@ -756,6 +900,14 @@ function bindSearchInputs() {
       bestlapsSearch = e.target.value || "";
       bestlapsPage = 1;
       renderBestLapsTablePage();
+    });
+  }
+
+  if (safetyInput) {
+    safetyInput.addEventListener("input", (e) => {
+      safetySearch = e.target.value || "";
+      safetyPage = 1;
+      renderSafetyTablePage();
     });
   }
 }
@@ -937,6 +1089,7 @@ function rerenderUI() {
 
   renderLeaderboardTablePage();
   renderBestLapsTablePage();
+  renderSafetyTablePage();
   renderTodayStatsModal();
 }
 
@@ -949,15 +1102,17 @@ async function init() {
   applyStaticTranslations();
 
   try {
-    const [leaderboard, bestlaps, globalStats] = await Promise.all([
+    const [leaderboard, bestlaps, globalStats, safety] = await Promise.all([
       loadJson(leaderboardUrl),
       loadJson(bestlapsUrl),
-      loadJson(globalStatsUrl)
+      loadJson(globalStatsUrl),
+      loadJson(safetyUrl)
     ]);
 
     leaderboardData = Array.isArray(leaderboard) ? leaderboard : [];
     bestlapsData = Array.isArray(bestlaps) ? bestlaps : [];
     todayStatsData = globalStats && typeof globalStats === "object" ? globalStats : null;
+    safetyData = Array.isArray(safety) ? safety : [];
 
     const driversCountEl = document.getElementById("drivers-count");
     if (driversCountEl) driversCountEl.textContent = leaderboardData.length;
@@ -983,8 +1138,10 @@ async function init() {
 
     const leaderboardTableEl = document.getElementById("leaderboard-table");
     const bestlapsTableEl = document.getElementById("bestlaps-table");
+    const safetyTableEl = document.getElementById("safety-table");
     const leaderboardWrapEl = document.getElementById("leaderboard-pagination-wrap");
     const bestlapsWrapEl = document.getElementById("bestlaps-pagination-wrap");
+    const safetyWrapEl = document.getElementById("safety-pagination-wrap");
 
     if (leaderboardTableEl) {
       leaderboardTableEl.innerHTML = `<div class="empty-box">${escapeHtml(t("errorLeaderboard"))}</div>`;
@@ -992,8 +1149,12 @@ async function init() {
     if (bestlapsTableEl) {
       bestlapsTableEl.innerHTML = `<div class="empty-box">${escapeHtml(t("errorBestlaps"))}</div>`;
     }
+    if (safetyTableEl) {
+      safetyTableEl.innerHTML = `<div class="empty-box">${escapeHtml(t("errorLoading"))}</div>`;
+    }
     if (leaderboardWrapEl) leaderboardWrapEl.style.display = "none";
     if (bestlapsWrapEl) bestlapsWrapEl.style.display = "none";
+    if (safetyWrapEl) safetyWrapEl.style.display = "none";
   }
 }
 

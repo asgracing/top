@@ -1054,3 +1054,51 @@ body.modal-open {
 .top-nav-link-secondary:hover {
   background: rgba(255,255,255,0.08);
 }
+
+.top-nav-inner {
+  display: grid;
+  grid-template-columns: auto 1fr auto;
+  align-items: center;
+}
+
+.top-nav-brand {
+  color: var(--text);
+  text-decoration: none;
+  font-weight: 900;
+  letter-spacing: 0.02em;
+  white-space: nowrap;
+}
+
+.top-nav-center {
+  display: flex;
+  justify-content: center;
+}
+
+.top-nav-menu {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
+  flex-wrap: nowrap;
+}
+
+.top-nav-actions {
+  display: flex;
+  justify-content: flex-end;
+}
+
+.safety-table-dynamic {
+  min-width: 980px;
+}
+
+@media (max-width: 980px) {
+  .top-nav-inner {
+    grid-template-columns: 1fr;
+    gap: 10px;
+  }
+
+  .top-nav-center,
+  .top-nav-actions {
+    justify-content: center;
+  }
+}
