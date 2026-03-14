@@ -216,18 +216,12 @@ body {
 
 .hero-grid {
   display: grid;
-  grid-template-columns: minmax(280px, 340px) minmax(0, 1fr) minmax(280px, 340px);
-  gap: 18px;
+  grid-template-columns: minmax(0, 1fr) minmax(280px, 340px);
+  gap: 24px 28px;
   align-items: start;
 }
 
 .hero-grid > :first-child {
-  display: contents;
-}
-
-.eyebrow,
-h1,
-.hero-subtitle {
   grid-column: 1 / -1;
 }
 
@@ -270,12 +264,11 @@ h1 {
 
 .hero-actions-row {
   display: grid;
-  grid-column: 1 / 3;
   grid-template-columns: minmax(280px, 340px) minmax(0, 1fr);
   gap: 16px;
   align-items: stretch;
   margin-top: 24px;
-  max-width: none;
+  max-width: min(100%, 1240px);
 }
 
 .hero-actions.hero-actions-stacked-mobile {
@@ -578,11 +571,10 @@ h1 {
 
 .hero-side {
   display: grid;
-  grid-column: 3;
   gap: 14px;
   width: 100%;
   max-width: 340px;
-  margin-left: 0;
+  margin-left: auto;
 }
 
 .hero-side-compact {
@@ -600,7 +592,7 @@ h1 {
 }
 
 .mini-label {
-  margin-bottom: 8px;
+  margin-bottom: 10px;
   font-size: 13px;
   color: var(--muted);
 }
@@ -619,59 +611,41 @@ h1 {
 }
 
 .mini-stat-bestlap {
-  min-height: 96px;
-  padding: 16px 18px 14px;
-}
-
-#best-lap-highlight {
-  font-size: clamp(2.1rem, 2.6vw, 3rem);
-  line-height: 0.95;
-}
-
-#best-lap-note {
-  font-size: 0.96rem;
+  min-height: 110px;
 }
 
 .mini-stat-compact {
-  min-height: 86px;
-  padding: 12px 14px;
-}
-
-.mini-stat-compact .mini-label {
-  margin-bottom: 6px;
-  font-size: 12px;
+  min-height: 110px;
+  padding: 14px 16px;
 }
 
 .mini-stat-compact .mini-value {
-  margin-top: 0;
-  margin-bottom: 0;
-  font-size: 1rem;
-  line-height: 1.2;
+  margin-top: 6px;
+  font-size: clamp(1.35rem, 2vw, 1.8rem);
+  line-height: 1.1;
 }
 
 .mini-stat-compact .mini-note {
   margin-top: 4px;
-  font-size: 0.82rem;
-  line-height: 1.3;
+  font-size: 0.88rem;
+  line-height: 1.35;
 }
 
 .hero-stats-row {
   display: grid;
   grid-template-columns: 1fr 1fr;
-  gap: 10px;
+  gap: 12px;
 }
 
 .server-status-wrap {
   display: flex;
   align-items: center;
-  gap: 8px;
-  flex-wrap: nowrap;
+  gap: 10px;
+  flex-wrap: wrap;
 }
 
 .server-status {
-  font-size: 12px;
-  font-weight: 800;
-  letter-spacing: 0.03em;
+  font-weight: 600;
 }
 
 .server-status.online {
@@ -683,14 +657,8 @@ h1 {
 }
 
 .server-players {
-  opacity: 0.9;
-  font-size: 12px;
-  font-weight: 700;
-}
-
-#drivers-count {
-  font-size: 1.1rem;
-  line-height: 1.2;
+  opacity: 0.8;
+  font-size: 1em;
 }
 
 
@@ -1298,14 +1266,6 @@ body.modal-open {
   }
 
   .hero-grid > :first-child {
-    display: block;
-  }
-
-  .eyebrow,
-  h1,
-  .hero-subtitle,
-  .hero-actions-row,
-  .hero-side {
     grid-column: auto;
   }
 
@@ -1644,8 +1604,6 @@ body.modal-open {
     font-size: 11px;
   }
 }
-
-
 
 
 
