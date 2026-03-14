@@ -1,13 +1,13 @@
 {
   "date": "2026-03-14",
-  "driver": "Arsenii Kapustin",
-  "player_id": "S76561199664057628",
-  "points": 82,
-  "races": 6,
+  "driver": "Евгений Майоров",
+  "player_id": "S76561199445415102",
+  "points": 97,
+  "races": 7,
   "wins": 3,
-  "average_finish": 11.0,
-  "best_lap": "1:49.045",
-  "best_lap_ms": 109045,
+  "average_finish": 8.0,
+  "best_lap": "1:46.760",
+  "best_lap_ms": 106760,
   "best_lap_track": "monza",
-  "updated_at": "2026-03-14T18:37:20"
+  "updated_at": "2026-03-14T18:42:20"
 }
