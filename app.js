@@ -844,7 +844,6 @@ function bindSafetySortHandlers() {
   });
 }
 
-
 function renderSafetyPenaltyBreakdown(row) {
   const penalties = row?.penalties && typeof row.penalties === "object" ? row.penalties : {};
   const columns = getSafetyColumns().filter(col => col.key.startsWith("penalties."));
