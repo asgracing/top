@@ -333,7 +333,7 @@ h1 {
   grid-template-columns: repeat(7, minmax(0, 1fr));
   align-items: end;
   gap: 8px;
-  min-height: 90px;
+  min-height: 80px;
   padding-top: 8px;
   border-bottom: 1px solid rgba(255, 255, 255, 0.08);
 }
@@ -369,7 +369,7 @@ h1 {
   flex-direction: column;
   justify-content: space-between;
   align-items: flex-start;
-  min-height: 104px;
+  min-height: 80px;
   padding-bottom: 18px;
   font-size: 11px;
   color: var(--muted);
@@ -1364,7 +1364,7 @@ body.modal-open {
   }
 
   .hero-online-card {
-    min-height: 150px;
+    min-height: 130px;
     max-height: none;
   }
 
