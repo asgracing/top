@@ -260,7 +260,7 @@ h1 {
 }
 
 .hero-actions-stacked-mobile .btn {
-  flex: 1 1 260px;
+  flex: 0 0 auto;
 }
 
 /* ===== LANGUAGE SWITCH ===== */
@@ -1430,7 +1430,7 @@ body.modal-open {
   display: grid;
   grid-template-columns: 280px minmax(0, 1fr);
   gap: 16px;
-  align-items: stretch;
+  align-items: start;
   margin-top: 18px;
 }
 
@@ -1439,6 +1439,7 @@ body.modal-open {
   flex-direction: column;
   gap: 12px;
   align-items: stretch;
+  margin-top: 0;
 }
 
 .hero-actions-stacked-mobile .btn,
@@ -1448,6 +1449,12 @@ body.modal-open {
   min-width: 0;
   max-width: none;
   align-self: stretch;
+  flex: 0 0 auto;
+}
+
+.btn-today-stats,
+.btn-driver-day {
+  min-height: 64px;
 }
 
 .hero-online-card {
