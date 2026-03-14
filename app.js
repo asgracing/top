@@ -1226,7 +1226,6 @@ function rerenderUI() {
 
 async function init() {
   const top3Content = document.getElementById("top3-content");
-
   bindLanguageButtons();
   bindSearchInputs();
   initTodayStatsModal();
