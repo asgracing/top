@@ -199,7 +199,7 @@ const translations = {
     championshipSubtitle: "Очки, победы, подиумы, средний финиш и лучший круг.",
     bestLapsTitle: "Лучшие круги",
     bestLapsSubtitle: "Быстрейшие круги из квалификаций и гонок.",
-    worstSafetyTitle: "Worst Safety",
+    worstSafetyTitle: "Худшая безопасность",
     worstSafetySubtitle: "Количество штрафов, штрафные баллы и разбивка по типам penalty.",
     aboutTitle: "О сервере ASG Racing",
     aboutSubtitle: "Публичный сервер Assetto Corsa Competizione",
@@ -247,7 +247,7 @@ const translations = {
       "Победы",
       "Подиумы",
       "Гонки",
-      "Средний финиш",
+      "Ср. финиш",
       "Лучший круг",
       "Трасса",
       "Сессия"
