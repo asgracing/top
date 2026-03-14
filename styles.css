@@ -289,7 +289,7 @@ h1 {
   display: flex;
   flex-direction: column;
   justify-content: space-between;
-  min-height: 180px;
+  min-height: 150px;
   padding: 16px 18px 14px;
   border: 1px solid var(--line);
   border-radius: 20px;
@@ -333,7 +333,7 @@ h1 {
   grid-template-columns: repeat(7, minmax(0, 1fr));
   align-items: end;
   gap: 8px;
-  min-height: 104px;
+  min-height: 90px;
   padding-top: 8px;
   border-bottom: 1px solid rgba(255, 255, 255, 0.08);
 }
