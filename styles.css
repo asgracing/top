@@ -1423,3 +1423,149 @@ body.modal-open {
     flex: 1 1 auto;
   }
 }
+
+/* ===== HERO ONLINE CHART ===== */
+
+.hero-actions-row {
+  display: grid;
+  grid-template-columns: 280px minmax(0, 1fr);
+  gap: 16px;
+  align-items: stretch;
+  margin-top: 18px;
+}
+
+.hero-actions-stacked-mobile {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  align-items: stretch;
+}
+
+.hero-actions-stacked-mobile .btn,
+.btn-today-stats,
+.btn-driver-day {
+  width: 100%;
+  min-width: 0;
+  max-width: none;
+  align-self: stretch;
+}
+
+.hero-online-card {
+  border: 1px solid var(--line);
+  border-radius: 18px;
+  padding: 14px 14px 12px;
+  background: rgba(255, 255, 255, 0.035);
+  min-height: 164px;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+}
+
+.hero-online-head {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 12px;
+  margin-bottom: 12px;
+}
+
+.hero-online-title {
+  font-size: 13px;
+  color: var(--muted);
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  font-weight: 700;
+}
+
+.hero-online-range {
+  font-size: 12px;
+  color: var(--muted);
+  white-space: nowrap;
+}
+
+.hero-online-chart-wrap {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) 42px;
+  gap: 10px;
+  align-items: end;
+  min-height: 108px;
+}
+
+.hero-online-chart {
+  height: 108px;
+  display: grid;
+  grid-template-columns: repeat(7, minmax(0, 1fr));
+  align-items: end;
+  gap: 8px;
+  padding-top: 8px;
+  border-bottom: 1px solid rgba(255,255,255,0.08);
+}
+
+.hero-online-bar-group {
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+  justify-content: end;
+  align-items: center;
+  gap: 8px;
+  min-width: 0;
+}
+
+.hero-online-bar {
+  width: 100%;
+  max-width: 28px;
+  min-height: 4px;
+  border-radius: 10px 10px 4px 4px;
+  background: linear-gradient(180deg, #ffb347 0%, #ff8a00 40%, #ff5b2e 100%);
+  box-shadow: 0 8px 18px rgba(255, 91, 46, 0.25);
+}
+
+.hero-online-date {
+  font-size: 11px;
+  color: var(--muted);
+  line-height: 1;
+  white-space: nowrap;
+}
+
+.hero-online-scale {
+  height: 108px;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  align-items: flex-start;
+  color: var(--muted);
+  font-size: 11px;
+  padding-bottom: 18px;
+}
+
+.hero-online-empty {
+  grid-column: 1 / -1;
+  align-self: center;
+  justify-self: center;
+  color: var(--muted);
+  font-size: 13px;
+}
+
+@media (max-width: 980px) {
+  .hero-actions-row {
+    grid-template-columns: 1fr;
+  }
+
+  .hero-online-card {
+    min-height: 180px;
+  }
+}
+
+@media (max-width: 640px) {
+  .hero-online-chart {
+    gap: 6px;
+  }
+
+  .hero-online-bar {
+    max-width: 22px;
+  }
+
+  .hero-online-range {
+    font-size: 11px;
+  }
+}

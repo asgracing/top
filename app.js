@@ -20,9 +20,12 @@ let safetySearch = "";
 let leaderboardSort = { key: null, direction: null };
 let bestlapsSort = { key: null, direction: null };
 let safetySort = { key: null, direction: null };
+let onlineData = [];
 
 const translations = {
   en: {
+    onlineTitle: "Unique players",
+onlineNoData: "No data",
     todayStatsBtn: "Today Stats",
     todayStatsEyebrow: "Daily overview",
     todayStatsTitle: "Today's Statistics",
@@ -147,6 +150,8 @@ const translations = {
     next: "Next →"
   },
   ru: {
+    onlineTitle: "Уникальные игроки",
+onlineNoData: "Нет данных",
     todayStatsBtn: "Статистика за сегодня",
     todayStatsEyebrow: "Сводка дня",
     todayStatsTitle: "Статистика за сегодня",
@@ -302,6 +307,75 @@ function getSafetyPenaltyKeys(data = []) {
     Object.keys(penalties).forEach(key => keys.add(key));
   });
   return Array.from(keys).sort((a, b) => a.localeCompare(b));
+}
+
+function formatShortDate(dateStr) {
+  if (!dateStr) return "—";
+  const [year, month, day] = String(dateStr).split("-");
+  if (!day || !month) return dateStr;
+  return `${day}.${month}`;
+}
+
+function getLast7DaysOnline(data) {
+  if (!Array.isArray(data)) return [];
+
+  return [...data]
+    .filter(item => item && item.date)
+    .sort((a, b) => new Date(a.date) - new Date(b.date))
+    .slice(-7)
+    .map(item => ({
+      date: item.date,
+      label: formatShortDate(item.date),
+      value: Number(item.unique_players) || 0
+    }));
+}
+
+function buildScaleValues(maxValue) {
+  const safeMax = Math.max(1, Number(maxValue) || 1);
+  return [
+    safeMax,
+    Math.round(safeMax * 0.66),
+    Math.round(safeMax * 0.33),
+    0
+  ];
+}
+
+function renderOnlineWidget() {
+  const chartEl = document.getElementById("online-chart");
+  const scaleEl = document.getElementById("online-scale");
+  const rangeEl = document.getElementById("online-range");
+  const titleEl = document.querySelector(".hero-online-title");
+
+  if (titleEl) titleEl.textContent = t("onlineTitle");
+  if (!chartEl || !scaleEl || !rangeEl) return;
+
+  const prepared = getLast7DaysOnline(onlineData);
+
+  if (!prepared.length) {
+    chartEl.innerHTML = `<div class="hero-online-empty">${escapeHtml(t("onlineNoData"))}</div>`;
+    scaleEl.innerHTML = `<span>0</span>`;
+    rangeEl.textContent = "—";
+    return;
+  }
+
+  const maxValue = Math.max(...prepared.map(item => item.value), 1);
+  const scaleValues = buildScaleValues(maxValue);
+
+  chartEl.innerHTML = prepared.map(item => {
+    const heightPercent = Math.max(4, Math.round((item.value / maxValue) * 100));
+    return `
+      <div class="hero-online-bar-group" title="${escapeHtml(item.label)} — ${escapeHtml(item.value)}">
+        <div class="hero-online-bar" style="height:${heightPercent}%"></div>
+        <div class="hero-online-date">${escapeHtml(item.label)}</div>
+      </div>
+    `;
+  }).join("");
+
+  scaleEl.innerHTML = scaleValues.map(value => `<span>${escapeHtml(value)}</span>`).join("");
+
+  const first = prepared[0];
+  const last = prepared[prepared.length - 1];
+  rangeEl.textContent = `${first.label} — ${last.label}`;
 }
 
 function getSafetyColumns() {
@@ -1222,6 +1296,7 @@ function rerenderUI() {
   renderSafetyTablePage();
   renderTodayStatsModal();
   renderDriverOfDayModal();
+  renderOnlineWidget();
 }
 
 async function init() {
@@ -1233,20 +1308,22 @@ async function init() {
   applyStaticTranslations();
 
   try {
-    const [leaderboard, bestlaps, globalStats, safety, driverOfDay, serverStatus] = await Promise.all([
-      loadJson(leaderboardUrl),
-      loadJson(bestlapsUrl),
-      loadJson(globalStatsUrl),
-      loadJson(safetyUrl),
-      loadJson(driverOfDayUrl),
-      loadJson("./server_status.json")
-    ]);
+const [leaderboard, bestlaps, globalStats, safety, driverOfDay, serverStatus, online] = await Promise.all([
+  loadJson(leaderboardUrl),
+  loadJson(bestlapsUrl),
+  loadJson(globalStatsUrl),
+  loadJson(safetyUrl),
+  loadJson(driverOfDayUrl),
+  loadJson("./server_status.json"),
+  loadJson("./online.json")
+]);
 
     leaderboardData = Array.isArray(leaderboard) ? leaderboard : [];
     bestlapsData = Array.isArray(bestlaps) ? bestlaps : [];
     todayStatsData = globalStats && typeof globalStats === "object" ? globalStats : null;
     safetyData = Array.isArray(safety) ? safety : [];
     driverOfDayData = driverOfDay && typeof driverOfDay === "object" ? driverOfDay : null;
+    onlineData = Array.isArray(online) ? online : [];
 
     const driversCountEl = document.getElementById("drivers-count");
     if (driversCountEl) {
