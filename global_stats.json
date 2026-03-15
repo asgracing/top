@@ -1,20 +1,20 @@
 {
   "date": "2026-03-15",
-  "unique_players_today": 74,
-  "races_today": 7,
-  "sessions_today": 16,
-  "points_earned_today": 580,
-  "wins_today": 7,
-  "podiums_today": 18,
-  "avg_players_per_race_today": 15.71,
+  "unique_players_today": 75,
+  "races_today": 8,
+  "sessions_today": 17,
+  "points_earned_today": 669,
+  "wins_today": 8,
+  "podiums_today": 21,
+  "avg_players_per_race_today": 14.5,
   "tracks_raced_today": [
     "monza"
   ],
   "best_lap_today": {
-    "lap": "1:47.427",
-    "lap_ms": 107427,
-    "driver": "REGI SILVA",
-    "player_id": "S76561199528581106",
+    "lap": "1:46.687",
+    "lap_ms": 106687,
+    "driver": "Man in Tights",
+    "player_id": "S76561198345280292",
     "track": "monza",
     "session_type": "R"
   },
@@ -30,11 +30,11 @@
   "server": {
     "status": "online",
     "server_online": true,
-    "players_online": 6,
+    "players_online": 3,
     "tcp_listening": null,
     "udp_listening": null,
     "broadcast_listening": null,
-    "updated_at": "2026-03-15T08:47:20"
+    "updated_at": "2026-03-15T08:52:20"
   },
-  "updated_at": "2026-03-15T08:47:20"
+  "updated_at": "2026-03-15T08:52:20"
 }
