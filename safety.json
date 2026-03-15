@@ -843,6 +843,20 @@
     "rank": 57
   },
   {
+    "player_id": "S76561198291245450",
+    "driver": "tugay ervan",
+    "penalty_count": 1,
+    "penalty_points": 1,
+    "reasons": {
+      "Cutting": 1
+    },
+    "penalties": {
+      "DriveThrough": 1
+    },
+    "last_seen": "2026-03-15T16:58:35",
+    "rank": 58
+  },
+  {
     "player_id": "S76561199869145455",
     "driver": "Никита Гаркавцев",
     "penalty_count": 1,
@@ -854,7 +868,7 @@
       "StopAndGo_20": 1
     },
     "last_seen": "2026-03-14T23:00:59",
-    "rank": 58
+    "rank": 59
   },
   {
     "player_id": "S76561199574744975",
@@ -869,7 +883,7 @@
       "Disqualified": 1
     },
     "last_seen": "2026-03-14T21:08:17",
-    "rank": 59
+    "rank": 60
   },
   {
     "player_id": "S76561198391324772",
@@ -884,7 +898,7 @@
       "Disqualified": 1
     },
     "last_seen": "2026-03-14T17:23:13",
-    "rank": 60
+    "rank": 61
   },
   {
     "player_id": "S76561198211561689",
@@ -899,7 +913,7 @@
       "Disqualified": 1
     },
     "last_seen": "2026-03-14T00:43:20",
-    "rank": 61
+    "rank": 62
   },
   {
     "player_id": "S76561198980124798",
@@ -913,7 +927,7 @@
       "Disqualified": 1
     },
     "last_seen": "2026-03-15T15:45:07",
-    "rank": 62
+    "rank": 63
   },
   {
     "player_id": "S76561198930402633",
@@ -927,7 +941,7 @@
       "Disqualified": 1
     },
     "last_seen": "2026-03-14T14:17:30",
-    "rank": 63
+    "rank": 64
   },
   {
     "player_id": "S76561198801103556",
@@ -941,7 +955,7 @@
       "Disqualified": 1
     },
     "last_seen": "2026-03-14T17:59:58",
-    "rank": 64
+    "rank": 65
   },
   {
     "player_id": "S76561199444872259",
@@ -955,7 +969,7 @@
       "Disqualified": 1
     },
     "last_seen": "2026-03-14T00:04:53",
-    "rank": 65
+    "rank": 66
   },
   {
     "player_id": "S76561198015562838",
@@ -969,7 +983,7 @@
       "Disqualified": 1
     },
     "last_seen": "2026-03-14T17:23:13",
-    "rank": 66
+    "rank": 67
   },
   {
     "player_id": "S76561198045178851",
@@ -983,7 +997,7 @@
       "Disqualified": 1
     },
     "last_seen": "2026-03-14T00:43:20",
-    "rank": 67
+    "rank": 68
   },
   {
     "player_id": "S76561198277920018",
@@ -997,7 +1011,7 @@
       "Disqualified": 1
     },
     "last_seen": "2026-03-15T13:52:15",
-    "rank": 68
+    "rank": 69
   },
   {
     "player_id": "S76561198871948501",
@@ -1011,7 +1025,7 @@
       "Disqualified": 1
     },
     "last_seen": "2026-03-14T14:55:10",
-    "rank": 69
+    "rank": 70
   },
   {
     "player_id": "S76561198123397673",
@@ -1025,7 +1039,7 @@
       "Disqualified": 1
     },
     "last_seen": "2026-03-14T13:40:43",
-    "rank": 70
+    "rank": 71
   },
   {
     "player_id": "S76561199523863168",
@@ -1039,6 +1053,6 @@
       "Disqualified": 1
     },
     "last_seen": "2026-03-14T19:15:44",
-    "rank": 71
+    "rank": 72
   }
 ]
