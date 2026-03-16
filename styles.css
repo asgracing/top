@@ -930,7 +930,7 @@ th.sortable.sort-desc::after {
 }
 
 td {
-  padding: 16px;
+  padding: 4px;
   border-bottom: 1px solid var(--line);
   vertical-align: middle;
   font-size: 15px;
