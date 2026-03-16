@@ -1447,7 +1447,7 @@ function renderRacesTable() {
       <td>
         <div class="race-track-cell">
           <span class="race-track-name">${escapeHtml(humanizeTrackName(race.track))}</span>
-          <span class="race-track-meta">${escapeHtml(race.source_file || "—")}</span>
+          
         </div>
       </td>
       <td><span class="race-winner">${renderDriverLink(race.winner || t("noWinner"), race.winner_public_id, "driver-link")}</span></td>
