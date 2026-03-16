@@ -2,12 +2,12 @@
   "public_id": "drv_43114e49748a",
   "driver": "Sergei Buravov",
   "summary": {
-    "points": 2,
-    "average_points_per_race": 0.18,
-    "races": 11,
+    "points": 12,
+    "average_points_per_race": 1.0,
+    "races": 12,
     "wins": 0,
     "podiums": 0,
-    "average_finish": 25.18,
+    "average_finish": 23.5,
     "best_lap": "1:49.457",
     "best_lap_ms": 109457,
     "best_lap_track": "monza",
@@ -16,34 +16,59 @@
     "penalty_points": 0,
     "fastest_lap_awards": 0,
     "most_raced_track": "monza",
-    "last_race_at": "2026-03-16T18:54:54",
-    "last_seen": "2026-03-16T19:06:41",
+    "last_race_at": "2026-03-16T19:31:35",
+    "last_seen": "2026-03-16T19:31:35",
     "win_rate": 0.0,
     "podium_rate": 0.0,
-    "average_positions_delta": -6.57,
-    "positions_delta_races": 7
+    "average_positions_delta": -5.75,
+    "positions_delta_races": 8
   },
   "recent_form": [
+    5,
     16,
     25,
     22,
-    44,
-    11
+    44
   ],
   "track_stats": [
     {
       "track": "monza",
-      "races": 11,
+      "races": 12,
       "wins": 0,
       "podiums": 0,
-      "points": 2,
-      "finish_sum": 277,
-      "average_finish": 25.18,
-      "best_lap_ms": 110122,
-      "best_lap": "1:50.122"
+      "points": 12,
+      "finish_sum": 282,
+      "average_finish": 23.5,
+      "best_lap_ms": 109552,
+      "best_lap": "1:49.552"
     }
   ],
   "race_history": [
+    {
+      "race_id": "260316_193135_R.json",
+      "finished_at": "2026-03-16T19:31:35",
+      "track": "monza",
+      "position": 5,
+      "participants_count": 41,
+      "winner": "Roga Yparoga",
+      "points": 10,
+      "qualifying_position": 5,
+      "start_position": 5,
+      "start_position_source": "qualifying_car_id",
+      "positions_delta": 0,
+      "positions_gained": 0,
+      "positions_lost": 0,
+      "best_lap": "1:49.552",
+      "best_lap_ms": 109552,
+      "total_time": "20:50.594",
+      "total_time_ms": 1250594,
+      "gap": "0:18.692",
+      "gap_ms": 18692,
+      "lap_count": 11,
+      "had_best_lap": false,
+      "penalty_count": 0,
+      "penalty_points": 0
+    },
     {
       "race_id": "260316_185454_R.json",
       "finished_at": "2026-03-16T18:54:54",

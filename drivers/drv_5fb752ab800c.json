@@ -3,11 +3,11 @@
   "driver": "Ivan Zavarin",
   "summary": {
     "points": 5,
-    "average_points_per_race": 0.83,
-    "races": 6,
+    "average_points_per_race": 0.71,
+    "races": 7,
     "wins": 0,
     "podiums": 0,
-    "average_finish": 21.67,
+    "average_finish": 20.86,
     "best_lap": "1:48.112",
     "best_lap_ms": 108112,
     "best_lap_track": "monza",
@@ -16,34 +16,59 @@
     "penalty_points": 0,
     "fastest_lap_awards": 0,
     "most_raced_track": "monza",
-    "last_race_at": "2026-03-16T18:54:54",
-    "last_seen": "2026-03-16T18:54:54",
+    "last_race_at": "2026-03-16T19:31:35",
+    "last_seen": "2026-03-16T19:31:35",
     "win_rate": 0.0,
     "podium_rate": 0.0,
-    "average_positions_delta": -5.0,
-    "positions_delta_races": 6
+    "average_positions_delta": -4.43,
+    "positions_delta_races": 7
   },
   "recent_form": [
+    16,
     8,
     33,
     48,
-    13,
-    10
+    13
   ],
   "track_stats": [
     {
       "track": "monza",
-      "races": 6,
+      "races": 7,
       "wins": 0,
       "podiums": 0,
       "points": 5,
-      "finish_sum": 130,
-      "average_finish": 21.67,
+      "finish_sum": 146,
+      "average_finish": 20.86,
       "best_lap_ms": 108112,
       "best_lap": "1:48.112"
     }
   ],
   "race_history": [
+    {
+      "race_id": "260316_193135_R.json",
+      "finished_at": "2026-03-16T19:31:35",
+      "track": "monza",
+      "position": 16,
+      "participants_count": 41,
+      "winner": "Roga Yparoga",
+      "points": 0,
+      "qualifying_position": 15,
+      "start_position": 15,
+      "start_position_source": "qualifying_car_id",
+      "positions_delta": -1,
+      "positions_gained": 0,
+      "positions_lost": 1,
+      "best_lap": "1:49.400",
+      "best_lap_ms": 109400,
+      "total_time": "7:39.327",
+      "total_time_ms": 459327,
+      "gap": "0:00.000",
+      "gap_ms": 0,
+      "lap_count": 4,
+      "had_best_lap": false,
+      "penalty_count": 0,
+      "penalty_points": 0
+    },
     {
       "race_id": "260316_185454_R.json",
       "finished_at": "2026-03-16T18:54:54",

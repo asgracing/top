@@ -1,17 +1,17 @@
 {
-  "public_id": "drv_40cc65693fcc",
-  "driver": "A. Spada",
+  "public_id": "drv_39c83180f26a",
+  "driver": "ALEKSEY EPIFANOV",
   "summary": {
     "points": 0,
     "average_points_per_race": 0.0,
     "races": 1,
     "wins": 0,
     "podiums": 0,
-    "average_finish": 23.0,
-    "best_lap": "1:48.060",
-    "best_lap_ms": 108060,
-    "best_lap_track": "monza",
-    "best_lap_session_type": "Q",
+    "average_finish": 38.0,
+    "best_lap": null,
+    "best_lap_ms": null,
+    "best_lap_track": null,
+    "best_lap_session_type": null,
     "penalty_count": 0,
     "penalty_points": 0,
     "fastest_lap_awards": 0,
@@ -20,11 +20,11 @@
     "last_seen": "2026-03-16T19:31:35",
     "win_rate": 0.0,
     "podium_rate": 0.0,
-    "average_positions_delta": -22.0,
-    "positions_delta_races": 1
+    "average_positions_delta": null,
+    "positions_delta_races": 0
   },
   "recent_form": [
-    23
+    38
   ],
   "track_stats": [
     {
@@ -33,10 +33,10 @@
       "wins": 0,
       "podiums": 0,
       "points": 0,
-      "finish_sum": 23,
-      "average_finish": 23.0,
-      "best_lap_ms": 115217,
-      "best_lap": "1:55.217"
+      "finish_sum": 38,
+      "average_finish": 38.0,
+      "best_lap_ms": null,
+      "best_lap": null
     }
   ],
   "race_history": [
@@ -44,23 +44,23 @@
       "race_id": "260316_193135_R.json",
       "finished_at": "2026-03-16T19:31:35",
       "track": "monza",
-      "position": 23,
+      "position": 38,
       "participants_count": 41,
       "winner": "Roga Yparoga",
       "points": 0,
-      "qualifying_position": 1,
-      "start_position": 1,
-      "start_position_source": "qualifying_car_id",
-      "positions_delta": -22,
-      "positions_gained": 0,
-      "positions_lost": 22,
-      "best_lap": "1:55.217",
-      "best_lap_ms": 115217,
-      "total_time": "7:58.030",
-      "total_time_ms": 478030,
-      "gap": "0:00.000",
-      "gap_ms": 0,
-      "lap_count": 2,
+      "qualifying_position": null,
+      "start_position": null,
+      "start_position_source": "unknown",
+      "positions_delta": null,
+      "positions_gained": null,
+      "positions_lost": null,
+      "best_lap": null,
+      "best_lap_ms": null,
+      "total_time": null,
+      "total_time_ms": null,
+      "gap": null,
+      "gap_ms": null,
+      "lap_count": 0,
       "had_best_lap": false,
       "penalty_count": 0,
       "penalty_points": 0

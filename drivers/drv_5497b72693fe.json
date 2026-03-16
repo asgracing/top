@@ -3,11 +3,11 @@
   "driver": "Martín Pepinó",
   "summary": {
     "points": 0,
-    "average_points_per_race": 0,
-    "races": 0,
+    "average_points_per_race": 0.0,
+    "races": 1,
     "wins": 0,
     "podiums": 0,
-    "average_finish": null,
+    "average_finish": 28.0,
     "best_lap": null,
     "best_lap_ms": null,
     "best_lap_track": null,
@@ -15,17 +15,57 @@
     "penalty_count": 0,
     "penalty_points": 0,
     "fastest_lap_awards": 0,
-    "most_raced_track": null,
-    "last_race_at": null,
-    "last_seen": null,
-    "win_rate": 0,
-    "podium_rate": 0,
-    "average_positions_delta": null,
-    "positions_delta_races": 0
+    "most_raced_track": "monza",
+    "last_race_at": "2026-03-16T19:31:35",
+    "last_seen": "2026-03-16T19:31:35",
+    "win_rate": 0.0,
+    "podium_rate": 0.0,
+    "average_positions_delta": 0.0,
+    "positions_delta_races": 1
   },
-  "recent_form": [],
-  "track_stats": [],
-  "race_history": [],
+  "recent_form": [
+    28
+  ],
+  "track_stats": [
+    {
+      "track": "monza",
+      "races": 1,
+      "wins": 0,
+      "podiums": 0,
+      "points": 0,
+      "finish_sum": 28,
+      "average_finish": 28.0,
+      "best_lap_ms": null,
+      "best_lap": null
+    }
+  ],
+  "race_history": [
+    {
+      "race_id": "260316_193135_R.json",
+      "finished_at": "2026-03-16T19:31:35",
+      "track": "monza",
+      "position": 28,
+      "participants_count": 41,
+      "winner": "Roga Yparoga",
+      "points": 0,
+      "qualifying_position": 28,
+      "start_position": 28,
+      "start_position_source": "qualifying_car_id",
+      "positions_delta": 0,
+      "positions_gained": 0,
+      "positions_lost": 0,
+      "best_lap": null,
+      "best_lap_ms": null,
+      "total_time": null,
+      "total_time_ms": null,
+      "gap": null,
+      "gap_ms": null,
+      "lap_count": 0,
+      "had_best_lap": false,
+      "penalty_count": 0,
+      "penalty_points": 0
+    }
+  ],
   "penalties": {
     "penalty_count": 0,
     "penalty_points": 0,
