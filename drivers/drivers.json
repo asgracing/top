@@ -16778,8 +16778,8 @@
     "wins": 0,
     "podiums": 0,
     "average_finish": 42.0,
-    "best_lap": null,
-    "best_lap_track": null,
+    "best_lap": "1:52.370",
+    "best_lap_track": "monza",
     "penalty_count": 0,
     "penalty_points": 0,
     "last_race_at": "2026-03-17T01:09:50"
@@ -17470,6 +17470,21 @@
     "average_finish": null,
     "best_lap": "1:51.272",
     "best_lap_track": "monza",
+    "penalty_count": 0,
+    "penalty_points": 0,
+    "last_race_at": null
+  },
+  {
+    "public_id": "drv_4f93544a4fab",
+    "driver": "Nathan Dvn",
+    "points": 0,
+    "average_points_per_race": 0,
+    "races": 0,
+    "wins": 0,
+    "podiums": 0,
+    "average_finish": null,
+    "best_lap": null,
+    "best_lap_track": null,
     "penalty_count": 0,
     "penalty_points": 0,
     "last_race_at": null
