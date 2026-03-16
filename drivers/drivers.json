@@ -2,17 +2,17 @@
   {
     "public_id": "drv_180cf5cae8ff",
     "driver": "Arsenii Kapustin [ASG]",
-    "points": 405,
-    "average_points_per_race": 17.61,
-    "races": 23,
+    "points": 423,
+    "average_points_per_race": 17.62,
+    "races": 24,
     "wins": 12,
-    "podiums": 16,
-    "average_finish": 6.0,
+    "podiums": 17,
+    "average_finish": 5.83,
     "best_lap": "1:48.280",
     "best_lap_track": "monza",
     "penalty_count": 2,
     "penalty_points": 3,
-    "last_race_at": "2026-03-15T14:30:44"
+    "last_race_at": "2026-03-16T15:00:14"
   },
   {
     "public_id": "drv_780fce005a4b",
@@ -32,17 +32,17 @@
   {
     "public_id": "drv_b466bb6eedd8",
     "driver": "Andrei Soldatenkov [ASG]",
-    "points": 260,
-    "average_points_per_race": 6.5,
-    "races": 40,
-    "wins": 4,
-    "podiums": 11,
-    "average_finish": 20.02,
+    "points": 286,
+    "average_points_per_race": 6.98,
+    "races": 41,
+    "wins": 5,
+    "podiums": 12,
+    "average_finish": 19.56,
     "best_lap": "1:47.405",
     "best_lap_track": "monza",
     "penalty_count": 1,
     "penalty_points": 3,
-    "last_race_at": "2026-03-15T23:46:16"
+    "last_race_at": "2026-03-16T15:00:14"
   },
   {
     "public_id": "drv_32d20c93fe7d",
@@ -90,6 +90,21 @@
     "last_race_at": "2026-03-15T23:08:44"
   },
   {
+    "public_id": "drv_b1fd7b57da41",
+    "driver": "Artem Malyginov",
+    "points": 106,
+    "average_points_per_race": 9.64,
+    "races": 11,
+    "wins": 1,
+    "podiums": 5,
+    "average_finish": 11.82,
+    "best_lap": "1:50.817",
+    "best_lap_track": "monza",
+    "penalty_count": 0,
+    "penalty_points": 0,
+    "last_race_at": "2026-03-16T15:00:14"
+  },
+  {
     "public_id": "drv_10b4b6556336",
     "driver": "Javier Breogan.VR.|ARF",
     "points": 100,
@@ -118,21 +133,6 @@
     "penalty_count": 0,
     "penalty_points": 0,
     "last_race_at": "2026-03-15T09:24:19"
-  },
-  {
-    "public_id": "drv_b1fd7b57da41",
-    "driver": "Artem Malyginov",
-    "points": 91,
-    "average_points_per_race": 9.1,
-    "races": 10,
-    "wins": 1,
-    "podiums": 4,
-    "average_finish": 12.7,
-    "best_lap": "1:50.817",
-    "best_lap_track": "monza",
-    "penalty_count": 0,
-    "penalty_points": 0,
-    "last_race_at": "2026-03-15T14:30:44"
   },
   {
     "public_id": "drv_b99f06eacb0f",

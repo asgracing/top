@@ -1,22 +1,23 @@
 {
   "schema_version": 3,
-  "generated_at": "2026-03-16T14:57:20",
+  "generated_at": "2026-03-16T15:02:20",
   "leaderboard": [
     {
       "player_id": "S76561199664057628",
       "driver": "Arsenii Kapustin [ASG]",
-      "races": 23,
+      "races": 24,
       "wins": 12,
-      "podiums": 16,
-      "points": 405,
-      "average_finish_sum": 138,
-      "average_finish": 6.0,
+      "podiums": 17,
+      "points": 423,
+      "average_finish_sum": 140,
+      "average_finish": 5.83,
       "best_lap_ms": 108280,
       "best_lap": "1:48.280",
       "best_lap_track": "monza",
       "best_lap_session_type": "R",
       "last_track": "monza",
-      "last_seen": "2026-03-15T14:30:44",
+      "last_seen": "2026-03-16T15:00:14",
+      "public_id": "drv_180cf5cae8ff",
       "rank": 1
     },
     {
@@ -39,18 +40,18 @@
     {
       "player_id": "S76561197983024493",
       "driver": "Andrei Soldatenkov [ASG]",
-      "races": 40,
-      "wins": 4,
-      "podiums": 11,
-      "points": 260,
-      "average_finish_sum": 801,
-      "average_finish": 20.02,
+      "races": 41,
+      "wins": 5,
+      "podiums": 12,
+      "points": 286,
+      "average_finish_sum": 802,
+      "average_finish": 19.56,
       "best_lap_ms": 107405,
       "best_lap": "1:47.405",
       "best_lap_track": "monza",
       "best_lap_session_type": "R",
       "last_track": "monza",
-      "last_seen": "2026-03-15T23:46:16",
+      "last_seen": "2026-03-16T15:00:14",
       "public_id": "drv_b466bb6eedd8",
       "rank": 3
     },
@@ -106,6 +107,24 @@
       "rank": 6
     },
     {
+      "player_id": "S76561199580771806",
+      "driver": "Artem Malyginov",
+      "races": 11,
+      "wins": 1,
+      "podiums": 5,
+      "points": 106,
+      "average_finish_sum": 130,
+      "average_finish": 11.82,
+      "best_lap_ms": 110817,
+      "best_lap": "1:50.817",
+      "best_lap_track": "monza",
+      "best_lap_session_type": "R",
+      "last_track": "monza",
+      "last_seen": "2026-03-16T15:00:14",
+      "public_id": "drv_b1fd7b57da41",
+      "rank": 7
+    },
+    {
       "player_id": "S76561198016201235",
       "driver": "Javier Breogan.VR.|ARF",
       "races": 23,
@@ -120,7 +139,7 @@
       "best_lap_session_type": "R",
       "last_track": "monza",
       "last_seen": "2026-03-16T00:22:05",
-      "rank": 7
+      "rank": 8
     },
     {
       "player_id": "S76561198345280292",
@@ -137,23 +156,6 @@
       "best_lap_session_type": "R",
       "last_track": "monza",
       "last_seen": "2026-03-15T09:24:19",
-      "rank": 8
-    },
-    {
-      "player_id": "S76561199580771806",
-      "driver": "Artem Malyginov",
-      "races": 10,
-      "wins": 1,
-      "podiums": 4,
-      "points": 91,
-      "average_finish_sum": 127,
-      "average_finish": 12.7,
-      "best_lap_ms": 110817,
-      "best_lap": "1:50.817",
-      "best_lap_track": "monza",
-      "best_lap_session_type": "R",
-      "last_track": "monza",
-      "last_seen": "2026-03-15T14:30:44",
       "rank": 9
     },
     {
@@ -16256,7 +16258,7 @@
       "best_lap": "1:47.405",
       "track": "monza",
       "session_type": "R",
-      "updated_at": "2026-03-15T23:46:16"
+      "updated_at": "2026-03-16T15:00:14"
     },
     {
       "rank": 32,
@@ -17592,13 +17594,13 @@
     {
       "rank": 153,
       "player_id": "S76561199664057628",
-      "public_id": null,
+      "public_id": "drv_180cf5cae8ff",
       "driver": "Arsenii Kapustin [ASG]",
       "best_lap_ms": 108280,
       "best_lap": "1:48.280",
       "track": "monza",
       "session_type": "R",
-      "updated_at": "2026-03-15T14:30:44"
+      "updated_at": "2026-03-16T15:00:14"
     },
     {
       "rank": 154,
@@ -21761,13 +21763,13 @@
     {
       "rank": 532,
       "player_id": "S76561199580771806",
-      "public_id": null,
+      "public_id": "drv_b1fd7b57da41",
       "driver": "Artem Malyginov",
       "best_lap_ms": 110817,
       "best_lap": "1:50.817",
       "track": "monza",
       "session_type": "R",
-      "updated_at": "2026-03-15T14:30:44"
+      "updated_at": "2026-03-16T15:00:14"
     },
     {
       "rank": 533,
@@ -24805,27 +24807,27 @@
     },
     {
       "date": "2026-03-16",
-      "unique_players": 16
+      "unique_players": 17
     }
   ],
   "global_stats": {
     "date": "2026-03-16",
-    "unique_players_today": 16,
-    "races_today": 1,
-    "sessions_today": 10,
-    "points_earned_today": 102,
-    "wins_today": 1,
-    "podiums_today": 3,
-    "avg_players_per_race_today": 11.0,
+    "unique_players_today": 17,
+    "races_today": 2,
+    "sessions_today": 11,
+    "points_earned_today": 161,
+    "wins_today": 2,
+    "podiums_today": 6,
+    "avg_players_per_race_today": 7.0,
     "tracks_raced_today": [
       "monza"
     ],
     "best_lap_today": {
-      "lap": "1:48.550",
-      "lap_ms": 108550,
-      "driver": "Gleb Blatin",
-      "player_id": "S76561198160885621",
-      "public_id": "drv_23052b1c8703",
+      "lap": "1:47.445",
+      "lap_ms": 107445,
+      "driver": "Andrei Soldatenkov [ASG]",
+      "player_id": "S76561197983024493",
+      "public_id": "drv_b466bb6eedd8",
       "track": "monza",
       "session_type": "R"
     },
@@ -24840,29 +24842,29 @@
       "driver": "Gleb Blatin",
       "points": 26
     },
-    "updated_at": "2026-03-16T14:57:20"
+    "updated_at": "2026-03-16T15:02:20"
   },
   "driver_of_the_day": {
     "date": "2026-03-16",
-    "driver": "Gleb Blatin",
-    "player_id": "S76561198160885621",
-    "public_id": null,
+    "driver": "Andrei Soldatenkov [ASG]",
+    "player_id": "S76561197983024493",
+    "public_id": "drv_b466bb6eedd8",
     "points": 26,
     "races": 1,
     "wins": 1,
     "average_finish": 1.0,
-    "best_lap": "1:48.550",
-    "best_lap_ms": 108550,
+    "best_lap": "1:47.445",
+    "best_lap_ms": 107445,
     "best_lap_track": "monza",
-    "updated_at": "2026-03-16T14:57:20"
+    "updated_at": "2026-03-16T15:02:20"
   },
   "server_status": {
     "status": "online",
     "server_online": true,
-    "players_online": 3,
+    "players_online": 7,
     "tcp_listening": true,
     "udp_listening": true,
     "broadcast_listening": true,
-    "updated_at": "2026-03-16T14:57:20"
+    "updated_at": "2026-03-16T15:02:20"
   }
 }

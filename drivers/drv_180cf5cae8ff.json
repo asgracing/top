@@ -2,12 +2,12 @@
   "public_id": "drv_180cf5cae8ff",
   "driver": "Arsenii Kapustin [ASG]",
   "summary": {
-    "points": 405,
-    "average_points_per_race": 17.61,
-    "races": 23,
+    "points": 423,
+    "average_points_per_race": 17.62,
+    "races": 24,
     "wins": 12,
-    "podiums": 16,
-    "average_finish": 6.0,
+    "podiums": 17,
+    "average_finish": 5.83,
     "best_lap": "1:48.280",
     "best_lap_ms": 108280,
     "best_lap_track": "monza",
@@ -16,32 +16,51 @@
     "penalty_points": 3,
     "fastest_lap_awards": 6,
     "most_raced_track": "monza",
-    "last_race_at": "2026-03-15T14:30:44",
-    "last_seen": "2026-03-15T14:30:44",
-    "win_rate": 52.17,
-    "podium_rate": 69.57
+    "last_race_at": "2026-03-16T15:00:14",
+    "last_seen": "2026-03-16T15:00:14",
+    "win_rate": 50.0,
+    "podium_rate": 70.83
   },
   "recent_form": [
+    2,
     36,
     7,
     7,
-    1,
-    2
+    1
   ],
   "track_stats": [
     {
       "track": "monza",
-      "races": 23,
+      "races": 24,
       "wins": 12,
-      "podiums": 16,
-      "points": 405,
-      "finish_sum": 138,
-      "average_finish": 6.0,
+      "podiums": 17,
+      "points": 423,
+      "finish_sum": 140,
+      "average_finish": 5.83,
       "best_lap_ms": 108280,
       "best_lap": "1:48.280"
     }
   ],
   "race_history": [
+    {
+      "race_id": "260316_150014_R.json",
+      "finished_at": "2026-03-16T15:00:14",
+      "track": "monza",
+      "position": 2,
+      "participants_count": 3,
+      "winner": "Andrei Soldatenkov [ASG]",
+      "points": 18,
+      "best_lap": "1:48.762",
+      "best_lap_ms": 108762,
+      "total_time": "20:04.049",
+      "total_time_ms": 1204049,
+      "gap": "0:04.008",
+      "gap_ms": 4008,
+      "lap_count": 7,
+      "had_best_lap": false,
+      "penalty_count": 0,
+      "penalty_points": 0
+    },
     {
       "race_id": "260315_143044_R.json",
       "finished_at": "2026-03-15T14:30:44",

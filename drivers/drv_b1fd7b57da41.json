@@ -2,12 +2,12 @@
   "public_id": "drv_b1fd7b57da41",
   "driver": "Artem Malyginov",
   "summary": {
-    "points": 91,
-    "average_points_per_race": 9.1,
-    "races": 10,
+    "points": 106,
+    "average_points_per_race": 9.64,
+    "races": 11,
     "wins": 1,
-    "podiums": 4,
-    "average_finish": 12.7,
+    "podiums": 5,
+    "average_finish": 11.82,
     "best_lap": "1:50.817",
     "best_lap_ms": 110817,
     "best_lap_track": "monza",
@@ -16,32 +16,51 @@
     "penalty_points": 0,
     "fastest_lap_awards": 0,
     "most_raced_track": "monza",
-    "last_race_at": "2026-03-15T14:30:44",
-    "last_seen": "2026-03-15T14:30:44",
-    "win_rate": 10.0,
-    "podium_rate": 40.0
+    "last_race_at": "2026-03-16T15:00:14",
+    "last_seen": "2026-03-16T15:00:14",
+    "win_rate": 9.09,
+    "podium_rate": 45.45
   },
   "recent_form": [
+    3,
     37,
     10,
     9,
-    2,
-    3
+    2
   ],
   "track_stats": [
     {
       "track": "monza",
-      "races": 10,
+      "races": 11,
       "wins": 1,
-      "podiums": 4,
-      "points": 91,
-      "finish_sum": 127,
-      "average_finish": 12.7,
+      "podiums": 5,
+      "points": 106,
+      "finish_sum": 130,
+      "average_finish": 11.82,
       "best_lap_ms": 110817,
       "best_lap": "1:50.817"
     }
   ],
   "race_history": [
+    {
+      "race_id": "260316_150014_R.json",
+      "finished_at": "2026-03-16T15:00:14",
+      "track": "monza",
+      "position": 3,
+      "participants_count": 3,
+      "winner": "Andrei Soldatenkov [ASG]",
+      "points": 15,
+      "best_lap": "1:51.427",
+      "best_lap_ms": 111427,
+      "total_time": "21:16.748",
+      "total_time_ms": 1276748,
+      "gap": "1:16.707",
+      "gap_ms": 76707,
+      "lap_count": 7,
+      "had_best_lap": false,
+      "penalty_count": 0,
+      "penalty_points": 0
+    },
     {
       "race_id": "260315_143044_R.json",
       "finished_at": "2026-03-15T14:30:44",
