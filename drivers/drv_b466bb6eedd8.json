@@ -3,11 +3,11 @@
   "driver": "Andrei Soldatenkov [ASG]",
   "summary": {
     "points": 291,
-    "average_points_per_race": 6.77,
-    "races": 43,
+    "average_points_per_race": 6.61,
+    "races": 44,
     "wins": 5,
     "podiums": 12,
-    "average_finish": 19.14,
+    "average_finish": 19.52,
     "best_lap": "1:47.405",
     "best_lap_ms": 107405,
     "best_lap_track": "monza",
@@ -16,32 +16,51 @@
     "penalty_points": 3,
     "fastest_lap_awards": 3,
     "most_raced_track": "monza",
-    "last_race_at": "2026-03-16T16:18:16",
-    "last_seen": "2026-03-16T16:18:16",
-    "win_rate": 11.63,
-    "podium_rate": 27.91
+    "last_race_at": "2026-03-16T16:57:38",
+    "last_seen": "2026-03-16T16:57:38",
+    "win_rate": 11.36,
+    "podium_rate": 27.27
   },
   "recent_form": [
+    36,
     8,
     13,
     1,
-    15,
-    3
+    15
   ],
   "track_stats": [
     {
       "track": "monza",
-      "races": 43,
+      "races": 44,
       "wins": 5,
       "podiums": 12,
       "points": 291,
-      "finish_sum": 823,
-      "average_finish": 19.14,
+      "finish_sum": 859,
+      "average_finish": 19.52,
       "best_lap_ms": 107405,
       "best_lap": "1:47.405"
     }
   ],
   "race_history": [
+    {
+      "race_id": "260316_165738_R.json",
+      "finished_at": "2026-03-16T16:57:38",
+      "track": "monza",
+      "position": 36,
+      "participants_count": 48,
+      "winner": "Yuri Polyakov",
+      "points": 0,
+      "best_lap": null,
+      "best_lap_ms": null,
+      "total_time": null,
+      "total_time_ms": null,
+      "gap": null,
+      "gap_ms": null,
+      "lap_count": 0,
+      "had_best_lap": false,
+      "penalty_count": 0,
+      "penalty_points": 0
+    },
     {
       "race_id": "260316_161816_R.json",
       "finished_at": "2026-03-16T16:18:16",

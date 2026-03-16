@@ -4,10 +4,10 @@
   "summary": {
     "points": 0,
     "average_points_per_race": 0.0,
-    "races": 3,
+    "races": 4,
     "wins": 0,
     "podiums": 0,
-    "average_finish": 22.67,
+    "average_finish": 20.5,
     "best_lap": "1:50.842",
     "best_lap_ms": 110842,
     "best_lap_track": "monza",
@@ -16,12 +16,13 @@
     "penalty_points": 3,
     "fastest_lap_awards": 0,
     "most_raced_track": "monza",
-    "last_race_at": "2026-03-15T20:02:14",
-    "last_seen": "2026-03-15T20:02:14",
+    "last_race_at": "2026-03-16T16:57:38",
+    "last_seen": "2026-03-16T16:57:38",
     "win_rate": 0.0,
     "podium_rate": 0.0
   },
   "recent_form": [
+    14,
     18,
     13,
     37
@@ -29,17 +30,36 @@
   "track_stats": [
     {
       "track": "monza",
-      "races": 3,
+      "races": 4,
       "wins": 0,
       "podiums": 0,
       "points": 0,
-      "finish_sum": 68,
-      "average_finish": 22.67,
+      "finish_sum": 82,
+      "average_finish": 20.5,
       "best_lap_ms": 110842,
       "best_lap": "1:50.842"
     }
   ],
   "race_history": [
+    {
+      "race_id": "260316_165738_R.json",
+      "finished_at": "2026-03-16T16:57:38",
+      "track": "monza",
+      "position": 14,
+      "participants_count": 48,
+      "winner": "Yuri Polyakov",
+      "points": 0,
+      "best_lap": "1:51.130",
+      "best_lap_ms": 111130,
+      "total_time": "21:21.897",
+      "total_time_ms": 1281897,
+      "gap": "1:20.906",
+      "gap_ms": 80906,
+      "lap_count": 8,
+      "had_best_lap": false,
+      "penalty_count": 0,
+      "penalty_points": 0
+    },
     {
       "race_id": "260315_200214_R.json",
       "finished_at": "2026-03-15T20:02:14",

@@ -2,12 +2,12 @@
   "public_id": "drv_b7345eb4cbc7",
   "driver": "Arseny Silverhand",
   "summary": {
-    "points": 0,
-    "average_points_per_race": 0.0,
-    "races": 1,
+    "points": 1,
+    "average_points_per_race": 0.5,
+    "races": 2,
     "wins": 0,
     "podiums": 0,
-    "average_finish": 25.0,
+    "average_finish": 17.5,
     "best_lap": "1:50.535",
     "best_lap_ms": 110535,
     "best_lap_track": "monza",
@@ -16,28 +16,48 @@
     "penalty_points": 0,
     "fastest_lap_awards": 0,
     "most_raced_track": "monza",
-    "last_race_at": "2026-03-16T16:18:16",
-    "last_seen": "2026-03-16T16:29:47",
+    "last_race_at": "2026-03-16T16:57:38",
+    "last_seen": "2026-03-16T16:57:38",
     "win_rate": 0.0,
     "podium_rate": 0.0
   },
   "recent_form": [
+    10,
     25
   ],
   "track_stats": [
     {
       "track": "monza",
-      "races": 1,
+      "races": 2,
       "wins": 0,
       "podiums": 0,
-      "points": 0,
-      "finish_sum": 25,
-      "average_finish": 25.0,
-      "best_lap_ms": 111777,
-      "best_lap": "1:51.777"
+      "points": 1,
+      "finish_sum": 35,
+      "average_finish": 17.5,
+      "best_lap_ms": 110820,
+      "best_lap": "1:50.820"
     }
   ],
   "race_history": [
+    {
+      "race_id": "260316_165738_R.json",
+      "finished_at": "2026-03-16T16:57:38",
+      "track": "monza",
+      "position": 10,
+      "participants_count": 48,
+      "winner": "Yuri Polyakov",
+      "points": 1,
+      "best_lap": "1:50.820",
+      "best_lap_ms": 110820,
+      "total_time": "20:51.900",
+      "total_time_ms": 1251900,
+      "gap": "0:50.909",
+      "gap_ms": 50909,
+      "lap_count": 11,
+      "had_best_lap": false,
+      "penalty_count": 0,
+      "penalty_points": 0
+    },
     {
       "race_id": "260316_161816_R.json",
       "finished_at": "2026-03-16T16:18:16",

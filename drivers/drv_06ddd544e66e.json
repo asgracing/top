@@ -1,17 +1,17 @@
 {
-  "public_id": "drv_232597ff8ada",
-  "driver": "Giuseppe Librizzi",
+  "public_id": "drv_06ddd544e66e",
+  "driver": "jimmy b",
   "summary": {
-    "points": 10,
-    "average_points_per_race": 10.0,
+    "points": 0,
+    "average_points_per_race": 0.0,
     "races": 1,
     "wins": 0,
     "podiums": 0,
-    "average_finish": 5.0,
-    "best_lap": "1:49.105",
-    "best_lap_ms": 109105,
-    "best_lap_track": "monza",
-    "best_lap_session_type": "R",
+    "average_finish": 26.0,
+    "best_lap": null,
+    "best_lap_ms": null,
+    "best_lap_track": null,
+    "best_lap_session_type": null,
     "penalty_count": 0,
     "penalty_points": 0,
     "fastest_lap_awards": 0,
@@ -22,7 +22,7 @@
     "podium_rate": 0.0
   },
   "recent_form": [
-    5
+    26
   ],
   "track_stats": [
     {
@@ -30,11 +30,11 @@
       "races": 1,
       "wins": 0,
       "podiums": 0,
-      "points": 10,
-      "finish_sum": 5,
-      "average_finish": 5.0,
-      "best_lap_ms": 109105,
-      "best_lap": "1:49.105"
+      "points": 0,
+      "finish_sum": 26,
+      "average_finish": 26.0,
+      "best_lap_ms": null,
+      "best_lap": null
     }
   ],
   "race_history": [
@@ -42,17 +42,17 @@
       "race_id": "260316_165738_R.json",
       "finished_at": "2026-03-16T16:57:38",
       "track": "monza",
-      "position": 5,
+      "position": 26,
       "participants_count": 48,
       "winner": "Yuri Polyakov",
-      "points": 10,
-      "best_lap": "1:49.105",
-      "best_lap_ms": 109105,
-      "total_time": "20:29.538",
-      "total_time_ms": 1229538,
-      "gap": "0:28.547",
-      "gap_ms": 28547,
-      "lap_count": 11,
+      "points": 0,
+      "best_lap": null,
+      "best_lap_ms": null,
+      "total_time": "17:49.308",
+      "total_time_ms": 1069308,
+      "gap": "0:00.000",
+      "gap_ms": 0,
+      "lap_count": 1,
       "had_best_lap": false,
       "penalty_count": 0,
       "penalty_points": 0

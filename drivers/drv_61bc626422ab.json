@@ -2,28 +2,62 @@
   "public_id": "drv_61bc626422ab",
   "driver": "Simon Estrella",
   "summary": {
-    "points": 0,
-    "average_points_per_race": 0,
-    "races": 0,
+    "points": 2,
+    "average_points_per_race": 2.0,
+    "races": 1,
     "wins": 0,
     "podiums": 0,
-    "average_finish": null,
-    "best_lap": "1:50.502",
-    "best_lap_ms": 110502,
+    "average_finish": 9.0,
+    "best_lap": "1:50.200",
+    "best_lap_ms": 110200,
     "best_lap_track": "monza",
-    "best_lap_session_type": "Q",
+    "best_lap_session_type": "R",
     "penalty_count": 0,
     "penalty_points": 0,
     "fastest_lap_awards": 0,
-    "most_raced_track": null,
-    "last_race_at": null,
-    "last_seen": "2026-03-16T16:29:47",
-    "win_rate": 0,
-    "podium_rate": 0
+    "most_raced_track": "monza",
+    "last_race_at": "2026-03-16T16:57:38",
+    "last_seen": "2026-03-16T16:57:38",
+    "win_rate": 0.0,
+    "podium_rate": 0.0
   },
-  "recent_form": [],
-  "track_stats": [],
-  "race_history": [],
+  "recent_form": [
+    9
+  ],
+  "track_stats": [
+    {
+      "track": "monza",
+      "races": 1,
+      "wins": 0,
+      "podiums": 0,
+      "points": 2,
+      "finish_sum": 9,
+      "average_finish": 9.0,
+      "best_lap_ms": 110200,
+      "best_lap": "1:50.200"
+    }
+  ],
+  "race_history": [
+    {
+      "race_id": "260316_165738_R.json",
+      "finished_at": "2026-03-16T16:57:38",
+      "track": "monza",
+      "position": 9,
+      "participants_count": 48,
+      "winner": "Yuri Polyakov",
+      "points": 2,
+      "best_lap": "1:50.200",
+      "best_lap_ms": 110200,
+      "total_time": "20:49.394",
+      "total_time_ms": 1249394,
+      "gap": "0:48.403",
+      "gap_ms": 48403,
+      "lap_count": 11,
+      "had_best_lap": false,
+      "penalty_count": 0,
+      "penalty_points": 0
+    }
+  ],
   "penalties": {
     "penalty_count": 0,
     "penalty_points": 0,

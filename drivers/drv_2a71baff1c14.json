@@ -3,11 +3,11 @@
   "driver": "Jack Petushitel",
   "summary": {
     "points": 30,
-    "average_points_per_race": 10.0,
-    "races": 3,
+    "average_points_per_race": 7.5,
+    "races": 4,
     "wins": 0,
     "podiums": 1,
-    "average_finish": 15.0,
+    "average_finish": 17.0,
     "best_lap": "1:47.570",
     "best_lap_ms": 107570,
     "best_lap_track": "monza",
@@ -16,12 +16,13 @@
     "penalty_points": 0,
     "fastest_lap_awards": 0,
     "most_raced_track": "monza",
-    "last_race_at": "2026-03-15T22:28:25",
-    "last_seen": "2026-03-16T16:29:47",
+    "last_race_at": "2026-03-16T16:57:38",
+    "last_seen": "2026-03-16T16:57:38",
     "win_rate": 0.0,
-    "podium_rate": 33.33
+    "podium_rate": 25.0
   },
   "recent_form": [
+    23,
     39,
     2,
     4
@@ -29,17 +30,36 @@
   "track_stats": [
     {
       "track": "monza",
-      "races": 3,
+      "races": 4,
       "wins": 0,
       "podiums": 1,
       "points": 30,
-      "finish_sum": 45,
-      "average_finish": 15.0,
+      "finish_sum": 68,
+      "average_finish": 17.0,
       "best_lap_ms": 108267,
       "best_lap": "1:48.267"
     }
   ],
   "race_history": [
+    {
+      "race_id": "260316_165738_R.json",
+      "finished_at": "2026-03-16T16:57:38",
+      "track": "monza",
+      "position": 23,
+      "participants_count": 48,
+      "winner": "Yuri Polyakov",
+      "points": 0,
+      "best_lap": "1:49.112",
+      "best_lap_ms": 109112,
+      "total_time": "3:44.011",
+      "total_time_ms": 224011,
+      "gap": "0:00.000",
+      "gap_ms": 0,
+      "lap_count": 2,
+      "had_best_lap": false,
+      "penalty_count": 0,
+      "penalty_points": 0
+    },
     {
       "race_id": "260315_222825_R.json",
       "finished_at": "2026-03-15T22:28:25",

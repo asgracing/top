@@ -2,12 +2,12 @@
   "public_id": "drv_10b4b6556336",
   "driver": "Javier Breogan.VR.|ARF",
   "summary": {
-    "points": 100,
-    "average_points_per_race": 4.35,
-    "races": 23,
+    "points": 112,
+    "average_points_per_race": 4.67,
+    "races": 24,
     "wins": 0,
     "podiums": 2,
-    "average_finish": 14.09,
+    "average_finish": 13.67,
     "best_lap": "1:47.887",
     "best_lap_ms": 107887,
     "best_lap_track": "monza",
@@ -16,32 +16,51 @@
     "penalty_points": 0,
     "fastest_lap_awards": 1,
     "most_raced_track": "monza",
-    "last_race_at": "2026-03-16T00:22:05",
-    "last_seen": "2026-03-16T00:22:05",
+    "last_race_at": "2026-03-16T16:57:38",
+    "last_seen": "2026-03-16T16:57:38",
     "win_rate": 0.0,
-    "podium_rate": 8.7
+    "podium_rate": 8.33
   },
   "recent_form": [
+    4,
     8,
     2,
     9,
-    15,
-    34
+    15
   ],
   "track_stats": [
     {
       "track": "monza",
-      "races": 23,
+      "races": 24,
       "wins": 0,
       "podiums": 2,
-      "points": 100,
-      "finish_sum": 324,
-      "average_finish": 14.09,
+      "points": 112,
+      "finish_sum": 328,
+      "average_finish": 13.67,
       "best_lap_ms": 107887,
       "best_lap": "1:47.887"
     }
   ],
   "race_history": [
+    {
+      "race_id": "260316_165738_R.json",
+      "finished_at": "2026-03-16T16:57:38",
+      "track": "monza",
+      "position": 4,
+      "participants_count": 48,
+      "winner": "Yuri Polyakov",
+      "points": 12,
+      "best_lap": "1:48.032",
+      "best_lap_ms": 108032,
+      "total_time": "20:26.024",
+      "total_time_ms": 1226024,
+      "gap": "0:25.033",
+      "gap_ms": 25033,
+      "lap_count": 11,
+      "had_best_lap": false,
+      "penalty_count": 0,
+      "penalty_points": 0
+    },
     {
       "race_id": "260316_002205_R.json",
       "finished_at": "2026-03-16T00:22:05",

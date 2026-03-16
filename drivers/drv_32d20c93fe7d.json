@@ -3,11 +3,11 @@
   "driver": "Евгений Майоров | NRR",
   "summary": {
     "points": 135,
-    "average_points_per_race": 10.38,
-    "races": 13,
+    "average_points_per_race": 9.64,
+    "races": 14,
     "wins": 3,
     "podiums": 6,
-    "average_finish": 12.85,
+    "average_finish": 15.14,
     "best_lap": "1:46.725",
     "best_lap_ms": 106725,
     "best_lap_track": "monza",
@@ -16,32 +16,51 @@
     "penalty_points": 0,
     "fastest_lap_awards": 6,
     "most_raced_track": "monza",
-    "last_race_at": "2026-03-15T16:21:55",
-    "last_seen": "2026-03-15T16:21:55",
-    "win_rate": 23.08,
-    "podium_rate": 46.15
+    "last_race_at": "2026-03-16T16:57:38",
+    "last_seen": "2026-03-16T16:57:38",
+    "win_rate": 21.43,
+    "podium_rate": 42.86
   },
   "recent_form": [
+    45,
     18,
     13,
     2,
-    2,
-    40
+    2
   ],
   "track_stats": [
     {
       "track": "monza",
-      "races": 13,
+      "races": 14,
       "wins": 3,
       "podiums": 6,
       "points": 135,
-      "finish_sum": 167,
-      "average_finish": 12.85,
+      "finish_sum": 212,
+      "average_finish": 15.14,
       "best_lap_ms": 106725,
       "best_lap": "1:46.725"
     }
   ],
   "race_history": [
+    {
+      "race_id": "260316_165738_R.json",
+      "finished_at": "2026-03-16T16:57:38",
+      "track": "monza",
+      "position": 45,
+      "participants_count": 48,
+      "winner": "Yuri Polyakov",
+      "points": 0,
+      "best_lap": null,
+      "best_lap_ms": null,
+      "total_time": null,
+      "total_time_ms": null,
+      "gap": null,
+      "gap_ms": null,
+      "lap_count": 0,
+      "had_best_lap": false,
+      "penalty_count": 0,
+      "penalty_points": 0
+    },
     {
       "race_id": "260315_162155_R.json",
       "finished_at": "2026-03-15T16:21:55",

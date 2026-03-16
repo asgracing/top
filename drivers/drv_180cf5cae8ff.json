@@ -3,11 +3,11 @@
   "driver": "Arsenii Kapustin [ASG]",
   "summary": {
     "points": 463,
-    "average_points_per_race": 17.81,
-    "races": 26,
+    "average_points_per_race": 17.15,
+    "races": 27,
     "wins": 13,
     "podiums": 19,
-    "average_finish": 5.54,
+    "average_finish": 6.7,
     "best_lap": "1:48.280",
     "best_lap_ms": 108280,
     "best_lap_track": "monza",
@@ -16,32 +16,51 @@
     "penalty_points": 3,
     "fastest_lap_awards": 6,
     "most_raced_track": "monza",
-    "last_race_at": "2026-03-16T16:18:16",
-    "last_seen": "2026-03-16T16:18:16",
-    "win_rate": 50.0,
-    "podium_rate": 73.08
+    "last_race_at": "2026-03-16T16:57:38",
+    "last_seen": "2026-03-16T16:57:38",
+    "win_rate": 48.15,
+    "podium_rate": 70.37
   },
   "recent_form": [
+    37,
     3,
     1,
     2,
-    36,
-    7
+    36
   ],
   "track_stats": [
     {
       "track": "monza",
-      "races": 26,
+      "races": 27,
       "wins": 13,
       "podiums": 19,
       "points": 463,
-      "finish_sum": 144,
-      "average_finish": 5.54,
+      "finish_sum": 181,
+      "average_finish": 6.7,
       "best_lap_ms": 108280,
       "best_lap": "1:48.280"
     }
   ],
   "race_history": [
+    {
+      "race_id": "260316_165738_R.json",
+      "finished_at": "2026-03-16T16:57:38",
+      "track": "monza",
+      "position": 37,
+      "participants_count": 48,
+      "winner": "Yuri Polyakov",
+      "points": 0,
+      "best_lap": null,
+      "best_lap_ms": null,
+      "total_time": null,
+      "total_time_ms": null,
+      "gap": null,
+      "gap_ms": null,
+      "lap_count": 0,
+      "had_best_lap": false,
+      "penalty_count": 0,
+      "penalty_points": 0
+    },
     {
       "race_id": "260316_161816_R.json",
       "finished_at": "2026-03-16T16:18:16",

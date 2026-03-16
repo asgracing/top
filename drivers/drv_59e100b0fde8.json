@@ -4,40 +4,60 @@
   "summary": {
     "points": 0,
     "average_points_per_race": 0.0,
-    "races": 1,
+    "races": 2,
     "wins": 0,
     "podiums": 0,
-    "average_finish": 45.0,
-    "best_lap": null,
-    "best_lap_ms": null,
-    "best_lap_track": null,
-    "best_lap_session_type": null,
-    "penalty_count": 0,
+    "average_finish": 33.0,
+    "best_lap": "1:49.555",
+    "best_lap_ms": 109555,
+    "best_lap_track": "monza",
+    "best_lap_session_type": "R",
+    "penalty_count": 1,
     "penalty_points": 0,
     "fastest_lap_awards": 0,
     "most_raced_track": "monza",
-    "last_race_at": "2026-03-15T17:34:49",
-    "last_seen": "2026-03-15T17:34:49",
+    "last_race_at": "2026-03-16T16:57:38",
+    "last_seen": "2026-03-16T16:57:38",
     "win_rate": 0.0,
     "podium_rate": 0.0
   },
   "recent_form": [
+    21,
     45
   ],
   "track_stats": [
     {
       "track": "monza",
-      "races": 1,
+      "races": 2,
       "wins": 0,
       "podiums": 0,
       "points": 0,
-      "finish_sum": 45,
-      "average_finish": 45.0,
-      "best_lap_ms": null,
-      "best_lap": null
+      "finish_sum": 66,
+      "average_finish": 33.0,
+      "best_lap_ms": 109555,
+      "best_lap": "1:49.555"
     }
   ],
   "race_history": [
+    {
+      "race_id": "260316_165738_R.json",
+      "finished_at": "2026-03-16T16:57:38",
+      "track": "monza",
+      "position": 21,
+      "participants_count": 48,
+      "winner": "Yuri Polyakov",
+      "points": 0,
+      "best_lap": "1:49.555",
+      "best_lap_ms": 109555,
+      "total_time": "17:58.221",
+      "total_time_ms": 1078221,
+      "gap": "0:00.000",
+      "gap_ms": 0,
+      "lap_count": 3,
+      "had_best_lap": false,
+      "penalty_count": 1,
+      "penalty_points": 0
+    },
     {
       "race_id": "260315_173449_R.json",
       "finished_at": "2026-03-15T17:34:49",
@@ -59,9 +79,13 @@
     }
   ],
   "penalties": {
-    "penalty_count": 0,
+    "penalty_count": 1,
     "penalty_points": 0,
-    "reasons": {},
-    "types": {}
+    "reasons": {
+      "Cutting": 1
+    },
+    "types": {
+      "Disqualified": 1
+    }
   }
 }
