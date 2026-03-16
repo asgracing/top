@@ -1,6 +1,6 @@
 {
-  "status": "offline",
-  "server_online": false,
-  "players_online": 0,
-  "updated_at": "2026-03-16T09:52:20"
+  "status": "online",
+  "server_online": true,
+  "players_online": 1,
+  "updated_at": "2026-03-16T09:57:20"
 }
