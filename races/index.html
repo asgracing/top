@@ -1,0 +1,136 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+
+  <title>ASG Racing Last Races | Assetto Corsa Competizione Results</title>
+  <meta
+    name="description"
+    content="Latest ASG Racing ACC race results with winner, track, best lap and full finishing order."
+  />
+  <meta name="robots" content="index, follow" />
+  <meta name="author" content="ASG Racing" />
+  <meta name="theme-color" content="#0b0f14" />
+
+  <link rel="canonical" href="https://asgracing.github.io/top/races/" />
+  <link rel="icon" href="../favicon.ico" sizes="any" />
+  <link rel="icon" type="image/png" sizes="32x32" href="../favicon-32x32.png" />
+  <link rel="icon" type="image/png" sizes="16x16" href="../favicon-16x16.png" />
+  <link rel="apple-touch-icon" href="../apple-touch-icon.png" />
+
+  <link rel="stylesheet" href="../styles.css" />
+</head>
+<body id="top">
+  <div class="site-video-bg" aria-hidden="true">
+    <video class="site-bg-video" autoplay muted loop playsinline preload="none">
+      <source src="../media/background.mp4" type="video/mp4" />
+    </video>
+  </div>
+  <div class="site-video-overlay" aria-hidden="true"></div>
+
+  <nav class="top-nav" id="top-nav">
+    <div class="top-nav-inner">
+      <a class="top-nav-brand" href="../" aria-label="ASG Racing home">ASG Racing</a>
+
+      <div class="top-nav-center">
+        <div class="top-nav-menu">
+          <a class="top-nav-link top-nav-link-primary" href="https://discord.gg/cEPFHXXtTC" target="_blank" rel="noopener noreferrer">Discord</a>
+          <a class="top-nav-link top-nav-link-primary" href="https://t.me/+JUymrENgddcyMTdi" target="_blank" rel="noopener noreferrer">Telegram</a>
+          <a class="top-nav-link top-nav-link-secondary" href="../" data-i18n="btnBackHome">Back to Home</a>
+          <a class="top-nav-link top-nav-link-secondary" href="./" data-i18n="btnLastRaces">Last Races</a>
+        </div>
+      </div>
+
+      <div class="top-nav-actions">
+        <div class="lang-switch top-nav-lang" aria-label="Language switcher">
+          <button class="lang-btn" type="button" data-lang="en"><span class="lang-flag">EN</span><span class="lang-text">EN</span></button>
+          <button class="lang-btn" type="button" data-lang="ru"><span class="lang-flag">RU</span><span class="lang-text">RU</span></button>
+        </div>
+      </div>
+    </div>
+  </nav>
+
+  <div class="container">
+    <section class="hero">
+      <div class="hero-card hero-card-page">
+        <div class="page-hero-copy">
+          <div class="eyebrow" data-i18n="racesEyebrow">Race archive</div>
+          <h1 data-i18n="racesPageTitle">Last Races</h1>
+          <p class="hero-subtitle page-hero-subtitle" data-i18n="racesPageSubtitle">
+            Latest race sessions from ASG Racing. Click any row to open the full result sheet.
+          </p>
+        </div>
+
+        <div class="page-hero-stats" id="races-summary-cards">
+          <div class="mini-stat">
+            <div class="mini-label" data-i18n="racesSummaryTotal">Total races</div>
+            <div class="mini-value" id="races-total-count">—</div>
+          </div>
+          <div class="mini-stat">
+            <div class="mini-label" data-i18n="racesSummaryLatestTrack">Latest track</div>
+            <div class="mini-value" id="races-latest-track">—</div>
+          </div>
+          <div class="mini-stat">
+            <div class="mini-label" data-i18n="racesSummaryLatestWinner">Latest winner</div>
+            <div class="mini-value" id="races-latest-winner">—</div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section class="section">
+      <div class="section-header">
+        <div>
+          <h2 class="section-title" data-i18n="racesTableTitle">Race Results</h2>
+          <p class="section-subtitle" data-i18n="racesTableSubtitle">Sorted from newest to oldest.</p>
+        </div>
+      </div>
+
+      <div class="table-card">
+        <div class="table-wrap" id="races-table">
+          <div class="loading" style="padding:20px;" data-i18n="loadingRaces">Loading races...</div>
+        </div>
+      </div>
+    </section>
+
+    <div class="modal-overlay" id="race-results-modal" aria-hidden="true">
+      <div class="modal-card modal-card-race" role="dialog" aria-modal="true" aria-labelledby="race-results-title">
+        <button class="modal-close" id="race-results-close" type="button" aria-label="Close">✕</button>
+
+        <div class="modal-header">
+          <div>
+            <div class="eyebrow" data-i18n="raceModalEyebrow">Race details</div>
+            <h3 id="race-results-title" class="modal-title">—</h3>
+            <p class="modal-subtitle" id="race-results-subtitle">—</p>
+          </div>
+        </div>
+
+        <div class="race-modal-summary" id="race-modal-summary"></div>
+
+        <div class="table-card table-card-modal">
+          <div class="table-wrap" id="race-results-table"></div>
+        </div>
+      </div>
+    </div>
+
+    <footer class="footer">
+      <div class="footer-inner">
+        <div class="footer-left">
+          <div class="footer-brand">ASG Racing ACC Leaderboard</div>
+          <div class="footer-text" data-i18n="footerText">
+            Statistics are generated from ACC Dedicated Server result files and published via GitHub Pages.
+          </div>
+        </div>
+
+        <div class="footer-links">
+          <a href="https://discord.gg/cEPFHXXtTC" target="_blank" rel="noopener noreferrer">Discord</a>
+          <a href="https://t.me/+JUymrENgddcyMTdi" target="_blank" rel="noopener noreferrer">Telegram</a>
+        </div>
+      </div>
+    </footer>
+  </div>
+
+  <script src="../app.js" defer></script>
+</body>
+</html>

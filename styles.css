@@ -314,6 +314,13 @@ h1 {
   flex: 0 0 auto;
 }
 
+.hero-primary-actions {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
+  gap: 12px;
+  width: 100%;
+}
+
 .hero-online-card {
   display: flex;
   flex-direction: column;
@@ -560,6 +567,39 @@ h1 {
     0 12px 28px rgba(255, 91, 46, 0.16);
 }
 
+.btn-last-races {
+  position: relative;
+  width: auto;
+  min-width: 220px;
+  min-height: 96px;
+  padding: 18px 20px;
+  border-radius: 20px;
+  align-self: flex-start;
+  text-align: center;
+  font-size: 0.98rem;
+  line-height: 1.25;
+  font-weight: 900;
+  letter-spacing: 0.02em;
+  color: var(--text);
+  border: 1px solid rgba(255, 184, 77, 0.22);
+  background:
+    linear-gradient(135deg, rgba(255, 255, 255, 0.07), rgba(255, 91, 46, 0.12)),
+    rgba(255, 255, 255, 0.04);
+  box-shadow:
+    0 0 0 1px rgba(255, 255, 255, 0.05) inset,
+    0 12px 28px rgba(0, 0, 0, 0.2);
+}
+
+.btn-last-races:hover {
+  transform: translateY(-2px);
+  background:
+    linear-gradient(135deg, rgba(255, 255, 255, 0.1), rgba(255, 91, 46, 0.16)),
+    rgba(255, 255, 255, 0.05);
+  box-shadow:
+    0 0 0 1px rgba(255, 255, 255, 0.08) inset,
+    0 16px 34px rgba(0, 0, 0, 0.26);
+}
+
 .btn-driver-day:hover {
   transform: translateY(-2px);
   background: linear-gradient(135deg, rgba(255, 138, 0, 0.18), rgba(255, 91, 46, 0.14));
@@ -660,6 +700,22 @@ h1 {
   display: grid;
   grid-template-columns: 1fr 1fr;
   gap: 12px;
+}
+
+.hero-card-page {
+  display: grid;
+  grid-template-columns: minmax(0, 1.4fr) minmax(320px, 0.9fr);
+  gap: 20px;
+  align-items: start;
+}
+
+.page-hero-copy .hero-subtitle {
+  margin-bottom: 0;
+}
+
+.page-hero-stats {
+  display: grid;
+  gap: 14px;
 }
 
 .server-status-wrap {
@@ -906,6 +962,35 @@ td {
 
 tbody tr:hover {
   background: rgba(255, 255, 255, 0.025);
+}
+
+.races-table tbody tr {
+  cursor: pointer;
+  transition: background 0.18s ease, transform 0.18s ease;
+}
+
+.races-table tbody tr:hover {
+  background: rgba(255, 91, 46, 0.07);
+}
+
+.race-track-cell {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.race-track-name {
+  font-weight: 800;
+}
+
+.race-track-meta,
+.race-note {
+  font-size: 13px;
+  color: var(--muted);
+}
+
+.race-winner {
+  font-weight: 700;
 }
 
 tbody tr:last-child td {
@@ -1205,6 +1290,40 @@ body.modal-open {
   opacity: 0.45;
 }
 
+.modal-card-race {
+  width: min(1080px, 100%);
+}
+
+.race-modal-summary {
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  gap: 12px;
+  margin-bottom: 18px;
+}
+
+.race-summary-card {
+  padding: 16px;
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  border-radius: 18px;
+  background: rgba(255, 255, 255, 0.045);
+}
+
+.race-summary-label {
+  margin-bottom: 8px;
+  font-size: 0.85rem;
+  color: var(--muted);
+}
+
+.race-summary-value {
+  font-size: 1.1rem;
+  font-weight: 800;
+  line-height: 1.25;
+}
+
+.table-card-modal {
+  border-radius: 18px;
+}
+
 /* ===== FOOTER ===== */
 
 .footer {
@@ -1404,6 +1523,7 @@ body.modal-open {
 
   .hero-actions-stacked-mobile .btn,
   .btn-today-stats,
+  .btn-last-races,
   .btn-driver-day {
     width: 100%;
     min-width: 0;
@@ -1423,6 +1543,10 @@ body.modal-open {
     max-height: none;
   }
 
+  .hero-card-page {
+    grid-template-columns: 1fr;
+  }
+
   .today-stats-grid {
     grid-template-columns: repeat(2, minmax(0, 1fr));
   }
@@ -1432,6 +1556,10 @@ body.modal-open {
   }
 
   .driver-day-grid {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+
+  .race-modal-summary {
     grid-template-columns: repeat(2, minmax(0, 1fr));
   }
 
@@ -1558,14 +1686,20 @@ body.modal-open {
 
   .hero-actions-stacked-mobile .btn,
   .btn-driver-day,
-  .btn-today-stats {
+  .btn-today-stats,
+  .btn-last-races {
     width: 100%;
     min-width: 0;
   }
 
   .btn-today-stats,
+  .btn-last-races,
   .btn-driver-day {
     font-size: 0.92rem;
+  }
+
+  .hero-primary-actions {
+    grid-template-columns: 1fr;
   }
 
   .hero-stats-row {
@@ -1595,6 +1729,10 @@ body.modal-open {
 
   .today-stats-grid,
   .driver-day-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .race-modal-summary {
     grid-template-columns: 1fr;
   }
 

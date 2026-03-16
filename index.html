@@ -80,6 +80,7 @@
       <div class="top-nav-menu">
         <a class="top-nav-link top-nav-link-primary" href="https://discord.gg/cEPFHXXtTC" target="_blank" rel="noopener noreferrer">Discord</a>
         <a class="top-nav-link top-nav-link-primary" href="https://t.me/+JUymrENgddcyMTdi" target="_blank" rel="noopener noreferrer">Telegram</a>
+        <a class="top-nav-link top-nav-link-secondary" href="./races/" data-i18n="btnLastRaces">Last Races</a>
         <a class="top-nav-link top-nav-link-secondary" href="#championship" data-i18n="btnChampionship">Championship</a>
         <a class="top-nav-link top-nav-link-secondary" href="#bestlaps" data-i18n="btnBestLaps">Best Laps</a>
         <a class="top-nav-link top-nav-link-secondary" href="#worst-safety" data-i18n="btnWorstSafety">Worst Safety</a>
@@ -112,14 +113,24 @@
 
     <div class="hero-actions-row">
       <div class="hero-actions hero-actions-stacked-mobile">
-        <button
-          class="btn btn-today-stats pulse-attention"
-          id="today-stats-btn"
-          type="button"
-          data-i18n="todayStatsBtn"
-        >
-          Today Stats
-        </button>
+        <div class="hero-primary-actions">
+          <button
+            class="btn btn-today-stats pulse-attention"
+            id="today-stats-btn"
+            type="button"
+            data-i18n="todayStatsBtn"
+          >
+            Today Stats
+          </button>
+
+          <a
+            class="btn btn-last-races"
+            href="./races/"
+            data-i18n="lastRacesBtn"
+          >
+            Last Races
+          </a>
+        </div>
 
         <button
           class="btn btn-driver-day"
