@@ -1,6 +1,6 @@
 {
   "schema_version": 3,
-  "generated_at": "2026-03-16T14:32:20",
+  "generated_at": "2026-03-16T14:37:20",
   "leaderboard": [
     {
       "player_id": "S76561199664057628",
@@ -51,6 +51,7 @@
       "best_lap_session_type": "R",
       "last_track": "monza",
       "last_seen": "2026-03-15T23:46:16",
+      "public_id": "drv_b466bb6eedd8",
       "rank": 3
     },
     {
@@ -16249,7 +16250,7 @@
     {
       "rank": 31,
       "player_id": "S76561197983024493",
-      "public_id": null,
+      "public_id": "drv_b466bb6eedd8",
       "driver": "Andrei Soldatenkov [ASG]",
       "best_lap_ms": 107405,
       "best_lap": "1:47.405",
@@ -24811,7 +24812,7 @@
     "date": "2026-03-16",
     "unique_players_today": 16,
     "races_today": 1,
-    "sessions_today": 7,
+    "sessions_today": 10,
     "points_earned_today": 102,
     "wins_today": 1,
     "podiums_today": 3,
@@ -24839,7 +24840,7 @@
       "driver": "Gleb Blatin",
       "points": 26
     },
-    "updated_at": "2026-03-16T14:32:20"
+    "updated_at": "2026-03-16T14:37:20"
   },
   "driver_of_the_day": {
     "date": "2026-03-16",
@@ -24853,15 +24854,15 @@
     "best_lap": "1:48.550",
     "best_lap_ms": 108550,
     "best_lap_track": "monza",
-    "updated_at": "2026-03-16T14:32:20"
+    "updated_at": "2026-03-16T14:37:20"
   },
   "server_status": {
     "status": "online",
     "server_online": true,
-    "players_online": 0,
+    "players_online": 1,
     "tcp_listening": true,
     "udp_listening": true,
     "broadcast_listening": true,
-    "updated_at": "2026-03-16T14:32:20"
+    "updated_at": "2026-03-16T14:37:20"
   }
 }
