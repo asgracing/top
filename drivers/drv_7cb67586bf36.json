@@ -1,17 +1,17 @@
 {
-  "public_id": "drv_288f3fe233e7",
-  "driver": "Daniele Di Marzo",
+  "public_id": "drv_7cb67586bf36",
+  "driver": "Jose Luis Sieira",
   "summary": {
     "points": 0,
     "average_points_per_race": 0.0,
     "races": 1,
     "wins": 0,
     "podiums": 0,
-    "average_finish": 13.0,
-    "best_lap": "1:50.967",
-    "best_lap_ms": 110967,
-    "best_lap_track": "monza",
-    "best_lap_session_type": "R",
+    "average_finish": 42.0,
+    "best_lap": null,
+    "best_lap_ms": null,
+    "best_lap_track": null,
+    "best_lap_session_type": null,
     "penalty_count": 0,
     "penalty_points": 0,
     "fastest_lap_awards": 0,
@@ -20,11 +20,11 @@
     "last_seen": "2026-03-17T01:09:50",
     "win_rate": 0.0,
     "podium_rate": 0.0,
-    "average_positions_delta": 17.0,
-    "positions_delta_races": 1
+    "average_positions_delta": null,
+    "positions_delta_races": 0
   },
   "recent_form": [
-    13
+    42
   ],
   "track_stats": [
     {
@@ -33,10 +33,10 @@
       "wins": 0,
       "podiums": 0,
       "points": 0,
-      "finish_sum": 13,
-      "average_finish": 13.0,
-      "best_lap_ms": 110967,
-      "best_lap": "1:50.967"
+      "finish_sum": 42,
+      "average_finish": 42.0,
+      "best_lap_ms": null,
+      "best_lap": null
     }
   ],
   "race_history": [
@@ -44,23 +44,23 @@
       "race_id": "260317_010950_R.json",
       "finished_at": "2026-03-17T01:09:50",
       "track": "monza",
-      "position": 13,
+      "position": 42,
       "participants_count": 42,
       "winner": "Jere Kärki (VR)",
       "points": 0,
-      "qualifying_position": 30,
-      "start_position": 30,
-      "start_position_source": "qualifying_car_id",
-      "positions_delta": 17,
-      "positions_gained": 17,
-      "positions_lost": 0,
-      "best_lap": "1:50.967",
-      "best_lap_ms": 110967,
-      "total_time": "20:55.458",
-      "total_time_ms": 1255458,
-      "gap": "0:50.779",
-      "gap_ms": 50779,
-      "lap_count": 11,
+      "qualifying_position": null,
+      "start_position": null,
+      "start_position_source": "unknown",
+      "positions_delta": null,
+      "positions_gained": null,
+      "positions_lost": null,
+      "best_lap": null,
+      "best_lap_ms": null,
+      "total_time": null,
+      "total_time_ms": null,
+      "gap": null,
+      "gap_ms": null,
+      "lap_count": 0,
       "had_best_lap": false,
       "penalty_count": 0,
       "penalty_points": 0

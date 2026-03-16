@@ -3,11 +3,11 @@
   "driver": "Alan Macleod",
   "summary": {
     "points": 2,
-    "average_points_per_race": 2.0,
-    "races": 1,
+    "average_points_per_race": 1.0,
+    "races": 2,
     "wins": 0,
     "podiums": 0,
-    "average_finish": 9.0,
+    "average_finish": 11.5,
     "best_lap": "1:48.860",
     "best_lap_ms": 108860,
     "best_lap_track": "monza",
@@ -16,30 +16,56 @@
     "penalty_points": 0,
     "fastest_lap_awards": 0,
     "most_raced_track": "monza",
-    "last_race_at": "2026-03-17T00:33:05",
-    "last_seen": "2026-03-17T00:33:05",
+    "last_race_at": "2026-03-17T01:09:50",
+    "last_seen": "2026-03-17T01:09:50",
     "win_rate": 0.0,
     "podium_rate": 0.0,
-    "average_positions_delta": -4.0,
-    "positions_delta_races": 1
+    "average_positions_delta": -7.0,
+    "positions_delta_races": 2
   },
   "recent_form": [
+    14,
     9
   ],
   "track_stats": [
     {
       "track": "monza",
-      "races": 1,
+      "races": 2,
       "wins": 0,
       "podiums": 0,
       "points": 2,
-      "finish_sum": 9,
-      "average_finish": 9.0,
+      "finish_sum": 23,
+      "average_finish": 11.5,
       "best_lap_ms": 108860,
       "best_lap": "1:48.860"
     }
   ],
   "race_history": [
+    {
+      "race_id": "260317_010950_R.json",
+      "finished_at": "2026-03-17T01:09:50",
+      "track": "monza",
+      "position": 14,
+      "participants_count": 42,
+      "winner": "Jere Kärki (VR)",
+      "points": 0,
+      "qualifying_position": 4,
+      "start_position": 4,
+      "start_position_source": "qualifying_car_id",
+      "positions_delta": -10,
+      "positions_gained": 0,
+      "positions_lost": 10,
+      "best_lap": "1:49.220",
+      "best_lap_ms": 109220,
+      "total_time": "20:58.328",
+      "total_time_ms": 1258328,
+      "gap": "0:53.649",
+      "gap_ms": 53649,
+      "lap_count": 11,
+      "had_best_lap": false,
+      "penalty_count": 0,
+      "penalty_points": 0
+    },
     {
       "race_id": "260317_003305_R.json",
       "finished_at": "2026-03-17T00:33:05",

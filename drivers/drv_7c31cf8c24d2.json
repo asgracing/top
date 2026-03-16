@@ -3,8 +3,8 @@
   "driver": "Alex Tyurin",
   "summary": {
     "points": 24,
-    "average_points_per_race": 6.0,
-    "races": 4,
+    "average_points_per_race": 4.8,
+    "races": 5,
     "wins": 0,
     "podiums": 0,
     "average_finish": 11.0,
@@ -16,14 +16,15 @@
     "penalty_points": 0,
     "fastest_lap_awards": 0,
     "most_raced_track": "monza",
-    "last_race_at": "2026-03-15T02:03:53",
-    "last_seen": "2026-03-15T02:03:53",
+    "last_race_at": "2026-03-17T01:09:50",
+    "last_seen": "2026-03-17T01:09:50",
     "win_rate": 0.0,
     "podium_rate": 0.0,
-    "average_positions_delta": -0.75,
-    "positions_delta_races": 4
+    "average_positions_delta": 2.2,
+    "positions_delta_races": 5
   },
   "recent_form": [
+    11,
     13,
     4,
     4,
@@ -32,17 +33,42 @@
   "track_stats": [
     {
       "track": "monza",
-      "races": 4,
+      "races": 5,
       "wins": 0,
       "podiums": 0,
       "points": 24,
-      "finish_sum": 44,
+      "finish_sum": 55,
       "average_finish": 11.0,
-      "best_lap_ms": 110317,
-      "best_lap": "1:50.317"
+      "best_lap_ms": 109980,
+      "best_lap": "1:49.980"
     }
   ],
   "race_history": [
+    {
+      "race_id": "260317_010950_R.json",
+      "finished_at": "2026-03-17T01:09:50",
+      "track": "monza",
+      "position": 11,
+      "participants_count": 42,
+      "winner": "Jere Kärki (VR)",
+      "points": 0,
+      "qualifying_position": 25,
+      "start_position": 25,
+      "start_position_source": "qualifying_car_id",
+      "positions_delta": 14,
+      "positions_gained": 14,
+      "positions_lost": 0,
+      "best_lap": "1:49.980",
+      "best_lap_ms": 109980,
+      "total_time": "20:41.681",
+      "total_time_ms": 1241681,
+      "gap": "0:37.002",
+      "gap_ms": 37002,
+      "lap_count": 11,
+      "had_best_lap": false,
+      "penalty_count": 0,
+      "penalty_points": 0
+    },
     {
       "race_id": "260315_020353_R.json",
       "finished_at": "2026-03-15T02:03:53",
