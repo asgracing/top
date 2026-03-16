@@ -681,6 +681,10 @@ h1 {
   color: #ef4444;
 }
 
+.server-status.degraded {
+  color: #f59e0b;
+}
+
 .server-players {
   opacity: 0.8;
   font-size: 1em;
@@ -1642,6 +1646,30 @@ body.modal-open {
 @media (max-width: 768px) {
   .site-video-bg {
     display: none;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .site-video-bg {
+    display: none;
+  }
+
+  .pulse-attention {
+    animation: none;
+  }
+
+  .top-nav,
+  .lang-switch,
+  .modal-overlay {
+    backdrop-filter: none;
+  }
+
+  .btn,
+  .top-nav-link-primary,
+  .top-nav-link-secondary,
+  .page-btn,
+  .modal-close {
+    transition: none;
   }
 }
 

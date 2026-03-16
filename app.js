@@ -1,8 +1,11 @@
+const snapshotUrl = "./snapshot.json";
 const leaderboardUrl = "./leaderboard.json";
 const bestlapsUrl = "./bestlaps.json";
 const globalStatsUrl = "./global_stats.json";
 const safetyUrl = "./safety.json";
 const driverOfDayUrl = "./driver_of_the_day.json";
+const serverStatusUrl = "./server_status.json";
+const onlineUrl = "./online.json";
 const PAGE_SIZE = 10;
 
 let leaderboardData = [];
@@ -536,9 +539,86 @@ function getProcessedSafety() {
 }
 
 async function loadJson(url) {
-  const res = await fetch(url + "?t=" + Date.now(), { cache: "no-store" });
+  const res = await fetch(url, { cache: "default" });
   if (!res.ok) throw new Error(`HTTP ${res.status} for ${url}`);
   return await res.json();
+}
+
+function debounce(fn, wait = 180) {
+  let timeoutId = null;
+  return (...args) => {
+    clearTimeout(timeoutId);
+    timeoutId = window.setTimeout(() => fn(...args), wait);
+  };
+}
+
+function normalizeSnapshotPayload(snapshot) {
+  return {
+    leaderboard: Array.isArray(snapshot?.leaderboard) ? snapshot.leaderboard : [],
+    bestlaps: Array.isArray(snapshot?.bestlaps) ? snapshot.bestlaps : [],
+    globalStats: snapshot?.global_stats && typeof snapshot.global_stats === "object" ? snapshot.global_stats : null,
+    safety: Array.isArray(snapshot?.safety) ? snapshot.safety : [],
+    driverOfDay: snapshot?.driver_of_the_day && typeof snapshot.driver_of_the_day === "object" ? snapshot.driver_of_the_day : null,
+    serverStatus: snapshot?.server_status && typeof snapshot.server_status === "object" ? snapshot.server_status : null,
+    online: Array.isArray(snapshot?.online) ? snapshot.online : []
+  };
+}
+
+function normalizeLegacyPayload(results) {
+  const [
+    leaderboardResult,
+    bestlapsResult,
+    globalStatsResult,
+    safetyResult,
+    driverOfDayResult,
+    serverStatusResult,
+    onlineResult
+  ] = results;
+
+  return {
+    leaderboard: leaderboardResult.status === "fulfilled" && Array.isArray(leaderboardResult.value)
+      ? leaderboardResult.value
+      : [],
+    bestlaps: bestlapsResult.status === "fulfilled" && Array.isArray(bestlapsResult.value)
+      ? bestlapsResult.value
+      : [],
+    globalStats: globalStatsResult.status === "fulfilled" && globalStatsResult.value && typeof globalStatsResult.value === "object"
+      ? globalStatsResult.value
+      : null,
+    safety: safetyResult.status === "fulfilled" && Array.isArray(safetyResult.value)
+      ? safetyResult.value
+      : [],
+    driverOfDay: driverOfDayResult.status === "fulfilled" && driverOfDayResult.value && typeof driverOfDayResult.value === "object"
+      ? driverOfDayResult.value
+      : null,
+    serverStatus: serverStatusResult.status === "fulfilled" && serverStatusResult.value && typeof serverStatusResult.value === "object"
+      ? serverStatusResult.value
+      : null,
+    online: onlineResult.status === "fulfilled" && Array.isArray(onlineResult.value)
+      ? onlineResult.value
+      : []
+  };
+}
+
+async function loadSiteData() {
+  try {
+    const snapshot = await loadJson(snapshotUrl);
+    return normalizeSnapshotPayload(snapshot);
+  } catch (snapshotError) {
+    console.warn("snapshot.json is unavailable, falling back to legacy JSON files.", snapshotError);
+  }
+
+  const legacyResults = await Promise.allSettled([
+    loadJson(leaderboardUrl),
+    loadJson(bestlapsUrl),
+    loadJson(globalStatsUrl),
+    loadJson(safetyUrl),
+    loadJson(driverOfDayUrl),
+    loadJson(serverStatusUrl),
+    loadJson(onlineUrl)
+  ]);
+
+  return normalizeLegacyPayload(legacyResults);
 }
 
 function applyStaticTranslations() {
@@ -1003,28 +1083,37 @@ function bindSearchInputs() {
   const leaderboardInput = document.getElementById("leaderboard-search");
   const bestlapsInput = document.getElementById("bestlaps-search");
   const safetyInput = document.getElementById("safety-search");
+  const handleLeaderboardInput = debounce((value) => {
+    leaderboardSearch = value || "";
+    leaderboardPage = 1;
+    renderLeaderboardTablePage();
+  });
+  const handleBestlapsInput = debounce((value) => {
+    bestlapsSearch = value || "";
+    bestlapsPage = 1;
+    renderBestLapsTablePage();
+  });
+  const handleSafetyInput = debounce((value) => {
+    safetySearch = value || "";
+    safetyPage = 1;
+    renderSafetyTablePage();
+  });
 
   if (leaderboardInput) {
     leaderboardInput.addEventListener("input", (e) => {
-      leaderboardSearch = e.target.value || "";
-      leaderboardPage = 1;
-      renderLeaderboardTablePage();
+      handleLeaderboardInput(e.target.value);
     });
   }
 
   if (bestlapsInput) {
     bestlapsInput.addEventListener("input", (e) => {
-      bestlapsSearch = e.target.value || "";
-      bestlapsPage = 1;
-      renderBestLapsTablePage();
+      handleBestlapsInput(e.target.value);
     });
   }
 
   if (safetyInput) {
     safetyInput.addEventListener("input", (e) => {
-      safetySearch = e.target.value || "";
-      safetyPage = 1;
-      renderSafetyTablePage();
+      handleSafetyInput(e.target.value);
     });
   }
 }
@@ -1308,22 +1397,14 @@ async function init() {
   applyStaticTranslations();
 
   try {
-const [leaderboard, bestlaps, globalStats, safety, driverOfDay, serverStatus, online] = await Promise.all([
-  loadJson(leaderboardUrl),
-  loadJson(bestlapsUrl),
-  loadJson(globalStatsUrl),
-  loadJson(safetyUrl),
-  loadJson(driverOfDayUrl),
-  loadJson("./server_status.json"),
-  loadJson("./online.json")
-]);
+    const data = await loadSiteData();
 
-    leaderboardData = Array.isArray(leaderboard) ? leaderboard : [];
-    bestlapsData = Array.isArray(bestlaps) ? bestlaps : [];
-    todayStatsData = globalStats && typeof globalStats === "object" ? globalStats : null;
-    safetyData = Array.isArray(safety) ? safety : [];
-    driverOfDayData = driverOfDay && typeof driverOfDay === "object" ? driverOfDay : null;
-    onlineData = Array.isArray(online) ? online : [];
+    leaderboardData = data.leaderboard;
+    bestlapsData = data.bestlaps;
+    todayStatsData = data.globalStats;
+    safetyData = data.safety;
+    driverOfDayData = data.driverOfDay;
+    onlineData = data.online;
 
     const driversCountEl = document.getElementById("drivers-count");
     if (driversCountEl) {
@@ -1352,20 +1433,22 @@ const [leaderboard, bestlaps, globalStats, safety, driverOfDay, serverStatus, on
 
     if (serverStatusEl && serverPlayersEl) {
       const status =
-        serverStatus && typeof serverStatus === "object"
-          ? String(serverStatus.status || "offline").toLowerCase()
+        data.serverStatus && typeof data.serverStatus === "object"
+          ? String(data.serverStatus.status || "offline").toLowerCase()
           : "offline";
 
       const players =
-        serverStatus && Number.isFinite(serverStatus.players_online)
-          ? serverStatus.players_online
+        data.serverStatus && Number.isFinite(data.serverStatus.players_online)
+          ? data.serverStatus.players_online
           : 0;
 
       serverStatusEl.textContent = status.toUpperCase();
       serverPlayersEl.textContent = players;
 
-      serverStatusEl.classList.remove("online", "offline");
-      serverStatusEl.classList.add(status === "online" ? "online" : "offline");
+      serverStatusEl.classList.remove("online", "offline", "degraded");
+      serverStatusEl.classList.add(
+        status === "online" ? "online" : status === "online_process_only" ? "degraded" : "offline"
+      );
     }
 
     rerenderUI();
@@ -1407,7 +1490,7 @@ const [leaderboard, bestlaps, globalStats, safety, driverOfDay, serverStatus, on
 
     if (serverStatusEl) {
       serverStatusEl.textContent = "OFFLINE";
-      serverStatusEl.classList.remove("online");
+      serverStatusEl.classList.remove("online", "degraded");
       serverStatusEl.classList.add("offline");
     }
 
