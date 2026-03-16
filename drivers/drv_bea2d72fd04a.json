@@ -3,11 +3,11 @@
   "driver": "Kevin Macleod",
   "summary": {
     "points": 0,
-    "average_points_per_race": 0,
-    "races": 0,
+    "average_points_per_race": 0.0,
+    "races": 1,
     "wins": 0,
     "podiums": 0,
-    "average_finish": null,
+    "average_finish": 21.0,
     "best_lap": "1:48.190",
     "best_lap_ms": 108190,
     "best_lap_track": "monza",
@@ -15,17 +15,57 @@
     "penalty_count": 0,
     "penalty_points": 0,
     "fastest_lap_awards": 0,
-    "most_raced_track": null,
-    "last_race_at": null,
-    "last_seen": "2026-03-17T00:07:15",
-    "win_rate": 0,
-    "podium_rate": 0,
-    "average_positions_delta": null,
-    "positions_delta_races": 0
+    "most_raced_track": "monza",
+    "last_race_at": "2026-03-17T00:33:05",
+    "last_seen": "2026-03-17T00:33:05",
+    "win_rate": 0.0,
+    "podium_rate": 0.0,
+    "average_positions_delta": -18.0,
+    "positions_delta_races": 1
   },
-  "recent_form": [],
-  "track_stats": [],
-  "race_history": [],
+  "recent_form": [
+    21
+  ],
+  "track_stats": [
+    {
+      "track": "monza",
+      "races": 1,
+      "wins": 0,
+      "podiums": 0,
+      "points": 0,
+      "finish_sum": 21,
+      "average_finish": 21.0,
+      "best_lap_ms": 108555,
+      "best_lap": "1:48.555"
+    }
+  ],
+  "race_history": [
+    {
+      "race_id": "260317_003305_R.json",
+      "finished_at": "2026-03-17T00:33:05",
+      "track": "monza",
+      "position": 21,
+      "participants_count": 44,
+      "winner": "Christian Dalla Longa",
+      "points": 0,
+      "qualifying_position": 3,
+      "start_position": 3,
+      "start_position_source": "qualifying_car_id",
+      "positions_delta": -18,
+      "positions_gained": 0,
+      "positions_lost": 18,
+      "best_lap": "1:48.555",
+      "best_lap_ms": 108555,
+      "total_time": "8:50.827",
+      "total_time_ms": 530827,
+      "gap": "0:00.000",
+      "gap_ms": 0,
+      "lap_count": 4,
+      "had_best_lap": false,
+      "penalty_count": 0,
+      "penalty_points": 0
+    }
+  ],
   "penalties": {
     "penalty_count": 0,
     "penalty_points": 0,

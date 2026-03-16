@@ -4,10 +4,10 @@
   "summary": {
     "points": 0,
     "average_points_per_race": 0.0,
-    "races": 1,
+    "races": 2,
     "wins": 0,
     "podiums": 0,
-    "average_finish": 23.0,
+    "average_finish": 28.0,
     "best_lap": "1:50.445",
     "best_lap_ms": 110445,
     "best_lap_track": "monza",
@@ -16,30 +16,56 @@
     "penalty_points": 0,
     "fastest_lap_awards": 0,
     "most_raced_track": "monza",
-    "last_race_at": "2026-03-15T21:15:16",
-    "last_seen": "2026-03-17T00:07:15",
+    "last_race_at": "2026-03-17T00:33:05",
+    "last_seen": "2026-03-17T00:33:05",
     "win_rate": 0.0,
     "podium_rate": 0.0,
-    "average_positions_delta": 6.0,
-    "positions_delta_races": 1
+    "average_positions_delta": -7.5,
+    "positions_delta_races": 2
   },
   "recent_form": [
+    33,
     23
   ],
   "track_stats": [
     {
       "track": "monza",
-      "races": 1,
+      "races": 2,
       "wins": 0,
       "podiums": 0,
       "points": 0,
-      "finish_sum": 23,
-      "average_finish": 23.0,
+      "finish_sum": 56,
+      "average_finish": 28.0,
       "best_lap_ms": 112440,
       "best_lap": "1:52.440"
     }
   ],
   "race_history": [
+    {
+      "race_id": "260317_003305_R.json",
+      "finished_at": "2026-03-17T00:33:05",
+      "track": "monza",
+      "position": 33,
+      "participants_count": 44,
+      "winner": "Christian Dalla Longa",
+      "points": 0,
+      "qualifying_position": 12,
+      "start_position": 12,
+      "start_position_source": "qualifying_car_id",
+      "positions_delta": -21,
+      "positions_gained": 0,
+      "positions_lost": 21,
+      "best_lap": null,
+      "best_lap_ms": null,
+      "total_time": null,
+      "total_time_ms": null,
+      "gap": null,
+      "gap_ms": null,
+      "lap_count": 0,
+      "had_best_lap": false,
+      "penalty_count": 0,
+      "penalty_points": 0
+    },
     {
       "race_id": "260315_211516_R.json",
       "finished_at": "2026-03-15T21:15:16",

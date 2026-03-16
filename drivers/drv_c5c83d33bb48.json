@@ -3,11 +3,11 @@
   "driver": "Zeyad Alaa",
   "summary": {
     "points": 10,
-    "average_points_per_race": 3.33,
-    "races": 3,
+    "average_points_per_race": 2.5,
+    "races": 4,
     "wins": 0,
     "podiums": 0,
-    "average_finish": 20.33,
+    "average_finish": 23.75,
     "best_lap": "1:48.737",
     "best_lap_ms": 108737,
     "best_lap_track": "monza",
@@ -16,14 +16,15 @@
     "penalty_points": 0,
     "fastest_lap_awards": 0,
     "most_raced_track": "monza",
-    "last_race_at": "2026-03-16T23:55:33",
-    "last_seen": "2026-03-16T23:55:33",
+    "last_race_at": "2026-03-17T00:33:05",
+    "last_seen": "2026-03-17T00:33:05",
     "win_rate": 0.0,
     "podium_rate": 0.0,
-    "average_positions_delta": 4.5,
-    "positions_delta_races": 2
+    "average_positions_delta": -6.0,
+    "positions_delta_races": 3
   },
   "recent_form": [
+    34,
     6,
     9,
     46
@@ -31,17 +32,42 @@
   "track_stats": [
     {
       "track": "monza",
-      "races": 3,
+      "races": 4,
       "wins": 0,
       "podiums": 0,
       "points": 10,
-      "finish_sum": 61,
-      "average_finish": 20.33,
+      "finish_sum": 95,
+      "average_finish": 23.75,
       "best_lap_ms": 109187,
       "best_lap": "1:49.187"
     }
   ],
   "race_history": [
+    {
+      "race_id": "260317_003305_R.json",
+      "finished_at": "2026-03-17T00:33:05",
+      "track": "monza",
+      "position": 34,
+      "participants_count": 44,
+      "winner": "Christian Dalla Longa",
+      "points": 0,
+      "qualifying_position": 7,
+      "start_position": 7,
+      "start_position_source": "qualifying_car_id",
+      "positions_delta": -27,
+      "positions_gained": 0,
+      "positions_lost": 27,
+      "best_lap": null,
+      "best_lap_ms": null,
+      "total_time": null,
+      "total_time_ms": null,
+      "gap": null,
+      "gap_ms": null,
+      "lap_count": 0,
+      "had_best_lap": false,
+      "penalty_count": 0,
+      "penalty_points": 0
+    },
     {
       "race_id": "260316_235533_R.json",
       "finished_at": "2026-03-16T23:55:33",
