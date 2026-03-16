@@ -4,10 +4,10 @@
   "summary": {
     "points": 0,
     "average_points_per_race": 0.0,
-    "races": 1,
+    "races": 2,
     "wins": 0,
     "podiums": 0,
-    "average_finish": 15.0,
+    "average_finish": 20.0,
     "best_lap": "1:51.620",
     "best_lap_ms": 111620,
     "best_lap_track": "monza",
@@ -16,30 +16,56 @@
     "penalty_points": 0,
     "fastest_lap_awards": 0,
     "most_raced_track": "monza",
-    "last_race_at": "2026-03-16T22:38:22",
-    "last_seen": "2026-03-16T22:49:56",
+    "last_race_at": "2026-03-16T23:17:32",
+    "last_seen": "2026-03-16T23:17:32",
     "win_rate": 0.0,
     "podium_rate": 0.0,
-    "average_positions_delta": null,
-    "positions_delta_races": 0
+    "average_positions_delta": -8.0,
+    "positions_delta_races": 1
   },
   "recent_form": [
+    25,
     15
   ],
   "track_stats": [
     {
       "track": "monza",
-      "races": 1,
+      "races": 2,
       "wins": 0,
       "podiums": 0,
       "points": 0,
-      "finish_sum": 15,
-      "average_finish": 15.0,
+      "finish_sum": 40,
+      "average_finish": 20.0,
       "best_lap_ms": 111952,
       "best_lap": "1:51.952"
     }
   ],
   "race_history": [
+    {
+      "race_id": "260316_231732_R.json",
+      "finished_at": "2026-03-16T23:17:32",
+      "track": "monza",
+      "position": 25,
+      "participants_count": 37,
+      "winner": "Perry Dinos",
+      "points": 0,
+      "qualifying_position": 17,
+      "start_position": 17,
+      "start_position_source": "qualifying_car_id",
+      "positions_delta": -8,
+      "positions_gained": 0,
+      "positions_lost": 8,
+      "best_lap": "1:54.215",
+      "best_lap_ms": 114215,
+      "total_time": "4:45.788",
+      "total_time_ms": 285788,
+      "gap": "0:00.000",
+      "gap_ms": 0,
+      "lap_count": 2,
+      "had_best_lap": false,
+      "penalty_count": 0,
+      "penalty_points": 0
+    },
     {
       "race_id": "260316_223822_R.json",
       "finished_at": "2026-03-16T22:38:22",

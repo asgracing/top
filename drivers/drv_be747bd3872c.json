@@ -1,17 +1,17 @@
 {
-  "public_id": "drv_ee498adc114c",
-  "driver": "Pascal Blatter",
+  "public_id": "drv_be747bd3872c",
+  "driver": "Ronald McDonald",
   "summary": {
     "points": 0,
     "average_points_per_race": 0.0,
     "races": 1,
     "wins": 0,
     "podiums": 0,
-    "average_finish": 31.0,
-    "best_lap": "1:50.965",
-    "best_lap_ms": 110965,
+    "average_finish": 22.0,
+    "best_lap": "1:47.962",
+    "best_lap_ms": 107962,
     "best_lap_track": "monza",
-    "best_lap_session_type": "Q",
+    "best_lap_session_type": "R",
     "penalty_count": 0,
     "penalty_points": 0,
     "fastest_lap_awards": 0,
@@ -20,11 +20,11 @@
     "last_seen": "2026-03-16T23:17:32",
     "win_rate": 0.0,
     "podium_rate": 0.0,
-    "average_positions_delta": -17.0,
-    "positions_delta_races": 1
+    "average_positions_delta": null,
+    "positions_delta_races": 0
   },
   "recent_form": [
-    31
+    22
   ],
   "track_stats": [
     {
@@ -33,10 +33,10 @@
       "wins": 0,
       "podiums": 0,
       "points": 0,
-      "finish_sum": 31,
-      "average_finish": 31.0,
-      "best_lap_ms": null,
-      "best_lap": null
+      "finish_sum": 22,
+      "average_finish": 22.0,
+      "best_lap_ms": 107962,
+      "best_lap": "1:47.962"
     }
   ],
   "race_history": [
@@ -44,23 +44,23 @@
       "race_id": "260316_231732_R.json",
       "finished_at": "2026-03-16T23:17:32",
       "track": "monza",
-      "position": 31,
+      "position": 22,
       "participants_count": 37,
       "winner": "Perry Dinos",
       "points": 0,
-      "qualifying_position": 14,
-      "start_position": 14,
-      "start_position_source": "qualifying_car_id",
-      "positions_delta": -17,
-      "positions_gained": 0,
-      "positions_lost": 17,
-      "best_lap": null,
-      "best_lap_ms": null,
-      "total_time": null,
-      "total_time_ms": null,
-      "gap": null,
-      "gap_ms": null,
-      "lap_count": 0,
+      "qualifying_position": null,
+      "start_position": null,
+      "start_position_source": "unknown",
+      "positions_delta": null,
+      "positions_gained": null,
+      "positions_lost": null,
+      "best_lap": "1:47.962",
+      "best_lap_ms": 107962,
+      "total_time": "22:13.292",
+      "total_time_ms": 1333292,
+      "gap": "0:23.868",
+      "gap_ms": 23868,
+      "lap_count": 4,
       "had_best_lap": false,
       "penalty_count": 0,
       "penalty_points": 0
