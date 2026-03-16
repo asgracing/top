@@ -781,10 +781,6 @@ function renderTop3(data) {
           <div class="meta-value">${escapeHtml(row.wins ?? 0)}</div>
         </div>
         <div class="meta-box">
-          <div class="meta-label">${escapeHtml(t("metaLabels").podiums)}</div>
-          <div class="meta-value">${escapeHtml(row.podiums ?? 0)}</div>
-        </div>
-        <div class="meta-box">
           <div class="meta-label">${escapeHtml(t("metaLabels").races)}</div>
           <div class="meta-value">${escapeHtml(row.races ?? 0)}</div>
         </div>
