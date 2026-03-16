@@ -3,11 +3,11 @@
   "driver": "RED ICEFIRE",
   "summary": {
     "points": 11,
-    "average_points_per_race": 1.22,
-    "races": 9,
+    "average_points_per_race": 1.1,
+    "races": 10,
     "wins": 0,
     "podiums": 0,
-    "average_finish": 18.0,
+    "average_finish": 17.9,
     "best_lap": "1:49.512",
     "best_lap_ms": 109512,
     "best_lap_track": "monza",
@@ -16,34 +16,59 @@
     "penalty_points": 0,
     "fastest_lap_awards": 0,
     "most_raced_track": "monza",
-    "last_race_at": "2026-03-16T23:17:32",
-    "last_seen": "2026-03-16T23:17:32",
+    "last_race_at": "2026-03-16T23:55:33",
+    "last_seen": "2026-03-16T23:55:33",
     "win_rate": 0.0,
     "podium_rate": 0.0,
-    "average_positions_delta": 7.17,
-    "positions_delta_races": 6
+    "average_positions_delta": 6.71,
+    "positions_delta_races": 7
   },
   "recent_form": [
+    17,
     11,
     20,
     17,
-    32,
-    8
+    32
   ],
   "track_stats": [
     {
       "track": "monza",
-      "races": 9,
+      "races": 10,
       "wins": 0,
       "podiums": 0,
       "points": 11,
-      "finish_sum": 162,
-      "average_finish": 18.0,
+      "finish_sum": 179,
+      "average_finish": 17.9,
       "best_lap_ms": 109512,
       "best_lap": "1:49.512"
     }
   ],
   "race_history": [
+    {
+      "race_id": "260316_235533_R.json",
+      "finished_at": "2026-03-16T23:55:33",
+      "track": "monza",
+      "position": 17,
+      "participants_count": 39,
+      "winner": "robert René",
+      "points": 0,
+      "qualifying_position": 21,
+      "start_position": 21,
+      "start_position_source": "qualifying_car_id",
+      "positions_delta": 4,
+      "positions_gained": 4,
+      "positions_lost": 0,
+      "best_lap": "1:50.605",
+      "best_lap_ms": 110605,
+      "total_time": "22:45.489",
+      "total_time_ms": 1365489,
+      "gap": "1:02.407",
+      "gap_ms": 62407,
+      "lap_count": 6,
+      "had_best_lap": false,
+      "penalty_count": 0,
+      "penalty_points": 0
+    },
     {
       "race_id": "260316_231732_R.json",
       "finished_at": "2026-03-16T23:17:32",

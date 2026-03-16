@@ -4,10 +4,10 @@
   "summary": {
     "points": 0,
     "average_points_per_race": 0.0,
-    "races": 1,
+    "races": 2,
     "wins": 0,
     "podiums": 0,
-    "average_finish": 23.0,
+    "average_finish": 19.5,
     "best_lap": "1:48.962",
     "best_lap_ms": 108962,
     "best_lap_track": "monza",
@@ -16,30 +16,56 @@
     "penalty_points": 0,
     "fastest_lap_awards": 0,
     "most_raced_track": "monza",
-    "last_race_at": "2026-03-16T23:17:32",
-    "last_seen": "2026-03-16T23:29:28",
+    "last_race_at": "2026-03-16T23:55:33",
+    "last_seen": "2026-03-16T23:55:33",
     "win_rate": 0.0,
     "podium_rate": 0.0,
-    "average_positions_delta": null,
-    "positions_delta_races": 0
+    "average_positions_delta": -6.0,
+    "positions_delta_races": 1
   },
   "recent_form": [
+    16,
     23
   ],
   "track_stats": [
     {
       "track": "monza",
-      "races": 1,
+      "races": 2,
       "wins": 0,
       "podiums": 0,
       "points": 0,
-      "finish_sum": 23,
-      "average_finish": 23.0,
-      "best_lap_ms": 110615,
-      "best_lap": "1:50.615"
+      "finish_sum": 39,
+      "average_finish": 19.5,
+      "best_lap_ms": 108975,
+      "best_lap": "1:48.975"
     }
   ],
   "race_history": [
+    {
+      "race_id": "260316_235533_R.json",
+      "finished_at": "2026-03-16T23:55:33",
+      "track": "monza",
+      "position": 16,
+      "participants_count": 39,
+      "winner": "robert René",
+      "points": 0,
+      "qualifying_position": 10,
+      "start_position": 10,
+      "start_position_source": "qualifying_car_id",
+      "positions_delta": -6,
+      "positions_gained": 0,
+      "positions_lost": 6,
+      "best_lap": "1:48.975",
+      "best_lap_ms": 108975,
+      "total_time": "14:14.961",
+      "total_time_ms": 854961,
+      "gap": "0:00.000",
+      "gap_ms": 0,
+      "lap_count": 7,
+      "had_best_lap": false,
+      "penalty_count": 0,
+      "penalty_points": 0
+    },
     {
       "race_id": "260316_231732_R.json",
       "finished_at": "2026-03-16T23:17:32",

@@ -4,10 +4,10 @@
   "summary": {
     "points": 0,
     "average_points_per_race": 0.0,
-    "races": 3,
+    "races": 4,
     "wins": 0,
     "podiums": 0,
-    "average_finish": 16.67,
+    "average_finish": 16.0,
     "best_lap": "1:52.077",
     "best_lap_ms": 112077,
     "best_lap_track": "monza",
@@ -16,14 +16,15 @@
     "penalty_points": 0,
     "fastest_lap_awards": 0,
     "most_raced_track": "monza",
-    "last_race_at": "2026-03-16T22:38:22",
-    "last_seen": "2026-03-16T23:29:28",
+    "last_race_at": "2026-03-16T23:55:33",
+    "last_seen": "2026-03-16T23:55:33",
     "win_rate": 0.0,
     "podium_rate": 0.0,
-    "average_positions_delta": 6.5,
-    "positions_delta_races": 2
+    "average_positions_delta": 4.67,
+    "positions_delta_races": 3
   },
   "recent_form": [
+    14,
     17,
     13,
     20
@@ -31,17 +32,42 @@
   "track_stats": [
     {
       "track": "monza",
-      "races": 3,
+      "races": 4,
       "wins": 0,
       "podiums": 0,
       "points": 0,
-      "finish_sum": 50,
-      "average_finish": 16.67,
+      "finish_sum": 64,
+      "average_finish": 16.0,
       "best_lap_ms": 112165,
       "best_lap": "1:52.165"
     }
   ],
   "race_history": [
+    {
+      "race_id": "260316_235533_R.json",
+      "finished_at": "2026-03-16T23:55:33",
+      "track": "monza",
+      "position": 14,
+      "participants_count": 39,
+      "winner": "robert René",
+      "points": 0,
+      "qualifying_position": 15,
+      "start_position": 15,
+      "start_position_source": "qualifying_car_id",
+      "positions_delta": 1,
+      "positions_gained": 1,
+      "positions_lost": 0,
+      "best_lap": "1:53.570",
+      "best_lap_ms": 113570,
+      "total_time": "23:21.324",
+      "total_time_ms": 1401324,
+      "gap": "1:38.242",
+      "gap_ms": 98242,
+      "lap_count": 9,
+      "had_best_lap": false,
+      "penalty_count": 0,
+      "penalty_points": 0
+    },
     {
       "race_id": "260316_223822_R.json",
       "finished_at": "2026-03-16T22:38:22",
