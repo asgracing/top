@@ -1,6 +1,6 @@
 {
   "schema_version": 4,
-  "generated_at": "2026-03-17T00:37:21",
+  "generated_at": "2026-03-17T00:42:21",
   "leaderboard": [
     {
       "player_id": "S76561199664057628",
@@ -35547,7 +35547,7 @@
       "driver": "Christian Dalla Longa",
       "points": 26
     },
-    "updated_at": "2026-03-17T00:37:21"
+    "updated_at": "2026-03-17T00:42:21"
   },
   "driver_of_the_day": {
     "date": "2026-03-17",
@@ -35563,15 +35563,15 @@
     "best_lap": "1:46.760",
     "best_lap_ms": 106760,
     "best_lap_track": "monza",
-    "updated_at": "2026-03-17T00:37:21"
+    "updated_at": "2026-03-17T00:42:21"
   },
   "server_status": {
     "status": "online",
     "server_online": true,
-    "players_online": 9,
+    "players_online": 15,
     "tcp_listening": true,
     "udp_listening": true,
     "broadcast_listening": true,
-    "updated_at": "2026-03-17T00:37:20"
+    "updated_at": "2026-03-17T00:42:20"
   }
 }
