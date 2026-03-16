@@ -3,11 +3,11 @@
   "driver": "Alexey Ovechkin",
   "summary": {
     "points": 10,
-    "average_points_per_race": 3.33,
-    "races": 3,
+    "average_points_per_race": 2.5,
+    "races": 4,
     "wins": 0,
     "podiums": 0,
-    "average_finish": 18.0,
+    "average_finish": 19.25,
     "best_lap": "1:48.552",
     "best_lap_ms": 108552,
     "best_lap_track": "monza",
@@ -16,14 +16,15 @@
     "penalty_points": 0,
     "fastest_lap_awards": 0,
     "most_raced_track": "monza",
-    "last_race_at": "2026-03-16T18:16:39",
-    "last_seen": "2026-03-16T18:16:39",
+    "last_race_at": "2026-03-16T18:54:54",
+    "last_seen": "2026-03-16T18:54:54",
     "win_rate": 0.0,
     "podium_rate": 0.0,
-    "average_positions_delta": -6.67,
-    "positions_delta_races": 3
+    "average_positions_delta": -4.25,
+    "positions_delta_races": 4
   },
   "recent_form": [
+    23,
     9,
     39,
     6
@@ -31,17 +32,42 @@
   "track_stats": [
     {
       "track": "monza",
-      "races": 3,
+      "races": 4,
       "wins": 0,
       "podiums": 0,
       "points": 10,
-      "finish_sum": 54,
-      "average_finish": 18.0,
+      "finish_sum": 77,
+      "average_finish": 19.25,
       "best_lap_ms": 108552,
       "best_lap": "1:48.552"
     }
   ],
   "race_history": [
+    {
+      "race_id": "260316_185454_R.json",
+      "finished_at": "2026-03-16T18:54:54",
+      "track": "monza",
+      "position": 23,
+      "participants_count": 36,
+      "winner": "Ahmed Yusupov",
+      "points": 0,
+      "qualifying_position": 26,
+      "start_position": 26,
+      "start_position_source": "qualifying_car_id",
+      "positions_delta": 3,
+      "positions_gained": 3,
+      "positions_lost": 0,
+      "best_lap": "1:51.390",
+      "best_lap_ms": 111390,
+      "total_time": "12:03.156",
+      "total_time_ms": 723156,
+      "gap": "0:00.000",
+      "gap_ms": 0,
+      "lap_count": 6,
+      "had_best_lap": false,
+      "penalty_count": 0,
+      "penalty_points": 0
+    },
     {
       "race_id": "260316_181639_R.json",
       "finished_at": "2026-03-16T18:16:39",

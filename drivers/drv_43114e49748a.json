@@ -3,11 +3,11 @@
   "driver": "Sergei Buravov",
   "summary": {
     "points": 2,
-    "average_points_per_race": 0.2,
-    "races": 10,
+    "average_points_per_race": 0.18,
+    "races": 11,
     "wins": 0,
     "podiums": 0,
-    "average_finish": 26.1,
+    "average_finish": 25.18,
     "best_lap": "1:49.605",
     "best_lap_ms": 109605,
     "best_lap_track": "monza",
@@ -16,34 +16,59 @@
     "penalty_points": 0,
     "fastest_lap_awards": 0,
     "most_raced_track": "monza",
-    "last_race_at": "2026-03-16T18:16:39",
-    "last_seen": "2026-03-16T18:16:39",
+    "last_race_at": "2026-03-16T18:54:54",
+    "last_seen": "2026-03-16T18:54:54",
     "win_rate": 0.0,
     "podium_rate": 0.0,
-    "average_positions_delta": -6.17,
-    "positions_delta_races": 6
+    "average_positions_delta": -6.57,
+    "positions_delta_races": 7
   },
   "recent_form": [
+    16,
     25,
     22,
     44,
-    11,
-    45
+    11
   ],
   "track_stats": [
     {
       "track": "monza",
-      "races": 10,
+      "races": 11,
       "wins": 0,
       "podiums": 0,
       "points": 2,
-      "finish_sum": 261,
-      "average_finish": 26.1,
+      "finish_sum": 277,
+      "average_finish": 25.18,
       "best_lap_ms": 110122,
       "best_lap": "1:50.122"
     }
   ],
   "race_history": [
+    {
+      "race_id": "260316_185454_R.json",
+      "finished_at": "2026-03-16T18:54:54",
+      "track": "monza",
+      "position": 16,
+      "participants_count": 36,
+      "winner": "Ahmed Yusupov",
+      "points": 0,
+      "qualifying_position": 7,
+      "start_position": 7,
+      "start_position_source": "qualifying_car_id",
+      "positions_delta": -9,
+      "positions_gained": 0,
+      "positions_lost": 9,
+      "best_lap": "1:50.145",
+      "best_lap_ms": 110145,
+      "total_time": "19:03.238",
+      "total_time_ms": 1143238,
+      "gap": "0:00.000",
+      "gap_ms": 0,
+      "lap_count": 10,
+      "had_best_lap": false,
+      "penalty_count": 0,
+      "penalty_points": 0
+    },
     {
       "race_id": "260316_181639_R.json",
       "finished_at": "2026-03-16T18:16:39",
