@@ -1,6 +1,6 @@
 {
   "schema_version": 4,
-  "generated_at": "2026-03-16T23:57:20",
+  "generated_at": "2026-03-17T00:02:21",
   "leaderboard": [
     {
       "player_id": "S76561199664057628",
@@ -34958,63 +34958,51 @@
     }
   ],
   "global_stats": {
-    "date": "2026-03-16",
-    "unique_players_today": 301,
-    "races_today": 16,
-    "sessions_today": 39,
-    "points_earned_today": 1589,
-    "wins_today": 16,
-    "podiums_today": 48,
-    "avg_players_per_race_today": 36.81,
-    "tracks_raced_today": [
-      "monza"
-    ],
+    "date": "2026-03-17",
+    "unique_players_today": 0,
+    "races_today": 0,
+    "sessions_today": 0,
+    "points_earned_today": 0,
+    "wins_today": 0,
+    "podiums_today": 0,
+    "avg_players_per_race_today": 0,
+    "tracks_raced_today": [],
     "best_lap_today": {
-      "lap": "1:46.712",
-      "lap_ms": 106712,
-      "driver": "Евгений Майоров | NRR",
-      "player_id": "S76561199445415102",
-      "public_id": "drv_32d20c93fe7d",
-      "track": "monza",
-      "session_type": "Q"
+      "lap": null,
+      "lap_ms": null,
+      "driver": null,
+      "player_id": null,
+      "public_id": null,
+      "track": null,
+      "session_type": null
     },
-    "most_active_driver_today": {
-      "player_id": "S76561199121481915",
-      "public_id": "drv_780fce005a4b",
-      "driver": "Kirill Bulgakov",
-      "races": 11
-    },
-    "most_successful_driver_today": {
-      "player_id": "S76561198059752261",
-      "public_id": "drv_aa5848bce348",
-      "driver": "Jere Kärki (VR)",
-      "points": 91
-    },
-    "updated_at": "2026-03-16T23:57:20"
+    "most_active_driver_today": null,
+    "most_successful_driver_today": null,
+    "updated_at": "2026-03-17T00:02:21"
   },
   "driver_of_the_day": {
-    "date": "2026-03-16",
-    "driver": "Jere Kärki (VR)",
-    "player_id": "S76561198059752261",
-    "public_id": "drv_aa5848bce348",
-    "points": 91,
-    "races": 6,
-    "wins": 2,
-    "average_finish": 5.67,
-    "average_positions_delta": 2.4,
-    "positions_delta_races": 5,
-    "best_lap": "1:48.107",
-    "best_lap_ms": 108107,
-    "best_lap_track": "monza",
-    "updated_at": "2026-03-16T23:57:20"
+    "date": "2026-03-17",
+    "driver": null,
+    "player_id": null,
+    "public_id": null,
+    "points": 0,
+    "races": 0,
+    "wins": 0,
+    "average_finish": null,
+    "average_positions_delta": null,
+    "positions_delta_races": 0,
+    "best_lap": null,
+    "best_lap_ms": null,
+    "best_lap_track": null,
+    "updated_at": "2026-03-17T00:02:21"
   },
   "server_status": {
     "status": "online",
     "server_online": true,
-    "players_online": 13,
+    "players_online": 22,
     "tcp_listening": true,
     "udp_listening": true,
     "broadcast_listening": true,
-    "updated_at": "2026-03-16T23:57:20"
+    "updated_at": "2026-03-17T00:02:20"
   }
 }
