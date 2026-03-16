@@ -615,7 +615,7 @@ h1 {
 .hero-side-compact {
   display: flex;
   flex-direction: column;
-  gap: 14px;
+  gap: 4px;
 }
 
 .mini-stat {
@@ -624,6 +624,7 @@ h1 {
   border: 1px solid var(--line);
   border-radius: 18px;
   background: var(--card-2);
+  margin-top: 4px;
 }
 
 .mini-label {
