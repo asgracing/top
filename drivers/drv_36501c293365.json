@@ -3,11 +3,11 @@
   "driver": "Jan Rogacki",
   "summary": {
     "points": 5,
-    "average_points_per_race": 0.83,
-    "races": 6,
+    "average_points_per_race": 0.71,
+    "races": 7,
     "wins": 0,
     "podiums": 0,
-    "average_finish": 15.67,
+    "average_finish": 16.43,
     "best_lap": "1:49.792",
     "best_lap_ms": 109792,
     "best_lap_track": "monza",
@@ -16,34 +16,59 @@
     "penalty_points": 3,
     "fastest_lap_awards": 0,
     "most_raced_track": "monza",
-    "last_race_at": "2026-03-15T20:38:27",
-    "last_seen": "2026-03-15T20:38:27",
+    "last_race_at": "2026-03-16T22:02:28",
+    "last_seen": "2026-03-16T22:02:28",
     "win_rate": 0.0,
     "podium_rate": 0.0,
-    "average_positions_delta": 9.8,
-    "positions_delta_races": 5
+    "average_positions_delta": 9.83,
+    "positions_delta_races": 6
   },
   "recent_form": [
+    21,
     12,
     12,
     10,
-    27,
-    8
+    27
   ],
   "track_stats": [
     {
       "track": "monza",
-      "races": 6,
+      "races": 7,
       "wins": 0,
       "podiums": 0,
       "points": 5,
-      "finish_sum": 94,
-      "average_finish": 15.67,
+      "finish_sum": 115,
+      "average_finish": 16.43,
       "best_lap_ms": 109792,
       "best_lap": "1:49.792"
     }
   ],
   "race_history": [
+    {
+      "race_id": "260316_220228_R.json",
+      "finished_at": "2026-03-16T22:02:28",
+      "track": "monza",
+      "position": 21,
+      "participants_count": 43,
+      "winner": "Man in Tights",
+      "points": 0,
+      "qualifying_position": 31,
+      "start_position": 31,
+      "start_position_source": "qualifying_car_id",
+      "positions_delta": 10,
+      "positions_gained": 10,
+      "positions_lost": 0,
+      "best_lap": "1:50.007",
+      "best_lap_ms": 110007,
+      "total_time": "12:49.394",
+      "total_time_ms": 769394,
+      "gap": "0:00.000",
+      "gap_ms": 0,
+      "lap_count": 6,
+      "had_best_lap": false,
+      "penalty_count": 0,
+      "penalty_points": 0
+    },
     {
       "race_id": "260315_203827_R.json",
       "finished_at": "2026-03-15T20:38:27",

@@ -3,33 +3,78 @@
   "driver": "Max K",
   "summary": {
     "points": 0,
-    "average_points_per_race": 0,
-    "races": 0,
+    "average_points_per_race": 0.0,
+    "races": 1,
     "wins": 0,
     "podiums": 0,
-    "average_finish": null,
+    "average_finish": 12.0,
     "best_lap": "1:53.510",
     "best_lap_ms": 113510,
     "best_lap_track": "monza",
     "best_lap_session_type": "Q",
-    "penalty_count": 0,
-    "penalty_points": 0,
+    "penalty_count": 2,
+    "penalty_points": 2,
     "fastest_lap_awards": 0,
-    "most_raced_track": null,
-    "last_race_at": null,
-    "last_seen": "2026-03-16T21:36:20",
-    "win_rate": 0,
-    "podium_rate": 0,
-    "average_positions_delta": null,
-    "positions_delta_races": 0
+    "most_raced_track": "monza",
+    "last_race_at": "2026-03-16T22:02:28",
+    "last_seen": "2026-03-16T22:02:28",
+    "win_rate": 0.0,
+    "podium_rate": 0.0,
+    "average_positions_delta": 3.0,
+    "positions_delta_races": 1
   },
-  "recent_form": [],
-  "track_stats": [],
-  "race_history": [],
+  "recent_form": [
+    12
+  ],
+  "track_stats": [
+    {
+      "track": "monza",
+      "races": 1,
+      "wins": 0,
+      "podiums": 0,
+      "points": 0,
+      "finish_sum": 12,
+      "average_finish": 12.0,
+      "best_lap_ms": 113765,
+      "best_lap": "1:53.765"
+    }
+  ],
+  "race_history": [
+    {
+      "race_id": "260316_220228_R.json",
+      "finished_at": "2026-03-16T22:02:28",
+      "track": "monza",
+      "position": 12,
+      "participants_count": 43,
+      "winner": "Man in Tights",
+      "points": 0,
+      "qualifying_position": 15,
+      "start_position": 15,
+      "start_position_source": "qualifying_car_id",
+      "positions_delta": 3,
+      "positions_gained": 3,
+      "positions_lost": 0,
+      "best_lap": "1:53.765",
+      "best_lap_ms": 113765,
+      "total_time": "22:54.001",
+      "total_time_ms": 1374001,
+      "gap": "1:08.158",
+      "gap_ms": 68158,
+      "lap_count": 11,
+      "had_best_lap": false,
+      "penalty_count": 2,
+      "penalty_points": 2
+    }
+  ],
   "penalties": {
-    "penalty_count": 0,
-    "penalty_points": 0,
-    "reasons": {},
-    "types": {}
+    "penalty_count": 2,
+    "penalty_points": 2,
+    "reasons": {
+      "Cutting": 2
+    },
+    "types": {
+      "StopAndGo_10": 1,
+      "None": 1
+    }
   }
 }

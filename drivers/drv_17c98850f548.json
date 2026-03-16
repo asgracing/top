@@ -3,11 +3,11 @@
   "driver": "Connor Baldwin",
   "summary": {
     "points": 10,
-    "average_points_per_race": 10.0,
-    "races": 1,
+    "average_points_per_race": 5.0,
+    "races": 2,
     "wins": 0,
     "podiums": 0,
-    "average_finish": 5.0,
+    "average_finish": 16.5,
     "best_lap": "1:50.847",
     "best_lap_ms": 110847,
     "best_lap_track": "monza",
@@ -16,30 +16,56 @@
     "penalty_points": 0,
     "fastest_lap_awards": 0,
     "most_raced_track": "monza",
-    "last_race_at": "2026-03-16T21:24:16",
-    "last_seen": "2026-03-16T21:24:16",
+    "last_race_at": "2026-03-16T22:02:28",
+    "last_seen": "2026-03-16T22:02:28",
     "win_rate": 0.0,
     "podium_rate": 0.0,
-    "average_positions_delta": 8.0,
-    "positions_delta_races": 1
+    "average_positions_delta": 4.0,
+    "positions_delta_races": 2
   },
   "recent_form": [
+    28,
     5
   ],
   "track_stats": [
     {
       "track": "monza",
-      "races": 1,
+      "races": 2,
       "wins": 0,
       "podiums": 0,
       "points": 10,
-      "finish_sum": 5,
-      "average_finish": 5.0,
+      "finish_sum": 33,
+      "average_finish": 16.5,
       "best_lap_ms": 110847,
       "best_lap": "1:50.847"
     }
   ],
   "race_history": [
+    {
+      "race_id": "260316_220228_R.json",
+      "finished_at": "2026-03-16T22:02:28",
+      "track": "monza",
+      "position": 28,
+      "participants_count": 43,
+      "winner": "Man in Tights",
+      "points": 0,
+      "qualifying_position": 28,
+      "start_position": 28,
+      "start_position_source": "qualifying_car_id",
+      "positions_delta": 0,
+      "positions_gained": 0,
+      "positions_lost": 0,
+      "best_lap": null,
+      "best_lap_ms": null,
+      "total_time": null,
+      "total_time_ms": null,
+      "gap": null,
+      "gap_ms": null,
+      "lap_count": 0,
+      "had_best_lap": false,
+      "penalty_count": 0,
+      "penalty_points": 0
+    },
     {
       "race_id": "260316_212416_R.json",
       "finished_at": "2026-03-16T21:24:16",

@@ -3,11 +3,11 @@
   "driver": "андрей широковских",
   "summary": {
     "points": 2,
-    "average_points_per_race": 0.67,
-    "races": 3,
+    "average_points_per_race": 0.5,
+    "races": 4,
     "wins": 0,
     "podiums": 0,
-    "average_finish": 19.67,
+    "average_finish": 18.25,
     "best_lap": "1:49.902",
     "best_lap_ms": 109902,
     "best_lap_track": "monza",
@@ -16,14 +16,15 @@
     "penalty_points": 0,
     "fastest_lap_awards": 0,
     "most_raced_track": "monza",
-    "last_race_at": "2026-03-16T21:24:16",
-    "last_seen": "2026-03-16T21:24:16",
+    "last_race_at": "2026-03-16T22:02:28",
+    "last_seen": "2026-03-16T22:02:28",
     "win_rate": 0.0,
     "podium_rate": 0.0,
-    "average_positions_delta": 3.5,
-    "positions_delta_races": 2
+    "average_positions_delta": 7.33,
+    "positions_delta_races": 3
   },
   "recent_form": [
+    14,
     9,
     23,
     27
@@ -31,17 +32,42 @@
   "track_stats": [
     {
       "track": "monza",
-      "races": 3,
+      "races": 4,
       "wins": 0,
       "podiums": 0,
       "points": 2,
-      "finish_sum": 59,
-      "average_finish": 19.67,
+      "finish_sum": 73,
+      "average_finish": 18.25,
       "best_lap_ms": 109902,
       "best_lap": "1:49.902"
     }
   ],
   "race_history": [
+    {
+      "race_id": "260316_220228_R.json",
+      "finished_at": "2026-03-16T22:02:28",
+      "track": "monza",
+      "position": 14,
+      "participants_count": 43,
+      "winner": "Man in Tights",
+      "points": 0,
+      "qualifying_position": 29,
+      "start_position": 29,
+      "start_position_source": "qualifying_car_id",
+      "positions_delta": 15,
+      "positions_gained": 15,
+      "positions_lost": 0,
+      "best_lap": "1:50.240",
+      "best_lap_ms": 110240,
+      "total_time": "22:17.655",
+      "total_time_ms": 1337655,
+      "gap": "0:31.812",
+      "gap_ms": 31812,
+      "lap_count": 8,
+      "had_best_lap": false,
+      "penalty_count": 0,
+      "penalty_points": 0
+    },
     {
       "race_id": "260316_212416_R.json",
       "finished_at": "2026-03-16T21:24:16",
