@@ -1,6 +1,6 @@
 {
   "schema_version": 4,
-  "generated_at": "2026-03-16T19:22:20",
+  "generated_at": "2026-03-16T19:27:20",
   "leaderboard": [
     {
       "player_id": "S76561199664057628",
@@ -31821,7 +31821,7 @@
       "driver": "Arsenii Kapustin [ASG]",
       "points": 58
     },
-    "updated_at": "2026-03-16T19:22:20"
+    "updated_at": "2026-03-16T19:27:20"
   },
   "driver_of_the_day": {
     "date": "2026-03-16",
@@ -31837,15 +31837,15 @@
     "best_lap": "1:48.455",
     "best_lap_ms": 108455,
     "best_lap_track": "monza",
-    "updated_at": "2026-03-16T19:22:20"
+    "updated_at": "2026-03-16T19:27:20"
   },
   "server_status": {
     "status": "online",
     "server_online": true,
-    "players_online": 20,
+    "players_online": 19,
     "tcp_listening": true,
     "udp_listening": true,
     "broadcast_listening": true,
-    "updated_at": "2026-03-16T19:22:20"
+    "updated_at": "2026-03-16T19:27:20"
   }
 }
