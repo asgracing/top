@@ -60,6 +60,7 @@ onlineNoData: "No data",
     driverOfDayRaces: "Races today",
     driverOfDayWins: "Wins today",
     driverOfDayAvgFinish: "Average finish",
+    driverOfDayAvgGain: "Avg pos delta",
     driverOfDayBestLap: "Best lap today",
     driverOfDayBestLapTrack: "Track",
     driverOfDayNoData: "No race data for today yet.",
@@ -147,7 +148,7 @@ onlineNoData: "No data",
     racesTableSubtitle: "Sorted from newest to oldest.",
     raceModalEyebrow: "Race details",
     racesCols: ["Date", "Track", "Winner", "Drivers", "Best Lap"],
-    raceModalCols: ["Pos", "Driver", "Best Lap", "Total Time", "Gap", "Pts", "Pen"],
+    raceModalCols: ["Pos", "Start", "Δ", "Driver", "Best Lap", "Total Time", "Gap", "Pts", "Pen"],
     raceSummaryTrack: "Track",
     raceSummaryWinner: "Winner",
     raceSummaryDrivers: "Drivers",
@@ -160,6 +161,7 @@ onlineNoData: "No data",
     driverPageSubtitle: "Personal race history, pace and safety metrics from the ASG Racing server.",
     driverSummaryPoints: "Points",
     driverSummaryAvgPoints: "Avg points / race",
+    driverSummaryAvgGain: "Avg pos delta",
     driverSummaryRaces: "Races",
     driverSummaryWins: "Wins",
     driverSummaryAvgFinish: "Avg finish",
@@ -176,7 +178,7 @@ onlineNoData: "No data",
     driverPodiumRate: "Podium rate",
     driverNoData: "Driver profile not found.",
     driverLoading: "Loading driver profile...",
-    driverRaceCols: ["Date", "Track", "Pos", "Points", "Best Lap", "Total Time", "Gap", "Pen"],
+    driverRaceCols: ["Date", "Track", "Start", "Pos", "Δ", "Points", "Best Lap", "Total Time", "Gap", "Pen"],
     driverTrackCols: ["Track", "Races", "Wins", "Podiums", "Points", "Avg finish", "Best lap"],
     driverPenaltyReason: "Reason",
     driverPenaltyType: "Type",
@@ -235,6 +237,7 @@ onlineNoData: "Нет данных",
     driverOfDayRaces: "Гонок сегодня",
     driverOfDayWins: "Побед сегодня",
     driverOfDayAvgFinish: "Ср. финиш",
+    driverOfDayAvgGain: "Ср. дельта поз.",
     driverOfDayBestLap: "Лучший круг сегодня",
     driverOfDayBestLapTrack: "Трасса",
     driverOfDayNoData: "Сегодня ещё нет данных по гонкам.",
@@ -322,7 +325,7 @@ onlineNoData: "Нет данных",
     racesTableSubtitle: "Сортировка от новых к старым.",
     raceModalEyebrow: "Детали гонки",
     racesCols: ["Дата", "Трасса", "Победитель", "Пилоты", "Лучший круг"],
-    raceModalCols: ["Pos", "Пилот", "Лучший круг", "Время", "Отставание", "Очки", "Штр."],
+    raceModalCols: ["Pos", "Старт", "Δ", "Пилот", "Лучший круг", "Время", "Отставание", "Очки", "Штр."],
     raceSummaryTrack: "Трасса",
     raceSummaryWinner: "Победитель",
     raceSummaryDrivers: "Пилотов",
@@ -335,6 +338,7 @@ onlineNoData: "Нет данных",
     driverPageSubtitle: "Личная история гонок, темп и safety-метрики на сервере ASG Racing.",
     driverSummaryPoints: "Очки",
     driverSummaryAvgPoints: "Ср. очков / гонку",
+    driverSummaryAvgGain: "Ср. дельта поз.",
     driverSummaryRaces: "Гонки",
     driverSummaryWins: "Победы",
     driverSummaryAvgFinish: "Ср. финиш",
@@ -351,7 +355,7 @@ onlineNoData: "Нет данных",
     driverPodiumRate: "Процент подиумов",
     driverNoData: "Профиль пилота не найден.",
     driverLoading: "Загрузка профиля пилота...",
-    driverRaceCols: ["Дата", "Трасса", "Поз", "Очки", "Лучший круг", "Время", "Отставание", "Штр"],
+    driverRaceCols: ["Дата", "Трасса", "Старт", "Поз", "Δ", "Очки", "Лучший круг", "Время", "Отставание", "Штр"],
     driverTrackCols: ["Трасса", "Гонки", "Победы", "Подиумы", "Очки", "Ср. финиш", "Лучший круг"],
     driverPenaltyReason: "Причина",
     driverPenaltyType: "Тип",
@@ -908,6 +912,17 @@ function updateDriverOfDayButtonLabel() {
 
 function formatAverageFinish(value) {
   return typeof value === "number" ? value.toFixed(2) : "—";
+}
+
+function formatPositionsDelta(value) {
+  if (typeof value !== "number") return "вЂ”";
+  if (value > 0) return `+${value}`;
+  return String(value);
+}
+
+function formatStartPosition(row) {
+  if (typeof row?.start_position === "number") return String(row.start_position);
+  return "вЂ”";
 }
 
 function updateBestLapNote(driver, track) {
@@ -1521,6 +1536,8 @@ function renderRaceResultsModal() {
   const rows = (selectedRace.results || []).map(row => `
     <tr>
       <td><span class="rank-badge rank-${escapeHtml(row.position)}">#${escapeHtml(row.position)}</span></td>
+      <td>${escapeHtml(formatStartPosition(row))}</td>
+      <td>${escapeHtml(formatPositionsDelta(row.positions_delta))}</td>
       <td>
         <div class="driver-cell">
           <div class="driver-avatar">${escapeHtml(initials(row.driver))}</div>
@@ -1616,7 +1633,9 @@ function renderDriverRaceHistory() {
     <tr>
       <td>${escapeHtml(formatDateTimeLocal(row.finished_at, currentLang))}</td>
       <td>${escapeHtml(humanizeTrackName(row.track))}</td>
+      <td>${escapeHtml(formatStartPosition(row))}</td>
       <td>${escapeHtml(row.position ?? "—")}</td>
+      <td>${escapeHtml(formatPositionsDelta(row.positions_delta))}</td>
       <td>${escapeHtml(row.points ?? 0)}</td>
       <td>${escapeHtml(row.best_lap ?? "—")}</td>
       <td>${escapeHtml(row.total_time ?? "—")}</td>
@@ -1714,6 +1733,10 @@ function renderDriverPage() {
     <div class="driver-stat-card">
       <div class="driver-stat-label">${escapeHtml(t("driverSummaryAvgPoints"))}</div>
       <div class="driver-stat-value">${escapeHtml(summary.average_points_per_race ?? 0)}</div>
+    </div>
+    <div class="driver-stat-card">
+      <div class="driver-stat-label">${escapeHtml(t("driverSummaryAvgGain"))}</div>
+      <div class="driver-stat-value">${escapeHtml(formatPositionsDelta(summary.average_positions_delta))}</div>
     </div>
     <div class="driver-stat-card">
       <div class="driver-stat-label">${escapeHtml(t("driverSummaryRaces"))}</div>
@@ -1858,16 +1881,38 @@ function renderTodayStatsModal() {
 
 function renderDriverOfDayModal() {
   const data = driverOfDayData;
+  const contentEl = document.getElementById("driver-of-day-content");
+  let avgGainCard = document.getElementById("driver-of-day-avg-gain")?.closest(".today-stat-card");
+  if (contentEl && !avgGainCard) {
+    const card = document.createElement("div");
+    card.className = "today-stat-card driver-day-card";
+    card.innerHTML = `
+      <div class="today-stat-label">${escapeHtml(t("driverOfDayAvgGain"))}</div>
+      <div class="today-stat-value" id="driver-of-day-avg-gain">—</div>
+    `;
+    const bestLapCard = document.getElementById("driver-of-day-best-lap")?.closest(".today-stat-card");
+    if (bestLapCard) {
+      contentEl.insertBefore(card, bestLapCard);
+    } else {
+      contentEl.appendChild(card);
+    }
+    avgGainCard = card;
+  }
+  if (avgGainCard) {
+    const labelEl = avgGainCard.querySelector(".today-stat-label");
+    if (labelEl) labelEl.textContent = t("driverOfDayAvgGain");
+  }
+
   const nameEl = document.getElementById("driver-of-day-name");
   const pointsEl = document.getElementById("driver-of-day-points");
   const racesEl = document.getElementById("driver-of-day-races");
   const winsEl = document.getElementById("driver-of-day-wins");
   const avgFinishEl = document.getElementById("driver-of-day-avg-finish");
+  const avgGainEl = document.getElementById("driver-of-day-avg-gain");
   const bestLapEl = document.getElementById("driver-of-day-best-lap");
   const bestLapTrackEl = document.getElementById("driver-of-day-best-lap-track");
   const updatedEl = document.getElementById("driver-of-day-updated");
   const emptyEl = document.getElementById("driver-of-day-empty");
-  const contentEl = document.getElementById("driver-of-day-content");
 
   if (!nameEl) return;
 
@@ -1877,6 +1922,7 @@ function renderDriverOfDayModal() {
     racesEl.textContent = "—";
     winsEl.textContent = "—";
     avgFinishEl.textContent = "—";
+    avgGainEl.textContent = "—";
     bestLapEl.textContent = "—";
     bestLapTrackEl.textContent = "—";
     updatedEl.textContent = "—";
@@ -1891,6 +1937,7 @@ function renderDriverOfDayModal() {
   racesEl.textContent = data.races ?? 0;
   winsEl.textContent = data.wins ?? 0;
   avgFinishEl.textContent = formatAverageFinish(data.average_finish);
+  avgGainEl.textContent = formatPositionsDelta(data.average_positions_delta);
   bestLapEl.textContent = data.best_lap || "—";
   bestLapTrackEl.textContent = data.best_lap_track || "—";
   updatedEl.textContent = currentLang === "ru"
