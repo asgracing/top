@@ -1392,6 +1392,7 @@ function renderRacesTable() {
       <tbody>${rows}</tbody>
     </table>
   `;
+  
 
   tableEl.querySelectorAll("tbody tr[data-race-index]").forEach(row => {
     row.addEventListener("click", (event) => {
