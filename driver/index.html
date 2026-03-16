@@ -1,0 +1,138 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+
+  <title>ASG Racing Driver Profile | Assetto Corsa Competizione Stats</title>
+  <meta
+    name="description"
+    content="Driver profile with race history, best lap, points and safety stats from ASG Racing ACC."
+  />
+  <meta name="robots" content="index, follow" />
+  <meta name="author" content="ASG Racing" />
+  <meta name="theme-color" content="#0b0f14" />
+
+  <link rel="canonical" href="https://asgracing.github.io/top/driver/" />
+  <link rel="icon" href="../favicon.ico" sizes="any" />
+  <link rel="icon" type="image/png" sizes="32x32" href="../favicon-32x32.png" />
+  <link rel="icon" type="image/png" sizes="16x16" href="../favicon-16x16.png" />
+  <link rel="apple-touch-icon" href="../apple-touch-icon.png" />
+
+  <link rel="stylesheet" href="../styles.css" />
+</head>
+<body id="top">
+  <div class="site-video-bg" aria-hidden="true">
+    <video class="site-bg-video" autoplay muted loop playsinline preload="none">
+      <source src="../media/background.mp4" type="video/mp4" />
+    </video>
+  </div>
+  <div class="site-video-overlay" aria-hidden="true"></div>
+
+  <nav class="top-nav" id="top-nav">
+    <div class="top-nav-inner">
+      <a class="top-nav-brand" href="../" aria-label="ASG Racing home">ASG Racing</a>
+
+      <div class="top-nav-center">
+        <div class="top-nav-menu">
+          <a class="top-nav-link top-nav-link-primary" href="https://discord.gg/cEPFHXXtTC" target="_blank" rel="noopener noreferrer">Discord</a>
+          <a class="top-nav-link top-nav-link-primary" href="https://t.me/+JUymrENgddcyMTdi" target="_blank" rel="noopener noreferrer">Telegram</a>
+          <a class="top-nav-link top-nav-link-secondary" href="../" data-i18n="btnBackHome">Back to Home</a>
+          <a class="top-nav-link top-nav-link-secondary" href="../races/" data-i18n="btnLastRaces">Last Races</a>
+        </div>
+      </div>
+
+      <div class="top-nav-actions">
+        <div class="lang-switch top-nav-lang" aria-label="Language switcher">
+          <button class="lang-btn" type="button" data-lang="en"><span class="lang-flag">EN</span><span class="lang-text">EN</span></button>
+          <button class="lang-btn" type="button" data-lang="ru"><span class="lang-flag">RU</span><span class="lang-text">RU</span></button>
+        </div>
+      </div>
+    </div>
+  </nav>
+
+  <div class="container">
+    <section class="hero">
+      <div class="hero-card driver-hero-card">
+        <div class="eyebrow" data-i18n="driverEyebrow">Driver profile</div>
+        <h1 id="driver-page-name">—</h1>
+        <p class="hero-subtitle" id="driver-page-subtitle" data-i18n="driverLoading">Loading driver profile...</p>
+
+        <div class="driver-stats-grid" id="driver-stat-cards">
+          <div class="loading" data-i18n="driverLoading">Loading driver profile...</div>
+        </div>
+
+        <div class="driver-highlights-grid" id="driver-highlights"></div>
+      </div>
+    </section>
+
+    <section class="section">
+      <div class="section-header">
+        <div>
+          <h2 class="section-title" data-i18n="driverSectionRaces">Race History</h2>
+        </div>
+      </div>
+      <div class="table-card">
+        <div class="table-wrap" id="driver-races-table">
+          <div class="loading" style="padding:20px;" data-i18n="driverLoading">Loading driver profile...</div>
+        </div>
+      </div>
+    </section>
+
+    <section class="section">
+      <div class="section-header">
+        <div>
+          <h2 class="section-title" data-i18n="driverSectionTracks">Track Stats</h2>
+        </div>
+      </div>
+      <div class="table-card">
+        <div class="table-wrap" id="driver-tracks-table">
+          <div class="loading" style="padding:20px;" data-i18n="driverLoading">Loading driver profile...</div>
+        </div>
+      </div>
+    </section>
+
+    <section class="section">
+      <div class="section-header">
+        <div>
+          <h2 class="section-title" data-i18n="driverSectionPenalties">Penalty Breakdown</h2>
+        </div>
+      </div>
+
+      <div class="driver-penalties-grid">
+        <div class="table-card driver-penalty-card">
+          <div class="driver-penalty-head" data-i18n="driverPenaltyReason">Reason</div>
+          <div class="driver-penalty-list" id="driver-penalty-reasons">
+            <div class="loading" style="padding:20px;" data-i18n="driverLoading">Loading driver profile...</div>
+          </div>
+        </div>
+
+        <div class="table-card driver-penalty-card">
+          <div class="driver-penalty-head" data-i18n="driverPenaltyType">Type</div>
+          <div class="driver-penalty-list" id="driver-penalty-types">
+            <div class="loading" style="padding:20px;" data-i18n="driverLoading">Loading driver profile...</div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <footer class="footer">
+      <div class="footer-inner">
+        <div class="footer-left">
+          <div class="footer-brand">ASG Racing ACC Leaderboard</div>
+          <div class="footer-text" data-i18n="footerText">
+            Statistics are generated from ACC Dedicated Server result files and published via GitHub Pages.
+          </div>
+        </div>
+
+        <div class="footer-links">
+          <a href="https://discord.gg/cEPFHXXtTC" target="_blank" rel="noopener noreferrer">Discord</a>
+          <a href="https://t.me/+JUymrENgddcyMTdi" target="_blank" rel="noopener noreferrer">Telegram</a>
+        </div>
+      </div>
+    </footer>
+  </div>
+
+  <script src="../app.js" defer></script>
+</body>
+</html>
