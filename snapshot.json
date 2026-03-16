@@ -1,6 +1,6 @@
 {
   "schema_version": 4,
-  "generated_at": "2026-03-16T23:32:21",
+  "generated_at": "2026-03-16T23:37:21",
   "leaderboard": [
     {
       "player_id": "S76561199664057628",
@@ -34862,7 +34862,7 @@
       "driver": "Jere Kärki (VR)",
       "points": 81
     },
-    "updated_at": "2026-03-16T23:32:21"
+    "updated_at": "2026-03-16T23:37:21"
   },
   "driver_of_the_day": {
     "date": "2026-03-16",
@@ -34878,15 +34878,15 @@
     "best_lap": "1:48.107",
     "best_lap_ms": 108107,
     "best_lap_track": "monza",
-    "updated_at": "2026-03-16T23:32:21"
+    "updated_at": "2026-03-16T23:37:21"
   },
   "server_status": {
     "status": "online",
     "server_online": true,
-    "players_online": 25,
+    "players_online": 21,
     "tcp_listening": true,
     "udp_listening": true,
     "broadcast_listening": true,
-    "updated_at": "2026-03-16T23:32:20"
+    "updated_at": "2026-03-16T23:37:20"
   }
 }
