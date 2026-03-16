@@ -19,7 +19,9 @@
     "last_race_at": "2026-03-14T21:46:15",
     "last_seen": "2026-03-14T21:46:15",
     "win_rate": 0.0,
-    "podium_rate": 0.0
+    "podium_rate": 0.0,
+    "average_positions_delta": 20.0,
+    "positions_delta_races": 1
   },
   "recent_form": [
     11
@@ -46,6 +48,12 @@
       "participants_count": 57,
       "winner": "J Lehman",
       "points": 1,
+      "qualifying_position": 31,
+      "start_position": 31,
+      "start_position_source": "qualifying_car_id",
+      "positions_delta": 20,
+      "positions_gained": 20,
+      "positions_lost": 0,
       "best_lap": "1:46.865",
       "best_lap_ms": 106865,
       "total_time": "16:34.113",

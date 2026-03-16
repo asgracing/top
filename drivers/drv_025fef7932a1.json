@@ -19,7 +19,9 @@
     "last_race_at": "2026-03-14T17:23:13",
     "last_seen": "2026-03-14T17:23:13",
     "win_rate": 0.0,
-    "podium_rate": 0.0
+    "podium_rate": 0.0,
+    "average_positions_delta": 5.0,
+    "positions_delta_races": 1
   },
   "recent_form": [
     22
@@ -46,6 +48,12 @@
       "participants_count": 35,
       "winner": "Roderik Banrevi",
       "points": 0,
+      "qualifying_position": 27,
+      "start_position": 27,
+      "start_position_source": "qualifying_car_id",
+      "positions_delta": 5,
+      "positions_gained": 5,
+      "positions_lost": 0,
       "best_lap": "1:58.765",
       "best_lap_ms": 118765,
       "total_time": "5:07.691",

@@ -19,7 +19,9 @@
     "last_race_at": "2026-03-13T15:38:47",
     "last_seen": "2026-03-13T15:38:47",
     "win_rate": 0.0,
-    "podium_rate": 0.0
+    "podium_rate": 0.0,
+    "average_positions_delta": 3.0,
+    "positions_delta_races": 1
   },
   "recent_form": [
     4
@@ -46,6 +48,12 @@
       "participants_count": 15,
       "winner": "Halil Atakan",
       "points": 12,
+      "qualifying_position": 7,
+      "start_position": 7,
+      "start_position_source": "qualifying_car_id",
+      "positions_delta": 3,
+      "positions_gained": 3,
+      "positions_lost": 0,
       "best_lap": "1:50.215",
       "best_lap_ms": 110215,
       "total_time": "20:38.439",

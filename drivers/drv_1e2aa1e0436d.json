@@ -19,7 +19,9 @@
     "last_race_at": "2026-03-15T15:45:07",
     "last_seen": "2026-03-15T15:45:07",
     "win_rate": 0.0,
-    "podium_rate": 0.0
+    "podium_rate": 0.0,
+    "average_positions_delta": 6.0,
+    "positions_delta_races": 1
   },
   "recent_form": [
     23
@@ -46,6 +48,12 @@
       "participants_count": 43,
       "winner": "Andrei Soldatenkov [ASG]",
       "points": 0,
+      "qualifying_position": 29,
+      "start_position": 29,
+      "start_position_source": "qualifying_car_id",
+      "positions_delta": 6,
+      "positions_gained": 6,
+      "positions_lost": 0,
       "best_lap": "1:59.145",
       "best_lap_ms": 119145,
       "total_time": "3:18.205",

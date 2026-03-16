@@ -19,7 +19,9 @@
     "last_race_at": "2026-03-15T23:46:16",
     "last_seen": "2026-03-15T23:46:16",
     "win_rate": 0.0,
-    "podium_rate": 0.0
+    "podium_rate": 0.0,
+    "average_positions_delta": 3.0,
+    "positions_delta_races": 1
   },
   "recent_form": [
     12
@@ -46,6 +48,12 @@
       "participants_count": 20,
       "winner": "Illia Diachenko",
       "points": 0,
+      "qualifying_position": 15,
+      "start_position": 15,
+      "start_position_source": "qualifying_car_id",
+      "positions_delta": 3,
+      "positions_gained": 3,
+      "positions_lost": 0,
       "best_lap": null,
       "best_lap_ms": null,
       "total_time": "5:06.250",

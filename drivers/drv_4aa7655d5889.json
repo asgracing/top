@@ -19,7 +19,9 @@
     "last_race_at": "2026-03-13T23:29:57",
     "last_seen": "2026-03-13T23:29:57",
     "win_rate": 0.0,
-    "podium_rate": 0.0
+    "podium_rate": 0.0,
+    "average_positions_delta": 17.0,
+    "positions_delta_races": 1
   },
   "recent_form": [
     9
@@ -46,6 +48,12 @@
       "participants_count": 44,
       "winner": "Man in Tights",
       "points": 2,
+      "qualifying_position": 26,
+      "start_position": 26,
+      "start_position_source": "qualifying_car_id",
+      "positions_delta": 17,
+      "positions_gained": 17,
+      "positions_lost": 0,
       "best_lap": "1:49.195",
       "best_lap_ms": 109195,
       "total_time": "22:29.364",

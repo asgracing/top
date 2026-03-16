@@ -19,7 +19,9 @@
     "last_race_at": "2026-03-14T14:17:30",
     "last_seen": "2026-03-14T14:17:30",
     "win_rate": 0.0,
-    "podium_rate": 0.0
+    "podium_rate": 0.0,
+    "average_positions_delta": 24.0,
+    "positions_delta_races": 1
   },
   "recent_form": [
     11
@@ -46,6 +48,12 @@
       "participants_count": 47,
       "winner": "Manny Ykaly",
       "points": 0,
+      "qualifying_position": 35,
+      "start_position": 35,
+      "start_position_source": "qualifying_car_id",
+      "positions_delta": 24,
+      "positions_gained": 24,
+      "positions_lost": 0,
       "best_lap": "1:48.735",
       "best_lap_ms": 108735,
       "total_time": "18:39.738",

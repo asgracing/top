@@ -19,7 +19,9 @@
     "last_race_at": "2026-03-14T21:08:17",
     "last_seen": "2026-03-14T21:08:17",
     "win_rate": 0.0,
-    "podium_rate": 0.0
+    "podium_rate": 0.0,
+    "average_positions_delta": null,
+    "positions_delta_races": 0
   },
   "recent_form": [
     21
@@ -46,6 +48,12 @@
       "participants_count": 51,
       "winner": "MIKI DEGANI",
       "points": 0,
+      "qualifying_position": null,
+      "start_position": null,
+      "start_position_source": "unknown",
+      "positions_delta": null,
+      "positions_gained": null,
+      "positions_lost": null,
       "best_lap": "1:50.487",
       "best_lap_ms": 110487,
       "total_time": "22:37.451",

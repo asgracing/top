@@ -19,7 +19,9 @@
     "last_race_at": "2026-03-15T20:38:27",
     "last_seen": "2026-03-15T20:38:27",
     "win_rate": 0.0,
-    "podium_rate": 0.0
+    "podium_rate": 0.0,
+    "average_positions_delta": -13.0,
+    "positions_delta_races": 1
   },
   "recent_form": [
     25
@@ -46,6 +48,12 @@
       "participants_count": 46,
       "winner": "Eric Sells",
       "points": 0,
+      "qualifying_position": 12,
+      "start_position": 12,
+      "start_position_source": "qualifying_car_id",
+      "positions_delta": -13,
+      "positions_gained": 0,
+      "positions_lost": 13,
       "best_lap": null,
       "best_lap_ms": null,
       "total_time": "2:35.233",

@@ -19,7 +19,9 @@
     "last_race_at": "2026-03-14T19:15:44",
     "last_seen": "2026-03-14T19:15:44",
     "win_rate": 0.0,
-    "podium_rate": 0.0
+    "podium_rate": 0.0,
+    "average_positions_delta": -16.0,
+    "positions_delta_races": 1
   },
   "recent_form": [
     29
@@ -46,6 +48,12 @@
       "participants_count": 54,
       "winner": "Jeff Reid",
       "points": 0,
+      "qualifying_position": 13,
+      "start_position": 13,
+      "start_position_source": "qualifying_car_id",
+      "positions_delta": -16,
+      "positions_gained": 0,
+      "positions_lost": 16,
       "best_lap": null,
       "best_lap_ms": null,
       "total_time": null,

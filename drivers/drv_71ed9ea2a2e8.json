@@ -19,7 +19,9 @@
     "last_race_at": "2026-03-14T16:46:36",
     "last_seen": "2026-03-14T16:46:36",
     "win_rate": 0.0,
-    "podium_rate": 0.0
+    "podium_rate": 0.0,
+    "average_positions_delta": -5.0,
+    "positions_delta_races": 1
   },
   "recent_form": [
     18
@@ -46,6 +48,12 @@
       "participants_count": 44,
       "winner": "Chris ver Damn [GER]",
       "points": 0,
+      "qualifying_position": 13,
+      "start_position": 13,
+      "start_position_source": "qualifying_car_id",
+      "positions_delta": -5,
+      "positions_gained": 0,
+      "positions_lost": 5,
       "best_lap": "1:50.875",
       "best_lap_ms": 110875,
       "total_time": "12:13.242",

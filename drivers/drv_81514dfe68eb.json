@@ -19,7 +19,9 @@
     "last_race_at": "2026-03-14T23:00:59",
     "last_seen": "2026-03-14T23:00:59",
     "win_rate": 0.0,
-    "podium_rate": 0.0
+    "podium_rate": 0.0,
+    "average_positions_delta": -7.0,
+    "positions_delta_races": 1
   },
   "recent_form": [
     15
@@ -46,6 +48,12 @@
       "participants_count": 47,
       "winner": "T Evans",
       "points": 0,
+      "qualifying_position": 8,
+      "start_position": 8,
+      "start_position_source": "qualifying_car_id",
+      "positions_delta": -7,
+      "positions_gained": 0,
+      "positions_lost": 7,
       "best_lap": "1:50.102",
       "best_lap_ms": 110102,
       "total_time": "16:32.149",

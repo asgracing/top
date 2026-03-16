@@ -19,7 +19,9 @@
     "last_race_at": "2026-03-14T16:10:08",
     "last_seen": "2026-03-14T16:10:08",
     "win_rate": 100.0,
-    "podium_rate": 100.0
+    "podium_rate": 100.0,
+    "average_positions_delta": 2.0,
+    "positions_delta_races": 1
   },
   "recent_form": [
     1
@@ -46,6 +48,12 @@
       "participants_count": 41,
       "winner": "Adrián de Mora",
       "points": 25,
+      "qualifying_position": 3,
+      "start_position": 3,
+      "start_position_source": "qualifying_car_id",
+      "positions_delta": 2,
+      "positions_gained": 2,
+      "positions_lost": 0,
       "best_lap": "1:47.095",
       "best_lap_ms": 107095,
       "total_time": "20:01.873",

@@ -19,7 +19,9 @@
     "last_race_at": "2026-03-14T23:37:49",
     "last_seen": "2026-03-14T23:37:49",
     "win_rate": 0.0,
-    "podium_rate": 0.0
+    "podium_rate": 0.0,
+    "average_positions_delta": -14.0,
+    "positions_delta_races": 1
   },
   "recent_form": [
     22
@@ -46,6 +48,12 @@
       "participants_count": 42,
       "winner": "Kirill Bulgakov",
       "points": 0,
+      "qualifying_position": 8,
+      "start_position": 8,
+      "start_position_source": "qualifying_car_id",
+      "positions_delta": -14,
+      "positions_gained": 0,
+      "positions_lost": 14,
       "best_lap": "1:50.027",
       "best_lap_ms": 110027,
       "total_time": "11:24.277",

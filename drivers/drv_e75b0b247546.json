@@ -19,7 +19,9 @@
     "last_race_at": "2026-03-15T15:08:40",
     "last_seen": "2026-03-15T15:08:40",
     "win_rate": 0.0,
-    "podium_rate": 0.0
+    "podium_rate": 0.0,
+    "average_positions_delta": 2.0,
+    "positions_delta_races": 1
   },
   "recent_form": [
     9
@@ -46,6 +48,12 @@
       "participants_count": 38,
       "winner": "Holli D.",
       "points": 2,
+      "qualifying_position": 11,
+      "start_position": 11,
+      "start_position_source": "qualifying_car_id",
+      "positions_delta": 2,
+      "positions_gained": 2,
+      "positions_lost": 0,
       "best_lap": "1:49.585",
       "best_lap_ms": 109585,
       "total_time": "22:24.349",

@@ -19,7 +19,9 @@
     "last_race_at": "2026-03-14T17:59:58",
     "last_seen": "2026-03-14T17:59:58",
     "win_rate": 0.0,
-    "podium_rate": 0.0
+    "podium_rate": 0.0,
+    "average_positions_delta": -14.0,
+    "positions_delta_races": 1
   },
   "recent_form": [
     19
@@ -46,6 +48,12 @@
       "participants_count": 47,
       "winner": "Евгений Майоров",
       "points": 0,
+      "qualifying_position": 5,
+      "start_position": 5,
+      "start_position_source": "qualifying_car_id",
+      "positions_delta": -14,
+      "positions_gained": 0,
+      "positions_lost": 14,
       "best_lap": "1:49.822",
       "best_lap_ms": 109822,
       "total_time": "12:39.238",

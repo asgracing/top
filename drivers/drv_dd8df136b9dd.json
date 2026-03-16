@@ -19,7 +19,9 @@
     "last_race_at": "2026-03-14T12:27:39",
     "last_seen": "2026-03-14T12:27:39",
     "win_rate": 0.0,
-    "podium_rate": 0.0
+    "podium_rate": 0.0,
+    "average_positions_delta": 1.0,
+    "positions_delta_races": 1
   },
   "recent_form": [
     4
@@ -46,6 +48,12 @@
       "participants_count": 11,
       "winner": "Arsenii Kapustin",
       "points": 12,
+      "qualifying_position": 5,
+      "start_position": 5,
+      "start_position_source": "qualifying_car_id",
+      "positions_delta": 1,
+      "positions_gained": 1,
+      "positions_lost": 0,
       "best_lap": "1:53.035",
       "best_lap_ms": 113035,
       "total_time": "18:09.870",

@@ -19,7 +19,9 @@
     "last_race_at": "2026-03-14T15:33:41",
     "last_seen": "2026-03-14T15:33:41",
     "win_rate": 0.0,
-    "podium_rate": 0.0
+    "podium_rate": 0.0,
+    "average_positions_delta": 19.0,
+    "positions_delta_races": 1
   },
   "recent_form": [
     10
@@ -46,6 +48,12 @@
       "participants_count": 49,
       "winner": "R A",
       "points": 1,
+      "qualifying_position": 29,
+      "start_position": 29,
+      "start_position_source": "qualifying_car_id",
+      "positions_delta": 19,
+      "positions_gained": 19,
+      "positions_lost": 0,
       "best_lap": "1:50.505",
       "best_lap_ms": 110505,
       "total_time": "22:41.482",

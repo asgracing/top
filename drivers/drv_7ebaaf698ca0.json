@@ -19,7 +19,9 @@
     "last_race_at": "2026-03-15T19:26:02",
     "last_seen": "2026-03-15T19:26:02",
     "win_rate": 0.0,
-    "podium_rate": 0.0
+    "podium_rate": 0.0,
+    "average_positions_delta": null,
+    "positions_delta_races": 0
   },
   "recent_form": [
     33
@@ -46,6 +48,12 @@
       "participants_count": 47,
       "winner": "David Marie",
       "points": 0,
+      "qualifying_position": null,
+      "start_position": null,
+      "start_position_source": "unknown",
+      "positions_delta": null,
+      "positions_gained": null,
+      "positions_lost": null,
       "best_lap": null,
       "best_lap_ms": null,
       "total_time": null,

@@ -19,7 +19,9 @@
     "last_race_at": null,
     "last_seen": "2026-03-14T04:05:02",
     "win_rate": 0,
-    "podium_rate": 0
+    "podium_rate": 0,
+    "average_positions_delta": null,
+    "positions_delta_races": 0
   },
   "recent_form": [],
   "track_stats": [],

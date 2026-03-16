@@ -19,7 +19,9 @@
     "last_race_at": "2026-03-15T22:28:25",
     "last_seen": "2026-03-15T22:28:25",
     "win_rate": 0.0,
-    "podium_rate": 0.0
+    "podium_rate": 0.0,
+    "average_positions_delta": -12.0,
+    "positions_delta_races": 1
   },
   "recent_form": [
     23
@@ -46,6 +48,12 @@
       "participants_count": 40,
       "winner": "Aleksander Kovalev",
       "points": 0,
+      "qualifying_position": 11,
+      "start_position": 11,
+      "start_position_source": "qualifying_car_id",
+      "positions_delta": -12,
+      "positions_gained": 0,
+      "positions_lost": 12,
       "best_lap": "1:50.057",
       "best_lap_ms": 110057,
       "total_time": "6:17.725",

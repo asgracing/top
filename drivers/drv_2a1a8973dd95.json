@@ -19,7 +19,9 @@
     "last_race_at": "2026-03-15T13:14:06",
     "last_seen": "2026-03-15T13:14:06",
     "win_rate": 0.0,
-    "podium_rate": 0.0
+    "podium_rate": 0.0,
+    "average_positions_delta": -16.0,
+    "positions_delta_races": 1
   },
   "recent_form": [
     19
@@ -46,6 +48,12 @@
       "participants_count": 33,
       "winner": "Paolo Giordano | PGM",
       "points": 0,
+      "qualifying_position": 3,
+      "start_position": 3,
+      "start_position_source": "qualifying_car_id",
+      "positions_delta": -16,
+      "positions_gained": 0,
+      "positions_lost": 16,
       "best_lap": "1:48.307",
       "best_lap_ms": 108307,
       "total_time": "8:33.364",

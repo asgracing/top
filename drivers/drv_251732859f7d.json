@@ -19,7 +19,9 @@
     "last_race_at": "2026-03-15T00:16:09",
     "last_seen": "2026-03-15T00:16:09",
     "win_rate": 0.0,
-    "podium_rate": 0.0
+    "podium_rate": 0.0,
+    "average_positions_delta": 17.0,
+    "positions_delta_races": 1
   },
   "recent_form": [
     18
@@ -46,6 +48,12 @@
       "participants_count": 47,
       "winner": "REGI SILVA",
       "points": 0,
+      "qualifying_position": 35,
+      "start_position": 35,
+      "start_position_source": "qualifying_car_id",
+      "positions_delta": 17,
+      "positions_gained": 17,
+      "positions_lost": 0,
       "best_lap": "1:50.177",
       "best_lap_ms": 110177,
       "total_time": "13:56.135",

@@ -19,7 +19,9 @@
     "last_race_at": "2026-03-15T18:47:44",
     "last_seen": "2026-03-15T18:47:44",
     "win_rate": 0.0,
-    "podium_rate": 0.0
+    "podium_rate": 0.0,
+    "average_positions_delta": -8.0,
+    "positions_delta_races": 1
   },
   "recent_form": [
     22
@@ -46,6 +48,12 @@
       "participants_count": 43,
       "winner": "Dat Iva",
       "points": 0,
+      "qualifying_position": 14,
+      "start_position": 14,
+      "start_position_source": "qualifying_car_id",
+      "positions_delta": -8,
+      "positions_gained": 0,
+      "positions_lost": 8,
       "best_lap": null,
       "best_lap_ms": null,
       "total_time": "2:45.370",

@@ -19,7 +19,9 @@
     "last_race_at": null,
     "last_seen": null,
     "win_rate": 0,
-    "podium_rate": 0
+    "podium_rate": 0,
+    "average_positions_delta": null,
+    "positions_delta_races": 0
   },
   "recent_form": [],
   "track_stats": [],

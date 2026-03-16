@@ -19,7 +19,9 @@
     "last_race_at": "2026-03-14T00:43:20",
     "last_seen": "2026-03-14T00:43:20",
     "win_rate": 0.0,
-    "podium_rate": 0.0
+    "podium_rate": 0.0,
+    "average_positions_delta": 9.0,
+    "positions_delta_races": 1
   },
   "recent_form": [
     17
@@ -46,6 +48,12 @@
       "participants_count": 32,
       "winner": "Sultan Isaev",
       "points": 0,
+      "qualifying_position": 26,
+      "start_position": 26,
+      "start_position_source": "qualifying_car_id",
+      "positions_delta": 9,
+      "positions_gained": 9,
+      "positions_lost": 0,
       "best_lap": "1:48.852",
       "best_lap_ms": 108852,
       "total_time": "22:08.878",

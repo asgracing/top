@@ -19,7 +19,9 @@
     "last_race_at": "2026-03-14T13:04:25",
     "last_seen": "2026-03-14T13:04:25",
     "win_rate": 0.0,
-    "podium_rate": 0.0
+    "podium_rate": 0.0,
+    "average_positions_delta": 4.0,
+    "positions_delta_races": 1
   },
   "recent_form": [
     8
@@ -46,6 +48,12 @@
       "participants_count": 29,
       "winner": "Yamamoto Suroki",
       "points": 4,
+      "qualifying_position": 12,
+      "start_position": 12,
+      "start_position_source": "qualifying_car_id",
+      "positions_delta": 4,
+      "positions_gained": 4,
+      "positions_lost": 0,
       "best_lap": "1:50.132",
       "best_lap_ms": 110132,
       "total_time": "20:59.048",

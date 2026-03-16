@@ -19,7 +19,9 @@
     "last_race_at": "2026-03-15T18:11:15",
     "last_seen": "2026-03-15T18:11:15",
     "win_rate": 0.0,
-    "podium_rate": 0.0
+    "podium_rate": 0.0,
+    "average_positions_delta": 1.0,
+    "positions_delta_races": 1
   },
   "recent_form": [
     8
@@ -46,6 +48,12 @@
       "participants_count": 44,
       "winner": "Denis Pinchuk",
       "points": 4,
+      "qualifying_position": 9,
+      "start_position": 9,
+      "start_position_source": "qualifying_car_id",
+      "positions_delta": 1,
+      "positions_gained": 1,
+      "positions_lost": 0,
       "best_lap": "1:48.905",
       "best_lap_ms": 108905,
       "total_time": "20:37.530",
