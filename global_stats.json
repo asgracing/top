@@ -28,13 +28,13 @@
     "points": 26
   },
   "server": {
-    "status": "online",
-    "server_online": true,
+    "status": "offline",
+    "server_online": false,
     "players_online": 0,
     "tcp_listening": null,
     "udp_listening": null,
     "broadcast_listening": null,
-    "updated_at": "2026-03-16T09:02:20"
+    "updated_at": "2026-03-16T09:07:20"
   },
-  "updated_at": "2026-03-16T09:02:20"
+  "updated_at": "2026-03-16T09:07:20"
 }
