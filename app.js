@@ -915,14 +915,14 @@ function formatAverageFinish(value) {
 }
 
 function formatPositionsDelta(value) {
-  if (typeof value !== "number") return "вЂ”";
+  if (typeof value !== "number") return "-";
   if (value > 0) return `+${value}`;
   return String(value);
 }
 
 function formatStartPosition(row) {
   if (typeof row?.start_position === "number") return String(row.start_position);
-  return "вЂ”";
+  return "-";
 }
 
 function updateBestLapNote(driver, track) {
