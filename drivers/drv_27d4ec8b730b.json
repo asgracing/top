@@ -2,28 +2,62 @@
   "public_id": "drv_27d4ec8b730b",
   "driver": "albert popovic",
   "summary": {
-    "points": 0,
-    "average_points_per_race": 0,
-    "races": 0,
+    "points": 4,
+    "average_points_per_race": 4.0,
+    "races": 1,
     "wins": 0,
     "podiums": 0,
-    "average_finish": null,
-    "best_lap": null,
-    "best_lap_ms": null,
-    "best_lap_track": null,
-    "best_lap_session_type": null,
+    "average_finish": 8.0,
+    "best_lap": "1:50.887",
+    "best_lap_ms": 110887,
+    "best_lap_track": "monza",
+    "best_lap_session_type": "R",
     "penalty_count": 0,
     "penalty_points": 0,
     "fastest_lap_awards": 0,
-    "most_raced_track": null,
-    "last_race_at": null,
-    "last_seen": null,
-    "win_rate": 0,
-    "podium_rate": 0
+    "most_raced_track": "monza",
+    "last_race_at": "2026-03-16T15:36:28",
+    "last_seen": "2026-03-16T15:36:28",
+    "win_rate": 0.0,
+    "podium_rate": 0.0
   },
-  "recent_form": [],
-  "track_stats": [],
-  "race_history": [],
+  "recent_form": [
+    8
+  ],
+  "track_stats": [
+    {
+      "track": "monza",
+      "races": 1,
+      "wins": 0,
+      "podiums": 0,
+      "points": 4,
+      "finish_sum": 8,
+      "average_finish": 8.0,
+      "best_lap_ms": 110887,
+      "best_lap": "1:50.887"
+    }
+  ],
+  "race_history": [
+    {
+      "race_id": "260316_153628_R.json",
+      "finished_at": "2026-03-16T15:36:28",
+      "track": "monza",
+      "position": 8,
+      "participants_count": 32,
+      "winner": "Arsenii Kapustin [ASG]",
+      "points": 4,
+      "best_lap": "1:50.887",
+      "best_lap_ms": 110887,
+      "total_time": "21:07.345",
+      "total_time_ms": 1267345,
+      "gap": "0:46.852",
+      "gap_ms": 46852,
+      "lap_count": 10,
+      "had_best_lap": false,
+      "penalty_count": 0,
+      "penalty_points": 0
+    }
+  ],
   "penalties": {
     "penalty_count": 0,
     "penalty_points": 0,

@@ -2,12 +2,12 @@
   "public_id": "drv_b1fd7b57da41",
   "driver": "Artem Malyginov",
   "summary": {
-    "points": 106,
-    "average_points_per_race": 9.64,
-    "races": 11,
+    "points": 114,
+    "average_points_per_race": 9.5,
+    "races": 12,
     "wins": 1,
     "podiums": 5,
-    "average_finish": 11.82,
+    "average_finish": 11.33,
     "best_lap": "1:50.817",
     "best_lap_ms": 110817,
     "best_lap_track": "monza",
@@ -16,32 +16,51 @@
     "penalty_points": 0,
     "fastest_lap_awards": 0,
     "most_raced_track": "monza",
-    "last_race_at": "2026-03-16T15:00:14",
-    "last_seen": "2026-03-16T15:00:14",
-    "win_rate": 9.09,
-    "podium_rate": 45.45
+    "last_race_at": "2026-03-16T15:36:28",
+    "last_seen": "2026-03-16T15:36:28",
+    "win_rate": 8.33,
+    "podium_rate": 41.67
   },
   "recent_form": [
+    6,
     3,
     37,
     10,
-    9,
-    2
+    9
   ],
   "track_stats": [
     {
       "track": "monza",
-      "races": 11,
+      "races": 12,
       "wins": 1,
       "podiums": 5,
-      "points": 106,
-      "finish_sum": 130,
-      "average_finish": 11.82,
+      "points": 114,
+      "finish_sum": 136,
+      "average_finish": 11.33,
       "best_lap_ms": 110817,
       "best_lap": "1:50.817"
     }
   ],
   "race_history": [
+    {
+      "race_id": "260316_153628_R.json",
+      "finished_at": "2026-03-16T15:36:28",
+      "track": "monza",
+      "position": 6,
+      "participants_count": 32,
+      "winner": "Arsenii Kapustin [ASG]",
+      "points": 8,
+      "best_lap": "1:51.992",
+      "best_lap_ms": 111992,
+      "total_time": "21:28.727",
+      "total_time_ms": 1288727,
+      "gap": "1:08.234",
+      "gap_ms": 68234,
+      "lap_count": 11,
+      "had_best_lap": false,
+      "penalty_count": 0,
+      "penalty_points": 0
+    },
     {
       "race_id": "260316_150014_R.json",
       "finished_at": "2026-03-16T15:00:14",

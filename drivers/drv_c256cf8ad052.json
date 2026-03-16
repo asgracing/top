@@ -4,41 +4,61 @@
   "summary": {
     "points": 0,
     "average_points_per_race": 0.0,
-    "races": 2,
+    "races": 3,
     "wins": 0,
     "podiums": 0,
-    "average_finish": 22.5,
-    "best_lap": "1:50.540",
-    "best_lap_ms": 110540,
+    "average_finish": 19.67,
+    "best_lap": "1:50.362",
+    "best_lap_ms": 110362,
     "best_lap_track": "monza",
-    "best_lap_session_type": "Q",
+    "best_lap_session_type": "R",
     "penalty_count": 2,
     "penalty_points": 0,
     "fastest_lap_awards": 0,
     "most_raced_track": "monza",
-    "last_race_at": "2026-03-14T01:21:24",
-    "last_seen": "2026-03-14T01:21:24",
+    "last_race_at": "2026-03-16T15:36:28",
+    "last_seen": "2026-03-16T15:36:28",
     "win_rate": 0.0,
     "podium_rate": 0.0
   },
   "recent_form": [
+    14,
     23,
     22
   ],
   "track_stats": [
     {
       "track": "monza",
-      "races": 2,
+      "races": 3,
       "wins": 0,
       "podiums": 0,
       "points": 0,
-      "finish_sum": 45,
-      "average_finish": 22.5,
-      "best_lap_ms": 111267,
-      "best_lap": "1:51.267"
+      "finish_sum": 59,
+      "average_finish": 19.67,
+      "best_lap_ms": 110362,
+      "best_lap": "1:50.362"
     }
   ],
   "race_history": [
+    {
+      "race_id": "260316_153628_R.json",
+      "finished_at": "2026-03-16T15:36:28",
+      "track": "monza",
+      "position": 14,
+      "participants_count": 32,
+      "winner": "Arsenii Kapustin [ASG]",
+      "points": 0,
+      "best_lap": "1:50.362",
+      "best_lap_ms": 110362,
+      "total_time": "21:36.735",
+      "total_time_ms": 1296735,
+      "gap": "1:16.242",
+      "gap_ms": 76242,
+      "lap_count": 4,
+      "had_best_lap": false,
+      "penalty_count": 0,
+      "penalty_points": 0
+    },
     {
       "race_id": "260314_012124_R.json",
       "finished_at": "2026-03-14T01:21:24",

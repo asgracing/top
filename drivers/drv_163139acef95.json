@@ -3,11 +3,11 @@
   "driver": "Illyaaa Serg",
   "summary": {
     "points": 35,
-    "average_points_per_race": 3.5,
-    "races": 10,
+    "average_points_per_race": 3.18,
+    "races": 11,
     "wins": 0,
     "podiums": 1,
-    "average_finish": 13.8,
+    "average_finish": 13.91,
     "best_lap": "1:48.452",
     "best_lap_ms": 108452,
     "best_lap_track": "monza",
@@ -16,32 +16,51 @@
     "penalty_points": 8,
     "fastest_lap_awards": 0,
     "most_raced_track": "monza",
-    "last_race_at": "2026-03-15T18:47:44",
-    "last_seen": "2026-03-15T18:47:44",
+    "last_race_at": "2026-03-16T15:36:28",
+    "last_seen": "2026-03-16T15:36:28",
     "win_rate": 0.0,
-    "podium_rate": 10.0
+    "podium_rate": 9.09
   },
   "recent_form": [
     15,
+    15,
     19,
     26,
-    26,
-    11
+    26
   ],
   "track_stats": [
     {
       "track": "monza",
-      "races": 10,
+      "races": 11,
       "wins": 0,
       "podiums": 1,
       "points": 35,
-      "finish_sum": 138,
-      "average_finish": 13.8,
+      "finish_sum": 153,
+      "average_finish": 13.91,
       "best_lap_ms": 109202,
       "best_lap": "1:49.202"
     }
   ],
   "race_history": [
+    {
+      "race_id": "260316_153628_R.json",
+      "finished_at": "2026-03-16T15:36:28",
+      "track": "monza",
+      "position": 15,
+      "participants_count": 32,
+      "winner": "Arsenii Kapustin [ASG]",
+      "points": 0,
+      "best_lap": "1:50.622",
+      "best_lap_ms": 110622,
+      "total_time": "21:16.817",
+      "total_time_ms": 1276817,
+      "gap": "0:56.324",
+      "gap_ms": 56324,
+      "lap_count": 3,
+      "had_best_lap": false,
+      "penalty_count": 0,
+      "penalty_points": 0
+    },
     {
       "race_id": "260315_184744_R.json",
       "finished_at": "2026-03-15T18:47:44",

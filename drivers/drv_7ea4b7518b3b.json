@@ -1,17 +1,17 @@
 {
-  "public_id": "drv_41d57ff52514",
-  "driver": "Lex Lex",
+  "public_id": "drv_7ea4b7518b3b",
+  "driver": "Sergey Borzov",
   "summary": {
-    "points": 0,
-    "average_points_per_race": 0.0,
+    "points": 15,
+    "average_points_per_race": 15.0,
     "races": 1,
     "wins": 0,
-    "podiums": 0,
-    "average_finish": 19.0,
-    "best_lap": "1:51.107",
-    "best_lap_ms": 111107,
+    "podiums": 1,
+    "average_finish": 3.0,
+    "best_lap": "1:48.167",
+    "best_lap_ms": 108167,
     "best_lap_track": "monza",
-    "best_lap_session_type": "Q",
+    "best_lap_session_type": "R",
     "penalty_count": 0,
     "penalty_points": 0,
     "fastest_lap_awards": 0,
@@ -19,22 +19,22 @@
     "last_race_at": "2026-03-16T15:36:28",
     "last_seen": "2026-03-16T15:36:28",
     "win_rate": 0.0,
-    "podium_rate": 0.0
+    "podium_rate": 100.0
   },
   "recent_form": [
-    19
+    3
   ],
   "track_stats": [
     {
       "track": "monza",
       "races": 1,
       "wins": 0,
-      "podiums": 0,
-      "points": 0,
-      "finish_sum": 19,
-      "average_finish": 19.0,
-      "best_lap_ms": 123402,
-      "best_lap": "2:03.402"
+      "podiums": 1,
+      "points": 15,
+      "finish_sum": 3,
+      "average_finish": 3.0,
+      "best_lap_ms": 108167,
+      "best_lap": "1:48.167"
     }
   ],
   "race_history": [
@@ -42,17 +42,17 @@
       "race_id": "260316_153628_R.json",
       "finished_at": "2026-03-16T15:36:28",
       "track": "monza",
-      "position": 19,
+      "position": 3,
       "participants_count": 32,
       "winner": "Arsenii Kapustin [ASG]",
-      "points": 0,
-      "best_lap": "2:03.402",
-      "best_lap_ms": 123402,
-      "total_time": "3:18.482",
-      "total_time_ms": 198482,
-      "gap": "0:00.000",
-      "gap_ms": 0,
-      "lap_count": 1,
+      "points": 15,
+      "best_lap": "1:48.167",
+      "best_lap_ms": 108167,
+      "total_time": "20:27.154",
+      "total_time_ms": 1227154,
+      "gap": "0:06.661",
+      "gap_ms": 6661,
+      "lap_count": 11,
       "had_best_lap": false,
       "penalty_count": 0,
       "penalty_points": 0
