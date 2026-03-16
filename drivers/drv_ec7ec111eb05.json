@@ -3,11 +3,11 @@
   "driver": "RED ICEFIRE",
   "summary": {
     "points": 7,
-    "average_points_per_race": 2.33,
-    "races": 3,
+    "average_points_per_race": 1.75,
+    "races": 4,
     "wins": 0,
     "podiums": 0,
-    "average_finish": 14.67,
+    "average_finish": 18.5,
     "best_lap": "1:50.172",
     "best_lap_ms": 110172,
     "best_lap_track": "monza",
@@ -16,12 +16,13 @@
     "penalty_points": 0,
     "fastest_lap_awards": 0,
     "most_raced_track": "monza",
-    "last_race_at": "2026-03-14T17:59:58",
-    "last_seen": "2026-03-14T17:59:58",
+    "last_race_at": "2026-03-16T17:38:38",
+    "last_seen": "2026-03-16T17:38:38",
     "win_rate": 0.0,
     "podium_rate": 0.0
   },
   "recent_form": [
+    30,
     10,
     7,
     27
@@ -29,17 +30,36 @@
   "track_stats": [
     {
       "track": "monza",
-      "races": 3,
+      "races": 4,
       "wins": 0,
       "podiums": 0,
       "points": 7,
-      "finish_sum": 44,
-      "average_finish": 14.67,
+      "finish_sum": 74,
+      "average_finish": 18.5,
       "best_lap_ms": 110172,
       "best_lap": "1:50.172"
     }
   ],
   "race_history": [
+    {
+      "race_id": "260316_173838_R.json",
+      "finished_at": "2026-03-16T17:38:38",
+      "track": "monza",
+      "position": 30,
+      "participants_count": 34,
+      "winner": "Евгений Майоров | NRR",
+      "points": 0,
+      "best_lap": null,
+      "best_lap_ms": null,
+      "total_time": null,
+      "total_time_ms": null,
+      "gap": null,
+      "gap_ms": null,
+      "lap_count": 0,
+      "had_best_lap": false,
+      "penalty_count": 0,
+      "penalty_points": 0
+    },
     {
       "race_id": "260314_175958_R.json",
       "finished_at": "2026-03-14T17:59:58",

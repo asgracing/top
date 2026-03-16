@@ -2,12 +2,12 @@
   "public_id": "drv_dff68ea43467",
   "driver": "massimiliano magi",
   "summary": {
-    "points": 0,
-    "average_points_per_race": 0.0,
-    "races": 1,
+    "points": 1,
+    "average_points_per_race": 0.5,
+    "races": 2,
     "wins": 0,
     "podiums": 0,
-    "average_finish": 22.0,
+    "average_finish": 16.0,
     "best_lap": "1:50.772",
     "best_lap_ms": 110772,
     "best_lap_track": "monza",
@@ -16,28 +16,48 @@
     "penalty_points": 0,
     "fastest_lap_awards": 0,
     "most_raced_track": "monza",
-    "last_race_at": "2026-03-16T16:57:38",
-    "last_seen": "2026-03-16T17:09:23",
+    "last_race_at": "2026-03-16T17:38:38",
+    "last_seen": "2026-03-16T17:38:38",
     "win_rate": 0.0,
     "podium_rate": 0.0
   },
   "recent_form": [
+    10,
     22
   ],
   "track_stats": [
     {
       "track": "monza",
-      "races": 1,
+      "races": 2,
       "wins": 0,
       "podiums": 0,
-      "points": 0,
-      "finish_sum": 22,
-      "average_finish": 22.0,
-      "best_lap_ms": 118510,
-      "best_lap": "1:58.510"
+      "points": 1,
+      "finish_sum": 32,
+      "average_finish": 16.0,
+      "best_lap_ms": 112227,
+      "best_lap": "1:52.227"
     }
   ],
   "race_history": [
+    {
+      "race_id": "260316_173838_R.json",
+      "finished_at": "2026-03-16T17:38:38",
+      "track": "monza",
+      "position": 10,
+      "participants_count": 34,
+      "winner": "Евгений Майоров | NRR",
+      "points": 1,
+      "best_lap": "1:52.227",
+      "best_lap_ms": 112227,
+      "total_time": "23:22.399",
+      "total_time_ms": 1402399,
+      "gap": "1:48.900",
+      "gap_ms": 108900,
+      "lap_count": 12,
+      "had_best_lap": false,
+      "penalty_count": 0,
+      "penalty_points": 0
+    },
     {
       "race_id": "260316_165738_R.json",
       "finished_at": "2026-03-16T16:57:38",

@@ -2,12 +2,12 @@
   "public_id": "drv_10b4b6556336",
   "driver": "Javier Breogan.VR.|ARF",
   "summary": {
-    "points": 112,
-    "average_points_per_race": 4.67,
-    "races": 24,
+    "points": 118,
+    "average_points_per_race": 4.72,
+    "races": 25,
     "wins": 0,
     "podiums": 2,
-    "average_finish": 13.67,
+    "average_finish": 13.4,
     "best_lap": "1:47.887",
     "best_lap_ms": 107887,
     "best_lap_track": "monza",
@@ -16,32 +16,51 @@
     "penalty_points": 0,
     "fastest_lap_awards": 1,
     "most_raced_track": "monza",
-    "last_race_at": "2026-03-16T16:57:38",
-    "last_seen": "2026-03-16T16:57:38",
+    "last_race_at": "2026-03-16T17:38:38",
+    "last_seen": "2026-03-16T17:38:38",
     "win_rate": 0.0,
-    "podium_rate": 8.33
+    "podium_rate": 8.0
   },
   "recent_form": [
+    7,
     4,
     8,
     2,
-    9,
-    15
+    9
   ],
   "track_stats": [
     {
       "track": "monza",
-      "races": 24,
+      "races": 25,
       "wins": 0,
       "podiums": 2,
-      "points": 112,
-      "finish_sum": 328,
-      "average_finish": 13.67,
+      "points": 118,
+      "finish_sum": 335,
+      "average_finish": 13.4,
       "best_lap_ms": 107887,
       "best_lap": "1:47.887"
     }
   ],
   "race_history": [
+    {
+      "race_id": "260316_173838_R.json",
+      "finished_at": "2026-03-16T17:38:38",
+      "track": "monza",
+      "position": 7,
+      "participants_count": 34,
+      "winner": "Евгений Майоров | NRR",
+      "points": 6,
+      "best_lap": "1:48.117",
+      "best_lap_ms": 108117,
+      "total_time": "22:27.068",
+      "total_time_ms": 1347068,
+      "gap": "0:53.569",
+      "gap_ms": 53569,
+      "lap_count": 12,
+      "had_best_lap": false,
+      "penalty_count": 0,
+      "penalty_points": 0
+    },
     {
       "race_id": "260316_165738_R.json",
       "finished_at": "2026-03-16T16:57:38",

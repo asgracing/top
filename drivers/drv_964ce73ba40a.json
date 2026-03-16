@@ -2,12 +2,12 @@
   "public_id": "drv_964ce73ba40a",
   "driver": "Kosso Filippo",
   "summary": {
-    "points": 16,
-    "average_points_per_race": 2.0,
-    "races": 8,
+    "points": 24,
+    "average_points_per_race": 2.67,
+    "races": 9,
     "wins": 0,
     "podiums": 0,
-    "average_finish": 23.12,
+    "average_finish": 21.22,
     "best_lap": "1:47.470",
     "best_lap_ms": 107470,
     "best_lap_track": "monza",
@@ -16,32 +16,51 @@
     "penalty_points": 0,
     "fastest_lap_awards": 0,
     "most_raced_track": "monza",
-    "last_race_at": "2026-03-16T16:57:38",
-    "last_seen": "2026-03-16T17:09:23",
+    "last_race_at": "2026-03-16T17:38:38",
+    "last_seen": "2026-03-16T17:38:38",
     "win_rate": 0.0,
     "podium_rate": 0.0
   },
   "recent_form": [
+    6,
     17,
     6,
     6,
-    42,
-    34
+    42
   ],
   "track_stats": [
     {
       "track": "monza",
-      "races": 8,
+      "races": 9,
       "wins": 0,
       "podiums": 0,
-      "points": 16,
-      "finish_sum": 185,
-      "average_finish": 23.12,
-      "best_lap_ms": 107952,
-      "best_lap": "1:47.952"
+      "points": 24,
+      "finish_sum": 191,
+      "average_finish": 21.22,
+      "best_lap_ms": 107847,
+      "best_lap": "1:47.847"
     }
   ],
   "race_history": [
+    {
+      "race_id": "260316_173838_R.json",
+      "finished_at": "2026-03-16T17:38:38",
+      "track": "monza",
+      "position": 6,
+      "participants_count": 34,
+      "winner": "Евгений Майоров | NRR",
+      "points": 8,
+      "best_lap": "1:47.847",
+      "best_lap_ms": 107847,
+      "total_time": "22:25.901",
+      "total_time_ms": 1345901,
+      "gap": "0:52.402",
+      "gap_ms": 52402,
+      "lap_count": 12,
+      "had_best_lap": false,
+      "penalty_count": 0,
+      "penalty_points": 0
+    },
     {
       "race_id": "260316_165738_R.json",
       "finished_at": "2026-03-16T16:57:38",

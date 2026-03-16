@@ -4,10 +4,10 @@
   "summary": {
     "points": 0,
     "average_points_per_race": 0.0,
-    "races": 2,
+    "races": 3,
     "wins": 0,
     "podiums": 0,
-    "average_finish": 30.0,
+    "average_finish": 24.33,
     "best_lap": "1:49.020",
     "best_lap_ms": 109020,
     "best_lap_track": "monza",
@@ -16,29 +16,49 @@
     "penalty_points": 0,
     "fastest_lap_awards": 0,
     "most_raced_track": "monza",
-    "last_race_at": "2026-03-15T13:14:06",
-    "last_seen": "2026-03-15T13:14:06",
+    "last_race_at": "2026-03-16T17:38:38",
+    "last_seen": "2026-03-16T17:38:38",
     "win_rate": 0.0,
     "podium_rate": 0.0
   },
   "recent_form": [
+    13,
     12,
     48
   ],
   "track_stats": [
     {
       "track": "monza",
-      "races": 2,
+      "races": 3,
       "wins": 0,
       "podiums": 0,
       "points": 0,
-      "finish_sum": 60,
-      "average_finish": 30.0,
+      "finish_sum": 73,
+      "average_finish": 24.33,
       "best_lap_ms": 109020,
       "best_lap": "1:49.020"
     }
   ],
   "race_history": [
+    {
+      "race_id": "260316_173838_R.json",
+      "finished_at": "2026-03-16T17:38:38",
+      "track": "monza",
+      "position": 13,
+      "participants_count": 34,
+      "winner": "Евгений Майоров | NRR",
+      "points": 0,
+      "best_lap": "1:49.262",
+      "best_lap_ms": 109262,
+      "total_time": "22:07.201",
+      "total_time_ms": 1327201,
+      "gap": "0:33.702",
+      "gap_ms": 33702,
+      "lap_count": 11,
+      "had_best_lap": false,
+      "penalty_count": 0,
+      "penalty_points": 0
+    },
     {
       "race_id": "260315_131406_R.json",
       "finished_at": "2026-03-15T13:14:06",

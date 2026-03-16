@@ -3,11 +3,11 @@
   "driver": "Sergei Buravov",
   "summary": {
     "points": 2,
-    "average_points_per_race": 0.25,
-    "races": 8,
+    "average_points_per_race": 0.22,
+    "races": 9,
     "wins": 0,
     "podiums": 0,
-    "average_finish": 26.75,
+    "average_finish": 26.22,
     "best_lap": "1:49.605",
     "best_lap_ms": 109605,
     "best_lap_track": "monza",
@@ -16,32 +16,51 @@
     "penalty_points": 0,
     "fastest_lap_awards": 0,
     "most_raced_track": "monza",
-    "last_race_at": "2026-03-16T16:57:38",
-    "last_seen": "2026-03-16T16:57:38",
+    "last_race_at": "2026-03-16T17:38:38",
+    "last_seen": "2026-03-16T17:38:38",
     "win_rate": 0.0,
     "podium_rate": 0.0
   },
   "recent_form": [
+    22,
     44,
     11,
     45,
-    9,
-    43
+    9
   ],
   "track_stats": [
     {
       "track": "monza",
-      "races": 8,
+      "races": 9,
       "wins": 0,
       "podiums": 0,
       "points": 2,
-      "finish_sum": 214,
-      "average_finish": 26.75,
+      "finish_sum": 236,
+      "average_finish": 26.22,
       "best_lap_ms": 110122,
       "best_lap": "1:50.122"
     }
   ],
   "race_history": [
+    {
+      "race_id": "260316_173838_R.json",
+      "finished_at": "2026-03-16T17:38:38",
+      "track": "monza",
+      "position": 22,
+      "participants_count": 34,
+      "winner": "Евгений Майоров | NRR",
+      "points": 0,
+      "best_lap": "1:50.415",
+      "best_lap_ms": 110415,
+      "total_time": "6:21.640",
+      "total_time_ms": 381640,
+      "gap": "0:00.000",
+      "gap_ms": 0,
+      "lap_count": 3,
+      "had_best_lap": false,
+      "penalty_count": 0,
+      "penalty_points": 0
+    },
     {
       "race_id": "260316_165738_R.json",
       "finished_at": "2026-03-16T16:57:38",
