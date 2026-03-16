@@ -2,46 +2,65 @@
   "public_id": "drv_10b4b6556336",
   "driver": "Javier Breogan.VR.|ARF",
   "summary": {
-    "points": 118,
-    "average_points_per_race": 4.72,
-    "races": 25,
+    "points": 128,
+    "average_points_per_race": 4.92,
+    "races": 26,
     "wins": 0,
     "podiums": 2,
-    "average_finish": 13.4,
-    "best_lap": "1:47.887",
-    "best_lap_ms": 107887,
+    "average_finish": 13.08,
+    "best_lap": "1:47.812",
+    "best_lap_ms": 107812,
     "best_lap_track": "monza",
     "best_lap_session_type": "R",
     "penalty_count": 0,
     "penalty_points": 0,
     "fastest_lap_awards": 1,
     "most_raced_track": "monza",
-    "last_race_at": "2026-03-16T17:38:38",
-    "last_seen": "2026-03-16T17:38:38",
+    "last_race_at": "2026-03-16T18:16:39",
+    "last_seen": "2026-03-16T18:16:39",
     "win_rate": 0.0,
-    "podium_rate": 8.0
+    "podium_rate": 7.69
   },
   "recent_form": [
+    5,
     7,
     4,
     8,
-    2,
-    9
+    2
   ],
   "track_stats": [
     {
       "track": "monza",
-      "races": 25,
+      "races": 26,
       "wins": 0,
       "podiums": 2,
-      "points": 118,
-      "finish_sum": 335,
-      "average_finish": 13.4,
-      "best_lap_ms": 107887,
-      "best_lap": "1:47.887"
+      "points": 128,
+      "finish_sum": 340,
+      "average_finish": 13.08,
+      "best_lap_ms": 107812,
+      "best_lap": "1:47.812"
     }
   ],
   "race_history": [
+    {
+      "race_id": "260316_181639_R.json",
+      "finished_at": "2026-03-16T18:16:39",
+      "track": "monza",
+      "position": 5,
+      "participants_count": 43,
+      "winner": "Mehmet Can",
+      "points": 10,
+      "best_lap": "1:47.812",
+      "best_lap_ms": 107812,
+      "total_time": "22:17.742",
+      "total_time_ms": 1337742,
+      "gap": "0:32.960",
+      "gap_ms": 32960,
+      "lap_count": 12,
+      "had_best_lap": false,
+      "penalty_count": 0,
+      "penalty_points": 0
+    },
     {
       "race_id": "260316_173838_R.json",
       "finished_at": "2026-03-16T17:38:38",

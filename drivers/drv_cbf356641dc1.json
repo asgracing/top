@@ -3,11 +3,11 @@
   "driver": "tom talbot",
   "summary": {
     "points": 27,
-    "average_points_per_race": 9.0,
-    "races": 3,
+    "average_points_per_race": 6.75,
+    "races": 4,
     "wins": 0,
     "podiums": 1,
-    "average_finish": 16.33,
+    "average_finish": 19.75,
     "best_lap": "1:48.462",
     "best_lap_ms": 108462,
     "best_lap_track": "monza",
@@ -16,12 +16,13 @@
     "penalty_points": 0,
     "fastest_lap_awards": 0,
     "most_raced_track": "monza",
-    "last_race_at": "2026-03-16T17:38:38",
-    "last_seen": "2026-03-16T17:38:38",
+    "last_race_at": "2026-03-16T18:16:39",
+    "last_seen": "2026-03-16T18:16:39",
     "win_rate": 0.0,
-    "podium_rate": 33.33
+    "podium_rate": 25.0
   },
   "recent_form": [
+    30,
     4,
     3,
     42
@@ -29,17 +30,36 @@
   "track_stats": [
     {
       "track": "monza",
-      "races": 3,
+      "races": 4,
       "wins": 0,
       "podiums": 1,
       "points": 27,
-      "finish_sum": 49,
-      "average_finish": 16.33,
+      "finish_sum": 79,
+      "average_finish": 19.75,
       "best_lap_ms": 108570,
       "best_lap": "1:48.570"
     }
   ],
   "race_history": [
+    {
+      "race_id": "260316_181639_R.json",
+      "finished_at": "2026-03-16T18:16:39",
+      "track": "monza",
+      "position": 30,
+      "participants_count": 43,
+      "winner": "Mehmet Can",
+      "points": 0,
+      "best_lap": null,
+      "best_lap_ms": null,
+      "total_time": null,
+      "total_time_ms": null,
+      "gap": null,
+      "gap_ms": null,
+      "lap_count": 0,
+      "had_best_lap": false,
+      "penalty_count": 0,
+      "penalty_points": 0
+    },
     {
       "race_id": "260316_173838_R.json",
       "finished_at": "2026-03-16T17:38:38",

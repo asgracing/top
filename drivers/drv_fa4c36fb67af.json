@@ -2,12 +2,12 @@
   "public_id": "drv_fa4c36fb67af",
   "driver": "Tang Mathew",
   "summary": {
-    "points": 0,
-    "average_points_per_race": 0.0,
-    "races": 1,
+    "points": 6,
+    "average_points_per_race": 3.0,
+    "races": 2,
     "wins": 0,
     "podiums": 0,
-    "average_finish": 31.0,
+    "average_finish": 19.0,
     "best_lap": "1:48.305",
     "best_lap_ms": 108305,
     "best_lap_track": "monza",
@@ -16,28 +16,48 @@
     "penalty_points": 0,
     "fastest_lap_awards": 0,
     "most_raced_track": "monza",
-    "last_race_at": "2026-03-16T17:38:38",
-    "last_seen": "2026-03-16T17:50:32",
+    "last_race_at": "2026-03-16T18:16:39",
+    "last_seen": "2026-03-16T18:16:39",
     "win_rate": 0.0,
     "podium_rate": 0.0
   },
   "recent_form": [
+    7,
     31
   ],
   "track_stats": [
     {
       "track": "monza",
-      "races": 1,
+      "races": 2,
       "wins": 0,
       "podiums": 0,
-      "points": 0,
-      "finish_sum": 31,
-      "average_finish": 31.0,
-      "best_lap_ms": null,
-      "best_lap": null
+      "points": 6,
+      "finish_sum": 38,
+      "average_finish": 19.0,
+      "best_lap_ms": 109357,
+      "best_lap": "1:49.357"
     }
   ],
   "race_history": [
+    {
+      "race_id": "260316_181639_R.json",
+      "finished_at": "2026-03-16T18:16:39",
+      "track": "monza",
+      "position": 7,
+      "participants_count": 43,
+      "winner": "Mehmet Can",
+      "points": 6,
+      "best_lap": "1:49.357",
+      "best_lap_ms": 109357,
+      "total_time": "22:28.921",
+      "total_time_ms": 1348921,
+      "gap": "0:44.139",
+      "gap_ms": 44139,
+      "lap_count": 12,
+      "had_best_lap": false,
+      "penalty_count": 0,
+      "penalty_points": 0
+    },
     {
       "race_id": "260316_173838_R.json",
       "finished_at": "2026-03-16T17:38:38",

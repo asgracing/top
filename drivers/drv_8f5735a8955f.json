@@ -2,28 +2,62 @@
   "public_id": "drv_8f5735a8955f",
   "driver": "sonny hayes",
   "summary": {
-    "points": 0,
-    "average_points_per_race": 0,
-    "races": 0,
+    "points": 15,
+    "average_points_per_race": 15.0,
+    "races": 1,
     "wins": 0,
-    "podiums": 0,
-    "average_finish": null,
-    "best_lap": "1:49.420",
-    "best_lap_ms": 109420,
+    "podiums": 1,
+    "average_finish": 3.0,
+    "best_lap": "1:49.255",
+    "best_lap_ms": 109255,
     "best_lap_track": "monza",
-    "best_lap_session_type": "Q",
+    "best_lap_session_type": "R",
     "penalty_count": 0,
     "penalty_points": 0,
     "fastest_lap_awards": 0,
-    "most_raced_track": null,
-    "last_race_at": null,
-    "last_seen": "2026-03-16T17:50:32",
-    "win_rate": 0,
-    "podium_rate": 0
+    "most_raced_track": "monza",
+    "last_race_at": "2026-03-16T18:16:39",
+    "last_seen": "2026-03-16T18:16:39",
+    "win_rate": 0.0,
+    "podium_rate": 100.0
   },
-  "recent_form": [],
-  "track_stats": [],
-  "race_history": [],
+  "recent_form": [
+    3
+  ],
+  "track_stats": [
+    {
+      "track": "monza",
+      "races": 1,
+      "wins": 0,
+      "podiums": 1,
+      "points": 15,
+      "finish_sum": 3,
+      "average_finish": 3.0,
+      "best_lap_ms": 109255,
+      "best_lap": "1:49.255"
+    }
+  ],
+  "race_history": [
+    {
+      "race_id": "260316_181639_R.json",
+      "finished_at": "2026-03-16T18:16:39",
+      "track": "monza",
+      "position": 3,
+      "participants_count": 43,
+      "winner": "Mehmet Can",
+      "points": 15,
+      "best_lap": "1:49.255",
+      "best_lap_ms": 109255,
+      "total_time": "22:04.506",
+      "total_time_ms": 1324506,
+      "gap": "0:19.724",
+      "gap_ms": 19724,
+      "lap_count": 12,
+      "had_best_lap": false,
+      "penalty_count": 0,
+      "penalty_points": 0
+    }
+  ],
   "penalties": {
     "penalty_count": 0,
     "penalty_points": 0,

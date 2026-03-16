@@ -4,24 +4,25 @@
   "summary": {
     "points": 0,
     "average_points_per_race": 0.0,
-    "races": 3,
+    "races": 4,
     "wins": 0,
     "podiums": 0,
-    "average_finish": 33.33,
-    "best_lap": null,
-    "best_lap_ms": null,
-    "best_lap_track": null,
-    "best_lap_session_type": null,
+    "average_finish": 29.75,
+    "best_lap": "1:49.157",
+    "best_lap_ms": 109157,
+    "best_lap_track": "monza",
+    "best_lap_session_type": "R",
     "penalty_count": 0,
     "penalty_points": 0,
     "fastest_lap_awards": 0,
     "most_raced_track": "monza",
-    "last_race_at": "2026-03-15T16:58:35",
-    "last_seen": "2026-03-15T16:58:35",
+    "last_race_at": "2026-03-16T18:16:39",
+    "last_seen": "2026-03-16T18:16:39",
     "win_rate": 0.0,
     "podium_rate": 0.0
   },
   "recent_form": [
+    19,
     45,
     34,
     21
@@ -29,17 +30,36 @@
   "track_stats": [
     {
       "track": "monza",
-      "races": 3,
+      "races": 4,
       "wins": 0,
       "podiums": 0,
       "points": 0,
-      "finish_sum": 100,
-      "average_finish": 33.33,
-      "best_lap_ms": null,
-      "best_lap": null
+      "finish_sum": 119,
+      "average_finish": 29.75,
+      "best_lap_ms": 109157,
+      "best_lap": "1:49.157"
     }
   ],
   "race_history": [
+    {
+      "race_id": "260316_181639_R.json",
+      "finished_at": "2026-03-16T18:16:39",
+      "track": "monza",
+      "position": 19,
+      "participants_count": 43,
+      "winner": "Mehmet Can",
+      "points": 0,
+      "best_lap": "1:49.157",
+      "best_lap_ms": 109157,
+      "total_time": "23:07.669",
+      "total_time_ms": 1387669,
+      "gap": "1:22.887",
+      "gap_ms": 82887,
+      "lap_count": 7,
+      "had_best_lap": false,
+      "penalty_count": 0,
+      "penalty_points": 0
+    },
     {
       "race_id": "260315_165835_R.json",
       "finished_at": "2026-03-15T16:58:35",

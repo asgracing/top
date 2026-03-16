@@ -3,11 +3,11 @@
   "driver": "X. Darkon",
   "summary": {
     "points": 18,
-    "average_points_per_race": 9.0,
-    "races": 2,
+    "average_points_per_race": 6.0,
+    "races": 3,
     "wins": 0,
     "podiums": 1,
-    "average_finish": 13.5,
+    "average_finish": 13.67,
     "best_lap": "1:47.817",
     "best_lap_ms": 107817,
     "best_lap_track": "monza",
@@ -16,29 +16,49 @@
     "penalty_points": 0,
     "fastest_lap_awards": 0,
     "most_raced_track": "monza",
-    "last_race_at": "2026-03-16T17:38:38",
-    "last_seen": "2026-03-16T17:38:38",
+    "last_race_at": "2026-03-16T18:16:39",
+    "last_seen": "2026-03-16T18:16:39",
     "win_rate": 0.0,
-    "podium_rate": 50.0
+    "podium_rate": 33.33
   },
   "recent_form": [
+    14,
     25,
     2
   ],
   "track_stats": [
     {
       "track": "monza",
-      "races": 2,
+      "races": 3,
       "wins": 0,
       "podiums": 1,
       "points": 18,
-      "finish_sum": 27,
-      "average_finish": 13.5,
+      "finish_sum": 41,
+      "average_finish": 13.67,
       "best_lap_ms": 108025,
       "best_lap": "1:48.025"
     }
   ],
   "race_history": [
+    {
+      "race_id": "260316_181639_R.json",
+      "finished_at": "2026-03-16T18:16:39",
+      "track": "monza",
+      "position": 14,
+      "participants_count": 43,
+      "winner": "Mehmet Can",
+      "points": 0,
+      "best_lap": "1:48.495",
+      "best_lap_ms": 108495,
+      "total_time": "17:17.407",
+      "total_time_ms": 1037407,
+      "gap": "0:00.000",
+      "gap_ms": 0,
+      "lap_count": 9,
+      "had_best_lap": false,
+      "penalty_count": 0,
+      "penalty_points": 0
+    },
     {
       "race_id": "260316_173838_R.json",
       "finished_at": "2026-03-16T17:38:38",

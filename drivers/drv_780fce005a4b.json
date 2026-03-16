@@ -3,11 +3,11 @@
   "driver": "Kirill Bulgakov",
   "summary": {
     "points": 303,
-    "average_points_per_race": 9.77,
-    "races": 31,
+    "average_points_per_race": 9.47,
+    "races": 32,
     "wins": 4,
     "podiums": 14,
-    "average_finish": 13.61,
+    "average_finish": 14.0,
     "best_lap": "1:46.750",
     "best_lap_ms": 106750,
     "best_lap_track": "monza",
@@ -16,32 +16,51 @@
     "penalty_points": 0,
     "fastest_lap_awards": 11,
     "most_raced_track": "monza",
-    "last_race_at": "2026-03-16T17:38:38",
-    "last_seen": "2026-03-16T17:38:38",
-    "win_rate": 12.9,
-    "podium_rate": 45.16
+    "last_race_at": "2026-03-16T18:16:39",
+    "last_seen": "2026-03-16T18:16:39",
+    "win_rate": 12.5,
+    "podium_rate": 43.75
   },
   "recent_form": [
+    26,
     18,
     41,
     29,
-    1,
-    2
+    1
   ],
   "track_stats": [
     {
       "track": "monza",
-      "races": 31,
+      "races": 32,
       "wins": 4,
       "podiums": 14,
       "points": 303,
-      "finish_sum": 422,
-      "average_finish": 13.61,
+      "finish_sum": 448,
+      "average_finish": 14.0,
       "best_lap_ms": 106750,
       "best_lap": "1:46.750"
     }
   ],
   "race_history": [
+    {
+      "race_id": "260316_181639_R.json",
+      "finished_at": "2026-03-16T18:16:39",
+      "track": "monza",
+      "position": 26,
+      "participants_count": 43,
+      "winner": "Mehmet Can",
+      "points": 0,
+      "best_lap": null,
+      "best_lap_ms": null,
+      "total_time": "0:44.668",
+      "total_time_ms": 44668,
+      "gap": "0:00.000",
+      "gap_ms": 0,
+      "lap_count": 0,
+      "had_best_lap": false,
+      "penalty_count": 0,
+      "penalty_points": 0
+    },
     {
       "race_id": "260316_173838_R.json",
       "finished_at": "2026-03-16T17:38:38",
