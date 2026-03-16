@@ -319,6 +319,7 @@ h1 {
   grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
   gap: 12px;
   width: 100%;
+  align-items: stretch;
 }
 
 .hero-online-card {
@@ -513,7 +514,8 @@ h1 {
 }
 
 /* Primary CTA in hero */
-.btn-today-stats {
+.btn-today-stats,
+.btn-last-races {
   position: relative;
   display: inline-flex;
   align-items: center;
@@ -537,7 +539,8 @@ h1 {
     0 12px 28px rgba(255, 91, 46, 0.30);
 }
 
-.btn-today-stats:hover {
+.btn-today-stats:hover,
+.btn-last-races:hover {
   transform: translateY(-2px);
   filter: brightness(1.05);
   box-shadow:
@@ -565,39 +568,6 @@ h1 {
   box-shadow:
     0 0 0 1px rgba(255, 255, 255, 0.05) inset,
     0 12px 28px rgba(255, 91, 46, 0.16);
-}
-
-.btn-last-races {
-  position: relative;
-  width: auto;
-  min-width: 220px;
-  min-height: 96px;
-  padding: 18px 20px;
-  border-radius: 20px;
-  align-self: flex-start;
-  text-align: center;
-  font-size: 0.98rem;
-  line-height: 1.25;
-  font-weight: 900;
-  letter-spacing: 0.02em;
-  color: var(--text);
-  border: 1px solid rgba(255, 184, 77, 0.22);
-  background:
-    linear-gradient(135deg, rgba(255, 255, 255, 0.07), rgba(255, 91, 46, 0.12)),
-    rgba(255, 255, 255, 0.04);
-  box-shadow:
-    0 0 0 1px rgba(255, 255, 255, 0.05) inset,
-    0 12px 28px rgba(0, 0, 0, 0.2);
-}
-
-.btn-last-races:hover {
-  transform: translateY(-2px);
-  background:
-    linear-gradient(135deg, rgba(255, 255, 255, 0.1), rgba(255, 91, 46, 0.16)),
-    rgba(255, 255, 255, 0.05);
-  box-shadow:
-    0 0 0 1px rgba(255, 255, 255, 0.08) inset,
-    0 16px 34px rgba(0, 0, 0, 0.26);
 }
 
 .btn-driver-day:hover {

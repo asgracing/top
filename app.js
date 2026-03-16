@@ -8,6 +8,7 @@ const safetyUrl = `${dataBasePath}safety.json`;
 const driverOfDayUrl = `${dataBasePath}driver_of_the_day.json`;
 const serverStatusUrl = `${dataBasePath}server_status.json`;
 const onlineUrl = `${dataBasePath}online.json`;
+const racesUrl = IS_RACES_PAGE ? "./races.json" : `${dataBasePath}races/races.json`;
 const PAGE_SIZE = 10;
 
 let leaderboardData = [];
@@ -616,7 +617,6 @@ function normalizeSnapshotPayload(snapshot) {
   return {
     leaderboard: Array.isArray(snapshot?.leaderboard) ? snapshot.leaderboard : [],
     bestlaps: Array.isArray(snapshot?.bestlaps) ? snapshot.bestlaps : [],
-    races: Array.isArray(snapshot?.races) ? snapshot.races : [],
     globalStats: snapshot?.global_stats && typeof snapshot.global_stats === "object" ? snapshot.global_stats : null,
     safety: Array.isArray(snapshot?.safety) ? snapshot.safety : [],
     driverOfDay: snapshot?.driver_of_the_day && typeof snapshot.driver_of_the_day === "object" ? snapshot.driver_of_the_day : null,
@@ -643,7 +643,6 @@ function normalizeLegacyPayload(results) {
     bestlaps: bestlapsResult.status === "fulfilled" && Array.isArray(bestlapsResult.value)
       ? bestlapsResult.value
       : [],
-    races: [],
     globalStats: globalStatsResult.status === "fulfilled" && globalStatsResult.value && typeof globalStatsResult.value === "object"
       ? globalStatsResult.value
       : null,
@@ -681,6 +680,11 @@ async function loadSiteData() {
   ]);
 
   return normalizeLegacyPayload(legacyResults);
+}
+
+async function loadRacesData() {
+  const data = await loadJson(racesUrl);
+  return Array.isArray(data) ? data : [];
 }
 
 function applyStaticTranslations() {
@@ -1656,20 +1660,20 @@ async function init() {
   applyStaticTranslations();
 
   try {
+    if (IS_RACES_PAGE) {
+      racesData = await loadRacesData();
+      rerenderUI();
+      return;
+    }
+
     const data = await loadSiteData();
 
     leaderboardData = data.leaderboard;
     bestlapsData = data.bestlaps;
-    racesData = data.races;
     todayStatsData = data.globalStats;
     safetyData = data.safety;
     driverOfDayData = data.driverOfDay;
     onlineData = data.online;
-
-    if (IS_RACES_PAGE) {
-      rerenderUI();
-      return;
-    }
 
     const driversCountEl = document.getElementById("drivers-count");
     if (driversCountEl) {
