@@ -685,65 +685,69 @@ h1 {
 .page-hero-stats {
   display: grid;
   grid-template-columns: repeat(3, minmax(0, 1fr));
-  gap: 14px;
-  margin-top: 16px;
+  gap: 10px;
+  margin-top: 12px;
 }
 
 .driver-hero-card {
-  padding: 24px;
+  padding: 18px 20px;
 }
 
 .driver-stats-grid {
   display: grid;
   grid-template-columns: repeat(3, minmax(0, 1fr));
-  gap: 12px;
-  margin-top: 18px;
+  gap: 10px;
+  margin-top: 14px;
 }
 
 .driver-stat-card,
 .driver-highlight-card {
-  padding: 16px;
+  min-height: 92px;
+  padding: 12px 16px;
   border: 1px solid var(--line);
-  border-radius: 18px;
-  background: rgba(255, 255, 255, 0.04);
+  border-radius: 16px;
+  background: linear-gradient(180deg, rgba(255, 255, 255, 0.045), rgba(255, 255, 255, 0.03));
+  box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.03);
 }
 
 .driver-stat-label,
 .driver-highlight-label,
 .driver-stat-note {
-  font-size: 12px;
+  font-size: 11px;
+  line-height: 1.25;
   color: var(--muted);
 }
 
 .driver-stat-value,
 .driver-highlight-value {
-  margin-top: 8px;
-  font-size: 1.2rem;
+  margin-top: 6px;
+  font-size: 1rem;
   font-weight: 800;
-  line-height: 1.2;
+  line-height: 1.15;
 }
 
 .driver-stat-note {
-  margin-top: 6px;
+  margin-top: 4px;
 }
 
 .driver-highlights-grid {
   display: grid;
   grid-template-columns: repeat(4, minmax(0, 1fr));
-  gap: 12px;
-  margin-top: 14px;
+  gap: 10px;
+  margin-top: 10px;
 }
 
 .form-pill {
   display: inline-flex;
   align-items: center;
   justify-content: center;
-  min-width: 34px;
-  height: 34px;
-  margin-right: 8px;
+  min-width: 30px;
+  height: 30px;
+  margin-right: 6px;
   border-radius: 999px;
   background: rgba(255, 255, 255, 0.06);
   border: 1px solid var(--line);
+  font-size: 0.92rem;
   font-weight: 800;
 }
 
