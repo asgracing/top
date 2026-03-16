@@ -4,10 +4,10 @@
   "summary": {
     "points": 0,
     "average_points_per_race": 0.0,
-    "races": 2,
+    "races": 3,
     "wins": 0,
     "podiums": 0,
-    "average_finish": 29.5,
+    "average_finish": 25.67,
     "best_lap": "1:50.710",
     "best_lap_ms": 110710,
     "best_lap_track": "monza",
@@ -16,31 +16,57 @@
     "penalty_points": 3,
     "fastest_lap_awards": 0,
     "most_raced_track": "monza",
-    "last_race_at": "2026-03-16T22:02:28",
-    "last_seen": "2026-03-16T22:13:52",
+    "last_race_at": "2026-03-16T22:38:22",
+    "last_seen": "2026-03-16T22:38:22",
     "win_rate": 0.0,
     "podium_rate": 0.0,
-    "average_positions_delta": 5.0,
-    "positions_delta_races": 1
+    "average_positions_delta": 0.5,
+    "positions_delta_races": 2
   },
   "recent_form": [
+    18,
     37,
     22
   ],
   "track_stats": [
     {
       "track": "monza",
-      "races": 2,
+      "races": 3,
       "wins": 0,
       "podiums": 0,
       "points": 0,
-      "finish_sum": 59,
-      "average_finish": 29.5,
-      "best_lap_ms": 118765,
-      "best_lap": "1:58.765"
+      "finish_sum": 77,
+      "average_finish": 25.67,
+      "best_lap_ms": 117590,
+      "best_lap": "1:57.590"
     }
   ],
   "race_history": [
+    {
+      "race_id": "260316_223822_R.json",
+      "finished_at": "2026-03-16T22:38:22",
+      "track": "monza",
+      "position": 18,
+      "participants_count": 46,
+      "winner": "A sterber",
+      "points": 0,
+      "qualifying_position": 14,
+      "start_position": 14,
+      "start_position_source": "qualifying_car_id",
+      "positions_delta": -4,
+      "positions_gained": 0,
+      "positions_lost": 4,
+      "best_lap": "1:57.590",
+      "best_lap_ms": 117590,
+      "total_time": "10:08.063",
+      "total_time_ms": 608063,
+      "gap": "0:00.000",
+      "gap_ms": 0,
+      "lap_count": 3,
+      "had_best_lap": false,
+      "penalty_count": 0,
+      "penalty_points": 0
+    },
     {
       "race_id": "260316_220228_R.json",
       "finished_at": "2026-03-16T22:02:28",

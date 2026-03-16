@@ -1,15 +1,15 @@
 {
-  "public_id": "drv_f173d803cf3b",
-  "driver": "Markus Gammert",
+  "public_id": "drv_1c36c1b93b7c",
+  "driver": "Aleksandr Petrov | S24",
   "summary": {
-    "points": 6,
-    "average_points_per_race": 6.0,
+    "points": 0,
+    "average_points_per_race": 0.0,
     "races": 1,
     "wins": 0,
     "podiums": 0,
-    "average_finish": 7.0,
-    "best_lap": "1:49.317",
-    "best_lap_ms": 109317,
+    "average_finish": 15.0,
+    "best_lap": "1:51.952",
+    "best_lap_ms": 111952,
     "best_lap_track": "monza",
     "best_lap_session_type": "R",
     "penalty_count": 0,
@@ -20,11 +20,11 @@
     "last_seen": "2026-03-16T22:38:22",
     "win_rate": 0.0,
     "podium_rate": 0.0,
-    "average_positions_delta": 1.0,
-    "positions_delta_races": 1
+    "average_positions_delta": null,
+    "positions_delta_races": 0
   },
   "recent_form": [
-    7
+    15
   ],
   "track_stats": [
     {
@@ -32,11 +32,11 @@
       "races": 1,
       "wins": 0,
       "podiums": 0,
-      "points": 6,
-      "finish_sum": 7,
-      "average_finish": 7.0,
-      "best_lap_ms": 109317,
-      "best_lap": "1:49.317"
+      "points": 0,
+      "finish_sum": 15,
+      "average_finish": 15.0,
+      "best_lap_ms": 111952,
+      "best_lap": "1:51.952"
     }
   ],
   "race_history": [
@@ -44,23 +44,23 @@
       "race_id": "260316_223822_R.json",
       "finished_at": "2026-03-16T22:38:22",
       "track": "monza",
-      "position": 7,
+      "position": 15,
       "participants_count": 46,
       "winner": "A sterber",
-      "points": 6,
-      "qualifying_position": 8,
-      "start_position": 8,
-      "start_position_source": "qualifying_car_id",
-      "positions_delta": 1,
-      "positions_gained": 1,
-      "positions_lost": 0,
-      "best_lap": "1:49.317",
-      "best_lap_ms": 109317,
-      "total_time": "20:30.467",
-      "total_time_ms": 1230467,
-      "gap": "0:24.105",
-      "gap_ms": 24105,
-      "lap_count": 11,
+      "points": 0,
+      "qualifying_position": null,
+      "start_position": null,
+      "start_position_source": "unknown",
+      "positions_delta": null,
+      "positions_gained": null,
+      "positions_lost": null,
+      "best_lap": "1:51.952",
+      "best_lap_ms": 111952,
+      "total_time": "21:00.402",
+      "total_time_ms": 1260402,
+      "gap": "0:54.040",
+      "gap_ms": 54040,
+      "lap_count": 6,
       "had_best_lap": false,
       "penalty_count": 0,
       "penalty_points": 0
