@@ -615,7 +615,8 @@ h1 {
 .hero-side-compact {
   display: flex;
   flex-direction: column;
-  gap: 14px;
+  gap: 10px;
+  margin-top: 4px;
 }
 
 .mini-stat {
