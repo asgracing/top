@@ -3,11 +3,11 @@
   "driver": "K etaLar",
   "summary": {
     "points": 8,
-    "average_points_per_race": 2.67,
-    "races": 3,
+    "average_points_per_race": 2.0,
+    "races": 4,
     "wins": 0,
     "podiums": 0,
-    "average_finish": 18.0,
+    "average_finish": 16.5,
     "best_lap": "1:49.090",
     "best_lap_ms": 109090,
     "best_lap_track": "monza",
@@ -16,14 +16,15 @@
     "penalty_points": 0,
     "fastest_lap_awards": 0,
     "most_raced_track": "monza",
-    "last_race_at": "2026-03-15T18:11:15",
-    "last_seen": "2026-03-15T18:11:15",
+    "last_race_at": "2026-03-16T20:45:56",
+    "last_seen": "2026-03-16T20:45:56",
     "win_rate": 0.0,
     "podium_rate": 0.0,
     "average_positions_delta": -2.5,
     "positions_delta_races": 2
   },
   "recent_form": [
+    12,
     31,
     6,
     17
@@ -31,17 +32,42 @@
   "track_stats": [
     {
       "track": "monza",
-      "races": 3,
+      "races": 4,
       "wins": 0,
       "podiums": 0,
       "points": 8,
-      "finish_sum": 54,
-      "average_finish": 18.0,
-      "best_lap_ms": 109250,
-      "best_lap": "1:49.250"
+      "finish_sum": 66,
+      "average_finish": 16.5,
+      "best_lap_ms": 109217,
+      "best_lap": "1:49.217"
     }
   ],
   "race_history": [
+    {
+      "race_id": "260316_204556_R.json",
+      "finished_at": "2026-03-16T20:45:56",
+      "track": "monza",
+      "position": 12,
+      "participants_count": 45,
+      "winner": "Jere Kärki (VR)",
+      "points": 0,
+      "qualifying_position": null,
+      "start_position": null,
+      "start_position_source": "unknown",
+      "positions_delta": null,
+      "positions_gained": null,
+      "positions_lost": null,
+      "best_lap": "1:49.217",
+      "best_lap_ms": 109217,
+      "total_time": "21:38.497",
+      "total_time_ms": 1298497,
+      "gap": "1:36.778",
+      "gap_ms": 96778,
+      "lap_count": 10,
+      "had_best_lap": false,
+      "penalty_count": 0,
+      "penalty_points": 0
+    },
     {
       "race_id": "260315_181115_R.json",
       "finished_at": "2026-03-15T18:11:15",

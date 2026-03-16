@@ -1,13 +1,13 @@
 {
-  "public_id": "drv_4312c05e9ac6",
-  "driver": "Toney Trefsgar",
+  "public_id": "drv_87d796535643",
+  "driver": "Алексатдр Смирнов",
   "summary": {
     "points": 0,
     "average_points_per_race": 0.0,
     "races": 1,
     "wins": 0,
     "podiums": 0,
-    "average_finish": 34.0,
+    "average_finish": 23.0,
     "best_lap": null,
     "best_lap_ms": null,
     "best_lap_track": null,
@@ -20,11 +20,11 @@
     "last_seen": "2026-03-16T20:45:56",
     "win_rate": 0.0,
     "podium_rate": 0.0,
-    "average_positions_delta": -8.0,
-    "positions_delta_races": 1
+    "average_positions_delta": null,
+    "positions_delta_races": 0
   },
   "recent_form": [
-    34
+    23
   ],
   "track_stats": [
     {
@@ -33,8 +33,8 @@
       "wins": 0,
       "podiums": 0,
       "points": 0,
-      "finish_sum": 34,
-      "average_finish": 34.0,
+      "finish_sum": 23,
+      "average_finish": 23.0,
       "best_lap_ms": null,
       "best_lap": null
     }
@@ -44,23 +44,23 @@
       "race_id": "260316_204556_R.json",
       "finished_at": "2026-03-16T20:45:56",
       "track": "monza",
-      "position": 34,
+      "position": 23,
       "participants_count": 45,
       "winner": "Jere Kärki (VR)",
       "points": 0,
-      "qualifying_position": 26,
-      "start_position": 26,
-      "start_position_source": "qualifying_car_id",
-      "positions_delta": -8,
-      "positions_gained": 0,
-      "positions_lost": 8,
+      "qualifying_position": null,
+      "start_position": null,
+      "start_position_source": "unknown",
+      "positions_delta": null,
+      "positions_gained": null,
+      "positions_lost": null,
       "best_lap": null,
       "best_lap_ms": null,
-      "total_time": null,
-      "total_time_ms": null,
-      "gap": null,
-      "gap_ms": null,
-      "lap_count": 0,
+      "total_time": "21:38.031",
+      "total_time_ms": 1298031,
+      "gap": "1:36.312",
+      "gap_ms": 96312,
+      "lap_count": 2,
       "had_best_lap": false,
       "penalty_count": 0,
       "penalty_points": 0

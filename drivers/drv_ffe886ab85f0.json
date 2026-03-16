@@ -3,27 +3,28 @@
   "driver": "atom saroyan",
   "summary": {
     "points": 6,
-    "average_points_per_race": 2.0,
-    "races": 3,
+    "average_points_per_race": 1.5,
+    "races": 4,
     "wins": 0,
     "podiums": 0,
-    "average_finish": 12.0,
+    "average_finish": 12.25,
     "best_lap": "1:49.965",
     "best_lap_ms": 109965,
     "best_lap_track": "monza",
     "best_lap_session_type": "R",
-    "penalty_count": 0,
-    "penalty_points": 0,
+    "penalty_count": 2,
+    "penalty_points": 3,
     "fastest_lap_awards": 0,
     "most_raced_track": "monza",
-    "last_race_at": "2026-03-16T20:09:24",
-    "last_seen": "2026-03-16T20:09:24",
+    "last_race_at": "2026-03-16T20:45:56",
+    "last_seen": "2026-03-16T20:45:56",
     "win_rate": 0.0,
     "podium_rate": 0.0,
-    "average_positions_delta": 1.33,
-    "positions_delta_races": 3
+    "average_positions_delta": -1.0,
+    "positions_delta_races": 4
   },
   "recent_form": [
+    13,
     7,
     15,
     14
@@ -31,17 +32,42 @@
   "track_stats": [
     {
       "track": "monza",
-      "races": 3,
+      "races": 4,
       "wins": 0,
       "podiums": 0,
       "points": 6,
-      "finish_sum": 36,
-      "average_finish": 12.0,
+      "finish_sum": 49,
+      "average_finish": 12.25,
       "best_lap_ms": 109965,
       "best_lap": "1:49.965"
     }
   ],
   "race_history": [
+    {
+      "race_id": "260316_204556_R.json",
+      "finished_at": "2026-03-16T20:45:56",
+      "track": "monza",
+      "position": 13,
+      "participants_count": 45,
+      "winner": "Jere Kärki (VR)",
+      "points": 0,
+      "qualifying_position": 5,
+      "start_position": 5,
+      "start_position_source": "qualifying_car_id",
+      "positions_delta": -8,
+      "positions_gained": 0,
+      "positions_lost": 8,
+      "best_lap": "1:50.015",
+      "best_lap_ms": 110015,
+      "total_time": "20:25.467",
+      "total_time_ms": 1225467,
+      "gap": "0:23.748",
+      "gap_ms": 23748,
+      "lap_count": 8,
+      "had_best_lap": false,
+      "penalty_count": 2,
+      "penalty_points": 3
+    },
     {
       "race_id": "260316_200924_R.json",
       "finished_at": "2026-03-16T20:09:24",
@@ -119,9 +145,15 @@
     }
   ],
   "penalties": {
-    "penalty_count": 0,
-    "penalty_points": 0,
-    "reasons": {},
-    "types": {}
+    "penalty_count": 2,
+    "penalty_points": 3,
+    "reasons": {
+      "PitSpeeding": 1,
+      "Cutting": 1
+    },
+    "types": {
+      "StopAndGo_30": 1,
+      "None": 1
+    }
   }
 }
