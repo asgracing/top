@@ -1,0 +1,107 @@
+{
+  "public_id": "drv_181a46c2fd16",
+  "driver": "Juanka Guerra",
+  "summary": {
+    "points": 28,
+    "average_points_per_race": 9.33,
+    "races": 3,
+    "wins": 0,
+    "podiums": 1,
+    "average_finish": 7.33,
+    "best_lap": "1:49.715",
+    "best_lap_ms": 109715,
+    "best_lap_track": "monza",
+    "best_lap_session_type": "R",
+    "penalty_count": 0,
+    "penalty_points": 0,
+    "fastest_lap_awards": 0,
+    "most_raced_track": "monza",
+    "last_race_at": "2026-03-15T09:24:19",
+    "last_seen": "2026-03-15T09:24:19",
+    "win_rate": 0.0,
+    "podium_rate": 33.33
+  },
+  "recent_form": [
+    5,
+    2,
+    15
+  ],
+  "track_stats": [
+    {
+      "track": "monza",
+      "races": 3,
+      "wins": 0,
+      "podiums": 1,
+      "points": 28,
+      "finish_sum": 22,
+      "average_finish": 7.33,
+      "best_lap_ms": 109715,
+      "best_lap": "1:49.715"
+    }
+  ],
+  "race_history": [
+    {
+      "race_id": "260315_092419_R.json",
+      "finished_at": "2026-03-15T09:24:19",
+      "track": "monza",
+      "position": 5,
+      "participants_count": 8,
+      "winner": "Artem Malyginov",
+      "points": 10,
+      "best_lap": null,
+      "best_lap_ms": null,
+      "total_time": null,
+      "total_time_ms": null,
+      "gap": null,
+      "gap_ms": null,
+      "lap_count": 0,
+      "had_best_lap": false,
+      "penalty_count": 0,
+      "penalty_points": 0
+    },
+    {
+      "race_id": "260315_085004_R.json",
+      "finished_at": "2026-03-15T08:50:04",
+      "track": "monza",
+      "position": 2,
+      "participants_count": 6,
+      "winner": "Arsenii Kapustin",
+      "points": 18,
+      "best_lap": "1:49.715",
+      "best_lap_ms": 109715,
+      "total_time": "20:30.572",
+      "total_time_ms": 1230572,
+      "gap": "0:18.836",
+      "gap_ms": 18836,
+      "lap_count": 11,
+      "had_best_lap": false,
+      "penalty_count": 0,
+      "penalty_points": 0
+    },
+    {
+      "race_id": "260315_020353_R.json",
+      "finished_at": "2026-03-15T02:03:53",
+      "track": "monza",
+      "position": 15,
+      "participants_count": 16,
+      "winner": "GNV MTogi",
+      "points": 0,
+      "best_lap": null,
+      "best_lap_ms": null,
+      "total_time": null,
+      "total_time_ms": null,
+      "gap": null,
+      "gap_ms": null,
+      "lap_count": 0,
+      "had_best_lap": false,
+      "penalty_count": 0,
+      "penalty_points": 0
+    }
+  ],
+  "penalties": {
+    "penalty_count": 0,
+    "penalty_points": 0,
+    "reasons": {},
+    "types": {}
+  }
+}

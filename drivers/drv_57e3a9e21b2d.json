@@ -1,0 +1,71 @@
+{
+  "public_id": "drv_57e3a9e21b2d",
+  "driver": "Henrique Fajardo",
+  "summary": {
+    "points": 0,
+    "average_points_per_race": 0.0,
+    "races": 1,
+    "wins": 0,
+    "podiums": 0,
+    "average_finish": 20.0,
+    "best_lap": "1:51.730",
+    "best_lap_ms": 111730,
+    "best_lap_track": "monza",
+    "best_lap_session_type": "R",
+    "penalty_count": 1,
+    "penalty_points": 2,
+    "fastest_lap_awards": 0,
+    "most_raced_track": "monza",
+    "last_race_at": "2026-03-15T19:26:02",
+    "last_seen": "2026-03-15T19:26:02",
+    "win_rate": 0.0,
+    "podium_rate": 0.0
+  },
+  "recent_form": [
+    20
+  ],
+  "track_stats": [
+    {
+      "track": "monza",
+      "races": 1,
+      "wins": 0,
+      "podiums": 0,
+      "points": 0,
+      "finish_sum": 20,
+      "average_finish": 20.0,
+      "best_lap_ms": 111730,
+      "best_lap": "1:51.730"
+    }
+  ],
+  "race_history": [
+    {
+      "race_id": "260315_192602_R.json",
+      "finished_at": "2026-03-15T19:26:02",
+      "track": "monza",
+      "position": 20,
+      "participants_count": 47,
+      "winner": "David Marie",
+      "points": 0,
+      "best_lap": "1:51.730",
+      "best_lap_ms": 111730,
+      "total_time": "23:45.873",
+      "total_time_ms": 1425873,
+      "gap": "2:07.894",
+      "gap_ms": 127894,
+      "lap_count": 4,
+      "had_best_lap": false,
+      "penalty_count": 2,
+      "penalty_points": 32
+    }
+  ],
+  "penalties": {
+    "penalty_count": 1,
+    "penalty_points": 2,
+    "reasons": {
+      "Cutting": 1
+    },
+    "types": {
+      "DriveThrough": 1
+    }
+  }
+}

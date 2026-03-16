@@ -1,0 +1,94 @@
+{
+  "public_id": "drv_63913215a9f0",
+  "driver": "Владимир Vladimir",
+  "summary": {
+    "points": 18,
+    "average_points_per_race": 9.0,
+    "races": 2,
+    "wins": 0,
+    "podiums": 1,
+    "average_finish": 12.5,
+    "best_lap": "1:51.940",
+    "best_lap_ms": 111940,
+    "best_lap_track": "monza",
+    "best_lap_session_type": "Q",
+    "penalty_count": 4,
+    "penalty_points": 6,
+    "fastest_lap_awards": 0,
+    "most_raced_track": "monza",
+    "last_race_at": "2026-03-16T00:22:05",
+    "last_seen": "2026-03-16T00:22:05",
+    "win_rate": 0.0,
+    "podium_rate": 50.0
+  },
+  "recent_form": [
+    2,
+    23
+  ],
+  "track_stats": [
+    {
+      "track": "monza",
+      "races": 2,
+      "wins": 0,
+      "podiums": 1,
+      "points": 18,
+      "finish_sum": 25,
+      "average_finish": 12.5,
+      "best_lap_ms": 112380,
+      "best_lap": "1:52.380"
+    }
+  ],
+  "race_history": [
+    {
+      "race_id": "260316_002205_R.json",
+      "finished_at": "2026-03-16T00:22:05",
+      "track": "monza",
+      "position": 2,
+      "participants_count": 11,
+      "winner": "Gleb Blatin",
+      "points": 18,
+      "best_lap": "1:52.380",
+      "best_lap_ms": 112380,
+      "total_time": "20:42.603",
+      "total_time_ms": 1242603,
+      "gap": "0:34.194",
+      "gap_ms": 34194,
+      "lap_count": 10,
+      "had_best_lap": false,
+      "penalty_count": 3,
+      "penalty_points": 3
+    },
+    {
+      "race_id": "260314_172313_R.json",
+      "finished_at": "2026-03-14T17:23:13",
+      "track": "monza",
+      "position": 23,
+      "participants_count": 35,
+      "winner": "Roderik Banrevi",
+      "points": 0,
+      "best_lap": null,
+      "best_lap_ms": null,
+      "total_time": "5:08.793",
+      "total_time_ms": 308793,
+      "gap": "0:00.000",
+      "gap_ms": 0,
+      "lap_count": 2,
+      "had_best_lap": false,
+      "penalty_count": 1,
+      "penalty_points": 3
+    }
+  ],
+  "penalties": {
+    "penalty_count": 4,
+    "penalty_points": 6,
+    "reasons": {
+      "Cutting": 3,
+      "PitSpeeding": 1
+    },
+    "types": {
+      "DriveThrough": 2,
+      "StopAndGo_30": 1,
+      "None": 1
+    }
+  }
+}

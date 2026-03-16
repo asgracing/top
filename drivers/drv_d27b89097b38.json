@@ -1,0 +1,67 @@
+{
+  "public_id": "drv_d27b89097b38",
+  "driver": "Gabriele Orlando",
+  "summary": {
+    "points": 0,
+    "average_points_per_race": 0.0,
+    "races": 1,
+    "wins": 0,
+    "podiums": 0,
+    "average_finish": 13.0,
+    "best_lap": "1:47.330",
+    "best_lap_ms": 107330,
+    "best_lap_track": "monza",
+    "best_lap_session_type": "R",
+    "penalty_count": 0,
+    "penalty_points": 0,
+    "fastest_lap_awards": 0,
+    "most_raced_track": "monza",
+    "last_race_at": "2026-03-15T14:30:44",
+    "last_seen": "2026-03-15T14:30:44",
+    "win_rate": 0.0,
+    "podium_rate": 0.0
+  },
+  "recent_form": [
+    13
+  ],
+  "track_stats": [
+    {
+      "track": "monza",
+      "races": 1,
+      "wins": 0,
+      "podiums": 0,
+      "points": 0,
+      "finish_sum": 13,
+      "average_finish": 13.0,
+      "best_lap_ms": 107330,
+      "best_lap": "1:47.330"
+    }
+  ],
+  "race_history": [
+    {
+      "race_id": "260315_143044_R.json",
+      "finished_at": "2026-03-15T14:30:44",
+      "track": "monza",
+      "position": 13,
+      "participants_count": 44,
+      "winner": "S Lee",
+      "points": 0,
+      "best_lap": "1:47.330",
+      "best_lap_ms": 107330,
+      "total_time": "15:09.216",
+      "total_time_ms": 909216,
+      "gap": "0:00.000",
+      "gap_ms": 0,
+      "lap_count": 8,
+      "had_best_lap": false,
+      "penalty_count": 0,
+      "penalty_points": 0
+    }
+  ],
+  "penalties": {
+    "penalty_count": 0,
+    "penalty_points": 0,
+    "reasons": {},
+    "types": {}
+  }
+}

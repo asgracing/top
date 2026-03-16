@@ -1,0 +1,107 @@
+{
+  "public_id": "drv_2a71baff1c14",
+  "driver": "Jack Petushitel",
+  "summary": {
+    "points": 30,
+    "average_points_per_race": 10.0,
+    "races": 3,
+    "wins": 0,
+    "podiums": 1,
+    "average_finish": 15.0,
+    "best_lap": "1:48.267",
+    "best_lap_ms": 108267,
+    "best_lap_track": "monza",
+    "best_lap_session_type": "R",
+    "penalty_count": 0,
+    "penalty_points": 0,
+    "fastest_lap_awards": 0,
+    "most_raced_track": "monza",
+    "last_race_at": "2026-03-15T22:28:25",
+    "last_seen": "2026-03-15T22:28:25",
+    "win_rate": 0.0,
+    "podium_rate": 33.33
+  },
+  "recent_form": [
+    39,
+    2,
+    4
+  ],
+  "track_stats": [
+    {
+      "track": "monza",
+      "races": 3,
+      "wins": 0,
+      "podiums": 1,
+      "points": 30,
+      "finish_sum": 45,
+      "average_finish": 15.0,
+      "best_lap_ms": 108267,
+      "best_lap": "1:48.267"
+    }
+  ],
+  "race_history": [
+    {
+      "race_id": "260315_222825_R.json",
+      "finished_at": "2026-03-15T22:28:25",
+      "track": "monza",
+      "position": 39,
+      "participants_count": 40,
+      "winner": "Aleksander Kovalev",
+      "points": 0,
+      "best_lap": null,
+      "best_lap_ms": null,
+      "total_time": null,
+      "total_time_ms": null,
+      "gap": null,
+      "gap_ms": null,
+      "lap_count": 0,
+      "had_best_lap": false,
+      "penalty_count": 0,
+      "penalty_points": 0
+    },
+    {
+      "race_id": "260315_215143_R.json",
+      "finished_at": "2026-03-15T21:51:43",
+      "track": "monza",
+      "position": 2,
+      "participants_count": 47,
+      "winner": "Aleksander Kovalev",
+      "points": 18,
+      "best_lap": "1:48.267",
+      "best_lap_ms": 108267,
+      "total_time": "20:07.203",
+      "total_time_ms": 1207203,
+      "gap": "0:05.583",
+      "gap_ms": 5583,
+      "lap_count": 11,
+      "had_best_lap": false,
+      "penalty_count": 0,
+      "penalty_points": 0
+    },
+    {
+      "race_id": "260315_211516_R.json",
+      "finished_at": "2026-03-15T21:15:16",
+      "track": "monza",
+      "position": 4,
+      "participants_count": 49,
+      "winner": "Stanislau Novikau",
+      "points": 12,
+      "best_lap": "1:48.600",
+      "best_lap_ms": 108600,
+      "total_time": "20:23.455",
+      "total_time_ms": 1223455,
+      "gap": "0:13.998",
+      "gap_ms": 13998,
+      "lap_count": 11,
+      "had_best_lap": false,
+      "penalty_count": 0,
+      "penalty_points": 0
+    }
+  ],
+  "penalties": {
+    "penalty_count": 0,
+    "penalty_points": 0,
+    "reasons": {},
+    "types": {}
+  }
+}

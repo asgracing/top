@@ -1,0 +1,87 @@
+{
+  "public_id": "drv_108596a47432",
+  "driver": "Manuel Pfleging",
+  "summary": {
+    "points": 38,
+    "average_points_per_race": 19.0,
+    "races": 2,
+    "wins": 1,
+    "podiums": 1,
+    "average_finish": 2.5,
+    "best_lap": "1:49.420",
+    "best_lap_ms": 109420,
+    "best_lap_track": "monza",
+    "best_lap_session_type": "R",
+    "penalty_count": 0,
+    "penalty_points": 0,
+    "fastest_lap_awards": 1,
+    "most_raced_track": "monza",
+    "last_race_at": "2026-03-15T02:38:02",
+    "last_seen": "2026-03-15T02:38:02",
+    "win_rate": 50.0,
+    "podium_rate": 50.0
+  },
+  "recent_form": [
+    1,
+    4
+  ],
+  "track_stats": [
+    {
+      "track": "monza",
+      "races": 2,
+      "wins": 1,
+      "podiums": 1,
+      "points": 38,
+      "finish_sum": 5,
+      "average_finish": 2.5,
+      "best_lap_ms": 109420,
+      "best_lap": "1:49.420"
+    }
+  ],
+  "race_history": [
+    {
+      "race_id": "260315_023802_R.json",
+      "finished_at": "2026-03-15T02:38:02",
+      "track": "monza",
+      "position": 1,
+      "participants_count": 11,
+      "winner": "Manuel Pfleging",
+      "points": 26,
+      "best_lap": "1:49.420",
+      "best_lap_ms": 109420,
+      "total_time": "5:36.862",
+      "total_time_ms": 336862,
+      "gap": null,
+      "gap_ms": null,
+      "lap_count": 3,
+      "had_best_lap": true,
+      "penalty_count": 0,
+      "penalty_points": 0
+    },
+    {
+      "race_id": "260315_020353_R.json",
+      "finished_at": "2026-03-15T02:03:53",
+      "track": "monza",
+      "position": 4,
+      "participants_count": 16,
+      "winner": "GNV MTogi",
+      "points": 12,
+      "best_lap": "1:49.552",
+      "best_lap_ms": 109552,
+      "total_time": "20:30.955",
+      "total_time_ms": 1230955,
+      "gap": "0:17.329",
+      "gap_ms": 17329,
+      "lap_count": 11,
+      "had_best_lap": false,
+      "penalty_count": 0,
+      "penalty_points": 0
+    }
+  ],
+  "penalties": {
+    "penalty_count": 0,
+    "penalty_points": 0,
+    "reasons": {},
+    "types": {}
+  }
+}

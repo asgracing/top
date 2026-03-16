@@ -1,0 +1,87 @@
+{
+  "public_id": "drv_bc08515b9a76",
+  "driver": "Andry Ryz",
+  "summary": {
+    "points": 1,
+    "average_points_per_race": 0.5,
+    "races": 2,
+    "wins": 0,
+    "podiums": 0,
+    "average_finish": 17.0,
+    "best_lap": "1:47.960",
+    "best_lap_ms": 107960,
+    "best_lap_track": "monza",
+    "best_lap_session_type": "R",
+    "penalty_count": 0,
+    "penalty_points": 0,
+    "fastest_lap_awards": 1,
+    "most_raced_track": "monza",
+    "last_race_at": "2026-03-15T21:51:43",
+    "last_seen": "2026-03-15T21:51:43",
+    "win_rate": 0.0,
+    "podium_rate": 0.0
+  },
+  "recent_form": [
+    17,
+    17
+  ],
+  "track_stats": [
+    {
+      "track": "monza",
+      "races": 2,
+      "wins": 0,
+      "podiums": 0,
+      "points": 1,
+      "finish_sum": 34,
+      "average_finish": 17.0,
+      "best_lap_ms": 107960,
+      "best_lap": "1:47.960"
+    }
+  ],
+  "race_history": [
+    {
+      "race_id": "260315_215143_R.json",
+      "finished_at": "2026-03-15T21:51:43",
+      "track": "monza",
+      "position": 17,
+      "participants_count": 47,
+      "winner": "Aleksander Kovalev",
+      "points": 0,
+      "best_lap": "1:49.212",
+      "best_lap_ms": 109212,
+      "total_time": "10:11.118",
+      "total_time_ms": 611118,
+      "gap": "0:00.000",
+      "gap_ms": 0,
+      "lap_count": 5,
+      "had_best_lap": false,
+      "penalty_count": 0,
+      "penalty_points": 0
+    },
+    {
+      "race_id": "260315_211516_R.json",
+      "finished_at": "2026-03-15T21:15:16",
+      "track": "monza",
+      "position": 17,
+      "participants_count": 49,
+      "winner": "Stanislau Novikau",
+      "points": 1,
+      "best_lap": "1:47.960",
+      "best_lap_ms": 107960,
+      "total_time": "21:42.873",
+      "total_time_ms": 1302873,
+      "gap": "1:33.416",
+      "gap_ms": 93416,
+      "lap_count": 10,
+      "had_best_lap": true,
+      "penalty_count": 0,
+      "penalty_points": 0
+    }
+  ],
+  "penalties": {
+    "penalty_count": 0,
+    "penalty_points": 0,
+    "reasons": {},
+    "types": {}
+  }
+}

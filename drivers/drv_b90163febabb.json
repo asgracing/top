@@ -1,0 +1,107 @@
+{
+  "public_id": "drv_b90163febabb",
+  "driver": "Aleksei Burmistrov",
+  "summary": {
+    "points": 12,
+    "average_points_per_race": 4.0,
+    "races": 3,
+    "wins": 0,
+    "podiums": 0,
+    "average_finish": 14.33,
+    "best_lap": "1:48.630",
+    "best_lap_ms": 108630,
+    "best_lap_track": "monza",
+    "best_lap_session_type": "R",
+    "penalty_count": 0,
+    "penalty_points": 0,
+    "fastest_lap_awards": 0,
+    "most_raced_track": "monza",
+    "last_race_at": "2026-03-15T00:51:47",
+    "last_seen": "2026-03-15T00:51:47",
+    "win_rate": 0.0,
+    "podium_rate": 0.0
+  },
+  "recent_form": [
+    14,
+    4,
+    25
+  ],
+  "track_stats": [
+    {
+      "track": "monza",
+      "races": 3,
+      "wins": 0,
+      "podiums": 0,
+      "points": 12,
+      "finish_sum": 43,
+      "average_finish": 14.33,
+      "best_lap_ms": 108630,
+      "best_lap": "1:48.630"
+    }
+  ],
+  "race_history": [
+    {
+      "race_id": "260315_005147_R.json",
+      "finished_at": "2026-03-15T00:51:47",
+      "track": "monza",
+      "position": 14,
+      "participants_count": 22,
+      "winner": "Reed McCarthy",
+      "points": 0,
+      "best_lap": null,
+      "best_lap_ms": null,
+      "total_time": null,
+      "total_time_ms": null,
+      "gap": null,
+      "gap_ms": null,
+      "lap_count": 0,
+      "had_best_lap": false,
+      "penalty_count": 0,
+      "penalty_points": 0
+    },
+    {
+      "race_id": "260315_001609_R.json",
+      "finished_at": "2026-03-15T00:16:09",
+      "track": "monza",
+      "position": 4,
+      "participants_count": 47,
+      "winner": "REGI SILVA",
+      "points": 12,
+      "best_lap": "1:48.630",
+      "best_lap_ms": 108630,
+      "total_time": "22:04.186",
+      "total_time_ms": 1324186,
+      "gap": "0:24.795",
+      "gap_ms": 24795,
+      "lap_count": 12,
+      "had_best_lap": false,
+      "penalty_count": 0,
+      "penalty_points": 0
+    },
+    {
+      "race_id": "260314_233749_R.json",
+      "finished_at": "2026-03-14T23:37:49",
+      "track": "monza",
+      "position": 25,
+      "participants_count": 42,
+      "winner": "Kirill Bulgakov",
+      "points": 0,
+      "best_lap": "1:53.252",
+      "best_lap_ms": 113252,
+      "total_time": "20:22.408",
+      "total_time_ms": 1222408,
+      "gap": "0:15.058",
+      "gap_ms": 15058,
+      "lap_count": 3,
+      "had_best_lap": false,
+      "penalty_count": 0,
+      "penalty_points": 0
+    }
+  ],
+  "penalties": {
+    "penalty_count": 0,
+    "penalty_points": 0,
+    "reasons": {},
+    "types": {}
+  }
+}

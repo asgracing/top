@@ -1,0 +1,87 @@
+{
+  "public_id": "drv_9d8f5eee1e91",
+  "driver": "Thorsten Schmidt | 47R",
+  "summary": {
+    "points": 12,
+    "average_points_per_race": 6.0,
+    "races": 2,
+    "wins": 0,
+    "podiums": 0,
+    "average_finish": 18.5,
+    "best_lap": "1:47.310",
+    "best_lap_ms": 107310,
+    "best_lap_track": "monza",
+    "best_lap_session_type": "R",
+    "penalty_count": 0,
+    "penalty_points": 0,
+    "fastest_lap_awards": 0,
+    "most_raced_track": "monza",
+    "last_race_at": "2026-03-13T23:29:57",
+    "last_seen": "2026-03-13T23:29:57",
+    "win_rate": 0.0,
+    "podium_rate": 0.0
+  },
+  "recent_form": [
+    33,
+    4
+  ],
+  "track_stats": [
+    {
+      "track": "monza",
+      "races": 2,
+      "wins": 0,
+      "podiums": 0,
+      "points": 12,
+      "finish_sum": 37,
+      "average_finish": 18.5,
+      "best_lap_ms": 107310,
+      "best_lap": "1:47.310"
+    }
+  ],
+  "race_history": [
+    {
+      "race_id": "260313_232957_R.json",
+      "finished_at": "2026-03-13T23:29:57",
+      "track": "monza",
+      "position": 33,
+      "participants_count": 44,
+      "winner": "Man in Tights",
+      "points": 0,
+      "best_lap": null,
+      "best_lap_ms": null,
+      "total_time": null,
+      "total_time_ms": null,
+      "gap": null,
+      "gap_ms": null,
+      "lap_count": 0,
+      "had_best_lap": false,
+      "penalty_count": 0,
+      "penalty_points": 0
+    },
+    {
+      "race_id": "260313_225200_R.json",
+      "finished_at": "2026-03-13T22:52:00",
+      "track": "monza",
+      "position": 4,
+      "participants_count": 39,
+      "winner": "Man in Tights",
+      "points": 12,
+      "best_lap": "1:47.310",
+      "best_lap_ms": 107310,
+      "total_time": "22:00.650",
+      "total_time_ms": 1320650,
+      "gap": "0:31.381",
+      "gap_ms": 31381,
+      "lap_count": 12,
+      "had_best_lap": false,
+      "penalty_count": 0,
+      "penalty_points": 0
+    }
+  ],
+  "penalties": {
+    "penalty_count": 0,
+    "penalty_points": 0,
+    "reasons": {},
+    "types": {}
+  }
+}

@@ -1,0 +1,87 @@
+{
+  "public_id": "drv_db86e452acca",
+  "driver": "PAC Pacmachine",
+  "summary": {
+    "points": 18,
+    "average_points_per_race": 9.0,
+    "races": 2,
+    "wins": 0,
+    "podiums": 1,
+    "average_finish": 14.0,
+    "best_lap": "1:47.625",
+    "best_lap_ms": 107625,
+    "best_lap_track": "monza",
+    "best_lap_session_type": "R",
+    "penalty_count": 0,
+    "penalty_points": 0,
+    "fastest_lap_awards": 0,
+    "most_raced_track": "monza",
+    "last_race_at": "2026-03-14T22:24:34",
+    "last_seen": "2026-03-14T22:24:34",
+    "win_rate": 0.0,
+    "podium_rate": 50.0
+  },
+  "recent_form": [
+    2,
+    26
+  ],
+  "track_stats": [
+    {
+      "track": "monza",
+      "races": 2,
+      "wins": 0,
+      "podiums": 1,
+      "points": 18,
+      "finish_sum": 28,
+      "average_finish": 14.0,
+      "best_lap_ms": 107625,
+      "best_lap": "1:47.625"
+    }
+  ],
+  "race_history": [
+    {
+      "race_id": "260314_222434_R.json",
+      "finished_at": "2026-03-14T22:24:34",
+      "track": "monza",
+      "position": 2,
+      "participants_count": 55,
+      "winner": "J Lehman",
+      "points": 18,
+      "best_lap": "1:47.625",
+      "best_lap_ms": 107625,
+      "total_time": "21:43.554",
+      "total_time_ms": 1303554,
+      "gap": "0:04.654",
+      "gap_ms": 4654,
+      "lap_count": 12,
+      "had_best_lap": false,
+      "penalty_count": 0,
+      "penalty_points": 0
+    },
+    {
+      "race_id": "260314_214615_R.json",
+      "finished_at": "2026-03-14T21:46:15",
+      "track": "monza",
+      "position": 26,
+      "participants_count": 57,
+      "winner": "J Lehman",
+      "points": 0,
+      "best_lap": "1:48.020",
+      "best_lap_ms": 108020,
+      "total_time": "20:08.701",
+      "total_time_ms": 1208701,
+      "gap": "0:00.000",
+      "gap_ms": 0,
+      "lap_count": 2,
+      "had_best_lap": false,
+      "penalty_count": 0,
+      "penalty_points": 0
+    }
+  ],
+  "penalties": {
+    "penalty_count": 0,
+    "penalty_points": 0,
+    "reasons": {},
+    "types": {}
+  }
+}

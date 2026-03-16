@@ -1,0 +1,67 @@
+{
+  "public_id": "drv_39c6db6578b0",
+  "driver": "Dmitriy Savelev",
+  "summary": {
+    "points": 2,
+    "average_points_per_race": 2.0,
+    "races": 1,
+    "wins": 0,
+    "podiums": 0,
+    "average_finish": 9.0,
+    "best_lap": "1:49.710",
+    "best_lap_ms": 109710,
+    "best_lap_track": "monza",
+    "best_lap_session_type": "R",
+    "penalty_count": 0,
+    "penalty_points": 0,
+    "fastest_lap_awards": 0,
+    "most_raced_track": "monza",
+    "last_race_at": "2026-03-14T23:37:49",
+    "last_seen": "2026-03-14T23:37:49",
+    "win_rate": 0.0,
+    "podium_rate": 0.0
+  },
+  "recent_form": [
+    9
+  ],
+  "track_stats": [
+    {
+      "track": "monza",
+      "races": 1,
+      "wins": 0,
+      "podiums": 0,
+      "points": 2,
+      "finish_sum": 9,
+      "average_finish": 9.0,
+      "best_lap_ms": 109710,
+      "best_lap": "1:49.710"
+    }
+  ],
+  "race_history": [
+    {
+      "race_id": "260314_233749_R.json",
+      "finished_at": "2026-03-14T23:37:49",
+      "track": "monza",
+      "position": 9,
+      "participants_count": 42,
+      "winner": "Kirill Bulgakov",
+      "points": 2,
+      "best_lap": "1:49.710",
+      "best_lap_ms": 109710,
+      "total_time": "20:41.318",
+      "total_time_ms": 1241318,
+      "gap": "0:33.968",
+      "gap_ms": 33968,
+      "lap_count": 11,
+      "had_best_lap": false,
+      "penalty_count": 0,
+      "penalty_points": 0
+    }
+  ],
+  "penalties": {
+    "penalty_count": 0,
+    "penalty_points": 0,
+    "reasons": {},
+    "types": {}
+  }
+}

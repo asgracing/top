@@ -1,0 +1,72 @@
+{
+  "public_id": "drv_d04c66279751",
+  "driver": "Delta Frost",
+  "summary": {
+    "points": 0,
+    "average_points_per_race": 0.0,
+    "races": 1,
+    "wins": 0,
+    "podiums": 0,
+    "average_finish": 21.0,
+    "best_lap": "1:54.247",
+    "best_lap_ms": 114247,
+    "best_lap_track": "monza",
+    "best_lap_session_type": "R",
+    "penalty_count": 2,
+    "penalty_points": 3,
+    "fastest_lap_awards": 0,
+    "most_raced_track": "monza",
+    "last_race_at": "2026-03-15T23:08:44",
+    "last_seen": "2026-03-15T23:08:44",
+    "win_rate": 0.0,
+    "podium_rate": 0.0
+  },
+  "recent_form": [
+    21
+  ],
+  "track_stats": [
+    {
+      "track": "monza",
+      "races": 1,
+      "wins": 0,
+      "podiums": 0,
+      "points": 0,
+      "finish_sum": 21,
+      "average_finish": 21.0,
+      "best_lap_ms": 114247,
+      "best_lap": "1:54.247"
+    }
+  ],
+  "race_history": [
+    {
+      "race_id": "260315_230844_R.json",
+      "finished_at": "2026-03-15T23:08:44",
+      "track": "monza",
+      "position": 21,
+      "participants_count": 39,
+      "winner": "Dmitriy Sukharev",
+      "points": 0,
+      "best_lap": "1:54.247",
+      "best_lap_ms": 114247,
+      "total_time": "21:21.151",
+      "total_time_ms": 1281151,
+      "gap": "0:00.000",
+      "gap_ms": 0,
+      "lap_count": 5,
+      "had_best_lap": false,
+      "penalty_count": 2,
+      "penalty_points": 3
+    }
+  ],
+  "penalties": {
+    "penalty_count": 2,
+    "penalty_points": 3,
+    "reasons": {
+      "Cutting": 2
+    },
+    "types": {
+      "DriveThrough": 1,
+      "Disqualified": 1
+    }
+  }
+}

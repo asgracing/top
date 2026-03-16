@@ -1,0 +1,107 @@
+{
+  "public_id": "drv_b2d982204ab7",
+  "driver": "Gauthier Viroux",
+  "summary": {
+    "points": 0,
+    "average_points_per_race": 0.0,
+    "races": 3,
+    "wins": 0,
+    "podiums": 0,
+    "average_finish": 17.67,
+    "best_lap": "1:50.020",
+    "best_lap_ms": 110020,
+    "best_lap_track": "monza",
+    "best_lap_session_type": "R",
+    "penalty_count": 0,
+    "penalty_points": 0,
+    "fastest_lap_awards": 0,
+    "most_raced_track": "monza",
+    "last_race_at": "2026-03-15T19:26:02",
+    "last_seen": "2026-03-15T19:26:02",
+    "win_rate": 0.0,
+    "podium_rate": 0.0
+  },
+  "recent_form": [
+    25,
+    11,
+    17
+  ],
+  "track_stats": [
+    {
+      "track": "monza",
+      "races": 3,
+      "wins": 0,
+      "podiums": 0,
+      "points": 0,
+      "finish_sum": 53,
+      "average_finish": 17.67,
+      "best_lap_ms": 110020,
+      "best_lap": "1:50.020"
+    }
+  ],
+  "race_history": [
+    {
+      "race_id": "260315_192602_R.json",
+      "finished_at": "2026-03-15T19:26:02",
+      "track": "monza",
+      "position": 25,
+      "participants_count": 47,
+      "winner": "David Marie",
+      "points": 0,
+      "best_lap": null,
+      "best_lap_ms": null,
+      "total_time": null,
+      "total_time_ms": null,
+      "gap": null,
+      "gap_ms": null,
+      "lap_count": 0,
+      "had_best_lap": false,
+      "penalty_count": 0,
+      "penalty_points": 0
+    },
+    {
+      "race_id": "260315_184744_R.json",
+      "finished_at": "2026-03-15T18:47:44",
+      "track": "monza",
+      "position": 11,
+      "participants_count": 43,
+      "winner": "Dat Iva",
+      "points": 0,
+      "best_lap": "1:50.020",
+      "best_lap_ms": 110020,
+      "total_time": "20:56.667",
+      "total_time_ms": 1256667,
+      "gap": "0:36.063",
+      "gap_ms": 36063,
+      "lap_count": 10,
+      "had_best_lap": false,
+      "penalty_count": 0,
+      "penalty_points": 0
+    },
+    {
+      "race_id": "260315_181115_R.json",
+      "finished_at": "2026-03-15T18:11:15",
+      "track": "monza",
+      "position": 17,
+      "participants_count": 44,
+      "winner": "Denis Pinchuk",
+      "points": 0,
+      "best_lap": "1:51.242",
+      "best_lap_ms": 111242,
+      "total_time": "21:53.331",
+      "total_time_ms": 1313331,
+      "gap": "1:50.571",
+      "gap_ms": 110571,
+      "lap_count": 9,
+      "had_best_lap": false,
+      "penalty_count": 0,
+      "penalty_points": 0
+    }
+  ],
+  "penalties": {
+    "penalty_count": 0,
+    "penalty_points": 0,
+    "reasons": {},
+    "types": {}
+  }
+}

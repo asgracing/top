@@ -1,0 +1,107 @@
+{
+  "public_id": "drv_aaf90205bbbe",
+  "driver": "Artem Shanin",
+  "summary": {
+    "points": 0,
+    "average_points_per_race": 0.0,
+    "races": 3,
+    "wins": 0,
+    "podiums": 0,
+    "average_finish": 24.33,
+    "best_lap": "1:52.702",
+    "best_lap_ms": 112702,
+    "best_lap_track": "monza",
+    "best_lap_session_type": "R",
+    "penalty_count": 0,
+    "penalty_points": 0,
+    "fastest_lap_awards": 0,
+    "most_raced_track": "monza",
+    "last_race_at": "2026-03-15T20:02:14",
+    "last_seen": "2026-03-15T20:02:14",
+    "win_rate": 0.0,
+    "podium_rate": 0.0
+  },
+  "recent_form": [
+    29,
+    15,
+    29
+  ],
+  "track_stats": [
+    {
+      "track": "monza",
+      "races": 3,
+      "wins": 0,
+      "podiums": 0,
+      "points": 0,
+      "finish_sum": 73,
+      "average_finish": 24.33,
+      "best_lap_ms": 112702,
+      "best_lap": "1:52.702"
+    }
+  ],
+  "race_history": [
+    {
+      "race_id": "260315_200214_R.json",
+      "finished_at": "2026-03-15T20:02:14",
+      "track": "monza",
+      "position": 29,
+      "participants_count": 42,
+      "winner": "Senya Lagisson TWICH",
+      "points": 0,
+      "best_lap": null,
+      "best_lap_ms": null,
+      "total_time": null,
+      "total_time_ms": null,
+      "gap": null,
+      "gap_ms": null,
+      "lap_count": 0,
+      "had_best_lap": false,
+      "penalty_count": 0,
+      "penalty_points": 0
+    },
+    {
+      "race_id": "260315_192602_R.json",
+      "finished_at": "2026-03-15T19:26:02",
+      "track": "monza",
+      "position": 15,
+      "participants_count": 47,
+      "winner": "David Marie",
+      "points": 0,
+      "best_lap": "1:52.702",
+      "best_lap_ms": 112702,
+      "total_time": "22:51.527",
+      "total_time_ms": 1371527,
+      "gap": "1:13.548",
+      "gap_ms": 73548,
+      "lap_count": 10,
+      "had_best_lap": false,
+      "penalty_count": 0,
+      "penalty_points": 0
+    },
+    {
+      "race_id": "260315_184744_R.json",
+      "finished_at": "2026-03-15T18:47:44",
+      "track": "monza",
+      "position": 29,
+      "participants_count": 43,
+      "winner": "Dat Iva",
+      "points": 0,
+      "best_lap": null,
+      "best_lap_ms": null,
+      "total_time": "22:19.825",
+      "total_time_ms": 1339825,
+      "gap": "1:59.221",
+      "gap_ms": 119221,
+      "lap_count": 0,
+      "had_best_lap": false,
+      "penalty_count": 0,
+      "penalty_points": 0
+    }
+  ],
+  "penalties": {
+    "penalty_count": 0,
+    "penalty_points": 0,
+    "reasons": {},
+    "types": {}
+  }
+}

@@ -1,0 +1,67 @@
+{
+  "public_id": "drv_760899f484d9",
+  "driver": "Juan Jose Dominguez Martin",
+  "summary": {
+    "points": 4,
+    "average_points_per_race": 4.0,
+    "races": 1,
+    "wins": 0,
+    "podiums": 0,
+    "average_finish": 8.0,
+    "best_lap": "1:51.670",
+    "best_lap_ms": 111670,
+    "best_lap_track": "monza",
+    "best_lap_session_type": "R",
+    "penalty_count": 0,
+    "penalty_points": 0,
+    "fastest_lap_awards": 0,
+    "most_raced_track": "monza",
+    "last_race_at": "2026-03-15T02:03:53",
+    "last_seen": "2026-03-15T02:03:53",
+    "win_rate": 0.0,
+    "podium_rate": 0.0
+  },
+  "recent_form": [
+    8
+  ],
+  "track_stats": [
+    {
+      "track": "monza",
+      "races": 1,
+      "wins": 0,
+      "podiums": 0,
+      "points": 4,
+      "finish_sum": 8,
+      "average_finish": 8.0,
+      "best_lap_ms": 111670,
+      "best_lap": "1:51.670"
+    }
+  ],
+  "race_history": [
+    {
+      "race_id": "260315_020353_R.json",
+      "finished_at": "2026-03-15T02:03:53",
+      "track": "monza",
+      "position": 8,
+      "participants_count": 16,
+      "winner": "GNV MTogi",
+      "points": 4,
+      "best_lap": "1:51.670",
+      "best_lap_ms": 111670,
+      "total_time": "20:57.098",
+      "total_time_ms": 1257098,
+      "gap": "0:43.472",
+      "gap_ms": 43472,
+      "lap_count": 11,
+      "had_best_lap": false,
+      "penalty_count": 0,
+      "penalty_points": 0
+    }
+  ],
+  "penalties": {
+    "penalty_count": 0,
+    "penalty_points": 0,
+    "reasons": {},
+    "types": {}
+  }
+}

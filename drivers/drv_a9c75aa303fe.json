@@ -1,0 +1,111 @@
+{
+  "public_id": "drv_a9c75aa303fe",
+  "driver": "B Nicomil",
+  "summary": {
+    "points": 10,
+    "average_points_per_race": 3.33,
+    "races": 3,
+    "wins": 0,
+    "podiums": 0,
+    "average_finish": 16.67,
+    "best_lap": "1:47.480",
+    "best_lap_ms": 107480,
+    "best_lap_track": "monza",
+    "best_lap_session_type": "R",
+    "penalty_count": 1,
+    "penalty_points": 3,
+    "fastest_lap_awards": 0,
+    "most_raced_track": "monza",
+    "last_race_at": "2026-03-14T22:24:34",
+    "last_seen": "2026-03-14T22:24:34",
+    "win_rate": 0.0,
+    "podium_rate": 0.0
+  },
+  "recent_form": [
+    31,
+    5,
+    14
+  ],
+  "track_stats": [
+    {
+      "track": "monza",
+      "races": 3,
+      "wins": 0,
+      "podiums": 0,
+      "points": 10,
+      "finish_sum": 50,
+      "average_finish": 16.67,
+      "best_lap_ms": 107480,
+      "best_lap": "1:47.480"
+    }
+  ],
+  "race_history": [
+    {
+      "race_id": "260314_222434_R.json",
+      "finished_at": "2026-03-14T22:24:34",
+      "track": "monza",
+      "position": 31,
+      "participants_count": 55,
+      "winner": "J Lehman",
+      "points": 0,
+      "best_lap": null,
+      "best_lap_ms": null,
+      "total_time": "1:37.157",
+      "total_time_ms": 97157,
+      "gap": "0:00.000",
+      "gap_ms": 0,
+      "lap_count": 0,
+      "had_best_lap": false,
+      "penalty_count": 1,
+      "penalty_points": 3
+    },
+    {
+      "race_id": "260314_004320_R.json",
+      "finished_at": "2026-03-14T00:43:20",
+      "track": "monza",
+      "position": 5,
+      "participants_count": 32,
+      "winner": "Sultan Isaev",
+      "points": 10,
+      "best_lap": "1:47.480",
+      "best_lap_ms": 107480,
+      "total_time": "21:59.756",
+      "total_time_ms": 1319756,
+      "gap": "0:12.620",
+      "gap_ms": 12620,
+      "lap_count": 12,
+      "had_best_lap": false,
+      "penalty_count": 0,
+      "penalty_points": 0
+    },
+    {
+      "race_id": "260313_221410_R.json",
+      "finished_at": "2026-03-13T22:14:10",
+      "track": "monza",
+      "position": 14,
+      "participants_count": 46,
+      "winner": "Man in Tights",
+      "points": 0,
+      "best_lap": "1:47.890",
+      "best_lap_ms": 107890,
+      "total_time": "14:24.784",
+      "total_time_ms": 864784,
+      "gap": "0:00.000",
+      "gap_ms": 0,
+      "lap_count": 7,
+      "had_best_lap": false,
+      "penalty_count": 0,
+      "penalty_points": 0
+    }
+  ],
+  "penalties": {
+    "penalty_count": 1,
+    "penalty_points": 3,
+    "reasons": {
+      "Cutting": 1
+    },
+    "types": {
+      "DriveThrough": 1
+    }
+  }
+}

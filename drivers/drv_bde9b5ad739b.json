@@ -1,0 +1,67 @@
+{
+  "public_id": "drv_bde9b5ad739b",
+  "driver": "Mert Yazıcı",
+  "summary": {
+    "points": 6,
+    "average_points_per_race": 6.0,
+    "races": 1,
+    "wins": 0,
+    "podiums": 0,
+    "average_finish": 7.0,
+    "best_lap": "1:49.672",
+    "best_lap_ms": 109672,
+    "best_lap_track": "monza",
+    "best_lap_session_type": "R",
+    "penalty_count": 0,
+    "penalty_points": 0,
+    "fastest_lap_awards": 0,
+    "most_raced_track": "monza",
+    "last_race_at": "2026-03-14T16:46:36",
+    "last_seen": "2026-03-14T16:46:36",
+    "win_rate": 0.0,
+    "podium_rate": 0.0
+  },
+  "recent_form": [
+    7
+  ],
+  "track_stats": [
+    {
+      "track": "monza",
+      "races": 1,
+      "wins": 0,
+      "podiums": 0,
+      "points": 6,
+      "finish_sum": 7,
+      "average_finish": 7.0,
+      "best_lap_ms": 109672,
+      "best_lap": "1:49.672"
+    }
+  ],
+  "race_history": [
+    {
+      "race_id": "260314_164636_R.json",
+      "finished_at": "2026-03-14T16:46:36",
+      "track": "monza",
+      "position": 7,
+      "participants_count": 44,
+      "winner": "Chris ver Damn [GER]",
+      "points": 6,
+      "best_lap": "1:49.672",
+      "best_lap_ms": 109672,
+      "total_time": "20:28.810",
+      "total_time_ms": 1228810,
+      "gap": "0:28.844",
+      "gap_ms": 28844,
+      "lap_count": 11,
+      "had_best_lap": false,
+      "penalty_count": 0,
+      "penalty_points": 0
+    }
+  ],
+  "penalties": {
+    "penalty_count": 0,
+    "penalty_points": 0,
+    "reasons": {},
+    "types": {}
+  }
+}

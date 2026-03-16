@@ -1,0 +1,67 @@
+{
+  "public_id": "drv_508dae510c68",
+  "driver": "Kacper Mruk",
+  "summary": {
+    "points": 0,
+    "average_points_per_race": 0.0,
+    "races": 1,
+    "wins": 0,
+    "podiums": 0,
+    "average_finish": 13.0,
+    "best_lap": "1:49.017",
+    "best_lap_ms": 109017,
+    "best_lap_track": "monza",
+    "best_lap_session_type": "R",
+    "penalty_count": 0,
+    "penalty_points": 0,
+    "fastest_lap_awards": 0,
+    "most_raced_track": "monza",
+    "last_race_at": "2026-03-14T18:37:49",
+    "last_seen": "2026-03-14T18:37:49",
+    "win_rate": 0.0,
+    "podium_rate": 0.0
+  },
+  "recent_form": [
+    13
+  ],
+  "track_stats": [
+    {
+      "track": "monza",
+      "races": 1,
+      "wins": 0,
+      "podiums": 0,
+      "points": 0,
+      "finish_sum": 13,
+      "average_finish": 13.0,
+      "best_lap_ms": 109017,
+      "best_lap": "1:49.017"
+    }
+  ],
+  "race_history": [
+    {
+      "race_id": "260314_183749_R.json",
+      "finished_at": "2026-03-14T18:37:49",
+      "track": "monza",
+      "position": 13,
+      "participants_count": 48,
+      "winner": "MIKI DEGANI",
+      "points": 0,
+      "best_lap": "1:49.017",
+      "best_lap_ms": 109017,
+      "total_time": "21:54.120",
+      "total_time_ms": 1314120,
+      "gap": "0:02.222",
+      "gap_ms": 2222,
+      "lap_count": 11,
+      "had_best_lap": false,
+      "penalty_count": 0,
+      "penalty_points": 0
+    }
+  ],
+  "penalties": {
+    "penalty_count": 0,
+    "penalty_points": 0,
+    "reasons": {},
+    "types": {}
+  }
+}

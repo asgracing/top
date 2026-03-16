@@ -1,0 +1,87 @@
+{
+  "public_id": "drv_da2280fff34e",
+  "driver": "Adelson Adelson",
+  "summary": {
+    "points": 0,
+    "average_points_per_race": 0.0,
+    "races": 2,
+    "wins": 0,
+    "podiums": 0,
+    "average_finish": 30.0,
+    "best_lap": null,
+    "best_lap_ms": null,
+    "best_lap_track": null,
+    "best_lap_session_type": null,
+    "penalty_count": 0,
+    "penalty_points": 0,
+    "fastest_lap_awards": 0,
+    "most_raced_track": "monza",
+    "last_race_at": "2026-03-15T23:08:44",
+    "last_seen": "2026-03-15T23:08:44",
+    "win_rate": 0.0,
+    "podium_rate": 0.0
+  },
+  "recent_form": [
+    35,
+    25
+  ],
+  "track_stats": [
+    {
+      "track": "monza",
+      "races": 2,
+      "wins": 0,
+      "podiums": 0,
+      "points": 0,
+      "finish_sum": 60,
+      "average_finish": 30.0,
+      "best_lap_ms": null,
+      "best_lap": null
+    }
+  ],
+  "race_history": [
+    {
+      "race_id": "260315_230844_R.json",
+      "finished_at": "2026-03-15T23:08:44",
+      "track": "monza",
+      "position": 35,
+      "participants_count": 39,
+      "winner": "Dmitriy Sukharev",
+      "points": 0,
+      "best_lap": null,
+      "best_lap_ms": null,
+      "total_time": null,
+      "total_time_ms": null,
+      "gap": null,
+      "gap_ms": null,
+      "lap_count": 0,
+      "had_best_lap": false,
+      "penalty_count": 0,
+      "penalty_points": 0
+    },
+    {
+      "race_id": "260314_214615_R.json",
+      "finished_at": "2026-03-14T21:46:15",
+      "track": "monza",
+      "position": 25,
+      "participants_count": 57,
+      "winner": "J Lehman",
+      "points": 0,
+      "best_lap": null,
+      "best_lap_ms": null,
+      "total_time": "11:10.220",
+      "total_time_ms": 670220,
+      "gap": "0:00.000",
+      "gap_ms": 0,
+      "lap_count": 2,
+      "had_best_lap": false,
+      "penalty_count": 0,
+      "penalty_points": 0
+    }
+  ],
+  "penalties": {
+    "penalty_count": 0,
+    "penalty_points": 0,
+    "reasons": {},
+    "types": {}
+  }
+}

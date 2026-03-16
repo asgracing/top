@@ -1,0 +1,107 @@
+{
+  "public_id": "drv_ee30acbc35a3",
+  "driver": "MATTIA CESARO",
+  "summary": {
+    "points": 19,
+    "average_points_per_race": 6.33,
+    "races": 3,
+    "wins": 0,
+    "podiums": 1,
+    "average_finish": 8.0,
+    "best_lap": "1:48.450",
+    "best_lap_ms": 108450,
+    "best_lap_track": "monza",
+    "best_lap_session_type": "Q",
+    "penalty_count": 0,
+    "penalty_points": 0,
+    "fastest_lap_awards": 0,
+    "most_raced_track": "monza",
+    "last_race_at": "2026-03-14T01:57:10",
+    "last_seen": "2026-03-14T01:57:10",
+    "win_rate": 0.0,
+    "podium_rate": 33.33
+  },
+  "recent_form": [
+    13,
+    3,
+    8
+  ],
+  "track_stats": [
+    {
+      "track": "monza",
+      "races": 3,
+      "wins": 0,
+      "podiums": 1,
+      "points": 19,
+      "finish_sum": 24,
+      "average_finish": 8.0,
+      "best_lap_ms": 109070,
+      "best_lap": "1:49.070"
+    }
+  ],
+  "race_history": [
+    {
+      "race_id": "260314_015710_R.json",
+      "finished_at": "2026-03-14T01:57:10",
+      "track": "monza",
+      "position": 13,
+      "participants_count": 27,
+      "winner": "Henri Fouquet",
+      "points": 0,
+      "best_lap": null,
+      "best_lap_ms": null,
+      "total_time": null,
+      "total_time_ms": null,
+      "gap": null,
+      "gap_ms": null,
+      "lap_count": 0,
+      "had_best_lap": false,
+      "penalty_count": 0,
+      "penalty_points": 0
+    },
+    {
+      "race_id": "260314_012124_R.json",
+      "finished_at": "2026-03-14T01:21:24",
+      "track": "monza",
+      "position": 3,
+      "participants_count": 40,
+      "winner": "Kirill Bulgakov",
+      "points": 15,
+      "best_lap": "1:49.070",
+      "best_lap_ms": 109070,
+      "total_time": "22:17.167",
+      "total_time_ms": 1337167,
+      "gap": "0:29.492",
+      "gap_ms": 29492,
+      "lap_count": 12,
+      "had_best_lap": false,
+      "penalty_count": 0,
+      "penalty_points": 0
+    },
+    {
+      "race_id": "260314_004320_R.json",
+      "finished_at": "2026-03-14T00:43:20",
+      "track": "monza",
+      "position": 8,
+      "participants_count": 32,
+      "winner": "Sultan Isaev",
+      "points": 4,
+      "best_lap": "1:49.585",
+      "best_lap_ms": 109585,
+      "total_time": "22:38.447",
+      "total_time_ms": 1358447,
+      "gap": "0:51.311",
+      "gap_ms": 51311,
+      "lap_count": 12,
+      "had_best_lap": false,
+      "penalty_count": 0,
+      "penalty_points": 0
+    }
+  ],
+  "penalties": {
+    "penalty_count": 0,
+    "penalty_points": 0,
+    "reasons": {},
+    "types": {}
+  }
+}

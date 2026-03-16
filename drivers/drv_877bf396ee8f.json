@@ -1,0 +1,67 @@
+{
+  "public_id": "drv_877bf396ee8f",
+  "driver": "Tiago Santos",
+  "summary": {
+    "points": 8,
+    "average_points_per_race": 8.0,
+    "races": 1,
+    "wins": 0,
+    "podiums": 0,
+    "average_finish": 6.0,
+    "best_lap": "1:48.990",
+    "best_lap_ms": 108990,
+    "best_lap_track": "monza",
+    "best_lap_session_type": "R",
+    "penalty_count": 0,
+    "penalty_points": 0,
+    "fastest_lap_awards": 0,
+    "most_raced_track": "monza",
+    "last_race_at": "2026-03-15T18:11:15",
+    "last_seen": "2026-03-15T18:11:15",
+    "win_rate": 0.0,
+    "podium_rate": 0.0
+  },
+  "recent_form": [
+    6
+  ],
+  "track_stats": [
+    {
+      "track": "monza",
+      "races": 1,
+      "wins": 0,
+      "podiums": 0,
+      "points": 8,
+      "finish_sum": 6,
+      "average_finish": 6.0,
+      "best_lap_ms": 108990,
+      "best_lap": "1:48.990"
+    }
+  ],
+  "race_history": [
+    {
+      "race_id": "260315_181115_R.json",
+      "finished_at": "2026-03-15T18:11:15",
+      "track": "monza",
+      "position": 6,
+      "participants_count": 44,
+      "winner": "Denis Pinchuk",
+      "points": 8,
+      "best_lap": "1:48.990",
+      "best_lap_ms": 108990,
+      "total_time": "20:34.260",
+      "total_time_ms": 1234260,
+      "gap": "0:31.500",
+      "gap_ms": 31500,
+      "lap_count": 11,
+      "had_best_lap": false,
+      "penalty_count": 0,
+      "penalty_points": 0
+    }
+  ],
+  "penalties": {
+    "penalty_count": 0,
+    "penalty_points": 0,
+    "reasons": {},
+    "types": {}
+  }
+}

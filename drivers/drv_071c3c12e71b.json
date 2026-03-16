@@ -1,0 +1,87 @@
+{
+  "public_id": "drv_071c3c12e71b",
+  "driver": "Vladimir Vidim",
+  "summary": {
+    "points": 2,
+    "average_points_per_race": 1.0,
+    "races": 2,
+    "wins": 0,
+    "podiums": 0,
+    "average_finish": 13.5,
+    "best_lap": "1:48.897",
+    "best_lap_ms": 108897,
+    "best_lap_track": "monza",
+    "best_lap_session_type": "R",
+    "penalty_count": 0,
+    "penalty_points": 0,
+    "fastest_lap_awards": 0,
+    "most_raced_track": "monza",
+    "last_race_at": "2026-03-15T23:46:16",
+    "last_seen": "2026-03-15T23:46:16",
+    "win_rate": 0.0,
+    "podium_rate": 0.0
+  },
+  "recent_form": [
+    18,
+    9
+  ],
+  "track_stats": [
+    {
+      "track": "monza",
+      "races": 2,
+      "wins": 0,
+      "podiums": 0,
+      "points": 2,
+      "finish_sum": 27,
+      "average_finish": 13.5,
+      "best_lap_ms": 108897,
+      "best_lap": "1:48.897"
+    }
+  ],
+  "race_history": [
+    {
+      "race_id": "260315_234616_R.json",
+      "finished_at": "2026-03-15T23:46:16",
+      "track": "monza",
+      "position": 18,
+      "participants_count": 20,
+      "winner": "Illia Diachenko",
+      "points": 0,
+      "best_lap": null,
+      "best_lap_ms": null,
+      "total_time": null,
+      "total_time_ms": null,
+      "gap": null,
+      "gap_ms": null,
+      "lap_count": 0,
+      "had_best_lap": false,
+      "penalty_count": 0,
+      "penalty_points": 0
+    },
+    {
+      "race_id": "260313_210056_R.json",
+      "finished_at": "2026-03-13T21:00:56",
+      "track": "monza",
+      "position": 9,
+      "participants_count": 47,
+      "winner": "Kirill Bulgakov",
+      "points": 2,
+      "best_lap": "1:48.897",
+      "best_lap_ms": 108897,
+      "total_time": "20:34.270",
+      "total_time_ms": 1234270,
+      "gap": "0:28.779",
+      "gap_ms": 28779,
+      "lap_count": 11,
+      "had_best_lap": false,
+      "penalty_count": 0,
+      "penalty_points": 0
+    }
+  ],
+  "penalties": {
+    "penalty_count": 0,
+    "penalty_points": 0,
+    "reasons": {},
+    "types": {}
+  }
+}

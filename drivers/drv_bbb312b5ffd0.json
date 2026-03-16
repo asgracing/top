@@ -1,0 +1,67 @@
+{
+  "public_id": "drv_bbb312b5ffd0",
+  "driver": "Gracjan Żęfę",
+  "summary": {
+    "points": 15,
+    "average_points_per_race": 15.0,
+    "races": 1,
+    "wins": 0,
+    "podiums": 1,
+    "average_finish": 3.0,
+    "best_lap": "1:47.940",
+    "best_lap_ms": 107940,
+    "best_lap_track": "monza",
+    "best_lap_session_type": "R",
+    "penalty_count": 0,
+    "penalty_points": 0,
+    "fastest_lap_awards": 0,
+    "most_raced_track": "monza",
+    "last_race_at": "2026-03-13T22:52:00",
+    "last_seen": "2026-03-13T22:52:00",
+    "win_rate": 0.0,
+    "podium_rate": 100.0
+  },
+  "recent_form": [
+    3
+  ],
+  "track_stats": [
+    {
+      "track": "monza",
+      "races": 1,
+      "wins": 0,
+      "podiums": 1,
+      "points": 15,
+      "finish_sum": 3,
+      "average_finish": 3.0,
+      "best_lap_ms": 107940,
+      "best_lap": "1:47.940"
+    }
+  ],
+  "race_history": [
+    {
+      "race_id": "260313_225200_R.json",
+      "finished_at": "2026-03-13T22:52:00",
+      "track": "monza",
+      "position": 3,
+      "participants_count": 39,
+      "winner": "Man in Tights",
+      "points": 15,
+      "best_lap": "1:47.940",
+      "best_lap_ms": 107940,
+      "total_time": "21:55.650",
+      "total_time_ms": 1315650,
+      "gap": "0:26.381",
+      "gap_ms": 26381,
+      "lap_count": 12,
+      "had_best_lap": false,
+      "penalty_count": 0,
+      "penalty_points": 0
+    }
+  ],
+  "penalties": {
+    "penalty_count": 0,
+    "penalty_points": 0,
+    "reasons": {},
+    "types": {}
+  }
+}

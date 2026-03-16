@@ -1,0 +1,72 @@
+{
+  "public_id": "drv_51df466a15ed",
+  "driver": "Makaken Bibizyanov",
+  "summary": {
+    "points": 0,
+    "average_points_per_race": 0.0,
+    "races": 1,
+    "wins": 0,
+    "podiums": 0,
+    "average_finish": 17.0,
+    "best_lap": "1:49.170",
+    "best_lap_ms": 109170,
+    "best_lap_track": "monza",
+    "best_lap_session_type": "R",
+    "penalty_count": 2,
+    "penalty_points": 0,
+    "fastest_lap_awards": 0,
+    "most_raced_track": "monza",
+    "last_race_at": "2026-03-14T17:23:13",
+    "last_seen": "2026-03-14T17:23:13",
+    "win_rate": 0.0,
+    "podium_rate": 0.0
+  },
+  "recent_form": [
+    17
+  ],
+  "track_stats": [
+    {
+      "track": "monza",
+      "races": 1,
+      "wins": 0,
+      "podiums": 0,
+      "points": 0,
+      "finish_sum": 17,
+      "average_finish": 17.0,
+      "best_lap_ms": 109170,
+      "best_lap": "1:49.170"
+    }
+  ],
+  "race_history": [
+    {
+      "race_id": "260314_172313_R.json",
+      "finished_at": "2026-03-14T17:23:13",
+      "track": "monza",
+      "position": 17,
+      "participants_count": 35,
+      "winner": "Roderik Banrevi",
+      "points": 0,
+      "best_lap": "1:49.170",
+      "best_lap_ms": 109170,
+      "total_time": "13:06.800",
+      "total_time_ms": 786800,
+      "gap": "0:00.000",
+      "gap_ms": 0,
+      "lap_count": 7,
+      "had_best_lap": false,
+      "penalty_count": 2,
+      "penalty_points": 0
+    }
+  ],
+  "penalties": {
+    "penalty_count": 2,
+    "penalty_points": 0,
+    "reasons": {
+      "Cutting": 2
+    },
+    "types": {
+      "DriveThrough": 1,
+      "Disqualified": 1
+    }
+  }
+}

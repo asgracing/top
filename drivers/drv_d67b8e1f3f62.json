@@ -1,0 +1,67 @@
+{
+  "public_id": "drv_d67b8e1f3f62",
+  "driver": "Jeffrey van Roekel",
+  "summary": {
+    "points": 15,
+    "average_points_per_race": 15.0,
+    "races": 1,
+    "wins": 0,
+    "podiums": 1,
+    "average_finish": 3.0,
+    "best_lap": "1:49.465",
+    "best_lap_ms": 109465,
+    "best_lap_track": "monza",
+    "best_lap_session_type": "R",
+    "penalty_count": 0,
+    "penalty_points": 0,
+    "fastest_lap_awards": 0,
+    "most_raced_track": "monza",
+    "last_race_at": "2026-03-14T13:04:25",
+    "last_seen": "2026-03-14T13:04:25",
+    "win_rate": 0.0,
+    "podium_rate": 100.0
+  },
+  "recent_form": [
+    3
+  ],
+  "track_stats": [
+    {
+      "track": "monza",
+      "races": 1,
+      "wins": 0,
+      "podiums": 1,
+      "points": 15,
+      "finish_sum": 3,
+      "average_finish": 3.0,
+      "best_lap_ms": 109465,
+      "best_lap": "1:49.465"
+    }
+  ],
+  "race_history": [
+    {
+      "race_id": "260314_130425_R.json",
+      "finished_at": "2026-03-14T13:04:25",
+      "track": "monza",
+      "position": 3,
+      "participants_count": 29,
+      "winner": "Yamamoto Suroki",
+      "points": 15,
+      "best_lap": "1:49.465",
+      "best_lap_ms": 109465,
+      "total_time": "20:26.798",
+      "total_time_ms": 1226798,
+      "gap": "0:21.551",
+      "gap_ms": 21551,
+      "lap_count": 11,
+      "had_best_lap": false,
+      "penalty_count": 0,
+      "penalty_points": 0
+    }
+  ],
+  "penalties": {
+    "penalty_count": 0,
+    "penalty_points": 0,
+    "reasons": {},
+    "types": {}
+  }
+}

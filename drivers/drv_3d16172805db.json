@@ -1,0 +1,67 @@
+{
+  "public_id": "drv_3d16172805db",
+  "driver": "Peter V.",
+  "summary": {
+    "points": 0,
+    "average_points_per_race": 0.0,
+    "races": 1,
+    "wins": 0,
+    "podiums": 0,
+    "average_finish": 27.0,
+    "best_lap": null,
+    "best_lap_ms": null,
+    "best_lap_track": null,
+    "best_lap_session_type": null,
+    "penalty_count": 0,
+    "penalty_points": 0,
+    "fastest_lap_awards": 0,
+    "most_raced_track": "monza",
+    "last_race_at": "2026-03-14T16:10:08",
+    "last_seen": "2026-03-14T16:10:08",
+    "win_rate": 0.0,
+    "podium_rate": 0.0
+  },
+  "recent_form": [
+    27
+  ],
+  "track_stats": [
+    {
+      "track": "monza",
+      "races": 1,
+      "wins": 0,
+      "podiums": 0,
+      "points": 0,
+      "finish_sum": 27,
+      "average_finish": 27.0,
+      "best_lap_ms": null,
+      "best_lap": null
+    }
+  ],
+  "race_history": [
+    {
+      "race_id": "260314_161008_R.json",
+      "finished_at": "2026-03-14T16:10:08",
+      "track": "monza",
+      "position": 27,
+      "participants_count": 41,
+      "winner": "Adrián de Mora",
+      "points": 0,
+      "best_lap": null,
+      "best_lap_ms": null,
+      "total_time": null,
+      "total_time_ms": null,
+      "gap": null,
+      "gap_ms": null,
+      "lap_count": 0,
+      "had_best_lap": false,
+      "penalty_count": 0,
+      "penalty_points": 0
+    }
+  ],
+  "penalties": {
+    "penalty_count": 0,
+    "penalty_points": 0,
+    "reasons": {},
+    "types": {}
+  }
+}

@@ -1,0 +1,67 @@
+{
+  "public_id": "drv_c52055f610b4",
+  "driver": "Tommy Flash",
+  "summary": {
+    "points": 0,
+    "average_points_per_race": 0.0,
+    "races": 1,
+    "wins": 0,
+    "podiums": 0,
+    "average_finish": 13.0,
+    "best_lap": "1:51.087",
+    "best_lap_ms": 111087,
+    "best_lap_track": "monza",
+    "best_lap_session_type": "R",
+    "penalty_count": 0,
+    "penalty_points": 0,
+    "fastest_lap_awards": 0,
+    "most_raced_track": "monza",
+    "last_race_at": "2026-03-15T21:15:16",
+    "last_seen": "2026-03-15T21:15:16",
+    "win_rate": 0.0,
+    "podium_rate": 0.0
+  },
+  "recent_form": [
+    13
+  ],
+  "track_stats": [
+    {
+      "track": "monza",
+      "races": 1,
+      "wins": 0,
+      "podiums": 0,
+      "points": 0,
+      "finish_sum": 13,
+      "average_finish": 13.0,
+      "best_lap_ms": 111087,
+      "best_lap": "1:51.087"
+    }
+  ],
+  "race_history": [
+    {
+      "race_id": "260315_211516_R.json",
+      "finished_at": "2026-03-15T21:15:16",
+      "track": "monza",
+      "position": 13,
+      "participants_count": 49,
+      "winner": "Stanislau Novikau",
+      "points": 0,
+      "best_lap": "1:51.087",
+      "best_lap_ms": 111087,
+      "total_time": "20:56.900",
+      "total_time_ms": 1256900,
+      "gap": "0:47.443",
+      "gap_ms": 47443,
+      "lap_count": 11,
+      "had_best_lap": false,
+      "penalty_count": 0,
+      "penalty_points": 0
+    }
+  ],
+  "penalties": {
+    "penalty_count": 0,
+    "penalty_points": 0,
+    "reasons": {},
+    "types": {}
+  }
+}

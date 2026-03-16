@@ -1,0 +1,87 @@
+{
+  "public_id": "drv_0e41d8fa66e7",
+  "driver": "Craig Jones",
+  "summary": {
+    "points": 0,
+    "average_points_per_race": 0.0,
+    "races": 2,
+    "wins": 0,
+    "podiums": 0,
+    "average_finish": 22.5,
+    "best_lap": "1:48.267",
+    "best_lap_ms": 108267,
+    "best_lap_track": "monza",
+    "best_lap_session_type": "Q",
+    "penalty_count": 0,
+    "penalty_points": 0,
+    "fastest_lap_awards": 0,
+    "most_raced_track": "monza",
+    "last_race_at": "2026-03-13T23:29:57",
+    "last_seen": "2026-03-13T23:29:57",
+    "win_rate": 0.0,
+    "podium_rate": 0.0
+  },
+  "recent_form": [
+    22,
+    23
+  ],
+  "track_stats": [
+    {
+      "track": "monza",
+      "races": 2,
+      "wins": 0,
+      "podiums": 0,
+      "points": 0,
+      "finish_sum": 45,
+      "average_finish": 22.5,
+      "best_lap_ms": 108732,
+      "best_lap": "1:48.732"
+    }
+  ],
+  "race_history": [
+    {
+      "race_id": "260313_232957_R.json",
+      "finished_at": "2026-03-13T23:29:57",
+      "track": "monza",
+      "position": 22,
+      "participants_count": 44,
+      "winner": "Man in Tights",
+      "points": 0,
+      "best_lap": "1:48.800",
+      "best_lap_ms": 108800,
+      "total_time": "8:44.742",
+      "total_time_ms": 524742,
+      "gap": "0:00.000",
+      "gap_ms": 0,
+      "lap_count": 4,
+      "had_best_lap": false,
+      "penalty_count": 0,
+      "penalty_points": 0
+    },
+    {
+      "race_id": "260313_225200_R.json",
+      "finished_at": "2026-03-13T22:52:00",
+      "track": "monza",
+      "position": 23,
+      "participants_count": 39,
+      "winner": "Man in Tights",
+      "points": 0,
+      "best_lap": "1:48.732",
+      "best_lap_ms": 108732,
+      "total_time": "20:51.861",
+      "total_time_ms": 1251861,
+      "gap": "0:00.000",
+      "gap_ms": 0,
+      "lap_count": 3,
+      "had_best_lap": false,
+      "penalty_count": 0,
+      "penalty_points": 0
+    }
+  ],
+  "penalties": {
+    "penalty_count": 0,
+    "penalty_points": 0,
+    "reasons": {},
+    "types": {}
+  }
+}

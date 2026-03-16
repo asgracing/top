@@ -1,0 +1,67 @@
+{
+  "public_id": "drv_60ff635875df",
+  "driver": "Joshuar Ramirez",
+  "summary": {
+    "points": 15,
+    "average_points_per_race": 15.0,
+    "races": 1,
+    "wins": 0,
+    "podiums": 1,
+    "average_finish": 3.0,
+    "best_lap": "1:50.000",
+    "best_lap_ms": 110000,
+    "best_lap_track": "monza",
+    "best_lap_session_type": "R",
+    "penalty_count": 0,
+    "penalty_points": 0,
+    "fastest_lap_awards": 0,
+    "most_raced_track": "monza",
+    "last_race_at": "2026-03-15T00:51:47",
+    "last_seen": "2026-03-15T00:51:47",
+    "win_rate": 0.0,
+    "podium_rate": 100.0
+  },
+  "recent_form": [
+    3
+  ],
+  "track_stats": [
+    {
+      "track": "monza",
+      "races": 1,
+      "wins": 0,
+      "podiums": 1,
+      "points": 15,
+      "finish_sum": 3,
+      "average_finish": 3.0,
+      "best_lap_ms": 110000,
+      "best_lap": "1:50.000"
+    }
+  ],
+  "race_history": [
+    {
+      "race_id": "260315_005147_R.json",
+      "finished_at": "2026-03-15T00:51:47",
+      "track": "monza",
+      "position": 3,
+      "participants_count": 22,
+      "winner": "Reed McCarthy",
+      "points": 15,
+      "best_lap": "1:50.000",
+      "best_lap_ms": 110000,
+      "total_time": "20:33.884",
+      "total_time_ms": 1233884,
+      "gap": "0:22.145",
+      "gap_ms": 22145,
+      "lap_count": 11,
+      "had_best_lap": false,
+      "penalty_count": 0,
+      "penalty_points": 0
+    }
+  ],
+  "penalties": {
+    "penalty_count": 0,
+    "penalty_points": 0,
+    "reasons": {},
+    "types": {}
+  }
+}

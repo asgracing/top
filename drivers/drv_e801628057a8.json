@@ -1,0 +1,87 @@
+{
+  "public_id": "drv_e801628057a8",
+  "driver": "Paolo Siena",
+  "summary": {
+    "points": 4,
+    "average_points_per_race": 2.0,
+    "races": 2,
+    "wins": 0,
+    "podiums": 0,
+    "average_finish": 24.0,
+    "best_lap": "1:50.182",
+    "best_lap_ms": 110182,
+    "best_lap_track": "monza",
+    "best_lap_session_type": "R",
+    "penalty_count": 0,
+    "penalty_points": 0,
+    "fastest_lap_awards": 0,
+    "most_raced_track": "monza",
+    "last_race_at": "2026-03-14T17:23:13",
+    "last_seen": "2026-03-14T17:23:13",
+    "win_rate": 0.0,
+    "podium_rate": 0.0
+  },
+  "recent_form": [
+    8,
+    40
+  ],
+  "track_stats": [
+    {
+      "track": "monza",
+      "races": 2,
+      "wins": 0,
+      "podiums": 0,
+      "points": 4,
+      "finish_sum": 48,
+      "average_finish": 24.0,
+      "best_lap_ms": 110182,
+      "best_lap": "1:50.182"
+    }
+  ],
+  "race_history": [
+    {
+      "race_id": "260314_172313_R.json",
+      "finished_at": "2026-03-14T17:23:13",
+      "track": "monza",
+      "position": 8,
+      "participants_count": 35,
+      "winner": "Roderik Banrevi",
+      "points": 4,
+      "best_lap": "1:50.182",
+      "best_lap_ms": 110182,
+      "total_time": "20:53.378",
+      "total_time_ms": 1253378,
+      "gap": "0:45.492",
+      "gap_ms": 45492,
+      "lap_count": 11,
+      "had_best_lap": false,
+      "penalty_count": 0,
+      "penalty_points": 0
+    },
+    {
+      "race_id": "260314_164636_R.json",
+      "finished_at": "2026-03-14T16:46:36",
+      "track": "monza",
+      "position": 40,
+      "participants_count": 44,
+      "winner": "Chris ver Damn [GER]",
+      "points": 0,
+      "best_lap": null,
+      "best_lap_ms": null,
+      "total_time": null,
+      "total_time_ms": null,
+      "gap": null,
+      "gap_ms": null,
+      "lap_count": 0,
+      "had_best_lap": false,
+      "penalty_count": 0,
+      "penalty_points": 0
+    }
+  ],
+  "penalties": {
+    "penalty_count": 0,
+    "penalty_points": 0,
+    "reasons": {},
+    "types": {}
+  }
+}

@@ -1,0 +1,134 @@
+{
+  "public_id": "drv_3e558150fd26",
+  "driver": "Guillermo Sanchez",
+  "summary": {
+    "points": 33,
+    "average_points_per_race": 8.25,
+    "races": 4,
+    "wins": 0,
+    "podiums": 2,
+    "average_finish": 11.75,
+    "best_lap": "1:48.450",
+    "best_lap_ms": 108450,
+    "best_lap_track": "monza",
+    "best_lap_session_type": "Q",
+    "penalty_count": 3,
+    "penalty_points": 3,
+    "fastest_lap_awards": 0,
+    "most_raced_track": "monza",
+    "last_race_at": "2026-03-15T21:51:43",
+    "last_seen": "2026-03-15T21:51:43",
+    "win_rate": 0.0,
+    "podium_rate": 50.0
+  },
+  "recent_form": [
+    13,
+    2,
+    3,
+    29
+  ],
+  "track_stats": [
+    {
+      "track": "monza",
+      "races": 4,
+      "wins": 0,
+      "podiums": 2,
+      "points": 33,
+      "finish_sum": 47,
+      "average_finish": 11.75,
+      "best_lap_ms": 108740,
+      "best_lap": "1:48.740"
+    }
+  ],
+  "race_history": [
+    {
+      "race_id": "260315_215143_R.json",
+      "finished_at": "2026-03-15T21:51:43",
+      "track": "monza",
+      "position": 13,
+      "participants_count": 47,
+      "winner": "Aleksander Kovalev",
+      "points": 0,
+      "best_lap": "1:52.705",
+      "best_lap_ms": 112705,
+      "total_time": "21:04.620",
+      "total_time_ms": 1264620,
+      "gap": "1:03.000",
+      "gap_ms": 63000,
+      "lap_count": 10,
+      "had_best_lap": false,
+      "penalty_count": 3,
+      "penalty_points": 3
+    },
+    {
+      "race_id": "260315_211516_R.json",
+      "finished_at": "2026-03-15T21:15:16",
+      "track": "monza",
+      "position": 2,
+      "participants_count": 49,
+      "winner": "Stanislau Novikau",
+      "points": 18,
+      "best_lap": "1:48.915",
+      "best_lap_ms": 108915,
+      "total_time": "20:13.499",
+      "total_time_ms": 1213499,
+      "gap": "0:04.042",
+      "gap_ms": 4042,
+      "lap_count": 11,
+      "had_best_lap": false,
+      "penalty_count": 0,
+      "penalty_points": 0
+    },
+    {
+      "race_id": "260314_230059_R.json",
+      "finished_at": "2026-03-14T23:00:59",
+      "track": "monza",
+      "position": 3,
+      "participants_count": 47,
+      "winner": "T Evans",
+      "points": 15,
+      "best_lap": "1:48.740",
+      "best_lap_ms": 108740,
+      "total_time": "20:32.407",
+      "total_time_ms": 1232407,
+      "gap": "0:21.984",
+      "gap_ms": 21984,
+      "lap_count": 11,
+      "had_best_lap": false,
+      "penalty_count": 0,
+      "penalty_points": 0
+    },
+    {
+      "race_id": "260314_214615_R.json",
+      "finished_at": "2026-03-14T21:46:15",
+      "track": "monza",
+      "position": 29,
+      "participants_count": 57,
+      "winner": "J Lehman",
+      "points": 0,
+      "best_lap": null,
+      "best_lap_ms": null,
+      "total_time": "1:28.478",
+      "total_time_ms": 88478,
+      "gap": "0:00.000",
+      "gap_ms": 0,
+      "lap_count": 0,
+      "had_best_lap": false,
+      "penalty_count": 0,
+      "penalty_points": 0
+    }
+  ],
+  "penalties": {
+    "penalty_count": 3,
+    "penalty_points": 3,
+    "reasons": {
+      "Cutting": 2,
+      "PitSpeeding": 1
+    },
+    "types": {
+      "DriveThrough": 1,
+      "StopAndGo_30": 1,
+      "None": 1
+    }
+  }
+}

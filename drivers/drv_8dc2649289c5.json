@@ -1,0 +1,107 @@
+{
+  "public_id": "drv_8dc2649289c5",
+  "driver": "Felix Driesfott",
+  "summary": {
+    "points": 12,
+    "average_points_per_race": 4.0,
+    "races": 3,
+    "wins": 0,
+    "podiums": 0,
+    "average_finish": 33.0,
+    "best_lap": "1:49.007",
+    "best_lap_ms": 109007,
+    "best_lap_track": "monza",
+    "best_lap_session_type": "R",
+    "penalty_count": 0,
+    "penalty_points": 0,
+    "fastest_lap_awards": 0,
+    "most_raced_track": "monza",
+    "last_race_at": "2026-03-14T19:53:49",
+    "last_seen": "2026-03-14T19:53:49",
+    "win_rate": 0.0,
+    "podium_rate": 0.0
+  },
+  "recent_form": [
+    4,
+    52,
+    43
+  ],
+  "track_stats": [
+    {
+      "track": "monza",
+      "races": 3,
+      "wins": 0,
+      "podiums": 0,
+      "points": 12,
+      "finish_sum": 99,
+      "average_finish": 33.0,
+      "best_lap_ms": 109007,
+      "best_lap": "1:49.007"
+    }
+  ],
+  "race_history": [
+    {
+      "race_id": "260314_195349_R.json",
+      "finished_at": "2026-03-14T19:53:49",
+      "track": "monza",
+      "position": 4,
+      "participants_count": 41,
+      "winner": "David Marie",
+      "points": 12,
+      "best_lap": "1:49.007",
+      "best_lap_ms": 109007,
+      "total_time": "22:06.929",
+      "total_time_ms": 1326929,
+      "gap": "0:34.715",
+      "gap_ms": 34715,
+      "lap_count": 12,
+      "had_best_lap": false,
+      "penalty_count": 0,
+      "penalty_points": 0
+    },
+    {
+      "race_id": "260314_191544_R.json",
+      "finished_at": "2026-03-14T19:15:44",
+      "track": "monza",
+      "position": 52,
+      "participants_count": 54,
+      "winner": "Jeff Reid",
+      "points": 0,
+      "best_lap": null,
+      "best_lap_ms": null,
+      "total_time": null,
+      "total_time_ms": null,
+      "gap": null,
+      "gap_ms": null,
+      "lap_count": 0,
+      "had_best_lap": false,
+      "penalty_count": 0,
+      "penalty_points": 0
+    },
+    {
+      "race_id": "260314_175958_R.json",
+      "finished_at": "2026-03-14T17:59:58",
+      "track": "monza",
+      "position": 43,
+      "participants_count": 47,
+      "winner": "Евгений Майоров",
+      "points": 0,
+      "best_lap": null,
+      "best_lap_ms": null,
+      "total_time": null,
+      "total_time_ms": null,
+      "gap": null,
+      "gap_ms": null,
+      "lap_count": 0,
+      "had_best_lap": false,
+      "penalty_count": 0,
+      "penalty_points": 0
+    }
+  ],
+  "penalties": {
+    "penalty_count": 0,
+    "penalty_points": 0,
+    "reasons": {},
+    "types": {}
+  }
+}

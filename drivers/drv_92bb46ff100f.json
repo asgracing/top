@@ -1,0 +1,67 @@
+{
+  "public_id": "drv_92bb46ff100f",
+  "driver": "ALAN LINS",
+  "summary": {
+    "points": 0,
+    "average_points_per_race": 0.0,
+    "races": 1,
+    "wins": 0,
+    "podiums": 0,
+    "average_finish": 17.0,
+    "best_lap": null,
+    "best_lap_ms": null,
+    "best_lap_track": null,
+    "best_lap_session_type": null,
+    "penalty_count": 0,
+    "penalty_points": 0,
+    "fastest_lap_awards": 0,
+    "most_raced_track": "monza",
+    "last_race_at": "2026-03-14T15:33:41",
+    "last_seen": "2026-03-14T15:33:41",
+    "win_rate": 0.0,
+    "podium_rate": 0.0
+  },
+  "recent_form": [
+    17
+  ],
+  "track_stats": [
+    {
+      "track": "monza",
+      "races": 1,
+      "wins": 0,
+      "podiums": 0,
+      "points": 0,
+      "finish_sum": 17,
+      "average_finish": 17.0,
+      "best_lap_ms": null,
+      "best_lap": null
+    }
+  ],
+  "race_history": [
+    {
+      "race_id": "260314_153341_R.json",
+      "finished_at": "2026-03-14T15:33:41",
+      "track": "monza",
+      "position": 17,
+      "participants_count": 49,
+      "winner": "R A",
+      "points": 0,
+      "best_lap": null,
+      "best_lap_ms": null,
+      "total_time": "2:39.609",
+      "total_time_ms": 159609,
+      "gap": "0:00.000",
+      "gap_ms": 0,
+      "lap_count": 1,
+      "had_best_lap": false,
+      "penalty_count": 0,
+      "penalty_points": 0
+    }
+  ],
+  "penalties": {
+    "penalty_count": 0,
+    "penalty_points": 0,
+    "reasons": {},
+    "types": {}
+  }
+}

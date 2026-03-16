@@ -1,0 +1,67 @@
+{
+  "public_id": "drv_e75b0b247546",
+  "driver": "Wesley Daniels",
+  "summary": {
+    "points": 2,
+    "average_points_per_race": 2.0,
+    "races": 1,
+    "wins": 0,
+    "podiums": 0,
+    "average_finish": 9.0,
+    "best_lap": "1:49.257",
+    "best_lap_ms": 109257,
+    "best_lap_track": "monza",
+    "best_lap_session_type": "Q",
+    "penalty_count": 0,
+    "penalty_points": 0,
+    "fastest_lap_awards": 0,
+    "most_raced_track": "monza",
+    "last_race_at": "2026-03-15T15:08:40",
+    "last_seen": "2026-03-15T15:08:40",
+    "win_rate": 0.0,
+    "podium_rate": 0.0
+  },
+  "recent_form": [
+    9
+  ],
+  "track_stats": [
+    {
+      "track": "monza",
+      "races": 1,
+      "wins": 0,
+      "podiums": 0,
+      "points": 2,
+      "finish_sum": 9,
+      "average_finish": 9.0,
+      "best_lap_ms": 109585,
+      "best_lap": "1:49.585"
+    }
+  ],
+  "race_history": [
+    {
+      "race_id": "260315_150840_R.json",
+      "finished_at": "2026-03-15T15:08:40",
+      "track": "monza",
+      "position": 9,
+      "participants_count": 38,
+      "winner": "Holli D.",
+      "points": 2,
+      "best_lap": "1:49.585",
+      "best_lap_ms": 109585,
+      "total_time": "22:24.349",
+      "total_time_ms": 1344349,
+      "gap": "0:46.773",
+      "gap_ms": 46773,
+      "lap_count": 12,
+      "had_best_lap": false,
+      "penalty_count": 0,
+      "penalty_points": 0
+    }
+  ],
+  "penalties": {
+    "penalty_count": 0,
+    "penalty_points": 0,
+    "reasons": {},
+    "types": {}
+  }
+}

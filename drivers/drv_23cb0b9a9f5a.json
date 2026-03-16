@@ -1,0 +1,87 @@
+{
+  "public_id": "drv_23cb0b9a9f5a",
+  "driver": "Artem Grishin",
+  "summary": {
+    "points": 8,
+    "average_points_per_race": 4.0,
+    "races": 2,
+    "wins": 0,
+    "podiums": 0,
+    "average_finish": 26.5,
+    "best_lap": "1:49.095",
+    "best_lap_ms": 109095,
+    "best_lap_track": "monza",
+    "best_lap_session_type": "R",
+    "penalty_count": 0,
+    "penalty_points": 0,
+    "fastest_lap_awards": 0,
+    "most_raced_track": "monza",
+    "last_race_at": "2026-03-15T21:51:43",
+    "last_seen": "2026-03-15T21:51:43",
+    "win_rate": 0.0,
+    "podium_rate": 0.0
+  },
+  "recent_form": [
+    6,
+    47
+  ],
+  "track_stats": [
+    {
+      "track": "monza",
+      "races": 2,
+      "wins": 0,
+      "podiums": 0,
+      "points": 8,
+      "finish_sum": 53,
+      "average_finish": 26.5,
+      "best_lap_ms": 109095,
+      "best_lap": "1:49.095"
+    }
+  ],
+  "race_history": [
+    {
+      "race_id": "260315_215143_R.json",
+      "finished_at": "2026-03-15T21:51:43",
+      "track": "monza",
+      "position": 6,
+      "participants_count": 47,
+      "winner": "Aleksander Kovalev",
+      "points": 8,
+      "best_lap": "1:49.095",
+      "best_lap_ms": 109095,
+      "total_time": "20:48.763",
+      "total_time_ms": 1248763,
+      "gap": "0:47.143",
+      "gap_ms": 47143,
+      "lap_count": 11,
+      "had_best_lap": false,
+      "penalty_count": 0,
+      "penalty_points": 0
+    },
+    {
+      "race_id": "260315_211516_R.json",
+      "finished_at": "2026-03-15T21:15:16",
+      "track": "monza",
+      "position": 47,
+      "participants_count": 49,
+      "winner": "Stanislau Novikau",
+      "points": 0,
+      "best_lap": null,
+      "best_lap_ms": null,
+      "total_time": null,
+      "total_time_ms": null,
+      "gap": null,
+      "gap_ms": null,
+      "lap_count": 0,
+      "had_best_lap": false,
+      "penalty_count": 0,
+      "penalty_points": 0
+    }
+  ],
+  "penalties": {
+    "penalty_count": 0,
+    "penalty_points": 0,
+    "reasons": {},
+    "types": {}
+  }
+}

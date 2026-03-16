@@ -1,0 +1,131 @@
+{
+  "public_id": "drv_f8bac98a1879",
+  "driver": "VaneS Vanes",
+  "summary": {
+    "points": 1,
+    "average_points_per_race": 0.25,
+    "races": 4,
+    "wins": 0,
+    "podiums": 0,
+    "average_finish": 14.5,
+    "best_lap": "1:51.447",
+    "best_lap_ms": 111447,
+    "best_lap_track": "monza",
+    "best_lap_session_type": "Q",
+    "penalty_count": 1,
+    "penalty_points": 3,
+    "fastest_lap_awards": 0,
+    "most_raced_track": "monza",
+    "last_race_at": "2026-03-15T00:51:47",
+    "last_seen": "2026-03-15T00:51:47",
+    "win_rate": 0.0,
+    "podium_rate": 0.0
+  },
+  "recent_form": [
+    10,
+    12,
+    13,
+    23
+  ],
+  "track_stats": [
+    {
+      "track": "monza",
+      "races": 4,
+      "wins": 0,
+      "podiums": 0,
+      "points": 1,
+      "finish_sum": 58,
+      "average_finish": 14.5,
+      "best_lap_ms": 113365,
+      "best_lap": "1:53.365"
+    }
+  ],
+  "race_history": [
+    {
+      "race_id": "260315_005147_R.json",
+      "finished_at": "2026-03-15T00:51:47",
+      "track": "monza",
+      "position": 10,
+      "participants_count": 22,
+      "winner": "Reed McCarthy",
+      "points": 1,
+      "best_lap": null,
+      "best_lap_ms": null,
+      "total_time": null,
+      "total_time_ms": null,
+      "gap": null,
+      "gap_ms": null,
+      "lap_count": 0,
+      "had_best_lap": false,
+      "penalty_count": 0,
+      "penalty_points": 0
+    },
+    {
+      "race_id": "260315_001609_R.json",
+      "finished_at": "2026-03-15T00:16:09",
+      "track": "monza",
+      "position": 12,
+      "participants_count": 47,
+      "winner": "REGI SILVA",
+      "points": 0,
+      "best_lap": "1:53.462",
+      "best_lap_ms": 113462,
+      "total_time": "22:15.547",
+      "total_time_ms": 1335547,
+      "gap": "0:36.156",
+      "gap_ms": 36156,
+      "lap_count": 11,
+      "had_best_lap": false,
+      "penalty_count": 2,
+      "penalty_points": 33
+    },
+    {
+      "race_id": "260314_233749_R.json",
+      "finished_at": "2026-03-14T23:37:49",
+      "track": "monza",
+      "position": 13,
+      "participants_count": 42,
+      "winner": "Kirill Bulgakov",
+      "points": 0,
+      "best_lap": "1:53.365",
+      "best_lap_ms": 113365,
+      "total_time": "21:43.744",
+      "total_time_ms": 1303744,
+      "gap": "1:36.394",
+      "gap_ms": 96394,
+      "lap_count": 11,
+      "had_best_lap": false,
+      "penalty_count": 0,
+      "penalty_points": 0
+    },
+    {
+      "race_id": "260314_230059_R.json",
+      "finished_at": "2026-03-14T23:00:59",
+      "track": "monza",
+      "position": 23,
+      "participants_count": 47,
+      "winner": "T Evans",
+      "points": 0,
+      "best_lap": "1:55.220",
+      "best_lap_ms": 115220,
+      "total_time": "20:20.367",
+      "total_time_ms": 1220367,
+      "gap": "0:09.944",
+      "gap_ms": 9944,
+      "lap_count": 3,
+      "had_best_lap": false,
+      "penalty_count": 0,
+      "penalty_points": 0
+    }
+  ],
+  "penalties": {
+    "penalty_count": 1,
+    "penalty_points": 3,
+    "reasons": {
+      "Cutting": 1
+    },
+    "types": {
+      "DriveThrough": 1
+    }
+  }
+}

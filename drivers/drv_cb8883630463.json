@@ -1,0 +1,67 @@
+{
+  "public_id": "drv_cb8883630463",
+  "driver": "Davide Cervasio",
+  "summary": {
+    "points": 6,
+    "average_points_per_race": 6.0,
+    "races": 1,
+    "wins": 0,
+    "podiums": 0,
+    "average_finish": 7.0,
+    "best_lap": "1:48.620",
+    "best_lap_ms": 108620,
+    "best_lap_track": "monza",
+    "best_lap_session_type": "R",
+    "penalty_count": 0,
+    "penalty_points": 0,
+    "fastest_lap_awards": 0,
+    "most_raced_track": "monza",
+    "last_race_at": "2026-03-15T23:08:44",
+    "last_seen": "2026-03-15T23:08:44",
+    "win_rate": 0.0,
+    "podium_rate": 0.0
+  },
+  "recent_form": [
+    7
+  ],
+  "track_stats": [
+    {
+      "track": "monza",
+      "races": 1,
+      "wins": 0,
+      "podiums": 0,
+      "points": 6,
+      "finish_sum": 7,
+      "average_finish": 7.0,
+      "best_lap_ms": 108620,
+      "best_lap": "1:48.620"
+    }
+  ],
+  "race_history": [
+    {
+      "race_id": "260315_230844_R.json",
+      "finished_at": "2026-03-15T23:08:44",
+      "track": "monza",
+      "position": 7,
+      "participants_count": 39,
+      "winner": "Dmitriy Sukharev",
+      "points": 6,
+      "best_lap": "1:48.620",
+      "best_lap_ms": 108620,
+      "total_time": "22:21.690",
+      "total_time_ms": 1341690,
+      "gap": "0:45.221",
+      "gap_ms": 45221,
+      "lap_count": 12,
+      "had_best_lap": false,
+      "penalty_count": 0,
+      "penalty_points": 0
+    }
+  ],
+  "penalties": {
+    "penalty_count": 0,
+    "penalty_points": 0,
+    "reasons": {},
+    "types": {}
+  }
+}

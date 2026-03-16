@@ -1,0 +1,107 @@
+{
+  "public_id": "drv_64e4d4ba1963",
+  "driver": "Данил Куз",
+  "summary": {
+    "points": 8,
+    "average_points_per_race": 2.67,
+    "races": 3,
+    "wins": 0,
+    "podiums": 0,
+    "average_finish": 22.0,
+    "best_lap": "1:48.192",
+    "best_lap_ms": 108192,
+    "best_lap_track": "monza",
+    "best_lap_session_type": "R",
+    "penalty_count": 0,
+    "penalty_points": 0,
+    "fastest_lap_awards": 0,
+    "most_raced_track": "monza",
+    "last_race_at": "2026-03-15T16:58:35",
+    "last_seen": "2026-03-15T16:58:35",
+    "win_rate": 0.0,
+    "podium_rate": 0.0
+  },
+  "recent_form": [
+    36,
+    6,
+    24
+  ],
+  "track_stats": [
+    {
+      "track": "monza",
+      "races": 3,
+      "wins": 0,
+      "podiums": 0,
+      "points": 8,
+      "finish_sum": 66,
+      "average_finish": 22.0,
+      "best_lap_ms": 108192,
+      "best_lap": "1:48.192"
+    }
+  ],
+  "race_history": [
+    {
+      "race_id": "260315_165835_R.json",
+      "finished_at": "2026-03-15T16:58:35",
+      "track": "monza",
+      "position": 36,
+      "participants_count": 53,
+      "winner": "Marco Mastroluca [FMP]",
+      "points": 0,
+      "best_lap": null,
+      "best_lap_ms": null,
+      "total_time": null,
+      "total_time_ms": null,
+      "gap": null,
+      "gap_ms": null,
+      "lap_count": 0,
+      "had_best_lap": false,
+      "penalty_count": 0,
+      "penalty_points": 0
+    },
+    {
+      "race_id": "260315_162155_R.json",
+      "finished_at": "2026-03-15T16:21:55",
+      "track": "monza",
+      "position": 6,
+      "participants_count": 43,
+      "winner": "s WARRINER",
+      "points": 8,
+      "best_lap": "1:48.192",
+      "best_lap_ms": 108192,
+      "total_time": "22:06.865",
+      "total_time_ms": 1326865,
+      "gap": "0:22.117",
+      "gap_ms": 22117,
+      "lap_count": 12,
+      "had_best_lap": false,
+      "penalty_count": 0,
+      "penalty_points": 0
+    },
+    {
+      "race_id": "260315_154507_R.json",
+      "finished_at": "2026-03-15T15:45:07",
+      "track": "monza",
+      "position": 24,
+      "participants_count": 43,
+      "winner": "Andrei Soldatenkov [ASG]",
+      "points": 0,
+      "best_lap": null,
+      "best_lap_ms": null,
+      "total_time": "21:03.529",
+      "total_time_ms": 1263529,
+      "gap": "1:01.556",
+      "gap_ms": 61556,
+      "lap_count": 1,
+      "had_best_lap": false,
+      "penalty_count": 0,
+      "penalty_points": 0
+    }
+  ],
+  "penalties": {
+    "penalty_count": 0,
+    "penalty_points": 0,
+    "reasons": {},
+    "types": {}
+  }
+}

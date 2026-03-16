@@ -1,0 +1,87 @@
+{
+  "public_id": "drv_e1b5a8815fd7",
+  "driver": "Lukáš Kubala",
+  "summary": {
+    "points": 10,
+    "average_points_per_race": 5.0,
+    "races": 2,
+    "wins": 0,
+    "podiums": 0,
+    "average_finish": 13.0,
+    "best_lap": "1:48.497",
+    "best_lap_ms": 108497,
+    "best_lap_track": "monza",
+    "best_lap_session_type": "R",
+    "penalty_count": 0,
+    "penalty_points": 0,
+    "fastest_lap_awards": 0,
+    "most_raced_track": "monza",
+    "last_race_at": "2026-03-14T19:53:49",
+    "last_seen": "2026-03-14T19:53:49",
+    "win_rate": 0.0,
+    "podium_rate": 0.0
+  },
+  "recent_form": [
+    5,
+    21
+  ],
+  "track_stats": [
+    {
+      "track": "monza",
+      "races": 2,
+      "wins": 0,
+      "podiums": 0,
+      "points": 10,
+      "finish_sum": 26,
+      "average_finish": 13.0,
+      "best_lap_ms": 108497,
+      "best_lap": "1:48.497"
+    }
+  ],
+  "race_history": [
+    {
+      "race_id": "260314_195349_R.json",
+      "finished_at": "2026-03-14T19:53:49",
+      "track": "monza",
+      "position": 5,
+      "participants_count": 41,
+      "winner": "David Marie",
+      "points": 10,
+      "best_lap": "1:48.497",
+      "best_lap_ms": 108497,
+      "total_time": "22:08.044",
+      "total_time_ms": 1328044,
+      "gap": "0:35.830",
+      "gap_ms": 35830,
+      "lap_count": 12,
+      "had_best_lap": false,
+      "penalty_count": 0,
+      "penalty_points": 0
+    },
+    {
+      "race_id": "260314_191544_R.json",
+      "finished_at": "2026-03-14T19:15:44",
+      "track": "monza",
+      "position": 21,
+      "participants_count": 54,
+      "winner": "Jeff Reid",
+      "points": 0,
+      "best_lap": "1:49.142",
+      "best_lap_ms": 109142,
+      "total_time": "22:38.596",
+      "total_time_ms": 1358596,
+      "gap": "0:54.303",
+      "gap_ms": 54303,
+      "lap_count": 3,
+      "had_best_lap": false,
+      "penalty_count": 0,
+      "penalty_points": 0
+    }
+  ],
+  "penalties": {
+    "penalty_count": 0,
+    "penalty_points": 0,
+    "reasons": {},
+    "types": {}
+  }
+}

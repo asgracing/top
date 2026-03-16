@@ -1,0 +1,107 @@
+{
+  "public_id": "drv_cdbe55e9ff23",
+  "driver": "Marco Zordan",
+  "summary": {
+    "points": 8,
+    "average_points_per_race": 2.67,
+    "races": 3,
+    "wins": 0,
+    "podiums": 0,
+    "average_finish": 18.67,
+    "best_lap": "1:49.470",
+    "best_lap_ms": 109470,
+    "best_lap_track": "monza",
+    "best_lap_session_type": "R",
+    "penalty_count": 0,
+    "penalty_points": 0,
+    "fastest_lap_awards": 0,
+    "most_raced_track": "monza",
+    "last_race_at": "2026-03-14T21:46:15",
+    "last_seen": "2026-03-14T21:46:15",
+    "win_rate": 0.0,
+    "podium_rate": 0.0
+  },
+  "recent_form": [
+    31,
+    6,
+    19
+  ],
+  "track_stats": [
+    {
+      "track": "monza",
+      "races": 3,
+      "wins": 0,
+      "podiums": 0,
+      "points": 8,
+      "finish_sum": 56,
+      "average_finish": 18.67,
+      "best_lap_ms": 109470,
+      "best_lap": "1:49.470"
+    }
+  ],
+  "race_history": [
+    {
+      "race_id": "260314_214615_R.json",
+      "finished_at": "2026-03-14T21:46:15",
+      "track": "monza",
+      "position": 31,
+      "participants_count": 57,
+      "winner": "J Lehman",
+      "points": 0,
+      "best_lap": null,
+      "best_lap_ms": null,
+      "total_time": null,
+      "total_time_ms": null,
+      "gap": null,
+      "gap_ms": null,
+      "lap_count": 0,
+      "had_best_lap": false,
+      "penalty_count": 0,
+      "penalty_points": 0
+    },
+    {
+      "race_id": "260314_210817_R.json",
+      "finished_at": "2026-03-14T21:08:17",
+      "track": "monza",
+      "position": 6,
+      "participants_count": 51,
+      "winner": "MIKI DEGANI",
+      "points": 8,
+      "best_lap": "1:49.470",
+      "best_lap_ms": 109470,
+      "total_time": "22:17.129",
+      "total_time_ms": 1337129,
+      "gap": "0:32.727",
+      "gap_ms": 32727,
+      "lap_count": 12,
+      "had_best_lap": false,
+      "penalty_count": 0,
+      "penalty_points": 0
+    },
+    {
+      "race_id": "260314_203008_R.json",
+      "finished_at": "2026-03-14T20:30:08",
+      "track": "monza",
+      "position": 19,
+      "participants_count": 50,
+      "winner": "MASINAVY Dina",
+      "points": 0,
+      "best_lap": "1:50.140",
+      "best_lap_ms": 110140,
+      "total_time": "20:14.907",
+      "total_time_ms": 1214907,
+      "gap": "0:11.186",
+      "gap_ms": 11186,
+      "lap_count": 4,
+      "had_best_lap": false,
+      "penalty_count": 0,
+      "penalty_points": 0
+    }
+  ],
+  "penalties": {
+    "penalty_count": 0,
+    "penalty_points": 0,
+    "reasons": {},
+    "types": {}
+  }
+}

@@ -1,0 +1,107 @@
+{
+  "public_id": "drv_f099b4884730",
+  "driver": "Leon Kolikidis",
+  "summary": {
+    "points": 4,
+    "average_points_per_race": 1.33,
+    "races": 3,
+    "wins": 0,
+    "podiums": 0,
+    "average_finish": 26.0,
+    "best_lap": "1:48.385",
+    "best_lap_ms": 108385,
+    "best_lap_track": "monza",
+    "best_lap_session_type": "R",
+    "penalty_count": 0,
+    "penalty_points": 0,
+    "fastest_lap_awards": 0,
+    "most_raced_track": "monza",
+    "last_race_at": "2026-03-15T16:58:35",
+    "last_seen": "2026-03-15T16:58:35",
+    "win_rate": 0.0,
+    "podium_rate": 0.0
+  },
+  "recent_form": [
+    42,
+    8,
+    28
+  ],
+  "track_stats": [
+    {
+      "track": "monza",
+      "races": 3,
+      "wins": 0,
+      "podiums": 0,
+      "points": 4,
+      "finish_sum": 78,
+      "average_finish": 26.0,
+      "best_lap_ms": 108385,
+      "best_lap": "1:48.385"
+    }
+  ],
+  "race_history": [
+    {
+      "race_id": "260315_165835_R.json",
+      "finished_at": "2026-03-15T16:58:35",
+      "track": "monza",
+      "position": 42,
+      "participants_count": 53,
+      "winner": "Marco Mastroluca [FMP]",
+      "points": 0,
+      "best_lap": null,
+      "best_lap_ms": null,
+      "total_time": null,
+      "total_time_ms": null,
+      "gap": null,
+      "gap_ms": null,
+      "lap_count": 0,
+      "had_best_lap": false,
+      "penalty_count": 0,
+      "penalty_points": 0
+    },
+    {
+      "race_id": "260315_162155_R.json",
+      "finished_at": "2026-03-15T16:21:55",
+      "track": "monza",
+      "position": 8,
+      "participants_count": 43,
+      "winner": "s WARRINER",
+      "points": 4,
+      "best_lap": "1:48.385",
+      "best_lap_ms": 108385,
+      "total_time": "22:19.641",
+      "total_time_ms": 1339641,
+      "gap": "0:34.893",
+      "gap_ms": 34893,
+      "lap_count": 12,
+      "had_best_lap": false,
+      "penalty_count": 0,
+      "penalty_points": 0
+    },
+    {
+      "race_id": "260313_232957_R.json",
+      "finished_at": "2026-03-13T23:29:57",
+      "track": "monza",
+      "position": 28,
+      "participants_count": 44,
+      "winner": "Man in Tights",
+      "points": 0,
+      "best_lap": null,
+      "best_lap_ms": null,
+      "total_time": null,
+      "total_time_ms": null,
+      "gap": null,
+      "gap_ms": null,
+      "lap_count": 0,
+      "had_best_lap": false,
+      "penalty_count": 0,
+      "penalty_points": 0
+    }
+  ],
+  "penalties": {
+    "penalty_count": 0,
+    "penalty_points": 0,
+    "reasons": {},
+    "types": {}
+  }
+}

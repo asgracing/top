@@ -1,0 +1,87 @@
+{
+  "public_id": "drv_d20ace3bfd44",
+  "driver": "EMRE 777",
+  "summary": {
+    "points": 4,
+    "average_points_per_race": 2.0,
+    "races": 2,
+    "wins": 0,
+    "podiums": 0,
+    "average_finish": 10.0,
+    "best_lap": "1:51.755",
+    "best_lap_ms": 111755,
+    "best_lap_track": "monza",
+    "best_lap_session_type": "R",
+    "penalty_count": 0,
+    "penalty_points": 0,
+    "fastest_lap_awards": 0,
+    "most_raced_track": "monza",
+    "last_race_at": "2026-03-14T22:24:34",
+    "last_seen": "2026-03-14T22:24:34",
+    "win_rate": 0.0,
+    "podium_rate": 0.0
+  },
+  "recent_form": [
+    8,
+    12
+  ],
+  "track_stats": [
+    {
+      "track": "monza",
+      "races": 2,
+      "wins": 0,
+      "podiums": 0,
+      "points": 4,
+      "finish_sum": 20,
+      "average_finish": 10.0,
+      "best_lap_ms": 111755,
+      "best_lap": "1:51.755"
+    }
+  ],
+  "race_history": [
+    {
+      "race_id": "260314_222434_R.json",
+      "finished_at": "2026-03-14T22:24:34",
+      "track": "monza",
+      "position": 8,
+      "participants_count": 55,
+      "winner": "J Lehman",
+      "points": 4,
+      "best_lap": "1:51.755",
+      "best_lap_ms": 111755,
+      "total_time": "22:48.238",
+      "total_time_ms": 1368238,
+      "gap": "1:09.338",
+      "gap_ms": 69338,
+      "lap_count": 12,
+      "had_best_lap": false,
+      "penalty_count": 0,
+      "penalty_points": 0
+    },
+    {
+      "race_id": "260314_023106_R.json",
+      "finished_at": "2026-03-14T02:31:06",
+      "track": "monza",
+      "position": 12,
+      "participants_count": 13,
+      "winner": "Henri Fouquet",
+      "points": 0,
+      "best_lap": null,
+      "best_lap_ms": null,
+      "total_time": null,
+      "total_time_ms": null,
+      "gap": null,
+      "gap_ms": null,
+      "lap_count": 0,
+      "had_best_lap": false,
+      "penalty_count": 0,
+      "penalty_points": 0
+    }
+  ],
+  "penalties": {
+    "penalty_count": 0,
+    "penalty_points": 0,
+    "reasons": {},
+    "types": {}
+  }
+}

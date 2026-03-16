@@ -1,0 +1,67 @@
+{
+  "public_id": "drv_d435107f404e",
+  "driver": "Hulbert Renjiro",
+  "summary": {
+    "points": 1,
+    "average_points_per_race": 1.0,
+    "races": 1,
+    "wins": 0,
+    "podiums": 0,
+    "average_finish": 10.0,
+    "best_lap": "1:51.180",
+    "best_lap_ms": 111180,
+    "best_lap_track": "monza",
+    "best_lap_session_type": "R",
+    "penalty_count": 0,
+    "penalty_points": 0,
+    "fastest_lap_awards": 0,
+    "most_raced_track": "monza",
+    "last_race_at": "2026-03-13T21:36:17",
+    "last_seen": "2026-03-13T21:36:17",
+    "win_rate": 0.0,
+    "podium_rate": 0.0
+  },
+  "recent_form": [
+    10
+  ],
+  "track_stats": [
+    {
+      "track": "monza",
+      "races": 1,
+      "wins": 0,
+      "podiums": 0,
+      "points": 1,
+      "finish_sum": 10,
+      "average_finish": 10.0,
+      "best_lap_ms": 111180,
+      "best_lap": "1:51.180"
+    }
+  ],
+  "race_history": [
+    {
+      "race_id": "260313_213617_R.json",
+      "finished_at": "2026-03-13T21:36:17",
+      "track": "monza",
+      "position": 10,
+      "participants_count": 29,
+      "winner": "Elang Alingga",
+      "points": 1,
+      "best_lap": "1:51.180",
+      "best_lap_ms": 111180,
+      "total_time": "20:06.411",
+      "total_time_ms": 1206411,
+      "gap": "0:00.739",
+      "gap_ms": 739,
+      "lap_count": 8,
+      "had_best_lap": false,
+      "penalty_count": 0,
+      "penalty_points": 0
+    }
+  ],
+  "penalties": {
+    "penalty_count": 0,
+    "penalty_points": 0,
+    "reasons": {},
+    "types": {}
+  }
+}

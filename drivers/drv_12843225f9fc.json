@@ -1,0 +1,67 @@
+{
+  "public_id": "drv_12843225f9fc",
+  "driver": "Konstantin Rvachev",
+  "summary": {
+    "points": 0,
+    "average_points_per_race": 0.0,
+    "races": 1,
+    "wins": 0,
+    "podiums": 0,
+    "average_finish": 13.0,
+    "best_lap": "1:50.617",
+    "best_lap_ms": 110617,
+    "best_lap_track": "monza",
+    "best_lap_session_type": "R",
+    "penalty_count": 0,
+    "penalty_points": 0,
+    "fastest_lap_awards": 0,
+    "most_raced_track": "monza",
+    "last_race_at": "2026-03-14T16:10:08",
+    "last_seen": "2026-03-14T16:10:08",
+    "win_rate": 0.0,
+    "podium_rate": 0.0
+  },
+  "recent_form": [
+    13
+  ],
+  "track_stats": [
+    {
+      "track": "monza",
+      "races": 1,
+      "wins": 0,
+      "podiums": 0,
+      "points": 0,
+      "finish_sum": 13,
+      "average_finish": 13.0,
+      "best_lap_ms": 110617,
+      "best_lap": "1:50.617"
+    }
+  ],
+  "race_history": [
+    {
+      "race_id": "260314_161008_R.json",
+      "finished_at": "2026-03-14T16:10:08",
+      "track": "monza",
+      "position": 13,
+      "participants_count": 41,
+      "winner": "Adrián de Mora",
+      "points": 0,
+      "best_lap": "1:50.617",
+      "best_lap_ms": 110617,
+      "total_time": "21:12.212",
+      "total_time_ms": 1272212,
+      "gap": "1:10.339",
+      "gap_ms": 70339,
+      "lap_count": 11,
+      "had_best_lap": false,
+      "penalty_count": 0,
+      "penalty_points": 0
+    }
+  ],
+  "penalties": {
+    "penalty_count": 0,
+    "penalty_points": 0,
+    "reasons": {},
+    "types": {}
+  }
+}

@@ -1,0 +1,87 @@
+{
+  "public_id": "drv_d23e78496333",
+  "driver": "jacob snoek",
+  "summary": {
+    "points": 1,
+    "average_points_per_race": 0.5,
+    "races": 2,
+    "wins": 0,
+    "podiums": 0,
+    "average_finish": 14.5,
+    "best_lap": "1:48.527",
+    "best_lap_ms": 108527,
+    "best_lap_track": "monza",
+    "best_lap_session_type": "R",
+    "penalty_count": 0,
+    "penalty_points": 0,
+    "fastest_lap_awards": 0,
+    "most_raced_track": "monza",
+    "last_race_at": "2026-03-15T17:34:49",
+    "last_seen": "2026-03-15T17:34:49",
+    "win_rate": 0.0,
+    "podium_rate": 0.0
+  },
+  "recent_form": [
+    19,
+    10
+  ],
+  "track_stats": [
+    {
+      "track": "monza",
+      "races": 2,
+      "wins": 0,
+      "podiums": 0,
+      "points": 1,
+      "finish_sum": 29,
+      "average_finish": 14.5,
+      "best_lap_ms": 108527,
+      "best_lap": "1:48.527"
+    }
+  ],
+  "race_history": [
+    {
+      "race_id": "260315_173449_R.json",
+      "finished_at": "2026-03-15T17:34:49",
+      "track": "monza",
+      "position": 19,
+      "participants_count": 48,
+      "winner": "Kirill Bulgakov",
+      "points": 0,
+      "best_lap": "1:48.527",
+      "best_lap_ms": 108527,
+      "total_time": "16:00.134",
+      "total_time_ms": 960134,
+      "gap": "0:00.000",
+      "gap_ms": 0,
+      "lap_count": 6,
+      "had_best_lap": false,
+      "penalty_count": 0,
+      "penalty_points": 0
+    },
+    {
+      "race_id": "260315_165835_R.json",
+      "finished_at": "2026-03-15T16:58:35",
+      "track": "monza",
+      "position": 10,
+      "participants_count": 53,
+      "winner": "Marco Mastroluca [FMP]",
+      "points": 1,
+      "best_lap": "1:48.975",
+      "best_lap_ms": 108975,
+      "total_time": "20:49.065",
+      "total_time_ms": 1249065,
+      "gap": "0:48.255",
+      "gap_ms": 48255,
+      "lap_count": 11,
+      "had_best_lap": false,
+      "penalty_count": 0,
+      "penalty_points": 0
+    }
+  ],
+  "penalties": {
+    "penalty_count": 0,
+    "penalty_points": 0,
+    "reasons": {},
+    "types": {}
+  }
+}

@@ -1,0 +1,92 @@
+{
+  "public_id": "drv_b8a1bf2ac498",
+  "driver": "Izi 44",
+  "summary": {
+    "points": 24,
+    "average_points_per_race": 12.0,
+    "races": 2,
+    "wins": 0,
+    "podiums": 0,
+    "average_finish": 4.0,
+    "best_lap": "1:49.827",
+    "best_lap_ms": 109827,
+    "best_lap_track": "monza",
+    "best_lap_session_type": "R",
+    "penalty_count": 2,
+    "penalty_points": 1,
+    "fastest_lap_awards": 0,
+    "most_raced_track": "monza",
+    "last_race_at": "2026-03-15T10:32:33",
+    "last_seen": "2026-03-15T10:32:33",
+    "win_rate": 0.0,
+    "podium_rate": 0.0
+  },
+  "recent_form": [
+    4,
+    4
+  ],
+  "track_stats": [
+    {
+      "track": "monza",
+      "races": 2,
+      "wins": 0,
+      "podiums": 0,
+      "points": 24,
+      "finish_sum": 8,
+      "average_finish": 4.0,
+      "best_lap_ms": 109827,
+      "best_lap": "1:49.827"
+    }
+  ],
+  "race_history": [
+    {
+      "race_id": "260315_103233_R.json",
+      "finished_at": "2026-03-15T10:32:33",
+      "track": "monza",
+      "position": 4,
+      "participants_count": 4,
+      "winner": "Arsenii Kapustin",
+      "points": 12,
+      "best_lap": null,
+      "best_lap_ms": null,
+      "total_time": null,
+      "total_time_ms": null,
+      "gap": null,
+      "gap_ms": null,
+      "lap_count": 0,
+      "had_best_lap": false,
+      "penalty_count": 0,
+      "penalty_points": 0
+    },
+    {
+      "race_id": "260315_095901_R.json",
+      "finished_at": "2026-03-15T09:59:01",
+      "track": "monza",
+      "position": 4,
+      "participants_count": 5,
+      "winner": "Andrei Soldatenkov [ASG]",
+      "points": 12,
+      "best_lap": "1:49.827",
+      "best_lap_ms": 109827,
+      "total_time": "21:10.212",
+      "total_time_ms": 1270212,
+      "gap": "0:56.708",
+      "gap_ms": 56708,
+      "lap_count": 11,
+      "had_best_lap": false,
+      "penalty_count": 2,
+      "penalty_points": 1
+    }
+  ],
+  "penalties": {
+    "penalty_count": 2,
+    "penalty_points": 1,
+    "reasons": {
+      "Cutting": 2
+    },
+    "types": {
+      "DriveThrough": 1,
+      "None": 1
+    }
+  }
+}

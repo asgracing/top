@@ -1,0 +1,71 @@
+{
+  "public_id": "drv_6dad53fa94c5",
+  "driver": "BIGG",
+  "summary": {
+    "points": 0,
+    "average_points_per_race": 0.0,
+    "races": 1,
+    "wins": 0,
+    "podiums": 0,
+    "average_finish": 25.0,
+    "best_lap": "1:49.955",
+    "best_lap_ms": 109955,
+    "best_lap_track": "monza",
+    "best_lap_session_type": "Q",
+    "penalty_count": 1,
+    "penalty_points": 0,
+    "fastest_lap_awards": 0,
+    "most_raced_track": "monza",
+    "last_race_at": "2026-03-15T15:45:07",
+    "last_seen": "2026-03-15T15:45:07",
+    "win_rate": 0.0,
+    "podium_rate": 0.0
+  },
+  "recent_form": [
+    25
+  ],
+  "track_stats": [
+    {
+      "track": "monza",
+      "races": 1,
+      "wins": 0,
+      "podiums": 0,
+      "points": 0,
+      "finish_sum": 25,
+      "average_finish": 25.0,
+      "best_lap_ms": null,
+      "best_lap": null
+    }
+  ],
+  "race_history": [
+    {
+      "race_id": "260315_154507_R.json",
+      "finished_at": "2026-03-15T15:45:07",
+      "track": "monza",
+      "position": 25,
+      "participants_count": 43,
+      "winner": "Andrei Soldatenkov [ASG]",
+      "points": 0,
+      "best_lap": null,
+      "best_lap_ms": null,
+      "total_time": "0:45.041",
+      "total_time_ms": 45041,
+      "gap": "0:00.000",
+      "gap_ms": 0,
+      "lap_count": 0,
+      "had_best_lap": false,
+      "penalty_count": 1,
+      "penalty_points": 0
+    }
+  ],
+  "penalties": {
+    "penalty_count": 1,
+    "penalty_points": 0,
+    "reasons": {
+      "PitSpeeding": 1
+    },
+    "types": {
+      "Disqualified": 1
+    }
+  }
+}

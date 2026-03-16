@@ -1,0 +1,87 @@
+{
+  "public_id": "drv_567dda9c15e3",
+  "driver": "Lukasz Sambor",
+  "summary": {
+    "points": 6,
+    "average_points_per_race": 3.0,
+    "races": 2,
+    "wins": 0,
+    "podiums": 0,
+    "average_finish": 9.0,
+    "best_lap": "1:47.997",
+    "best_lap_ms": 107997,
+    "best_lap_track": "monza",
+    "best_lap_session_type": "R",
+    "penalty_count": 0,
+    "penalty_points": 0,
+    "fastest_lap_awards": 0,
+    "most_raced_track": "monza",
+    "last_race_at": "2026-03-13T15:02:24",
+    "last_seen": "2026-03-13T15:02:24",
+    "win_rate": 0.0,
+    "podium_rate": 0.0
+  },
+  "recent_form": [
+    11,
+    7
+  ],
+  "track_stats": [
+    {
+      "track": "monza",
+      "races": 2,
+      "wins": 0,
+      "podiums": 0,
+      "points": 6,
+      "finish_sum": 18,
+      "average_finish": 9.0,
+      "best_lap_ms": 107997,
+      "best_lap": "1:47.997"
+    }
+  ],
+  "race_history": [
+    {
+      "race_id": "260313_150224_R.json",
+      "finished_at": "2026-03-13T15:02:24",
+      "track": "monza",
+      "position": 11,
+      "participants_count": 13,
+      "winner": "Arsenii Kapustin",
+      "points": 0,
+      "best_lap": null,
+      "best_lap_ms": null,
+      "total_time": null,
+      "total_time_ms": null,
+      "gap": null,
+      "gap_ms": null,
+      "lap_count": 0,
+      "had_best_lap": false,
+      "penalty_count": 0,
+      "penalty_points": 0
+    },
+    {
+      "race_id": "260313_142639_R.json",
+      "finished_at": "2026-03-13T14:26:39",
+      "track": "monza",
+      "position": 7,
+      "participants_count": 13,
+      "winner": "Arsenii Kapustin",
+      "points": 6,
+      "best_lap": "1:47.997",
+      "best_lap_ms": 107997,
+      "total_time": "22:02.132",
+      "total_time_ms": 1322132,
+      "gap": "1:45.713",
+      "gap_ms": 105713,
+      "lap_count": 3,
+      "had_best_lap": false,
+      "penalty_count": 0,
+      "penalty_points": 0
+    }
+  ],
+  "penalties": {
+    "penalty_count": 0,
+    "penalty_points": 0,
+    "reasons": {},
+    "types": {}
+  }
+}

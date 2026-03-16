@@ -1,0 +1,87 @@
+{
+  "public_id": "drv_99255672cca1",
+  "driver": "Almi Almenjodler",
+  "summary": {
+    "points": 2,
+    "average_points_per_race": 1.0,
+    "races": 2,
+    "wins": 0,
+    "podiums": 0,
+    "average_finish": 22.5,
+    "best_lap": "1:48.787",
+    "best_lap_ms": 108787,
+    "best_lap_track": "monza",
+    "best_lap_session_type": "R",
+    "penalty_count": 0,
+    "penalty_points": 0,
+    "fastest_lap_awards": 0,
+    "most_raced_track": "monza",
+    "last_race_at": "2026-03-14T16:46:36",
+    "last_seen": "2026-03-14T16:46:36",
+    "win_rate": 0.0,
+    "podium_rate": 0.0
+  },
+  "recent_form": [
+    36,
+    9
+  ],
+  "track_stats": [
+    {
+      "track": "monza",
+      "races": 2,
+      "wins": 0,
+      "podiums": 0,
+      "points": 2,
+      "finish_sum": 45,
+      "average_finish": 22.5,
+      "best_lap_ms": 108787,
+      "best_lap": "1:48.787"
+    }
+  ],
+  "race_history": [
+    {
+      "race_id": "260314_164636_R.json",
+      "finished_at": "2026-03-14T16:46:36",
+      "track": "monza",
+      "position": 36,
+      "participants_count": 44,
+      "winner": "Chris ver Damn [GER]",
+      "points": 0,
+      "best_lap": null,
+      "best_lap_ms": null,
+      "total_time": null,
+      "total_time_ms": null,
+      "gap": null,
+      "gap_ms": null,
+      "lap_count": 0,
+      "had_best_lap": false,
+      "penalty_count": 0,
+      "penalty_points": 0
+    },
+    {
+      "race_id": "260314_161008_R.json",
+      "finished_at": "2026-03-14T16:10:08",
+      "track": "monza",
+      "position": 9,
+      "participants_count": 41,
+      "winner": "Adrián de Mora",
+      "points": 2,
+      "best_lap": "1:48.787",
+      "best_lap_ms": 108787,
+      "total_time": "20:33.914",
+      "total_time_ms": 1233914,
+      "gap": "0:32.041",
+      "gap_ms": 32041,
+      "lap_count": 11,
+      "had_best_lap": false,
+      "penalty_count": 0,
+      "penalty_points": 0
+    }
+  ],
+  "penalties": {
+    "penalty_count": 0,
+    "penalty_points": 0,
+    "reasons": {},
+    "types": {}
+  }
+}

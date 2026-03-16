@@ -1,0 +1,87 @@
+{
+  "public_id": "drv_766059a3e18a",
+  "driver": "Иван Жмышенко",
+  "summary": {
+    "points": 17,
+    "average_points_per_race": 8.5,
+    "races": 2,
+    "wins": 0,
+    "podiums": 1,
+    "average_finish": 6.0,
+    "best_lap": "1:49.057",
+    "best_lap_ms": 109057,
+    "best_lap_track": "monza",
+    "best_lap_session_type": "R",
+    "penalty_count": 0,
+    "penalty_points": 0,
+    "fastest_lap_awards": 0,
+    "most_raced_track": "monza",
+    "last_race_at": "2026-03-16T00:22:05",
+    "last_seen": "2026-03-16T00:22:05",
+    "win_rate": 0.0,
+    "podium_rate": 50.0
+  },
+  "recent_form": [
+    3,
+    9
+  ],
+  "track_stats": [
+    {
+      "track": "monza",
+      "races": 2,
+      "wins": 0,
+      "podiums": 1,
+      "points": 17,
+      "finish_sum": 12,
+      "average_finish": 6.0,
+      "best_lap_ms": 109057,
+      "best_lap": "1:49.057"
+    }
+  ],
+  "race_history": [
+    {
+      "race_id": "260316_002205_R.json",
+      "finished_at": "2026-03-16T00:22:05",
+      "track": "monza",
+      "position": 3,
+      "participants_count": 11,
+      "winner": "Gleb Blatin",
+      "points": 15,
+      "best_lap": "1:49.057",
+      "best_lap_ms": 109057,
+      "total_time": "17:58.010",
+      "total_time_ms": 1078010,
+      "gap": "0:00.000",
+      "gap_ms": 0,
+      "lap_count": 9,
+      "had_best_lap": false,
+      "penalty_count": 0,
+      "penalty_points": 0
+    },
+    {
+      "race_id": "260315_234616_R.json",
+      "finished_at": "2026-03-15T23:46:16",
+      "track": "monza",
+      "position": 9,
+      "participants_count": 20,
+      "winner": "Illia Diachenko",
+      "points": 2,
+      "best_lap": "1:49.205",
+      "best_lap_ms": 109205,
+      "total_time": "21:44.272",
+      "total_time_ms": 1304272,
+      "gap": "1:39.244",
+      "gap_ms": 99244,
+      "lap_count": 6,
+      "had_best_lap": false,
+      "penalty_count": 0,
+      "penalty_points": 0
+    }
+  ],
+  "penalties": {
+    "penalty_count": 0,
+    "penalty_points": 0,
+    "reasons": {},
+    "types": {}
+  }
+}

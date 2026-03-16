@@ -1,0 +1,67 @@
+{
+  "public_id": "drv_ab7639e55b76",
+  "driver": "Vladislav Kaminskiy",
+  "summary": {
+    "points": 0,
+    "average_points_per_race": 0.0,
+    "races": 1,
+    "wins": 0,
+    "podiums": 0,
+    "average_finish": 22.0,
+    "best_lap": "1:47.407",
+    "best_lap_ms": 107407,
+    "best_lap_track": "monza",
+    "best_lap_session_type": "R",
+    "penalty_count": 0,
+    "penalty_points": 0,
+    "fastest_lap_awards": 0,
+    "most_raced_track": "monza",
+    "last_race_at": "2026-03-15T23:08:44",
+    "last_seen": "2026-03-15T23:08:44",
+    "win_rate": 0.0,
+    "podium_rate": 0.0
+  },
+  "recent_form": [
+    22
+  ],
+  "track_stats": [
+    {
+      "track": "monza",
+      "races": 1,
+      "wins": 0,
+      "podiums": 0,
+      "points": 0,
+      "finish_sum": 22,
+      "average_finish": 22.0,
+      "best_lap_ms": 107407,
+      "best_lap": "1:47.407"
+    }
+  ],
+  "race_history": [
+    {
+      "race_id": "260315_230844_R.json",
+      "finished_at": "2026-03-15T23:08:44",
+      "track": "monza",
+      "position": 22,
+      "participants_count": 39,
+      "winner": "Dmitriy Sukharev",
+      "points": 0,
+      "best_lap": "1:47.407",
+      "best_lap_ms": 107407,
+      "total_time": "22:22.733",
+      "total_time_ms": 1342733,
+      "gap": "0:46.264",
+      "gap_ms": 46264,
+      "lap_count": 4,
+      "had_best_lap": false,
+      "penalty_count": 0,
+      "penalty_points": 0
+    }
+  ],
+  "penalties": {
+    "penalty_count": 0,
+    "penalty_points": 0,
+    "reasons": {},
+    "types": {}
+  }
+}

@@ -1,0 +1,111 @@
+{
+  "public_id": "drv_38c665ad550a",
+  "driver": "Vinícius Santos",
+  "summary": {
+    "points": 14,
+    "average_points_per_race": 4.67,
+    "races": 3,
+    "wins": 0,
+    "podiums": 0,
+    "average_finish": 17.33,
+    "best_lap": "1:56.052",
+    "best_lap_ms": 116052,
+    "best_lap_track": "monza",
+    "best_lap_session_type": "R",
+    "penalty_count": 1,
+    "penalty_points": 3,
+    "fastest_lap_awards": 0,
+    "most_raced_track": "monza",
+    "last_race_at": "2026-03-16T00:22:05",
+    "last_seen": "2026-03-16T00:22:05",
+    "win_rate": 0.0,
+    "podium_rate": 0.0
+  },
+  "recent_form": [
+    6,
+    7,
+    39
+  ],
+  "track_stats": [
+    {
+      "track": "monza",
+      "races": 3,
+      "wins": 0,
+      "podiums": 0,
+      "points": 14,
+      "finish_sum": 52,
+      "average_finish": 17.33,
+      "best_lap_ms": 116052,
+      "best_lap": "1:56.052"
+    }
+  ],
+  "race_history": [
+    {
+      "race_id": "260316_002205_R.json",
+      "finished_at": "2026-03-16T00:22:05",
+      "track": "monza",
+      "position": 6,
+      "participants_count": 11,
+      "winner": "Gleb Blatin",
+      "points": 8,
+      "best_lap": null,
+      "best_lap_ms": null,
+      "total_time": "4:51.923",
+      "total_time_ms": 291923,
+      "gap": "0:00.000",
+      "gap_ms": 0,
+      "lap_count": 2,
+      "had_best_lap": false,
+      "penalty_count": 0,
+      "penalty_points": 0
+    },
+    {
+      "race_id": "260315_234616_R.json",
+      "finished_at": "2026-03-15T23:46:16",
+      "track": "monza",
+      "position": 7,
+      "participants_count": 20,
+      "winner": "Illia Diachenko",
+      "points": 6,
+      "best_lap": "1:56.052",
+      "best_lap_ms": 116052,
+      "total_time": "21:58.113",
+      "total_time_ms": 1318113,
+      "gap": "1:53.085",
+      "gap_ms": 113085,
+      "lap_count": 10,
+      "had_best_lap": false,
+      "penalty_count": 2,
+      "penalty_points": 33
+    },
+    {
+      "race_id": "260315_230844_R.json",
+      "finished_at": "2026-03-15T23:08:44",
+      "track": "monza",
+      "position": 39,
+      "participants_count": 39,
+      "winner": "Dmitriy Sukharev",
+      "points": 0,
+      "best_lap": null,
+      "best_lap_ms": null,
+      "total_time": null,
+      "total_time_ms": null,
+      "gap": null,
+      "gap_ms": null,
+      "lap_count": 0,
+      "had_best_lap": false,
+      "penalty_count": 0,
+      "penalty_points": 0
+    }
+  ],
+  "penalties": {
+    "penalty_count": 1,
+    "penalty_points": 3,
+    "reasons": {
+      "Cutting": 1
+    },
+    "types": {
+      "DriveThrough": 1
+    }
+  }
+}

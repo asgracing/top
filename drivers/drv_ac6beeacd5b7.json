@@ -1,0 +1,67 @@
+{
+  "public_id": "drv_ac6beeacd5b7",
+  "driver": "Сейран Мадосян",
+  "summary": {
+    "points": 6,
+    "average_points_per_race": 6.0,
+    "races": 1,
+    "wins": 0,
+    "podiums": 0,
+    "average_finish": 7.0,
+    "best_lap": "1:50.010",
+    "best_lap_ms": 110010,
+    "best_lap_track": "monza",
+    "best_lap_session_type": "Q",
+    "penalty_count": 0,
+    "penalty_points": 0,
+    "fastest_lap_awards": 0,
+    "most_raced_track": "monza",
+    "last_race_at": "2026-03-15T20:02:14",
+    "last_seen": "2026-03-15T20:02:14",
+    "win_rate": 0.0,
+    "podium_rate": 0.0
+  },
+  "recent_form": [
+    7
+  ],
+  "track_stats": [
+    {
+      "track": "monza",
+      "races": 1,
+      "wins": 0,
+      "podiums": 0,
+      "points": 6,
+      "finish_sum": 7,
+      "average_finish": 7.0,
+      "best_lap_ms": 110200,
+      "best_lap": "1:50.200"
+    }
+  ],
+  "race_history": [
+    {
+      "race_id": "260315_200214_R.json",
+      "finished_at": "2026-03-15T20:02:14",
+      "track": "monza",
+      "position": 7,
+      "participants_count": 42,
+      "winner": "Senya Lagisson TWICH",
+      "points": 6,
+      "best_lap": "1:50.200",
+      "best_lap_ms": 110200,
+      "total_time": "20:33.354",
+      "total_time_ms": 1233354,
+      "gap": "0:29.894",
+      "gap_ms": 29894,
+      "lap_count": 11,
+      "had_best_lap": false,
+      "penalty_count": 0,
+      "penalty_points": 0
+    }
+  ],
+  "penalties": {
+    "penalty_count": 0,
+    "penalty_points": 0,
+    "reasons": {},
+    "types": {}
+  }
+}

@@ -1,0 +1,87 @@
+{
+  "public_id": "drv_c8965897cac8",
+  "driver": "JUAN SANCHEZ",
+  "summary": {
+    "points": 0,
+    "average_points_per_race": 0.0,
+    "races": 2,
+    "wins": 0,
+    "podiums": 0,
+    "average_finish": 21.0,
+    "best_lap": "1:50.407",
+    "best_lap_ms": 110407,
+    "best_lap_track": "monza",
+    "best_lap_session_type": "R",
+    "penalty_count": 0,
+    "penalty_points": 0,
+    "fastest_lap_awards": 0,
+    "most_raced_track": "monza",
+    "last_race_at": "2026-03-14T17:59:58",
+    "last_seen": "2026-03-14T17:59:58",
+    "win_rate": 0.0,
+    "podium_rate": 0.0
+  },
+  "recent_form": [
+    24,
+    18
+  ],
+  "track_stats": [
+    {
+      "track": "monza",
+      "races": 2,
+      "wins": 0,
+      "podiums": 0,
+      "points": 0,
+      "finish_sum": 42,
+      "average_finish": 21.0,
+      "best_lap_ms": 110407,
+      "best_lap": "1:50.407"
+    }
+  ],
+  "race_history": [
+    {
+      "race_id": "260314_175958_R.json",
+      "finished_at": "2026-03-14T17:59:58",
+      "track": "monza",
+      "position": 24,
+      "participants_count": 47,
+      "winner": "Евгений Майоров",
+      "points": 0,
+      "best_lap": null,
+      "best_lap_ms": null,
+      "total_time": "20:47.170",
+      "total_time_ms": 1247170,
+      "gap": "0:43.712",
+      "gap_ms": 43712,
+      "lap_count": 1,
+      "had_best_lap": false,
+      "penalty_count": 0,
+      "penalty_points": 0
+    },
+    {
+      "race_id": "260313_232957_R.json",
+      "finished_at": "2026-03-13T23:29:57",
+      "track": "monza",
+      "position": 18,
+      "participants_count": 44,
+      "winner": "Man in Tights",
+      "points": 0,
+      "best_lap": "1:50.407",
+      "best_lap_ms": 110407,
+      "total_time": "21:03.158",
+      "total_time_ms": 1263158,
+      "gap": "0:00.000",
+      "gap_ms": 0,
+      "lap_count": 8,
+      "had_best_lap": false,
+      "penalty_count": 0,
+      "penalty_points": 0
+    }
+  ],
+  "penalties": {
+    "penalty_count": 0,
+    "penalty_points": 0,
+    "reasons": {},
+    "types": {}
+  }
+}

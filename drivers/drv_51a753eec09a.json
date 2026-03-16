@@ -1,0 +1,87 @@
+{
+  "public_id": "drv_51a753eec09a",
+  "driver": "celian willem-larabi",
+  "summary": {
+    "points": 12,
+    "average_points_per_race": 6.0,
+    "races": 2,
+    "wins": 0,
+    "podiums": 0,
+    "average_finish": 11.0,
+    "best_lap": "1:49.795",
+    "best_lap_ms": 109795,
+    "best_lap_track": "monza",
+    "best_lap_session_type": "R",
+    "penalty_count": 0,
+    "penalty_points": 0,
+    "fastest_lap_awards": 0,
+    "most_raced_track": "monza",
+    "last_race_at": "2026-03-14T13:40:43",
+    "last_seen": "2026-03-14T13:40:43",
+    "win_rate": 0.0,
+    "podium_rate": 0.0
+  },
+  "recent_form": [
+    18,
+    4
+  ],
+  "track_stats": [
+    {
+      "track": "monza",
+      "races": 2,
+      "wins": 0,
+      "podiums": 0,
+      "points": 12,
+      "finish_sum": 22,
+      "average_finish": 11.0,
+      "best_lap_ms": 109795,
+      "best_lap": "1:49.795"
+    }
+  ],
+  "race_history": [
+    {
+      "race_id": "260314_134043_R.json",
+      "finished_at": "2026-03-14T13:40:43",
+      "track": "monza",
+      "position": 18,
+      "participants_count": 43,
+      "winner": "Евгений Майоров",
+      "points": 0,
+      "best_lap": "1:50.472",
+      "best_lap_ms": 110472,
+      "total_time": "14:45.659",
+      "total_time_ms": 885659,
+      "gap": "0:00.000",
+      "gap_ms": 0,
+      "lap_count": 7,
+      "had_best_lap": false,
+      "penalty_count": 0,
+      "penalty_points": 0
+    },
+    {
+      "race_id": "260314_130425_R.json",
+      "finished_at": "2026-03-14T13:04:25",
+      "track": "monza",
+      "position": 4,
+      "participants_count": 29,
+      "winner": "Yamamoto Suroki",
+      "points": 12,
+      "best_lap": "1:49.795",
+      "best_lap_ms": 109795,
+      "total_time": "20:37.768",
+      "total_time_ms": 1237768,
+      "gap": "0:32.521",
+      "gap_ms": 32521,
+      "lap_count": 11,
+      "had_best_lap": false,
+      "penalty_count": 0,
+      "penalty_points": 0
+    }
+  ],
+  "penalties": {
+    "penalty_count": 0,
+    "penalty_points": 0,
+    "reasons": {},
+    "types": {}
+  }
+}

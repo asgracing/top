@@ -1,0 +1,67 @@
+{
+  "public_id": "drv_cd70038eb8cc",
+  "driver": "sergio david ceron echeverria",
+  "summary": {
+    "points": 15,
+    "average_points_per_race": 15.0,
+    "races": 1,
+    "wins": 0,
+    "podiums": 1,
+    "average_finish": 3.0,
+    "best_lap": "1:56.472",
+    "best_lap_ms": 116472,
+    "best_lap_track": "monza",
+    "best_lap_session_type": "Q",
+    "penalty_count": 0,
+    "penalty_points": 0,
+    "fastest_lap_awards": 0,
+    "most_raced_track": "monza",
+    "last_race_at": "2026-03-15T09:24:19",
+    "last_seen": "2026-03-15T09:24:19",
+    "win_rate": 0.0,
+    "podium_rate": 100.0
+  },
+  "recent_form": [
+    3
+  ],
+  "track_stats": [
+    {
+      "track": "monza",
+      "races": 1,
+      "wins": 0,
+      "podiums": 1,
+      "points": 15,
+      "finish_sum": 3,
+      "average_finish": 3.0,
+      "best_lap_ms": 122487,
+      "best_lap": "2:02.487"
+    }
+  ],
+  "race_history": [
+    {
+      "race_id": "260315_092419_R.json",
+      "finished_at": "2026-03-15T09:24:19",
+      "track": "monza",
+      "position": 3,
+      "participants_count": 8,
+      "winner": "Artem Malyginov",
+      "points": 15,
+      "best_lap": "2:02.487",
+      "best_lap_ms": 122487,
+      "total_time": "2:47.126",
+      "total_time_ms": 167126,
+      "gap": "0:00.000",
+      "gap_ms": 0,
+      "lap_count": 1,
+      "had_best_lap": false,
+      "penalty_count": 0,
+      "penalty_points": 0
+    }
+  ],
+  "penalties": {
+    "penalty_count": 0,
+    "penalty_points": 0,
+    "reasons": {},
+    "types": {}
+  }
+}

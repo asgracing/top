@@ -1,0 +1,67 @@
+{
+  "public_id": "drv_a57fd2cf7ca3",
+  "driver": "ЯЧС ЯЧС",
+  "summary": {
+    "points": 0,
+    "average_points_per_race": 0.0,
+    "races": 1,
+    "wins": 0,
+    "podiums": 0,
+    "average_finish": 24.0,
+    "best_lap": "1:52.165",
+    "best_lap_ms": 112165,
+    "best_lap_track": "monza",
+    "best_lap_session_type": "R",
+    "penalty_count": 0,
+    "penalty_points": 0,
+    "fastest_lap_awards": 0,
+    "most_raced_track": "monza",
+    "last_race_at": "2026-03-14T21:46:15",
+    "last_seen": "2026-03-14T21:46:15",
+    "win_rate": 0.0,
+    "podium_rate": 0.0
+  },
+  "recent_form": [
+    24
+  ],
+  "track_stats": [
+    {
+      "track": "monza",
+      "races": 1,
+      "wins": 0,
+      "podiums": 0,
+      "points": 0,
+      "finish_sum": 24,
+      "average_finish": 24.0,
+      "best_lap_ms": 112165,
+      "best_lap": "1:52.165"
+    }
+  ],
+  "race_history": [
+    {
+      "race_id": "260314_214615_R.json",
+      "finished_at": "2026-03-14T21:46:15",
+      "track": "monza",
+      "position": 24,
+      "participants_count": 57,
+      "winner": "J Lehman",
+      "points": 0,
+      "best_lap": "1:52.165",
+      "best_lap_ms": 112165,
+      "total_time": "18:36.086",
+      "total_time_ms": 1116086,
+      "gap": "0:00.000",
+      "gap_ms": 0,
+      "lap_count": 3,
+      "had_best_lap": false,
+      "penalty_count": 0,
+      "penalty_points": 0
+    }
+  ],
+  "penalties": {
+    "penalty_count": 0,
+    "penalty_points": 0,
+    "reasons": {},
+    "types": {}
+  }
+}

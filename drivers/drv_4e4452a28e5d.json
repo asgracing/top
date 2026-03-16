@@ -1,0 +1,107 @@
+{
+  "public_id": "drv_4e4452a28e5d",
+  "driver": "ALEJANDRO QUINTANA",
+  "summary": {
+    "points": 12,
+    "average_points_per_race": 4.0,
+    "races": 3,
+    "wins": 0,
+    "podiums": 0,
+    "average_finish": 22.67,
+    "best_lap": "1:48.710",
+    "best_lap_ms": 108710,
+    "best_lap_track": "monza",
+    "best_lap_session_type": "R",
+    "penalty_count": 0,
+    "penalty_points": 0,
+    "fastest_lap_awards": 0,
+    "most_raced_track": "monza",
+    "last_race_at": "2026-03-14T16:46:36",
+    "last_seen": "2026-03-14T16:46:36",
+    "win_rate": 0.0,
+    "podium_rate": 0.0
+  },
+  "recent_form": [
+    33,
+    4,
+    31
+  ],
+  "track_stats": [
+    {
+      "track": "monza",
+      "races": 3,
+      "wins": 0,
+      "podiums": 0,
+      "points": 12,
+      "finish_sum": 68,
+      "average_finish": 22.67,
+      "best_lap_ms": 108710,
+      "best_lap": "1:48.710"
+    }
+  ],
+  "race_history": [
+    {
+      "race_id": "260314_164636_R.json",
+      "finished_at": "2026-03-14T16:46:36",
+      "track": "monza",
+      "position": 33,
+      "participants_count": 44,
+      "winner": "Chris ver Damn [GER]",
+      "points": 0,
+      "best_lap": null,
+      "best_lap_ms": null,
+      "total_time": null,
+      "total_time_ms": null,
+      "gap": null,
+      "gap_ms": null,
+      "lap_count": 0,
+      "had_best_lap": false,
+      "penalty_count": 0,
+      "penalty_points": 0
+    },
+    {
+      "race_id": "260314_161008_R.json",
+      "finished_at": "2026-03-14T16:10:08",
+      "track": "monza",
+      "position": 4,
+      "participants_count": 41,
+      "winner": "Adrián de Mora",
+      "points": 12,
+      "best_lap": "1:48.710",
+      "best_lap_ms": 108710,
+      "total_time": "20:14.328",
+      "total_time_ms": 1214328,
+      "gap": "0:12.455",
+      "gap_ms": 12455,
+      "lap_count": 11,
+      "had_best_lap": false,
+      "penalty_count": 0,
+      "penalty_points": 0
+    },
+    {
+      "race_id": "260314_153341_R.json",
+      "finished_at": "2026-03-14T15:33:41",
+      "track": "monza",
+      "position": 31,
+      "participants_count": 49,
+      "winner": "R A",
+      "points": 0,
+      "best_lap": null,
+      "best_lap_ms": null,
+      "total_time": null,
+      "total_time_ms": null,
+      "gap": null,
+      "gap_ms": null,
+      "lap_count": 0,
+      "had_best_lap": false,
+      "penalty_count": 0,
+      "penalty_points": 0
+    }
+  ],
+  "penalties": {
+    "penalty_count": 0,
+    "penalty_points": 0,
+    "reasons": {},
+    "types": {}
+  }
+}

@@ -1,0 +1,107 @@
+{
+  "public_id": "drv_6211c8b7df17",
+  "driver": "Greggy Mavy",
+  "summary": {
+    "points": 4,
+    "average_points_per_race": 1.33,
+    "races": 3,
+    "wins": 0,
+    "podiums": 0,
+    "average_finish": 25.67,
+    "best_lap": "1:52.585",
+    "best_lap_ms": 112585,
+    "best_lap_track": "monza",
+    "best_lap_session_type": "R",
+    "penalty_count": 0,
+    "penalty_points": 0,
+    "fastest_lap_awards": 0,
+    "most_raced_track": "monza",
+    "last_race_at": "2026-03-14T21:08:17",
+    "last_seen": "2026-03-14T21:08:17",
+    "win_rate": 0.0,
+    "podium_rate": 0.0
+  },
+  "recent_form": [
+    35,
+    8,
+    34
+  ],
+  "track_stats": [
+    {
+      "track": "monza",
+      "races": 3,
+      "wins": 0,
+      "podiums": 0,
+      "points": 4,
+      "finish_sum": 77,
+      "average_finish": 25.67,
+      "best_lap_ms": 112585,
+      "best_lap": "1:52.585"
+    }
+  ],
+  "race_history": [
+    {
+      "race_id": "260314_210817_R.json",
+      "finished_at": "2026-03-14T21:08:17",
+      "track": "monza",
+      "position": 35,
+      "participants_count": 51,
+      "winner": "MIKI DEGANI",
+      "points": 0,
+      "best_lap": null,
+      "best_lap_ms": null,
+      "total_time": null,
+      "total_time_ms": null,
+      "gap": null,
+      "gap_ms": null,
+      "lap_count": 0,
+      "had_best_lap": false,
+      "penalty_count": 0,
+      "penalty_points": 0
+    },
+    {
+      "race_id": "260314_203008_R.json",
+      "finished_at": "2026-03-14T20:30:08",
+      "track": "monza",
+      "position": 8,
+      "participants_count": 50,
+      "winner": "MASINAVY Dina",
+      "points": 4,
+      "best_lap": "1:52.585",
+      "best_lap_ms": 112585,
+      "total_time": "21:36.421",
+      "total_time_ms": 1296421,
+      "gap": "1:32.700",
+      "gap_ms": 92700,
+      "lap_count": 11,
+      "had_best_lap": false,
+      "penalty_count": 0,
+      "penalty_points": 0
+    },
+    {
+      "race_id": "260314_191544_R.json",
+      "finished_at": "2026-03-14T19:15:44",
+      "track": "monza",
+      "position": 34,
+      "participants_count": 54,
+      "winner": "Jeff Reid",
+      "points": 0,
+      "best_lap": null,
+      "best_lap_ms": null,
+      "total_time": null,
+      "total_time_ms": null,
+      "gap": null,
+      "gap_ms": null,
+      "lap_count": 0,
+      "had_best_lap": false,
+      "penalty_count": 0,
+      "penalty_points": 0
+    }
+  ],
+  "penalties": {
+    "penalty_count": 0,
+    "penalty_points": 0,
+    "reasons": {},
+    "types": {}
+  }
+}

@@ -1,0 +1,67 @@
+{
+  "public_id": "drv_385f7dd83ac9",
+  "driver": "Marco Carlucci",
+  "summary": {
+    "points": 4,
+    "average_points_per_race": 4.0,
+    "races": 1,
+    "wins": 0,
+    "podiums": 0,
+    "average_finish": 8.0,
+    "best_lap": "1:49.855",
+    "best_lap_ms": 109855,
+    "best_lap_track": "monza",
+    "best_lap_session_type": "Q",
+    "penalty_count": 0,
+    "penalty_points": 0,
+    "fastest_lap_awards": 0,
+    "most_raced_track": "monza",
+    "last_race_at": "2026-03-15T16:58:35",
+    "last_seen": "2026-03-15T16:58:35",
+    "win_rate": 0.0,
+    "podium_rate": 0.0
+  },
+  "recent_form": [
+    8
+  ],
+  "track_stats": [
+    {
+      "track": "monza",
+      "races": 1,
+      "wins": 0,
+      "podiums": 0,
+      "points": 4,
+      "finish_sum": 8,
+      "average_finish": 8.0,
+      "best_lap_ms": 109857,
+      "best_lap": "1:49.857"
+    }
+  ],
+  "race_history": [
+    {
+      "race_id": "260315_165835_R.json",
+      "finished_at": "2026-03-15T16:58:35",
+      "track": "monza",
+      "position": 8,
+      "participants_count": 53,
+      "winner": "Marco Mastroluca [FMP]",
+      "points": 4,
+      "best_lap": "1:49.857",
+      "best_lap_ms": 109857,
+      "total_time": "20:45.254",
+      "total_time_ms": 1245254,
+      "gap": "0:44.444",
+      "gap_ms": 44444,
+      "lap_count": 11,
+      "had_best_lap": false,
+      "penalty_count": 0,
+      "penalty_points": 0
+    }
+  ],
+  "penalties": {
+    "penalty_count": 0,
+    "penalty_points": 0,
+    "reasons": {},
+    "types": {}
+  }
+}

@@ -1,0 +1,131 @@
+{
+  "public_id": "drv_c49574b27007",
+  "driver": "GT presque",
+  "summary": {
+    "points": 2,
+    "average_points_per_race": 0.5,
+    "races": 4,
+    "wins": 0,
+    "podiums": 0,
+    "average_finish": 14.25,
+    "best_lap": "1:48.952",
+    "best_lap_ms": 108952,
+    "best_lap_track": "monza",
+    "best_lap_session_type": "R",
+    "penalty_count": 1,
+    "penalty_points": 0,
+    "fastest_lap_awards": 0,
+    "most_raced_track": "monza",
+    "last_race_at": "2026-03-14T17:23:13",
+    "last_seen": "2026-03-14T17:23:13",
+    "win_rate": 0.0,
+    "podium_rate": 0.0
+  },
+  "recent_form": [
+    18,
+    9,
+    18,
+    12
+  ],
+  "track_stats": [
+    {
+      "track": "monza",
+      "races": 4,
+      "wins": 0,
+      "podiums": 0,
+      "points": 2,
+      "finish_sum": 57,
+      "average_finish": 14.25,
+      "best_lap_ms": 108952,
+      "best_lap": "1:48.952"
+    }
+  ],
+  "race_history": [
+    {
+      "race_id": "260314_172313_R.json",
+      "finished_at": "2026-03-14T17:23:13",
+      "track": "monza",
+      "position": 18,
+      "participants_count": 35,
+      "winner": "Roderik Banrevi",
+      "points": 0,
+      "best_lap": "1:50.045",
+      "best_lap_ms": 110045,
+      "total_time": "13:36.698",
+      "total_time_ms": 816698,
+      "gap": "0:00.000",
+      "gap_ms": 0,
+      "lap_count": 7,
+      "had_best_lap": false,
+      "penalty_count": 1,
+      "penalty_points": 0
+    },
+    {
+      "race_id": "260314_164636_R.json",
+      "finished_at": "2026-03-14T16:46:36",
+      "track": "monza",
+      "position": 9,
+      "participants_count": 44,
+      "winner": "Chris ver Damn [GER]",
+      "points": 2,
+      "best_lap": "1:48.952",
+      "best_lap_ms": 108952,
+      "total_time": "20:40.076",
+      "total_time_ms": 1240076,
+      "gap": "0:40.110",
+      "gap_ms": 40110,
+      "lap_count": 11,
+      "had_best_lap": false,
+      "penalty_count": 0,
+      "penalty_points": 0
+    },
+    {
+      "race_id": "260314_161008_R.json",
+      "finished_at": "2026-03-14T16:10:08",
+      "track": "monza",
+      "position": 18,
+      "participants_count": 41,
+      "winner": "Adrián de Mora",
+      "points": 0,
+      "best_lap": "1:49.982",
+      "best_lap_ms": 109982,
+      "total_time": "18:34.276",
+      "total_time_ms": 1114276,
+      "gap": "0:00.000",
+      "gap_ms": 0,
+      "lap_count": 9,
+      "had_best_lap": false,
+      "penalty_count": 0,
+      "penalty_points": 0
+    },
+    {
+      "race_id": "260314_153341_R.json",
+      "finished_at": "2026-03-14T15:33:41",
+      "track": "monza",
+      "position": 12,
+      "participants_count": 49,
+      "winner": "R A",
+      "points": 0,
+      "best_lap": "1:50.782",
+      "best_lap_ms": 110782,
+      "total_time": "22:41.795",
+      "total_time_ms": 1361795,
+      "gap": "0:50.004",
+      "gap_ms": 50004,
+      "lap_count": 10,
+      "had_best_lap": false,
+      "penalty_count": 0,
+      "penalty_points": 0
+    }
+  ],
+  "penalties": {
+    "penalty_count": 1,
+    "penalty_points": 0,
+    "reasons": {
+      "PitSpeeding": 1
+    },
+    "types": {
+      "Disqualified": 1
+    }
+  }
+}

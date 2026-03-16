@@ -1,0 +1,107 @@
+{
+  "public_id": "drv_c1073493ab51",
+  "driver": "Markus Becker",
+  "summary": {
+    "points": 5,
+    "average_points_per_race": 1.67,
+    "races": 3,
+    "wins": 0,
+    "podiums": 0,
+    "average_finish": 18.0,
+    "best_lap": "1:48.140",
+    "best_lap_ms": 108140,
+    "best_lap_track": "monza",
+    "best_lap_session_type": "R",
+    "penalty_count": 0,
+    "penalty_points": 0,
+    "fastest_lap_awards": 0,
+    "most_raced_track": "monza",
+    "last_race_at": "2026-03-14T22:24:34",
+    "last_seen": "2026-03-14T22:24:34",
+    "win_rate": 0.0,
+    "podium_rate": 0.0
+  },
+  "recent_form": [
+    10,
+    36,
+    8
+  ],
+  "track_stats": [
+    {
+      "track": "monza",
+      "races": 3,
+      "wins": 0,
+      "podiums": 0,
+      "points": 5,
+      "finish_sum": 54,
+      "average_finish": 18.0,
+      "best_lap_ms": 108140,
+      "best_lap": "1:48.140"
+    }
+  ],
+  "race_history": [
+    {
+      "race_id": "260314_222434_R.json",
+      "finished_at": "2026-03-14T22:24:34",
+      "track": "monza",
+      "position": 10,
+      "participants_count": 55,
+      "winner": "J Lehman",
+      "points": 1,
+      "best_lap": "1:51.892",
+      "best_lap_ms": 111892,
+      "total_time": "22:53.405",
+      "total_time_ms": 1373405,
+      "gap": "1:14.505",
+      "gap_ms": 74505,
+      "lap_count": 12,
+      "had_best_lap": false,
+      "penalty_count": 0,
+      "penalty_points": 0
+    },
+    {
+      "race_id": "260314_214615_R.json",
+      "finished_at": "2026-03-14T21:46:15",
+      "track": "monza",
+      "position": 36,
+      "participants_count": 57,
+      "winner": "J Lehman",
+      "points": 0,
+      "best_lap": null,
+      "best_lap_ms": null,
+      "total_time": null,
+      "total_time_ms": null,
+      "gap": null,
+      "gap_ms": null,
+      "lap_count": 0,
+      "had_best_lap": false,
+      "penalty_count": 0,
+      "penalty_points": 0
+    },
+    {
+      "race_id": "260314_210817_R.json",
+      "finished_at": "2026-03-14T21:08:17",
+      "track": "monza",
+      "position": 8,
+      "participants_count": 51,
+      "winner": "MIKI DEGANI",
+      "points": 4,
+      "best_lap": "1:48.140",
+      "best_lap_ms": 108140,
+      "total_time": "22:35.318",
+      "total_time_ms": 1355318,
+      "gap": "0:50.916",
+      "gap_ms": 50916,
+      "lap_count": 12,
+      "had_best_lap": false,
+      "penalty_count": 0,
+      "penalty_points": 0
+    }
+  ],
+  "penalties": {
+    "penalty_count": 0,
+    "penalty_points": 0,
+    "reasons": {},
+    "types": {}
+  }
+}

@@ -1,0 +1,87 @@
+{
+  "public_id": "drv_2bb0efd62346",
+  "driver": "Nikita Dyachencko",
+  "summary": {
+    "points": 10,
+    "average_points_per_race": 5.0,
+    "races": 2,
+    "wins": 0,
+    "podiums": 0,
+    "average_finish": 12.5,
+    "best_lap": "1:48.895",
+    "best_lap_ms": 108895,
+    "best_lap_track": "monza",
+    "best_lap_session_type": "Q",
+    "penalty_count": 0,
+    "penalty_points": 0,
+    "fastest_lap_awards": 0,
+    "most_raced_track": "monza",
+    "last_race_at": "2026-03-15T20:02:14",
+    "last_seen": "2026-03-15T20:02:14",
+    "win_rate": 0.0,
+    "podium_rate": 0.0
+  },
+  "recent_form": [
+    20,
+    5
+  ],
+  "track_stats": [
+    {
+      "track": "monza",
+      "races": 2,
+      "wins": 0,
+      "podiums": 0,
+      "points": 10,
+      "finish_sum": 25,
+      "average_finish": 12.5,
+      "best_lap_ms": 109235,
+      "best_lap": "1:49.235"
+    }
+  ],
+  "race_history": [
+    {
+      "race_id": "260315_200214_R.json",
+      "finished_at": "2026-03-15T20:02:14",
+      "track": "monza",
+      "position": 20,
+      "participants_count": 42,
+      "winner": "Senya Lagisson TWICH",
+      "points": 0,
+      "best_lap": "1:49.492",
+      "best_lap_ms": 109492,
+      "total_time": "13:51.522",
+      "total_time_ms": 831522,
+      "gap": "0:00.000",
+      "gap_ms": 0,
+      "lap_count": 6,
+      "had_best_lap": false,
+      "penalty_count": 0,
+      "penalty_points": 0
+    },
+    {
+      "race_id": "260315_192602_R.json",
+      "finished_at": "2026-03-15T19:26:02",
+      "track": "monza",
+      "position": 5,
+      "participants_count": 47,
+      "winner": "David Marie",
+      "points": 10,
+      "best_lap": "1:49.235",
+      "best_lap_ms": 109235,
+      "total_time": "22:30.254",
+      "total_time_ms": 1350254,
+      "gap": "0:52.275",
+      "gap_ms": 52275,
+      "lap_count": 12,
+      "had_best_lap": false,
+      "penalty_count": 0,
+      "penalty_points": 0
+    }
+  ],
+  "penalties": {
+    "penalty_count": 0,
+    "penalty_points": 0,
+    "reasons": {},
+    "types": {}
+  }
+}

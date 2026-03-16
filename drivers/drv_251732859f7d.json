@@ -1,0 +1,71 @@
+{
+  "public_id": "drv_251732859f7d",
+  "driver": "Jp Carvalhinho",
+  "summary": {
+    "points": 0,
+    "average_points_per_race": 0.0,
+    "races": 1,
+    "wins": 0,
+    "podiums": 0,
+    "average_finish": 18.0,
+    "best_lap": "1:50.177",
+    "best_lap_ms": 110177,
+    "best_lap_track": "monza",
+    "best_lap_session_type": "R",
+    "penalty_count": 1,
+    "penalty_points": 3,
+    "fastest_lap_awards": 0,
+    "most_raced_track": "monza",
+    "last_race_at": "2026-03-15T00:16:09",
+    "last_seen": "2026-03-15T00:16:09",
+    "win_rate": 0.0,
+    "podium_rate": 0.0
+  },
+  "recent_form": [
+    18
+  ],
+  "track_stats": [
+    {
+      "track": "monza",
+      "races": 1,
+      "wins": 0,
+      "podiums": 0,
+      "points": 0,
+      "finish_sum": 18,
+      "average_finish": 18.0,
+      "best_lap_ms": 110177,
+      "best_lap": "1:50.177"
+    }
+  ],
+  "race_history": [
+    {
+      "race_id": "260315_001609_R.json",
+      "finished_at": "2026-03-15T00:16:09",
+      "track": "monza",
+      "position": 18,
+      "participants_count": 47,
+      "winner": "REGI SILVA",
+      "points": 0,
+      "best_lap": "1:50.177",
+      "best_lap_ms": 110177,
+      "total_time": "13:56.135",
+      "total_time_ms": 836135,
+      "gap": "0:00.000",
+      "gap_ms": 0,
+      "lap_count": 7,
+      "had_best_lap": false,
+      "penalty_count": 1,
+      "penalty_points": 3
+    }
+  ],
+  "penalties": {
+    "penalty_count": 1,
+    "penalty_points": 3,
+    "reasons": {
+      "Cutting": 1
+    },
+    "types": {
+      "DriveThrough": 1
+    }
+  }
+}

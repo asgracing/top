@@ -1,0 +1,87 @@
+{
+  "public_id": "drv_31b2239d13e0",
+  "driver": "Dat Iva",
+  "summary": {
+    "points": 25,
+    "average_points_per_race": 12.5,
+    "races": 2,
+    "wins": 1,
+    "podiums": 1,
+    "average_finish": 8.5,
+    "best_lap": "1:47.612",
+    "best_lap_ms": 107612,
+    "best_lap_track": "monza",
+    "best_lap_session_type": "Q",
+    "penalty_count": 0,
+    "penalty_points": 0,
+    "fastest_lap_awards": 0,
+    "most_raced_track": "monza",
+    "last_race_at": "2026-03-15T18:47:44",
+    "last_seen": "2026-03-15T18:47:44",
+    "win_rate": 50.0,
+    "podium_rate": 50.0
+  },
+  "recent_form": [
+    1,
+    16
+  ],
+  "track_stats": [
+    {
+      "track": "monza",
+      "races": 2,
+      "wins": 1,
+      "podiums": 1,
+      "points": 25,
+      "finish_sum": 17,
+      "average_finish": 8.5,
+      "best_lap_ms": 107825,
+      "best_lap": "1:47.825"
+    }
+  ],
+  "race_history": [
+    {
+      "race_id": "260315_184744_R.json",
+      "finished_at": "2026-03-15T18:47:44",
+      "track": "monza",
+      "position": 1,
+      "participants_count": 43,
+      "winner": "Dat Iva",
+      "points": 25,
+      "best_lap": "1:47.825",
+      "best_lap_ms": 107825,
+      "total_time": "20:20.604",
+      "total_time_ms": 1220604,
+      "gap": null,
+      "gap_ms": null,
+      "lap_count": 11,
+      "had_best_lap": false,
+      "penalty_count": 0,
+      "penalty_points": 0
+    },
+    {
+      "race_id": "260315_181115_R.json",
+      "finished_at": "2026-03-15T18:11:15",
+      "track": "monza",
+      "position": 16,
+      "participants_count": 44,
+      "winner": "Denis Pinchuk",
+      "points": 0,
+      "best_lap": "1:47.840",
+      "best_lap_ms": 107840,
+      "total_time": "21:14.570",
+      "total_time_ms": 1274570,
+      "gap": "1:11.810",
+      "gap_ms": 71810,
+      "lap_count": 10,
+      "had_best_lap": false,
+      "penalty_count": 0,
+      "penalty_points": 0
+    }
+  ],
+  "penalties": {
+    "penalty_count": 0,
+    "penalty_points": 0,
+    "reasons": {},
+    "types": {}
+  }
+}

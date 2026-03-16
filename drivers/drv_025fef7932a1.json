@@ -1,0 +1,71 @@
+{
+  "public_id": "drv_025fef7932a1",
+  "driver": "E. Eusebio",
+  "summary": {
+    "points": 0,
+    "average_points_per_race": 0.0,
+    "races": 1,
+    "wins": 0,
+    "podiums": 0,
+    "average_finish": 22.0,
+    "best_lap": "1:58.765",
+    "best_lap_ms": 118765,
+    "best_lap_track": "monza",
+    "best_lap_session_type": "R",
+    "penalty_count": 1,
+    "penalty_points": 3,
+    "fastest_lap_awards": 0,
+    "most_raced_track": "monza",
+    "last_race_at": "2026-03-14T17:23:13",
+    "last_seen": "2026-03-14T17:23:13",
+    "win_rate": 0.0,
+    "podium_rate": 0.0
+  },
+  "recent_form": [
+    22
+  ],
+  "track_stats": [
+    {
+      "track": "monza",
+      "races": 1,
+      "wins": 0,
+      "podiums": 0,
+      "points": 0,
+      "finish_sum": 22,
+      "average_finish": 22.0,
+      "best_lap_ms": 118765,
+      "best_lap": "1:58.765"
+    }
+  ],
+  "race_history": [
+    {
+      "race_id": "260314_172313_R.json",
+      "finished_at": "2026-03-14T17:23:13",
+      "track": "monza",
+      "position": 22,
+      "participants_count": 35,
+      "winner": "Roderik Banrevi",
+      "points": 0,
+      "best_lap": "1:58.765",
+      "best_lap_ms": 118765,
+      "total_time": "5:07.691",
+      "total_time_ms": 307691,
+      "gap": "0:00.000",
+      "gap_ms": 0,
+      "lap_count": 2,
+      "had_best_lap": false,
+      "penalty_count": 1,
+      "penalty_points": 3
+    }
+  ],
+  "penalties": {
+    "penalty_count": 1,
+    "penalty_points": 3,
+    "reasons": {
+      "Cutting": 1
+    },
+    "types": {
+      "StopAndGo_20": 1
+    }
+  }
+}

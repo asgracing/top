@@ -1,0 +1,67 @@
+{
+  "public_id": "drv_24d0d6a5dad6",
+  "driver": "Pavle Kokuz",
+  "summary": {
+    "points": 0,
+    "average_points_per_race": 0.0,
+    "races": 1,
+    "wins": 0,
+    "podiums": 0,
+    "average_finish": 20.0,
+    "best_lap": "1:51.522",
+    "best_lap_ms": 111522,
+    "best_lap_track": "monza",
+    "best_lap_session_type": "Q",
+    "penalty_count": 0,
+    "penalty_points": 0,
+    "fastest_lap_awards": 0,
+    "most_raced_track": "monza",
+    "last_race_at": "2026-03-13T22:14:10",
+    "last_seen": "2026-03-13T22:14:10",
+    "win_rate": 0.0,
+    "podium_rate": 0.0
+  },
+  "recent_form": [
+    20
+  ],
+  "track_stats": [
+    {
+      "track": "monza",
+      "races": 1,
+      "wins": 0,
+      "podiums": 0,
+      "points": 0,
+      "finish_sum": 20,
+      "average_finish": 20.0,
+      "best_lap_ms": 111927,
+      "best_lap": "1:51.927"
+    }
+  ],
+  "race_history": [
+    {
+      "race_id": "260313_221410_R.json",
+      "finished_at": "2026-03-13T22:14:10",
+      "track": "monza",
+      "position": 20,
+      "participants_count": 46,
+      "winner": "Man in Tights",
+      "points": 0,
+      "best_lap": "1:51.927",
+      "best_lap_ms": 111927,
+      "total_time": "9:18.418",
+      "total_time_ms": 558418,
+      "gap": "0:00.000",
+      "gap_ms": 0,
+      "lap_count": 4,
+      "had_best_lap": false,
+      "penalty_count": 0,
+      "penalty_points": 0
+    }
+  ],
+  "penalties": {
+    "penalty_count": 0,
+    "penalty_points": 0,
+    "reasons": {},
+    "types": {}
+  }
+}

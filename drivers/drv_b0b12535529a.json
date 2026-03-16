@@ -1,0 +1,87 @@
+{
+  "public_id": "drv_b0b12535529a",
+  "driver": "Nelson Figueroa Jr",
+  "summary": {
+    "points": 16,
+    "average_points_per_race": 8.0,
+    "races": 2,
+    "wins": 0,
+    "podiums": 0,
+    "average_finish": 6.0,
+    "best_lap": "1:49.085",
+    "best_lap_ms": 109085,
+    "best_lap_track": "monza",
+    "best_lap_session_type": "R",
+    "penalty_count": 0,
+    "penalty_points": 0,
+    "fastest_lap_awards": 0,
+    "most_raced_track": "monza",
+    "last_race_at": "2026-03-14T00:04:53",
+    "last_seen": "2026-03-14T00:04:53",
+    "win_rate": 0.0,
+    "podium_rate": 0.0
+  },
+  "recent_form": [
+    4,
+    8
+  ],
+  "track_stats": [
+    {
+      "track": "monza",
+      "races": 2,
+      "wins": 0,
+      "podiums": 0,
+      "points": 16,
+      "finish_sum": 12,
+      "average_finish": 6.0,
+      "best_lap_ms": 109085,
+      "best_lap": "1:49.085"
+    }
+  ],
+  "race_history": [
+    {
+      "race_id": "260314_000453_R.json",
+      "finished_at": "2026-03-14T00:04:53",
+      "track": "monza",
+      "position": 4,
+      "participants_count": 39,
+      "winner": "Andrei Soldatenkov",
+      "points": 12,
+      "best_lap": "1:49.085",
+      "best_lap_ms": 109085,
+      "total_time": "20:16.257",
+      "total_time_ms": 1216257,
+      "gap": "0:13.491",
+      "gap_ms": 13491,
+      "lap_count": 11,
+      "had_best_lap": false,
+      "penalty_count": 0,
+      "penalty_points": 0
+    },
+    {
+      "race_id": "260313_232957_R.json",
+      "finished_at": "2026-03-13T23:29:57",
+      "track": "monza",
+      "position": 8,
+      "participants_count": 44,
+      "winner": "Man in Tights",
+      "points": 4,
+      "best_lap": "1:49.745",
+      "best_lap_ms": 109745,
+      "total_time": "22:26.033",
+      "total_time_ms": 1346033,
+      "gap": "0:54.361",
+      "gap_ms": 54361,
+      "lap_count": 12,
+      "had_best_lap": false,
+      "penalty_count": 0,
+      "penalty_points": 0
+    }
+  ],
+  "penalties": {
+    "penalty_count": 0,
+    "penalty_points": 0,
+    "reasons": {},
+    "types": {}
+  }
+}

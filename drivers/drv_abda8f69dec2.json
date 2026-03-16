@@ -1,0 +1,67 @@
+{
+  "public_id": "drv_abda8f69dec2",
+  "driver": "Michel Van Damme",
+  "summary": {
+    "points": 4,
+    "average_points_per_race": 4.0,
+    "races": 1,
+    "wins": 0,
+    "podiums": 0,
+    "average_finish": 8.0,
+    "best_lap": "1:48.437",
+    "best_lap_ms": 108437,
+    "best_lap_track": "monza",
+    "best_lap_session_type": "Q",
+    "penalty_count": 0,
+    "penalty_points": 0,
+    "fastest_lap_awards": 0,
+    "most_raced_track": "monza",
+    "last_race_at": "2026-03-13T21:00:56",
+    "last_seen": "2026-03-13T21:00:56",
+    "win_rate": 0.0,
+    "podium_rate": 0.0
+  },
+  "recent_form": [
+    8
+  ],
+  "track_stats": [
+    {
+      "track": "monza",
+      "races": 1,
+      "wins": 0,
+      "podiums": 0,
+      "points": 4,
+      "finish_sum": 8,
+      "average_finish": 8.0,
+      "best_lap_ms": 108705,
+      "best_lap": "1:48.705"
+    }
+  ],
+  "race_history": [
+    {
+      "race_id": "260313_210056_R.json",
+      "finished_at": "2026-03-13T21:00:56",
+      "track": "monza",
+      "position": 8,
+      "participants_count": 47,
+      "winner": "Kirill Bulgakov",
+      "points": 4,
+      "best_lap": "1:48.705",
+      "best_lap_ms": 108705,
+      "total_time": "20:31.137",
+      "total_time_ms": 1231137,
+      "gap": "0:25.646",
+      "gap_ms": 25646,
+      "lap_count": 11,
+      "had_best_lap": false,
+      "penalty_count": 0,
+      "penalty_points": 0
+    }
+  ],
+  "penalties": {
+    "penalty_count": 0,
+    "penalty_points": 0,
+    "reasons": {},
+    "types": {}
+  }
+}

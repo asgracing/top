@@ -1,0 +1,87 @@
+{
+  "public_id": "drv_2c1c8eed26d0",
+  "driver": "Mikael Parpinelli",
+  "summary": {
+    "points": 15,
+    "average_points_per_race": 7.5,
+    "races": 2,
+    "wins": 0,
+    "podiums": 1,
+    "average_finish": 21.0,
+    "best_lap": "1:47.645",
+    "best_lap_ms": 107645,
+    "best_lap_track": "monza",
+    "best_lap_session_type": "R",
+    "penalty_count": 0,
+    "penalty_points": 0,
+    "fastest_lap_awards": 0,
+    "most_raced_track": "monza",
+    "last_race_at": "2026-03-15T00:16:09",
+    "last_seen": "2026-03-15T00:16:09",
+    "win_rate": 0.0,
+    "podium_rate": 50.0
+  },
+  "recent_form": [
+    39,
+    3
+  ],
+  "track_stats": [
+    {
+      "track": "monza",
+      "races": 2,
+      "wins": 0,
+      "podiums": 1,
+      "points": 15,
+      "finish_sum": 42,
+      "average_finish": 21.0,
+      "best_lap_ms": 107645,
+      "best_lap": "1:47.645"
+    }
+  ],
+  "race_history": [
+    {
+      "race_id": "260315_001609_R.json",
+      "finished_at": "2026-03-15T00:16:09",
+      "track": "monza",
+      "position": 39,
+      "participants_count": 47,
+      "winner": "REGI SILVA",
+      "points": 0,
+      "best_lap": null,
+      "best_lap_ms": null,
+      "total_time": null,
+      "total_time_ms": null,
+      "gap": null,
+      "gap_ms": null,
+      "lap_count": 0,
+      "had_best_lap": false,
+      "penalty_count": 0,
+      "penalty_points": 0
+    },
+    {
+      "race_id": "260314_233749_R.json",
+      "finished_at": "2026-03-14T23:37:49",
+      "track": "monza",
+      "position": 3,
+      "participants_count": 42,
+      "winner": "Kirill Bulgakov",
+      "points": 15,
+      "best_lap": "1:47.645",
+      "best_lap_ms": 107645,
+      "total_time": "20:12.172",
+      "total_time_ms": 1212172,
+      "gap": "0:04.822",
+      "gap_ms": 4822,
+      "lap_count": 11,
+      "had_best_lap": false,
+      "penalty_count": 0,
+      "penalty_points": 0
+    }
+  ],
+  "penalties": {
+    "penalty_count": 0,
+    "penalty_points": 0,
+    "reasons": {},
+    "types": {}
+  }
+}

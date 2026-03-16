@@ -1,0 +1,67 @@
+{
+  "public_id": "drv_fafca2e392e8",
+  "driver": "Berend Vermeulen",
+  "summary": {
+    "points": 0,
+    "average_points_per_race": 0.0,
+    "races": 1,
+    "wins": 0,
+    "podiums": 0,
+    "average_finish": 24.0,
+    "best_lap": "1:51.197",
+    "best_lap_ms": 111197,
+    "best_lap_track": "monza",
+    "best_lap_session_type": "R",
+    "penalty_count": 0,
+    "penalty_points": 0,
+    "fastest_lap_awards": 0,
+    "most_raced_track": "monza",
+    "last_race_at": "2026-03-15T22:28:25",
+    "last_seen": "2026-03-15T22:28:25",
+    "win_rate": 0.0,
+    "podium_rate": 0.0
+  },
+  "recent_form": [
+    24
+  ],
+  "track_stats": [
+    {
+      "track": "monza",
+      "races": 1,
+      "wins": 0,
+      "podiums": 0,
+      "points": 0,
+      "finish_sum": 24,
+      "average_finish": 24.0,
+      "best_lap_ms": 111197,
+      "best_lap": "1:51.197"
+    }
+  ],
+  "race_history": [
+    {
+      "race_id": "260315_222825_R.json",
+      "finished_at": "2026-03-15T22:28:25",
+      "track": "monza",
+      "position": 24,
+      "participants_count": 40,
+      "winner": "Aleksander Kovalev",
+      "points": 0,
+      "best_lap": "1:51.197",
+      "best_lap_ms": 111197,
+      "total_time": "6:33.905",
+      "total_time_ms": 393905,
+      "gap": "0:00.000",
+      "gap_ms": 0,
+      "lap_count": 3,
+      "had_best_lap": false,
+      "penalty_count": 0,
+      "penalty_points": 0
+    }
+  ],
+  "penalties": {
+    "penalty_count": 0,
+    "penalty_points": 0,
+    "reasons": {},
+    "types": {}
+  }
+}

@@ -1,0 +1,131 @@
+{
+  "public_id": "drv_5c4acbf7b0a9",
+  "driver": "Eduardo Lukacs",
+  "summary": {
+    "points": 4,
+    "average_points_per_race": 1.0,
+    "races": 4,
+    "wins": 0,
+    "podiums": 0,
+    "average_finish": 25.0,
+    "best_lap": "1:48.452",
+    "best_lap_ms": 108452,
+    "best_lap_track": "monza",
+    "best_lap_session_type": "R",
+    "penalty_count": 1,
+    "penalty_points": 0,
+    "fastest_lap_awards": 0,
+    "most_raced_track": "monza",
+    "last_race_at": "2026-03-14T16:10:08",
+    "last_seen": "2026-03-14T16:10:08",
+    "win_rate": 0.0,
+    "podium_rate": 0.0
+  },
+  "recent_form": [
+    34,
+    8,
+    11,
+    47
+  ],
+  "track_stats": [
+    {
+      "track": "monza",
+      "races": 4,
+      "wins": 0,
+      "podiums": 0,
+      "points": 4,
+      "finish_sum": 100,
+      "average_finish": 25.0,
+      "best_lap_ms": 108452,
+      "best_lap": "1:48.452"
+    }
+  ],
+  "race_history": [
+    {
+      "race_id": "260314_161008_R.json",
+      "finished_at": "2026-03-14T16:10:08",
+      "track": "monza",
+      "position": 34,
+      "participants_count": 41,
+      "winner": "Adrián de Mora",
+      "points": 0,
+      "best_lap": null,
+      "best_lap_ms": null,
+      "total_time": null,
+      "total_time_ms": null,
+      "gap": null,
+      "gap_ms": null,
+      "lap_count": 0,
+      "had_best_lap": false,
+      "penalty_count": 0,
+      "penalty_points": 0
+    },
+    {
+      "race_id": "260314_153341_R.json",
+      "finished_at": "2026-03-14T15:33:41",
+      "track": "monza",
+      "position": 8,
+      "participants_count": 49,
+      "winner": "R A",
+      "points": 4,
+      "best_lap": "1:48.452",
+      "best_lap_ms": 108452,
+      "total_time": "22:15.991",
+      "total_time_ms": 1335991,
+      "gap": "0:24.200",
+      "gap_ms": 24200,
+      "lap_count": 12,
+      "had_best_lap": false,
+      "penalty_count": 0,
+      "penalty_points": 0
+    },
+    {
+      "race_id": "260314_145510_R.json",
+      "finished_at": "2026-03-14T14:55:10",
+      "track": "monza",
+      "position": 11,
+      "participants_count": 46,
+      "winner": "Евгений Майоров",
+      "points": 0,
+      "best_lap": "1:49.105",
+      "best_lap_ms": 109105,
+      "total_time": "22:45.370",
+      "total_time_ms": 1365370,
+      "gap": "1:14.000",
+      "gap_ms": 74000,
+      "lap_count": 12,
+      "had_best_lap": false,
+      "penalty_count": 0,
+      "penalty_points": 0
+    },
+    {
+      "race_id": "260314_141730_R.json",
+      "finished_at": "2026-03-14T14:17:30",
+      "track": "monza",
+      "position": 47,
+      "participants_count": 47,
+      "winner": "Manny Ykaly",
+      "points": 0,
+      "best_lap": null,
+      "best_lap_ms": null,
+      "total_time": null,
+      "total_time_ms": null,
+      "gap": null,
+      "gap_ms": null,
+      "lap_count": 0,
+      "had_best_lap": false,
+      "penalty_count": 1,
+      "penalty_points": 0
+    }
+  ],
+  "penalties": {
+    "penalty_count": 1,
+    "penalty_points": 0,
+    "reasons": {
+      "PitSpeeding": 1
+    },
+    "types": {
+      "Disqualified": 1
+    }
+  }
+}

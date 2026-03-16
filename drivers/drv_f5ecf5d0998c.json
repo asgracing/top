@@ -1,0 +1,67 @@
+{
+  "public_id": "drv_f5ecf5d0998c",
+  "driver": "Dirk Brinksma",
+  "summary": {
+    "points": 4,
+    "average_points_per_race": 4.0,
+    "races": 1,
+    "wins": 0,
+    "podiums": 0,
+    "average_finish": 8.0,
+    "best_lap": "1:50.075",
+    "best_lap_ms": 110075,
+    "best_lap_track": "monza",
+    "best_lap_session_type": "Q",
+    "penalty_count": 0,
+    "penalty_points": 0,
+    "fastest_lap_awards": 0,
+    "most_raced_track": "monza",
+    "last_race_at": "2026-03-15T21:15:16",
+    "last_seen": "2026-03-15T21:15:16",
+    "win_rate": 0.0,
+    "podium_rate": 0.0
+  },
+  "recent_form": [
+    8
+  ],
+  "track_stats": [
+    {
+      "track": "monza",
+      "races": 1,
+      "wins": 0,
+      "podiums": 0,
+      "points": 4,
+      "finish_sum": 8,
+      "average_finish": 8.0,
+      "best_lap_ms": 110962,
+      "best_lap": "1:50.962"
+    }
+  ],
+  "race_history": [
+    {
+      "race_id": "260315_211516_R.json",
+      "finished_at": "2026-03-15T21:15:16",
+      "track": "monza",
+      "position": 8,
+      "participants_count": 49,
+      "winner": "Stanislau Novikau",
+      "points": 4,
+      "best_lap": "1:50.962",
+      "best_lap_ms": 110962,
+      "total_time": "20:42.129",
+      "total_time_ms": 1242129,
+      "gap": "0:32.672",
+      "gap_ms": 32672,
+      "lap_count": 11,
+      "had_best_lap": false,
+      "penalty_count": 0,
+      "penalty_points": 0
+    }
+  ],
+  "penalties": {
+    "penalty_count": 0,
+    "penalty_points": 0,
+    "reasons": {},
+    "types": {}
+  }
+}

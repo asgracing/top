@@ -1,0 +1,91 @@
+{
+  "public_id": "drv_820d1a5fa0fc",
+  "driver": "Eralp Arven",
+  "summary": {
+    "points": 0,
+    "average_points_per_race": 0.0,
+    "races": 2,
+    "wins": 0,
+    "podiums": 0,
+    "average_finish": 21.0,
+    "best_lap": "1:50.930",
+    "best_lap_ms": 110930,
+    "best_lap_track": "monza",
+    "best_lap_session_type": "Q",
+    "penalty_count": 1,
+    "penalty_points": 2,
+    "fastest_lap_awards": 0,
+    "most_raced_track": "monza",
+    "last_race_at": "2026-03-15T17:34:49",
+    "last_seen": "2026-03-15T17:34:49",
+    "win_rate": 0.0,
+    "podium_rate": 0.0
+  },
+  "recent_form": [
+    24,
+    18
+  ],
+  "track_stats": [
+    {
+      "track": "monza",
+      "races": 2,
+      "wins": 0,
+      "podiums": 0,
+      "points": 0,
+      "finish_sum": 42,
+      "average_finish": 21.0,
+      "best_lap_ms": 112435,
+      "best_lap": "1:52.435"
+    }
+  ],
+  "race_history": [
+    {
+      "race_id": "260315_173449_R.json",
+      "finished_at": "2026-03-15T17:34:49",
+      "track": "monza",
+      "position": 24,
+      "participants_count": 48,
+      "winner": "Kirill Bulgakov",
+      "points": 0,
+      "best_lap": "1:58.287",
+      "best_lap_ms": 118287,
+      "total_time": "6:20.560",
+      "total_time_ms": 380560,
+      "gap": "0:00.000",
+      "gap_ms": 0,
+      "lap_count": 3,
+      "had_best_lap": false,
+      "penalty_count": 1,
+      "penalty_points": 2
+    },
+    {
+      "race_id": "260315_165835_R.json",
+      "finished_at": "2026-03-15T16:58:35",
+      "track": "monza",
+      "position": 18,
+      "participants_count": 53,
+      "winner": "Marco Mastroluca [FMP]",
+      "points": 0,
+      "best_lap": "1:52.435",
+      "best_lap_ms": 112435,
+      "total_time": "20:21.892",
+      "total_time_ms": 1221892,
+      "gap": "0:21.082",
+      "gap_ms": 21082,
+      "lap_count": 7,
+      "had_best_lap": false,
+      "penalty_count": 0,
+      "penalty_points": 0
+    }
+  ],
+  "penalties": {
+    "penalty_count": 1,
+    "penalty_points": 2,
+    "reasons": {
+      "Cutting": 1
+    },
+    "types": {
+      "DriveThrough": 1
+    }
+  }
+}

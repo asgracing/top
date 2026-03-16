@@ -1,0 +1,87 @@
+{
+  "public_id": "drv_f3ad2174ec19",
+  "driver": "Joel Ronald",
+  "summary": {
+    "points": 0,
+    "average_points_per_race": 0.0,
+    "races": 2,
+    "wins": 0,
+    "podiums": 0,
+    "average_finish": 15.0,
+    "best_lap": "1:48.477",
+    "best_lap_ms": 108477,
+    "best_lap_track": "monza",
+    "best_lap_session_type": "R",
+    "penalty_count": 0,
+    "penalty_points": 0,
+    "fastest_lap_awards": 0,
+    "most_raced_track": "monza",
+    "last_race_at": "2026-03-14T20:30:08",
+    "last_seen": "2026-03-14T20:30:08",
+    "win_rate": 0.0,
+    "podium_rate": 0.0
+  },
+  "recent_form": [
+    17,
+    13
+  ],
+  "track_stats": [
+    {
+      "track": "monza",
+      "races": 2,
+      "wins": 0,
+      "podiums": 0,
+      "points": 0,
+      "finish_sum": 30,
+      "average_finish": 15.0,
+      "best_lap_ms": 108477,
+      "best_lap": "1:48.477"
+    }
+  ],
+  "race_history": [
+    {
+      "race_id": "260314_203008_R.json",
+      "finished_at": "2026-03-14T20:30:08",
+      "track": "monza",
+      "position": 17,
+      "participants_count": 50,
+      "winner": "MASINAVY Dina",
+      "points": 0,
+      "best_lap": "1:48.912",
+      "best_lap_ms": 108912,
+      "total_time": "7:31.087",
+      "total_time_ms": 451087,
+      "gap": "0:00.000",
+      "gap_ms": 0,
+      "lap_count": 4,
+      "had_best_lap": false,
+      "penalty_count": 0,
+      "penalty_points": 0
+    },
+    {
+      "race_id": "260314_195349_R.json",
+      "finished_at": "2026-03-14T19:53:49",
+      "track": "monza",
+      "position": 13,
+      "participants_count": 41,
+      "winner": "David Marie",
+      "points": 0,
+      "best_lap": "1:48.477",
+      "best_lap_ms": 108477,
+      "total_time": "22:33.219",
+      "total_time_ms": 1353219,
+      "gap": "1:01.005",
+      "gap_ms": 61005,
+      "lap_count": 11,
+      "had_best_lap": false,
+      "penalty_count": 0,
+      "penalty_points": 0
+    }
+  ],
+  "penalties": {
+    "penalty_count": 0,
+    "penalty_points": 0,
+    "reasons": {},
+    "types": {}
+  }
+}

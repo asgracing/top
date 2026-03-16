@@ -1,0 +1,87 @@
+{
+  "public_id": "drv_b9324e79c5c3",
+  "driver": "Julian Schulz",
+  "summary": {
+    "points": 19,
+    "average_points_per_race": 9.5,
+    "races": 2,
+    "wins": 0,
+    "podiums": 1,
+    "average_finish": 14.5,
+    "best_lap": "1:46.755",
+    "best_lap_ms": 106755,
+    "best_lap_track": "monza",
+    "best_lap_session_type": "R",
+    "penalty_count": 0,
+    "penalty_points": 0,
+    "fastest_lap_awards": 1,
+    "most_raced_track": "monza",
+    "last_race_at": "2026-03-14T15:33:41",
+    "last_seen": "2026-03-14T15:33:41",
+    "win_rate": 0.0,
+    "podium_rate": 50.0
+  },
+  "recent_form": [
+    27,
+    2
+  ],
+  "track_stats": [
+    {
+      "track": "monza",
+      "races": 2,
+      "wins": 0,
+      "podiums": 1,
+      "points": 19,
+      "finish_sum": 29,
+      "average_finish": 14.5,
+      "best_lap_ms": 106755,
+      "best_lap": "1:46.755"
+    }
+  ],
+  "race_history": [
+    {
+      "race_id": "260314_153341_R.json",
+      "finished_at": "2026-03-14T15:33:41",
+      "track": "monza",
+      "position": 27,
+      "participants_count": 49,
+      "winner": "R A",
+      "points": 0,
+      "best_lap": null,
+      "best_lap_ms": null,
+      "total_time": null,
+      "total_time_ms": null,
+      "gap": null,
+      "gap_ms": null,
+      "lap_count": 0,
+      "had_best_lap": false,
+      "penalty_count": 0,
+      "penalty_points": 0
+    },
+    {
+      "race_id": "260314_145510_R.json",
+      "finished_at": "2026-03-14T14:55:10",
+      "track": "monza",
+      "position": 2,
+      "participants_count": 46,
+      "winner": "Евгений Майоров",
+      "points": 19,
+      "best_lap": "1:46.755",
+      "best_lap_ms": 106755,
+      "total_time": "21:47.628",
+      "total_time_ms": 1307628,
+      "gap": "0:16.258",
+      "gap_ms": 16258,
+      "lap_count": 12,
+      "had_best_lap": true,
+      "penalty_count": 0,
+      "penalty_points": 0
+    }
+  ],
+  "penalties": {
+    "penalty_count": 0,
+    "penalty_points": 0,
+    "reasons": {},
+    "types": {}
+  }
+}

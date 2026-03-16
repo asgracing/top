@@ -1,0 +1,67 @@
+{
+  "public_id": "drv_adcedb868996",
+  "driver": "Rodolphe | ANS",
+  "summary": {
+    "points": 15,
+    "average_points_per_race": 15.0,
+    "races": 1,
+    "wins": 0,
+    "podiums": 1,
+    "average_finish": 3.0,
+    "best_lap": "1:48.087",
+    "best_lap_ms": 108087,
+    "best_lap_track": "monza",
+    "best_lap_session_type": "R",
+    "penalty_count": 0,
+    "penalty_points": 0,
+    "fastest_lap_awards": 0,
+    "most_raced_track": "monza",
+    "last_race_at": "2026-03-14T19:15:44",
+    "last_seen": "2026-03-14T19:15:44",
+    "win_rate": 0.0,
+    "podium_rate": 100.0
+  },
+  "recent_form": [
+    3
+  ],
+  "track_stats": [
+    {
+      "track": "monza",
+      "races": 1,
+      "wins": 0,
+      "podiums": 1,
+      "points": 15,
+      "finish_sum": 3,
+      "average_finish": 3.0,
+      "best_lap_ms": 108087,
+      "best_lap": "1:48.087"
+    }
+  ],
+  "race_history": [
+    {
+      "race_id": "260314_191544_R.json",
+      "finished_at": "2026-03-14T19:15:44",
+      "track": "monza",
+      "position": 3,
+      "participants_count": 54,
+      "winner": "Jeff Reid",
+      "points": 15,
+      "best_lap": "1:48.087",
+      "best_lap_ms": 108087,
+      "total_time": "21:52.463",
+      "total_time_ms": 1312463,
+      "gap": "0:08.170",
+      "gap_ms": 8170,
+      "lap_count": 12,
+      "had_best_lap": false,
+      "penalty_count": 0,
+      "penalty_points": 0
+    }
+  ],
+  "penalties": {
+    "penalty_count": 0,
+    "penalty_points": 0,
+    "reasons": {},
+    "types": {}
+  }
+}

@@ -1,0 +1,67 @@
+{
+  "public_id": "drv_1937a788d59e",
+  "driver": "Eemil Räsänen",
+  "summary": {
+    "points": 18,
+    "average_points_per_race": 18.0,
+    "races": 1,
+    "wins": 0,
+    "podiums": 1,
+    "average_finish": 2.0,
+    "best_lap": "1:47.550",
+    "best_lap_ms": 107550,
+    "best_lap_track": "monza",
+    "best_lap_session_type": "R",
+    "penalty_count": 0,
+    "penalty_points": 0,
+    "fastest_lap_awards": 0,
+    "most_raced_track": "monza",
+    "last_race_at": "2026-03-15T19:26:02",
+    "last_seen": "2026-03-15T19:26:02",
+    "win_rate": 0.0,
+    "podium_rate": 100.0
+  },
+  "recent_form": [
+    2
+  ],
+  "track_stats": [
+    {
+      "track": "monza",
+      "races": 1,
+      "wins": 0,
+      "podiums": 1,
+      "points": 18,
+      "finish_sum": 2,
+      "average_finish": 2.0,
+      "best_lap_ms": 107550,
+      "best_lap": "1:47.550"
+    }
+  ],
+  "race_history": [
+    {
+      "race_id": "260315_192602_R.json",
+      "finished_at": "2026-03-15T19:26:02",
+      "track": "monza",
+      "position": 2,
+      "participants_count": 47,
+      "winner": "David Marie",
+      "points": 18,
+      "best_lap": "1:47.550",
+      "best_lap_ms": 107550,
+      "total_time": "21:54.882",
+      "total_time_ms": 1314882,
+      "gap": "0:16.903",
+      "gap_ms": 16903,
+      "lap_count": 12,
+      "had_best_lap": false,
+      "penalty_count": 0,
+      "penalty_points": 0
+    }
+  ],
+  "penalties": {
+    "penalty_count": 0,
+    "penalty_points": 0,
+    "reasons": {},
+    "types": {}
+  }
+}

@@ -1,0 +1,67 @@
+{
+  "public_id": "drv_03310d2b3706",
+  "driver": "Paolo Giordano | PGM",
+  "summary": {
+    "points": 26,
+    "average_points_per_race": 26.0,
+    "races": 1,
+    "wins": 1,
+    "podiums": 1,
+    "average_finish": 1.0,
+    "best_lap": "1:47.400",
+    "best_lap_ms": 107400,
+    "best_lap_track": "monza",
+    "best_lap_session_type": "R",
+    "penalty_count": 0,
+    "penalty_points": 0,
+    "fastest_lap_awards": 1,
+    "most_raced_track": "monza",
+    "last_race_at": "2026-03-15T13:14:06",
+    "last_seen": "2026-03-15T13:14:06",
+    "win_rate": 100.0,
+    "podium_rate": 100.0
+  },
+  "recent_form": [
+    1
+  ],
+  "track_stats": [
+    {
+      "track": "monza",
+      "races": 1,
+      "wins": 1,
+      "podiums": 1,
+      "points": 26,
+      "finish_sum": 1,
+      "average_finish": 1.0,
+      "best_lap_ms": 107400,
+      "best_lap": "1:47.400"
+    }
+  ],
+  "race_history": [
+    {
+      "race_id": "260315_131406_R.json",
+      "finished_at": "2026-03-15T13:14:06",
+      "track": "monza",
+      "position": 1,
+      "participants_count": 33,
+      "winner": "Paolo Giordano | PGM",
+      "points": 26,
+      "best_lap": "1:47.400",
+      "best_lap_ms": 107400,
+      "total_time": "20:02.644",
+      "total_time_ms": 1202644,
+      "gap": null,
+      "gap_ms": null,
+      "lap_count": 11,
+      "had_best_lap": true,
+      "penalty_count": 0,
+      "penalty_points": 0
+    }
+  ],
+  "penalties": {
+    "penalty_count": 0,
+    "penalty_points": 0,
+    "reasons": {},
+    "types": {}
+  }
+}

@@ -1,0 +1,87 @@
+{
+  "public_id": "drv_fbb2d8e947db",
+  "driver": "Kirill Fomenko",
+  "summary": {
+    "points": 0,
+    "average_points_per_race": 0.0,
+    "races": 2,
+    "wins": 0,
+    "podiums": 0,
+    "average_finish": 20.5,
+    "best_lap": "1:47.480",
+    "best_lap_ms": 107480,
+    "best_lap_track": "monza",
+    "best_lap_session_type": "Q",
+    "penalty_count": 0,
+    "penalty_points": 0,
+    "fastest_lap_awards": 0,
+    "most_raced_track": "monza",
+    "last_race_at": "2026-03-14T00:04:53",
+    "last_seen": "2026-03-14T00:04:53",
+    "win_rate": 0.0,
+    "podium_rate": 0.0
+  },
+  "recent_form": [
+    16,
+    25
+  ],
+  "track_stats": [
+    {
+      "track": "monza",
+      "races": 2,
+      "wins": 0,
+      "podiums": 0,
+      "points": 0,
+      "finish_sum": 41,
+      "average_finish": 20.5,
+      "best_lap_ms": 107697,
+      "best_lap": "1:47.697"
+    }
+  ],
+  "race_history": [
+    {
+      "race_id": "260314_000453_R.json",
+      "finished_at": "2026-03-14T00:04:53",
+      "track": "monza",
+      "position": 16,
+      "participants_count": 39,
+      "winner": "Andrei Soldatenkov",
+      "points": 0,
+      "best_lap": "1:47.697",
+      "best_lap_ms": 107697,
+      "total_time": "11:29.794",
+      "total_time_ms": 689794,
+      "gap": "0:00.000",
+      "gap_ms": 0,
+      "lap_count": 6,
+      "had_best_lap": false,
+      "penalty_count": 0,
+      "penalty_points": 0
+    },
+    {
+      "race_id": "260313_232957_R.json",
+      "finished_at": "2026-03-13T23:29:57",
+      "track": "monza",
+      "position": 25,
+      "participants_count": 44,
+      "winner": "Man in Tights",
+      "points": 0,
+      "best_lap": "1:48.470",
+      "best_lap_ms": 108470,
+      "total_time": "23:01.465",
+      "total_time_ms": 1381465,
+      "gap": "1:29.793",
+      "gap_ms": 89793,
+      "lap_count": 2,
+      "had_best_lap": false,
+      "penalty_count": 0,
+      "penalty_points": 0
+    }
+  ],
+  "penalties": {
+    "penalty_count": 0,
+    "penalty_points": 0,
+    "reasons": {},
+    "types": {}
+  }
+}

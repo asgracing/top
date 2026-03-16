@@ -1,0 +1,67 @@
+{
+  "public_id": "drv_427c6c2dadce",
+  "driver": "Mars Mars",
+  "summary": {
+    "points": 6,
+    "average_points_per_race": 6.0,
+    "races": 1,
+    "wins": 0,
+    "podiums": 0,
+    "average_finish": 7.0,
+    "best_lap": "1:50.612",
+    "best_lap_ms": 110612,
+    "best_lap_track": "monza",
+    "best_lap_session_type": "R",
+    "penalty_count": 0,
+    "penalty_points": 0,
+    "fastest_lap_awards": 0,
+    "most_raced_track": "monza",
+    "last_race_at": "2026-03-13T15:38:47",
+    "last_seen": "2026-03-13T15:38:47",
+    "win_rate": 0.0,
+    "podium_rate": 0.0
+  },
+  "recent_form": [
+    7
+  ],
+  "track_stats": [
+    {
+      "track": "monza",
+      "races": 1,
+      "wins": 0,
+      "podiums": 0,
+      "points": 6,
+      "finish_sum": 7,
+      "average_finish": 7.0,
+      "best_lap_ms": 110612,
+      "best_lap": "1:50.612"
+    }
+  ],
+  "race_history": [
+    {
+      "race_id": "260313_153847_R.json",
+      "finished_at": "2026-03-13T15:38:47",
+      "track": "monza",
+      "position": 7,
+      "participants_count": 15,
+      "winner": "Halil Atakan",
+      "points": 6,
+      "best_lap": "1:50.612",
+      "best_lap_ms": 110612,
+      "total_time": "14:45.285",
+      "total_time_ms": 885285,
+      "gap": "0:00.000",
+      "gap_ms": 0,
+      "lap_count": 7,
+      "had_best_lap": false,
+      "penalty_count": 0,
+      "penalty_points": 0
+    }
+  ],
+  "penalties": {
+    "penalty_count": 0,
+    "penalty_points": 0,
+    "reasons": {},
+    "types": {}
+  }
+}

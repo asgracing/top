@@ -1,0 +1,87 @@
+{
+  "public_id": "drv_b34f90b2720c",
+  "driver": "H.B. Fowler",
+  "summary": {
+    "points": 8,
+    "average_points_per_race": 4.0,
+    "races": 2,
+    "wins": 0,
+    "podiums": 0,
+    "average_finish": 24.5,
+    "best_lap": "1:48.705",
+    "best_lap_ms": 108705,
+    "best_lap_track": "monza",
+    "best_lap_session_type": "R",
+    "penalty_count": 0,
+    "penalty_points": 0,
+    "fastest_lap_awards": 0,
+    "most_raced_track": "monza",
+    "last_race_at": "2026-03-14T19:15:44",
+    "last_seen": "2026-03-14T19:15:44",
+    "win_rate": 0.0,
+    "podium_rate": 0.0
+  },
+  "recent_form": [
+    43,
+    6
+  ],
+  "track_stats": [
+    {
+      "track": "monza",
+      "races": 2,
+      "wins": 0,
+      "podiums": 0,
+      "points": 8,
+      "finish_sum": 49,
+      "average_finish": 24.5,
+      "best_lap_ms": 108705,
+      "best_lap": "1:48.705"
+    }
+  ],
+  "race_history": [
+    {
+      "race_id": "260314_191544_R.json",
+      "finished_at": "2026-03-14T19:15:44",
+      "track": "monza",
+      "position": 43,
+      "participants_count": 54,
+      "winner": "Jeff Reid",
+      "points": 0,
+      "best_lap": null,
+      "best_lap_ms": null,
+      "total_time": null,
+      "total_time_ms": null,
+      "gap": null,
+      "gap_ms": null,
+      "lap_count": 0,
+      "had_best_lap": false,
+      "penalty_count": 0,
+      "penalty_points": 0
+    },
+    {
+      "race_id": "260314_183749_R.json",
+      "finished_at": "2026-03-14T18:37:49",
+      "track": "monza",
+      "position": 6,
+      "participants_count": 48,
+      "winner": "MIKI DEGANI",
+      "points": 8,
+      "best_lap": "1:48.705",
+      "best_lap_ms": 108705,
+      "total_time": "22:11.721",
+      "total_time_ms": 1331721,
+      "gap": "0:19.823",
+      "gap_ms": 19823,
+      "lap_count": 12,
+      "had_best_lap": false,
+      "penalty_count": 0,
+      "penalty_points": 0
+    }
+  ],
+  "penalties": {
+    "penalty_count": 0,
+    "penalty_points": 0,
+    "reasons": {},
+    "types": {}
+  }
+}

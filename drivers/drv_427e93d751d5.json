@@ -1,0 +1,87 @@
+{
+  "public_id": "drv_427e93d751d5",
+  "driver": "P. Hautzi",
+  "summary": {
+    "points": 3,
+    "average_points_per_race": 1.5,
+    "races": 2,
+    "wins": 0,
+    "podiums": 0,
+    "average_finish": 9.5,
+    "best_lap": "1:48.667",
+    "best_lap_ms": 108667,
+    "best_lap_track": "monza",
+    "best_lap_session_type": "R",
+    "penalty_count": 0,
+    "penalty_points": 0,
+    "fastest_lap_awards": 0,
+    "most_raced_track": "monza",
+    "last_race_at": "2026-03-14T15:33:41",
+    "last_seen": "2026-03-14T15:33:41",
+    "win_rate": 0.0,
+    "podium_rate": 0.0
+  },
+  "recent_form": [
+    9,
+    10
+  ],
+  "track_stats": [
+    {
+      "track": "monza",
+      "races": 2,
+      "wins": 0,
+      "podiums": 0,
+      "points": 3,
+      "finish_sum": 19,
+      "average_finish": 9.5,
+      "best_lap_ms": 108667,
+      "best_lap": "1:48.667"
+    }
+  ],
+  "race_history": [
+    {
+      "race_id": "260314_153341_R.json",
+      "finished_at": "2026-03-14T15:33:41",
+      "track": "monza",
+      "position": 9,
+      "participants_count": 49,
+      "winner": "R A",
+      "points": 2,
+      "best_lap": "1:48.667",
+      "best_lap_ms": 108667,
+      "total_time": "22:16.174",
+      "total_time_ms": 1336174,
+      "gap": "0:24.383",
+      "gap_ms": 24383,
+      "lap_count": 12,
+      "had_best_lap": false,
+      "penalty_count": 0,
+      "penalty_points": 0
+    },
+    {
+      "race_id": "260313_153847_R.json",
+      "finished_at": "2026-03-13T15:38:47",
+      "track": "monza",
+      "position": 10,
+      "participants_count": 15,
+      "winner": "Halil Atakan",
+      "points": 1,
+      "best_lap": "1:48.772",
+      "best_lap_ms": 108772,
+      "total_time": "20:17.751",
+      "total_time_ms": 1217751,
+      "gap": "0:03.836",
+      "gap_ms": 3836,
+      "lap_count": 2,
+      "had_best_lap": false,
+      "penalty_count": 0,
+      "penalty_points": 0
+    }
+  ],
+  "penalties": {
+    "penalty_count": 0,
+    "penalty_points": 0,
+    "reasons": {},
+    "types": {}
+  }
+}
