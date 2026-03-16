@@ -1,0 +1,33 @@
+{
+  "public_id": "drv_b620eef5977e",
+  "driver": "Pulse Consti",
+  "summary": {
+    "points": 0,
+    "average_points_per_race": 0,
+    "races": 0,
+    "wins": 0,
+    "podiums": 0,
+    "average_finish": null,
+    "best_lap": "1:49.130",
+    "best_lap_ms": 109130,
+    "best_lap_track": "monza",
+    "best_lap_session_type": "Q",
+    "penalty_count": 0,
+    "penalty_points": 0,
+    "fastest_lap_awards": 0,
+    "most_raced_track": null,
+    "last_race_at": null,
+    "last_seen": "2026-03-16T18:28:44",
+    "win_rate": 0,
+    "podium_rate": 0
+  },
+  "recent_form": [],
+  "track_stats": [],
+  "race_history": [],
+  "penalties": {
+    "penalty_count": 0,
+    "penalty_points": 0,
+    "reasons": {},
+    "types": {}
+  }
+}
