@@ -1394,7 +1394,10 @@ function renderRacesTable() {
   `;
 
   tableEl.querySelectorAll("tbody tr[data-race-index]").forEach(row => {
-    row.addEventListener("click", () => {
+    row.addEventListener("click", (event) => {
+      if (event.target.closest("a")) {
+        return;
+      }
       const index = Number(row.dataset.raceIndex);
       openRaceResultsModal(races[index] || null);
     });
