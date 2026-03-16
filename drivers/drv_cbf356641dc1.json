@@ -1,17 +1,17 @@
 {
-  "public_id": "drv_b69a060f2313",
-  "driver": "Oleg Bykov",
+  "public_id": "drv_cbf356641dc1",
+  "driver": "tom talbot",
   "summary": {
     "points": 0,
     "average_points_per_race": 0.0,
     "races": 1,
     "wins": 0,
     "podiums": 0,
-    "average_finish": 15.0,
-    "best_lap": "1:49.092",
-    "best_lap_ms": 109092,
-    "best_lap_track": "monza",
-    "best_lap_session_type": "R",
+    "average_finish": 42.0,
+    "best_lap": null,
+    "best_lap_ms": null,
+    "best_lap_track": null,
+    "best_lap_session_type": null,
     "penalty_count": 0,
     "penalty_points": 0,
     "fastest_lap_awards": 0,
@@ -22,7 +22,7 @@
     "podium_rate": 0.0
   },
   "recent_form": [
-    15
+    42
   ],
   "track_stats": [
     {
@@ -31,10 +31,10 @@
       "wins": 0,
       "podiums": 0,
       "points": 0,
-      "finish_sum": 15,
-      "average_finish": 15.0,
-      "best_lap_ms": 109092,
-      "best_lap": "1:49.092"
+      "finish_sum": 42,
+      "average_finish": 42.0,
+      "best_lap_ms": null,
+      "best_lap": null
     }
   ],
   "race_history": [
@@ -42,17 +42,17 @@
       "race_id": "260316_161816_R.json",
       "finished_at": "2026-03-16T16:18:16",
       "track": "monza",
-      "position": 15,
+      "position": 42,
       "participants_count": 42,
       "winner": "Jere Kärki (VR)",
       "points": 0,
-      "best_lap": "1:49.092",
-      "best_lap_ms": 109092,
-      "total_time": "20:15.071",
-      "total_time_ms": 1215071,
-      "gap": "0:07.478",
-      "gap_ms": 7478,
-      "lap_count": 10,
+      "best_lap": null,
+      "best_lap_ms": null,
+      "total_time": null,
+      "total_time_ms": null,
+      "gap": null,
+      "gap_ms": null,
+      "lap_count": 0,
       "had_best_lap": false,
       "penalty_count": 0,
       "penalty_points": 0

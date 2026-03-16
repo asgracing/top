@@ -2,12 +2,12 @@
   "public_id": "drv_c256cf8ad052",
   "driver": "Sergey Shelkov",
   "summary": {
-    "points": 0,
-    "average_points_per_race": 0.0,
-    "races": 3,
+    "points": 6,
+    "average_points_per_race": 1.5,
+    "races": 4,
     "wins": 0,
     "podiums": 0,
-    "average_finish": 19.67,
+    "average_finish": 16.5,
     "best_lap": "1:50.362",
     "best_lap_ms": 110362,
     "best_lap_track": "monza",
@@ -16,12 +16,13 @@
     "penalty_points": 0,
     "fastest_lap_awards": 0,
     "most_raced_track": "monza",
-    "last_race_at": "2026-03-16T15:36:28",
-    "last_seen": "2026-03-16T15:36:28",
+    "last_race_at": "2026-03-16T16:18:16",
+    "last_seen": "2026-03-16T16:18:16",
     "win_rate": 0.0,
     "podium_rate": 0.0
   },
   "recent_form": [
+    7,
     14,
     23,
     22
@@ -29,17 +30,36 @@
   "track_stats": [
     {
       "track": "monza",
-      "races": 3,
+      "races": 4,
       "wins": 0,
       "podiums": 0,
-      "points": 0,
-      "finish_sum": 59,
-      "average_finish": 19.67,
+      "points": 6,
+      "finish_sum": 66,
+      "average_finish": 16.5,
       "best_lap_ms": 110362,
       "best_lap": "1:50.362"
     }
   ],
   "race_history": [
+    {
+      "race_id": "260316_161816_R.json",
+      "finished_at": "2026-03-16T16:18:16",
+      "track": "monza",
+      "position": 7,
+      "participants_count": 42,
+      "winner": "Jere Kärki (VR)",
+      "points": 6,
+      "best_lap": "1:50.705",
+      "best_lap_ms": 110705,
+      "total_time": "20:46.517",
+      "total_time_ms": 1246517,
+      "gap": "0:38.924",
+      "gap_ms": 38924,
+      "lap_count": 11,
+      "had_best_lap": false,
+      "penalty_count": 0,
+      "penalty_points": 0
+    },
     {
       "race_id": "260316_153628_R.json",
       "finished_at": "2026-03-16T15:36:28",

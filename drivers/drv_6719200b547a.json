@@ -2,12 +2,12 @@
   "public_id": "drv_6719200b547a",
   "driver": "CC ZHAO",
   "summary": {
-    "points": 2,
-    "average_points_per_race": 2.0,
-    "races": 1,
+    "points": 12,
+    "average_points_per_race": 6.0,
+    "races": 2,
     "wins": 0,
     "podiums": 0,
-    "average_finish": 9.0,
+    "average_finish": 7.0,
     "best_lap": "1:50.402",
     "best_lap_ms": 110402,
     "best_lap_track": "monza",
@@ -16,28 +16,48 @@
     "penalty_points": 0,
     "fastest_lap_awards": 0,
     "most_raced_track": "monza",
-    "last_race_at": "2026-03-16T15:36:28",
-    "last_seen": "2026-03-16T15:36:28",
+    "last_race_at": "2026-03-16T16:18:16",
+    "last_seen": "2026-03-16T16:18:16",
     "win_rate": 0.0,
     "podium_rate": 0.0
   },
   "recent_form": [
+    5,
     9
   ],
   "track_stats": [
     {
       "track": "monza",
-      "races": 1,
+      "races": 2,
       "wins": 0,
       "podiums": 0,
-      "points": 2,
-      "finish_sum": 9,
-      "average_finish": 9.0,
+      "points": 12,
+      "finish_sum": 14,
+      "average_finish": 7.0,
       "best_lap_ms": 110402,
       "best_lap": "1:50.402"
     }
   ],
   "race_history": [
+    {
+      "race_id": "260316_161816_R.json",
+      "finished_at": "2026-03-16T16:18:16",
+      "track": "monza",
+      "position": 5,
+      "participants_count": 42,
+      "winner": "Jere Kärki (VR)",
+      "points": 10,
+      "best_lap": "1:50.482",
+      "best_lap_ms": 110482,
+      "total_time": "20:41.047",
+      "total_time_ms": 1241047,
+      "gap": "0:33.454",
+      "gap_ms": 33454,
+      "lap_count": 11,
+      "had_best_lap": false,
+      "penalty_count": 0,
+      "penalty_points": 0
+    },
     {
       "race_id": "260316_153628_R.json",
       "finished_at": "2026-03-16T15:36:28",

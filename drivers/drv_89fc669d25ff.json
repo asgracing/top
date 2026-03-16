@@ -4,10 +4,10 @@
   "summary": {
     "points": 0,
     "average_points_per_race": 0.0,
-    "races": 2,
+    "races": 3,
     "wins": 0,
     "podiums": 0,
-    "average_finish": 27.0,
+    "average_finish": 27.33,
     "best_lap": "1:49.890",
     "best_lap_ms": 109890,
     "best_lap_track": "monza",
@@ -16,29 +16,49 @@
     "penalty_points": 0,
     "fastest_lap_awards": 0,
     "most_raced_track": "monza",
-    "last_race_at": "2026-03-16T15:36:28",
-    "last_seen": "2026-03-16T15:48:24",
+    "last_race_at": "2026-03-16T16:18:16",
+    "last_seen": "2026-03-16T16:18:16",
     "win_rate": 0.0,
     "podium_rate": 0.0
   },
   "recent_form": [
+    28,
     21,
     33
   ],
   "track_stats": [
     {
       "track": "monza",
-      "races": 2,
+      "races": 3,
       "wins": 0,
       "podiums": 0,
       "points": 0,
-      "finish_sum": 54,
-      "average_finish": 27.0,
+      "finish_sum": 82,
+      "average_finish": 27.33,
       "best_lap_ms": null,
       "best_lap": null
     }
   ],
   "race_history": [
+    {
+      "race_id": "260316_161816_R.json",
+      "finished_at": "2026-03-16T16:18:16",
+      "track": "monza",
+      "position": 28,
+      "participants_count": 42,
+      "winner": "Jere Kärki (VR)",
+      "points": 0,
+      "best_lap": null,
+      "best_lap_ms": null,
+      "total_time": "1:26.070",
+      "total_time_ms": 86070,
+      "gap": "0:00.000",
+      "gap_ms": 0,
+      "lap_count": 0,
+      "had_best_lap": false,
+      "penalty_count": 0,
+      "penalty_points": 0
+    },
     {
       "race_id": "260316_153628_R.json",
       "finished_at": "2026-03-16T15:36:28",

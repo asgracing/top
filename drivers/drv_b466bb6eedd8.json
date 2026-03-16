@@ -2,12 +2,12 @@
   "public_id": "drv_b466bb6eedd8",
   "driver": "Andrei Soldatenkov [ASG]",
   "summary": {
-    "points": 287,
-    "average_points_per_race": 6.83,
-    "races": 42,
+    "points": 291,
+    "average_points_per_race": 6.77,
+    "races": 43,
     "wins": 5,
     "podiums": 12,
-    "average_finish": 19.4,
+    "average_finish": 19.14,
     "best_lap": "1:47.405",
     "best_lap_ms": 107405,
     "best_lap_track": "monza",
@@ -16,32 +16,51 @@
     "penalty_points": 3,
     "fastest_lap_awards": 3,
     "most_raced_track": "monza",
-    "last_race_at": "2026-03-16T15:36:28",
-    "last_seen": "2026-03-16T15:36:28",
-    "win_rate": 11.9,
-    "podium_rate": 28.57
+    "last_race_at": "2026-03-16T16:18:16",
+    "last_seen": "2026-03-16T16:18:16",
+    "win_rate": 11.63,
+    "podium_rate": 27.91
   },
   "recent_form": [
+    8,
     13,
     1,
     15,
-    3,
-    36
+    3
   ],
   "track_stats": [
     {
       "track": "monza",
-      "races": 42,
+      "races": 43,
       "wins": 5,
       "podiums": 12,
-      "points": 287,
-      "finish_sum": 815,
-      "average_finish": 19.4,
+      "points": 291,
+      "finish_sum": 823,
+      "average_finish": 19.14,
       "best_lap_ms": 107405,
       "best_lap": "1:47.405"
     }
   ],
   "race_history": [
+    {
+      "race_id": "260316_161816_R.json",
+      "finished_at": "2026-03-16T16:18:16",
+      "track": "monza",
+      "position": 8,
+      "participants_count": 42,
+      "winner": "Jere Kärki (VR)",
+      "points": 4,
+      "best_lap": "1:47.840",
+      "best_lap_ms": 107840,
+      "total_time": "20:50.023",
+      "total_time_ms": 1250023,
+      "gap": "0:42.430",
+      "gap_ms": 42430,
+      "lap_count": 11,
+      "had_best_lap": false,
+      "penalty_count": 0,
+      "penalty_points": 0
+    },
     {
       "race_id": "260316_153628_R.json",
       "finished_at": "2026-03-16T15:36:28",

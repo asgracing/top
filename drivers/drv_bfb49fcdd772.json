@@ -3,11 +3,11 @@
   "driver": "Deimantas Burakas",
   "summary": {
     "points": 1,
-    "average_points_per_race": 0.25,
-    "races": 4,
+    "average_points_per_race": 0.2,
+    "races": 5,
     "wins": 0,
     "podiums": 0,
-    "average_finish": 17.75,
+    "average_finish": 18.8,
     "best_lap": "1:51.392",
     "best_lap_ms": 111392,
     "best_lap_track": "monza",
@@ -16,12 +16,13 @@
     "penalty_points": 0,
     "fastest_lap_awards": 0,
     "most_raced_track": "monza",
-    "last_race_at": "2026-03-16T15:36:28",
-    "last_seen": "2026-03-16T15:48:24",
+    "last_race_at": "2026-03-16T16:18:16",
+    "last_seen": "2026-03-16T16:18:16",
     "win_rate": 0.0,
     "podium_rate": 0.0
   },
   "recent_form": [
+    23,
     10,
     21,
     18,
@@ -30,17 +31,36 @@
   "track_stats": [
     {
       "track": "monza",
-      "races": 4,
+      "races": 5,
       "wins": 0,
       "podiums": 0,
       "points": 1,
-      "finish_sum": 71,
-      "average_finish": 17.75,
-      "best_lap_ms": 114950,
-      "best_lap": "1:54.950"
+      "finish_sum": 94,
+      "average_finish": 18.8,
+      "best_lap_ms": 112100,
+      "best_lap": "1:52.100"
     }
   ],
   "race_history": [
+    {
+      "race_id": "260316_161816_R.json",
+      "finished_at": "2026-03-16T16:18:16",
+      "track": "monza",
+      "position": 23,
+      "participants_count": 42,
+      "winner": "Jere Kärki (VR)",
+      "points": 0,
+      "best_lap": "1:52.100",
+      "best_lap_ms": 112100,
+      "total_time": "9:05.565",
+      "total_time_ms": 545565,
+      "gap": "0:00.000",
+      "gap_ms": 0,
+      "lap_count": 4,
+      "had_best_lap": false,
+      "penalty_count": 0,
+      "penalty_points": 0
+    },
     {
       "race_id": "260316_153628_R.json",
       "finished_at": "2026-03-16T15:36:28",

@@ -3,11 +3,11 @@
   "driver": "Illyaaa Serg",
   "summary": {
     "points": 35,
-    "average_points_per_race": 3.18,
-    "races": 11,
+    "average_points_per_race": 2.92,
+    "races": 12,
     "wins": 0,
     "podiums": 1,
-    "average_finish": 13.91,
+    "average_finish": 14.33,
     "best_lap": "1:48.452",
     "best_lap_ms": 108452,
     "best_lap_track": "monza",
@@ -16,32 +16,51 @@
     "penalty_points": 8,
     "fastest_lap_awards": 0,
     "most_raced_track": "monza",
-    "last_race_at": "2026-03-16T15:36:28",
-    "last_seen": "2026-03-16T15:36:28",
+    "last_race_at": "2026-03-16T16:18:16",
+    "last_seen": "2026-03-16T16:18:16",
     "win_rate": 0.0,
-    "podium_rate": 9.09
+    "podium_rate": 8.33
   },
   "recent_form": [
+    19,
     15,
     15,
     19,
-    26,
     26
   ],
   "track_stats": [
     {
       "track": "monza",
-      "races": 11,
+      "races": 12,
       "wins": 0,
       "podiums": 1,
       "points": 35,
-      "finish_sum": 153,
-      "average_finish": 13.91,
+      "finish_sum": 172,
+      "average_finish": 14.33,
       "best_lap_ms": 109202,
       "best_lap": "1:49.202"
     }
   ],
   "race_history": [
+    {
+      "race_id": "260316_161816_R.json",
+      "finished_at": "2026-03-16T16:18:16",
+      "track": "monza",
+      "position": 19,
+      "participants_count": 42,
+      "winner": "Jere Kärki (VR)",
+      "points": 0,
+      "best_lap": "1:49.782",
+      "best_lap_ms": 109782,
+      "total_time": "19:16.450",
+      "total_time_ms": 1156450,
+      "gap": "0:00.000",
+      "gap_ms": 0,
+      "lap_count": 8,
+      "had_best_lap": false,
+      "penalty_count": 0,
+      "penalty_points": 0
+    },
     {
       "race_id": "260316_153628_R.json",
       "finished_at": "2026-03-16T15:36:28",

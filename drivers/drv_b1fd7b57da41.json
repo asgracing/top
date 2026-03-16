@@ -2,12 +2,12 @@
   "public_id": "drv_b1fd7b57da41",
   "driver": "Artem Malyginov",
   "summary": {
-    "points": 114,
-    "average_points_per_race": 9.5,
-    "races": 12,
+    "points": 116,
+    "average_points_per_race": 8.92,
+    "races": 13,
     "wins": 1,
     "podiums": 5,
-    "average_finish": 11.33,
+    "average_finish": 11.15,
     "best_lap": "1:50.817",
     "best_lap_ms": 110817,
     "best_lap_track": "monza",
@@ -16,32 +16,51 @@
     "penalty_points": 0,
     "fastest_lap_awards": 0,
     "most_raced_track": "monza",
-    "last_race_at": "2026-03-16T15:36:28",
-    "last_seen": "2026-03-16T15:36:28",
-    "win_rate": 8.33,
-    "podium_rate": 41.67
+    "last_race_at": "2026-03-16T16:18:16",
+    "last_seen": "2026-03-16T16:18:16",
+    "win_rate": 7.69,
+    "podium_rate": 38.46
   },
   "recent_form": [
+    9,
     6,
     3,
     37,
-    10,
-    9
+    10
   ],
   "track_stats": [
     {
       "track": "monza",
-      "races": 12,
+      "races": 13,
       "wins": 1,
       "podiums": 5,
-      "points": 114,
-      "finish_sum": 136,
-      "average_finish": 11.33,
+      "points": 116,
+      "finish_sum": 145,
+      "average_finish": 11.15,
       "best_lap_ms": 110817,
       "best_lap": "1:50.817"
     }
   ],
   "race_history": [
+    {
+      "race_id": "260316_161816_R.json",
+      "finished_at": "2026-03-16T16:18:16",
+      "track": "monza",
+      "position": 9,
+      "participants_count": 42,
+      "winner": "Jere Kärki (VR)",
+      "points": 2,
+      "best_lap": "1:51.032",
+      "best_lap_ms": 111032,
+      "total_time": "20:51.884",
+      "total_time_ms": 1251884,
+      "gap": "0:44.291",
+      "gap_ms": 44291,
+      "lap_count": 11,
+      "had_best_lap": false,
+      "penalty_count": 0,
+      "penalty_points": 0
+    },
     {
       "race_id": "260316_153628_R.json",
       "finished_at": "2026-03-16T15:36:28",

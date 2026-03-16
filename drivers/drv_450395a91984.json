@@ -2,12 +2,12 @@
   "public_id": "drv_450395a91984",
   "driver": "hara takuya",
   "summary": {
-    "points": 0,
-    "average_points_per_race": 0.0,
-    "races": 1,
+    "points": 8,
+    "average_points_per_race": 4.0,
+    "races": 2,
     "wins": 0,
     "podiums": 0,
-    "average_finish": 20.0,
+    "average_finish": 13.0,
     "best_lap": "1:50.165",
     "best_lap_ms": 110165,
     "best_lap_track": "monza",
@@ -16,28 +16,48 @@
     "penalty_points": 0,
     "fastest_lap_awards": 0,
     "most_raced_track": "monza",
-    "last_race_at": "2026-03-16T15:36:28",
-    "last_seen": "2026-03-16T15:48:24",
+    "last_race_at": "2026-03-16T16:18:16",
+    "last_seen": "2026-03-16T16:18:16",
     "win_rate": 0.0,
     "podium_rate": 0.0
   },
   "recent_form": [
+    6,
     20
   ],
   "track_stats": [
     {
       "track": "monza",
-      "races": 1,
+      "races": 2,
       "wins": 0,
       "podiums": 0,
-      "points": 0,
-      "finish_sum": 20,
-      "average_finish": 20.0,
-      "best_lap_ms": null,
-      "best_lap": null
+      "points": 8,
+      "finish_sum": 26,
+      "average_finish": 13.0,
+      "best_lap_ms": 110857,
+      "best_lap": "1:50.857"
     }
   ],
   "race_history": [
+    {
+      "race_id": "260316_161816_R.json",
+      "finished_at": "2026-03-16T16:18:16",
+      "track": "monza",
+      "position": 6,
+      "participants_count": 42,
+      "winner": "Jere Kärki (VR)",
+      "points": 8,
+      "best_lap": "1:50.857",
+      "best_lap_ms": 110857,
+      "total_time": "20:43.581",
+      "total_time_ms": 1243581,
+      "gap": "0:35.988",
+      "gap_ms": 35988,
+      "lap_count": 11,
+      "had_best_lap": false,
+      "penalty_count": 0,
+      "penalty_points": 0
+    },
     {
       "race_id": "260316_153628_R.json",
       "finished_at": "2026-03-16T15:36:28",

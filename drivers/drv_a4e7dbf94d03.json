@@ -4,40 +4,60 @@
   "summary": {
     "points": 0,
     "average_points_per_race": 0.0,
-    "races": 1,
+    "races": 2,
     "wins": 0,
     "podiums": 0,
-    "average_finish": 29.0,
-    "best_lap": "1:49.105",
-    "best_lap_ms": 109105,
+    "average_finish": 20.0,
+    "best_lap": "1:48.935",
+    "best_lap_ms": 108935,
     "best_lap_track": "monza",
-    "best_lap_session_type": "Q",
-    "penalty_count": 0,
-    "penalty_points": 0,
+    "best_lap_session_type": "R",
+    "penalty_count": 3,
+    "penalty_points": 4,
     "fastest_lap_awards": 0,
     "most_raced_track": "monza",
-    "last_race_at": "2026-03-16T15:36:28",
-    "last_seen": "2026-03-16T15:48:24",
+    "last_race_at": "2026-03-16T16:18:16",
+    "last_seen": "2026-03-16T16:18:16",
     "win_rate": 0.0,
     "podium_rate": 0.0
   },
   "recent_form": [
+    11,
     29
   ],
   "track_stats": [
     {
       "track": "monza",
-      "races": 1,
+      "races": 2,
       "wins": 0,
       "podiums": 0,
       "points": 0,
-      "finish_sum": 29,
-      "average_finish": 29.0,
-      "best_lap_ms": null,
-      "best_lap": null
+      "finish_sum": 40,
+      "average_finish": 20.0,
+      "best_lap_ms": 108935,
+      "best_lap": "1:48.935"
     }
   ],
   "race_history": [
+    {
+      "race_id": "260316_161816_R.json",
+      "finished_at": "2026-03-16T16:18:16",
+      "track": "monza",
+      "position": 11,
+      "participants_count": 42,
+      "winner": "Jere Kärki (VR)",
+      "points": 0,
+      "best_lap": "1:48.935",
+      "best_lap_ms": 108935,
+      "total_time": "21:12.289",
+      "total_time_ms": 1272289,
+      "gap": "1:04.696",
+      "gap_ms": 64696,
+      "lap_count": 11,
+      "had_best_lap": false,
+      "penalty_count": 3,
+      "penalty_points": 4
+    },
     {
       "race_id": "260316_153628_R.json",
       "finished_at": "2026-03-16T15:36:28",
@@ -59,9 +79,17 @@
     }
   ],
   "penalties": {
-    "penalty_count": 0,
-    "penalty_points": 0,
-    "reasons": {},
-    "types": {}
+    "penalty_count": 3,
+    "penalty_points": 4,
+    "reasons": {
+      "None": 1,
+      "Trolling": 1,
+      "Cutting": 1
+    },
+    "types": {
+      "DriveThrough": 1,
+      "StopAndGo_30": 1,
+      "None": 1
+    }
   }
 }

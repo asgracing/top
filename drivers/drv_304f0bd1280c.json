@@ -3,11 +3,11 @@
   "driver": "Sultan Isaev",
   "summary": {
     "points": 25,
-    "average_points_per_race": 5.0,
-    "races": 5,
+    "average_points_per_race": 4.17,
+    "races": 6,
     "wins": 1,
     "podiums": 1,
-    "average_finish": 21.2,
+    "average_finish": 21.67,
     "best_lap": "1:47.717",
     "best_lap_ms": 107717,
     "best_lap_track": "monza",
@@ -16,32 +16,51 @@
     "penalty_points": 3,
     "fastest_lap_awards": 0,
     "most_raced_track": "monza",
-    "last_race_at": "2026-03-15T00:16:09",
-    "last_seen": "2026-03-15T00:16:09",
-    "win_rate": 20.0,
-    "podium_rate": 20.0
+    "last_race_at": "2026-03-16T16:18:16",
+    "last_seen": "2026-03-16T16:18:16",
+    "win_rate": 16.67,
+    "podium_rate": 16.67
   },
   "recent_form": [
+    24,
     37,
     15,
     1,
-    38,
-    15
+    38
   ],
   "track_stats": [
     {
       "track": "monza",
-      "races": 5,
+      "races": 6,
       "wins": 1,
       "podiums": 1,
       "points": 25,
-      "finish_sum": 106,
-      "average_finish": 21.2,
+      "finish_sum": 130,
+      "average_finish": 21.67,
       "best_lap_ms": 107717,
       "best_lap": "1:47.717"
     }
   ],
   "race_history": [
+    {
+      "race_id": "260316_161816_R.json",
+      "finished_at": "2026-03-16T16:18:16",
+      "track": "monza",
+      "position": 24,
+      "participants_count": 42,
+      "winner": "Jere Kärki (VR)",
+      "points": 0,
+      "best_lap": "1:49.065",
+      "best_lap_ms": 109065,
+      "total_time": "21:20.952",
+      "total_time_ms": 1280952,
+      "gap": "1:13.359",
+      "gap_ms": 73359,
+      "lap_count": 4,
+      "had_best_lap": false,
+      "penalty_count": 0,
+      "penalty_points": 0
+    },
     {
       "race_id": "260315_001609_R.json",
       "finished_at": "2026-03-15T00:16:09",
