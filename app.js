@@ -531,14 +531,89 @@ function escapeAttribute(value) {
   return encodeURIComponent(String(value ?? ""));
 }
 
-function getDriverProfileHref(publicId) {
-  if (!publicId) return null;
-  return `${dataBasePath}driver/?id=${escapeAttribute(publicId)}`;
+function sha1(input) {
+  const text = unescape(encodeURIComponent(String(input ?? "")));
+  const words = [];
+  const bitLength = text.length * 8;
+
+  for (let i = 0; i < text.length; i += 1) {
+    words[i >> 2] |= text.charCodeAt(i) << (24 - (i % 4) * 8);
+  }
+
+  words[bitLength >> 5] |= 0x80 << (24 - (bitLength % 32));
+  words[(((bitLength + 64) >> 9) << 4) + 15] = bitLength;
+
+  const rotateLeft = (value, shift) => (value << shift) | (value >>> (32 - shift));
+
+  let h0 = 0x67452301;
+  let h1 = 0xefcdab89;
+  let h2 = 0x98badcfe;
+  let h3 = 0x10325476;
+  let h4 = 0xc3d2e1f0;
+
+  for (let i = 0; i < words.length; i += 16) {
+    const w = new Array(80);
+    for (let j = 0; j < 16; j += 1) w[j] = words[i + j] | 0;
+    for (let j = 16; j < 80; j += 1) w[j] = rotateLeft(w[j - 3] ^ w[j - 8] ^ w[j - 14] ^ w[j - 16], 1);
+
+    let a = h0;
+    let b = h1;
+    let c = h2;
+    let d = h3;
+    let e = h4;
+
+    for (let j = 0; j < 80; j += 1) {
+      let f;
+      let k;
+
+      if (j < 20) {
+        f = (b & c) | (~b & d);
+        k = 0x5a827999;
+      } else if (j < 40) {
+        f = b ^ c ^ d;
+        k = 0x6ed9eba1;
+      } else if (j < 60) {
+        f = (b & c) | (b & d) | (c & d);
+        k = 0x8f1bbcdc;
+      } else {
+        f = b ^ c ^ d;
+        k = 0xca62c1d6;
+      }
+
+      const temp = (rotateLeft(a, 5) + f + e + k + w[j]) | 0;
+      e = d;
+      d = c;
+      c = rotateLeft(b, 30);
+      b = a;
+      a = temp;
+    }
+
+    h0 = (h0 + a) | 0;
+    h1 = (h1 + b) | 0;
+    h2 = (h2 + c) | 0;
+    h3 = (h3 + d) | 0;
+    h4 = (h4 + e) | 0;
+  }
+
+  return [h0, h1, h2, h3, h4]
+    .map(value => (value >>> 0).toString(16).padStart(8, "0"))
+    .join("");
 }
 
-function renderDriverLink(name, publicId, className = "driver-link") {
+function makePublicDriverId(playerId) {
+  if (!playerId) return null;
+  return `drv_${sha1(playerId).slice(0, 12)}`;
+}
+
+function getDriverProfileHref(publicId, playerId = null) {
+  const resolvedId = publicId || makePublicDriverId(playerId);
+  if (!resolvedId) return null;
+  return `${dataBasePath}driver/?id=${escapeAttribute(resolvedId)}`;
+}
+
+function renderDriverLink(name, publicId, className = "driver-link", playerId = null) {
   const safeName = escapeHtml(name || "—");
-  const href = getDriverProfileHref(publicId);
+  const href = getDriverProfileHref(publicId, playerId);
   if (!href) {
     return `<span class="${escapeHtml(className)}">${safeName}</span>`;
   }
@@ -856,7 +931,7 @@ function renderTop3(data) {
   return top3.map((row, index) => `
     <article class="pilot-card ${classes[index] || ""}">
       <div class="pilot-rank">#${escapeHtml(row.rank)}</div>
-      <h3 class="pilot-name">${renderDriverLink(row.driver, row.public_id, "driver-link driver-link-heading")}</h3>
+      <h3 class="pilot-name">${renderDriverLink(row.driver, row.public_id, "driver-link driver-link-heading", row.player_id)}</h3>
       <div class="muted">${escapeHtml(t("metaLabels").bestLap)}: ${escapeHtml(row.best_lap || "—")}</div>
       <div class="pilot-meta">
         <div class="meta-box">
@@ -1026,7 +1101,7 @@ function renderLeaderboardTablePage() {
         <div class="driver-cell">
           <div class="driver-avatar">${escapeHtml(initials(row.driver))}</div>
           <div class="driver-name-wrap">
-            <div class="driver-name">${renderDriverLink(row.driver, row.public_id)}</div>
+            <div class="driver-name">${renderDriverLink(row.driver, row.public_id, "driver-link", row.player_id)}</div>
           </div>
         </div>
       </td>
@@ -1091,7 +1166,7 @@ function renderBestLapsTablePage() {
         <div class="driver-cell">
           <div class="driver-avatar">${escapeHtml(initials(row.driver))}</div>
           <div class="driver-name-wrap">
-            <div class="driver-name">${renderDriverLink(row.driver, row.public_id)}</div>
+            <div class="driver-name">${renderDriverLink(row.driver, row.public_id, "driver-link", row.player_id)}</div>
           </div>
         </div>
       </td>
@@ -1180,7 +1255,7 @@ function renderSafetyTablePage() {
         <div class="driver-cell">
           <div class="driver-avatar">${escapeHtml(initials(row.driver))}</div>
           <div class="driver-name-wrap">
-            <div class="driver-name">${renderDriverLink(row.driver, row.public_id)}</div>
+            <div class="driver-name">${renderDriverLink(row.driver, row.public_id, "driver-link", row.player_id)}</div>
           </div>
         </div>
       </td>
@@ -1319,15 +1394,15 @@ function findPublicIdByPlayerId(playerId) {
 
   if (Array.isArray(leaderboardData)) {
     const found = leaderboardData.find(item => item.player_id === playerId || item.playerId === playerId);
-    if (found) return found.public_id || null;
+    if (found) return found.public_id || makePublicDriverId(playerId);
   }
 
   if (Array.isArray(driverIndexData)) {
     const found = driverIndexData.find(item => item.player_id === playerId);
-    if (found) return found.public_id || null;
+    if (found) return found.public_id || makePublicDriverId(playerId);
   }
 
-  return null;
+  return makePublicDriverId(playerId);
 }
 
 function humanizeTrackName(track) {
@@ -1392,7 +1467,6 @@ function renderRacesTable() {
       <tbody>${rows}</tbody>
     </table>
   `;
-  
 
   tableEl.querySelectorAll("tbody tr[data-race-index]").forEach(row => {
     row.addEventListener("click", (event) => {
@@ -1451,7 +1525,7 @@ function renderRaceResultsModal() {
         <div class="driver-cell">
           <div class="driver-avatar">${escapeHtml(initials(row.driver))}</div>
           <div class="driver-name-wrap">
-            <div class="driver-name">${renderDriverLink(row.driver, row.public_id)}</div>
+            <div class="driver-name">${renderDriverLink(row.driver, row.public_id, "driver-link", row.player_id)}</div>
             <div class="race-note">${escapeHtml(row.race_number != null ? `#${row.race_number}` : "")}</div>
           </div>
         </div>
