@@ -1260,7 +1260,7 @@ function renderRacesTable() {
       <td>
         <div class="race-track-cell">
           <span class="race-track-name">${escapeHtml(humanizeTrackName(race.track))}</span>
-          <span class="race-track-meta">${escapeHtml(race.source_file || "—")}</span>
+          
         </div>
       </td>
       <td><span class="race-winner">${escapeHtml(race.winner || t("noWinner"))}</span></td>
