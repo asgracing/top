@@ -3,8 +3,8 @@
   "driver": "Kirill Bulgakov",
   "summary": {
     "points": 312,
-    "average_points_per_race": 9.18,
-    "races": 34,
+    "average_points_per_race": 8.91,
+    "races": 35,
     "wins": 4,
     "podiums": 14,
     "average_finish": 13.94,
@@ -16,34 +16,59 @@
     "penalty_points": 0,
     "fastest_lap_awards": 12,
     "most_raced_track": "monza",
-    "last_race_at": "2026-03-16T19:31:35",
-    "last_seen": "2026-03-16T19:31:35",
-    "win_rate": 11.76,
-    "podium_rate": 41.18,
-    "average_positions_delta": 3.41,
-    "positions_delta_races": 29
+    "last_race_at": "2026-03-16T20:09:24",
+    "last_seen": "2026-03-16T20:09:24",
+    "win_rate": 11.43,
+    "podium_rate": 40.0,
+    "average_positions_delta": 3.4,
+    "positions_delta_races": 30
   },
   "recent_form": [
+    14,
     20,
     6,
     26,
-    18,
-    41
+    18
   ],
   "track_stats": [
     {
       "track": "monza",
-      "races": 34,
+      "races": 35,
       "wins": 4,
       "podiums": 14,
       "points": 312,
-      "finish_sum": 474,
+      "finish_sum": 488,
       "average_finish": 13.94,
       "best_lap_ms": 106750,
       "best_lap": "1:46.750"
     }
   ],
   "race_history": [
+    {
+      "race_id": "260316_200924_R.json",
+      "finished_at": "2026-03-16T20:09:24",
+      "track": "monza",
+      "position": 14,
+      "participants_count": 45,
+      "winner": "It's-a me, Mario!",
+      "points": 0,
+      "qualifying_position": 17,
+      "start_position": 17,
+      "start_position_source": "qualifying_car_id",
+      "positions_delta": 3,
+      "positions_gained": 3,
+      "positions_lost": 0,
+      "best_lap": "1:47.640",
+      "best_lap_ms": 107640,
+      "total_time": "18:20.662",
+      "total_time_ms": 1100662,
+      "gap": "0:00.000",
+      "gap_ms": 0,
+      "lap_count": 10,
+      "had_best_lap": false,
+      "penalty_count": 0,
+      "penalty_points": 0
+    },
     {
       "race_id": "260316_193135_R.json",
       "finished_at": "2026-03-16T19:31:35",

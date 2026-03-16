@@ -18,8 +18,8 @@
     "public_id": "drv_780fce005a4b",
     "driver": "Kirill Bulgakov",
     "points": 312,
-    "average_points_per_race": 9.18,
-    "races": 34,
+    "average_points_per_race": 8.91,
+    "races": 35,
     "wins": 4,
     "podiums": 14,
     "average_finish": 13.94,
@@ -27,7 +27,7 @@
     "best_lap_track": "monza",
     "penalty_count": 0,
     "penalty_points": 0,
-    "last_race_at": "2026-03-16T19:31:35"
+    "last_race_at": "2026-03-16T20:09:24"
   },
   {
     "public_id": "drv_b466bb6eedd8",
@@ -255,6 +255,21 @@
     "last_race_at": "2026-03-15T19:26:02"
   },
   {
+    "public_id": "drv_aa5848bce348",
+    "driver": "Jere Kärki (VR)",
+    "points": 55,
+    "average_points_per_race": 18.33,
+    "races": 3,
+    "wins": 1,
+    "podiums": 2,
+    "average_finish": 2.33,
+    "best_lap": "1:48.107",
+    "best_lap_track": "monza",
+    "penalty_count": 0,
+    "penalty_points": 0,
+    "last_race_at": "2026-03-16T20:09:24"
+  },
+  {
     "public_id": "drv_5a46efa548a0",
     "driver": "Yan Bryukhanov",
     "points": 51,
@@ -373,21 +388,6 @@
     "penalty_count": 0,
     "penalty_points": 0,
     "last_race_at": "2026-03-16T00:22:05"
-  },
-  {
-    "public_id": "drv_aa5848bce348",
-    "driver": "Jere Kärki (VR)",
-    "points": 43,
-    "average_points_per_race": 21.5,
-    "races": 2,
-    "wins": 1,
-    "podiums": 2,
-    "average_finish": 1.5,
-    "best_lap": "1:48.107",
-    "best_lap_track": "monza",
-    "penalty_count": 0,
-    "penalty_points": 0,
-    "last_race_at": "2026-03-16T16:18:16"
   },
   {
     "public_id": "drv_7f31781d8782",
@@ -678,16 +678,16 @@
     "public_id": "drv_2860659f7354",
     "driver": "Michael Elchinov",
     "points": 32,
-    "average_points_per_race": 2.46,
-    "races": 13,
+    "average_points_per_race": 2.29,
+    "races": 14,
     "wins": 0,
     "podiums": 1,
-    "average_finish": 16.38,
+    "average_finish": 17.43,
     "best_lap": "1:49.242",
     "best_lap_track": "monza",
     "penalty_count": 0,
     "penalty_points": 0,
-    "last_race_at": "2026-03-16T19:31:35"
+    "last_race_at": "2026-03-16T20:09:24"
   },
   {
     "public_id": "drv_1daac4308993",
@@ -883,6 +883,21 @@
     "penalty_count": 0,
     "penalty_points": 0,
     "last_race_at": "2026-03-15T13:14:06"
+  },
+  {
+    "public_id": "drv_db00f57a7200",
+    "driver": "It's-a me, Mario!",
+    "points": 26,
+    "average_points_per_race": 13.0,
+    "races": 2,
+    "wins": 1,
+    "podiums": 1,
+    "average_finish": 9.5,
+    "best_lap": "1:47.162",
+    "best_lap_track": "monza",
+    "penalty_count": 0,
+    "penalty_points": 0,
+    "last_race_at": "2026-03-16T20:09:24"
   },
   {
     "public_id": "drv_8df863259862",
@@ -1335,6 +1350,21 @@
     "last_race_at": "2026-03-15T16:58:35"
   },
   {
+    "public_id": "drv_5fb752ab800c",
+    "driver": "Ivan Zavarin",
+    "points": 23,
+    "average_points_per_race": 2.88,
+    "races": 8,
+    "wins": 0,
+    "podiums": 1,
+    "average_finish": 18.5,
+    "best_lap": "1:47.917",
+    "best_lap_track": "monza",
+    "penalty_count": 0,
+    "penalty_points": 0,
+    "last_race_at": "2026-03-16T20:09:24"
+  },
+  {
     "public_id": "drv_b45fec65c646",
     "driver": "Ilya S",
     "points": 23,
@@ -1545,21 +1575,6 @@
     "last_race_at": "2026-03-13T15:38:47"
   },
   {
-    "public_id": "drv_feb4f4219d92",
-    "driver": "Paul Kerrigan",
-    "points": 19,
-    "average_points_per_race": 9.5,
-    "races": 2,
-    "wins": 0,
-    "podiums": 1,
-    "average_finish": 6.0,
-    "best_lap": "1:50.000",
-    "best_lap_track": "monza",
-    "penalty_count": 0,
-    "penalty_points": 0,
-    "last_race_at": "2026-03-15T02:38:02"
-  },
-  {
     "public_id": "drv_675236474afa",
     "driver": "Top G",
     "points": 19,
@@ -1588,6 +1603,21 @@
     "penalty_count": 0,
     "penalty_points": 0,
     "last_race_at": "2026-03-14T01:57:10"
+  },
+  {
+    "public_id": "drv_feb4f4219d92",
+    "driver": "Paul Kerrigan",
+    "points": 19,
+    "average_points_per_race": 6.33,
+    "races": 3,
+    "wins": 0,
+    "podiums": 1,
+    "average_finish": 11.33,
+    "best_lap": "1:49.645",
+    "best_lap_track": "monza",
+    "penalty_count": 0,
+    "penalty_points": 0,
+    "last_race_at": "2026-03-16T20:09:24"
   },
   {
     "public_id": "drv_b9324e79c5c3",
@@ -1648,21 +1678,6 @@
     "penalty_count": 0,
     "penalty_points": 0,
     "last_race_at": "2026-03-15T18:47:44"
-  },
-  {
-    "public_id": "drv_fbd16be9c64c",
-    "driver": "Dariusz Gawrysiak",
-    "points": 18,
-    "average_points_per_race": 18.0,
-    "races": 1,
-    "wins": 0,
-    "podiums": 1,
-    "average_finish": 2.0,
-    "best_lap": "1:49.750",
-    "best_lap_track": "monza",
-    "penalty_count": 0,
-    "penalty_points": 0,
-    "last_race_at": "2026-03-16T19:31:35"
   },
   {
     "public_id": "drv_1937a788d59e",
@@ -1843,6 +1858,21 @@
     "penalty_count": 0,
     "penalty_points": 0,
     "last_race_at": "2026-03-14T19:53:49"
+  },
+  {
+    "public_id": "drv_fbd16be9c64c",
+    "driver": "Dariusz Gawrysiak",
+    "points": 18,
+    "average_points_per_race": 9.0,
+    "races": 2,
+    "wins": 0,
+    "podiums": 1,
+    "average_finish": 17.0,
+    "best_lap": "1:49.750",
+    "best_lap_track": "monza",
+    "penalty_count": 0,
+    "penalty_points": 0,
+    "last_race_at": "2026-03-16T20:09:24"
   },
   {
     "public_id": "drv_c21edb4a83ca",
@@ -2415,6 +2445,21 @@
     "last_race_at": "2026-03-15T00:16:09"
   },
   {
+    "public_id": "drv_9afd0424ded9",
+    "driver": "Temer Lakerino",
+    "points": 15,
+    "average_points_per_race": 7.5,
+    "races": 2,
+    "wins": 0,
+    "podiums": 1,
+    "average_finish": 21.0,
+    "best_lap": "1:48.580",
+    "best_lap_track": "monza",
+    "penalty_count": 0,
+    "penalty_points": 0,
+    "last_race_at": "2026-03-16T20:09:24"
+  },
+  {
     "public_id": "drv_cb5d95ebe678",
     "driver": "Kirill Dmitriev",
     "points": 15,
@@ -2490,6 +2535,21 @@
     "last_race_at": "2026-03-15T01:27:30"
   },
   {
+    "public_id": "drv_dbc06b53aee0",
+    "driver": "Denis Lizunov",
+    "points": 14,
+    "average_points_per_race": 4.67,
+    "races": 3,
+    "wins": 0,
+    "podiums": 0,
+    "average_finish": 8.67,
+    "best_lap": "1:48.962",
+    "best_lap_track": "monza",
+    "penalty_count": 0,
+    "penalty_points": 0,
+    "last_race_at": "2026-03-16T20:09:24"
+  },
+  {
     "public_id": "drv_6941473e69fd",
     "driver": "Joseph O.",
     "points": 14,
@@ -2533,6 +2593,21 @@
     "penalty_count": 1,
     "penalty_points": 3,
     "last_race_at": "2026-03-16T00:22:05"
+  },
+  {
+    "public_id": "drv_2352d9041299",
+    "driver": "Saveliy Usatov",
+    "points": 14,
+    "average_points_per_race": 1.17,
+    "races": 12,
+    "wins": 0,
+    "podiums": 0,
+    "average_finish": 19.67,
+    "best_lap": "1:48.967",
+    "best_lap_track": "monza",
+    "penalty_count": 1,
+    "penalty_points": 3,
+    "last_race_at": "2026-03-16T20:09:24"
   },
   {
     "public_id": "drv_3c2cf0f84f65",
@@ -2775,21 +2850,6 @@
     "last_race_at": "2026-03-13T15:02:24"
   },
   {
-    "public_id": "drv_dbc06b53aee0",
-    "driver": "Denis Lizunov",
-    "points": 12,
-    "average_points_per_race": 6.0,
-    "races": 2,
-    "wins": 0,
-    "podiums": 0,
-    "average_finish": 8.5,
-    "best_lap": "1:48.962",
-    "best_lap_track": "monza",
-    "penalty_count": 0,
-    "penalty_points": 0,
-    "last_race_at": "2026-03-16T19:31:35"
-  },
-  {
     "public_id": "drv_51a753eec09a",
     "driver": "celian willem-larabi",
     "points": 12,
@@ -2940,21 +3000,6 @@
     "last_race_at": "2026-03-14T21:08:17"
   },
   {
-    "public_id": "drv_937f38286851",
-    "driver": "Андрей Ма",
-    "points": 12,
-    "average_points_per_race": 1.33,
-    "races": 9,
-    "wins": 0,
-    "podiums": 0,
-    "average_finish": 20.33,
-    "best_lap": "1:48.660",
-    "best_lap_track": "monza",
-    "penalty_count": 3,
-    "penalty_points": 6,
-    "last_race_at": "2026-03-15T00:16:09"
-  },
-  {
     "public_id": "drv_3da42bbd8ddd",
     "driver": "Matteo Messina",
     "points": 12,
@@ -2968,6 +3013,21 @@
     "penalty_count": 2,
     "penalty_points": 3,
     "last_race_at": "2026-03-14T14:55:10"
+  },
+  {
+    "public_id": "drv_937f38286851",
+    "driver": "Андрей Ма",
+    "points": 12,
+    "average_points_per_race": 1.2,
+    "races": 10,
+    "wins": 0,
+    "podiums": 0,
+    "average_finish": 22.4,
+    "best_lap": "1:48.660",
+    "best_lap_track": "monza",
+    "penalty_count": 3,
+    "penalty_points": 6,
+    "last_race_at": "2026-03-16T20:09:24"
   },
   {
     "public_id": "drv_4e4452a28e5d",
@@ -3003,16 +3063,16 @@
     "public_id": "drv_43114e49748a",
     "driver": "Sergei Buravov",
     "points": 12,
-    "average_points_per_race": 1.0,
-    "races": 12,
+    "average_points_per_race": 0.92,
+    "races": 13,
     "wins": 0,
     "podiums": 0,
-    "average_finish": 23.5,
+    "average_finish": 23.85,
     "best_lap": "1:49.457",
     "best_lap_track": "monza",
     "penalty_count": 0,
     "penalty_points": 0,
-    "last_race_at": "2026-03-16T19:31:35"
+    "last_race_at": "2026-03-16T20:09:24"
   },
   {
     "public_id": "drv_7b51e90db7c1",
@@ -3180,6 +3240,21 @@
     "last_race_at": "2026-03-15T09:59:01"
   },
   {
+    "public_id": "drv_9a70c0c4f784",
+    "driver": "Dmitriy Reecenal",
+    "points": 10,
+    "average_points_per_race": 10.0,
+    "races": 1,
+    "wins": 0,
+    "podiums": 0,
+    "average_finish": 5.0,
+    "best_lap": "1:48.757",
+    "best_lap_track": "monza",
+    "penalty_count": 0,
+    "penalty_points": 0,
+    "last_race_at": "2026-03-16T20:09:24"
+  },
+  {
     "public_id": "drv_510058d2cd21",
     "driver": "Drift Paragon",
     "points": 10,
@@ -3318,16 +3393,16 @@
     "public_id": "drv_232597ff8ada",
     "driver": "Giuseppe Librizzi",
     "points": 10,
-    "average_points_per_race": 5.0,
-    "races": 2,
+    "average_points_per_race": 3.33,
+    "races": 3,
     "wins": 0,
     "podiums": 0,
-    "average_finish": 14.5,
+    "average_finish": 15.0,
     "best_lap": "1:49.105",
     "best_lap_track": "monza",
     "penalty_count": 0,
     "penalty_points": 0,
-    "last_race_at": "2026-03-16T17:38:38"
+    "last_race_at": "2026-03-16T20:09:24"
   },
   {
     "public_id": "drv_bb4d51ca2fdc",
@@ -3433,21 +3508,6 @@
     "penalty_count": 0,
     "penalty_points": 0,
     "last_race_at": "2026-03-15T20:38:27"
-  },
-  {
-    "public_id": "drv_2352d9041299",
-    "driver": "Saveliy Usatov",
-    "points": 10,
-    "average_points_per_race": 0.91,
-    "races": 11,
-    "wins": 0,
-    "podiums": 0,
-    "average_finish": 20.73,
-    "best_lap": "1:48.985",
-    "best_lap_track": "monza",
-    "penalty_count": 1,
-    "penalty_points": 3,
-    "last_race_at": "2026-03-16T19:31:35"
   },
   {
     "public_id": "drv_52b9171227ee",
@@ -3780,21 +3840,6 @@
     "last_race_at": "2026-03-14T12:27:39"
   },
   {
-    "public_id": "drv_f74dcf635dcc",
-    "driver": "Maksim Baklanov",
-    "points": 8,
-    "average_points_per_race": 8.0,
-    "races": 1,
-    "wins": 0,
-    "podiums": 0,
-    "average_finish": 6.0,
-    "best_lap": "1:49.967",
-    "best_lap_track": "monza",
-    "penalty_count": 0,
-    "penalty_points": 0,
-    "last_race_at": "2026-03-16T19:31:35"
-  },
-  {
     "public_id": "drv_1721886b10f4",
     "driver": "Ryan BONO",
     "points": 8,
@@ -4020,6 +4065,21 @@
     "last_race_at": "2026-03-14T21:46:15"
   },
   {
+    "public_id": "drv_f74dcf635dcc",
+    "driver": "Maksim Baklanov",
+    "points": 8,
+    "average_points_per_race": 4.0,
+    "races": 2,
+    "wins": 0,
+    "podiums": 0,
+    "average_finish": 20.5,
+    "best_lap": "1:49.967",
+    "best_lap_track": "monza",
+    "penalty_count": 0,
+    "penalty_points": 0,
+    "last_race_at": "2026-03-16T20:09:24"
+  },
+  {
     "public_id": "drv_1307a3536f35",
     "driver": "Peter p",
     "points": 8,
@@ -4033,6 +4093,21 @@
     "penalty_count": 0,
     "penalty_points": 0,
     "last_race_at": "2026-03-14T13:40:43"
+  },
+  {
+    "public_id": "drv_39c83180f26a",
+    "driver": "ALEKSEY EPIFANOV",
+    "points": 8,
+    "average_points_per_race": 4.0,
+    "races": 2,
+    "wins": 0,
+    "podiums": 0,
+    "average_finish": 22.0,
+    "best_lap": "1:48.720",
+    "best_lap_track": "monza",
+    "penalty_count": 0,
+    "penalty_points": 0,
+    "last_race_at": "2026-03-16T20:09:24"
   },
   {
     "public_id": "drv_64e4d4ba1963",
@@ -4170,21 +4245,6 @@
     "last_race_at": "2026-03-15T23:08:44"
   },
   {
-    "public_id": "drv_405f484a0c3c",
-    "driver": "Eduardo Salvan",
-    "points": 6,
-    "average_points_per_race": 6.0,
-    "races": 1,
-    "wins": 0,
-    "podiums": 0,
-    "average_finish": 7.0,
-    "best_lap": "1:49.077",
-    "best_lap_track": "monza",
-    "penalty_count": 0,
-    "penalty_points": 0,
-    "last_race_at": "2026-03-16T19:31:35"
-  },
-  {
     "public_id": "drv_d622f86779b0",
     "driver": "Hide F",
     "points": 6,
@@ -4305,6 +4365,36 @@
     "last_race_at": "2026-03-13T22:52:00"
   },
   {
+    "public_id": "drv_ffe886ab85f0",
+    "driver": "atom saroyan",
+    "points": 6,
+    "average_points_per_race": 2.0,
+    "races": 3,
+    "wins": 0,
+    "podiums": 0,
+    "average_finish": 12.0,
+    "best_lap": "1:49.965",
+    "best_lap_track": "monza",
+    "penalty_count": 0,
+    "penalty_points": 0,
+    "last_race_at": "2026-03-16T20:09:24"
+  },
+  {
+    "public_id": "drv_405f484a0c3c",
+    "driver": "Eduardo Salvan",
+    "points": 6,
+    "average_points_per_race": 3.0,
+    "races": 2,
+    "wins": 0,
+    "podiums": 0,
+    "average_finish": 12.0,
+    "best_lap": "1:49.077",
+    "best_lap_track": "monza",
+    "penalty_count": 0,
+    "penalty_points": 0,
+    "last_race_at": "2026-03-16T20:09:24"
+  },
+  {
     "public_id": "drv_5c5c20122618",
     "driver": "Dave P",
     "points": 6,
@@ -4318,21 +4408,6 @@
     "penalty_count": 0,
     "penalty_points": 0,
     "last_race_at": "2026-03-14T17:59:58"
-  },
-  {
-    "public_id": "drv_4711f407620f",
-    "driver": "Liam Ford",
-    "points": 6,
-    "average_points_per_race": 3.0,
-    "races": 2,
-    "wins": 0,
-    "podiums": 0,
-    "average_finish": 13.0,
-    "best_lap": "1:49.450",
-    "best_lap_track": "monza",
-    "penalty_count": 0,
-    "penalty_points": 0,
-    "last_race_at": "2026-03-13T21:36:17"
   },
   {
     "public_id": "drv_4414ca65f495",
@@ -4515,6 +4590,21 @@
     "last_race_at": "2026-03-14T23:00:59"
   },
   {
+    "public_id": "drv_4d0210e802a4",
+    "driver": "HAYTHAM SOBHY",
+    "points": 6,
+    "average_points_per_race": 1.0,
+    "races": 6,
+    "wins": 0,
+    "podiums": 0,
+    "average_finish": 21.33,
+    "best_lap": "1:47.857",
+    "best_lap_track": "monza",
+    "penalty_count": 0,
+    "penalty_points": 0,
+    "last_race_at": "2026-03-16T20:09:24"
+  },
+  {
     "public_id": "drv_5a01c645326a",
     "driver": "Bruce Lee",
     "points": 6,
@@ -4530,19 +4620,19 @@
     "last_race_at": "2026-03-14T14:55:10"
   },
   {
-    "public_id": "drv_4d0210e802a4",
-    "driver": "BARA  SULIMAN",
+    "public_id": "drv_4711f407620f",
+    "driver": "Liam Ford",
     "points": 6,
-    "average_points_per_race": 1.2,
-    "races": 5,
+    "average_points_per_race": 2.0,
+    "races": 3,
     "wins": 0,
     "podiums": 0,
-    "average_finish": 22.0,
-    "best_lap": "1:47.857",
+    "average_finish": 22.67,
+    "best_lap": "1:49.450",
     "best_lap_track": "monza",
     "penalty_count": 0,
     "penalty_points": 0,
-    "last_race_at": "2026-03-15T23:46:16"
+    "last_race_at": "2026-03-16T20:09:24"
   },
   {
     "public_id": "drv_b9a5d1649e20",
@@ -4723,21 +4813,6 @@
     "penalty_count": 0,
     "penalty_points": 0,
     "last_race_at": "2026-03-15T23:08:44"
-  },
-  {
-    "public_id": "drv_5fb752ab800c",
-    "driver": "Ivan Zavarin",
-    "points": 5,
-    "average_points_per_race": 0.71,
-    "races": 7,
-    "wins": 0,
-    "podiums": 0,
-    "average_finish": 20.86,
-    "best_lap": "1:48.112",
-    "best_lap_track": "monza",
-    "penalty_count": 0,
-    "penalty_points": 0,
-    "last_race_at": "2026-03-16T19:31:35"
   },
   {
     "public_id": "drv_ff6259c2c3d3",
@@ -5640,6 +5715,21 @@
     "last_race_at": "2026-03-16T18:16:39"
   },
   {
+    "public_id": "drv_c2e780c3318d",
+    "driver": "Y Seitz",
+    "points": 2,
+    "average_points_per_race": 0.67,
+    "races": 3,
+    "wins": 0,
+    "podiums": 0,
+    "average_finish": 20.33,
+    "best_lap": "1:49.080",
+    "best_lap_track": "monza",
+    "penalty_count": 0,
+    "penalty_points": 0,
+    "last_race_at": "2026-03-16T20:09:24"
+  },
+  {
     "public_id": "drv_582f3428bf35",
     "driver": "Arsen Kaibov",
     "points": 2,
@@ -5683,21 +5773,6 @@
     "penalty_count": 0,
     "penalty_points": 0,
     "last_race_at": "2026-03-14T13:40:43"
-  },
-  {
-    "public_id": "drv_c2e780c3318d",
-    "driver": "Y Seitz",
-    "points": 2,
-    "average_points_per_race": 1.0,
-    "races": 2,
-    "wins": 0,
-    "podiums": 0,
-    "average_finish": 23.0,
-    "best_lap": "1:49.330",
-    "best_lap_track": "monza",
-    "penalty_count": 0,
-    "penalty_points": 0,
-    "last_race_at": "2026-03-15T16:58:35"
   },
   {
     "public_id": "drv_715475df15f4",
@@ -5790,6 +5865,21 @@
     "last_race_at": "2026-03-15T01:27:30"
   },
   {
+    "public_id": "drv_d26d8500b037",
+    "driver": "HORACIO OVIEDO",
+    "points": 1,
+    "average_points_per_race": 1.0,
+    "races": 1,
+    "wins": 0,
+    "podiums": 0,
+    "average_finish": 10.0,
+    "best_lap": "1:50.660",
+    "best_lap_track": "monza",
+    "penalty_count": 0,
+    "penalty_points": 0,
+    "last_race_at": "2026-03-16T20:09:24"
+  },
+  {
     "public_id": "drv_d435107f404e",
     "driver": "Hulbert Renjiro",
     "points": 1,
@@ -5803,21 +5893,6 @@
     "penalty_count": 0,
     "penalty_points": 0,
     "last_race_at": "2026-03-13T21:36:17"
-  },
-  {
-    "public_id": "drv_ea720160d1d5",
-    "driver": "ixio kowal",
-    "points": 1,
-    "average_points_per_race": 1.0,
-    "races": 1,
-    "wins": 0,
-    "podiums": 0,
-    "average_finish": 10.0,
-    "best_lap": "1:50.387",
-    "best_lap_track": "monza",
-    "penalty_count": 2,
-    "penalty_points": 3,
-    "last_race_at": "2026-03-16T19:31:35"
   },
   {
     "public_id": "drv_46a063692d34",
@@ -6013,6 +6088,21 @@
     "penalty_count": 0,
     "penalty_points": 0,
     "last_race_at": "2026-03-16T16:57:38"
+  },
+  {
+    "public_id": "drv_ea720160d1d5",
+    "driver": "ixio kowal",
+    "points": 1,
+    "average_points_per_race": 0.5,
+    "races": 2,
+    "wins": 0,
+    "podiums": 0,
+    "average_finish": 18.5,
+    "best_lap": "1:50.387",
+    "best_lap_track": "monza",
+    "penalty_count": 2,
+    "penalty_points": 3,
+    "last_race_at": "2026-03-16T20:09:24"
   },
   {
     "public_id": "drv_bfb49fcdd772",
@@ -6435,6 +6525,21 @@
     "last_race_at": "2026-03-16T00:22:05"
   },
   {
+    "public_id": "drv_be2f8f8abd12",
+    "driver": "Yekta AL",
+    "points": 0,
+    "average_points_per_race": 0.0,
+    "races": 1,
+    "wins": 0,
+    "podiums": 0,
+    "average_finish": 11.0,
+    "best_lap": "1:54.340",
+    "best_lap_track": "monza",
+    "penalty_count": 0,
+    "penalty_points": 0,
+    "last_race_at": "2026-03-16T20:09:24"
+  },
+  {
     "public_id": "drv_6d5558f055c5",
     "driver": "Adam Pokorný",
     "points": 0,
@@ -6778,21 +6883,6 @@
     "penalty_count": 0,
     "penalty_points": 0,
     "last_race_at": "2026-03-14T21:08:17"
-  },
-  {
-    "public_id": "drv_ffe886ab85f0",
-    "driver": "atom saroyan",
-    "points": 0,
-    "average_points_per_race": 0.0,
-    "races": 2,
-    "wins": 0,
-    "podiums": 0,
-    "average_finish": 14.5,
-    "best_lap": "1:49.965",
-    "best_lap_track": "monza",
-    "penalty_count": 0,
-    "penalty_points": 0,
-    "last_race_at": "2026-03-15T20:38:27"
   },
   {
     "public_id": "drv_e7fa8454363c",
@@ -7500,21 +7590,6 @@
     "last_race_at": "2026-03-16T15:36:28"
   },
   {
-    "public_id": "drv_db00f57a7200",
-    "driver": "It's-a me, Mario!",
-    "points": 0,
-    "average_points_per_race": 0.0,
-    "races": 1,
-    "wins": 0,
-    "podiums": 0,
-    "average_finish": 18.0,
-    "best_lap": "1:47.225",
-    "best_lap_track": "monza",
-    "penalty_count": 0,
-    "penalty_points": 0,
-    "last_race_at": "2026-03-15T21:51:43"
-  },
-  {
     "public_id": "drv_251732859f7d",
     "driver": "Jp Carvalhinho",
     "points": 0,
@@ -7693,6 +7768,21 @@
     "penalty_count": 0,
     "penalty_points": 0,
     "last_race_at": "2026-03-15T19:26:02"
+  },
+  {
+    "public_id": "drv_62839d65718c",
+    "driver": "Andrei Lewis",
+    "points": 0,
+    "average_points_per_race": 0.0,
+    "races": 1,
+    "wins": 0,
+    "podiums": 0,
+    "average_finish": 19.0,
+    "best_lap": "1:51.877",
+    "best_lap_track": "monza",
+    "penalty_count": 0,
+    "penalty_points": 0,
+    "last_race_at": "2026-03-16T20:09:24"
   },
   {
     "public_id": "drv_57eb3afed807",
@@ -7890,21 +7980,6 @@
     "last_race_at": "2026-03-15T16:21:55"
   },
   {
-    "public_id": "drv_2855c39bd833",
-    "driver": "Daniil Mcqeen",
-    "points": 0,
-    "average_points_per_race": 0.0,
-    "races": 2,
-    "wins": 0,
-    "podiums": 0,
-    "average_finish": 19.5,
-    "best_lap": "1:48.675",
-    "best_lap_track": "monza",
-    "penalty_count": 0,
-    "penalty_points": 0,
-    "last_race_at": "2026-03-15T15:45:07"
-  },
-  {
     "public_id": "drv_317a7657ab96",
     "driver": ". [APEX]상원",
     "points": 0,
@@ -7978,6 +8053,21 @@
     "penalty_count": 0,
     "penalty_points": 0,
     "last_race_at": "2026-03-15T20:38:27"
+  },
+  {
+    "public_id": "drv_2855c39bd833",
+    "driver": "Daniil Mcqeen",
+    "points": 0,
+    "average_points_per_race": 0.0,
+    "races": 3,
+    "wins": 0,
+    "podiums": 0,
+    "average_finish": 20.0,
+    "best_lap": "1:48.025",
+    "best_lap_track": "monza",
+    "penalty_count": 0,
+    "penalty_points": 0,
+    "last_race_at": "2026-03-16T20:09:24"
   },
   {
     "public_id": "drv_81737ed0cf93",
@@ -8083,6 +8173,21 @@
     "penalty_count": 2,
     "penalty_points": 1,
     "last_race_at": "2026-03-15T00:16:09"
+  },
+  {
+    "public_id": "drv_b75ba3b738e2",
+    "driver": "mirami mir",
+    "points": 0,
+    "average_points_per_race": 0.0,
+    "races": 1,
+    "wins": 0,
+    "podiums": 0,
+    "average_finish": 20.0,
+    "best_lap": "1:52.412",
+    "best_lap_track": "monza",
+    "penalty_count": 0,
+    "penalty_points": 0,
+    "last_race_at": "2026-03-16T20:09:24"
   },
   {
     "public_id": "drv_05ad6939eaf8",
@@ -8233,21 +8338,6 @@
     "penalty_count": 0,
     "penalty_points": 0,
     "last_race_at": "2026-03-14T00:04:53"
-  },
-  {
-    "public_id": "drv_6211eaa36b6a",
-    "driver": "Ábel Kiss",
-    "points": 0,
-    "average_points_per_race": 0.0,
-    "races": 2,
-    "wins": 0,
-    "podiums": 0,
-    "average_finish": 20.5,
-    "best_lap": "1:52.312",
-    "best_lap_track": "monza",
-    "penalty_count": 0,
-    "penalty_points": 0,
-    "last_race_at": "2026-03-16T19:31:35"
   },
   {
     "public_id": "drv_2d576b6354fb",
@@ -8443,6 +8533,21 @@
     "penalty_count": 0,
     "penalty_points": 0,
     "last_race_at": "2026-03-14T01:21:24"
+  },
+  {
+    "public_id": "drv_14ce23d95530",
+    "driver": "Hanmea S",
+    "points": 0,
+    "average_points_per_race": 0.0,
+    "races": 2,
+    "wins": 0,
+    "podiums": 0,
+    "average_finish": 21.0,
+    "best_lap": "1:53.735",
+    "best_lap_track": "monza",
+    "penalty_count": 0,
+    "penalty_points": 0,
+    "last_race_at": "2026-03-16T20:09:24"
   },
   {
     "public_id": "drv_216610c8f5af",
@@ -9255,6 +9360,21 @@
     "last_race_at": "2026-03-16T17:38:38"
   },
   {
+    "public_id": "drv_0b8c61547ee5",
+    "driver": "Kacper Łyjak",
+    "points": 0,
+    "average_points_per_race": 0.0,
+    "races": 1,
+    "wins": 0,
+    "podiums": 0,
+    "average_finish": 23.0,
+    "best_lap": "1:53.380",
+    "best_lap_track": "monza",
+    "penalty_count": 0,
+    "penalty_points": 0,
+    "last_race_at": "2026-03-16T20:09:24"
+  },
+  {
     "public_id": "drv_cc3ddae1215c",
     "driver": "Lewis LOK",
     "points": 0,
@@ -9900,21 +10020,6 @@
     "last_race_at": "2026-03-16T15:36:28"
   },
   {
-    "public_id": "drv_207d14eeee04",
-    "driver": "K  Magomed | TS",
-    "points": 0,
-    "average_points_per_race": 0.0,
-    "races": 6,
-    "wins": 0,
-    "podiums": 0,
-    "average_finish": 24.83,
-    "best_lap": "1:48.217",
-    "best_lap_track": "monza",
-    "penalty_count": 0,
-    "penalty_points": 0,
-    "last_race_at": "2026-03-16T19:31:35"
-  },
-  {
     "public_id": "drv_c2276f782610",
     "driver": "AMR RACING",
     "points": 0,
@@ -10063,6 +10168,21 @@
     "penalty_count": 0,
     "penalty_points": 0,
     "last_race_at": "2026-03-14T01:57:10"
+  },
+  {
+    "public_id": "drv_ecd56cbf3af6",
+    "driver": "Miel Hendrickx",
+    "points": 0,
+    "average_points_per_race": 0.0,
+    "races": 1,
+    "wins": 0,
+    "podiums": 0,
+    "average_finish": 25.0,
+    "best_lap": "1:49.565",
+    "best_lap_track": "monza",
+    "penalty_count": 0,
+    "penalty_points": 0,
+    "last_race_at": "2026-03-16T20:09:24"
   },
   {
     "public_id": "drv_4466d4352bb0",
@@ -10215,21 +10335,6 @@
     "last_race_at": "2026-03-13T22:14:10"
   },
   {
-    "public_id": "drv_15e3ae90efa5",
-    "driver": "vlad Kosyanenko[ASG]",
-    "points": 0,
-    "average_points_per_race": 0.0,
-    "races": 1,
-    "wins": 0,
-    "podiums": 0,
-    "average_finish": 25.0,
-    "best_lap": null,
-    "best_lap_track": null,
-    "penalty_count": 0,
-    "penalty_points": 0,
-    "last_race_at": "2026-03-13T21:36:17"
-  },
-  {
     "public_id": "drv_481f6408ab13",
     "driver": "Wojtek Kucz",
     "points": 0,
@@ -10318,6 +10423,21 @@
     "penalty_count": 0,
     "penalty_points": 0,
     "last_race_at": "2026-03-15T15:08:40"
+  },
+  {
+    "public_id": "drv_207d14eeee04",
+    "driver": "K  Magomed | TS",
+    "points": 0,
+    "average_points_per_race": 0.0,
+    "races": 7,
+    "wins": 0,
+    "podiums": 0,
+    "average_finish": 25.43,
+    "best_lap": "1:48.217",
+    "best_lap_track": "monza",
+    "penalty_count": 0,
+    "penalty_points": 0,
+    "last_race_at": "2026-03-16T20:09:24"
   },
   {
     "public_id": "drv_0eeaca23794c",
@@ -10545,6 +10665,21 @@
     "last_race_at": "2026-03-16T16:57:38"
   },
   {
+    "public_id": "drv_3bd7ff12b1f0",
+    "driver": "Guanxi Yang",
+    "points": 0,
+    "average_points_per_race": 0.0,
+    "races": 1,
+    "wins": 0,
+    "podiums": 0,
+    "average_finish": 26.0,
+    "best_lap": null,
+    "best_lap_track": null,
+    "penalty_count": 0,
+    "penalty_points": 0,
+    "last_race_at": "2026-03-16T20:09:24"
+  },
+  {
     "public_id": "drv_06ddd544e66e",
     "driver": "jimmy b",
     "points": 0,
@@ -10725,6 +10860,21 @@
     "last_race_at": "2026-03-15T20:38:27"
   },
   {
+    "public_id": "drv_6211eaa36b6a",
+    "driver": "Ábel Kiss",
+    "points": 0,
+    "average_points_per_race": 0.0,
+    "races": 3,
+    "wins": 0,
+    "podiums": 0,
+    "average_finish": 26.0,
+    "best_lap": "1:52.312",
+    "best_lap_track": "monza",
+    "penalty_count": 0,
+    "penalty_points": 0,
+    "last_race_at": "2026-03-16T20:09:24"
+  },
+  {
     "public_id": "drv_7eb4ba34321c",
     "driver": "Ak P",
     "points": 0,
@@ -10753,6 +10903,21 @@
     "penalty_count": 0,
     "penalty_points": 0,
     "last_race_at": "2026-03-16T17:38:38"
+  },
+  {
+    "public_id": "drv_5e69feb1ca2a",
+    "driver": "Valera Livencov",
+    "points": 0,
+    "average_points_per_race": 0.0,
+    "races": 3,
+    "wins": 0,
+    "podiums": 0,
+    "average_finish": 26.33,
+    "best_lap": "1:49.592",
+    "best_lap_track": "monza",
+    "penalty_count": 1,
+    "penalty_points": 1,
+    "last_race_at": "2026-03-16T20:09:24"
   },
   {
     "public_id": "drv_7a74a62811dd",
@@ -11805,6 +11970,21 @@
     "last_race_at": "2026-03-14T19:15:44"
   },
   {
+    "public_id": "drv_15e3ae90efa5",
+    "driver": "vlad Kosyanenko[ASG]",
+    "points": 0,
+    "average_points_per_race": 0.0,
+    "races": 2,
+    "wins": 0,
+    "podiums": 0,
+    "average_finish": 29.0,
+    "best_lap": null,
+    "best_lap_track": null,
+    "penalty_count": 0,
+    "penalty_points": 0,
+    "last_race_at": "2026-03-16T20:09:24"
+  },
+  {
     "public_id": "drv_dcf75d87a0be",
     "driver": "Yan Oliveira",
     "points": 0,
@@ -12735,6 +12915,21 @@
     "last_race_at": "2026-03-15T13:52:15"
   },
   {
+    "public_id": "drv_2e3ea7c4d7fa",
+    "driver": "rp",
+    "points": 0,
+    "average_points_per_race": 0.0,
+    "races": 3,
+    "wins": 0,
+    "podiums": 0,
+    "average_finish": 32.0,
+    "best_lap": "1:50.860",
+    "best_lap_track": "monza",
+    "penalty_count": 0,
+    "penalty_points": 0,
+    "last_race_at": "2026-03-16T20:09:24"
+  },
+  {
     "public_id": "drv_ead3d6e9f3b0",
     "driver": "Vahe Gabrielyan",
     "points": 0,
@@ -12958,21 +13153,6 @@
     "penalty_count": 0,
     "penalty_points": 0,
     "last_race_at": "2026-03-16T16:57:38"
-  },
-  {
-    "public_id": "drv_5e69feb1ca2a",
-    "driver": "Valera Livencov",
-    "points": 0,
-    "average_points_per_race": 0.0,
-    "races": 2,
-    "wins": 0,
-    "podiums": 0,
-    "average_finish": 33.0,
-    "best_lap": "1:50.430",
-    "best_lap_track": "monza",
-    "penalty_count": 0,
-    "penalty_points": 0,
-    "last_race_at": "2026-03-16T19:31:35"
   },
   {
     "public_id": "drv_6609c84212e9",
@@ -13335,6 +13515,21 @@
     "last_race_at": "2026-03-14T23:00:59"
   },
   {
+    "public_id": "drv_720de517c860",
+    "driver": "Youri Bouam",
+    "points": 0,
+    "average_points_per_race": 0.0,
+    "races": 1,
+    "wins": 0,
+    "podiums": 0,
+    "average_finish": 34.0,
+    "best_lap": null,
+    "best_lap_track": null,
+    "penalty_count": 0,
+    "penalty_points": 0,
+    "last_race_at": "2026-03-16T20:09:24"
+  },
+  {
     "public_id": "drv_ce2f46097f7f",
     "driver": "Sergey Zubanov",
     "points": 0,
@@ -13665,21 +13860,6 @@
     "last_race_at": "2026-03-13T22:52:00"
   },
   {
-    "public_id": "drv_996286905fb5",
-    "driver": "Alexander Serbov",
-    "points": 0,
-    "average_points_per_race": 0.0,
-    "races": 1,
-    "wins": 0,
-    "podiums": 0,
-    "average_finish": 36.0,
-    "best_lap": null,
-    "best_lap_track": null,
-    "penalty_count": 0,
-    "penalty_points": 0,
-    "last_race_at": "2026-03-14T20:30:08"
-  },
-  {
     "public_id": "drv_73f3d6d9fd66",
     "driver": "BORYS  CIEPIELSKI",
     "points": 0,
@@ -13845,21 +14025,6 @@
     "last_race_at": "2026-03-14T21:08:17"
   },
   {
-    "public_id": "drv_2e3ea7c4d7fa",
-    "driver": "rp",
-    "points": 0,
-    "average_points_per_race": 0.0,
-    "races": 2,
-    "wins": 0,
-    "podiums": 0,
-    "average_finish": 36.0,
-    "best_lap": "1:50.860",
-    "best_lap_track": "monza",
-    "penalty_count": 0,
-    "penalty_points": 0,
-    "last_race_at": "2026-03-15T18:47:44"
-  },
-  {
     "public_id": "drv_82ffbad5fcab",
     "driver": "Sibongiseni Ndl",
     "points": 0,
@@ -13873,6 +14038,21 @@
     "penalty_count": 0,
     "penalty_points": 0,
     "last_race_at": "2026-03-16T18:54:54"
+  },
+  {
+    "public_id": "drv_ba4e79605687",
+    "driver": "T.THITI SIR",
+    "points": 0,
+    "average_points_per_race": 0.0,
+    "races": 1,
+    "wins": 0,
+    "podiums": 0,
+    "average_finish": 36.0,
+    "best_lap": null,
+    "best_lap_track": null,
+    "penalty_count": 0,
+    "penalty_points": 0,
+    "last_race_at": "2026-03-16T20:09:24"
   },
   {
     "public_id": "drv_faa2e41cbcb5",
@@ -14175,11 +14355,11 @@
     "last_race_at": "2026-03-14T16:46:36"
   },
   {
-    "public_id": "drv_39c83180f26a",
-    "driver": "ALEKSEY EPIFANOV",
+    "public_id": "drv_996286905fb5",
+    "driver": "Alexander Serbov",
     "points": 0,
     "average_points_per_race": 0.0,
-    "races": 1,
+    "races": 2,
     "wins": 0,
     "podiums": 0,
     "average_finish": 38.0,
@@ -14187,7 +14367,7 @@
     "best_lap_track": null,
     "penalty_count": 0,
     "penalty_points": 0,
-    "last_race_at": "2026-03-16T19:31:35"
+    "last_race_at": "2026-03-16T20:09:24"
   },
   {
     "public_id": "drv_b0289c1f56d8",
@@ -14248,6 +14428,21 @@
     "penalty_count": 0,
     "penalty_points": 0,
     "last_race_at": "2026-03-15T18:47:44"
+  },
+  {
+    "public_id": "drv_431462354d83",
+    "driver": "Mr WasGehtSieDasAn",
+    "points": 0,
+    "average_points_per_race": 0.0,
+    "races": 1,
+    "wins": 0,
+    "podiums": 0,
+    "average_finish": 38.0,
+    "best_lap": null,
+    "best_lap_track": null,
+    "penalty_count": 0,
+    "penalty_points": 0,
+    "last_race_at": "2026-03-16T20:09:24"
   },
   {
     "public_id": "drv_ac513424006f",
@@ -14355,6 +14550,21 @@
     "last_race_at": "2026-03-14T22:24:34"
   },
   {
+    "public_id": "drv_919b27927f05",
+    "driver": "Dennis Bosch",
+    "points": 0,
+    "average_points_per_race": 0.0,
+    "races": 1,
+    "wins": 0,
+    "podiums": 0,
+    "average_finish": 39.0,
+    "best_lap": null,
+    "best_lap_track": null,
+    "penalty_count": 0,
+    "penalty_points": 0,
+    "last_race_at": "2026-03-16T20:09:24"
+  },
+  {
     "public_id": "drv_f45e95ecf5ce",
     "driver": "Fernando Silva Higashi",
     "points": 0,
@@ -14443,21 +14653,6 @@
     "penalty_count": 0,
     "penalty_points": 0,
     "last_race_at": "2026-03-13T21:00:56"
-  },
-  {
-    "public_id": "drv_9afd0424ded9",
-    "driver": "Temer Lakerino",
-    "points": 0,
-    "average_points_per_race": 0.0,
-    "races": 1,
-    "wins": 0,
-    "podiums": 0,
-    "average_finish": 39.0,
-    "best_lap": "1:49.610",
-    "best_lap_track": "monza",
-    "penalty_count": 0,
-    "penalty_points": 0,
-    "last_race_at": "2026-03-16T19:31:35"
   },
   {
     "public_id": "drv_1dc6469113d8",
@@ -15045,6 +15240,21 @@
     "last_race_at": "2026-03-13T22:14:10"
   },
   {
+    "public_id": "drv_6769e2b7e434",
+    "driver": "Vladislav Guselnikov",
+    "points": 0,
+    "average_points_per_race": 0.0,
+    "races": 1,
+    "wins": 0,
+    "podiums": 0,
+    "average_finish": 43.0,
+    "best_lap": null,
+    "best_lap_track": null,
+    "penalty_count": 0,
+    "penalty_points": 0,
+    "last_race_at": "2026-03-16T20:09:24"
+  },
+  {
     "public_id": "drv_56e9c27ddb5d",
     "driver": "Andrey Lyagin",
     "points": 0,
@@ -15090,6 +15300,21 @@
     "last_race_at": "2026-03-14T15:33:41"
   },
   {
+    "public_id": "drv_a7eafba5b7a7",
+    "driver": "rodneyy mims",
+    "points": 0,
+    "average_points_per_race": 0.0,
+    "races": 1,
+    "wins": 0,
+    "podiums": 0,
+    "average_finish": 44.0,
+    "best_lap": null,
+    "best_lap_track": null,
+    "penalty_count": 0,
+    "penalty_points": 0,
+    "last_race_at": "2026-03-16T20:09:24"
+  },
+  {
     "public_id": "drv_d176e752fb9e",
     "driver": "Burak ZAYİM",
     "points": 0,
@@ -15118,6 +15343,21 @@
     "penalty_count": 0,
     "penalty_points": 0,
     "last_race_at": "2026-03-14T15:33:41"
+  },
+  {
+    "public_id": "drv_ecdaa050f79d",
+    "driver": "Graziano Ippolito",
+    "points": 0,
+    "average_points_per_race": 0.0,
+    "races": 1,
+    "wins": 0,
+    "podiums": 0,
+    "average_finish": 45.0,
+    "best_lap": null,
+    "best_lap_track": null,
+    "penalty_count": 0,
+    "penalty_points": 0,
+    "last_race_at": "2026-03-16T20:09:24"
   },
   {
     "public_id": "drv_2c17f65adc7d",
@@ -15525,143 +15765,8 @@
     "last_race_at": null
   },
   {
-    "public_id": "drv_62839d65718c",
-    "driver": "Andrei Lewis",
-    "points": 0,
-    "average_points_per_race": 0,
-    "races": 0,
-    "wins": 0,
-    "podiums": 0,
-    "average_finish": null,
-    "best_lap": null,
-    "best_lap_track": null,
-    "penalty_count": 0,
-    "penalty_points": 0,
-    "last_race_at": null
-  },
-  {
-    "public_id": "drv_9a70c0c4f784",
-    "driver": "Dmitriy Reecenal",
-    "points": 0,
-    "average_points_per_race": 0,
-    "races": 0,
-    "wins": 0,
-    "podiums": 0,
-    "average_finish": null,
-    "best_lap": "1:48.757",
-    "best_lap_track": "monza",
-    "penalty_count": 0,
-    "penalty_points": 0,
-    "last_race_at": null
-  },
-  {
-    "public_id": "drv_3bd7ff12b1f0",
-    "driver": "Guanxi Yang",
-    "points": 0,
-    "average_points_per_race": 0,
-    "races": 0,
-    "wins": 0,
-    "podiums": 0,
-    "average_finish": null,
-    "best_lap": null,
-    "best_lap_track": null,
-    "penalty_count": 0,
-    "penalty_points": 0,
-    "last_race_at": null
-  },
-  {
-    "public_id": "drv_14ce23d95530",
-    "driver": "Hanmea S",
-    "points": 0,
-    "average_points_per_race": 0,
-    "races": 0,
-    "wins": 0,
-    "podiums": 0,
-    "average_finish": null,
-    "best_lap": "1:54.682",
-    "best_lap_track": "monza",
-    "penalty_count": 0,
-    "penalty_points": 0,
-    "last_race_at": null
-  },
-  {
-    "public_id": "drv_d26d8500b037",
-    "driver": "HORACIO OVIEDO",
-    "points": 0,
-    "average_points_per_race": 0,
-    "races": 0,
-    "wins": 0,
-    "podiums": 0,
-    "average_finish": null,
-    "best_lap": null,
-    "best_lap_track": null,
-    "penalty_count": 0,
-    "penalty_points": 0,
-    "last_race_at": null
-  },
-  {
-    "public_id": "drv_0b8c61547ee5",
-    "driver": "Kacper Łyjak",
-    "points": 0,
-    "average_points_per_race": 0,
-    "races": 0,
-    "wins": 0,
-    "podiums": 0,
-    "average_finish": null,
-    "best_lap": null,
-    "best_lap_track": null,
-    "penalty_count": 0,
-    "penalty_points": 0,
-    "last_race_at": null
-  },
-  {
-    "public_id": "drv_ecd56cbf3af6",
-    "driver": "Miel Hendrickx",
-    "points": 0,
-    "average_points_per_race": 0,
-    "races": 0,
-    "wins": 0,
-    "podiums": 0,
-    "average_finish": null,
-    "best_lap": "1:49.565",
-    "best_lap_track": "monza",
-    "penalty_count": 0,
-    "penalty_points": 0,
-    "last_race_at": null
-  },
-  {
-    "public_id": "drv_b75ba3b738e2",
-    "driver": "mirami mir",
-    "points": 0,
-    "average_points_per_race": 0,
-    "races": 0,
-    "wins": 0,
-    "podiums": 0,
-    "average_finish": null,
-    "best_lap": "1:52.412",
-    "best_lap_track": "monza",
-    "penalty_count": 0,
-    "penalty_points": 0,
-    "last_race_at": null
-  },
-  {
     "public_id": "drv_324225ad6988",
     "driver": "Vin Benzin",
-    "points": 0,
-    "average_points_per_race": 0,
-    "races": 0,
-    "wins": 0,
-    "podiums": 0,
-    "average_finish": null,
-    "best_lap": null,
-    "best_lap_track": null,
-    "penalty_count": 0,
-    "penalty_points": 0,
-    "last_race_at": null
-  },
-  {
-    "public_id": "drv_be2f8f8abd12",
-    "driver": "Yekta AL",
     "points": 0,
     "average_points_per_race": 0,
     "races": 0,

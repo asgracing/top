@@ -4,10 +4,10 @@
   "summary": {
     "points": 0,
     "average_points_per_race": 0.0,
-    "races": 2,
+    "races": 3,
     "wins": 0,
     "podiums": 0,
-    "average_finish": 20.5,
+    "average_finish": 26.0,
     "best_lap": "1:52.312",
     "best_lap_ms": 112312,
     "best_lap_track": "monza",
@@ -16,31 +16,57 @@
     "penalty_points": 0,
     "fastest_lap_awards": 0,
     "most_raced_track": "monza",
-    "last_race_at": "2026-03-16T19:31:35",
-    "last_seen": "2026-03-16T19:43:27",
+    "last_race_at": "2026-03-16T20:09:24",
+    "last_seen": "2026-03-16T20:09:24",
     "win_rate": 0.0,
     "podium_rate": 0.0,
-    "average_positions_delta": 10.0,
-    "positions_delta_races": 1
+    "average_positions_delta": -6.5,
+    "positions_delta_races": 2
   },
   "recent_form": [
+    37,
     15,
     26
   ],
   "track_stats": [
     {
       "track": "monza",
-      "races": 2,
+      "races": 3,
       "wins": 0,
       "podiums": 0,
       "points": 0,
-      "finish_sum": 41,
-      "average_finish": 20.5,
+      "finish_sum": 78,
+      "average_finish": 26.0,
       "best_lap_ms": 117380,
       "best_lap": "1:57.380"
     }
   ],
   "race_history": [
+    {
+      "race_id": "260316_200924_R.json",
+      "finished_at": "2026-03-16T20:09:24",
+      "track": "monza",
+      "position": 37,
+      "participants_count": 45,
+      "winner": "It's-a me, Mario!",
+      "points": 0,
+      "qualifying_position": 14,
+      "start_position": 14,
+      "start_position_source": "qualifying_car_id",
+      "positions_delta": -23,
+      "positions_gained": 0,
+      "positions_lost": 23,
+      "best_lap": null,
+      "best_lap_ms": null,
+      "total_time": null,
+      "total_time_ms": null,
+      "gap": null,
+      "gap_ms": null,
+      "lap_count": 0,
+      "had_best_lap": false,
+      "penalty_count": 0,
+      "penalty_points": 0
+    },
     {
       "race_id": "260316_193135_R.json",
       "finished_at": "2026-03-16T19:31:35",

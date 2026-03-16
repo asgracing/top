@@ -3,11 +3,11 @@
   "driver": "mirami mir",
   "summary": {
     "points": 0,
-    "average_points_per_race": 0,
-    "races": 0,
+    "average_points_per_race": 0.0,
+    "races": 1,
     "wins": 0,
     "podiums": 0,
-    "average_finish": null,
+    "average_finish": 20.0,
     "best_lap": "1:52.412",
     "best_lap_ms": 112412,
     "best_lap_track": "monza",
@@ -15,17 +15,57 @@
     "penalty_count": 0,
     "penalty_points": 0,
     "fastest_lap_awards": 0,
-    "most_raced_track": null,
-    "last_race_at": null,
-    "last_seen": "2026-03-16T19:43:27",
-    "win_rate": 0,
-    "podium_rate": 0,
-    "average_positions_delta": null,
-    "positions_delta_races": 0
+    "most_raced_track": "monza",
+    "last_race_at": "2026-03-16T20:09:24",
+    "last_seen": "2026-03-16T20:09:24",
+    "win_rate": 0.0,
+    "podium_rate": 0.0,
+    "average_positions_delta": -5.0,
+    "positions_delta_races": 1
   },
-  "recent_form": [],
-  "track_stats": [],
-  "race_history": [],
+  "recent_form": [
+    20
+  ],
+  "track_stats": [
+    {
+      "track": "monza",
+      "races": 1,
+      "wins": 0,
+      "podiums": 0,
+      "points": 0,
+      "finish_sum": 20,
+      "average_finish": 20.0,
+      "best_lap_ms": 113347,
+      "best_lap": "1:53.347"
+    }
+  ],
+  "race_history": [
+    {
+      "race_id": "260316_200924_R.json",
+      "finished_at": "2026-03-16T20:09:24",
+      "track": "monza",
+      "position": 20,
+      "participants_count": 45,
+      "winner": "It's-a me, Mario!",
+      "points": 0,
+      "qualifying_position": 15,
+      "start_position": 15,
+      "start_position_source": "qualifying_car_id",
+      "positions_delta": -5,
+      "positions_gained": 0,
+      "positions_lost": 5,
+      "best_lap": "1:53.347",
+      "best_lap_ms": 113347,
+      "total_time": "10:41.042",
+      "total_time_ms": 641042,
+      "gap": "0:00.000",
+      "gap_ms": 0,
+      "lap_count": 5,
+      "had_best_lap": false,
+      "penalty_count": 0,
+      "penalty_points": 0
+    }
+  ],
   "penalties": {
     "penalty_count": 0,
     "penalty_points": 0,

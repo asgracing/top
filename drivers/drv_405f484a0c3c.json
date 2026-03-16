@@ -3,11 +3,11 @@
   "driver": "Eduardo Salvan",
   "summary": {
     "points": 6,
-    "average_points_per_race": 6.0,
-    "races": 1,
+    "average_points_per_race": 3.0,
+    "races": 2,
     "wins": 0,
     "podiums": 0,
-    "average_finish": 7.0,
+    "average_finish": 12.0,
     "best_lap": "1:49.077",
     "best_lap_ms": 109077,
     "best_lap_track": "monza",
@@ -16,30 +16,56 @@
     "penalty_points": 0,
     "fastest_lap_awards": 0,
     "most_raced_track": "monza",
-    "last_race_at": "2026-03-16T19:31:35",
-    "last_seen": "2026-03-16T19:31:35",
+    "last_race_at": "2026-03-16T20:09:24",
+    "last_seen": "2026-03-16T20:09:24",
     "win_rate": 0.0,
     "podium_rate": 0.0,
-    "average_positions_delta": null,
-    "positions_delta_races": 0
+    "average_positions_delta": -7.0,
+    "positions_delta_races": 1
   },
   "recent_form": [
+    17,
     7
   ],
   "track_stats": [
     {
       "track": "monza",
-      "races": 1,
+      "races": 2,
       "wins": 0,
       "podiums": 0,
       "points": 6,
-      "finish_sum": 7,
-      "average_finish": 7.0,
+      "finish_sum": 24,
+      "average_finish": 12.0,
       "best_lap_ms": 109077,
       "best_lap": "1:49.077"
     }
   ],
   "race_history": [
+    {
+      "race_id": "260316_200924_R.json",
+      "finished_at": "2026-03-16T20:09:24",
+      "track": "monza",
+      "position": 17,
+      "participants_count": 45,
+      "winner": "It's-a me, Mario!",
+      "points": 0,
+      "qualifying_position": 10,
+      "start_position": 10,
+      "start_position_source": "qualifying_car_id",
+      "positions_delta": -7,
+      "positions_gained": 0,
+      "positions_lost": 7,
+      "best_lap": "1:49.975",
+      "best_lap_ms": 109975,
+      "total_time": "13:41.362",
+      "total_time_ms": 821362,
+      "gap": "0:00.000",
+      "gap_ms": 0,
+      "lap_count": 7,
+      "had_best_lap": false,
+      "penalty_count": 0,
+      "penalty_points": 0
+    },
     {
       "race_id": "260316_193135_R.json",
       "finished_at": "2026-03-16T19:31:35",
