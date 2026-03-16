@@ -925,6 +925,14 @@ function formatStartPosition(row) {
   return "-";
 }
 
+function renderPositionsDelta(value) {
+  const formatted = formatPositionsDelta(value);
+  let cls = "delta-neutral";
+  if (typeof value === "number" && value > 0) cls = "delta-positive";
+  if (typeof value === "number" && value < 0) cls = "delta-negative";
+  return `<span class="positions-delta ${cls}">${escapeHtml(formatted)}</span>`;
+}
+
 function updateBestLapNote(driver, track) {
   const noteEl = document.getElementById("best-lap-note");
   if (!noteEl) return;
@@ -1537,7 +1545,7 @@ function renderRaceResultsModal() {
     <tr>
       <td><span class="rank-badge rank-${escapeHtml(row.position)}">#${escapeHtml(row.position)}</span></td>
       <td>${escapeHtml(formatStartPosition(row))}</td>
-      <td>${escapeHtml(formatPositionsDelta(row.positions_delta))}</td>
+      <td>${renderPositionsDelta(row.positions_delta)}</td>
       <td>
         <div class="driver-cell">
           <div class="driver-avatar">${escapeHtml(initials(row.driver))}</div>
@@ -1635,7 +1643,7 @@ function renderDriverRaceHistory() {
       <td>${escapeHtml(humanizeTrackName(row.track))}</td>
       <td>${escapeHtml(formatStartPosition(row))}</td>
       <td>${escapeHtml(row.position ?? "—")}</td>
-      <td>${escapeHtml(formatPositionsDelta(row.positions_delta))}</td>
+      <td>${renderPositionsDelta(row.positions_delta)}</td>
       <td>${escapeHtml(row.points ?? 0)}</td>
       <td>${escapeHtml(row.best_lap ?? "—")}</td>
       <td>${escapeHtml(row.total_time ?? "—")}</td>
@@ -1736,7 +1744,7 @@ function renderDriverPage() {
     </div>
     <div class="driver-stat-card">
       <div class="driver-stat-label">${escapeHtml(t("driverSummaryAvgGain"))}</div>
-      <div class="driver-stat-value">${escapeHtml(formatPositionsDelta(summary.average_positions_delta))}</div>
+      <div class="driver-stat-value">${renderPositionsDelta(summary.average_positions_delta)}</div>
     </div>
     <div class="driver-stat-card">
       <div class="driver-stat-label">${escapeHtml(t("driverSummaryRaces"))}</div>
@@ -1923,6 +1931,8 @@ function renderDriverOfDayModal() {
     winsEl.textContent = "—";
     avgFinishEl.textContent = "—";
     avgGainEl.textContent = "—";
+    avgGainEl.classList.remove("delta-positive", "delta-negative");
+    avgGainEl.classList.add("positions-delta", "delta-neutral");
     bestLapEl.textContent = "—";
     bestLapTrackEl.textContent = "—";
     updatedEl.textContent = "—";
@@ -1938,6 +1948,15 @@ function renderDriverOfDayModal() {
   winsEl.textContent = data.wins ?? 0;
   avgFinishEl.textContent = formatAverageFinish(data.average_finish);
   avgGainEl.textContent = formatPositionsDelta(data.average_positions_delta);
+  avgGainEl.classList.remove("delta-positive", "delta-negative", "delta-neutral");
+  avgGainEl.classList.add("positions-delta");
+  if (typeof data.average_positions_delta === "number" && data.average_positions_delta > 0) {
+    avgGainEl.classList.add("delta-positive");
+  } else if (typeof data.average_positions_delta === "number" && data.average_positions_delta < 0) {
+    avgGainEl.classList.add("delta-negative");
+  } else {
+    avgGainEl.classList.add("delta-neutral");
+  }
   bestLapEl.textContent = data.best_lap || "—";
   bestLapTrackEl.textContent = data.best_lap_track || "—";
   updatedEl.textContent = currentLang === "ru"

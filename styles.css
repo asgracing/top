@@ -15,6 +15,7 @@
   --silver: #b8c4d4;
   --bronze: #d28b5f;
   --green: #39d98a;
+  --red: #ef4444;
 
   /* ===== SHARED UI TOKENS ===== */
   --shadow: 0 20px 60px rgba(0, 0, 0, 0.35);
@@ -1076,6 +1077,23 @@ tbody tr:hover {
 
 .race-winner {
   font-weight: 700;
+}
+
+.positions-delta {
+  font-weight: 700;
+  color: var(--text);
+}
+
+.positions-delta.delta-positive {
+  color: var(--green);
+}
+
+.positions-delta.delta-negative {
+  color: var(--red);
+}
+
+.positions-delta.delta-neutral {
+  color: var(--text);
 }
 
 tbody tr:last-child td {
