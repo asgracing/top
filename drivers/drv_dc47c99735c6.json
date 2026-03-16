@@ -3,11 +3,11 @@
   "driver": "K etaLar",
   "summary": {
     "points": 8,
-    "average_points_per_race": 2.0,
-    "races": 4,
+    "average_points_per_race": 1.6,
+    "races": 5,
     "wins": 0,
     "podiums": 0,
-    "average_finish": 16.5,
+    "average_finish": 15.8,
     "best_lap": "1:49.090",
     "best_lap_ms": 109090,
     "best_lap_track": "monza",
@@ -16,14 +16,15 @@
     "penalty_points": 0,
     "fastest_lap_awards": 0,
     "most_raced_track": "monza",
-    "last_race_at": "2026-03-16T20:45:56",
-    "last_seen": "2026-03-16T20:45:56",
+    "last_race_at": "2026-03-16T21:24:16",
+    "last_seen": "2026-03-16T21:24:16",
     "win_rate": 0.0,
     "podium_rate": 0.0,
-    "average_positions_delta": -2.5,
-    "positions_delta_races": 2
+    "average_positions_delta": -4.0,
+    "positions_delta_races": 3
   },
   "recent_form": [
+    13,
     12,
     31,
     6,
@@ -32,17 +33,42 @@
   "track_stats": [
     {
       "track": "monza",
-      "races": 4,
+      "races": 5,
       "wins": 0,
       "podiums": 0,
       "points": 8,
-      "finish_sum": 66,
-      "average_finish": 16.5,
-      "best_lap_ms": 109217,
-      "best_lap": "1:49.217"
+      "finish_sum": 79,
+      "average_finish": 15.8,
+      "best_lap_ms": 109127,
+      "best_lap": "1:49.127"
     }
   ],
   "race_history": [
+    {
+      "race_id": "260316_212416_R.json",
+      "finished_at": "2026-03-16T21:24:16",
+      "track": "monza",
+      "position": 13,
+      "participants_count": 44,
+      "winner": "T Sever",
+      "points": 0,
+      "qualifying_position": 6,
+      "start_position": 6,
+      "start_position_source": "qualifying_car_id",
+      "positions_delta": -7,
+      "positions_gained": 0,
+      "positions_lost": 7,
+      "best_lap": "1:49.127",
+      "best_lap_ms": 109127,
+      "total_time": "22:52.253",
+      "total_time_ms": 1372253,
+      "gap": "1:05.724",
+      "gap_ms": 65724,
+      "lap_count": 9,
+      "had_best_lap": false,
+      "penalty_count": 0,
+      "penalty_points": 0
+    },
     {
       "race_id": "260316_204556_R.json",
       "finished_at": "2026-03-16T20:45:56",

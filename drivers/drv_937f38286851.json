@@ -3,47 +3,72 @@
   "driver": "Андрей Ма",
   "summary": {
     "points": 13,
-    "average_points_per_race": 1.18,
-    "races": 11,
+    "average_points_per_race": 1.08,
+    "races": 12,
     "wins": 0,
     "podiums": 0,
-    "average_finish": 21.27,
+    "average_finish": 21.58,
     "best_lap": "1:48.660",
     "best_lap_ms": 108660,
     "best_lap_track": "monza",
     "best_lap_session_type": "R",
-    "penalty_count": 3,
+    "penalty_count": 4,
     "penalty_points": 6,
     "fastest_lap_awards": 0,
     "most_raced_track": "monza",
-    "last_race_at": "2026-03-16T20:45:56",
-    "last_seen": "2026-03-16T20:45:56",
+    "last_race_at": "2026-03-16T21:24:16",
+    "last_seen": "2026-03-16T21:24:16",
     "win_rate": 0.0,
     "podium_rate": 0.0,
-    "average_positions_delta": -4.75,
-    "positions_delta_races": 8
+    "average_positions_delta": -6.44,
+    "positions_delta_races": 9
   },
   "recent_form": [
+    25,
     10,
     41,
     32,
-    16,
-    13
+    16
   ],
   "track_stats": [
     {
       "track": "monza",
-      "races": 11,
+      "races": 12,
       "wins": 0,
       "podiums": 0,
       "points": 13,
-      "finish_sum": 234,
-      "average_finish": 21.27,
+      "finish_sum": 259,
+      "average_finish": 21.58,
       "best_lap_ms": 108660,
       "best_lap": "1:48.660"
     }
   ],
   "race_history": [
+    {
+      "race_id": "260316_212416_R.json",
+      "finished_at": "2026-03-16T21:24:16",
+      "track": "monza",
+      "position": 25,
+      "participants_count": 44,
+      "winner": "T Sever",
+      "points": 0,
+      "qualifying_position": 5,
+      "start_position": 5,
+      "start_position_source": "qualifying_car_id",
+      "positions_delta": -20,
+      "positions_gained": 0,
+      "positions_lost": 20,
+      "best_lap": null,
+      "best_lap_ms": null,
+      "total_time": "9:26.384",
+      "total_time_ms": 566384,
+      "gap": "0:00.000",
+      "gap_ms": 0,
+      "lap_count": 1,
+      "had_best_lap": false,
+      "penalty_count": 1,
+      "penalty_points": 0
+    },
     {
       "race_id": "260316_204556_R.json",
       "finished_at": "2026-03-16T20:45:56",
@@ -321,16 +346,17 @@
     }
   ],
   "penalties": {
-    "penalty_count": 3,
+    "penalty_count": 4,
     "penalty_points": 6,
     "reasons": {
       "PitSpeeding": 1,
-      "Cutting": 2
+      "Cutting": 3
     },
     "types": {
       "StopAndGo_30": 1,
       "DriveThrough": 1,
-      "None": 1
+      "None": 1,
+      "Disqualified": 1
     }
   }
 }

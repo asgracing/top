@@ -1,15 +1,15 @@
 {
-  "public_id": "drv_17c98850f548",
-  "driver": "Connor Baldwin",
+  "public_id": "drv_56b2b8b91027",
+  "driver": "Daniel Jendrzejek",
   "summary": {
-    "points": 10,
-    "average_points_per_race": 10.0,
+    "points": 1,
+    "average_points_per_race": 1.0,
     "races": 1,
     "wins": 0,
     "podiums": 0,
-    "average_finish": 5.0,
-    "best_lap": "1:50.847",
-    "best_lap_ms": 110847,
+    "average_finish": 10.0,
+    "best_lap": "1:49.402",
+    "best_lap_ms": 109402,
     "best_lap_track": "monza",
     "best_lap_session_type": "R",
     "penalty_count": 0,
@@ -20,11 +20,11 @@
     "last_seen": "2026-03-16T21:24:16",
     "win_rate": 0.0,
     "podium_rate": 0.0,
-    "average_positions_delta": 8.0,
-    "positions_delta_races": 1
+    "average_positions_delta": null,
+    "positions_delta_races": 0
   },
   "recent_form": [
-    5
+    10
   ],
   "track_stats": [
     {
@@ -32,11 +32,11 @@
       "races": 1,
       "wins": 0,
       "podiums": 0,
-      "points": 10,
-      "finish_sum": 5,
-      "average_finish": 5.0,
-      "best_lap_ms": 110847,
-      "best_lap": "1:50.847"
+      "points": 1,
+      "finish_sum": 10,
+      "average_finish": 10.0,
+      "best_lap_ms": 109402,
+      "best_lap": "1:49.402"
     }
   ],
   "race_history": [
@@ -44,23 +44,23 @@
       "race_id": "260316_212416_R.json",
       "finished_at": "2026-03-16T21:24:16",
       "track": "monza",
-      "position": 5,
+      "position": 10,
       "participants_count": 44,
       "winner": "T Sever",
-      "points": 10,
-      "qualifying_position": 13,
-      "start_position": 13,
-      "start_position_source": "qualifying_car_id",
-      "positions_delta": 8,
-      "positions_gained": 8,
-      "positions_lost": 0,
-      "best_lap": "1:50.847",
-      "best_lap_ms": 110847,
-      "total_time": "22:49.814",
-      "total_time_ms": 1369814,
-      "gap": "1:03.285",
-      "gap_ms": 63285,
-      "lap_count": 12,
+      "points": 1,
+      "qualifying_position": null,
+      "start_position": null,
+      "start_position_source": "unknown",
+      "positions_delta": null,
+      "positions_gained": null,
+      "positions_lost": null,
+      "best_lap": "1:49.402",
+      "best_lap_ms": 109402,
+      "total_time": "22:10.578",
+      "total_time_ms": 1330578,
+      "gap": "0:24.049",
+      "gap_ms": 24049,
+      "lap_count": 10,
       "had_best_lap": false,
       "penalty_count": 0,
       "penalty_points": 0
