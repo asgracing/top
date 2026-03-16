@@ -1,6 +1,6 @@
 {
   "schema_version": 4,
-  "generated_at": "2026-03-17T00:02:21",
+  "generated_at": "2026-03-17T00:07:20",
   "leaderboard": [
     {
       "player_id": "S76561199664057628",
@@ -34978,7 +34978,7 @@
     },
     "most_active_driver_today": null,
     "most_successful_driver_today": null,
-    "updated_at": "2026-03-17T00:02:21"
+    "updated_at": "2026-03-17T00:07:20"
   },
   "driver_of_the_day": {
     "date": "2026-03-17",
@@ -34994,15 +34994,15 @@
     "best_lap": null,
     "best_lap_ms": null,
     "best_lap_track": null,
-    "updated_at": "2026-03-17T00:02:21"
+    "updated_at": "2026-03-17T00:07:20"
   },
   "server_status": {
     "status": "online",
     "server_online": true,
-    "players_online": 22,
+    "players_online": 25,
     "tcp_listening": true,
     "udp_listening": true,
     "broadcast_listening": true,
-    "updated_at": "2026-03-17T00:02:20"
+    "updated_at": "2026-03-17T00:07:20"
   }
 }
