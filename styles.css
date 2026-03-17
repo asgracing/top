@@ -936,13 +936,21 @@ h1 {
   background: linear-gradient(180deg, rgba(210, 139, 95, 0.16), rgba(255, 255, 255, 0.03)), var(--card);
 }
 
+.pilot-topline {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  margin-bottom: 8px;
+  min-width: 0;
+}
+
 .pilot-rank {
   display: inline-flex;
   align-items: center;
   justify-content: center;
+  flex: 0 0 auto;
   width: 34px;
   height: 34px;
-  margin-bottom: 10px;
   border: 1px solid var(--line);
   border-radius: 999px;
   background: rgba(255, 255, 255, 0.06);
@@ -963,7 +971,8 @@ h1 {
 }
 
 .pilot-name {
-  margin: 0 0 8px;
+  margin: 0;
+  min-width: 0;
   font-size: 18px;
   font-weight: 800;
   line-height: 1.1;
@@ -973,6 +982,20 @@ h1 {
 .pilot-card .muted {
   font-size: 13px;
   line-height: 1.35;
+}
+
+.pilot-lap-line {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: 12px;
+}
+
+.pilot-lap-car {
+  flex: 0 0 auto;
+  color: var(--text);
+  font-weight: 600;
+  text-align: right;
 }
 
 .pilot-meta {

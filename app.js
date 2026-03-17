@@ -1031,6 +1031,42 @@ function renderTop3(data) {
   `).join("");
 }
 
+function renderTop3Compact(data) {
+  if (!Array.isArray(data) || !data.length) {
+    return `<div class="empty-box">${escapeHtml(t("emptyTop3"))}</div>`;
+  }
+
+  const top3 = data.slice(0, 3);
+  const classes = ["top1", "top2", "top3"];
+
+  return top3.map((row, index) => `
+    <article class="pilot-card ${classes[index] || ""}">
+      <div class="pilot-topline">
+        <div class="pilot-rank">#${escapeHtml(row.rank)}</div>
+        <h3 class="pilot-name">${renderDriverLink(row.driver, row.public_id, "driver-link driver-link-heading", row.player_id)}</h3>
+      </div>
+      <div class="muted pilot-lap-line">
+        <span>${escapeHtml(t("metaLabels").bestLap)}: ${escapeHtml(row.best_lap || "—")}</span>
+        <span class="pilot-lap-car">${escapeHtml(row.best_lap_car_name || "—")}</span>
+      </div>
+      <div class="pilot-meta">
+        <div class="meta-box">
+          <div class="meta-label">${escapeHtml(t("metaLabels").points)}</div>
+          <div class="meta-value">${escapeHtml(row.points ?? 0)}</div>
+        </div>
+        <div class="meta-box">
+          <div class="meta-label">${escapeHtml(t("metaLabels").wins)}</div>
+          <div class="meta-value">${escapeHtml(row.wins ?? 0)}</div>
+        </div>
+        <div class="meta-box">
+          <div class="meta-label">${escapeHtml(t("metaLabels").races)}</div>
+          <div class="meta-value">${escapeHtml(row.races ?? 0)}</div>
+        </div>
+      </div>
+    </article>
+  `).join("");
+}
+
 function paginate(data, page, pageSize) {
   const totalPages = Math.max(1, Math.ceil(data.length / pageSize));
   const safePage = Math.min(Math.max(1, page), totalPages);
@@ -2234,7 +2270,7 @@ function rerenderUI() {
   }
 
   const top3El = document.getElementById("top3-content");
-  if (top3El) top3El.innerHTML = renderTop3(leaderboardData);
+  if (top3El) top3El.innerHTML = renderTop3Compact(leaderboardData);
 
   renderLeaderboardTablePage();
   renderBestLapsTablePage();
