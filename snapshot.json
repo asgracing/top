@@ -1,6 +1,6 @@
 {
   "schema_version": 6,
-  "generated_at": "2026-03-17T17:07:21",
+  "generated_at": "2026-03-17T17:12:21",
   "leaderboard": [
     {
       "player_id": "S76561199664057628",
@@ -44493,7 +44493,7 @@
       "driver": "GNV MTogi",
       "points": 58
     },
-    "updated_at": "2026-03-17T17:07:21"
+    "updated_at": "2026-03-17T17:12:21"
   },
   "driver_of_the_day": {
     "date": "2026-03-17",
@@ -44512,15 +44512,15 @@
     "best_lap_car_model_id": 32,
     "best_lap_car_name_raw": "Ferrari 296 GT3",
     "best_lap_car_name": "Ferrari 296 GT3",
-    "updated_at": "2026-03-17T17:07:21"
+    "updated_at": "2026-03-17T17:12:21"
   },
   "server_status": {
     "status": "online",
     "server_online": true,
-    "players_online": 25,
+    "players_online": 24,
     "tcp_listening": true,
     "udp_listening": true,
     "broadcast_listening": true,
-    "updated_at": "2026-03-17T17:07:20"
+    "updated_at": "2026-03-17T17:12:20"
   }
 }
