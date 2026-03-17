@@ -2029,7 +2029,7 @@ function renderTodayStatsModal() {
     podiumsEl.textContent = "—";
     avgPlayersEl.textContent = "—";
     tracksEl.textContent = "—";
-    bestLapEl.textContent = "—";
+    bestLapEl.innerHTML = `<span>—</span><span class="today-detail-side-inline">—</span>`;
     bestLapNoteEl.textContent = "—";
     mostActiveEl.textContent = "—";
     mostActiveNoteEl.textContent = "—";
@@ -2055,7 +2055,7 @@ function renderTodayStatsModal() {
       ? stats.tracks_raced_today.join(", ")
       : "—";
 
-  bestLapEl.textContent = stats.best_lap_today?.lap || "—";
+  bestLapEl.innerHTML = `<span>${escapeHtml(stats.best_lap_today?.lap || "—")}</span><span class="today-detail-side-inline">${escapeHtml(stats.best_lap_today?.car_name || "—")}</span>`;
   bestLapNoteEl.textContent = stats.best_lap_today
     ? `${stats.best_lap_today.driver} · ${stats.best_lap_today.track}`
     : "—";
