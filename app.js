@@ -15,6 +15,24 @@ const carsUrl = IS_CARS_PAGE ? "./cars.json" : `${dataBasePath}cars/cars.json`;
 const driverIndexUrl = `${dataBasePath}drivers/drivers.json`;
 const PAGE_SIZE = 10;
 
+function resolveInitialLanguage() {
+  const urlLang = new URLSearchParams(window.location.search).get("lang");
+  if (urlLang && translations[urlLang]) return urlLang;
+
+  const storedLang = localStorage.getItem("asgLang");
+  if (storedLang && translations[storedLang]) return storedLang;
+
+  const browserLanguages = Array.isArray(navigator.languages) && navigator.languages.length
+    ? navigator.languages
+    : [navigator.language];
+
+  const preferred = browserLanguages
+    .map(value => String(value || "").trim().toLowerCase())
+    .find(Boolean);
+
+  return preferred && preferred.startsWith("ru") ? "ru" : "en";
+}
+
 let leaderboardData = [];
 let bestlapsData = [];
 let todayStatsData = null;
@@ -25,7 +43,7 @@ let carsData = [];
 let leaderboardPage = 1;
 let bestlapsPage = 1;
 let safetyPage = 1;
-let currentLang = localStorage.getItem("asgLang") || "en";
+let currentLang = "en";
 let leaderboardSearch = "";
 let bestlapsSearch = "";
 let safetySearch = "";
@@ -418,6 +436,8 @@ onlineNoData: "Нет данных",
     next: "Вперед →"
   }
 };
+
+currentLang = resolveInitialLanguage();
 
 const leaderboardColumns = [
   { key: "rank", type: "number" },
