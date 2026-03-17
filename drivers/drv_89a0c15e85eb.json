@@ -15,6 +15,8 @@
     "best_lap_car_name_raw": "Porsche 992 GT3 R",
     "best_lap_car_name": "Porsche 992 GT3 R",
     "best_lap_session_type": "R",
+    "average_pace_ms": null,
+    "average_pace": null,
     "penalty_count": 0,
     "penalty_points": 0,
     "fastest_lap_awards": 0,
