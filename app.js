@@ -541,7 +541,9 @@ function getSafetyColumns() {
 }
 
 function t(key) {
-  return translations[currentLang][key] ?? translations.en[key] ?? key;
+  const langPack = translations[currentLang] || translations.en || {};
+  const enPack = translations.en || {};
+  return langPack[key] ?? enPack[key] ?? key;
 }
 
 function replaceTokens(template, values = {}) {
@@ -790,7 +792,7 @@ function getProcessedCars() {
 }
 
 async function loadJson(url) {
-  const res = await fetch(url, { cache: "default" });
+  const res = await fetch(url, { cache: "no-store" });
   if (!res.ok) throw new Error(`HTTP ${res.status} for ${url}`);
   return await res.json();
 }
