@@ -32,6 +32,7 @@ let safetySearch = "";
 let leaderboardSort = { key: null, direction: null };
 let bestlapsSort = { key: null, direction: null };
 let safetySort = { key: null, direction: null };
+let carsSort = { key: "wins", direction: "desc" };
 let onlineData = [];
 let selectedRace = null;
 let driverIndexData = [];
@@ -256,6 +257,17 @@ onlineNoData: "Нет данных",
     driverOfDayBestLapTrack: "Трасса",
     driverOfDayNoData: "Сегодня ещё нет данных по гонкам.",
     htmlLang: "ru",
+    pageTitleCars: "ASG Racing Cars | РЎС‚Р°С‚РёСЃС‚РёРєР° Assetto Corsa Competizione",
+    btnCars: "Машины",
+    carsEyebrow: "Статистика машин",
+    carsPageTitle: "Машины",
+    carsPageSubtitle: "Обзор результатов по моделям машин на основе сохраненных гоночных результатов.",
+    carsSummaryTotal: "Моделей машин",
+    carsSummaryTopWinner: "Лидер по победам",
+    carsSummaryMostUsed: "Самая популярная",
+    carsTableTitle: "Таблица машин",
+    carsTableSubtitle: "Сортировка по клику на заголовки столбцов.",
+    carsCols: ["Машина", "Гонки", "Победы", "Винрейт", "Подиумы", "Пилоты", "Ср. финиш", "Лучшие круги", "Бестлап"],
     pageTitle: "ASG Racing ACC Leaderboard | Статистика Assetto Corsa Competizione",
     pageTitleRaces: "ASG Racing Последние гонки | Результаты Assetto Corsa Competizione",
     metaDescription:
@@ -773,6 +785,14 @@ function getProcessedSafety() {
     filterByDriver(safetyData, safetySearch),
     safetySort,
     getSafetyColumns()
+  );
+}
+
+function getProcessedCars() {
+  return sortData(
+    carsData,
+    carsSort,
+    carsColumns
   );
 }
 
@@ -1714,6 +1734,55 @@ function renderCarsTable() {
 function renderCarsPage() {
   renderCarsSummary();
   renderCarsTable();
+}
+
+function renderCarsTable() {
+  const tableEl = document.getElementById("cars-table");
+  if (!tableEl) return;
+
+  const rowsData = getProcessedCars();
+
+  if (!rowsData.length) {
+    tableEl.innerHTML = `<div class="empty-box">${escapeHtml(t("emptyRaces"))}</div>`;
+    return;
+  }
+
+  const headers = t("carsCols").map((label, index) => `
+    <th class="sortable ${getSortClass(carsSort, carsColumns[index].key)}" data-sort-key="${carsColumns[index].key}">
+      ${escapeHtml(label)}
+    </th>
+  `).join("");
+
+  const rows = rowsData.map(row => `
+    <tr>
+      <td>${escapeHtml(row.car_name || "РІР‚вЂќ")}</td>
+      <td>${escapeHtml(row.races ?? 0)}</td>
+      <td>${escapeHtml(row.wins ?? 0)}</td>
+      <td>${escapeHtml(formatPercent(row.win_rate))}</td>
+      <td>${escapeHtml(row.podiums ?? 0)}</td>
+      <td>${escapeHtml(row.unique_drivers ?? 0)}</td>
+      <td>${escapeHtml(formatAverageFinish(row.average_finish))}</td>
+      <td>${escapeHtml(row.fastest_lap_awards ?? 0)}</td>
+      <td>
+        <div>${escapeHtml(row.best_lap || "РІР‚вЂќ")}</div>
+        <div class="race-note">${renderDriverLink(row.best_lap_driver || "РІР‚вЂќ", row.best_lap_public_id, "driver-link driver-link-subtle")}</div>
+      </td>
+    </tr>
+  `).join("");
+
+  tableEl.innerHTML = `
+    <table>
+      <thead><tr>${headers}</tr></thead>
+      <tbody>${rows}</tbody>
+    </table>
+  `;
+
+  tableEl.querySelectorAll("th.sortable").forEach(th => {
+    th.addEventListener("click", () => {
+      carsSort = cycleSort(carsSort, th.dataset.sortKey);
+      renderCarsTable();
+    });
+  });
 }
 
 function renderRecentForm(items = []) {
