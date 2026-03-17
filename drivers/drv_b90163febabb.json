@@ -3,11 +3,11 @@
   "driver": "Aleksei Burmistrov",
   "summary": {
     "points": 12,
-    "average_points_per_race": 4.0,
-    "races": 3,
+    "average_points_per_race": 6.0,
+    "races": 2,
     "wins": 0,
     "podiums": 0,
-    "average_finish": 14.33,
+    "average_finish": 14.5,
     "best_lap": "1:48.630",
     "best_lap_ms": 108630,
     "best_lap_track": "monza",
@@ -23,8 +23,8 @@
     "last_seen": "2026-03-15T00:51:47",
     "win_rate": 0.0,
     "podium_rate": 0.0,
-    "average_positions_delta": -0.5,
-    "positions_delta_races": 2
+    "average_positions_delta": 1.0,
+    "positions_delta_races": 1
   },
   "recent_form": [
     14,
@@ -34,12 +34,12 @@
   "track_stats": [
     {
       "track": "monza",
-      "races": 3,
+      "races": 2,
       "wins": 0,
       "podiums": 0,
       "points": 12,
-      "finish_sum": 43,
-      "average_finish": 14.33,
+      "finish_sum": 29,
+      "average_finish": 14.5,
       "best_lap_ms": 108630,
       "best_lap": "1:48.630"
     }
@@ -69,6 +69,7 @@
       "gap": null,
       "gap_ms": null,
       "lap_count": 0,
+      "counted_for_stats": false,
       "had_best_lap": false,
       "penalty_count": 0,
       "penalty_points": 0
@@ -97,6 +98,7 @@
       "gap": "0:24.795",
       "gap_ms": 24795,
       "lap_count": 12,
+      "counted_for_stats": true,
       "had_best_lap": false,
       "penalty_count": 0,
       "penalty_points": 0
@@ -125,6 +127,7 @@
       "gap": "0:15.058",
       "gap_ms": 15058,
       "lap_count": 3,
+      "counted_for_stats": true,
       "had_best_lap": false,
       "penalty_count": 0,
       "penalty_points": 0

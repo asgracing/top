@@ -3,11 +3,11 @@
   "driver": "Nsk Xpert",
   "summary": {
     "points": 0,
-    "average_points_per_race": 0.0,
-    "races": 1,
+    "average_points_per_race": 0,
+    "races": 0,
     "wins": 0,
     "podiums": 0,
-    "average_finish": 36.0,
+    "average_finish": null,
     "best_lap": null,
     "best_lap_ms": null,
     "best_lap_track": null,
@@ -18,30 +18,18 @@
     "penalty_count": 0,
     "penalty_points": 0,
     "fastest_lap_awards": 0,
-    "most_raced_track": "monza",
+    "most_raced_track": null,
     "last_race_at": "2026-03-14T21:08:17",
     "last_seen": "2026-03-14T21:08:17",
-    "win_rate": 0.0,
-    "podium_rate": 0.0,
+    "win_rate": 0,
+    "podium_rate": 0,
     "average_positions_delta": null,
     "positions_delta_races": 0
   },
   "recent_form": [
     36
   ],
-  "track_stats": [
-    {
-      "track": "monza",
-      "races": 1,
-      "wins": 0,
-      "podiums": 0,
-      "points": 0,
-      "finish_sum": 36,
-      "average_finish": 36.0,
-      "best_lap_ms": null,
-      "best_lap": null
-    }
-  ],
+  "track_stats": [],
   "race_history": [
     {
       "race_id": "260314_210817_R.json",
@@ -67,6 +55,7 @@
       "gap": null,
       "gap_ms": null,
       "lap_count": 0,
+      "counted_for_stats": false,
       "had_best_lap": false,
       "penalty_count": 0,
       "penalty_points": 0

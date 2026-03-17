@@ -3,11 +3,11 @@
   "driver": "Senya Lagisson TWICH",
   "summary": {
     "points": 31,
-    "average_points_per_race": 5.17,
-    "races": 6,
+    "average_points_per_race": 10.33,
+    "races": 3,
     "wins": 1,
     "podiums": 1,
-    "average_finish": 19.5,
+    "average_finish": 7.0,
     "best_lap": "1:48.120",
     "best_lap_ms": 108120,
     "best_lap_track": "monza",
@@ -21,10 +21,10 @@
     "most_raced_track": "monza",
     "last_race_at": "2026-03-15T21:15:16",
     "last_seen": "2026-03-15T21:15:16",
-    "win_rate": 16.67,
-    "podium_rate": 16.67,
-    "average_positions_delta": -5.8,
-    "positions_delta_races": 5
+    "win_rate": 33.33,
+    "podium_rate": 33.33,
+    "average_positions_delta": 4.5,
+    "positions_delta_races": 2
   },
   "recent_form": [
     41,
@@ -36,12 +36,12 @@
   "track_stats": [
     {
       "track": "monza",
-      "races": 6,
+      "races": 3,
       "wins": 1,
       "podiums": 1,
       "points": 31,
-      "finish_sum": 117,
-      "average_finish": 19.5,
+      "finish_sum": 21,
+      "average_finish": 7.0,
       "best_lap_ms": 108120,
       "best_lap": "1:48.120"
     }
@@ -71,6 +71,7 @@
       "gap": null,
       "gap_ms": null,
       "lap_count": 0,
+      "counted_for_stats": false,
       "had_best_lap": false,
       "penalty_count": 0,
       "penalty_points": 0
@@ -99,6 +100,7 @@
       "gap": "0:00.000",
       "gap_ms": 0,
       "lap_count": 10,
+      "counted_for_stats": true,
       "had_best_lap": false,
       "penalty_count": 0,
       "penalty_points": 0
@@ -127,6 +129,7 @@
       "gap": null,
       "gap_ms": null,
       "lap_count": 11,
+      "counted_for_stats": true,
       "had_best_lap": false,
       "penalty_count": 0,
       "penalty_points": 0
@@ -155,6 +158,7 @@
       "gap": null,
       "gap_ms": null,
       "lap_count": 0,
+      "counted_for_stats": false,
       "had_best_lap": false,
       "penalty_count": 0,
       "penalty_points": 0
@@ -183,6 +187,7 @@
       "gap": null,
       "gap_ms": null,
       "lap_count": 0,
+      "counted_for_stats": false,
       "had_best_lap": false,
       "penalty_count": 0,
       "penalty_points": 0
@@ -211,6 +216,7 @@
       "gap": "0:33.068",
       "gap_ms": 33068,
       "lap_count": 11,
+      "counted_for_stats": true,
       "had_best_lap": false,
       "penalty_count": 0,
       "penalty_points": 0

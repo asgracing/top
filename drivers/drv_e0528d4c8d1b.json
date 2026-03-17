@@ -2,12 +2,12 @@
   "public_id": "drv_e0528d4c8d1b",
   "driver": "Vasilii Gyuliaev",
   "summary": {
-    "points": 1,
-    "average_points_per_race": 0.5,
-    "races": 2,
+    "points": 0,
+    "average_points_per_race": 0.0,
+    "races": 1,
     "wins": 0,
     "podiums": 0,
-    "average_finish": 10.5,
+    "average_finish": 11.0,
     "best_lap": "1:49.317",
     "best_lap_ms": 109317,
     "best_lap_track": "monza",
@@ -33,12 +33,12 @@
   "track_stats": [
     {
       "track": "monza",
-      "races": 2,
+      "races": 1,
       "wins": 0,
       "podiums": 0,
-      "points": 1,
-      "finish_sum": 21,
-      "average_finish": 10.5,
+      "points": 0,
+      "finish_sum": 11,
+      "average_finish": 11.0,
       "best_lap_ms": 109317,
       "best_lap": "1:49.317"
     }
@@ -68,6 +68,7 @@
       "gap": "0:38.004",
       "gap_ms": 38004,
       "lap_count": 11,
+      "counted_for_stats": true,
       "had_best_lap": false,
       "penalty_count": 0,
       "penalty_points": 0
@@ -82,7 +83,7 @@
       "position": 10,
       "participants_count": 11,
       "winner": "Tyler Obrian",
-      "points": 1,
+      "points": 0,
       "qualifying_position": null,
       "start_position": null,
       "start_position_source": "unknown",
@@ -96,6 +97,7 @@
       "gap": null,
       "gap_ms": null,
       "lap_count": 0,
+      "counted_for_stats": false,
       "had_best_lap": false,
       "penalty_count": 0,
       "penalty_points": 0

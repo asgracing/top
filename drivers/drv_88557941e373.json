@@ -3,11 +3,11 @@
   "driver": "STETH STETH",
   "summary": {
     "points": 4,
-    "average_points_per_race": 1.0,
-    "races": 4,
+    "average_points_per_race": 1.33,
+    "races": 3,
     "wins": 0,
     "podiums": 0,
-    "average_finish": 11.5,
+    "average_finish": 11.33,
     "best_lap": "1:49.342",
     "best_lap_ms": 109342,
     "best_lap_track": "monza",
@@ -23,8 +23,8 @@
     "last_seen": "2026-03-14T01:57:10",
     "win_rate": 0.0,
     "podium_rate": 0.0,
-    "average_positions_delta": 2.25,
-    "positions_delta_races": 4
+    "average_positions_delta": 4.67,
+    "positions_delta_races": 3
   },
   "recent_form": [
     12,
@@ -35,12 +35,12 @@
   "track_stats": [
     {
       "track": "monza",
-      "races": 4,
+      "races": 3,
       "wins": 0,
       "podiums": 0,
       "points": 4,
-      "finish_sum": 46,
-      "average_finish": 11.5,
+      "finish_sum": 34,
+      "average_finish": 11.33,
       "best_lap_ms": 109342,
       "best_lap": "1:49.342"
     }
@@ -70,6 +70,7 @@
       "gap": null,
       "gap_ms": null,
       "lap_count": 0,
+      "counted_for_stats": false,
       "had_best_lap": false,
       "penalty_count": 0,
       "penalty_points": 0
@@ -98,6 +99,7 @@
       "gap": "0:52.326",
       "gap_ms": 52326,
       "lap_count": 12,
+      "counted_for_stats": true,
       "had_best_lap": false,
       "penalty_count": 0,
       "penalty_points": 0
@@ -126,6 +128,7 @@
       "gap": "1:02.872",
       "gap_ms": 62872,
       "lap_count": 12,
+      "counted_for_stats": true,
       "had_best_lap": false,
       "penalty_count": 0,
       "penalty_points": 0
@@ -154,6 +157,7 @@
       "gap": "0:24.658",
       "gap_ms": 24658,
       "lap_count": 8,
+      "counted_for_stats": true,
       "had_best_lap": false,
       "penalty_count": 0,
       "penalty_points": 0

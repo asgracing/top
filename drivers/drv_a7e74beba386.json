@@ -3,11 +3,11 @@
   "driver": "Yamamoto Suroki",
   "summary": {
     "points": 56,
-    "average_points_per_race": 14.0,
-    "races": 4,
+    "average_points_per_race": 18.67,
+    "races": 3,
     "wins": 1,
     "podiums": 2,
-    "average_finish": 12.75,
+    "average_finish": 2.33,
     "best_lap": "1:48.412",
     "best_lap_ms": 108412,
     "best_lap_track": "monza",
@@ -21,10 +21,10 @@
     "most_raced_track": "monza",
     "last_race_at": "2026-03-14T14:55:10",
     "last_seen": "2026-03-14T14:55:10",
-    "win_rate": 25.0,
-    "podium_rate": 50.0,
-    "average_positions_delta": 1.0,
-    "positions_delta_races": 4
+    "win_rate": 33.33,
+    "podium_rate": 66.67,
+    "average_positions_delta": 8.67,
+    "positions_delta_races": 3
   },
   "recent_form": [
     44,
@@ -35,12 +35,12 @@
   "track_stats": [
     {
       "track": "monza",
-      "races": 4,
+      "races": 3,
       "wins": 1,
       "podiums": 2,
       "points": 56,
-      "finish_sum": 51,
-      "average_finish": 12.75,
+      "finish_sum": 7,
+      "average_finish": 2.33,
       "best_lap_ms": 108412,
       "best_lap": "1:48.412"
     }
@@ -70,6 +70,7 @@
       "gap": null,
       "gap_ms": null,
       "lap_count": 0,
+      "counted_for_stats": false,
       "had_best_lap": false,
       "penalty_count": 0,
       "penalty_points": 0
@@ -98,6 +99,7 @@
       "gap": "0:02.163",
       "gap_ms": 2163,
       "lap_count": 11,
+      "counted_for_stats": true,
       "had_best_lap": false,
       "penalty_count": 0,
       "penalty_points": 0
@@ -126,6 +128,7 @@
       "gap": "0:07.680",
       "gap_ms": 7680,
       "lap_count": 11,
+      "counted_for_stats": true,
       "had_best_lap": false,
       "penalty_count": 0,
       "penalty_points": 0
@@ -154,6 +157,7 @@
       "gap": null,
       "gap_ms": null,
       "lap_count": 11,
+      "counted_for_stats": true,
       "had_best_lap": true,
       "penalty_count": 0,
       "penalty_points": 0

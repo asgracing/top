@@ -68,6 +68,7 @@
       "gap": "0:15.856",
       "gap_ms": 15856,
       "lap_count": 12,
+      "counted_for_stats": true,
       "had_best_lap": false,
       "penalty_count": 0,
       "penalty_points": 0
@@ -96,6 +97,7 @@
       "gap": "0:35.897",
       "gap_ms": 35897,
       "lap_count": 6,
+      "counted_for_stats": true,
       "had_best_lap": false,
       "penalty_count": 0,
       "penalty_points": 0

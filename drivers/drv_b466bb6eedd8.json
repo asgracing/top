@@ -2,12 +2,12 @@
   "public_id": "drv_b466bb6eedd8",
   "driver": "Andrei Soldatenkov [ASG]",
   "summary": {
-    "points": 303,
-    "average_points_per_race": 6.59,
-    "races": 46,
-    "wins": 5,
-    "podiums": 12,
-    "average_finish": 19.35,
+    "points": 167,
+    "average_points_per_race": 12.85,
+    "races": 13,
+    "wins": 4,
+    "podiums": 7,
+    "average_finish": 7.38,
     "best_lap": "1:47.405",
     "best_lap_ms": 107405,
     "best_lap_track": "monza",
@@ -21,10 +21,10 @@
     "most_raced_track": "monza",
     "last_race_at": "2026-03-16T23:55:33",
     "last_seen": "2026-03-16T23:55:33",
-    "win_rate": 10.87,
-    "podium_rate": 26.09,
-    "average_positions_delta": -7.63,
-    "positions_delta_races": 38
+    "win_rate": 30.77,
+    "podium_rate": 53.85,
+    "average_positions_delta": -1.45,
+    "positions_delta_races": 11
   },
   "recent_form": [
     27,
@@ -36,12 +36,12 @@
   "track_stats": [
     {
       "track": "monza",
-      "races": 46,
-      "wins": 5,
-      "podiums": 12,
-      "points": 303,
-      "finish_sum": 890,
-      "average_finish": 19.35,
+      "races": 13,
+      "wins": 4,
+      "podiums": 7,
+      "points": 167,
+      "finish_sum": 96,
+      "average_finish": 7.38,
       "best_lap_ms": 107405,
       "best_lap": "1:47.405"
     }
@@ -71,6 +71,7 @@
       "gap": null,
       "gap_ms": null,
       "lap_count": 0,
+      "counted_for_stats": false,
       "had_best_lap": false,
       "penalty_count": 0,
       "penalty_points": 0
@@ -99,6 +100,7 @@
       "gap": "0:09.147",
       "gap_ms": 9147,
       "lap_count": 12,
+      "counted_for_stats": true,
       "had_best_lap": false,
       "penalty_count": 0,
       "penalty_points": 0
@@ -127,6 +129,7 @@
       "gap": null,
       "gap_ms": null,
       "lap_count": 0,
+      "counted_for_stats": false,
       "had_best_lap": false,
       "penalty_count": 0,
       "penalty_points": 0
@@ -155,6 +158,7 @@
       "gap": "0:42.430",
       "gap_ms": 42430,
       "lap_count": 11,
+      "counted_for_stats": true,
       "had_best_lap": false,
       "penalty_count": 0,
       "penalty_points": 0
@@ -183,6 +187,7 @@
       "gap": "0:11.257",
       "gap_ms": 11257,
       "lap_count": 4,
+      "counted_for_stats": true,
       "had_best_lap": true,
       "penalty_count": 0,
       "penalty_points": 0
@@ -211,6 +216,7 @@
       "gap": null,
       "gap_ms": null,
       "lap_count": 11,
+      "counted_for_stats": true,
       "had_best_lap": true,
       "penalty_count": 0,
       "penalty_points": 0
@@ -239,6 +245,7 @@
       "gap": null,
       "gap_ms": null,
       "lap_count": 0,
+      "counted_for_stats": false,
       "had_best_lap": false,
       "penalty_count": 0,
       "penalty_points": 0
@@ -267,6 +274,7 @@
       "gap": "0:28.148",
       "gap_ms": 28148,
       "lap_count": 12,
+      "counted_for_stats": true,
       "had_best_lap": false,
       "penalty_count": 0,
       "penalty_points": 0
@@ -295,6 +303,7 @@
       "gap": null,
       "gap_ms": null,
       "lap_count": 0,
+      "counted_for_stats": false,
       "had_best_lap": false,
       "penalty_count": 1,
       "penalty_points": 3
@@ -323,6 +332,7 @@
       "gap": null,
       "gap_ms": null,
       "lap_count": 0,
+      "counted_for_stats": false,
       "had_best_lap": false,
       "penalty_count": 0,
       "penalty_points": 0
@@ -351,6 +361,7 @@
       "gap": null,
       "gap_ms": null,
       "lap_count": 11,
+      "counted_for_stats": true,
       "had_best_lap": false,
       "penalty_count": 0,
       "penalty_points": 0
@@ -379,6 +390,7 @@
       "gap": "0:16.223",
       "gap_ms": 16223,
       "lap_count": 12,
+      "counted_for_stats": true,
       "had_best_lap": false,
       "penalty_count": 0,
       "penalty_points": 0
@@ -407,6 +419,7 @@
       "gap": "1:23.311",
       "gap_ms": 83311,
       "lap_count": 4,
+      "counted_for_stats": true,
       "had_best_lap": false,
       "penalty_count": 0,
       "penalty_points": 0
@@ -421,7 +434,7 @@
       "position": 3,
       "participants_count": 4,
       "winner": "Arsenii Kapustin",
-      "points": 15,
+      "points": 0,
       "qualifying_position": 3,
       "start_position": 3,
       "start_position_source": "qualifying_car_id",
@@ -435,6 +448,7 @@
       "gap": null,
       "gap_ms": null,
       "lap_count": 0,
+      "counted_for_stats": false,
       "had_best_lap": false,
       "penalty_count": 0,
       "penalty_points": 0
@@ -463,6 +477,7 @@
       "gap": null,
       "gap_ms": null,
       "lap_count": 11,
+      "counted_for_stats": true,
       "had_best_lap": true,
       "penalty_count": 0,
       "penalty_points": 0
@@ -477,7 +492,7 @@
       "position": 8,
       "participants_count": 8,
       "winner": "Artem Malyginov",
-      "points": 4,
+      "points": 0,
       "qualifying_position": null,
       "start_position": null,
       "start_position_source": "unknown",
@@ -491,6 +506,7 @@
       "gap": null,
       "gap_ms": null,
       "lap_count": 0,
+      "counted_for_stats": false,
       "had_best_lap": false,
       "penalty_count": 0,
       "penalty_points": 0
@@ -519,6 +535,7 @@
       "gap": null,
       "gap_ms": null,
       "lap_count": 0,
+      "counted_for_stats": false,
       "had_best_lap": false,
       "penalty_count": 0,
       "penalty_points": 0
@@ -547,6 +564,7 @@
       "gap": null,
       "gap_ms": null,
       "lap_count": 0,
+      "counted_for_stats": false,
       "had_best_lap": false,
       "penalty_count": 0,
       "penalty_points": 0
@@ -575,6 +593,7 @@
       "gap": null,
       "gap_ms": null,
       "lap_count": 0,
+      "counted_for_stats": false,
       "had_best_lap": false,
       "penalty_count": 0,
       "penalty_points": 0
@@ -603,6 +622,7 @@
       "gap": null,
       "gap_ms": null,
       "lap_count": 0,
+      "counted_for_stats": false,
       "had_best_lap": false,
       "penalty_count": 0,
       "penalty_points": 0
@@ -631,6 +651,7 @@
       "gap": null,
       "gap_ms": null,
       "lap_count": 0,
+      "counted_for_stats": false,
       "had_best_lap": false,
       "penalty_count": 0,
       "penalty_points": 0
@@ -659,6 +680,7 @@
       "gap": null,
       "gap_ms": null,
       "lap_count": 0,
+      "counted_for_stats": false,
       "had_best_lap": false,
       "penalty_count": 0,
       "penalty_points": 0
@@ -687,6 +709,7 @@
       "gap": null,
       "gap_ms": null,
       "lap_count": 0,
+      "counted_for_stats": false,
       "had_best_lap": false,
       "penalty_count": 0,
       "penalty_points": 0
@@ -715,6 +738,7 @@
       "gap": null,
       "gap_ms": null,
       "lap_count": 0,
+      "counted_for_stats": false,
       "had_best_lap": false,
       "penalty_count": 0,
       "penalty_points": 0
@@ -743,6 +767,7 @@
       "gap": null,
       "gap_ms": null,
       "lap_count": 0,
+      "counted_for_stats": false,
       "had_best_lap": false,
       "penalty_count": 0,
       "penalty_points": 0
@@ -771,6 +796,7 @@
       "gap": null,
       "gap_ms": null,
       "lap_count": 0,
+      "counted_for_stats": false,
       "had_best_lap": false,
       "penalty_count": 0,
       "penalty_points": 0
@@ -799,6 +825,7 @@
       "gap": null,
       "gap_ms": null,
       "lap_count": 0,
+      "counted_for_stats": false,
       "had_best_lap": false,
       "penalty_count": 0,
       "penalty_points": 0
@@ -827,6 +854,7 @@
       "gap": null,
       "gap_ms": null,
       "lap_count": 0,
+      "counted_for_stats": false,
       "had_best_lap": false,
       "penalty_count": 0,
       "penalty_points": 0
@@ -841,7 +869,7 @@
       "position": 8,
       "participants_count": 11,
       "winner": "Arsenii Kapustin",
-      "points": 4,
+      "points": 0,
       "qualifying_position": 4,
       "start_position": 4,
       "start_position_source": "qualifying_car_id",
@@ -855,6 +883,7 @@
       "gap": null,
       "gap_ms": null,
       "lap_count": 0,
+      "counted_for_stats": false,
       "had_best_lap": false,
       "penalty_count": 0,
       "penalty_points": 0
@@ -869,7 +898,7 @@
       "position": 2,
       "participants_count": 2,
       "winner": "Arsenii Kapustin",
-      "points": 18,
+      "points": 0,
       "qualifying_position": null,
       "start_position": null,
       "start_position_source": "unknown",
@@ -883,6 +912,7 @@
       "gap": null,
       "gap_ms": null,
       "lap_count": 0,
+      "counted_for_stats": false,
       "had_best_lap": false,
       "penalty_count": 0,
       "penalty_points": 0
@@ -897,7 +927,7 @@
       "position": 2,
       "participants_count": 3,
       "winner": "Yan Bryukhanov",
-      "points": 18,
+      "points": 0,
       "qualifying_position": 1,
       "start_position": 1,
       "start_position_source": "qualifying_car_id",
@@ -911,6 +941,7 @@
       "gap": null,
       "gap_ms": null,
       "lap_count": 0,
+      "counted_for_stats": false,
       "had_best_lap": false,
       "penalty_count": 0,
       "penalty_points": 0
@@ -939,6 +970,7 @@
       "gap": null,
       "gap_ms": null,
       "lap_count": 0,
+      "counted_for_stats": false,
       "had_best_lap": false,
       "penalty_count": 0,
       "penalty_points": 0
@@ -967,6 +999,7 @@
       "gap": null,
       "gap_ms": null,
       "lap_count": 0,
+      "counted_for_stats": false,
       "had_best_lap": false,
       "penalty_count": 0,
       "penalty_points": 0
@@ -995,6 +1028,7 @@
       "gap": null,
       "gap_ms": null,
       "lap_count": 11,
+      "counted_for_stats": true,
       "had_best_lap": false,
       "penalty_count": 0,
       "penalty_points": 0
@@ -1023,6 +1057,7 @@
       "gap": "0:00.000",
       "gap_ms": 0,
       "lap_count": 4,
+      "counted_for_stats": true,
       "had_best_lap": false,
       "penalty_count": 0,
       "penalty_points": 0
@@ -1051,6 +1086,7 @@
       "gap": "0:05.451",
       "gap_ms": 5451,
       "lap_count": 10,
+      "counted_for_stats": true,
       "had_best_lap": false,
       "penalty_count": 0,
       "penalty_points": 0
@@ -1079,6 +1115,7 @@
       "gap": null,
       "gap_ms": null,
       "lap_count": 0,
+      "counted_for_stats": false,
       "had_best_lap": false,
       "penalty_count": 0,
       "penalty_points": 0
@@ -1107,6 +1144,7 @@
       "gap": null,
       "gap_ms": null,
       "lap_count": 0,
+      "counted_for_stats": false,
       "had_best_lap": false,
       "penalty_count": 0,
       "penalty_points": 0
@@ -1135,6 +1173,7 @@
       "gap": null,
       "gap_ms": null,
       "lap_count": 0,
+      "counted_for_stats": false,
       "had_best_lap": false,
       "penalty_count": 0,
       "penalty_points": 0
@@ -1163,6 +1202,7 @@
       "gap": null,
       "gap_ms": null,
       "lap_count": 0,
+      "counted_for_stats": false,
       "had_best_lap": false,
       "penalty_count": 0,
       "penalty_points": 0
@@ -1177,7 +1217,7 @@
       "position": 5,
       "participants_count": 11,
       "winner": "Tyler Obrian",
-      "points": 10,
+      "points": 0,
       "qualifying_position": 2,
       "start_position": 2,
       "start_position_source": "qualifying_car_id",
@@ -1191,6 +1231,7 @@
       "gap": null,
       "gap_ms": null,
       "lap_count": 0,
+      "counted_for_stats": false,
       "had_best_lap": false,
       "penalty_count": 0,
       "penalty_points": 0
@@ -1219,6 +1260,7 @@
       "gap": "0:04.146",
       "gap_ms": 4146,
       "lap_count": 11,
+      "counted_for_stats": true,
       "had_best_lap": false,
       "penalty_count": 0,
       "penalty_points": 0
@@ -1233,7 +1275,7 @@
       "position": 4,
       "participants_count": 6,
       "winner": "Arsenii Kapustin",
-      "points": 12,
+      "points": 0,
       "qualifying_position": 1,
       "start_position": 1,
       "start_position_source": "qualifying_car_id",
@@ -1247,6 +1289,7 @@
       "gap": "0:00.000",
       "gap_ms": 0,
       "lap_count": 0,
+      "counted_for_stats": false,
       "had_best_lap": false,
       "penalty_count": 0,
       "penalty_points": 0
@@ -1261,7 +1304,7 @@
       "position": 4,
       "participants_count": 6,
       "winner": "Arsenii Kapustin",
-      "points": 12,
+      "points": 0,
       "qualifying_position": 1,
       "start_position": 1,
       "start_position_source": "qualifying_car_id",
@@ -1275,6 +1318,7 @@
       "gap": null,
       "gap_ms": null,
       "lap_count": 0,
+      "counted_for_stats": false,
       "had_best_lap": false,
       "penalty_count": 0,
       "penalty_points": 0
@@ -1289,7 +1333,7 @@
       "position": 2,
       "participants_count": 2,
       "winner": "Arsenii Kapustin",
-      "points": 18,
+      "points": 0,
       "qualifying_position": 1,
       "start_position": 1,
       "start_position_source": "qualifying_car_id",
@@ -1303,6 +1347,7 @@
       "gap": null,
       "gap_ms": null,
       "lap_count": 0,
+      "counted_for_stats": false,
       "had_best_lap": false,
       "penalty_count": 0,
       "penalty_points": 0
@@ -1317,7 +1362,7 @@
       "position": 1,
       "participants_count": 2,
       "winner": "Andrei Soldatenkov",
-      "points": 25,
+      "points": 0,
       "qualifying_position": 1,
       "start_position": 1,
       "start_position_source": "qualifying_car_id",
@@ -1331,6 +1376,7 @@
       "gap": null,
       "gap_ms": null,
       "lap_count": 0,
+      "counted_for_stats": false,
       "had_best_lap": false,
       "penalty_count": 0,
       "penalty_points": 0

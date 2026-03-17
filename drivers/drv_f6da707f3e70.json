@@ -4,10 +4,10 @@
   "summary": {
     "points": 0,
     "average_points_per_race": 0.0,
-    "races": 3,
+    "races": 1,
     "wins": 0,
     "podiums": 0,
-    "average_finish": 24.67,
+    "average_finish": 14.0,
     "best_lap": "1:48.665",
     "best_lap_ms": 108665,
     "best_lap_track": "monza",
@@ -34,12 +34,12 @@
   "track_stats": [
     {
       "track": "monza",
-      "races": 3,
+      "races": 1,
       "wins": 0,
       "podiums": 0,
       "points": 0,
-      "finish_sum": 74,
-      "average_finish": 24.67,
+      "finish_sum": 14,
+      "average_finish": 14.0,
       "best_lap_ms": 108665,
       "best_lap": "1:48.665"
     }
@@ -69,6 +69,7 @@
       "gap": null,
       "gap_ms": null,
       "lap_count": 0,
+      "counted_for_stats": false,
       "had_best_lap": false,
       "penalty_count": 0,
       "penalty_points": 0
@@ -97,6 +98,7 @@
       "gap": "0:00.000",
       "gap_ms": 0,
       "lap_count": 7,
+      "counted_for_stats": true,
       "had_best_lap": false,
       "penalty_count": 0,
       "penalty_points": 0
@@ -125,6 +127,7 @@
       "gap": null,
       "gap_ms": null,
       "lap_count": 0,
+      "counted_for_stats": false,
       "had_best_lap": false,
       "penalty_count": 0,
       "penalty_points": 0

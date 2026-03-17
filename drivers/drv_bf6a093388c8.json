@@ -70,6 +70,7 @@
       "gap": "0:00.000",
       "gap_ms": 0,
       "lap_count": 2,
+      "counted_for_stats": true,
       "had_best_lap": false,
       "penalty_count": 0,
       "penalty_points": 0
@@ -98,6 +99,7 @@
       "gap": "0:53.494",
       "gap_ms": 53494,
       "lap_count": 6,
+      "counted_for_stats": true,
       "had_best_lap": false,
       "penalty_count": 2,
       "penalty_points": 3
@@ -126,6 +128,7 @@
       "gap": "0:13.752",
       "gap_ms": 13752,
       "lap_count": 11,
+      "counted_for_stats": true,
       "had_best_lap": false,
       "penalty_count": 0,
       "penalty_points": 0
@@ -154,6 +157,7 @@
       "gap": "0:00.000",
       "gap_ms": 0,
       "lap_count": 9,
+      "counted_for_stats": true,
       "had_best_lap": false,
       "penalty_count": 0,
       "penalty_points": 0

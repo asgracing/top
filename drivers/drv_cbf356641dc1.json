@@ -3,11 +3,11 @@
   "driver": "tom talbot",
   "summary": {
     "points": 27,
-    "average_points_per_race": 6.75,
-    "races": 4,
+    "average_points_per_race": 13.5,
+    "races": 2,
     "wins": 0,
     "podiums": 1,
-    "average_finish": 19.75,
+    "average_finish": 3.5,
     "best_lap": "1:48.462",
     "best_lap_ms": 108462,
     "best_lap_track": "monza",
@@ -22,9 +22,9 @@
     "last_race_at": "2026-03-16T18:16:39",
     "last_seen": "2026-03-16T18:16:39",
     "win_rate": 0.0,
-    "podium_rate": 25.0,
-    "average_positions_delta": 7.33,
-    "positions_delta_races": 3
+    "podium_rate": 50.0,
+    "average_positions_delta": 18.5,
+    "positions_delta_races": 2
   },
   "recent_form": [
     30,
@@ -35,12 +35,12 @@
   "track_stats": [
     {
       "track": "monza",
-      "races": 4,
+      "races": 2,
       "wins": 0,
       "podiums": 1,
       "points": 27,
-      "finish_sum": 79,
-      "average_finish": 19.75,
+      "finish_sum": 7,
+      "average_finish": 3.5,
       "best_lap_ms": 108570,
       "best_lap": "1:48.570"
     }
@@ -70,6 +70,7 @@
       "gap": null,
       "gap_ms": null,
       "lap_count": 0,
+      "counted_for_stats": false,
       "had_best_lap": false,
       "penalty_count": 0,
       "penalty_points": 0
@@ -98,6 +99,7 @@
       "gap": "0:49.988",
       "gap_ms": 49988,
       "lap_count": 12,
+      "counted_for_stats": true,
       "had_best_lap": false,
       "penalty_count": 0,
       "penalty_points": 0
@@ -126,6 +128,7 @@
       "gap": "0:16.271",
       "gap_ms": 16271,
       "lap_count": 11,
+      "counted_for_stats": true,
       "had_best_lap": false,
       "penalty_count": 0,
       "penalty_points": 0
@@ -154,6 +157,7 @@
       "gap": null,
       "gap_ms": null,
       "lap_count": 0,
+      "counted_for_stats": false,
       "had_best_lap": false,
       "penalty_count": 0,
       "penalty_points": 0

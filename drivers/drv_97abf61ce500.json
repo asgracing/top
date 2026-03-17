@@ -3,11 +3,11 @@
   "driver": "Artem Bashlykov",
   "summary": {
     "points": 25,
-    "average_points_per_race": 5.0,
-    "races": 5,
+    "average_points_per_race": 6.25,
+    "races": 4,
     "wins": 0,
     "podiums": 0,
-    "average_finish": 12.8,
+    "average_finish": 7.0,
     "best_lap": "1:48.125",
     "best_lap_ms": 108125,
     "best_lap_track": "monza",
@@ -23,8 +23,8 @@
     "last_seen": "2026-03-13T23:29:57",
     "win_rate": 0.0,
     "podium_rate": 0.0,
-    "average_positions_delta": 2.0,
-    "positions_delta_races": 4
+    "average_positions_delta": 5.67,
+    "positions_delta_races": 3
   },
   "recent_form": [
     36,
@@ -36,12 +36,12 @@
   "track_stats": [
     {
       "track": "monza",
-      "races": 5,
+      "races": 4,
       "wins": 0,
       "podiums": 0,
       "points": 25,
-      "finish_sum": 64,
-      "average_finish": 12.8,
+      "finish_sum": 28,
+      "average_finish": 7.0,
       "best_lap_ms": 108125,
       "best_lap": "1:48.125"
     }
@@ -71,6 +71,7 @@
       "gap": null,
       "gap_ms": null,
       "lap_count": 0,
+      "counted_for_stats": false,
       "had_best_lap": false,
       "penalty_count": 0,
       "penalty_points": 0
@@ -99,6 +100,7 @@
       "gap": "0:39.767",
       "gap_ms": 39767,
       "lap_count": 12,
+      "counted_for_stats": true,
       "had_best_lap": false,
       "penalty_count": 0,
       "penalty_points": 0
@@ -127,6 +129,7 @@
       "gap": "0:34.170",
       "gap_ms": 34170,
       "lap_count": 12,
+      "counted_for_stats": true,
       "had_best_lap": false,
       "penalty_count": 0,
       "penalty_points": 0
@@ -155,6 +158,7 @@
       "gap": "0:22.397",
       "gap_ms": 22397,
       "lap_count": 11,
+      "counted_for_stats": true,
       "had_best_lap": false,
       "penalty_count": 0,
       "penalty_points": 0
@@ -183,6 +187,7 @@
       "gap": "0:30.231",
       "gap_ms": 30231,
       "lap_count": 11,
+      "counted_for_stats": true,
       "had_best_lap": false,
       "penalty_count": 0,
       "penalty_points": 0

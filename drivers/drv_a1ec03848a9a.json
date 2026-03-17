@@ -3,11 +3,11 @@
   "driver": "Ty Wilkerson",
   "summary": {
     "points": 6,
-    "average_points_per_race": 3.0,
-    "races": 2,
+    "average_points_per_race": 6.0,
+    "races": 1,
     "wins": 0,
     "podiums": 0,
-    "average_finish": 22.0,
+    "average_finish": 7.0,
     "best_lap": "1:51.107",
     "best_lap_ms": 111107,
     "best_lap_track": "monza",
@@ -23,8 +23,8 @@
     "last_seen": "2026-03-16T21:24:16",
     "win_rate": 0.0,
     "podium_rate": 0.0,
-    "average_positions_delta": -7.5,
-    "positions_delta_races": 2
+    "average_positions_delta": 1.0,
+    "positions_delta_races": 1
   },
   "recent_form": [
     37,
@@ -33,12 +33,12 @@
   "track_stats": [
     {
       "track": "monza",
-      "races": 2,
+      "races": 1,
       "wins": 0,
       "podiums": 0,
       "points": 6,
-      "finish_sum": 44,
-      "average_finish": 22.0,
+      "finish_sum": 7,
+      "average_finish": 7.0,
       "best_lap_ms": 111107,
       "best_lap": "1:51.107"
     }
@@ -68,6 +68,7 @@
       "gap": null,
       "gap_ms": null,
       "lap_count": 0,
+      "counted_for_stats": false,
       "had_best_lap": false,
       "penalty_count": 0,
       "penalty_points": 0
@@ -96,6 +97,7 @@
       "gap": "0:50.391",
       "gap_ms": 50391,
       "lap_count": 11,
+      "counted_for_stats": true,
       "had_best_lap": false,
       "penalty_count": 0,
       "penalty_points": 0

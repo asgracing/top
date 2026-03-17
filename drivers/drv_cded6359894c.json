@@ -2,12 +2,12 @@
   "public_id": "drv_cded6359894c",
   "driver": "mat blank",
   "summary": {
-    "points": 16,
-    "average_points_per_race": 4.0,
-    "races": 4,
+    "points": 0,
+    "average_points_per_race": 0.0,
+    "races": 1,
     "wins": 0,
     "podiums": 0,
-    "average_finish": 17.5,
+    "average_finish": 13.0,
     "best_lap": "1:48.355",
     "best_lap_ms": 108355,
     "best_lap_track": "monza",
@@ -35,12 +35,12 @@
   "track_stats": [
     {
       "track": "monza",
-      "races": 4,
+      "races": 1,
       "wins": 0,
       "podiums": 0,
-      "points": 16,
-      "finish_sum": 70,
-      "average_finish": 17.5,
+      "points": 0,
+      "finish_sum": 13,
+      "average_finish": 13.0,
       "best_lap_ms": 108355,
       "best_lap": "1:48.355"
     }
@@ -70,6 +70,7 @@
       "gap": null,
       "gap_ms": null,
       "lap_count": 0,
+      "counted_for_stats": false,
       "had_best_lap": false,
       "penalty_count": 0,
       "penalty_points": 0
@@ -98,6 +99,7 @@
       "gap": "0:00.000",
       "gap_ms": 0,
       "lap_count": 7,
+      "counted_for_stats": true,
       "had_best_lap": false,
       "penalty_count": 0,
       "penalty_points": 0
@@ -112,7 +114,7 @@
       "position": 4,
       "participants_count": 4,
       "winner": "Arsenii Kapustin",
-      "points": 12,
+      "points": 0,
       "qualifying_position": null,
       "start_position": null,
       "start_position_source": "unknown",
@@ -126,6 +128,7 @@
       "gap": null,
       "gap_ms": null,
       "lap_count": 0,
+      "counted_for_stats": false,
       "had_best_lap": false,
       "penalty_count": 0,
       "penalty_points": 0
@@ -140,7 +143,7 @@
       "position": 8,
       "participants_count": 10,
       "winner": "Denis Denalget [ASG]",
-      "points": 4,
+      "points": 0,
       "qualifying_position": null,
       "start_position": null,
       "start_position_source": "unknown",
@@ -154,6 +157,7 @@
       "gap": null,
       "gap_ms": null,
       "lap_count": 0,
+      "counted_for_stats": false,
       "had_best_lap": false,
       "penalty_count": 0,
       "penalty_points": 0

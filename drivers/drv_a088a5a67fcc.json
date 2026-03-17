@@ -3,11 +3,11 @@
   "driver": "Danila Grishin",
   "summary": {
     "points": 6,
-    "average_points_per_race": 2.0,
-    "races": 3,
+    "average_points_per_race": 6.0,
+    "races": 1,
     "wins": 0,
     "podiums": 0,
-    "average_finish": 29.67,
+    "average_finish": 7.0,
     "best_lap": "1:49.847",
     "best_lap_ms": 109847,
     "best_lap_track": "monza",
@@ -23,8 +23,8 @@
     "last_seen": "2026-03-15T21:51:43",
     "win_rate": 0.0,
     "podium_rate": 0.0,
-    "average_positions_delta": -7.0,
-    "positions_delta_races": 2
+    "average_positions_delta": 5.0,
+    "positions_delta_races": 1
   },
   "recent_form": [
     7,
@@ -34,12 +34,12 @@
   "track_stats": [
     {
       "track": "monza",
-      "races": 3,
+      "races": 1,
       "wins": 0,
       "podiums": 0,
       "points": 6,
-      "finish_sum": 89,
-      "average_finish": 29.67,
+      "finish_sum": 7,
+      "average_finish": 7.0,
       "best_lap_ms": 109847,
       "best_lap": "1:49.847"
     }
@@ -69,6 +69,7 @@
       "gap": "0:51.844",
       "gap_ms": 51844,
       "lap_count": 11,
+      "counted_for_stats": true,
       "had_best_lap": false,
       "penalty_count": 0,
       "penalty_points": 0
@@ -97,6 +98,7 @@
       "gap": null,
       "gap_ms": null,
       "lap_count": 0,
+      "counted_for_stats": false,
       "had_best_lap": false,
       "penalty_count": 0,
       "penalty_points": 0
@@ -125,6 +127,7 @@
       "gap": null,
       "gap_ms": null,
       "lap_count": 0,
+      "counted_for_stats": false,
       "had_best_lap": false,
       "penalty_count": 0,
       "penalty_points": 0

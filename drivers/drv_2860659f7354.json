@@ -3,11 +3,11 @@
   "driver": "Michael Elchinov",
   "summary": {
     "points": 48,
-    "average_points_per_race": 2.53,
-    "races": 19,
+    "average_points_per_race": 3.69,
+    "races": 13,
     "wins": 0,
     "podiums": 1,
-    "average_finish": 17.89,
+    "average_finish": 9.62,
     "best_lap": "1:48.950",
     "best_lap_ms": 108950,
     "best_lap_track": "monza",
@@ -22,9 +22,9 @@
     "last_race_at": "2026-03-16T23:55:33",
     "last_seen": "2026-03-16T23:55:33",
     "win_rate": 0.0,
-    "podium_rate": 5.26,
-    "average_positions_delta": 3.88,
-    "positions_delta_races": 16
+    "podium_rate": 7.69,
+    "average_positions_delta": 8.08,
+    "positions_delta_races": 12
   },
   "recent_form": [
     29,
@@ -36,12 +36,12 @@
   "track_stats": [
     {
       "track": "monza",
-      "races": 19,
+      "races": 13,
       "wins": 0,
       "podiums": 1,
       "points": 48,
-      "finish_sum": 340,
-      "average_finish": 17.89,
+      "finish_sum": 125,
+      "average_finish": 9.62,
       "best_lap_ms": 109242,
       "best_lap": "1:49.242"
     }
@@ -71,6 +71,7 @@
       "gap": null,
       "gap_ms": null,
       "lap_count": 0,
+      "counted_for_stats": false,
       "had_best_lap": false,
       "penalty_count": 0,
       "penalty_points": 0
@@ -99,6 +100,7 @@
       "gap": "0:19.344",
       "gap_ms": 19344,
       "lap_count": 12,
+      "counted_for_stats": true,
       "had_best_lap": false,
       "penalty_count": 0,
       "penalty_points": 0
@@ -127,6 +129,7 @@
       "gap": "0:48.813",
       "gap_ms": 48813,
       "lap_count": 11,
+      "counted_for_stats": true,
       "had_best_lap": false,
       "penalty_count": 0,
       "penalty_points": 0
@@ -155,6 +158,7 @@
       "gap": "0:41.538",
       "gap_ms": 41538,
       "lap_count": 12,
+      "counted_for_stats": true,
       "had_best_lap": false,
       "penalty_count": 0,
       "penalty_points": 0
@@ -183,6 +187,7 @@
       "gap": null,
       "gap_ms": null,
       "lap_count": 0,
+      "counted_for_stats": false,
       "had_best_lap": false,
       "penalty_count": 0,
       "penalty_points": 0
@@ -211,6 +216,7 @@
       "gap": null,
       "gap_ms": null,
       "lap_count": 0,
+      "counted_for_stats": false,
       "had_best_lap": false,
       "penalty_count": 0,
       "penalty_points": 0
@@ -239,6 +245,7 @@
       "gap": "0:12.163",
       "gap_ms": 12163,
       "lap_count": 11,
+      "counted_for_stats": true,
       "had_best_lap": false,
       "penalty_count": 0,
       "penalty_points": 0
@@ -267,6 +274,7 @@
       "gap": "0:51.727",
       "gap_ms": 51727,
       "lap_count": 12,
+      "counted_for_stats": true,
       "had_best_lap": false,
       "penalty_count": 0,
       "penalty_points": 0
@@ -295,6 +303,7 @@
       "gap": null,
       "gap_ms": null,
       "lap_count": 0,
+      "counted_for_stats": false,
       "had_best_lap": false,
       "penalty_count": 0,
       "penalty_points": 0
@@ -323,6 +332,7 @@
       "gap": null,
       "gap_ms": null,
       "lap_count": 0,
+      "counted_for_stats": false,
       "had_best_lap": false,
       "penalty_count": 0,
       "penalty_points": 0
@@ -351,6 +361,7 @@
       "gap": "1:35.671",
       "gap_ms": 95671,
       "lap_count": 11,
+      "counted_for_stats": true,
       "had_best_lap": false,
       "penalty_count": 0,
       "penalty_points": 0
@@ -379,6 +390,7 @@
       "gap": "0:37.680",
       "gap_ms": 37680,
       "lap_count": 11,
+      "counted_for_stats": true,
       "had_best_lap": false,
       "penalty_count": 0,
       "penalty_points": 0
@@ -407,6 +419,7 @@
       "gap": "0:32.015",
       "gap_ms": 32015,
       "lap_count": 11,
+      "counted_for_stats": true,
       "had_best_lap": false,
       "penalty_count": 0,
       "penalty_points": 0
@@ -435,6 +448,7 @@
       "gap": null,
       "gap_ms": null,
       "lap_count": 0,
+      "counted_for_stats": false,
       "had_best_lap": false,
       "penalty_count": 0,
       "penalty_points": 0
@@ -463,6 +477,7 @@
       "gap": "0:44.667",
       "gap_ms": 44667,
       "lap_count": 12,
+      "counted_for_stats": true,
       "had_best_lap": false,
       "penalty_count": 0,
       "penalty_points": 0
@@ -491,6 +506,7 @@
       "gap": "0:01.347",
       "gap_ms": 1347,
       "lap_count": 10,
+      "counted_for_stats": true,
       "had_best_lap": false,
       "penalty_count": 0,
       "penalty_points": 0
@@ -519,6 +535,7 @@
       "gap": "1:01.579",
       "gap_ms": 61579,
       "lap_count": 12,
+      "counted_for_stats": true,
       "had_best_lap": false,
       "penalty_count": 0,
       "penalty_points": 0
@@ -547,6 +564,7 @@
       "gap": "1:00.257",
       "gap_ms": 60257,
       "lap_count": 12,
+      "counted_for_stats": true,
       "had_best_lap": false,
       "penalty_count": 0,
       "penalty_points": 0
@@ -575,6 +593,7 @@
       "gap": "1:15.251",
       "gap_ms": 75251,
       "lap_count": 7,
+      "counted_for_stats": true,
       "had_best_lap": false,
       "penalty_count": 0,
       "penalty_points": 0

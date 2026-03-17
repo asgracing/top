@@ -3,11 +3,11 @@
   "driver": "Bruno Labrecque",
   "summary": {
     "points": 36,
-    "average_points_per_race": 9.0,
-    "races": 4,
+    "average_points_per_race": 12.0,
+    "races": 3,
     "wins": 0,
     "podiums": 1,
-    "average_finish": 10.25,
+    "average_finish": 4.33,
     "best_lap": "1:47.282",
     "best_lap_ms": 107282,
     "best_lap_track": "monza",
@@ -22,9 +22,9 @@
     "last_race_at": "2026-03-14T21:08:17",
     "last_seen": "2026-03-14T21:08:17",
     "win_rate": 0.0,
-    "podium_rate": 25.0,
-    "average_positions_delta": 2.75,
-    "positions_delta_races": 4
+    "podium_rate": 33.33,
+    "average_positions_delta": 12.0,
+    "positions_delta_races": 3
   },
   "recent_form": [
     28,
@@ -35,12 +35,12 @@
   "track_stats": [
     {
       "track": "monza",
-      "races": 4,
+      "races": 3,
       "wins": 0,
       "podiums": 1,
       "points": 36,
-      "finish_sum": 41,
-      "average_finish": 10.25,
+      "finish_sum": 13,
+      "average_finish": 4.33,
       "best_lap_ms": 107282,
       "best_lap": "1:47.282"
     }
@@ -70,6 +70,7 @@
       "gap": null,
       "gap_ms": null,
       "lap_count": 0,
+      "counted_for_stats": false,
       "had_best_lap": false,
       "penalty_count": 0,
       "penalty_points": 0
@@ -98,6 +99,7 @@
       "gap": "0:30.104",
       "gap_ms": 30104,
       "lap_count": 11,
+      "counted_for_stats": true,
       "had_best_lap": false,
       "penalty_count": 0,
       "penalty_points": 0
@@ -126,6 +128,7 @@
       "gap": "0:36.291",
       "gap_ms": 36291,
       "lap_count": 12,
+      "counted_for_stats": true,
       "had_best_lap": false,
       "penalty_count": 0,
       "penalty_points": 0
@@ -154,6 +157,7 @@
       "gap": "0:07.967",
       "gap_ms": 7967,
       "lap_count": 12,
+      "counted_for_stats": true,
       "had_best_lap": false,
       "penalty_count": 0,
       "penalty_points": 0

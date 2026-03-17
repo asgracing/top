@@ -3,11 +3,11 @@
   "driver": "Markus Becker",
   "summary": {
     "points": 5,
-    "average_points_per_race": 1.67,
-    "races": 3,
+    "average_points_per_race": 2.5,
+    "races": 2,
     "wins": 0,
     "podiums": 0,
-    "average_finish": 18.0,
+    "average_finish": 9.0,
     "best_lap": "1:48.140",
     "best_lap_ms": 108140,
     "best_lap_track": "monza",
@@ -23,8 +23,8 @@
     "last_seen": "2026-03-14T22:24:34",
     "win_rate": 0.0,
     "podium_rate": 0.0,
-    "average_positions_delta": 9.0,
-    "positions_delta_races": 3
+    "average_positions_delta": 16.5,
+    "positions_delta_races": 2
   },
   "recent_form": [
     10,
@@ -34,12 +34,12 @@
   "track_stats": [
     {
       "track": "monza",
-      "races": 3,
+      "races": 2,
       "wins": 0,
       "podiums": 0,
       "points": 5,
-      "finish_sum": 54,
-      "average_finish": 18.0,
+      "finish_sum": 18,
+      "average_finish": 9.0,
       "best_lap_ms": 108140,
       "best_lap": "1:48.140"
     }
@@ -69,6 +69,7 @@
       "gap": "1:14.505",
       "gap_ms": 74505,
       "lap_count": 12,
+      "counted_for_stats": true,
       "had_best_lap": false,
       "penalty_count": 0,
       "penalty_points": 0
@@ -97,6 +98,7 @@
       "gap": null,
       "gap_ms": null,
       "lap_count": 0,
+      "counted_for_stats": false,
       "had_best_lap": false,
       "penalty_count": 0,
       "penalty_points": 0
@@ -125,6 +127,7 @@
       "gap": "0:50.916",
       "gap_ms": 50916,
       "lap_count": 12,
+      "counted_for_stats": true,
       "had_best_lap": false,
       "penalty_count": 0,
       "penalty_points": 0

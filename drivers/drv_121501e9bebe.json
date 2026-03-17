@@ -3,11 +3,11 @@
   "driver": "Vitaliy Kredentsov",
   "summary": {
     "points": 16,
-    "average_points_per_race": 5.33,
-    "races": 3,
+    "average_points_per_race": 8.0,
+    "races": 2,
     "wins": 0,
     "podiums": 0,
-    "average_finish": 10.67,
+    "average_finish": 6.0,
     "best_lap": "1:52.757",
     "best_lap_ms": 112757,
     "best_lap_track": "monza",
@@ -34,12 +34,12 @@
   "track_stats": [
     {
       "track": "monza",
-      "races": 3,
+      "races": 2,
       "wins": 0,
       "podiums": 0,
       "points": 16,
-      "finish_sum": 32,
-      "average_finish": 10.67,
+      "finish_sum": 12,
+      "average_finish": 6.0,
       "best_lap_ms": 112757,
       "best_lap": "1:52.757"
     }
@@ -69,6 +69,7 @@
       "gap": "0:00.000",
       "gap_ms": 0,
       "lap_count": 7,
+      "counted_for_stats": true,
       "had_best_lap": false,
       "penalty_count": 0,
       "penalty_points": 0
@@ -97,6 +98,7 @@
       "gap": null,
       "gap_ms": null,
       "lap_count": 0,
+      "counted_for_stats": false,
       "had_best_lap": false,
       "penalty_count": 0,
       "penalty_points": 0
@@ -125,6 +127,7 @@
       "gap": "0:29.183",
       "gap_ms": 29183,
       "lap_count": 2,
+      "counted_for_stats": true,
       "had_best_lap": false,
       "penalty_count": 0,
       "penalty_points": 0

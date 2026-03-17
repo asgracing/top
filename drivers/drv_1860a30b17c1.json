@@ -2,12 +2,12 @@
   "public_id": "drv_1860a30b17c1",
   "driver": "MAC JAC",
   "summary": {
-    "points": 26,
-    "average_points_per_race": 8.67,
-    "races": 3,
+    "points": 20,
+    "average_points_per_race": 10.0,
+    "races": 2,
     "wins": 0,
     "podiums": 1,
-    "average_finish": 6.0,
+    "average_finish": 5.5,
     "best_lap": "1:51.395",
     "best_lap_ms": 111395,
     "best_lap_track": "monza",
@@ -22,9 +22,9 @@
     "last_race_at": "2026-03-17T15:02:44",
     "last_seen": "2026-03-17T15:02:44",
     "win_rate": 0.0,
-    "podium_rate": 33.33,
-    "average_positions_delta": -0.33,
-    "positions_delta_races": 3
+    "podium_rate": 50.0,
+    "average_positions_delta": 0.5,
+    "positions_delta_races": 2
   },
   "recent_form": [
     9,
@@ -34,12 +34,12 @@
   "track_stats": [
     {
       "track": "monza",
-      "races": 3,
+      "races": 2,
       "wins": 0,
       "podiums": 1,
-      "points": 26,
-      "finish_sum": 18,
-      "average_finish": 6.0,
+      "points": 20,
+      "finish_sum": 11,
+      "average_finish": 5.5,
       "best_lap_ms": 111395,
       "best_lap": "1:51.395"
     }
@@ -69,6 +69,7 @@
       "gap": "0:00.000",
       "gap_ms": 0,
       "lap_count": 8,
+      "counted_for_stats": true,
       "had_best_lap": false,
       "penalty_count": 0,
       "penalty_points": 0
@@ -83,7 +84,7 @@
       "position": 7,
       "participants_count": 10,
       "winner": "Kimi RAI",
-      "points": 6,
+      "points": 0,
       "qualifying_position": 5,
       "start_position": 5,
       "start_position_source": "qualifying_car_id",
@@ -97,6 +98,7 @@
       "gap": null,
       "gap_ms": null,
       "lap_count": 0,
+      "counted_for_stats": false,
       "had_best_lap": false,
       "penalty_count": 0,
       "penalty_points": 0
@@ -125,6 +127,7 @@
       "gap": "0:16.746",
       "gap_ms": 16746,
       "lap_count": 11,
+      "counted_for_stats": true,
       "had_best_lap": false,
       "penalty_count": 0,
       "penalty_points": 0

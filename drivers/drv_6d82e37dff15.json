@@ -2,12 +2,12 @@
   "public_id": "drv_6d82e37dff15",
   "driver": "Dima Kulikov",
   "summary": {
-    "points": 25,
-    "average_points_per_race": 12.5,
-    "races": 2,
+    "points": 15,
+    "average_points_per_race": 15.0,
+    "races": 1,
     "wins": 0,
     "podiums": 1,
-    "average_finish": 4.0,
+    "average_finish": 3.0,
     "best_lap": "1:49.340",
     "best_lap_ms": 109340,
     "best_lap_track": "monza",
@@ -22,7 +22,7 @@
     "last_race_at": "2026-03-17T15:02:44",
     "last_seen": "2026-03-17T15:02:44",
     "win_rate": 0.0,
-    "podium_rate": 50.0,
+    "podium_rate": 100.0,
     "average_positions_delta": -2.0,
     "positions_delta_races": 1
   },
@@ -33,12 +33,12 @@
   "track_stats": [
     {
       "track": "monza",
-      "races": 2,
+      "races": 1,
       "wins": 0,
       "podiums": 1,
-      "points": 25,
-      "finish_sum": 8,
-      "average_finish": 4.0,
+      "points": 15,
+      "finish_sum": 3,
+      "average_finish": 3.0,
       "best_lap_ms": 110682,
       "best_lap": "1:50.682"
     }
@@ -68,6 +68,7 @@
       "gap": "0:13.159",
       "gap_ms": 13159,
       "lap_count": 11,
+      "counted_for_stats": true,
       "had_best_lap": false,
       "penalty_count": 0,
       "penalty_points": 0
@@ -82,7 +83,7 @@
       "position": 5,
       "participants_count": 5,
       "winner": "Andrei Soldatenkov [ASG]",
-      "points": 10,
+      "points": 0,
       "qualifying_position": null,
       "start_position": null,
       "start_position_source": "unknown",
@@ -96,6 +97,7 @@
       "gap": null,
       "gap_ms": null,
       "lap_count": 0,
+      "counted_for_stats": false,
       "had_best_lap": false,
       "penalty_count": 0,
       "penalty_points": 0

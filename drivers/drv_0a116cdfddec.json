@@ -3,11 +3,11 @@
   "driver": "Vangelis Kioroglou",
   "summary": {
     "points": 23,
-    "average_points_per_race": 5.75,
-    "races": 4,
+    "average_points_per_race": 11.5,
+    "races": 2,
     "wins": 0,
     "podiums": 1,
-    "average_finish": 21.25,
+    "average_finish": 4.5,
     "best_lap": "1:48.170",
     "best_lap_ms": 108170,
     "best_lap_track": "monza",
@@ -22,9 +22,9 @@
     "last_race_at": "2026-03-15T18:11:15",
     "last_seen": "2026-03-15T18:11:15",
     "win_rate": 0.0,
-    "podium_rate": 25.0,
-    "average_positions_delta": -1.67,
-    "positions_delta_races": 3
+    "podium_rate": 50.0,
+    "average_positions_delta": 2.5,
+    "positions_delta_races": 2
   },
   "recent_form": [
     3,
@@ -35,12 +35,12 @@
   "track_stats": [
     {
       "track": "monza",
-      "races": 4,
+      "races": 2,
       "wins": 0,
       "podiums": 1,
       "points": 23,
-      "finish_sum": 85,
-      "average_finish": 21.25,
+      "finish_sum": 9,
+      "average_finish": 4.5,
       "best_lap_ms": 108170,
       "best_lap": "1:48.170"
     }
@@ -70,6 +70,7 @@
       "gap": "0:23.921",
       "gap_ms": 23921,
       "lap_count": 11,
+      "counted_for_stats": true,
       "had_best_lap": false,
       "penalty_count": 0,
       "penalty_points": 0
@@ -98,6 +99,7 @@
       "gap": null,
       "gap_ms": null,
       "lap_count": 0,
+      "counted_for_stats": false,
       "had_best_lap": false,
       "penalty_count": 0,
       "penalty_points": 0
@@ -126,6 +128,7 @@
       "gap": null,
       "gap_ms": null,
       "lap_count": 0,
+      "counted_for_stats": false,
       "had_best_lap": false,
       "penalty_count": 0,
       "penalty_points": 0
@@ -154,6 +157,7 @@
       "gap": "0:36.669",
       "gap_ms": 36669,
       "lap_count": 12,
+      "counted_for_stats": true,
       "had_best_lap": false,
       "penalty_count": 0,
       "penalty_points": 0

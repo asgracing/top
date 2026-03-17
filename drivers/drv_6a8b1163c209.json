@@ -3,11 +3,11 @@
   "driver": "Anton Alipov",
   "summary": {
     "points": 16,
-    "average_points_per_race": 2.67,
-    "races": 6,
+    "average_points_per_race": 4.0,
+    "races": 4,
     "wins": 0,
     "podiums": 0,
-    "average_finish": 19.17,
+    "average_finish": 10.25,
     "best_lap": "1:47.915",
     "best_lap_ms": 107915,
     "best_lap_track": "monza",
@@ -23,8 +23,8 @@
     "last_seen": "2026-03-15T16:58:35",
     "win_rate": 0.0,
     "podium_rate": 0.0,
-    "average_positions_delta": -5.0,
-    "positions_delta_races": 5
+    "average_positions_delta": -4.67,
+    "positions_delta_races": 3
   },
   "recent_form": [
     35,
@@ -36,12 +36,12 @@
   "track_stats": [
     {
       "track": "monza",
-      "races": 6,
+      "races": 4,
       "wins": 0,
       "podiums": 0,
       "points": 16,
-      "finish_sum": 115,
-      "average_finish": 19.17,
+      "finish_sum": 41,
+      "average_finish": 10.25,
       "best_lap_ms": 107915,
       "best_lap": "1:47.915"
     }
@@ -71,6 +71,7 @@
       "gap": null,
       "gap_ms": null,
       "lap_count": 0,
+      "counted_for_stats": false,
       "had_best_lap": false,
       "penalty_count": 0,
       "penalty_points": 0
@@ -99,6 +100,7 @@
       "gap": "0:12.956",
       "gap_ms": 12956,
       "lap_count": 12,
+      "counted_for_stats": true,
       "had_best_lap": false,
       "penalty_count": 0,
       "penalty_points": 0
@@ -127,6 +129,7 @@
       "gap": "0:00.000",
       "gap_ms": 0,
       "lap_count": 9,
+      "counted_for_stats": true,
       "had_best_lap": false,
       "penalty_count": 0,
       "penalty_points": 0
@@ -155,6 +158,7 @@
       "gap": null,
       "gap_ms": null,
       "lap_count": 0,
+      "counted_for_stats": false,
       "had_best_lap": false,
       "penalty_count": 0,
       "penalty_points": 0
@@ -183,6 +187,7 @@
       "gap": "0:39.219",
       "gap_ms": 39219,
       "lap_count": 12,
+      "counted_for_stats": true,
       "had_best_lap": false,
       "penalty_count": 0,
       "penalty_points": 0
@@ -211,6 +216,7 @@
       "gap": "1:30.687",
       "gap_ms": 90687,
       "lap_count": 7,
+      "counted_for_stats": true,
       "had_best_lap": false,
       "penalty_count": 0,
       "penalty_points": 0

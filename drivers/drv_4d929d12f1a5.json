@@ -3,11 +3,11 @@
   "driver": "Muhammad Shabonov",
   "summary": {
     "points": 1,
-    "average_points_per_race": 0.2,
-    "races": 5,
+    "average_points_per_race": 0.33,
+    "races": 3,
     "wins": 0,
     "podiums": 0,
-    "average_finish": 26.8,
+    "average_finish": 14.0,
     "best_lap": "1:49.950",
     "best_lap_ms": 109950,
     "best_lap_track": "monza",
@@ -23,8 +23,8 @@
     "last_seen": "2026-03-14T21:08:17",
     "win_rate": 0.0,
     "podium_rate": 0.0,
-    "average_positions_delta": 2.33,
-    "positions_delta_races": 3
+    "average_positions_delta": 11.5,
+    "positions_delta_races": 2
   },
   "recent_form": [
     10,
@@ -36,12 +36,12 @@
   "track_stats": [
     {
       "track": "monza",
-      "races": 5,
+      "races": 3,
       "wins": 0,
       "podiums": 0,
       "points": 1,
-      "finish_sum": 134,
-      "average_finish": 26.8,
+      "finish_sum": 42,
+      "average_finish": 14.0,
       "best_lap_ms": 109950,
       "best_lap": "1:49.950"
     }
@@ -71,6 +71,7 @@
       "gap": "1:03.784",
       "gap_ms": 63784,
       "lap_count": 12,
+      "counted_for_stats": true,
       "had_best_lap": false,
       "penalty_count": 0,
       "penalty_points": 0
@@ -99,6 +100,7 @@
       "gap": null,
       "gap_ms": null,
       "lap_count": 0,
+      "counted_for_stats": false,
       "had_best_lap": false,
       "penalty_count": 0,
       "penalty_points": 0
@@ -127,6 +129,7 @@
       "gap": null,
       "gap_ms": null,
       "lap_count": 0,
+      "counted_for_stats": false,
       "had_best_lap": false,
       "penalty_count": 0,
       "penalty_points": 0
@@ -155,6 +158,7 @@
       "gap": "1:14.547",
       "gap_ms": 74547,
       "lap_count": 12,
+      "counted_for_stats": true,
       "had_best_lap": false,
       "penalty_count": 0,
       "penalty_points": 0
@@ -183,6 +187,7 @@
       "gap": "0:12.265",
       "gap_ms": 12265,
       "lap_count": 4,
+      "counted_for_stats": true,
       "had_best_lap": false,
       "penalty_count": 0,
       "penalty_points": 0

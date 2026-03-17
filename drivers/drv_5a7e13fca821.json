@@ -4,10 +4,10 @@
   "summary": {
     "points": 0,
     "average_points_per_race": 0.0,
-    "races": 3,
+    "races": 2,
     "wins": 0,
     "podiums": 0,
-    "average_finish": 24.33,
+    "average_finish": 21.5,
     "best_lap": "1:48.710",
     "best_lap_ms": 108710,
     "best_lap_track": "monza",
@@ -23,8 +23,8 @@
     "last_seen": "2026-03-15T23:08:44",
     "win_rate": 0.0,
     "podium_rate": 0.0,
-    "average_positions_delta": -15.33,
-    "positions_delta_races": 3
+    "average_positions_delta": -10.0,
+    "positions_delta_races": 2
   },
   "recent_form": [
     18,
@@ -34,12 +34,12 @@
   "track_stats": [
     {
       "track": "monza",
-      "races": 3,
+      "races": 2,
       "wins": 0,
       "podiums": 0,
       "points": 0,
-      "finish_sum": 73,
-      "average_finish": 24.33,
+      "finish_sum": 43,
+      "average_finish": 21.5,
       "best_lap_ms": 109277,
       "best_lap": "1:49.277"
     }
@@ -69,6 +69,7 @@
       "gap": "0:00.000",
       "gap_ms": 0,
       "lap_count": 8,
+      "counted_for_stats": true,
       "had_best_lap": false,
       "penalty_count": 0,
       "penalty_points": 0
@@ -97,6 +98,7 @@
       "gap": "0:00.000",
       "gap_ms": 0,
       "lap_count": 2,
+      "counted_for_stats": true,
       "had_best_lap": false,
       "penalty_count": 0,
       "penalty_points": 0
@@ -125,6 +127,7 @@
       "gap": null,
       "gap_ms": null,
       "lap_count": 0,
+      "counted_for_stats": false,
       "had_best_lap": false,
       "penalty_count": 0,
       "penalty_points": 0

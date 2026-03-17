@@ -3,11 +3,11 @@
   "driver": "Артём Мозолевский | S24",
   "summary": {
     "points": 12,
-    "average_points_per_race": 4.0,
-    "races": 3,
+    "average_points_per_race": 6.0,
+    "races": 2,
     "wins": 0,
     "podiums": 0,
-    "average_finish": 17.67,
+    "average_finish": 7.0,
     "best_lap": "1:48.917",
     "best_lap_ms": 108917,
     "best_lap_track": "monza",
@@ -34,12 +34,12 @@
   "track_stats": [
     {
       "track": "monza",
-      "races": 3,
+      "races": 2,
       "wins": 0,
       "podiums": 0,
       "points": 12,
-      "finish_sum": 53,
-      "average_finish": 17.67,
+      "finish_sum": 14,
+      "average_finish": 7.0,
       "best_lap_ms": 108917,
       "best_lap": "1:48.917"
     }
@@ -69,6 +69,7 @@
       "gap": null,
       "gap_ms": null,
       "lap_count": 0,
+      "counted_for_stats": false,
       "had_best_lap": false,
       "penalty_count": 0,
       "penalty_points": 0
@@ -97,6 +98,7 @@
       "gap": "0:00.000",
       "gap_ms": 0,
       "lap_count": 3,
+      "counted_for_stats": true,
       "had_best_lap": false,
       "penalty_count": 0,
       "penalty_points": 0
@@ -125,6 +127,7 @@
       "gap": "0:21.340",
       "gap_ms": 21340,
       "lap_count": 1,
+      "counted_for_stats": true,
       "had_best_lap": false,
       "penalty_count": 0,
       "penalty_points": 0

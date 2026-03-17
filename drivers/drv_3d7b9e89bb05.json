@@ -3,11 +3,11 @@
   "driver": "Mike Flauaus",
   "summary": {
     "points": 18,
-    "average_points_per_race": 4.5,
-    "races": 4,
+    "average_points_per_race": 6.0,
+    "races": 3,
     "wins": 0,
     "podiums": 1,
-    "average_finish": 17.25,
+    "average_finish": 12.67,
     "best_lap": "1:48.915",
     "best_lap_ms": 108915,
     "best_lap_track": "monza",
@@ -22,9 +22,9 @@
     "last_race_at": "2026-03-15T00:16:09",
     "last_seen": "2026-03-15T00:16:09",
     "win_rate": 0.0,
-    "podium_rate": 25.0,
-    "average_positions_delta": -4.33,
-    "positions_delta_races": 3
+    "podium_rate": 33.33,
+    "average_positions_delta": -2.0,
+    "positions_delta_races": 2
   },
   "recent_form": [
     31,
@@ -35,12 +35,12 @@
   "track_stats": [
     {
       "track": "monza",
-      "races": 4,
+      "races": 3,
       "wins": 0,
       "podiums": 1,
       "points": 18,
-      "finish_sum": 69,
-      "average_finish": 17.25,
+      "finish_sum": 38,
+      "average_finish": 12.67,
       "best_lap_ms": 108915,
       "best_lap": "1:48.915"
     }
@@ -70,6 +70,7 @@
       "gap": null,
       "gap_ms": null,
       "lap_count": 0,
+      "counted_for_stats": false,
       "had_best_lap": false,
       "penalty_count": 0,
       "penalty_points": 0
@@ -98,6 +99,7 @@
       "gap": "1:11.389",
       "gap_ms": 71389,
       "lap_count": 9,
+      "counted_for_stats": true,
       "had_best_lap": false,
       "penalty_count": 0,
       "penalty_points": 0
@@ -126,6 +128,7 @@
       "gap": "0:13.428",
       "gap_ms": 13428,
       "lap_count": 11,
+      "counted_for_stats": true,
       "had_best_lap": false,
       "penalty_count": 0,
       "penalty_points": 0
@@ -154,6 +157,7 @@
       "gap": "1:39.396",
       "gap_ms": 99396,
       "lap_count": 5,
+      "counted_for_stats": true,
       "had_best_lap": false,
       "penalty_count": 0,
       "penalty_points": 0

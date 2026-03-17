@@ -2,12 +2,12 @@
   "public_id": "drv_bc3ce48228c5",
   "driver": "fran ventu",
   "summary": {
-    "points": 35,
-    "average_points_per_race": 11.67,
-    "races": 3,
+    "points": 33,
+    "average_points_per_race": 16.5,
+    "races": 2,
     "wins": 0,
     "podiums": 2,
-    "average_finish": 4.67,
+    "average_finish": 2.5,
     "best_lap": "1:50.067",
     "best_lap_ms": 110067,
     "best_lap_track": "monza",
@@ -22,9 +22,9 @@
     "last_race_at": "2026-03-16T00:22:05",
     "last_seen": "2026-03-16T00:22:05",
     "win_rate": 0.0,
-    "podium_rate": 66.67,
-    "average_positions_delta": 0.67,
-    "positions_delta_races": 3
+    "podium_rate": 100.0,
+    "average_positions_delta": 2.0,
+    "positions_delta_races": 2
   },
   "recent_form": [
     9,
@@ -34,12 +34,12 @@
   "track_stats": [
     {
       "track": "monza",
-      "races": 3,
+      "races": 2,
       "wins": 0,
       "podiums": 2,
-      "points": 35,
-      "finish_sum": 14,
-      "average_finish": 4.67,
+      "points": 33,
+      "finish_sum": 5,
+      "average_finish": 2.5,
       "best_lap_ms": 110067,
       "best_lap": "1:50.067"
     }
@@ -55,7 +55,7 @@
       "position": 9,
       "participants_count": 11,
       "winner": "Gleb Blatin",
-      "points": 2,
+      "points": 0,
       "qualifying_position": 7,
       "start_position": 7,
       "start_position_source": "qualifying_car_id",
@@ -69,6 +69,7 @@
       "gap": null,
       "gap_ms": null,
       "lap_count": 0,
+      "counted_for_stats": false,
       "had_best_lap": false,
       "penalty_count": 0,
       "penalty_points": 0
@@ -97,6 +98,7 @@
       "gap": "0:25.635",
       "gap_ms": 25635,
       "lap_count": 11,
+      "counted_for_stats": true,
       "had_best_lap": false,
       "penalty_count": 0,
       "penalty_points": 0
@@ -125,6 +127,7 @@
       "gap": "0:05.320",
       "gap_ms": 5320,
       "lap_count": 11,
+      "counted_for_stats": true,
       "had_best_lap": false,
       "penalty_count": 0,
       "penalty_points": 0

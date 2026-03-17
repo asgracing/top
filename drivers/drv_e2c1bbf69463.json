@@ -3,11 +3,11 @@
   "driver": "Matthew Roschin",
   "summary": {
     "points": 24,
-    "average_points_per_race": 6.0,
-    "races": 4,
+    "average_points_per_race": 12.0,
+    "races": 2,
     "wins": 0,
     "podiums": 1,
-    "average_finish": 24.0,
+    "average_finish": 4.5,
     "best_lap": "1:48.407",
     "best_lap_ms": 108407,
     "best_lap_track": "monza",
@@ -22,9 +22,9 @@
     "last_race_at": "2026-03-14T21:46:15",
     "last_seen": "2026-03-14T21:46:15",
     "win_rate": 0.0,
-    "podium_rate": 25.0,
-    "average_positions_delta": 1.67,
-    "positions_delta_races": 3
+    "podium_rate": 50.0,
+    "average_positions_delta": 5.0,
+    "positions_delta_races": 2
   },
   "recent_form": [
     38,
@@ -35,12 +35,12 @@
   "track_stats": [
     {
       "track": "monza",
-      "races": 4,
+      "races": 2,
       "wins": 0,
       "podiums": 1,
       "points": 24,
-      "finish_sum": 96,
-      "average_finish": 24.0,
+      "finish_sum": 9,
+      "average_finish": 4.5,
       "best_lap_ms": 108407,
       "best_lap": "1:48.407"
     }
@@ -70,6 +70,7 @@
       "gap": null,
       "gap_ms": null,
       "lap_count": 0,
+      "counted_for_stats": false,
       "had_best_lap": false,
       "penalty_count": 0,
       "penalty_points": 0
@@ -98,6 +99,7 @@
       "gap": null,
       "gap_ms": null,
       "lap_count": 0,
+      "counted_for_stats": false,
       "had_best_lap": false,
       "penalty_count": 0,
       "penalty_points": 0
@@ -126,6 +128,7 @@
       "gap": "0:48.859",
       "gap_ms": 48859,
       "lap_count": 12,
+      "counted_for_stats": true,
       "had_best_lap": false,
       "penalty_count": 0,
       "penalty_points": 0
@@ -154,6 +157,7 @@
       "gap": "0:24.577",
       "gap_ms": 24577,
       "lap_count": 12,
+      "counted_for_stats": true,
       "had_best_lap": false,
       "penalty_count": 0,
       "penalty_points": 0

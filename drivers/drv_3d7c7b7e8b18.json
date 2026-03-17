@@ -3,11 +3,11 @@
   "driver": "Marco Arndt",
   "summary": {
     "points": 30,
-    "average_points_per_race": 6.0,
-    "races": 5,
+    "average_points_per_race": 7.5,
+    "races": 4,
     "wins": 0,
     "podiums": 1,
-    "average_finish": 13.8,
+    "average_finish": 8.75,
     "best_lap": "1:47.897",
     "best_lap_ms": 107897,
     "best_lap_track": "monza",
@@ -22,9 +22,9 @@
     "last_race_at": "2026-03-15T13:52:15",
     "last_seen": "2026-03-15T13:52:15",
     "win_rate": 0.0,
-    "podium_rate": 20.0,
-    "average_positions_delta": -3.8,
-    "positions_delta_races": 5
+    "podium_rate": 25.0,
+    "average_positions_delta": -1.5,
+    "positions_delta_races": 4
   },
   "recent_form": [
     19,
@@ -36,12 +36,12 @@
   "track_stats": [
     {
       "track": "monza",
-      "races": 5,
+      "races": 4,
       "wins": 0,
       "podiums": 1,
       "points": 30,
-      "finish_sum": 69,
-      "average_finish": 13.8,
+      "finish_sum": 35,
+      "average_finish": 8.75,
       "best_lap_ms": 108217,
       "best_lap": "1:48.217"
     }
@@ -71,6 +71,7 @@
       "gap": "0:00.000",
       "gap_ms": 0,
       "lap_count": 8,
+      "counted_for_stats": true,
       "had_best_lap": false,
       "penalty_count": 0,
       "penalty_points": 0
@@ -99,6 +100,7 @@
       "gap": "1:03.574",
       "gap_ms": 63574,
       "lap_count": 11,
+      "counted_for_stats": true,
       "had_best_lap": false,
       "penalty_count": 0,
       "penalty_points": 0
@@ -127,6 +129,7 @@
       "gap": null,
       "gap_ms": null,
       "lap_count": 0,
+      "counted_for_stats": false,
       "had_best_lap": false,
       "penalty_count": 0,
       "penalty_points": 0
@@ -155,6 +158,7 @@
       "gap": "0:04.547",
       "gap_ms": 4547,
       "lap_count": 11,
+      "counted_for_stats": true,
       "had_best_lap": false,
       "penalty_count": 0,
       "penalty_points": 0
@@ -183,6 +187,7 @@
       "gap": "0:15.881",
       "gap_ms": 15881,
       "lap_count": 12,
+      "counted_for_stats": true,
       "had_best_lap": false,
       "penalty_count": 0,
       "penalty_points": 0

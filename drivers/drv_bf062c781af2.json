@@ -3,11 +3,11 @@
   "driver": "Максим Петров",
   "summary": {
     "points": 6,
-    "average_points_per_race": 1.0,
-    "races": 6,
+    "average_points_per_race": 2.0,
+    "races": 3,
     "wins": 0,
     "podiums": 0,
-    "average_finish": 27.17,
+    "average_finish": 15.67,
     "best_lap": "1:48.532",
     "best_lap_ms": 108532,
     "best_lap_track": "monza",
@@ -23,8 +23,8 @@
     "last_seen": "2026-03-16T19:31:35",
     "win_rate": 0.0,
     "podium_rate": 0.0,
-    "average_positions_delta": -2.33,
-    "positions_delta_races": 3
+    "average_positions_delta": 16.0,
+    "positions_delta_races": 1
   },
   "recent_form": [
     37,
@@ -36,12 +36,12 @@
   "track_stats": [
     {
       "track": "monza",
-      "races": 6,
+      "races": 3,
       "wins": 0,
       "podiums": 0,
       "points": 6,
-      "finish_sum": 163,
-      "average_finish": 27.17,
+      "finish_sum": 47,
+      "average_finish": 15.67,
       "best_lap_ms": 108532,
       "best_lap": "1:48.532"
     }
@@ -71,6 +71,7 @@
       "gap": null,
       "gap_ms": null,
       "lap_count": 0,
+      "counted_for_stats": false,
       "had_best_lap": false,
       "penalty_count": 0,
       "penalty_points": 0
@@ -99,6 +100,7 @@
       "gap": "0:24.384",
       "gap_ms": 24384,
       "lap_count": 12,
+      "counted_for_stats": true,
       "had_best_lap": false,
       "penalty_count": 0,
       "penalty_points": 0
@@ -127,6 +129,7 @@
       "gap": "1:22.887",
       "gap_ms": 82887,
       "lap_count": 7,
+      "counted_for_stats": true,
       "had_best_lap": false,
       "penalty_count": 0,
       "penalty_points": 0
@@ -155,6 +158,7 @@
       "gap": null,
       "gap_ms": null,
       "lap_count": 0,
+      "counted_for_stats": false,
       "had_best_lap": false,
       "penalty_count": 0,
       "penalty_points": 0
@@ -183,6 +187,7 @@
       "gap": null,
       "gap_ms": null,
       "lap_count": 0,
+      "counted_for_stats": false,
       "had_best_lap": false,
       "penalty_count": 0,
       "penalty_points": 0
@@ -211,6 +216,7 @@
       "gap": "0:00.000",
       "gap_ms": 0,
       "lap_count": 3,
+      "counted_for_stats": true,
       "had_best_lap": false,
       "penalty_count": 0,
       "penalty_points": 0

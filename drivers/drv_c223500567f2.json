@@ -3,11 +3,11 @@
   "driver": "M Kip",
   "summary": {
     "points": 6,
-    "average_points_per_race": 2.0,
-    "races": 3,
+    "average_points_per_race": 3.0,
+    "races": 2,
     "wins": 0,
     "podiums": 0,
-    "average_finish": 17.67,
+    "average_finish": 12.5,
     "best_lap": "1:48.112",
     "best_lap_ms": 108112,
     "best_lap_track": "monza",
@@ -23,8 +23,8 @@
     "last_seen": "2026-03-17T01:09:50",
     "win_rate": 0.0,
     "podium_rate": 0.0,
-    "average_positions_delta": 3.33,
-    "positions_delta_races": 3
+    "average_positions_delta": 8.5,
+    "positions_delta_races": 2
   },
   "recent_form": [
     28,
@@ -34,12 +34,12 @@
   "track_stats": [
     {
       "track": "monza",
-      "races": 3,
+      "races": 2,
       "wins": 0,
       "podiums": 0,
       "points": 6,
-      "finish_sum": 53,
-      "average_finish": 17.67,
+      "finish_sum": 25,
+      "average_finish": 12.5,
       "best_lap_ms": 108112,
       "best_lap": "1:48.112"
     }
@@ -69,6 +69,7 @@
       "gap": null,
       "gap_ms": null,
       "lap_count": 0,
+      "counted_for_stats": false,
       "had_best_lap": false,
       "penalty_count": 0,
       "penalty_points": 0
@@ -97,6 +98,7 @@
       "gap": "0:00.000",
       "gap_ms": 0,
       "lap_count": 7,
+      "counted_for_stats": true,
       "had_best_lap": false,
       "penalty_count": 0,
       "penalty_points": 0
@@ -125,6 +127,7 @@
       "gap": "0:34.044",
       "gap_ms": 34044,
       "lap_count": 12,
+      "counted_for_stats": true,
       "had_best_lap": false,
       "penalty_count": 0,
       "penalty_points": 0

@@ -3,11 +3,11 @@
   "driver": "R CM",
   "summary": {
     "points": 20,
-    "average_points_per_race": 2.86,
-    "races": 7,
+    "average_points_per_race": 4.0,
+    "races": 5,
     "wins": 0,
     "podiums": 0,
-    "average_finish": 14.0,
+    "average_finish": 10.2,
     "best_lap": "1:48.282",
     "best_lap_ms": 108282,
     "best_lap_track": "monza",
@@ -23,8 +23,8 @@
     "last_seen": "2026-03-14T01:57:10",
     "win_rate": 0.0,
     "podium_rate": 0.0,
-    "average_positions_delta": 6.83,
-    "positions_delta_races": 6
+    "average_positions_delta": 14.0,
+    "positions_delta_races": 4
   },
   "recent_form": [
     15,
@@ -36,12 +36,12 @@
   "track_stats": [
     {
       "track": "monza",
-      "races": 7,
+      "races": 5,
       "wins": 0,
       "podiums": 0,
       "points": 20,
-      "finish_sum": 98,
-      "average_finish": 14.0,
+      "finish_sum": 51,
+      "average_finish": 10.2,
       "best_lap_ms": 108282,
       "best_lap": "1:48.282"
     }
@@ -71,6 +71,7 @@
       "gap": null,
       "gap_ms": null,
       "lap_count": 0,
+      "counted_for_stats": false,
       "had_best_lap": false,
       "penalty_count": 0,
       "penalty_points": 0
@@ -99,6 +100,7 @@
       "gap": "0:46.027",
       "gap_ms": 46027,
       "lap_count": 12,
+      "counted_for_stats": true,
       "had_best_lap": false,
       "penalty_count": 0,
       "penalty_points": 0
@@ -127,6 +129,7 @@
       "gap": "0:45.364",
       "gap_ms": 45364,
       "lap_count": 12,
+      "counted_for_stats": true,
       "had_best_lap": false,
       "penalty_count": 0,
       "penalty_points": 0
@@ -155,6 +158,7 @@
       "gap": null,
       "gap_ms": null,
       "lap_count": 0,
+      "counted_for_stats": false,
       "had_best_lap": false,
       "penalty_count": 0,
       "penalty_points": 0
@@ -183,6 +187,7 @@
       "gap": "0:34.759",
       "gap_ms": 34759,
       "lap_count": 11,
+      "counted_for_stats": true,
       "had_best_lap": false,
       "penalty_count": 0,
       "penalty_points": 0
@@ -211,6 +216,7 @@
       "gap": "1:03.545",
       "gap_ms": 63545,
       "lap_count": 12,
+      "counted_for_stats": true,
       "had_best_lap": false,
       "penalty_count": 0,
       "penalty_points": 0
@@ -239,6 +245,7 @@
       "gap": "0:19.178",
       "gap_ms": 19178,
       "lap_count": 5,
+      "counted_for_stats": true,
       "had_best_lap": false,
       "penalty_count": 0,
       "penalty_points": 0

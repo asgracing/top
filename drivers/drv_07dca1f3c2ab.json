@@ -2,12 +2,12 @@
   "public_id": "drv_07dca1f3c2ab",
   "driver": "Felix Caratini",
   "summary": {
-    "points": 23,
-    "average_points_per_race": 11.5,
-    "races": 2,
+    "points": 15,
+    "average_points_per_race": 15.0,
+    "races": 1,
     "wins": 0,
     "podiums": 1,
-    "average_finish": 4.5,
+    "average_finish": 3.0,
     "best_lap": "1:50.382",
     "best_lap_ms": 110382,
     "best_lap_track": "monza",
@@ -22,9 +22,9 @@
     "last_race_at": "2026-03-15T09:24:19",
     "last_seen": "2026-03-15T09:24:19",
     "win_rate": 0.0,
-    "podium_rate": 50.0,
-    "average_positions_delta": -0.5,
-    "positions_delta_races": 2
+    "podium_rate": 100.0,
+    "average_positions_delta": -1.0,
+    "positions_delta_races": 1
   },
   "recent_form": [
     6,
@@ -33,12 +33,12 @@
   "track_stats": [
     {
       "track": "monza",
-      "races": 2,
+      "races": 1,
       "wins": 0,
       "podiums": 1,
-      "points": 23,
-      "finish_sum": 9,
-      "average_finish": 4.5,
+      "points": 15,
+      "finish_sum": 3,
+      "average_finish": 3.0,
       "best_lap_ms": 110382,
       "best_lap": "1:50.382"
     }
@@ -54,7 +54,7 @@
       "position": 6,
       "participants_count": 8,
       "winner": "Artem Malyginov",
-      "points": 8,
+      "points": 0,
       "qualifying_position": 6,
       "start_position": 6,
       "start_position_source": "qualifying_car_id",
@@ -68,6 +68,7 @@
       "gap": null,
       "gap_ms": null,
       "lap_count": 0,
+      "counted_for_stats": false,
       "had_best_lap": false,
       "penalty_count": 0,
       "penalty_points": 0
@@ -96,6 +97,7 @@
       "gap": "0:27.322",
       "gap_ms": 27322,
       "lap_count": 11,
+      "counted_for_stats": true,
       "had_best_lap": false,
       "penalty_count": 0,
       "penalty_points": 0
