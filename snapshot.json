@@ -1,6 +1,6 @@
 {
   "schema_version": 4,
-  "generated_at": "2026-03-17T11:12:20",
+  "generated_at": "2026-03-17T11:17:21",
   "leaderboard": [
     {
       "player_id": "S76561199664057628",
@@ -38689,7 +38689,7 @@
       "driver": "Jere Kärki (VR)",
       "points": 37
     },
-    "updated_at": "2026-03-17T11:12:21"
+    "updated_at": "2026-03-17T11:17:21"
   },
   "driver_of_the_day": {
     "date": "2026-03-17",
@@ -38708,7 +38708,7 @@
     "best_lap_car_model_id": null,
     "best_lap_car_name": null,
     "best_lap_car": null,
-    "updated_at": "2026-03-17T11:12:21"
+    "updated_at": "2026-03-17T11:17:21"
   },
   "server_status": {
     "status": "online",
@@ -38717,6 +38717,6 @@
     "tcp_listening": true,
     "udp_listening": true,
     "broadcast_listening": true,
-    "updated_at": "2026-03-17T11:12:20"
+    "updated_at": "2026-03-17T11:17:20"
   }
 }
