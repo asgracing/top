@@ -3,11 +3,11 @@
   "driver": "Zeyad Alaa",
   "summary": {
     "points": 12,
-    "average_points_per_race": 1.5,
-    "races": 8,
+    "average_points_per_race": 1.33,
+    "races": 9,
     "wins": 0,
     "podiums": 0,
-    "average_finish": 14.38,
+    "average_finish": 14.33,
     "best_lap": "1:48.657",
     "best_lap_ms": 108657,
     "best_lap_track": "monza",
@@ -15,40 +15,69 @@
     "best_lap_car_name_raw": "Ford Mustang GT3",
     "best_lap_car_name": "Ford Mustang GT3",
     "best_lap_session_type": "R",
-    "average_pace_ms": 110361,
-    "average_pace": "1:50.361",
-    "penalty_count": 0,
-    "penalty_points": 0,
+    "average_pace_ms": 110347,
+    "average_pace": "1:50.347",
+    "penalty_count": 2,
+    "penalty_points": 3,
     "fastest_lap_awards": 0,
     "most_raced_track": "monza",
-    "last_race_at": "2026-03-18T00:52:49",
-    "last_seen": "2026-03-18T00:52:49",
+    "last_race_at": "2026-03-18T01:29:13",
+    "last_seen": "2026-03-18T01:29:13",
     "win_rate": 0.0,
     "podium_rate": 0.0,
-    "average_positions_delta": 0.0,
-    "positions_delta_races": 7
+    "average_positions_delta": -1.25,
+    "positions_delta_races": 8
   },
   "recent_form": [
+    14,
     12,
     27,
     20,
-    23,
-    17
+    23
   ],
   "track_stats": [
     {
       "track": "monza",
-      "races": 8,
+      "races": 9,
       "wins": 0,
       "podiums": 0,
       "points": 12,
-      "finish_sum": 115,
-      "average_finish": 14.38,
+      "finish_sum": 129,
+      "average_finish": 14.33,
       "best_lap_ms": 108657,
       "best_lap": "1:48.657"
     }
   ],
   "race_history": [
+    {
+      "race_id": "260318_012913_R.json",
+      "finished_at": "2026-03-18T01:29:13",
+      "track": "monza",
+      "car_model_id": 34,
+      "car_name_raw": "Porsche 992 GT3 R",
+      "car_name": "Porsche 992 GT3 R",
+      "position": 14,
+      "participants_count": 36,
+      "winner": "Alexey Zhmachkin",
+      "points": 0,
+      "qualifying_position": 4,
+      "start_position": 4,
+      "start_position_source": "qualifying_car_id",
+      "positions_delta": -10,
+      "positions_gained": 0,
+      "positions_lost": 10,
+      "best_lap": "1:49.485",
+      "best_lap_ms": 109485,
+      "total_time": "21:03.486",
+      "total_time_ms": 1263486,
+      "gap": "0:54.568",
+      "gap_ms": 54568,
+      "lap_count": 11,
+      "counted_for_stats": true,
+      "had_best_lap": false,
+      "penalty_count": 2,
+      "penalty_points": 3
+    },
     {
       "race_id": "260318_005249_R.json",
       "finished_at": "2026-03-18T00:52:49",
@@ -370,9 +399,15 @@
     }
   ],
   "penalties": {
-    "penalty_count": 0,
-    "penalty_points": 0,
-    "reasons": {},
-    "types": {}
+    "penalty_count": 2,
+    "penalty_points": 3,
+    "reasons": {
+      "None": 1,
+      "Cutting": 1
+    },
+    "types": {
+      "DriveThrough": 1,
+      "None": 1
+    }
   }
 }
