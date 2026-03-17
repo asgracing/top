@@ -1,0 +1,81 @@
+{
+  "public_id": "drv_1f714472ce9b",
+  "driver": "Алексей Abroskin",
+  "summary": {
+    "points": 0,
+    "average_points_per_race": 0.0,
+    "races": 1,
+    "wins": 0,
+    "podiums": 0,
+    "average_finish": 13.0,
+    "best_lap": "2:54.975",
+    "best_lap_ms": 174975,
+    "best_lap_track": "monza",
+    "best_lap_car_model_id": 22,
+    "best_lap_car_name_raw": "McLaren 720S GT3 (2019)",
+    "best_lap_car_name": "McLaren 720S GT3",
+    "best_lap_session_type": "R",
+    "penalty_count": 0,
+    "penalty_points": 0,
+    "fastest_lap_awards": 0,
+    "most_raced_track": "monza",
+    "last_race_at": "2026-03-17T15:02:44",
+    "last_seen": "2026-03-17T15:02:44",
+    "win_rate": 0.0,
+    "podium_rate": 0.0,
+    "average_positions_delta": null,
+    "positions_delta_races": 0
+  },
+  "recent_form": [
+    13
+  ],
+  "track_stats": [
+    {
+      "track": "monza",
+      "races": 1,
+      "wins": 0,
+      "podiums": 0,
+      "points": 0,
+      "finish_sum": 13,
+      "average_finish": 13.0,
+      "best_lap_ms": 174975,
+      "best_lap": "2:54.975"
+    }
+  ],
+  "race_history": [
+    {
+      "race_id": "260317_150244_R.json",
+      "finished_at": "2026-03-17T15:02:44",
+      "track": "monza",
+      "car_model_id": 22,
+      "car_name_raw": "McLaren 720S GT3 (2019)",
+      "car_name": "McLaren 720S GT3",
+      "position": 13,
+      "participants_count": 27,
+      "winner": "Klay Kang",
+      "points": 0,
+      "qualifying_position": null,
+      "start_position": null,
+      "start_position_source": "unknown",
+      "positions_delta": null,
+      "positions_gained": null,
+      "positions_lost": null,
+      "best_lap": "2:54.975",
+      "best_lap_ms": 174975,
+      "total_time": "20:35.251",
+      "total_time_ms": 1235251,
+      "gap": "0:07.910",
+      "gap_ms": 7910,
+      "lap_count": 4,
+      "had_best_lap": false,
+      "penalty_count": 0,
+      "penalty_points": 0
+    }
+  ],
+  "penalties": {
+    "penalty_count": 0,
+    "penalty_points": 0,
+    "reasons": {},
+    "types": {}
+  }
+}

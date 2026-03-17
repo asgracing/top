@@ -1,13 +1,13 @@
 {
-  "public_id": "drv_beb2ff0fc3de",
-  "driver": "Adalberto Orlando",
+  "public_id": "drv_c5d9d6c83e45",
+  "driver": "Aleksey Garbar",
   "summary": {
     "points": 0,
     "average_points_per_race": 0.0,
     "races": 1,
     "wins": 0,
     "podiums": 0,
-    "average_finish": 20.0,
+    "average_finish": 25.0,
     "best_lap": null,
     "best_lap_ms": null,
     "best_lap_track": null,
@@ -15,19 +15,19 @@
     "best_lap_car_name_raw": null,
     "best_lap_car_name": null,
     "best_lap_session_type": null,
-    "penalty_count": 1,
-    "penalty_points": 3,
+    "penalty_count": 0,
+    "penalty_points": 0,
     "fastest_lap_awards": 0,
     "most_raced_track": "monza",
     "last_race_at": "2026-03-17T15:02:44",
     "last_seen": "2026-03-17T15:02:44",
     "win_rate": 0.0,
     "podium_rate": 0.0,
-    "average_positions_delta": -7.0,
-    "positions_delta_races": 1
+    "average_positions_delta": null,
+    "positions_delta_races": 0
   },
   "recent_form": [
-    20
+    25
   ],
   "track_stats": [
     {
@@ -36,8 +36,8 @@
       "wins": 0,
       "podiums": 0,
       "points": 0,
-      "finish_sum": 20,
-      "average_finish": 20.0,
+      "finish_sum": 25,
+      "average_finish": 25.0,
       "best_lap_ms": null,
       "best_lap": null
     }
@@ -47,19 +47,19 @@
       "race_id": "260317_150244_R.json",
       "finished_at": "2026-03-17T15:02:44",
       "track": "monza",
-      "car_model_id": 32,
-      "car_name_raw": "Ferrari 296 GT3",
-      "car_name": "Ferrari 296 GT3",
-      "position": 20,
+      "car_model_id": 15,
+      "car_name_raw": "Lexus RC F GT3",
+      "car_name": "Lexus RC F GT3",
+      "position": 25,
       "participants_count": 27,
       "winner": "Klay Kang",
       "points": 0,
-      "qualifying_position": 13,
-      "start_position": 13,
-      "start_position_source": "qualifying_car_id",
-      "positions_delta": -7,
-      "positions_gained": 0,
-      "positions_lost": 7,
+      "qualifying_position": null,
+      "start_position": null,
+      "start_position_source": "unknown",
+      "positions_delta": null,
+      "positions_gained": null,
+      "positions_lost": null,
       "best_lap": null,
       "best_lap_ms": null,
       "total_time": null,
@@ -68,18 +68,14 @@
       "gap_ms": null,
       "lap_count": 0,
       "had_best_lap": false,
-      "penalty_count": 1,
-      "penalty_points": 3
+      "penalty_count": 0,
+      "penalty_points": 0
     }
   ],
   "penalties": {
-    "penalty_count": 1,
-    "penalty_points": 3,
-    "reasons": {
-      "None": 1
-    },
-    "types": {
-      "DriveThrough": 1
-    }
+    "penalty_count": 0,
+    "penalty_points": 0,
+    "reasons": {},
+    "types": {}
   }
 }
