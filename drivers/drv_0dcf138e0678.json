@@ -3,11 +3,11 @@
   "driver": "Max Hardy",
   "summary": {
     "points": 22,
-    "average_points_per_race": 5.5,
-    "races": 4,
+    "average_points_per_race": 4.4,
+    "races": 5,
     "wins": 0,
     "podiums": 0,
-    "average_finish": 10.25,
+    "average_finish": 11.6,
     "best_lap": "1:48.662",
     "best_lap_ms": 108662,
     "best_lap_track": "monza",
@@ -15,20 +15,21 @@
     "best_lap_car_name_raw": "Mercedes-AMG GT3 2020",
     "best_lap_car_name": "Mercedes-AMG GT3",
     "best_lap_session_type": "R",
-    "average_pace_ms": 111316,
-    "average_pace": "1:51.316",
-    "penalty_count": 0,
-    "penalty_points": 0,
+    "average_pace_ms": 111214,
+    "average_pace": "1:51.214",
+    "penalty_count": 2,
+    "penalty_points": 1,
     "fastest_lap_awards": 0,
     "most_raced_track": "monza",
-    "last_race_at": "2026-03-17T19:18:36",
-    "last_seen": "2026-03-17T19:18:36",
+    "last_race_at": "2026-03-17T19:56:34",
+    "last_seen": "2026-03-17T19:56:34",
     "win_rate": 0.0,
     "podium_rate": 0.0,
-    "average_positions_delta": 3.33,
-    "positions_delta_races": 3
+    "average_positions_delta": 0.75,
+    "positions_delta_races": 4
   },
   "recent_form": [
+    17,
     5,
     8,
     22,
@@ -37,17 +38,46 @@
   "track_stats": [
     {
       "track": "monza",
-      "races": 4,
+      "races": 5,
       "wins": 0,
       "podiums": 0,
       "points": 22,
-      "finish_sum": 41,
-      "average_finish": 10.25,
+      "finish_sum": 58,
+      "average_finish": 11.6,
       "best_lap_ms": 108662,
       "best_lap": "1:48.662"
     }
   ],
   "race_history": [
+    {
+      "race_id": "260317_195634_R.json",
+      "finished_at": "2026-03-17T19:56:34",
+      "track": "monza",
+      "car_model_id": 25,
+      "car_name_raw": "Mercedes-AMG GT3 2020",
+      "car_name": "Mercedes-AMG GT3",
+      "position": 17,
+      "participants_count": 41,
+      "winner": "Man in Tights",
+      "points": 0,
+      "qualifying_position": 10,
+      "start_position": 10,
+      "start_position_source": "qualifying_car_id",
+      "positions_delta": -7,
+      "positions_gained": 0,
+      "positions_lost": 7,
+      "best_lap": "1:49.877",
+      "best_lap_ms": 109877,
+      "total_time": "23:31.121",
+      "total_time_ms": 1411121,
+      "gap": "1:53.035",
+      "gap_ms": 113035,
+      "lap_count": 11,
+      "counted_for_stats": true,
+      "had_best_lap": false,
+      "penalty_count": 2,
+      "penalty_points": 1
+    },
     {
       "race_id": "260317_191836_R.json",
       "finished_at": "2026-03-17T19:18:36",
@@ -166,9 +196,15 @@
     }
   ],
   "penalties": {
-    "penalty_count": 0,
-    "penalty_points": 0,
-    "reasons": {},
-    "types": {}
+    "penalty_count": 2,
+    "penalty_points": 1,
+    "reasons": {
+      "Cutting": 1,
+      "PitSpeeding": 1
+    },
+    "types": {
+      "DriveThrough": 1,
+      "StopAndGo_30": 1
+    }
   }
 }
