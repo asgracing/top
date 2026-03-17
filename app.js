@@ -1,6 +1,7 @@
 const IS_RACES_PAGE = /\/races(?:\/|\/index\.html)?$/i.test(window.location.pathname);
 const IS_DRIVER_PAGE = /\/driver(?:\/|\/index\.html)?$/i.test(window.location.pathname);
-const dataBasePath = (IS_RACES_PAGE || IS_DRIVER_PAGE) ? "../" : "./";
+const IS_CARS_PAGE = /\/cars(?:\/|\/index\.html)?$/i.test(window.location.pathname);
+const dataBasePath = (IS_RACES_PAGE || IS_DRIVER_PAGE || IS_CARS_PAGE) ? "../" : "./";
 const snapshotUrl = `${dataBasePath}snapshot.json`;
 const leaderboardUrl = `${dataBasePath}leaderboard.json`;
 const bestlapsUrl = `${dataBasePath}bestlaps.json`;
@@ -10,6 +11,7 @@ const driverOfDayUrl = `${dataBasePath}driver_of_the_day.json`;
 const serverStatusUrl = `${dataBasePath}server_status.json`;
 const onlineUrl = `${dataBasePath}online.json`;
 const racesUrl = IS_RACES_PAGE ? "./races.json" : `${dataBasePath}races/races.json`;
+const carsUrl = IS_CARS_PAGE ? "./cars.json" : `${dataBasePath}cars/cars.json`;
 const driverIndexUrl = `${dataBasePath}drivers/drivers.json`;
 const PAGE_SIZE = 10;
 
@@ -19,6 +21,7 @@ let todayStatsData = null;
 let safetyData = [];
 let driverOfDayData = null;
 let racesData = [];
+let carsData = [];
 let leaderboardPage = 1;
 let bestlapsPage = 1;
 let safetyPage = 1;
@@ -67,6 +70,7 @@ onlineNoData: "No data",
     htmlLang: "en",
     pageTitle: "ASG Racing ACC Leaderboard | Assetto Corsa Competizione Stats",
     pageTitleRaces: "ASG Racing Last Races | Assetto Corsa Competizione Results",
+    pageTitleCars: "ASG Racing Cars | Assetto Corsa Competizione Stats",
     metaDescription:
       "ASG Racing ACC Leaderboard — race stats, wins, podiums and best laps from the public Assetto Corsa Competizione server.",
     ogDescription:
@@ -79,6 +83,7 @@ onlineNoData: "No data",
       "Race statistics, wins, podiums and best laps from the <strong>ASG Racing</strong> server. Data is automatically updated based on dedicated server results.",
     btnChampionship: "Championship",
     btnLastRaces: "Last Races",
+    btnCars: "Cars",
     lastRacesBtn: "Last Races",
     btnBackHome: "Back to Home",
     btnBestLaps: "Best Laps",
@@ -141,6 +146,15 @@ onlineNoData: "No data",
     racesEyebrow: "Race archive",
     racesPageTitle: "Last Races",
     racesPageSubtitle: "Latest race sessions from ASG Racing. Click any row to open the full result sheet.",
+    carsEyebrow: "Car stats",
+    carsPageTitle: "Cars",
+    carsPageSubtitle: "Performance overview by car model based on recorded race results.",
+    carsSummaryTotal: "Car models",
+    carsSummaryTopWinner: "Top winner",
+    carsSummaryMostUsed: "Most used",
+    carsTableTitle: "Cars Table",
+    carsTableSubtitle: "Sorted by wins, podiums and race count.",
+    carsCols: ["Car", "Races", "Wins", "Win Rate", "Podiums", "Drivers", "Avg Finish", "Fastest Laps", "Best Lap"],
     racesSummaryTotal: "Total races",
     racesSummaryLatestTrack: "Latest track",
     racesSummaryLatestWinner: "Latest winner",
@@ -418,6 +432,18 @@ const racesColumns = [
   { key: "track", type: "string" },
   { key: "winner", type: "string" },
   { key: "participants_count", type: "number" },
+  { key: "best_lap", type: "time" }
+];
+
+const carsColumns = [
+  { key: "car_name", type: "string" },
+  { key: "races", type: "number" },
+  { key: "wins", type: "number" },
+  { key: "win_rate", type: "number" },
+  { key: "podiums", type: "number" },
+  { key: "unique_drivers", type: "number" },
+  { key: "average_finish", type: "number" },
+  { key: "fastest_lap_awards", type: "number" },
   { key: "best_lap", type: "time" }
 ];
 
@@ -838,6 +864,11 @@ async function loadRacesData() {
   return Array.isArray(data) ? data : [];
 }
 
+async function loadCarsData() {
+  const data = await loadJson(carsUrl);
+  return Array.isArray(data) ? data : [];
+}
+
 function getRequestedDriverId() {
   const params = new URLSearchParams(window.location.search);
   return params.get("id");
@@ -853,6 +884,8 @@ function applyStaticTranslations() {
   document.documentElement.lang = t("htmlLang");
   document.title = IS_DRIVER_PAGE
     ? t("pageTitleDriver")
+    : IS_CARS_PAGE
+      ? t("pageTitleCars")
     : IS_RACES_PAGE
       ? t("pageTitleRaces")
       : t("pageTitle");
@@ -912,6 +945,10 @@ function updateDriverOfDayButtonLabel() {
 
 function formatAverageFinish(value) {
   return typeof value === "number" ? value.toFixed(2) : "—";
+}
+
+function formatPercent(value) {
+  return typeof value === "number" ? `${value.toFixed(2)}%` : "вЂ”";
 }
 
 function formatPositionsDelta(value) {
@@ -1621,6 +1658,64 @@ function renderRacesPage() {
   renderRaceResultsModal();
 }
 
+function renderCarsSummary() {
+  const totalEl = document.getElementById("cars-total-count");
+  const winnerEl = document.getElementById("cars-top-winner");
+  const usedEl = document.getElementById("cars-most-used");
+  if (!totalEl || !winnerEl || !usedEl) return;
+
+  totalEl.textContent = carsData.length || "вЂ”";
+  const topWinner = carsData[0] || null;
+  const mostUsed = [...carsData].sort((a, b) => {
+    const racesDiff = (b?.races ?? 0) - (a?.races ?? 0);
+    if (racesDiff !== 0) return racesDiff;
+    return String(a?.car_name || "").localeCompare(String(b?.car_name || ""));
+  })[0] || null;
+
+  winnerEl.textContent = topWinner ? topWinner.car_name : "вЂ”";
+  usedEl.textContent = mostUsed ? mostUsed.car_name : "вЂ”";
+}
+
+function renderCarsTable() {
+  const tableEl = document.getElementById("cars-table");
+  if (!tableEl) return;
+
+  if (!carsData.length) {
+    tableEl.innerHTML = `<div class="empty-box">${escapeHtml(t("emptyRaces"))}</div>`;
+    return;
+  }
+
+  const headers = t("carsCols").map(label => `<th>${escapeHtml(label)}</th>`).join("");
+  const rows = carsData.map(row => `
+    <tr>
+      <td>${escapeHtml(row.car_name || "вЂ”")}</td>
+      <td>${escapeHtml(row.races ?? 0)}</td>
+      <td>${escapeHtml(row.wins ?? 0)}</td>
+      <td>${escapeHtml(formatPercent(row.win_rate))}</td>
+      <td>${escapeHtml(row.podiums ?? 0)}</td>
+      <td>${escapeHtml(row.unique_drivers ?? 0)}</td>
+      <td>${escapeHtml(formatAverageFinish(row.average_finish))}</td>
+      <td>${escapeHtml(row.fastest_lap_awards ?? 0)}</td>
+      <td>
+        <div>${escapeHtml(row.best_lap || "вЂ”")}</div>
+        <div class="race-note">${renderDriverLink(row.best_lap_driver || "вЂ”", row.best_lap_public_id, "driver-link driver-link-subtle")}</div>
+      </td>
+    </tr>
+  `).join("");
+
+  tableEl.innerHTML = `
+    <table>
+      <thead><tr>${headers}</tr></thead>
+      <tbody>${rows}</tbody>
+    </table>
+  `;
+}
+
+function renderCarsPage() {
+  renderCarsSummary();
+  renderCarsTable();
+}
+
 function renderRecentForm(items = []) {
   if (!Array.isArray(items) || !items.length) return `<span class="empty-inline">—</span>`;
   return items.map(item => `<span class="form-pill">${escapeHtml(item)}</span>`).join("");
@@ -2059,6 +2154,11 @@ function rerenderUI() {
     return;
   }
 
+  if (IS_CARS_PAGE) {
+    renderCarsPage();
+    return;
+  }
+
   if (IS_RACES_PAGE) {
     renderRacesPage();
     return;
@@ -2080,7 +2180,7 @@ async function init() {
   bindLanguageButtons();
   if (IS_RACES_PAGE) {
     initRaceResultsModal();
-  } else if (!IS_DRIVER_PAGE) {
+  } else if (!IS_DRIVER_PAGE && !IS_CARS_PAGE) {
     bindSearchInputs();
     initTodayStatsModal();
     initDriverOfDayModal();
@@ -2090,6 +2190,12 @@ async function init() {
   try {
     if (IS_DRIVER_PAGE) {
       driverProfileData = await loadDriverProfile(getRequestedDriverId());
+      rerenderUI();
+      return;
+    }
+
+    if (IS_CARS_PAGE) {
+      carsData = await loadCarsData();
       rerenderUI();
       return;
     }
@@ -2172,6 +2278,14 @@ async function init() {
       const racesTableEl = document.getElementById("races-table");
       if (racesTableEl) {
         racesTableEl.innerHTML = `<div class="empty-box">${escapeHtml(t("errorLoading"))}</div>`;
+      }
+      return;
+    }
+
+    if (IS_CARS_PAGE) {
+      const carsTableEl = document.getElementById("cars-table");
+      if (carsTableEl) {
+        carsTableEl.innerHTML = `<div class="empty-box">${escapeHtml(t("errorLoading"))}</div>`;
       }
       return;
     }
