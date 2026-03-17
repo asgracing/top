@@ -1,6 +1,6 @@
 {
   "schema_version": 4,
-  "generated_at": "2026-03-17T13:02:21",
+  "generated_at": "2026-03-17T13:07:21",
   "leaderboard": [
     {
       "player_id": "S76561199664057628",
@@ -24489,6 +24489,27 @@
       "rank": 1166
     },
     {
+      "player_id": "S76561199076764913",
+      "public_id": "drv_63bacd05437a",
+      "driver": "Don Kart",
+      "races": 0,
+      "wins": 0,
+      "podiums": 0,
+      "points": 0,
+      "average_finish_sum": 0,
+      "average_finish": null,
+      "best_lap_ms": null,
+      "best_lap": null,
+      "best_lap_track": null,
+      "best_lap_session_type": null,
+      "last_track": null,
+      "last_seen": null,
+      "positions_delta_sum": 0,
+      "positions_delta_races": 0,
+      "average_positions_delta": null,
+      "rank": 1167
+    },
+    {
       "player_id": "S76561198838015440",
       "public_id": "drv_324225ad6988",
       "driver": "Vin Benzin",
@@ -24507,7 +24528,28 @@
       "positions_delta_sum": 0,
       "positions_delta_races": 0,
       "average_positions_delta": null,
-      "rank": 1167
+      "rank": 1168
+    },
+    {
+      "player_id": "S76561198076643799",
+      "public_id": "drv_94b43f8d7040",
+      "driver": "Андрей Чаплинский",
+      "races": 0,
+      "wins": 0,
+      "podiums": 0,
+      "points": 0,
+      "average_finish_sum": 0,
+      "average_finish": null,
+      "best_lap_ms": null,
+      "best_lap": null,
+      "best_lap_track": null,
+      "best_lap_session_type": null,
+      "last_track": null,
+      "last_seen": null,
+      "positions_delta_sum": 0,
+      "positions_delta_races": 0,
+      "average_positions_delta": null,
+      "rank": 1169
     }
   ],
   "bestlaps": [
@@ -36063,14 +36105,14 @@
     },
     {
       "date": "2026-03-17",
-      "unique_players": 67
+      "unique_players": 70
     }
   ],
   "global_stats": {
     "date": "2026-03-17",
-    "unique_players_today": 67,
+    "unique_players_today": 70,
     "races_today": 3,
-    "sessions_today": 7,
+    "sessions_today": 8,
     "points_earned_today": 307,
     "wins_today": 3,
     "podiums_today": 9,
@@ -36099,7 +36141,7 @@
       "driver": "Jere Kärki (VR)",
       "points": 37
     },
-    "updated_at": "2026-03-17T13:02:21"
+    "updated_at": "2026-03-17T13:07:21"
   },
   "driver_of_the_day": {
     "date": "2026-03-17",
@@ -36115,7 +36157,7 @@
     "best_lap": "1:48.602",
     "best_lap_ms": 108602,
     "best_lap_track": "monza",
-    "updated_at": "2026-03-17T13:02:21"
+    "updated_at": "2026-03-17T13:07:21"
   },
   "server_status": {
     "status": "online",
@@ -36124,6 +36166,6 @@
     "tcp_listening": true,
     "udp_listening": true,
     "broadcast_listening": true,
-    "updated_at": "2026-03-17T13:02:20"
+    "updated_at": "2026-03-17T13:07:20"
   }
 }

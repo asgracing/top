@@ -17490,8 +17490,38 @@
     "last_race_at": null
   },
   {
+    "public_id": "drv_63bacd05437a",
+    "driver": "Don Kart",
+    "points": 0,
+    "average_points_per_race": 0,
+    "races": 0,
+    "wins": 0,
+    "podiums": 0,
+    "average_finish": null,
+    "best_lap": null,
+    "best_lap_track": null,
+    "penalty_count": 0,
+    "penalty_points": 0,
+    "last_race_at": null
+  },
+  {
     "public_id": "drv_324225ad6988",
     "driver": "Vin Benzin",
+    "points": 0,
+    "average_points_per_race": 0,
+    "races": 0,
+    "wins": 0,
+    "podiums": 0,
+    "average_finish": null,
+    "best_lap": null,
+    "best_lap_track": null,
+    "penalty_count": 0,
+    "penalty_points": 0,
+    "last_race_at": null
+  },
+  {
+    "public_id": "drv_94b43f8d7040",
+    "driver": "Андрей Чаплинский",
     "points": 0,
     "average_points_per_race": 0,
     "races": 0,
