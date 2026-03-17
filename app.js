@@ -237,6 +237,7 @@ onlineNoData: "No data",
     driverFavoriteCar: "Favorite car",
     driverWinRate: "Win rate",
     driverPodiumRate: "Podium rate",
+    driverRankingPosition: "Ranking position",
     driverNoData: "Driver profile not found.",
     driverLoading: "Loading driver profile...",
     driverRaceCols: ["Date", "Track", "Start", "Pos", "Δ", "Points", "Best Lap", "Car", "Gap", "Pen"],
@@ -446,6 +447,7 @@ onlineNoData: "Нет данных",
     driverFavoriteCar: "Любимая машина",
     driverWinRate: "Процент побед",
     driverPodiumRate: "Процент подиумов",
+    driverRankingPosition: "Позиция в рейтинге",
     driverNoData: "Профиль пилота не найден.",
     driverLoading: "Загрузка профиля пилота...",
     driverRaceCols: ["Дата", "Трасса", "Старт", "Поз", "Δ", "Очки", "Лучший круг", "Машина", "Отставание", "Штр"],
@@ -1072,6 +1074,11 @@ async function loadDriverProfile(publicId) {
   if (!publicId) return null;
   const data = await loadJson(`${dataBasePath}drivers/${encodeURIComponent(publicId)}.json`);
   return data && typeof data === "object" ? data : null;
+}
+
+async function loadDriverIndex() {
+  const data = await loadJson(driverIndexUrl);
+  return Array.isArray(data) ? data : [];
 }
 
 function applyStaticTranslations() {
@@ -2291,6 +2298,19 @@ function renderPenaltyList(containerId, entries, labelKey) {
   `).join("");
 }
 
+function getDriverRankInfo(profile) {
+  const publicId = profile?.public_id;
+  if (!publicId || !Array.isArray(driverIndexData) || !driverIndexData.length) return null;
+
+  const index = driverIndexData.findIndex(row => row?.public_id === publicId);
+  if (index === -1) return null;
+
+  return {
+    rank: index + 1,
+    rankClass: index === 0 ? "rank-1" : index === 1 ? "rank-2" : index === 2 ? "rank-3" : "rank-default"
+  };
+}
+
 function getFavoriteCarName(profile) {
   const history = Array.isArray(profile?.race_history) ? profile.race_history : [];
   if (!history.length) return null;
@@ -2334,8 +2354,12 @@ function renderDriverPage() {
   const summary = driverProfileData.summary || {};
   const favoriteCarName = getFavoriteCarName(driverProfileData);
   const averagePace = summary.average_pace ?? "-";
+  const rankInfo = getDriverRankInfo(driverProfileData);
   document.title = `${driverProfileData.driver} | ${t("pageTitleDriver")}`;
-  nameEl.textContent = driverProfileData.driver || "-";
+  nameEl.innerHTML = `
+    <span class="driver-title-name">${escapeHtml(driverProfileData.driver || "-")}</span>
+    ${rankInfo ? `<span class="driver-rank-pill ${escapeHtml(rankInfo.rankClass)}" title="${escapeAttribute(t("driverRankingPosition"))}">#${escapeHtml(rankInfo.rank)}</span>` : ""}
+  `;
   subtitleEl.textContent = t("driverPageSubtitle");
 
   statsEl.innerHTML = `
@@ -2688,7 +2712,12 @@ async function init() {
 
   try {
     if (IS_DRIVER_PAGE) {
-      driverProfileData = await loadDriverProfile(getRequestedDriverId());
+      const [profile, indexData] = await Promise.all([
+        loadDriverProfile(getRequestedDriverId()),
+        loadDriverIndex()
+      ]);
+      driverProfileData = profile;
+      driverIndexData = indexData;
       rerenderUI();
       return;
     }

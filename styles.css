@@ -753,6 +753,57 @@ tr.is-interactive-row:focus-visible {
   padding: 18px 20px;
 }
 
+.driver-title-name {
+  display: inline;
+}
+
+#driver-page-name {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  flex-wrap: wrap;
+}
+
+.driver-rank-pill {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 42px;
+  padding: 0 14px;
+  border-radius: 999px;
+  border: 1px solid var(--line);
+  background: rgba(255, 255, 255, 0.06);
+  font-size: 0.92rem;
+  font-weight: 900;
+  letter-spacing: 0.02em;
+  line-height: 1;
+  white-space: nowrap;
+}
+
+.driver-rank-pill.rank-1 {
+  color: var(--gold);
+  border-color: rgba(245, 196, 81, 0.28);
+  background: rgba(245, 196, 81, 0.1);
+}
+
+.driver-rank-pill.rank-2 {
+  color: var(--silver);
+  border-color: rgba(184, 196, 212, 0.28);
+  background: rgba(184, 196, 212, 0.1);
+}
+
+.driver-rank-pill.rank-3 {
+  color: var(--bronze);
+  border-color: rgba(210, 139, 95, 0.28);
+  background: rgba(210, 139, 95, 0.1);
+}
+
+.driver-rank-pill.rank-default {
+  color: var(--accent-2);
+  border-color: rgba(255, 209, 102, 0.24);
+  background: rgba(255, 209, 102, 0.08);
+}
+
 .driver-stats-grid {
   display: grid;
   grid-template-columns: repeat(3, minmax(0, 1fr));
