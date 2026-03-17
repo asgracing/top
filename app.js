@@ -58,6 +58,8 @@ let driverProfileData = null;
 
 const translations = {
   en: {
+    closeLabel: "Close",
+    openRaceDetailsLabel: "Open race details",
     onlineTitle: "Unique players",
 onlineNoData: "No data",
     todayStatsBtn: "Today Stats",
@@ -247,6 +249,8 @@ onlineNoData: "No data",
     next: "Next →"
   },
   ru: {
+    closeLabel: "Закрыть",
+    openRaceDetailsLabel: "Открыть детали гонки",
     onlineTitle: "Уникальные игроки",
 onlineNoData: "Нет данных",
     todayStatsBtn: "Статистика за сегодня",
@@ -786,6 +790,24 @@ function getSortClass(sortState, key) {
   return sortState.direction === "asc" ? "sort-asc" : "sort-desc";
 }
 
+function getAriaSort(sortState, key) {
+  if (sortState.key !== key || !sortState.direction) return "none";
+  return sortState.direction === "asc" ? "ascending" : "descending";
+}
+
+function bindSortableHeaders(selector, sortState, onSort) {
+  document.querySelectorAll(selector).forEach(th => {
+    th.addEventListener("click", () => onSort(th.dataset.sortKey));
+    th.addEventListener("keydown", (event) => {
+      if (event.key === "Enter" || event.key === " ") {
+        event.preventDefault();
+        onSort(th.dataset.sortKey);
+      }
+    });
+    th.setAttribute("aria-sort", getAriaSort(sortState, th.dataset.sortKey));
+  });
+}
+
 function getProcessedLeaderboard() {
   return sortData(
     filterByDriver(leaderboardData, leaderboardSearch),
@@ -950,8 +972,15 @@ function applyStaticTranslations() {
     if (value !== undefined) el.innerHTML = value;
   });
 
+  document.querySelectorAll("[data-i18n-aria-label]").forEach(el => {
+    const key = el.dataset.i18nAriaLabel;
+    const value = t(key);
+    if (value !== undefined) el.setAttribute("aria-label", value);
+  });
+
   document.querySelectorAll(".lang-btn").forEach(btn => {
     btn.classList.toggle("active", btn.dataset.lang === currentLang);
+    btn.setAttribute("aria-pressed", btn.dataset.lang === currentLang ? "true" : "false");
   });
 
   const leaderboardInput = document.getElementById("leaderboard-search");
@@ -993,6 +1022,76 @@ function formatPercent(value) {
   return typeof value === "number" ? `${value.toFixed(2)}%` : "—";
 }
 
+function getFocusableElements(container) {
+  if (!container) return [];
+  return [...container.querySelectorAll(
+    'a[href], button:not([disabled]), textarea:not([disabled]), input:not([disabled]), select:not([disabled]), [tabindex]:not([tabindex="-1"])'
+  )].filter(el => !el.hasAttribute("hidden") && el.getAttribute("aria-hidden") !== "true");
+}
+
+function createModalController({ modalId, closeButtonId, openButtonId, onOpen, onClose }) {
+  const modal = document.getElementById(modalId);
+  const closeBtn = document.getElementById(closeButtonId);
+  const openBtn = openButtonId ? document.getElementById(openButtonId) : null;
+  if (!modal || !closeBtn) return null;
+
+  let lastFocusedElement = null;
+
+  const close = () => {
+    modal.classList.remove("is-open");
+    modal.setAttribute("aria-hidden", "true");
+    document.body.classList.remove("modal-open");
+    if (typeof onClose === "function") onClose();
+    if (lastFocusedElement && typeof lastFocusedElement.focus === "function") {
+      lastFocusedElement.focus();
+    }
+  };
+
+  const open = (trigger = null) => {
+    lastFocusedElement = trigger || document.activeElement;
+    if (typeof onOpen === "function") onOpen();
+    modal.classList.add("is-open");
+    modal.setAttribute("aria-hidden", "false");
+    document.body.classList.add("modal-open");
+    window.requestAnimationFrame(() => {
+      const [firstFocusable] = getFocusableElements(modal);
+      (firstFocusable || closeBtn).focus();
+    });
+  };
+
+  closeBtn.addEventListener("click", close);
+  modal.addEventListener("click", (event) => {
+    if (event.target === modal) close();
+  });
+  modal.addEventListener("keydown", (event) => {
+    if (event.key === "Escape") {
+      event.preventDefault();
+      close();
+      return;
+    }
+
+    if (event.key !== "Tab") return;
+    const focusable = getFocusableElements(modal);
+    if (!focusable.length) return;
+
+    const first = focusable[0];
+    const last = focusable[focusable.length - 1];
+    if (event.shiftKey && document.activeElement === first) {
+      event.preventDefault();
+      last.focus();
+    } else if (!event.shiftKey && document.activeElement === last) {
+      event.preventDefault();
+      first.focus();
+    }
+  });
+
+  if (openBtn) {
+    openBtn.addEventListener("click", () => open(openBtn));
+  }
+
+  return { modal, open, close };
+}
+
 function formatPositionsDelta(value) {
   if (typeof value !== "number") return "-";
   if (value > 0) return `+${value}`;
@@ -1021,37 +1120,6 @@ function updateBestLapNote(driver, track, carName) {
     track: track || "Unknown track"
   });
   noteEl.textContent = carName ? `${base} · ${carName}` : base;
-}
-
-function renderTop3(data) {
-  if (!Array.isArray(data) || !data.length) {
-    return `<div class="empty-box">${escapeHtml(t("emptyTop3"))}</div>`;
-  }
-
-  const top3 = data.slice(0, 3);
-  const classes = ["top1", "top2", "top3"];
-
-  return top3.map((row, index) => `
-    <article class="pilot-card ${classes[index] || ""}">
-      <div class="pilot-rank">#${escapeHtml(row.rank)}</div>
-      <h3 class="pilot-name">${renderDriverLink(row.driver, row.public_id, "driver-link driver-link-heading", row.player_id)}</h3>
-      <div class="muted">${escapeHtml(t("metaLabels").bestLap)}: ${escapeHtml(row.best_lap || "-")}</div>
-      <div class="pilot-meta">
-        <div class="meta-box">
-          <div class="meta-label">${escapeHtml(t("metaLabels").points)}</div>
-          <div class="meta-value">${escapeHtml(row.points ?? 0)}</div>
-        </div>
-        <div class="meta-box">
-          <div class="meta-label">${escapeHtml(t("metaLabels").wins)}</div>
-          <div class="meta-value">${escapeHtml(row.wins ?? 0)}</div>
-        </div>
-        <div class="meta-box">
-          <div class="meta-label">${escapeHtml(t("metaLabels").races)}</div>
-          <div class="meta-value">${escapeHtml(row.races ?? 0)}</div>
-        </div>
-      </div>
-    </article>
-  `).join("");
 }
 
 function renderTop3Compact(data) {
@@ -1183,7 +1251,7 @@ function renderPagination(
 function renderLeaderboardHeaders() {
   const cols = t("leaderboardCols");
   return leaderboardColumns.map((col, index) => `
-    <th class="sortable ${getSortClass(leaderboardSort, col.key)}" data-sort-key="${escapeHtml(col.key)}">
+    <th class="sortable ${getSortClass(leaderboardSort, col.key)}" data-sort-key="${escapeHtml(col.key)}" tabindex="0" role="button" aria-sort="${getAriaSort(leaderboardSort, col.key)}">
       ${escapeHtml(cols[index])}
     </th>
   `).join("");
@@ -1192,29 +1260,25 @@ function renderLeaderboardHeaders() {
 function renderBestlapsHeaders() {
   const cols = t("bestlapsCols");
   return bestlapsColumns.map((col, index) => `
-    <th class="sortable ${getSortClass(bestlapsSort, col.key)}" data-sort-key="${escapeHtml(col.key)}">
+    <th class="sortable ${getSortClass(bestlapsSort, col.key)}" data-sort-key="${escapeHtml(col.key)}" tabindex="0" role="button" aria-sort="${getAriaSort(bestlapsSort, col.key)}">
       ${escapeHtml(cols[index])}
     </th>
   `).join("");
 }
 
 function bindLeaderboardSortHandlers() {
-  document.querySelectorAll("#leaderboard-table th[data-sort-key]").forEach(th => {
-    th.addEventListener("click", () => {
-      leaderboardSort = cycleSort(leaderboardSort, th.dataset.sortKey);
-      leaderboardPage = 1;
-      renderLeaderboardTablePage();
-    });
+  bindSortableHeaders("#leaderboard-table th[data-sort-key]", leaderboardSort, (key) => {
+    leaderboardSort = cycleSort(leaderboardSort, key);
+    leaderboardPage = 1;
+    renderLeaderboardTablePage();
   });
 }
 
 function bindBestlapsSortHandlers() {
-  document.querySelectorAll("#bestlaps-table th[data-sort-key]").forEach(th => {
-    th.addEventListener("click", () => {
-      bestlapsSort = cycleSort(bestlapsSort, th.dataset.sortKey);
-      bestlapsPage = 1;
-      renderBestLapsTablePage();
-    });
+  bindSortableHeaders("#bestlaps-table th[data-sort-key]", bestlapsSort, (key) => {
+    bestlapsSort = cycleSort(bestlapsSort, key);
+    bestlapsPage = 1;
+    renderBestLapsTablePage();
   });
 }
 
@@ -1347,19 +1411,17 @@ function renderBestLapsTablePage() {
 function renderSafetyHeaders() {
   const columns = getSafetyColumns();
   return columns.map(col => `
-    <th class="sortable ${getSortClass(safetySort, col.key)}" data-sort-key="${escapeHtml(col.key)}">
+    <th class="sortable ${getSortClass(safetySort, col.key)}" data-sort-key="${escapeHtml(col.key)}" tabindex="0" role="button" aria-sort="${getAriaSort(safetySort, col.key)}">
       ${escapeHtml(col.label)}
     </th>
   `).join("");
 }
 
 function bindSafetySortHandlers() {
-  document.querySelectorAll("#safety-table th[data-sort-key]").forEach(th => {
-    th.addEventListener("click", () => {
-      safetySort = cycleSort(safetySort, th.dataset.sortKey);
-      safetyPage = 1;
-      renderSafetyTablePage();
-    });
+  bindSortableHeaders("#safety-table th[data-sort-key]", safetySort, (key) => {
+    safetySort = cycleSort(safetySort, key);
+    safetyPage = 1;
+    renderSafetyTablePage();
   });
 }
 
@@ -1581,7 +1643,13 @@ function renderRacesTable() {
 
   const headers = t("racesCols").map(label => `<th>${escapeHtml(label)}</th>`).join("");
   const rows = races.map((race, index) => `
-    <tr data-race-index="${escapeHtml(index)}">
+    <tr
+      class="is-interactive-row"
+      data-race-index="${escapeHtml(index)}"
+      tabindex="0"
+      role="button"
+      aria-label="${escapeHtml(`${t("openRaceDetailsLabel")}: ${humanizeTrackName(race.track)}`)}"
+    >
       <td>${escapeHtml(formatDateTimeLocal(race.finished_at, currentLang))}</td>
       <td>
         <div class="race-track-cell">
@@ -1608,12 +1676,20 @@ function renderRacesTable() {
   `;
 
   tableEl.querySelectorAll("tbody tr[data-race-index]").forEach(row => {
-    row.addEventListener("click", (event) => {
+    const openRow = (event) => {
       if (event.target.closest("a")) {
         return;
       }
       const index = Number(row.dataset.raceIndex);
-      openRaceResultsModal(races[index] || null);
+      openRaceResultsModal(races[index] || null, row);
+    };
+
+    row.addEventListener("click", openRow);
+    row.addEventListener("keydown", (event) => {
+      if (event.key === "Enter" || event.key === " ") {
+        event.preventDefault();
+        openRow(event);
+      }
     });
   });
 }
@@ -1656,7 +1732,6 @@ function renderRaceResultsModal() {
     </div>
   `;
 
-  
   const headers = t("raceModalCols").map(label => `<th>${escapeHtml(label)}</th>`).join("");
   const rows = (selectedRace.results || []).map(row => `
     <tr>
@@ -1693,41 +1768,23 @@ function renderRaceResultsModal() {
   `;
 }
 
-function openRaceResultsModal(race) {
-  const modal = document.getElementById("race-results-modal");
-  if (!modal || !race) return;
+let raceResultsModalController = null;
+let driverOfDayModalController = null;
+let todayStatsModalController = null;
 
+function openRaceResultsModal(race, trigger = null) {
+  if (!raceResultsModalController || !race) return;
   selectedRace = race;
-  renderRaceResultsModal();
-  modal.classList.add("is-open");
-  modal.setAttribute("aria-hidden", "false");
-  document.body.classList.add("modal-open");
-}
-
-function closeRaceResultsModal() {
-  const modal = document.getElementById("race-results-modal");
-  if (!modal) return;
-
-  modal.classList.remove("is-open");
-  modal.setAttribute("aria-hidden", "true");
-  document.body.classList.remove("modal-open");
+  raceResultsModalController.open(trigger);
 }
 
 function initRaceResultsModal() {
-  const modal = document.getElementById("race-results-modal");
-  const closeBtn = document.getElementById("race-results-close");
-  if (!modal || !closeBtn) return;
-
-  closeBtn.addEventListener("click", closeRaceResultsModal);
-  modal.addEventListener("click", (e) => {
-    if (e.target === modal) {
-      closeRaceResultsModal();
-    }
-  });
-
-  document.addEventListener("keydown", (e) => {
-    if (e.key === "Escape" && modal.classList.contains("is-open")) {
-      closeRaceResultsModal();
+  raceResultsModalController = createModalController({
+    modalId: "race-results-modal",
+    closeButtonId: "race-results-close",
+    onOpen: renderRaceResultsModal,
+    onClose: () => {
+      selectedRace = null;
     }
   });
 }
@@ -1756,41 +1813,6 @@ function renderCarsSummary() {
   usedEl.textContent = mostUsed ? mostUsed.car_name : "—";
 }
 
-function renderCarsTable() {
-  const tableEl = document.getElementById("cars-table");
-  if (!tableEl) return;
-
-  if (!carsData.length) {
-    tableEl.innerHTML = `<div class="empty-box">${escapeHtml(t("emptyRaces"))}</div>`;
-    return;
-  }
-
-  const headers = t("carsCols").map(label => `<th>${escapeHtml(label)}</th>`).join("");
-  const rows = carsData.map(row => `
-    <tr>
-      <td>${escapeHtml(row.car_name || "—")}</td>
-      <td>${escapeHtml(row.races ?? 0)}</td>
-      <td>${escapeHtml(row.wins ?? 0)}</td>
-      <td>${escapeHtml(formatPercent(row.win_rate))}</td>
-      <td>${escapeHtml(row.podiums ?? 0)}</td>
-      <td>${escapeHtml(row.unique_drivers ?? 0)}</td>
-      <td>${escapeHtml(formatAverageFinish(row.average_finish))}</td>
-      <td>${escapeHtml(row.fastest_lap_awards ?? 0)}</td>
-      <td>
-        <div>${escapeHtml(row.best_lap || "—")}</div>
-        <div class="race-note">${renderDriverLink(row.best_lap_driver || "—", row.best_lap_public_id, "driver-link driver-link-subtle")}</div>
-      </td>
-    </tr>
-  `).join("");
-
-  tableEl.innerHTML = `
-    <table>
-      <thead><tr>${headers}</tr></thead>
-      <tbody>${rows}</tbody>
-    </table>
-  `;
-}
-
 function renderCarsPage() {
   renderCarsSummary();
   renderCarsTable();
@@ -1808,7 +1830,7 @@ function renderCarsTable() {
   }
 
   const headers = t("carsCols").map((label, index) => `
-    <th class="sortable ${getSortClass(carsSort, carsColumns[index].key)}" data-sort-key="${carsColumns[index].key}">
+    <th class="sortable ${getSortClass(carsSort, carsColumns[index].key)}" data-sort-key="${carsColumns[index].key}" tabindex="0" role="button" aria-sort="${getAriaSort(carsSort, carsColumns[index].key)}">
       ${escapeHtml(label)}
     </th>
   `).join("");
@@ -1837,11 +1859,9 @@ function renderCarsTable() {
     </table>
   `;
 
-  tableEl.querySelectorAll("th.sortable").forEach(th => {
-    th.addEventListener("click", () => {
-      carsSort = cycleSort(carsSort, th.dataset.sortKey);
-      renderCarsTable();
-    });
+  bindSortableHeaders("#cars-table th.sortable", carsSort, (key) => {
+    carsSort = cycleSort(carsSort, key);
+    renderCarsTable();
   });
 }
 
@@ -2217,87 +2237,60 @@ function renderDriverOfDayModal() {
 }
 
 function openDriverOfDayModal() {
-  const modal = document.getElementById("driver-of-day-modal");
-  if (!modal) return;
-
-  renderDriverOfDayModal();
-  modal.classList.add("is-open");
-  modal.setAttribute("aria-hidden", "false");
-  document.body.classList.add("modal-open");
-}
-
-function closeDriverOfDayModal() {
-  const modal = document.getElementById("driver-of-day-modal");
-  if (!modal) return;
-
-  modal.classList.remove("is-open");
-  modal.setAttribute("aria-hidden", "true");
-  document.body.classList.remove("modal-open");
+  if (!driverOfDayModalController) return;
+  driverOfDayModalController.open(document.getElementById("driver-of-day-btn"));
 }
 
 function initDriverOfDayModal() {
-  const openBtn = document.getElementById("driver-of-day-btn");
-  const closeBtn = document.getElementById("driver-of-day-close");
-  const modal = document.getElementById("driver-of-day-modal");
-
-  if (!openBtn || !closeBtn || !modal) return;
-
-  openBtn.addEventListener("click", openDriverOfDayModal);
-  closeBtn.addEventListener("click", closeDriverOfDayModal);
-
-  modal.addEventListener("click", (e) => {
-    if (e.target === modal) {
-      closeDriverOfDayModal();
-    }
-  });
-
-  document.addEventListener("keydown", (e) => {
-    if (e.key === "Escape" && modal.classList.contains("is-open")) {
-      closeDriverOfDayModal();
-    }
+  driverOfDayModalController = createModalController({
+    modalId: "driver-of-day-modal",
+    closeButtonId: "driver-of-day-close",
+    openButtonId: "driver-of-day-btn",
+    onOpen: renderDriverOfDayModal
   });
 }
 
 function openTodayStatsModal() {
-  const modal = document.getElementById("today-stats-modal");
-  if (!modal) return;
-
-  renderTodayStatsModal();
-  modal.classList.add("is-open");
-  modal.setAttribute("aria-hidden", "false");
-  document.body.classList.add("modal-open");
-}
-
-function closeTodayStatsModal() {
-  const modal = document.getElementById("today-stats-modal");
-  if (!modal) return;
-
-  modal.classList.remove("is-open");
-  modal.setAttribute("aria-hidden", "true");
-  document.body.classList.remove("modal-open");
+  if (!todayStatsModalController) return;
+  todayStatsModalController.open(document.getElementById("today-stats-btn"));
 }
 
 function initTodayStatsModal() {
-  const openBtn = document.getElementById("today-stats-btn");
-  const closeBtn = document.getElementById("today-stats-close");
-  const modal = document.getElementById("today-stats-modal");
-
-  if (!openBtn || !closeBtn || !modal) return;
-
-  openBtn.addEventListener("click", openTodayStatsModal);
-  closeBtn.addEventListener("click", closeTodayStatsModal);
-
-  modal.addEventListener("click", (e) => {
-    if (e.target === modal) {
-      closeTodayStatsModal();
-    }
+  todayStatsModalController = createModalController({
+    modalId: "today-stats-modal",
+    closeButtonId: "today-stats-close",
+    openButtonId: "today-stats-btn",
+    onOpen: renderTodayStatsModal
   });
+}
 
-  document.addEventListener("keydown", (e) => {
-    if (e.key === "Escape" && modal.classList.contains("is-open")) {
-      closeTodayStatsModal();
-    }
-  });
+function optimizeBackgroundMedia() {
+  const video = document.querySelector(".site-bg-video");
+  if (!video) return;
+
+  const reduceMotion = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+  const shouldUseStaticBackground =
+    reduceMotion ||
+    IS_DRIVER_PAGE ||
+    IS_RACES_PAGE ||
+    IS_CARS_PAGE ||
+    window.innerWidth < 900 ||
+    navigator.connection?.saveData;
+
+  if (shouldUseStaticBackground) {
+    document.body.classList.add("lite-background");
+    video.pause();
+    video.removeAttribute("autoplay");
+    return;
+  }
+
+  document.body.classList.remove("lite-background");
+  const playPromise = video.play?.();
+  if (playPromise && typeof playPromise.catch === "function") {
+    playPromise.catch(() => {
+      document.body.classList.add("lite-background");
+    });
+  }
 }
 
 function rerenderUI() {
@@ -2332,6 +2325,8 @@ function rerenderUI() {
 async function init() {
   const top3Content = document.getElementById("top3-content");
   bindLanguageButtons();
+  optimizeBackgroundMedia();
+  window.addEventListener("resize", debounce(optimizeBackgroundMedia, 120));
   if (IS_RACES_PAGE) {
     initRaceResultsModal();
   } else if (!IS_DRIVER_PAGE && !IS_CARS_PAGE) {
