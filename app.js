@@ -2310,18 +2310,6 @@ function getFavoriteCarName(profile) {
     })[0][0];
 }
 
-function getAveragePace(profile) {
-  const history = Array.isArray(profile?.race_history) ? profile.race_history : [];
-  const validBestLaps = history.filter(row =>
-    row?.had_best_lap === true && Number.isFinite(row?.best_lap_ms) && row.best_lap_ms > 0
-  );
-
-  if (!validBestLaps.length) return "-";
-
-  const averageMs = validBestLaps.reduce((sum, row) => sum + row.best_lap_ms, 0) / validBestLaps.length;
-  return formatLapTimeFromMs(averageMs);
-}
-
 function renderDriverPage() {
   const nameEl = document.getElementById("driver-page-name");
   const subtitleEl = document.getElementById("driver-page-subtitle");
@@ -2343,7 +2331,7 @@ function renderDriverPage() {
 
   const summary = driverProfileData.summary || {};
   const favoriteCarName = getFavoriteCarName(driverProfileData);
-  const averagePace = getAveragePace(driverProfileData);
+  const averagePace = summary.average_pace ?? "-";
   document.title = `${driverProfileData.driver} | ${t("pageTitleDriver")}`;
   nameEl.textContent = driverProfileData.driver || "-";
   subtitleEl.textContent = t("driverPageSubtitle");
