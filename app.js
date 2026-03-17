@@ -1656,6 +1656,7 @@ function renderRaceResultsModal() {
     </div>
   `;
 
+  
   const headers = t("raceModalCols").map(label => `<th>${escapeHtml(label)}</th>`).join("");
   const rows = (selectedRace.results || []).map(row => `
     <tr>
