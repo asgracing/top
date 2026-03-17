@@ -2470,9 +2470,9 @@ function renderTodayStatsModal() {
     tracksEl.textContent = "-";
     bestLapEl.innerHTML = `<span>-</span><span class="today-detail-side-inline">-</span>`;
     bestLapNoteEl.textContent = "-";
-    mostActiveEl.textContent = "-";
+    mostActiveEl.innerHTML = `<span>-</span>`;
     mostActiveNoteEl.textContent = "-";
-    mostSuccessfulEl.textContent = "-";
+    mostSuccessfulEl.innerHTML = `<span>-</span>`;
     mostSuccessfulNoteEl.textContent = "-";
     updatedEl.textContent = "-";
     return;
@@ -2504,7 +2504,12 @@ function renderTodayStatsModal() {
     stats.most_active_driver_today?.player_id ||
     "-";
 
-  mostActiveEl.textContent = mostActiveName;
+  mostActiveEl.innerHTML = renderDriverLink(
+    mostActiveName,
+    stats.most_active_driver_today?.public_id || findPublicIdByPlayerId(stats.most_active_driver_today?.player_id),
+    "driver-link",
+    stats.most_active_driver_today?.player_id
+  );
   mostActiveNoteEl.textContent =
     stats.most_active_driver_today?.races != null
       ? (lang === "ru"
@@ -2512,7 +2517,12 @@ function renderTodayStatsModal() {
           : `Races today: ${stats.most_active_driver_today.races}`)
       : "-";
 
-  mostSuccessfulEl.textContent = stats.most_successful_driver_today?.driver || "-";
+  mostSuccessfulEl.innerHTML = renderDriverLink(
+    stats.most_successful_driver_today?.driver || "-",
+    stats.most_successful_driver_today?.public_id || findPublicIdByPlayerId(stats.most_successful_driver_today?.player_id),
+    "driver-link",
+    stats.most_successful_driver_today?.player_id
+  );
   mostSuccessfulNoteEl.textContent =
     stats.most_successful_driver_today?.points != null
       ? (lang === "ru"
@@ -2564,7 +2574,7 @@ function renderDriverOfDayModal() {
   if (!nameEl) return;
 
   if (!data || !data.driver) {
-    nameEl.textContent = "-";
+    nameEl.innerHTML = `<span>-</span>`;
     pointsEl.textContent = "-";
     racesEl.textContent = "-";
     winsEl.textContent = "-";
@@ -2573,7 +2583,7 @@ function renderDriverOfDayModal() {
     avgGainEl.classList.remove("delta-positive", "delta-negative");
     avgGainEl.classList.add("positions-delta", "delta-neutral");
     bestLapEl.textContent = "-";
-    bestLapTrackEl.textContent = "-";
+    bestLapTrackEl.textContent = "";
     updatedEl.textContent = "-";
     if (emptyEl) emptyEl.textContent = t("driverOfDayNoData");
     if (emptyEl) emptyEl.hidden = false;
@@ -2581,7 +2591,12 @@ function renderDriverOfDayModal() {
     return;
   }
 
-  nameEl.textContent = data.driver || "-";
+  nameEl.innerHTML = renderDriverLink(
+    data.driver || "-",
+    data.public_id || findPublicIdByPlayerId(data.player_id),
+    "driver-link",
+    data.player_id
+  );
   pointsEl.textContent = data.points ?? 0;
   racesEl.textContent = data.races ?? 0;
   winsEl.textContent = data.wins ?? 0;
@@ -2597,7 +2612,7 @@ function renderDriverOfDayModal() {
     avgGainEl.classList.add("delta-neutral");
   }
   bestLapEl.textContent = data.best_lap || "-";
-  bestLapTrackEl.textContent = data.best_lap_track || "-";
+  bestLapTrackEl.textContent = "";
   updatedEl.textContent = currentLang === "ru"
     ? `Обновлено: ${formatDateTimeLocal(data.updated_at, "ru")}`
     : `Updated: ${formatDateTimeLocal(data.updated_at, "en")}`;
