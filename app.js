@@ -194,7 +194,7 @@ onlineNoData: "No data",
     driverPodiumRate: "Podium rate",
     driverNoData: "Driver profile not found.",
     driverLoading: "Loading driver profile...",
-    driverRaceCols: ["Date", "Track", "Start", "Pos", "Δ", "Points", "Best Lap", "Total Time", "Gap", "Pen"],
+    driverRaceCols: ["Date", "Track", "Start", "Pos", "Δ", "Points", "Best Lap", "Car", "Gap", "Pen"],
     driverTrackCols: ["Track", "Races", "Wins", "Podiums", "Points", "Avg finish", "Best lap"],
     driverPenaltyReason: "Reason",
     driverPenaltyType: "Type",
@@ -383,7 +383,7 @@ onlineNoData: "Нет данных",
     driverPodiumRate: "Процент подиумов",
     driverNoData: "Профиль пилота не найден.",
     driverLoading: "Загрузка профиля пилота...",
-    driverRaceCols: ["Дата", "Трасса", "Старт", "Поз", "Δ", "Очки", "Лучший круг", "Время", "Отставание", "Штр"],
+    driverRaceCols: ["Дата", "Трасса", "Старт", "Поз", "Δ", "Очки", "Лучший круг", "Машина", "Отставание", "Штр"],
     driverTrackCols: ["Трасса", "Гонки", "Победы", "Подиумы", "Очки", "Ср. финиш", "Лучший круг"],
     driverPenaltyReason: "Причина",
     driverPenaltyType: "Тип",
@@ -1849,7 +1849,7 @@ function renderDriverRaceHistory() {
       <td>${renderPositionsDelta(row.positions_delta)}</td>
       <td>${escapeHtml(row.points ?? 0)}</td>
       <td>${escapeHtml(row.best_lap ?? "-")}</td>
-      <td>${escapeHtml(row.total_time ?? "-")}</td>
+      <td>${escapeHtml(row.car_name ?? "-")}</td>
       <td>${escapeHtml(row.gap ?? "-")}</td>
       <td>${escapeHtml(row.penalty_points ?? 0)}</td>
     </tr>
