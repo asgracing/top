@@ -2386,13 +2386,13 @@ function renderDriverPage() {
       <div class="driver-stat-label">${escapeHtml(t("driverSummaryAvgPace"))}</div>
       <div class="driver-stat-value">${escapeHtml(averagePace)}</div>
     </div>
+    <div class="driver-stat-card">
+      <div class="driver-stat-label">${escapeHtml(t("driverFavoriteCar"))}</div>
+      <div class="driver-stat-value">${renderCarLink(favoriteCarName || "-", "driver-link driver-link-heading")}</div>
+    </div>
   `;
 
   highlightsEl.innerHTML = `
-    <div class="driver-highlight-card">
-      <div class="driver-highlight-label">${escapeHtml(t("driverFavoriteCar"))}</div>
-      <div class="driver-highlight-value">${renderCarLink(favoriteCarName || "-", "driver-link driver-link-heading")}</div>
-    </div>
     <div class="driver-highlight-card">
       <div class="driver-highlight-label">${escapeHtml(t("driverRecentForm"))}</div>
       <div class="driver-highlight-value">${renderRecentForm(driverProfileData.recent_form)}</div>
