@@ -1,0 +1,82 @@
+{
+  "public_id": "drv_c89ae2c47d6a",
+  "driver": "Evgeny Che",
+  "summary": {
+    "points": 0,
+    "average_points_per_race": 0.0,
+    "races": 1,
+    "wins": 0,
+    "podiums": 0,
+    "average_finish": 18.0,
+    "best_lap": "1:49.515",
+    "best_lap_ms": 109515,
+    "best_lap_track": "monza",
+    "best_lap_car_model_id": 6,
+    "best_lap_car_name_raw": "Nissan GT-R Nismo GT3 2018",
+    "best_lap_car_name": "Nissan GT-R Nismo GT3",
+    "best_lap_session_type": "R",
+    "penalty_count": 0,
+    "penalty_points": 0,
+    "fastest_lap_awards": 0,
+    "most_raced_track": "monza",
+    "last_race_at": "2026-03-17T16:52:17",
+    "last_seen": "2026-03-17T16:52:17",
+    "win_rate": 0.0,
+    "podium_rate": 0.0,
+    "average_positions_delta": null,
+    "positions_delta_races": 0
+  },
+  "recent_form": [
+    18
+  ],
+  "track_stats": [
+    {
+      "track": "monza",
+      "races": 1,
+      "wins": 0,
+      "podiums": 0,
+      "points": 0,
+      "finish_sum": 18,
+      "average_finish": 18.0,
+      "best_lap_ms": 109515,
+      "best_lap": "1:49.515"
+    }
+  ],
+  "race_history": [
+    {
+      "race_id": "260317_165217_R.json",
+      "finished_at": "2026-03-17T16:52:17",
+      "track": "monza",
+      "car_model_id": 6,
+      "car_name_raw": "Nissan GT-R Nismo GT3 2018",
+      "car_name": "Nissan GT-R Nismo GT3",
+      "position": 18,
+      "participants_count": 38,
+      "winner": "Yukrin Rino",
+      "points": 0,
+      "qualifying_position": null,
+      "start_position": null,
+      "start_position_source": "unknown",
+      "positions_delta": null,
+      "positions_gained": null,
+      "positions_lost": null,
+      "best_lap": "1:49.515",
+      "best_lap_ms": 109515,
+      "total_time": "11:52.960",
+      "total_time_ms": 712960,
+      "gap": "0:00.000",
+      "gap_ms": 0,
+      "lap_count": 3,
+      "counted_for_stats": true,
+      "had_best_lap": false,
+      "penalty_count": 0,
+      "penalty_points": 0
+    }
+  ],
+  "penalties": {
+    "penalty_count": 0,
+    "penalty_points": 0,
+    "reasons": {},
+    "types": {}
+  }
+}
