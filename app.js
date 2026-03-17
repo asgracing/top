@@ -1,4 +1,4 @@
-const IS_RACES_PAGE = /\/races(?:\/|\/index\.html)?$/i.test(window.location.pathname);
+﻿const IS_RACES_PAGE = /\/races(?:\/|\/index\.html)?$/i.test(window.location.pathname);
 const IS_DRIVER_PAGE = /\/driver(?:\/|\/index\.html)?$/i.test(window.location.pathname);
 const IS_CARS_PAGE = /\/cars(?:\/|\/index\.html)?$/i.test(window.location.pathname);
 const dataBasePath = (IS_RACES_PAGE || IS_DRIVER_PAGE || IS_CARS_PAGE) ? "../" : "./";
@@ -73,13 +73,13 @@ onlineNoData: "No data",
     pageTitleRaces: "ASG Racing Last Races | Assetto Corsa Competizione Results",
     pageTitleCars: "ASG Racing Cars | Assetto Corsa Competizione Stats",
     metaDescription:
-      "ASG Racing ACC Leaderboard — race stats, wins, podiums and best laps from the public Assetto Corsa Competizione server.",
+      "ASG Racing ACC Leaderboard вЂ” race stats, wins, podiums and best laps from the public Assetto Corsa Competizione server.",
     ogDescription:
       "Race stats, wins, podiums and best laps from the ASG Racing server in Assetto Corsa Competizione.",
     twitterDescription:
       "Races, wins, podiums and best laps from the public ACC server of ASG Racing.",
     ogLocale: "en_US",
-    heroTitle: "🏁 ASG Racing Leaderboard",
+    heroTitle: "рџЏЃ ASG Racing Leaderboard",
     heroSubtitle:
       "Race statistics, wins, podiums and best laps from the <strong>ASG Racing</strong> server. Data is automatically updated based on dedicated server results.",
     btnChampionship: "Championship",
@@ -94,7 +94,7 @@ onlineNoData: "No data",
     driversCountNote: "Unique participants included in the stats.",
     bestLapHighlightLabel: "Best lap record",
     bestLapNoteFallback: "Best lap highlight will appear here.",
-    bestLapNoteTemplate: "{driver} · {track}",
+    bestLapNoteTemplate: "{driver} В· {track}",
     top3Title: "Top 3 Drivers",
     top3Subtitle: "Current championship leaders by points.",
     championshipTitle: "Championship Leaderboard",
@@ -108,19 +108,19 @@ onlineNoData: "No data",
     aboutP1:
       "<strong>ASG Racing</strong> is a public <strong>Assetto Corsa Competizione</strong> server where drivers compete on popular GT3 tracks, improve their lap times and compare their statistics with other racers.",
     aboutP2: "This page automatically publishes the server leaderboard including:",
-    aboutList1: "🏁 number of races",
-    aboutList2: "🥇 wins",
-    aboutList3: "🏆 podium finishes",
-    aboutList4: "📊 average finish position",
-    aboutList5: "⚡ best laps",
+    aboutList1: "рџЏЃ number of races",
+    aboutList2: "рџҐ‡ wins",
+    aboutList3: "рџЏ† podium finishes",
+    aboutList4: "рџ“Љ average finish position",
+    aboutList5: "вљЎ best laps",
     aboutP3:
       "Statistics are generated automatically from <strong>ACC Dedicated Server</strong> result files. After each race the data is recalculated and published on the website.",
     pointsTitle: "How points are calculated",
     pointsP1: "Points are awarded using a GT-style system:",
-    pointsList1: "1st place — 25 points",
-    pointsList2: "2nd place — 18 points",
-    pointsList3: "3rd place — 15 points",
-    pointsList4: "4th–10th — decreasing points",
+    pointsList1: "1st place вЂ” 25 points",
+    pointsList2: "2nd place вЂ” 18 points",
+    pointsList3: "3rd place вЂ” 15 points",
+    pointsList4: "4thвЂ“10th вЂ” decreasing points",
     pointsP2:
       "Drivers also receive <strong>1 additional point</strong> for the fastest lap in race.",
     bestLapsInfoTitle: "Best laps",
@@ -163,7 +163,7 @@ onlineNoData: "No data",
     racesTableSubtitle: "Sorted from newest to oldest.",
     raceModalEyebrow: "Race details",
     racesCols: ["Date", "Track", "Winner", "Drivers", "Best Lap"],
-    raceModalCols: ["Pos", "Start", "Δ", "Driver", "Best Lap", "Total Time", "Gap", "Pts", "Pen"],
+    raceModalCols: ["Pos", "Start", "О”", "Driver", "Best Lap", "Total Time", "Gap", "Pts", "Pen"],
     raceSummaryTrack: "Track",
     raceSummaryWinner: "Winner",
     raceSummaryDrivers: "Drivers",
@@ -193,7 +193,7 @@ onlineNoData: "No data",
     driverPodiumRate: "Podium rate",
     driverNoData: "Driver profile not found.",
     driverLoading: "Loading driver profile...",
-    driverRaceCols: ["Date", "Track", "Start", "Pos", "Δ", "Points", "Best Lap", "Total Time", "Gap", "Pen"],
+    driverRaceCols: ["Date", "Track", "Start", "Pos", "О”", "Points", "Best Lap", "Total Time", "Gap", "Pen"],
     driverTrackCols: ["Track", "Races", "Wins", "Podiums", "Points", "Avg finish", "Best lap"],
     driverPenaltyReason: "Reason",
     driverPenaltyType: "Type",
@@ -206,10 +206,10 @@ onlineNoData: "No data",
       "Races",
       "Avg Finish",
       "Best Lap",
-      "Track",
+      "Car",
       "Session"
     ],
-    bestlapsCols: ["Rank", "Driver", "Best Lap", "Track", "Session", "Updated"],
+    bestlapsCols: ["Rank", "Driver", "Best Lap", "Car", "Session", "Updated"],
     safetyBaseCols: ["Rank", "Driver", "Penalties", "Penalty Points"],
     leaderboardSearchPlaceholder: "Search driver...",
     bestlapsSearchPlaceholder: "Search driver...",
@@ -224,196 +224,196 @@ onlineNoData: "No data",
     sessionRace: "Race",
     sessionQualifying: "Qualifying",
     paginationShown: "Showing {start}-{end} of {total}",
-    prev: "← Prev",
-    next: "Next →"
+    prev: "в†ђ Prev",
+    next: "Next в†’"
   },
   ru: {
-    onlineTitle: "Уникальные игроки",
-onlineNoData: "Нет данных",
-    todayStatsBtn: "Статистика за сегодня",
-    todayStatsEyebrow: "Сводка дня",
-    todayStatsTitle: "Статистика за сегодня",
-    todayUniquePlayers: "Уникальных пилотов сегодня",
-    todayRaces: "Гонок сегодня",
-    todaySessions: "Сессий сегодня",
-    todayPoints: "Очков заработано сегодня",
-    todayWins: "Побед сегодня",
-    todayPodiums: "Подиумов сегодня",
-    todayAvgPlayers: "Среднее пилотов на гонку",
-    todayTracks: "Трассы сегодня",
-    todayBestLap: "Лучший круг сегодня",
-    todayMostActive: "Самый активный пилот",
-    todayMostSuccessful: "Самый успешный пилот",
-    driverOfDayBtn: "Гонщик дня: {driver}",
-    driverOfDayEyebrow: "Лучший пилот дня",
-    driverOfDayTitle: "Гонщик дня",
-    driverOfDayName: "Пилот",
-    driverOfDayPoints: "Очки за сегодня",
-    driverOfDayRaces: "Гонок сегодня",
-    driverOfDayWins: "Побед сегодня",
-    driverOfDayAvgFinish: "Ср. финиш",
-    driverOfDayAvgGain: "Ср. дельта поз.",
-    driverOfDayBestLap: "Лучший круг сегодня",
-    driverOfDayBestLapTrack: "Трасса",
-    driverOfDayNoData: "Сегодня ещё нет данных по гонкам.",
+    onlineTitle: "РЈРЅРёРєР°Р»СЊРЅС‹Рµ РёРіСЂРѕРєРё",
+onlineNoData: "РќРµС‚ РґР°РЅРЅС‹С…",
+    todayStatsBtn: "РЎС‚Р°С‚РёСЃС‚РёРєР° Р·Р° СЃРµРіРѕРґРЅСЏ",
+    todayStatsEyebrow: "РЎРІРѕРґРєР° РґРЅСЏ",
+    todayStatsTitle: "РЎС‚Р°С‚РёСЃС‚РёРєР° Р·Р° СЃРµРіРѕРґРЅСЏ",
+    todayUniquePlayers: "РЈРЅРёРєР°Р»СЊРЅС‹С… РїРёР»РѕС‚РѕРІ СЃРµРіРѕРґРЅСЏ",
+    todayRaces: "Р“РѕРЅРѕРє СЃРµРіРѕРґРЅСЏ",
+    todaySessions: "РЎРµСЃСЃРёР№ СЃРµРіРѕРґРЅСЏ",
+    todayPoints: "РћС‡РєРѕРІ Р·Р°СЂР°Р±РѕС‚Р°РЅРѕ СЃРµРіРѕРґРЅСЏ",
+    todayWins: "РџРѕР±РµРґ СЃРµРіРѕРґРЅСЏ",
+    todayPodiums: "РџРѕРґРёСѓРјРѕРІ СЃРµРіРѕРґРЅСЏ",
+    todayAvgPlayers: "РЎСЂРµРґРЅРµРµ РїРёР»РѕС‚РѕРІ РЅР° РіРѕРЅРєСѓ",
+    todayTracks: "РўСЂР°СЃСЃС‹ СЃРµРіРѕРґРЅСЏ",
+    todayBestLap: "Р›СѓС‡С€РёР№ РєСЂСѓРі СЃРµРіРѕРґРЅСЏ",
+    todayMostActive: "РЎР°РјС‹Р№ Р°РєС‚РёРІРЅС‹Р№ РїРёР»РѕС‚",
+    todayMostSuccessful: "РЎР°РјС‹Р№ СѓСЃРїРµС€РЅС‹Р№ РїРёР»РѕС‚",
+    driverOfDayBtn: "Р“РѕРЅС‰РёРє РґРЅСЏ: {driver}",
+    driverOfDayEyebrow: "Р›СѓС‡С€РёР№ РїРёР»РѕС‚ РґРЅСЏ",
+    driverOfDayTitle: "Р“РѕРЅС‰РёРє РґРЅСЏ",
+    driverOfDayName: "РџРёР»РѕС‚",
+    driverOfDayPoints: "РћС‡РєРё Р·Р° СЃРµРіРѕРґРЅСЏ",
+    driverOfDayRaces: "Р“РѕРЅРѕРє СЃРµРіРѕРґРЅСЏ",
+    driverOfDayWins: "РџРѕР±РµРґ СЃРµРіРѕРґРЅСЏ",
+    driverOfDayAvgFinish: "РЎСЂ. С„РёРЅРёС€",
+    driverOfDayAvgGain: "РЎСЂ. РґРµР»СЊС‚Р° РїРѕР·.",
+    driverOfDayBestLap: "Р›СѓС‡С€РёР№ РєСЂСѓРі СЃРµРіРѕРґРЅСЏ",
+    driverOfDayBestLapTrack: "РўСЂР°СЃСЃР°",
+    driverOfDayNoData: "РЎРµРіРѕРґРЅСЏ РµС‰С‘ РЅРµС‚ РґР°РЅРЅС‹С… РїРѕ РіРѕРЅРєР°Рј.",
     htmlLang: "ru",
-    pageTitleCars: "ASG Racing Cars | РЎС‚Р°С‚РёСЃС‚РёРєР° Assetto Corsa Competizione",
-    btnCars: "Машины",
-    carsEyebrow: "Статистика машин",
-    carsPageTitle: "Машины",
-    carsPageSubtitle: "Обзор результатов по моделям машин на основе сохраненных гоночных результатов.",
-    carsSummaryTotal: "Моделей машин",
-    carsSummaryTopWinner: "Лидер по победам",
-    carsSummaryMostUsed: "Самая популярная",
-    carsTableTitle: "Таблица машин",
-    carsTableSubtitle: "Сортировка по клику на заголовки столбцов.",
-    carsCols: ["Машина", "Гонки", "Победы", "Винрейт", "Подиумы", "Пилоты", "Ср. финиш", "Лучшие круги", "Бестлап"],
-    pageTitle: "ASG Racing ACC Leaderboard | Статистика Assetto Corsa Competizione",
-    pageTitleRaces: "ASG Racing Последние гонки | Результаты Assetto Corsa Competizione",
+    pageTitleCars: "ASG Racing Cars | Р РЋРЎвЂљР В°РЎвЂљР С‘РЎРѓРЎвЂљР С‘Р С”Р В° Assetto Corsa Competizione",
+    btnCars: "РњР°С€РёРЅС‹",
+    carsEyebrow: "РЎС‚Р°С‚РёСЃС‚РёРєР° РјР°С€РёРЅ",
+    carsPageTitle: "РњР°С€РёРЅС‹",
+    carsPageSubtitle: "РћР±Р·РѕСЂ СЂРµР·СѓР»СЊС‚Р°С‚РѕРІ РїРѕ РјРѕРґРµР»СЏРј РјР°С€РёРЅ РЅР° РѕСЃРЅРѕРІРµ СЃРѕС…СЂР°РЅРµРЅРЅС‹С… РіРѕРЅРѕС‡РЅС‹С… СЂРµР·СѓР»СЊС‚Р°С‚РѕРІ.",
+    carsSummaryTotal: "РњРѕРґРµР»РµР№ РјР°С€РёРЅ",
+    carsSummaryTopWinner: "Р›РёРґРµСЂ РїРѕ РїРѕР±РµРґР°Рј",
+    carsSummaryMostUsed: "РЎР°РјР°СЏ РїРѕРїСѓР»СЏСЂРЅР°СЏ",
+    carsTableTitle: "РўР°Р±Р»РёС†Р° РјР°С€РёРЅ",
+    carsTableSubtitle: "РЎРѕСЂС‚РёСЂРѕРІРєР° РїРѕ РєР»РёРєСѓ РЅР° Р·Р°РіРѕР»РѕРІРєРё СЃС‚РѕР»Р±С†РѕРІ.",
+    carsCols: ["РњР°С€РёРЅР°", "Р“РѕРЅРєРё", "РџРѕР±РµРґС‹", "Р’РёРЅСЂРµР№С‚", "РџРѕРґРёСѓРјС‹", "РџРёР»РѕС‚С‹", "РЎСЂ. С„РёРЅРёС€", "Р›СѓС‡С€РёРµ РєСЂСѓРіРё", "Р‘РµСЃС‚Р»Р°Рї"],
+    pageTitle: "ASG Racing ACC Leaderboard | РЎС‚Р°С‚РёСЃС‚РёРєР° Assetto Corsa Competizione",
+    pageTitleRaces: "ASG Racing РџРѕСЃР»РµРґРЅРёРµ РіРѕРЅРєРё | Р РµР·СѓР»СЊС‚Р°С‚С‹ Assetto Corsa Competizione",
     metaDescription:
-      "ASG Racing ACC Leaderboard — статистика гонок, побед, подиумов и лучших кругов на публичном сервере Assetto Corsa Competizione.",
+      "ASG Racing ACC Leaderboard вЂ” СЃС‚Р°С‚РёСЃС‚РёРєР° РіРѕРЅРѕРє, РїРѕР±РµРґ, РїРѕРґРёСѓРјРѕРІ Рё Р»СѓС‡С€РёС… РєСЂСѓРіРѕРІ РЅР° РїСѓР±Р»РёС‡РЅРѕРј СЃРµСЂРІРµСЂРµ Assetto Corsa Competizione.",
     ogDescription:
-      "Статистика гонок, побед, подиумов и лучших кругов на сервере ASG Racing в Assetto Corsa Competizione.",
+      "РЎС‚Р°С‚РёСЃС‚РёРєР° РіРѕРЅРѕРє, РїРѕР±РµРґ, РїРѕРґРёСѓРјРѕРІ Рё Р»СѓС‡С€РёС… РєСЂСѓРіРѕРІ РЅР° СЃРµСЂРІРµСЂРµ ASG Racing РІ Assetto Corsa Competizione.",
     twitterDescription:
-      "Гонки, победы, подиумы и лучшие круги на публичном ACC сервере ASG Racing.",
+      "Р“РѕРЅРєРё, РїРѕР±РµРґС‹, РїРѕРґРёСѓРјС‹ Рё Р»СѓС‡С€РёРµ РєСЂСѓРіРё РЅР° РїСѓР±Р»РёС‡РЅРѕРј ACC СЃРµСЂРІРµСЂРµ ASG Racing.",
     ogLocale: "ru_RU",
-    heroTitle: "🏁 ASG Racing Leaderboard",
+    heroTitle: "рџЏЃ ASG Racing Leaderboard",
     heroSubtitle:
-      "Статистика гонок, побед, подиумов и лучших кругов на сервере <strong>ASG Racing</strong>. Данные обновляются автоматически на основе результатов dedicated server.",
-    btnChampionship: "Чемпионат",
-    btnLastRaces: "Последние гонки",
-    lastRacesBtn: "Последние гонки",
-    btnBackHome: "На главную",
-    btnBestLaps: "Лучшие круги",
-    btnWorstSafety: "Худшая безопасность",
-    btnAboutServer: "О сервере",
-    driversCountLabel: "Пилотов в рейтинге",
-    driversCountNote: "Уникальные участники, попавшие в статистику.",
-    bestLapHighlightLabel: "Лучший круг",
-    bestLapNoteFallback: "Лучший круг будет показан здесь.",
-    bestLapNoteTemplate: "{driver} · {track}",
-    top3Title: "Топ-3 пилота",
-    top3Subtitle: "Текущие лидеры чемпионата по очкам.",
-    championshipTitle: "Таблица чемпионата",
-    championshipSubtitle: "Очки, победы, подиумы, средний финиш и лучший круг.",
-    bestLapsTitle: "Лучшие круги",
-    bestLapsSubtitle: "Быстрейшие круги из квалификаций и гонок.",
-    worstSafetyTitle: "Худшая безопасность",
-    worstSafetySubtitle: "Количество штрафов, штрафные баллы и разбивка по типам penalty.",
-    aboutTitle: "О сервере ASG Racing",
-    aboutSubtitle: "Публичный сервер Assetto Corsa Competizione",
+      "РЎС‚Р°С‚РёСЃС‚РёРєР° РіРѕРЅРѕРє, РїРѕР±РµРґ, РїРѕРґРёСѓРјРѕРІ Рё Р»СѓС‡С€РёС… РєСЂСѓРіРѕРІ РЅР° СЃРµСЂРІРµСЂРµ <strong>ASG Racing</strong>. Р”Р°РЅРЅС‹Рµ РѕР±РЅРѕРІР»СЏСЋС‚СЃСЏ Р°РІС‚РѕРјР°С‚РёС‡РµСЃРєРё РЅР° РѕСЃРЅРѕРІРµ СЂРµР·СѓР»СЊС‚Р°С‚РѕРІ dedicated server.",
+    btnChampionship: "Р§РµРјРїРёРѕРЅР°С‚",
+    btnLastRaces: "РџРѕСЃР»РµРґРЅРёРµ РіРѕРЅРєРё",
+    lastRacesBtn: "РџРѕСЃР»РµРґРЅРёРµ РіРѕРЅРєРё",
+    btnBackHome: "РќР° РіР»Р°РІРЅСѓСЋ",
+    btnBestLaps: "Р›СѓС‡С€РёРµ РєСЂСѓРіРё",
+    btnWorstSafety: "РҐСѓРґС€Р°СЏ Р±РµР·РѕРїР°СЃРЅРѕСЃС‚СЊ",
+    btnAboutServer: "Рћ СЃРµСЂРІРµСЂРµ",
+    driversCountLabel: "РџРёР»РѕС‚РѕРІ РІ СЂРµР№С‚РёРЅРіРµ",
+    driversCountNote: "РЈРЅРёРєР°Р»СЊРЅС‹Рµ СѓС‡Р°СЃС‚РЅРёРєРё, РїРѕРїР°РІС€РёРµ РІ СЃС‚Р°С‚РёСЃС‚РёРєСѓ.",
+    bestLapHighlightLabel: "Р›СѓС‡С€РёР№ РєСЂСѓРі",
+    bestLapNoteFallback: "Р›СѓС‡С€РёР№ РєСЂСѓРі Р±СѓРґРµС‚ РїРѕРєР°Р·Р°РЅ Р·РґРµСЃСЊ.",
+    bestLapNoteTemplate: "{driver} В· {track}",
+    top3Title: "РўРѕРї-3 РїРёР»РѕС‚Р°",
+    top3Subtitle: "РўРµРєСѓС‰РёРµ Р»РёРґРµСЂС‹ С‡РµРјРїРёРѕРЅР°С‚Р° РїРѕ РѕС‡РєР°Рј.",
+    championshipTitle: "РўР°Р±Р»РёС†Р° С‡РµРјРїРёРѕРЅР°С‚Р°",
+    championshipSubtitle: "РћС‡РєРё, РїРѕР±РµРґС‹, РїРѕРґРёСѓРјС‹, СЃСЂРµРґРЅРёР№ С„РёРЅРёС€ Рё Р»СѓС‡С€РёР№ РєСЂСѓРі.",
+    bestLapsTitle: "Р›СѓС‡С€РёРµ РєСЂСѓРіРё",
+    bestLapsSubtitle: "Р‘С‹СЃС‚СЂРµР№С€РёРµ РєСЂСѓРіРё РёР· РєРІР°Р»РёС„РёРєР°С†РёР№ Рё РіРѕРЅРѕРє.",
+    worstSafetyTitle: "РҐСѓРґС€Р°СЏ Р±РµР·РѕРїР°СЃРЅРѕСЃС‚СЊ",
+    worstSafetySubtitle: "РљРѕР»РёС‡РµСЃС‚РІРѕ С€С‚СЂР°С„РѕРІ, С€С‚СЂР°С„РЅС‹Рµ Р±Р°Р»Р»С‹ Рё СЂР°Р·Р±РёРІРєР° РїРѕ С‚РёРїР°Рј penalty.",
+    aboutTitle: "Рћ СЃРµСЂРІРµСЂРµ ASG Racing",
+    aboutSubtitle: "РџСѓР±Р»РёС‡РЅС‹Р№ СЃРµСЂРІРµСЂ Assetto Corsa Competizione",
     aboutP1:
-      "<strong>ASG Racing</strong> — это публичный сервер <strong>Assetto Corsa Competizione</strong>, где пилоты соревнуются на популярных GT3 трассах, улучшают свои времена круга и сравнивают статистику с другими гонщиками.",
-    aboutP2: "На этой странице автоматически публикуется leaderboard сервера, включающий:",
-    aboutList1: "🏁 количество гонок",
-    aboutList2: "🥇 победы",
-    aboutList3: "🏆 подиумы",
-    aboutList4: "📊 средний финиш",
-    aboutList5: "⚡ лучшие круги",
+      "<strong>ASG Racing</strong> вЂ” СЌС‚Рѕ РїСѓР±Р»РёС‡РЅС‹Р№ СЃРµСЂРІРµСЂ <strong>Assetto Corsa Competizione</strong>, РіРґРµ РїРёР»РѕС‚С‹ СЃРѕСЂРµРІРЅСѓСЋС‚СЃСЏ РЅР° РїРѕРїСѓР»СЏСЂРЅС‹С… GT3 С‚СЂР°СЃСЃР°С…, СѓР»СѓС‡С€Р°СЋС‚ СЃРІРѕРё РІСЂРµРјРµРЅР° РєСЂСѓРіР° Рё СЃСЂР°РІРЅРёРІР°СЋС‚ СЃС‚Р°С‚РёСЃС‚РёРєСѓ СЃ РґСЂСѓРіРёРјРё РіРѕРЅС‰РёРєР°РјРё.",
+    aboutP2: "РќР° СЌС‚РѕР№ СЃС‚СЂР°РЅРёС†Рµ Р°РІС‚РѕРјР°С‚РёС‡РµСЃРєРё РїСѓР±Р»РёРєСѓРµС‚СЃСЏ leaderboard СЃРµСЂРІРµСЂР°, РІРєР»СЋС‡Р°СЋС‰РёР№:",
+    aboutList1: "рџЏЃ РєРѕР»РёС‡РµСЃС‚РІРѕ РіРѕРЅРѕРє",
+    aboutList2: "рџҐ‡ РїРѕР±РµРґС‹",
+    aboutList3: "рџЏ† РїРѕРґРёСѓРјС‹",
+    aboutList4: "рџ“Љ СЃСЂРµРґРЅРёР№ С„РёРЅРёС€",
+    aboutList5: "вљЎ Р»СѓС‡С€РёРµ РєСЂСѓРіРё",
     aboutP3:
-      "Статистика обновляется автоматически на основе файлов результатов <strong>ACC Dedicated Server</strong>. После каждой гонки данные пересчитываются и публикуются на сайте.",
-    pointsTitle: "Как считается рейтинг",
-    pointsP1: "Очки начисляются по системе, похожей на чемпионаты GT:",
-    pointsList1: "1 место — 25 очков",
-    pointsList2: "2 место — 18 очков",
-    pointsList3: "3 место — 15 очков",
-    pointsList4: "4–10 место — уменьшающиеся очки",
+      "РЎС‚Р°С‚РёСЃС‚РёРєР° РѕР±РЅРѕРІР»СЏРµС‚СЃСЏ Р°РІС‚РѕРјР°С‚РёС‡РµСЃРєРё РЅР° РѕСЃРЅРѕРІРµ С„Р°Р№Р»РѕРІ СЂРµР·СѓР»СЊС‚Р°С‚РѕРІ <strong>ACC Dedicated Server</strong>. РџРѕСЃР»Рµ РєР°Р¶РґРѕР№ РіРѕРЅРєРё РґР°РЅРЅС‹Рµ РїРµСЂРµСЃС‡РёС‚С‹РІР°СЋС‚СЃСЏ Рё РїСѓР±Р»РёРєСѓСЋС‚СЃСЏ РЅР° СЃР°Р№С‚Рµ.",
+    pointsTitle: "РљР°Рє СЃС‡РёС‚Р°РµС‚СЃСЏ СЂРµР№С‚РёРЅРі",
+    pointsP1: "РћС‡РєРё РЅР°С‡РёСЃР»СЏСЋС‚СЃСЏ РїРѕ СЃРёСЃС‚РµРјРµ, РїРѕС…РѕР¶РµР№ РЅР° С‡РµРјРїРёРѕРЅР°С‚С‹ GT:",
+    pointsList1: "1 РјРµСЃС‚Рѕ вЂ” 25 РѕС‡РєРѕРІ",
+    pointsList2: "2 РјРµСЃС‚Рѕ вЂ” 18 РѕС‡РєРѕРІ",
+    pointsList3: "3 РјРµСЃС‚Рѕ вЂ” 15 РѕС‡РєРѕРІ",
+    pointsList4: "4вЂ“10 РјРµСЃС‚Рѕ вЂ” СѓРјРµРЅСЊС€Р°СЋС‰РёРµСЃСЏ РѕС‡РєРё",
     pointsP2:
-      "Также пилот получает <strong>1 дополнительное очко</strong> за лучший круг в гонке.",
-    bestLapsInfoTitle: "Лучшие круги",
+      "РўР°РєР¶Рµ РїРёР»РѕС‚ РїРѕР»СѓС‡Р°РµС‚ <strong>1 РґРѕРїРѕР»РЅРёС‚РµР»СЊРЅРѕРµ РѕС‡РєРѕ</strong> Р·Р° Р»СѓС‡С€РёР№ РєСЂСѓРі РІ РіРѕРЅРєРµ.",
+    bestLapsInfoTitle: "Р›СѓС‡С€РёРµ РєСЂСѓРіРё",
     bestLapsInfoP1:
-      "Таблица <strong>Best Laps</strong> содержит лучшие времена круга, показанные как в квалификации, так и в гонках. Это позволяет сравнить абсолютную скорость пилотов.",
-    joinTitle: "Присоединиться к серверу",
-    joinP1: "Чтобы участвовать в гонках и попасть в таблицу лидеров, подключайтесь к серверу:",
+      "РўР°Р±Р»РёС†Р° <strong>Best Laps</strong> СЃРѕРґРµСЂР¶РёС‚ Р»СѓС‡С€РёРµ РІСЂРµРјРµРЅР° РєСЂСѓРіР°, РїРѕРєР°Р·Р°РЅРЅС‹Рµ РєР°Рє РІ РєРІР°Р»РёС„РёРєР°С†РёРё, С‚Р°Рє Рё РІ РіРѕРЅРєР°С…. Р­С‚Рѕ РїРѕР·РІРѕР»СЏРµС‚ СЃСЂР°РІРЅРёС‚СЊ Р°Р±СЃРѕР»СЋС‚РЅСѓСЋ СЃРєРѕСЂРѕСЃС‚СЊ РїРёР»РѕС‚РѕРІ.",
+    joinTitle: "РџСЂРёСЃРѕРµРґРёРЅРёС‚СЊСЃСЏ Рє СЃРµСЂРІРµСЂСѓ",
+    joinP1: "Р§С‚РѕР±С‹ СѓС‡Р°СЃС‚РІРѕРІР°С‚СЊ РІ РіРѕРЅРєР°С… Рё РїРѕРїР°СЃС‚СЊ РІ С‚Р°Р±Р»РёС†Сѓ Р»РёРґРµСЂРѕРІ, РїРѕРґРєР»СЋС‡Р°Р№С‚РµСЃСЊ Рє СЃРµСЂРІРµСЂСѓ:",
     serverName: "ASG Racing ACC Public Server",
-    joinP2: "Общение и новости сервера доступны в наших сообществах:",
+    joinP2: "РћР±С‰РµРЅРёРµ Рё РЅРѕРІРѕСЃС‚Рё СЃРµСЂРІРµСЂР° РґРѕСЃС‚СѓРїРЅС‹ РІ РЅР°С€РёС… СЃРѕРѕР±С‰РµСЃС‚РІР°С…:",
     footerText:
-      "Данные собираются из файлов результатов ACC Dedicated Server и публикуются через GitHub Pages.",
-    loading: "Загрузка...",
-    loadingRaces: "Загрузка гонок...",
-    loadingLeaderboard: "Загрузка leaderboard...",
-    loadingBestLaps: "Загрузка best laps...",
-    emptyTop3: "Пока нет данных для топ-3.",
-    emptyLeaderboard: "Пока нет данных leaderboard.",
-    emptyBestLaps: "Пока нет данных best laps.",
-    emptyRaces: "Пока нет данных о гонках.",
-    emptySearch: "Совпадений не найдено.",
-    errorLoading: "Ошибка загрузки данных.",
-    errorLeaderboard: "Не удалось загрузить leaderboard.json",
-    errorBestlaps: "Не удалось загрузить bestlaps.json",
-    racesEyebrow: "Архив гонок",
-    racesPageTitle: "Последние гонки",
-    racesPageSubtitle: "Последние гоночные сессии ASG Racing. Нажмите на строку, чтобы открыть полный протокол.",
-    racesSummaryTotal: "Всего гонок",
-    racesSummaryLatestTrack: "Последняя трасса",
-    racesSummaryLatestWinner: "Последний победитель",
-    racesTableTitle: "Результаты гонок",
-    racesTableSubtitle: "Сортировка от новых к старым.",
-    raceModalEyebrow: "Детали гонки",
-    racesCols: ["Дата", "Трасса", "Победитель", "Пилоты", "Лучший круг"],
-    raceModalCols: ["Pos", "Старт", "Δ", "Пилот", "Лучший круг", "Время", "Отставание", "Очки", "Штр."],
-    raceSummaryTrack: "Трасса",
-    raceSummaryWinner: "Победитель",
-    raceSummaryDrivers: "Пилотов",
-    raceSummaryBestLap: "Лучший круг",
-    racePenaltyShort: "Штр.",
-    raceBestLapBadge: "Быстрый круг",
-    noWinner: "Нет победителя",
-    pageTitleDriver: "ASG Racing Профиль пилота | Статистика Assetto Corsa Competizione",
-    driverEyebrow: "Профиль пилота",
-    driverPageSubtitle: "Личная история гонок, темп и safety-метрики на сервере ASG Racing.",
-    driverSummaryPoints: "Очки",
-    driverSummaryAvgPoints: "Ср. очков / гонку",
-    driverSummaryAvgGain: "Ср. дельта поз.",
-    driverSummaryRaces: "Гонки",
-    driverSummaryWins: "Победы",
-    driverSummaryAvgFinish: "Ср. финиш",
-    driverSummaryBestLap: "Лучший круг",
-    driverSummaryPenaltyPoints: "Штрафные очки",
-    driverSummaryFastestLaps: "Лучшие круги в гонке",
-    driverSectionOverview: "Обзор",
-    driverSectionRaces: "История гонок",
-    driverSectionTracks: "Статистика по трассам",
-    driverSectionPenalties: "Разбор штрафов",
-    driverRecentForm: "Последние результаты",
-    driverMostRacedTrack: "Любимая трасса",
-    driverWinRate: "Процент побед",
-    driverPodiumRate: "Процент подиумов",
-    driverNoData: "Профиль пилота не найден.",
-    driverLoading: "Загрузка профиля пилота...",
-    driverRaceCols: ["Дата", "Трасса", "Старт", "Поз", "Δ", "Очки", "Лучший круг", "Время", "Отставание", "Штр"],
-    driverTrackCols: ["Трасса", "Гонки", "Победы", "Подиумы", "Очки", "Ср. финиш", "Лучший круг"],
-    driverPenaltyReason: "Причина",
-    driverPenaltyType: "Тип",
+      "Р”Р°РЅРЅС‹Рµ СЃРѕР±РёСЂР°СЋС‚СЃСЏ РёР· С„Р°Р№Р»РѕРІ СЂРµР·СѓР»СЊС‚Р°С‚РѕРІ ACC Dedicated Server Рё РїСѓР±Р»РёРєСѓСЋС‚СЃСЏ С‡РµСЂРµР· GitHub Pages.",
+    loading: "Р—Р°РіСЂСѓР·РєР°...",
+    loadingRaces: "Р—Р°РіСЂСѓР·РєР° РіРѕРЅРѕРє...",
+    loadingLeaderboard: "Р—Р°РіСЂСѓР·РєР° leaderboard...",
+    loadingBestLaps: "Р—Р°РіСЂСѓР·РєР° best laps...",
+    emptyTop3: "РџРѕРєР° РЅРµС‚ РґР°РЅРЅС‹С… РґР»СЏ С‚РѕРї-3.",
+    emptyLeaderboard: "РџРѕРєР° РЅРµС‚ РґР°РЅРЅС‹С… leaderboard.",
+    emptyBestLaps: "РџРѕРєР° РЅРµС‚ РґР°РЅРЅС‹С… best laps.",
+    emptyRaces: "РџРѕРєР° РЅРµС‚ РґР°РЅРЅС‹С… Рѕ РіРѕРЅРєР°С….",
+    emptySearch: "РЎРѕРІРїР°РґРµРЅРёР№ РЅРµ РЅР°Р№РґРµРЅРѕ.",
+    errorLoading: "РћС€РёР±РєР° Р·Р°РіСЂСѓР·РєРё РґР°РЅРЅС‹С….",
+    errorLeaderboard: "РќРµ СѓРґР°Р»РѕСЃСЊ Р·Р°РіСЂСѓР·РёС‚СЊ leaderboard.json",
+    errorBestlaps: "РќРµ СѓРґР°Р»РѕСЃСЊ Р·Р°РіСЂСѓР·РёС‚СЊ bestlaps.json",
+    racesEyebrow: "РђСЂС…РёРІ РіРѕРЅРѕРє",
+    racesPageTitle: "РџРѕСЃР»РµРґРЅРёРµ РіРѕРЅРєРё",
+    racesPageSubtitle: "РџРѕСЃР»РµРґРЅРёРµ РіРѕРЅРѕС‡РЅС‹Рµ СЃРµСЃСЃРёРё ASG Racing. РќР°Р¶РјРёС‚Рµ РЅР° СЃС‚СЂРѕРєСѓ, С‡С‚РѕР±С‹ РѕС‚РєСЂС‹С‚СЊ РїРѕР»РЅС‹Р№ РїСЂРѕС‚РѕРєРѕР».",
+    racesSummaryTotal: "Р’СЃРµРіРѕ РіРѕРЅРѕРє",
+    racesSummaryLatestTrack: "РџРѕСЃР»РµРґРЅСЏСЏ С‚СЂР°СЃСЃР°",
+    racesSummaryLatestWinner: "РџРѕСЃР»РµРґРЅРёР№ РїРѕР±РµРґРёС‚РµР»СЊ",
+    racesTableTitle: "Р РµР·СѓР»СЊС‚Р°С‚С‹ РіРѕРЅРѕРє",
+    racesTableSubtitle: "РЎРѕСЂС‚РёСЂРѕРІРєР° РѕС‚ РЅРѕРІС‹С… Рє СЃС‚Р°СЂС‹Рј.",
+    raceModalEyebrow: "Р”РµС‚Р°Р»Рё РіРѕРЅРєРё",
+    racesCols: ["Р”Р°С‚Р°", "РўСЂР°СЃСЃР°", "РџРѕР±РµРґРёС‚РµР»СЊ", "РџРёР»РѕС‚С‹", "Р›СѓС‡С€РёР№ РєСЂСѓРі"],
+    raceModalCols: ["Pos", "РЎС‚Р°СЂС‚", "О”", "РџРёР»РѕС‚", "Р›СѓС‡С€РёР№ РєСЂСѓРі", "Р’СЂРµРјСЏ", "РћС‚СЃС‚Р°РІР°РЅРёРµ", "РћС‡РєРё", "РЁС‚СЂ."],
+    raceSummaryTrack: "РўСЂР°СЃСЃР°",
+    raceSummaryWinner: "РџРѕР±РµРґРёС‚РµР»СЊ",
+    raceSummaryDrivers: "РџРёР»РѕС‚РѕРІ",
+    raceSummaryBestLap: "Р›СѓС‡С€РёР№ РєСЂСѓРі",
+    racePenaltyShort: "РЁС‚СЂ.",
+    raceBestLapBadge: "Р‘С‹СЃС‚СЂС‹Р№ РєСЂСѓРі",
+    noWinner: "РќРµС‚ РїРѕР±РµРґРёС‚РµР»СЏ",
+    pageTitleDriver: "ASG Racing РџСЂРѕС„РёР»СЊ РїРёР»РѕС‚Р° | РЎС‚Р°С‚РёСЃС‚РёРєР° Assetto Corsa Competizione",
+    driverEyebrow: "РџСЂРѕС„РёР»СЊ РїРёР»РѕС‚Р°",
+    driverPageSubtitle: "Р›РёС‡РЅР°СЏ РёСЃС‚РѕСЂРёСЏ РіРѕРЅРѕРє, С‚РµРјРї Рё safety-РјРµС‚СЂРёРєРё РЅР° СЃРµСЂРІРµСЂРµ ASG Racing.",
+    driverSummaryPoints: "РћС‡РєРё",
+    driverSummaryAvgPoints: "РЎСЂ. РѕС‡РєРѕРІ / РіРѕРЅРєСѓ",
+    driverSummaryAvgGain: "РЎСЂ. РґРµР»СЊС‚Р° РїРѕР·.",
+    driverSummaryRaces: "Р“РѕРЅРєРё",
+    driverSummaryWins: "РџРѕР±РµРґС‹",
+    driverSummaryAvgFinish: "РЎСЂ. С„РёРЅРёС€",
+    driverSummaryBestLap: "Р›СѓС‡С€РёР№ РєСЂСѓРі",
+    driverSummaryPenaltyPoints: "РЁС‚СЂР°С„РЅС‹Рµ РѕС‡РєРё",
+    driverSummaryFastestLaps: "Р›СѓС‡С€РёРµ РєСЂСѓРіРё РІ РіРѕРЅРєРµ",
+    driverSectionOverview: "РћР±Р·РѕСЂ",
+    driverSectionRaces: "РСЃС‚РѕСЂРёСЏ РіРѕРЅРѕРє",
+    driverSectionTracks: "РЎС‚Р°С‚РёСЃС‚РёРєР° РїРѕ С‚СЂР°СЃСЃР°Рј",
+    driverSectionPenalties: "Р Р°Р·Р±РѕСЂ С€С‚СЂР°С„РѕРІ",
+    driverRecentForm: "РџРѕСЃР»РµРґРЅРёРµ СЂРµР·СѓР»СЊС‚Р°С‚С‹",
+    driverMostRacedTrack: "Р›СЋР±РёРјР°СЏ С‚СЂР°СЃСЃР°",
+    driverWinRate: "РџСЂРѕС†РµРЅС‚ РїРѕР±РµРґ",
+    driverPodiumRate: "РџСЂРѕС†РµРЅС‚ РїРѕРґРёСѓРјРѕРІ",
+    driverNoData: "РџСЂРѕС„РёР»СЊ РїРёР»РѕС‚Р° РЅРµ РЅР°Р№РґРµРЅ.",
+    driverLoading: "Р—Р°РіСЂСѓР·РєР° РїСЂРѕС„РёР»СЏ РїРёР»РѕС‚Р°...",
+    driverRaceCols: ["Р”Р°С‚Р°", "РўСЂР°СЃСЃР°", "РЎС‚Р°СЂС‚", "РџРѕР·", "О”", "РћС‡РєРё", "Р›СѓС‡С€РёР№ РєСЂСѓРі", "Р’СЂРµРјСЏ", "РћС‚СЃС‚Р°РІР°РЅРёРµ", "РЁС‚СЂ"],
+    driverTrackCols: ["РўСЂР°СЃСЃР°", "Р“РѕРЅРєРё", "РџРѕР±РµРґС‹", "РџРѕРґРёСѓРјС‹", "РћС‡РєРё", "РЎСЂ. С„РёРЅРёС€", "Р›СѓС‡С€РёР№ РєСЂСѓРі"],
+    driverPenaltyReason: "РџСЂРёС‡РёРЅР°",
+    driverPenaltyType: "РўРёРї",
     leaderboardCols: [
-      "Место",
-      "Пилот",
-      "Очки",
-      "Победы",
-      "Подиумы",
-      "Гонки",
-      "Ср. финиш",
-      "Лучший круг",
-      "Трасса",
-      "Сессия"
+      "РњРµСЃС‚Рѕ",
+      "РџРёР»РѕС‚",
+      "РћС‡РєРё",
+      "РџРѕР±РµРґС‹",
+      "РџРѕРґРёСѓРјС‹",
+      "Р“РѕРЅРєРё",
+      "РЎСЂ. С„РёРЅРёС€",
+      "Р›СѓС‡С€РёР№ РєСЂСѓРі",
+      "Машина",
+      "РЎРµСЃСЃРёСЏ"
     ],
-    bestlapsCols: ["Место", "Пилот", "Лучший круг", "Трасса", "Сессия", "Обновлено"],
-    safetyBaseCols: ["Место", "Пилот", "Нарушения", "Штрафные баллы"],
-    leaderboardSearchPlaceholder: "Поиск пилота...",
-    bestlapsSearchPlaceholder: "Поиск пилота...",
-    safetySearchPlaceholder: "Поиск пилота...",
+    bestlapsCols: ["Место", "Пилот", "Лучший круг", "Машина", "Сессия", "Обновлено"],
+    safetyBaseCols: ["РњРµСЃС‚Рѕ", "РџРёР»РѕС‚", "РќР°СЂСѓС€РµРЅРёСЏ", "РЁС‚СЂР°С„РЅС‹Рµ Р±Р°Р»Р»С‹"],
+    leaderboardSearchPlaceholder: "РџРѕРёСЃРє РїРёР»РѕС‚Р°...",
+    bestlapsSearchPlaceholder: "РџРѕРёСЃРє РїРёР»РѕС‚Р°...",
+    safetySearchPlaceholder: "РџРѕРёСЃРє РїРёР»РѕС‚Р°...",
     metaLabels: {
-      points: "Очки",
-      wins: "Победы",
-      podiums: "Подиумы",
-      races: "Гонки",
-      bestLap: "Лучший круг"
+      points: "РћС‡РєРё",
+      wins: "РџРѕР±РµРґС‹",
+      podiums: "РџРѕРґРёСѓРјС‹",
+      races: "Р“РѕРЅРєРё",
+      bestLap: "Р›СѓС‡С€РёР№ РєСЂСѓРі"
     },
-    sessionRace: "Гонка",
-    sessionQualifying: "Квалификация",
-    paginationShown: "Показано {start}-{end} из {total}",
-    prev: "← Назад",
-    next: "Вперед →"
+    sessionRace: "Р“РѕРЅРєР°",
+    sessionQualifying: "РљРІР°Р»РёС„РёРєР°С†РёСЏ",
+    paginationShown: "РџРѕРєР°Р·Р°РЅРѕ {start}-{end} РёР· {total}",
+    prev: "в†ђ РќР°Р·Р°Рґ",
+    next: "Р’РїРµСЂРµРґ в†’"
   }
 };
 
@@ -426,7 +426,7 @@ const leaderboardColumns = [
   { key: "races", type: "number" },
   { key: "average_finish", type: "number" },
   { key: "best_lap", type: "time" },
-  { key: "best_lap_track", type: "string" },
+  { key: "best_lap_car_name", type: "string" },
   { key: "best_lap_session_type", type: "string" }
 ];
 
@@ -434,7 +434,7 @@ const bestlapsColumns = [
   { key: "rank", type: "number" },
   { key: "driver", type: "string" },
   { key: "best_lap", type: "time" },
-  { key: "track", type: "string" },
+  { key: "car_name", type: "string" },
   { key: "session_type", type: "string" },
   { key: "updated_at", type: "string" }
 ];
@@ -470,7 +470,7 @@ function getSafetyPenaltyKeys(data = []) {
 }
 
 function formatShortDate(dateStr) {
-  if (!dateStr) return "—";
+  if (!dateStr) return "вЂ”";
   const [year, month, day] = String(dateStr).split("-");
   if (!day || !month) return dateStr;
   return `${day}.${month}`;
@@ -514,7 +514,7 @@ function renderOnlineWidget() {
   if (!prepared.length) {
     chartEl.innerHTML = `<div class="hero-online-empty">${escapeHtml(t("onlineNoData"))}</div>`;
     scaleEl.innerHTML = `<span>0</span>`;
-    rangeEl.textContent = "—";
+    rangeEl.textContent = "вЂ”";
     return;
   }
 
@@ -524,7 +524,7 @@ function renderOnlineWidget() {
   chartEl.innerHTML = prepared.map(item => {
     const heightPercent = Math.max(4, Math.round((item.value / maxValue) * 100));
     return `
-      <div class="hero-online-bar-group" title="${escapeHtml(item.label)} — ${escapeHtml(item.value)}">
+      <div class="hero-online-bar-group" title="${escapeHtml(item.label)} вЂ” ${escapeHtml(item.value)}">
         <div class="hero-online-bar" style="height:${heightPercent}%"></div>
         <div class="hero-online-date">${escapeHtml(item.label)}</div>
       </div>
@@ -535,7 +535,7 @@ function renderOnlineWidget() {
 
   const first = prepared[0];
   const last = prepared[prepared.length - 1];
-  rangeEl.textContent = `${first.label} — ${last.label}`;
+  rangeEl.textContent = `${first.label} вЂ” ${last.label}`;
 }
 
 function getSafetyColumns() {
@@ -654,7 +654,7 @@ function getDriverProfileHref(publicId, playerId = null) {
 }
 
 function renderDriverLink(name, publicId, className = "driver-link", playerId = null) {
-  const safeName = escapeHtml(name || "—");
+  const safeName = escapeHtml(name || "вЂ”");
   const href = getDriverProfileHref(publicId, playerId);
   if (!href) {
     return `<span class="${escapeHtml(className)}">${safeName}</span>`;
@@ -673,7 +673,7 @@ function sessionLabel(value) {
   const v = String(value || "").toUpperCase();
   if (v === "R") return `<span class="pill pill-session-r">${escapeHtml(t("sessionRace"))}</span>`;
   if (v === "Q") return `<span class="pill pill-session-q">${escapeHtml(t("sessionQualifying"))}</span>`;
-  return `<span class="pill">${escapeHtml(v || "—")}</span>`;
+  return `<span class="pill">${escapeHtml(v || "вЂ”")}</span>`;
 }
 
 function normalizeString(value) {
@@ -681,7 +681,7 @@ function normalizeString(value) {
 }
 
 function parseNumeric(value) {
-  if (value === null || value === undefined || value === "" || value === "—") {
+  if (value === null || value === undefined || value === "" || value === "вЂ”") {
     return Number.POSITIVE_INFINITY;
   }
   const num = Number(String(value).replace(",", "."));
@@ -689,7 +689,7 @@ function parseNumeric(value) {
 }
 
 function parseLapTime(value) {
-  if (!value || value === "—") return Number.POSITIVE_INFINITY;
+  if (!value || value === "вЂ”") return Number.POSITIVE_INFINITY;
   const str = String(value).trim();
   const parts = str.split(":");
 
@@ -951,7 +951,7 @@ function applyStaticTranslations() {
 }
 
 function getDriverOfDayName() {
-  return driverOfDayData?.driver || "—";
+  return driverOfDayData?.driver || "вЂ”";
 }
 
 function updateDriverOfDayButtonLabel() {
@@ -964,11 +964,11 @@ function updateDriverOfDayButtonLabel() {
 }
 
 function formatAverageFinish(value) {
-  return typeof value === "number" ? value.toFixed(2) : "—";
+  return typeof value === "number" ? value.toFixed(2) : "вЂ”";
 }
 
 function formatPercent(value) {
-  return typeof value === "number" ? `${value.toFixed(2)}%` : "вЂ”";
+  return typeof value === "number" ? `${value.toFixed(2)}%` : "РІР‚вЂќ";
 }
 
 function formatPositionsDelta(value) {
@@ -998,7 +998,7 @@ function updateBestLapNote(driver, track, carName) {
     driver: driver || "Unknown",
     track: track || "Unknown track"
   });
-  noteEl.textContent = carName ? `${base} · ${carName}` : base;
+  noteEl.textContent = carName ? `${base} В· ${carName}` : base;
 }
 
 function renderTop3(data) {
@@ -1013,7 +1013,7 @@ function renderTop3(data) {
     <article class="pilot-card ${classes[index] || ""}">
       <div class="pilot-rank">#${escapeHtml(row.rank)}</div>
       <h3 class="pilot-name">${renderDriverLink(row.driver, row.public_id, "driver-link driver-link-heading", row.player_id)}</h3>
-      <div class="muted">${escapeHtml(t("metaLabels").bestLap)}: ${escapeHtml(row.best_lap || "—")}</div>
+      <div class="muted">${escapeHtml(t("metaLabels").bestLap)}: ${escapeHtml(row.best_lap || "вЂ”")}</div>
       <div class="pilot-meta">
         <div class="meta-box">
           <div class="meta-label">${escapeHtml(t("metaLabels").points)}</div>
@@ -1047,8 +1047,8 @@ function renderTop3Compact(data) {
         <h3 class="pilot-name">${renderDriverLink(row.driver, row.public_id, "driver-link driver-link-heading", row.player_id)}</h3>
       </div>
       <div class="muted pilot-lap-line">
-        <span>${escapeHtml(t("metaLabels").bestLap)}: ${escapeHtml(row.best_lap || "—")}</span>
-        <span class="pilot-lap-car">${escapeHtml(row.best_lap_car_name || "—")}</span>
+        <span>${escapeHtml(t("metaLabels").bestLap)}: ${escapeHtml(row.best_lap || "вЂ”")}</span>
+        <span class="pilot-lap-car">${escapeHtml(row.best_lap_car_name || "вЂ”")}</span>
       </div>
       <div class="pilot-meta">
         <div class="meta-box">
@@ -1226,9 +1226,9 @@ function renderLeaderboardTablePage() {
       <td>${escapeHtml(row.wins ?? 0)}</td>
       <td>${escapeHtml(row.podiums ?? 0)}</td>
       <td>${escapeHtml(row.races ?? 0)}</td>
-      <td>${escapeHtml(row.average_finish ?? "—")}</td>
-      <td>${escapeHtml(row.best_lap ?? "—")}</td>
-      <td>${escapeHtml(row.best_lap_track ?? "—")}</td>
+      <td>${escapeHtml(row.average_finish ?? "вЂ”")}</td>
+      <td>${escapeHtml(row.best_lap ?? "вЂ”")}</td>
+      <td>${escapeHtml(row.best_lap_car_name ?? "вЂ”")}</td>
       <td>${sessionLabel(row.best_lap_session_type)}</td>
     </tr>
   `).join("");
@@ -1287,10 +1287,10 @@ function renderBestLapsTablePage() {
           </div>
         </div>
       </td>
-      <td>${escapeHtml(row.best_lap ?? "—")}</td>
-      <td>${escapeHtml(row.track ?? "—")}</td>
+      <td>${escapeHtml(row.best_lap ?? "вЂ”")}</td>
+      <td>${escapeHtml(row.car_name ?? "вЂ”")}</td>
       <td>${sessionLabel(row.session_type)}</td>
-      <td>${escapeHtml(row.updated_at ?? "—")}</td>
+      <td>${escapeHtml(row.updated_at ?? "вЂ”")}</td>
     </tr>
   `).join("");
 
@@ -1462,7 +1462,7 @@ function bindSearchInputs() {
 }
 
 function formatDateTimeLocal(isoString, lang = "en") {
-  if (!isoString) return "—";
+  if (!isoString) return "вЂ”";
 
   const locale = lang === "ru" ? "ru-RU" : "en-GB";
   const date = new Date(isoString);
@@ -1523,7 +1523,7 @@ function findPublicIdByPlayerId(playerId) {
 }
 
 function humanizeTrackName(track) {
-  if (!track) return "—";
+  if (!track) return "вЂ”";
   return String(track)
     .replace(/[_-]+/g, " ")
     .replace(/\b\w/g, char => char.toUpperCase());
@@ -1540,8 +1540,8 @@ function renderRacesSummary() {
   if (!totalEl || !trackEl || !winnerEl) return;
 
   const latestRace = getProcessedRaces()[0];
-  totalEl.textContent = racesData.length || "—";
-  trackEl.textContent = latestRace ? humanizeTrackName(latestRace.track) : "—";
+  totalEl.textContent = racesData.length || "вЂ”";
+  trackEl.textContent = latestRace ? humanizeTrackName(latestRace.track) : "вЂ”";
   winnerEl.innerHTML = latestRace
     ? renderDriverLink(latestRace.winner || t("noWinner"), latestRace.winner_public_id, "driver-link")
     : t("noWinner");
@@ -1568,10 +1568,10 @@ function renderRacesTable() {
         </div>
       </td>
       <td><span class="race-winner">${renderDriverLink(race.winner || t("noWinner"), race.winner_public_id, "driver-link")}</span></td>
-      <td>${escapeHtml(race.participants_count ?? "—")}</td>
+      <td>${escapeHtml(race.participants_count ?? "вЂ”")}</td>
       <td>
-        <div>${escapeHtml(race.best_lap || "—")}</div>
-        <div class="race-note">${renderDriverLink(race.best_lap_driver || "—", race.best_lap_public_id, "driver-link driver-link-subtle")}</div>
+        <div>${escapeHtml(race.best_lap || "вЂ”")}</div>
+        <div class="race-note">${renderDriverLink(race.best_lap_driver || "вЂ”", race.best_lap_public_id, "driver-link driver-link-subtle")}</div>
       </td>
     </tr>
   `).join("");
@@ -1605,8 +1605,8 @@ function renderRaceResultsModal() {
   if (!titleEl || !subtitleEl || !summaryEl || !tableEl) return;
 
   if (!selectedRace) {
-    titleEl.textContent = "—";
-    subtitleEl.textContent = "—";
+    titleEl.textContent = "вЂ”";
+    subtitleEl.textContent = "вЂ”";
     summaryEl.innerHTML = "";
     tableEl.innerHTML = `<div class="empty-box">${escapeHtml(t("emptyRaces"))}</div>`;
     return;
@@ -1626,11 +1626,11 @@ function renderRaceResultsModal() {
     </div>
     <div class="race-summary-card">
       <div class="race-summary-label">${escapeHtml(t("raceSummaryDrivers"))}</div>
-      <div class="race-summary-value">${escapeHtml(selectedRace.participants_count ?? "—")}</div>
+      <div class="race-summary-value">${escapeHtml(selectedRace.participants_count ?? "вЂ”")}</div>
     </div>
     <div class="race-summary-card">
       <div class="race-summary-label">${escapeHtml(t("raceSummaryBestLap"))}</div>
-      <div class="race-summary-value">${escapeHtml(selectedRace.best_lap || "—")}</div>
+      <div class="race-summary-value">${escapeHtml(selectedRace.best_lap || "вЂ”")}</div>
     </div>
   `;
 
@@ -1650,11 +1650,11 @@ function renderRaceResultsModal() {
         </div>
       </td>
       <td>
-        <div>${escapeHtml(row.best_lap || "—")}</div>
+        <div>${escapeHtml(row.best_lap || "вЂ”")}</div>
         <div class="race-note">${row.had_best_lap ? escapeHtml(t("raceBestLapBadge")) : ""}</div>
       </td>
-      <td>${escapeHtml(row.total_time || "—")}</td>
-      <td>${escapeHtml(row.gap || (row.position === 1 ? "—" : "—"))}</td>
+      <td>${escapeHtml(row.total_time || "вЂ”")}</td>
+      <td>${escapeHtml(row.gap || (row.position === 1 ? "вЂ”" : "вЂ”"))}</td>
       <td>${escapeHtml(row.points ?? 0)}</td>
       <td>${escapeHtml(row.penalty_count ?? 0)}</td>
     </tr>
@@ -1721,7 +1721,7 @@ function renderCarsSummary() {
   const usedEl = document.getElementById("cars-most-used");
   if (!totalEl || !winnerEl || !usedEl) return;
 
-  totalEl.textContent = carsData.length || "вЂ”";
+  totalEl.textContent = carsData.length || "РІР‚вЂќ";
   const topWinner = carsData[0] || null;
   const mostUsed = [...carsData].sort((a, b) => {
     const racesDiff = (b?.races ?? 0) - (a?.races ?? 0);
@@ -1729,8 +1729,8 @@ function renderCarsSummary() {
     return String(a?.car_name || "").localeCompare(String(b?.car_name || ""));
   })[0] || null;
 
-  winnerEl.textContent = topWinner ? topWinner.car_name : "вЂ”";
-  usedEl.textContent = mostUsed ? mostUsed.car_name : "вЂ”";
+  winnerEl.textContent = topWinner ? topWinner.car_name : "РІР‚вЂќ";
+  usedEl.textContent = mostUsed ? mostUsed.car_name : "РІР‚вЂќ";
 }
 
 function renderCarsTable() {
@@ -1745,7 +1745,7 @@ function renderCarsTable() {
   const headers = t("carsCols").map(label => `<th>${escapeHtml(label)}</th>`).join("");
   const rows = carsData.map(row => `
     <tr>
-      <td>${escapeHtml(row.car_name || "вЂ”")}</td>
+      <td>${escapeHtml(row.car_name || "РІР‚вЂќ")}</td>
       <td>${escapeHtml(row.races ?? 0)}</td>
       <td>${escapeHtml(row.wins ?? 0)}</td>
       <td>${escapeHtml(formatPercent(row.win_rate))}</td>
@@ -1754,8 +1754,8 @@ function renderCarsTable() {
       <td>${escapeHtml(formatAverageFinish(row.average_finish))}</td>
       <td>${escapeHtml(row.fastest_lap_awards ?? 0)}</td>
       <td>
-        <div>${escapeHtml(row.best_lap || "вЂ”")}</div>
-        <div class="race-note">${renderDriverLink(row.best_lap_driver || "вЂ”", row.best_lap_public_id, "driver-link driver-link-subtle")}</div>
+        <div>${escapeHtml(row.best_lap || "РІР‚вЂќ")}</div>
+        <div class="race-note">${renderDriverLink(row.best_lap_driver || "РІР‚вЂќ", row.best_lap_public_id, "driver-link driver-link-subtle")}</div>
       </td>
     </tr>
   `).join("");
@@ -1792,7 +1792,7 @@ function renderCarsTable() {
 
   const rows = rowsData.map(row => `
     <tr>
-      <td>${escapeHtml(row.car_name || "РІР‚вЂќ")}</td>
+      <td>${escapeHtml(row.car_name || "Р Р†Р вЂљРІР‚Сњ")}</td>
       <td>${escapeHtml(row.races ?? 0)}</td>
       <td>${escapeHtml(row.wins ?? 0)}</td>
       <td>${escapeHtml(formatPercent(row.win_rate))}</td>
@@ -1801,8 +1801,8 @@ function renderCarsTable() {
       <td>${escapeHtml(formatAverageFinish(row.average_finish))}</td>
       <td>${escapeHtml(row.fastest_lap_awards ?? 0)}</td>
       <td>
-        <div>${escapeHtml(row.best_lap || "РІР‚вЂќ")}</div>
-        <div class="race-note">${renderDriverLink(row.best_lap_driver || "РІР‚вЂќ", row.best_lap_public_id, "driver-link driver-link-subtle")}</div>
+        <div>${escapeHtml(row.best_lap || "Р Р†Р вЂљРІР‚Сњ")}</div>
+        <div class="race-note">${renderDriverLink(row.best_lap_driver || "Р Р†Р вЂљРІР‚Сњ", row.best_lap_public_id, "driver-link driver-link-subtle")}</div>
       </td>
     </tr>
   `).join("");
@@ -1823,7 +1823,7 @@ function renderCarsTable() {
 }
 
 function renderRecentForm(items = []) {
-  if (!Array.isArray(items) || !items.length) return `<span class="empty-inline">—</span>`;
+  if (!Array.isArray(items) || !items.length) return `<span class="empty-inline">вЂ”</span>`;
   return items.map(item => `<span class="form-pill">${escapeHtml(item)}</span>`).join("");
 }
 
@@ -1843,12 +1843,12 @@ function renderDriverRaceHistory() {
       <td>${escapeHtml(formatDateTimeLocal(row.finished_at, currentLang))}</td>
       <td>${escapeHtml(humanizeTrackName(row.track))}</td>
       <td>${escapeHtml(formatStartPosition(row))}</td>
-      <td>${escapeHtml(row.position ?? "—")}</td>
+      <td>${escapeHtml(row.position ?? "вЂ”")}</td>
       <td>${renderPositionsDelta(row.positions_delta)}</td>
       <td>${escapeHtml(row.points ?? 0)}</td>
-      <td>${escapeHtml(row.best_lap ?? "—")}</td>
-      <td>${escapeHtml(row.total_time ?? "—")}</td>
-      <td>${escapeHtml(row.gap ?? "—")}</td>
+      <td>${escapeHtml(row.best_lap ?? "вЂ”")}</td>
+      <td>${escapeHtml(row.total_time ?? "вЂ”")}</td>
+      <td>${escapeHtml(row.gap ?? "вЂ”")}</td>
       <td>${escapeHtml(row.penalty_points ?? 0)}</td>
     </tr>
   `).join("");
@@ -1879,8 +1879,8 @@ function renderDriverTrackStats() {
       <td>${escapeHtml(row.wins ?? 0)}</td>
       <td>${escapeHtml(row.podiums ?? 0)}</td>
       <td>${escapeHtml(row.points ?? 0)}</td>
-      <td>${escapeHtml(row.average_finish ?? "—")}</td>
-      <td>${escapeHtml(row.best_lap ?? "—")}</td>
+      <td>${escapeHtml(row.average_finish ?? "вЂ”")}</td>
+      <td>${escapeHtml(row.best_lap ?? "вЂ”")}</td>
     </tr>
   `).join("");
 
@@ -1898,7 +1898,7 @@ function renderPenaltyList(containerId, entries, labelKey) {
 
   const items = Object.entries(entries || {}).sort((a, b) => b[1] - a[1]);
   if (!items.length) {
-    el.innerHTML = `<div class="empty-box">—</div>`;
+    el.innerHTML = `<div class="empty-box">вЂ”</div>`;
     return;
   }
 
@@ -1918,7 +1918,7 @@ function renderDriverPage() {
   if (!nameEl || !subtitleEl || !statsEl || !highlightsEl) return;
 
   if (!driverProfileData) {
-    nameEl.textContent = "—";
+    nameEl.textContent = "вЂ”";
     subtitleEl.textContent = t("driverNoData");
     statsEl.innerHTML = `<div class="empty-box">${escapeHtml(t("driverNoData"))}</div>`;
     highlightsEl.innerHTML = "";
@@ -1931,7 +1931,7 @@ function renderDriverPage() {
 
   const summary = driverProfileData.summary || {};
   document.title = `${driverProfileData.driver} | ${t("pageTitleDriver")}`;
-  nameEl.textContent = driverProfileData.driver || "—";
+  nameEl.textContent = driverProfileData.driver || "вЂ”";
   subtitleEl.textContent = t("driverPageSubtitle");
 
   statsEl.innerHTML = `
@@ -1957,11 +1957,11 @@ function renderDriverPage() {
     </div>
     <div class="driver-stat-card">
       <div class="driver-stat-label">${escapeHtml(t("driverSummaryAvgFinish"))}</div>
-      <div class="driver-stat-value">${escapeHtml(summary.average_finish ?? "—")}</div>
+      <div class="driver-stat-value">${escapeHtml(summary.average_finish ?? "вЂ”")}</div>
     </div>
     <div class="driver-stat-card">
       <div class="driver-stat-label">${escapeHtml(t("driverSummaryBestLap"))}</div>
-      <div class="driver-stat-value">${escapeHtml(summary.best_lap ?? "—")}</div>
+      <div class="driver-stat-value">${escapeHtml(summary.best_lap ?? "вЂ”")}</div>
       <div class="driver-stat-note">${escapeHtml(humanizeTrackName(summary.best_lap_track))}</div>
     </div>
     <div class="driver-stat-card">
@@ -2022,69 +2022,69 @@ function renderTodayStatsModal() {
   if (!uniquePlayersEl) return;
 
   if (!stats) {
-    uniquePlayersEl.textContent = "—";
-    racesEl.textContent = "—";
-    sessionsEl.textContent = "—";
-    pointsEl.textContent = "—";
-    winsEl.textContent = "—";
-    podiumsEl.textContent = "—";
-    avgPlayersEl.textContent = "—";
-    tracksEl.textContent = "—";
-    bestLapEl.innerHTML = `<span>—</span><span class="today-detail-side-inline">—</span>`;
-    bestLapNoteEl.textContent = "—";
-    mostActiveEl.textContent = "—";
-    mostActiveNoteEl.textContent = "—";
-    mostSuccessfulEl.textContent = "—";
-    mostSuccessfulNoteEl.textContent = "—";
-    updatedEl.textContent = "—";
+    uniquePlayersEl.textContent = "вЂ”";
+    racesEl.textContent = "вЂ”";
+    sessionsEl.textContent = "вЂ”";
+    pointsEl.textContent = "вЂ”";
+    winsEl.textContent = "вЂ”";
+    podiumsEl.textContent = "вЂ”";
+    avgPlayersEl.textContent = "вЂ”";
+    tracksEl.textContent = "вЂ”";
+    bestLapEl.innerHTML = `<span>вЂ”</span><span class="today-detail-side-inline">вЂ”</span>`;
+    bestLapNoteEl.textContent = "вЂ”";
+    mostActiveEl.textContent = "вЂ”";
+    mostActiveNoteEl.textContent = "вЂ”";
+    mostSuccessfulEl.textContent = "вЂ”";
+    mostSuccessfulNoteEl.textContent = "вЂ”";
+    updatedEl.textContent = "вЂ”";
     return;
   }
 
-  uniquePlayersEl.textContent = stats.unique_players_today ?? "—";
-  racesEl.textContent = stats.races_today ?? "—";
-  sessionsEl.textContent = stats.sessions_today ?? "—";
-  pointsEl.textContent = stats.points_earned_today ?? "—";
-  winsEl.textContent = stats.wins_today ?? "—";
-  podiumsEl.textContent = stats.podiums_today ?? "—";
+  uniquePlayersEl.textContent = stats.unique_players_today ?? "вЂ”";
+  racesEl.textContent = stats.races_today ?? "вЂ”";
+  sessionsEl.textContent = stats.sessions_today ?? "вЂ”";
+  pointsEl.textContent = stats.points_earned_today ?? "вЂ”";
+  winsEl.textContent = stats.wins_today ?? "вЂ”";
+  podiumsEl.textContent = stats.podiums_today ?? "вЂ”";
   avgPlayersEl.textContent =
     typeof stats.avg_players_per_race_today === "number"
       ? stats.avg_players_per_race_today.toFixed(2)
-      : "—";
+      : "вЂ”";
 
   tracksEl.textContent =
     Array.isArray(stats.tracks_raced_today) && stats.tracks_raced_today.length
       ? stats.tracks_raced_today.join(", ")
-      : "—";
+      : "вЂ”";
 
-  bestLapEl.innerHTML = `<span>${escapeHtml(stats.best_lap_today?.lap || "—")}</span><span class="today-detail-side-inline">${escapeHtml(stats.best_lap_today?.car_name || "—")}</span>`;
+  bestLapEl.innerHTML = `<span>${escapeHtml(stats.best_lap_today?.lap || "вЂ”")}</span><span class="today-detail-side-inline">${escapeHtml(stats.best_lap_today?.car_name || "вЂ”")}</span>`;
   bestLapNoteEl.textContent = stats.best_lap_today
-    ? `${stats.best_lap_today.driver} · ${stats.best_lap_today.track}`
-    : "—";
+    ? `${stats.best_lap_today.driver} В· ${stats.best_lap_today.track}`
+    : "вЂ”";
 
   const mostActiveName =
     findDriverNameByPlayerId(stats.most_active_driver_today?.player_id) ||
     stats.most_active_driver_today?.player_id ||
-    "—";
+    "вЂ”";
 
   mostActiveEl.textContent = mostActiveName;
   mostActiveNoteEl.textContent =
     stats.most_active_driver_today?.races != null
       ? (lang === "ru"
-          ? `Гонок за сегодня: ${stats.most_active_driver_today.races}`
+          ? `Р“РѕРЅРѕРє Р·Р° СЃРµРіРѕРґРЅСЏ: ${stats.most_active_driver_today.races}`
           : `Races today: ${stats.most_active_driver_today.races}`)
-      : "—";
+      : "вЂ”";
 
-  mostSuccessfulEl.textContent = stats.most_successful_driver_today?.driver || "—";
+  mostSuccessfulEl.textContent = stats.most_successful_driver_today?.driver || "вЂ”";
   mostSuccessfulNoteEl.textContent =
     stats.most_successful_driver_today?.points != null
       ? (lang === "ru"
-          ? `Очков за сегодня: ${stats.most_successful_driver_today.points}`
+          ? `РћС‡РєРѕРІ Р·Р° СЃРµРіРѕРґРЅСЏ: ${stats.most_successful_driver_today.points}`
           : `Points today: ${stats.most_successful_driver_today.points}`)
-      : "—";
+      : "вЂ”";
 
   updatedEl.textContent =
     lang === "ru"
-      ? `Обновлено: ${formatDateTimeLocal(stats.updated_at, "ru")}`
+      ? `РћР±РЅРѕРІР»РµРЅРѕ: ${formatDateTimeLocal(stats.updated_at, "ru")}`
       : `Updated: ${formatDateTimeLocal(stats.updated_at, "en")}`;
 }
 
@@ -2097,7 +2097,7 @@ function renderDriverOfDayModal() {
     card.className = "today-stat-card driver-day-card";
     card.innerHTML = `
       <div class="today-stat-label">${escapeHtml(t("driverOfDayAvgGain"))}</div>
-      <div class="today-stat-value" id="driver-of-day-avg-gain">—</div>
+      <div class="today-stat-value" id="driver-of-day-avg-gain">вЂ”</div>
     `;
     const bestLapCard = document.getElementById("driver-of-day-best-lap")?.closest(".today-stat-card");
     if (bestLapCard) {
@@ -2126,24 +2126,24 @@ function renderDriverOfDayModal() {
   if (!nameEl) return;
 
   if (!data || !data.driver) {
-    nameEl.textContent = "—";
-    pointsEl.textContent = "—";
-    racesEl.textContent = "—";
-    winsEl.textContent = "—";
-    avgFinishEl.textContent = "—";
-    avgGainEl.textContent = "—";
+    nameEl.textContent = "вЂ”";
+    pointsEl.textContent = "вЂ”";
+    racesEl.textContent = "вЂ”";
+    winsEl.textContent = "вЂ”";
+    avgFinishEl.textContent = "вЂ”";
+    avgGainEl.textContent = "вЂ”";
     avgGainEl.classList.remove("delta-positive", "delta-negative");
     avgGainEl.classList.add("positions-delta", "delta-neutral");
-    bestLapEl.textContent = "—";
-    bestLapTrackEl.textContent = "—";
-    updatedEl.textContent = "—";
+    bestLapEl.textContent = "вЂ”";
+    bestLapTrackEl.textContent = "вЂ”";
+    updatedEl.textContent = "вЂ”";
     if (emptyEl) emptyEl.textContent = t("driverOfDayNoData");
     if (emptyEl) emptyEl.hidden = false;
     if (contentEl) contentEl.classList.add("is-empty");
     return;
   }
 
-  nameEl.textContent = data.driver || "—";
+  nameEl.textContent = data.driver || "вЂ”";
   pointsEl.textContent = data.points ?? 0;
   racesEl.textContent = data.races ?? 0;
   winsEl.textContent = data.wins ?? 0;
@@ -2158,10 +2158,10 @@ function renderDriverOfDayModal() {
   } else {
     avgGainEl.classList.add("delta-neutral");
   }
-  bestLapEl.textContent = data.best_lap || "—";
-  bestLapTrackEl.textContent = data.best_lap_track || "—";
+  bestLapEl.textContent = data.best_lap || "вЂ”";
+  bestLapTrackEl.textContent = data.best_lap_track || "вЂ”";
   updatedEl.textContent = currentLang === "ru"
-    ? `Обновлено: ${formatDateTimeLocal(data.updated_at, "ru")}`
+    ? `РћР±РЅРѕРІР»РµРЅРѕ: ${formatDateTimeLocal(data.updated_at, "ru")}`
     : `Updated: ${formatDateTimeLocal(data.updated_at, "en")}`;
 
   if (emptyEl) emptyEl.hidden = true;
@@ -2331,12 +2331,12 @@ async function init() {
 
     if (bestlapsData.length > 0) {
       if (bestLapHighlightEl) {
-        bestLapHighlightEl.textContent = bestlapsData[0].best_lap || "—";
+        bestLapHighlightEl.textContent = bestlapsData[0].best_lap || "вЂ”";
       }
       updateBestLapNote(bestlapsData[0].driver, bestlapsData[0].track, bestlapsData[0].car_name);
     } else {
       if (bestLapHighlightEl) {
-        bestLapHighlightEl.textContent = "—";
+        bestLapHighlightEl.textContent = "вЂ”";
       }
       if (bestLapNoteEl) {
         bestLapNoteEl.textContent = t("bestLapNoteFallback");
@@ -2374,7 +2374,7 @@ async function init() {
       const statsEl = document.getElementById("driver-stat-cards");
       const nameEl = document.getElementById("driver-page-name");
       const subtitleEl = document.getElementById("driver-page-subtitle");
-      if (nameEl) nameEl.textContent = "—";
+      if (nameEl) nameEl.textContent = "вЂ”";
       if (subtitleEl) subtitleEl.textContent = t("driverNoData");
       if (statsEl) statsEl.innerHTML = `<div class="empty-box">${escapeHtml(t("driverNoData"))}</div>`;
       return;
