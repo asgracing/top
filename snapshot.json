@@ -1,6 +1,6 @@
 {
   "schema_version": 5,
-  "generated_at": "2026-03-17T11:22:15",
+  "generated_at": "2026-03-17T11:22:21",
   "leaderboard": [
     {
       "player_id": "S76561199664057628",
@@ -42487,7 +42487,7 @@
       "driver": "Jere Kärki (VR)",
       "points": 37
     },
-    "updated_at": "2026-03-17T11:22:15"
+    "updated_at": "2026-03-17T11:22:21"
   },
   "driver_of_the_day": {
     "date": "2026-03-17",
@@ -42506,7 +42506,7 @@
     "best_lap_car_model_id": 6,
     "best_lap_car_name": "Nissan GT-R Nismo GT3 2018",
     "best_lap_car": "Nissan GT-R Nismo GT3 '18",
-    "updated_at": "2026-03-17T11:22:15"
+    "updated_at": "2026-03-17T11:22:21"
   },
   "server_status": {
     "status": "online",
@@ -42515,6 +42515,6 @@
     "tcp_listening": true,
     "udp_listening": true,
     "broadcast_listening": true,
-    "updated_at": "2026-03-17T11:22:14"
+    "updated_at": "2026-03-17T11:22:20"
   }
 }
