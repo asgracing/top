@@ -163,7 +163,7 @@ onlineNoData: "No data",
     racesTableSubtitle: "Sorted from newest to oldest.",
     raceModalEyebrow: "Race details",
     racesCols: ["Date", "Track", "Winner", "Drivers", "Best Lap"],
-    raceModalCols: ["Pos", "Start", "Δ", "Driver", "Best Lap", "Total Time", "Gap", "Pts", "Pen"],
+    raceModalCols: ["Pos", "Start", "Δ", "Driver", "Best Lap", "Car", "Gap", "Pts", "Pen"],
     raceSummaryTrack: "Track",
     raceSummaryWinner: "Winner",
     raceSummaryDrivers: "Drivers",
@@ -351,7 +351,7 @@ onlineNoData: "Нет данных",
     racesTableSubtitle: "Сортировка от новых к старым.",
     raceModalEyebrow: "Детали гонки",
     racesCols: ["Дата", "Трасса", "Победитель", "Пилоты", "Лучший круг"],
-    raceModalCols: ["Pos", "Старт", "Δ", "Пилот", "Лучший круг", "Время", "Отставание", "Очки", "Штр."],
+    raceModalCols: ["Pos", "Старт", "Δ", "Пилот", "Лучший круг", "Машина", "Отставание", "Очки", "Штр."],
     raceSummaryTrack: "Трасса",
     raceSummaryWinner: "Победитель",
     raceSummaryDrivers: "Пилотов",
@@ -1653,7 +1653,7 @@ function renderRaceResultsModal() {
         <div>${escapeHtml(row.best_lap || "-")}</div>
         <div class="race-note">${row.had_best_lap ? escapeHtml(t("raceBestLapBadge")) : ""}</div>
       </td>
-      <td>${escapeHtml(row.total_time || "-")}</td>
+      <td>${escapeHtml(row.car_name || "-")}</td>
       <td>${escapeHtml(row.gap || (row.position === 1 ? "-" : "-"))}</td>
       <td>${escapeHtml(row.points ?? 0)}</td>
       <td>${escapeHtml(row.penalty_count ?? 0)}</td>
