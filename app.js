@@ -819,6 +819,20 @@ function normalizeSnapshotPayload(snapshot) {
   };
 }
 
+function hasUsableHomeData(data) {
+  if (!data || typeof data !== "object") return false;
+  return Boolean(
+    (Array.isArray(data.leaderboard) && data.leaderboard.length) ||
+    (Array.isArray(data.bestlaps) && data.bestlaps.length) ||
+    (Array.isArray(data.safety) && data.safety.length) ||
+    (data.globalStats && typeof data.globalStats === "object")
+  );
+}
+
+function hasUsableCarsData(data) {
+  return Array.isArray(data) && data.length > 0;
+}
+
 function normalizeLegacyPayload(results) {
   const [
     leaderboardResult,
@@ -869,7 +883,11 @@ function normalizeLegacyPayload(results) {
 async function loadSiteData() {
   try {
     const snapshot = await loadJson(snapshotUrl);
-    return normalizeSnapshotPayload(snapshot);
+    const normalized = normalizeSnapshotPayload(snapshot);
+    if (hasUsableHomeData(normalized)) {
+      return normalized;
+    }
+    console.warn("snapshot.json loaded but does not contain usable home-page data, falling back to section JSON files.");
   } catch (snapshotError) {
     console.warn("snapshot.json is unavailable, falling back to legacy JSON files.", snapshotError);
   }
@@ -897,7 +915,10 @@ async function loadRacesData() {
 async function loadCarsData() {
   try {
     const data = await loadJson(carsUrl);
-    return Array.isArray(data) ? data : [];
+    if (hasUsableCarsData(data)) {
+      return data;
+    }
+    console.warn("cars.json loaded but is empty, trying snapshot.json fallback.");
   } catch (carsError) {
     console.warn("cars.json is unavailable, trying snapshot.json fallback.", carsError);
   }
@@ -905,7 +926,11 @@ async function loadCarsData() {
   try {
     const snapshot = await loadJson(snapshotUrl);
     const normalized = normalizeSnapshotPayload(snapshot);
-    return Array.isArray(normalized.cars) ? normalized.cars : [];
+    if (hasUsableCarsData(normalized.cars)) {
+      return normalized.cars;
+    }
+    console.warn("snapshot.json loaded but does not contain usable car data.");
+    return [];
   } catch (snapshotError) {
     console.warn("snapshot.json fallback for cars is unavailable.", snapshotError);
     return [];
