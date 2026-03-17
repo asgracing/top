@@ -222,6 +222,7 @@ onlineNoData: "No data",
     driverSummaryAvgGain: "Avg pos delta",
     driverSummaryRaces: "Races",
     driverSummaryWins: "Wins",
+    driverSummaryPodiums: "Podiums",
     driverSummaryAvgFinish: "Avg finish",
     driverSummaryBestLap: "Best lap",
     driverSummaryAvgPace: "Average pace",
@@ -430,6 +431,7 @@ onlineNoData: "Нет данных",
     driverSummaryAvgGain: "Ср. дельта поз.",
     driverSummaryRaces: "Гонки",
     driverSummaryWins: "Победы",
+    driverSummaryPodiums: "Подиумы",
     driverSummaryAvgFinish: "Ср. финиш",
     driverSummaryBestLap: "Лучший круг",
     driverSummaryAvgPace: "Средний темп",
@@ -2342,14 +2344,6 @@ function renderDriverPage() {
       <div class="driver-stat-value">${escapeHtml(summary.points ?? 0)}</div>
     </div>
     <div class="driver-stat-card">
-      <div class="driver-stat-label">${escapeHtml(t("driverSummaryAvgPoints"))}</div>
-      <div class="driver-stat-value">${escapeHtml(summary.average_points_per_race ?? 0)}</div>
-    </div>
-    <div class="driver-stat-card">
-      <div class="driver-stat-label">${escapeHtml(t("driverSummaryAvgGain"))}</div>
-      <div class="driver-stat-value">${renderPositionsDelta(summary.average_positions_delta)}</div>
-    </div>
-    <div class="driver-stat-card">
       <div class="driver-stat-label">${escapeHtml(t("driverSummaryRaces"))}</div>
       <div class="driver-stat-value">${escapeHtml(summary.races ?? 0)}</div>
     </div>
@@ -2358,8 +2352,20 @@ function renderDriverPage() {
       <div class="driver-stat-value">${escapeHtml(summary.wins ?? 0)}</div>
     </div>
     <div class="driver-stat-card">
+      <div class="driver-stat-label">${escapeHtml(t("driverSummaryPodiums"))}</div>
+      <div class="driver-stat-value">${escapeHtml(summary.podiums ?? 0)}</div>
+    </div>
+    <div class="driver-stat-card">
       <div class="driver-stat-label">${escapeHtml(t("driverSummaryAvgFinish"))}</div>
       <div class="driver-stat-value">${escapeHtml(summary.average_finish ?? "-")}</div>
+    </div>
+    <div class="driver-stat-card">
+      <div class="driver-stat-label">${escapeHtml(t("driverSummaryAvgPoints"))}</div>
+      <div class="driver-stat-value">${escapeHtml(summary.average_points_per_race ?? 0)}</div>
+    </div>
+    <div class="driver-stat-card">
+      <div class="driver-stat-label">${escapeHtml(t("driverSummaryAvgGain"))}</div>
+      <div class="driver-stat-value">${renderPositionsDelta(summary.average_positions_delta)}</div>
     </div>
     <div class="driver-stat-card">
       <div class="driver-stat-label">${escapeHtml(t("driverSummaryBestLap"))}</div>
@@ -2371,14 +2377,6 @@ function renderDriverPage() {
     <div class="driver-stat-card">
       <div class="driver-stat-label">${escapeHtml(t("driverSummaryAvgPace"))}</div>
       <div class="driver-stat-value">${escapeHtml(averagePace)}</div>
-    </div>
-    <div class="driver-stat-card">
-      <div class="driver-stat-label">${escapeHtml(t("driverSummaryPenaltyPoints"))}</div>
-      <div class="driver-stat-value">${escapeHtml(summary.penalty_points ?? 0)}</div>
-    </div>
-    <div class="driver-stat-card">
-      <div class="driver-stat-label">${escapeHtml(t("driverSummaryFastestLaps"))}</div>
-      <div class="driver-stat-value">${escapeHtml(summary.fastest_lap_awards ?? 0)}</div>
     </div>
   `;
 
@@ -2398,6 +2396,14 @@ function renderDriverPage() {
     <div class="driver-highlight-card">
       <div class="driver-highlight-label">${escapeHtml(t("driverPodiumRate"))}</div>
       <div class="driver-highlight-value">${escapeHtml(summary.podium_rate ?? 0)}%</div>
+    </div>
+    <div class="driver-highlight-card">
+      <div class="driver-highlight-label">${escapeHtml(t("driverSummaryFastestLaps"))}</div>
+      <div class="driver-highlight-value">${escapeHtml(summary.fastest_lap_awards ?? 0)}</div>
+    </div>
+    <div class="driver-highlight-card">
+      <div class="driver-highlight-label">${escapeHtml(t("driverSummaryPenaltyPoints"))}</div>
+      <div class="driver-highlight-value">${escapeHtml(summary.penalty_points ?? 0)}</div>
     </div>
   `;
 
