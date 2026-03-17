@@ -1907,7 +1907,6 @@ function renderRaceResultsModal() {
     return;
   }
 
-  
   titleEl.textContent = humanizeTrackName(selectedRace.track);
   subtitleEl.textContent = formatDateTimeLocal(selectedRace.finished_at, currentLang);
 
