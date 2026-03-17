@@ -1,6 +1,6 @@
 {
   "schema_version": 7,
-  "generated_at": "2026-03-18T00:17:21",
+  "generated_at": "2026-03-18T00:22:21",
   "leaderboard": [
     {
       "player_id": "S76561199664057628",
@@ -54808,7 +54808,7 @@
       "driver": "Axel Phowley",
       "points": 26
     },
-    "updated_at": "2026-03-18T00:17:21"
+    "updated_at": "2026-03-18T00:22:21"
   },
   "driver_of_the_day": {
     "date": "2026-03-18",
@@ -54827,15 +54827,15 @@
     "best_lap_car_model_id": 15,
     "best_lap_car_name_raw": "Lexus RC F GT3",
     "best_lap_car_name": "Lexus RC F GT3",
-    "updated_at": "2026-03-18T00:17:21"
+    "updated_at": "2026-03-18T00:22:21"
   },
   "server_status": {
     "status": "online",
     "server_online": true,
-    "players_online": 12,
+    "players_online": 16,
     "tcp_listening": true,
     "udp_listening": true,
     "broadcast_listening": true,
-    "updated_at": "2026-03-18T00:17:20"
+    "updated_at": "2026-03-18T00:22:20"
   }
 }
