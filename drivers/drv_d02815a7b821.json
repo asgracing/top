@@ -1,0 +1,38 @@
+{
+  "public_id": "drv_d02815a7b821",
+  "driver": "Aaronskie U.",
+  "summary": {
+    "points": 0,
+    "average_points_per_race": 0,
+    "races": 0,
+    "wins": 0,
+    "podiums": 0,
+    "average_finish": null,
+    "best_lap": "1:50.412",
+    "best_lap_ms": 110412,
+    "best_lap_track": "monza",
+    "best_lap_car_model_id": 16,
+    "best_lap_car_name_raw": "Lamborghini Huracan Evo (2019)",
+    "best_lap_car_name": "Lamborghini Huracan Evo",
+    "best_lap_session_type": "Q",
+    "penalty_count": 0,
+    "penalty_points": 0,
+    "fastest_lap_awards": 0,
+    "most_raced_track": null,
+    "last_race_at": null,
+    "last_seen": "2026-03-17T14:37:55",
+    "win_rate": 0,
+    "podium_rate": 0,
+    "average_positions_delta": null,
+    "positions_delta_races": 0
+  },
+  "recent_form": [],
+  "track_stats": [],
+  "race_history": [],
+  "penalties": {
+    "penalty_count": 0,
+    "penalty_points": 0,
+    "reasons": {},
+    "types": {}
+  }
+}
