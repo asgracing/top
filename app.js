@@ -189,6 +189,7 @@ onlineNoData: "No data",
     driverSectionPenalties: "Penalty Breakdown",
     driverRecentForm: "Recent form",
     driverMostRacedTrack: "Most raced track",
+    driverFavoriteCar: "Favorite car",
     driverWinRate: "Win rate",
     driverPodiumRate: "Podium rate",
     driverNoData: "Driver profile not found.",
@@ -377,6 +378,7 @@ onlineNoData: "Нет данных",
     driverSectionPenalties: "Разбор штрафов",
     driverRecentForm: "Последние результаты",
     driverMostRacedTrack: "Любимая трасса",
+    driverFavoriteCar: "Любимая машина",
     driverWinRate: "Процент побед",
     driverPodiumRate: "Процент подиумов",
     driverNoData: "Профиль пилота не найден.",
@@ -1910,6 +1912,27 @@ function renderPenaltyList(containerId, entries, labelKey) {
   `).join("");
 }
 
+function getFavoriteCarName(profile) {
+  const history = Array.isArray(profile?.race_history) ? profile.race_history : [];
+  if (!history.length) return null;
+
+  const counts = new Map();
+  history.forEach(row => {
+    const name = String(row?.car_name || "").trim();
+    if (!name) return;
+    counts.set(name, (counts.get(name) || 0) + 1);
+  });
+
+  if (!counts.size) return null;
+
+  return [...counts.entries()]
+    .sort((a, b) => {
+      const countDiff = b[1] - a[1];
+      if (countDiff !== 0) return countDiff;
+      return a[0].localeCompare(b[0]);
+    })[0][0];
+}
+
 function renderDriverPage() {
   const nameEl = document.getElementById("driver-page-name");
   const subtitleEl = document.getElementById("driver-page-subtitle");
@@ -1930,6 +1953,7 @@ function renderDriverPage() {
   }
 
   const summary = driverProfileData.summary || {};
+  const favoriteCarName = getFavoriteCarName(driverProfileData);
   document.title = `${driverProfileData.driver} | ${t("pageTitleDriver")}`;
   nameEl.textContent = driverProfileData.driver || "-";
   subtitleEl.textContent = t("driverPageSubtitle");
@@ -1961,7 +1985,10 @@ function renderDriverPage() {
     </div>
     <div class="driver-stat-card">
       <div class="driver-stat-label">${escapeHtml(t("driverSummaryBestLap"))}</div>
-      <div class="driver-stat-value">${escapeHtml(summary.best_lap ?? "-")}</div>
+      <div class="driver-stat-value driver-stat-mainline">
+        <span>${escapeHtml(summary.best_lap ?? "-")}</span>
+        <span class="driver-stat-side">${escapeHtml(summary.best_lap_car_name ?? "-")}</span>
+      </div>
       <div class="driver-stat-note">${escapeHtml(humanizeTrackName(summary.best_lap_track))}</div>
     </div>
     <div class="driver-stat-card">
@@ -1980,8 +2007,8 @@ function renderDriverPage() {
       <div class="driver-highlight-value">${renderRecentForm(driverProfileData.recent_form)}</div>
     </div>
     <div class="driver-highlight-card">
-      <div class="driver-highlight-label">${escapeHtml(t("driverMostRacedTrack"))}</div>
-      <div class="driver-highlight-value">${escapeHtml(humanizeTrackName(summary.most_raced_track))}</div>
+      <div class="driver-highlight-label">${escapeHtml(t("driverFavoriteCar"))}</div>
+      <div class="driver-highlight-value">${escapeHtml(favoriteCarName || "-")}</div>
     </div>
     <div class="driver-highlight-card">
       <div class="driver-highlight-label">${escapeHtml(t("driverWinRate"))}</div>

@@ -738,6 +738,20 @@ h1 {
   line-height: 1.15;
 }
 
+.driver-stat-mainline {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: 12px;
+}
+
+.driver-stat-side {
+  color: var(--muted);
+  font-size: 0.8rem;
+  font-weight: 700;
+  text-align: right;
+}
+
 .driver-stat-note {
   margin-top: 4px;
 }
