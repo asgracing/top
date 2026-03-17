@@ -2568,10 +2568,12 @@ function renderDriverOfDayModal() {
   const avgGainEl = document.getElementById("driver-of-day-avg-gain");
   const bestLapEl = document.getElementById("driver-of-day-best-lap");
   const bestLapTrackEl = document.getElementById("driver-of-day-best-lap-track");
+  const bestLapTrackCard = bestLapTrackEl?.closest(".today-stat-card");
   const updatedEl = document.getElementById("driver-of-day-updated");
   const emptyEl = document.getElementById("driver-of-day-empty");
 
   if (!nameEl) return;
+  if (bestLapTrackCard) bestLapTrackCard.hidden = true;
 
   if (!data || !data.driver) {
     nameEl.innerHTML = `<span>-</span>`;

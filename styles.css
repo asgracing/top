@@ -1439,6 +1439,25 @@ tbody tr:last-child td {
   color: var(--accent-2);
 }
 
+.today-stat-value .driver-link,
+.today-detail-main .driver-link,
+.today-detail-sub .driver-link {
+  position: relative;
+  font-weight: inherit;
+  text-decoration: none;
+  border-bottom: 1px solid transparent;
+}
+
+.today-stat-value .driver-link:hover,
+.today-detail-main .driver-link:hover,
+.today-detail-sub .driver-link:hover,
+.today-stat-value .driver-link:focus-visible,
+.today-detail-main .driver-link:focus-visible,
+.today-detail-sub .driver-link:focus-visible {
+  color: var(--accent-2);
+  border-bottom-color: rgba(255, 209, 102, 0.42);
+}
+
 .driver-link-heading {
   color: var(--text);
 }
