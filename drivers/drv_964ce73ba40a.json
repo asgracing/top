@@ -3,11 +3,11 @@
   "driver": "Kosso Filippo",
   "summary": {
     "points": 24,
-    "average_points_per_race": 4.0,
-    "races": 6,
+    "average_points_per_race": 3.43,
+    "races": 7,
     "wins": 0,
     "podiums": 0,
-    "average_finish": 13.0,
+    "average_finish": 13.57,
     "best_lap": "1:47.470",
     "best_lap_ms": 107470,
     "best_lap_track": "monza",
@@ -15,38 +15,67 @@
     "best_lap_car_name_raw": "Mercedes-AMG GT3 2020",
     "best_lap_car_name": "Mercedes-AMG GT3",
     "best_lap_session_type": "Q",
-    "penalty_count": 0,
-    "penalty_points": 0,
+    "penalty_count": 1,
+    "penalty_points": 3,
     "fastest_lap_awards": 0,
     "most_raced_track": "monza",
-    "last_race_at": "2026-03-17T17:28:48",
-    "last_seen": "2026-03-17T17:28:48",
+    "last_race_at": "2026-03-17T18:05:10",
+    "last_seen": "2026-03-17T18:05:10",
     "win_rate": 0.0,
     "podium_rate": 0.0,
-    "average_positions_delta": -4.75,
-    "positions_delta_races": 4
+    "average_positions_delta": -7.0,
+    "positions_delta_races": 5
   },
   "recent_form": [
+    17,
     24,
     32,
     6,
-    17,
-    6
+    17
   ],
   "track_stats": [
     {
       "track": "monza",
-      "races": 6,
+      "races": 7,
       "wins": 0,
       "podiums": 0,
       "points": 24,
-      "finish_sum": 78,
-      "average_finish": 13.0,
+      "finish_sum": 95,
+      "average_finish": 13.57,
       "best_lap_ms": 107847,
       "best_lap": "1:47.847"
     }
   ],
   "race_history": [
+    {
+      "race_id": "260317_180510_R.json",
+      "finished_at": "2026-03-17T18:05:10",
+      "track": "monza",
+      "car_model_id": 36,
+      "car_name_raw": "Ford Mustang GT3",
+      "car_name": "Ford Mustang GT3",
+      "position": 17,
+      "participants_count": 42,
+      "winner": "William Joseph Blazkowicz",
+      "points": 0,
+      "qualifying_position": 1,
+      "start_position": 1,
+      "start_position_source": "qualifying_car_id",
+      "positions_delta": -16,
+      "positions_gained": 0,
+      "positions_lost": 16,
+      "best_lap": "1:48.547",
+      "best_lap_ms": 108547,
+      "total_time": "11:49.555",
+      "total_time_ms": 709555,
+      "gap": "0:00.000",
+      "gap_ms": 0,
+      "lap_count": 6,
+      "counted_for_stats": true,
+      "had_best_lap": false,
+      "penalty_count": 1,
+      "penalty_points": 3
+    },
     {
       "race_id": "260317_172848_R.json",
       "finished_at": "2026-03-17T17:28:48",
@@ -368,9 +397,13 @@
     }
   ],
   "penalties": {
-    "penalty_count": 0,
-    "penalty_points": 0,
-    "reasons": {},
-    "types": {}
+    "penalty_count": 1,
+    "penalty_points": 3,
+    "reasons": {
+      "Cutting": 1
+    },
+    "types": {
+      "DriveThrough": 1
+    }
   }
 }
