@@ -1,6 +1,6 @@
 {
   "schema_version": 7,
-  "generated_at": "2026-03-17T23:57:21",
+  "generated_at": "2026-03-18T00:02:21",
   "leaderboard": [
     {
       "player_id": "S76561199664057628",
@@ -54515,61 +54515,49 @@
     }
   ],
   "global_stats": {
-    "date": "2026-03-17",
-    "unique_players_today": 361,
-    "races_today": 20,
-    "sessions_today": 45,
-    "points_earned_today": 1957,
-    "wins_today": 20,
-    "podiums_today": 60,
-    "avg_players_per_race_today": 34.7,
-    "tracks_raced_today": [
-      "monza"
-    ],
+    "date": "2026-03-18",
+    "unique_players_today": 0,
+    "races_today": 0,
+    "sessions_today": 0,
+    "points_earned_today": 0,
+    "wins_today": 0,
+    "podiums_today": 0,
+    "avg_players_per_race_today": 0,
+    "tracks_raced_today": [],
     "best_lap_today": {
-      "lap": "1:46.212",
-      "lap_ms": 106212,
-      "driver": "Axel Phowley",
-      "player_id": "S76561199031997075",
-      "public_id": "drv_6aeeee77c5c4",
-      "track": "monza",
-      "car_model_id": 15,
-      "car_name_raw": "Lexus RC F GT3",
-      "car_name": "Lexus RC F GT3",
-      "session_type": "Q"
+      "lap": null,
+      "lap_ms": null,
+      "driver": null,
+      "player_id": null,
+      "public_id": null,
+      "track": null,
+      "car_model_id": null,
+      "car_name_raw": null,
+      "car_name": null,
+      "session_type": null
     },
-    "most_active_driver_today": {
-      "player_id": "S76561198022114236",
-      "public_id": "drv_621dfc2c2b98",
-      "driver": "Alexey Shustov",
-      "races": 9
-    },
-    "most_successful_driver_today": {
-      "player_id": "S76561198259757651",
-      "public_id": "drv_941416356e56",
-      "driver": "Ivan Fomenkov",
-      "points": 95
-    },
-    "updated_at": "2026-03-17T23:57:21"
+    "most_active_driver_today": null,
+    "most_successful_driver_today": null,
+    "updated_at": "2026-03-18T00:02:21"
   },
   "driver_of_the_day": {
-    "date": "2026-03-17",
-    "driver": "Ivan Fomenkov",
-    "player_id": "S76561198259757651",
-    "public_id": "drv_941416356e56",
-    "points": 95,
-    "races": 6,
-    "wins": 1,
-    "average_finish": 3.33,
-    "average_positions_delta": 10.83,
-    "positions_delta_races": 6,
-    "best_lap": "1:47.230",
-    "best_lap_ms": 107230,
-    "best_lap_track": "monza",
-    "best_lap_car_model_id": 35,
-    "best_lap_car_name_raw": "McLaren 720S GT3 Evo 2023",
-    "best_lap_car_name": "McLaren 720S GT3 Evo",
-    "updated_at": "2026-03-17T23:57:21"
+    "date": "2026-03-18",
+    "driver": null,
+    "player_id": null,
+    "public_id": null,
+    "points": 0,
+    "races": 0,
+    "wins": 0,
+    "average_finish": null,
+    "average_positions_delta": null,
+    "positions_delta_races": 0,
+    "best_lap": null,
+    "best_lap_ms": null,
+    "best_lap_track": null,
+    "best_lap_car_model_id": null,
+    "best_lap_car_name_raw": null,
+    "best_lap_car_name": null,
+    "updated_at": "2026-03-18T00:02:21"
   },
   "server_status": {
     "status": "online",
@@ -54578,6 +54566,6 @@
     "tcp_listening": true,
     "udp_listening": true,
     "broadcast_listening": true,
-    "updated_at": "2026-03-17T23:57:20"
+    "updated_at": "2026-03-18T00:02:20"
   }
 }
