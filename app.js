@@ -2358,7 +2358,7 @@ function renderDriverPage() {
   document.title = `${driverProfileData.driver} | ${t("pageTitleDriver")}`;
   nameEl.innerHTML = `
     <span class="driver-title-name">${escapeHtml(driverProfileData.driver || "-")}</span>
-    ${rankInfo ? `<span class="driver-rank-pill ${escapeHtml(rankInfo.rankClass)}" title="${escapeAttribute(t("driverRankingPosition"))}">#${escapeHtml(rankInfo.rank)}</span>` : ""}
+    ${rankInfo ? `<span class="driver-rank-pill ${escapeHtml(rankInfo.rankClass)}" title="${escapeAttribute(t("driverRankingPosition"))}"><span class="driver-rank-label">${escapeHtml(t("driverRankingPosition"))}:</span><span class="driver-rank-value">#${escapeHtml(rankInfo.rank)}</span></span>` : ""}
   `;
   subtitleEl.textContent = t("driverPageSubtitle");
 
