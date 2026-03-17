@@ -1,6 +1,6 @@
 {
   "schema_version": 6,
-  "generated_at": "2026-03-17T17:31:32",
+  "generated_at": "2026-03-17T17:32:21",
   "leaderboard": [
     {
       "player_id": "S76561199664057628",
@@ -44649,7 +44649,7 @@
       "driver": "Ivan Fomenkov",
       "points": 64
     },
-    "updated_at": "2026-03-17T17:31:32"
+    "updated_at": "2026-03-17T17:32:21"
   },
   "driver_of_the_day": {
     "date": "2026-03-17",
@@ -44668,15 +44668,15 @@
     "best_lap_car_model_id": 35,
     "best_lap_car_name_raw": "McLaren 720S GT3 Evo 2023",
     "best_lap_car_name": "McLaren 720S GT3 Evo",
-    "updated_at": "2026-03-17T17:31:32"
+    "updated_at": "2026-03-17T17:32:21"
   },
   "server_status": {
     "status": "online",
     "server_online": true,
-    "players_online": 20,
+    "players_online": 22,
     "tcp_listening": true,
     "udp_listening": true,
     "broadcast_listening": true,
-    "updated_at": "2026-03-17T17:31:31"
+    "updated_at": "2026-03-17T17:32:20"
   }
 }
