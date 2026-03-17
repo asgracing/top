@@ -810,6 +810,7 @@ function normalizeSnapshotPayload(snapshot) {
     leaderboard: Array.isArray(snapshot?.leaderboard) ? snapshot.leaderboard : [],
     bestlaps: Array.isArray(snapshot?.bestlaps) ? snapshot.bestlaps : [],
     cars: Array.isArray(snapshot?.cars) ? snapshot.cars : [],
+    driverIndex: Array.isArray(snapshot?.leaderboard) ? snapshot.leaderboard : [],
     globalStats: snapshot?.global_stats && typeof snapshot.global_stats === "object" ? snapshot.global_stats : null,
     safety: Array.isArray(snapshot?.safety) ? snapshot.safety : [],
     driverOfDay: snapshot?.driver_of_the_day && typeof snapshot.driver_of_the_day === "object" ? snapshot.driver_of_the_day : null,
@@ -826,17 +827,27 @@ function normalizeLegacyPayload(results) {
     safetyResult,
     driverOfDayResult,
     serverStatusResult,
-    onlineResult
+    onlineResult,
+    carsResult,
+    driverIndexResult
   ] = results;
 
+  const driverIndex = driverIndexResult.status === "fulfilled" && Array.isArray(driverIndexResult.value)
+    ? driverIndexResult.value
+    : [];
+  const leaderboard = leaderboardResult.status === "fulfilled" && Array.isArray(leaderboardResult.value)
+    ? leaderboardResult.value
+    : driverIndex;
+
   return {
-    leaderboard: leaderboardResult.status === "fulfilled" && Array.isArray(leaderboardResult.value)
-      ? leaderboardResult.value
-      : [],
+    leaderboard,
     bestlaps: bestlapsResult.status === "fulfilled" && Array.isArray(bestlapsResult.value)
       ? bestlapsResult.value
       : [],
-    cars: [],
+    cars: carsResult.status === "fulfilled" && Array.isArray(carsResult.value)
+      ? carsResult.value
+      : [],
+    driverIndex,
     globalStats: globalStatsResult.status === "fulfilled" && globalStatsResult.value && typeof globalStatsResult.value === "object"
       ? globalStatsResult.value
       : null,
@@ -864,13 +875,15 @@ async function loadSiteData() {
   }
 
   const legacyResults = await Promise.allSettled([
-    loadJson(leaderboardUrl),
+    loadJson(driverIndexUrl),
     loadJson(bestlapsUrl),
     loadJson(globalStatsUrl),
     loadJson(safetyUrl),
     loadJson(driverOfDayUrl),
     loadJson(serverStatusUrl),
-    loadJson(onlineUrl)
+    loadJson(onlineUrl),
+    loadJson(carsUrl),
+    loadJson(driverIndexUrl)
   ]);
 
   return normalizeLegacyPayload(legacyResults);
@@ -882,8 +895,21 @@ async function loadRacesData() {
 }
 
 async function loadCarsData() {
-  const data = await loadJson(carsUrl);
-  return Array.isArray(data) ? data : [];
+  try {
+    const data = await loadJson(carsUrl);
+    return Array.isArray(data) ? data : [];
+  } catch (carsError) {
+    console.warn("cars.json is unavailable, trying snapshot.json fallback.", carsError);
+  }
+
+  try {
+    const snapshot = await loadJson(snapshotUrl);
+    const normalized = normalizeSnapshotPayload(snapshot);
+    return Array.isArray(normalized.cars) ? normalized.cars : [];
+  } catch (snapshotError) {
+    console.warn("snapshot.json fallback for cars is unavailable.", snapshotError);
+    return [];
+  }
 }
 
 function getRequestedDriverId() {
@@ -2269,6 +2295,9 @@ async function init() {
     leaderboardData = data.leaderboard;
     bestlapsData = data.bestlaps;
     carsData = data.cars;
+    driverIndexData = Array.isArray(data.driverIndex) && data.driverIndex.length
+      ? data.driverIndex
+      : leaderboardData;
     todayStatsData = data.globalStats;
     safetyData = data.safety;
     driverOfDayData = data.driverOfDay;
