@@ -73,7 +73,7 @@ onlineNoData: "No data",
     pageTitleRaces: "ASG Racing Last Races | Assetto Corsa Competizione Results",
     pageTitleCars: "ASG Racing Cars | Assetto Corsa Competizione Stats",
     metaDescription:
-      "ASG Racing ACC Leaderboard вЂ” race stats, wins, podiums and best laps from the public Assetto Corsa Competizione server.",
+      "ASG Racing ACC Leaderboard - race stats, wins, podiums and best laps from the public Assetto Corsa Competizione server.",
     ogDescription:
       "Race stats, wins, podiums and best laps from the ASG Racing server in Assetto Corsa Competizione.",
     twitterDescription:
@@ -117,10 +117,10 @@ onlineNoData: "No data",
       "Statistics are generated automatically from <strong>ACC Dedicated Server</strong> result files. After each race the data is recalculated and published on the website.",
     pointsTitle: "How points are calculated",
     pointsP1: "Points are awarded using a GT-style system:",
-    pointsList1: "1st place вЂ” 25 points",
-    pointsList2: "2nd place вЂ” 18 points",
-    pointsList3: "3rd place вЂ” 15 points",
-    pointsList4: "4thвЂ“10th вЂ” decreasing points",
+    pointsList1: "1st place - 25 points",
+    pointsList2: "2nd place - 18 points",
+    pointsList3: "3rd place - 15 points",
+    pointsList4: "4thвЂ“10th - decreasing points",
     pointsP2:
       "Drivers also receive <strong>1 additional point</strong> for the fastest lap in race.",
     bestLapsInfoTitle: "Best laps",
@@ -271,7 +271,7 @@ onlineNoData: "РќРµС‚ РґР°РЅРЅС‹С…",
     pageTitle: "ASG Racing ACC Leaderboard | РЎС‚Р°С‚РёСЃС‚РёРєР° Assetto Corsa Competizione",
     pageTitleRaces: "ASG Racing РџРѕСЃР»РµРґРЅРёРµ РіРѕРЅРєРё | Р РµР·СѓР»СЊС‚Р°С‚С‹ Assetto Corsa Competizione",
     metaDescription:
-      "ASG Racing ACC Leaderboard вЂ” СЃС‚Р°С‚РёСЃС‚РёРєР° РіРѕРЅРѕРє, РїРѕР±РµРґ, РїРѕРґРёСѓРјРѕРІ Рё Р»СѓС‡С€РёС… РєСЂСѓРіРѕРІ РЅР° РїСѓР±Р»РёС‡РЅРѕРј СЃРµСЂРІРµСЂРµ Assetto Corsa Competizione.",
+      "ASG Racing ACC Leaderboard - СЃС‚Р°С‚РёСЃС‚РёРєР° РіРѕРЅРѕРє, РїРѕР±РµРґ, РїРѕРґРёСѓРјРѕРІ Рё Р»СѓС‡С€РёС… РєСЂСѓРіРѕРІ РЅР° РїСѓР±Р»РёС‡РЅРѕРј СЃРµСЂРІРµСЂРµ Assetto Corsa Competizione.",
     ogDescription:
       "РЎС‚Р°С‚РёСЃС‚РёРєР° РіРѕРЅРѕРє, РїРѕР±РµРґ, РїРѕРґРёСѓРјРѕРІ Рё Р»СѓС‡С€РёС… РєСЂСѓРіРѕРІ РЅР° СЃРµСЂРІРµСЂРµ ASG Racing РІ Assetto Corsa Competizione.",
     twitterDescription:
@@ -303,7 +303,7 @@ onlineNoData: "РќРµС‚ РґР°РЅРЅС‹С…",
     aboutTitle: "Рћ СЃРµСЂРІРµСЂРµ ASG Racing",
     aboutSubtitle: "РџСѓР±Р»РёС‡РЅС‹Р№ СЃРµСЂРІРµСЂ Assetto Corsa Competizione",
     aboutP1:
-      "<strong>ASG Racing</strong> вЂ” СЌС‚Рѕ РїСѓР±Р»РёС‡РЅС‹Р№ СЃРµСЂРІРµСЂ <strong>Assetto Corsa Competizione</strong>, РіРґРµ РїРёР»РѕС‚С‹ СЃРѕСЂРµРІРЅСѓСЋС‚СЃСЏ РЅР° РїРѕРїСѓР»СЏСЂРЅС‹С… GT3 С‚СЂР°СЃСЃР°С…, СѓР»СѓС‡С€Р°СЋС‚ СЃРІРѕРё РІСЂРµРјРµРЅР° РєСЂСѓРіР° Рё СЃСЂР°РІРЅРёРІР°СЋС‚ СЃС‚Р°С‚РёСЃС‚РёРєСѓ СЃ РґСЂСѓРіРёРјРё РіРѕРЅС‰РёРєР°РјРё.",
+      "<strong>ASG Racing</strong> - СЌС‚Рѕ РїСѓР±Р»РёС‡РЅС‹Р№ СЃРµСЂРІРµСЂ <strong>Assetto Corsa Competizione</strong>, РіРґРµ РїРёР»РѕС‚С‹ СЃРѕСЂРµРІРЅСѓСЋС‚СЃСЏ РЅР° РїРѕРїСѓР»СЏСЂРЅС‹С… GT3 С‚СЂР°СЃСЃР°С…, СѓР»СѓС‡С€Р°СЋС‚ СЃРІРѕРё РІСЂРµРјРµРЅР° РєСЂСѓРіР° Рё СЃСЂР°РІРЅРёРІР°СЋС‚ СЃС‚Р°С‚РёСЃС‚РёРєСѓ СЃ РґСЂСѓРіРёРјРё РіРѕРЅС‰РёРєР°РјРё.",
     aboutP2: "РќР° СЌС‚РѕР№ СЃС‚СЂР°РЅРёС†Рµ Р°РІС‚РѕРјР°С‚РёС‡РµСЃРєРё РїСѓР±Р»РёРєСѓРµС‚СЃСЏ leaderboard СЃРµСЂРІРµСЂР°, РІРєР»СЋС‡Р°СЋС‰РёР№:",
     aboutList1: "рџЏЃ РєРѕР»РёС‡РµСЃС‚РІРѕ РіРѕРЅРѕРє",
     aboutList2: "рџҐ‡ РїРѕР±РµРґС‹",
@@ -314,10 +314,10 @@ onlineNoData: "РќРµС‚ РґР°РЅРЅС‹С…",
       "РЎС‚Р°С‚РёСЃС‚РёРєР° РѕР±РЅРѕРІР»СЏРµС‚СЃСЏ Р°РІС‚РѕРјР°С‚РёС‡РµСЃРєРё РЅР° РѕСЃРЅРѕРІРµ С„Р°Р№Р»РѕРІ СЂРµР·СѓР»СЊС‚Р°С‚РѕРІ <strong>ACC Dedicated Server</strong>. РџРѕСЃР»Рµ РєР°Р¶РґРѕР№ РіРѕРЅРєРё РґР°РЅРЅС‹Рµ РїРµСЂРµСЃС‡РёС‚С‹РІР°СЋС‚СЃСЏ Рё РїСѓР±Р»РёРєСѓСЋС‚СЃСЏ РЅР° СЃР°Р№С‚Рµ.",
     pointsTitle: "РљР°Рє СЃС‡РёС‚Р°РµС‚СЃСЏ СЂРµР№С‚РёРЅРі",
     pointsP1: "РћС‡РєРё РЅР°С‡РёСЃР»СЏСЋС‚СЃСЏ РїРѕ СЃРёСЃС‚РµРјРµ, РїРѕС…РѕР¶РµР№ РЅР° С‡РµРјРїРёРѕРЅР°С‚С‹ GT:",
-    pointsList1: "1 РјРµСЃС‚Рѕ вЂ” 25 РѕС‡РєРѕРІ",
-    pointsList2: "2 РјРµСЃС‚Рѕ вЂ” 18 РѕС‡РєРѕРІ",
-    pointsList3: "3 РјРµСЃС‚Рѕ вЂ” 15 РѕС‡РєРѕРІ",
-    pointsList4: "4вЂ“10 РјРµСЃС‚Рѕ вЂ” СѓРјРµРЅСЊС€Р°СЋС‰РёРµСЃСЏ РѕС‡РєРё",
+    pointsList1: "1 РјРµСЃС‚Рѕ - 25 РѕС‡РєРѕРІ",
+    pointsList2: "2 РјРµСЃС‚Рѕ - 18 РѕС‡РєРѕРІ",
+    pointsList3: "3 РјРµСЃС‚Рѕ - 15 РѕС‡РєРѕРІ",
+    pointsList4: "4вЂ“10 РјРµСЃС‚Рѕ - СѓРјРµРЅСЊС€Р°СЋС‰РёРµСЃСЏ РѕС‡РєРё",
     pointsP2:
       "РўР°РєР¶Рµ РїРёР»РѕС‚ РїРѕР»СѓС‡Р°РµС‚ <strong>1 РґРѕРїРѕР»РЅРёС‚РµР»СЊРЅРѕРµ РѕС‡РєРѕ</strong> Р·Р° Р»СѓС‡С€РёР№ РєСЂСѓРі РІ РіРѕРЅРєРµ.",
     bestLapsInfoTitle: "Р›СѓС‡С€РёРµ РєСЂСѓРіРё",
@@ -470,7 +470,7 @@ function getSafetyPenaltyKeys(data = []) {
 }
 
 function formatShortDate(dateStr) {
-  if (!dateStr) return "вЂ”";
+  if (!dateStr) return "-";
   const [year, month, day] = String(dateStr).split("-");
   if (!day || !month) return dateStr;
   return `${day}.${month}`;
@@ -514,7 +514,7 @@ function renderOnlineWidget() {
   if (!prepared.length) {
     chartEl.innerHTML = `<div class="hero-online-empty">${escapeHtml(t("onlineNoData"))}</div>`;
     scaleEl.innerHTML = `<span>0</span>`;
-    rangeEl.textContent = "вЂ”";
+    rangeEl.textContent = "-";
     return;
   }
 
@@ -524,7 +524,7 @@ function renderOnlineWidget() {
   chartEl.innerHTML = prepared.map(item => {
     const heightPercent = Math.max(4, Math.round((item.value / maxValue) * 100));
     return `
-      <div class="hero-online-bar-group" title="${escapeHtml(item.label)} вЂ” ${escapeHtml(item.value)}">
+      <div class="hero-online-bar-group" title="${escapeHtml(item.label)} - ${escapeHtml(item.value)}">
         <div class="hero-online-bar" style="height:${heightPercent}%"></div>
         <div class="hero-online-date">${escapeHtml(item.label)}</div>
       </div>
@@ -535,7 +535,7 @@ function renderOnlineWidget() {
 
   const first = prepared[0];
   const last = prepared[prepared.length - 1];
-  rangeEl.textContent = `${first.label} вЂ” ${last.label}`;
+  rangeEl.textContent = `${first.label} - ${last.label}`;
 }
 
 function getSafetyColumns() {
@@ -654,7 +654,7 @@ function getDriverProfileHref(publicId, playerId = null) {
 }
 
 function renderDriverLink(name, publicId, className = "driver-link", playerId = null) {
-  const safeName = escapeHtml(name || "вЂ”");
+  const safeName = escapeHtml(name || "-");
   const href = getDriverProfileHref(publicId, playerId);
   if (!href) {
     return `<span class="${escapeHtml(className)}">${safeName}</span>`;
@@ -673,7 +673,7 @@ function sessionLabel(value) {
   const v = String(value || "").toUpperCase();
   if (v === "R") return `<span class="pill pill-session-r">${escapeHtml(t("sessionRace"))}</span>`;
   if (v === "Q") return `<span class="pill pill-session-q">${escapeHtml(t("sessionQualifying"))}</span>`;
-  return `<span class="pill">${escapeHtml(v || "вЂ”")}</span>`;
+  return `<span class="pill">${escapeHtml(v || "-")}</span>`;
 }
 
 function normalizeString(value) {
@@ -681,7 +681,7 @@ function normalizeString(value) {
 }
 
 function parseNumeric(value) {
-  if (value === null || value === undefined || value === "" || value === "вЂ”") {
+  if (value === null || value === undefined || value === "" || value === "-") {
     return Number.POSITIVE_INFINITY;
   }
   const num = Number(String(value).replace(",", "."));
@@ -689,7 +689,7 @@ function parseNumeric(value) {
 }
 
 function parseLapTime(value) {
-  if (!value || value === "вЂ”") return Number.POSITIVE_INFINITY;
+  if (!value || value === "-") return Number.POSITIVE_INFINITY;
   const str = String(value).trim();
   const parts = str.split(":");
 
@@ -951,7 +951,7 @@ function applyStaticTranslations() {
 }
 
 function getDriverOfDayName() {
-  return driverOfDayData?.driver || "вЂ”";
+  return driverOfDayData?.driver || "-";
 }
 
 function updateDriverOfDayButtonLabel() {
@@ -964,7 +964,7 @@ function updateDriverOfDayButtonLabel() {
 }
 
 function formatAverageFinish(value) {
-  return typeof value === "number" ? value.toFixed(2) : "вЂ”";
+  return typeof value === "number" ? value.toFixed(2) : "-";
 }
 
 function formatPercent(value) {
@@ -1013,7 +1013,7 @@ function renderTop3(data) {
     <article class="pilot-card ${classes[index] || ""}">
       <div class="pilot-rank">#${escapeHtml(row.rank)}</div>
       <h3 class="pilot-name">${renderDriverLink(row.driver, row.public_id, "driver-link driver-link-heading", row.player_id)}</h3>
-      <div class="muted">${escapeHtml(t("metaLabels").bestLap)}: ${escapeHtml(row.best_lap || "вЂ”")}</div>
+      <div class="muted">${escapeHtml(t("metaLabels").bestLap)}: ${escapeHtml(row.best_lap || "-")}</div>
       <div class="pilot-meta">
         <div class="meta-box">
           <div class="meta-label">${escapeHtml(t("metaLabels").points)}</div>
@@ -1047,8 +1047,8 @@ function renderTop3Compact(data) {
         <h3 class="pilot-name">${renderDriverLink(row.driver, row.public_id, "driver-link driver-link-heading", row.player_id)}</h3>
       </div>
       <div class="muted pilot-lap-line">
-        <span>${escapeHtml(t("metaLabels").bestLap)}: ${escapeHtml(row.best_lap || "вЂ”")}</span>
-        <span class="pilot-lap-car">${escapeHtml(row.best_lap_car_name || "вЂ”")}</span>
+        <span>${escapeHtml(t("metaLabels").bestLap)}: ${escapeHtml(row.best_lap || "-")}</span>
+        <span class="pilot-lap-car">${escapeHtml(row.best_lap_car_name || "-")}</span>
       </div>
       <div class="pilot-meta">
         <div class="meta-box">
@@ -1226,9 +1226,9 @@ function renderLeaderboardTablePage() {
       <td>${escapeHtml(row.wins ?? 0)}</td>
       <td>${escapeHtml(row.podiums ?? 0)}</td>
       <td>${escapeHtml(row.races ?? 0)}</td>
-      <td>${escapeHtml(row.average_finish ?? "вЂ”")}</td>
-      <td>${escapeHtml(row.best_lap ?? "вЂ”")}</td>
-      <td>${escapeHtml(row.best_lap_car_name ?? "вЂ”")}</td>
+      <td>${escapeHtml(row.average_finish ?? "-")}</td>
+      <td>${escapeHtml(row.best_lap ?? "-")}</td>
+      <td>${escapeHtml(row.best_lap_car_name ?? "-")}</td>
       <td>${sessionLabel(row.best_lap_session_type)}</td>
     </tr>
   `).join("");
@@ -1287,10 +1287,10 @@ function renderBestLapsTablePage() {
           </div>
         </div>
       </td>
-      <td>${escapeHtml(row.best_lap ?? "вЂ”")}</td>
-      <td>${escapeHtml(row.car_name ?? "вЂ”")}</td>
+      <td>${escapeHtml(row.best_lap ?? "-")}</td>
+      <td>${escapeHtml(row.car_name ?? "-")}</td>
       <td>${sessionLabel(row.session_type)}</td>
-      <td>${escapeHtml(row.updated_at ?? "вЂ”")}</td>
+      <td>${escapeHtml(row.updated_at ?? "-")}</td>
     </tr>
   `).join("");
 
@@ -1462,7 +1462,7 @@ function bindSearchInputs() {
 }
 
 function formatDateTimeLocal(isoString, lang = "en") {
-  if (!isoString) return "вЂ”";
+  if (!isoString) return "-";
 
   const locale = lang === "ru" ? "ru-RU" : "en-GB";
   const date = new Date(isoString);
@@ -1523,7 +1523,7 @@ function findPublicIdByPlayerId(playerId) {
 }
 
 function humanizeTrackName(track) {
-  if (!track) return "вЂ”";
+  if (!track) return "-";
   return String(track)
     .replace(/[_-]+/g, " ")
     .replace(/\b\w/g, char => char.toUpperCase());
@@ -1540,8 +1540,8 @@ function renderRacesSummary() {
   if (!totalEl || !trackEl || !winnerEl) return;
 
   const latestRace = getProcessedRaces()[0];
-  totalEl.textContent = racesData.length || "вЂ”";
-  trackEl.textContent = latestRace ? humanizeTrackName(latestRace.track) : "вЂ”";
+  totalEl.textContent = racesData.length || "-";
+  trackEl.textContent = latestRace ? humanizeTrackName(latestRace.track) : "-";
   winnerEl.innerHTML = latestRace
     ? renderDriverLink(latestRace.winner || t("noWinner"), latestRace.winner_public_id, "driver-link")
     : t("noWinner");
@@ -1568,10 +1568,10 @@ function renderRacesTable() {
         </div>
       </td>
       <td><span class="race-winner">${renderDriverLink(race.winner || t("noWinner"), race.winner_public_id, "driver-link")}</span></td>
-      <td>${escapeHtml(race.participants_count ?? "вЂ”")}</td>
+      <td>${escapeHtml(race.participants_count ?? "-")}</td>
       <td>
-        <div>${escapeHtml(race.best_lap || "вЂ”")}</div>
-        <div class="race-note">${renderDriverLink(race.best_lap_driver || "вЂ”", race.best_lap_public_id, "driver-link driver-link-subtle")}</div>
+        <div>${escapeHtml(race.best_lap || "-")}</div>
+        <div class="race-note">${renderDriverLink(race.best_lap_driver || "-", race.best_lap_public_id, "driver-link driver-link-subtle")}</div>
       </td>
     </tr>
   `).join("");
@@ -1605,8 +1605,8 @@ function renderRaceResultsModal() {
   if (!titleEl || !subtitleEl || !summaryEl || !tableEl) return;
 
   if (!selectedRace) {
-    titleEl.textContent = "вЂ”";
-    subtitleEl.textContent = "вЂ”";
+    titleEl.textContent = "-";
+    subtitleEl.textContent = "-";
     summaryEl.innerHTML = "";
     tableEl.innerHTML = `<div class="empty-box">${escapeHtml(t("emptyRaces"))}</div>`;
     return;
@@ -1626,11 +1626,11 @@ function renderRaceResultsModal() {
     </div>
     <div class="race-summary-card">
       <div class="race-summary-label">${escapeHtml(t("raceSummaryDrivers"))}</div>
-      <div class="race-summary-value">${escapeHtml(selectedRace.participants_count ?? "вЂ”")}</div>
+      <div class="race-summary-value">${escapeHtml(selectedRace.participants_count ?? "-")}</div>
     </div>
     <div class="race-summary-card">
       <div class="race-summary-label">${escapeHtml(t("raceSummaryBestLap"))}</div>
-      <div class="race-summary-value">${escapeHtml(selectedRace.best_lap || "вЂ”")}</div>
+      <div class="race-summary-value">${escapeHtml(selectedRace.best_lap || "-")}</div>
     </div>
   `;
 
@@ -1650,11 +1650,11 @@ function renderRaceResultsModal() {
         </div>
       </td>
       <td>
-        <div>${escapeHtml(row.best_lap || "вЂ”")}</div>
+        <div>${escapeHtml(row.best_lap || "-")}</div>
         <div class="race-note">${row.had_best_lap ? escapeHtml(t("raceBestLapBadge")) : ""}</div>
       </td>
-      <td>${escapeHtml(row.total_time || "вЂ”")}</td>
-      <td>${escapeHtml(row.gap || (row.position === 1 ? "вЂ”" : "вЂ”"))}</td>
+      <td>${escapeHtml(row.total_time || "-")}</td>
+      <td>${escapeHtml(row.gap || (row.position === 1 ? "-" : "-"))}</td>
       <td>${escapeHtml(row.points ?? 0)}</td>
       <td>${escapeHtml(row.penalty_count ?? 0)}</td>
     </tr>
@@ -1823,7 +1823,7 @@ function renderCarsTable() {
 }
 
 function renderRecentForm(items = []) {
-  if (!Array.isArray(items) || !items.length) return `<span class="empty-inline">вЂ”</span>`;
+  if (!Array.isArray(items) || !items.length) return `<span class="empty-inline">-</span>`;
   return items.map(item => `<span class="form-pill">${escapeHtml(item)}</span>`).join("");
 }
 
@@ -1843,12 +1843,12 @@ function renderDriverRaceHistory() {
       <td>${escapeHtml(formatDateTimeLocal(row.finished_at, currentLang))}</td>
       <td>${escapeHtml(humanizeTrackName(row.track))}</td>
       <td>${escapeHtml(formatStartPosition(row))}</td>
-      <td>${escapeHtml(row.position ?? "вЂ”")}</td>
+      <td>${escapeHtml(row.position ?? "-")}</td>
       <td>${renderPositionsDelta(row.positions_delta)}</td>
       <td>${escapeHtml(row.points ?? 0)}</td>
-      <td>${escapeHtml(row.best_lap ?? "вЂ”")}</td>
-      <td>${escapeHtml(row.total_time ?? "вЂ”")}</td>
-      <td>${escapeHtml(row.gap ?? "вЂ”")}</td>
+      <td>${escapeHtml(row.best_lap ?? "-")}</td>
+      <td>${escapeHtml(row.total_time ?? "-")}</td>
+      <td>${escapeHtml(row.gap ?? "-")}</td>
       <td>${escapeHtml(row.penalty_points ?? 0)}</td>
     </tr>
   `).join("");
@@ -1879,8 +1879,8 @@ function renderDriverTrackStats() {
       <td>${escapeHtml(row.wins ?? 0)}</td>
       <td>${escapeHtml(row.podiums ?? 0)}</td>
       <td>${escapeHtml(row.points ?? 0)}</td>
-      <td>${escapeHtml(row.average_finish ?? "вЂ”")}</td>
-      <td>${escapeHtml(row.best_lap ?? "вЂ”")}</td>
+      <td>${escapeHtml(row.average_finish ?? "-")}</td>
+      <td>${escapeHtml(row.best_lap ?? "-")}</td>
     </tr>
   `).join("");
 
@@ -1898,7 +1898,7 @@ function renderPenaltyList(containerId, entries, labelKey) {
 
   const items = Object.entries(entries || {}).sort((a, b) => b[1] - a[1]);
   if (!items.length) {
-    el.innerHTML = `<div class="empty-box">вЂ”</div>`;
+    el.innerHTML = `<div class="empty-box">-</div>`;
     return;
   }
 
@@ -1918,7 +1918,7 @@ function renderDriverPage() {
   if (!nameEl || !subtitleEl || !statsEl || !highlightsEl) return;
 
   if (!driverProfileData) {
-    nameEl.textContent = "вЂ”";
+    nameEl.textContent = "-";
     subtitleEl.textContent = t("driverNoData");
     statsEl.innerHTML = `<div class="empty-box">${escapeHtml(t("driverNoData"))}</div>`;
     highlightsEl.innerHTML = "";
@@ -1931,7 +1931,7 @@ function renderDriverPage() {
 
   const summary = driverProfileData.summary || {};
   document.title = `${driverProfileData.driver} | ${t("pageTitleDriver")}`;
-  nameEl.textContent = driverProfileData.driver || "вЂ”";
+  nameEl.textContent = driverProfileData.driver || "-";
   subtitleEl.textContent = t("driverPageSubtitle");
 
   statsEl.innerHTML = `
@@ -1957,11 +1957,11 @@ function renderDriverPage() {
     </div>
     <div class="driver-stat-card">
       <div class="driver-stat-label">${escapeHtml(t("driverSummaryAvgFinish"))}</div>
-      <div class="driver-stat-value">${escapeHtml(summary.average_finish ?? "вЂ”")}</div>
+      <div class="driver-stat-value">${escapeHtml(summary.average_finish ?? "-")}</div>
     </div>
     <div class="driver-stat-card">
       <div class="driver-stat-label">${escapeHtml(t("driverSummaryBestLap"))}</div>
-      <div class="driver-stat-value">${escapeHtml(summary.best_lap ?? "вЂ”")}</div>
+      <div class="driver-stat-value">${escapeHtml(summary.best_lap ?? "-")}</div>
       <div class="driver-stat-note">${escapeHtml(humanizeTrackName(summary.best_lap_track))}</div>
     </div>
     <div class="driver-stat-card">
@@ -2022,49 +2022,49 @@ function renderTodayStatsModal() {
   if (!uniquePlayersEl) return;
 
   if (!stats) {
-    uniquePlayersEl.textContent = "вЂ”";
-    racesEl.textContent = "вЂ”";
-    sessionsEl.textContent = "вЂ”";
-    pointsEl.textContent = "вЂ”";
-    winsEl.textContent = "вЂ”";
-    podiumsEl.textContent = "вЂ”";
-    avgPlayersEl.textContent = "вЂ”";
-    tracksEl.textContent = "вЂ”";
-    bestLapEl.innerHTML = `<span>вЂ”</span><span class="today-detail-side-inline">вЂ”</span>`;
-    bestLapNoteEl.textContent = "вЂ”";
-    mostActiveEl.textContent = "вЂ”";
-    mostActiveNoteEl.textContent = "вЂ”";
-    mostSuccessfulEl.textContent = "вЂ”";
-    mostSuccessfulNoteEl.textContent = "вЂ”";
-    updatedEl.textContent = "вЂ”";
+    uniquePlayersEl.textContent = "-";
+    racesEl.textContent = "-";
+    sessionsEl.textContent = "-";
+    pointsEl.textContent = "-";
+    winsEl.textContent = "-";
+    podiumsEl.textContent = "-";
+    avgPlayersEl.textContent = "-";
+    tracksEl.textContent = "-";
+    bestLapEl.innerHTML = `<span>-</span><span class="today-detail-side-inline">-</span>`;
+    bestLapNoteEl.textContent = "-";
+    mostActiveEl.textContent = "-";
+    mostActiveNoteEl.textContent = "-";
+    mostSuccessfulEl.textContent = "-";
+    mostSuccessfulNoteEl.textContent = "-";
+    updatedEl.textContent = "-";
     return;
   }
 
-  uniquePlayersEl.textContent = stats.unique_players_today ?? "вЂ”";
-  racesEl.textContent = stats.races_today ?? "вЂ”";
-  sessionsEl.textContent = stats.sessions_today ?? "вЂ”";
-  pointsEl.textContent = stats.points_earned_today ?? "вЂ”";
-  winsEl.textContent = stats.wins_today ?? "вЂ”";
-  podiumsEl.textContent = stats.podiums_today ?? "вЂ”";
+  uniquePlayersEl.textContent = stats.unique_players_today ?? "-";
+  racesEl.textContent = stats.races_today ?? "-";
+  sessionsEl.textContent = stats.sessions_today ?? "-";
+  pointsEl.textContent = stats.points_earned_today ?? "-";
+  winsEl.textContent = stats.wins_today ?? "-";
+  podiumsEl.textContent = stats.podiums_today ?? "-";
   avgPlayersEl.textContent =
     typeof stats.avg_players_per_race_today === "number"
       ? stats.avg_players_per_race_today.toFixed(2)
-      : "вЂ”";
+      : "-";
 
   tracksEl.textContent =
     Array.isArray(stats.tracks_raced_today) && stats.tracks_raced_today.length
       ? stats.tracks_raced_today.join(", ")
-      : "вЂ”";
+      : "-";
 
-  bestLapEl.innerHTML = `<span>${escapeHtml(stats.best_lap_today?.lap || "вЂ”")}</span><span class="today-detail-side-inline">${escapeHtml(stats.best_lap_today?.car_name || "вЂ”")}</span>`;
+  bestLapEl.innerHTML = `<span>${escapeHtml(stats.best_lap_today?.lap || "-")}</span><span class="today-detail-side-inline">${escapeHtml(stats.best_lap_today?.car_name || "-")}</span>`;
   bestLapNoteEl.textContent = stats.best_lap_today
     ? `${stats.best_lap_today.driver} В· ${stats.best_lap_today.track}`
-    : "вЂ”";
+    : "-";
 
   const mostActiveName =
     findDriverNameByPlayerId(stats.most_active_driver_today?.player_id) ||
     stats.most_active_driver_today?.player_id ||
-    "вЂ”";
+    "-";
 
   mostActiveEl.textContent = mostActiveName;
   mostActiveNoteEl.textContent =
@@ -2072,15 +2072,15 @@ function renderTodayStatsModal() {
       ? (lang === "ru"
           ? `Р“РѕРЅРѕРє Р·Р° СЃРµРіРѕРґРЅСЏ: ${stats.most_active_driver_today.races}`
           : `Races today: ${stats.most_active_driver_today.races}`)
-      : "вЂ”";
+      : "-";
 
-  mostSuccessfulEl.textContent = stats.most_successful_driver_today?.driver || "вЂ”";
+  mostSuccessfulEl.textContent = stats.most_successful_driver_today?.driver || "-";
   mostSuccessfulNoteEl.textContent =
     stats.most_successful_driver_today?.points != null
       ? (lang === "ru"
           ? `РћС‡РєРѕРІ Р·Р° СЃРµРіРѕРґРЅСЏ: ${stats.most_successful_driver_today.points}`
           : `Points today: ${stats.most_successful_driver_today.points}`)
-      : "вЂ”";
+      : "-";
 
   updatedEl.textContent =
     lang === "ru"
@@ -2097,7 +2097,7 @@ function renderDriverOfDayModal() {
     card.className = "today-stat-card driver-day-card";
     card.innerHTML = `
       <div class="today-stat-label">${escapeHtml(t("driverOfDayAvgGain"))}</div>
-      <div class="today-stat-value" id="driver-of-day-avg-gain">вЂ”</div>
+      <div class="today-stat-value" id="driver-of-day-avg-gain">-</div>
     `;
     const bestLapCard = document.getElementById("driver-of-day-best-lap")?.closest(".today-stat-card");
     if (bestLapCard) {
@@ -2126,24 +2126,24 @@ function renderDriverOfDayModal() {
   if (!nameEl) return;
 
   if (!data || !data.driver) {
-    nameEl.textContent = "вЂ”";
-    pointsEl.textContent = "вЂ”";
-    racesEl.textContent = "вЂ”";
-    winsEl.textContent = "вЂ”";
-    avgFinishEl.textContent = "вЂ”";
-    avgGainEl.textContent = "вЂ”";
+    nameEl.textContent = "-";
+    pointsEl.textContent = "-";
+    racesEl.textContent = "-";
+    winsEl.textContent = "-";
+    avgFinishEl.textContent = "-";
+    avgGainEl.textContent = "-";
     avgGainEl.classList.remove("delta-positive", "delta-negative");
     avgGainEl.classList.add("positions-delta", "delta-neutral");
-    bestLapEl.textContent = "вЂ”";
-    bestLapTrackEl.textContent = "вЂ”";
-    updatedEl.textContent = "вЂ”";
+    bestLapEl.textContent = "-";
+    bestLapTrackEl.textContent = "-";
+    updatedEl.textContent = "-";
     if (emptyEl) emptyEl.textContent = t("driverOfDayNoData");
     if (emptyEl) emptyEl.hidden = false;
     if (contentEl) contentEl.classList.add("is-empty");
     return;
   }
 
-  nameEl.textContent = data.driver || "вЂ”";
+  nameEl.textContent = data.driver || "-";
   pointsEl.textContent = data.points ?? 0;
   racesEl.textContent = data.races ?? 0;
   winsEl.textContent = data.wins ?? 0;
@@ -2158,8 +2158,8 @@ function renderDriverOfDayModal() {
   } else {
     avgGainEl.classList.add("delta-neutral");
   }
-  bestLapEl.textContent = data.best_lap || "вЂ”";
-  bestLapTrackEl.textContent = data.best_lap_track || "вЂ”";
+  bestLapEl.textContent = data.best_lap || "-";
+  bestLapTrackEl.textContent = data.best_lap_track || "-";
   updatedEl.textContent = currentLang === "ru"
     ? `РћР±РЅРѕРІР»РµРЅРѕ: ${formatDateTimeLocal(data.updated_at, "ru")}`
     : `Updated: ${formatDateTimeLocal(data.updated_at, "en")}`;
@@ -2331,12 +2331,12 @@ async function init() {
 
     if (bestlapsData.length > 0) {
       if (bestLapHighlightEl) {
-        bestLapHighlightEl.textContent = bestlapsData[0].best_lap || "вЂ”";
+        bestLapHighlightEl.textContent = bestlapsData[0].best_lap || "-";
       }
       updateBestLapNote(bestlapsData[0].driver, bestlapsData[0].track, bestlapsData[0].car_name);
     } else {
       if (bestLapHighlightEl) {
-        bestLapHighlightEl.textContent = "вЂ”";
+        bestLapHighlightEl.textContent = "-";
       }
       if (bestLapNoteEl) {
         bestLapNoteEl.textContent = t("bestLapNoteFallback");
@@ -2374,7 +2374,7 @@ async function init() {
       const statsEl = document.getElementById("driver-stat-cards");
       const nameEl = document.getElementById("driver-page-name");
       const subtitleEl = document.getElementById("driver-page-subtitle");
-      if (nameEl) nameEl.textContent = "вЂ”";
+      if (nameEl) nameEl.textContent = "-";
       if (subtitleEl) subtitleEl.textContent = t("driverNoData");
       if (statsEl) statsEl.innerHTML = `<div class="empty-box">${escapeHtml(t("driverNoData"))}</div>`;
       return;
