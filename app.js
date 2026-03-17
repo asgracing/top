@@ -224,6 +224,7 @@ onlineNoData: "No data",
     driverSummaryWins: "Wins",
     driverSummaryAvgFinish: "Avg finish",
     driverSummaryBestLap: "Best lap",
+    driverSummaryAvgPace: "Average pace",
     driverSummaryPenaltyPoints: "Penalty points",
     driverSummaryFastestLaps: "Fastest lap awards",
     driverSectionOverview: "Overview",
@@ -431,6 +432,7 @@ onlineNoData: "Нет данных",
     driverSummaryWins: "Победы",
     driverSummaryAvgFinish: "Ср. финиш",
     driverSummaryBestLap: "Лучший круг",
+    driverSummaryAvgPace: "Средний темп",
     driverSummaryPenaltyPoints: "Штрафные очки",
     driverSummaryFastestLaps: "Лучшие круги в гонке",
     driverSectionOverview: "Обзор",
@@ -857,6 +859,15 @@ function parseLapTime(value) {
   }
 
   return Number.POSITIVE_INFINITY;
+}
+
+function formatLapTimeFromMs(value) {
+  if (!Number.isFinite(value) || value <= 0) return "-";
+  const totalMs = Math.round(value);
+  const minutes = Math.floor(totalMs / 60000);
+  const seconds = Math.floor((totalMs % 60000) / 1000);
+  const milliseconds = totalMs % 1000;
+  return `${minutes}:${String(seconds).padStart(2, "0")}.${String(milliseconds).padStart(3, "0")}`;
 }
 
 function getNestedValue(row, key) {
@@ -2299,6 +2310,18 @@ function getFavoriteCarName(profile) {
     })[0][0];
 }
 
+function getAveragePace(profile) {
+  const history = Array.isArray(profile?.race_history) ? profile.race_history : [];
+  const validBestLaps = history.filter(row =>
+    row?.had_best_lap === true && Number.isFinite(row?.best_lap_ms) && row.best_lap_ms > 0
+  );
+
+  if (!validBestLaps.length) return "-";
+
+  const averageMs = validBestLaps.reduce((sum, row) => sum + row.best_lap_ms, 0) / validBestLaps.length;
+  return formatLapTimeFromMs(averageMs);
+}
+
 function renderDriverPage() {
   const nameEl = document.getElementById("driver-page-name");
   const subtitleEl = document.getElementById("driver-page-subtitle");
@@ -2320,6 +2343,7 @@ function renderDriverPage() {
 
   const summary = driverProfileData.summary || {};
   const favoriteCarName = getFavoriteCarName(driverProfileData);
+  const averagePace = getAveragePace(driverProfileData);
   document.title = `${driverProfileData.driver} | ${t("pageTitleDriver")}`;
   nameEl.textContent = driverProfileData.driver || "-";
   subtitleEl.textContent = t("driverPageSubtitle");
@@ -2355,7 +2379,10 @@ function renderDriverPage() {
         <span>${escapeHtml(summary.best_lap ?? "-")}</span>
         <span class="driver-stat-side">${renderCarLink(summary.best_lap_car_name ?? "-", "driver-link driver-link-subtle")}</span>
       </div>
-      <div class="driver-stat-note">${escapeHtml(humanizeTrackName(summary.best_lap_track))}</div>
+    </div>
+    <div class="driver-stat-card">
+      <div class="driver-stat-label">${escapeHtml(t("driverSummaryAvgPace"))}</div>
+      <div class="driver-stat-value">${escapeHtml(averagePace)}</div>
     </div>
     <div class="driver-stat-card">
       <div class="driver-stat-label">${escapeHtml(t("driverSummaryPenaltyPoints"))}</div>
