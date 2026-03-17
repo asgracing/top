@@ -100,6 +100,26 @@
     "last_race_at": "2026-03-17T20:34:30"
   },
   {
+    "public_id": "drv_621dfc2c2b98",
+    "driver": "Alexey Shustov",
+    "points": 164,
+    "average_points_per_race": 5.86,
+    "races": 28,
+    "wins": 1,
+    "podiums": 4,
+    "average_finish": 8.79,
+    "best_lap": "1:48.627",
+    "best_lap_track": "monza",
+    "best_lap_car_model_id": 12,
+    "best_lap_car_name_raw": "Aston Martin V12 Vantage GT3",
+    "best_lap_car_name": "Aston Martin V12 Vantage GT3",
+    "average_pace_ms": 110871,
+    "average_pace": "1:50.871",
+    "penalty_count": 0,
+    "penalty_points": 0,
+    "last_race_at": "2026-03-18T00:52:49"
+  },
+  {
     "public_id": "drv_10b4b6556336",
     "driver": "Javier Breogan.VR.|ARF",
     "points": 160,
@@ -140,26 +160,6 @@
     "last_race_at": "2026-03-17T22:23:45"
   },
   {
-    "public_id": "drv_621dfc2c2b98",
-    "driver": "Alexey Shustov",
-    "points": 154,
-    "average_points_per_race": 5.7,
-    "races": 27,
-    "wins": 1,
-    "podiums": 4,
-    "average_finish": 8.93,
-    "best_lap": "1:48.627",
-    "best_lap_track": "monza",
-    "best_lap_car_model_id": 12,
-    "best_lap_car_name_raw": "Aston Martin V12 Vantage GT3",
-    "best_lap_car_name": "Aston Martin V12 Vantage GT3",
-    "average_pace_ms": 110930,
-    "average_pace": "1:50.930",
-    "penalty_count": 0,
-    "penalty_points": 0,
-    "last_race_at": "2026-03-18T00:16:29"
-  },
-  {
     "public_id": "drv_aa5848bce348",
     "driver": "Jere Kärki (VR)",
     "points": 147,
@@ -177,7 +177,7 @@
     "average_pace": "1:49.126",
     "penalty_count": 0,
     "penalty_points": 0,
-    "last_race_at": "2026-03-18T00:16:29"
+    "last_race_at": "2026-03-18T00:52:49"
   },
   {
     "public_id": "drv_f435e9938f76",
@@ -300,6 +300,26 @@
     "last_race_at": "2026-03-17T22:23:45"
   },
   {
+    "public_id": "drv_304f0bd1280c",
+    "driver": "Sultan Isaev",
+    "points": 79,
+    "average_points_per_race": 8.78,
+    "races": 9,
+    "wins": 1,
+    "podiums": 4,
+    "average_finish": 10.22,
+    "best_lap": "1:47.580",
+    "best_lap_track": "monza",
+    "best_lap_car_model_id": 35,
+    "best_lap_car_name_raw": "McLaren 720S GT3 Evo 2023",
+    "best_lap_car_name": "McLaren 720S GT3 Evo",
+    "average_pace_ms": 109276,
+    "average_pace": "1:49.276",
+    "penalty_count": 1,
+    "penalty_points": 3,
+    "last_race_at": "2026-03-18T00:52:49"
+  },
+  {
     "public_id": "drv_b99f06eacb0f",
     "driver": "J Lehman",
     "points": 71,
@@ -378,26 +398,6 @@
     "penalty_count": 0,
     "penalty_points": 0,
     "last_race_at": "2026-03-15T18:47:44"
-  },
-  {
-    "public_id": "drv_304f0bd1280c",
-    "driver": "Sultan Isaev",
-    "points": 61,
-    "average_points_per_race": 7.62,
-    "races": 8,
-    "wins": 1,
-    "podiums": 3,
-    "average_finish": 11.25,
-    "best_lap": "1:47.580",
-    "best_lap_track": "monza",
-    "best_lap_car_model_id": 35,
-    "best_lap_car_name_raw": "McLaren 720S GT3 Evo 2023",
-    "best_lap_car_name": "McLaren 720S GT3 Evo",
-    "average_pace_ms": 109247,
-    "average_pace": "1:49.247",
-    "penalty_count": 1,
-    "penalty_points": 3,
-    "last_race_at": "2026-03-18T00:16:29"
   },
   {
     "public_id": "drv_15fb23efcd30",
@@ -578,6 +578,26 @@
     "penalty_count": 2,
     "penalty_points": 6,
     "last_race_at": "2026-03-17T21:47:10"
+  },
+  {
+    "public_id": "drv_757520e078be",
+    "driver": "C 'AeRo [SCO]",
+    "points": 50,
+    "average_points_per_race": 4.17,
+    "races": 12,
+    "wins": 0,
+    "podiums": 0,
+    "average_finish": 12.17,
+    "best_lap": "1:49.347",
+    "best_lap_track": "monza",
+    "best_lap_car_model_id": 32,
+    "best_lap_car_name_raw": "Ferrari 296 GT3",
+    "best_lap_car_name": "Ferrari 296 GT3",
+    "average_pace_ms": 110910,
+    "average_pace": "1:50.910",
+    "penalty_count": 3,
+    "penalty_points": 2,
+    "last_race_at": "2026-03-18T00:52:49"
   },
   {
     "public_id": "drv_2860659f7354",
@@ -920,24 +940,24 @@
     "last_race_at": "2026-03-16T23:17:32"
   },
   {
-    "public_id": "drv_757520e078be",
-    "driver": "C 'AeRo [SCO]",
-    "points": 38,
-    "average_points_per_race": 3.45,
-    "races": 11,
-    "wins": 0,
-    "podiums": 0,
-    "average_finish": 12.91,
-    "best_lap": "1:49.445",
+    "public_id": "drv_45ea8435b66f",
+    "driver": "LOVA LOVA",
+    "points": 37,
+    "average_points_per_race": 18.5,
+    "races": 2,
+    "wins": 1,
+    "podiums": 1,
+    "average_finish": 2.5,
+    "best_lap": "1:47.745",
     "best_lap_track": "monza",
     "best_lap_car_model_id": 32,
     "best_lap_car_name_raw": "Ferrari 296 GT3",
     "best_lap_car_name": "Ferrari 296 GT3",
-    "average_pace_ms": 110917,
-    "average_pace": "1:50.917",
-    "penalty_count": 3,
-    "penalty_points": 2,
-    "last_race_at": "2026-03-18T00:16:29"
+    "average_pace_ms": 109018,
+    "average_pace": "1:49.018",
+    "penalty_count": 0,
+    "penalty_points": 0,
+    "last_race_at": "2026-03-18T00:52:49"
   },
   {
     "public_id": "drv_cdc0363048e0",
@@ -1220,6 +1240,26 @@
     "last_race_at": "2026-03-15T21:15:16"
   },
   {
+    "public_id": "drv_ee30acbc35a3",
+    "driver": "MATTIA CESARO",
+    "points": 31,
+    "average_points_per_race": 7.75,
+    "races": 4,
+    "wins": 0,
+    "podiums": 1,
+    "average_finish": 6.25,
+    "best_lap": "1:48.340",
+    "best_lap_track": "monza",
+    "best_lap_car_model_id": 15,
+    "best_lap_car_name_raw": "Lexus RC F GT3",
+    "best_lap_car_name": "Lexus RC F GT3",
+    "average_pace_ms": 110457,
+    "average_pace": "1:50.457",
+    "penalty_count": 0,
+    "penalty_points": 0,
+    "last_race_at": "2026-03-18T00:52:49"
+  },
+  {
     "public_id": "drv_8d85cc2e062e",
     "driver": "Denis Soloviev",
     "points": 30,
@@ -1378,26 +1418,6 @@
     "penalty_count": 0,
     "penalty_points": 0,
     "last_race_at": "2026-03-16T18:16:39"
-  },
-  {
-    "public_id": "drv_ee30acbc35a3",
-    "driver": "MATTIA CESARO",
-    "points": 27,
-    "average_points_per_race": 9.0,
-    "races": 3,
-    "wins": 0,
-    "podiums": 1,
-    "average_finish": 5.67,
-    "best_lap": "1:48.340",
-    "best_lap_track": "monza",
-    "best_lap_car_model_id": 15,
-    "best_lap_car_name_raw": "Lexus RC F GT3",
-    "best_lap_car_name": "Lexus RC F GT3",
-    "average_pace_ms": 110485,
-    "average_pace": "1:50.485",
-    "penalty_count": 0,
-    "penalty_points": 0,
-    "last_race_at": "2026-03-18T00:16:29"
   },
   {
     "public_id": "drv_52e1870c1ad3",
@@ -3500,6 +3520,26 @@
     "last_race_at": "2026-03-16T00:22:05"
   },
   {
+    "public_id": "drv_4343d77cbfa4",
+    "driver": "Stepan Trunda",
+    "points": 17,
+    "average_points_per_race": 4.25,
+    "races": 4,
+    "wins": 0,
+    "podiums": 0,
+    "average_finish": 8.25,
+    "best_lap": "1:47.452",
+    "best_lap_track": "monza",
+    "best_lap_car_model_id": 35,
+    "best_lap_car_name_raw": "McLaren 720S GT3 Evo 2023",
+    "best_lap_car_name": "McLaren 720S GT3 Evo",
+    "average_pace_ms": 109068,
+    "average_pace": "1:49.068",
+    "penalty_count": 3,
+    "penalty_points": 5,
+    "last_race_at": "2026-03-18T00:52:49"
+  },
+  {
     "public_id": "drv_b949a8209112",
     "driver": "S MD",
     "points": 16,
@@ -3537,7 +3577,7 @@
     "average_pace": "1:48.827",
     "penalty_count": 0,
     "penalty_points": 0,
-    "last_race_at": "2026-03-18T00:16:29"
+    "last_race_at": "2026-03-18T00:52:49"
   },
   {
     "public_id": "drv_022d000bd3a6",
@@ -4360,6 +4400,26 @@
     "last_race_at": "2026-03-17T14:10:45"
   },
   {
+    "public_id": "drv_69e479b09e20",
+    "driver": "peter pet",
+    "points": 15,
+    "average_points_per_race": 7.5,
+    "races": 2,
+    "wins": 0,
+    "podiums": 1,
+    "average_finish": 14.0,
+    "best_lap": "1:48.380",
+    "best_lap_track": "monza",
+    "best_lap_car_model_id": 35,
+    "best_lap_car_name_raw": "McLaren 720S GT3 Evo 2023",
+    "best_lap_car_name": "McLaren 720S GT3 Evo",
+    "average_pace_ms": 109652,
+    "average_pace": "1:49.652",
+    "penalty_count": 1,
+    "penalty_points": 3,
+    "last_race_at": "2026-03-18T00:52:49"
+  },
+  {
     "public_id": "drv_9e03f6f8785d",
     "driver": "vvv vvv",
     "points": 15,
@@ -4477,7 +4537,7 @@
     "average_pace": "1:50.582",
     "penalty_count": 0,
     "penalty_points": 0,
-    "last_race_at": "2026-03-18T00:16:29"
+    "last_race_at": "2026-03-18T00:52:49"
   },
   {
     "public_id": "drv_b0c59ad2e618",
@@ -4900,26 +4960,6 @@
     "last_race_at": "2026-03-14T17:23:13"
   },
   {
-    "public_id": "drv_45ea8435b66f",
-    "driver": "LOVA LOVA",
-    "points": 12,
-    "average_points_per_race": 12.0,
-    "races": 1,
-    "wins": 0,
-    "podiums": 0,
-    "average_finish": 4.0,
-    "best_lap": "1:47.885",
-    "best_lap_track": "monza",
-    "best_lap_car_model_id": 32,
-    "best_lap_car_name_raw": "Ferrari 296 GT3",
-    "best_lap_car_name": "Ferrari 296 GT3",
-    "average_pace_ms": 108553,
-    "average_pace": "1:48.553",
-    "penalty_count": 0,
-    "penalty_points": 0,
-    "last_race_at": "2026-03-18T00:16:29"
-  },
-  {
     "public_id": "drv_036567795b89",
     "driver": "Mihai Radu",
     "points": 12,
@@ -5300,6 +5340,26 @@
     "last_race_at": "2026-03-15T21:51:43"
   },
   {
+    "public_id": "drv_c5c83d33bb48",
+    "driver": "Zeyad Alaa",
+    "points": 12,
+    "average_points_per_race": 1.5,
+    "races": 8,
+    "wins": 0,
+    "podiums": 0,
+    "average_finish": 14.38,
+    "best_lap": "1:48.657",
+    "best_lap_track": "monza",
+    "best_lap_car_model_id": 36,
+    "best_lap_car_name_raw": "Ford Mustang GT3",
+    "best_lap_car_name": "Ford Mustang GT3",
+    "average_pace_ms": 110422,
+    "average_pace": "1:50.422",
+    "penalty_count": 0,
+    "penalty_points": 0,
+    "last_race_at": "2026-03-18T00:52:49"
+  },
+  {
     "public_id": "drv_b90163febabb",
     "driver": "Aleksei Burmistrov",
     "points": 12,
@@ -5335,26 +5395,6 @@
     "best_lap_car_name": "AMR V8 Vantage",
     "average_pace_ms": 108577,
     "average_pace": "1:48.577",
-    "penalty_count": 0,
-    "penalty_points": 0,
-    "last_race_at": "2026-03-18T00:16:29"
-  },
-  {
-    "public_id": "drv_c5c83d33bb48",
-    "driver": "Zeyad Alaa",
-    "points": 12,
-    "average_points_per_race": 1.71,
-    "races": 7,
-    "wins": 0,
-    "podiums": 0,
-    "average_finish": 14.71,
-    "best_lap": "1:48.737",
-    "best_lap_track": "monza",
-    "best_lap_car_model_id": 34,
-    "best_lap_car_name_raw": "Porsche 992 GT3 R",
-    "best_lap_car_name": "Porsche 992 GT3 R",
-    "average_pace_ms": 110571,
-    "average_pace": "1:50.571",
     "penalty_count": 0,
     "penalty_points": 0,
     "last_race_at": "2026-03-18T00:16:29"
@@ -6140,26 +6180,6 @@
     "last_race_at": "2026-03-15T15:45:07"
   },
   {
-    "public_id": "drv_4343d77cbfa4",
-    "driver": "Stepan Trunda",
-    "points": 10,
-    "average_points_per_race": 3.33,
-    "races": 3,
-    "wins": 0,
-    "podiums": 0,
-    "average_finish": 8.67,
-    "best_lap": "1:47.507",
-    "best_lap_track": "monza",
-    "best_lap_car_model_id": 35,
-    "best_lap_car_name_raw": "McLaren 720S GT3 Evo 2023",
-    "best_lap_car_name": "McLaren 720S GT3 Evo",
-    "average_pace_ms": 108926,
-    "average_pace": "1:48.926",
-    "penalty_count": 3,
-    "penalty_points": 5,
-    "last_race_at": "2026-03-18T00:16:29"
-  },
-  {
     "public_id": "drv_1637de9a270f",
     "driver": "Timofey Arkipov",
     "points": 10,
@@ -6758,6 +6778,26 @@
     "penalty_count": 0,
     "penalty_points": 0,
     "last_race_at": "2026-03-13T15:02:24"
+  },
+  {
+    "public_id": "drv_7652aa660522",
+    "driver": "Gabriel Dahuron",
+    "points": 8,
+    "average_points_per_race": 8.0,
+    "races": 1,
+    "wins": 0,
+    "podiums": 0,
+    "average_finish": 6.0,
+    "best_lap": "1:48.960",
+    "best_lap_track": "monza",
+    "best_lap_car_model_id": 15,
+    "best_lap_car_name_raw": "Lexus RC F GT3",
+    "best_lap_car_name": "Lexus RC F GT3",
+    "average_pace_ms": 111256,
+    "average_pace": "1:51.256",
+    "penalty_count": 0,
+    "penalty_points": 0,
+    "last_race_at": "2026-03-18T00:52:49"
   },
   {
     "public_id": "drv_b34f90b2720c",
@@ -9580,6 +9620,26 @@
     "last_race_at": "2026-03-13T23:29:57"
   },
   {
+    "public_id": "drv_6ebe4edcd33e",
+    "driver": "Shane Marshall",
+    "points": 2,
+    "average_points_per_race": 2.0,
+    "races": 1,
+    "wins": 0,
+    "podiums": 0,
+    "average_finish": 9.0,
+    "best_lap": "1:48.807",
+    "best_lap_track": "monza",
+    "best_lap_car_model_id": 20,
+    "best_lap_car_name_raw": "AMR V8 Vantage (2019)",
+    "best_lap_car_name": "AMR V8 Vantage",
+    "average_pace_ms": 110024,
+    "average_pace": "1:50.024",
+    "penalty_count": 0,
+    "penalty_points": 0,
+    "last_race_at": "2026-03-18T00:52:49"
+  },
+  {
     "public_id": "drv_5d8b821172cb",
     "driver": "Steve Foidl",
     "points": 2,
@@ -9980,6 +10040,26 @@
     "last_race_at": "2026-03-14T17:59:58"
   },
   {
+    "public_id": "drv_0cdea701afd1",
+    "driver": "Alexey Zhmachkin",
+    "points": 1,
+    "average_points_per_race": 1.0,
+    "races": 1,
+    "wins": 0,
+    "podiums": 0,
+    "average_finish": 10.0,
+    "best_lap": "1:48.040",
+    "best_lap_track": "monza",
+    "best_lap_car_model_id": 35,
+    "best_lap_car_name_raw": "McLaren 720S GT3 Evo 2023",
+    "best_lap_car_name": "McLaren 720S GT3 Evo",
+    "average_pace_ms": 109540,
+    "average_pace": "1:49.540",
+    "penalty_count": 0,
+    "penalty_points": 0,
+    "last_race_at": "2026-03-18T00:52:49"
+  },
+  {
     "public_id": "drv_63e5026face4",
     "driver": "Bence Olah",
     "points": 1,
@@ -10057,7 +10137,7 @@
     "average_pace": "1:50.316",
     "penalty_count": 0,
     "penalty_points": 0,
-    "last_race_at": "2026-03-18T00:16:29"
+    "last_race_at": "2026-03-18T00:52:49"
   },
   {
     "public_id": "drv_d26d8500b037",
@@ -11180,6 +11260,26 @@
     "last_race_at": "2026-03-16T20:45:56"
   },
   {
+    "public_id": "drv_895ebbdffbab",
+    "driver": "Younes Bouhoreira",
+    "points": 0,
+    "average_points_per_race": 0.0,
+    "races": 1,
+    "wins": 0,
+    "podiums": 0,
+    "average_finish": 11.0,
+    "best_lap": "1:51.675",
+    "best_lap_track": "monza",
+    "best_lap_car_model_id": 23,
+    "best_lap_car_name_raw": "Porsche 911II GT3 R (2019)",
+    "best_lap_car_name": "Porsche 911II GT3 R",
+    "average_pace_ms": 112358,
+    "average_pace": "1:52.358",
+    "penalty_count": 0,
+    "penalty_points": 0,
+    "last_race_at": "2026-03-18T00:52:49"
+  },
+  {
     "public_id": "drv_459efd85c666",
     "driver": "хто я",
     "points": 0,
@@ -11657,7 +11757,7 @@
     "average_pace": "1:49.871",
     "penalty_count": 0,
     "penalty_points": 0,
-    "last_race_at": "2026-03-18T00:16:29"
+    "last_race_at": "2026-03-18T00:52:49"
   },
   {
     "public_id": "drv_b4d6163fe071",
@@ -11778,6 +11878,26 @@
     "penalty_count": 0,
     "penalty_points": 0,
     "last_race_at": "2026-03-17T17:28:48"
+  },
+  {
+    "public_id": "drv_83e9b3db6426",
+    "driver": "Christian Racky",
+    "points": 0,
+    "average_points_per_race": 0.0,
+    "races": 1,
+    "wins": 0,
+    "podiums": 0,
+    "average_finish": 13.0,
+    "best_lap": "1:51.865",
+    "best_lap_track": "monza",
+    "best_lap_car_model_id": 1,
+    "best_lap_car_name_raw": "Mercedes-AMG GT3",
+    "best_lap_car_name": "Mercedes-AMG GT3",
+    "average_pace_ms": 111865,
+    "average_pace": "1:51.865",
+    "penalty_count": 0,
+    "penalty_points": 0,
+    "last_race_at": "2026-03-18T00:52:49"
   },
   {
     "public_id": "drv_288f3fe233e7",
@@ -13600,6 +13720,26 @@
     "last_race_at": "2026-03-16T22:02:28"
   },
   {
+    "public_id": "drv_d8053c2c3ee0",
+    "driver": "Александр Диденко",
+    "points": 0,
+    "average_points_per_race": 0.0,
+    "races": 1,
+    "wins": 0,
+    "podiums": 0,
+    "average_finish": 16.0,
+    "best_lap": null,
+    "best_lap_track": null,
+    "best_lap_car_model_id": null,
+    "best_lap_car_name_raw": null,
+    "best_lap_car_name": null,
+    "average_pace_ms": null,
+    "average_pace": null,
+    "penalty_count": 0,
+    "penalty_points": 0,
+    "last_race_at": "2026-03-18T00:52:49"
+  },
+  {
     "public_id": "drv_bcefdfd5aa66",
     "driver": "Julian Ling",
     "points": 0,
@@ -15320,6 +15460,26 @@
     "last_race_at": "2026-03-17T19:18:36"
   },
   {
+    "public_id": "drv_e83b94e4b7f1",
+    "driver": "Daniele Ondradu",
+    "points": 0,
+    "average_points_per_race": 0.0,
+    "races": 3,
+    "wins": 0,
+    "podiums": 0,
+    "average_finish": 19.0,
+    "best_lap": "1:50.495",
+    "best_lap_track": "monza",
+    "best_lap_car_model_id": 35,
+    "best_lap_car_name_raw": "McLaren 720S GT3 Evo 2023",
+    "best_lap_car_name": "McLaren 720S GT3 Evo",
+    "average_pace_ms": 113423,
+    "average_pace": "1:53.423",
+    "penalty_count": 0,
+    "penalty_points": 0,
+    "last_race_at": "2026-03-18T00:52:49"
+  },
+  {
     "public_id": "drv_6e73941c8888",
     "driver": "Digo Silva",
     "points": 0,
@@ -15740,6 +15900,26 @@
     "last_race_at": "2026-03-16T23:55:33"
   },
   {
+    "public_id": "drv_dc017f65b59d",
+    "driver": "SiN Taylor Orr",
+    "points": 0,
+    "average_points_per_race": 0.0,
+    "races": 2,
+    "wins": 0,
+    "podiums": 0,
+    "average_finish": 19.5,
+    "best_lap": "1:50.490",
+    "best_lap_track": "monza",
+    "best_lap_car_model_id": 31,
+    "best_lap_car_name_raw": "Audi R8 LMS GT3 evo II",
+    "best_lap_car_name": "Audi R8 LMS GT3 evo II",
+    "average_pace_ms": 110834,
+    "average_pace": "1:50.834",
+    "penalty_count": 0,
+    "penalty_points": 0,
+    "last_race_at": "2026-03-18T00:52:49"
+  },
+  {
     "public_id": "drv_317a7657ab96",
     "driver": ". [APEX]상원",
     "points": 0,
@@ -16137,7 +16317,7 @@
     "average_pace": "1:49.556",
     "penalty_count": 2,
     "penalty_points": 1,
-    "last_race_at": "2026-03-18T00:16:29"
+    "last_race_at": "2026-03-18T00:52:49"
   },
   {
     "public_id": "drv_1f6c5a2303cf",
@@ -16700,26 +16880,6 @@
     "last_race_at": "2026-03-14T23:00:59"
   },
   {
-    "public_id": "drv_e83b94e4b7f1",
-    "driver": "Daniele Ondradu",
-    "points": 0,
-    "average_points_per_race": 0.0,
-    "races": 2,
-    "wins": 0,
-    "podiums": 0,
-    "average_finish": 21.0,
-    "best_lap": "1:50.495",
-    "best_lap_track": "monza",
-    "best_lap_car_model_id": 35,
-    "best_lap_car_name_raw": "McLaren 720S GT3 Evo 2023",
-    "best_lap_car_name": "McLaren 720S GT3 Evo",
-    "average_pace_ms": 113423,
-    "average_pace": "1:53.423",
-    "penalty_count": 0,
-    "penalty_points": 0,
-    "last_race_at": "2026-03-16T22:02:28"
-  },
-  {
     "public_id": "drv_d04c66279751",
     "driver": "Delta Frost",
     "points": 0,
@@ -17277,7 +17437,7 @@
     "average_pace": "1:51.128",
     "penalty_count": 1,
     "penalty_points": 3,
-    "last_race_at": "2026-03-18T00:16:29"
+    "last_race_at": "2026-03-18T00:52:49"
   },
   {
     "public_id": "drv_b6337aac40a1",
@@ -17877,7 +18037,7 @@
     "average_pace": "1:49.743",
     "penalty_count": 0,
     "penalty_points": 0,
-    "last_race_at": "2026-03-18T00:16:29"
+    "last_race_at": "2026-03-18T00:52:49"
   },
   {
     "public_id": "drv_a16ad78cd476",
@@ -19380,26 +19540,6 @@
     "last_race_at": "2026-03-14T17:23:13"
   },
   {
-    "public_id": "drv_69e479b09e20",
-    "driver": "peter pet",
-    "points": 0,
-    "average_points_per_race": 0.0,
-    "races": 1,
-    "wins": 0,
-    "podiums": 0,
-    "average_finish": 25.0,
-    "best_lap": "1:48.812",
-    "best_lap_track": "monza",
-    "best_lap_car_model_id": 35,
-    "best_lap_car_name_raw": "McLaren 720S GT3 Evo 2023",
-    "best_lap_car_name": "McLaren 720S GT3 Evo",
-    "average_pace_ms": 109735,
-    "average_pace": "1:49.735",
-    "penalty_count": 1,
-    "penalty_points": 3,
-    "last_race_at": "2026-03-15T16:21:55"
-  },
-  {
     "public_id": "drv_aa6595d05e85",
     "driver": "Pinto Fabio",
     "points": 0,
@@ -19458,26 +19598,6 @@
     "penalty_count": 0,
     "penalty_points": 0,
     "last_race_at": "2026-03-17T19:18:36"
-  },
-  {
-    "public_id": "drv_dc017f65b59d",
-    "driver": "SiN Taylor Orr",
-    "points": 0,
-    "average_points_per_race": 0.0,
-    "races": 1,
-    "wins": 0,
-    "podiums": 0,
-    "average_finish": 25.0,
-    "best_lap": "1:50.490",
-    "best_lap_track": "monza",
-    "best_lap_car_model_id": 31,
-    "best_lap_car_name_raw": "Audi R8 LMS GT3 evo II",
-    "best_lap_car_name": "Audi R8 LMS GT3 evo II",
-    "average_pace_ms": 110490,
-    "average_pace": "1:50.490",
-    "penalty_count": 0,
-    "penalty_points": 0,
-    "last_race_at": "2026-03-18T00:16:29"
   },
   {
     "public_id": "drv_1f65ba6adb89",
@@ -20437,7 +20557,7 @@
     "average_pace": null,
     "penalty_count": 1,
     "penalty_points": 0,
-    "last_race_at": null
+    "last_race_at": "2026-03-18T00:52:49"
   },
   {
     "public_id": "drv_117a009e48a6",
@@ -20498,26 +20618,6 @@
     "penalty_count": 0,
     "penalty_points": 0,
     "last_race_at": "2026-03-14T21:08:17"
-  },
-  {
-    "public_id": "drv_0cdea701afd1",
-    "driver": "Alexey Zhmachkin",
-    "points": 0,
-    "average_points_per_race": 0,
-    "races": 0,
-    "wins": 0,
-    "podiums": 0,
-    "average_finish": null,
-    "best_lap": null,
-    "best_lap_track": null,
-    "best_lap_car_model_id": null,
-    "best_lap_car_name_raw": null,
-    "best_lap_car_name": null,
-    "average_pace_ms": null,
-    "average_pace": null,
-    "penalty_count": 0,
-    "penalty_points": 0,
-    "last_race_at": "2026-03-18T00:16:29"
   },
   {
     "public_id": "drv_c4551e43bc4d",
@@ -20638,6 +20738,26 @@
     "penalty_count": 0,
     "penalty_points": 0,
     "last_race_at": "2026-03-14T20:30:08"
+  },
+  {
+    "public_id": "drv_695d8463170d",
+    "driver": "Andrei Abrazhei",
+    "points": 0,
+    "average_points_per_race": 0,
+    "races": 0,
+    "wins": 0,
+    "podiums": 0,
+    "average_finish": null,
+    "best_lap": null,
+    "best_lap_track": null,
+    "best_lap_car_model_id": null,
+    "best_lap_car_name_raw": null,
+    "best_lap_car_name": null,
+    "average_pace_ms": null,
+    "average_pace": null,
+    "penalty_count": 0,
+    "penalty_points": 0,
+    "last_race_at": "2026-03-18T00:52:49"
   },
   {
     "public_id": "drv_1189a2b3c736",
@@ -20877,7 +20997,7 @@
     "average_pace": null,
     "penalty_count": 0,
     "penalty_points": 0,
-    "last_race_at": null
+    "last_race_at": "2026-03-18T00:52:49"
   },
   {
     "public_id": "drv_40662cc3b49b",
@@ -21340,26 +21460,6 @@
     "last_race_at": "2026-03-14T01:57:10"
   },
   {
-    "public_id": "drv_83e9b3db6426",
-    "driver": "Christian Racky",
-    "points": 0,
-    "average_points_per_race": 0,
-    "races": 0,
-    "wins": 0,
-    "podiums": 0,
-    "average_finish": null,
-    "best_lap": null,
-    "best_lap_track": null,
-    "best_lap_car_model_id": null,
-    "best_lap_car_name_raw": null,
-    "best_lap_car_name": null,
-    "average_pace_ms": null,
-    "average_pace": null,
-    "penalty_count": 0,
-    "penalty_points": 0,
-    "last_race_at": "2026-03-17T23:38:34"
-  },
-  {
     "public_id": "drv_beaf401263dd",
     "driver": "ClouDie Khinchuk",
     "points": 0,
@@ -21537,7 +21637,7 @@
     "average_pace": null,
     "penalty_count": 0,
     "penalty_points": 0,
-    "last_race_at": null
+    "last_race_at": "2026-03-18T00:52:49"
   },
   {
     "public_id": "drv_2c5e72ec739c",
@@ -21558,6 +21658,26 @@
     "penalty_count": 0,
     "penalty_points": 0,
     "last_race_at": "2026-03-15T21:51:43"
+  },
+  {
+    "public_id": "drv_ec96338f8077",
+    "driver": "Daniil Ready",
+    "points": 0,
+    "average_points_per_race": 0,
+    "races": 0,
+    "wins": 0,
+    "podiums": 0,
+    "average_finish": null,
+    "best_lap": null,
+    "best_lap_track": null,
+    "best_lap_car_model_id": null,
+    "best_lap_car_name_raw": null,
+    "best_lap_car_name": null,
+    "average_pace_ms": null,
+    "average_pace": null,
+    "penalty_count": 0,
+    "penalty_points": 0,
+    "last_race_at": "2026-03-18T00:52:49"
   },
   {
     "public_id": "drv_f2416e58354f",
@@ -21597,7 +21717,7 @@
     "average_pace": null,
     "penalty_count": 0,
     "penalty_points": 0,
-    "last_race_at": null
+    "last_race_at": "2026-03-18T00:52:49"
   },
   {
     "public_id": "drv_bd366d98b799",
@@ -22217,7 +22337,7 @@
     "average_pace": null,
     "penalty_count": 0,
     "penalty_points": 0,
-    "last_race_at": null
+    "last_race_at": "2026-03-18T00:52:49"
   },
   {
     "public_id": "drv_08ce1a8018ea",
@@ -22298,6 +22418,26 @@
     "penalty_count": 0,
     "penalty_points": 0,
     "last_race_at": "2026-03-15T23:08:44"
+  },
+  {
+    "public_id": "drv_397fceb0dcf7",
+    "driver": "Fergal L",
+    "points": 0,
+    "average_points_per_race": 0,
+    "races": 0,
+    "wins": 0,
+    "podiums": 0,
+    "average_finish": null,
+    "best_lap": null,
+    "best_lap_track": null,
+    "best_lap_car_model_id": null,
+    "best_lap_car_name_raw": null,
+    "best_lap_car_name": null,
+    "average_pace_ms": null,
+    "average_pace": null,
+    "penalty_count": 0,
+    "penalty_points": 0,
+    "last_race_at": "2026-03-18T00:52:49"
   },
   {
     "public_id": "drv_c42284825116",
@@ -22498,26 +22638,6 @@
     "penalty_count": 0,
     "penalty_points": 0,
     "last_race_at": "2026-03-15T23:46:16"
-  },
-  {
-    "public_id": "drv_7652aa660522",
-    "driver": "Gabriel Dahuron",
-    "points": 0,
-    "average_points_per_race": 0,
-    "races": 0,
-    "wins": 0,
-    "podiums": 0,
-    "average_finish": null,
-    "best_lap": null,
-    "best_lap_track": null,
-    "best_lap_car_model_id": null,
-    "best_lap_car_name_raw": null,
-    "best_lap_car_name": null,
-    "average_pace_ms": null,
-    "average_pace": null,
-    "penalty_count": 0,
-    "penalty_points": 0,
-    "last_race_at": null
   },
   {
     "public_id": "drv_87ac0769422a",
@@ -22837,7 +22957,7 @@
     "average_pace": null,
     "penalty_count": 0,
     "penalty_points": 0,
-    "last_race_at": null
+    "last_race_at": "2026-03-18T00:52:49"
   },
   {
     "public_id": "drv_90d043338f57",
@@ -23277,7 +23397,7 @@
     "average_pace": null,
     "penalty_count": 0,
     "penalty_points": 0,
-    "last_race_at": null
+    "last_race_at": "2026-03-18T00:52:49"
   },
   {
     "public_id": "drv_0d64cef40bf2",
@@ -23797,7 +23917,7 @@
     "average_pace": null,
     "penalty_count": 0,
     "penalty_points": 0,
-    "last_race_at": null
+    "last_race_at": "2026-03-18T00:52:49"
   },
   {
     "public_id": "drv_ea4b9f3cc912",
@@ -24675,9 +24795,9 @@
     "best_lap_car_name": null,
     "average_pace_ms": null,
     "average_pace": null,
-    "penalty_count": 0,
-    "penalty_points": 0,
-    "last_race_at": null
+    "penalty_count": 1,
+    "penalty_points": 3,
+    "last_race_at": "2026-03-18T00:52:49"
   },
   {
     "public_id": "drv_e6845dd2a7af",
@@ -25740,6 +25860,26 @@
     "last_race_at": "2026-03-15T21:51:43"
   },
   {
+    "public_id": "drv_ab11d59801c7",
+    "driver": "Richarles Pereira",
+    "points": 0,
+    "average_points_per_race": 0,
+    "races": 0,
+    "wins": 0,
+    "podiums": 0,
+    "average_finish": null,
+    "best_lap": null,
+    "best_lap_track": null,
+    "best_lap_car_model_id": null,
+    "best_lap_car_name_raw": null,
+    "best_lap_car_name": null,
+    "average_pace_ms": null,
+    "average_pace": null,
+    "penalty_count": 0,
+    "penalty_points": 0,
+    "last_race_at": "2026-03-18T00:52:49"
+  },
+  {
     "public_id": "drv_44c8266b62f4",
     "driver": "Rizzo Ratiano",
     "points": 0,
@@ -26018,26 +26158,6 @@
     "penalty_count": 0,
     "penalty_points": 0,
     "last_race_at": "2026-03-15T18:47:44"
-  },
-  {
-    "public_id": "drv_6ebe4edcd33e",
-    "driver": "Shane Marshall",
-    "points": 0,
-    "average_points_per_race": 0,
-    "races": 0,
-    "wins": 0,
-    "podiums": 0,
-    "average_finish": null,
-    "best_lap": "1:50.055",
-    "best_lap_track": "monza",
-    "best_lap_car_model_id": 20,
-    "best_lap_car_name_raw": "AMR V8 Vantage (2019)",
-    "best_lap_car_name": "AMR V8 Vantage",
-    "average_pace_ms": 110055,
-    "average_pace": "1:50.055",
-    "penalty_count": 0,
-    "penalty_points": 0,
-    "last_race_at": null
   },
   {
     "public_id": "drv_82ffbad5fcab",
@@ -27117,7 +27237,7 @@
     "average_pace": null,
     "penalty_count": 0,
     "penalty_points": 0,
-    "last_race_at": "2026-03-17T23:00:10"
+    "last_race_at": "2026-03-18T00:52:49"
   },
   {
     "public_id": "drv_911983f39d83",
@@ -27278,26 +27398,6 @@
     "penalty_count": 0,
     "penalty_points": 0,
     "last_race_at": "2026-03-15T16:58:35"
-  },
-  {
-    "public_id": "drv_895ebbdffbab",
-    "driver": "Younes Bouhoreira",
-    "points": 0,
-    "average_points_per_race": 0,
-    "races": 0,
-    "wins": 0,
-    "podiums": 0,
-    "average_finish": null,
-    "best_lap": "1:52.435",
-    "best_lap_track": "monza",
-    "best_lap_car_model_id": 23,
-    "best_lap_car_name_raw": "Porsche 911II GT3 R (2019)",
-    "best_lap_car_name": "Porsche 911II GT3 R",
-    "average_pace_ms": 112435,
-    "average_pace": "1:52.435",
-    "penalty_count": 0,
-    "penalty_points": 0,
-    "last_race_at": null
   },
   {
     "public_id": "drv_720de517c860",
