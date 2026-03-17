@@ -21,19 +21,19 @@
     "penalty_points": 0,
     "fastest_lap_awards": 0,
     "most_raced_track": "monza",
-    "last_race_at": "2026-03-17T23:38:34",
-    "last_seen": "2026-03-17T23:38:34",
+    "last_race_at": "2026-03-18T00:16:29",
+    "last_seen": "2026-03-18T00:16:29",
     "win_rate": 0.0,
     "podium_rate": 0.0,
     "average_positions_delta": 3.67,
     "positions_delta_races": 3
   },
   "recent_form": [
+    39,
     15,
     8,
     40,
-    27,
-    14
+    27
   ],
   "track_stats": [
     {
@@ -49,6 +49,35 @@
     }
   ],
   "race_history": [
+    {
+      "race_id": "260318_001629_R.json",
+      "finished_at": "2026-03-18T00:16:29",
+      "track": "monza",
+      "car_model_id": 6,
+      "car_name_raw": "Nissan GT-R Nismo GT3 2018",
+      "car_name": "Nissan GT-R Nismo GT3",
+      "position": 39,
+      "participants_count": 45,
+      "winner": "Axel Phowley",
+      "points": 0,
+      "qualifying_position": 25,
+      "start_position": 25,
+      "start_position_source": "qualifying_car_id",
+      "positions_delta": -14,
+      "positions_gained": 0,
+      "positions_lost": 14,
+      "best_lap": null,
+      "best_lap_ms": null,
+      "total_time": null,
+      "total_time_ms": null,
+      "gap": null,
+      "gap_ms": null,
+      "lap_count": 0,
+      "counted_for_stats": false,
+      "had_best_lap": false,
+      "penalty_count": 0,
+      "penalty_points": 0
+    },
     {
       "race_id": "260317_233834_R.json",
       "finished_at": "2026-03-17T23:38:34",

@@ -4,10 +4,10 @@
   "summary": {
     "points": 0,
     "average_points_per_race": 0.0,
-    "races": 1,
+    "races": 2,
     "wins": 0,
     "podiums": 0,
-    "average_finish": 20.0,
+    "average_finish": 21.0,
     "best_lap": "1:49.890",
     "best_lap_ms": 109890,
     "best_lap_track": "monza",
@@ -17,34 +17,64 @@
     "best_lap_session_type": "Q",
     "average_pace_ms": 111128,
     "average_pace": "1:51.128",
-    "penalty_count": 0,
-    "penalty_points": 0,
+    "penalty_count": 1,
+    "penalty_points": 3,
     "fastest_lap_awards": 0,
     "most_raced_track": "monza",
-    "last_race_at": "2026-03-13T22:14:10",
-    "last_seen": "2026-03-17T23:50:25",
+    "last_race_at": "2026-03-18T00:16:29",
+    "last_seen": "2026-03-18T00:16:29",
     "win_rate": 0.0,
     "podium_rate": 0.0,
-    "average_positions_delta": -16.0,
-    "positions_delta_races": 1
+    "average_positions_delta": -13.0,
+    "positions_delta_races": 2
   },
   "recent_form": [
+    22,
     20
   ],
   "track_stats": [
     {
       "track": "monza",
-      "races": 1,
+      "races": 2,
       "wins": 0,
       "podiums": 0,
       "points": 0,
-      "finish_sum": 20,
-      "average_finish": 20.0,
+      "finish_sum": 42,
+      "average_finish": 21.0,
       "best_lap_ms": 111927,
       "best_lap": "1:51.927"
     }
   ],
   "race_history": [
+    {
+      "race_id": "260318_001629_R.json",
+      "finished_at": "2026-03-18T00:16:29",
+      "track": "monza",
+      "car_model_id": 30,
+      "car_name_raw": "BMW M4 GT3",
+      "car_name": "BMW M4 GT3",
+      "position": 22,
+      "participants_count": 45,
+      "winner": "Axel Phowley",
+      "points": 0,
+      "qualifying_position": 12,
+      "start_position": 12,
+      "start_position_source": "qualifying_car_id",
+      "positions_delta": -10,
+      "positions_gained": 0,
+      "positions_lost": 10,
+      "best_lap": null,
+      "best_lap_ms": null,
+      "total_time": "4:51.676",
+      "total_time_ms": 291676,
+      "gap": "0:00.000",
+      "gap_ms": 0,
+      "lap_count": 2,
+      "counted_for_stats": true,
+      "had_best_lap": false,
+      "penalty_count": 1,
+      "penalty_points": 3
+    },
     {
       "race_id": "260313_221410_R.json",
       "finished_at": "2026-03-13T22:14:10",
@@ -76,9 +106,13 @@
     }
   ],
   "penalties": {
-    "penalty_count": 0,
-    "penalty_points": 0,
-    "reasons": {},
-    "types": {}
+    "penalty_count": 1,
+    "penalty_points": 3,
+    "reasons": {
+      "Cutting": 1
+    },
+    "types": {
+      "DriveThrough": 1
+    }
   }
 }

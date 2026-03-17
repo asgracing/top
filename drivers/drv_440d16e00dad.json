@@ -1,0 +1,84 @@
+{
+  "public_id": "drv_440d16e00dad",
+  "driver": "Sylvain Retif",
+  "summary": {
+    "points": 0,
+    "average_points_per_race": 0.0,
+    "races": 1,
+    "wins": 0,
+    "podiums": 0,
+    "average_finish": 17.0,
+    "best_lap": "1:48.885",
+    "best_lap_ms": 108885,
+    "best_lap_track": "monza",
+    "best_lap_car_model_id": 34,
+    "best_lap_car_name_raw": "Porsche 992 GT3 R",
+    "best_lap_car_name": "Porsche 992 GT3 R",
+    "best_lap_session_type": "R",
+    "average_pace_ms": 110130,
+    "average_pace": "1:50.130",
+    "penalty_count": 0,
+    "penalty_points": 0,
+    "fastest_lap_awards": 0,
+    "most_raced_track": "monza",
+    "last_race_at": "2026-03-18T00:16:29",
+    "last_seen": "2026-03-18T00:16:29",
+    "win_rate": 0.0,
+    "podium_rate": 0.0,
+    "average_positions_delta": null,
+    "positions_delta_races": 0
+  },
+  "recent_form": [
+    17
+  ],
+  "track_stats": [
+    {
+      "track": "monza",
+      "races": 1,
+      "wins": 0,
+      "podiums": 0,
+      "points": 0,
+      "finish_sum": 17,
+      "average_finish": 17.0,
+      "best_lap_ms": 108885,
+      "best_lap": "1:48.885"
+    }
+  ],
+  "race_history": [
+    {
+      "race_id": "260318_001629_R.json",
+      "finished_at": "2026-03-18T00:16:29",
+      "track": "monza",
+      "car_model_id": 34,
+      "car_name_raw": "Porsche 992 GT3 R",
+      "car_name": "Porsche 992 GT3 R",
+      "position": 17,
+      "participants_count": 45,
+      "winner": "Axel Phowley",
+      "points": 0,
+      "qualifying_position": null,
+      "start_position": null,
+      "start_position_source": "unknown",
+      "positions_delta": null,
+      "positions_gained": null,
+      "positions_lost": null,
+      "best_lap": "1:48.885",
+      "best_lap_ms": 108885,
+      "total_time": "22:36.224",
+      "total_time_ms": 1356224,
+      "gap": "0:54.498",
+      "gap_ms": 54498,
+      "lap_count": 9,
+      "counted_for_stats": true,
+      "had_best_lap": false,
+      "penalty_count": 0,
+      "penalty_points": 0
+    }
+  ],
+  "penalties": {
+    "penalty_count": 0,
+    "penalty_points": 0,
+    "reasons": {},
+    "types": {}
+  }
+}
