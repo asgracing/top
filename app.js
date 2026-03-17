@@ -1916,6 +1916,7 @@ function renderRacesSummary() {
     : null;
   const latestWinnerCarName = getResultCarName(latestWinnerRow);
 
+  
   totalEl.textContent = processedRaces.length || "-";
   avgActiveEl.textContent = processedRaces.length ? (activeDriversTotal / processedRaces.length).toFixed(2) : "-";
   avgOvertakesEl.textContent = processedRaces.length ? (overtakesTotal / processedRaces.length).toFixed(2) : "-";
