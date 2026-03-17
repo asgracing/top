@@ -1,6 +1,6 @@
 {
-  "public_id": "drv_fb81524426bf",
-  "driver": "vid dezman",
+  "public_id": "drv_a2e54bfc23d4",
+  "driver": "Cristiano CR7",
   "summary": {
     "points": 0,
     "average_points_per_race": 0,
@@ -29,7 +29,7 @@
     "positions_delta_races": 0
   },
   "recent_form": [
-    27
+    40
   ],
   "track_stats": [],
   "race_history": [
@@ -37,19 +37,19 @@
       "race_id": "260317_230010_R.json",
       "finished_at": "2026-03-17T23:00:10",
       "track": "monza",
-      "car_model_id": 30,
-      "car_name_raw": "BMW M4 GT3",
-      "car_name": "BMW M4 GT3",
-      "position": 27,
+      "car_model_id": 32,
+      "car_name_raw": "Ferrari 296 GT3",
+      "car_name": "Ferrari 296 GT3",
+      "position": 40,
       "participants_count": 42,
       "winner": "Oscar Cnac",
       "points": 0,
-      "qualifying_position": 24,
-      "start_position": 24,
-      "start_position_source": "qualifying_car_id",
-      "positions_delta": -3,
-      "positions_gained": 0,
-      "positions_lost": 3,
+      "qualifying_position": null,
+      "start_position": null,
+      "start_position_source": "unknown",
+      "positions_delta": null,
+      "positions_gained": null,
+      "positions_lost": null,
       "best_lap": null,
       "best_lap_ms": null,
       "total_time": null,
