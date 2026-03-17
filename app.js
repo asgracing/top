@@ -2344,18 +2344,6 @@ function renderDriverPage() {
       <div class="driver-stat-value">${escapeHtml(summary.points ?? 0)}</div>
     </div>
     <div class="driver-stat-card">
-      <div class="driver-stat-label">${escapeHtml(t("driverSummaryRaces"))}</div>
-      <div class="driver-stat-value">${escapeHtml(summary.races ?? 0)}</div>
-    </div>
-    <div class="driver-stat-card">
-      <div class="driver-stat-label">${escapeHtml(t("driverSummaryWins"))}</div>
-      <div class="driver-stat-value">${escapeHtml(summary.wins ?? 0)}</div>
-    </div>
-    <div class="driver-stat-card">
-      <div class="driver-stat-label">${escapeHtml(t("driverSummaryPodiums"))}</div>
-      <div class="driver-stat-value">${escapeHtml(summary.podiums ?? 0)}</div>
-    </div>
-    <div class="driver-stat-card">
       <div class="driver-stat-label">${escapeHtml(t("driverSummaryAvgFinish"))}</div>
       <div class="driver-stat-value">${escapeHtml(summary.average_finish ?? "-")}</div>
     </div>
@@ -2364,8 +2352,28 @@ function renderDriverPage() {
       <div class="driver-stat-value">${escapeHtml(summary.average_points_per_race ?? 0)}</div>
     </div>
     <div class="driver-stat-card">
+      <div class="driver-stat-label">${escapeHtml(t("driverSummaryRaces"))}</div>
+      <div class="driver-stat-value">${escapeHtml(summary.races ?? 0)}</div>
+    </div>
+    <div class="driver-stat-card">
+      <div class="driver-stat-label">${escapeHtml(t("driverSummaryWins"))}</div>
+      <div class="driver-stat-value">${escapeHtml(summary.wins ?? 0)}</div>
+    </div>
+    <div class="driver-stat-card">
+      <div class="driver-stat-label">${escapeHtml(t("driverWinRate"))}</div>
+      <div class="driver-stat-value">${escapeHtml(summary.win_rate ?? 0)}%</div>
+    </div>
+    <div class="driver-stat-card">
       <div class="driver-stat-label">${escapeHtml(t("driverSummaryAvgGain"))}</div>
       <div class="driver-stat-value">${renderPositionsDelta(summary.average_positions_delta)}</div>
+    </div>
+    <div class="driver-stat-card">
+      <div class="driver-stat-label">${escapeHtml(t("driverSummaryPodiums"))}</div>
+      <div class="driver-stat-value">${escapeHtml(summary.podiums ?? 0)}</div>
+    </div>
+    <div class="driver-stat-card">
+      <div class="driver-stat-label">${escapeHtml(t("driverPodiumRate"))}</div>
+      <div class="driver-stat-value">${escapeHtml(summary.podium_rate ?? 0)}%</div>
     </div>
     <div class="driver-stat-card">
       <div class="driver-stat-label">${escapeHtml(t("driverSummaryBestLap"))}</div>
@@ -2382,20 +2390,12 @@ function renderDriverPage() {
 
   highlightsEl.innerHTML = `
     <div class="driver-highlight-card">
-      <div class="driver-highlight-label">${escapeHtml(t("driverRecentForm"))}</div>
-      <div class="driver-highlight-value">${renderRecentForm(driverProfileData.recent_form)}</div>
-    </div>
-    <div class="driver-highlight-card">
       <div class="driver-highlight-label">${escapeHtml(t("driverFavoriteCar"))}</div>
       <div class="driver-highlight-value">${renderCarLink(favoriteCarName || "-", "driver-link driver-link-heading")}</div>
     </div>
     <div class="driver-highlight-card">
-      <div class="driver-highlight-label">${escapeHtml(t("driverWinRate"))}</div>
-      <div class="driver-highlight-value">${escapeHtml(summary.win_rate ?? 0)}%</div>
-    </div>
-    <div class="driver-highlight-card">
-      <div class="driver-highlight-label">${escapeHtml(t("driverPodiumRate"))}</div>
-      <div class="driver-highlight-value">${escapeHtml(summary.podium_rate ?? 0)}%</div>
+      <div class="driver-highlight-label">${escapeHtml(t("driverRecentForm"))}</div>
+      <div class="driver-highlight-value">${renderRecentForm(driverProfileData.recent_form)}</div>
     </div>
     <div class="driver-highlight-card">
       <div class="driver-highlight-label">${escapeHtml(t("driverSummaryFastestLaps"))}</div>
