@@ -3,11 +3,11 @@
   "driver": "Maksym Kudlai",
   "summary": {
     "points": 8,
-    "average_points_per_race": 4.0,
-    "races": 2,
+    "average_points_per_race": 2.67,
+    "races": 3,
     "wins": 0,
     "podiums": 0,
-    "average_finish": 17.0,
+    "average_finish": 16.67,
     "best_lap": "1:48.182",
     "best_lap_ms": 108182,
     "best_lap_track": "monza",
@@ -15,20 +15,21 @@
     "best_lap_car_name_raw": "AMR V8 Vantage (2019)",
     "best_lap_car_name": "AMR V8 Vantage",
     "best_lap_session_type": "R",
-    "average_pace_ms": 109048,
-    "average_pace": "1:49.048",
-    "penalty_count": 0,
-    "penalty_points": 0,
+    "average_pace_ms": 109179,
+    "average_pace": "1:49.179",
+    "penalty_count": 1,
+    "penalty_points": 3,
     "fastest_lap_awards": 0,
     "most_raced_track": "monza",
-    "last_race_at": "2026-03-17T21:47:10",
-    "last_seen": "2026-03-17T21:47:10",
+    "last_race_at": "2026-03-17T22:23:45",
+    "last_seen": "2026-03-17T22:23:45",
     "win_rate": 0.0,
     "podium_rate": 0.0,
-    "average_positions_delta": 1.0,
-    "positions_delta_races": 1
+    "average_positions_delta": 3.0,
+    "positions_delta_races": 2
   },
   "recent_form": [
+    16,
     29,
     6,
     28,
@@ -37,17 +38,46 @@
   "track_stats": [
     {
       "track": "monza",
-      "races": 2,
+      "races": 3,
       "wins": 0,
       "podiums": 0,
       "points": 8,
-      "finish_sum": 34,
-      "average_finish": 17.0,
+      "finish_sum": 50,
+      "average_finish": 16.67,
       "best_lap_ms": 108182,
       "best_lap": "1:48.182"
     }
   ],
   "race_history": [
+    {
+      "race_id": "260317_222345_R.json",
+      "finished_at": "2026-03-17T22:23:45",
+      "track": "monza",
+      "car_model_id": 20,
+      "car_name_raw": "AMR V8 Vantage (2019)",
+      "car_name": "AMR V8 Vantage",
+      "position": 16,
+      "participants_count": 42,
+      "winner": "Andrei Soldatenkov [ASG]",
+      "points": 0,
+      "qualifying_position": 21,
+      "start_position": 21,
+      "start_position_source": "qualifying_car_id",
+      "positions_delta": 5,
+      "positions_gained": 5,
+      "positions_lost": 0,
+      "best_lap": "1:49.197",
+      "best_lap_ms": 109197,
+      "total_time": "12:02.791",
+      "total_time_ms": 722791,
+      "gap": "0:00.000",
+      "gap_ms": 0,
+      "lap_count": 6,
+      "counted_for_stats": true,
+      "had_best_lap": false,
+      "penalty_count": 1,
+      "penalty_points": 3
+    },
     {
       "race_id": "260317_214710_R.json",
       "finished_at": "2026-03-17T21:47:10",
@@ -166,9 +196,13 @@
     }
   ],
   "penalties": {
-    "penalty_count": 0,
-    "penalty_points": 0,
-    "reasons": {},
-    "types": {}
+    "penalty_count": 1,
+    "penalty_points": 3,
+    "reasons": {
+      "Cutting": 1
+    },
+    "types": {
+      "StopAndGo_10": 1
+    }
   }
 }
