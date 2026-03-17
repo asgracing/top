@@ -196,8 +196,11 @@ onlineNoData: "No data",
     carsTableSubtitle: "Sorted by wins, podiums and race count.",
     carsCols: ["Car", "Races", "Wins", "Win Rate", "Podiums", "Drivers", "Avg Finish", "Fastest Laps", "Best Lap"],
     racesSummaryTotal: "Total races",
-    racesSummaryLatestTrack: "Latest track",
+    racesSummaryAvgActive: "Avg active finishers",
+    racesSummaryAvgOvertakes: "Avg overtakes",
+    racesSummaryTopWinner: "Top winner",
     racesSummaryLatestWinner: "Latest winner",
+    racesSummaryLastWinnerBestLap: "Winner best lap",
     racesTableTitle: "Race Results",
     racesTableSubtitle: "Sorted from newest to oldest.",
     raceModalEyebrow: "Race details",
@@ -400,8 +403,11 @@ onlineNoData: "Нет данных",
     emptyFilteredRaces: "Нет гонок, подходящих под текущие фильтры.",
     emptyFilteredCars: "Нет машин, подходящих под текущие фильтры.",
     racesSummaryTotal: "Всего гонок",
-    racesSummaryLatestTrack: "Последняя трасса",
+    racesSummaryAvgActive: "Ср. активных пилотов",
+    racesSummaryAvgOvertakes: "Ср. обгонов",
+    racesSummaryTopWinner: "Лучший победитель",
     racesSummaryLatestWinner: "Последний победитель",
+    racesSummaryLastWinnerBestLap: "Лучший круг победителя",
     racesTableTitle: "Результаты гонок",
     racesTableSubtitle: "Сортировка от новых к старым.",
     raceModalEyebrow: "Детали гонки",
@@ -517,6 +523,46 @@ const carsColumns = [
   { key: "fastest_lap_awards", type: "number" },
   { key: "best_lap", type: "time" }
 ];
+
+const carModelNames = {
+  0: "Porsche 991 GT3 R",
+  1: "Mercedes-AMG GT3",
+  2: "Ferrari 488 GT3",
+  3: "Audi R8 LMS",
+  4: "Lamborghini Huracan GT3",
+  5: "McLaren 650S GT3",
+  6: "Nissan GT-R Nismo GT3 2018",
+  7: "BMW M6 GT3",
+  8: "Bentley Continental GT3 2018",
+  9: "Porsche 991II GT3 Cup",
+  10: "Nissan GT-R Nismo GT3 2017",
+  11: "Bentley Continental GT3 2016",
+  12: "Aston Martin V12 Vantage GT3",
+  13: "Lamborghini Gallardo R-EX",
+  14: "Jaguar G3",
+  15: "Lexus RC F GT3",
+  16: "Lamborghini Huracan Evo (2019)",
+  17: "Honda NSX GT3",
+  18: "Lamborghini Huracan SuperTrofeo",
+  19: "Audi R8 LMS Evo (2019)",
+  20: "AMR V8 Vantage (2019)",
+  21: "Honda NSX Evo (2019)",
+  22: "McLaren 720S GT3 (2019)",
+  23: "Porsche 911II GT3 R (2019)",
+  24: "Ferrari 488 GT3 Evo 2020",
+  25: "Mercedes-AMG GT3 2020",
+  26: "Ferrari 488 Challenge Evo",
+  27: "BMW M2 CS Racing",
+  28: "Porsche 911 GT3 Cup (Type 992)",
+  29: "Lamborghini Huracán Super Trofeo EVO2",
+  30: "BMW M4 GT3",
+  31: "Audi R8 LMS GT3 evo II",
+  32: "Ferrari 296 GT3",
+  33: "Lamborghini Huracan Evo2",
+  34: "Porsche 992 GT3 R",
+  35: "McLaren 720S GT3 Evo 2023",
+  36: "Ford Mustang GT3"
+};
 
 const driverRaceColumns = [
   { key: "finished_at", type: "string" },
@@ -1716,6 +1762,25 @@ function humanizeTrackName(track) {
     .replace(/\b\w/g, char => char.toUpperCase());
 }
 
+function isValidRaceTime(value) {
+  return typeof value === "number" && value > 0 && value !== 2147483647 && value !== 4294967295;
+}
+
+function isActiveRaceResult(row) {
+  if (!row || row.counted_for_stats === false) return false;
+  if ((row.lap_count ?? 0) <= 0) return false;
+  if (!isValidRaceTime(row.total_time_ms)) return false;
+  return true;
+}
+
+function getResultCarName(row) {
+  if (!row) return "-";
+  if (row.car_name) return row.car_name;
+  if (row.car_model != null && carModelNames[row.car_model]) return carModelNames[row.car_model];
+  if (row.car_model_id != null && carModelNames[row.car_model_id]) return carModelNames[row.car_model_id];
+  return "-";
+}
+
 function getQueryParam(name) {
   return new URLSearchParams(window.location.search).get(name);
 }
@@ -1795,17 +1860,53 @@ function renderCarsFilters() {
 
 function renderRacesSummary() {
   const totalEl = document.getElementById("races-total-count");
-  const trackEl = document.getElementById("races-latest-track");
+  const avgActiveEl = document.getElementById("races-avg-active");
+  const avgOvertakesEl = document.getElementById("races-avg-overtakes");
+  const topWinnerEl = document.getElementById("races-top-winner");
   const winnerEl = document.getElementById("races-latest-winner");
-  if (!totalEl || !trackEl || !winnerEl) return;
+  const lastWinnerBestLapEl = document.getElementById("races-last-winner-best-lap");
+  const lastWinnerBestLapNoteEl = document.getElementById("races-last-winner-best-lap-note");
+  if (!totalEl || !avgActiveEl || !avgOvertakesEl || !topWinnerEl || !winnerEl || !lastWinnerBestLapEl || !lastWinnerBestLapNoteEl) return;
 
   const processedRaces = getProcessedRaces();
   const latestRace = processedRaces[0];
+  const winnerCounts = new Map();
+  let activeDriversTotal = 0;
+  let overtakesTotal = 0;
+
+  processedRaces.forEach(race => {
+    if (race?.winner) {
+      const key = race.winner_public_id || race.winner;
+      const existing = winnerCounts.get(key) || { count: 0, name: race.winner, publicId: race.winner_public_id };
+      existing.count += 1;
+      winnerCounts.set(key, existing);
+    }
+
+    const activeResults = (race.results || []).filter(isActiveRaceResult);
+    activeDriversTotal += activeResults.length;
+    overtakesTotal += activeResults.reduce((sum, row) => sum + Math.max(0, row?.positions_delta ?? 0), 0);
+  });
+
+  const topWinner = [...winnerCounts.values()].sort((a, b) => b.count - a.count || a.name.localeCompare(b.name))[0] || null;
+  const latestWinnerRow = latestRace
+    ? (latestRace.results || []).find(row =>
+        (latestRace.winner_public_id && row.public_id === latestRace.winner_public_id) ||
+        row.driver === latestRace.winner
+      )
+    : null;
+  const latestWinnerCarName = getResultCarName(latestWinnerRow);
+
   totalEl.textContent = processedRaces.length || "-";
-  trackEl.textContent = latestRace ? humanizeTrackName(latestRace.track) : "-";
+  avgActiveEl.textContent = processedRaces.length ? (activeDriversTotal / processedRaces.length).toFixed(2) : "-";
+  avgOvertakesEl.textContent = processedRaces.length ? (overtakesTotal / processedRaces.length).toFixed(2) : "-";
+  topWinnerEl.innerHTML = topWinner
+    ? renderDriverLink(topWinner.name || t("noWinner"), topWinner.publicId, "driver-link")
+    : t("noWinner");
   winnerEl.innerHTML = latestRace
     ? renderDriverLink(latestRace.winner || t("noWinner"), latestRace.winner_public_id, "driver-link")
     : t("noWinner");
+  lastWinnerBestLapEl.textContent = latestWinnerRow?.best_lap || "-";
+  lastWinnerBestLapNoteEl.textContent = latestWinnerCarName;
 }
 
 function renderRacesTablePage() {
