@@ -942,7 +942,7 @@ function applyStaticTranslations() {
 
   const bestLapNoteEl = document.getElementById("best-lap-note");
   if (bestlapsData.length > 0 && bestLapNoteEl) {
-    updateBestLapNote(bestlapsData[0].driver, bestlapsData[0].track);
+    updateBestLapNote(bestlapsData[0].driver, bestlapsData[0].track, bestlapsData[0].car_name);
   } else if (bestLapNoteEl) {
     bestLapNoteEl.textContent = t("bestLapNoteFallback");
   }
@@ -990,14 +990,15 @@ function renderPositionsDelta(value) {
   return `<span class="positions-delta ${cls}">${escapeHtml(formatted)}</span>`;
 }
 
-function updateBestLapNote(driver, track) {
+function updateBestLapNote(driver, track, carName) {
   const noteEl = document.getElementById("best-lap-note");
   if (!noteEl) return;
 
-  noteEl.textContent = replaceTokens(t("bestLapNoteTemplate"), {
+  const base = replaceTokens(t("bestLapNoteTemplate"), {
     driver: driver || "Unknown",
     track: track || "Unknown track"
   });
+  noteEl.textContent = carName ? `${base} · ${carName}` : base;
 }
 
 function renderTop3(data) {
@@ -2332,7 +2333,7 @@ async function init() {
       if (bestLapHighlightEl) {
         bestLapHighlightEl.textContent = bestlapsData[0].best_lap || "—";
       }
-      updateBestLapNote(bestlapsData[0].driver, bestlapsData[0].track);
+      updateBestLapNote(bestlapsData[0].driver, bestlapsData[0].track, bestlapsData[0].car_name);
     } else {
       if (bestLapHighlightEl) {
         bestLapHighlightEl.textContent = "—";
