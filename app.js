@@ -43,6 +43,7 @@ let carsData = [];
 let leaderboardPage = 1;
 let bestlapsPage = 1;
 let safetyPage = 1;
+let racesPage = 1;
 let currentLang = "en";
 let leaderboardSearch = "";
 let bestlapsSearch = "";
@@ -1170,7 +1171,7 @@ function applyRevealAnimations() {
   if (window.matchMedia("(prefers-reduced-motion: reduce)").matches) return;
 
   const targets = document.querySelectorAll(
-    ".hero-card, .section, .pilot-card, .mini-stat, .driver-stat-card, .driver-highlight-card, .race-summary-card"
+    ".hero-card, .pilot-card, .mini-stat, .driver-stat-card, .driver-highlight-card, .race-summary-card"
   );
 
   if (!("IntersectionObserver" in window)) {
@@ -1612,10 +1613,6 @@ function bindSearchInputs() {
   const leaderboardInput = document.getElementById("leaderboard-search");
   const bestlapsInput = document.getElementById("bestlaps-search");
   const safetyInput = document.getElementById("safety-search");
-  const racesInput = document.getElementById("races-search");
-  const carsInput = document.getElementById("cars-search");
-  const racesTrackSelect = document.getElementById("races-track-filter");
-  const carsMinRacesSelect = document.getElementById("cars-min-races");
   const handleLeaderboardInput = debounce((value) => {
     leaderboardSearch = value || "";
     leaderboardPage = 1;
@@ -1630,16 +1627,6 @@ function bindSearchInputs() {
     safetySearch = value || "";
     safetyPage = 1;
     renderSafetyTablePage();
-  });
-  const handleRacesInput = debounce((value) => {
-    racesSearch = value || "";
-    updatePageQuery({ q: racesSearch || null, track: racesTrackFilter || null });
-    renderRacesPage();
-  });
-  const handleCarsInput = debounce((value) => {
-    carsSearch = value || "";
-    updatePageQuery({ car: carsSearch || null, minRaces: carsMinRacesFilter || null });
-    renderCarsPage();
   });
 
   if (leaderboardInput) {
@@ -1657,34 +1644,6 @@ function bindSearchInputs() {
   if (safetyInput) {
     safetyInput.addEventListener("input", (e) => {
       handleSafetyInput(e.target.value);
-    });
-  }
-
-  if (racesInput) {
-    racesInput.addEventListener("input", (e) => {
-      handleRacesInput(e.target.value);
-    });
-  }
-
-  if (carsInput) {
-    carsInput.addEventListener("input", (e) => {
-      handleCarsInput(e.target.value);
-    });
-  }
-
-  if (racesTrackSelect) {
-    racesTrackSelect.addEventListener("change", (e) => {
-      racesTrackFilter = e.target.value || "";
-      updatePageQuery({ q: racesSearch || null, track: racesTrackFilter || null });
-      renderRacesPage();
-    });
-  }
-
-  if (carsMinRacesSelect) {
-    carsMinRacesSelect.addEventListener("change", (e) => {
-      carsMinRacesFilter = e.target.value || "0";
-      updatePageQuery({ car: carsSearch || null, minRaces: carsMinRacesFilter || null });
-      renderCarsPage();
     });
   }
 }
@@ -1815,19 +1774,7 @@ function renderFilterMeta(containerId, { items = [], count = 0, onClearId = "" }
 }
 
 function filterRaces(data) {
-  const query = normalizeString(racesSearch);
-  return [...data].filter(row => {
-    if (racesTrackFilter && row.track !== racesTrackFilter) return false;
-    if (!query) return true;
-
-    const haystack = [
-      row.track,
-      row.winner,
-      row.best_lap_driver
-    ].map(normalizeString).join(" ");
-
-    return haystack.includes(query);
-  });
+  return [...data];
 }
 
 function getProcessedRaces() {
@@ -1835,55 +1782,15 @@ function getProcessedRaces() {
 }
 
 function filterCars(data) {
-  const query = normalizeString(carsSearch);
-  const minRaces = Number(carsMinRacesFilter) || 0;
-
-  return [...data].filter(row => {
-    if ((row?.races ?? 0) < minRaces) return false;
-    if (!query) return true;
-    return normalizeString(row?.car_name).includes(query);
-  });
+  return [...data];
 }
 
 function renderRacesFilters() {
-  const inputEl = document.getElementById("races-search");
-  const selectEl = document.getElementById("races-track-filter");
-  if (inputEl) inputEl.value = racesSearch;
-  if (!selectEl) return;
-
-  const tracks = [...new Set(racesData.map(row => row?.track).filter(Boolean))]
-    .sort((a, b) => humanizeTrackName(a).localeCompare(humanizeTrackName(b)));
-
-  selectEl.innerHTML = [
-    `<option value="">${escapeHtml(t("racesTrackFilterAll"))}</option>`,
-    ...tracks.map(track => `<option value="${escapeHtml(track)}">${escapeHtml(humanizeTrackName(track))}</option>`)
-  ].join("");
-  selectEl.value = racesTrackFilter;
-
-  renderFilterMeta("races-tools-meta", {
-    items: [
-      racesSearch ? { label: t("filterSearchLabel"), value: racesSearch } : null,
-      racesTrackFilter ? { label: t("filterTrackLabel"), value: humanizeTrackName(racesTrackFilter) } : null
-    ],
-    count: getProcessedRaces().length,
-    onClearId: "races-clear-filters"
-  });
+  return;
 }
 
 function renderCarsFilters() {
-  const inputEl = document.getElementById("cars-search");
-  const selectEl = document.getElementById("cars-min-races");
-  if (inputEl) inputEl.value = carsSearch;
-  if (selectEl) selectEl.value = carsMinRacesFilter;
-
-  renderFilterMeta("cars-tools-meta", {
-    items: [
-      carsSearch ? { label: t("filterCarLabel"), value: carsSearch } : null,
-      Number(carsMinRacesFilter) > 0 ? { label: t("filterMinRacesLabel"), value: `${carsMinRacesFilter}+` } : null
-    ],
-    count: getProcessedCars().length,
-    onClearId: "cars-clear-filters"
-  });
+  return;
 }
 
 function renderRacesSummary() {
@@ -1892,27 +1799,31 @@ function renderRacesSummary() {
   const winnerEl = document.getElementById("races-latest-winner");
   if (!totalEl || !trackEl || !winnerEl) return;
 
-  const filteredRaces = getProcessedRaces();
-  const latestRace = filteredRaces[0];
-  totalEl.textContent = filteredRaces.length || "-";
+  const processedRaces = getProcessedRaces();
+  const latestRace = processedRaces[0];
+  totalEl.textContent = processedRaces.length || "-";
   trackEl.textContent = latestRace ? humanizeTrackName(latestRace.track) : "-";
   winnerEl.innerHTML = latestRace
     ? renderDriverLink(latestRace.winner || t("noWinner"), latestRace.winner_public_id, "driver-link")
     : t("noWinner");
 }
 
-function renderRacesTable() {
+function renderRacesTablePage() {
   const tableEl = document.getElementById("races-table");
-  if (!tableEl) return;
+  const wrapEl = document.getElementById("races-pagination-wrap");
+  if (!tableEl || !wrapEl) return;
 
-  const races = getProcessedRaces();
-  if (!races.length) {
-    tableEl.innerHTML = `<div class="empty-box">${escapeHtml(racesSearch || racesTrackFilter ? t("emptyFilteredRaces") : t("emptyRaces"))}</div>`;
+  const result = paginate(getProcessedRaces(), racesPage, PAGE_SIZE);
+  racesPage = result.page;
+
+  if (!result.totalItems) {
+    tableEl.innerHTML = `<div class="empty-box">${escapeHtml(t("emptyRaces"))}</div>`;
+    wrapEl.style.display = "none";
     return;
   }
 
   const headers = t("racesCols").map(label => `<th>${escapeHtml(label)}</th>`).join("");
-  const rows = races.map((race, index) => `
+  const rows = result.items.map((race, index) => `
     <tr
       class="is-interactive-row"
       data-race-index="${escapeHtml(index)}"
@@ -1951,7 +1862,7 @@ function renderRacesTable() {
         return;
       }
       const index = Number(row.dataset.raceIndex);
-      openRaceResultsModal(races[index] || null, row);
+      openRaceResultsModal(result.items[index] || null, row);
     };
 
     row.addEventListener("click", openRow);
@@ -1962,6 +1873,22 @@ function renderRacesTable() {
       }
     });
   });
+
+  renderPagination(
+    "races-pagination",
+    "races-pagination-info",
+    "races-pagination-wrap",
+    result.page,
+    result.totalPages,
+    result.totalItems,
+    result.startIndex,
+    result.endIndex,
+    (page) => {
+      racesPage = page;
+      renderRacesTablePage();
+      document.getElementById("top")?.scrollIntoView({ behavior: "smooth", block: "start" });
+    }
+  );
 }
 
 function renderRaceResultsModal() {
@@ -2063,9 +1990,8 @@ function initRaceResultsModal() {
 }
 
 function renderRacesPage() {
-  renderRacesFilters();
   renderRacesSummary();
-  renderRacesTable();
+  renderRacesTablePage();
   renderRaceResultsModal();
 }
 
@@ -2075,10 +2001,10 @@ function renderCarsSummary() {
   const usedEl = document.getElementById("cars-most-used");
   if (!totalEl || !winnerEl || !usedEl) return;
 
-  const filteredCars = getProcessedCars();
-  totalEl.textContent = filteredCars.length || "—";
-  const topWinner = filteredCars[0] || null;
-  const mostUsed = [...filteredCars].sort((a, b) => {
+  const processedCars = getProcessedCars();
+  totalEl.textContent = processedCars.length || "—";
+  const topWinner = processedCars[0] || null;
+  const mostUsed = [...processedCars].sort((a, b) => {
     const racesDiff = (b?.races ?? 0) - (a?.races ?? 0);
     if (racesDiff !== 0) return racesDiff;
     return String(a?.car_name || "").localeCompare(String(b?.car_name || ""));
@@ -2089,7 +2015,6 @@ function renderCarsSummary() {
 }
 
 function renderCarsPage() {
-  renderCarsFilters();
   renderCarsSummary();
   renderCarsTable();
 }
@@ -2101,7 +2026,7 @@ function renderCarsTable() {
   const rowsData = getProcessedCars();
 
   if (!rowsData.length) {
-    tableEl.innerHTML = `<div class="empty-box">${escapeHtml(carsSearch || Number(carsMinRacesFilter) > 0 ? t("emptyFilteredCars") : t("emptyRaces"))}</div>`;
+    tableEl.innerHTML = `<div class="empty-box">${escapeHtml(t("emptyRaces"))}</div>`;
     return;
   }
 
@@ -2632,15 +2557,10 @@ async function init() {
   optimizeBackgroundMedia();
   window.addEventListener("resize", debounce(optimizeBackgroundMedia, 120));
   if (IS_RACES_PAGE) {
-    racesSearch = getQueryParam("q") || "";
-    racesTrackFilter = getQueryParam("track") || "";
     initRaceResultsModal();
   } else if (!IS_DRIVER_PAGE && !IS_CARS_PAGE) {
     initTodayStatsModal();
     initDriverOfDayModal();
-  } else if (IS_CARS_PAGE) {
-    carsSearch = getQueryParam("car") || "";
-    carsMinRacesFilter = getQueryParam("minRaces") || "0";
   }
   applyStaticTranslations();
 
