@@ -2331,6 +2331,7 @@ function renderDriverPage() {
 
   const summary = driverProfileData.summary || {};
   const favoriteCarName = getFavoriteCarName(driverProfileData);
+  const averagePace = summary.average_pace ?? "-";
   document.title = `${driverProfileData.driver} | ${t("pageTitleDriver")}`;
   nameEl.textContent = driverProfileData.driver || "-";
   subtitleEl.textContent = t("driverPageSubtitle");
@@ -2366,6 +2367,10 @@ function renderDriverPage() {
         <span>${escapeHtml(summary.best_lap ?? "-")}</span>
         <span class="driver-stat-side">${renderCarLink(summary.best_lap_car_name ?? "-", "driver-link driver-link-subtle")}</span>
       </div>
+    </div>
+    <div class="driver-stat-card">
+      <div class="driver-stat-label">${escapeHtml(t("driverSummaryAvgPace"))}</div>
+      <div class="driver-stat-value">${escapeHtml(averagePace)}</div>
     </div>
     <div class="driver-stat-card">
       <div class="driver-stat-label">${escapeHtml(t("driverSummaryPenaltyPoints"))}</div>
