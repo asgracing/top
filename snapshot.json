@@ -1,6 +1,6 @@
 {
   "schema_version": 7,
-  "generated_at": "2026-03-18T17:12:20",
+  "generated_at": "2026-03-18T17:22:20",
   "leaderboard": [
     {
       "player_id": "S76561199664057628",
@@ -38251,6 +38251,34 @@
       "rank": 1366
     },
     {
+      "player_id": "S76561198062718955",
+      "public_id": "drv_46f3c14e4ea0",
+      "driver": "Shiven Ram",
+      "races": 0,
+      "wins": 0,
+      "podiums": 0,
+      "points": 0,
+      "average_finish_sum": 0,
+      "average_finish": null,
+      "best_lap_ms": null,
+      "best_lap": null,
+      "best_lap_track": null,
+      "best_lap_car_model_id": null,
+      "best_lap_car_name_raw": null,
+      "best_lap_car_name": null,
+      "best_lap_session_type": null,
+      "last_track": null,
+      "last_seen": null,
+      "positions_delta_sum": 0,
+      "positions_delta_races": 0,
+      "average_positions_delta": null,
+      "average_pace_sum_ms": 0,
+      "average_pace_laps_count": 0,
+      "average_pace_ms": null,
+      "average_pace": null,
+      "rank": 1367
+    },
+    {
       "player_id": "S76561199681015245",
       "public_id": "drv_82ffbad5fcab",
       "driver": "Sibongiseni Ndl",
@@ -38276,7 +38304,7 @@
       "average_pace_laps_count": 0,
       "average_pace_ms": null,
       "average_pace": null,
-      "rank": 1367
+      "rank": 1368
     },
     {
       "player_id": "S76561199507973295",
@@ -38304,7 +38332,7 @@
       "average_pace_laps_count": 0,
       "average_pace_ms": null,
       "average_pace": null,
-      "rank": 1368
+      "rank": 1369
     },
     {
       "player_id": "S76561198287937319",
@@ -38332,7 +38360,7 @@
       "average_pace_laps_count": 0,
       "average_pace_ms": null,
       "average_pace": null,
-      "rank": 1369
+      "rank": 1370
     },
     {
       "player_id": "S76561198421980094",
@@ -38360,7 +38388,7 @@
       "average_pace_laps_count": 1,
       "average_pace_ms": 110280,
       "average_pace": "1:50.280",
-      "rank": 1370
+      "rank": 1371
     },
     {
       "player_id": "S76561199681291603",
@@ -38388,7 +38416,7 @@
       "average_pace_laps_count": 0,
       "average_pace_ms": null,
       "average_pace": null,
-      "rank": 1371
+      "rank": 1372
     },
     {
       "player_id": "S76561198224845272",
@@ -38416,7 +38444,7 @@
       "average_pace_laps_count": 1,
       "average_pace_ms": 110535,
       "average_pace": "1:50.535",
-      "rank": 1372
+      "rank": 1373
     },
     {
       "player_id": "S76561198811740582",
@@ -38444,7 +38472,7 @@
       "average_pace_laps_count": 0,
       "average_pace_ms": null,
       "average_pace": null,
-      "rank": 1373
+      "rank": 1374
     },
     {
       "player_id": "S76561198330004454",
@@ -38472,7 +38500,7 @@
       "average_pace_laps_count": 0,
       "average_pace_ms": null,
       "average_pace": null,
-      "rank": 1374
+      "rank": 1375
     },
     {
       "player_id": "S76561198093582047",
@@ -38500,7 +38528,7 @@
       "average_pace_laps_count": 0,
       "average_pace_ms": null,
       "average_pace": null,
-      "rank": 1375
+      "rank": 1376
     },
     {
       "player_id": "S76561198053999264",
@@ -38528,7 +38556,7 @@
       "average_pace_laps_count": 0,
       "average_pace_ms": null,
       "average_pace": null,
-      "rank": 1376
+      "rank": 1377
     },
     {
       "player_id": "S76561199229685146",
@@ -38556,7 +38584,7 @@
       "average_pace_laps_count": 0,
       "average_pace_ms": null,
       "average_pace": null,
-      "rank": 1377
+      "rank": 1378
     },
     {
       "player_id": "S76561199211185865",
@@ -38584,7 +38612,7 @@
       "average_pace_laps_count": 1,
       "average_pace_ms": 109292,
       "average_pace": "1:49.292",
-      "rank": 1378
+      "rank": 1379
     },
     {
       "player_id": "S76561198120260524",
@@ -38612,7 +38640,7 @@
       "average_pace_laps_count": 0,
       "average_pace_ms": null,
       "average_pace": null,
-      "rank": 1379
+      "rank": 1380
     },
     {
       "player_id": "S76561198410876878",
@@ -38640,7 +38668,7 @@
       "average_pace_laps_count": 0,
       "average_pace_ms": null,
       "average_pace": null,
-      "rank": 1380
+      "rank": 1381
     },
     {
       "player_id": "S76561198686578478",
@@ -38668,7 +38696,7 @@
       "average_pace_laps_count": 0,
       "average_pace_ms": null,
       "average_pace": null,
-      "rank": 1381
+      "rank": 1382
     },
     {
       "player_id": "S76561199880073373",
@@ -38696,7 +38724,7 @@
       "average_pace_laps_count": 0,
       "average_pace_ms": null,
       "average_pace": null,
-      "rank": 1382
+      "rank": 1383
     },
     {
       "player_id": "S76561197963365686",
@@ -38724,7 +38752,7 @@
       "average_pace_laps_count": 0,
       "average_pace_ms": null,
       "average_pace": null,
-      "rank": 1383
+      "rank": 1384
     },
     {
       "player_id": "S76561198417403198",
@@ -38752,7 +38780,7 @@
       "average_pace_laps_count": 0,
       "average_pace_ms": null,
       "average_pace": null,
-      "rank": 1384
+      "rank": 1385
     },
     {
       "player_id": "S76561198132313810",
@@ -38780,7 +38808,7 @@
       "average_pace_laps_count": 0,
       "average_pace_ms": null,
       "average_pace": null,
-      "rank": 1385
+      "rank": 1386
     },
     {
       "player_id": "S76561198214565637",
@@ -38808,7 +38836,7 @@
       "average_pace_laps_count": 0,
       "average_pace_ms": null,
       "average_pace": null,
-      "rank": 1386
+      "rank": 1387
     },
     {
       "player_id": "S76561198754698813",
@@ -38836,7 +38864,7 @@
       "average_pace_laps_count": 0,
       "average_pace_ms": null,
       "average_pace": null,
-      "rank": 1387
+      "rank": 1388
     },
     {
       "player_id": "S76561199041321576",
@@ -38864,7 +38892,7 @@
       "average_pace_laps_count": 0,
       "average_pace_ms": null,
       "average_pace": null,
-      "rank": 1388
+      "rank": 1389
     },
     {
       "player_id": "S76561198015820363",
@@ -38892,7 +38920,7 @@
       "average_pace_laps_count": 1,
       "average_pace_ms": 108785,
       "average_pace": "1:48.785",
-      "rank": 1389
+      "rank": 1390
     },
     {
       "player_id": "S76561199050858775",
@@ -38920,7 +38948,7 @@
       "average_pace_laps_count": 0,
       "average_pace_ms": null,
       "average_pace": null,
-      "rank": 1390
+      "rank": 1391
     },
     {
       "player_id": "S76561199124533094",
@@ -38948,7 +38976,7 @@
       "average_pace_laps_count": 0,
       "average_pace_ms": null,
       "average_pace": null,
-      "rank": 1391
+      "rank": 1392
     },
     {
       "player_id": "S76561199797899655",
@@ -38976,7 +39004,7 @@
       "average_pace_laps_count": 0,
       "average_pace_ms": null,
       "average_pace": null,
-      "rank": 1392
+      "rank": 1393
     },
     {
       "player_id": "S76561198187335531",
@@ -39004,7 +39032,7 @@
       "average_pace_laps_count": 0,
       "average_pace_ms": null,
       "average_pace": null,
-      "rank": 1393
+      "rank": 1394
     },
     {
       "player_id": "S76561199788577202",
@@ -39032,7 +39060,7 @@
       "average_pace_laps_count": 0,
       "average_pace_ms": null,
       "average_pace": null,
-      "rank": 1394
+      "rank": 1395
     },
     {
       "player_id": "S76561198383129869",
@@ -39060,7 +39088,7 @@
       "average_pace_laps_count": 0,
       "average_pace_ms": null,
       "average_pace": null,
-      "rank": 1395
+      "rank": 1396
     },
     {
       "player_id": "S76561199730055202",
@@ -39088,7 +39116,7 @@
       "average_pace_laps_count": 0,
       "average_pace_ms": null,
       "average_pace": null,
-      "rank": 1396
+      "rank": 1397
     },
     {
       "player_id": "S76561199259497803",
@@ -39116,7 +39144,7 @@
       "average_pace_laps_count": 0,
       "average_pace_ms": null,
       "average_pace": null,
-      "rank": 1397
+      "rank": 1398
     },
     {
       "player_id": "S76561199798900185",
@@ -39144,7 +39172,7 @@
       "average_pace_laps_count": 0,
       "average_pace_ms": null,
       "average_pace": null,
-      "rank": 1398
+      "rank": 1399
     },
     {
       "player_id": "S76561198995109697",
@@ -39172,7 +39200,7 @@
       "average_pace_laps_count": 0,
       "average_pace_ms": null,
       "average_pace": null,
-      "rank": 1399
+      "rank": 1400
     },
     {
       "player_id": "S76561198347920817",
@@ -39200,7 +39228,7 @@
       "average_pace_laps_count": 0,
       "average_pace_ms": null,
       "average_pace": null,
-      "rank": 1400
+      "rank": 1401
     },
     {
       "player_id": "S76561198268919054",
@@ -39228,7 +39256,7 @@
       "average_pace_laps_count": 0,
       "average_pace_ms": null,
       "average_pace": null,
-      "rank": 1401
+      "rank": 1402
     },
     {
       "player_id": "S76561199167285197",
@@ -39256,7 +39284,7 @@
       "average_pace_laps_count": 0,
       "average_pace_ms": null,
       "average_pace": null,
-      "rank": 1402
+      "rank": 1403
     },
     {
       "player_id": "S76561198431175630",
@@ -39284,7 +39312,7 @@
       "average_pace_laps_count": 0,
       "average_pace_ms": null,
       "average_pace": null,
-      "rank": 1403
+      "rank": 1404
     },
     {
       "player_id": "S76561199045104981",
@@ -39312,7 +39340,7 @@
       "average_pace_laps_count": 2,
       "average_pace_ms": 110820,
       "average_pace": "1:50.820",
-      "rank": 1404
+      "rank": 1405
     },
     {
       "player_id": "S76561199135650862",
@@ -39340,7 +39368,7 @@
       "average_pace_laps_count": 0,
       "average_pace_ms": null,
       "average_pace": null,
-      "rank": 1405
+      "rank": 1406
     },
     {
       "player_id": "S76561198825003637",
@@ -39368,7 +39396,7 @@
       "average_pace_laps_count": 2,
       "average_pace_ms": 111084,
       "average_pace": "1:51.084",
-      "rank": 1406
+      "rank": 1407
     },
     {
       "player_id": "S76561198117096035",
@@ -39396,7 +39424,7 @@
       "average_pace_laps_count": 0,
       "average_pace_ms": null,
       "average_pace": null,
-      "rank": 1407
+      "rank": 1408
     },
     {
       "player_id": "S76561199743626321",
@@ -39424,7 +39452,7 @@
       "average_pace_laps_count": 0,
       "average_pace_ms": null,
       "average_pace": null,
-      "rank": 1408
+      "rank": 1409
     },
     {
       "player_id": "S76561198152830265",
@@ -39452,7 +39480,7 @@
       "average_pace_laps_count": 0,
       "average_pace_ms": null,
       "average_pace": null,
-      "rank": 1409
+      "rank": 1410
     },
     {
       "player_id": "S76561198838015440",
@@ -39480,7 +39508,7 @@
       "average_pace_laps_count": 0,
       "average_pace_ms": null,
       "average_pace": null,
-      "rank": 1410
+      "rank": 1411
     },
     {
       "player_id": "S76561199215247074",
@@ -39508,7 +39536,7 @@
       "average_pace_laps_count": 0,
       "average_pace_ms": null,
       "average_pace": null,
-      "rank": 1411
+      "rank": 1412
     },
     {
       "player_id": "S76561199219208085",
@@ -39536,7 +39564,7 @@
       "average_pace_laps_count": 0,
       "average_pace_ms": null,
       "average_pace": null,
-      "rank": 1412
+      "rank": 1413
     },
     {
       "player_id": "S76561198173168377",
@@ -39564,7 +39592,7 @@
       "average_pace_laps_count": 0,
       "average_pace_ms": null,
       "average_pace": null,
-      "rank": 1413
+      "rank": 1414
     },
     {
       "player_id": "S76561199106441335",
@@ -39592,7 +39620,7 @@
       "average_pace_laps_count": 0,
       "average_pace_ms": null,
       "average_pace": null,
-      "rank": 1414
+      "rank": 1415
     },
     {
       "player_id": "S76561198815679059",
@@ -39620,7 +39648,7 @@
       "average_pace_laps_count": 0,
       "average_pace_ms": null,
       "average_pace": null,
-      "rank": 1415
+      "rank": 1416
     },
     {
       "player_id": "S76561198016084086",
@@ -39648,7 +39676,7 @@
       "average_pace_laps_count": 0,
       "average_pace_ms": null,
       "average_pace": null,
-      "rank": 1416
+      "rank": 1417
     },
     {
       "player_id": "S76561198331389694",
@@ -39676,7 +39704,7 @@
       "average_pace_laps_count": 1,
       "average_pace_ms": 110545,
       "average_pace": "1:50.545",
-      "rank": 1417
+      "rank": 1418
     },
     {
       "player_id": "S76561198357038625",
@@ -39704,7 +39732,7 @@
       "average_pace_laps_count": 0,
       "average_pace_ms": null,
       "average_pace": null,
-      "rank": 1418
+      "rank": 1419
     },
     {
       "player_id": "S76561198384300031",
@@ -39732,7 +39760,7 @@
       "average_pace_laps_count": 0,
       "average_pace_ms": null,
       "average_pace": null,
-      "rank": 1419
+      "rank": 1420
     },
     {
       "player_id": "S76561199675912868",
@@ -39760,7 +39788,7 @@
       "average_pace_laps_count": 0,
       "average_pace_ms": null,
       "average_pace": null,
-      "rank": 1420
+      "rank": 1421
     },
     {
       "player_id": "S76561199794088887",
@@ -39788,7 +39816,7 @@
       "average_pace_laps_count": 0,
       "average_pace_ms": null,
       "average_pace": null,
-      "rank": 1421
+      "rank": 1422
     },
     {
       "player_id": "S76561198345835818",
@@ -39816,7 +39844,7 @@
       "average_pace_laps_count": 0,
       "average_pace_ms": null,
       "average_pace": null,
-      "rank": 1422
+      "rank": 1423
     },
     {
       "player_id": "S76561199550202295",
@@ -39844,7 +39872,7 @@
       "average_pace_laps_count": 0,
       "average_pace_ms": null,
       "average_pace": null,
-      "rank": 1423
+      "rank": 1424
     },
     {
       "player_id": "S76561198321761580",
@@ -39872,7 +39900,7 @@
       "average_pace_laps_count": 0,
       "average_pace_ms": null,
       "average_pace": null,
-      "rank": 1424
+      "rank": 1425
     },
     {
       "player_id": "S76561198401503053",
@@ -39900,7 +39928,7 @@
       "average_pace_laps_count": 0,
       "average_pace_ms": null,
       "average_pace": null,
-      "rank": 1425
+      "rank": 1426
     },
     {
       "player_id": "S76561198157123468",
@@ -39928,7 +39956,7 @@
       "average_pace_laps_count": 0,
       "average_pace_ms": null,
       "average_pace": null,
-      "rank": 1426
+      "rank": 1427
     },
     {
       "player_id": "S76561199228224593",
@@ -39956,7 +39984,7 @@
       "average_pace_laps_count": 0,
       "average_pace_ms": null,
       "average_pace": null,
-      "rank": 1427
+      "rank": 1428
     },
     {
       "player_id": "S76561199155580297",
@@ -39984,7 +40012,7 @@
       "average_pace_laps_count": 0,
       "average_pace_ms": null,
       "average_pace": null,
-      "rank": 1428
+      "rank": 1429
     },
     {
       "player_id": "S76561198869621915",
@@ -40012,7 +40040,7 @@
       "average_pace_laps_count": 0,
       "average_pace_ms": null,
       "average_pace": null,
-      "rank": 1429
+      "rank": 1430
     },
     {
       "player_id": "S76561198858763790",
@@ -40040,7 +40068,7 @@
       "average_pace_laps_count": 0,
       "average_pace_ms": null,
       "average_pace": null,
-      "rank": 1430
+      "rank": 1431
     },
     {
       "player_id": "S76561199813366459",
@@ -40068,7 +40096,7 @@
       "average_pace_laps_count": 0,
       "average_pace_ms": null,
       "average_pace": null,
-      "rank": 1431
+      "rank": 1432
     },
     {
       "player_id": "S76561198141931792",
@@ -40096,7 +40124,7 @@
       "average_pace_laps_count": 0,
       "average_pace_ms": null,
       "average_pace": null,
-      "rank": 1432
+      "rank": 1433
     },
     {
       "player_id": "S76561199275459496",
@@ -40124,7 +40152,7 @@
       "average_pace_laps_count": 0,
       "average_pace_ms": null,
       "average_pace": null,
-      "rank": 1433
+      "rank": 1434
     },
     {
       "player_id": "S76561199569222152",
@@ -40152,7 +40180,7 @@
       "average_pace_laps_count": 0,
       "average_pace_ms": null,
       "average_pace": null,
-      "rank": 1434
+      "rank": 1435
     },
     {
       "player_id": "S76561198224625488",
@@ -40180,7 +40208,7 @@
       "average_pace_laps_count": 0,
       "average_pace_ms": null,
       "average_pace": null,
-      "rank": 1435
+      "rank": 1436
     },
     {
       "player_id": "S76561199811858535",
@@ -40208,7 +40236,7 @@
       "average_pace_laps_count": 0,
       "average_pace_ms": null,
       "average_pace": null,
-      "rank": 1436
+      "rank": 1437
     },
     {
       "player_id": "S76561198076643799",
@@ -40236,7 +40264,7 @@
       "average_pace_laps_count": 0,
       "average_pace_ms": null,
       "average_pace": null,
-      "rank": 1437
+      "rank": 1438
     },
     {
       "player_id": "S76561198356560431",
@@ -40264,7 +40292,7 @@
       "average_pace_laps_count": 0,
       "average_pace_ms": null,
       "average_pace": null,
-      "rank": 1438
+      "rank": 1439
     },
     {
       "player_id": "S76561199416692485",
@@ -40292,7 +40320,7 @@
       "average_pace_laps_count": 0,
       "average_pace_ms": null,
       "average_pace": null,
-      "rank": 1439
+      "rank": 1440
     },
     {
       "player_id": "S76561198832976959",
@@ -40320,7 +40348,7 @@
       "average_pace_laps_count": 0,
       "average_pace_ms": null,
       "average_pace": null,
-      "rank": 1440
+      "rank": 1441
     },
     {
       "player_id": "S76561198261164133",
@@ -40348,7 +40376,7 @@
       "average_pace_laps_count": 2,
       "average_pace_ms": 112254,
       "average_pace": "1:52.254",
-      "rank": 1441
+      "rank": 1442
     },
     {
       "player_id": "S76561199073772512",
@@ -40376,7 +40404,7 @@
       "average_pace_laps_count": 0,
       "average_pace_ms": null,
       "average_pace": null,
-      "rank": 1442
+      "rank": 1443
     },
     {
       "player_id": "S76561199712738499",
@@ -40404,7 +40432,7 @@
       "average_pace_laps_count": 0,
       "average_pace_ms": null,
       "average_pace": null,
-      "rank": 1443
+      "rank": 1444
     }
   ],
   "bestlaps": [
@@ -57732,14 +57760,14 @@
     },
     {
       "date": "2026-03-18",
-      "unique_players": 154
+      "unique_players": 155
     }
   ],
   "global_stats": {
     "date": "2026-03-18",
-    "unique_players_today": 154,
+    "unique_players_today": 155,
     "races_today": 10,
-    "sessions_today": 28,
+    "sessions_today": 29,
     "points_earned_today": 918,
     "wins_today": 10,
     "podiums_today": 28,
@@ -57771,7 +57799,7 @@
       "driver": "Rogue Hunter",
       "points": 43
     },
-    "updated_at": "2026-03-18T17:12:20"
+    "updated_at": "2026-03-18T17:22:20"
   },
   "driver_of_the_day": {
     "date": "2026-03-18",
@@ -57790,7 +57818,7 @@
     "best_lap_car_model_id": 36,
     "best_lap_car_name_raw": "Ford Mustang GT3",
     "best_lap_car_name": "Ford Mustang GT3",
-    "updated_at": "2026-03-18T17:12:20"
+    "updated_at": "2026-03-18T17:22:20"
   },
   "server_status": {
     "status": "online",
@@ -57799,6 +57827,6 @@
     "tcp_listening": true,
     "udp_listening": true,
     "broadcast_listening": true,
-    "updated_at": "2026-03-18T17:12:20"
+    "updated_at": "2026-03-18T17:22:20"
   }
 }
