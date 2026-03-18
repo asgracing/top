@@ -1,6 +1,6 @@
 {
   "schema_version": 7,
-  "generated_at": "2026-03-18T21:02:20",
+  "generated_at": "2026-03-18T21:12:20",
   "leaderboard": [
     {
       "player_id": "S76561199664057628",
@@ -59918,7 +59918,7 @@
       "driver": "Javier Breogan.VR.|ARF",
       "points": 109
     },
-    "updated_at": "2026-03-18T21:02:20"
+    "updated_at": "2026-03-18T21:12:20"
   },
   "driver_of_the_day": {
     "date": "2026-03-18",
@@ -59937,15 +59937,15 @@
     "best_lap_car_model_id": 35,
     "best_lap_car_name_raw": "McLaren 720S GT3 Evo 2023",
     "best_lap_car_name": "McLaren 720S GT3 Evo",
-    "updated_at": "2026-03-18T21:02:20"
+    "updated_at": "2026-03-18T21:12:20"
   },
   "server_status": {
     "status": "online",
     "server_online": true,
-    "players_online": 24,
+    "players_online": 17,
     "tcp_listening": true,
     "udp_listening": true,
     "broadcast_listening": true,
-    "updated_at": "2026-03-18T21:02:20"
+    "updated_at": "2026-03-18T21:12:20"
   }
 }
