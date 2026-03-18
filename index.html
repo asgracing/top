@@ -1,4 +1,4 @@
-﻿<!DOCTYPE html>
+<!DOCTYPE html>
 <html lang="en">
 <head>
   <meta charset="UTF-8" />
@@ -25,7 +25,7 @@
 <!-- /Yandex.Metrika counter -->
   <meta
     name="description"
-    content="ASG Racing ACC Leaderboard - race stats, wins, podiums and best laps from the public Assetto Corsa Competizione server."
+    content="ASG Racing ACC Leaderboard — race stats, wins, podiums and best laps from the public Assetto Corsa Competizione server."
   />
   <meta
     name="keywords"
@@ -103,7 +103,7 @@
       <div class="hero-card">
         
 <div class="hero-grid">
-  <div class="hero-copy">
+  <div>
     <div class="eyebrow">ACC Public Leaderboard</div>
     <h1 data-i18n="heroTitle">🏁 ASG Racing League</h1>
     <p class="hero-subtitle" data-i18n="heroSubtitle">
@@ -111,29 +111,6 @@
       <strong>ASG Racing</strong> server. Data is automatically updated
       based on dedicated server results.
     </p>
-  </div>
-
-  <aside class="hero-hourly-card" id="hero-hourly-card">
-    <div class="hero-hourly-head">
-      <div class="eyebrow hero-hourly-eyebrow" id="hourly-eyebrow">Next Scheduled 1-Hour Race</div>
-    </div>
-
-    <div class="hero-hourly-meta">
-      <div class="hero-hourly-meta-row">
-        <span class="hero-hourly-meta-label" id="hourly-starts-label">Starts</span>
-        <span class="hero-hourly-meta-value" id="hourly-starts-value">-</span>
-      </div>
-
-      <div class="hero-hourly-meta-row">
-        <span class="hero-hourly-meta-label" id="hourly-track-label">Track</span>
-        <span class="hero-hourly-meta-value" id="hourly-track-value">-</span>
-      </div>
-    </div>
-
-    <a class="btn hero-hourly-btn" id="hourly-details-btn" href="/hourly/">
-      Open Event page
-    </a>
-  </aside>
 
     <div class="hero-actions-row">
       <div class="hero-actions hero-actions-stacked-mobile">
@@ -161,14 +138,14 @@
           id="driver-of-day-btn"
           type="button"
         >
-          Driver of the day: -
+          Driver of the day: —
         </button>
       </div>
 
       <div class="hero-online-card" id="hero-online-card">
         <div class="hero-online-head">
           <div class="hero-online-title">Unique players</div>
-          <div class="hero-online-range" id="online-range">-</div>
+          <div class="hero-online-range" id="online-range">—</div>
         </div>
 
         <div class="hero-online-chart-wrap">
@@ -182,26 +159,27 @@
         </div>
       </div>
     </div>
+  </div>
 
   <div class="hero-side hero-side-compact">
     <div class="mini-stat mini-stat-bestlap">
       <div class="mini-label">Best lap record</div>
-      <div class="mini-value" id="best-lap-highlight">-</div>
-      <div class="mini-note" id="best-lap-note">-</div>
+      <div class="mini-value" id="best-lap-highlight">—</div>
+      <div class="mini-note" id="best-lap-note">—</div>
     </div>
 
     <div class="hero-stats-row">
       <div class="mini-stat mini-stat-compact">
         <div class="mini-label">Server</div>
         <div class="mini-value server-status-wrap">
-          <span class="server-status" id="serverStatusValue">-</span>
-          <span class="server-players" id="serverPlayersValue">-</span>
+          <span class="server-status" id="serverStatusValue">—</span>
+          <span class="server-players" id="serverPlayersValue">—</span>
         </div>
       </div>
 
       <div class="mini-stat mini-stat-compact">
         <div class="mini-label">Drivers in leaderboard</div>
-        <div class="mini-value" id="drivers-count">-</div>
+        <div class="mini-value" id="drivers-count">—</div>
       </div>
     </div>
   </div>
@@ -311,7 +289,7 @@
             <li data-i18n="aboutList2">🥇 wins</li>
             <li data-i18n="aboutList3">🏆 podium finishes</li>
             <li data-i18n="aboutList4">📊 average finish position</li>
-            <li data-i18n="aboutList5">вљЎ best laps</li>
+            <li data-i18n="aboutList5">⚡ best laps</li>
           </ul>
 
           <p data-i18n="aboutP3">
@@ -326,10 +304,10 @@
           </p>
 
           <ul>
-            <li data-i18n="pointsList1">1st place - 25 points</li>
-            <li data-i18n="pointsList2">2nd place - 18 points</li>
-            <li data-i18n="pointsList3">3rd place - 15 points</li>
-            <li data-i18n="pointsList4">4th-10th - decreasing points</li>
+            <li data-i18n="pointsList1">1st place — 25 points</li>
+            <li data-i18n="pointsList2">2nd place — 18 points</li>
+            <li data-i18n="pointsList3">3rd place — 15 points</li>
+            <li data-i18n="pointsList4">4th–10th — decreasing points</li>
           </ul>
 
           <p data-i18n="pointsP2">
@@ -366,127 +344,127 @@
     </section>
 <div class="modal-overlay" id="today-stats-modal" aria-hidden="true">
   <div class="modal-card" role="dialog" aria-modal="true" aria-labelledby="today-stats-title">
-    <button class="modal-close" id="driver-of-day-close" type="button" aria-label="Close" data-i18n-aria-label="closeLabel">&times;</button>
+    <button class="modal-close" id="today-stats-close" type="button" aria-label="Close" data-i18n-aria-label="closeLabel">✕</button>
 
     <div class="modal-header">
       <div>
         <div class="eyebrow" data-i18n="todayStatsEyebrow">Daily overview</div>
         <h3 id="today-stats-title" class="modal-title" data-i18n="todayStatsTitle">Статистика за сегодня</h3>
-        <p class="modal-subtitle" id="today-stats-updated">-</p>
+        <p class="modal-subtitle" id="today-stats-updated">—</p>
       </div>
     </div>
 
     <div class="today-stats-grid">
       <div class="today-stat-card">
         <div class="today-stat-label" data-i18n="todayUniquePlayers">Unique drivers today</div>
-        <div class="today-stat-value" id="today-unique-players">-</div>
+        <div class="today-stat-value" id="today-unique-players">—</div>
       </div>
 
       <div class="today-stat-card">
         <div class="today-stat-label" data-i18n="todayRaces">Races today</div>
-        <div class="today-stat-value" id="today-races">-</div>
+        <div class="today-stat-value" id="today-races">—</div>
       </div>
 
       <div class="today-stat-card">
         <div class="today-stat-label" data-i18n="todaySessions">Sessions today</div>
-        <div class="today-stat-value" id="today-sessions">-</div>
+        <div class="today-stat-value" id="today-sessions">—</div>
       </div>
 
       <div class="today-stat-card">
         <div class="today-stat-label" data-i18n="todayPoints">Points earned today</div>
-        <div class="today-stat-value" id="today-points">-</div>
+        <div class="today-stat-value" id="today-points">—</div>
       </div>
 
       <div class="today-stat-card">
         <div class="today-stat-label" data-i18n="todayWins">Wins today</div>
-        <div class="today-stat-value" id="today-wins">-</div>
+        <div class="today-stat-value" id="today-wins">—</div>
       </div>
 
       <div class="today-stat-card">
         <div class="today-stat-label" data-i18n="todayPodiums">Podiums today</div>
-        <div class="today-stat-value" id="today-podiums">-</div>
+        <div class="today-stat-value" id="today-podiums">—</div>
       </div>
 
       <div class="today-stat-card">
         <div class="today-stat-label" data-i18n="todayAvgPlayers">Avg players per race</div>
-        <div class="today-stat-value" id="today-avg-players">-</div>
+        <div class="today-stat-value" id="today-avg-players">—</div>
       </div>
 
       <div class="today-stat-card">
         <div class="today-stat-label" data-i18n="todayTracks">Tracks raced today</div>
-        <div class="today-stat-value today-stat-value-sm" id="today-tracks">-</div>
+        <div class="today-stat-value today-stat-value-sm" id="today-tracks">—</div>
       </div>
     </div>
 
     <div class="today-stats-details">
       <div class="today-detail-card">
         <div class="today-detail-title" data-i18n="todayBestLap">Best lap today</div>
-        <div class="today-detail-main" id="today-best-lap">-</div>
-        <div class="today-detail-sub" id="today-best-lap-note">-</div>
+        <div class="today-detail-main" id="today-best-lap">—</div>
+        <div class="today-detail-sub" id="today-best-lap-note">—</div>
       </div>
 
       <div class="today-detail-card">
         <div class="today-detail-title" data-i18n="todayMostActive">Most active driver</div>
-        <div class="today-detail-main" id="today-most-active">-</div>
-        <div class="today-detail-sub" id="today-most-active-note">-</div>
+        <div class="today-detail-main" id="today-most-active">—</div>
+        <div class="today-detail-sub" id="today-most-active-note">—</div>
       </div>
 
       <div class="today-detail-card">
         <div class="today-detail-title" data-i18n="todayMostSuccessful">Most successful driver</div>
-        <div class="today-detail-main" id="today-most-successful">-</div>
-        <div class="today-detail-sub" id="today-most-successful-note">-</div>
+        <div class="today-detail-main" id="today-most-successful">—</div>
+        <div class="today-detail-sub" id="today-most-successful-note">—</div>
       </div>
     </div>
   </div>
 </div>
     <div class="modal-overlay" id="driver-of-day-modal" aria-hidden="true">
   <div class="modal-card modal-card-driver" role="dialog" aria-modal="true" aria-labelledby="driver-of-day-title">
-    <button class="modal-close" id="driver-of-day-close" type="button" aria-label="Close" data-i18n-aria-label="closeLabel">&times;</button>
+    <button class="modal-close" id="driver-of-day-close" type="button" aria-label="Close" data-i18n-aria-label="closeLabel">✕</button>
 
     <div class="modal-header">
       <div>
         <div class="eyebrow" data-i18n="driverOfDayEyebrow">Top performer today</div>
         <h3 id="driver-of-day-title" class="modal-title" data-i18n="driverOfDayTitle">Driver of the Day</h3>
-        <p class="modal-subtitle" id="driver-of-day-updated">-</p>
+        <p class="modal-subtitle" id="driver-of-day-updated">—</p>
       </div>
     </div>
 
-    <div id="driver-of-day-empty" class="empty-box" hidden>-</div>
+    <div id="driver-of-day-empty" class="empty-box" hidden>—</div>
 
     <div id="driver-of-day-content" class="today-stats-grid driver-day-grid">
       <div class="today-stat-card driver-day-card driver-day-card-wide">
         <div class="today-stat-label" data-i18n="driverOfDayName">Driver</div>
-        <div class="today-stat-value" id="driver-of-day-name">-</div>
+        <div class="today-stat-value" id="driver-of-day-name">—</div>
       </div>
 
       <div class="today-stat-card driver-day-card">
         <div class="today-stat-label" data-i18n="driverOfDayPoints">Points today</div>
-        <div class="today-stat-value" id="driver-of-day-points">-</div>
+        <div class="today-stat-value" id="driver-of-day-points">—</div>
       </div>
 
       <div class="today-stat-card driver-day-card">
         <div class="today-stat-label" data-i18n="driverOfDayRaces">Races today</div>
-        <div class="today-stat-value" id="driver-of-day-races">-</div>
+        <div class="today-stat-value" id="driver-of-day-races">—</div>
       </div>
 
       <div class="today-stat-card driver-day-card">
         <div class="today-stat-label" data-i18n="driverOfDayWins">Wins today</div>
-        <div class="today-stat-value" id="driver-of-day-wins">-</div>
+        <div class="today-stat-value" id="driver-of-day-wins">—</div>
       </div>
 
       <div class="today-stat-card driver-day-card">
         <div class="today-stat-label" data-i18n="driverOfDayAvgFinish">Average finish</div>
-        <div class="today-stat-value" id="driver-of-day-avg-finish">-</div>
+        <div class="today-stat-value" id="driver-of-day-avg-finish">—</div>
       </div>
 
       <div class="today-stat-card driver-day-card">
         <div class="today-stat-label" data-i18n="driverOfDayBestLap">Best lap today</div>
-        <div class="today-stat-value" id="driver-of-day-best-lap">-</div>
+        <div class="today-stat-value" id="driver-of-day-best-lap">—</div>
       </div>
 
       <div class="today-stat-card driver-day-card">
         <div class="today-stat-label" data-i18n="driverOfDayBestLapTrack">Track</div>
-        <div class="today-stat-value today-stat-value-sm" id="driver-of-day-best-lap-track">-</div>
+        <div class="today-stat-value today-stat-value-sm" id="driver-of-day-best-lap-track">—</div>
       </div>
     </div>
   </div>
