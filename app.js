@@ -64,7 +64,7 @@ const translations = {
     openRaceDetailsLabel: "Open race details",
     onlineTitle: "Unique players",
 onlineNoData: "No data",
-    hourlyEyebrow: "Next hourly race",
+    hourlyEyebrow: "Next Event",
     hourlyStatusScheduled: "Scheduled",
     hourlyStatusUnscheduled: "Awaiting schedule",
     hourlyStartsLabel: "Starts",
@@ -264,7 +264,7 @@ onlineNoData: "No data",
     openRaceDetailsLabel: "Открыть детали гонки",
     onlineTitle: "Уникальные игроки",
 onlineNoData: "Нет данных",
-    hourlyEyebrow: "Следующая часовая гонка",
+    hourlyEyebrow: "Следующая Гонка",
     hourlyStatusScheduled: "Запланировано",
     hourlyStatusUnscheduled: "Пока без слота",
     hourlyStartsLabel: "Старт",
@@ -1611,13 +1611,11 @@ function renderHourlyAnnouncement() {
   const cardEl = document.getElementById("hero-hourly-card");
   const eyebrowEl = document.getElementById("hourly-eyebrow");
   const statusEl = document.getElementById("hourly-status");
-  const timeEl = document.getElementById("hourly-time");
   const startsLabelEl = document.getElementById("hourly-starts-label");
   const startsValueEl = document.getElementById("hourly-starts-value");
   const trackLabelEl = document.getElementById("hourly-track-label");
   const trackValueEl = document.getElementById("hourly-track-value");
   const detailsBtnEl = document.getElementById("hourly-details-btn");
-  const topLinkEl = document.getElementById("hourly-link-top");
 
   if (!cardEl) return;
 
@@ -1628,11 +1626,9 @@ function renderHourlyAnnouncement() {
 
   const detailsUrl = hourlyAnnouncementData?.details_url || "/hourly/";
   if (detailsBtnEl) detailsBtnEl.setAttribute("href", detailsUrl);
-  if (topLinkEl) topLinkEl.setAttribute("href", detailsUrl);
 
   if (hourlyAnnouncementData === undefined) {
     if (statusEl) statusEl.textContent = t("hourlyLoading");
-    if (timeEl) timeEl.textContent = "—";
     if (startsValueEl) startsValueEl.textContent = "—";
     if (trackValueEl) trackValueEl.textContent = t("hourlyTrackFallback");
     return;
@@ -1640,7 +1636,6 @@ function renderHourlyAnnouncement() {
 
   if (hourlyAnnouncementData === null) {
     if (statusEl) statusEl.textContent = t("hourlyUnavailable");
-    if (timeEl) timeEl.textContent = "—";
     if (startsValueEl) startsValueEl.textContent = "—";
     if (trackValueEl) trackValueEl.textContent = t("hourlyTrackFallback");
     return;
@@ -1650,12 +1645,6 @@ function renderHourlyAnnouncement() {
 
   if (statusEl) {
     statusEl.textContent = isScheduled ? t("hourlyStatusScheduled") : t("hourlyStatusUnscheduled");
-  }
-
-  if (timeEl) {
-    timeEl.textContent = isScheduled
-      ? `${hourlyAnnouncementData.start_time_local || "—"} ${hourlyAnnouncementData.timezone || ""}`.trim()
-      : t("hourlyUnavailable");
   }
 
   if (startsValueEl) {
