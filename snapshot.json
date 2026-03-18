@@ -1,6 +1,6 @@
 {
   "schema_version": 7,
-  "generated_at": "2026-03-18T15:42:20",
+  "generated_at": "2026-03-18T15:52:20",
   "leaderboard": [
     {
       "player_id": "S76561199664057628",
@@ -276,10 +276,10 @@
       "positions_delta_sum": 22,
       "positions_delta_races": 9,
       "average_positions_delta": 2.44,
-      "average_pace_sum_ms": 11311333,
-      "average_pace_laps_count": 100,
-      "average_pace_ms": 113113,
-      "average_pace": "1:53.113",
+      "average_pace_sum_ms": 11423178,
+      "average_pace_laps_count": 101,
+      "average_pace_ms": 113101,
+      "average_pace": "1:53.101",
       "rank": 10
     },
     {
@@ -57599,7 +57599,7 @@
     "date": "2026-03-18",
     "unique_players_today": 143,
     "races_today": 8,
-    "sessions_today": 21,
+    "sessions_today": 22,
     "points_earned_today": 736,
     "wins_today": 8,
     "podiums_today": 22,
@@ -57631,7 +57631,7 @@
       "driver": "Rogue Hunter",
       "points": 43
     },
-    "updated_at": "2026-03-18T15:42:20"
+    "updated_at": "2026-03-18T15:52:20"
   },
   "driver_of_the_day": {
     "date": "2026-03-18",
@@ -57650,15 +57650,15 @@
     "best_lap_car_model_id": 36,
     "best_lap_car_name_raw": "Ford Mustang GT3",
     "best_lap_car_name": "Ford Mustang GT3",
-    "updated_at": "2026-03-18T15:42:20"
+    "updated_at": "2026-03-18T15:52:20"
   },
   "server_status": {
     "status": "online",
     "server_online": true,
-    "players_online": 1,
+    "players_online": 5,
     "tcp_listening": true,
     "udp_listening": true,
     "broadcast_listening": true,
-    "updated_at": "2026-03-18T15:42:20"
+    "updated_at": "2026-03-18T15:52:20"
   }
 }
