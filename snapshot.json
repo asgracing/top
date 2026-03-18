@@ -1,6 +1,6 @@
 {
   "schema_version": 7,
-  "generated_at": "2026-03-18T17:42:20",
+  "generated_at": "2026-03-18T17:52:20",
   "leaderboard": [
     {
       "player_id": "S76561199664057628",
@@ -59,6 +59,34 @@
       "rank": 2
     },
     {
+      "player_id": "S76561198016201235",
+      "public_id": "drv_10b4b6556336",
+      "driver": "Javier Breogan.VR.|ARF",
+      "races": 36,
+      "wins": 2,
+      "podiums": 4,
+      "points": 218,
+      "average_finish_sum": 328,
+      "average_finish": 9.11,
+      "best_lap_ms": 107812,
+      "best_lap": "1:47.812",
+      "best_lap_track": "monza",
+      "best_lap_car_model_id": 35,
+      "best_lap_car_name_raw": "McLaren 720S GT3 Evo 2023",
+      "best_lap_car_name": "McLaren 720S GT3 Evo",
+      "best_lap_session_type": "R",
+      "last_track": "monza",
+      "last_seen": "2026-03-18T17:43:38",
+      "positions_delta_sum": 302,
+      "positions_delta_races": 28,
+      "average_positions_delta": 10.79,
+      "average_pace_sum_ms": 30859558,
+      "average_pace_laps_count": 282,
+      "average_pace_ms": 109431,
+      "average_pace": "1:49.431",
+      "rank": 3
+    },
+    {
       "player_id": "S76561197983024493",
       "public_id": "drv_b466bb6eedd8",
       "driver": "Andrei Soldatenkov [ASG]",
@@ -84,34 +112,6 @@
       "average_pace_laps_count": 136,
       "average_pace_ms": 109234,
       "average_pace": "1:49.234",
-      "rank": 3
-    },
-    {
-      "player_id": "S76561198016201235",
-      "public_id": "drv_10b4b6556336",
-      "driver": "Javier Breogan.VR.|ARF",
-      "races": 35,
-      "wins": 1,
-      "podiums": 3,
-      "points": 192,
-      "average_finish_sum": 327,
-      "average_finish": 9.34,
-      "best_lap_ms": 107812,
-      "best_lap": "1:47.812",
-      "best_lap_track": "monza",
-      "best_lap_car_model_id": 35,
-      "best_lap_car_name_raw": "McLaren 720S GT3 Evo 2023",
-      "best_lap_car_name": "McLaren 720S GT3 Evo",
-      "best_lap_session_type": "R",
-      "last_track": "monza",
-      "last_seen": "2026-03-18T16:52:36",
-      "positions_delta_sum": 302,
-      "positions_delta_races": 27,
-      "average_positions_delta": 11.19,
-      "average_pace_sum_ms": 29874836,
-      "average_pace_laps_count": 273,
-      "average_pace_ms": 109432,
-      "average_pace": "1:49.432",
       "rank": 4
     },
     {
@@ -1252,7 +1252,7 @@
       "best_lap_car_name": "McLaren 720S GT3 Evo",
       "best_lap_session_type": "R",
       "last_track": "monza",
-      "last_seen": "2026-03-18T16:52:36",
+      "last_seen": "2026-03-18T17:43:38",
       "positions_delta_sum": -30,
       "positions_delta_races": 8,
       "average_positions_delta": -3.75,
@@ -38267,8 +38267,8 @@
       "best_lap_car_name_raw": null,
       "best_lap_car_name": null,
       "best_lap_session_type": null,
-      "last_track": null,
-      "last_seen": null,
+      "last_track": "monza",
+      "last_seen": "2026-03-18T17:43:38",
       "positions_delta_sum": 0,
       "positions_delta_races": 0,
       "average_positions_delta": null,
@@ -41904,7 +41904,7 @@
       "car_name_raw": "McLaren 720S GT3 Evo 2023",
       "car_name": "McLaren 720S GT3 Evo",
       "session_type": "R",
-      "updated_at": "2026-03-18T16:52:36"
+      "updated_at": "2026-03-18T17:43:38"
     },
     {
       "rank": 106,
@@ -48862,7 +48862,7 @@
       "car_name_raw": "McLaren 720S GT3 Evo 2023",
       "car_name": "McLaren 720S GT3 Evo",
       "session_type": "R",
-      "updated_at": "2026-03-18T16:52:36"
+      "updated_at": "2026-03-18T17:43:38"
     },
     {
       "rank": 603,
@@ -57766,12 +57766,12 @@
   "global_stats": {
     "date": "2026-03-18",
     "unique_players_today": 155,
-    "races_today": 10,
-    "sessions_today": 29,
-    "points_earned_today": 918,
-    "wins_today": 10,
-    "podiums_today": 28,
-    "avg_players_per_race_today": 24.6,
+    "races_today": 11,
+    "sessions_today": 30,
+    "points_earned_today": 944,
+    "wins_today": 11,
+    "podiums_today": 29,
+    "avg_players_per_race_today": 22.64,
     "tracks_raced_today": [
       "monza"
     ],
@@ -57794,39 +57794,39 @@
       "races": 7
     },
     "most_successful_driver_today": {
-      "player_id": "S76561199226326139",
-      "public_id": "drv_edd6fbc03e29",
-      "driver": "Rogue Hunter",
-      "points": 43
+      "player_id": "S76561198016201235",
+      "public_id": "drv_10b4b6556336",
+      "driver": "Javier Breogan.VR.|ARF",
+      "points": 58
     },
-    "updated_at": "2026-03-18T17:42:20"
+    "updated_at": "2026-03-18T17:52:20"
   },
   "driver_of_the_day": {
     "date": "2026-03-18",
-    "driver": "Rogue Hunter",
-    "player_id": "S76561199226326139",
-    "public_id": "drv_edd6fbc03e29",
-    "points": 43,
+    "driver": "Javier Breogan.VR.|ARF",
+    "player_id": "S76561198016201235",
+    "public_id": "drv_10b4b6556336",
+    "points": 58,
     "races": 3,
-    "wins": 1,
-    "average_finish": 9.0,
-    "average_positions_delta": 1.0,
+    "wins": 2,
+    "average_finish": 3.0,
+    "average_positions_delta": 4.0,
     "positions_delta_races": 2,
-    "best_lap": "1:48.170",
-    "best_lap_ms": 108170,
+    "best_lap": "1:47.847",
+    "best_lap_ms": 107847,
     "best_lap_track": "monza",
-    "best_lap_car_model_id": 36,
-    "best_lap_car_name_raw": "Ford Mustang GT3",
-    "best_lap_car_name": "Ford Mustang GT3",
-    "updated_at": "2026-03-18T17:42:20"
+    "best_lap_car_model_id": 35,
+    "best_lap_car_name_raw": "McLaren 720S GT3 Evo 2023",
+    "best_lap_car_name": "McLaren 720S GT3 Evo",
+    "updated_at": "2026-03-18T17:52:20"
   },
   "server_status": {
     "status": "online",
     "server_online": true,
-    "players_online": 1,
+    "players_online": 4,
     "tcp_listening": true,
     "udp_listening": true,
     "broadcast_listening": true,
-    "updated_at": "2026-03-18T17:42:20"
+    "updated_at": "2026-03-18T17:52:20"
   }
 }
