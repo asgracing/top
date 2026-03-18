@@ -23140,6 +23140,26 @@
     "last_race_at": "2026-03-18T00:16:29"
   },
   {
+    "public_id": "drv_419b52ea6b83",
+    "driver": "ENOMAG",
+    "points": 0,
+    "average_points_per_race": 0,
+    "races": 0,
+    "wins": 0,
+    "podiums": 0,
+    "average_finish": null,
+    "best_lap": null,
+    "best_lap_track": null,
+    "best_lap_car_model_id": null,
+    "best_lap_car_name_raw": null,
+    "best_lap_car_name": null,
+    "average_pace_ms": null,
+    "average_pace": null,
+    "penalty_count": 0,
+    "penalty_points": 0,
+    "last_race_at": null
+  },
+  {
     "public_id": "drv_124205fa80e4",
     "driver": "Enzo scuderi",
     "points": 0,
@@ -25061,7 +25081,7 @@
   },
   {
     "public_id": "drv_76f2f4181062",
-    "driver": "Lu W.",
+    "driver": "Lu Kimi",
     "points": 0,
     "average_points_per_race": 0,
     "races": 0,
@@ -25498,6 +25518,26 @@
     "penalty_count": 0,
     "penalty_points": 0,
     "last_race_at": "2026-03-13T22:14:10"
+  },
+  {
+    "public_id": "drv_4a7f18ec0900",
+    "driver": "Manuel Pepe",
+    "points": 0,
+    "average_points_per_race": 0,
+    "races": 0,
+    "wins": 0,
+    "podiums": 0,
+    "average_finish": null,
+    "best_lap": null,
+    "best_lap_track": null,
+    "best_lap_car_model_id": null,
+    "best_lap_car_name_raw": null,
+    "best_lap_car_name": null,
+    "average_pace_ms": null,
+    "average_pace": null,
+    "penalty_count": 0,
+    "penalty_points": 0,
+    "last_race_at": null
   },
   {
     "public_id": "drv_525575745f7c",
