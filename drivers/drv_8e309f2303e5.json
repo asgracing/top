@@ -4,10 +4,10 @@
   "summary": {
     "points": 0,
     "average_points_per_race": 0.0,
-    "races": 1,
+    "races": 2,
     "wins": 0,
     "podiums": 0,
-    "average_finish": 19.0,
+    "average_finish": 15.0,
     "best_lap": "1:48.672",
     "best_lap_ms": 108672,
     "best_lap_track": "monza",
@@ -15,36 +15,66 @@
     "best_lap_car_name_raw": "BMW M4 GT3",
     "best_lap_car_name": "BMW M4 GT3",
     "best_lap_session_type": "Q",
-    "average_pace_ms": 109132,
-    "average_pace": "1:49.132",
-    "penalty_count": 0,
-    "penalty_points": 0,
+    "average_pace_ms": 109304,
+    "average_pace": "1:49.304",
+    "penalty_count": 1,
+    "penalty_points": 3,
     "fastest_lap_awards": 0,
     "most_raced_track": "monza",
-    "last_race_at": "2026-03-14T00:43:20",
-    "last_seen": "2026-03-14T00:43:20",
+    "last_race_at": "2026-03-18T18:54:35",
+    "last_seen": "2026-03-18T18:54:35",
     "win_rate": 0.0,
     "podium_rate": 0.0,
     "average_positions_delta": -14.0,
     "positions_delta_races": 1
   },
   "recent_form": [
+    11,
     19
   ],
   "track_stats": [
     {
       "track": "monza",
-      "races": 1,
+      "races": 2,
       "wins": 0,
       "podiums": 0,
       "points": 0,
-      "finish_sum": 19,
-      "average_finish": 19.0,
+      "finish_sum": 30,
+      "average_finish": 15.0,
       "best_lap_ms": 108830,
       "best_lap": "1:48.830"
     }
   ],
   "race_history": [
+    {
+      "race_id": "260318_185435_R.json",
+      "finished_at": "2026-03-18T18:54:35",
+      "track": "monza",
+      "car_model_id": 30,
+      "car_name_raw": "BMW M4 GT3",
+      "car_name": "BMW M4 GT3",
+      "position": 11,
+      "participants_count": 32,
+      "winner": "Javier Breogan.VR.|ARF",
+      "points": 0,
+      "qualifying_position": null,
+      "start_position": null,
+      "start_position_source": "unknown",
+      "positions_delta": null,
+      "positions_gained": null,
+      "positions_lost": null,
+      "best_lap": "1:49.367",
+      "best_lap_ms": 109367,
+      "total_time": "14:08.894",
+      "total_time_ms": 848894,
+      "gap": "0:00.000",
+      "gap_ms": 0,
+      "lap_count": 6,
+      "counted_for_stats": true,
+      "had_best_lap": false,
+      "penalty_count": 1,
+      "penalty_points": 3
+    },
     {
       "race_id": "260314_004320_R.json",
       "finished_at": "2026-03-14T00:43:20",
@@ -76,9 +106,13 @@
     }
   ],
   "penalties": {
-    "penalty_count": 0,
-    "penalty_points": 0,
-    "reasons": {},
-    "types": {}
+    "penalty_count": 1,
+    "penalty_points": 3,
+    "reasons": {
+      "Cutting": 1
+    },
+    "types": {
+      "DriveThrough": 1
+    }
   }
 }
