@@ -1,6 +1,6 @@
 {
   "schema_version": 7,
-  "generated_at": "2026-03-18T17:02:20",
+  "generated_at": "2026-03-18T17:12:20",
   "leaderboard": [
     {
       "player_id": "S76561199664057628",
@@ -740,22 +740,22 @@
       "points": 51,
       "average_finish_sum": 142,
       "average_finish": 12.91,
-      "best_lap_ms": 107312,
-      "best_lap": "1:47.312",
+      "best_lap_ms": 107037,
+      "best_lap": "1:47.037",
       "best_lap_track": "monza",
       "best_lap_car_model_id": 25,
       "best_lap_car_name_raw": "Mercedes-AMG GT3 2020",
       "best_lap_car_name": "Mercedes-AMG GT3",
       "best_lap_session_type": "Q",
       "last_track": "monza",
-      "last_seen": "2026-03-18T16:52:36",
+      "last_seen": "2026-03-18T17:02:54",
       "positions_delta_sum": -55,
       "positions_delta_races": 8,
       "average_positions_delta": -6.88,
-      "average_pace_sum_ms": 8123219,
-      "average_pace_laps_count": 74,
-      "average_pace_ms": 109773,
-      "average_pace": "1:49.773",
+      "average_pace_sum_ms": 8338026,
+      "average_pace_laps_count": 76,
+      "average_pace_ms": 109711,
+      "average_pace": "1:49.711",
       "rank": 27
     },
     {
@@ -40620,6 +40620,20 @@
     },
     {
       "rank": 16,
+      "player_id": "S76561198391956358",
+      "public_id": "drv_964ce73ba40a",
+      "driver": "Kosso Filippo",
+      "best_lap_ms": 107037,
+      "best_lap": "1:47.037",
+      "track": "monza",
+      "car_model_id": 25,
+      "car_name_raw": "Mercedes-AMG GT3 2020",
+      "car_name": "Mercedes-AMG GT3",
+      "session_type": "Q",
+      "updated_at": "2026-03-18T17:02:54"
+    },
+    {
+      "rank": 17,
       "player_id": "S76561198335683670",
       "public_id": "drv_cf6a10a5b3e4",
       "driver": "Nick Rain [NRR]",
@@ -40633,7 +40647,7 @@
       "updated_at": "2026-03-17T18:05:10"
     },
     {
-      "rank": 17,
+      "rank": 18,
       "player_id": "S76561198874258553",
       "public_id": "drv_07f50324c103",
       "driver": "Nome Cognome",
@@ -40647,7 +40661,7 @@
       "updated_at": "2026-03-17T21:47:10"
     },
     {
-      "rank": 18,
+      "rank": 19,
       "player_id": "S76561198990220192",
       "public_id": "drv_d6bfcefb6c6a",
       "driver": "A sterber",
@@ -40661,7 +40675,7 @@
       "updated_at": "2026-03-16T23:17:32"
     },
     {
-      "rank": 19,
+      "rank": 20,
       "player_id": "S76561198350636012",
       "public_id": "drv_19f1e3784eb2",
       "driver": "Adrián de Mora",
@@ -40675,7 +40689,7 @@
       "updated_at": "2026-03-14T16:10:08"
     },
     {
-      "rank": 20,
+      "rank": 21,
       "player_id": "S76561198207069167",
       "public_id": "drv_55694f726886",
       "driver": "j. pancakes",
@@ -40689,7 +40703,7 @@
       "updated_at": "2026-03-14T01:21:24"
     },
     {
-      "rank": 21,
+      "rank": 22,
       "player_id": "S76561199818407592",
       "public_id": "drv_6107093c9228",
       "driver": "Denis Pinchuk",
@@ -40703,7 +40717,7 @@
       "updated_at": "2026-03-15T18:47:44"
     },
     {
-      "rank": 22,
+      "rank": 23,
       "player_id": "S76561198177000801",
       "public_id": "drv_3da42bbd8ddd",
       "driver": "Matteo Messina",
@@ -40717,7 +40731,7 @@
       "updated_at": "2026-03-14T14:55:10"
     },
     {
-      "rank": 23,
+      "rank": 24,
       "player_id": "S76561199673368909",
       "public_id": "drv_b99f06eacb0f",
       "driver": "J Lehman",
@@ -40731,7 +40745,7 @@
       "updated_at": "2026-03-14T22:24:34"
     },
     {
-      "rank": 24,
+      "rank": 25,
       "player_id": "S76561197993868431",
       "public_id": "drv_db00f57a7200",
       "driver": "It's-a me, Mario!",
@@ -40745,7 +40759,7 @@
       "updated_at": "2026-03-16T20:09:24"
     },
     {
-      "rank": 25,
+      "rank": 26,
       "player_id": "S76561198179725961",
       "public_id": "drv_d59d8b69d9ec",
       "driver": "Denis Denalget [ASG]",
@@ -40759,7 +40773,7 @@
       "updated_at": "2026-03-15T23:46:16"
     },
     {
-      "rank": 26,
+      "rank": 27,
       "player_id": "S76561198277151444",
       "public_id": "drv_519a538989b5",
       "driver": "Holli D.",
@@ -40773,7 +40787,7 @@
       "updated_at": "2026-03-15T15:45:07"
     },
     {
-      "rank": 27,
+      "rank": 28,
       "player_id": "S76561198273845555",
       "public_id": "drv_cc83b7dae6b8",
       "driver": "BEEP BEEP",
@@ -40787,7 +40801,7 @@
       "updated_at": "2026-03-14T00:04:53"
     },
     {
-      "rank": 28,
+      "rank": 29,
       "player_id": "S76561198259757651",
       "public_id": "drv_941416356e56",
       "driver": "Ivan Fomenkov",
@@ -40801,7 +40815,7 @@
       "updated_at": "2026-03-17T19:18:36"
     },
     {
-      "rank": 29,
+      "rank": 30,
       "player_id": "S76561197961626165",
       "public_id": "drv_72afd55bd36d",
       "driver": "Scott Kuo",
@@ -40815,7 +40829,7 @@
       "updated_at": "2026-03-14T14:55:10"
     },
     {
-      "rank": 30,
+      "rank": 31,
       "player_id": "S76561199163604689",
       "public_id": "drv_f4a4e31abd79",
       "driver": "Ahmed Yusupov",
@@ -40829,7 +40843,7 @@
       "updated_at": "2026-03-16T18:54:54"
     },
     {
-      "rank": 31,
+      "rank": 32,
       "player_id": "S76561199213312367",
       "public_id": "drv_9d25d0c9dcc1",
       "driver": "Dmitriy Sukharev",
@@ -40843,7 +40857,7 @@
       "updated_at": "2026-03-18T00:16:29"
     },
     {
-      "rank": 32,
+      "rank": 33,
       "player_id": "S76561198057344931",
       "public_id": "drv_7e503b83155b",
       "driver": "Mirza Mašnić",
@@ -40857,7 +40871,7 @@
       "updated_at": "2026-03-18T02:05:06"
     },
     {
-      "rank": 33,
+      "rank": 34,
       "player_id": "S76561199110630841",
       "public_id": "drv_df5ed208d595",
       "driver": "Bruno Labrecque",
@@ -40871,7 +40885,7 @@
       "updated_at": "2026-03-14T21:08:17"
     },
     {
-      "rank": 34,
+      "rank": 35,
       "player_id": "S76561197984703970",
       "public_id": "drv_0084e25cf41e",
       "driver": "_,Smok",
@@ -40885,7 +40899,7 @@
       "updated_at": "2026-03-15T23:08:44"
     },
     {
-      "rank": 35,
+      "rank": 36,
       "player_id": "S76561197962102252",
       "public_id": "drv_9d8f5eee1e91",
       "driver": "Thorsten Schmidt | 47R",
@@ -40897,20 +40911,6 @@
       "car_name": "Mercedes-AMG GT3",
       "session_type": "R",
       "updated_at": "2026-03-13T23:29:57"
-    },
-    {
-      "rank": 36,
-      "player_id": "S76561198391956358",
-      "public_id": "drv_964ce73ba40a",
-      "driver": "Kosso Filippo",
-      "best_lap_ms": 107312,
-      "best_lap": "1:47.312",
-      "track": "monza",
-      "car_model_id": 25,
-      "car_name_raw": "Mercedes-AMG GT3 2020",
-      "car_name": "Mercedes-AMG GT3",
-      "session_type": "Q",
-      "updated_at": "2026-03-18T16:52:36"
     },
     {
       "rank": 37,
@@ -57739,7 +57739,7 @@
     "date": "2026-03-18",
     "unique_players_today": 154,
     "races_today": 10,
-    "sessions_today": 26,
+    "sessions_today": 28,
     "points_earned_today": 918,
     "wins_today": 10,
     "podiums_today": 28,
@@ -57771,7 +57771,7 @@
       "driver": "Rogue Hunter",
       "points": 43
     },
-    "updated_at": "2026-03-18T17:02:20"
+    "updated_at": "2026-03-18T17:12:20"
   },
   "driver_of_the_day": {
     "date": "2026-03-18",
@@ -57790,15 +57790,15 @@
     "best_lap_car_model_id": 36,
     "best_lap_car_name_raw": "Ford Mustang GT3",
     "best_lap_car_name": "Ford Mustang GT3",
-    "updated_at": "2026-03-18T17:02:20"
+    "updated_at": "2026-03-18T17:12:20"
   },
   "server_status": {
     "status": "online",
     "server_online": true,
-    "players_online": 2,
+    "players_online": 1,
     "tcp_listening": true,
     "udp_listening": true,
     "broadcast_listening": true,
-    "updated_at": "2026-03-18T17:02:20"
+    "updated_at": "2026-03-18T17:12:20"
   }
 }
