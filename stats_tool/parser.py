@@ -29,7 +29,7 @@ GIT_EXE = r"C:\Program Files\Git\cmd\git.exe"
 
 AUTO_GIT_PUSH = True
 COMMIT_MESSAGE_PREFIX = "ACC stats update"
-SCHEMA_VERSION = 6
+SCHEMA_VERSION = 7
 
 SERVER_PROCESS_NAME = "accServer.exe"
 SERVER_TCP_PORT = 10034
@@ -299,6 +299,10 @@ def create_driver_entry(player_id, display_name):
         "positions_delta_sum": 0,
         "positions_delta_races": 0,
         "average_positions_delta": None,
+        "pace_laps_sum_ms": 0,
+        "pace_laps_count": 0,
+        "average_pace_ms": None,
+        "average_pace": None,
     }
 
 
@@ -647,6 +651,46 @@ def build_car_driver_map(lines: list):
             car_driver_map[(car_id, 0)] = (current_player_id, current_display_name)
 
     return car_driver_map
+
+
+def update_driver_average_pace(driver_stats, lap_time_ms):
+    if not is_valid_lap(lap_time_ms):
+        return
+
+    driver_stats["pace_laps_sum_ms"] += lap_time_ms
+    driver_stats["pace_laps_count"] += 1
+    average_pace_ms = round(driver_stats["pace_laps_sum_ms"] / driver_stats["pace_laps_count"])
+    driver_stats["average_pace_ms"] = average_pace_ms
+    driver_stats["average_pace"] = ms_to_lap_str(average_pace_ms)
+
+
+def process_driver_pace_laps(data: dict, lines: list, drivers: dict):
+    laps = data.get("laps") or []
+    if not laps:
+        return
+
+    car_driver_map = build_car_driver_map(lines)
+
+    for lap in laps:
+        if not isinstance(lap, dict) or not lap.get("isValidForBest"):
+            continue
+
+        car_id = lap.get("carId")
+        driver_index = lap.get("driverIndex", 0)
+        mapped = car_driver_map.get((car_id, driver_index)) or car_driver_map.get((car_id, 0))
+        if not mapped:
+            continue
+
+        player_id, display_name = mapped
+        if not player_id:
+            continue
+
+        lap_time_ms = lap.get("laptime")
+        if not is_valid_lap(lap_time_ms):
+            continue
+
+        driver_stats = ensure_driver(drivers, player_id, display_name)
+        update_driver_average_pace(driver_stats, lap_time_ms)
 
 
 def process_penalties(data: dict, lines: list, safety_stats: dict, file_modified: str):
@@ -1036,6 +1080,12 @@ def process_file(path: Path, state: dict):
             )
             queue_qualifying_snapshot(state, snapshot)
         return
+
+    process_driver_pace_laps(
+        data=data,
+        lines=lines,
+        drivers=state["drivers"],
+    )
 
     race_order = build_race_order(lines)
     qualifying_snapshot = pop_qualifying_snapshot_for_race(state, data)
@@ -1435,6 +1485,8 @@ def build_driver_profiles(state: dict):
                 "most_raced_track": most_raced_track,
                 "last_race_at": bucket["last_race_at"],
                 "last_seen": driver.get("last_seen"),
+                "average_pace_ms": driver.get("average_pace_ms"),
+                "average_pace": driver.get("average_pace"),
                 "win_rate": round((driver["wins"] / driver["races"]) * 100, 2) if driver["races"] else 0,
                 "podium_rate": round((driver["podiums"] / driver["races"]) * 100, 2) if driver["races"] else 0,
                 "average_positions_delta": driver.get("average_positions_delta"),

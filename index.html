@@ -103,7 +103,7 @@
       <div class="hero-card">
         
 <div class="hero-grid">
-  <div>
+  <div class="hero-copy">
     <div class="eyebrow">ACC Public Leaderboard</div>
     <h1 data-i18n="heroTitle">🏁 ASG Racing League</h1>
     <p class="hero-subtitle" data-i18n="heroSubtitle">
@@ -111,51 +111,88 @@
       <strong>ASG Racing</strong> server. Data is automatically updated
       based on dedicated server results.
     </p>
+  </div>
 
-    <div class="hero-actions-row">
-      <div class="hero-actions hero-actions-stacked-mobile">
-        <div class="hero-primary-actions">
-          <button
-            class="btn btn-today-stats pulse-attention"
-            id="today-stats-btn"
-            type="button"
-            data-i18n="todayStatsBtn"
-          >
-            Today Stats
-          </button>
+  <aside class="hero-hourly-card" id="hero-hourly-card">
+    <div class="hero-hourly-head">
+      <div
+        class="eyebrow hero-hourly-eyebrow"
+        id="hourly-eyebrow"
+        data-i18n="hourlyEyebrow"
+      >
+        Next Scheduled Event
+      </div>
+    </div>
 
-          <a
-            class="btn btn-last-races"
-            href="./races/"
-            data-i18n="lastRacesBtn"
-          >
-            Last Races
-          </a>
-        </div>
-
-        <button
-          class="btn btn-driver-day"
-          id="driver-of-day-btn"
-          type="button"
+    <div class="hero-hourly-meta">
+      <div class="hero-hourly-meta-row">
+        <span
+          class="hero-hourly-meta-label"
+          id="hourly-track-label"
+          data-i18n="hourlyTrackLabel"
         >
-          Driver of the day: —
+          Track
+        </span>
+        <span class="hero-hourly-meta-line">
+          <span class="hero-hourly-meta-value" id="hourly-track-value">—</span>
+          <span class="hero-hourly-meta-time" id="hourly-starts-value">—</span>
+        </span>
+      </div>
+    </div>
+
+    <a
+      class="btn hero-hourly-btn"
+      id="hourly-details-btn"
+      href="#"
+      data-i18n="hourlyOpenBtn"
+    >
+      Open hourly page
+    </a>
+  </aside>
+
+  <div class="hero-actions-row">
+    <div class="hero-actions hero-actions-stacked-mobile">
+      <div class="hero-primary-actions">
+        <button
+          class="btn btn-today-stats pulse-attention"
+          id="today-stats-btn"
+          type="button"
+          data-i18n="todayStatsBtn"
+        >
+          Today Stats
         </button>
+
+        <a
+          class="btn btn-last-races"
+          href="./races/"
+          data-i18n="lastRacesBtn"
+        >
+          Last Races
+        </a>
       </div>
 
-      <div class="hero-online-card" id="hero-online-card">
-        <div class="hero-online-head">
-          <div class="hero-online-title">Unique players</div>
-          <div class="hero-online-range" id="online-range">—</div>
+      <button
+        class="btn btn-driver-day"
+        id="driver-of-day-btn"
+        type="button"
+      >
+        Driver of the day: —
+      </button>
+    </div>
+
+    <div class="hero-online-card" id="hero-online-card">
+      <div class="hero-online-head">
+        <div class="hero-online-title">Unique players</div>
+        <div class="hero-online-range" id="online-range">—</div>
+      </div>
+
+      <div class="hero-online-chart-wrap">
+        <div class="hero-online-chart" id="online-chart">
+          <div class="hero-online-empty">No data</div>
         </div>
 
-        <div class="hero-online-chart-wrap">
-          <div class="hero-online-chart" id="online-chart">
-            <div class="hero-online-empty">No data</div>
-          </div>
-
-          <div class="hero-online-scale" id="online-scale">
-            <span>0</span>
-          </div>
+        <div class="hero-online-scale" id="online-scale">
+          <span>0</span>
         </div>
       </div>
     </div>

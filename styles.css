@@ -256,7 +256,7 @@ body.lite-background .site-video-overlay {
 .hero-card {
   position: relative;
   overflow: hidden;
-  padding: 20px;
+  padding: 10px;
   border: 1px solid var(--line);
   border-radius: 30px;
   background:
@@ -276,18 +276,8 @@ body.lite-background .site-video-overlay {
 .hero-grid {
   display: grid;
   grid-template-columns: minmax(280px, 340px) minmax(0, 1fr) minmax(280px, 340px);
-  gap: 4px;
+  gap: 10px;
   align-items: start;
-}
-
-.hero-grid > :first-child {
-  display: contents;
-}
-
-.eyebrow,
-h1,
-.hero-subtitle {
-  grid-column: 1 / -1;
 }
 
 .eyebrow {
@@ -315,6 +305,109 @@ h1 {
   font-size: 17px;
   line-height: 1.6;
   color: var(--muted);
+}
+
+.hero-copy {
+  grid-column: 1 / 3;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-self: stretch;
+  padding-top: 12px;
+}
+
+.hero-hourly-card {
+  grid-column: 3 / 4;
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+  align-self: start;
+  padding: 18px 18px 16px;
+  border: 1px solid rgba(255, 209, 102, 0.26);
+  border-radius: 20px;
+  background:
+    linear-gradient(180deg, rgba(255, 193, 86, 0.14), rgba(255, 91, 46, 0.08)),
+    rgba(36, 33, 38, 0.94);
+  box-shadow:
+    inset 0 1px 0 rgba(255, 255, 255, 0.05),
+    0 18px 40px rgba(0, 0, 0, 0.24);
+}
+
+.hero-hourly-head {
+  display: flex;
+  align-items: center;
+  justify-content: flex-start;
+  gap: 12px;
+}
+
+.hero-hourly-eyebrow {
+  margin: 0;
+  color: #ffcc5c;
+  font-size: 0.84rem;
+}
+
+.hero-hourly-meta {
+  display: grid;
+  gap: 10px;
+}
+
+.hero-hourly-meta-row {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 6px;
+  align-items: start;
+}
+
+.hero-hourly-meta-label {
+  color: rgba(255, 255, 255, 0.6);
+  font-size: 0.74rem;
+  font-weight: 800;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+}
+
+.hero-hourly-meta-value {
+  color: var(--text);
+  font-size: 1.1rem;
+  font-weight: 800;
+  line-height: 1.25;
+}
+
+.hero-hourly-meta-line {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: 14px;
+}
+
+.hero-hourly-meta-time {
+  flex: 0 0 auto;
+  color: var(--text);
+  font-size: 0.92rem;
+  font-weight: 800;
+  letter-spacing: 0.02em;
+  white-space: nowrap;
+}
+
+.hero-hourly-card .btn.hero-hourly-btn {
+  width: 100%;
+  justify-content: center;
+  padding: 14px 18px;
+  border: 0;
+  border-radius: 14px;
+  background: linear-gradient(135deg, #ff8b2c, #ff5b2e);
+  color: #fff;
+  font-weight: 900;
+  box-shadow: 0 14px 28px rgba(255, 91, 46, 0.28);
+}
+
+.hero-hourly-btn {
+  align-self: stretch;
+}
+
+.hero-hourly-btn.is-disabled {
+  opacity: 0.75;
+  pointer-events: none;
 }
 
 .hero-actions {
@@ -1922,13 +2015,8 @@ body.modal-open {
     grid-template-columns: 1fr;
   }
 
-  .hero-grid > :first-child {
-    display: block;
-  }
-
-  .eyebrow,
-  h1,
-  .hero-subtitle,
+  .hero-copy,
+  .hero-hourly-card,
   .hero-actions-row,
   .hero-side {
     grid-column: auto;
@@ -2060,6 +2148,10 @@ body.modal-open {
 
   .hero-actions-row {
     grid-template-columns: 1fr;
+  }
+
+  .hero-hourly-card {
+    margin-bottom: 6px;
   }
 
   .hero-online-card {
@@ -2223,6 +2315,17 @@ body.modal-open {
   .btn-last-races {
     width: 100%;
     min-width: 0;
+  }
+
+  .hero-hourly-meta-row {
+    grid-template-columns: 1fr;
+    gap: 4px;
+  }
+
+  .hero-hourly-meta-line {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 4px;
   }
 
   .btn-today-stats,
