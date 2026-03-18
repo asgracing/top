@@ -1,18 +1,21 @@
 ﻿const IS_RACES_PAGE = /\/races(?:\/|\/index\.html)?$/i.test(window.location.pathname);
 const IS_DRIVER_PAGE = /\/driver(?:\/|\/index\.html)?$/i.test(window.location.pathname);
 const IS_CARS_PAGE = /\/cars(?:\/|\/index\.html)?$/i.test(window.location.pathname);
-const dataBasePath = (IS_RACES_PAGE || IS_DRIVER_PAGE || IS_CARS_PAGE) ? "../" : "./";
-const snapshotUrl = `${dataBasePath}snapshot.json`;
-const leaderboardUrl = `${dataBasePath}leaderboard.json`;
-const bestlapsUrl = `${dataBasePath}bestlaps.json`;
-const globalStatsUrl = `${dataBasePath}global_stats.json`;
-const safetyUrl = `${dataBasePath}safety.json`;
-const driverOfDayUrl = `${dataBasePath}driver_of_the_day.json`;
-const serverStatusUrl = `${dataBasePath}server_status.json`;
-const onlineUrl = `${dataBasePath}online.json`;
-const racesUrl = IS_RACES_PAGE ? "./races.json" : `${dataBasePath}races/races.json`;
-const carsUrl = IS_CARS_PAGE ? "./cars.json" : `${dataBasePath}cars/cars.json`;
-const driverIndexUrl = `${dataBasePath}drivers/drivers.json`;
+const SITE_BASE_PATH = (IS_RACES_PAGE || IS_DRIVER_PAGE || IS_CARS_PAGE) ? "../" : "./";
+const TOP_DATA_BASE_URL = "https://asgracing.github.io/top-data";
+const HOURLY_DATA_BASE_URL = "https://asgracing.github.io/top-data/hourly";
+const snapshotUrl = `${TOP_DATA_BASE_URL}/snapshot.json`;
+const leaderboardUrl = `${TOP_DATA_BASE_URL}/leaderboard.json`;
+const bestlapsUrl = `${TOP_DATA_BASE_URL}/bestlaps.json`;
+const globalStatsUrl = `${TOP_DATA_BASE_URL}/global_stats.json`;
+const safetyUrl = `${TOP_DATA_BASE_URL}/safety.json`;
+const driverOfDayUrl = `${TOP_DATA_BASE_URL}/driver_of_the_day.json`;
+const serverStatusUrl = `${TOP_DATA_BASE_URL}/server_status.json`;
+const onlineUrl = `${TOP_DATA_BASE_URL}/online.json`;
+const hourlyAnnouncementUrl = `${HOURLY_DATA_BASE_URL}/announcement.json`;
+const racesUrl = `${TOP_DATA_BASE_URL}/races/races.json`;
+const carsUrl = `${TOP_DATA_BASE_URL}/cars/cars.json`;
+const driverIndexUrl = `${TOP_DATA_BASE_URL}/drivers/drivers.json`;
 const PAGE_SIZE = 10;
 
 function resolveInitialLanguage() {
@@ -59,6 +62,7 @@ let bestlapsSort = { key: null, direction: null };
 let safetySort = { key: null, direction: null };
 let carsSort = { key: "wins", direction: "desc" };
 let onlineData = [];
+let hourlyAnnouncementData = null;
 let selectedRace = null;
 let driverIndexData = [];
 let driverProfileData = null;
@@ -69,6 +73,11 @@ const translations = {
     openRaceDetailsLabel: "Open race details",
     onlineTitle: "Unique players",
 onlineNoData: "No data",
+    hourlyEyebrow: "Next Scheduled Event",
+    hourlyStartsLabel: "Starts",
+    hourlyTrackLabel: "Track",
+    hourlyOpenBtn: "Open hourly page",
+    hourlyNoEvent: "No scheduled event yet",
     todayStatsBtn: "Today Stats",
     todayStatsEyebrow: "Daily overview",
     todayStatsTitle: "Today's Statistics",
@@ -279,6 +288,11 @@ onlineNoData: "No data",
     openRaceDetailsLabel: "Открыть детали гонки",
     onlineTitle: "Уникальные игроки",
 onlineNoData: "Нет данных",
+    hourlyEyebrow: "Ближайший hourly-ивент",
+    hourlyStartsLabel: "Старт",
+    hourlyTrackLabel: "Трасса",
+    hourlyOpenBtn: "Открыть hourly-страницу",
+    hourlyNoEvent: "Пока нет запланированного события",
     todayStatsBtn: "Статистика за сегодня",
     todayStatsEyebrow: "Сводка дня",
     todayStatsTitle: "Статистика за сегодня",
@@ -672,6 +686,46 @@ function renderOnlineWidget() {
   rangeEl.textContent = `${first.label} - ${last.label}`;
 }
 
+function formatHourlyStart(dateValue, timeValue, timezoneValue) {
+  if (!dateValue || !timeValue) return t("hourlyNoEvent");
+
+  const normalizedTimezone = timezoneValue || "UTC+3";
+  const isoCandidate = `${dateValue}T${timeValue}:00+03:00`;
+  const parsed = new Date(isoCandidate);
+
+  if (Number.isNaN(parsed.getTime())) {
+    return `${dateValue}, ${timeValue} ${normalizedTimezone}`;
+  }
+
+  const locale = getCurrentLangSafe() === "ru" ? "ru-RU" : "en-GB";
+  const formatted = new Intl.DateTimeFormat(locale, {
+    year: "numeric",
+    month: "2-digit",
+    day: "2-digit",
+    hour: "2-digit",
+    minute: "2-digit"
+  }).format(parsed);
+
+  return `${formatted} ${normalizedTimezone}`;
+}
+
+function renderHourlyHeroCard() {
+  const startsEl = document.getElementById("hourly-starts-value");
+  const trackEl = document.getElementById("hourly-track-value");
+  const detailsBtn = document.getElementById("hourly-details-btn");
+
+  if (!startsEl || !trackEl || !detailsBtn) return;
+
+  const data = hourlyAnnouncementData;
+  startsEl.textContent = formatHourlyStart(
+    data?.date,
+    data?.start_time_local,
+    data?.timezone
+  );
+  trackEl.textContent = data?.track_name || "—";
+  detailsBtn.href = data?.details_url || "/hourly/";
+}
+
 function getSafetyColumns() {
   const dynamicPenaltyKeys = getSafetyPenaltyKeys(safetyData);
   return [
@@ -784,12 +838,12 @@ function makePublicDriverId(playerId) {
 function getDriverProfileHref(publicId, playerId = null) {
   const resolvedId = publicId || makePublicDriverId(playerId);
   if (!resolvedId) return null;
-  return `${dataBasePath}driver/?id=${encodeURIComponent(resolvedId)}`;
+  return `${SITE_BASE_PATH}driver/?id=${encodeURIComponent(resolvedId)}`;
 }
 
 function getCarsPageHref(carName) {
   if (!carName) return null;
-  return `${dataBasePath}cars/?car=${encodeURIComponent(carName)}`;
+  return `${SITE_BASE_PATH}cars/?car=${encodeURIComponent(carName)}`;
 }
 
 function renderDriverLink(name, publicId, className = "driver-link", playerId = null) {
@@ -1055,6 +1109,16 @@ async function loadSiteData() {
   return normalizeLegacyPayload(legacyResults);
 }
 
+async function loadHourlyAnnouncementData() {
+  try {
+    const data = await loadJson(hourlyAnnouncementUrl);
+    return data && typeof data === "object" ? data : null;
+  } catch (error) {
+    console.warn("hourly announcement is unavailable.", error);
+    return null;
+  }
+}
+
 async function loadRacesData() {
   const data = await loadJson(racesUrl);
   return Array.isArray(data) ? data : [];
@@ -1072,7 +1136,7 @@ function getRequestedDriverId() {
 
 async function loadDriverProfile(publicId) {
   if (!publicId) return null;
-  const data = await loadJson(`${dataBasePath}drivers/${encodeURIComponent(publicId)}.json`);
+  const data = await loadJson(`${TOP_DATA_BASE_URL}/drivers/${encodeURIComponent(publicId)}.json`);
   return data && typeof data === "object" ? data : null;
 }
 
@@ -2710,6 +2774,7 @@ function rerenderUI() {
   renderSafetyTablePage();
   renderTodayStatsModal();
   renderDriverOfDayModal();
+  renderHourlyHeroCard();
   renderOnlineWidget();
   applyRevealAnimations();
 }
@@ -2752,7 +2817,10 @@ async function init() {
       return;
     }
 
-    const data = await loadSiteData();
+    const [data, hourlyAnnouncement] = await Promise.all([
+      loadSiteData(),
+      loadHourlyAnnouncementData()
+    ]);
 
     leaderboardData = data.leaderboard;
     bestlapsData = data.bestlaps;
@@ -2760,6 +2828,7 @@ async function init() {
     safetyData = data.safety;
     driverOfDayData = data.driverOfDay;
     onlineData = data.online;
+    hourlyAnnouncementData = hourlyAnnouncement;
 
     const driversCountEl = document.getElementById("drivers-count");
     if (driversCountEl) {
