@@ -153,6 +153,23 @@
     "last_seen": "2026-03-18T01:29:13"
   },
   {
+    "car_model_id": 34,
+    "car_name_raw": "Porsche 992 GT3 R",
+    "car_name": "Porsche 992 GT3 R",
+    "races": 152,
+    "wins": 2,
+    "podiums": 11,
+    "win_rate": 1.32,
+    "average_finish": 13.93,
+    "unique_drivers": 98,
+    "fastest_lap_awards": 1,
+    "best_lap_ms": 106760,
+    "best_lap": "1:46.760",
+    "best_lap_driver": "Christian Dalla Longa",
+    "best_lap_public_id": "drv_288a4303be72",
+    "last_seen": "2026-03-18T11:38:23"
+  },
+  {
     "car_model_id": 23,
     "car_name_raw": "Porsche 911II GT3 R (2019)",
     "car_name": "Porsche 911II GT3 R",
@@ -168,23 +185,6 @@
     "best_lap_driver": "R A",
     "best_lap_public_id": "drv_8bfa4d38a6fc",
     "last_seen": "2026-03-18T02:05:06"
-  },
-  {
-    "car_model_id": 34,
-    "car_name_raw": "Porsche 992 GT3 R",
-    "car_name": "Porsche 992 GT3 R",
-    "races": 151,
-    "wins": 1,
-    "podiums": 10,
-    "win_rate": 0.66,
-    "average_finish": 14.01,
-    "unique_drivers": 97,
-    "fastest_lap_awards": 1,
-    "best_lap_ms": 106760,
-    "best_lap": "1:46.760",
-    "best_lap_driver": "Christian Dalla Longa",
-    "best_lap_public_id": "drv_288a4303be72",
-    "last_seen": "2026-03-18T03:16:42"
   },
   {
     "car_model_id": 33,
