@@ -64,9 +64,7 @@ const translations = {
     openRaceDetailsLabel: "Open race details",
     onlineTitle: "Unique players",
 onlineNoData: "No data",
-    hourlyEyebrow: "Next Event",
-    hourlyStatusScheduled: "Scheduled",
-    hourlyStatusUnscheduled: "Awaiting schedule",
+    hourlyEyebrow: "Next Scheduled Event",
     hourlyStartsLabel: "Starts",
     hourlyTrackLabel: "Track",
     hourlyDetailsBtn: "Open hourly page",
@@ -265,8 +263,6 @@ onlineNoData: "No data",
     onlineTitle: "Уникальные игроки",
 onlineNoData: "Нет данных",
     hourlyEyebrow: "Следующая Гонка",
-    hourlyStatusScheduled: "Запланировано",
-    hourlyStatusUnscheduled: "Пока без слота",
     hourlyStartsLabel: "Старт",
     hourlyTrackLabel: "Трасса",
     hourlyDetailsBtn: "Открыть hourly-страницу",
@@ -1610,7 +1606,6 @@ function formatAnnouncementStart(announcement, lang = "en") {
 function renderHourlyAnnouncement() {
   const cardEl = document.getElementById("hero-hourly-card");
   const eyebrowEl = document.getElementById("hourly-eyebrow");
-  const statusEl = document.getElementById("hourly-status");
   const startsLabelEl = document.getElementById("hourly-starts-label");
   const startsValueEl = document.getElementById("hourly-starts-value");
   const trackLabelEl = document.getElementById("hourly-track-label");
@@ -1628,27 +1623,19 @@ function renderHourlyAnnouncement() {
   if (detailsBtnEl) detailsBtnEl.setAttribute("href", detailsUrl);
 
   if (hourlyAnnouncementData === undefined) {
-    if (statusEl) statusEl.textContent = t("hourlyLoading");
     if (startsValueEl) startsValueEl.textContent = "—";
     if (trackValueEl) trackValueEl.textContent = t("hourlyTrackFallback");
     return;
   }
 
   if (hourlyAnnouncementData === null) {
-    if (statusEl) statusEl.textContent = t("hourlyUnavailable");
     if (startsValueEl) startsValueEl.textContent = "—";
     if (trackValueEl) trackValueEl.textContent = t("hourlyTrackFallback");
     return;
   }
 
-  const isScheduled = hourlyAnnouncementData.status === "scheduled";
-
-  if (statusEl) {
-    statusEl.textContent = isScheduled ? t("hourlyStatusScheduled") : t("hourlyStatusUnscheduled");
-  }
-
   if (startsValueEl) {
-    startsValueEl.textContent = isScheduled
+    startsValueEl.textContent = hourlyAnnouncementData.status === "scheduled"
       ? formatAnnouncementStart(hourlyAnnouncementData, currentLang)
       : "—";
   }

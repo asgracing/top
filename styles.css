@@ -653,8 +653,8 @@ tr.is-interactive-row:focus-visible {
   display: flex;
   flex-direction: column;
   grid-column: 2;
-  gap: 14px;
-  min-height: 176px;
+  gap: 16px;
+  min-height: 0;
   padding: 18px 18px 20px;
   margin-top: 4px;
   border: 1px solid rgba(255, 209, 102, 0.2);
@@ -671,7 +671,7 @@ tr.is-interactive-row:focus-visible {
 .hero-hourly-head {
   display: flex;
   align-items: flex-start;
-  gap: 12px;
+  gap: 0;
 }
 
 .hero-hourly-eyebrow {
@@ -679,17 +679,9 @@ tr.is-interactive-row:focus-visible {
   margin-bottom: 0;
 }
 
-.hero-hourly-status {
-  font-size: 0.9rem;
-  font-weight: 800;
-  letter-spacing: 0.04em;
-  text-transform: uppercase;
-  color: var(--accent-2);
-}
-
 .hero-hourly-meta {
   display: grid;
-  gap: 10px;
+  gap: 12px;
 }
 
 .hero-hourly-meta-row {
