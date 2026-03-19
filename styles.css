@@ -355,6 +355,8 @@ h1 {
 }
 
 .hero-hourly-card {
+  --hero-hourly-track-photo: none;
+  position: relative;
   grid-column: 3 / 4;
   display: flex;
   flex-direction: column;
@@ -369,6 +371,26 @@ h1 {
   box-shadow:
     inset 0 1px 0 rgba(255, 255, 255, 0.05),
     0 18px 40px rgba(0, 0, 0, 0.24);
+}
+
+.hero-hourly-card::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  border-radius: inherit;
+  background:
+    linear-gradient(120deg, rgba(8, 12, 18, 0.82) 0%, rgba(8, 12, 18, 0.64) 38%, rgba(8, 12, 18, 0.78) 100%),
+    radial-gradient(circle at top right, rgba(255, 184, 77, 0.16), transparent 32%),
+    var(--hero-hourly-track-photo);
+  background-position: center, top right, center;
+  background-size: cover, auto, cover;
+  background-repeat: no-repeat;
+  pointer-events: none;
+}
+
+.hero-hourly-card > * {
+  position: relative;
+  z-index: 1;
 }
 
 .hero-hourly-head {
@@ -446,6 +468,21 @@ h1 {
 .hero-hourly-btn.is-disabled {
   opacity: 0.75;
   pointer-events: none;
+}
+
+.hero-hourly-votes {
+  display: inline-flex;
+  align-items: center;
+  min-height: 42px;
+  padding: 12px 14px;
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  border-radius: 14px;
+  background: rgba(8, 12, 18, 0.42);
+  color: #f6f0dc;
+  font-size: 0.95rem;
+  font-weight: 800;
+  line-height: 1.35;
+  backdrop-filter: blur(10px);
 }
 
 .hero-actions {
