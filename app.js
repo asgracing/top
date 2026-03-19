@@ -73,10 +73,10 @@ const translations = {
     openRaceDetailsLabel: "Open race details",
     onlineTitle: "Unique players",
 onlineNoData: "No data",
-    hourlyEyebrow: "Next Scheduled Event",
+    hourlyEyebrow: "Next 1-Hour Race",
     hourlyStartsLabel: "Starts",
     hourlyTrackLabel: "Track",
-    hourlyOpenBtn: "Open hourly page",
+    hourlyOpenBtn: "1-Hour Race!",
     hourlyNoEvent: "No scheduled event yet",
     todayStatsBtn: "Today Stats",
     todayStatsEyebrow: "Daily overview",
@@ -288,10 +288,10 @@ onlineNoData: "No data",
     openRaceDetailsLabel: "Открыть детали гонки",
     onlineTitle: "Уникальные игроки",
 onlineNoData: "Нет данных",
-    hourlyEyebrow: "Ближайший hourly-ивент",
+    hourlyEyebrow: "Ближайшая часовая гонка",
     hourlyStartsLabel: "Старт",
     hourlyTrackLabel: "Трасса",
-    hourlyOpenBtn: "Открыть hourly-страницу",
+    hourlyOpenBtn: "Часовая Гонка!",
     hourlyNoEvent: "Пока нет запланированного события",
     todayStatsBtn: "Статистика за сегодня",
     todayStatsEyebrow: "Сводка дня",
@@ -686,29 +686,6 @@ function renderOnlineWidget() {
   rangeEl.textContent = `${first.label} - ${last.label}`;
 }
 
-function formatHourlyStart(dateValue, timeValue, timezoneValue) {
-  if (!dateValue || !timeValue) return t("hourlyNoEvent");
-
-  const normalizedTimezone = timezoneValue || "UTC+3";
-  const isoCandidate = `${dateValue}T${timeValue}:00+03:00`;
-  const parsed = new Date(isoCandidate);
-
-  if (Number.isNaN(parsed.getTime())) {
-    return `${dateValue}, ${timeValue} ${normalizedTimezone}`;
-  }
-
-  const locale = getCurrentLangSafe() === "ru" ? "ru-RU" : "en-GB";
-  const formatted = new Intl.DateTimeFormat(locale, {
-    year: "numeric",
-    month: "2-digit",
-    day: "2-digit",
-    hour: "2-digit",
-    minute: "2-digit"
-  }).format(parsed);
-
-  return `${formatted} ${normalizedTimezone}`;
-}
-
 function renderHourlyHeroCard() {
   const startsEl = document.getElementById("hourly-starts-value");
   const trackEl = document.getElementById("hourly-track-value");
@@ -717,13 +694,20 @@ function renderHourlyHeroCard() {
   if (!startsEl || !trackEl || !detailsBtn) return;
 
   const data = hourlyAnnouncementData;
-  startsEl.textContent = formatHourlyStart(
-    data?.date,
-    data?.start_time_local,
-    data?.timezone
-  );
-  trackEl.textContent = data?.track_name || "—";
-  detailsBtn.href = data?.details_url || "/hourly/";
+  trackEl.textContent = data?.track_name || t("hourlyNoEvent");
+  startsEl.textContent = data?.start_time_local && data?.timezone
+    ? `${data.start_time_local} ${data.timezone}`
+    : "—";
+
+  if (data?.details_url) {
+    detailsBtn.href = data.details_url;
+    detailsBtn.removeAttribute("aria-disabled");
+    detailsBtn.classList.remove("is-disabled");
+  } else {
+    detailsBtn.href = "#";
+    detailsBtn.setAttribute("aria-disabled", "true");
+    detailsBtn.classList.add("is-disabled");
+  }
 }
 
 function getSafetyColumns() {
