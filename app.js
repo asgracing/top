@@ -13,6 +13,7 @@ const driverOfDayUrl = `${TOP_DATA_BASE_URL}/driver_of_the_day.json`;
 const serverStatusUrl = `${TOP_DATA_BASE_URL}/server_status.json`;
 const onlineUrl = `${TOP_DATA_BASE_URL}/online.json`;
 const hourlyAnnouncementUrl = `${HOURLY_DATA_BASE_URL}/announcement.json`;
+const hourlyVotesApiUrl = "https://hourly-votes.asgracing.workers.dev";
 const racesUrl = `${TOP_DATA_BASE_URL}/races/races.json`;
 const carsUrl = `${TOP_DATA_BASE_URL}/cars/cars.json`;
 const driverIndexUrl = `${TOP_DATA_BASE_URL}/drivers/drivers.json`;
@@ -63,9 +64,16 @@ let safetySort = { key: null, direction: null };
 let carsSort = { key: "wins", direction: "desc" };
 let onlineData = [];
 let hourlyAnnouncementData = null;
+let hourlyVotesCount = null;
 let selectedRace = null;
 let driverIndexData = [];
 let driverProfileData = null;
+const HOURLY_TRACK_BACKGROUNDS = {
+  monza: "https://asgracing.github.io/hourly/assets/tracks/monza.jpg",
+  silverstone: "https://asgracing.github.io/hourly/assets/tracks/silverstone.jpg",
+  spa: "https://asgracing.github.io/hourly/assets/tracks/spa.jpg",
+  nurburgring: "https://asgracing.github.io/hourly/assets/tracks/nurburgring.jpg"
+};
 
 const translations = {
   en: {
@@ -78,6 +86,9 @@ onlineNoData: "No data",
     hourlyTrackLabel: "Track",
     hourlyOpenBtn: "1-Hour Race!",
     hourlyNoEvent: "No scheduled event yet",
+    hourlyVotesZero: "No registrations yet",
+    hourlyVotesOne: "{value} registered driver",
+    hourlyVotesMany: "{value} registered drivers",
     todayStatsBtn: "Today Stats",
     todayStatsEyebrow: "Daily overview",
     todayStatsTitle: "Today's Statistics",
@@ -293,6 +304,9 @@ onlineNoData: "Нет данных",
     hourlyTrackLabel: "Трасса",
     hourlyOpenBtn: "Часовая Гонка!",
     hourlyNoEvent: "Пока нет запланированного события",
+    hourlyVotesZero: "Пока никто не зарегистрировался",
+    hourlyVotesOne: "{value} участник",
+    hourlyVotesMany: "{value} участников",
     todayStatsBtn: "Статистика за сегодня",
     todayStatsEyebrow: "Сводка дня",
     todayStatsTitle: "Статистика за сегодня",
@@ -690,14 +704,28 @@ function renderHourlyHeroCard() {
   const startsEl = document.getElementById("hourly-starts-value");
   const trackEl = document.getElementById("hourly-track-value");
   const detailsBtn = document.getElementById("hourly-details-btn");
+  const votesEl = document.getElementById("hourly-votes-summary");
+  const cardEl = document.getElementById("hero-hourly-card");
 
-  if (!startsEl || !trackEl || !detailsBtn) return;
+  if (!startsEl || !trackEl || !detailsBtn || !votesEl || !cardEl) return;
 
   const data = hourlyAnnouncementData;
   trackEl.textContent = data?.track_name || t("hourlyNoEvent");
   startsEl.textContent = data?.start_time_local && data?.timezone
     ? `${data.start_time_local} ${data.timezone}`
     : "—";
+  const trackCode = String(data?.track_code || "").trim().toLowerCase();
+  const backgroundUrl = HOURLY_TRACK_BACKGROUNDS[trackCode];
+  cardEl.style.setProperty("--hero-hourly-track-photo", backgroundUrl ? `url("${backgroundUrl}")` : "none");
+
+  if (typeof hourlyVotesCount === "number") {
+    votesEl.textContent = replaceTokens(
+      t(hourlyVotesCount === 1 ? "hourlyVotesOne" : hourlyVotesCount > 1 ? "hourlyVotesMany" : "hourlyVotesZero"),
+      { value: hourlyVotesCount }
+    );
+  } else {
+    votesEl.textContent = "—";
+  }
 
   if (data?.details_url) {
     detailsBtn.href = data.details_url;
@@ -707,6 +735,43 @@ function renderHourlyHeroCard() {
     detailsBtn.href = "#";
     detailsBtn.setAttribute("aria-disabled", "true");
     detailsBtn.classList.add("is-disabled");
+  }
+}
+
+function normalizeHourlyEventId(value) {
+  return String(value || "")
+    .trim()
+    .toLowerCase()
+    .replace(/[^a-z0-9._-]+/g, "_")
+    .replace(/^_+|_+$/g, "");
+}
+
+function buildHourlyAnnouncementEventId(item) {
+  const explicitId = normalizeHourlyEventId(item?.event_id);
+  if (explicitId) return explicitId;
+  const date = String(item?.date || "").trim();
+  const time = String(item?.start_time_local || "").trim().replace(":", "");
+  const trackCode = normalizeHourlyEventId(item?.track_code || item?.track_name || "slot");
+  return normalizeHourlyEventId(`hourly_${date}_${time}_${trackCode}`);
+}
+
+async function loadHourlyVotes(announcement) {
+  const eventId = buildHourlyAnnouncementEventId(announcement);
+  if (!eventId) {
+    hourlyVotesCount = null;
+    return;
+  }
+  try {
+    const url = new URL("/votes", hourlyVotesApiUrl);
+    url.searchParams.set("event_ids", eventId);
+    const response = await fetch(url, { cache: "no-store" });
+    if (!response.ok) throw new Error(`HTTP ${response.status}`);
+    const payload = await response.json();
+    const count = payload?.items?.[eventId]?.votes;
+    hourlyVotesCount = typeof count === "number" ? count : 0;
+  } catch (error) {
+    console.warn("hourly votes are unavailable.", error);
+    hourlyVotesCount = null;
   }
 }
 
@@ -2826,6 +2891,7 @@ async function init() {
     driverOfDayData = data.driverOfDay;
     onlineData = data.online;
     hourlyAnnouncementData = hourlyAnnouncement;
+    await loadHourlyVotes(hourlyAnnouncementData);
 
     const driversCountEl = document.getElementById("drivers-count");
     if (driversCountEl) {
