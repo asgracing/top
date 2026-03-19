@@ -1598,6 +1598,11 @@ tbody tr:last-child td {
   color: var(--muted);
 }
 
+.best-lap-value {
+  color: #a300f5;
+  text-shadow: 0 0 12px rgba(163, 0, 245, 0.2);
+}
+
 .pill {
   display: inline-flex;
   align-items: center;

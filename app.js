@@ -1010,6 +1010,17 @@ function getProcessedCars() {
   );
 }
 
+function getBestLapClass(isHighlighted) {
+  return isHighlighted ? "best-lap-value" : "";
+}
+
+function getFastestLapMs(items = [], key = "best_lap_ms") {
+  const values = items
+    .map(item => item?.[key])
+    .filter(value => typeof value === "number" && value > 0);
+  return values.length ? Math.min(...values) : null;
+}
+
 async function loadJson(url) {
   const res = await fetch(url, { cache: "default" });
   if (!res.ok) throw new Error(`HTTP ${res.status} for ${url}`);
@@ -2095,7 +2106,7 @@ function renderRaceResultsModal() {
     </div>
     <div class="race-summary-card">
       <div class="race-summary-label">${escapeHtml(t("raceSummaryBestLap"))}</div>
-      <div class="race-summary-value">${escapeHtml(selectedRace.best_lap || "-")}</div>
+      <div class="race-summary-value best-lap-value">${escapeHtml(selectedRace.best_lap || "-")}</div>
     </div>
   `;
 
@@ -2115,7 +2126,7 @@ function renderRaceResultsModal() {
         </div>
       </td>
       <td>
-        <div>${escapeHtml(row.best_lap || "-")}</div>
+        <div class="${getBestLapClass(Boolean(row.had_best_lap))}">${escapeHtml(row.best_lap || "-")}</div>
         <div class="race-note">${row.had_best_lap ? escapeHtml(t("raceBestLapBadge")) : ""}</div>
       </td>
       <td>
@@ -2194,6 +2205,7 @@ function renderCarsTable() {
   if (!tableEl) return;
 
   const rowsData = getProcessedCars();
+  const fastestLapMs = getFastestLapMs(rowsData);
 
   if (!rowsData.length) {
     tableEl.innerHTML = `<div class="empty-box">${escapeHtml(t("emptyRaces"))}</div>`;
@@ -2217,7 +2229,7 @@ function renderCarsTable() {
       <td>${escapeHtml(formatAverageFinish(row.average_finish))}</td>
       <td>${escapeHtml(row.fastest_lap_awards ?? 0)}</td>
       <td>
-        <div>${escapeHtml(row.best_lap || "—")}</div>
+        <div class="${getBestLapClass(row.best_lap_ms === fastestLapMs)}">${escapeHtml(row.best_lap || "—")}</div>
         <div class="race-note">${renderDriverLink(row.best_lap_driver || "—", row.best_lap_public_id, "driver-link driver-link-subtle")}</div>
       </td>
     </tr>
@@ -2247,6 +2259,7 @@ function renderDriverRaceHistory() {
 
   const rawData = Array.isArray(driverProfileData?.race_history) ? driverProfileData.race_history : [];
   const rowsData = sortData(rawData, driverRaceSort, driverRaceColumns);
+  const fastestLapMs = getFastestLapMs(rawData);
   if (!rowsData.length) {
     tableEl.innerHTML = `<div class="empty-box">${escapeHtml(t("driverNoData"))}</div>`;
     return;
@@ -2265,7 +2278,7 @@ function renderDriverRaceHistory() {
       <td>${escapeHtml(row.position ?? "-")}</td>
       <td>${renderPositionsDelta(row.positions_delta)}</td>
       <td>${escapeHtml(row.points ?? 0)}</td>
-      <td>${escapeHtml(row.best_lap ?? "-")}</td>
+      <td><span class="${getBestLapClass(row.best_lap_ms === fastestLapMs)}">${escapeHtml(row.best_lap ?? "-")}</span></td>
       <td>
         <div>${renderCarLink(row.car_name ?? "-", "driver-link driver-link-subtle")}</div>
         <div class="race-note">${row.counted_for_stats === false ? escapeHtml(t("notCountedBadge")) : ""}</div>
@@ -2451,7 +2464,7 @@ function renderDriverPage() {
     <div class="driver-stat-card">
       <div class="driver-stat-label">${escapeHtml(t("driverSummaryBestLap"))}</div>
       <div class="driver-stat-value driver-stat-mainline">
-        <span>${escapeHtml(summary.best_lap ?? "-")}</span>
+        <span class="best-lap-value">${escapeHtml(summary.best_lap ?? "-")}</span>
         <span class="driver-stat-side">${renderCarLink(summary.best_lap_car_name ?? "-", "driver-link driver-link-subtle")}</span>
       </div>
     </div>
@@ -2543,7 +2556,7 @@ function renderTodayStatsModal() {
       ? stats.tracks_raced_today.join(", ")
       : "-";
 
-  bestLapEl.innerHTML = `<span>${escapeHtml(stats.best_lap_today?.lap || "-")}</span><span class="today-detail-side-inline">${escapeHtml(stats.best_lap_today?.car_name || "-")}</span>`;
+  bestLapEl.innerHTML = `<span class="best-lap-value">${escapeHtml(stats.best_lap_today?.lap || "-")}</span><span class="today-detail-side-inline">${escapeHtml(stats.best_lap_today?.car_name || "-")}</span>`;
   bestLapNoteEl.textContent = stats.best_lap_today
     ? `${stats.best_lap_today.driver} · ${stats.best_lap_today.track}`
     : "-";
@@ -2662,7 +2675,7 @@ function renderDriverOfDayModal() {
   } else {
     avgGainEl.classList.add("delta-neutral");
   }
-  bestLapEl.textContent = data.best_lap || "-";
+  bestLapEl.innerHTML = `<span class="best-lap-value">${escapeHtml(data.best_lap || "-")}</span>`;
   bestLapTrackEl.textContent = "";
   updatedEl.textContent = currentLang === "ru"
     ? `Обновлено: ${formatDateTimeLocal(data.updated_at, "ru")}`
