@@ -317,6 +317,10 @@ h1 {
   margin-left: 10px;
 }
 
+.hero-copy .eyebrow {
+  margin-bottom: 8px;
+}
+
 .hero-hourly-card {
   grid-column: 3 / 4;
   display: flex;
