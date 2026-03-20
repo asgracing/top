@@ -241,7 +241,7 @@
       <div class="section-header">
         <div>
           <h2 class="section-title" data-i18n="championshipTitle">Championship Leaderboard</h2>
-          <p class="section-subtitle" data-i18n="championshipSubtitle">Points, wins, podiums, average finish and best lap.</p>
+          <p class="section-subtitle section-subtitle-hint" data-i18n="championshipSubtitle">Points, wins, podiums, average finish and best lap.</p>
         </div>
         <div class="table-tools">
           <input id="leaderboard-search" class="search-input" type="text" autocomplete="off" />
@@ -263,7 +263,7 @@
       <div class="section-header">
         <div>
           <h2 class="section-title" data-i18n="bestLapsTitle">Best Laps</h2>
-          <p class="section-subtitle" data-i18n="bestLapsSubtitle">Fastest laps recorded during qualifying and race sessions.</p>
+          <p class="section-subtitle section-subtitle-hint" data-i18n="bestLapsSubtitle">Fastest laps recorded during qualifying and race sessions.</p>
         </div>
         <div class="table-tools">
           <input id="bestlaps-search" class="search-input" type="text" autocomplete="off" />
@@ -381,6 +381,33 @@
         </div>
       </div>
     </section>
+<div class="modal-overlay" id="driver-preview-modal" aria-hidden="true">
+  <div class="modal-card modal-card-driver modal-card-driver-preview" role="dialog" aria-modal="true" aria-labelledby="driver-preview-title">
+    <button class="modal-close" id="driver-preview-close" type="button" aria-label="Close" data-i18n-aria-label="closeLabel">&times;</button>
+
+    <div class="modal-header modal-header-driver-preview">
+      <div>
+        <div class="eyebrow" data-i18n="driverPreviewEyebrow">Driver quick view</div>
+        <h3 id="driver-preview-title" class="modal-title">-</h3>
+        <p class="modal-subtitle" id="driver-preview-subtitle" data-i18n="driverPreviewSubtitle">
+          Key pace and results from the ASG Racing server.
+        </p>
+      </div>
+
+      <a class="btn btn-driver-preview-link" id="driver-preview-link" href="#" data-i18n="driverPreviewOpenPage" hidden>
+        Go to driver page
+      </a>
+    </div>
+
+    <div class="driver-preview-scroll">
+      <div class="driver-stats-grid driver-preview-stats-grid" id="driver-preview-stats">
+        <div class="loading" data-i18n="driverLoading">Loading driver profile...</div>
+      </div>
+
+      <div class="driver-highlights-grid" id="driver-preview-highlights"></div>
+    </div>
+  </div>
+</div>
 <div class="modal-overlay" id="today-stats-modal" aria-hidden="true">
   <div class="modal-card" role="dialog" aria-modal="true" aria-labelledby="today-stats-title">
     <button class="modal-close" id="today-stats-close" type="button" aria-label="Close" data-i18n-aria-label="closeLabel">✕</button>
