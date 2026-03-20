@@ -2273,7 +2273,7 @@ function renderRacesTablePage() {
     (page) => {
       racesPage = page;
       renderRacesTablePage();
-      document.getElementById("top")?.scrollIntoView({ behavior: "smooth", block: "start" });
+      document.getElementById("races-table")?.scrollIntoView({ behavior: "smooth", block: "center" });
     }
   );
 }

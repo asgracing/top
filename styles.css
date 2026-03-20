@@ -2597,6 +2597,35 @@ body.modal-open {
     padding: 12px 14px;
   }
 
+  .page-hero-stats {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 10px;
+  }
+
+  .page-hero-stats .mini-stat {
+    min-height: 0;
+  }
+
+  .page-hero-stats .mini-value,
+  .page-hero-stats .mini-note,
+  .page-hero-stats .driver-link {
+    overflow-wrap: anywhere;
+    word-break: break-word;
+  }
+
+  .page-hero-stats .mini-value {
+    font-size: clamp(0.8rem, 4.1vw, 1.7rem);
+    line-height: 1.05;
+  }
+
+  .page-hero-stats .mini-note {
+    line-height: 1.25;
+  }
+
+  .page-hero-copy .hero-subtitle.page-hero-subtitle {
+    font-size: 16px;
+  }
+
   .modal-overlay {
     padding: 8px;
   }
