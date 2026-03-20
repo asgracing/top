@@ -68,6 +68,9 @@ let hourlyVotesCount = null;
 let selectedRace = null;
 let driverIndexData = [];
 let driverProfileData = null;
+let driverPreviewState = null;
+let driverPreviewModalController = null;
+const driverProfileCache = new Map();
 const HOURLY_TRACK_BACKGROUNDS = {
   monza: "https://asgracing.github.io/hourly/assets/tracks/monza.jpg",
   silverstone: "https://asgracing.github.io/hourly/assets/tracks/silverstone.jpg",
@@ -79,6 +82,7 @@ const translations = {
   en: {
     closeLabel: "Close",
     openRaceDetailsLabel: "Open race details",
+    openDriverPreviewLabel: "Open driver quick view",
     onlineTitle: "Unique players",
 onlineNoData: "No data",
     hourlyEyebrow: "Next 1-Hour Race",
@@ -145,9 +149,9 @@ onlineNoData: "No data",
     top3Title: "Top 3 Drivers",
     top3Subtitle: "Current championship leaders by points.",
     championshipTitle: "Championship Leaderboard",
-    championshipSubtitle: "Points, wins, podiums, average finish and best lap.",
+    championshipSubtitle: "Row click opens quick view. Name opens full profile.",
     bestLapsTitle: "Best Laps",
-    bestLapsSubtitle: "Fastest laps recorded during qualifying and race sessions.",
+    bestLapsSubtitle: "Row click opens quick view. Name opens full profile.",
     worstSafetyTitle: "Worst Safety",
     worstSafetySubtitle: "Penalty count, penalty points and breakdown by penalty type.",
     aboutTitle: "About ASG Racing Server",
@@ -222,7 +226,7 @@ onlineNoData: "No data",
     racesSummaryLatestWinner: "Latest winner",
     racesSummaryLastWinnerBestLap: "Winner best lap",
     racesTableTitle: "Race Results",
-    racesTableSubtitle: "Sorted from newest to oldest.",
+    racesTableSubtitle: "Row click opens quick view. Name opens full profile.",
     raceModalEyebrow: "Race details",
     racesCols: ["Date", "Track", "Winner", "Drivers", "Best Lap"],
     raceModalCols: ["Pos", "Start", "Δ", "Driver", "Best Lap", "Car", "Gap", "Pts", "Pen"],
@@ -236,6 +240,11 @@ onlineNoData: "No data",
     noWinner: "No winner",
     pageTitleDriver: "ASG Racing Driver Profile | Assetto Corsa Competizione Stats",
     driverEyebrow: "Driver profile",
+    driverPreviewEyebrow: "Driver quick view",
+    driverPreviewSubtitle: "Key pace and results from the ASG Racing server.",
+    driverPreviewOpenPage: "Go to driver page",
+    driverPreviewRowHint: "Row click opens quick view",
+    driverPreviewLinkHint: "Name opens full profile",
     driverPageSubtitle: "Personal race history, pace and safety metrics from the ASG Racing server.",
     driverSummaryPoints: "Points",
     driverSummaryAvgPoints: "Avg points / race",
@@ -250,6 +259,7 @@ onlineNoData: "No data",
     driverSummaryFastestLaps: "Fastest lap awards",
     driverSectionOverview: "Overview",
     driverSectionRaces: "Race History",
+    driverSectionRacesSubtitle: "Row click opens quick view.",
     driverSectionTracks: "Track Stats",
     driverSectionPenalties: "Penalty Breakdown",
     driverRecentForm: "Recent form",
@@ -265,7 +275,7 @@ onlineNoData: "No data",
     driverPenaltyReason: "Reason",
     driverPenaltyType: "Type",
     leaderboardCols: [
-      "Rank",
+      "#",
       "Driver",
       "Points",
       "Wins",
@@ -276,8 +286,8 @@ onlineNoData: "No data",
       "Car",
       "Session"
     ],
-    bestlapsCols: ["Rank", "Driver", "Best Lap", "Car", "Session", "Updated"],
-    safetyBaseCols: ["Rank", "Driver", "Penalties", "Penalty Points"],
+    bestlapsCols: ["#", "Driver", "Best Lap", "Car", "Session", "Updated"],
+    safetyBaseCols: ["#", "Driver", "Penalties", "Penalty Points"],
     leaderboardSearchPlaceholder: "Search driver...",
     bestlapsSearchPlaceholder: "Search driver...",
     safetySearchPlaceholder: "Search driver...",
@@ -289,7 +299,7 @@ onlineNoData: "No data",
       bestLap: "Best lap"
     },
     sessionRace: "Race",
-    sessionQualifying: "Qualifying",
+    sessionQualifying: "Quali",
     paginationShown: "Showing {start}-{end} of {total}",
     prev: "← Prev",
     next: "Next →"
@@ -297,6 +307,7 @@ onlineNoData: "No data",
   ru: {
     closeLabel: "Закрыть",
     openRaceDetailsLabel: "Открыть детали гонки",
+    openDriverPreviewLabel: "Открыть быстрое превью пилота",
     onlineTitle: "Уникальные игроки",
 onlineNoData: "Нет данных",
     hourlyEyebrow: "Ближайшая часовая гонка",
@@ -374,9 +385,9 @@ onlineNoData: "Нет данных",
     top3Title: "Топ-3 пилота",
     top3Subtitle: "Текущие лидеры чемпионата по очкам.",
     championshipTitle: "Таблица чемпионата",
-    championshipSubtitle: "Очки, победы, подиумы, средний финиш и лучший круг.",
+    championshipSubtitle: "Клик по строке открывает модалку. Имя открывает полный профиль.",
     bestLapsTitle: "Лучшие круги",
-    bestLapsSubtitle: "Быстрейшие круги из квалификаций и гонок.",
+    bestLapsSubtitle: "Клик по строке открывает модалку. Имя открывает полный профиль.",
     worstSafetyTitle: "Худшая безопасность",
     worstSafetySubtitle: "Количество штрафов, штрафные баллы и разбивка по типам penalty.",
     aboutTitle: "О сервере ASG Racing",
@@ -440,7 +451,7 @@ onlineNoData: "Нет данных",
     racesSummaryLatestWinner: "Последний победитель",
     racesSummaryLastWinnerBestLap: "Лучший круг победителя",
     racesTableTitle: "Результаты гонок",
-    racesTableSubtitle: "Сортировка от новых к старым.",
+    racesTableSubtitle: "Клик по строке открывает модалку. Имя открывает полный профиль.",
     raceModalEyebrow: "Детали гонки",
     racesCols: ["Дата", "Трасса", "Победитель", "Пилоты", "Лучший круг"],
     raceModalCols: ["Pos", "Старт", "Δ", "Пилот", "Лучший круг", "Машина", "Отставание", "Очки", "Штр."],
@@ -454,6 +465,11 @@ onlineNoData: "Нет данных",
     noWinner: "Нет победителя",
     pageTitleDriver: "ASG Racing Профиль пилота | Статистика Assetto Corsa Competizione",
     driverEyebrow: "Профиль пилота",
+    driverPreviewEyebrow: "Быстрый просмотр пилота",
+    driverPreviewSubtitle: "Ключевые показатели темпа и результатов на сервере ASG Racing.",
+    driverPreviewOpenPage: "Перейти на страницу пилота",
+    driverPreviewRowHint: "Клик по строке открывает модалку",
+    driverPreviewLinkHint: "Имя открывает полный профиль",
     driverPageSubtitle: "Личная история гонок, темп и safety-метрики на сервере ASG Racing.",
     driverSummaryPoints: "Очки",
     driverSummaryAvgPoints: "Ср. очков / гонку",
@@ -468,6 +484,7 @@ onlineNoData: "Нет данных",
     driverSummaryFastestLaps: "Лучшие круги в гонке",
     driverSectionOverview: "Обзор",
     driverSectionRaces: "История гонок",
+    driverSectionRacesSubtitle: "Клик по строке открывает модалку.",
     driverSectionTracks: "Статистика по трассам",
     driverSectionPenalties: "Разбор штрафов",
     driverRecentForm: "Последние результаты",
@@ -483,7 +500,7 @@ onlineNoData: "Нет данных",
     driverPenaltyReason: "Причина",
     driverPenaltyType: "Тип",
     leaderboardCols: [
-      "Место",
+      "№",
       "Пилот",
       "Очки",
       "Победы",
@@ -494,8 +511,8 @@ onlineNoData: "Нет данных",
       "Машина",
       "Сессия"
     ],
-    bestlapsCols: ["Место", "Пилот", "Лучший круг", "Машина", "Сессия", "Обновлено"],
-    safetyBaseCols: ["Место", "Пилот", "Нарушения", "Штрафные баллы"],
+    bestlapsCols: ["№", "Пилот", "Лучший круг", "Машина", "Сессия", "Обновлено"],
+    safetyBaseCols: ["№", "Пилот", "Нарушения", "Штрафные баллы"],
     leaderboardSearchPlaceholder: "Поиск пилота...",
     bestlapsSearchPlaceholder: "Поиск пилота...",
     safetySearchPlaceholder: "Поиск пилота...",
@@ -507,7 +524,7 @@ onlineNoData: "Нет данных",
       bestLap: "Лучший круг"
     },
     sessionRace: "Гонка",
-    sessionQualifying: "Квалификация",
+    sessionQualifying: "Квала",
     paginationShown: "Показано {start}-{end} из {total}",
     prev: "← Назад",
     next: "Вперед →"
@@ -920,6 +937,38 @@ function initials(name) {
   return (parts[0][0] + parts[1][0]).toUpperCase();
 }
 
+function getDriverPreviewRowData(row) {
+  const publicId = row?.public_id || makePublicDriverId(row?.player_id);
+  if (!publicId) return null;
+
+  return {
+    publicId,
+    playerId: row?.player_id || null,
+    driver: row?.driver || "-",
+    href: getDriverProfileHref(publicId, row?.player_id),
+  };
+}
+
+function buildDriverPreviewRowAttributes(row) {
+  const preview = getDriverPreviewRowData(row);
+  if (!preview) return "";
+
+  return [
+    'class="is-interactive-row is-driver-preview-row"',
+    'tabindex="0"',
+    'role="button"',
+    `aria-label="${escapeAttribute(`${t("openDriverPreviewLabel")}: ${preview.driver}`)}"`,
+    `data-driver-preview="true"`,
+    `data-public-id="${escapeAttribute(preview.publicId)}"`,
+    `data-player-id="${escapeAttribute(preview.playerId || "")}"`,
+    `data-driver-name="${escapeAttribute(preview.driver)}"`
+  ].join(" ");
+}
+
+function renderDriverNameMeta() {
+  return "";
+}
+
 function sessionLabel(value) {
   const v = String(value || "").toUpperCase();
   if (v === "R") return `<span class="pill pill-session-r">${escapeHtml(t("sessionRace"))}</span>`;
@@ -1200,6 +1249,20 @@ async function loadDriverProfile(publicId) {
   return data && typeof data === "object" ? data : null;
 }
 
+async function loadDriverProfileCached(publicId) {
+  if (!publicId) return null;
+  if (!driverProfileCache.has(publicId)) {
+    driverProfileCache.set(
+      publicId,
+      loadDriverProfile(publicId).catch((error) => {
+        driverProfileCache.delete(publicId);
+        throw error;
+      })
+    );
+  }
+  return driverProfileCache.get(publicId);
+}
+
 async function loadDriverIndex() {
   const data = await loadJson(driverIndexUrl);
   return Array.isArray(data) ? data : [];
@@ -1355,6 +1418,80 @@ function createModalController({ modalId, closeButtonId, openButtonId, onOpen, o
   }
 
   return { modal, open, close };
+}
+
+function shouldIgnoreDriverPreviewTrigger(target) {
+  return Boolean(target?.closest("a, button, input, select, textarea, summary"));
+}
+
+function getDriverPreviewTriggerRow(target, tableRoot) {
+  const row = target?.closest?.("tr[data-driver-preview='true']");
+  if (!row || (tableRoot && !tableRoot.contains(row))) return null;
+  return row;
+}
+
+function openDriverPreviewFromRowElement(rowEl, trigger) {
+  const publicId = rowEl?.dataset?.publicId || null;
+  const playerId = rowEl?.dataset?.playerId || null;
+  const driver = rowEl?.dataset?.driverName || "-";
+  if (!publicId || !driverPreviewModalController) return;
+
+  driverPreviewState = {
+    publicId,
+    playerId,
+    driver,
+    href: getDriverProfileHref(publicId, playerId),
+    loading: true,
+    error: false,
+    profile: null
+  };
+
+  driverPreviewModalController.open(trigger || rowEl);
+  renderDriverPreviewModal();
+
+  loadDriverProfileCached(publicId)
+    .then((profile) => {
+      if (!driverPreviewState || driverPreviewState.publicId !== publicId) return;
+      driverPreviewState = {
+        ...driverPreviewState,
+        loading: false,
+        error: !profile,
+        profile: profile || null,
+      };
+      renderDriverPreviewModal();
+    })
+    .catch(() => {
+      if (!driverPreviewState || driverPreviewState.publicId !== publicId) return;
+      driverPreviewState = {
+        ...driverPreviewState,
+        loading: false,
+        error: true,
+        profile: null,
+      };
+      renderDriverPreviewModal();
+    });
+}
+
+function bindDriverPreviewTableInteractions(tableRoot) {
+  if (!tableRoot || tableRoot.dataset.driverPreviewBound === "true") return;
+
+  tableRoot.addEventListener("click", (event) => {
+    if (shouldIgnoreDriverPreviewTrigger(event.target)) return;
+    const row = getDriverPreviewTriggerRow(event.target, tableRoot);
+    if (!row) return;
+    openDriverPreviewFromRowElement(row, row);
+  });
+
+  tableRoot.addEventListener("keydown", (event) => {
+    const row = getDriverPreviewTriggerRow(event.target, tableRoot);
+    if (!row) return;
+    if (shouldIgnoreDriverPreviewTrigger(event.target)) return;
+    if (event.key !== "Enter" && event.key !== " ") return;
+    event.preventDefault();
+    openDriverPreviewFromRowElement(row, row);
+  });
+
+  tableRoot.dataset.driverPreviewBound = "true";
 }
 
 function applyRevealAnimations() {
@@ -1591,13 +1728,14 @@ function renderLeaderboardTablePage() {
   }
 
   const rows = result.items.map(row => `
-    <tr>
+    <tr ${buildDriverPreviewRowAttributes(row)}>
       <td><span class="rank-badge rank-${escapeHtml(row.rank)}">#${escapeHtml(row.rank)}</span></td>
       <td>
         <div class="driver-cell">
           <div class="driver-avatar">${escapeHtml(initials(row.driver))}</div>
           <div class="driver-name-wrap">
             <div class="driver-name">${renderDriverLink(row.driver, row.public_id, "driver-link", row.player_id)}</div>
+            ${renderDriverNameMeta(row)}
           </div>
         </div>
       </td>
@@ -1622,6 +1760,7 @@ function renderLeaderboardTablePage() {
   `;
 
   bindLeaderboardSortHandlers();
+  bindDriverPreviewTableInteractions(tableEl);
 
   renderPagination(
     "leaderboard-pagination",
@@ -1656,13 +1795,14 @@ function renderBestLapsTablePage() {
   }
 
   const rows = result.items.map(row => `
-    <tr>
+    <tr ${buildDriverPreviewRowAttributes(row)}>
       <td><span class="rank-badge rank-${escapeHtml(row.rank)}">#${escapeHtml(row.rank)}</span></td>
       <td>
         <div class="driver-cell">
           <div class="driver-avatar">${escapeHtml(initials(row.driver))}</div>
           <div class="driver-name-wrap">
             <div class="driver-name">${renderDriverLink(row.driver, row.public_id, "driver-link", row.player_id)}</div>
+            ${renderDriverNameMeta(row)}
           </div>
         </div>
       </td>
@@ -1683,6 +1823,7 @@ function renderBestLapsTablePage() {
   `;
 
   bindBestlapsSortHandlers();
+  bindDriverPreviewTableInteractions(tableEl);
 
   renderPagination(
     "bestlaps-pagination",
@@ -2176,8 +2317,9 @@ function renderRaceResultsModal() {
   `;
 
   const headers = t("raceModalCols").map(label => `<th>${escapeHtml(label)}</th>`).join("");
+  const highlightedDriverPublicId = IS_DRIVER_PAGE ? driverProfileData?.public_id : null;
   const rows = (selectedRace.results || []).map(row => `
-    <tr>
+    <tr class="${row.public_id && highlightedDriverPublicId && row.public_id === highlightedDriverPublicId ? "race-result-row-highlight" : ""}">
       <td><span class="rank-badge rank-${escapeHtml(row.position)}">#${escapeHtml(row.position)}</span></td>
       <td>${escapeHtml(formatStartPosition(row))}</td>
       <td>${renderPositionsDelta(row.positions_delta)}</td>
@@ -2235,10 +2377,27 @@ function initRaceResultsModal() {
   });
 }
 
+function initDriverPreviewModal() {
+  driverPreviewModalController = createModalController({
+    modalId: "driver-preview-modal",
+    closeButtonId: "driver-preview-close",
+    onOpen: renderDriverPreviewModal,
+    onClose: () => {
+      driverPreviewState = null;
+      renderDriverPreviewModal();
+    }
+  });
+}
+
 function renderRacesPage() {
   renderRacesSummary();
   renderRacesTablePage();
   renderRaceResultsModal();
+}
+
+function getRaceById(raceId) {
+  if (!raceId || !Array.isArray(racesData)) return null;
+  return racesData.find(race => race?.race_id === raceId) || null;
 }
 
 function renderCarsSummary() {
@@ -2318,6 +2477,99 @@ function renderRecentForm(items = []) {
   return items.map(item => `<span class="form-pill">${escapeHtml(item)}</span>`).join("");
 }
 
+function buildDriverHeroTitle(profile) {
+  if (!profile) return "-";
+  const rankInfo = getDriverRankInfo(profile);
+  return `
+    <span class="driver-title-name">${escapeHtml(profile.driver || "-")}</span>
+    ${rankInfo ? `<span class="driver-rank-pill ${escapeHtml(rankInfo.rankClass)}" title="${escapeAttribute(t("driverRankingPosition"))}"><span class="driver-rank-label">${escapeHtml(t("driverRankingPosition"))}:</span><span class="driver-rank-value">#${escapeHtml(rankInfo.rank)}</span></span>` : ""}
+  `;
+}
+
+function buildDriverStatsMarkup(profile) {
+  if (!profile) {
+    return `<div class="empty-box">${escapeHtml(t("driverNoData"))}</div>`;
+  }
+
+  const summary = profile.summary || {};
+  const favoriteCarName = getFavoriteCarName(profile);
+  const averagePace = summary.average_pace ?? "-";
+
+  return `
+    <div class="driver-stat-card">
+      <div class="driver-stat-label">${escapeHtml(t("driverSummaryPoints"))}</div>
+      <div class="driver-stat-value">${escapeHtml(summary.points ?? 0)}</div>
+    </div>
+    <div class="driver-stat-card">
+      <div class="driver-stat-label">${escapeHtml(t("driverSummaryAvgFinish"))}</div>
+      <div class="driver-stat-value">${escapeHtml(summary.average_finish ?? "-")}</div>
+    </div>
+    <div class="driver-stat-card">
+      <div class="driver-stat-label">${escapeHtml(t("driverSummaryAvgPoints"))}</div>
+      <div class="driver-stat-value">${escapeHtml(summary.average_points_per_race ?? 0)}</div>
+    </div>
+    <div class="driver-stat-card">
+      <div class="driver-stat-label">${escapeHtml(t("driverSummaryRaces"))}</div>
+      <div class="driver-stat-value">${escapeHtml(summary.races ?? 0)}</div>
+    </div>
+    <div class="driver-stat-card">
+      <div class="driver-stat-label">${escapeHtml(t("driverSummaryWins"))}</div>
+      <div class="driver-stat-value">${escapeHtml(summary.wins ?? 0)}</div>
+    </div>
+    <div class="driver-stat-card">
+      <div class="driver-stat-label">${escapeHtml(t("driverWinRate"))}</div>
+      <div class="driver-stat-value">${escapeHtml(summary.win_rate ?? 0)}%</div>
+    </div>
+    <div class="driver-stat-card">
+      <div class="driver-stat-label">${escapeHtml(t("driverSummaryAvgGain"))}</div>
+      <div class="driver-stat-value">${renderPositionsDelta(summary.average_positions_delta)}</div>
+    </div>
+    <div class="driver-stat-card">
+      <div class="driver-stat-label">${escapeHtml(t("driverSummaryPodiums"))}</div>
+      <div class="driver-stat-value">${escapeHtml(summary.podiums ?? 0)}</div>
+    </div>
+    <div class="driver-stat-card">
+      <div class="driver-stat-label">${escapeHtml(t("driverPodiumRate"))}</div>
+      <div class="driver-stat-value">${escapeHtml(summary.podium_rate ?? 0)}%</div>
+    </div>
+    <div class="driver-stat-card">
+      <div class="driver-stat-label">${escapeHtml(t("driverSummaryBestLap"))}</div>
+      <div class="driver-stat-value driver-stat-mainline">
+        <span class="best-lap-value">${escapeHtml(summary.best_lap ?? "-")}</span>
+        <span class="driver-stat-side">${renderCarLink(summary.best_lap_car_name ?? "-", "driver-link driver-link-subtle")}</span>
+      </div>
+    </div>
+    <div class="driver-stat-card">
+      <div class="driver-stat-label">${escapeHtml(t("driverSummaryAvgPace"))}</div>
+      <div class="driver-stat-value">${escapeHtml(averagePace)}</div>
+    </div>
+    <div class="driver-stat-card">
+      <div class="driver-stat-label">${escapeHtml(t("driverFavoriteCar"))}</div>
+      <div class="driver-stat-value">${renderCarLink(favoriteCarName || "-", "driver-link driver-link-heading")}</div>
+    </div>
+  `;
+}
+
+function buildDriverHighlightsMarkup(profile) {
+  if (!profile) return "";
+  const summary = profile.summary || {};
+
+  return `
+    <div class="driver-highlight-card">
+      <div class="driver-highlight-label">${escapeHtml(t("driverRecentForm"))}</div>
+      <div class="driver-highlight-value">${renderRecentForm(profile.recent_form)}</div>
+    </div>
+    <div class="driver-highlight-card">
+      <div class="driver-highlight-label">${escapeHtml(t("driverSummaryFastestLaps"))}</div>
+      <div class="driver-highlight-value">${escapeHtml(summary.fastest_lap_awards ?? 0)}</div>
+    </div>
+    <div class="driver-highlight-card">
+      <div class="driver-highlight-label">${escapeHtml(t("driverSummaryPenaltyPoints"))}</div>
+      <div class="driver-highlight-value">${escapeHtml(summary.penalty_points ?? 0)}</div>
+    </div>
+  `;
+}
+
 function renderDriverRaceHistory() {
   const tableEl = document.getElementById("driver-races-table");
   if (!tableEl) return;
@@ -2336,7 +2588,13 @@ function renderDriverRaceHistory() {
     </th>
   `).join("");
   const rows = rowsData.map(row => `
-    <tr>
+    <tr
+      class="is-interactive-row"
+      data-race-id="${escapeAttribute(row.race_id || "")}"
+      tabindex="0"
+      role="button"
+      aria-label="${escapeAttribute(`${t("openRaceDetailsLabel")}: ${humanizeTrackName(row.track)}`)}"
+    >
       <td>${escapeHtml(formatDateTimeLocal(row.finished_at, currentLang))}</td>
       <td>${escapeHtml(humanizeTrackName(row.track))}</td>
       <td>${escapeHtml(formatStartPosition(row))}</td>
@@ -2354,7 +2612,7 @@ function renderDriverRaceHistory() {
   `).join("");
 
   tableEl.innerHTML = `
-    <table>
+    <table class="driver-races-table">
       <thead><tr>${headers}</tr></thead>
       <tbody>${rows}</tbody>
     </table>
@@ -2363,6 +2621,24 @@ function renderDriverRaceHistory() {
   bindSortableHeaders("#driver-races-table th.sortable", driverRaceSort, (key) => {
     driverRaceSort = cycleSort(driverRaceSort, key);
     renderDriverRaceHistory();
+  });
+
+  tableEl.querySelectorAll("tbody tr[data-race-id]").forEach(row => {
+    const openRow = (event) => {
+      if (event.target.closest("a")) {
+        return;
+      }
+      const race = getRaceById(row.dataset.raceId);
+      openRaceResultsModal(race, row);
+    };
+
+    row.addEventListener("click", openRow);
+    row.addEventListener("keydown", (event) => {
+      if (event.key === "Enter" || event.key === " ") {
+        event.preventDefault();
+        openRow(event);
+      }
+    });
   });
 }
 
@@ -2427,9 +2703,14 @@ function renderPenaltyList(containerId, entries, labelKey) {
 
 function getDriverRankInfo(profile) {
   const publicId = profile?.public_id;
-  if (!publicId || !Array.isArray(driverIndexData) || !driverIndexData.length) return null;
+  const rankingSource = Array.isArray(driverIndexData) && driverIndexData.length
+    ? driverIndexData
+    : Array.isArray(leaderboardData) && leaderboardData.length
+      ? leaderboardData
+      : [];
+  if (!publicId || !rankingSource.length) return null;
 
-  const index = driverIndexData.findIndex(row => row?.public_id === publicId);
+  const index = rankingSource.findIndex(row => row?.public_id === publicId);
   if (index === -1) return null;
 
   return {
@@ -2478,90 +2759,59 @@ function renderDriverPage() {
     return;
   }
 
-  const summary = driverProfileData.summary || {};
-  const favoriteCarName = getFavoriteCarName(driverProfileData);
-  const averagePace = summary.average_pace ?? "-";
-  const rankInfo = getDriverRankInfo(driverProfileData);
   document.title = `${driverProfileData.driver} | ${t("pageTitleDriver")}`;
-  nameEl.innerHTML = `
-    <span class="driver-title-name">${escapeHtml(driverProfileData.driver || "-")}</span>
-    ${rankInfo ? `<span class="driver-rank-pill ${escapeHtml(rankInfo.rankClass)}" title="${escapeAttribute(t("driverRankingPosition"))}"><span class="driver-rank-label">${escapeHtml(t("driverRankingPosition"))}:</span><span class="driver-rank-value">#${escapeHtml(rankInfo.rank)}</span></span>` : ""}
-  `;
+  nameEl.innerHTML = buildDriverHeroTitle(driverProfileData);
   subtitleEl.textContent = t("driverPageSubtitle");
-
-  statsEl.innerHTML = `
-    <div class="driver-stat-card">
-      <div class="driver-stat-label">${escapeHtml(t("driverSummaryPoints"))}</div>
-      <div class="driver-stat-value">${escapeHtml(summary.points ?? 0)}</div>
-    </div>
-    <div class="driver-stat-card">
-      <div class="driver-stat-label">${escapeHtml(t("driverSummaryAvgFinish"))}</div>
-      <div class="driver-stat-value">${escapeHtml(summary.average_finish ?? "-")}</div>
-    </div>
-    <div class="driver-stat-card">
-      <div class="driver-stat-label">${escapeHtml(t("driverSummaryAvgPoints"))}</div>
-      <div class="driver-stat-value">${escapeHtml(summary.average_points_per_race ?? 0)}</div>
-    </div>
-    <div class="driver-stat-card">
-      <div class="driver-stat-label">${escapeHtml(t("driverSummaryRaces"))}</div>
-      <div class="driver-stat-value">${escapeHtml(summary.races ?? 0)}</div>
-    </div>
-    <div class="driver-stat-card">
-      <div class="driver-stat-label">${escapeHtml(t("driverSummaryWins"))}</div>
-      <div class="driver-stat-value">${escapeHtml(summary.wins ?? 0)}</div>
-    </div>
-    <div class="driver-stat-card">
-      <div class="driver-stat-label">${escapeHtml(t("driverWinRate"))}</div>
-      <div class="driver-stat-value">${escapeHtml(summary.win_rate ?? 0)}%</div>
-    </div>
-    <div class="driver-stat-card">
-      <div class="driver-stat-label">${escapeHtml(t("driverSummaryAvgGain"))}</div>
-      <div class="driver-stat-value">${renderPositionsDelta(summary.average_positions_delta)}</div>
-    </div>
-    <div class="driver-stat-card">
-      <div class="driver-stat-label">${escapeHtml(t("driverSummaryPodiums"))}</div>
-      <div class="driver-stat-value">${escapeHtml(summary.podiums ?? 0)}</div>
-    </div>
-    <div class="driver-stat-card">
-      <div class="driver-stat-label">${escapeHtml(t("driverPodiumRate"))}</div>
-      <div class="driver-stat-value">${escapeHtml(summary.podium_rate ?? 0)}%</div>
-    </div>
-    <div class="driver-stat-card">
-      <div class="driver-stat-label">${escapeHtml(t("driverSummaryBestLap"))}</div>
-      <div class="driver-stat-value driver-stat-mainline">
-        <span class="best-lap-value">${escapeHtml(summary.best_lap ?? "-")}</span>
-        <span class="driver-stat-side">${renderCarLink(summary.best_lap_car_name ?? "-", "driver-link driver-link-subtle")}</span>
-      </div>
-    </div>
-    <div class="driver-stat-card">
-      <div class="driver-stat-label">${escapeHtml(t("driverSummaryAvgPace"))}</div>
-      <div class="driver-stat-value">${escapeHtml(averagePace)}</div>
-    </div>
-    <div class="driver-stat-card">
-      <div class="driver-stat-label">${escapeHtml(t("driverFavoriteCar"))}</div>
-      <div class="driver-stat-value">${renderCarLink(favoriteCarName || "-", "driver-link driver-link-heading")}</div>
-    </div>
-  `;
-
-  highlightsEl.innerHTML = `
-    <div class="driver-highlight-card">
-      <div class="driver-highlight-label">${escapeHtml(t("driverRecentForm"))}</div>
-      <div class="driver-highlight-value">${renderRecentForm(driverProfileData.recent_form)}</div>
-    </div>
-    <div class="driver-highlight-card">
-      <div class="driver-highlight-label">${escapeHtml(t("driverSummaryFastestLaps"))}</div>
-      <div class="driver-highlight-value">${escapeHtml(summary.fastest_lap_awards ?? 0)}</div>
-    </div>
-    <div class="driver-highlight-card">
-      <div class="driver-highlight-label">${escapeHtml(t("driverSummaryPenaltyPoints"))}</div>
-      <div class="driver-highlight-value">${escapeHtml(summary.penalty_points ?? 0)}</div>
-    </div>
-  `;
+  statsEl.innerHTML = buildDriverStatsMarkup(driverProfileData);
+  highlightsEl.innerHTML = buildDriverHighlightsMarkup(driverProfileData);
 
   renderDriverRaceHistory();
   renderDriverTrackStats();
   renderPenaltyList("driver-penalty-reasons", driverProfileData.penalties?.reasons, "driverPenaltyReason");
   renderPenaltyList("driver-penalty-types", driverProfileData.penalties?.types, "driverPenaltyType");
+}
+
+function renderDriverPreviewModal() {
+  const titleEl = document.getElementById("driver-preview-title");
+  const subtitleEl = document.getElementById("driver-preview-subtitle");
+  const statsEl = document.getElementById("driver-preview-stats");
+  const highlightsEl = document.getElementById("driver-preview-highlights");
+  const actionEl = document.getElementById("driver-preview-link");
+  if (!titleEl || !subtitleEl || !statsEl || !highlightsEl || !actionEl) return;
+
+  if (!driverPreviewState) {
+    titleEl.textContent = "-";
+    subtitleEl.textContent = t("driverPreviewSubtitle");
+    statsEl.innerHTML = `<div class="loading">${escapeHtml(t("driverLoading"))}</div>`;
+    highlightsEl.innerHTML = "";
+    actionEl.hidden = true;
+    return;
+  }
+
+  const profile = driverPreviewState.profile;
+  if (driverPreviewState.loading) {
+    titleEl.textContent = driverPreviewState.driver || "-";
+    subtitleEl.textContent = t("driverPreviewSubtitle");
+    statsEl.innerHTML = `<div class="loading">${escapeHtml(t("driverLoading"))}</div>`;
+    highlightsEl.innerHTML = "";
+  } else if (!profile || driverPreviewState.error) {
+    titleEl.textContent = driverPreviewState.driver || "-";
+    subtitleEl.textContent = t("driverPreviewSubtitle");
+    statsEl.innerHTML = `<div class="empty-box">${escapeHtml(t("driverNoData"))}</div>`;
+    highlightsEl.innerHTML = "";
+  } else {
+    titleEl.innerHTML = buildDriverHeroTitle(profile);
+    subtitleEl.textContent = t("driverPreviewSubtitle");
+    statsEl.innerHTML = buildDriverStatsMarkup(profile);
+    highlightsEl.innerHTML = buildDriverHighlightsMarkup(profile);
+  }
+
+  if (driverPreviewState.href) {
+    actionEl.href = driverPreviewState.href;
+    actionEl.hidden = false;
+  } else {
+    actionEl.hidden = true;
+  }
 }
 
 function renderTodayStatsModal() {
@@ -2807,11 +3057,19 @@ function optimizeBackgroundMedia() {
   }
 }
 
+function updateTopNavModalOffset() {
+  const topNav = document.getElementById("top-nav");
+  const navHeight = topNav?.getBoundingClientRect?.().height || 0;
+  const offset = Math.max(16, Math.ceil(navHeight) + 8);
+  document.documentElement.style.setProperty("--top-nav-modal-offset", `${offset}px`);
+}
+
 function rerenderUI() {
   applyStaticTranslations();
 
   if (IS_DRIVER_PAGE) {
     renderDriverPage();
+    renderRaceResultsModal();
     applyRevealAnimations();
     return;
   }
@@ -2836,6 +3094,7 @@ function rerenderUI() {
   renderSafetyTablePage();
   renderTodayStatsModal();
   renderDriverOfDayModal();
+  renderDriverPreviewModal();
   renderHourlyHeroCard();
   renderOnlineWidget();
   applyRevealAnimations();
@@ -2845,24 +3104,33 @@ async function init() {
   const top3Content = document.getElementById("top3-content");
   bindLanguageButtons();
   bindSearchInputs();
+  updateTopNavModalOffset();
   optimizeBackgroundMedia();
-  window.addEventListener("resize", debounce(optimizeBackgroundMedia, 120));
+  window.addEventListener("resize", debounce(() => {
+    updateTopNavModalOffset();
+    optimizeBackgroundMedia();
+  }, 120));
   if (IS_RACES_PAGE) {
+    initRaceResultsModal();
+  } else if (IS_DRIVER_PAGE) {
     initRaceResultsModal();
   } else if (!IS_DRIVER_PAGE && !IS_CARS_PAGE) {
     initTodayStatsModal();
     initDriverOfDayModal();
+    initDriverPreviewModal();
   }
   applyStaticTranslations();
 
   try {
     if (IS_DRIVER_PAGE) {
-      const [profile, indexData] = await Promise.all([
+      const [profile, indexData, raceArchive] = await Promise.all([
         loadDriverProfile(getRequestedDriverId()),
-        loadDriverIndex()
+        loadDriverIndex(),
+        loadRacesData().catch(() => [])
       ]);
       driverProfileData = profile;
       driverIndexData = indexData;
+      racesData = raceArchive;
       rerenderUI();
       return;
     }
