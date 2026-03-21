@@ -74,7 +74,7 @@
 
 <nav class="top-nav" id="top-nav">
   <div class="top-nav-inner">
-    <a class="top-nav-brand" href="#top" aria-label="ASG Racing home">ASG Racing</a>
+    <a class="top-nav-brand" href="#top" aria-label="ASG Racing home" data-i18n-aria-label="homeAriaLabel">ASG Racing</a>
 
     <div class="top-nav-center">
       <div class="top-nav-menu">
@@ -90,7 +90,7 @@
     </div>
 
     <div class="top-nav-actions">
-      <div class="lang-switch top-nav-lang" aria-label="Language switcher">
+      <div class="lang-switch top-nav-lang" aria-label="Language switcher" data-i18n-aria-label="langSwitcherLabel">
         <button class="lang-btn" type="button" data-lang="en"><span class="lang-flag">🇬🇧</span><span class="lang-text">EN</span></button>
         <button class="lang-btn" type="button" data-lang="ru"><span class="lang-flag">🇷🇺</span><span class="lang-text">RU</span></button>
       </div>
@@ -104,7 +104,7 @@
         
 <div class="hero-grid">
   <div class="hero-copy">
-    <div class="eyebrow">ACC Public Leaderboard</div>
+    <div class="eyebrow" data-i18n="heroEyebrow">ACC Public Leaderboard</div>
     <h1 data-i18n="heroTitle">🏁 ASG Racing League</h1>
     <p class="hero-subtitle" data-i18n="heroSubtitle">
       Race statistics, wins, podiums and best laps from the
@@ -184,13 +184,13 @@
 
     <div class="hero-online-card" id="hero-online-card">
       <div class="hero-online-head">
-        <div class="hero-online-title">Unique players</div>
+        <div class="hero-online-title" data-i18n="onlineTitle">Unique players</div>
         <div class="hero-online-range" id="online-range">—</div>
       </div>
 
       <div class="hero-online-chart-wrap">
         <div class="hero-online-chart" id="online-chart">
-          <div class="hero-online-empty">No data</div>
+          <div class="hero-online-empty" data-i18n="onlineNoData">No data</div>
         </div>
 
         <div class="hero-online-scale" id="online-scale">
@@ -202,14 +202,14 @@
 
   <div class="hero-side hero-side-compact">
     <div class="mini-stat mini-stat-bestlap">
-      <div class="mini-label">Best lap record</div>
+      <div class="mini-label" data-i18n="bestLapHighlightLabel">Best lap record</div>
       <div class="mini-value best-lap-value" id="best-lap-highlight">—</div>
       <div class="mini-note" id="best-lap-note">—</div>
     </div>
 
     <div class="hero-stats-row">
       <div class="mini-stat mini-stat-compact">
-        <div class="mini-label">Server</div>
+        <div class="mini-label" data-i18n="serverStatusLabel">Server</div>
         <div class="mini-value server-status-wrap">
           <span class="server-status" id="serverStatusValue">—</span>
           <span class="server-players" id="serverPlayersValue">—</span>
@@ -217,7 +217,7 @@
       </div>
 
       <div class="mini-stat mini-stat-compact">
-        <div class="mini-label">Drivers in leaderboard</div>
+        <div class="mini-label" data-i18n="driversCountLabel">Drivers in leaderboard</div>
         <div class="mini-value" id="drivers-count">—</div>
       </div>
     </div>
@@ -294,7 +294,7 @@
 
       <div class="table-card">
         <div class="table-wrap" id="safety-table">
-          <div class="loading" style="padding:20px;">Loading safety...</div>
+          <div class="loading" style="padding:20px;" data-i18n="loadingSafety">Loading safety...</div>
         </div>
         <div class="pagination-wrap" id="safety-pagination-wrap" style="display:none;">
           <div class="pagination-info" id="safety-pagination-info"></div>

@@ -81,10 +81,13 @@ const HOURLY_TRACK_BACKGROUNDS = {
 const translations = {
   en: {
     closeLabel: "Close",
+    homeAriaLabel: "ASG Racing home",
+    langSwitcherLabel: "Language switcher",
     openRaceDetailsLabel: "Open race details",
     openDriverPreviewLabel: "Open driver quick view",
     onlineTitle: "Unique players",
 onlineNoData: "No data",
+    heroEyebrow: "ACC Public Leaderboard",
     hourlyEyebrow: "Next 1-Hour Race",
     hourlyStartsLabel: "Starts",
     hourlyTrackLabel: "Track",
@@ -141,6 +144,10 @@ onlineNoData: "No data",
     btnBestLaps: "Best Laps",
     btnWorstSafety: "Worst Safety",
     btnAboutServer: "About Server",
+    serverStatusLabel: "Server",
+    serverStatusOnline: "ONLINE",
+    serverStatusOffline: "OFFLINE",
+    serverStatusDegraded: "DEGRADED",
     driversCountLabel: "Drivers in leaderboard",
     driversCountNote: "Unique participants included in the stats.",
     bestLapHighlightLabel: "Best lap record",
@@ -187,6 +194,7 @@ onlineNoData: "No data",
     loadingRaces: "Loading races...",
     loadingLeaderboard: "Loading leaderboard...",
     loadingBestLaps: "Loading best laps...",
+    loadingSafety: "Loading safety...",
     emptyTop3: "No top-3 data available yet.",
     emptyLeaderboard: "No leaderboard data yet.",
     emptyBestLaps: "No best lap data yet.",
@@ -306,16 +314,19 @@ onlineNoData: "No data",
   },
   ru: {
     closeLabel: "Закрыть",
+    homeAriaLabel: "Главная ASG Racing",
+    langSwitcherLabel: "Переключение языка",
     openRaceDetailsLabel: "Открыть детали гонки",
     openDriverPreviewLabel: "Открыть быстрое превью пилота",
     onlineTitle: "Уникальные игроки",
 onlineNoData: "Нет данных",
+    heroEyebrow: "Чемпионат публичного сервера ACC",
     hourlyEyebrow: "Ближайшая часовая гонка",
     hourlyStartsLabel: "Старт",
     hourlyTrackLabel: "Трасса",
     hourlyOpenBtn: "Часовая Гонка!",
     hourlyNoEvent: "Пока нет запланированного события",
-    hourlyVotesZero: "Пока никто не зарегистрировался",
+    hourlyVotesZero: "Нет регистраций",
     hourlyVotesOne: "{value} участник",
     hourlyVotesMany: "{value} участников",
     todayStatsBtn: "Статистика за сегодня",
@@ -377,6 +388,10 @@ onlineNoData: "Нет данных",
     btnBestLaps: "Круги",
     btnWorstSafety: "Штрафы",
     btnAboutServer: "Сервер",
+    serverStatusLabel: "Сервер",
+    serverStatusOnline: "ОНЛАЙН",
+    serverStatusOffline: "ОФФЛАЙН",
+    serverStatusDegraded: "ЧАСТИЧНО",
     driversCountLabel: "Пилотов в рейтинге",
     driversCountNote: "Уникальные участники, попавшие в статистику.",
     bestLapHighlightLabel: "Лучший круг",
@@ -423,6 +438,7 @@ onlineNoData: "Нет данных",
     loadingRaces: "Загрузка гонок...",
     loadingLeaderboard: "Загрузка leaderboard...",
     loadingBestLaps: "Загрузка best laps...",
+    loadingSafety: "Загрузка safety...",
     emptyTop3: "Пока нет данных для топ-3.",
     emptyLeaderboard: "Пока нет данных leaderboard.",
     emptyBestLaps: "Пока нет данных best laps.",
@@ -2075,6 +2091,13 @@ function formatTodayPointsNote(value, lang = currentLang) {
   return replaceTokens(tForLang(lang, "todayPointsNote"), { value });
 }
 
+function getLocalizedServerStatus(status, lang = currentLang) {
+  const normalized = String(status || "offline").toLowerCase();
+  if (normalized === "online") return tForLang(lang, "serverStatusOnline");
+  if (normalized === "online_process_only") return tForLang(lang, "serverStatusDegraded");
+  return tForLang(lang, "serverStatusOffline");
+}
+
 function humanizeTrackName(track) {
   if (!track) return "-";
   return String(track)
@@ -3180,7 +3203,7 @@ async function init() {
           ? data.serverStatus.players_online
           : 0;
 
-      serverStatusEl.textContent = status.toUpperCase();
+      serverStatusEl.textContent = getLocalizedServerStatus(status, currentLang);
       serverPlayersEl.textContent = players;
 
       serverStatusEl.classList.remove("online", "offline", "degraded");
@@ -3253,7 +3276,7 @@ async function init() {
     const serverPlayersEl = document.getElementById("serverPlayersValue");
 
     if (serverStatusEl) {
-      serverStatusEl.textContent = "OFFLINE";
+      serverStatusEl.textContent = getLocalizedServerStatus("offline", currentLang);
       serverStatusEl.classList.remove("online", "degraded");
       serverStatusEl.classList.add("offline");
     }
