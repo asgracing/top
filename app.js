@@ -83,6 +83,8 @@ const translations = {
     closeLabel: "Close",
     homeAriaLabel: "ASG Racing home",
     langSwitcherLabel: "Language switcher",
+    navMore: "More",
+    navMoreAriaLabel: "Open extra navigation",
     openRaceDetailsLabel: "Open race details",
     openDriverPreviewLabel: "Open driver quick view",
     onlineTitle: "Unique players",
@@ -316,6 +318,8 @@ onlineNoData: "No data",
     closeLabel: "Закрыть",
     homeAriaLabel: "Главная ASG Racing",
     langSwitcherLabel: "Переключение языка",
+    navMore: "Еще",
+    navMoreAriaLabel: "Открыть дополнительную навигацию",
     openRaceDetailsLabel: "Открыть детали гонки",
     openDriverPreviewLabel: "Открыть быстрое превью пилота",
     onlineTitle: "Уникальные игроки",
@@ -1383,6 +1387,7 @@ function applyStaticTranslations() {
   }
 
   updateDriverOfDayButtonLabel();
+  document.getElementById("top-nav-more")?.rebuildOverflowMenu?.();
 }
 
 function getDriverOfDayName() {
@@ -1979,6 +1984,102 @@ function bindLanguageButtons() {
       rerenderUI();
     });
   });
+}
+
+function bindTopNavMoreMenu() {
+  const root = document.getElementById("top-nav-more");
+  const toggle = document.getElementById("top-nav-more-toggle");
+  const menu = document.getElementById("top-nav-more-menu");
+  const navMenu = document.querySelector(".top-nav-menu");
+  const items = navMenu ? [...navMenu.querySelectorAll("[data-nav-item='true']")] : [];
+  if (!root || !toggle || !menu || !navMenu || !items.length || root.dataset.bound === "true") return;
+
+  const closeMenu = () => {
+    toggle.setAttribute("aria-expanded", "false");
+    menu.hidden = true;
+    root.classList.remove("is-open");
+  };
+
+  const rebuildOverflowMenu = () => {
+    menu.innerHTML = "";
+    items.forEach(item => {
+      item.hidden = false;
+    });
+
+    root.classList.remove("is-visible");
+    closeMenu();
+
+    if (window.innerWidth > 980) {
+      return;
+    }
+
+    root.classList.add("is-visible");
+    root.hidden = false;
+
+    const availableWidth = navMenu.clientWidth;
+    const toggleWidth = root.offsetWidth || toggle.getBoundingClientRect().width;
+    const gap = 8;
+    const maxVisibleRight = Math.max(0, availableWidth - toggleWidth - gap);
+
+    items.forEach(item => {
+      item.hidden = false;
+    });
+
+    items.forEach(item => {
+      const itemRightEdge = item.offsetLeft + item.offsetWidth;
+      if (itemRightEdge > maxVisibleRight) {
+        item.hidden = true;
+      }
+    });
+
+    const hiddenItems = items.filter(item => item.hidden);
+    if (!hiddenItems.length) {
+      root.classList.remove("is-visible");
+      root.hidden = true;
+      return;
+    }
+
+    hiddenItems.forEach(item => {
+      const clone = item.cloneNode(true);
+      clone.className = "top-nav-more-link";
+      clone.hidden = false;
+      clone.removeAttribute("data-nav-item");
+      menu.appendChild(clone);
+    });
+  };
+
+  const openMenu = () => {
+    toggle.setAttribute("aria-expanded", "true");
+    menu.hidden = false;
+    root.classList.add("is-open");
+  };
+
+  toggle.addEventListener("click", (event) => {
+    event.preventDefault();
+    if (menu.hidden) openMenu();
+    else closeMenu();
+  });
+
+  document.addEventListener("click", (event) => {
+    if (!root.contains(event.target)) closeMenu();
+  });
+
+  document.addEventListener("keydown", (event) => {
+    if (event.key === "Escape") closeMenu();
+  });
+
+  menu.addEventListener("click", (event) => {
+    if (event.target.closest("a")) closeMenu();
+  });
+
+  window.addEventListener("resize", () => {
+    rebuildOverflowMenu();
+  });
+
+  requestAnimationFrame(rebuildOverflowMenu);
+  window.addEventListener("load", rebuildOverflowMenu, { once: true });
+  root.rebuildOverflowMenu = rebuildOverflowMenu;
+  root.dataset.bound = "true";
 }
 
 function bindSearchInputs() {
@@ -3111,6 +3212,7 @@ function rerenderUI() {
 
 async function init() {
   bindLanguageButtons();
+  bindTopNavMoreMenu();
   bindSearchInputs();
   updateTopNavModalOffset();
   optimizeBackgroundMedia();
