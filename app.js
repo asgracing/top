@@ -531,6 +531,18 @@ onlineNoData: "Нет данных",
   }
 };
 
+Object.assign(translations.en, {
+  updatedPrefix: "Updated",
+  todayRacesNote: "Races today: {value}",
+  todayPointsNote: "Points today: {value}"
+});
+
+Object.assign(translations.ru, {
+  updatedPrefix: "Обновлено",
+  todayRacesNote: "Гонок за сегодня: {value}",
+  todayPointsNote: "Очков за сегодня: {value}"
+});
+
 currentLang = resolveInitialLanguage();
 
 const leaderboardColumns = [
@@ -811,6 +823,10 @@ function t(key) {
   return translations[currentLang][key] ?? translations.en[key] ?? key;
 }
 
+function tForLang(lang, key) {
+  return translations[lang]?.[key] ?? translations.en[key] ?? key;
+}
+
 function replaceTokens(template, values = {}) {
   return String(template).replace(/\{(\w+)\}/g, (_, key) => values[key] ?? "");
 }
@@ -1089,6 +1105,30 @@ function bindSortableHeaders(selector, sortState, onSort) {
       }
     });
     th.setAttribute("aria-sort", getAriaSort(sortState, th.dataset.sortKey));
+  });
+}
+
+function renderSortableHeaders(columns, labels, sortState) {
+  return columns.map((col, index) => `
+    <th class="sortable ${getSortClass(sortState, col.key)}" data-sort-key="${escapeHtml(col.key)}" tabindex="0" role="button" aria-sort="${getAriaSort(sortState, col.key)}">
+      ${escapeHtml(Array.isArray(labels) ? labels[index] : col.label ?? col.key)}
+    </th>
+  `).join("");
+}
+
+function bindInteractiveRows(container, selector, onOpen, { ignoreSelector = "a" } = {}) {
+  container.querySelectorAll(selector).forEach(row => {
+    const openRow = (event) => {
+      if (event.target.closest(ignoreSelector)) return;
+      onOpen(row, event);
+    };
+
+    row.addEventListener("click", openRow);
+    row.addEventListener("keydown", (event) => {
+      if (event.key !== "Enter" && event.key !== " ") return;
+      event.preventDefault();
+      openRow(event);
+    });
   });
 }
 
@@ -1679,21 +1719,11 @@ function renderPagination(
 }
 
 function renderLeaderboardHeaders() {
-  const cols = t("leaderboardCols");
-  return leaderboardColumns.map((col, index) => `
-    <th class="sortable ${getSortClass(leaderboardSort, col.key)}" data-sort-key="${escapeHtml(col.key)}" tabindex="0" role="button" aria-sort="${getAriaSort(leaderboardSort, col.key)}">
-      ${escapeHtml(cols[index])}
-    </th>
-  `).join("");
+  return renderSortableHeaders(leaderboardColumns, t("leaderboardCols"), leaderboardSort);
 }
 
 function renderBestlapsHeaders() {
-  const cols = t("bestlapsCols");
-  return bestlapsColumns.map((col, index) => `
-    <th class="sortable ${getSortClass(bestlapsSort, col.key)}" data-sort-key="${escapeHtml(col.key)}" tabindex="0" role="button" aria-sort="${getAriaSort(bestlapsSort, col.key)}">
-      ${escapeHtml(cols[index])}
-    </th>
-  `).join("");
+  return renderSortableHeaders(bestlapsColumns, t("bestlapsCols"), bestlapsSort);
 }
 
 function bindLeaderboardSortHandlers() {
@@ -1843,12 +1873,7 @@ function renderBestLapsTablePage() {
 }
 
 function renderSafetyHeaders() {
-  const columns = getSafetyColumns();
-  return columns.map(col => `
-    <th class="sortable ${getSortClass(safetySort, col.key)}" data-sort-key="${escapeHtml(col.key)}" tabindex="0" role="button" aria-sort="${getAriaSort(safetySort, col.key)}">
-      ${escapeHtml(col.label)}
-    </th>
-  `).join("");
+  return renderSortableHeaders(getSafetyColumns(), null, safetySort);
 }
 
 function bindSafetySortHandlers() {
@@ -2000,44 +2025,54 @@ function getCurrentLangSafe() {
 }
 
 function findDriverNameByPlayerId(playerId) {
+  const found = findDriverRecordByPlayerId(playerId);
+  return found?.driver || found?.name || found?.player || null;
+}
+
+function findPublicIdByPlayerId(playerId) {
+  const found = findDriverRecordByPlayerId(playerId);
+  if (found?.public_id) return found.public_id;
+  return makePublicDriverId(playerId);
+}
+
+function findDriverRecordByPlayerId(playerId) {
   if (!playerId) return null;
 
-  if (
-    todayStatsData?.most_successful_driver_today?.player_id === playerId &&
-    todayStatsData?.most_successful_driver_today?.driver
-  ) {
-    return todayStatsData.most_successful_driver_today.driver;
-  }
+  const dailyCandidates = [
+    todayStatsData?.most_active_driver_today,
+    todayStatsData?.most_successful_driver_today,
+    driverOfDayData
+  ];
+
+  const dailyMatch = dailyCandidates.find(item => item?.player_id === playerId);
+  if (dailyMatch) return dailyMatch;
 
   if (Array.isArray(leaderboardData)) {
     const found = leaderboardData.find(item => item.player_id === playerId || item.playerId === playerId);
-    if (found) return found.driver || found.name || found.player || null;
+    if (found) return found;
+  }
+
+  if (Array.isArray(driverIndexData)) {
+    const found = driverIndexData.find(item => item.player_id === playerId || item.playerId === playerId);
+    if (found) return found;
   }
 
   return null;
 }
 
-function findPublicIdByPlayerId(playerId) {
-  if (!playerId) return null;
+function formatLocalizedUpdatedLabel(updatedAt, lang = currentLang) {
+  if (!updatedAt) return "-";
+  return `${tForLang(lang, "updatedPrefix")}: ${formatDateTimeLocal(updatedAt, lang)}`;
+}
 
-  if (
-    todayStatsData?.most_successful_driver_today?.player_id === playerId &&
-    todayStatsData?.most_successful_driver_today?.public_id
-  ) {
-    return todayStatsData.most_successful_driver_today.public_id;
-  }
+function formatTodayActivityNote(value, lang = currentLang) {
+  if (value == null) return "-";
+  return replaceTokens(tForLang(lang, "todayRacesNote"), { value });
+}
 
-  if (Array.isArray(leaderboardData)) {
-    const found = leaderboardData.find(item => item.player_id === playerId || item.playerId === playerId);
-    if (found) return found.public_id || makePublicDriverId(playerId);
-  }
-
-  if (Array.isArray(driverIndexData)) {
-    const found = driverIndexData.find(item => item.player_id === playerId);
-    if (found) return found.public_id || makePublicDriverId(playerId);
-  }
-
-  return makePublicDriverId(playerId);
+function formatTodayPointsNote(value, lang = currentLang) {
+  if (value == null) return "-";
+  return replaceTokens(tForLang(lang, "todayPointsNote"), { value });
 }
 
 function humanizeTrackName(track) {
@@ -2243,22 +2278,9 @@ function renderRacesTablePage() {
     </table>
   `;
 
-  tableEl.querySelectorAll("tbody tr[data-race-index]").forEach(row => {
-    const openRow = (event) => {
-      if (event.target.closest("a")) {
-        return;
-      }
-      const index = Number(row.dataset.raceIndex);
-      openRaceResultsModal(result.items[index] || null, row);
-    };
-
-    row.addEventListener("click", openRow);
-    row.addEventListener("keydown", (event) => {
-      if (event.key === "Enter" || event.key === " ") {
-        event.preventDefault();
-        openRow(event);
-      }
-    });
+  bindInteractiveRows(tableEl, "tbody tr[data-race-index]", (row) => {
+    const index = Number(row.dataset.raceIndex);
+    openRaceResultsModal(result.items[index] || null, row);
   });
 
   renderPagination(
@@ -2582,11 +2604,7 @@ function renderDriverRaceHistory() {
     return;
   }
 
-  const headers = t("driverRaceCols").map((label, index) => `
-    <th class="sortable ${getSortClass(driverRaceSort, driverRaceColumns[index].key)}" data-sort-key="${escapeHtml(driverRaceColumns[index].key)}" tabindex="0" role="button" aria-sort="${getAriaSort(driverRaceSort, driverRaceColumns[index].key)}">
-      ${escapeHtml(label)}
-    </th>
-  `).join("");
+  const headers = renderSortableHeaders(driverRaceColumns, t("driverRaceCols"), driverRaceSort);
   const rows = rowsData.map(row => `
     <tr
       class="is-interactive-row"
@@ -2623,22 +2641,9 @@ function renderDriverRaceHistory() {
     renderDriverRaceHistory();
   });
 
-  tableEl.querySelectorAll("tbody tr[data-race-id]").forEach(row => {
-    const openRow = (event) => {
-      if (event.target.closest("a")) {
-        return;
-      }
-      const race = getRaceById(row.dataset.raceId);
-      openRaceResultsModal(race, row);
-    };
-
-    row.addEventListener("click", openRow);
-    row.addEventListener("keydown", (event) => {
-      if (event.key === "Enter" || event.key === " ") {
-        event.preventDefault();
-        openRow(event);
-      }
-    });
+  bindInteractiveRows(tableEl, "tbody tr[data-race-id]", (row) => {
+    const race = getRaceById(row.dataset.raceId);
+    openRaceResultsModal(race, row);
   });
 }
 
@@ -2653,11 +2658,7 @@ function renderDriverTrackStats() {
     return;
   }
 
-  const headers = t("driverTrackCols").map((label, index) => `
-    <th class="sortable ${getSortClass(driverTrackSort, driverTrackColumns[index].key)}" data-sort-key="${escapeHtml(driverTrackColumns[index].key)}" tabindex="0" role="button" aria-sort="${getAriaSort(driverTrackSort, driverTrackColumns[index].key)}">
-      ${escapeHtml(label)}
-    </th>
-  `).join("");
+  const headers = renderSortableHeaders(driverTrackColumns, t("driverTrackCols"), driverTrackSort);
   const rows = rowsData.map(row => `
     <tr>
       <td>${escapeHtml(humanizeTrackName(row.track))}</td>
@@ -2887,12 +2888,7 @@ function renderTodayStatsModal() {
     "driver-link",
     stats.most_active_driver_today?.player_id
   );
-  mostActiveNoteEl.textContent =
-    stats.most_active_driver_today?.races != null
-      ? (lang === "ru"
-          ? `Гонок за сегодня: ${stats.most_active_driver_today.races}`
-          : `Races today: ${stats.most_active_driver_today.races}`)
-      : "-";
+  mostActiveNoteEl.textContent = formatTodayActivityNote(stats.most_active_driver_today?.races, lang);
 
   mostSuccessfulEl.innerHTML = renderDriverLink(
     stats.most_successful_driver_today?.driver || "-",
@@ -2900,17 +2896,9 @@ function renderTodayStatsModal() {
     "driver-link",
     stats.most_successful_driver_today?.player_id
   );
-  mostSuccessfulNoteEl.textContent =
-    stats.most_successful_driver_today?.points != null
-      ? (lang === "ru"
-          ? `Очков за сегодня: ${stats.most_successful_driver_today.points}`
-          : `Points today: ${stats.most_successful_driver_today.points}`)
-      : "-";
+  mostSuccessfulNoteEl.textContent = formatTodayPointsNote(stats.most_successful_driver_today?.points, lang);
 
-  updatedEl.textContent =
-    lang === "ru"
-      ? `Обновлено: ${formatDateTimeLocal(stats.updated_at, "ru")}`
-      : `Updated: ${formatDateTimeLocal(stats.updated_at, "en")}`;
+  updatedEl.textContent = formatLocalizedUpdatedLabel(stats.updated_at, lang);
 }
 
 function renderDriverOfDayModal() {
@@ -2992,9 +2980,7 @@ function renderDriverOfDayModal() {
   }
   bestLapEl.innerHTML = `<span class="best-lap-value">${escapeHtml(data.best_lap || "-")}</span>`;
   bestLapTrackEl.textContent = "";
-  updatedEl.textContent = currentLang === "ru"
-    ? `Обновлено: ${formatDateTimeLocal(data.updated_at, "ru")}`
-    : `Updated: ${formatDateTimeLocal(data.updated_at, "en")}`;
+  updatedEl.textContent = formatLocalizedUpdatedLabel(data.updated_at, currentLang);
 
   if (emptyEl) emptyEl.hidden = true;
   if (contentEl) contentEl.classList.remove("is-empty");
@@ -3101,7 +3087,6 @@ function rerenderUI() {
 }
 
 async function init() {
-  const top3Content = document.getElementById("top3-content");
   bindLanguageButtons();
   bindSearchInputs();
   updateTopNavModalOffset();
@@ -3110,9 +3095,7 @@ async function init() {
     updateTopNavModalOffset();
     optimizeBackgroundMedia();
   }, 120));
-  if (IS_RACES_PAGE) {
-    initRaceResultsModal();
-  } else if (IS_DRIVER_PAGE) {
+  if (IS_RACES_PAGE || IS_DRIVER_PAGE) {
     initRaceResultsModal();
   } else if (!IS_DRIVER_PAGE && !IS_CARS_PAGE) {
     initTodayStatsModal();
