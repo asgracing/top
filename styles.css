@@ -2882,6 +2882,312 @@ body.modal-open {
   }
 }
 
+/* ===== FUN STATS PAGE ===== */
+
+.fun-hero-card {
+  overflow: hidden;
+}
+
+.fun-period-toolbar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 18px;
+  margin-top: 28px;
+  flex-wrap: wrap;
+}
+
+.fun-period-switch {
+  display: inline-flex;
+  gap: 8px;
+  padding: 6px;
+  border-radius: 999px;
+  background: rgba(255, 255, 255, 0.06);
+  border: 1px solid rgba(255, 255, 255, 0.08);
+}
+
+.fun-period-btn {
+  border: 0;
+  border-radius: 999px;
+  padding: 10px 16px;
+  background: transparent;
+  color: var(--muted);
+  font: inherit;
+  font-weight: 700;
+  cursor: pointer;
+  transition: background 0.2s ease, color 0.2s ease, transform 0.2s ease;
+}
+
+.fun-period-btn:hover {
+  color: var(--text);
+}
+
+.fun-period-btn.active {
+  background: linear-gradient(135deg, rgba(255, 91, 46, 0.92), rgba(255, 209, 102, 0.92));
+  color: #11161d;
+  box-shadow: 0 12px 30px rgba(255, 91, 46, 0.22);
+}
+
+.fun-period-range {
+  color: var(--muted);
+  font-size: 0.95rem;
+  font-weight: 600;
+}
+
+.fun-summary-grid,
+.fun-awards-grid,
+.fun-lists-grid {
+  display: grid;
+  gap: 18px;
+}
+
+.fun-summary-grid {
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  margin-top: 24px;
+}
+
+.fun-awards-grid {
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+}
+
+.fun-lists-grid {
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+}
+
+.fun-summary-card,
+.fun-award-card,
+.fun-list-card {
+  border-radius: 22px;
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  background: linear-gradient(180deg, rgba(15, 21, 31, 0.92), rgba(11, 15, 20, 0.9));
+  box-shadow: var(--shadow);
+}
+
+.fun-summary-card {
+  padding: 22px;
+}
+
+.fun-summary-label,
+.fun-award-label,
+.fun-list-title {
+  color: var(--muted);
+  font-size: 0.8rem;
+  font-weight: 800;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+}
+
+.fun-summary-value {
+  margin-top: 10px;
+  font-size: clamp(1.7rem, 2vw, 2.4rem);
+  font-weight: 900;
+}
+
+.fun-summary-note {
+  margin-top: 8px;
+  color: var(--muted);
+  font-size: 0.92rem;
+  line-height: 1.45;
+}
+
+.fun-summary-card-driver-note .fun-summary-value {
+  font-size: clamp(1.25rem, 1.6vw, 1.7rem);
+  line-height: 1.1;
+}
+
+.fun-summary-card-driver-note .fun-summary-note {
+  font-size: 1rem;
+  font-weight: 700;
+  color: var(--text);
+  overflow-wrap: anywhere;
+  word-break: break-word;
+}
+
+.fun-award-card {
+  padding: 24px;
+  position: relative;
+}
+
+.fun-award-card::before {
+  content: "";
+  position: absolute;
+  inset: 0 0 auto 0;
+  height: 3px;
+  border-radius: 22px 22px 0 0;
+  background: rgba(255, 255, 255, 0.14);
+}
+
+.fun-award-card-accent::before {
+  background: linear-gradient(90deg, #ff5b2e, #ffd166);
+}
+
+.fun-award-card-warm::before {
+  background: linear-gradient(90deg, #ffd166, #ff8a3d);
+}
+
+.fun-award-card-gold::before {
+  background: linear-gradient(90deg, #ffe28a, #f5c451);
+}
+
+.fun-award-card-cool::before {
+  background: linear-gradient(90deg, #67d1ff, #5d9cff);
+}
+
+.fun-award-card-clean::before {
+  background: linear-gradient(90deg, #39d98a, #9cf7cb);
+}
+
+.fun-award-card-danger::before {
+  background: linear-gradient(90deg, #ef4444, #ff8c7a);
+}
+
+.fun-award-card-neutral::before {
+  background: linear-gradient(90deg, rgba(255,255,255,0.24), rgba(255,255,255,0.08));
+}
+
+.fun-award-title {
+  margin-top: 14px;
+  font-size: 1.2rem;
+  font-weight: 900;
+  line-height: 1.25;
+}
+
+.fun-award-title .driver-link-heading {
+  font-size: inherit;
+}
+
+.fun-award-note {
+  margin-top: 10px;
+  color: var(--muted);
+  line-height: 1.5;
+}
+
+.fun-list-card {
+  padding: 22px;
+}
+
+.fun-lists-grid .fun-list-card:nth-child(1) {
+  background:
+    radial-gradient(circle at top right, rgba(255, 120, 72, 0.18), transparent 42%),
+    linear-gradient(180deg, rgba(26, 18, 18, 0.96), rgba(14, 14, 18, 0.92));
+}
+
+.fun-lists-grid .fun-list-card:nth-child(2) {
+  background:
+    radial-gradient(circle at top right, rgba(98, 170, 255, 0.18), transparent 42%),
+    linear-gradient(180deg, rgba(16, 21, 31, 0.96), rgba(11, 15, 20, 0.92));
+}
+
+.fun-lists-grid .fun-list-card:nth-child(3) {
+  background:
+    radial-gradient(circle at top right, rgba(76, 217, 136, 0.16), transparent 42%),
+    linear-gradient(180deg, rgba(16, 27, 23, 0.96), rgba(11, 15, 20, 0.92));
+}
+
+.fun-lists-grid .fun-list-card:nth-child(4) {
+  background:
+    radial-gradient(circle at top right, rgba(255, 209, 102, 0.18), transparent 42%),
+    linear-gradient(180deg, rgba(30, 24, 14, 0.96), rgba(14, 14, 18, 0.92));
+}
+
+.fun-lists-grid .fun-list-card:nth-child(5) {
+  background:
+    radial-gradient(circle at top right, rgba(205, 146, 255, 0.16), transparent 42%),
+    linear-gradient(180deg, rgba(26, 18, 33, 0.96), rgba(12, 14, 20, 0.92));
+}
+
+.fun-lists-grid .fun-list-card:nth-child(6) {
+  background:
+    radial-gradient(circle at top right, rgba(142, 220, 255, 0.16), transparent 42%),
+    linear-gradient(180deg, rgba(15, 24, 30, 0.96), rgba(11, 15, 20, 0.92));
+}
+
+.fun-list {
+  list-style: none;
+  margin: 16px 0 0;
+  padding: 0;
+  display: grid;
+  gap: 10px;
+}
+
+.fun-list-item {
+  display: grid;
+  grid-template-columns: auto 1fr auto;
+  gap: 12px;
+  align-items: center;
+  padding: 10px 12px;
+  border-radius: 14px;
+  background: rgba(255, 255, 255, 0.04);
+  border: 1px solid rgba(255, 255, 255, 0.06);
+}
+
+.fun-list-item-empty {
+  grid-template-columns: 1fr;
+  color: var(--muted);
+}
+
+.fun-list-rank {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-width: 34px;
+  height: 34px;
+  border-radius: 999px;
+  font-weight: 800;
+  background: rgba(255, 91, 46, 0.14);
+  color: #ffd8c7;
+}
+
+.fun-list-main {
+  min-width: 0;
+  font-weight: 700;
+}
+
+.fun-list-side {
+  color: var(--muted);
+  font-weight: 700;
+  text-align: right;
+}
+
+@media (max-width: 1080px) {
+  .fun-summary-grid {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+
+  .fun-lists-grid {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+}
+
+@media (max-width: 720px) {
+  .fun-period-toolbar {
+    align-items: stretch;
+  }
+
+  .fun-period-switch {
+    width: 100%;
+  }
+
+  .fun-period-btn {
+    flex: 1 1 0;
+  }
+
+  .fun-summary-grid,
+  .fun-awards-grid,
+  .fun-lists-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .fun-list-item {
+    grid-template-columns: auto 1fr;
+  }
+
+  .fun-list-side {
+    grid-column: 2;
+    text-align: left;
+  }
+}
+
 @media (max-width: 768px) {
   .site-video-bg {
     display: none;

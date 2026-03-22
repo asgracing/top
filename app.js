@@ -1,7 +1,8 @@
 ﻿const IS_RACES_PAGE = /\/races(?:\/|\/index\.html)?$/i.test(window.location.pathname);
 const IS_DRIVER_PAGE = /\/driver(?:\/|\/index\.html)?$/i.test(window.location.pathname);
 const IS_CARS_PAGE = /\/cars(?:\/|\/index\.html)?$/i.test(window.location.pathname);
-const SITE_BASE_PATH = (IS_RACES_PAGE || IS_DRIVER_PAGE || IS_CARS_PAGE) ? "../" : "./";
+const IS_FUN_STATS_PAGE = /\/fun-stats(?:\/|\/index\.html)?$/i.test(window.location.pathname);
+const SITE_BASE_PATH = (IS_RACES_PAGE || IS_DRIVER_PAGE || IS_CARS_PAGE || IS_FUN_STATS_PAGE) ? "../" : "./";
 const TOP_DATA_BASE_URL = "https://asgracing.github.io/top-data";
 const HOURLY_DATA_BASE_URL = "https://asgracing.github.io/hourly-data";
 const snapshotUrl = `${TOP_DATA_BASE_URL}/snapshot.json`;
@@ -73,6 +74,7 @@ let driverIndexData = [];
 let driverProfileData = null;
 let driverPreviewState = null;
 let driverPreviewModalController = null;
+let funStatsPeriod = "week";
 const driverProfileCache = new Map();
 const HOURLY_TRACK_BACKGROUNDS = {
   monza: "https://asgracing.github.io/hourly/assets/tracks/monza.jpg",
@@ -135,12 +137,19 @@ onlineNoData: "No data",
     pageTitle: "ASG Racing ACC Leaderboard | Assetto Corsa Competizione Stats",
     pageTitleRaces: "ASG Racing Last Races | Assetto Corsa Competizione Results",
     pageTitleCars: "ASG Racing Cars | Assetto Corsa Competizione Stats",
+    pageTitleFunStats: "ASG Racing Fun Stats | Weekly and Monthly ACC Stories",
     metaDescription:
       "ASG Racing ACC Leaderboard - race stats, wins, podiums and best laps from the public Assetto Corsa Competizione server.",
+    metaDescriptionFunStats:
+      "Weekly and monthly fun stats from ASG Racing ACC: comeback heroes, clean racers, hot laps, grind leaders and more.",
     ogDescription:
       "Race stats, wins, podiums and best laps from the ASG Racing server in Assetto Corsa Competizione.",
+    ogDescriptionFunStats:
+      "Weekly and monthly stories from the ASG Racing server: points bosses, comeback heroes, clean racers and hot lap heroes.",
     twitterDescription:
       "Races, wins, podiums and best laps from the public ACC server of ASG Racing.",
+    twitterDescriptionFunStats:
+      "Weekly and monthly ASG Racing fun stats with the most active, fastest and wildest drivers on the server.",
     ogLocale: "en_US",
     heroTitle: "🏁 ASG Racing Leaderboard",
     heroSubtitle:
@@ -148,6 +157,7 @@ onlineNoData: "No data",
     btnChampionship: "Championship",
     btnLastRaces: "Last Races",
     btnCars: "Cars",
+    btnFunStats: "Fun Stats",
     lastRacesBtn: "Last Races",
     btnBackHome: "Back to Home",
     btnBestLaps: "Best Laps",
@@ -236,6 +246,52 @@ onlineNoData: "No data",
     carsTableTitle: "Cars Table",
     carsTableSubtitle: "Sorted by wins, podiums and race count.",
     carsCols: ["Car", "Races", "Wins", "Win Rate", "Podiums", "Drivers", "Avg Finish", "Fastest Laps", "Best Lap"],
+    funStatsEyebrow: "Weekly and monthly pulse",
+    funStatsPageTitle: "Fun Stats",
+    funStatsPageSubtitle:
+      "Not just wins and podiums. This page highlights the busiest, fastest, cleanest and most chaotic stories from recent ASG Racing races.",
+    funStatsWeekTab: "Last 7 days",
+    funStatsMonthTab: "Last 30 days",
+    funStatsPeriodSwitcherLabel: "Period switcher",
+    funStatsWindowLabel: "Data window",
+    funStatsSummaryRaces: "Races held",
+    funStatsSummaryDrivers: "Active drivers",
+    funStatsSummaryFastestLapsLeader: "Fastest lap leader",
+    funStatsSummaryOvertakes: "Positions gained",
+    funStatsAwardsTitle: "Fun Awards",
+    funStatsAwardsSubtitle: "A lighter weekly and monthly view of who made noise on the server.",
+    funStatsLeaderboardsTitle: "Quick Rankings",
+    funStatsLeaderboardsSubtitle: "Top names and trends for the selected period.",
+    funStatsEmpty: "Not enough race data for this period yet.",
+    funStatsListActive: "Most active drivers",
+    funStatsListMovers: "Biggest movers",
+    funStatsListClean: "Cleanest racers",
+    funStatsListStable: "Most consistent",
+    funStatsListFastest: "Fastest lap kings",
+    funStatsListCars: "Most used cars",
+    funStatsAwardPointsBoss: "Points Boss",
+    funStatsAwardGrindKing: "Grind King",
+    funStatsAwardPodiumHunter: "Podium Hunter",
+    funStatsAwardComebackHero: "Comeback Hero",
+    funStatsAwardCleanOperator: "Clean Operator",
+    funStatsAwardHotLapHero: "Hot Lap Hero",
+    funStatsAwardChaosMagnet: "Chaos Magnet",
+    funStatsAwardGarageFavorite: "Garage Favorite",
+    funStatsAwardPointsBossNote: "{value} pts scored in the selected period.",
+    funStatsAwardGrindKingNote: "{value} race starts logged.",
+    funStatsAwardPodiumHunterNote: "{value} podium finishes collected.",
+    funStatsAwardComebackHeroNote: "+{value} positions gained across races.",
+    funStatsAwardCleanOperatorNote: "{value} penalty pts across {starts} starts.",
+    funStatsAwardHotLapHeroNote: "{lap} on Monza.",
+    funStatsAwardChaosMagnetNote: "{value} penalty pts received.",
+    funStatsAwardGarageFavoriteNote: "{value} starts with this car.",
+    funStatsSummaryFastestLapsLeaderNote: "{value} times",
+    funStatsListStartsValue: "{value} starts",
+    funStatsListGainValue: "+{value} positions",
+    funStatsListPenaltyValue: "{value} penalty pts",
+    funStatsListAvgFinishValue: "avg finish {value}",
+    funStatsListFastestLapValue: "{value} fastest laps",
+    funStatsListCarValue: "{value} starts",
     racesSummaryTotal: "Total races",
     racesSummaryAvgActive: "Avg active finishers",
     racesSummaryAvgOvertakes: "Avg overtakes",
@@ -371,8 +427,10 @@ onlineNoData: "Нет данных",
     driverOfDayBestLapTrack: "Трасса",
     driverOfDayNoData: "Сегодня ещё нет данных по гонкам.",
     htmlLang: "ru",
+    pageTitleFunStats: "ASG Racing Fun Stats | Недельные и месячные истории ACC",
     pageTitleCars: "ASG Racing Cars | Статистика Assetto Corsa Competizione",
     btnCars: "Машины",
+    btnFunStats: "Фан-стата",
     carsEyebrow: "Статистика машин",
     carsPageTitle: "Машины",
     carsPageSubtitle: "Обзор результатов по моделям машин на основе сохраненных гоночных результатов.",
@@ -384,14 +442,66 @@ onlineNoData: "Нет данных",
     carsTableTitle: "Таблица машин",
     carsTableSubtitle: "Сортировка по клику на заголовки столбцов.",
     carsCols: ["Машина", "Гонки", "Победы", "Винрейт", "Подиумы", "Пилоты", "Ср. финиш", "Лучшие круги", "Бестлап"],
+    funStatsEyebrow: "Пульс недели и месяца",
+    funStatsPageTitle: "Фан-стата",
+    funStatsPageSubtitle:
+      "Не только победы и подиумы. Здесь собраны самые живые истории последних гонок ASG Racing: активность, камбэки, чистые заезды, быстрые круги и немного хаоса.",
+    funStatsWeekTab: "Последние 7 дней",
+    funStatsMonthTab: "Последние 30 дней",
+    funStatsPeriodSwitcherLabel: "Переключатель периода",
+    funStatsWindowLabel: "Период данных",
+    funStatsSummaryRaces: "Проведено гонок",
+    funStatsSummaryDrivers: "Активных пилотов",
+    funStatsSummaryFastestLapsLeader: "Лидер по быстрым кругам",
+    funStatsSummaryOvertakes: "Отбитых позиций",
+    funStatsAwardsTitle: "Фан-награды",
+    funStatsAwardsSubtitle: "Более живой недельный и месячный взгляд на то, что происходило на сервере.",
+    funStatsLeaderboardsTitle: "Быстрые рейтинги",
+    funStatsLeaderboardsSubtitle: "Главные имена и тренды за выбранный период.",
+    funStatsEmpty: "Пока недостаточно данных за этот период.",
+    funStatsListActive: "Самые активные пилоты",
+    funStatsListMovers: "Главные камбэкеры",
+    funStatsListClean: "Самые чистые гонщики",
+    funStatsListStable: "Самые стабильные",
+    funStatsListFastest: "Короли быстрых кругов",
+    funStatsListCars: "Самые популярные машины",
+    funStatsAwardPointsBoss: "Босс по очкам",
+    funStatsAwardGrindKing: "Король наката",
+    funStatsAwardPodiumHunter: "Охотник за подиумами",
+    funStatsAwardComebackHero: "Герой камбэков",
+    funStatsAwardCleanOperator: "Чистый оператор",
+    funStatsAwardHotLapHero: "Герой быстрого круга",
+    funStatsAwardChaosMagnet: "Магнит для хаоса",
+    funStatsAwardGarageFavorite: "Любимчик гаража",
+    funStatsAwardPointsBossNote: "{value} очков за выбранный период.",
+    funStatsAwardGrindKingNote: "{value} стартов за период.",
+    funStatsAwardPodiumHunterNote: "{value} подиумов собрано.",
+    funStatsAwardComebackHeroNote: "+{value} отыгранных позиций по сумме гонок.",
+    funStatsAwardCleanOperatorNote: "{value} штрафных очков за {starts} стартов.",
+    funStatsAwardHotLapHeroNote: "{lap} на Monza.",
+    funStatsAwardChaosMagnetNote: "{value} штрафных очков получено.",
+    funStatsAwardGarageFavoriteNote: "{value} стартов на этой машине.",
+    funStatsSummaryFastestLapsLeaderNote: "{value} раз",
+    funStatsListStartsValue: "{value} стартов",
+    funStatsListGainValue: "+{value} позиций",
+    funStatsListPenaltyValue: "{value} штраф. очков",
+    funStatsListAvgFinishValue: "ср. финиш {value}",
+    funStatsListFastestLapValue: "{value} быстрых кругов",
+    funStatsListCarValue: "{value} стартов",
     pageTitle: "ASG Racing ACC Leaderboard | Статистика Assetto Corsa Competizione",
     pageTitleRaces: "ASG Racing Последние гонки | Результаты Assetto Corsa Competizione",
     metaDescription:
       "ASG Racing ACC Leaderboard - статистика гонок, побед, подиумов и лучших кругов на публичном сервере Assetto Corsa Competizione.",
+    metaDescriptionFunStats:
+      "Недельная и месячная фан-статистика ASG Racing ACC: камбэки, чистые гонщики, быстрые круги, активность и самые яркие истории сервера.",
     ogDescription:
       "Статистика гонок, побед, подиумов и лучших кругов на сервере ASG Racing в Assetto Corsa Competizione.",
+    ogDescriptionFunStats:
+      "Недельные и месячные истории ASG Racing: лидеры по очкам, камбэки, чистые гонщики, быстрые круги и самые активные пилоты.",
     twitterDescription:
       "Гонки, победы, подиумы и лучшие круги на публичном ACC сервере ASG Racing.",
+    twitterDescriptionFunStats:
+      "Фановая недельная и месячная статистика ASG Racing с самыми активными, быстрыми и безумными пилотами сервера.",
     ogLocale: "ru_RU",
     heroTitle: "🏁 ASG Racing Leaderboard",
     heroSubtitle:
@@ -1273,6 +1383,361 @@ function getProcessedCars() {
   );
 }
 
+function getLatestRaceDate(data = racesData) {
+  const timestamps = (Array.isArray(data) ? data : [])
+    .map(race => new Date(race?.finished_at || race?.date || "").getTime())
+    .filter(Number.isFinite);
+  return timestamps.length ? new Date(Math.max(...timestamps)) : null;
+}
+
+function getFunStatsPeriodWindow(period) {
+  const days = period === "month" ? 30 : 7;
+  const anchor = getLatestRaceDate() || new Date();
+  const end = new Date(anchor);
+  const start = new Date(anchor);
+  start.setHours(0, 0, 0, 0);
+  start.setDate(start.getDate() - (days - 1));
+  return { start, end };
+}
+
+function getFunStatsPeriodRaces(period) {
+  const { start, end } = getFunStatsPeriodWindow(period);
+  const startTime = start.getTime();
+  const endTime = end.getTime();
+
+  return (Array.isArray(racesData) ? racesData : [])
+    .filter(race => {
+      const time = new Date(race?.finished_at || race?.date || "").getTime();
+      return Number.isFinite(time) && time >= startTime && time <= endTime;
+    })
+    .sort((a, b) => new Date(b?.finished_at || 0).getTime() - new Date(a?.finished_at || 0).getTime());
+}
+
+function createFunDriverRecord(row) {
+  return {
+    publicId: row?.public_id || makePublicDriverId(row?.player_id),
+    playerId: row?.player_id || null,
+    driver: row?.driver || "-",
+    starts: 0,
+    points: 0,
+    wins: 0,
+    podiums: 0,
+    fastestLapAwards: 0,
+    finishTotal: 0,
+    finishSamples: 0,
+    positionsGain: 0,
+    penaltyPoints: 0,
+    penaltyCount: 0
+  };
+}
+
+function aggregateFunStats(period) {
+  const periodRaces = getFunStatsPeriodRaces(period);
+  const { start, end } = getFunStatsPeriodWindow(period);
+  const driverMap = new Map();
+  const carMap = new Map();
+  let overtakesTotal = 0;
+  let fastestLapRecord = null;
+
+  periodRaces.forEach(race => {
+    const activeResults = (race?.results || []).filter(isActiveRaceResult);
+
+    activeResults.forEach(row => {
+      const key = row?.public_id || makePublicDriverId(row?.player_id) || row?.driver || "unknown_driver";
+      const record = driverMap.get(key) || createFunDriverRecord(row);
+      record.starts += 1;
+      record.points += row?.points ?? 0;
+      record.wins += row?.position === 1 ? 1 : 0;
+      record.podiums += typeof row?.position === "number" && row.position <= 3 ? 1 : 0;
+      record.fastestLapAwards += row?.had_best_lap ? 1 : 0;
+      if (typeof row?.position === "number" && row.position > 0) {
+        record.finishTotal += row.position;
+        record.finishSamples += 1;
+      }
+      record.positionsGain += Math.max(0, row?.positions_delta ?? 0);
+      record.penaltyPoints += row?.penalty_points ?? 0;
+      record.penaltyCount += row?.penalty_count ?? 0;
+      driverMap.set(key, record);
+
+      overtakesTotal += Math.max(0, row?.positions_delta ?? 0);
+
+      const carName = row?.car_name || "-";
+      const carRecord = carMap.get(carName) || { car: carName, starts: 0, wins: 0 };
+      carRecord.starts += 1;
+      carRecord.wins += row?.position === 1 ? 1 : 0;
+      carMap.set(carName, carRecord);
+
+      if (typeof row?.best_lap_ms === "number" && row.best_lap_ms > 0) {
+        if (!fastestLapRecord || row.best_lap_ms < fastestLapRecord.bestLapMs) {
+          fastestLapRecord = {
+            bestLapMs: row.best_lap_ms,
+            lap: row.best_lap || formatLapTimeFromMs(row.best_lap_ms),
+            driver: row.driver || "-",
+            publicId: row.public_id || makePublicDriverId(row.player_id),
+            playerId: row.player_id || null
+          };
+        }
+      }
+    });
+  });
+
+  const drivers = [...driverMap.values()];
+  const cars = [...carMap.values()];
+  const cleanPool = drivers.filter(driver => driver.starts >= (period === "month" ? 4 : 2));
+  const stablePool = drivers
+    .filter(driver => driver.starts >= (period === "month" ? 5 : 3) && driver.finishSamples > 0)
+    .map(driver => ({
+      ...driver,
+      averageFinish: driver.finishTotal / driver.finishSamples
+    }));
+  const chaosMagnet = [...(Array.isArray(safetyData) ? safetyData : [])]
+    .sort((a, b) => (b?.penalty_points ?? 0) - (a?.penalty_points ?? 0) || (b?.penalty_count ?? 0) - (a?.penalty_count ?? 0))
+    [0] || null;
+  const fastestLapLeader = [...drivers]
+    .sort((a, b) => b.fastestLapAwards - a.fastestLapAwards || b.points - a.points || a.driver.localeCompare(b.driver))[0] || null;
+
+  return {
+    rangeLabel: `${formatDateLocal(start, currentLang)} - ${formatDateLocal(end, currentLang)}`,
+    summary: {
+      races: periodRaces.length,
+      activeDrivers: drivers.length,
+      fastestLapLeader,
+      overtakes: overtakesTotal
+    },
+    awards: {
+      pointsBoss: [...drivers].sort((a, b) => b.points - a.points || b.wins - a.wins || a.driver.localeCompare(b.driver))[0] || null,
+      grindKing: [...drivers].sort((a, b) => b.starts - a.starts || b.points - a.points || a.driver.localeCompare(b.driver))[0] || null,
+      podiumHunter: [...drivers].sort((a, b) => b.podiums - a.podiums || b.wins - a.wins || a.driver.localeCompare(b.driver))[0] || null,
+      comebackHero: [...drivers].sort((a, b) => b.positionsGain - a.positionsGain || b.starts - a.starts || a.driver.localeCompare(b.driver))[0] || null,
+      cleanOperator: [...cleanPool].sort((a, b) => a.penaltyPoints - b.penaltyPoints || b.starts - a.starts || b.points - a.points || a.driver.localeCompare(b.driver))[0] || null,
+      hotLapHero: fastestLapRecord,
+      chaosMagnet: chaosMagnet
+        ? {
+            driver: chaosMagnet.driver || "-",
+            publicId: chaosMagnet.public_id || makePublicDriverId(chaosMagnet.player_id),
+            playerId: chaosMagnet.player_id || null,
+            penaltyPoints: chaosMagnet.penalty_points ?? 0
+          }
+        : null,
+      garageFavorite: [...cars].sort((a, b) => b.starts - a.starts || b.wins - a.wins || a.car.localeCompare(b.car))[0] || null
+    },
+    lists: {
+      active: [...drivers].sort((a, b) => b.starts - a.starts || b.points - a.points || a.driver.localeCompare(b.driver)).slice(0, 5),
+      movers: [...drivers].sort((a, b) => b.positionsGain - a.positionsGain || b.starts - a.starts || a.driver.localeCompare(b.driver)).slice(0, 5),
+      clean: [...cleanPool].sort((a, b) => a.penaltyPoints - b.penaltyPoints || b.starts - a.starts || b.points - a.points || a.driver.localeCompare(b.driver)).slice(0, 5),
+      stable: [...stablePool].sort((a, b) => a.averageFinish - b.averageFinish || b.starts - a.starts || a.driver.localeCompare(b.driver)).slice(0, 5),
+      fastest: [...drivers].sort((a, b) => b.fastestLapAwards - a.fastestLapAwards || b.points - a.points || a.driver.localeCompare(b.driver)).slice(0, 5),
+      cars: [...cars].sort((a, b) => b.starts - a.starts || b.wins - a.wins || a.car.localeCompare(b.car)).slice(0, 5)
+    }
+  };
+}
+
+function renderFunStatsAwardCard(labelKey, titleMarkup, note, accent = "default") {
+  return `
+    <article class="fun-award-card fun-award-card-${escapeHtml(accent)}">
+      <div class="fun-award-label">${escapeHtml(t(labelKey))}</div>
+      <div class="fun-award-title">${titleMarkup}</div>
+      <div class="fun-award-note">${escapeHtml(note)}</div>
+    </article>
+  `;
+}
+
+function renderFunStatsSummaryCard(labelMarkup, valueMarkup, note = "", extraClass = "") {
+  return `
+    <article class="fun-summary-card ${escapeHtml(extraClass)}">
+      <div class="fun-summary-label">${labelMarkup}</div>
+      <div class="fun-summary-value">${valueMarkup}</div>
+      ${note ? `<div class="fun-summary-note">${escapeHtml(note)}</div>` : ""}
+    </article>
+  `;
+}
+
+function renderFunStatsListCard(titleKey, items, valueFormatter) {
+  const listMarkup = items.length
+    ? items.map((item, index) => `
+        <li class="fun-list-item">
+          <span class="fun-list-rank">#${index + 1}</span>
+          <span class="fun-list-main">${item.label}</span>
+          <span class="fun-list-side">${escapeHtml(valueFormatter(item))}</span>
+        </li>
+      `).join("")
+    : `<li class="fun-list-item fun-list-item-empty">${escapeHtml(t("funStatsEmpty"))}</li>`;
+
+  return `
+    <article class="fun-list-card">
+      <div class="fun-list-title">${escapeHtml(t(titleKey))}</div>
+      <ul class="fun-list">${listMarkup}</ul>
+    </article>
+  `;
+}
+
+function renderFunStatsPage() {
+  const summaryEl = document.getElementById("fun-stats-summary");
+  const awardsEl = document.getElementById("fun-stats-awards");
+  const leaderboardsEl = document.getElementById("fun-stats-leaderboards");
+  const rangeEl = document.getElementById("fun-stats-range");
+  const toggleButtons = document.querySelectorAll("[data-fun-period]");
+
+  if (!summaryEl || !awardsEl || !leaderboardsEl || !rangeEl) return;
+
+  toggleButtons.forEach(button => {
+    const active = button.dataset.funPeriod === funStatsPeriod;
+    button.classList.toggle("active", active);
+    button.setAttribute("aria-pressed", active ? "true" : "false");
+  });
+
+  const data = aggregateFunStats(funStatsPeriod);
+  rangeEl.textContent = `${t("funStatsWindowLabel")}: ${data.rangeLabel}`;
+
+  summaryEl.innerHTML = `
+    ${renderFunStatsSummaryCard(
+      escapeHtml(t("funStatsSummaryRaces")),
+      escapeHtml(data.summary.races)
+    )}
+    ${renderFunStatsSummaryCard(
+      escapeHtml(t("funStatsSummaryDrivers")),
+      escapeHtml(data.summary.activeDrivers)
+    )}
+    ${renderFunStatsSummaryCard(
+      escapeHtml(t("funStatsSummaryFastestLapsLeader")),
+      data.summary.fastestLapLeader
+        ? escapeHtml(replaceTokens(t("funStatsSummaryFastestLapsLeaderNote"), { value: data.summary.fastestLapLeader.fastestLapAwards }))
+        : "-",
+      data.summary.fastestLapLeader
+        ? data.summary.fastestLapLeader.driver
+        : ""
+      ,
+      "fun-summary-card-driver-note"
+    )}
+    ${renderFunStatsSummaryCard(
+      escapeHtml(t("funStatsSummaryOvertakes")),
+      escapeHtml(data.summary.overtakes)
+    )}
+  `;
+
+  if (!data.summary.races) {
+    awardsEl.innerHTML = `<div class="empty-box">${escapeHtml(t("funStatsEmpty"))}</div>`;
+    leaderboardsEl.innerHTML = "";
+    return;
+  }
+
+  const { pointsBoss, grindKing, podiumHunter, comebackHero, cleanOperator, hotLapHero, chaosMagnet, garageFavorite } = data.awards;
+
+  awardsEl.innerHTML = [
+    pointsBoss && renderFunStatsAwardCard(
+      "funStatsAwardPointsBoss",
+      renderDriverLink(pointsBoss.driver, pointsBoss.publicId, "driver-link driver-link-heading", pointsBoss.playerId),
+      replaceTokens(t("funStatsAwardPointsBossNote"), { value: pointsBoss.points }),
+      "accent"
+    ),
+    grindKing && renderFunStatsAwardCard(
+      "funStatsAwardGrindKing",
+      renderDriverLink(grindKing.driver, grindKing.publicId, "driver-link driver-link-heading", grindKing.playerId),
+      replaceTokens(t("funStatsAwardGrindKingNote"), { value: grindKing.starts }),
+      "warm"
+    ),
+    podiumHunter && renderFunStatsAwardCard(
+      "funStatsAwardPodiumHunter",
+      renderDriverLink(podiumHunter.driver, podiumHunter.publicId, "driver-link driver-link-heading", podiumHunter.playerId),
+      replaceTokens(t("funStatsAwardPodiumHunterNote"), { value: podiumHunter.podiums }),
+      "gold"
+    ),
+    comebackHero && renderFunStatsAwardCard(
+      "funStatsAwardComebackHero",
+      renderDriverLink(comebackHero.driver, comebackHero.publicId, "driver-link driver-link-heading", comebackHero.playerId),
+      replaceTokens(t("funStatsAwardComebackHeroNote"), { value: comebackHero.positionsGain }),
+      "cool"
+    ),
+    cleanOperator && renderFunStatsAwardCard(
+      "funStatsAwardCleanOperator",
+      renderDriverLink(cleanOperator.driver, cleanOperator.publicId, "driver-link driver-link-heading", cleanOperator.playerId),
+      replaceTokens(t("funStatsAwardCleanOperatorNote"), { value: cleanOperator.penaltyPoints, starts: cleanOperator.starts }),
+      "clean"
+    ),
+    hotLapHero && renderFunStatsAwardCard(
+      "funStatsAwardHotLapHero",
+      renderDriverLink(hotLapHero.driver, hotLapHero.publicId, "driver-link driver-link-heading", hotLapHero.playerId),
+      replaceTokens(t("funStatsAwardHotLapHeroNote"), { lap: hotLapHero.lap }),
+      "accent"
+    ),
+    chaosMagnet && renderFunStatsAwardCard(
+      "funStatsAwardChaosMagnet",
+      renderDriverLink(chaosMagnet.driver, chaosMagnet.publicId, "driver-link driver-link-heading", chaosMagnet.playerId),
+      replaceTokens(t("funStatsAwardChaosMagnetNote"), { value: chaosMagnet.penaltyPoints }),
+      "danger"
+    ),
+    garageFavorite && renderFunStatsAwardCard(
+      "funStatsAwardGarageFavorite",
+      renderCarLink(garageFavorite.car, "driver-link driver-link-heading"),
+      replaceTokens(t("funStatsAwardGarageFavoriteNote"), { value: garageFavorite.starts }),
+      "neutral"
+    )
+  ].filter(Boolean).join("");
+
+  leaderboardsEl.innerHTML = [
+    renderFunStatsListCard(
+      "funStatsListActive",
+      data.lists.active.map(item => ({
+        label: renderDriverLink(item.driver, item.publicId, "driver-link", item.playerId),
+        value: item.starts
+      })),
+      item => replaceTokens(t("funStatsListStartsValue"), { value: item.value })
+    ),
+    renderFunStatsListCard(
+      "funStatsListMovers",
+      data.lists.movers.map(item => ({
+        label: renderDriverLink(item.driver, item.publicId, "driver-link", item.playerId),
+        value: item.positionsGain
+      })),
+      item => replaceTokens(t("funStatsListGainValue"), { value: item.value })
+    ),
+    renderFunStatsListCard(
+      "funStatsListClean",
+      data.lists.clean.map(item => ({
+        label: renderDriverLink(item.driver, item.publicId, "driver-link", item.playerId),
+        value: item.penaltyPoints
+      })),
+      item => replaceTokens(t("funStatsListPenaltyValue"), { value: item.value })
+    ),
+    renderFunStatsListCard(
+      "funStatsListStable",
+      data.lists.stable.map(item => ({
+        label: renderDriverLink(item.driver, item.publicId, "driver-link", item.playerId),
+        value: item.averageFinish
+      })),
+      item => replaceTokens(t("funStatsListAvgFinishValue"), { value: Number(item.value).toFixed(2) })
+    ),
+    renderFunStatsListCard(
+      "funStatsListFastest",
+      data.lists.fastest.map(item => ({
+        label: renderDriverLink(item.driver, item.publicId, "driver-link", item.playerId),
+        value: item.fastestLapAwards
+      })),
+      item => replaceTokens(t("funStatsListFastestLapValue"), { value: item.value })
+    ),
+    renderFunStatsListCard(
+      "funStatsListCars",
+      data.lists.cars.map(item => ({
+        label: renderCarLink(item.car, "driver-link"),
+        value: item.starts
+      })),
+      item => replaceTokens(t("funStatsListCarValue"), { value: item.value })
+    )
+  ].join("");
+}
+
+function bindFunStatsControls() {
+  document.querySelectorAll("[data-fun-period]").forEach(button => {
+    button.addEventListener("click", () => {
+      const nextPeriod = button.dataset.funPeriod;
+      if (!nextPeriod || nextPeriod === funStatsPeriod) return;
+      funStatsPeriod = nextPeriod;
+      renderFunStatsPage();
+      applyRevealAnimations();
+    });
+  });
+}
+
 function getBestLapClass(isHighlighted) {
   return isHighlighted ? "best-lap-value" : "";
 }
@@ -1423,9 +1888,11 @@ function applyStaticTranslations() {
     ? t("pageTitleDriver")
     : IS_CARS_PAGE
       ? t("pageTitleCars")
-    : IS_RACES_PAGE
-      ? t("pageTitleRaces")
-      : t("pageTitle");
+      : IS_FUN_STATS_PAGE
+        ? t("pageTitleFunStats")
+        : IS_RACES_PAGE
+          ? t("pageTitleRaces")
+          : t("pageTitle");
 
   const descriptionMeta = document.querySelector('meta[name="description"]');
   const ogDescriptionMeta = document.querySelector('meta[property="og:description"]');
@@ -1433,10 +1900,18 @@ function applyStaticTranslations() {
   const ogLocaleMeta = document.querySelector('meta[property="og:locale"]');
 
   if (!IS_RACES_PAGE) {
-    if (descriptionMeta) descriptionMeta.setAttribute("content", t("metaDescription"));
-    if (ogDescriptionMeta) ogDescriptionMeta.setAttribute("content", t("ogDescription"));
-    if (twitterDescriptionMeta) twitterDescriptionMeta.setAttribute("content", t("twitterDescription"));
-    if (ogLocaleMeta) ogLocaleMeta.setAttribute("content", t("ogLocale"));
+    if (descriptionMeta) {
+      descriptionMeta.setAttribute("content", IS_FUN_STATS_PAGE ? t("metaDescriptionFunStats") : t("metaDescription"));
+    }
+    if (ogDescriptionMeta) {
+      ogDescriptionMeta.setAttribute("content", IS_FUN_STATS_PAGE ? t("ogDescriptionFunStats") : t("ogDescription"));
+    }
+    if (twitterDescriptionMeta) {
+      twitterDescriptionMeta.setAttribute("content", IS_FUN_STATS_PAGE ? t("twitterDescriptionFunStats") : t("twitterDescription"));
+    }
+    if (ogLocaleMeta) {
+      ogLocaleMeta.setAttribute("content", t("ogLocale"));
+    }
   }
 
   document.querySelectorAll("[data-i18n]").forEach(el => {
@@ -1648,7 +2123,7 @@ function applyRevealAnimations() {
   if (window.matchMedia("(prefers-reduced-motion: reduce)").matches) return;
 
   const targets = document.querySelectorAll(
-    ".hero-card, .pilot-card, .mini-stat, .driver-stat-card, .driver-highlight-card, .race-summary-card"
+    ".hero-card, .pilot-card, .mini-stat, .driver-stat-card, .driver-highlight-card, .race-summary-card, .fun-summary-card, .fun-award-card, .fun-list-card"
   );
 
   if (!("IntersectionObserver" in window)) {
@@ -2222,6 +2697,19 @@ function formatDateTimeLocal(isoString, lang = "en") {
     day: "2-digit",
     hour: "2-digit",
     minute: "2-digit"
+  }).format(date);
+}
+
+function formatDateLocal(isoString, lang = "en") {
+  if (!isoString) return "-";
+
+  const locale = lang === "ru" ? "ru-RU" : "en-US";
+  const date = new Date(isoString);
+  if (Number.isNaN(date.getTime())) return "-";
+
+  return new Intl.DateTimeFormat(locale, {
+    day: "numeric",
+    month: "short"
   }).format(date);
 }
 
@@ -3237,6 +3725,7 @@ function optimizeBackgroundMedia() {
     IS_DRIVER_PAGE ||
     IS_RACES_PAGE ||
     IS_CARS_PAGE ||
+    IS_FUN_STATS_PAGE ||
     window.innerWidth < 900 ||
     navigator.connection?.saveData;
 
@@ -3279,6 +3768,12 @@ function rerenderUI() {
     return;
   }
 
+  if (IS_FUN_STATS_PAGE) {
+    renderFunStatsPage();
+    applyRevealAnimations();
+    return;
+  }
+
   if (IS_RACES_PAGE) {
     renderRacesPage();
     applyRevealAnimations();
@@ -3302,6 +3797,7 @@ function rerenderUI() {
 async function init() {
   bindLanguageButtons();
   bindTopNavMoreMenu();
+  bindFunStatsControls();
   bindSearchInputs();
   updateTopNavModalOffset();
   optimizeBackgroundMedia();
@@ -3334,6 +3830,17 @@ async function init() {
 
     if (IS_CARS_PAGE) {
       carsData = await loadCarsData();
+      rerenderUI();
+      return;
+    }
+
+    if (IS_FUN_STATS_PAGE) {
+      const [raceArchive, data] = await Promise.all([
+        loadRacesData(),
+        loadSiteData().catch(() => ({ safety: [] }))
+      ]);
+      racesData = raceArchive;
+      safetyData = Array.isArray(data?.safety) ? data.safety : [];
       rerenderUI();
       return;
     }
@@ -3430,6 +3937,18 @@ async function init() {
       if (carsTableEl) {
         carsTableEl.innerHTML = `<div class="empty-box">${escapeHtml(t("errorLoading"))}</div>`;
       }
+      return;
+    }
+
+    if (IS_FUN_STATS_PAGE) {
+      const summaryEl = document.getElementById("fun-stats-summary");
+      const awardsEl = document.getElementById("fun-stats-awards");
+      const leaderboardsEl = document.getElementById("fun-stats-leaderboards");
+      if (summaryEl) {
+        summaryEl.innerHTML = `<div class="empty-box">${escapeHtml(t("errorLoading"))}</div>`;
+      }
+      if (awardsEl) awardsEl.innerHTML = "";
+      if (leaderboardsEl) leaderboardsEl.innerHTML = "";
       return;
     }
 

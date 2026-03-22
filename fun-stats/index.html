@@ -1,23 +1,22 @@
-﻿<!DOCTYPE html>
+<!DOCTYPE html>
 <html lang="en">
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
 
-  <title>ASG Racing Cars | Assetto Corsa Competizione Stats</title>
+  <title>ASG Racing Fun Stats | Weekly and Monthly ACC Stories</title>
   <meta
     name="description"
-    content="ASG Racing car statistics with wins, win rate, podiums, drivers and best lap by car model."
+    content="Weekly and monthly fun stats from ASG Racing ACC: comeback heroes, clean racers, hot laps, grind leaders and more."
   />
   <meta
     name="keywords"
-    content="ASG Racing, ACC cars, Assetto Corsa Competizione car stats, GT3 stats, car wins, best lap by car"
+    content="ASG Racing, ACC fun stats, weekly stats, monthly stats, Assetto Corsa Competizione, Monza, race stories"
   />
 
   <meta name="yandex-verification" content="c76adf2164af15e6" />
   <meta name="google-site-verification" content="Q9-gOMKl6WbBLelP-Vl__xxrrF2Qyrm47kdie0mGxz8" />
 
-  <!-- Yandex.Metrika counter -->
   <script type="text/javascript">
       (function(m,e,t,r,i,k,a){
           m[i]=m[i]||function(){(m[i].a=m[i].a||[]).push(arguments)};
@@ -29,35 +28,34 @@
       ym(107697834, 'init', {ssr:true, webvisor:true, clickmap:true, ecommerce:"dataLayer", referrer: document.referrer, url: location.href, accurateTrackBounce:true, trackLinks:true});
   </script>
   <noscript><div><img src="https://mc.yandex.ru/watch/107697834" style="position:absolute; left:-9999px;" alt="" /></div></noscript>
-  <!-- /Yandex.Metrika counter -->
 
   <meta name="robots" content="index, follow" />
   <meta name="author" content="ASG Racing" />
   <meta name="theme-color" content="#0b0f14" />
 
-  <link rel="canonical" href="https://asgracing.github.io/top/cars/" />
+  <link rel="canonical" href="https://asgracing.github.io/top/fun-stats/" />
   <link rel="icon" href="../favicon.ico" sizes="any" />
   <link rel="icon" type="image/png" sizes="32x32" href="../favicon-32x32.png" />
   <link rel="icon" type="image/png" sizes="16x16" href="../favicon-16x16.png" />
   <link rel="apple-touch-icon" href="../apple-touch-icon.png" />
 
   <meta property="og:type" content="website" />
-  <meta property="og:url" content="https://asgracing.github.io/top/cars/" />
-  <meta property="og:title" content="ASG Racing Cars" />
+  <meta property="og:url" content="https://asgracing.github.io/top/fun-stats/" />
+  <meta property="og:title" content="ASG Racing Fun Stats" />
   <meta
     property="og:description"
-    content="Performance overview by car model with wins, podiums, usage and best lap data from ASG Racing ACC."
+    content="Weekly and monthly stories from the ASG Racing server: points bosses, comeback heroes, clean racers and hot lap heroes."
   />
   <meta property="og:image" content="https://asgracing.github.io/top/og-cover.jpg" />
-  <meta property="og:image:alt" content="ASG Racing cars statistics preview" />
+  <meta property="og:image:alt" content="ASG Racing fun stats preview" />
   <meta property="og:site_name" content="ASG Racing ACC Leaderboard" />
   <meta property="og:locale" content="en_US" />
 
   <meta name="twitter:card" content="summary_large_image" />
-  <meta name="twitter:title" content="ASG Racing Cars" />
+  <meta name="twitter:title" content="ASG Racing Fun Stats" />
   <meta
     name="twitter:description"
-    content="Performance overview by car model with wins, podiums, usage and best lap data from ASG Racing ACC."
+    content="Weekly and monthly ASG Racing fun stats with the most active, fastest and wildest drivers on the server."
   />
   <meta name="twitter:image" content="https://asgracing.github.io/top/og-cover.jpg" />
 
@@ -83,8 +81,8 @@
       <div class="top-nav-center">
         <div class="top-nav-menu">
           <a class="top-nav-link top-nav-link-secondary" href="../races/" data-i18n="btnLastRaces" data-nav-item="true">Last Races</a>
-          <a class="top-nav-link top-nav-link-secondary" href="./" data-i18n="btnCars" data-nav-item="true">Cars</a>
-          <a class="top-nav-link top-nav-link-secondary" href="../fun-stats/" data-i18n="btnFunStats" data-nav-item="true">Fun Stats</a>
+          <a class="top-nav-link top-nav-link-secondary" href="../cars/" data-i18n="btnCars" data-nav-item="true">Cars</a>
+          <a class="top-nav-link top-nav-link-secondary" href="./" data-i18n="btnFunStats" data-nav-item="true">Fun Stats</a>
           <a class="top-nav-link top-nav-link-secondary" href="../#championship" data-i18n="btnChampionship" data-nav-item="true">Championship</a>
           <a class="top-nav-link top-nav-link-secondary" href="../#bestlaps" data-i18n="btnBestLaps" data-nav-item="true">Best Laps</a>
           <a class="top-nav-link top-nav-link-secondary" href="../#worst-safety" data-i18n="btnWorstSafety" data-nav-item="true">Worst Safety</a>
@@ -118,27 +116,23 @@
 
   <div class="container">
     <section class="hero">
-      <div class="hero-card hero-card-page">
+      <div class="hero-card hero-card-page fun-hero-card">
         <div class="page-hero-copy">
-          <div class="eyebrow" data-i18n="carsEyebrow">Car stats</div>
-          <h1 data-i18n="carsPageTitle">Cars</h1>
-          <p class="hero-subtitle page-hero-subtitle" data-i18n="carsPageSubtitle">
-            Performance overview by car model based on recorded race results.
+          <h1 data-i18n="funStatsPageTitle">Fun Stats</h1>
+          <p class="hero-subtitle page-hero-subtitle" data-i18n="funStatsPageSubtitle">
+            Not just wins and podiums. This page highlights the busiest, fastest, cleanest and most chaotic stories from recent ASG Racing races.
           </p>
 
-          <div class="page-hero-stats">
-            <div class="mini-stat">
-              <div class="mini-label" data-i18n="carsSummaryTotal">Car models</div>
-              <div class="mini-value" id="cars-total-count">-</div>
+          <div class="fun-period-toolbar">
+            <div class="fun-period-switch" role="group" aria-label="Period switcher" data-i18n-aria-label="funStatsPeriodSwitcherLabel">
+              <button class="fun-period-btn active" type="button" data-fun-period="week" data-i18n="funStatsWeekTab">Last 7 days</button>
+              <button class="fun-period-btn" type="button" data-fun-period="month" data-i18n="funStatsMonthTab">Last 30 days</button>
             </div>
-            <div class="mini-stat">
-              <div class="mini-label" data-i18n="carsSummaryTopWinner">Top winner</div>
-              <div class="mini-value" id="cars-top-winner">-</div>
-            </div>
-            <div class="mini-stat">
-              <div class="mini-label" data-i18n="carsSummaryMostUsed">Most used</div>
-              <div class="mini-value" id="cars-most-used">-</div>
-            </div>
+            <div class="fun-period-range" id="fun-stats-range">—</div>
+          </div>
+
+          <div class="fun-summary-grid" id="fun-stats-summary">
+            <div class="loading" data-i18n="loadingRaces">Loading races...</div>
           </div>
         </div>
       </div>
@@ -147,15 +141,24 @@
     <section class="section">
       <div class="section-header">
         <div>
-          <h2 class="section-title" data-i18n="carsTableTitle">Cars Table</h2>
-          <p class="section-subtitle" data-i18n="carsTableSubtitle">Sorted by wins, podiums and race count.</p>
+          <h2 class="section-title" data-i18n="funStatsAwardsTitle">Fun Awards</h2>
+          <p class="section-subtitle" data-i18n="funStatsAwardsSubtitle">A lighter weekly and monthly view of who made noise on the server.</p>
         </div>
       </div>
+      <div class="fun-awards-grid" id="fun-stats-awards">
+        <div class="loading" style="padding:20px;" data-i18n="loadingRaces">Loading races...</div>
+      </div>
+    </section>
 
-      <div class="table-card">
-        <div class="table-wrap" id="cars-table">
-          <div class="loading" style="padding:20px;" data-i18n="loading">Loading...</div>
+    <section class="section">
+      <div class="section-header">
+        <div>
+          <h2 class="section-title" data-i18n="funStatsLeaderboardsTitle">Quick Rankings</h2>
+          <p class="section-subtitle" data-i18n="funStatsLeaderboardsSubtitle">Top names and trends for the selected period.</p>
         </div>
+      </div>
+      <div class="fun-lists-grid" id="fun-stats-leaderboards">
+        <div class="loading" style="padding:20px;" data-i18n="loadingRaces">Loading races...</div>
       </div>
     </section>
 
@@ -179,7 +182,3 @@
   <script src="../app.js" defer></script>
 </body>
 </html>
-
-
-
-
