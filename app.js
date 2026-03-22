@@ -65,6 +65,9 @@ let carsSort = { key: "wins", direction: "desc" };
 let onlineData = [];
 let hourlyAnnouncementData = null;
 let hourlyVotesCount = null;
+let hourlyVoteAlreadyVoted = false;
+let hourlyVotePending = false;
+let hourlyVoteFailed = false;
 let selectedRace = null;
 let driverIndexData = [];
 let driverProfileData = null;
@@ -94,6 +97,10 @@ onlineNoData: "No data",
     hourlyStartsLabel: "Starts",
     hourlyTrackLabel: "Track",
     hourlyOpenBtn: "1-Hour Race!",
+    hourlyVoteBtn: "I want to race!",
+    hourlyVoteDone: "You're in",
+    hourlyVoteSending: "Saving...",
+    hourlyVoteFailed: "Try again",
     hourlyNoEvent: "No scheduled event yet",
     hourlyVotesZero: "No registrations yet",
     hourlyVotesOne: "{value} registered driver",
@@ -329,6 +336,10 @@ onlineNoData: "Нет данных",
     hourlyStartsLabel: "Старт",
     hourlyTrackLabel: "Трасса",
     hourlyOpenBtn: "Часовая Гонка!",
+    hourlyVoteBtn: "Я хочу поехать!",
+    hourlyVoteDone: "Ты в списке",
+    hourlyVoteSending: "Сохраняем...",
+    hourlyVoteFailed: "Повтори позже",
     hourlyNoEvent: "Пока нет запланированного события",
     hourlyVotesZero: "Нет регистраций",
     hourlyVotesOne: "{value} участник",
@@ -554,13 +565,23 @@ onlineNoData: "Нет данных",
 Object.assign(translations.en, {
   updatedPrefix: "Updated",
   todayRacesNote: "Races today: {value}",
-  todayPointsNote: "Points today: {value}"
+  todayPointsNote: "Points today: {value}",
+  heroFunnelTitle: "Monza 24/7, daily events, beginner-friendly help",
+  heroFunnelNote: "Telegram and Discord are the most convenient ways to stay in touch with the community. Here you will find reminders, results, voting, and live sim racing conversations.",
+  joinTelegramBtn: "Join Telegram",
+  joinDiscordBtn: "Join Discord",
+  heroOpenHourlyBtn: "Next hourly event"
 });
 
 Object.assign(translations.ru, {
   updatedPrefix: "Обновлено",
   todayRacesNote: "Гонок за сегодня: {value}",
-  todayPointsNote: "Очков за сегодня: {value}"
+  todayPointsNote: "Очков за сегодня: {value}",
+  heroFunnelTitle: "Monza 24/7, ежедневные ивенты, помощь новичкам",
+  heroFunnelNote: "Telegram и Discord - самые удобные способы общения в комьюнити. Здесь ты найдешь: напоминания, результаты, голосования, живое общение на симрейсинговые темы.",
+  joinTelegramBtn: "Вступить в Telegram",
+  joinDiscordBtn: "Вступить в Discord",
+  heroOpenHourlyBtn: "Ближайшая часовая гонка"
 });
 
 currentLang = resolveInitialLanguage();
@@ -752,11 +773,11 @@ function renderOnlineWidget() {
 function renderHourlyHeroCard() {
   const startsEl = document.getElementById("hourly-starts-value");
   const trackEl = document.getElementById("hourly-track-value");
-  const detailsBtn = document.getElementById("hourly-details-btn");
   const votesEl = document.getElementById("hourly-votes-summary");
   const cardEl = document.getElementById("hero-hourly-card");
+  const voteBtn = document.getElementById("hourly-vote-btn");
 
-  if (!startsEl || !trackEl || !detailsBtn || !votesEl || !cardEl) return;
+  if (!startsEl || !trackEl || !votesEl || !cardEl || !voteBtn) return;
 
   const data = hourlyAnnouncementData;
   trackEl.textContent = data?.track_name || t("hourlyNoEvent");
@@ -772,18 +793,27 @@ function renderHourlyHeroCard() {
       t(hourlyVotesCount === 1 ? "hourlyVotesOne" : hourlyVotesCount > 1 ? "hourlyVotesMany" : "hourlyVotesZero"),
       { value: hourlyVotesCount }
     );
+  } else if (hourlyVoteFailed) {
+    votesEl.textContent = t("hourlyVoteFailed");
   } else {
     votesEl.textContent = "—";
   }
 
-  if (data?.details_url) {
-    detailsBtn.href = data.details_url;
-    detailsBtn.removeAttribute("aria-disabled");
-    detailsBtn.classList.remove("is-disabled");
-  } else {
-    detailsBtn.href = "#";
-    detailsBtn.setAttribute("aria-disabled", "true");
-    detailsBtn.classList.add("is-disabled");
+  voteBtn.textContent = hourlyVotePending
+    ? t("hourlyVoteSending")
+    : hourlyVoteAlreadyVoted
+      ? t("hourlyVoteDone")
+      : t("hourlyVoteBtn");
+
+  voteBtn.disabled = !data?.event_id && !data?.track_name || hourlyVotePending;
+  voteBtn.classList.toggle("is-voted", hourlyVoteAlreadyVoted);
+  voteBtn.classList.toggle("pulse-attention", !hourlyVoteAlreadyVoted && !hourlyVotePending && Boolean(data?.event_id || data?.track_name));
+
+  if (!voteBtn.dataset.bound) {
+    voteBtn.addEventListener("click", () => {
+      void submitHourlyHeroVote();
+    });
+    voteBtn.dataset.bound = "true";
   }
 }
 
@@ -808,19 +838,68 @@ async function loadHourlyVotes(announcement) {
   const eventId = buildHourlyAnnouncementEventId(announcement);
   if (!eventId) {
     hourlyVotesCount = null;
+    hourlyVoteAlreadyVoted = false;
+    hourlyVoteFailed = false;
     return;
   }
   try {
     const url = new URL("/votes", hourlyVotesApiUrl);
     url.searchParams.set("event_ids", eventId);
+    url.searchParams.set("voter_id", getHourlyBrowserVoterId());
     const response = await fetch(url, { cache: "no-store" });
     if (!response.ok) throw new Error(`HTTP ${response.status}`);
     const payload = await response.json();
-    const count = payload?.items?.[eventId]?.votes;
+    const item = payload?.items?.[eventId];
+    const count = item?.votes;
     hourlyVotesCount = typeof count === "number" ? count : 0;
+    hourlyVoteAlreadyVoted = Boolean(item?.already_voted);
+    hourlyVoteFailed = false;
   } catch (error) {
     console.warn("hourly votes are unavailable.", error);
     hourlyVotesCount = null;
+    hourlyVoteAlreadyVoted = false;
+  }
+}
+
+async function submitHourlyHeroVote() {
+  const eventId = buildHourlyAnnouncementEventId(hourlyAnnouncementData);
+  if (!eventId || hourlyVotePending) return;
+
+  hourlyVotePending = true;
+  hourlyVoteFailed = false;
+  renderHourlyHeroCard();
+
+  try {
+    const endpoint = hourlyVoteAlreadyVoted ? "/unvote" : "/vote";
+    const body = hourlyVoteAlreadyVoted
+      ? {
+          event_id: eventId,
+          voter_id: getHourlyBrowserVoterId()
+        }
+      : {
+          event_id: eventId,
+          track: hourlyAnnouncementData?.track_name || hourlyAnnouncementData?.track_code || "-",
+          date: hourlyAnnouncementData?.date || "",
+          time: hourlyAnnouncementData?.start_time_local || "",
+          voter_id: getHourlyBrowserVoterId()
+        };
+
+    const response = await fetch(new URL(endpoint, hourlyVotesApiUrl), {
+      method: "POST",
+      headers: { "content-type": "application/json; charset=utf-8" },
+      body: JSON.stringify(body)
+    });
+    if (!response.ok) throw new Error(`HTTP ${response.status}`);
+    const payload = await response.json();
+    hourlyVotesCount = typeof payload?.votes === "number" ? payload.votes : hourlyVotesCount;
+    hourlyVoteAlreadyVoted = Boolean(payload?.already_voted);
+    hourlyVoteFailed = false;
+  } catch (error) {
+    console.warn("hourly hero vote failed.", error);
+    hourlyVoteFailed = true;
+  } finally {
+    hourlyVotePending = false;
+    renderHourlyHeroCard();
   }
 }
 
@@ -849,6 +928,16 @@ function tForLang(lang, key) {
 
 function replaceTokens(template, values = {}) {
   return String(template).replace(/\{(\w+)\}/g, (_, key) => values[key] ?? "");
+}
+
+function getHourlyBrowserVoterId() {
+  const storageKey = "hourlyVoteVoterId";
+  let value = localStorage.getItem(storageKey);
+  if (!value) {
+    value = `browser-${Date.now().toString(36)}-${Math.random().toString(36).slice(2, 10)}`;
+    localStorage.setItem(storageKey, value);
+  }
+  return value;
 }
 
 function escapeHtml(value) {

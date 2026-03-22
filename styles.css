@@ -528,9 +528,20 @@ h1 {
   align-self: stretch;
 }
 
+.hero-hourly-actions {
+  display: grid;
+  gap: 10px;
+}
+
 .hero-hourly-btn.is-disabled {
   opacity: 0.75;
   pointer-events: none;
+}
+
+.hero-hourly-btn.is-voted {
+  background: linear-gradient(135deg, #ffd166, #ffb347);
+  color: #101418;
+  box-shadow: 0 14px 28px rgba(255, 209, 102, 0.22);
 }
 
 .hero-hourly-votes {
@@ -691,6 +702,41 @@ h1 {
   justify-self: center;
   font-size: 13px;
   color: var(--muted);
+}
+
+.hero-funnel-card {
+  display: grid;
+  gap: 12px;
+  margin-top: 10px;
+}
+
+.hero-copy h1 {
+  font-size: clamp(28px, 4.2vw, 46px);
+}
+
+.hero-funnel-title {
+  color: var(--text);
+  font-size: 1.15rem;
+  font-weight: 900;
+  line-height: 1.25;
+}
+
+.hero-funnel-note {
+  margin: 6px 0 0;
+  color: var(--muted);
+  line-height: 1.6;
+}
+
+.hero-funnel-actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+}
+
+.hero-cta-primary,
+.hero-cta-secondary {
+  min-height: 48px;
+  padding-inline: 18px;
 }
 
 
@@ -2759,6 +2805,15 @@ body.modal-open {
   .today-stats-grid,
   .driver-day-grid {
     grid-template-columns: 1fr;
+  }
+
+  .hero-funnel-actions {
+    flex-direction: column;
+  }
+
+  .hero-cta-primary,
+  .hero-cta-secondary {
+    width: 100%;
   }
 
   .driver-stats-grid {

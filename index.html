@@ -122,13 +122,47 @@
         
 <div class="hero-grid">
   <div class="hero-copy">
-    <div class="eyebrow" data-i18n="heroEyebrow">ACC Public Leaderboard</div>
     <h1 data-i18n="heroTitle">🏁 ASG Racing League</h1>
-    <p class="hero-subtitle" data-i18n="heroSubtitle">
-      Race statistics, wins, podiums and best laps from the
-      <strong>ASG Racing</strong> server. Data is automatically updated
-      based on dedicated server results.
-    </p>
+
+    <div class="hero-funnel-card">
+      <div class="hero-funnel-copy">
+        <div class="hero-funnel-title" data-i18n="heroFunnelTitle">Залетай на сервер, лови ближайшую гонку и оставайся в движухе</div>
+        <p class="hero-funnel-note" data-i18n="heroFunnelNote">
+          Telegram — самый быстрый способ получать сборы, напоминания, результаты, голосования и все движение комьюнити.
+        </p>
+      </div>
+
+      <div class="hero-funnel-actions">
+        <a
+          class="btn btn-primary hero-cta-primary"
+          id="hero-telegram-btn"
+          href="https://t.me/+JUymrENgddcyMTdi"
+          target="_blank"
+          rel="noopener noreferrer"
+          data-i18n="joinTelegramBtn"
+        >
+          Вступить в Telegram
+        </a>
+        <a
+          class="btn btn-secondary hero-cta-secondary"
+          id="hero-discord-btn"
+          href="https://discord.gg/cEPFHXXtTC"
+          target="_blank"
+          rel="noopener noreferrer"
+          data-i18n="joinDiscordBtn"
+        >
+          Вступить в Discord
+        </a>
+        <a
+          class="btn btn-secondary hero-cta-secondary"
+          id="hero-hourly-link"
+          href="https://asgracing.github.io/hourly/"
+          data-i18n="heroOpenHourlyBtn"
+        >
+          Ближайшая часовая гонка
+        </a>
+      </div>
+    </div>
   </div>
 
   <aside class="hero-hourly-card" id="hero-hourly-card">
@@ -160,14 +194,16 @@
 
     <div class="hero-hourly-votes" id="hourly-votes-summary">—</div>
 
-    <a
-      class="btn hero-hourly-btn pulse-attention"
-      id="hourly-details-btn"
-      href="#"
-      data-i18n="hourlyOpenBtn"
-    >
-      Open hourly page
-    </a>
+    <div class="hero-hourly-actions">
+      <button
+        class="btn hero-hourly-btn pulse-attention"
+        id="hourly-vote-btn"
+        type="button"
+        data-i18n="hourlyVoteBtn"
+      >
+        Register for event
+      </button>
+    </div>
   </aside>
 
   <div class="hero-actions-row">
