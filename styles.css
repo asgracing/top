@@ -64,6 +64,31 @@ body {
   overflow-x: hidden;
 }
 
+body.monza-bg-page::after {
+  content: "";
+  position: fixed;
+  inset: 0;
+  z-index: 0;
+  pointer-events: none;
+  background:
+    linear-gradient(180deg, rgba(8, 12, 18, 0.08) 0%, rgba(8, 12, 18, 0.12) 38%, rgba(8, 12, 18, 0.18) 100%),
+    url("./fun-stats/monza.jpg") center center / cover no-repeat;
+}
+
+body.monza-bg-page .site-video-bg {
+  display: none;
+}
+
+body.monza-bg-page .site-video-overlay {
+  background:
+    linear-gradient(
+      180deg,
+        rgba(8, 12, 18, 0.03) 0%,
+      rgba(8, 12, 18, 0.06) 36%,
+      rgba(8, 12, 18, 0.1) 100%
+    );
+}
+
 body.lite-background .site-video-bg {
   display: none;
 }
