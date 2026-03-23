@@ -2190,6 +2190,76 @@ function renderPositionsDelta(value) {
   return `<span class="positions-delta ${cls}">${escapeHtml(formatted)}</span>`;
 }
 
+function formatTrendNumber(value, digits = 2) {
+  if (typeof value !== "number" || !Number.isFinite(value)) return "";
+  const rounded = Number(value.toFixed(digits));
+  return Number.isInteger(rounded) ? String(rounded) : rounded.toFixed(digits).replace(/\.?0+$/, "");
+}
+
+function formatTrendDelta(change, metric) {
+  const delta = Math.abs(change?.delta ?? NaN);
+  if (!Number.isFinite(delta) || delta === 0) return "";
+
+  if (metric === "best_lap_ms" || metric === "average_pace_ms") {
+    return delta >= 1000
+      ? `${formatTrendNumber(delta / 1000, 3)}s`
+      : `${formatTrendNumber(delta, 0)}ms`;
+  }
+
+  if (metric === "average_finish" || metric === "average_positions_delta") {
+    return formatTrendNumber(delta, 2);
+  }
+
+  return formatTrendNumber(delta, 0);
+}
+
+function formatTrendTitleValue(metric, value) {
+  if (value == null) return "-";
+  if ((metric === "best_lap_ms" || metric === "average_pace_ms") && typeof value === "number") {
+    return formatLapTimeFromMs(value) || String(value);
+  }
+  if (typeof value === "number") {
+    return formatTrendNumber(value, 2);
+  }
+  return String(value);
+}
+
+function renderTrendBadge(change, metric, { compact = false } = {}) {
+  if (!change || !change.trend || change.trend === "same") return "";
+
+  const trendClass = change.trend === "up" ? "trend-up" : "trend-down";
+  const arrow = change.trend === "up" ? "▲" : "▼";
+  const deltaLabel = formatTrendDelta(change, metric);
+  const beforeText = formatTrendTitleValue(metric, change.before);
+  const afterText = formatTrendTitleValue(metric, change.after);
+  const title = `${beforeText} -> ${afterText}`;
+
+  return `
+    <span class="trend-badge ${compact ? "trend-badge-compact" : ""} ${trendClass}" title="${escapeAttribute(title)}" aria-label="${escapeAttribute(title)}">
+      <span class="trend-arrow">${arrow}</span>
+      ${deltaLabel ? `<span class="trend-value">${escapeHtml(deltaLabel)}</span>` : ""}
+    </span>
+  `;
+}
+
+function renderRankBadgeWithTrend(rank, change) {
+  return `
+    <span class="rank-badge-wrap">
+      <span class="rank-badge rank-${escapeHtml(rank)}">#${escapeHtml(rank)}</span>
+      ${renderTrendBadge(change, "championship_rank", { compact: true })}
+    </span>
+  `;
+}
+
+function renderStatValueWithTrend(valueMarkup, change, metric) {
+  return `
+    <div class="stat-with-trend">
+      <span>${valueMarkup}</span>
+      ${renderTrendBadge(change, metric, { compact: true })}
+    </div>
+  `;
+}
+
 function updateBestLapNote(driver, track, carName) {
   const noteEl = document.getElementById("best-lap-note");
   if (!noteEl) return;
@@ -2212,7 +2282,7 @@ function renderTop3Compact(data) {
   return top3.map((row, index) => `
     <article class="pilot-card ${classes[index] || ""}">
       <div class="pilot-topline">
-        <div class="pilot-rank">#${escapeHtml(row.rank)}</div>
+        <div class="pilot-rank">#${escapeHtml(row.rank)} ${renderTrendBadge(row.rank_change, "championship_rank", { compact: true })}</div>
         <h3 class="pilot-name">${renderDriverLink(row.driver, row.public_id, "driver-link driver-link-heading", row.player_id)}</h3>
       </div>
       <div class="muted pilot-lap-line">
@@ -2368,7 +2438,7 @@ function renderLeaderboardTablePage() {
 
   const rows = result.items.map(row => `
     <tr ${buildDriverPreviewRowAttributes(row)}>
-      <td><span class="rank-badge rank-${escapeHtml(row.rank)}">#${escapeHtml(row.rank)}</span></td>
+      <td>${renderRankBadgeWithTrend(row.rank, row.rank_change)}</td>
       <td>
         <div class="driver-cell">
           <div class="driver-avatar">${escapeHtml(initials(row.driver))}</div>
@@ -2435,7 +2505,12 @@ function renderBestLapsTablePage() {
 
   const rows = result.items.map(row => `
     <tr ${buildDriverPreviewRowAttributes(row)}>
-      <td><span class="rank-badge rank-${escapeHtml(row.rank)}">#${escapeHtml(row.rank)}</span></td>
+      <td>
+        <span class="rank-badge-wrap">
+          <span class="rank-badge rank-${escapeHtml(row.rank)}">#${escapeHtml(row.rank)}</span>
+          ${renderTrendBadge(row.rank_change, "bestlap_rank", { compact: true })}
+        </span>
+      </td>
       <td>
         <div class="driver-cell">
           <div class="driver-avatar">${escapeHtml(initials(row.driver))}</div>
@@ -2445,7 +2520,7 @@ function renderBestLapsTablePage() {
           </div>
         </div>
       </td>
-      <td>${escapeHtml(row.best_lap ?? "-")}</td>
+      <td>${renderStatValueWithTrend(escapeHtml(row.best_lap ?? "-"), row.latest_changes?.best_lap_ms, "best_lap_ms")}</td>
       <td>${escapeHtml(row.car_name ?? "-")}</td>
       <td>${sessionLabel(row.session_type)}</td>
       <td>${escapeHtml(row.updated_at ?? "-")}</td>
@@ -3067,7 +3142,7 @@ function renderRaceResultsModal() {
   const highlightedDriverPublicId = IS_DRIVER_PAGE ? driverProfileData?.public_id : null;
   const rows = (selectedRace.results || []).map(row => `
     <tr class="${row.public_id && highlightedDriverPublicId && row.public_id === highlightedDriverPublicId ? "race-result-row-highlight" : ""}">
-      <td><span class="rank-badge rank-${escapeHtml(row.position)}">#${escapeHtml(row.position)}</span></td>
+      <td>${renderRankBadgeWithTrend(row.position, row.rank_change)}</td>
       <td>${escapeHtml(formatStartPosition(row))}</td>
       <td>${renderPositionsDelta(row.positions_delta)}</td>
       <td>
@@ -3229,7 +3304,7 @@ function buildDriverHeroTitle(profile) {
   const rankInfo = getDriverRankInfo(profile);
   return `
     <span class="driver-title-name">${escapeHtml(profile.driver || "-")}</span>
-    ${rankInfo ? `<span class="driver-rank-pill ${escapeHtml(rankInfo.rankClass)}" title="${escapeAttribute(t("driverRankingPosition"))}"><span class="driver-rank-label">${escapeHtml(t("driverRankingPosition"))}:</span><span class="driver-rank-value">#${escapeHtml(rankInfo.rank)}</span></span>` : ""}
+    ${rankInfo ? `<span class="driver-rank-pill ${escapeHtml(rankInfo.rankClass)}" title="${escapeAttribute(t("driverRankingPosition"))}"><span class="driver-rank-label">${escapeHtml(t("driverRankingPosition"))}:</span><span class="driver-rank-value">#${escapeHtml(rankInfo.rank)}</span>${renderTrendBadge(rankInfo.change, "championship_rank", { compact: true })}</span>` : ""}
   `;
 }
 
@@ -3245,11 +3320,11 @@ function buildDriverStatsMarkup(profile) {
   return `
     <div class="driver-stat-card">
       <div class="driver-stat-label">${escapeHtml(t("driverSummaryPoints"))}</div>
-      <div class="driver-stat-value">${escapeHtml(summary.points ?? 0)}</div>
+      <div class="driver-stat-value">${renderStatValueWithTrend(escapeHtml(summary.points ?? 0), summary.latest_changes?.points, "points")}</div>
     </div>
     <div class="driver-stat-card">
       <div class="driver-stat-label">${escapeHtml(t("driverSummaryAvgFinish"))}</div>
-      <div class="driver-stat-value">${escapeHtml(summary.average_finish ?? "-")}</div>
+      <div class="driver-stat-value">${renderStatValueWithTrend(escapeHtml(summary.average_finish ?? "-"), summary.latest_changes?.average_finish, "average_finish")}</div>
     </div>
     <div class="driver-stat-card">
       <div class="driver-stat-label">${escapeHtml(t("driverSummaryAvgPoints"))}</div>
@@ -3257,7 +3332,7 @@ function buildDriverStatsMarkup(profile) {
     </div>
     <div class="driver-stat-card">
       <div class="driver-stat-label">${escapeHtml(t("driverSummaryRaces"))}</div>
-      <div class="driver-stat-value">${escapeHtml(summary.races ?? 0)}</div>
+      <div class="driver-stat-value">${renderStatValueWithTrend(escapeHtml(summary.races ?? 0), summary.latest_changes?.races, "races")}</div>
     </div>
     <div class="driver-stat-card">
       <div class="driver-stat-label">${escapeHtml(t("driverSummaryWins"))}</div>
@@ -3269,11 +3344,11 @@ function buildDriverStatsMarkup(profile) {
     </div>
     <div class="driver-stat-card">
       <div class="driver-stat-label">${escapeHtml(t("driverSummaryAvgGain"))}</div>
-      <div class="driver-stat-value">${renderPositionsDelta(summary.average_positions_delta)}</div>
+      <div class="driver-stat-value">${renderStatValueWithTrend(renderPositionsDelta(summary.average_positions_delta), summary.latest_changes?.average_positions_delta, "average_positions_delta")}</div>
     </div>
     <div class="driver-stat-card">
       <div class="driver-stat-label">${escapeHtml(t("driverSummaryPodiums"))}</div>
-      <div class="driver-stat-value">${escapeHtml(summary.podiums ?? 0)}</div>
+      <div class="driver-stat-value">${renderStatValueWithTrend(escapeHtml(summary.podiums ?? 0), summary.latest_changes?.podiums, "podiums")}</div>
     </div>
     <div class="driver-stat-card">
       <div class="driver-stat-label">${escapeHtml(t("driverPodiumRate"))}</div>
@@ -3282,13 +3357,13 @@ function buildDriverStatsMarkup(profile) {
     <div class="driver-stat-card">
       <div class="driver-stat-label">${escapeHtml(t("driverSummaryBestLap"))}</div>
       <div class="driver-stat-value driver-stat-mainline">
-        <span class="best-lap-value">${escapeHtml(summary.best_lap ?? "-")}</span>
+        <span class="best-lap-value stat-with-trend">${escapeHtml(summary.best_lap ?? "-")}${renderTrendBadge(summary.latest_changes?.best_lap_ms, "best_lap_ms", { compact: true })}</span>
         <span class="driver-stat-side">${renderCarLink(summary.best_lap_car_name ?? "-", "driver-link driver-link-subtle")}</span>
       </div>
     </div>
     <div class="driver-stat-card">
       <div class="driver-stat-label">${escapeHtml(t("driverSummaryAvgPace"))}</div>
-      <div class="driver-stat-value">${escapeHtml(averagePace)}</div>
+      <div class="driver-stat-value">${renderStatValueWithTrend(escapeHtml(averagePace), summary.latest_changes?.average_pace_ms, "average_pace_ms")}</div>
     </div>
     <div class="driver-stat-card">
       <div class="driver-stat-label">${escapeHtml(t("driverFavoriteCar"))}</div>
@@ -3341,7 +3416,7 @@ function renderDriverRaceHistory() {
       <td>${escapeHtml(formatDateTimeLocal(row.finished_at, currentLang))}</td>
       <td>${escapeHtml(humanizeTrackName(row.track))}</td>
       <td>${escapeHtml(formatStartPosition(row))}</td>
-      <td>${escapeHtml(row.position ?? "-")}</td>
+      <td>${renderStatValueWithTrend(escapeHtml(row.position ?? "-"), row.rank_change, "championship_rank")}</td>
       <td>${renderPositionsDelta(row.positions_delta)}</td>
       <td>${escapeHtml(row.points ?? 0)}</td>
       <td><span class="${getBestLapClass(row.best_lap_ms === fastestLapMs)}">${escapeHtml(row.best_lap ?? "-")}</span></td>
@@ -3440,8 +3515,9 @@ function getDriverRankInfo(profile) {
   if (index === -1) return null;
 
   return {
-    rank: index + 1,
-    rankClass: index === 0 ? "rank-1" : index === 1 ? "rank-2" : index === 2 ? "rank-3" : "rank-default"
+    rank: profile?.summary?.championship_rank || index + 1,
+    rankClass: index === 0 ? "rank-1" : index === 1 ? "rank-2" : index === 2 ? "rank-3" : "rank-default",
+    change: profile?.summary?.latest_changes?.championship_rank || null,
   };
 }
 

@@ -29,7 +29,7 @@ GIT_EXE = r"C:\Program Files\Git\cmd\git.exe"
 
 AUTO_GIT_PUSH = True
 COMMIT_MESSAGE_PREFIX = "ACC stats update"
-SCHEMA_VERSION = 7
+SCHEMA_VERSION = 8
 
 SERVER_PROCESS_NAME = "accServer.exe"
 SERVER_TCP_PORT = 10034
@@ -52,6 +52,20 @@ POINTS_MAP = {
 BEST_LAP_BONUS = 1
 INVALID_LAP_VALUES = {0, -1, 2147483647, 4294967295}
 MIN_FILE_AGE_SECONDS = 10
+
+COMPARISON_METRIC_DIRECTIONS = {
+    "championship_rank": "lower",
+    "bestlap_rank": "lower",
+    "points": "higher",
+    "wins": "higher",
+    "podiums": "higher",
+    "races": "higher",
+    "average_finish": "lower",
+    "best_lap_ms": "lower",
+    "average_pace_ms": "lower",
+    "average_positions_delta": "higher",
+    "penalty_points": "lower",
+}
 
 CAR_MODEL_NAMES = {
     0: "Porsche 991 GT3 R",
@@ -303,6 +317,10 @@ def create_driver_entry(player_id, display_name):
         "pace_laps_count": 0,
         "average_pace_ms": None,
         "average_pace": None,
+        "championship_rank": None,
+        "bestlap_rank": None,
+        "latest_changes": {},
+        "latest_change_at": None,
     }
 
 
@@ -730,6 +748,107 @@ def process_penalties(data: dict, lines: list, safety_stats: dict, file_modified
         safety_entry["last_seen"] = file_modified
 
 
+def build_rank_map(rows: list):
+    rank_map = {}
+    for index, row in enumerate(rows, start=1):
+        player_id = row.get("player_id")
+        if player_id:
+            rank_map[player_id] = index
+    return rank_map
+
+
+def build_comparison_snapshot(state: dict):
+    drivers = state.get("drivers", {})
+    safety = state.get("safety", {})
+    leaderboard_rows = build_leaderboard_output(drivers)
+    bestlap_rows = build_bestlaps_output(drivers)
+
+    championship_ranks = build_rank_map(leaderboard_rows)
+    bestlap_ranks = build_rank_map(bestlap_rows)
+
+    snapshot = {}
+    for player_id, driver in drivers.items():
+        safety_entry = safety.get(player_id, {})
+        snapshot[player_id] = {
+            "championship_rank": championship_ranks.get(player_id),
+            "bestlap_rank": bestlap_ranks.get(player_id),
+            "points": driver.get("points"),
+            "wins": driver.get("wins"),
+            "podiums": driver.get("podiums"),
+            "races": driver.get("races"),
+            "average_finish": driver.get("average_finish"),
+            "best_lap_ms": driver.get("best_lap_ms"),
+            "average_pace_ms": driver.get("average_pace_ms"),
+            "average_positions_delta": driver.get("average_positions_delta"),
+            "penalty_points": safety_entry.get("penalty_points", 0),
+        }
+    return snapshot
+
+
+def build_metric_change(metric_name: str, before, after):
+    if before == after:
+        return None
+
+    direction = COMPARISON_METRIC_DIRECTIONS.get(metric_name, "higher")
+    if before is None and after is None:
+        trend = "same"
+    elif before is None:
+        trend = "up"
+    elif after is None:
+        trend = "down"
+    elif direction == "lower":
+        trend = "up" if after < before else "down"
+    else:
+        trend = "up" if after > before else "down"
+
+    delta = None
+    if isinstance(before, (int, float)) and isinstance(after, (int, float)):
+        delta = round(after - before, 3)
+
+    return {
+        "before": before,
+        "after": after,
+        "delta": delta,
+        "trend": trend,
+    }
+
+
+def build_player_change_set(before_metrics: dict, after_metrics: dict):
+    changes = {}
+    metric_names = sorted(set(before_metrics.keys()) | set(after_metrics.keys()))
+    for metric_name in metric_names:
+        change = build_metric_change(
+            metric_name,
+            before_metrics.get(metric_name),
+            after_metrics.get(metric_name),
+        )
+        if change:
+            changes[metric_name] = change
+    return changes
+
+
+def apply_latest_comparisons(state: dict, before_snapshot: dict, after_snapshot: dict, file_modified: str):
+    comparisons = {}
+    player_ids = sorted(set(before_snapshot.keys()) | set(after_snapshot.keys()) | set(state.get("drivers", {}).keys()))
+
+    for player_id in player_ids:
+        if player_id not in state["drivers"]:
+            continue
+
+        driver_entry = state["drivers"][player_id]
+        before_metrics = before_snapshot.get(player_id, {})
+        after_metrics = after_snapshot.get(player_id, {})
+        changes = build_player_change_set(before_metrics, after_metrics)
+
+        driver_entry["championship_rank"] = after_metrics.get("championship_rank")
+        driver_entry["bestlap_rank"] = after_metrics.get("bestlap_rank")
+        driver_entry["latest_changes"] = changes
+        driver_entry["latest_change_at"] = file_modified
+        comparisons[player_id] = changes
+
+    return comparisons
+
+
 def build_penalty_lookup(data: dict):
     penalty_lookup = {}
 
@@ -1081,6 +1200,7 @@ def process_file(path: Path, state: dict):
             queue_qualifying_snapshot(state, snapshot)
         return
 
+    before_snapshot = build_comparison_snapshot(state)
     process_driver_pace_laps(
         data=data,
         lines=lines,
@@ -1181,6 +1301,23 @@ def process_file(path: Path, state: dict):
                 daily_stats["wins_today"] += 1
             if position <= 3:
                 daily_stats["podiums_today"] += 1
+
+    after_snapshot = build_comparison_snapshot(state)
+    latest_comparisons = apply_latest_comparisons(
+        state,
+        before_snapshot,
+        after_snapshot,
+        file_modified,
+    )
+
+    race_entry = state["races"].get(get_relative_result_path(path))
+    if race_entry:
+        for result in race_entry.get("results", []):
+            player_id = result.get("player_id")
+            changes = latest_comparisons.get(player_id, {})
+            result["changes"] = changes
+            result["rank_change"] = changes.get("championship_rank")
+            result["bestlap_rank_change"] = changes.get("bestlap_rank")
 
 
 def collect_result_files():
@@ -1293,6 +1430,7 @@ def build_leaderboard_output(drivers: dict):
 
     for idx, row in enumerate(leaderboard, start=1):
         row["rank"] = idx
+        row["rank_change"] = (row.get("latest_changes") or {}).get("championship_rank")
 
     return leaderboard
 
@@ -1322,6 +1460,8 @@ def build_bestlaps_output(drivers: dict):
                 "car_name": row.get("best_lap_car_name"),
                 "session_type": row["best_lap_session_type"],
                 "updated_at": row["last_seen"],
+                "rank_change": (row.get("latest_changes") or {}).get("bestlap_rank"),
+                "latest_changes": row.get("latest_changes", {}),
             }
         )
 
@@ -1403,6 +1543,9 @@ def build_driver_profiles(state: dict):
                     "had_best_lap": result.get("had_best_lap", False),
                     "penalty_count": result.get("penalty_count", 0),
                     "penalty_points": result.get("penalty_points", 0),
+                    "changes": result.get("changes", {}),
+                    "rank_change": result.get("rank_change"),
+                    "bestlap_rank_change": result.get("bestlap_rank_change"),
                 }
             )
 
@@ -1491,6 +1634,10 @@ def build_driver_profiles(state: dict):
                 "podium_rate": round((driver["podiums"] / driver["races"]) * 100, 2) if driver["races"] else 0,
                 "average_positions_delta": driver.get("average_positions_delta"),
                 "positions_delta_races": driver.get("positions_delta_races", 0),
+                "championship_rank": driver.get("championship_rank"),
+                "bestlap_rank": driver.get("bestlap_rank"),
+                "latest_changes": driver.get("latest_changes", {}),
+                "latest_change_at": driver.get("latest_change_at"),
             },
             "recent_form": [row.get("position") for row in race_history[:5] if row.get("position") is not None],
             "track_stats": track_stats_list,
@@ -1529,6 +1676,10 @@ def build_drivers_index(state: dict):
                 "penalty_count": summary["penalty_count"],
                 "penalty_points": summary["penalty_points"],
                 "last_race_at": summary["last_race_at"],
+                "championship_rank": summary.get("championship_rank"),
+                "bestlap_rank": summary.get("bestlap_rank"),
+                "latest_changes": summary.get("latest_changes", {}),
+                "latest_change_at": summary.get("latest_change_at"),
             }
         )
 
