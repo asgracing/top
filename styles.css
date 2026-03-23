@@ -1208,6 +1208,13 @@ tr.is-interactive-row:focus-visible {
   line-height: 1.15;
 }
 
+.stat-with-trend {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  flex-wrap: wrap;
+}
+
 .driver-stat-mainline {
   display: flex;
   align-items: baseline;
@@ -1767,6 +1774,48 @@ tbody tr.is-driver-preview-row:focus-visible td:last-child::after {
 
 .positions-delta.delta-neutral {
   color: var(--text);
+}
+
+.trend-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  padding: 3px 8px;
+  border-radius: 999px;
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  background: rgba(255, 255, 255, 0.04);
+  font-size: 0.78rem;
+  font-weight: 800;
+  line-height: 1;
+  vertical-align: middle;
+}
+
+.trend-badge-compact {
+  padding: 2px 6px;
+  font-size: 0.72rem;
+}
+
+.trend-badge.trend-up {
+  color: var(--green);
+  border-color: rgba(57, 217, 138, 0.2);
+  background: rgba(57, 217, 138, 0.12);
+}
+
+.trend-badge.trend-down {
+  color: var(--red);
+  border-color: rgba(239, 68, 68, 0.2);
+  background: rgba(239, 68, 68, 0.12);
+}
+
+.trend-arrow {
+  font-size: 0.74em;
+}
+
+.rank-badge-wrap {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  flex-wrap: wrap;
 }
 
 tbody tr:last-child td {
