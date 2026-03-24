@@ -15,6 +15,13 @@ const serverStatusUrl = `${TOP_DATA_BASE_URL}/server_status.json`;
 const onlineUrl = `${TOP_DATA_BASE_URL}/online.json`;
 const hourlyAnnouncementUrl = `${HOURLY_DATA_BASE_URL}/announcement.json`;
 const hourlyVotesApiUrl = "https://hourly-votes.asgracing.workers.dev";
+const TWITCH_CHANNEL_NAME = "asgracing";
+const TWITCH_CHANNEL_URL = `https://www.twitch.tv/${TWITCH_CHANNEL_NAME}`;
+const TWITCH_LIVE_PREVIEW_URL = `https://static-cdn.jtvnw.net/previews-ttv/live_user_${TWITCH_CHANNEL_NAME}-440x248.jpg`;
+const YOUTUBE_CHANNEL_HANDLE = "@ASGRacingACC";
+const YOUTUBE_CHANNEL_URL = "https://www.youtube.com/@ASGRacingACC";
+const YOUTUBE_LIVE_URL = `${YOUTUBE_CHANNEL_URL}/live`;
+const TWITCH_WIDGET_CHECK_INTERVAL_MS = 120000;
 const racesUrl = `${TOP_DATA_BASE_URL}/races/races.json`;
 const carsUrl = `${TOP_DATA_BASE_URL}/cars/cars.json`;
 const driverIndexUrl = `${TOP_DATA_BASE_URL}/drivers/drivers.json`;
@@ -75,6 +82,17 @@ let driverProfileData = null;
 let driverPreviewState = null;
 let driverPreviewModalController = null;
 let hourlyHeroModalController = null;
+let twitchWidgetCheckTimer = null;
+let twitchWidgetState = {
+  initialized: false,
+  live: false,
+  expanded: false,
+  dismissed: false,
+  checking: false,
+  platform: null,
+  embedUrl: "",
+  openUrl: TWITCH_CHANNEL_URL
+};
 let funStatsPeriod = "week";
 const driverProfileCache = new Map();
 const HOURLY_TRACK_BACKGROUNDS = {
@@ -225,6 +243,11 @@ onlineNoData: "No data",
     communityTwitchTitle: "Twitch",
     communityTwitchText: "Race replays, highlights and content worth rewatching after the checkered flag drops.",
     communityTwitchCta: "Watch on Twitch",
+    twitchWidgetTitle: "ASG Racing is streaming now!",
+    twitchWidgetOpen: "Open stream",
+    twitchWidgetExpand: "Bigger",
+    twitchWidgetCollapse: "Smaller",
+    twitchWidgetHide: "Hide",
     communityTiktokTitle: "TikTok",
     communityTiktokText: "Short, punchy moments: overtakes, chaos, emotions and the most addictive ASG Racing clips.",
     communityTiktokCta: "Catch the best moments",
@@ -590,6 +613,11 @@ onlineNoData: "Нет данных",
     communityTwitchTitle: "Twitch",
     communityTwitchText: "Записи гонок, хайлайты и моменты, которые хочется пересматривать уже после клетчатого флага.",
     communityTwitchCta: "Смотреть на Twitch",
+    twitchWidgetTitle: "ASG Racing сейчас стримит!",
+    twitchWidgetOpen: "Открыть стрим",
+    twitchWidgetExpand: "Больше",
+    twitchWidgetCollapse: "Меньше",
+    twitchWidgetHide: "Свернуть",
     communityTiktokTitle: "TikTok",
     communityTiktokText: "Короткие яркие моменты: обгоны, хаос, эмоции и самые залипательные эпизоды ASG Racing.",
     communityTiktokCta: "Поймать лучшие моменты",
@@ -1457,6 +1485,261 @@ function formatDateOnlyForHourly(dateString, lang = currentLang) {
     year: "numeric",
     timeZone: "Europe/Moscow"
   }).format(date);
+}
+
+function getTwitchEmbedParents() {
+  const hosts = new Set();
+  const hostname = String(window.location.hostname || "").trim();
+  if (hostname) hosts.add(hostname);
+  hosts.add("localhost");
+  hosts.add("127.0.0.1");
+  return [...hosts];
+}
+
+function buildTwitchPlayerUrl() {
+  const url = new URL("https://player.twitch.tv/");
+  url.searchParams.set("channel", TWITCH_CHANNEL_NAME);
+  url.searchParams.set("autoplay", "false");
+  getTwitchEmbedParents().forEach(parent => url.searchParams.append("parent", parent));
+  return url.toString();
+}
+
+function extractYouTubeEmbedUrl(oembedPayload) {
+  const html = String(oembedPayload?.html || "");
+  const match = html.match(/src="([^"]+)"/i);
+  if (!match?.[1]) return "";
+  try {
+    const url = new URL(match[1]);
+    url.searchParams.set("autoplay", "0");
+    url.searchParams.set("rel", "0");
+    return url.toString();
+  } catch {
+    return "";
+  }
+}
+
+async function detectYouTubeLive() {
+  try {
+    const oembedUrl = new URL("https://www.youtube.com/oembed");
+    oembedUrl.searchParams.set("url", YOUTUBE_LIVE_URL);
+    oembedUrl.searchParams.set("format", "json");
+    const response = await fetch(oembedUrl.toString(), { cache: "no-store", mode: "cors" });
+    if (!response.ok) return { live: false };
+    const payload = await response.json();
+    const embedUrl = extractYouTubeEmbedUrl(payload);
+    if (!embedUrl) return { live: false };
+    return {
+      live: true,
+      platform: "youtube",
+      embedUrl,
+      openUrl: YOUTUBE_LIVE_URL
+    };
+  } catch {
+    return { live: false };
+  }
+}
+
+async function detectActiveLiveStream() {
+  const twitchLive = await detectTwitchLive();
+  if (twitchLive) {
+    return {
+      live: true,
+      platform: "twitch",
+      embedUrl: buildTwitchPlayerUrl(),
+      openUrl: TWITCH_CHANNEL_URL
+    };
+  }
+
+  const youtubeLive = await detectYouTubeLive();
+  if (youtubeLive.live) return youtubeLive;
+
+  return {
+    live: false,
+    platform: null,
+    embedUrl: "",
+    openUrl: TWITCH_CHANNEL_URL
+  };
+}
+
+function ensureTwitchWidget() {
+  if (twitchWidgetState.initialized) return;
+
+  const root = document.createElement("aside");
+  root.className = "twitch-widget";
+  root.id = "twitch-widget";
+  root.hidden = true;
+  root.innerHTML = `
+    <div class="twitch-widget-shell">
+      <div class="twitch-widget-header">
+        <div class="twitch-widget-actions">
+          <a
+            class="twitch-widget-open"
+            id="twitch-widget-open"
+            href="${escapeHtml(TWITCH_CHANNEL_URL)}"
+            target="_blank"
+            rel="noopener noreferrer"
+          >${escapeHtml(t("twitchWidgetOpen"))}</a>
+          <button
+            class="twitch-widget-expand"
+            id="twitch-widget-expand"
+            type="button"
+            aria-expanded="false"
+          >${escapeHtml(t("twitchWidgetExpand"))}</button>
+          <button
+            class="twitch-widget-hide"
+            id="twitch-widget-hide"
+            type="button"
+          >${escapeHtml(t("twitchWidgetHide"))}</button>
+        </div>
+        <a
+          class="twitch-widget-title-wrap"
+          id="twitch-widget-link"
+          href="${escapeHtml(TWITCH_CHANNEL_URL)}"
+          target="_blank"
+          rel="noopener noreferrer"
+        >
+          <span class="twitch-widget-title" id="twitch-widget-title">${escapeHtml(t("twitchWidgetTitle"))}</span>
+        </a>
+      </div>
+      <div class="twitch-widget-player-wrap">
+        <iframe
+          id="twitch-widget-frame"
+          title="ASG Racing Twitch stream"
+          allowfullscreen
+          scrolling="no"
+          allow="autoplay; fullscreen"
+          src="about:blank"
+        ></iframe>
+      </div>
+    </div>
+  `;
+
+  document.body.appendChild(root);
+
+  const expandBtn = root.querySelector("#twitch-widget-expand");
+  if (expandBtn) {
+    expandBtn.addEventListener("click", (event) => {
+      event.preventDefault();
+      twitchWidgetState.expanded = !twitchWidgetState.expanded;
+      renderTwitchWidget();
+    });
+  }
+
+  const hideBtn = root.querySelector("#twitch-widget-hide");
+  if (hideBtn) {
+    hideBtn.addEventListener("click", (event) => {
+      event.preventDefault();
+      twitchWidgetState.dismissed = true;
+      twitchWidgetState.expanded = false;
+      renderTwitchWidget();
+    });
+  }
+
+  twitchWidgetState.initialized = true;
+  renderTwitchWidget();
+}
+
+function renderTwitchWidget() {
+  if (!twitchWidgetState.initialized) return;
+
+  const root = document.getElementById("twitch-widget");
+  const frame = document.getElementById("twitch-widget-frame");
+  const titleEl = document.getElementById("twitch-widget-title");
+  const openEl = document.getElementById("twitch-widget-open");
+  const expandEl = document.getElementById("twitch-widget-expand");
+  const hideEl = document.getElementById("twitch-widget-hide");
+  const titleWrapEl = document.getElementById("twitch-widget-link");
+  if (!root || !frame || !titleEl || !openEl || !expandEl || !hideEl) return;
+
+  titleEl.textContent = t("twitchWidgetTitle");
+  openEl.textContent = t("twitchWidgetOpen");
+  const activeOpenUrl = twitchWidgetState.openUrl || TWITCH_CHANNEL_URL;
+  openEl.setAttribute("href", activeOpenUrl);
+  if (titleWrapEl) titleWrapEl.setAttribute("href", activeOpenUrl);
+  expandEl.textContent = twitchWidgetState.expanded ? t("twitchWidgetCollapse") : t("twitchWidgetExpand");
+  expandEl.setAttribute("aria-expanded", twitchWidgetState.expanded ? "true" : "false");
+  expandEl.setAttribute("aria-label", twitchWidgetState.expanded ? t("twitchWidgetCollapse") : t("twitchWidgetExpand"));
+  hideEl.textContent = t("twitchWidgetHide");
+  root.classList.toggle("is-platform-youtube", twitchWidgetState.platform === "youtube");
+  root.classList.toggle("is-platform-twitch", twitchWidgetState.platform === "twitch");
+
+  if (!twitchWidgetState.live || twitchWidgetState.dismissed) {
+    root.hidden = true;
+    root.classList.remove("is-visible", "is-expanded");
+    if (frame.getAttribute("src") !== "about:blank") frame.setAttribute("src", "about:blank");
+    return;
+  }
+
+  root.hidden = false;
+  root.classList.add("is-visible");
+  root.classList.toggle("is-expanded", twitchWidgetState.expanded);
+  if (frame.getAttribute("src") !== twitchWidgetState.embedUrl) frame.setAttribute("src", twitchWidgetState.embedUrl);
+}
+
+function detectTwitchLive() {
+  return new Promise(resolve => {
+    const image = new Image();
+    let settled = false;
+
+    const finish = (value) => {
+      if (settled) return;
+      settled = true;
+      resolve(value);
+    };
+
+    const timeoutId = window.setTimeout(() => finish(false), 8000);
+
+    image.onload = () => {
+      window.clearTimeout(timeoutId);
+      finish(true);
+    };
+    image.onerror = () => {
+      window.clearTimeout(timeoutId);
+      finish(false);
+    };
+    image.src = `${TWITCH_LIVE_PREVIEW_URL}?ts=${Date.now()}`;
+  });
+}
+
+async function refreshTwitchWidgetState() {
+  if (twitchWidgetState.checking) return;
+  twitchWidgetState.checking = true;
+
+  try {
+    const previousPlatform = twitchWidgetState.platform;
+    const result = await detectActiveLiveStream();
+    twitchWidgetState.live = result.live;
+    twitchWidgetState.platform = result.platform;
+    twitchWidgetState.embedUrl = result.embedUrl || "";
+    twitchWidgetState.openUrl = result.openUrl || TWITCH_CHANNEL_URL;
+    if (!result.live) {
+      twitchWidgetState.expanded = false;
+      twitchWidgetState.dismissed = false;
+    }
+    if (previousPlatform && previousPlatform !== result.platform) {
+      twitchWidgetState.dismissed = false;
+    }
+    renderTwitchWidget();
+  } finally {
+    twitchWidgetState.checking = false;
+  }
+}
+
+function initTwitchWidget() {
+  ensureTwitchWidget();
+  void refreshTwitchWidgetState();
+
+  if (twitchWidgetCheckTimer) window.clearInterval(twitchWidgetCheckTimer);
+  twitchWidgetCheckTimer = window.setInterval(() => {
+    void refreshTwitchWidgetState();
+  }, TWITCH_WIDGET_CHECK_INTERVAL_MS);
+
+  if (!document.body.dataset.twitchVisibilityBound) {
+    document.addEventListener("visibilitychange", () => {
+      if (!document.hidden) void refreshTwitchWidgetState();
+    });
+    document.body.dataset.twitchVisibilityBound = "true";
+  }
 }
 
 function sha1(input) {
@@ -2348,6 +2631,7 @@ function applyStaticTranslations() {
   }
 
   updateDriverOfDayButtonLabel();
+  renderTwitchWidget();
   document.getElementById("top-nav-more")?.rebuildOverflowMenu?.();
 }
 
@@ -4307,6 +4591,7 @@ async function init() {
   bindTopNavMoreMenu();
   bindFunStatsControls();
   bindSearchInputs();
+  initTwitchWidget();
   updateTopNavModalOffset();
   optimizeBackgroundMedia();
   window.addEventListener("resize", debounce(() => {
