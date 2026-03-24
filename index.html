@@ -184,7 +184,14 @@
     </div>
   </div>
 
-  <aside class="hero-hourly-card" id="hero-hourly-card">
+  <aside
+    class="hero-hourly-card"
+    id="hero-hourly-card"
+    role="button"
+    tabindex="0"
+    aria-haspopup="dialog"
+    aria-controls="hourly-details-modal"
+  >
     <div class="hero-hourly-head">
       <div
         class="eyebrow hero-hourly-eyebrow"
@@ -626,6 +633,23 @@
         <div class="today-detail-main" id="today-most-successful">—</div>
         <div class="today-detail-sub" id="today-most-successful-note">—</div>
       </div>
+    </div>
+  </div>
+</div>
+<div class="modal-overlay" id="hourly-details-modal" aria-hidden="true">
+  <div class="modal-card modal-card-slot" role="dialog" aria-modal="true" aria-labelledby="hourly-details-title">
+    <button class="modal-close" id="hourly-details-close" type="button" aria-label="Close" data-i18n-aria-label="closeLabel">✕</button>
+
+    <div class="modal-header">
+      <div>
+        <div class="eyebrow" data-i18n="hourlyModalEyebrow">Event details</div>
+        <h3 id="hourly-details-title" class="modal-title">—</h3>
+        <p class="modal-subtitle" id="hourly-details-subtitle">—</p>
+      </div>
+    </div>
+
+    <div class="hourly-modal-details" id="hourly-details-content">
+      <div class="empty-box">—</div>
     </div>
   </div>
 </div>
