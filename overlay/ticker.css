@@ -1,0 +1,90 @@
+:root {
+  --ticker-text: #ffffff;
+  --ticker-shadow: 0 12px 28px rgba(0, 0, 0, 0.36);
+  --ticker-pass-duration: 22s;
+}
+
+* {
+  box-sizing: border-box;
+}
+
+html,
+body {
+  margin: 0;
+  min-height: 100%;
+  background: transparent;
+}
+
+body {
+  overflow: hidden;
+  font-family: "Segoe UI Variable", "Segoe UI", "Inter", Arial, sans-serif;
+}
+
+.ticker-overlay {
+  width: 100%;
+  opacity: 0;
+  visibility: hidden;
+  transition: opacity 0.45s ease, visibility 0.45s ease;
+}
+
+.ticker-overlay.is-visible {
+  opacity: 1;
+  visibility: visible;
+}
+
+.ticker-shell {
+  position: relative;
+  overflow: hidden;
+  width: 100%;
+  padding: 12px 0;
+}
+
+.ticker-track {
+  display: inline-flex;
+  align-items: center;
+  gap: 28px;
+  min-width: max-content;
+  padding-left: 100%;
+  white-space: nowrap;
+  animation: ticker-marquee var(--ticker-pass-duration) linear 2;
+  animation-play-state: paused;
+  text-shadow: var(--ticker-shadow);
+}
+
+.ticker-overlay.is-visible .ticker-track {
+  animation-play-state: running;
+}
+
+.ticker-item,
+.ticker-separator {
+  color: var(--ticker-text);
+  font-size: clamp(28px, 3.1vw, 42px);
+  line-height: 1.1;
+  font-weight: 800;
+  letter-spacing: -0.02em;
+}
+
+.ticker-separator {
+  opacity: 0.82;
+}
+
+@keyframes ticker-marquee {
+  0% {
+    transform: translate3d(0, 0, 0);
+  }
+
+  100% {
+    transform: translate3d(-50%, 0, 0);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .ticker-overlay {
+    transition: none;
+  }
+
+  .ticker-track {
+    animation: none;
+    padding-left: 0;
+  }
+}
