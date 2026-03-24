@@ -74,6 +74,7 @@ let driverIndexData = [];
 let driverProfileData = null;
 let driverPreviewState = null;
 let driverPreviewModalController = null;
+let hourlyHeroModalController = null;
 let funStatsPeriod = "week";
 const driverProfileCache = new Map();
 const HOURLY_TRACK_BACKGROUNDS = {
@@ -81,6 +82,11 @@ const HOURLY_TRACK_BACKGROUNDS = {
   silverstone: "https://asgracing.github.io/hourly/assets/tracks/silverstone.jpg",
   spa: "https://asgracing.github.io/hourly/assets/tracks/spa.jpg",
   nurburgring: "https://asgracing.github.io/hourly/assets/tracks/nurburgring.jpg"
+};
+const HOURLY_WEATHER_ICON_PATHS = {
+  clouds: "https://asgracing.github.io/hourly/assets/weather/cloudness.png",
+  rain: "https://asgracing.github.io/hourly/assets/weather/rain.png",
+  random: "https://asgracing.github.io/hourly/assets/weather/random.png"
 };
 
 const translations = {
@@ -704,7 +710,39 @@ Object.assign(translations.en, {
   heroFunnelNote: "Telegram and Discord are the most convenient ways to stay in touch with the community. Here you will find reminders, results, voting, and live sim racing conversations.",
   joinTelegramBtn: "Join Telegram",
   joinDiscordBtn: "Join Discord",
-  heroOpenHourlyBtn: "Next hourly event"
+  heroOpenHourlyBtn: "Next hourly event",
+  hourlyModalEyebrow: "Slot details",
+  hourlyOpenDetailsLabel: "Open hourly event details",
+  hourlyServerLabel: "Server",
+  hourlyPasswordLabel: "Password",
+  hourlyDateTimeLabel: "Date + time",
+  hourlyEntryLabel: "Entry",
+  hourlyFormatLabel: "Format",
+  hourlyPitstopLabel: "Pitstop",
+  hourlyRefuelLabel: "Refuel",
+  hourlyTyresLabel: "Tyres",
+  hourlyWeatherLabel: "Weather",
+  hourlyPasswordNone: "No password",
+  hourlyUnknownValue: "--",
+  hourlyEntrySlots: "{value} slots",
+  hourlyEntrySafety: "SAFETY {value}",
+  hourlyEntryTrackMedals: "{value} medals",
+  hourlyEntryRacecraft: "RC {value}",
+  hourlyPitNoMandatory: "No mandatory stop",
+  hourlyMandatoryPitstopCount: "{value} mandatory stop",
+  hourlyMandatoryPitstopCountPlural: "{value} mandatory stops",
+  hourlyPitWindow: "Window {value}m",
+  hourlyPitRefuelAllowed: "Refuel allowed",
+  hourlyPitRefuelFixed: "Fixed refuel time",
+  hourlyRefuelMandatory: "Refuel required",
+  hourlyRefuelNone: "No refuel",
+  hourlyTyresMandatory: "Tyre change required",
+  hourlyTyresSets: "{value} sets",
+  hourlyTyresNone: "No tyre rule",
+  hourlyWeatherTemp: "{value}°C",
+  hourlyWeatherClouds: "Clouds {value}%",
+  hourlyWeatherRain: "Rain {value}%",
+  hourlyWeatherRandom: "Random {value}"
 });
 
 Object.assign(translations.ru, {
@@ -715,7 +753,39 @@ Object.assign(translations.ru, {
   heroFunnelNote: "Telegram и Discord - самые удобные способы общения в комьюнити. Здесь ты найдешь: напоминания, результаты, голосования, живое общение на симрейсинговые темы.",
   joinTelegramBtn: "Вступить в Telegram",
   joinDiscordBtn: "Вступить в Discord",
-  heroOpenHourlyBtn: "Ближайшая часовая гонка"
+  heroOpenHourlyBtn: "Ближайшая часовая гонка",
+  hourlyModalEyebrow: "Детали слота",
+  hourlyOpenDetailsLabel: "Открыть детали часового события",
+  hourlyServerLabel: "Сервер",
+  hourlyPasswordLabel: "Пароль",
+  hourlyDateTimeLabel: "Дата + время",
+  hourlyEntryLabel: "Вход",
+  hourlyFormatLabel: "Формат",
+  hourlyPitstopLabel: "Пит-стоп",
+  hourlyRefuelLabel: "Заправка",
+  hourlyTyresLabel: "Шины",
+  hourlyWeatherLabel: "Погода",
+  hourlyPasswordNone: "Без пароля",
+  hourlyUnknownValue: "--",
+  hourlyEntrySlots: "{value} слотов",
+  hourlyEntrySafety: "SAFETY {value}",
+  hourlyEntryTrackMedals: "{value} медалей",
+  hourlyEntryRacecraft: "RC {value}",
+  hourlyPitNoMandatory: "Без обязательного пита",
+  hourlyMandatoryPitstopCount: "{value} обязательный пит-стоп",
+  hourlyMandatoryPitstopCountPlural: "{value} обязательных пит-стопа",
+  hourlyPitWindow: "Окно {value}м",
+  hourlyPitRefuelAllowed: "Заправка разрешена",
+  hourlyPitRefuelFixed: "Фикс. время заправки",
+  hourlyRefuelMandatory: "Заправка обязательна",
+  hourlyRefuelNone: "Без заправки",
+  hourlyTyresMandatory: "Смена шин обязательна",
+  hourlyTyresSets: "{value} комплектов",
+  hourlyTyresNone: "Без правила по шинам",
+  hourlyWeatherTemp: "{value}°C",
+  hourlyWeatherClouds: "Облака {value}%",
+  hourlyWeatherRain: "Дождь {value}%",
+  hourlyWeatherRandom: "Рандом {value}"
 });
 
 currentLang = resolveInitialLanguage();
@@ -904,6 +974,261 @@ function renderOnlineWidget() {
   rangeEl.textContent = `${first.label} - ${last.label}`;
 }
 
+function createHourlyModalToken(label, tone = "default", icon = "") {
+  return { label, tone, icon };
+}
+
+function renderHourlyModalTokens(tokens = []) {
+  const safeTokens = tokens.filter(token => token && token.label);
+  const normalized = safeTokens.length
+    ? safeTokens
+    : [createHourlyModalToken(t("hourlyUnknownValue"), "muted")];
+
+  return `<div class="hourly-modal-token-list">${normalized.map(token => `
+    <span class="hourly-modal-token hourly-modal-token-${escapeHtml(token.tone || "default")}">
+      ${token.icon ? `<img class="hourly-modal-token-icon" src="${escapeHtml(token.icon)}" alt="" aria-hidden="true" />` : ""}
+      <span>${escapeHtml(token.label)}</span>
+    </span>
+  `).join("")}</div>`;
+}
+
+function getHourlyVotesLabel() {
+  if (typeof hourlyVotesCount === "number") {
+    return replaceTokens(
+      t(hourlyVotesCount === 1 ? "hourlyVotesOne" : hourlyVotesCount > 1 ? "hourlyVotesMany" : "hourlyVotesZero"),
+      { value: hourlyVotesCount }
+    );
+  }
+  if (hourlyVoteFailed) return t("hourlyVoteFailed");
+  return "—";
+}
+
+function formatHourlyMandatoryPitstopCount(value) {
+  if (typeof value !== "number" || value <= 0) return t("hourlyPitNoMandatory");
+  return value === 1
+    ? replaceTokens(t("hourlyMandatoryPitstopCount"), { value })
+    : replaceTokens(t("hourlyMandatoryPitstopCountPlural"), { value });
+}
+
+function buildHourlyEntryTokens(server) {
+  if (!server || typeof server !== "object") return [];
+
+  const tokens = [];
+  if (server.car_group) tokens.push(createHourlyModalToken(server.car_group, "primary"));
+  if (typeof server.max_car_slots === "number" && server.max_car_slots > 0) {
+    tokens.push(createHourlyModalToken(replaceTokens(t("hourlyEntrySlots"), { value: server.max_car_slots })));
+  }
+  if (typeof server.safety_rating_requirement === "number" && server.safety_rating_requirement > 0) {
+    tokens.push(createHourlyModalToken(replaceTokens(t("hourlyEntrySafety"), { value: server.safety_rating_requirement }), "muted"));
+  }
+  if (typeof server.track_medals_requirement === "number" && server.track_medals_requirement > 0) {
+    tokens.push(createHourlyModalToken(replaceTokens(t("hourlyEntryTrackMedals"), { value: server.track_medals_requirement }), "muted"));
+  }
+  if (typeof server.racecraft_rating_requirement === "number" && server.racecraft_rating_requirement > 0) {
+    tokens.push(createHourlyModalToken(replaceTokens(t("hourlyEntryRacecraft"), { value: server.racecraft_rating_requirement }), "muted"));
+  }
+  return tokens;
+}
+
+function buildHourlyFormatTokens(session) {
+  if (!session || typeof session !== "object") return [];
+
+  const tokens = [];
+  if (typeof session.qualifying_duration_minutes === "number" && session.qualifying_duration_minutes > 0) {
+    tokens.push(createHourlyModalToken(`Q ${session.qualifying_duration_minutes}m`, "primary"));
+  }
+  if (typeof session.race_duration_minutes === "number" && session.race_duration_minutes > 0) {
+    tokens.push(createHourlyModalToken(`R ${session.race_duration_minutes}m`, "primary"));
+  }
+  if (!tokens.length && session.format_label) {
+    session.format_label
+      .split(" + ")
+      .map(part => part.trim())
+      .filter(Boolean)
+      .forEach(part => tokens.push(createHourlyModalToken(part, "primary")));
+  }
+
+  const preRaceMinutes = minutesFromSeconds(session.pre_race_waiting_time_seconds);
+  if (preRaceMinutes && preRaceMinutes > 0) {
+    tokens.push(createHourlyModalToken(`Pre ${preRaceMinutes}m`, "muted"));
+  }
+
+  return tokens;
+}
+
+function buildHourlyPitstopTokens(rules) {
+  if (!rules || typeof rules !== "object") return [];
+
+  const tokens = [
+    createHourlyModalToken(
+      formatHourlyMandatoryPitstopCount(rules.mandatory_pitstop_count),
+      rules.mandatory_pitstop_count > 0 ? "primary" : "muted"
+    )
+  ];
+  if (typeof rules.pit_window_length_minutes === "number" && rules.pit_window_length_minutes > 0) {
+    tokens.push(createHourlyModalToken(replaceTokens(t("hourlyPitWindow"), { value: rules.pit_window_length_minutes })));
+  }
+  return tokens;
+}
+
+function buildHourlyRefuelTokens(rules) {
+  if (!rules || typeof rules !== "object") return [];
+
+  const tokens = [];
+  if (rules.refuelling_allowed_in_race) tokens.push(createHourlyModalToken(t("hourlyPitRefuelAllowed")));
+  if (rules.refuelling_time_fixed) tokens.push(createHourlyModalToken(t("hourlyPitRefuelFixed"), "muted"));
+  if (rules.mandatory_pitstop_refuelling_required) tokens.push(createHourlyModalToken(t("hourlyRefuelMandatory"), "primary"));
+  if (!tokens.length) tokens.push(createHourlyModalToken(t("hourlyRefuelNone"), "muted"));
+  return tokens;
+}
+
+function buildHourlyTyreTokens(rules) {
+  if (!rules || typeof rules !== "object") return [];
+
+  const tokens = [];
+  if (rules.mandatory_pitstop_tyre_change_required) tokens.push(createHourlyModalToken(t("hourlyTyresMandatory"), "primary"));
+  if (typeof rules.tyre_set_count === "number" && rules.tyre_set_count > 0) {
+    tokens.push(createHourlyModalToken(replaceTokens(t("hourlyTyresSets"), { value: rules.tyre_set_count }), "muted"));
+  }
+  if (!tokens.length) tokens.push(createHourlyModalToken(t("hourlyTyresNone"), "muted"));
+  return tokens;
+}
+
+function buildHourlyWeatherTokens(weather) {
+  if (!weather || typeof weather !== "object") return [];
+
+  const tokens = [];
+  if (typeof weather.ambient_temp_c === "number") {
+    tokens.push(createHourlyModalToken(replaceTokens(t("hourlyWeatherTemp"), { value: weather.ambient_temp_c })));
+  }
+  const cloudPercent = percentValue(weather.cloud_level);
+  if (cloudPercent !== null) {
+    tokens.push(createHourlyModalToken(`${cloudPercent}%`, "muted", HOURLY_WEATHER_ICON_PATHS.clouds));
+  }
+  const rainPercent = percentValue(weather.rain_level);
+  if (rainPercent !== null) {
+    tokens.push(createHourlyModalToken(`${rainPercent}%`, "muted", HOURLY_WEATHER_ICON_PATHS.rain));
+  }
+  if (typeof weather.weather_randomness === "number") {
+    tokens.push(createHourlyModalToken(String(weather.weather_randomness), "muted", HOURLY_WEATHER_ICON_PATHS.random));
+  }
+  return tokens;
+}
+
+function applyHourlyModalTrackBackground(trackCode) {
+  const modalCard = document.querySelector("#hourly-details-modal .modal-card-slot");
+  if (!modalCard) return;
+
+  const backgroundUrl = HOURLY_TRACK_BACKGROUNDS[String(trackCode || "").trim().toLowerCase()];
+  modalCard.style.setProperty("--modal-track-photo", backgroundUrl ? `url("${backgroundUrl}")` : "none");
+}
+
+function buildHourlyHeroModalContent(data) {
+  const server = data?.server || {};
+  const session = data?.session || {};
+  const rules = data?.rules || {};
+  const weather = data?.weather || {};
+  const canVote = Boolean(data?.event_id || data?.track_name);
+  const voteLabel = hourlyVotePending
+    ? t("hourlyVoteSending")
+    : hourlyVoteAlreadyVoted
+      ? t("hourlyVoteDone")
+      : t("hourlyVoteBtn");
+
+  return `
+    <div class="hourly-modal-grid">
+      <section class="hourly-modal-left-cluster">
+        <div class="hourly-modal-panel-grid hourly-modal-panel-grid-three">
+          <article class="hourly-modal-panel-item">
+            <div class="hourly-modal-label">${escapeHtml(t("hourlyPitstopLabel"))}</div>
+            ${renderHourlyModalTokens(buildHourlyPitstopTokens(rules))}
+          </article>
+          <article class="hourly-modal-panel-item">
+            <div class="hourly-modal-label">${escapeHtml(t("hourlyRefuelLabel"))}</div>
+            ${renderHourlyModalTokens(buildHourlyRefuelTokens(rules))}
+          </article>
+          <article class="hourly-modal-panel-item">
+            <div class="hourly-modal-label">${escapeHtml(t("hourlyTyresLabel"))}</div>
+            ${renderHourlyModalTokens(buildHourlyTyreTokens(rules))}
+          </article>
+        </div>
+      </section>
+
+      <aside class="hourly-modal-side-stack">
+        <div class="hourly-modal-side-card hourly-modal-side-card-combined">
+          <div class="hourly-modal-side-section">
+            ${renderHourlyModalTokens(buildHourlyEntryTokens(server))}
+          </div>
+          <div class="hourly-modal-side-section">
+            ${renderHourlyModalTokens(buildHourlyFormatTokens(session))}
+          </div>
+          <div class="hourly-modal-side-section hourly-modal-side-section-weather">
+            ${renderHourlyModalTokens(buildHourlyWeatherTokens(weather))}
+          </div>
+        </div>
+      </aside>
+    </div>
+    <div class="hourly-modal-details-cta">
+      <button
+        class="btn hero-hourly-btn hourly-modal-cta-btn${hourlyVoteAlreadyVoted ? " is-voted" : ""}${!hourlyVoteAlreadyVoted && !hourlyVotePending && canVote ? " pulse-attention" : ""}"
+        id="hourly-modal-vote-btn"
+        type="button"
+        ${!canVote || hourlyVotePending ? "disabled" : ""}
+      >${escapeHtml(voteLabel)} <span aria-hidden="true">♥</span></button>
+      <div class="hourly-modal-cta-meta" id="hourly-modal-votes-summary">${escapeHtml(getHourlyVotesLabel())}</div>
+    </div>
+  `;
+}
+
+function renderHourlyHeroModal() {
+  const titleEl = document.getElementById("hourly-details-title");
+  const subtitleEl = document.getElementById("hourly-details-subtitle");
+  const contentEl = document.getElementById("hourly-details-content");
+  if (!titleEl || !subtitleEl || !contentEl) return;
+
+  const data = hourlyAnnouncementData;
+  if (!data?.track_name && !data?.event_id) {
+    applyHourlyModalTrackBackground("");
+    titleEl.textContent = t("hourlyNoEvent");
+    subtitleEl.textContent = "—";
+    contentEl.innerHTML = `<div class="empty-box">${escapeHtml(t("hourlyNoEvent"))}</div>`;
+    return;
+  }
+
+  const server = data?.server || {};
+  const startTime = getHourlyLocalizedField(data, "start_time_local", "—");
+  const timezone = getHourlyLocalizedField(data, "timezone", "UTC+3");
+
+  applyHourlyModalTrackBackground(data?.track_code);
+  titleEl.textContent = getHourlyLocalizedField(data, "track_name", t("hourlyUnknownValue"));
+  subtitleEl.innerHTML = `
+    <span class="hourly-modal-subtitle-grid">
+      <span class="hourly-modal-subtitle-card">
+        <span class="hourly-modal-subtitle-label">${escapeHtml(t("hourlyServerLabel"))}</span>
+        <span class="hourly-modal-subtitle-value">${escapeHtml(server.name || server.full_name || t("hourlyUnknownValue"))}</span>
+      </span>
+      <span class="hourly-modal-subtitle-card">
+        <span class="hourly-modal-subtitle-label">${escapeHtml(t("hourlyPasswordLabel"))}</span>
+        <span class="hourly-modal-subtitle-value">${escapeHtml(server.password || t("hourlyPasswordNone"))}</span>
+      </span>
+      <span class="hourly-modal-subtitle-card">
+        <span class="hourly-modal-subtitle-label">${escapeHtml(t("hourlyDateTimeLabel"))}</span>
+        <span class="hourly-modal-subtitle-value">${escapeHtml(formatDateOnlyForHourly(data?.date))}<br>${escapeHtml(`${startTime} ${timezone}`.trim())}</span>
+      </span>
+    </span>
+  `;
+  contentEl.innerHTML = buildHourlyHeroModalContent(data);
+
+  const modalVoteBtn = document.getElementById("hourly-modal-vote-btn");
+  if (modalVoteBtn && modalVoteBtn.dataset.bound !== "true") {
+    modalVoteBtn.addEventListener("click", (event) => {
+      event.stopPropagation();
+      void submitHourlyHeroVote();
+    });
+    modalVoteBtn.dataset.bound = "true";
+  }
+}
+
 function renderHourlyHeroCard() {
   const startsEl = document.getElementById("hourly-starts-value");
   const trackEl = document.getElementById("hourly-track-value");
@@ -922,16 +1247,7 @@ function renderHourlyHeroCard() {
   const backgroundUrl = HOURLY_TRACK_BACKGROUNDS[trackCode];
   cardEl.style.setProperty("--hero-hourly-track-photo", backgroundUrl ? `url("${backgroundUrl}")` : "none");
 
-  if (typeof hourlyVotesCount === "number") {
-    votesEl.textContent = replaceTokens(
-      t(hourlyVotesCount === 1 ? "hourlyVotesOne" : hourlyVotesCount > 1 ? "hourlyVotesMany" : "hourlyVotesZero"),
-      { value: hourlyVotesCount }
-    );
-  } else if (hourlyVoteFailed) {
-    votesEl.textContent = t("hourlyVoteFailed");
-  } else {
-    votesEl.textContent = "—";
-  }
+  votesEl.textContent = getHourlyVotesLabel();
 
   voteBtn.textContent = hourlyVotePending
     ? t("hourlyVoteSending")
@@ -942,10 +1258,19 @@ function renderHourlyHeroCard() {
   voteBtn.disabled = !data?.event_id && !data?.track_name || hourlyVotePending;
   voteBtn.classList.toggle("is-voted", hourlyVoteAlreadyVoted);
   voteBtn.classList.toggle("pulse-attention", !hourlyVoteAlreadyVoted && !hourlyVotePending && Boolean(data?.event_id || data?.track_name));
+  cardEl.setAttribute(
+    "aria-label",
+    `${t("hourlyOpenDetailsLabel")}: ${data?.track_name || t("hourlyNoEvent")}`
+  );
+  cardEl.setAttribute("aria-disabled", (!data?.event_id && !data?.track_name) ? "true" : "false");
 
   if (!voteBtn.dataset.bound) {
-    voteBtn.addEventListener("click", () => {
+    voteBtn.addEventListener("click", (event) => {
+      event.stopPropagation();
       void submitHourlyHeroVote();
+    });
+    voteBtn.addEventListener("keydown", (event) => {
+      event.stopPropagation();
     });
     voteBtn.dataset.bound = "true";
   }
@@ -992,6 +1317,7 @@ async function loadHourlyVotes(announcement) {
     console.warn("hourly votes are unavailable.", error);
     hourlyVotesCount = null;
     hourlyVoteAlreadyVoted = false;
+    hourlyVoteFailed = true;
   }
 }
 
@@ -1002,6 +1328,7 @@ async function submitHourlyHeroVote() {
   hourlyVotePending = true;
   hourlyVoteFailed = false;
   renderHourlyHeroCard();
+  renderHourlyHeroModal();
 
   try {
     const endpoint = hourlyVoteAlreadyVoted ? "/unvote" : "/vote";
@@ -1034,6 +1361,7 @@ async function submitHourlyHeroVote() {
   } finally {
     hourlyVotePending = false;
     renderHourlyHeroCard();
+    renderHourlyHeroModal();
   }
 }
 
@@ -1064,6 +1392,30 @@ function replaceTokens(template, values = {}) {
   return String(template).replace(/\{(\w+)\}/g, (_, key) => values[key] ?? "");
 }
 
+function getHourlyLocalizedField(item, key, fallback = null) {
+  if (!item || typeof item !== "object") return fallback ?? t("hourlyUnknownValue");
+
+  const directLocalized = item[`${key}_${currentLang}`];
+  if (typeof directLocalized === "string" && directLocalized.trim()) return directLocalized;
+
+  const raw = item[key];
+  if (typeof raw === "string" && raw.trim()) return raw;
+  if (raw && typeof raw === "object") {
+    const nested = raw[currentLang] ?? raw.en ?? raw.ru;
+    if (typeof nested === "string" && nested.trim()) return nested;
+  }
+
+  return fallback ?? t("hourlyUnknownValue");
+}
+
+function percentValue(value) {
+  return typeof value === "number" && !Number.isNaN(value) ? Math.round(value * 100) : null;
+}
+
+function minutesFromSeconds(value) {
+  return typeof value === "number" && !Number.isNaN(value) ? Math.round(value / 60) : null;
+}
+
 function getHourlyBrowserVoterId() {
   const storageKey = "hourlyVoteVoterId";
   let value = localStorage.getItem(storageKey);
@@ -1084,6 +1436,21 @@ function escapeHtml(value) {
 
 function escapeAttribute(value) {
   return encodeURIComponent(String(value ?? ""));
+}
+
+function formatDateOnlyForHourly(dateString, lang = currentLang) {
+  if (!dateString) return tForLang(lang, "hourlyUnknownValue");
+
+  const locale = lang === "ru" ? "ru-RU" : "en-US";
+  const date = new Date(`${dateString}T00:00:00+03:00`);
+  if (Number.isNaN(date.getTime())) return dateString;
+
+  return new Intl.DateTimeFormat(locale, {
+    day: "2-digit",
+    month: "long",
+    year: "numeric",
+    timeZone: "Europe/Moscow"
+  }).format(date);
 }
 
 function sha1(input) {
@@ -3818,6 +4185,37 @@ function initTodayStatsModal() {
   });
 }
 
+function openHourlyHeroModal() {
+  if (!hourlyHeroModalController || (!hourlyAnnouncementData?.event_id && !hourlyAnnouncementData?.track_name)) return;
+  hourlyHeroModalController.open(document.getElementById("hero-hourly-card"));
+}
+
+function initHourlyHeroModal() {
+  hourlyHeroModalController = createModalController({
+    modalId: "hourly-details-modal",
+    closeButtonId: "hourly-details-close",
+    onOpen: renderHourlyHeroModal,
+    onClose: () => applyHourlyModalTrackBackground("")
+  });
+
+  const cardEl = document.getElementById("hero-hourly-card");
+  if (!cardEl || cardEl.dataset.modalBound === "true") return;
+
+  const openFromCard = (event) => {
+    if (event?.target?.closest?.("button, a")) return;
+    openHourlyHeroModal();
+  };
+
+  cardEl.addEventListener("click", openFromCard);
+  cardEl.addEventListener("keydown", (event) => {
+    if (event.key !== "Enter" && event.key !== " ") return;
+    if (event.target?.closest?.("button, a")) return;
+    event.preventDefault();
+    openHourlyHeroModal();
+  });
+  cardEl.dataset.modalBound = "true";
+}
+
 function optimizeBackgroundMedia() {
   const video = document.querySelector(".site-bg-video");
   if (!video) return;
@@ -3892,6 +4290,7 @@ function rerenderUI() {
   renderTodayStatsModal();
   renderDriverOfDayModal();
   renderDriverPreviewModal();
+  renderHourlyHeroModal();
   renderHourlyHeroCard();
   renderOnlineWidget();
   applyRevealAnimations();
@@ -3914,6 +4313,7 @@ async function init() {
     initTodayStatsModal();
     initDriverOfDayModal();
     initDriverPreviewModal();
+    initHourlyHeroModal();
   }
   applyStaticTranslations();
 
