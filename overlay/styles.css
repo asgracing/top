@@ -229,6 +229,48 @@ body {
   color: #ff9a5b;
 }
 
+.overlay-rank-wrap {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  flex-wrap: nowrap;
+}
+
+.trend-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  padding: 4px 9px;
+  border-radius: 999px;
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  background: rgba(255, 255, 255, 0.04);
+  font-size: 0.88rem;
+  font-weight: 900;
+  line-height: 1;
+  white-space: nowrap;
+}
+
+.trend-badge-compact {
+  padding: 3px 8px;
+  font-size: 0.82rem;
+}
+
+.trend-badge.trend-up {
+  color: #39d98a;
+  border-color: rgba(57, 217, 138, 0.2);
+  background: rgba(57, 217, 138, 0.12);
+}
+
+.trend-badge.trend-down {
+  color: #ff6b6b;
+  border-color: rgba(239, 68, 68, 0.2);
+  background: rgba(239, 68, 68, 0.12);
+}
+
+.trend-arrow {
+  font-size: 0.74em;
+}
+
 .driver-name {
   font-size: 1.5rem;
   color: #ffffff;

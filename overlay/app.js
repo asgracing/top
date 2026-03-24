@@ -8,6 +8,16 @@ const TELEGRAM_URL = "https://t.me/+JUymrENgddcyMTdi";
 const DISCORD_URL = "https://discord.gg/cEPFHXXtTC";
 
 const REFRESH_INTERVAL_MS = 30000;
+const OVERLAY_PAGE_SIZE = 10;
+const OVERLAY_TOTAL_PAGES = 10;
+const FIRST_PAGE_DURATION_MS = 10000;
+const CAROUSEL_PAGE_DURATION_MS = 10000;
+
+let overlayLeaderboardRows = [];
+let overlayCurrentPage = 1;
+let overlayTotalPages = 1;
+let overlayRotationTimer = 0;
+let overlayRotationStarted = false;
 
 function formatUpdatedAt(value) {
   if (!value) return "Update time unavailable";
@@ -88,21 +98,55 @@ function resolveDriverName(row) {
   return row?.driver || row?.name || row?.player_name || "Unknown";
 }
 
-function renderLeaderboardTable(items) {
+function sortLeaderboardRows(items) {
+  return (Array.isArray(items) ? items : [])
+    .slice()
+    .sort((a, b) => resolveRank(a, 0) - resolveRank(b, 0));
+}
+
+function renderTrendBadge(change) {
+  if (!change || !change.trend || change.trend === "same") return "";
+
+  const trendClass = change.trend === "up" ? "trend-up" : "trend-down";
+  const arrow = change.trend === "up" ? "▲" : "▼";
+  const delta = Math.abs(Number(change?.delta));
+  const deltaLabel = Number.isFinite(delta) && delta > 0 ? String(Math.round(delta)) : "";
+  const beforeText = change?.before != null ? `#${change.before}` : "";
+  const afterText = change?.after != null ? `#${change.after}` : "";
+  const title = [beforeText, afterText].filter(Boolean).join(" -> ");
+
+  return `
+    <span class="trend-badge trend-badge-compact ${trendClass}"${title ? ` title="${escapeHtml(title)}" aria-label="${escapeHtml(title)}"` : ""}>
+      <span class="trend-arrow">${arrow}</span>
+      ${deltaLabel ? `<span class="trend-value">${escapeHtml(deltaLabel)}</span>` : ""}
+    </span>
+  `;
+}
+
+function renderLeaderboardTable(items, page = 1) {
   const body = document.getElementById("overlay-leaderboard-body");
+  const sectionTitle = document.querySelector(".section-title");
   if (!body) return;
 
-  if (!Array.isArray(items) || items.length === 0) {
-    body.innerHTML = '<tr><td colspan="5" class="overlay-empty">No leaderboard data.</td></tr>';
+  const safePage = Math.max(1, Math.min(page, OVERLAY_TOTAL_PAGES));
+  const startIndex = (safePage - 1) * OVERLAY_PAGE_SIZE;
+  const endIndex = startIndex + OVERLAY_PAGE_SIZE;
+  const visibleItems = Array.isArray(items) ? items.slice(startIndex, endIndex) : [];
+  const pageFrom = startIndex + 1;
+  const pageTo = endIndex;
+
+  if (sectionTitle) {
+    sectionTitle.textContent = `Server Standings ${pageFrom}-${pageTo}`;
+  }
+
+  if (visibleItems.length === 0) {
+    body.innerHTML = '<tr><td colspan="5" class="overlay-empty">No drivers on this page yet.</td></tr>';
     return;
   }
 
-  const rows = items
-    .slice()
-    .sort((a, b) => resolveRank(a, 0) - resolveRank(b, 0))
-    .slice(0, 10)
+  const rows = visibleItems
     .map((row, index) => {
-      const rank = resolveRank(row, index);
+      const rank = resolveRank(row, startIndex + index);
       const rankClass =
         rank === 1
           ? " rank-pill-first"
@@ -114,7 +158,12 @@ function renderLeaderboardTable(items) {
 
       return `
       <tr>
-        <td><span class="rank-pill${rankClass}">${escapeHtml(rank)}</span></td>
+        <td>
+          <span class="overlay-rank-wrap">
+            <span class="rank-pill${rankClass}">${escapeHtml(rank)}</span>
+            ${renderTrendBadge(row.rank_change)}
+          </span>
+        </td>
         <td class="driver-name">${escapeHtml(resolveDriverName(row))}</td>
         <td class="points-value">${escapeHtml(resolvePoints(row))}</td>
         <td class="wins-value">${escapeHtml(resolveWins(row))}</td>
@@ -125,6 +174,36 @@ function renderLeaderboardTable(items) {
     .join("");
 
   body.innerHTML = rows;
+}
+
+function clearOverlayRotationTimer() {
+  if (!overlayRotationTimer) return;
+  window.clearTimeout(overlayRotationTimer);
+  overlayRotationTimer = 0;
+}
+
+function scheduleNextOverlayPage() {
+  clearOverlayRotationTimer();
+
+  if (overlayTotalPages <= 1) {
+    overlayCurrentPage = 1;
+    return;
+  }
+
+  const currentDuration = overlayCurrentPage === 1 ? FIRST_PAGE_DURATION_MS : CAROUSEL_PAGE_DURATION_MS;
+  overlayRotationTimer = window.setTimeout(() => {
+    overlayCurrentPage = overlayCurrentPage >= overlayTotalPages ? 1 : overlayCurrentPage + 1;
+    renderLeaderboardTable(overlayLeaderboardRows, overlayCurrentPage);
+    scheduleNextOverlayPage();
+  }, currentDuration);
+}
+
+function restartOverlayRotation() {
+  overlayTotalPages = OVERLAY_TOTAL_PAGES;
+  overlayCurrentPage = 1;
+  renderLeaderboardTable(overlayLeaderboardRows, overlayCurrentPage);
+  scheduleNextOverlayPage();
+  overlayRotationStarted = true;
 }
 
 function renderBestLapCard(items) {
@@ -169,11 +248,18 @@ async function refreshOverlay() {
 
   try {
     const data = await loadOverlayData();
-    renderLeaderboardTable(data.leaderboard);
+    overlayLeaderboardRows = sortLeaderboardRows(data.leaderboard);
+    overlayTotalPages = OVERLAY_TOTAL_PAGES;
+    overlayCurrentPage = Math.max(1, Math.min(overlayCurrentPage, overlayTotalPages));
+    renderLeaderboardTable(overlayLeaderboardRows, overlayCurrentPage);
+    if (!overlayRotationStarted) restartOverlayRotation();
     renderBestLapCard(data.bestlaps);
     if (updatedEl) updatedEl.textContent = formatUpdatedAt(data.updatedAt);
   } catch (_error) {
-    renderLeaderboardTable([]);
+    overlayLeaderboardRows = [];
+    clearOverlayRotationTimer();
+    overlayRotationStarted = false;
+    renderLeaderboardTable([], 1);
     renderBestLapCard([]);
     if (updatedEl) updatedEl.textContent = "Load error";
   }
