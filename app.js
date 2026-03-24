@@ -248,6 +248,7 @@ onlineNoData: "No data",
     twitchWidgetExpand: "Bigger",
     twitchWidgetCollapse: "Smaller",
     twitchWidgetHide: "Hide",
+    twitchWidgetShow: "Open stream",
     communityTiktokTitle: "TikTok",
     communityTiktokText: "Short, punchy moments: overtakes, chaos, emotions and the most addictive ASG Racing clips.",
     communityTiktokCta: "Catch the best moments",
@@ -618,6 +619,7 @@ onlineNoData: "Нет данных",
     twitchWidgetExpand: "Больше",
     twitchWidgetCollapse: "Меньше",
     twitchWidgetHide: "Свернуть",
+    twitchWidgetShow: "Развернуть стрим",
     communityTiktokTitle: "TikTok",
     communityTiktokText: "Короткие яркие моменты: обгоны, хаос, эмоции и самые залипательные эпизоды ASG Racing.",
     communityTiktokCta: "Поймать лучшие моменты",
@@ -1601,20 +1603,25 @@ function ensureTwitchWidget() {
           <span class="twitch-widget-title" id="twitch-widget-title">${escapeHtml(t("twitchWidgetTitle"))}</span>
         </a>
       </div>
-      <div class="twitch-widget-player-wrap">
-        <iframe
-          id="twitch-widget-frame"
-          title="ASG Racing Twitch stream"
-          allowfullscreen
+        <div class="twitch-widget-player-wrap">
+          <iframe
+            id="twitch-widget-frame"
+            title="ASG Racing Twitch stream"
+            allowfullscreen
           scrolling="no"
           allow="autoplay; fullscreen"
           src="about:blank"
-        ></iframe>
+          ></iframe>
+        </div>
       </div>
-    </div>
-  `;
+      <button
+        class="twitch-widget-launcher"
+        id="twitch-widget-launcher"
+        type="button"
+      >${escapeHtml(t("twitchWidgetShow"))}</button>
+    `;
 
-  document.body.appendChild(root);
+    document.body.appendChild(root);
 
   const expandBtn = root.querySelector("#twitch-widget-expand");
   if (expandBtn) {
@@ -1635,6 +1642,15 @@ function ensureTwitchWidget() {
     });
   }
 
+  const launcherBtn = root.querySelector("#twitch-widget-launcher");
+  if (launcherBtn) {
+    launcherBtn.addEventListener("click", (event) => {
+      event.preventDefault();
+      twitchWidgetState.dismissed = false;
+      renderTwitchWidget();
+    });
+  }
+
   twitchWidgetState.initialized = true;
   renderTwitchWidget();
 }
@@ -1648,8 +1664,10 @@ function renderTwitchWidget() {
   const openEl = document.getElementById("twitch-widget-open");
   const expandEl = document.getElementById("twitch-widget-expand");
   const hideEl = document.getElementById("twitch-widget-hide");
+  const launcherEl = document.getElementById("twitch-widget-launcher");
   const titleWrapEl = document.getElementById("twitch-widget-link");
-  if (!root || !frame || !titleEl || !openEl || !expandEl || !hideEl) return;
+  const shellEl = root.querySelector(".twitch-widget-shell");
+  if (!root || !frame || !titleEl || !openEl || !expandEl || !hideEl || !launcherEl || !shellEl) return;
 
   titleEl.textContent = t("twitchWidgetTitle");
   openEl.textContent = t("twitchWidgetOpen");
@@ -1660,21 +1678,34 @@ function renderTwitchWidget() {
   expandEl.setAttribute("aria-expanded", twitchWidgetState.expanded ? "true" : "false");
   expandEl.setAttribute("aria-label", twitchWidgetState.expanded ? t("twitchWidgetCollapse") : t("twitchWidgetExpand"));
   hideEl.textContent = t("twitchWidgetHide");
+  launcherEl.textContent = t("twitchWidgetShow");
+  launcherEl.setAttribute("aria-label", t("twitchWidgetShow"));
   root.classList.toggle("is-platform-youtube", twitchWidgetState.platform === "youtube");
   root.classList.toggle("is-platform-twitch", twitchWidgetState.platform === "twitch");
 
-  if (!twitchWidgetState.live || twitchWidgetState.dismissed) {
-    root.hidden = true;
-    root.classList.remove("is-visible", "is-expanded");
-    if (frame.getAttribute("src") !== "about:blank") frame.setAttribute("src", "about:blank");
-    return;
-  }
+  if (!twitchWidgetState.live) {
+      root.hidden = true;
+      root.classList.remove("is-visible", "is-expanded", "is-collapsed");
+      shellEl.hidden = false;
+      launcherEl.hidden = true;
+      if (frame.getAttribute("src") !== "about:blank") frame.setAttribute("src", "about:blank");
+      return;
+    }
 
-  root.hidden = false;
-  root.classList.add("is-visible");
-  root.classList.toggle("is-expanded", twitchWidgetState.expanded);
-  if (frame.getAttribute("src") !== twitchWidgetState.embedUrl) frame.setAttribute("src", twitchWidgetState.embedUrl);
-}
+    root.hidden = false;
+    root.classList.add("is-visible");
+    root.classList.toggle("is-expanded", twitchWidgetState.expanded && !twitchWidgetState.dismissed);
+    root.classList.toggle("is-collapsed", twitchWidgetState.dismissed);
+    shellEl.hidden = twitchWidgetState.dismissed;
+    launcherEl.hidden = !twitchWidgetState.dismissed;
+
+    if (twitchWidgetState.dismissed) {
+      if (frame.getAttribute("src") !== "about:blank") frame.setAttribute("src", "about:blank");
+      return;
+    }
+
+    if (frame.getAttribute("src") !== twitchWidgetState.embedUrl) frame.setAttribute("src", twitchWidgetState.embedUrl);
+  }
 
 function detectTwitchLive() {
   return new Promise(resolve => {
