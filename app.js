@@ -2282,7 +2282,10 @@ function renderTop3Compact(data) {
   return top3.map((row, index) => `
     <article class="pilot-card ${classes[index] || ""}">
       <div class="pilot-topline">
-        <div class="pilot-rank">#${escapeHtml(row.rank)} ${renderTrendBadge(row.rank_change, "championship_rank", { compact: true })}</div>
+        <div class="pilot-rank-wrap">
+          <div class="pilot-rank">#${escapeHtml(row.rank)}</div>
+          ${renderTrendBadge(row.rank_change, "championship_rank", { compact: true })}
+        </div>
         <h3 class="pilot-name">${renderDriverLink(row.driver, row.public_id, "driver-link driver-link-heading", row.player_id)}</h3>
       </div>
       <div class="muted pilot-lap-line">

@@ -1516,6 +1516,13 @@ tr.is-interactive-row:focus-visible {
   min-width: 0;
 }
 
+.pilot-rank-wrap {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  flex: 0 0 auto;
+}
+
 .pilot-rank {
   display: inline-flex;
   align-items: center;
@@ -1528,6 +1535,7 @@ tr.is-interactive-row:focus-visible {
   background: rgba(255, 255, 255, 0.06);
   font-size: 14px;
   font-weight: 900;
+  white-space: nowrap;
 }
 
 .top1 .pilot-rank {
@@ -1540,6 +1548,10 @@ tr.is-interactive-row:focus-visible {
 
 .top3 .pilot-rank {
   color: var(--bronze);
+}
+
+.pilot-topline .trend-badge {
+  flex: 0 0 auto;
 }
 
 .pilot-name {
