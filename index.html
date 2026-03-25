@@ -265,7 +265,14 @@
       </button>
     </div>
 
-    <div class="hero-online-card" id="hero-online-card">
+    <div
+      class="hero-online-card"
+      id="hero-online-card"
+      role="button"
+      tabindex="0"
+      aria-haspopup="dialog"
+      aria-controls="online-activity-modal"
+    >
       <div class="hero-online-head">
         <div class="hero-online-title" data-i18n="onlineTitle">Unique players</div>
         <div class="hero-online-range" id="online-range">—</div>
@@ -685,6 +692,37 @@
         <div class="today-detail-main" id="today-most-successful">—</div>
         <div class="today-detail-sub" id="today-most-successful-note">—</div>
       </div>
+    </div>
+  </div>
+</div>
+<div class="modal-overlay" id="online-activity-modal" aria-hidden="true">
+  <div class="modal-card modal-card-activity" role="dialog" aria-modal="true" aria-labelledby="online-activity-title">
+    <button class="modal-close" id="online-activity-close" type="button" aria-label="Close" data-i18n-aria-label="closeLabel">✕</button>
+
+    <div class="modal-header">
+      <div>
+        <h3 id="online-activity-title" class="modal-title" data-i18n="onlineActivityTitle">Prime time by day</h3>
+        <p class="modal-subtitle" id="online-activity-subtitle">—</p>
+      </div>
+    </div>
+
+    <div class="activity-controls">
+      <label class="activity-month-picker">
+        <span data-i18n="onlineActivityMonthLabel">Month</span>
+        <select id="online-activity-months"></select>
+      </label>
+      <div class="activity-days-strip" id="online-activity-days"></div>
+    </div>
+    <div class="activity-summary-grid" id="online-activity-summary"></div>
+
+    <div class="activity-layout">
+      <section class="activity-panel">
+        <div class="activity-panel-head">
+          <h4 class="activity-panel-title" data-i18n="onlineActivityHoursTitle">Hourly activity</h4>
+          <div class="activity-panel-note" id="online-activity-prime-time">—</div>
+        </div>
+        <div class="activity-hours-list" id="online-activity-hours"></div>
+      </section>
     </div>
   </div>
 </div>

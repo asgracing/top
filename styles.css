@@ -712,6 +712,20 @@ h1 {
   border-radius: 20px;
   background: linear-gradient(180deg, rgba(255, 255, 255, 0.04), rgba(255, 255, 255, 0.025));
   overflow: hidden;
+  cursor: pointer;
+  transition: transform 0.18s ease, border-color 0.18s ease, box-shadow 0.18s ease;
+}
+
+.hero-online-card:hover,
+.hero-online-card:focus-visible {
+  transform: translateY(-2px);
+  border-color: rgba(255, 179, 71, 0.4);
+  box-shadow: 0 16px 32px rgba(0, 0, 0, 0.18);
+}
+
+.hero-online-card:focus-visible {
+  outline: 2px solid rgba(255, 179, 71, 0.68);
+  outline-offset: 2px;
 }
 
 .hero-online-head {
@@ -2220,6 +2234,10 @@ tbody tr:last-child td {
   box-shadow: 0 30px 80px rgba(0, 0, 0, 0.45);
 }
 
+.modal-card-activity {
+  width: min(1140px, 100%);
+}
+
 .modal-card-slot {
   --modal-track-photo: none;
   max-height: none;
@@ -2334,6 +2352,191 @@ tbody tr:last-child td {
   font-size: 0.92rem;
   line-height: 1.45;
   color: var(--muted);
+}
+
+.activity-controls {
+  display: grid;
+  grid-template-columns: 220px minmax(0, 1fr);
+  gap: 12px;
+  align-items: start;
+  margin-bottom: 16px;
+}
+
+.activity-month-picker {
+  display: grid;
+  gap: 8px;
+}
+
+.activity-month-picker span {
+  font-size: 0.82rem;
+  color: var(--muted);
+}
+
+.activity-month-picker select {
+  width: 100%;
+  min-width: 0;
+  padding: 12px 14px;
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  border-radius: 14px;
+  background: rgba(255, 255, 255, 0.04);
+  color: var(--text);
+}
+
+.activity-days-strip {
+  display: flex;
+  gap: 8px;
+  overflow-x: auto;
+  padding-bottom: 6px;
+}
+
+.activity-day-pill {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  flex: 0 0 auto;
+  padding: 9px 12px;
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  border-radius: 999px;
+  background: rgba(255, 255, 255, 0.04);
+  color: var(--text);
+  cursor: pointer;
+  transition: border-color 0.18s ease, transform 0.18s ease, background 0.18s ease;
+  white-space: nowrap;
+}
+
+.activity-day-pill strong {
+  color: var(--accent);
+}
+
+.activity-day-pill:hover,
+.activity-day-pill.is-active {
+  border-color: rgba(255, 179, 71, 0.4);
+  background: rgba(255, 179, 71, 0.12);
+}
+
+.activity-summary-grid {
+  display: grid;
+  grid-template-columns: repeat(5, minmax(0, 1fr));
+  gap: 12px;
+  margin-bottom: 16px;
+}
+
+.activity-summary-card,
+.activity-panel,
+.activity-hour-card {
+  padding: 16px;
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  border-radius: 18px;
+  background: rgba(255, 255, 255, 0.045);
+}
+
+.activity-summary-card-accent {
+  background: linear-gradient(180deg, rgba(255, 179, 71, 0.12), rgba(255, 255, 255, 0.045));
+  border-color: rgba(255, 179, 71, 0.22);
+}
+
+.activity-summary-label {
+  margin-bottom: 8px;
+  font-size: 0.84rem;
+  color: var(--muted);
+}
+
+.activity-summary-value {
+  font-size: clamp(1rem, 1.8vw, 1.38rem);
+  line-height: 1.35;
+  font-weight: 800;
+  color: var(--text);
+}
+
+.activity-layout {
+  display: block;
+}
+
+.activity-panel {
+  min-width: 0;
+}
+
+.activity-panel-head {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 12px;
+  margin-bottom: 12px;
+}
+
+.activity-panel-title {
+  margin: 0;
+  font-size: 1rem;
+  color: var(--text);
+}
+
+.activity-panel-note {
+  font-size: 0.92rem;
+  color: var(--muted);
+  text-align: right;
+}
+
+.activity-hours-list {
+  display: grid;
+  grid-template-columns: repeat(24, minmax(0, 1fr));
+  gap: 4px;
+  align-items: end;
+  width: 100%;
+  min-width: 0;
+}
+
+.activity-hour-bar-card {
+  display: grid;
+  gap: 6px;
+  min-width: 0;
+}
+
+.activity-hour-unique {
+  font-size: 0.7rem;
+  font-weight: 700;
+  text-align: center;
+  color: var(--text);
+  line-height: 1;
+}
+
+.activity-hour-bar-stage {
+  display: flex;
+  align-items: end;
+  justify-content: center;
+  height: 150px;
+  padding: 10px 0;
+  border-radius: 14px;
+  background:
+    linear-gradient(180deg, rgba(255, 255, 255, 0.03), rgba(255, 255, 255, 0.01)),
+    rgba(255, 255, 255, 0.02);
+}
+
+.activity-hour-bar-vertical {
+  display: block;
+  width: min(100%, 16px);
+  min-height: 2px;
+  border-radius: 999px 999px 6px 6px;
+  background: linear-gradient(180deg, #ffd36a 0%, #ff9a2f 45%, #ff5b2e 100%);
+  box-shadow: 0 10px 22px rgba(255, 91, 46, 0.22);
+}
+
+.activity-hour-bar-card.is-prime .activity-hour-bar-stage {
+  background:
+    linear-gradient(180deg, rgba(255, 179, 71, 0.1), rgba(255, 255, 255, 0.02)),
+    rgba(255, 255, 255, 0.02);
+  outline: 1px solid rgba(255, 179, 71, 0.28);
+}
+
+.activity-hour-bar-card.is-prime .activity-hour-bar-vertical {
+  background: linear-gradient(180deg, #ffe08b 0%, #ffb347 38%, #ff6d2e 100%);
+  box-shadow: 0 12px 24px rgba(255, 179, 71, 0.28);
+}
+
+.activity-hour-axis-label {
+  font-size: 0.72rem;
+  text-align: center;
+  color: var(--muted);
+  letter-spacing: 0.02em;
 }
 
 body.modal-open {
@@ -3545,6 +3748,11 @@ body.modal-open {
     grid-template-columns: 1fr;
   }
 
+  .activity-controls,
+  .activity-summary-grid {
+    grid-template-columns: 1fr;
+  }
+
   .driver-day-grid {
     grid-template-columns: repeat(2, minmax(0, 1fr));
   }
@@ -3626,6 +3834,15 @@ body.modal-open {
   .today-stat-label,
   .modal-subtitle {
     overflow-wrap: anywhere;
+  }
+
+  .activity-panel-head {
+    flex-direction: column;
+    align-items: stretch;
+  }
+
+  .activity-panel-note {
+    text-align: left;
   }
 }
 

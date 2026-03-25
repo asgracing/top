@@ -82,12 +82,16 @@ let hourlyVotesCount = null;
 let hourlyVoteAlreadyVoted = false;
 let hourlyVotePending = false;
 let hourlyVoteFailed = false;
+let raceActivityInsights = null;
 let selectedRace = null;
 let driverIndexData = [];
 let driverProfileData = null;
 let driverPreviewState = null;
 let driverPreviewModalController = null;
 let hourlyHeroModalController = null;
+let onlineActivityModalController = null;
+let selectedActivityDate = null;
+let selectedActivityMonth = null;
 let twitchWidgetCheckTimer = null;
 let twitchWidgetState = {
   initialized: false,
@@ -131,6 +135,20 @@ const translations = {
     openDriverPreviewLabel: "Open driver quick view",
     onlineTitle: "Unique players",
 onlineNoData: "No data",
+    onlineActivityTitle: "Prime time by day",
+    onlineActivityOpenLabel: "Open race activity details",
+    onlineActivityEmpty: "Not enough race data yet.",
+    onlineActivitySubtitle: "{date} · activity {score}/100",
+    onlineActivityPrimeTime: "Prime time {hour} · score {score}",
+    onlineActivityHoursTitle: "Hourly activity, unique drivers",
+    onlineActivityMonthLabel: "Month",
+    onlineActivityUniqueLabel: "Unique drivers",
+    onlineActivityRacesLabel: "Races",
+    onlineActivityAvgPlayersLabel: "Avg drivers per race",
+    onlineActivityScoreLabel: "Activity",
+    onlineActivityTracksLabel: "Tracks",
+    onlineActivityHourRaces: "{value} races",
+    onlineActivityHourUnique: "{value} unique",
     heroEyebrow: "ACC Public Leaderboard",
     hourlyEyebrow: "Next 1-Hour Race",
     hourlyStartsLabel: "Starts",
@@ -469,6 +487,20 @@ onlineNoData: "No data",
     openDriverPreviewLabel: "Открыть быстрое превью пилота",
     onlineTitle: "Уникальные игроки",
 onlineNoData: "Нет данных",
+    onlineActivityTitle: "Прайм-тайм по дням",
+    onlineActivityOpenLabel: "Открыть активность гонок",
+    onlineActivityEmpty: "Пока недостаточно данных по гонкам.",
+    onlineActivitySubtitle: "{date} · активность {score}/100",
+    onlineActivityPrimeTime: "Прайм-тайм {hour} · индекс {score}",
+    onlineActivityHoursTitle: "Почасовая активность, уникальные пилоты",
+    onlineActivityMonthLabel: "Месяц",
+    onlineActivityUniqueLabel: "Уникальные пилоты",
+    onlineActivityRacesLabel: "Гонки",
+    onlineActivityAvgPlayersLabel: "Среднее пилотов на гонку",
+    onlineActivityScoreLabel: "Активность",
+    onlineActivityTracksLabel: "Трассы",
+    onlineActivityHourRaces: "{value} гонок",
+    onlineActivityHourUnique: "{value} уникальных",
     heroEyebrow: "Чемпионат публичного сервера ACC",
     hourlyEyebrow: "Ближайшая часовая гонка",
     hourlyStartsLabel: "Старт",
@@ -1033,13 +1065,199 @@ function buildScaleValues(maxValue) {
   ];
 }
 
+function normalizeActivityScore(value, maxValue) {
+  if (!Number.isFinite(value) || value <= 0) return 0;
+  const safeMax = Math.max(1, Number(maxValue) || 1);
+  return Math.round((value / safeMax) * 100);
+}
+
+function buildRaceActivityInsights(races = []) {
+  const dayMap = new Map();
+
+  races.forEach(race => {
+    const finishedAt = race?.finished_at;
+    if (!finishedAt) return;
+
+    const finishedDate = new Date(finishedAt);
+    if (Number.isNaN(finishedDate.getTime())) return;
+
+    const dayKey = finishedAt.slice(0, 10);
+    const hourKey = String(finishedDate.getHours()).padStart(2, "0");
+    const participants = Array.isArray(race?.results) ? race.results : [];
+    const participantsCount = Number.isFinite(race?.participants_count)
+      ? race.participants_count
+      : participants.length;
+
+    if (!dayMap.has(dayKey)) {
+      dayMap.set(dayKey, {
+        date: dayKey,
+        races: 0,
+        entries: 0,
+        uniquePlayers: new Set(),
+        tracks: new Set(),
+        hours: new Map(),
+        participants: new Map()
+      });
+    }
+
+    const dayEntry = dayMap.get(dayKey);
+    dayEntry.races += 1;
+    dayEntry.entries += participantsCount;
+    if (race?.track) dayEntry.tracks.add(race.track);
+
+    if (!dayEntry.hours.has(hourKey)) {
+      dayEntry.hours.set(hourKey, {
+        hour: hourKey,
+        label: `${hourKey}:00`,
+        races: 0,
+        entries: 0,
+        uniquePlayers: new Set()
+      });
+    }
+
+    const hourEntry = dayEntry.hours.get(hourKey);
+    hourEntry.races += 1;
+    hourEntry.entries += participantsCount;
+
+    participants.forEach(result => {
+      const playerId = result?.player_id;
+      if (!playerId) return;
+
+      dayEntry.uniquePlayers.add(playerId);
+      hourEntry.uniquePlayers.add(playerId);
+
+      if (!dayEntry.participants.has(playerId)) {
+        dayEntry.participants.set(playerId, {
+          player_id: playerId,
+          public_id: result?.public_id || findPublicIdByPlayerId(playerId),
+          driver: result?.driver || findDriverNameByPlayerId(playerId) || "-",
+          races: 0,
+          points: 0,
+          wins: 0,
+          average_finish_sum: 0,
+          average_finish_count: 0,
+          average_finish: null,
+          best_lap: null,
+          best_lap_ms: null
+        });
+      }
+
+      const participantEntry = dayEntry.participants.get(playerId);
+      participantEntry.races += 1;
+      participantEntry.points += Number(result?.points) || 0;
+
+      const position = Number(result?.position);
+      if (Number.isFinite(position) && position > 0) {
+        participantEntry.average_finish_sum += position;
+        participantEntry.average_finish_count += 1;
+        participantEntry.average_finish = Number(
+          (participantEntry.average_finish_sum / participantEntry.average_finish_count).toFixed(2)
+        );
+        if (position === 1) participantEntry.wins += 1;
+      }
+
+      const bestLapMs = Number(result?.best_lap_ms);
+      if (Number.isFinite(bestLapMs) && bestLapMs > 0) {
+        if (!Number.isFinite(participantEntry.best_lap_ms) || bestLapMs < participantEntry.best_lap_ms) {
+          participantEntry.best_lap_ms = bestLapMs;
+          participantEntry.best_lap = result?.best_lap || participantEntry.best_lap;
+        }
+      }
+    });
+  });
+
+  const dayEntries = [...dayMap.values()];
+  const maxDayRaces = Math.max(1, ...dayEntries.map(day => day.races || 0));
+  const maxDayEntries = Math.max(1, ...dayEntries.map(day => day.entries || 0));
+  const maxDayUnique = Math.max(1, ...dayEntries.map(day => day.uniquePlayers.size || 0));
+  const allHours = dayEntries.flatMap(day => [...day.hours.values()]);
+  const maxHourRaces = Math.max(1, ...allHours.map(hour => hour.races || 0));
+  const maxHourEntries = Math.max(1, ...allHours.map(hour => hour.entries || 0));
+  const maxHourUnique = Math.max(1, ...allHours.map(hour => hour.uniquePlayers.size || 0));
+
+  return dayEntries
+    .sort((a, b) => String(b.date).localeCompare(String(a.date)))
+    .map(day => {
+      const normalizedRaces = normalizeActivityScore(day.races, maxDayRaces);
+      const normalizedEntries = normalizeActivityScore(day.entries, maxDayEntries);
+      const normalizedUnique = normalizeActivityScore(day.uniquePlayers.size, maxDayUnique);
+      const activityScore = Math.round(normalizedUnique * 0.45 + normalizedEntries * 0.4 + normalizedRaces * 0.15);
+
+      const hours = Array.from({ length: 24 }, (_, index) => {
+        const key = String(index).padStart(2, "0");
+        const bucket = day.hours.get(key) || {
+          hour: key,
+          label: `${key}:00`,
+          races: 0,
+          entries: 0,
+          uniquePlayers: new Set()
+        };
+        const normalizedHourRaces = normalizeActivityScore(bucket.races, maxHourRaces);
+        const normalizedHourEntries = normalizeActivityScore(bucket.entries, maxHourEntries);
+        const normalizedHourUnique = normalizeActivityScore(bucket.uniquePlayers.size, maxHourUnique);
+        const hourScore = Math.round(normalizedHourUnique * 0.5 + normalizedHourEntries * 0.35 + normalizedHourRaces * 0.15);
+
+        return {
+          hour: key,
+          label: bucket.label,
+          races: bucket.races,
+          entries: bucket.entries,
+          unique_players: bucket.uniquePlayers.size,
+          activity_score: hourScore
+        };
+      });
+
+      const peakHour = [...hours].sort((a, b) =>
+        (b.activity_score - a.activity_score) ||
+        (b.entries - a.entries) ||
+        (b.unique_players - a.unique_players) ||
+        (b.races - a.races) ||
+        String(a.hour).localeCompare(String(b.hour))
+      )[0] || null;
+
+      const participants = [...day.participants.values()]
+        .sort((a, b) =>
+          (b.races - a.races) ||
+          (b.points - a.points) ||
+          (b.wins - a.wins) ||
+          ((a.average_finish ?? 9999) - (b.average_finish ?? 9999)) ||
+          String(a.driver || "").localeCompare(String(b.driver || ""))
+        )
+        .map(item => ({
+          player_id: item.player_id,
+          public_id: item.public_id,
+          driver: item.driver,
+          races: item.races,
+          points: item.points,
+          wins: item.wins,
+          average_finish: item.average_finish,
+          best_lap: item.best_lap
+        }));
+
+      return {
+        date: day.date,
+        races: day.races,
+        entries: day.entries,
+        unique_players: day.uniquePlayers.size,
+        avg_players_per_race: day.races ? Number((day.entries / day.races).toFixed(2)) : 0,
+        activity_score: activityScore,
+        tracks: [...day.tracks].sort((a, b) => String(a).localeCompare(String(b))),
+        peak_hour: peakHour && peakHour.activity_score > 0 ? peakHour : null,
+        hours,
+        participants
+      };
+    });
+}
+
 function renderOnlineWidget() {
   const chartEl = document.getElementById("online-chart");
   const scaleEl = document.getElementById("online-scale");
   const rangeEl = document.getElementById("online-range");
   const titleEl = document.querySelector(".hero-online-title");
+  const cardEl = document.getElementById("hero-online-card");
 
   if (titleEl) titleEl.textContent = t("onlineTitle");
+  if (cardEl) cardEl.setAttribute("aria-label", t("onlineActivityOpenLabel"));
   if (!chartEl || !scaleEl || !rangeEl) return;
 
   const prepared = getLast7DaysOnline(onlineData);
@@ -4721,6 +4939,174 @@ function renderTodayStatsModal() {
   updatedEl.textContent = formatLocalizedUpdatedLabel(stats.updated_at, lang);
 }
 
+function formatActivityDateLabel(dateStr, lang = currentLang) {
+  if (!dateStr) return "-";
+  const locale = lang === "ru" ? "ru-RU" : "en-US";
+  const safeDate = new Date(`${dateStr}T12:00:00`);
+  if (Number.isNaN(safeDate.getTime())) return dateStr;
+  return new Intl.DateTimeFormat(locale, {
+    weekday: "short",
+    day: "numeric",
+    month: "short"
+  }).format(safeDate);
+}
+
+function formatActivityMonthLabel(monthStr, lang = currentLang) {
+  if (!monthStr) return "-";
+  const locale = lang === "ru" ? "ru-RU" : "en-US";
+  const safeDate = new Date(`${monthStr}-01T12:00:00`);
+  if (Number.isNaN(safeDate.getTime())) return monthStr;
+  return new Intl.DateTimeFormat(locale, {
+    month: "long",
+    year: "numeric"
+  }).format(safeDate);
+}
+
+function getAvailableActivityMonths(days = []) {
+  return [...new Set(days.map(day => String(day?.date || "").slice(0, 7)).filter(Boolean))]
+    .sort((a, b) => String(b).localeCompare(String(a)));
+}
+
+function getSelectedActivityInsightsDay() {
+  const days = Array.isArray(raceActivityInsights) ? raceActivityInsights : [];
+  if (!days.length) return null;
+  const months = getAvailableActivityMonths(days);
+  if (!selectedActivityMonth || !months.includes(selectedActivityMonth)) {
+    selectedActivityMonth = months[0] || null;
+  }
+  const visibleDays = selectedActivityMonth
+    ? days.filter(day => String(day?.date || "").startsWith(selectedActivityMonth))
+    : days;
+  const matched = visibleDays.find(day => day?.date === selectedActivityDate);
+  if (matched) return matched;
+  selectedActivityDate = visibleDays[0]?.date || days[0]?.date || null;
+  return visibleDays[0] || days[0] || null;
+}
+
+function buildActivitySummaryCard(label, value, accent = false) {
+  return `
+    <article class="activity-summary-card${accent ? " activity-summary-card-accent" : ""}">
+      <div class="activity-summary-label">${escapeHtml(label)}</div>
+      <div class="activity-summary-value">${escapeHtml(value)}</div>
+    </article>
+  `;
+}
+
+function renderOnlineActivityModal() {
+  const daysEl = document.getElementById("online-activity-days");
+  const monthsEl = document.getElementById("online-activity-months");
+  const summaryEl = document.getElementById("online-activity-summary");
+  const subtitleEl = document.getElementById("online-activity-subtitle");
+  const primeTimeEl = document.getElementById("online-activity-prime-time");
+  const hoursEl = document.getElementById("online-activity-hours");
+
+  if (!daysEl || !monthsEl || !summaryEl || !subtitleEl || !primeTimeEl || !hoursEl) return;
+
+  const days = Array.isArray(raceActivityInsights) ? raceActivityInsights : [];
+  if (!days.length) {
+    subtitleEl.textContent = t("onlineActivityEmpty");
+    daysEl.innerHTML = "";
+    monthsEl.innerHTML = "";
+    summaryEl.innerHTML = `<div class="empty-box">${escapeHtml(t("onlineActivityEmpty"))}</div>`;
+    primeTimeEl.textContent = t("onlineActivityEmpty");
+    hoursEl.innerHTML = `<div class="empty-box">${escapeHtml(t("onlineActivityEmpty"))}</div>`;
+    return;
+  }
+
+  const months = getAvailableActivityMonths(days);
+  if (!selectedActivityMonth || !months.includes(selectedActivityMonth)) {
+    selectedActivityMonth = months[0] || null;
+  }
+  monthsEl.innerHTML = months.map(month => `
+    <option value="${escapeHtml(month)}"${month === selectedActivityMonth ? " selected" : ""}>
+      ${escapeHtml(formatActivityMonthLabel(month, currentLang))}
+    </option>
+  `).join("");
+
+  if (monthsEl.dataset.bound !== "true") {
+    monthsEl.addEventListener("change", () => {
+      selectedActivityMonth = monthsEl.value || selectedActivityMonth;
+      selectedActivityDate = null;
+      renderOnlineActivityModal();
+    });
+    monthsEl.dataset.bound = "true";
+  }
+
+  const selectedDay = getSelectedActivityInsightsDay();
+  if (!selectedDay) return;
+  const visibleDays = selectedActivityMonth
+    ? days.filter(day => String(day?.date || "").startsWith(selectedActivityMonth))
+    : days;
+
+  subtitleEl.textContent = replaceTokens(t("onlineActivitySubtitle"), {
+    date: formatActivityDateLabel(selectedDay.date, currentLang),
+    score: selectedDay.activity_score ?? 0
+  });
+
+  daysEl.innerHTML = visibleDays.map(day => `
+    <button
+      class="activity-day-pill${day.date === selectedDay.date ? " is-active" : ""}"
+      type="button"
+      data-activity-date="${escapeHtml(day.date)}"
+    >
+      <span>${escapeHtml(formatActivityDateLabel(day.date, currentLang))}</span>
+      <strong>${escapeHtml(day.activity_score ?? 0)}</strong>
+    </button>
+  `).join("");
+
+  daysEl.querySelectorAll("[data-activity-date]").forEach(button => {
+    if (button.dataset.bound === "true") return;
+    button.addEventListener("click", () => {
+      selectedActivityDate = button.dataset.activityDate || selectedActivityDate;
+      renderOnlineActivityModal();
+    });
+    button.dataset.bound = "true";
+  });
+
+  const tracksLabel = Array.isArray(selectedDay.tracks) && selectedDay.tracks.length
+    ? selectedDay.tracks.join(", ")
+    : "-";
+  const peakHour = selectedDay.peak_hour;
+
+  summaryEl.innerHTML = [
+    buildActivitySummaryCard(t("onlineActivityUniqueLabel"), selectedDay.unique_players ?? 0),
+    buildActivitySummaryCard(t("onlineActivityRacesLabel"), selectedDay.races ?? 0),
+    buildActivitySummaryCard(
+      t("onlineActivityAvgPlayersLabel"),
+      typeof selectedDay.avg_players_per_race === "number" ? selectedDay.avg_players_per_race.toFixed(2) : "-"
+    ),
+    buildActivitySummaryCard(t("onlineActivityTracksLabel"), tracksLabel),
+    buildActivitySummaryCard(t("onlineActivityScoreLabel"), `${selectedDay.activity_score ?? 0}/100`, true)
+  ].join("");
+
+  primeTimeEl.textContent = peakHour
+    ? replaceTokens(t("onlineActivityPrimeTime"), {
+      hour: peakHour.label || `${peakHour.hour}:00`,
+      score: peakHour.activity_score ?? 0
+    })
+    : t("onlineActivityEmpty");
+
+  const hours = Array.isArray(selectedDay.hours) ? selectedDay.hours : [];
+  hoursEl.innerHTML = hours.map(hour => {
+    const height = hour.activity_score > 0 ? Math.max(8, hour.activity_score) : 2;
+    const isPrime = peakHour && hour.hour === peakHour.hour;
+    const tooltip = [
+      hour.label || `${hour.hour}:00`,
+      replaceTokens(t("onlineActivityHourRaces"), { value: hour.races ?? 0 }),
+      replaceTokens(t("onlineActivityHourUnique"), { value: hour.unique_players ?? 0 })
+    ].join(" • ");
+    return `
+      <article class="activity-hour-bar-card${isPrime ? " is-prime" : ""}" title="${escapeHtml(tooltip)}">
+        <div class="activity-hour-unique">${escapeHtml(hour.unique_players ?? 0)}</div>
+        <div class="activity-hour-bar-stage">
+          <span class="activity-hour-bar-vertical" style="height:${height}%"></span>
+        </div>
+        <div class="activity-hour-axis-label">${escapeHtml(hour.hour)}</div>
+      </article>
+    `;
+  }).join("");
+}
+
 function renderDriverOfDayModal() {
   const data = driverOfDayData;
   const contentEl = document.getElementById("driver-of-day-content");
@@ -4834,6 +5220,30 @@ function initTodayStatsModal() {
   });
 }
 
+function openOnlineActivityModal() {
+  if (!onlineActivityModalController) return;
+  onlineActivityModalController.open(document.getElementById("hero-online-card"));
+}
+
+function initOnlineActivityModal() {
+  onlineActivityModalController = createModalController({
+    modalId: "online-activity-modal",
+    closeButtonId: "online-activity-close",
+    onOpen: renderOnlineActivityModal
+  });
+
+  const cardEl = document.getElementById("hero-online-card");
+  if (!cardEl || cardEl.dataset.activityModalBound === "true") return;
+
+  cardEl.addEventListener("click", () => openOnlineActivityModal());
+  cardEl.addEventListener("keydown", event => {
+    if (event.key !== "Enter" && event.key !== " ") return;
+    event.preventDefault();
+    openOnlineActivityModal();
+  });
+  cardEl.dataset.activityModalBound = "true";
+}
+
 function openHourlyHeroModal() {
   if (!hourlyHeroModalController || (!hourlyAnnouncementData?.event_id && !hourlyAnnouncementData?.track_name)) return;
   hourlyHeroModalController.open(document.getElementById("hero-hourly-card"));
@@ -4937,6 +5347,7 @@ function rerenderUI() {
   renderBestLapsTablePage();
   renderSafetyTablePage();
   renderTodayStatsModal();
+  renderOnlineActivityModal();
   renderDriverOfDayModal();
   renderDriverPreviewModal();
   renderHourlyHeroModal();
@@ -4963,6 +5374,7 @@ async function init() {
     initRaceResultsModal();
   } else if (!IS_DRIVER_PAGE && !IS_CARS_PAGE) {
     initTodayStatsModal();
+    initOnlineActivityModal();
     initDriverOfDayModal();
     initDriverPreviewModal();
     initHourlyHeroModal();
@@ -5006,9 +5418,10 @@ async function init() {
       return;
     }
 
-    const [data, hourlyAnnouncement] = await Promise.all([
+    const [data, hourlyAnnouncement, raceArchive] = await Promise.all([
       loadSiteData(),
-      loadHourlyAnnouncementData()
+      loadHourlyAnnouncementData(),
+      loadRacesData().catch(() => [])
     ]);
 
     leaderboardData = data.leaderboard;
@@ -5018,6 +5431,8 @@ async function init() {
     driverOfDayData = data.driverOfDay;
     onlineData = data.online;
     hourlyAnnouncementData = hourlyAnnouncement;
+    racesData = Array.isArray(raceArchive) ? raceArchive : [];
+    raceActivityInsights = buildRaceActivityInsights(racesData);
     await loadHourlyVotes(hourlyAnnouncementData);
 
     const driversCountEl = document.getElementById("drivers-count");
