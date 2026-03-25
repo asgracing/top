@@ -292,9 +292,9 @@
 
     <div class="hero-stats-row">
       <div class="mini-stat mini-stat-compact">
-        <div class="mini-label" data-i18n="serverStatusLabel">Server</div>
-        <div class="mini-value server-status-wrap">
-          <span class="server-status" id="serverStatusValue">—</span>
+        <div class="mini-label" data-i18n="serversLabel">Servers</div>
+        <div class="mini-value server-status-wrap server-status-wrap-total">
+          <span class="server-total-label" id="serverStatusValue" data-i18n="serverTotalPlayersLabel">Total players</span>
           <span class="server-players" id="serverPlayersValue">—</span>
         </div>
       </div>
@@ -307,6 +307,36 @@
   </div>
 </div>
     </section>
+
+    <aside class="server-sticky-widget" id="server-sticky-widget" aria-label="Server status">
+      <div class="server-sticky-head">
+        <div class="server-sticky-title" data-i18n="serversWidgetTitle">Server status</div>
+      </div>
+
+      <div class="server-sticky-cards">
+        <div class="server-sticky-card server-sticky-card-main" id="server-card-main">
+          <div class="server-sticky-card-overlay"></div>
+          <div class="server-sticky-card-content">
+            <div class="server-sticky-card-name" data-i18n="serverMainLabel">Main</div>
+            <div class="server-sticky-card-status">
+              <span class="server-status" id="serverMainStatusValue">—</span>
+              <span class="server-players" id="serverMainPlayersValue">—</span>
+            </div>
+          </div>
+        </div>
+
+        <div class="server-sticky-card server-sticky-card-sunset" id="server-card-sunset">
+          <div class="server-sticky-card-overlay"></div>
+          <div class="server-sticky-card-content">
+            <div class="server-sticky-card-name" data-i18n="serverSunsetLabel">Sunset</div>
+            <div class="server-sticky-card-status">
+              <span class="server-status" id="serverSunsetStatusValue">—</span>
+              <span class="server-players" id="serverSunsetPlayersValue">—</span>
+            </div>
+          </div>
+        </div>
+      </div>
+    </aside>
 
     <section class="section" id="top3-section">
       <div class="section-header">

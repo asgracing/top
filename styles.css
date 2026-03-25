@@ -1338,6 +1338,16 @@ tr.is-interactive-row:focus-visible {
   flex-wrap: nowrap;
 }
 
+.server-status-wrap-total {
+  align-items: baseline;
+}
+
+.server-total-label {
+  font-size: 0.94rem;
+  font-weight: 700;
+  color: #edf2ff;
+}
+
 .server-status {
   font-weight: 600;
 }
@@ -1357,6 +1367,96 @@ tr.is-interactive-row:focus-visible {
 .server-players {
   opacity: 0.8;
   font-size: 1em;
+}
+
+.server-sticky-widget {
+  position: fixed;
+  top: 106px;
+  right: 22px;
+  z-index: 1100;
+  width: min(190px, calc(100vw - 44px));
+  display: grid;
+  gap: 7px;
+}
+
+.server-sticky-head {
+  padding: 0 2px;
+}
+
+.server-sticky-title {
+  font-size: 0.68rem;
+  font-weight: 800;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: rgba(237, 242, 255, 0.78);
+}
+
+.server-sticky-cards {
+  display: grid;
+  gap: 7px;
+}
+
+.server-sticky-card {
+  --server-card-bg: none;
+  position: relative;
+  overflow: hidden;
+  min-height: 76px;
+  border-radius: 16px;
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  background:
+    linear-gradient(180deg, rgba(8, 12, 19, 0.22), rgba(8, 12, 19, 0.78)),
+    var(--server-card-bg);
+  background-position: center;
+  background-size: cover;
+  box-shadow:
+    0 20px 44px rgba(0, 0, 0, 0.24),
+    0 8px 24px rgba(0, 0, 0, 0.16);
+  backdrop-filter: blur(8px);
+}
+
+.server-sticky-card-overlay {
+  position: absolute;
+  inset: 0;
+  background:
+    linear-gradient(135deg, rgba(255, 255, 255, 0.06), transparent 42%),
+    linear-gradient(180deg, rgba(8, 12, 19, 0.16), rgba(8, 12, 19, 0.7));
+}
+
+.server-sticky-card-content {
+  position: relative;
+  z-index: 1;
+  display: grid;
+  gap: 10px;
+  padding: 10px 12px;
+}
+
+.server-sticky-card-name {
+  font-size: 0.82rem;
+  font-weight: 800;
+  color: #ffffff;
+  text-align: right;
+  text-shadow: 0 2px 10px rgba(0, 0, 0, 0.35);
+}
+
+.server-sticky-card-status {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: 8px;
+}
+
+.server-sticky-card-status .server-status {
+  font-size: 0.74rem;
+  font-weight: 800;
+  letter-spacing: 0.04em;
+}
+
+.server-sticky-card-status .server-players {
+  font-size: 0.98rem;
+  font-weight: 900;
+  color: #ffffff;
+  opacity: 1;
+  text-shadow: 0 2px 10px rgba(0, 0, 0, 0.32);
 }
 
 
@@ -2671,10 +2771,12 @@ body.modal-open {
 }
 
 .twitch-widget.is-collapsed {
-  width: auto;
+  width: min(360px, calc(100vw - 22px));
 }
 
 .twitch-widget-shell {
+  width: 100%;
+  box-sizing: border-box;
   overflow: hidden;
   border: 1px solid rgba(145, 70, 255, 0.32);
   border-radius: 20px;
@@ -2791,6 +2893,8 @@ body.modal-open {
   display: inline-flex;
   align-items: center;
   justify-content: center;
+  width: 100%;
+  box-sizing: border-box;
   min-height: 48px;
   padding: 0 18px;
   border: 1px solid rgba(145, 70, 255, 0.32);
@@ -2840,6 +2944,147 @@ body.modal-open {
 .twitch-widget.is-platform-youtube .twitch-widget-launcher:hover,
 .twitch-widget.is-platform-youtube .twitch-widget-launcher:focus-visible {
   border-color: rgba(255, 63, 58, 0.48);
+}
+
+.top-guide-scrim {
+  position: fixed;
+  inset: 0;
+  z-index: 1180;
+  background: rgba(7, 11, 17, 0.38);
+  pointer-events: none;
+}
+
+.top-guide {
+  position: fixed;
+  top: 120px;
+  left: 22px;
+  z-index: 1250;
+  width: min(320px, calc(100vw - 44px));
+  padding: 18px;
+  border-radius: 24px;
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  background:
+    radial-gradient(circle at top left, rgba(255, 91, 46, 0.18), transparent 38%),
+    linear-gradient(180deg, rgba(18, 24, 34, 0.97), rgba(10, 14, 21, 0.97));
+  box-shadow:
+    0 24px 60px rgba(0, 0, 0, 0.34),
+    0 10px 30px rgba(255, 91, 46, 0.12);
+  backdrop-filter: blur(16px);
+}
+
+.top-guide-progress {
+  font-size: 0.76rem;
+  font-weight: 800;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: rgba(255, 214, 199, 0.92);
+}
+
+.top-guide-title {
+  margin: 10px 0 0;
+  font-size: 1.15rem;
+  line-height: 1.2;
+  color: #f7fbff;
+}
+
+.top-guide-body {
+  margin: 12px 0 0;
+  color: rgba(226, 234, 245, 0.9);
+  line-height: 1.6;
+  font-size: 0.96rem;
+}
+
+.top-guide-actions {
+  display: flex;
+  gap: 10px;
+  flex-wrap: wrap;
+  margin-top: 16px;
+}
+
+.top-guide-btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 38px;
+  padding: 0 14px;
+  border-radius: 999px;
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  background: rgba(255, 255, 255, 0.06);
+  color: #edf2ff;
+  font: inherit;
+  font-size: 0.82rem;
+  font-weight: 800;
+  cursor: pointer;
+  transition: transform 0.18s ease, border-color 0.18s ease, background 0.18s ease, color 0.18s ease;
+}
+
+.top-guide-btn:hover,
+.top-guide-btn:focus-visible {
+  transform: translateY(-1px);
+  color: #ffffff;
+}
+
+.top-guide-btn:disabled {
+  opacity: 0.45;
+  cursor: default;
+  transform: none;
+}
+
+.top-guide-btn-primary {
+  background: linear-gradient(135deg, rgba(255, 91, 46, 0.92), rgba(255, 141, 87, 0.88));
+  border-color: rgba(255, 141, 87, 0.5);
+  color: #fff6f0;
+}
+
+.top-guide-btn-secondary:hover,
+.top-guide-btn-secondary:focus-visible,
+.top-guide-btn-ghost:hover,
+.top-guide-btn-ghost:focus-visible {
+  border-color: rgba(255, 255, 255, 0.2);
+  background: rgba(255, 255, 255, 0.1);
+}
+
+.top-guide-launcher {
+  position: fixed;
+  left: 22px;
+  bottom: 22px;
+  z-index: 1240;
+  min-height: 48px;
+  padding: 0 18px;
+  border-radius: 999px;
+  border: 1px solid rgba(255, 91, 46, 0.3);
+  background:
+    radial-gradient(circle at top left, rgba(255, 91, 46, 0.18), transparent 45%),
+    linear-gradient(180deg, rgba(18, 24, 34, 0.97), rgba(10, 14, 21, 0.97));
+  box-shadow:
+    0 18px 42px rgba(0, 0, 0, 0.34),
+    0 8px 24px rgba(255, 91, 46, 0.14);
+  color: #f7fbff;
+  font: inherit;
+  font-size: 0.92rem;
+  font-weight: 800;
+  cursor: pointer;
+  transition: transform 0.18s ease, border-color 0.18s ease, background 0.18s ease;
+}
+
+.top-guide-launcher:hover,
+.top-guide-launcher:focus-visible {
+  transform: translateY(-1px);
+  border-color: rgba(255, 141, 87, 0.5);
+}
+
+.top-guide-highlight {
+  position: relative;
+  z-index: 1190;
+  border-radius: 24px;
+  box-shadow:
+    0 0 0 3px rgba(255, 91, 46, 0.78),
+    0 0 0 10px rgba(255, 91, 46, 0.12),
+    0 24px 54px rgba(0, 0, 0, 0.28);
+}
+
+.top-guide-highlight.btn-last-races {
+  border-radius: 999px;
 }
 
 .community-grid {
@@ -4019,6 +4264,15 @@ body.modal-open {
   .fun-list-side {
     grid-column: 2;
     text-align: left;
+  }
+}
+
+@media (max-width: 1279px) {
+  .server-sticky-widget,
+  .top-guide,
+  .top-guide-launcher,
+  .top-guide-scrim {
+    display: none !important;
   }
 }
 

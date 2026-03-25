@@ -22,6 +22,12 @@ const YOUTUBE_CHANNEL_HANDLE = "@ASGRacingACC";
 const YOUTUBE_CHANNEL_URL = "https://www.youtube.com/@ASGRacingACC";
 const YOUTUBE_LIVE_URL = `${YOUTUBE_CHANNEL_URL}/live`;
 const TWITCH_WIDGET_CHECK_INTERVAL_MS = 120000;
+const TOP_GUIDE_STORAGE_KEY = "asgTopGuideSeen";
+const TOP_GUIDE_MEDIA_QUERY = "(min-width: 1280px)";
+const SERVER_CARD_BACKGROUNDS = {
+  main: `${SITE_BASE_PATH}assets/main.jpg`,
+  sunset: `${SITE_BASE_PATH}assets/sunset.jpeg`
+};
 const racesUrl = `${TOP_DATA_BASE_URL}/races/races.json`;
 const carsUrl = `${TOP_DATA_BASE_URL}/cars/cars.json`;
 const driverIndexUrl = `${TOP_DATA_BASE_URL}/drivers/drivers.json`;
@@ -92,6 +98,13 @@ let twitchWidgetState = {
   platform: null,
   embedUrl: "",
   openUrl: TWITCH_CHANNEL_URL
+};
+let topGuideState = {
+  initialized: false,
+  active: false,
+  stepIndex: 0,
+  highlightedElement: null,
+  mediaQuery: null
 };
 let funStatsPeriod = "week";
 const driverProfileCache = new Map();
@@ -187,10 +200,16 @@ onlineNoData: "No data",
     btnBestLaps: "Best Laps",
     btnWorstSafety: "Worst Safety",
     btnAboutServer: "About Server",
+    serversLabel: "Servers",
     serverStatusLabel: "Server",
     serverStatusOnline: "ONLINE",
     serverStatusOffline: "OFFLINE",
     serverStatusDegraded: "DEGRADED",
+    serverTotalPlayersLabel: "Total players",
+    serverTotalPlayersNote: "Servers",
+    serversWidgetTitle: "Server status",
+    serverMainLabel: "Main",
+    serverSunsetLabel: "Sunset",
     driversCountLabel: "Drivers in leaderboard",
     driversCountNote: "Unique participants included in the stats.",
     bestLapHighlightLabel: "Best lap record",
@@ -249,6 +268,24 @@ onlineNoData: "No data",
     twitchWidgetCollapse: "Smaller",
     twitchWidgetHide: "Hide",
     twitchWidgetShow: "Open stream",
+    topGuideLauncher: "New here?",
+    topGuideDismiss: "Skip",
+    topGuideBack: "Back",
+    topGuideNext: "Next",
+    topGuideDone: "Got it",
+    topGuideProgress: "Step {current} of {total}",
+    topGuideStepWelcomeTitle: "Welcome to the server stats",
+    topGuideStepWelcomeText: "This page brings together ASG Racing server stats, live info, race history and quick links to the community.",
+    topGuideStepChampionshipTitle: "Start with the championship",
+    topGuideStepChampionshipText: "This is the main leaderboard. Use it to find yourself, compare points and quickly jump into a full driver profile.",
+    topGuideStepSearchTitle: "Find yourself in the top",
+    topGuideStepSearchText: "Use this search field to jump straight to your name in the standings instead of scanning the full table manually.",
+    topGuideStepProfileTitle: "Open your full driver stats",
+    topGuideStepProfileText: "Click your name inside the championship table to open a full driver profile with race history, pace and detailed statistics.",
+    topGuideStepRacesTitle: "Open the latest races",
+    topGuideStepRacesText: "This button takes you to the recent race archive, where every session has a full result sheet and finishing order.",
+    topGuideStepHourlyTitle: "Hourly events live here",
+    topGuideStepHourlyText: "This card shows the next hourly event: track, start time, registrations and more detailed slot info.",
     communityTiktokTitle: "TikTok",
     communityTiktokText: "Short, punchy moments: overtakes, chaos, emotions and the most addictive ASG Racing clips.",
     communityTiktokCta: "Catch the best moments",
@@ -558,10 +595,16 @@ onlineNoData: "Нет данных",
     btnBestLaps: "Круги",
     btnWorstSafety: "Штрафы",
     btnAboutServer: "Сервер",
+    serversLabel: "Серверы",
     serverStatusLabel: "Сервер",
     serverStatusOnline: "ОНЛАЙН",
     serverStatusOffline: "ОФФЛАЙН",
     serverStatusDegraded: "ЧАСТИЧНО",
+    serverTotalPlayersLabel: "Всего игроков",
+    serverTotalPlayersNote: "Серверы",
+    serversWidgetTitle: "Статус серверов",
+    serverMainLabel: "Главный",
+    serverSunsetLabel: "На закате",
     driversCountLabel: "Пилотов в рейтинге",
     driversCountNote: "Уникальные участники, попавшие в статистику.",
     bestLapHighlightLabel: "Лучший круг",
@@ -620,6 +663,24 @@ onlineNoData: "Нет данных",
     twitchWidgetCollapse: "Меньше",
     twitchWidgetHide: "Свернуть",
     twitchWidgetShow: "Развернуть стрим",
+    topGuideLauncher: "Впервые здесь?",
+    topGuideDismiss: "Пропустить",
+    topGuideBack: "Назад",
+    topGuideNext: "Дальше",
+    topGuideDone: "Понятно",
+    topGuideProgress: "Шаг {current} из {total}",
+    topGuideStepWelcomeTitle: "Добро пожаловать в статистику сервера",
+    topGuideStepWelcomeText: "Здесь собрана статистика ASG Racing: рейтинг пилотов, статус сервера, история гонок и быстрые переходы в комьюнити.",
+    topGuideStepChampionshipTitle: "Начните с чемпионата",
+    topGuideStepChampionshipText: "Это главный рейтинг пилотов. Здесь можно найти себя, сравнить очки и перейти в полный профиль водителя.",
+    topGuideStepSearchTitle: "Найди себя в топе",
+    topGuideStepSearchText: "Используйте это поле поиска, чтобы быстро найти себя в таблице, а не просматривать весь рейтинг вручную.",
+    topGuideStepProfileTitle: "Открой детальную статистику пилота",
+    topGuideStepProfileText: "Кликните по своему имени в таблице чемпионата, чтобы открыть полный профиль пилота с историей гонок, темпом и детальной статистикой.",
+    topGuideStepRacesTitle: "Здесь последние гонки",
+    topGuideStepRacesText: "Эта кнопка ведет в архив недавних гонок, где у каждого заезда есть полный протокол и порядок финиша.",
+    topGuideStepHourlyTitle: "А здесь часовые эвенты",
+    topGuideStepHourlyText: "В этой карточке показана ближайшая часовая гонка: трасса, время старта, регистрации и подробности слота.",
     communityTiktokTitle: "TikTok",
     communityTiktokText: "Короткие яркие моменты: обгоны, хаос, эмоции и самые залипательные эпизоды ASG Racing.",
     communityTiktokCta: "Поймать лучшие моменты",
@@ -1773,6 +1834,247 @@ function initTwitchWidget() {
   }
 }
 
+function shouldEnableTopGuide() {
+  return !IS_RACES_PAGE && !IS_DRIVER_PAGE && !IS_CARS_PAGE && !IS_FUN_STATS_PAGE;
+}
+
+function isTopGuideDesktop() {
+  return typeof window !== "undefined"
+    && typeof window.matchMedia === "function"
+    && window.matchMedia(TOP_GUIDE_MEDIA_QUERY).matches;
+}
+
+function getTopGuideSteps() {
+  return [
+    {
+      targetSelector: ".hero-card",
+      titleKey: "topGuideStepWelcomeTitle",
+      textKey: "topGuideStepWelcomeText",
+      scrollBlock: "nearest"
+    },
+    {
+      targetSelector: "#championship",
+      titleKey: "topGuideStepChampionshipTitle",
+      textKey: "topGuideStepChampionshipText",
+      scrollBlock: "center"
+    },
+    {
+      targetSelector: "#leaderboard-search",
+      titleKey: "topGuideStepSearchTitle",
+      textKey: "topGuideStepSearchText",
+      scrollBlock: "center"
+    },
+    {
+      targetSelector: "#leaderboard-table",
+      titleKey: "topGuideStepProfileTitle",
+      textKey: "topGuideStepProfileText",
+      scrollBlock: "center"
+    },
+    {
+      targetSelector: ".btn-last-races",
+      titleKey: "topGuideStepRacesTitle",
+      textKey: "topGuideStepRacesText",
+      scrollBlock: "center"
+    },
+    {
+      targetSelector: "#hero-hourly-card",
+      titleKey: "topGuideStepHourlyTitle",
+      textKey: "topGuideStepHourlyText",
+      scrollBlock: "center"
+    }
+  ];
+}
+
+function clearTopGuideHighlight() {
+  if (topGuideState.highlightedElement) {
+    topGuideState.highlightedElement.classList.remove("top-guide-highlight");
+    topGuideState.highlightedElement = null;
+  }
+}
+
+function setTopGuideSeen() {
+  try {
+    localStorage.setItem(TOP_GUIDE_STORAGE_KEY, "1");
+  } catch {
+    // Ignore storage issues.
+  }
+}
+
+function hasSeenTopGuide() {
+  try {
+    return localStorage.getItem(TOP_GUIDE_STORAGE_KEY) === "1";
+  } catch {
+    return false;
+  }
+}
+
+function scrollTopGuideTargetIntoView(target, block = "center") {
+  if (!target || typeof target.getBoundingClientRect !== "function") return;
+
+  const rect = target.getBoundingClientRect();
+  const targetTop = rect.top + window.scrollY;
+  const viewportHeight = window.innerHeight || document.documentElement.clientHeight || 0;
+  const navOffset = 96;
+  let nextScrollTop = targetTop - navOffset;
+
+  if (block === "center") {
+    nextScrollTop = targetTop - Math.max(120, (viewportHeight - rect.height) / 2);
+  }
+
+  window.scrollTo({
+    top: Math.max(0, nextScrollTop),
+    behavior: "smooth"
+  });
+}
+
+function closeTopGuide(markSeen = true) {
+  topGuideState.active = false;
+  clearTopGuideHighlight();
+  if (markSeen) setTopGuideSeen();
+  renderTopGuide();
+}
+
+function openTopGuide(stepIndex = 0, force = false) {
+  if (!topGuideState.initialized || !shouldEnableTopGuide() || !isTopGuideDesktop()) return;
+  if (!force && hasSeenTopGuide()) return;
+
+  const steps = getTopGuideSteps();
+  topGuideState.stepIndex = Math.max(0, Math.min(stepIndex, steps.length - 1));
+  topGuideState.active = true;
+  renderTopGuide();
+}
+
+function setTopGuideStep(nextStepIndex) {
+  const steps = getTopGuideSteps();
+  if (!steps.length) return;
+
+  if (nextStepIndex >= steps.length) {
+    closeTopGuide(true);
+    return;
+  }
+
+  topGuideState.stepIndex = Math.max(0, Math.min(nextStepIndex, steps.length - 1));
+  renderTopGuide();
+}
+
+function renderTopGuide() {
+  if (!topGuideState.initialized) return;
+
+  const root = document.getElementById("top-guide");
+  const launcher = document.getElementById("top-guide-launcher");
+  const scrim = document.getElementById("top-guide-scrim");
+  const titleEl = document.getElementById("top-guide-title");
+  const bodyEl = document.getElementById("top-guide-body");
+  const progressEl = document.getElementById("top-guide-progress");
+  const backBtn = document.getElementById("top-guide-back");
+  const nextBtn = document.getElementById("top-guide-next");
+  const skipBtn = document.getElementById("top-guide-skip");
+
+  if (!root || !launcher || !scrim || !titleEl || !bodyEl || !progressEl || !backBtn || !nextBtn || !skipBtn) return;
+
+  launcher.textContent = t("topGuideLauncher");
+  launcher.setAttribute("aria-label", t("topGuideLauncher"));
+  skipBtn.textContent = t("topGuideDismiss");
+  backBtn.textContent = t("topGuideBack");
+
+  if (!shouldEnableTopGuide() || !isTopGuideDesktop()) {
+    topGuideState.active = false;
+    clearTopGuideHighlight();
+    root.hidden = true;
+    scrim.hidden = true;
+    launcher.hidden = true;
+    return;
+  }
+
+  const steps = getTopGuideSteps();
+  const step = steps[topGuideState.stepIndex];
+  const total = steps.length;
+
+  launcher.hidden = topGuideState.active;
+  root.hidden = !topGuideState.active;
+  scrim.hidden = !topGuideState.active;
+
+  if (!topGuideState.active || !step) {
+    clearTopGuideHighlight();
+    return;
+  }
+
+  titleEl.textContent = t(step.titleKey);
+  bodyEl.textContent = t(step.textKey);
+  progressEl.textContent = replaceTokens(t("topGuideProgress"), {
+    current: topGuideState.stepIndex + 1,
+    total
+  });
+  backBtn.disabled = topGuideState.stepIndex === 0;
+  nextBtn.textContent = topGuideState.stepIndex === total - 1 ? t("topGuideDone") : t("topGuideNext");
+
+  clearTopGuideHighlight();
+  const target = document.querySelector(step.targetSelector);
+  if (target) {
+    target.classList.add("top-guide-highlight");
+    topGuideState.highlightedElement = target;
+    scrollTopGuideTargetIntoView(target, step.scrollBlock);
+  }
+}
+
+function ensureTopGuide() {
+  if (topGuideState.initialized || !shouldEnableTopGuide()) return;
+
+  const scrim = document.createElement("div");
+  scrim.className = "top-guide-scrim";
+  scrim.id = "top-guide-scrim";
+  scrim.hidden = true;
+
+  const root = document.createElement("aside");
+  root.className = "top-guide";
+  root.id = "top-guide";
+  root.hidden = true;
+  root.innerHTML = `
+    <div class="top-guide-progress" id="top-guide-progress"></div>
+    <h3 class="top-guide-title" id="top-guide-title"></h3>
+    <p class="top-guide-body" id="top-guide-body"></p>
+    <div class="top-guide-actions">
+      <button class="top-guide-btn top-guide-btn-ghost" id="top-guide-skip" type="button"></button>
+      <button class="top-guide-btn top-guide-btn-secondary" id="top-guide-back" type="button"></button>
+      <button class="top-guide-btn top-guide-btn-primary" id="top-guide-next" type="button"></button>
+    </div>
+  `;
+
+  const launcher = document.createElement("button");
+  launcher.className = "top-guide-launcher";
+  launcher.id = "top-guide-launcher";
+  launcher.type = "button";
+
+  document.body.appendChild(scrim);
+  document.body.appendChild(root);
+  document.body.appendChild(launcher);
+
+  root.querySelector("#top-guide-skip")?.addEventListener("click", () => closeTopGuide(true));
+  root.querySelector("#top-guide-back")?.addEventListener("click", () => setTopGuideStep(topGuideState.stepIndex - 1));
+  root.querySelector("#top-guide-next")?.addEventListener("click", () => setTopGuideStep(topGuideState.stepIndex + 1));
+  launcher.addEventListener("click", () => openTopGuide(0, true));
+
+  topGuideState.mediaQuery = window.matchMedia?.(TOP_GUIDE_MEDIA_QUERY) || null;
+  topGuideState.mediaQuery?.addEventListener?.("change", () => {
+    if (!isTopGuideDesktop()) {
+      topGuideState.active = false;
+      clearTopGuideHighlight();
+    }
+    renderTopGuide();
+  });
+
+  window.addEventListener("resize", () => {
+    if (topGuideState.active) renderTopGuide();
+  });
+
+  topGuideState.initialized = true;
+  renderTopGuide();
+
+  if (!hasSeenTopGuide()) {
+    window.setTimeout(() => openTopGuide(0, true), 500);
+  }
+}
+
 function sha1(input) {
   const text = unescape(encodeURIComponent(String(input ?? "")));
   const words = [];
@@ -2663,6 +2965,7 @@ function applyStaticTranslations() {
 
   updateDriverOfDayButtonLabel();
   renderTwitchWidget();
+  renderTopGuide();
   document.getElementById("top-nav-more")?.rebuildOverflowMenu?.();
 }
 
@@ -3564,6 +3867,31 @@ function getLocalizedServerStatus(status, lang = currentLang) {
   if (normalized === "online") return tForLang(lang, "serverStatusOnline");
   if (normalized === "online_process_only") return tForLang(lang, "serverStatusDegraded");
   return tForLang(lang, "serverStatusOffline");
+}
+
+function resolveNamedServerStatus(serverStatus, name) {
+  if (!serverStatus || typeof serverStatus !== "object") return null;
+  if (serverStatus[name] && typeof serverStatus[name] === "object") return serverStatus[name];
+  if (serverStatus.servers && typeof serverStatus.servers === "object" && serverStatus.servers[name] && typeof serverStatus.servers[name] === "object") {
+    return serverStatus.servers[name];
+  }
+  return null;
+}
+
+function applyServerStatusClass(element, status) {
+  if (!element) return;
+  const normalized = String(status || "offline").toLowerCase();
+  element.classList.remove("online", "offline", "degraded");
+  element.classList.add(
+    normalized === "online" ? "online" : normalized === "online_process_only" ? "degraded" : "offline"
+  );
+}
+
+function updateServerCardBackgrounds() {
+  const mainCard = document.getElementById("server-card-main");
+  const sunsetCard = document.getElementById("server-card-sunset");
+  if (mainCard) mainCard.style.setProperty("--server-card-bg", `url("${SERVER_CARD_BACKGROUNDS.main}")`);
+  if (sunsetCard) sunsetCard.style.setProperty("--server-card-bg", `url("${SERVER_CARD_BACKGROUNDS.sunset}")`);
 }
 
 function humanizeTrackName(track) {
@@ -4618,10 +4946,12 @@ function rerenderUI() {
 }
 
 async function init() {
+  updateServerCardBackgrounds();
   bindLanguageButtons();
   bindTopNavMoreMenu();
   bindFunStatsControls();
   bindSearchInputs();
+  ensureTopGuide();
   initTwitchWidget();
   updateTopNavModalOffset();
   optimizeBackgroundMedia();
@@ -4714,25 +5044,39 @@ async function init() {
 
     const serverStatusEl = document.getElementById("serverStatusValue");
     const serverPlayersEl = document.getElementById("serverPlayersValue");
+    const mainServerStatusEl = document.getElementById("serverMainStatusValue");
+    const mainServerPlayersEl = document.getElementById("serverMainPlayersValue");
+    const sunsetServerStatusEl = document.getElementById("serverSunsetStatusValue");
+    const sunsetServerPlayersEl = document.getElementById("serverSunsetPlayersValue");
 
     if (serverStatusEl && serverPlayersEl) {
-      const status =
-        data.serverStatus && typeof data.serverStatus === "object"
-          ? String(data.serverStatus.status || "offline").toLowerCase()
-          : "offline";
-
-      const players =
+      const totalPlayers =
         data.serverStatus && Number.isFinite(data.serverStatus.players_online)
           ? data.serverStatus.players_online
           : 0;
 
-      serverStatusEl.textContent = getLocalizedServerStatus(status, currentLang);
-      serverPlayersEl.textContent = players;
-
+      serverStatusEl.textContent = t("serverTotalPlayersLabel");
+      serverPlayersEl.textContent = totalPlayers;
       serverStatusEl.classList.remove("online", "offline", "degraded");
-      serverStatusEl.classList.add(
-        status === "online" ? "online" : status === "online_process_only" ? "degraded" : "offline"
-      );
+    }
+
+    const mainServer = resolveNamedServerStatus(data.serverStatus, "main");
+    const sunsetServer = resolveNamedServerStatus(data.serverStatus, "sunset");
+
+    if (mainServerStatusEl && mainServerPlayersEl) {
+      const mainStatus = String(mainServer?.status || "offline").toLowerCase();
+      const mainPlayers = Number.isFinite(mainServer?.players_online) ? mainServer.players_online : 0;
+      mainServerStatusEl.textContent = getLocalizedServerStatus(mainStatus, currentLang);
+      mainServerPlayersEl.textContent = mainPlayers;
+      applyServerStatusClass(mainServerStatusEl, mainStatus);
+    }
+
+    if (sunsetServerStatusEl && sunsetServerPlayersEl) {
+      const sunsetStatus = String(sunsetServer?.status || "offline").toLowerCase();
+      const sunsetPlayers = Number.isFinite(sunsetServer?.players_online) ? sunsetServer.players_online : 0;
+      sunsetServerStatusEl.textContent = getLocalizedServerStatus(sunsetStatus, currentLang);
+      sunsetServerPlayersEl.textContent = sunsetPlayers;
+      applyServerStatusClass(sunsetServerStatusEl, sunsetStatus);
     }
 
     rerenderUI();
@@ -4809,15 +5153,36 @@ async function init() {
 
     const serverStatusEl = document.getElementById("serverStatusValue");
     const serverPlayersEl = document.getElementById("serverPlayersValue");
+    const mainServerStatusEl = document.getElementById("serverMainStatusValue");
+    const mainServerPlayersEl = document.getElementById("serverMainPlayersValue");
+    const sunsetServerStatusEl = document.getElementById("serverSunsetStatusValue");
+    const sunsetServerPlayersEl = document.getElementById("serverSunsetPlayersValue");
 
     if (serverStatusEl) {
-      serverStatusEl.textContent = getLocalizedServerStatus("offline", currentLang);
-      serverStatusEl.classList.remove("online", "degraded");
-      serverStatusEl.classList.add("offline");
+      serverStatusEl.textContent = t("serverTotalPlayersLabel");
+      serverStatusEl.classList.remove("online", "offline", "degraded");
     }
 
     if (serverPlayersEl) {
       serverPlayersEl.textContent = "--";
+    }
+
+    if (mainServerStatusEl) {
+      mainServerStatusEl.textContent = getLocalizedServerStatus("offline", currentLang);
+      applyServerStatusClass(mainServerStatusEl, "offline");
+    }
+
+    if (mainServerPlayersEl) {
+      mainServerPlayersEl.textContent = "--";
+    }
+
+    if (sunsetServerStatusEl) {
+      sunsetServerStatusEl.textContent = getLocalizedServerStatus("offline", currentLang);
+      applyServerStatusClass(sunsetServerStatusEl, "offline");
+    }
+
+    if (sunsetServerPlayersEl) {
+      sunsetServerPlayersEl.textContent = "--";
     }
   }
 }
