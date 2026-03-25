@@ -1,6 +1,8 @@
 import json
 import logging
+import os
 import re
+import shutil
 import subprocess
 import time
 import hashlib
@@ -8,11 +10,69 @@ from datetime import date, datetime
 from pathlib import Path
 
 
-BASE_DIR = Path(
-    r"I:\SteamLibrary\steamapps\common\Assetto Corsa Competizione Dedicated Server Public 08.2025\server"
-)
 TOOL_DIR = Path(__file__).resolve().parent
+ENV_BASE_DIR = "ACC_SERVER_BASE_DIR"
+ENV_GIT_EXE = "ACC_GIT_EXE"
+ENV_SUNSET_SERVER_BASE_DIR = "ACC_SUNSET_SERVER_BASE_DIR"
+
+
+def resolve_base_dir() -> Path:
+    env_value = os.environ.get(ENV_BASE_DIR, "").strip()
+    if env_value:
+        return Path(env_value).expanduser()
+
+    sibling_server_dir = TOOL_DIR.parent
+    if sibling_server_dir.name.lower() == "server":
+        return sibling_server_dir
+
+    known_locations = [
+        Path(r"C:\Assetto Corsa Competizione Dedicated Server Public 08.2025\server"),
+        Path(r"I:\SteamLibrary\steamapps\common\Assetto Corsa Competizione Dedicated Server Public 08.2025\server"),
+    ]
+    for candidate in known_locations:
+        if candidate.exists():
+            return candidate
+
+    return known_locations[0]
+
+
+def resolve_git_executable():
+    env_value = os.environ.get(ENV_GIT_EXE, "").strip()
+    if env_value:
+        env_path = Path(env_value).expanduser()
+        if env_path.exists():
+            return str(env_path)
+
+    path_git = shutil.which("git")
+    if path_git:
+        return path_git
+
+    known_locations = [
+        Path(r"C:\Program Files\Git\cmd\git.exe"),
+        Path(r"C:\Program Files\Git\bin\git.exe"),
+        Path(r"C:\Program Files (x86)\Git\cmd\git.exe"),
+        Path(r"C:\Program Files (x86)\Git\bin\git.exe"),
+    ]
+    for candidate in known_locations:
+        if candidate.exists():
+            return str(candidate)
+
+    return None
+
+
+def resolve_sunset_base_dir() -> Path:
+    env_value = os.environ.get(ENV_SUNSET_SERVER_BASE_DIR, "").strip()
+    if env_value:
+        return Path(env_value).expanduser()
+
+    return Path(r"C:\Assetto Corsa Competizione Dedicated Server Public 08.2025 Sunset\server")
+
+
+BASE_DIR = resolve_base_dir()
+SUNSET_BASE_DIR = resolve_sunset_base_dir()
 RESULTS_DIR = BASE_DIR / "results"
+SUNSET_RESULTS_DIR = SUNSET_BASE_DIR / "results"
+MERGED_RESULTS_DIR = RESULTS_DIR / "_merged"
 OUTPUT_DIR = BASE_DIR / "top-data"
 RACES_DIR = OUTPUT_DIR / "races"
 DRIVERS_DIR = OUTPUT_DIR / "drivers"
@@ -25,7 +85,7 @@ CARS_FILE = CARS_DIR / "cars.json"
 STATE_FILE = TOOL_DIR / "parser_state.json"
 LOG_FILE = TOOL_DIR / "parser.log"
 
-GIT_EXE = r"C:\Program Files\Git\cmd\git.exe"
+GIT_EXE = resolve_git_executable()
 
 AUTO_GIT_PUSH = True
 COMMIT_MESSAGE_PREFIX = "ACC stats update"
@@ -118,6 +178,15 @@ def configure_logging():
             logging.StreamHandler(),
         ],
     )
+    logging.info("Resolved ACC server base directory: %s", BASE_DIR)
+    logging.info("Resolved Sunset server base directory: %s", SUNSET_BASE_DIR)
+    if GIT_EXE:
+        logging.info("Resolved Git executable: %s", GIT_EXE)
+    else:
+        logging.warning(
+            "Git executable not found. Set %s or install Git for automatic publish.",
+            ENV_GIT_EXE,
+        )
 
 
 def robust_read_json(path: Path):
@@ -175,6 +244,64 @@ def save_json_if_changed(path: Path, data) -> bool:
 
     path.write_text(new_text, encoding="utf-8")
     return True
+
+
+def sync_external_results_source(source_dir: Path, prefix: str):
+    if not source_dir.exists():
+        logging.info("External results source not found, skipping: %s", source_dir)
+        return
+
+    target_root = MERGED_RESULTS_DIR / prefix
+    target_root.mkdir(parents=True, exist_ok=True)
+
+    active_targets = set()
+    copied_count = 0
+    updated_count = 0
+    removed_count = 0
+
+    for source_file in source_dir.rglob("*.json"):
+        try:
+            relative_path = source_file.relative_to(source_dir)
+            target_dir = target_root / relative_path.parent
+            target_file = target_dir / f"{prefix}_{source_file.name}"
+            active_targets.add(target_file.resolve())
+
+            target_dir.mkdir(parents=True, exist_ok=True)
+
+            existed_before = target_file.exists()
+            should_copy = True
+            if existed_before:
+                source_stat = source_file.stat()
+                target_stat = target_file.stat()
+                should_copy = (
+                    int(source_stat.st_mtime) != int(target_stat.st_mtime)
+                    or int(source_stat.st_size) != int(target_stat.st_size)
+                )
+
+            if should_copy:
+                shutil.copy2(source_file, target_file)
+                if existed_before:
+                    updated_count += 1
+                else:
+                    copied_count += 1
+        except Exception as exc:
+            logging.warning("Failed to sync external result %s: %s", source_file, exc)
+
+    for target_file in target_root.rglob("*.json"):
+        try:
+            if target_file.resolve() not in active_targets:
+                target_file.unlink()
+                removed_count += 1
+        except Exception as exc:
+            logging.warning("Failed to remove stale imported result %s: %s", target_file, exc)
+
+    logging.info(
+        "External results sync complete for '%s': copied=%s, updated=%s, removed=%s",
+        prefix,
+        copied_count,
+        updated_count,
+        removed_count,
+    )
 
 
 def ms_to_lap_str(ms):
@@ -1327,6 +1454,8 @@ def collect_result_files():
         logging.warning("Results folder not found: %s", RESULTS_DIR)
         return files
 
+    sync_external_results_source(SUNSET_RESULTS_DIR, "sunset")
+
     now = time.time()
 
     for file_path in RESULTS_DIR.rglob("*.json"):
@@ -1946,6 +2075,9 @@ def build_snapshot(state: dict, server_status: dict):
 
 
 def run_git(args):
+    if not GIT_EXE:
+        raise FileNotFoundError("Git executable is not configured.")
+
     result = subprocess.run(
         [GIT_EXE] + args,
         cwd=str(OUTPUT_DIR),
@@ -1964,6 +2096,10 @@ def git_publish_if_needed(changed_files):
 
     if not changed_files:
         logging.info("No output changes detected. git push is not required.")
+        return
+
+    if not GIT_EXE:
+        logging.warning("Skipping git publish because Git executable was not found.")
         return
 
     logging.info("Publishing updated snapshot to Git...")
