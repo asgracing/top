@@ -92,9 +92,18 @@ COMMIT_MESSAGE_PREFIX = "ACC stats update"
 SCHEMA_VERSION = 8
 
 SERVER_PROCESS_NAME = "accServer.exe"
-SERVER_TCP_PORT = 10034
-SERVER_UDP_PORT = 10033
-SERVER_BROADCAST_PORT = 8999
+SERVER_PORT_GROUPS = {
+    "main": {
+        "tcp_port": 10040,
+        "udp_port": 10039,
+        "broadcast_port": 8999,
+    },
+    "sunset": {
+        "tcp_port": 10038,
+        "udp_port": 10037,
+        "broadcast_port": None,
+    },
+}
 
 POINTS_MAP = {
     1: 25,
@@ -1185,6 +1194,7 @@ def get_server_process_info():
         "name": SERVER_PROCESS_NAME,
         "pid": pid,
         "raw": lines[0].strip(),
+        "count": len(lines),
     }
 
 
@@ -1216,16 +1226,53 @@ def port_is_listening(port: int, protocol: str = "TCP") -> bool:
     return False
 
 
+def build_port_group_status(name: str, tcp_port: int, udp_port: int, broadcast_port=None):
+    tcp_listening = port_is_listening(tcp_port, "TCP")
+    udp_listening = port_is_listening(udp_port, "UDP")
+    broadcast_listening = bool(broadcast_port and port_is_listening(broadcast_port, "UDP"))
+    _established_lines, unique_remotes = get_established_connections_for_port(tcp_port)
+    players_online = len(unique_remotes) if tcp_listening else 0
+    server_online = tcp_listening or udp_listening or broadcast_listening
+
+    if tcp_listening:
+        status = "online"
+    elif server_online:
+        status = "online_process_only"
+    else:
+        status = "offline"
+
+    return {
+        "name": name,
+        "status": status,
+        "server_online": server_online,
+        "players_online": players_online,
+        "tcp_port": tcp_port,
+        "udp_port": udp_port,
+        "broadcast_port": broadcast_port,
+        "tcp_listening": tcp_listening,
+        "udp_listening": udp_listening,
+        "broadcast_listening": broadcast_listening,
+    }
+
+
 def build_server_status_output():
     now_str = datetime.now().isoformat(timespec="seconds")
     process_info = get_server_process_info()
-    server_online = process_info is not None
+    servers = {
+        name: build_port_group_status(
+            name,
+            ports["tcp_port"],
+            ports["udp_port"],
+            ports.get("broadcast_port"),
+        )
+        for name, ports in SERVER_PORT_GROUPS.items()
+    }
 
-    tcp_listening = port_is_listening(SERVER_TCP_PORT, "TCP")
-    udp_listening = port_is_listening(SERVER_UDP_PORT, "UDP")
-    broadcast_listening = port_is_listening(SERVER_BROADCAST_PORT, "UDP")
-    _established_lines, unique_remotes = get_established_connections_for_port(SERVER_TCP_PORT)
-    players_online = len(unique_remotes) if server_online else 0
+    server_online = any(server["server_online"] for server in servers.values())
+    players_online = sum(server["players_online"] for server in servers.values())
+    tcp_listening = any(server["tcp_listening"] for server in servers.values())
+    udp_listening = any(server["udp_listening"] for server in servers.values())
+    broadcast_listening = any(server["broadcast_listening"] for server in servers.values())
 
     if not server_online:
         status = "offline"
@@ -1242,6 +1289,11 @@ def build_server_status_output():
         "udp_listening": udp_listening,
         "broadcast_listening": broadcast_listening,
         "updated_at": now_str,
+        "server_process_name": SERVER_PROCESS_NAME,
+        "server_process_count": process_info.get("count", 0) if process_info else 0,
+        "servers": servers,
+        "main": servers.get("main"),
+        "sunset": servers.get("sunset"),
     }
 
 
