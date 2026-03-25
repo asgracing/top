@@ -46,13 +46,8 @@ body {
   min-width: max-content;
   padding-left: 100%;
   white-space: nowrap;
-  animation: ticker-marquee var(--ticker-pass-duration) linear 2;
-  animation-play-state: paused;
+  transform: translate3d(0, 0, 0);
   text-shadow: var(--ticker-shadow);
-}
-
-.ticker-overlay.is-visible .ticker-track {
-  animation-play-state: running;
 }
 
 .ticker-item,
@@ -84,7 +79,7 @@ body {
   }
 
   .ticker-track {
-    animation: none;
     padding-left: 0;
+    transform: none;
   }
 }
