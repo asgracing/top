@@ -2956,7 +2956,7 @@ body.modal-open {
   z-index: 1200;
   display: flex;
   justify-content: flex-end;
-  width: min(360px, calc(100vw - 22px));
+  width: min(320px, calc(100vw - 22px));
   opacity: 0;
   transform: translateY(14px);
   pointer-events: none;
@@ -2970,11 +2970,11 @@ body.modal-open {
 }
 
 .twitch-widget.is-expanded {
-  width: min(50vw, 820px);
+  width: min(50vw, 780px);
 }
 
 .twitch-widget.is-collapsed {
-  width: min(360px, calc(100vw - 22px));
+  width: min(320px, calc(100vw - 22px));
 }
 
 .twitch-widget-shell {
@@ -4126,7 +4126,7 @@ body.modal-open {
   .twitch-widget {
     right: 16px;
     bottom: 16px;
-    width: min(360px, calc(100vw - 32px));
+    width: min(320px, calc(100vw - 32px));
   }
 
   .twitch-widget.is-expanded {

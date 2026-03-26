@@ -97,7 +97,7 @@ let twitchWidgetState = {
   initialized: false,
   live: false,
   expanded: false,
-  dismissed: false,
+  dismissed: true,
   checking: false,
   platform: null,
   embedUrl: "",
@@ -1821,16 +1821,6 @@ async function detectYouTubeLive() {
 }
 
 async function detectActiveLiveStream() {
-  const twitchLive = await detectTwitchLive();
-  if (twitchLive) {
-    return {
-      live: true,
-      platform: "twitch",
-      embedUrl: buildTwitchPlayerUrl(),
-      openUrl: TWITCH_CHANNEL_URL
-    };
-  }
-
   const youtubeLive = await detectYouTubeLive();
   if (youtubeLive.live) return youtubeLive;
 
@@ -1925,6 +1915,11 @@ function ensureTwitchWidget() {
   if (launcherBtn) {
     launcherBtn.addEventListener("click", (event) => {
       event.preventDefault();
+      if (!twitchWidgetState.live) {
+        const targetUrl = twitchWidgetState.openUrl || TWITCH_CHANNEL_URL;
+        window.open(targetUrl, "_blank", "noopener,noreferrer");
+        return;
+      }
       twitchWidgetState.dismissed = false;
       renderTwitchWidget();
     });
@@ -1963,10 +1958,11 @@ function renderTwitchWidget() {
   root.classList.toggle("is-platform-twitch", twitchWidgetState.platform === "twitch");
 
   if (!twitchWidgetState.live) {
-      root.hidden = true;
-      root.classList.remove("is-visible", "is-expanded", "is-collapsed");
-      shellEl.hidden = false;
-      launcherEl.hidden = true;
+      root.hidden = false;
+      root.classList.add("is-visible", "is-collapsed");
+      root.classList.remove("is-expanded");
+      shellEl.hidden = true;
+      launcherEl.hidden = false;
       if (frame.getAttribute("src") !== "about:blank") frame.setAttribute("src", "about:blank");
       return;
     }
@@ -2001,7 +1997,13 @@ function detectTwitchLive() {
 
     image.onload = () => {
       window.clearTimeout(timeoutId);
-      finish(true);
+      const resolvedUrl = String(image.currentSrc || image.src || "").toLowerCase();
+      const looksOfflinePlaceholder =
+        resolvedUrl.includes("404_preview") ||
+        resolvedUrl.includes("404-processing") ||
+        resolvedUrl.includes("404_") ||
+        resolvedUrl.includes("/404");
+      finish(!looksOfflinePlaceholder);
     };
     image.onerror = () => {
       window.clearTimeout(timeoutId);
@@ -2016,6 +2018,7 @@ async function refreshTwitchWidgetState() {
   twitchWidgetState.checking = true;
 
   try {
+    const wasLive = twitchWidgetState.live;
     const previousPlatform = twitchWidgetState.platform;
     const result = await detectActiveLiveStream();
     twitchWidgetState.live = result.live;
@@ -2024,7 +2027,11 @@ async function refreshTwitchWidgetState() {
     twitchWidgetState.openUrl = result.openUrl || TWITCH_CHANNEL_URL;
     if (!result.live) {
       twitchWidgetState.expanded = false;
+      twitchWidgetState.dismissed = true;
+    }
+    if (!wasLive && result.live) {
       twitchWidgetState.dismissed = false;
+      twitchWidgetState.expanded = false;
     }
     if (previousPlatform && previousPlatform !== result.platform) {
       twitchWidgetState.dismissed = false;
