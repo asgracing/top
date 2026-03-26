@@ -1824,6 +1824,16 @@ async function detectActiveLiveStream() {
   const youtubeLive = await detectYouTubeLive();
   if (youtubeLive.live) return youtubeLive;
 
+  const twitchLive = await detectTwitchLive();
+  if (twitchLive) {
+    return {
+      live: true,
+      platform: "twitch",
+      embedUrl: buildTwitchPlayerUrl(),
+      openUrl: TWITCH_CHANNEL_URL
+    };
+  }
+
   return {
     live: false,
     platform: null,
