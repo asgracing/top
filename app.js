@@ -3,6 +3,7 @@ const IS_DRIVER_PAGE = /\/driver(?:\/|\/index\.html)?$/i.test(window.location.pa
 const IS_CARS_PAGE = /\/cars(?:\/|\/index\.html)?$/i.test(window.location.pathname);
 const IS_FUN_STATS_PAGE = /\/fun-stats(?:\/|\/index\.html)?$/i.test(window.location.pathname);
 const SITE_BASE_PATH = (IS_RACES_PAGE || IS_DRIVER_PAGE || IS_CARS_PAGE || IS_FUN_STATS_PAGE) ? "../" : "./";
+const CAR_IMAGE_BASE_PATH = `${SITE_BASE_PATH}assets/car-icons`;
 const TOP_DATA_BASE_URL = "https://asgracing.github.io/top-data";
 const HOURLY_DATA_BASE_URL = "https://asgracing.github.io/hourly-data";
 const snapshotUrl = `${TOP_DATA_BASE_URL}/snapshot.json`;
@@ -343,6 +344,8 @@ onlineNoData: "No data",
     carsSummaryTotal: "Car models",
     carsSummaryTopWinner: "Top winner",
     carsSummaryMostUsed: "Most used",
+    metaLabelRaces: "Races",
+    metaLabelWins: "Wins",
     carsTableTitle: "Cars Table",
     carsTableSubtitle: "Sorted by wins, podiums and race count.",
     carsCols: ["Car", "Races", "Wins", "Win Rate", "Podiums", "Drivers", "Avg Finish", "Fastest Laps", "Best Lap"],
@@ -553,6 +556,8 @@ onlineNoData: "Нет данных",
     carsSummaryTotal: "Моделей машин",
     carsSummaryTopWinner: "Лидер по победам",
     carsSummaryMostUsed: "Самая популярная",
+    metaLabelRaces: "Гонки",
+    metaLabelWins: "Победы",
     carsTableTitle: "Таблица машин",
     carsTableSubtitle: "Сортировка по клику на заголовки столбцов.",
     carsCols: ["Машина", "Гонки", "Победы", "Винрейт", "Подиумы", "Пилоты", "Ср. финиш", "Лучшие круги", "Бестлап"],
@@ -3513,6 +3518,7 @@ function renderTop3Compact(data) {
           ${renderTrendBadge(row.rank_change, "championship_rank", { compact: true })}
         </div>
         <h3 class="pilot-name">${renderDriverLink(row.driver, row.public_id, "driver-link driver-link-heading", row.player_id)}</h3>
+        ${renderCarImage(row, { className: "car-thumb car-thumb-inline pilot-topline-car", alt: row.best_lap_car_name || row.car_name || "" })}
       </div>
       <div class="muted pilot-lap-line">
         <span>${escapeHtml(t("metaLabels").bestLap)}: ${escapeHtml(row.best_lap || "-")}</span>
@@ -3750,7 +3756,7 @@ function renderBestLapsTablePage() {
         </div>
       </td>
       <td>${renderStatValueWithTrend(escapeHtml(row.best_lap ?? "-"), row.latest_changes?.best_lap_ms, "best_lap_ms")}</td>
-      <td>${escapeHtml(row.car_name ?? "-")}</td>
+      <td><span class="car-label-inline">${renderCarImage(row, { className: "car-thumb car-thumb-inline", alt: row.car_name || "" })}<span>${escapeHtml(row.car_name ?? "-")}</span></span></td>
       <td>${sessionLabel(row.session_type)}</td>
       <td>${escapeHtml(row.updated_at ?? "-")}</td>
     </tr>
@@ -4155,6 +4161,67 @@ function getResultCarName(row) {
   return "-";
 }
 
+function normalizeCarModelName(value) {
+  return String(value || "")
+    .normalize("NFKD")
+    .replace(/[\u0300-\u036f]/g, "")
+    .replace(/[^a-z0-9]+/gi, "")
+    .toLowerCase();
+}
+
+function getCarModelId(row) {
+  if (!row || typeof row !== "object") return null;
+
+  const candidates = [
+    row.car_model,
+    row.car_model_id,
+    row.best_lap_car_model,
+    row.best_lap_car_model_id,
+    row.carModel,
+    row.carModelId
+  ];
+
+  for (const candidate of candidates) {
+    const numeric = Number(candidate);
+    if (Number.isInteger(numeric) && numeric >= 0 && carModelNames[numeric]) return numeric;
+  }
+
+  const nameCandidates = [
+    row.car_name,
+    row.best_lap_car_name,
+    row.carName,
+    row.bestLapCarName
+  ]
+    .map(normalizeCarModelName)
+    .filter(Boolean);
+
+  for (const [modelId, modelName] of Object.entries(carModelNames)) {
+    if (nameCandidates.includes(normalizeCarModelName(modelName))) return Number(modelId);
+  }
+
+  return null;
+}
+
+function getCarImagePathByModelId(modelId, extension = "png") {
+  if (!Number.isInteger(modelId) || modelId < 0) return "";
+  return `${CAR_IMAGE_BASE_PATH}/${modelId}.${extension}`;
+}
+
+function renderCarImage(row, options = {}) {
+  const {
+    className = "car-thumb",
+    alt = "",
+    extension = "png"
+  } = options;
+  const modelId = getCarModelId(row);
+  if (modelId == null) return "";
+
+  const imagePath = getCarImagePathByModelId(modelId, extension);
+  const imageAlt = alt || getResultCarName(row);
+
+  return `<img class="${escapeHtml(className)}" src="${escapeHtml(imagePath)}" alt="${escapeHtml(imageAlt)}" loading="lazy" decoding="async" onerror="this.remove()">`;
+}
+
 function getQueryParam(name) {
   return new URLSearchParams(window.location.search).get(name);
 }
@@ -4480,7 +4547,12 @@ function renderCarsSummary() {
   const totalEl = document.getElementById("cars-total-count");
   const winnerEl = document.getElementById("cars-top-winner");
   const usedEl = document.getElementById("cars-most-used");
-  if (!totalEl || !winnerEl || !usedEl) return;
+  const spotlightEl = document.getElementById("cars-hero-spotlight");
+  const spotlightMediaEl = document.getElementById("cars-hero-spotlight-media");
+  const spotlightNameEl = document.getElementById("cars-hero-spotlight-name");
+  const spotlightRacesEl = document.getElementById("cars-hero-spotlight-races");
+  const spotlightWinsEl = document.getElementById("cars-hero-spotlight-wins");
+  if (!totalEl || !winnerEl) return;
 
   const processedCars = getProcessedCars();
   totalEl.textContent = processedCars.length || "—";
@@ -4492,7 +4564,28 @@ function renderCarsSummary() {
   })[0] || null;
 
   winnerEl.innerHTML = topWinner ? renderCarLink(topWinner.car_name, "driver-link") : "—";
-  usedEl.innerHTML = mostUsed ? renderCarLink(mostUsed.car_name, "driver-link") : "—";
+  if (usedEl) {
+    usedEl.innerHTML = mostUsed ? renderCarLink(mostUsed.car_name, "driver-link") : "—";
+  }
+
+  if (spotlightEl && spotlightMediaEl && spotlightNameEl && spotlightRacesEl && spotlightWinsEl) {
+    if (mostUsed) {
+      spotlightEl.hidden = false;
+      spotlightMediaEl.innerHTML = renderCarImage(
+        mostUsed,
+        { className: "cars-hero-spotlight-image", alt: mostUsed.car_name || "" }
+      );
+      spotlightNameEl.innerHTML = renderCarLink(mostUsed.car_name || "—", "driver-link");
+      spotlightRacesEl.textContent = String(mostUsed.races ?? 0);
+      spotlightWinsEl.textContent = String(mostUsed.wins ?? 0);
+    } else {
+      spotlightEl.hidden = true;
+      spotlightMediaEl.innerHTML = "";
+      spotlightNameEl.textContent = "—";
+      spotlightRacesEl.textContent = "—";
+      spotlightWinsEl.textContent = "—";
+    }
+  }
 }
 
 function renderCarsPage() {
@@ -4520,7 +4613,7 @@ function renderCarsTable() {
 
   const rows = rowsData.map(row => `
     <tr>
-      <td>${renderCarLink(row.car_name || "—", "driver-link")}</td>
+      <td><span class="car-label-inline">${renderCarImage(row, { className: "car-thumb car-thumb-inline", alt: row.car_name || "" })}${renderCarLink(row.car_name || "—", "driver-link")}</span></td>
       <td>${escapeHtml(row.races ?? 0)}</td>
       <td>${escapeHtml(row.wins ?? 0)}</td>
       <td>${escapeHtml(formatPercent(row.win_rate))}</td>

@@ -1133,15 +1133,120 @@ tr.is-interactive-row:focus-visible {
   display: block;
 }
 
+.cars-hero-card {
+  display: grid;
+  grid-template-columns: minmax(0, 1.75fr) minmax(240px, 0.8fr);
+  gap: 18px;
+  align-items: start;
+}
+
+.cars-hero-copy-card {
+  display: grid;
+  padding: 18px 20px;
+  border: 1px solid var(--line);
+  border-radius: 22px;
+  background:
+    linear-gradient(180deg, rgba(255, 255, 255, 0.08), rgba(255, 255, 255, 0.03)),
+    rgba(15, 19, 26, 0.44);
+  backdrop-filter: blur(14px);
+  box-shadow: 0 18px 40px rgba(8, 11, 17, 0.18);
+}
+
+.cars-hero-card .page-hero-copy {
+  display: grid;
+  gap: 12px;
+  align-content: start;
+}
+
+.cars-hero-card .page-hero-subtitle {
+  max-width: 760px;
+}
+
 .page-hero-copy .hero-subtitle {
   margin-bottom: 0;
 }
 
 .page-hero-stats {
   display: grid;
-  grid-template-columns: repeat(3, minmax(0, 1fr));
+  grid-template-columns: repeat(2, minmax(0, 1fr));
   gap: 10px;
   margin-top: 12px;
+}
+
+.cars-hero-spotlight {
+  display: grid;
+  gap: 12px;
+  min-height: 100%;
+  margin-top: 0;
+  padding: 16px 18px;
+  align-self: start;
+}
+
+.cars-hero-spotlight-media {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 132px;
+  padding: 0;
+  border: 0;
+  border-radius: 0;
+  background: transparent;
+  box-shadow: none;
+}
+
+.cars-hero-spotlight-image {
+  width: min(100%, 240px);
+  height: auto;
+  max-height: 132px;
+  object-fit: contain;
+}
+
+.cars-hero-spotlight-name {
+  font-size: 1.08rem;
+  font-weight: 800;
+  line-height: 1.2;
+}
+
+.cars-hero-spotlight-meta {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 10px;
+}
+
+.cars-hero-spotlight-stat {
+  display: grid;
+  gap: 4px;
+  padding: 10px 12px;
+  border: 1px solid var(--line);
+  border-radius: 14px;
+  background: rgba(255, 255, 255, 0.04);
+}
+
+.cars-hero-spotlight-stat-label {
+  color: var(--muted);
+  font-size: 0.75rem;
+  font-weight: 700;
+  line-height: 1.1;
+}
+
+.cars-hero-spotlight-stat-value {
+  color: var(--text);
+  font-size: 1.12rem;
+  font-weight: 900;
+  line-height: 1;
+}
+
+@media (max-width: 900px) {
+  .cars-hero-card {
+    grid-template-columns: 1fr;
+  }
+}
+
+@media (max-width: 640px) {
+  .page-hero-stats,
+  .cars-hero-spotlight-meta {
+    grid-template-columns: 1fr;
+  }
 }
 
 .driver-hero-card {
@@ -1505,6 +1610,33 @@ tr.is-interactive-row:focus-visible {
   color: #ff9a62;
 }
 
+.car-thumb {
+  display: block;
+  width: 34px;
+  height: 20px;
+  object-fit: contain;
+  object-position: center;
+  flex: 0 0 auto;
+}
+
+.car-thumb-inline {
+  width: 30px;
+  height: 18px;
+}
+
+.car-label-inline {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  min-width: 0;
+  vertical-align: middle;
+}
+
+.car-label-inline > span,
+.car-label-inline > a {
+  min-width: 0;
+}
+
 .table-tools {
   display: flex;
   align-items: center;
@@ -1701,6 +1833,13 @@ tr.is-interactive-row:focus-visible {
   font-weight: 800;
   line-height: 1.1;
   letter-spacing: -0.02em;
+}
+
+.pilot-topline-car {
+  margin-left: auto;
+  flex: 0 0 auto;
+  width: 60px;
+  height: 36px;
 }
 
 .pilot-card .muted {

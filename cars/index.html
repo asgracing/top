@@ -139,29 +139,42 @@
 
   <div class="container">
     <section class="hero">
-      <div class="hero-card hero-card-page">
-        <div class="page-hero-copy">
-          <div class="eyebrow" data-i18n="carsEyebrow">Car stats</div>
-          <h1 data-i18n="carsPageTitle">Cars</h1>
-          <p class="hero-subtitle page-hero-subtitle" data-i18n="carsPageSubtitle">
-            Performance overview by car model based on recorded race results.
-          </p>
+      <div class="hero-card hero-card-page cars-hero-card">
+        <div class="cars-hero-copy-card">
+          <div class="page-hero-copy">
+            <div class="eyebrow" data-i18n="carsEyebrow">Car stats</div>
+            <h1 data-i18n="carsPageTitle">Cars</h1>
+            <p class="hero-subtitle page-hero-subtitle" data-i18n="carsPageSubtitle">
+              Performance overview by car model based on recorded race results.
+            </p>
 
-          <div class="page-hero-stats">
-            <div class="mini-stat">
-              <div class="mini-label" data-i18n="carsSummaryTotal">Car models</div>
-              <div class="mini-value" id="cars-total-count">-</div>
-            </div>
-            <div class="mini-stat">
-              <div class="mini-label" data-i18n="carsSummaryTopWinner">Top winner</div>
-              <div class="mini-value" id="cars-top-winner">-</div>
-            </div>
-            <div class="mini-stat">
-              <div class="mini-label" data-i18n="carsSummaryMostUsed">Most used</div>
-              <div class="mini-value" id="cars-most-used">-</div>
+            <div class="page-hero-stats">
+              <div class="mini-stat">
+                <div class="mini-label" data-i18n="carsSummaryTotal">Car models</div>
+                <div class="mini-value" id="cars-total-count">-</div>
+              </div>
+              <div class="mini-stat">
+                <div class="mini-label" data-i18n="carsSummaryTopWinner">Top winner</div>
+                <div class="mini-value" id="cars-top-winner">-</div>
+              </div>
             </div>
           </div>
         </div>
+        <aside class="cars-hero-spotlight mini-stat" id="cars-hero-spotlight">
+          <div class="mini-label" data-i18n="carsSummaryMostUsed">Most used</div>
+          <div class="cars-hero-spotlight-media" id="cars-hero-spotlight-media" aria-hidden="true"></div>
+          <div class="cars-hero-spotlight-name" id="cars-hero-spotlight-name">-</div>
+          <div class="cars-hero-spotlight-meta">
+            <div class="cars-hero-spotlight-stat">
+              <span class="cars-hero-spotlight-stat-label" data-i18n="metaLabelRaces">Races</span>
+              <span class="cars-hero-spotlight-stat-value" id="cars-hero-spotlight-races">-</span>
+            </div>
+            <div class="cars-hero-spotlight-stat">
+              <span class="cars-hero-spotlight-stat-label" data-i18n="metaLabelWins">Wins</span>
+              <span class="cars-hero-spotlight-stat-value" id="cars-hero-spotlight-wins">-</span>
+            </div>
+          </div>
+        </aside>
       </div>
     </section>
 
