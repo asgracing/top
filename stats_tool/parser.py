@@ -1,5 +1,6 @@
 import json
 import logging
+import math
 import os
 import re
 import shutil
@@ -895,10 +896,15 @@ def build_rank_map(rows: list):
 
 
 def normalize_points_value(value):
-    rounded = round(value, 2)
-    if isinstance(rounded, float) and rounded.is_integer():
-        return int(rounded)
-    return rounded
+    if value is None:
+        return 0
+
+    floor_value = math.floor(value)
+    fraction = value - floor_value
+
+    if fraction >= 0.6:
+        return floor_value + 1
+    return floor_value
 
 
 def resolve_max_points_for_participants(participant_count: int):
