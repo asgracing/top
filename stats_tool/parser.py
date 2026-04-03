@@ -89,7 +89,7 @@ GIT_EXE = resolve_git_executable()
 
 AUTO_GIT_PUSH = True
 COMMIT_MESSAGE_PREFIX = "ACC stats update"
-SCHEMA_VERSION = 8
+SCHEMA_VERSION = 9
 
 SERVER_PROCESS_NAME = "accServer.exe"
 SERVER_PORT_GROUPS = {
@@ -121,6 +121,7 @@ POINTS_MAP = {
 BEST_LAP_BONUS = 1
 INVALID_LAP_VALUES = {0, -1, 2147483647, 4294967295}
 MIN_FILE_AGE_SECONDS = 10
+SCORING_BASE_MAX_POINTS = POINTS_MAP[1]
 
 COMPARISON_METRIC_DIRECTIONS = {
     "championship_rank": "lower",
@@ -893,6 +894,43 @@ def build_rank_map(rows: list):
     return rank_map
 
 
+def normalize_points_value(value):
+    rounded = round(value, 2)
+    if isinstance(rounded, float) and rounded.is_integer():
+        return int(rounded)
+    return rounded
+
+
+def resolve_max_points_for_participants(participant_count: int):
+    if participant_count >= 25:
+        return 25
+    if participant_count >= 20:
+        return 20
+    if participant_count >= 15:
+        return 15
+    if participant_count >= 10:
+        return 10
+    if participant_count >= 5:
+        return 5
+    return max(participant_count, 0)
+
+
+def calculate_scaled_points(base_points, participant_count: int):
+    if base_points <= 0 or participant_count <= 0:
+        return 0
+
+    max_points = resolve_max_points_for_participants(participant_count)
+    scale = max_points / SCORING_BASE_MAX_POINTS
+    return normalize_points_value(base_points * scale)
+
+
+def calculate_race_points(position: int, participant_count: int, has_best_lap: bool = False):
+    points = calculate_scaled_points(POINTS_MAP.get(position, 0), participant_count)
+    if has_best_lap:
+        points = normalize_points_value(points + BEST_LAP_BONUS)
+    return points
+
+
 def build_comparison_snapshot(state: dict):
     drivers = state.get("drivers", {})
     safety = state.get("safety", {})
@@ -1043,6 +1081,7 @@ def build_race_history_entry(
     data: dict,
     race_order: list,
     normalized_lines: list,
+    participant_count: int,
     best_lap_driver_id,
     qualifying_snapshot,
     file_modified: str,
@@ -1081,10 +1120,8 @@ def build_race_history_entry(
             qualifying_snapshot,
         )
         positions_delta = qualifying_position - position if isinstance(qualifying_position, int) else None
-        points = POINTS_MAP.get(position, 0) if counted_for_stats else 0
         has_best_lap = best_lap_driver_id == item["player_id"]
-        if has_best_lap and counted_for_stats:
-            points += BEST_LAP_BONUS
+        points = calculate_race_points(position, participant_count, has_best_lap) if counted_for_stats else 0
 
         if position == 1:
             winner_name = item["display_name"]
@@ -1415,6 +1452,7 @@ def process_file(path: Path, state: dict):
         data=data,
         race_order=race_order,
         normalized_lines=normalized_lines,
+        participant_count=participant_count,
         best_lap_driver_id=best_lap_driver_id,
         qualifying_snapshot=qualifying_snapshot,
         file_modified=file_modified,
@@ -1446,7 +1484,11 @@ def process_file(path: Path, state: dict):
             driver_stats["average_finish_sum"] += position
             driver_stats["average_finish"] = round(driver_stats["average_finish_sum"] / driver_stats["races"], 2)
 
-            gained_points = POINTS_MAP.get(position, 0)
+            gained_points = calculate_race_points(
+                position,
+                participant_count,
+                has_best_lap=best_lap_driver_id == player_id,
+            )
             if position == 1:
                 driver_stats["wins"] += 1
             if position <= 3:
@@ -1454,9 +1496,6 @@ def process_file(path: Path, state: dict):
 
             driver_stats["points"] += gained_points
             update_average_positions_delta(driver_stats, positions_delta)
-            if best_lap_driver_id == player_id:
-                driver_stats["points"] += BEST_LAP_BONUS
-                gained_points += BEST_LAP_BONUS
 
             daily_stats["driver_races_today"][player_id] = daily_stats["driver_races_today"].get(player_id, 0) + 1
             daily_stats["points_earned_today"] += gained_points
@@ -2223,6 +2262,10 @@ def discover_processing_plan(state: dict):
 
 
 def rebuild_all():
+    if not RESULTS_DIR.exists():
+        logging.error("Results folder not found. Aborting rebuild to avoid publishing empty data: %s", RESULTS_DIR)
+        return
+
     state = load_state()
     plan = discover_processing_plan(state)
     processing_mode = plan["mode"]
