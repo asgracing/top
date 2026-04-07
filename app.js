@@ -22,6 +22,7 @@ const TWITCH_LIVE_PREVIEW_URL = `https://static-cdn.jtvnw.net/previews-ttv/live_
 const YOUTUBE_CHANNEL_HANDLE = "@ASGRacingACC";
 const YOUTUBE_CHANNEL_URL = "https://www.youtube.com/@ASGRacingACC";
 const YOUTUBE_LIVE_URL = `${YOUTUBE_CHANNEL_URL}/live`;
+const YOUTUBE_LIVE_AUTO_DETECT = false;
 const TWITCH_WIDGET_CHECK_INTERVAL_MS = 120000;
 const TOP_GUIDE_STORAGE_KEY = "asgTopGuideSeen";
 const TOP_GUIDE_MEDIA_QUERY = "(min-width: 1280px)";
@@ -1897,8 +1898,10 @@ async function detectYouTubeLive() {
 }
 
 async function detectActiveLiveStream() {
-  const youtubeLive = await detectYouTubeLive();
-  if (youtubeLive.live) return youtubeLive;
+  if (YOUTUBE_LIVE_AUTO_DETECT) {
+    const youtubeLive = await detectYouTubeLive();
+    if (youtubeLive.live) return youtubeLive;
+  }
 
   const twitchLive = await detectTwitchLive();
   if (twitchLive) {
