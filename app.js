@@ -163,6 +163,10 @@ onlineNoData: "No data",
     hourlyVotesZero: "No registrations yet",
     hourlyVotesOne: "{value} registered driver",
     hourlyVotesMany: "{value} registered drivers",
+    hourlyPromoTitle: "x5 points for the race!!!",
+    hourlyPromoNote: "The hourly event hits the championship harder.",
+    hourlyLastWinnerLabel: "Last hourly winner",
+    hourlyLastWinnerEmpty: "No completed hourly race yet",
     todayStatsBtn: "Today Stats",
     todayStatsEyebrow: "Daily overview",
     todayStatsTitle: "Today's Statistics",
@@ -255,13 +259,13 @@ onlineNoData: "No data",
     aboutP3:
       "Statistics are generated automatically from <strong>ACC Dedicated Server</strong> result files. After each race the data is recalculated and published on the website.",
     pointsTitle: "How points are calculated",
-    pointsP1: "Points depend on how many drivers finished in the race classification:",
+    pointsP1: "Race points depend on how many drivers are classified in that race:",
     pointsList1: "25+ drivers - base GT scale 25/18/15/12/10/8/6/4/2/1",
-    pointsList2: "20-24 drivers - the whole scale is reduced so the winner gets 20 points",
-    pointsList3: "15-19 drivers - the whole scale is reduced so the winner gets 15 points",
-    pointsList4: "10-14 / 5-9 / under 5 drivers - the winner gets 10 / 5 / driver-count points",
+    pointsList2: "20-24 / 15-19 / 10-14 drivers - the same scale is reduced so the winner gets 20 / 15 / 10 points",
+    pointsList3: "5-9 drivers - the winner gets 5 points, with the rest of the scale reduced proportionally",
+    pointsList4: "1-4 drivers - the winner gets points equal to the number of classified drivers",
     pointsP2:
-      "Drivers also receive <strong>1 additional point</strong> for the fastest lap in race.",
+      "All scaled values are rounded to whole points: 0.1-0.5 rounds down, 0.6-0.9 rounds up. The fastest lap always gives <strong>+1 point</strong>.",
     bestLapsInfoTitle: "Best laps",
     bestLapsInfoP1:
       "The <strong>Best Laps</strong> table contains the fastest lap times recorded both in qualifying and in race sessions. This makes it easy to compare the outright pace of the drivers.",
@@ -517,6 +521,10 @@ onlineNoData: "Нет данных",
     hourlyVotesZero: "Нет регистраций",
     hourlyVotesOne: "{value} участник",
     hourlyVotesMany: "{value} участников",
+    hourlyPromoTitle: "x5 очки за гонку!!!",
+    hourlyPromoNote: "Часовой заезд бьет по чемпионату сильнее.",
+    hourlyLastWinnerLabel: "Последний победитель",
+    hourlyLastWinnerEmpty: "Пока нет завершенной часовой гонки",
     todayStatsBtn: "Статистика за сегодня",
     todayStatsEyebrow: "Сводка дня",
     todayStatsTitle: "Статистика за сегодня",
@@ -668,13 +676,13 @@ onlineNoData: "Нет данных",
     aboutP3:
       "Статистика обновляется автоматически на основе файлов результатов <strong>ACC Dedicated Server</strong>. После каждой гонки данные пересчитываются и публикуются на сайте.",
     pointsTitle: "Как считается рейтинг",
-    pointsP1: "Очки зависят от числа пилотов в зачёте конкретной гонки:",
+    pointsP1: "Очки за гонку зависят от числа пилотов, попавших в классификацию этой гонки:",
     pointsList1: "25+ пилотов - базовая GT-шкала 25/18/15/12/10/8/6/4/2/1",
-    pointsList2: "20-24 пилота - вся шкала уменьшается так, чтобы победитель получил 20 очков",
-    pointsList3: "15-19 пилотов - вся шкала уменьшается так, чтобы победитель получил 15 очков",
-    pointsList4: "10-14 / 5-9 / меньше 5 пилотов - победитель получает 10 / 5 / число пилотов очков",
+    pointsList2: "20-24 / 15-19 / 10-14 пилотов - та же шкала уменьшается так, чтобы победитель получил 20 / 15 / 10 очков",
+    pointsList3: "5-9 пилотов - победитель получает 5 очков, остальные места уменьшаются пропорционально",
+    pointsList4: "1-4 пилота - победитель получает число очков, равное числу классифицированных пилотов",
     pointsP2:
-      "Также пилот получает <strong>1 дополнительное очко</strong> за лучший круг в гонке.",
+      "Все дробные значения округляются до целых: 0.1-0.5 вниз, 0.6-0.9 вверх. За лучший круг пилот всегда получает <strong>+1 очко</strong>.",
     bestLapsInfoTitle: "Лучшие круги",
     bestLapsInfoP1:
       "Таблица <strong>Best Laps</strong> содержит лучшие времена круга, показанные как в квалификации, так и в гонках. Это позволяет сравнить абсолютную скорость пилотов.",
@@ -841,7 +849,7 @@ Object.assign(translations.en, {
   todayRacesNote: "Races today: {value}",
   todayPointsNote: "Points today: {value}",
   heroFunnelTitle: "Monza 24/7, daily events, beginner-friendly help",
-  heroFunnelNote: "Telegram and Discord are the most convenient ways to stay in touch with the community. Here you will find reminders, results, voting, and live sim racing conversations.",
+  heroFunnelNote: "<a class=\"hero-funnel-link hero-funnel-link-telegram\" href=\"https://t.me/+JUymrENgddcyMTdi\" target=\"_blank\" rel=\"noopener noreferrer\">Telegram</a> and <a class=\"hero-funnel-link hero-funnel-link-discord\" href=\"https://discord.gg/cEPFHXXtTC\" target=\"_blank\" rel=\"noopener noreferrer\">Discord</a> are the most convenient ways to stay in touch with the community. Here you will find reminders, results, voting, and live sim racing conversations.",
   joinTelegramBtn: "Join Telegram",
   joinDiscordBtn: "Join Discord",
   heroOpenHourlyBtn: "Next hourly event",
@@ -884,7 +892,7 @@ Object.assign(translations.ru, {
   todayRacesNote: "Гонок за сегодня: {value}",
   todayPointsNote: "Очков за сегодня: {value}",
   heroFunnelTitle: "Monza 24/7, ежедневные ивенты, помощь новичкам",
-  heroFunnelNote: "Telegram и Discord - самые удобные способы общения в комьюнити. Здесь ты найдешь: напоминания, результаты, голосования, живое общение на симрейсинговые темы.",
+  heroFunnelNote: "<a class=\"hero-funnel-link hero-funnel-link-telegram\" href=\"https://t.me/+JUymrENgddcyMTdi\" target=\"_blank\" rel=\"noopener noreferrer\">Telegram</a> и <a class=\"hero-funnel-link hero-funnel-link-discord\" href=\"https://discord.gg/cEPFHXXtTC\" target=\"_blank\" rel=\"noopener noreferrer\">Discord</a> - самые удобные способы общения в комьюнити. Здесь ты найдешь: напоминания, результаты, голосования, живое общение на симрейсинговые темы.",
   joinTelegramBtn: "Вступить в Telegram",
   joinDiscordBtn: "Вступить в Discord",
   heroOpenHourlyBtn: "Ближайшая часовая гонка",
@@ -1594,6 +1602,69 @@ function renderHourlyHeroCard() {
     });
     voteBtn.dataset.bound = "true";
   }
+}
+
+function isHourlyRace(race) {
+  const sourceText = [
+    race?.result_source,
+    race?.race_type,
+    race?.source_file,
+    race?.race_id,
+    race?.server_name,
+    race?.meta_data
+  ]
+    .filter(Boolean)
+    .join(" ")
+    .toLowerCase();
+
+  return sourceText.includes("hourly");
+}
+
+function getLatestHourlyRace() {
+  return (Array.isArray(racesData) ? racesData : [])
+    .filter(isHourlyRace)
+    .sort((a, b) => new Date(b?.finished_at || b?.date || 0).getTime() - new Date(a?.finished_at || a?.date || 0).getTime())[0] || null;
+}
+
+function getRaceWinnerResult(race) {
+  const results = Array.isArray(race?.results) ? race.results : [];
+  return results.find(row => row?.position === 1)
+    || results.find(row => row?.public_id && row.public_id === race?.winner_public_id)
+    || results[0]
+    || null;
+}
+
+function renderHourlyWinnerCard() {
+  const cardEl = document.getElementById("hero-hourly-winner-card");
+  const nameEl = document.getElementById("hero-hourly-winner-name");
+  const metaEl = document.getElementById("hero-hourly-winner-meta");
+  const mediaEl = document.getElementById("hero-hourly-winner-media");
+  if (!cardEl || !nameEl || !metaEl || !mediaEl) return;
+
+  const race = getLatestHourlyRace();
+  if (!race) {
+    cardEl.classList.add("is-empty");
+    nameEl.textContent = t("hourlyLastWinnerEmpty");
+    metaEl.textContent = "—";
+    mediaEl.innerHTML = "";
+    return;
+  }
+
+  const winnerResult = getRaceWinnerResult(race);
+  const winnerName = race.winner || winnerResult?.driver || "—";
+  const winnerPublicId = race.winner_public_id || winnerResult?.public_id || null;
+  const winnerPlayerId = winnerResult?.player_id || null;
+  const carName = winnerResult?.car_name || winnerResult?.car_name_raw || "";
+  const trackName = humanizeTrackName(race.track || race.track_name || "—");
+  const raceDate = formatDateTimeLocal(race.finished_at || race.date, currentLang);
+
+  cardEl.classList.remove("is-empty");
+  nameEl.innerHTML = renderDriverLink(winnerName, winnerPublicId, "driver-link driver-link-heading", winnerPlayerId);
+  metaEl.textContent = [trackName, raceDate, carName].filter(Boolean).join(" · ");
+  mediaEl.innerHTML = renderCarImage(
+    winnerResult || {},
+    { className: "hero-hourly-winner-car", alt: carName || winnerName }
+  );
 }
 
 function normalizeHourlyEventId(value) {
@@ -5462,6 +5533,7 @@ function rerenderUI() {
   renderDriverPreviewModal();
   renderHourlyHeroModal();
   renderHourlyHeroCard();
+  renderHourlyWinnerCard();
   renderOnlineWidget();
   applyRevealAnimations();
 }

@@ -143,48 +143,117 @@
       <div class="hero-card">
         
 <div class="hero-grid">
-  <div class="hero-copy">
-    <h1 data-i18n="heroTitle">🏁 ASG Racing League</h1>
+  <div class="hero-main-column">
+    <div class="hero-copy">
+      <h1 data-i18n="heroTitle">🏁 ASG Racing League</h1>
 
-    <div class="hero-funnel-card">
-      <div class="hero-funnel-copy">
-        <div class="hero-funnel-title" data-i18n="heroFunnelTitle">Залетай на сервер, лови ближайшую гонку и оставайся в движухе</div>
-        <p class="hero-funnel-note" data-i18n="heroFunnelNote">
-          Telegram — самый быстрый способ получать сборы, напоминания, результаты, голосования и все движение комьюнити.
-        </p>
-      </div>
+      <div class="hero-funnel-card">
+        <div class="hero-funnel-copy">
+          <div class="hero-funnel-title" data-i18n="heroFunnelTitle">Залетай на сервер, лови ближайшую гонку и оставайся в движухе</div>
+          <p class="hero-funnel-note" data-i18n="heroFunnelNote">
+            <a class="hero-funnel-link hero-funnel-link-telegram" href="https://t.me/+JUymrENgddcyMTdi" target="_blank" rel="noopener noreferrer">Telegram</a> и <a class="hero-funnel-link hero-funnel-link-discord" href="https://discord.gg/cEPFHXXtTC" target="_blank" rel="noopener noreferrer">Discord</a> - самые удобные способы общения в комьюнити. Здесь ты найдешь: напоминания, результаты, голосования, живое общение на симрейсинговые темы.
+          </p>
+        </div>
 
-      <div class="hero-funnel-actions">
-        <a
-          class="btn btn-primary hero-cta-primary"
-          id="hero-telegram-btn"
-          href="https://t.me/+JUymrENgddcyMTdi"
-          target="_blank"
-          rel="noopener noreferrer"
-          data-i18n="joinTelegramBtn"
-        >
-          Вступить в Telegram
-        </a>
-        <a
-          class="btn btn-secondary hero-cta-secondary"
-          id="hero-discord-btn"
-          href="https://discord.gg/cEPFHXXtTC"
-          target="_blank"
-          rel="noopener noreferrer"
-          data-i18n="joinDiscordBtn"
-        >
-          Вступить в Discord
-        </a>
-        <a
-          class="btn btn-secondary hero-cta-secondary"
-          id="hero-hourly-link"
-          href="https://asgracing.github.io/hourly/"
-          data-i18n="heroOpenHourlyBtn"
-        >
-          Ближайшая часовая гонка
-        </a>
       </div>
     </div>
+
+    <div class="hero-actions-row">
+      <div class="hero-actions hero-actions-stacked-mobile">
+        <div class="hero-primary-actions">
+          <button
+            class="btn btn-today-stats"
+            id="today-stats-btn"
+            type="button"
+            data-i18n="todayStatsBtn"
+          >
+            Today Stats
+          </button>
+
+          <a
+            class="btn btn-last-races"
+            href="./races/"
+            data-i18n="lastRacesBtn"
+          >
+            Last Races
+          </a>
+        </div>
+
+        <button
+          class="btn btn-driver-day"
+          id="driver-of-day-btn"
+          type="button"
+        >
+          Driver of the day: —
+        </button>
+
+        <div
+          class="hero-online-card"
+          id="hero-online-card"
+          role="button"
+          tabindex="0"
+          aria-haspopup="dialog"
+          aria-controls="online-activity-modal"
+        >
+          <div class="hero-online-head">
+            <div class="hero-online-title" data-i18n="onlineTitle">Unique players</div>
+            <div class="hero-online-range" id="online-range">—</div>
+          </div>
+
+          <div class="hero-online-chart-wrap">
+            <div class="hero-online-chart" id="online-chart">
+              <div class="hero-online-empty" data-i18n="onlineNoData">No data</div>
+            </div>
+
+            <div class="hero-online-scale" id="online-scale">
+              <span>0</span>
+            </div>
+          </div>
+        </div>
+
+        <div class="hero-side hero-side-compact">
+          <div class="mini-stat mini-stat-bestlap">
+            <div class="mini-label" data-i18n="bestLapHighlightLabel">Best lap record</div>
+            <div class="mini-value best-lap-value" id="best-lap-highlight">—</div>
+            <div class="mini-note" id="best-lap-note">—</div>
+          </div>
+
+          <div class="hero-stats-row">
+            <div class="mini-stat mini-stat-compact">
+              <div class="mini-label" data-i18n="serversLabel">Servers</div>
+              <div class="mini-value server-status-wrap server-status-wrap-total">
+                <span class="server-total-label" id="serverStatusValue" data-i18n="serverTotalPlayersLabel">Total players</span>
+                <span class="server-players" id="serverPlayersValue">—</span>
+              </div>
+            </div>
+
+            <div class="mini-stat mini-stat-compact">
+              <div class="mini-label" data-i18n="driversCountLabel">Drivers in leaderboard</div>
+              <div class="mini-value" id="drivers-count">—</div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="hero-top3-panel">
+      <div id="top3-content" class="cards-top3 cards-top3-hero">
+        <div class="loading" data-i18n="loading">Loading...</div>
+      </div>
+    </div>
+  </div>
+
+  <div class="hero-hourly-promo">
+    <a class="hero-hourly-promo-title pulse-attention" href="https://asgracing.github.io/hourly/" data-i18n="hourlyPromoTitle">x5 points for the race!!!</a>
+    <div class="hero-hourly-promo-note" data-i18n="hourlyPromoNote">The hourly event hits the championship harder.</div>
+    <article class="hero-hourly-winner-card" id="hero-hourly-winner-card">
+      <div class="hero-hourly-winner-copy">
+        <div class="hero-hourly-winner-label" data-i18n="hourlyLastWinnerLabel">Last hourly winner</div>
+        <div class="hero-hourly-winner-name" id="hero-hourly-winner-name">—</div>
+        <div class="hero-hourly-winner-meta" id="hero-hourly-winner-meta">—</div>
+      </div>
+      <div class="hero-hourly-winner-media" id="hero-hourly-winner-media" aria-hidden="true"></div>
+    </article>
   </div>
 
   <aside
@@ -235,84 +304,8 @@
     </div>
   </aside>
 
-  <div class="hero-actions-row">
-    <div class="hero-actions hero-actions-stacked-mobile">
-      <div class="hero-primary-actions">
-        <button
-          class="btn btn-today-stats"
-          id="today-stats-btn"
-          type="button"
-          data-i18n="todayStatsBtn"
-        >
-          Today Stats
-        </button>
-
-        <a
-          class="btn btn-last-races"
-          href="./races/"
-          data-i18n="lastRacesBtn"
-        >
-          Last Races
-        </a>
-      </div>
-
-      <button
-        class="btn btn-driver-day"
-        id="driver-of-day-btn"
-        type="button"
-      >
-        Driver of the day: —
-      </button>
-    </div>
-
-    <div
-      class="hero-online-card"
-      id="hero-online-card"
-      role="button"
-      tabindex="0"
-      aria-haspopup="dialog"
-      aria-controls="online-activity-modal"
-    >
-      <div class="hero-online-head">
-        <div class="hero-online-title" data-i18n="onlineTitle">Unique players</div>
-        <div class="hero-online-range" id="online-range">—</div>
-      </div>
-
-      <div class="hero-online-chart-wrap">
-        <div class="hero-online-chart" id="online-chart">
-          <div class="hero-online-empty" data-i18n="onlineNoData">No data</div>
-        </div>
-
-        <div class="hero-online-scale" id="online-scale">
-          <span>0</span>
-        </div>
-      </div>
-    </div>
-  </div>
-
-  <div class="hero-side hero-side-compact">
-    <div class="mini-stat mini-stat-bestlap">
-      <div class="mini-label" data-i18n="bestLapHighlightLabel">Best lap record</div>
-      <div class="mini-value best-lap-value" id="best-lap-highlight">—</div>
-      <div class="mini-note" id="best-lap-note">—</div>
-    </div>
-
-    <div class="hero-stats-row">
-      <div class="mini-stat mini-stat-compact">
-        <div class="mini-label" data-i18n="serversLabel">Servers</div>
-        <div class="mini-value server-status-wrap server-status-wrap-total">
-          <span class="server-total-label" id="serverStatusValue" data-i18n="serverTotalPlayersLabel">Total players</span>
-          <span class="server-players" id="serverPlayersValue">—</span>
-        </div>
-      </div>
-
-      <div class="mini-stat mini-stat-compact">
-        <div class="mini-label" data-i18n="driversCountLabel">Drivers in leaderboard</div>
-        <div class="mini-value" id="drivers-count">—</div>
-      </div>
-    </div>
-  </div>
 </div>
+      </div>
     </section>
 
     <aside class="server-sticky-widget" id="server-sticky-widget" aria-label="Server status">
@@ -344,18 +337,6 @@
         </div>
       </div>
     </aside>
-
-    <section class="section" id="top3-section">
-      <div class="section-header">
-        <div>
-          <h2 class="section-title" data-i18n="top3Title">Top 3 Drivers</h2>
-          <p class="section-subtitle" data-i18n="top3Subtitle">Current championship leaders by points.</p>
-        </div>
-      </div>
-      <div id="top3-content" class="cards-top3">
-        <div class="loading" data-i18n="loading">Loading...</div>
-      </div>
-    </section>
 
     <section class="section" id="championship">
       <div class="section-header">
@@ -556,18 +537,18 @@
           <h3 style="margin-top:26px; color:var(--text);" data-i18n="pointsTitle">How points are calculated</h3>
 
           <p data-i18n="pointsP1">
-            Points depend on how many drivers finished in the race classification:
+            Race points depend on how many drivers are classified in that race:
           </p>
 
           <ul>
             <li data-i18n="pointsList1">25+ drivers - base GT scale 25/18/15/12/10/8/6/4/2/1</li>
-            <li data-i18n="pointsList2">20-24 drivers - the whole scale is reduced so the winner gets 20 points</li>
-            <li data-i18n="pointsList3">15-19 drivers - the whole scale is reduced so the winner gets 15 points</li>
-            <li data-i18n="pointsList4">10-14 / 5-9 / under 5 drivers - the winner gets 10 / 5 / driver-count points</li>
+            <li data-i18n="pointsList2">20-24 / 15-19 / 10-14 drivers - the same scale is reduced so the winner gets 20 / 15 / 10 points</li>
+            <li data-i18n="pointsList3">5-9 drivers - the winner gets 5 points, with the rest of the scale reduced proportionally</li>
+            <li data-i18n="pointsList4">1-4 drivers - the winner gets points equal to the number of classified drivers</li>
           </ul>
 
           <p data-i18n="pointsP2">
-            Drivers also receive <strong>1 additional point</strong> for the fastest lap in race.
+            All scaled values are rounded to whole points: 0.1-0.5 rounds down, 0.6-0.9 rounds up. The fastest lap always gives <strong>+1 point</strong>.
           </p>
 
           <h3 style="margin-top:26px; color:var(--text);" data-i18n="bestLapsInfoTitle">Best laps</h3>

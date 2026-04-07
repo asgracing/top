@@ -15,6 +15,7 @@ TOOL_DIR = Path(__file__).resolve().parent
 ENV_BASE_DIR = "ACC_SERVER_BASE_DIR"
 ENV_GIT_EXE = "ACC_GIT_EXE"
 ENV_SUNSET_SERVER_BASE_DIR = "ACC_SUNSET_SERVER_BASE_DIR"
+ENV_HOURLY_RESULTS_DIR = "ACC_HOURLY_RESULTS_DIR"
 
 
 def resolve_base_dir() -> Path:
@@ -69,10 +70,19 @@ def resolve_sunset_base_dir() -> Path:
     return Path(r"C:\Assetto Corsa Competizione Dedicated Server Public 08.2025 Sunset\server")
 
 
+def resolve_hourly_results_dir() -> Path:
+    env_value = os.environ.get(ENV_HOURLY_RESULTS_DIR, "").strip()
+    if env_value:
+        return Path(env_value).expanduser()
+
+    return Path(r"C:\ACCHOURLY")
+
+
 BASE_DIR = resolve_base_dir()
 SUNSET_BASE_DIR = resolve_sunset_base_dir()
 RESULTS_DIR = BASE_DIR / "results"
 SUNSET_RESULTS_DIR = SUNSET_BASE_DIR / "results"
+HOURLY_RESULTS_DIR = resolve_hourly_results_dir()
 MERGED_RESULTS_DIR = RESULTS_DIR / "_merged"
 OUTPUT_DIR = BASE_DIR / "top-data"
 RACES_DIR = OUTPUT_DIR / "races"
@@ -120,6 +130,7 @@ POINTS_MAP = {
 }
 
 BEST_LAP_BONUS = 1
+HOURLY_POINTS_MULTIPLIER = 5
 INVALID_LAP_VALUES = {0, -1, 2147483647, 4294967295}
 MIN_FILE_AGE_SECONDS = 10
 SCORING_BASE_MAX_POINTS = POINTS_MAP[1]
@@ -191,6 +202,7 @@ def configure_logging():
     )
     logging.info("Resolved ACC server base directory: %s", BASE_DIR)
     logging.info("Resolved Sunset server base directory: %s", SUNSET_BASE_DIR)
+    logging.info("Resolved hourly results directory: %s", HOURLY_RESULTS_DIR)
     if GIT_EXE:
         logging.info("Resolved Git executable: %s", GIT_EXE)
     else:
@@ -257,7 +269,12 @@ def save_json_if_changed(path: Path, data) -> bool:
     return True
 
 
-def sync_external_results_source(source_dir: Path, prefix: str):
+def is_acc_session_result_file(path: Path) -> bool:
+    stem = path.stem.upper()
+    return stem.endswith("_Q") or stem.endswith("_R")
+
+
+def sync_external_results_source(source_dir: Path, prefix: str, only_session_results: bool = False):
     if not source_dir.exists():
         logging.info("External results source not found, skipping: %s", source_dir)
         return
@@ -272,6 +289,9 @@ def sync_external_results_source(source_dir: Path, prefix: str):
 
     for source_file in source_dir.rglob("*.json"):
         try:
+            if only_session_results and not is_acc_session_result_file(source_file):
+                continue
+
             relative_path = source_file.relative_to(source_dir)
             target_dir = target_root / relative_path.parent
             target_file = target_dir / f"{prefix}_{source_file.name}"
@@ -1096,6 +1116,8 @@ def build_race_history_entry(
     penalty_lookup = build_penalty_lookup(data)
     track_name = data.get("trackName", "unknown")
     source_file = get_relative_result_path(path)
+    result_source = get_result_source(path)
+    points_multiplier = get_points_multiplier_for_source(result_source)
     participants = []
     winner_name = None
     winner_public_id = None
@@ -1127,7 +1149,14 @@ def build_race_history_entry(
         )
         positions_delta = qualifying_position - position if isinstance(qualifying_position, int) else None
         has_best_lap = best_lap_driver_id == item["player_id"]
-        points = calculate_race_points(position, participant_count, has_best_lap) if counted_for_stats else 0
+        points = (
+            apply_points_multiplier(
+                calculate_race_points(position, participant_count, has_best_lap),
+                points_multiplier,
+            )
+            if counted_for_stats
+            else 0
+        )
 
         if position == 1:
             winner_name = item["display_name"]
@@ -1184,6 +1213,10 @@ def build_race_history_entry(
     return {
         "race_id": source_file,
         "source_file": source_file,
+        "result_source": result_source,
+        "result_source_label": get_result_source_label(result_source),
+        "race_type": result_source,
+        "points_multiplier": points_multiplier,
         "date": get_file_day_str(path),
         "finished_at": file_modified,
         "track": track_name,
@@ -1210,6 +1243,33 @@ def get_file_day_str(path: Path) -> str:
 
 def get_relative_result_path(path: Path) -> str:
     return str(path.relative_to(RESULTS_DIR)).replace("\\", "/")
+
+
+def get_result_source(path: Path) -> str:
+    relative_path = get_relative_result_path(path).lower()
+    if relative_path.startswith("_merged/hourly/"):
+        return "hourly"
+    if relative_path.startswith("_merged/sunset/"):
+        return "sunset"
+    return "main"
+
+
+def get_result_source_label(source: str) -> str:
+    if source == "hourly":
+        return "часовая"
+    if source == "sunset":
+        return "sunset"
+    return "main"
+
+
+def get_points_multiplier_for_source(source: str) -> int:
+    return HOURLY_POINTS_MULTIPLIER if source == "hourly" else 1
+
+
+def apply_points_multiplier(points: int, multiplier: int) -> int:
+    if not isinstance(multiplier, int) or multiplier <= 1:
+        return points
+    return normalize_points_value(points * multiplier)
 
 
 def safe_check_output(command: str) -> str:
@@ -1422,6 +1482,8 @@ def process_file(path: Path, state: dict):
             queue_qualifying_snapshot(state, snapshot)
         return
 
+    result_source = get_result_source(path)
+    points_multiplier = get_points_multiplier_for_source(result_source)
     before_snapshot = build_comparison_snapshot(state)
     process_driver_pace_laps(
         data=data,
@@ -1495,6 +1557,7 @@ def process_file(path: Path, state: dict):
                 participant_count,
                 has_best_lap=best_lap_driver_id == player_id,
             )
+            gained_points = apply_points_multiplier(gained_points, points_multiplier)
             if position == 1:
                 driver_stats["wins"] += 1
             if position <= 3:
@@ -1552,6 +1615,7 @@ def collect_result_files():
         return files
 
     sync_external_results_source(SUNSET_RESULTS_DIR, "sunset")
+    sync_external_results_source(HOURLY_RESULTS_DIR, "hourly", only_session_results=True)
 
     now = time.time()
 

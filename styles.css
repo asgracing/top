@@ -451,9 +451,9 @@ body.lite-background .site-video-overlay {
 
 .hero-grid {
   display: grid;
-  grid-template-columns: minmax(280px, 340px) minmax(0, 1fr) minmax(280px, 340px);
-  gap: 10px;
-  align-items: start;
+  grid-template-columns: minmax(0, 2fr) minmax(280px, 1fr);
+  gap: 10px 12px;
+  align-items: stretch;
 }
 
 .eyebrow {
@@ -483,24 +483,211 @@ h1 {
   color: var(--muted);
 }
 
+.hero-main-column {
+  grid-column: 1 / 2;
+  grid-row: 1 / 3;
+  display: grid;
+  grid-template-rows: auto auto minmax(0, 1fr);
+  gap: 10px;
+  min-width: 0;
+  align-self: stretch;
+}
+
 .hero-copy {
-  grid-column: 1 / 3;
   display: flex;
   flex-direction: column;
-  justify-content: center;
-  align-self: stretch;
-  padding-top: 12px;
-  margin-left: 10px;
+  justify-content: flex-start;
+  align-self: start;
+  padding-top: 0;
+  margin-left: 0;
 }
 
 .hero-copy .eyebrow {
   margin-bottom: 8px;
 }
 
+.hero-hourly-promo {
+  position: relative;
+  overflow: hidden;
+  grid-column: 2 / 3;
+  grid-row: 1;
+  display: grid;
+  gap: 14px;
+  padding: 18px;
+  border: 1px solid rgba(255, 209, 102, 0.34);
+  border-radius: 20px;
+  background:
+    linear-gradient(135deg, rgba(255, 209, 102, 0.2), rgba(255, 91, 46, 0.14)),
+    rgba(21, 19, 20, 0.92);
+  box-shadow: 0 18px 38px rgba(255, 91, 46, 0.14);
+}
+
+.hero-hourly-promo-title {
+  position: relative;
+  z-index: 1;
+  display: inline-flex;
+  width: fit-content;
+  max-width: 100%;
+  padding: 6px 10px;
+  border: 1px solid rgba(255, 209, 102, 0.46);
+  border-radius: 8px;
+  background: rgba(255, 209, 102, 0.14);
+  color: #ffd166;
+  font-size: clamp(1.35rem, 2vw, 2rem);
+  font-weight: 950;
+  line-height: 1;
+  text-decoration: none;
+  text-transform: uppercase;
+  box-shadow: 0 0 26px rgba(255, 209, 102, 0.18);
+  transition: transform 0.18s ease, color 0.18s ease, border-color 0.18s ease, background 0.18s ease;
+}
+
+.hero-hourly-promo-title:hover,
+.hero-hourly-promo-title:focus-visible {
+  transform: translateY(-1px);
+  border-color: rgba(255, 209, 102, 0.8);
+  background: rgba(255, 209, 102, 0.22);
+  color: #fff2bd;
+}
+
+.hero-hourly-promo-title:focus-visible {
+  outline: 2px solid rgba(255, 209, 102, 0.62);
+  outline-offset: 3px;
+}
+
+.hero-hourly-promo-title.pulse-attention {
+  animation: pulseAttention 2.1s infinite, hourlyPromoBlink 1.35s ease-in-out infinite;
+}
+
+@keyframes hourlyPromoBlink {
+  0%,
+  100% {
+    text-shadow: 0 0 10px rgba(255, 209, 102, 0.28);
+  }
+  50% {
+    text-shadow:
+      0 0 18px rgba(255, 209, 102, 0.78),
+      0 0 34px rgba(255, 91, 46, 0.52);
+  }
+}
+
+.hero-hourly-promo-note {
+  position: relative;
+  z-index: 1;
+  color: rgba(255, 255, 255, 0.72);
+  font-size: 0.9rem;
+  font-weight: 750;
+  line-height: 1.35;
+}
+
+.hero-hourly-winner-card {
+  position: relative;
+  overflow: hidden;
+  display: block;
+  min-height: 82px;
+  padding: 18px 22px;
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  border-radius: 16px;
+  background:
+    linear-gradient(135deg, rgba(255, 255, 255, 0.08), rgba(255, 91, 46, 0.08)),
+    rgba(14, 18, 24, 0.9);
+  box-shadow:
+    inset 0 1px 0 rgba(255, 255, 255, 0.06),
+    0 18px 38px rgba(0, 0, 0, 0.24);
+}
+
+.hero-hourly-winner-card::before {
+  content: "";
+  position: absolute;
+  top: -50px;
+  right: -34px;
+  width: 210px;
+  height: 210px;
+  background: url("./assets/crown.png") center / contain no-repeat;
+  opacity: 0.2;
+  transform: rotate(12deg);
+  pointer-events: none;
+}
+
+.hero-hourly-winner-card::after {
+  content: "";
+  position: absolute;
+  inset: auto -20px -48px auto;
+  width: 210px;
+  height: 120px;
+  background: radial-gradient(circle, rgba(255, 209, 102, 0.22), transparent 70%);
+  pointer-events: none;
+}
+
+.hero-hourly-winner-copy,
+.hero-hourly-winner-media {
+  position: relative;
+  z-index: 1;
+}
+
+.hero-hourly-winner-copy {
+  position: relative;
+  z-index: 2;
+  display: grid;
+  gap: 6px;
+  min-width: 0;
+  max-width: 100%;
+}
+
+.hero-hourly-winner-label {
+  margin-bottom: 0;
+  color: rgba(255, 255, 255, 0.6);
+  font-size: 0.68rem;
+  font-weight: 850;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+}
+
+.hero-hourly-winner-name {
+  min-width: 0;
+  margin-bottom: 0;
+  color: var(--text);
+  font-size: clamp(1rem, 1.35vw, 1.35rem);
+  font-weight: 950;
+  line-height: 1.05;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.hero-hourly-winner-meta {
+  min-width: 0;
+  color: rgba(255, 255, 255, 0.68);
+  font-size: 0.74rem;
+  font-weight: 700;
+  line-height: 1.35;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.hero-hourly-winner-media {
+  position: absolute;
+  z-index: 1;
+  inset: 0;
+  pointer-events: none;
+}
+
+.hero-hourly-winner-car {
+  position: absolute;
+  right: -8px;
+  bottom: -2px;
+  width: min(190px, 46%);
+  height: auto;
+  max-height: 102px;
+  object-fit: contain;
+  opacity: 0.52;
+  filter: drop-shadow(0 16px 22px rgba(0, 0, 0, 0.34));
+}
+
 .hero-hourly-card {
   --hero-hourly-track-photo: none;
   position: relative;
-  grid-column: 3 / 4;
+  grid-column: 2 / 3;
+  grid-row: 2;
   display: flex;
   flex-direction: column;
   gap: 8px;
@@ -667,18 +854,21 @@ h1 {
 
 .hero-actions-row {
   display: grid;
-  grid-column: 1 / 3;
-  grid-template-columns: minmax(280px, 340px) minmax(0, 1fr);
-  gap: 16px;
+  grid-template-columns: minmax(0, 1fr);
+  gap: 8px;
   align-items: stretch;
-  margin-top: 4px;
+  margin-top: 0;
   max-width: none;
 }
 
 .hero-actions.hero-actions-stacked-mobile {
-  display: flex;
-  flex-direction: column;
-  gap: 12px;
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  grid-template-areas:
+    "today races online online"
+    "driver driver online online"
+    "stats stats stats stats";
+  gap: 8px;
   margin-top: 0;
   align-items: stretch;
   justify-content: flex-start;
@@ -688,26 +878,35 @@ h1 {
   width: 100%;
   min-width: 0;
   max-width: none;
-  min-height: 72px;
-  padding: 16px 18px;
+  min-height: 52px;
+  padding: 12px 16px;
   align-self: stretch;
   flex: 0 0 auto;
 }
 
 .hero-primary-actions {
-  display: grid;
-  grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
-  gap: 12px;
-  width: 100%;
-  align-items: stretch;
+  display: contents;
+}
+
+.btn-today-stats {
+  grid-area: today;
+}
+
+.btn-last-races {
+  grid-area: races;
+}
+
+.btn-driver-day {
+  grid-area: driver;
 }
 
 .hero-online-card {
+  grid-area: online;
   display: flex;
   flex-direction: column;
   justify-content: space-between;
-  min-height: 150px;
-  padding: 16px 18px 14px;
+  min-height: 52px;
+  padding: 10px 12px 8px;
   border: 1px solid var(--line);
   border-radius: 20px;
   background: linear-gradient(180deg, rgba(255, 255, 255, 0.04), rgba(255, 255, 255, 0.025));
@@ -737,7 +936,7 @@ h1 {
 }
 
 .hero-online-title {
-  font-size: 13px;
+  font-size: 11px;
   font-weight: 800;
   letter-spacing: 0.08em;
   text-transform: uppercase;
@@ -752,8 +951,8 @@ h1 {
 
 .hero-online-chart-wrap {
   display: grid;
-  grid-template-columns: minmax(0, 1fr) 42px;
-  gap: 10px;
+  grid-template-columns: minmax(0, 1fr) 28px;
+  gap: 6px;
   align-items: end;
   flex: 1;
   min-height: 0;
@@ -816,25 +1015,66 @@ h1 {
 
 .hero-funnel-card {
   display: grid;
-  gap: 12px;
-  margin-top: 10px;
+  gap: 8px;
+  margin-top: 6px;
 }
 
 .hero-copy h1 {
-  font-size: clamp(28px, 4.2vw, 46px);
+  font-size: clamp(26px, 3.4vw, 42px);
 }
 
 .hero-funnel-title {
   color: var(--text);
-  font-size: 1.15rem;
+  font-size: 1.05rem;
   font-weight: 900;
-  line-height: 1.25;
+  line-height: 1.2;
 }
 
 .hero-funnel-note {
-  margin: 6px 0 0;
+  margin: 4px 0 0;
   color: var(--muted);
-  line-height: 1.6;
+  font-size: 0.95rem;
+  line-height: 1.45;
+}
+
+.hero-funnel-link {
+  font-weight: 900;
+  text-decoration: none;
+  transition: color 0.18s ease, text-shadow 0.18s ease;
+}
+
+.hero-funnel-link:hover,
+.hero-funnel-link:focus-visible {
+  text-decoration: underline;
+  text-underline-offset: 3px;
+}
+
+.hero-funnel-link:focus-visible {
+  outline: 2px solid currentColor;
+  outline-offset: 2px;
+  border-radius: 4px;
+}
+
+.hero-funnel-link-telegram {
+  color: #27a7e7;
+  text-shadow: 0 0 18px rgba(39, 167, 231, 0.24);
+}
+
+.hero-funnel-link-telegram:hover,
+.hero-funnel-link-telegram:focus-visible {
+  color: #6ed0ff;
+  text-shadow: 0 0 22px rgba(39, 167, 231, 0.42);
+}
+
+.hero-funnel-link-discord {
+  color: #5865f2;
+  text-shadow: 0 0 18px rgba(88, 101, 242, 0.24);
+}
+
+.hero-funnel-link-discord:hover,
+.hero-funnel-link-discord:focus-visible {
+  color: #8d96ff;
+  text-shadow: 0 0 22px rgba(88, 101, 242, 0.42);
 }
 
 .hero-funnel-actions {
@@ -1050,26 +1290,27 @@ tr.is-interactive-row:focus-visible {
 
 .hero-side {
   display: grid;
-  grid-column: 3;
-  gap: 4px;
+  grid-area: stats;
+  grid-row: auto;
+  gap: 2px;
   width: 100%;
-  max-width: 340px;
+  max-width: none;
   margin-left: 0;
 }
 
 .hero-side-compact {
-  display: flex;
-  flex-direction: column;
-  gap: 4px;
+  display: grid;
+  grid-template-columns: minmax(0, 1.6fr) minmax(120px, 0.7fr) minmax(120px, 0.7fr);
+  gap: 6px;
 }
 
 .mini-stat {
-  min-height: 80px;
-  padding: 10px 16px;
+  min-height: 56px;
+  padding: 7px 12px;
   border: 1px solid var(--line);
   border-radius: 18px;
   background: var(--card-2);
-  margin-top: 4px;
+  margin-top: 2px;
   transition: transform 0.18s ease, border-color 0.18s ease, background 0.18s ease;
 }
 
@@ -1083,31 +1324,31 @@ tr.is-interactive-row:focus-visible {
 }
 
 .mini-label {
-  margin-bottom: 10px;
-  font-size: 13px;
+  margin-bottom: 5px;
+  font-size: 12px;
   color: var(--muted);
 }
 
 .mini-value {
-  margin-bottom: 8px;
-  font-size: 18px;
+  margin-bottom: 4px;
+  font-size: 16px;
   font-weight: 800;
   line-height: 1;
 }
 
 .mini-note {
-  font-size: 13px;
-  line-height: 1.4;
+  font-size: 12px;
+  line-height: 1.3;
   color: var(--muted);
 }
 
 .mini-stat-bestlap {
-  min-height: 80px;
+  min-height: 56px;
 }
 
 .mini-stat-compact {
-  min-height: 50px;
-  padding: 4px 16px;
+  min-height: 42px;
+  padding: 5px 12px;
 }
 
 .mini-stat-compact .mini-value {
@@ -1124,9 +1365,75 @@ tr.is-interactive-row:focus-visible {
 }
 
 .hero-stats-row {
-  display: grid;
-  grid-template-columns: 1fr 1fr;
-  gap: 12px;
+  display: contents;
+}
+
+.hero-top3-panel {
+  min-width: 0;
+  align-self: end;
+}
+
+.cards-top3.cards-top3-hero {
+  gap: 8px;
+}
+
+.cards-top3-hero .pilot-card {
+  min-height: 0;
+  padding: 9px 10px;
+  border-radius: 14px;
+  box-shadow: none;
+}
+
+.cards-top3-hero .pilot-topline {
+  gap: 6px;
+  margin-bottom: 5px;
+}
+
+.cards-top3-hero .pilot-rank {
+  width: 28px;
+  height: 28px;
+  font-size: 12px;
+}
+
+.cards-top3-hero .pilot-rank-wrap {
+  gap: 4px;
+}
+
+.cards-top3-hero .pilot-name {
+  font-size: 14px;
+}
+
+.cards-top3-hero .pilot-topline-car {
+  width: 46px;
+  height: 28px;
+}
+
+.cards-top3-hero .pilot-card .muted {
+  font-size: 11px;
+  line-height: 1.2;
+}
+
+.cards-top3-hero .pilot-lap-line {
+  gap: 6px;
+}
+
+.cards-top3-hero .pilot-meta {
+  gap: 5px;
+  margin-top: 7px;
+}
+
+.cards-top3-hero .meta-box {
+  padding: 5px 6px;
+  border-radius: 10px;
+}
+
+.cards-top3-hero .meta-label {
+  margin-bottom: 2px;
+  font-size: 9px;
+}
+
+.cards-top3-hero .meta-value {
+  font-size: 13px;
 }
 
 .hero-card-page {
@@ -3723,10 +4030,13 @@ body.modal-open {
   }
 
   .hero-copy,
+  .hero-main-column,
+  .hero-hourly-promo,
   .hero-hourly-card,
   .hero-actions-row,
   .hero-side {
     grid-column: auto;
+    grid-row: auto;
   }
 
   .hero-side {
@@ -3828,16 +4138,24 @@ body.modal-open {
     padding-top: 20px;
   }
 
-  /*
-    Tablet layout:
-    keep both hero actions in two columns for compactness,
-    but let online chart go below as a single full-width block.
-  */
-  .hero-actions-stacked-mobile {
+  .hero-actions.hero-actions-stacked-mobile {
     display: grid;
     grid-template-columns: repeat(2, minmax(0, 1fr));
+    grid-template-areas:
+      "today races"
+      "driver driver"
+      "online online"
+      "stats stats";
     gap: 10px;
     align-items: stretch;
+  }
+
+  .hero-side {
+    grid-column: 1 / -1;
+  }
+
+  .hero-side-compact {
+    grid-template-columns: minmax(0, 1.4fr) minmax(110px, 0.8fr) minmax(110px, 0.8fr);
   }
 
   .hero-actions-stacked-mobile .btn,
@@ -3861,9 +4179,17 @@ body.modal-open {
     margin-bottom: 6px;
   }
 
+  .hero-hourly-winner-card {
+    min-height: 82px;
+  }
+
   .hero-online-card {
-    min-height: 130px;
+    min-height: 108px;
     max-height: none;
+  }
+
+  .cards-top3.cards-top3-hero {
+    grid-template-columns: repeat(3, minmax(0, 1fr));
   }
 
   .hero-card-page {
@@ -4085,7 +4411,18 @@ body.modal-open {
     height: 16px;
   }
 
-  .hero-actions-stacked-mobile {
+  .hero-actions.hero-actions-stacked-mobile {
+    grid-template-columns: 1fr;
+    grid-template-areas:
+      "today"
+      "races"
+      "driver"
+      "online"
+      "stats";
+  }
+
+  .hero-side-compact,
+  .cards-top3.cards-top3-hero {
     grid-template-columns: 1fr;
   }
 
@@ -4097,6 +4434,14 @@ body.modal-open {
     min-width: 0;
   }
 
+  .hero-side .mini-value {
+    font-size: 16px;
+  }
+
+  .cards-top3-hero .pilot-name {
+    font-size: 14px;
+  }
+
   .hero-hourly-meta-row {
     grid-template-columns: 1fr;
     gap: 4px;
@@ -4106,6 +4451,24 @@ body.modal-open {
     flex-direction: column;
     align-items: flex-start;
     gap: 4px;
+  }
+
+  .hero-hourly-winner-card {
+    min-height: 96px;
+  }
+
+  .hero-hourly-winner-media {
+    min-height: 0;
+  }
+
+  .hero-hourly-winner-card::before {
+    width: 150px;
+    height: 150px;
+    opacity: 0.18;
+  }
+
+  .hero-hourly-winner-car {
+    width: min(160px, 62%);
   }
 
   .btn-today-stats,
