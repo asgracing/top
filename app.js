@@ -127,6 +127,7 @@ let topGuideState = {
 let funStatsPeriod = "week";
 const driverProfileCache = new Map();
 const raceDetailsCache = new Map();
+let legacyRaceArchivePromise = null;
 const HOURLY_TRACK_BACKGROUNDS = {
   monza: "https://asgracing.github.io/hourly/assets/tracks/monza.jpg",
   silverstone: "https://asgracing.github.io/hourly/assets/tracks/silverstone.jpg",
@@ -3343,6 +3344,85 @@ function buildRaceDetailsPath(raceId) {
   return `races/details/${filename}`;
 }
 
+function normalizeRaceIdentity(value) {
+  return String(value || "")
+    .trim()
+    .toLowerCase()
+    .replace(/^.*[\\/]/, "")
+    .replace(/\.json$/i, "");
+}
+
+function getRaceIdentityCandidates(race) {
+  const candidates = new Set();
+  [race?.race_id, race?.source_file, race?.details_path].forEach((value) => {
+    const normalized = normalizeRaceIdentity(value);
+    if (normalized) candidates.add(normalized);
+  });
+  return candidates;
+}
+
+function mergeRaceDetails(race, details) {
+  const merged = {
+    ...(details && typeof details === "object" ? details : {}),
+    ...(race && typeof race === "object" ? race : {}),
+    _detailsLoading: false,
+    _detailsError: false,
+  };
+
+  if (Array.isArray(details?.results)) {
+    merged.results = details.results;
+  }
+
+  return merged;
+}
+
+async function loadLegacyRaceArchiveCached() {
+  if (!legacyRaceArchivePromise) {
+    legacyRaceArchivePromise = loadJson(racesUrl)
+      .then((data) => (Array.isArray(data) ? data : []))
+      .catch((error) => {
+        legacyRaceArchivePromise = null;
+        throw error;
+      });
+  }
+
+  return legacyRaceArchivePromise;
+}
+
+function findLegacyRaceByIdentity(race, archive) {
+  if (!race || !Array.isArray(archive) || !archive.length) return null;
+
+  const candidates = getRaceIdentityCandidates(race);
+  const identityMatch = archive.find((entry) => {
+    const entryCandidates = getRaceIdentityCandidates(entry);
+    for (const candidate of entryCandidates) {
+      if (candidates.has(candidate)) return true;
+    }
+    return false;
+  });
+  if (identityMatch) return identityMatch;
+
+  const finishedAt = String(race.finished_at || "").trim();
+  const track = String(race.track || "").trim().toLowerCase();
+  const winner = String(race.winner || "").trim().toLowerCase();
+
+  return archive.find((entry) => (
+    String(entry?.finished_at || "").trim() === finishedAt
+    && String(entry?.track || "").trim().toLowerCase() === track
+    && (!winner || String(entry?.winner || "").trim().toLowerCase() === winner)
+  )) || null;
+}
+
+async function loadLegacyRaceDetails(race) {
+  const archive = await loadLegacyRaceArchiveCached();
+  const details = findLegacyRaceByIdentity(race, archive);
+  if (!details) {
+    const raceId = race?.race_id || race?.source_file || "unknown race";
+    throw new Error(`Race details were not found in the legacy archive for ${raceId}`);
+  }
+  return mergeRaceDetails(race, details);
+}
+
 async function loadRaceDetailsCached(race) {
   if (!race) return null;
   if (Array.isArray(race.results) && race.results.length) return race;
@@ -3362,11 +3442,18 @@ async function loadRaceDetailsCached(race) {
     for (const detailsPath of detailsPaths) {
       try {
         const details = await loadTopDataV2Json(detailsPath);
-        return details && typeof details === "object" ? { ...race, ...details } : race;
+        return details && typeof details === "object" ? mergeRaceDetails(race, details) : race;
       } catch (error) {
         lastError = error;
       }
     }
+
+    try {
+      return await loadLegacyRaceDetails(race);
+    } catch (legacyError) {
+      lastError = legacyError;
+    }
+
     throw lastError || new Error("Failed to load race details.");
   })().catch(error => {
     raceDetailsCache.delete(raceId);
@@ -4817,9 +4904,17 @@ function renderRaceResultsModal() {
     </div>
   `;
 
+  const raceResults = Array.isArray(selectedRace.results) ? selectedRace.results : [];
+  if (!raceResults.length) {
+    tableEl.innerHTML = selectedRace._detailsLoading
+      ? `<div class="loading">${escapeHtml(t("loading"))}</div>`
+      : `<div class="empty-box">${escapeHtml(selectedRace._detailsError ? t("errorLoading") : t("emptyRaces"))}</div>`;
+    return;
+  }
+
   const headers = t("raceModalCols").map(label => `<th>${escapeHtml(label)}</th>`).join("");
   const highlightedDriverPublicId = IS_DRIVER_PAGE ? driverProfileData?.public_id : null;
-  const rows = (selectedRace.results || []).map(row => `
+  const rows = raceResults.map(row => `
     <tr class="${row.public_id && highlightedDriverPublicId && row.public_id === highlightedDriverPublicId ? "race-result-row-highlight" : ""}">
       <td>${renderRankBadgeWithTrend(row.position, row.rank_change)}</td>
       <td>${escapeHtml(formatStartPosition(row))}</td>
@@ -4863,20 +4958,35 @@ let todayStatsModalController = null;
 
 function openRaceResultsModal(race, trigger = null) {
   if (!raceResultsModalController || !race) return;
-  selectedRace = race;
+  const hasInlineResults = Array.isArray(race.results) && race.results.length;
+  selectedRace = {
+    ...race,
+    _detailsLoading: !hasInlineResults,
+    _detailsError: false,
+  };
   raceResultsModalController.open(trigger);
 
-  if (Array.isArray(race.results) && race.results.length) return;
+  if (hasInlineResults) return;
 
   loadRaceDetailsCached(race)
     .then((details) => {
-      const activeRaceId = selectedRace?.race_id || selectedRace?.source_file;
-      const loadedRaceId = details?.race_id || details?.source_file;
+      const activeRaceId = normalizeRaceIdentity(selectedRace?.race_id || selectedRace?.source_file);
+      const loadedRaceId = normalizeRaceIdentity(details?.race_id || details?.source_file);
       if (!details || !activeRaceId || activeRaceId !== loadedRaceId) return;
-      selectedRace = details;
+      selectedRace = mergeRaceDetails(race, details);
       renderRaceResultsModal();
     })
     .catch((error) => {
+      const activeRaceId = normalizeRaceIdentity(selectedRace?.race_id || selectedRace?.source_file);
+      const failedRaceId = normalizeRaceIdentity(race?.race_id || race?.source_file);
+      if (activeRaceId && failedRaceId && activeRaceId === failedRaceId) {
+        selectedRace = {
+          ...selectedRace,
+          _detailsLoading: false,
+          _detailsError: true,
+        };
+        renderRaceResultsModal();
+      }
       console.warn("Failed to load race details.", error);
     });
 }
