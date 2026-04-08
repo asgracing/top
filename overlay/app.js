@@ -1,5 +1,8 @@
-const TOP_DATA_BASE_URL = "https://asgracing.github.io/top-data";
+const pageParams = new URLSearchParams(window.location.search);
+const TOP_DATA_BASE_URL = pageParams.get("topDataBase") || "https://asgracing.github.io/top-data";
+const TOP_DATA_V2_BASE_URL = `${TOP_DATA_BASE_URL}/v2`;
 const snapshotUrl = `${TOP_DATA_BASE_URL}/snapshot.json`;
+const overlayV2Url = `${TOP_DATA_V2_BASE_URL}/overlay.json`;
 const leaderboardUrl = `${TOP_DATA_BASE_URL}/leaderboard.json`;
 const bestlapsUrl = `${TOP_DATA_BASE_URL}/bestlaps.json`;
 
@@ -55,6 +58,7 @@ function normalizeSnapshotPayload(snapshot) {
     updatedAt:
       snapshot?.updated_at ||
       snapshot?.updatedAt ||
+      snapshot?.generated_at ||
       snapshot?.leaderboard_updated_at ||
       snapshot?.bestlaps_updated_at ||
       ""
@@ -62,6 +66,13 @@ function normalizeSnapshotPayload(snapshot) {
 }
 
 async function loadOverlayData() {
+  try {
+    const overlay = await loadJson(`${overlayV2Url}?t=${Date.now()}`);
+    return normalizeSnapshotPayload(overlay);
+  } catch (_v2Error) {
+    // Keep the old snapshot path as a safety net while v2 data rolls out.
+  }
+
   try {
     const snapshot = await loadJson(snapshotUrl);
     return normalizeSnapshotPayload(snapshot);

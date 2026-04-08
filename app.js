@@ -4,9 +4,14 @@ const IS_CARS_PAGE = /\/cars(?:\/|\/index\.html)?$/i.test(window.location.pathna
 const IS_FUN_STATS_PAGE = /\/fun-stats(?:\/|\/index\.html)?$/i.test(window.location.pathname);
 const SITE_BASE_PATH = (IS_RACES_PAGE || IS_DRIVER_PAGE || IS_CARS_PAGE || IS_FUN_STATS_PAGE) ? "../" : "./";
 const CAR_IMAGE_BASE_PATH = `${SITE_BASE_PATH}assets/car-icons`;
-const TOP_DATA_BASE_URL = "https://asgracing.github.io/top-data";
+const pageParams = new URLSearchParams(window.location.search);
+const TOP_DATA_BASE_URL = pageParams.get("topDataBase") || "https://asgracing.github.io/top-data";
+const TOP_DATA_V2_BASE_URL = `${TOP_DATA_BASE_URL}/v2`;
 const HOURLY_DATA_BASE_URL = "https://asgracing.github.io/hourly-data";
+const dataMode = pageParams.get("data") || "v2";
+const ENABLE_TOP_DATA_V2 = dataMode !== "legacy";
 const snapshotUrl = `${TOP_DATA_BASE_URL}/snapshot.json`;
+const topDataV2ManifestUrl = `${TOP_DATA_V2_BASE_URL}/manifest.json`;
 const leaderboardUrl = `${TOP_DATA_BASE_URL}/leaderboard.json`;
 const bestlapsUrl = `${TOP_DATA_BASE_URL}/bestlaps.json`;
 const globalStatsUrl = `${TOP_DATA_BASE_URL}/global_stats.json`;
@@ -60,6 +65,11 @@ let safetyData = [];
 let driverOfDayData = null;
 let racesData = [];
 let carsData = [];
+let topDataV2Manifest = null;
+let topDataV2Version = "";
+let latestHourlyRaceData = null;
+let racesArchiveMeta = null;
+let racesArchiveSummary = null;
 let leaderboardPage = 1;
 let bestlapsPage = 1;
 let safetyPage = 1;
@@ -114,6 +124,7 @@ let topGuideState = {
 };
 let funStatsPeriod = "week";
 const driverProfileCache = new Map();
+const raceDetailsCache = new Map();
 const HOURLY_TRACK_BACKGROUNDS = {
   monza: "https://asgracing.github.io/hourly/assets/tracks/monza.jpg",
   silverstone: "https://asgracing.github.io/hourly/assets/tracks/silverstone.jpg",
@@ -1622,6 +1633,7 @@ function isHourlyRace(race) {
 }
 
 function getLatestHourlyRace() {
+  if (latestHourlyRaceData) return latestHourlyRaceData;
   return (Array.isArray(racesData) ? racesData : [])
     .filter(isHourlyRace)
     .sort((a, b) => new Date(b?.finished_at || b?.date || 0).getTime() - new Date(a?.finished_at || a?.date || 0).getTime())[0] || null;
@@ -1651,7 +1663,14 @@ function renderHourlyWinnerCard() {
     return;
   }
 
-  const winnerResult = getRaceWinnerResult(race);
+  const winnerResult = getRaceWinnerResult(race) || {
+    player_id: race.winner_player_id,
+    public_id: race.winner_public_id,
+    driver: race.winner,
+    car_model_id: race.winner_car_model_id,
+    car_name_raw: race.winner_car_name_raw,
+    car_name: race.winner_car_name
+  };
   const winnerName = race.winner || winnerResult?.driver || "—";
   const winnerPublicId = race.winner_public_id || winnerResult?.public_id || null;
   const winnerPlayerId = winnerResult?.player_id || null;
@@ -3082,6 +3101,41 @@ async function loadJson(url) {
   return await res.json();
 }
 
+function topDataV2Path(path) {
+  return `${TOP_DATA_V2_BASE_URL}/${String(path || "").replace(/^\/+/, "")}`;
+}
+
+function withTopDataV2Version(url) {
+  if (!topDataV2Version) return url;
+  const separator = url.includes("?") ? "&" : "?";
+  return `${url}${separator}v=${encodeURIComponent(topDataV2Version)}`;
+}
+
+async function loadTopDataV2Manifest() {
+  if (!ENABLE_TOP_DATA_V2) return null;
+  if (topDataV2Manifest) return topDataV2Manifest;
+
+  const url = `${topDataV2ManifestUrl}?t=${Date.now()}`;
+  const res = await fetch(url, { cache: "no-store" });
+  if (!res.ok) throw new Error(`HTTP ${res.status} for ${url}`);
+  const manifest = await res.json();
+  topDataV2Manifest = manifest && typeof manifest === "object" ? manifest : null;
+  topDataV2Version = String(topDataV2Manifest?.version || topDataV2Manifest?.generated_at || "");
+  return topDataV2Manifest;
+}
+
+async function loadTopDataV2Json(path) {
+  await loadTopDataV2Manifest();
+  return loadJson(withTopDataV2Version(topDataV2Path(path)));
+}
+
+async function loadSiteDataV2() {
+  const manifest = await loadTopDataV2Manifest();
+  const homePath = manifest?.home || "home.json";
+  const data = await loadTopDataV2Json(homePath);
+  return normalizeSnapshotPayload(data);
+}
+
 function debounce(fn, wait = 180) {
   let timeoutId = null;
   return (...args) => {
@@ -3098,7 +3152,10 @@ function normalizeSnapshotPayload(snapshot) {
     safety: Array.isArray(snapshot?.safety) ? snapshot.safety : [],
     driverOfDay: snapshot?.driver_of_the_day && typeof snapshot.driver_of_the_day === "object" ? snapshot.driver_of_the_day : null,
     serverStatus: snapshot?.server_status && typeof snapshot.server_status === "object" ? snapshot.server_status : null,
-    online: Array.isArray(snapshot?.online) ? snapshot.online : []
+    online: Array.isArray(snapshot?.online) ? snapshot.online : [],
+    raceActivity: Array.isArray(snapshot?.race_activity) ? snapshot.race_activity : null,
+    latestHourlyRace: snapshot?.latest_hourly_race && typeof snapshot.latest_hourly_race === "object" ? snapshot.latest_hourly_race : null,
+    racesSummary: snapshot?.races_summary && typeof snapshot.races_summary === "object" ? snapshot.races_summary : null
   };
 }
 
@@ -3139,6 +3196,14 @@ function normalizeLegacyPayload(results) {
 }
 
 async function loadSiteData() {
+  if (ENABLE_TOP_DATA_V2) {
+    try {
+      return await loadSiteDataV2();
+    } catch (v2Error) {
+      console.warn("top-data v2 is unavailable, falling back to legacy JSON files.", v2Error);
+    }
+  }
+
   try {
     const snapshot = await loadJson(snapshotUrl);
     return normalizeSnapshotPayload(snapshot);
@@ -3170,8 +3235,72 @@ async function loadHourlyAnnouncementData() {
 }
 
 async function loadRacesData() {
+  if (ENABLE_TOP_DATA_V2) {
+    try {
+      return await loadRacesPageData(1);
+    } catch (v2Error) {
+      console.warn("top-data v2 races are unavailable, falling back to the full race archive.", v2Error);
+      racesArchiveMeta = null;
+      racesArchiveSummary = null;
+    }
+  }
+
   const data = await loadJson(racesUrl);
+  racesArchiveMeta = null;
+  racesArchiveSummary = null;
   return Array.isArray(data) ? data : [];
+}
+
+async function loadFullRacesData() {
+  const data = await loadJson(racesUrl);
+  racesArchiveMeta = null;
+  racesArchiveSummary = null;
+  return Array.isArray(data) ? data : [];
+}
+
+async function loadRacesPageData(page = 1) {
+  const manifest = await loadTopDataV2Manifest();
+  const pagePathTemplate = manifest?.races?.page_path || "races/page-{page}.json";
+  const pagePath = pagePathTemplate.replace("{page}", String(page));
+  const payload = await loadTopDataV2Json(pagePath);
+
+  racesArchiveMeta = payload && typeof payload === "object" ? payload : null;
+  racesArchiveSummary = racesArchiveMeta?.summary && typeof racesArchiveMeta.summary === "object"
+    ? racesArchiveMeta.summary
+    : null;
+
+  return Array.isArray(racesArchiveMeta?.items) ? racesArchiveMeta.items : [];
+}
+
+function buildRaceDetailsPath(raceId) {
+  const encodedRaceId = encodeURIComponent(String(raceId || "unknown"));
+  const filename = encodedRaceId.toLowerCase().endsWith(".json")
+    ? encodedRaceId
+    : `${encodedRaceId}.json`;
+  return `races/details/${filename}`;
+}
+
+async function loadRaceDetailsCached(race) {
+  if (!race) return null;
+  if (Array.isArray(race.results) && race.results.length) return race;
+
+  const raceId = race.race_id || race.source_file;
+  if (!raceId) return race;
+
+  if (raceDetailsCache.has(raceId)) {
+    return raceDetailsCache.get(raceId);
+  }
+
+  const detailsPath = race.details_path || buildRaceDetailsPath(raceId);
+  const promise = loadTopDataV2Json(detailsPath)
+    .then(details => details && typeof details === "object" ? { ...race, ...details } : race)
+    .catch(error => {
+      raceDetailsCache.delete(raceId);
+      throw error;
+    });
+
+  raceDetailsCache.set(raceId, promise);
+  return promise;
 }
 
 async function loadCarsData() {
@@ -4358,6 +4487,9 @@ function filterRaces(data) {
 }
 
 function getProcessedRaces() {
+  if (racesArchiveMeta) {
+    return Array.isArray(racesData) ? racesData : [];
+  }
   return sortData(filterRaces(racesData), { key: "finished_at", direction: "desc" }, racesColumns);
 }
 
@@ -4385,6 +4517,23 @@ function renderRacesSummary() {
 
   const processedRaces = getProcessedRaces();
   const latestRace = processedRaces[0];
+  if (racesArchiveSummary) {
+    const topWinner = racesArchiveSummary.top_winner || null;
+    const latestSummaryRace = racesArchiveSummary.latest_race || latestRace || null;
+    totalEl.textContent = racesArchiveSummary.total_races || "-";
+    avgActiveEl.textContent = racesArchiveSummary.average_active_drivers ?? "-";
+    avgOvertakesEl.textContent = racesArchiveSummary.average_overtakes ?? "-";
+    topWinnerEl.innerHTML = topWinner
+      ? renderDriverLink(topWinner.name || t("noWinner"), topWinner.public_id, "driver-link")
+      : t("noWinner");
+    winnerEl.innerHTML = latestSummaryRace
+      ? renderDriverLink(latestSummaryRace.winner || t("noWinner"), latestSummaryRace.winner_public_id, "driver-link")
+      : t("noWinner");
+    lastWinnerBestLapEl.textContent = latestSummaryRace?.best_lap || "-";
+    lastWinnerBestLapNoteEl.textContent = latestSummaryRace?.best_lap_car_name || "";
+    return;
+  }
+
   const winnerCounts = new Map();
   let activeDriversTotal = 0;
   let overtakesTotal = 0;
@@ -4430,7 +4579,17 @@ function renderRacesTablePage() {
   const wrapEl = document.getElementById("races-pagination-wrap");
   if (!tableEl || !wrapEl) return;
 
-  const result = paginate(getProcessedRaces(), racesPage, PAGE_SIZE);
+  const isV2PagedArchive = Boolean(racesArchiveMeta);
+  const result = isV2PagedArchive
+    ? {
+        items: getProcessedRaces(),
+        page: racesArchiveMeta.page || racesPage,
+        totalPages: racesArchiveMeta.total_pages || 1,
+        totalItems: racesArchiveMeta.total_items || 0,
+        startIndex: racesArchiveMeta.start_index || 0,
+        endIndex: racesArchiveMeta.end_index || 0,
+      }
+    : paginate(getProcessedRaces(), racesPage, PAGE_SIZE);
   racesPage = result.page;
 
   if (!result.totalItems) {
@@ -4489,6 +4648,20 @@ function renderRacesTablePage() {
     result.endIndex,
     (page) => {
       racesPage = page;
+      if (isV2PagedArchive) {
+        tableEl.innerHTML = `<div class="loading">${escapeHtml(t("loading"))}</div>`;
+        loadRacesPageData(page)
+          .then((items) => {
+            racesData = items;
+            renderRacesPage();
+            document.getElementById("races-table")?.scrollIntoView({ behavior: "smooth", block: "center" });
+          })
+          .catch((error) => {
+            console.warn("Failed to load races page.", error);
+            renderRacesTablePage();
+          });
+        return;
+      }
       renderRacesTablePage();
       document.getElementById("races-table")?.scrollIntoView({ behavior: "smooth", block: "center" });
     }
@@ -4581,6 +4754,20 @@ function openRaceResultsModal(race, trigger = null) {
   if (!raceResultsModalController || !race) return;
   selectedRace = race;
   raceResultsModalController.open(trigger);
+
+  if (Array.isArray(race.results) && race.results.length) return;
+
+  loadRaceDetailsCached(race)
+    .then((details) => {
+      const activeRaceId = selectedRace?.race_id || selectedRace?.source_file;
+      const loadedRaceId = details?.race_id || details?.source_file;
+      if (!details || !activeRaceId || activeRaceId !== loadedRaceId) return;
+      selectedRace = details;
+      renderRaceResultsModal();
+    })
+    .catch((error) => {
+      console.warn("Failed to load race details.", error);
+    });
 }
 
 function initRaceResultsModal() {
@@ -4863,7 +5050,8 @@ function renderDriverRaceHistory() {
   });
 
   bindInteractiveRows(tableEl, "tbody tr[data-race-id]", (row) => {
-    const race = getRaceById(row.dataset.raceId);
+    const raceId = row.dataset.raceId;
+    const race = getRaceById(raceId) || rawData.find(item => item?.race_id === raceId) || null;
     openRaceResultsModal(race, row);
   });
 }
@@ -5588,7 +5776,7 @@ async function init() {
 
     if (IS_FUN_STATS_PAGE) {
       const [raceArchive, data] = await Promise.all([
-        loadRacesData(),
+        loadFullRacesData(),
         loadSiteData().catch(() => ({ safety: [] }))
       ]);
       racesData = raceArchive;
@@ -5603,10 +5791,9 @@ async function init() {
       return;
     }
 
-    const [data, hourlyAnnouncement, raceArchive] = await Promise.all([
+    const [data, hourlyAnnouncement] = await Promise.all([
       loadSiteData(),
-      loadHourlyAnnouncementData(),
-      loadRacesData().catch(() => [])
+      loadHourlyAnnouncementData()
     ]);
 
     leaderboardData = data.leaderboard;
@@ -5616,8 +5803,17 @@ async function init() {
     driverOfDayData = data.driverOfDay;
     onlineData = data.online;
     hourlyAnnouncementData = hourlyAnnouncement;
-    racesData = Array.isArray(raceArchive) ? raceArchive : [];
-    raceActivityInsights = buildRaceActivityInsights(racesData);
+    latestHourlyRaceData = data.latestHourlyRace;
+    racesArchiveSummary = data.racesSummary;
+
+    if (Array.isArray(data.raceActivity)) {
+      raceActivityInsights = data.raceActivity;
+      racesData = [];
+    } else {
+      const raceArchive = await loadFullRacesData().catch(() => []);
+      racesData = Array.isArray(raceArchive) ? raceArchive : [];
+      raceActivityInsights = buildRaceActivityInsights(racesData);
+    }
     await loadHourlyVotes(hourlyAnnouncementData);
 
     const driversCountEl = document.getElementById("drivers-count");

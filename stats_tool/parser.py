@@ -9,6 +9,7 @@ import time
 import hashlib
 from datetime import date, datetime
 from pathlib import Path
+from urllib.parse import quote
 
 
 TOOL_DIR = Path(__file__).resolve().parent
@@ -16,6 +17,7 @@ ENV_BASE_DIR = "ACC_SERVER_BASE_DIR"
 ENV_GIT_EXE = "ACC_GIT_EXE"
 ENV_SUNSET_SERVER_BASE_DIR = "ACC_SUNSET_SERVER_BASE_DIR"
 ENV_HOURLY_RESULTS_DIR = "ACC_HOURLY_RESULTS_DIR"
+ENV_AUTO_GIT_PUSH = "ACC_STATS_AUTO_GIT_PUSH"
 
 
 def resolve_base_dir() -> Path:
@@ -88,19 +90,28 @@ OUTPUT_DIR = BASE_DIR / "top-data"
 RACES_DIR = OUTPUT_DIR / "races"
 DRIVERS_DIR = OUTPUT_DIR / "drivers"
 CARS_DIR = OUTPUT_DIR / "cars"
+V2_DIR = OUTPUT_DIR / "v2"
+V2_RACES_DIR = V2_DIR / "races"
+V2_RACE_DETAILS_DIR = V2_RACES_DIR / "details"
 
 SNAPSHOT_FILE = OUTPUT_DIR / "snapshot.json"
 RACES_FILE = RACES_DIR / "races.json"
 DRIVERS_INDEX_FILE = DRIVERS_DIR / "drivers.json"
 CARS_FILE = CARS_DIR / "cars.json"
+V2_MANIFEST_FILE = V2_DIR / "manifest.json"
+V2_HOME_FILE = V2_DIR / "home.json"
+V2_OVERLAY_FILE = V2_DIR / "overlay.json"
+V2_RACES_SUMMARY_FILE = V2_RACES_DIR / "summary.json"
 STATE_FILE = TOOL_DIR / "parser_state.json"
 LOG_FILE = TOOL_DIR / "parser.log"
 
 GIT_EXE = resolve_git_executable()
 
-AUTO_GIT_PUSH = True
+AUTO_GIT_PUSH = os.getenv(ENV_AUTO_GIT_PUSH, "true").strip().lower() not in {"0", "false", "no", "off"}
 COMMIT_MESSAGE_PREFIX = "ACC stats update"
 SCHEMA_VERSION = 9
+V2_SCHEMA_VERSION = 1
+V2_RACE_PAGE_SIZE = 10
 
 SERVER_PROCESS_NAME = "accServer.exe"
 SERVER_PORT_GROUPS = {
@@ -2162,6 +2173,404 @@ def build_global_stats_output(state: dict):
     }
 
 
+def build_v2_race_detail_filename(race_id) -> str:
+    safe_race_id = quote(str(race_id or "unknown"), safe="")
+    return safe_race_id if safe_race_id.lower().endswith(".json") else f"{safe_race_id}.json"
+
+
+def build_v2_race_detail_path(race: dict) -> str:
+    return f"races/details/{build_v2_race_detail_filename(race.get('race_id') or race.get('source_file'))}"
+
+
+def build_v2_race_summary_row(race: dict) -> dict:
+    winner_result = next(
+        (
+            row
+            for row in (race.get("results") or [])
+            if row.get("position") == 1
+            or (race.get("winner_public_id") and row.get("public_id") == race.get("winner_public_id"))
+        ),
+        {},
+    )
+    return {
+        "race_id": race.get("race_id"),
+        "source_file": race.get("source_file"),
+        "result_source": race.get("result_source"),
+        "result_source_label": race.get("result_source_label"),
+        "race_type": race.get("race_type"),
+        "date": race.get("date"),
+        "finished_at": race.get("finished_at"),
+        "track": race.get("track"),
+        "session_type": race.get("session_type"),
+        "server_name": race.get("server_name"),
+        "meta_data": race.get("meta_data"),
+        "participants_count": race.get("participants_count"),
+        "winner": race.get("winner"),
+        "winner_public_id": race.get("winner_public_id"),
+        "winner_player_id": winner_result.get("player_id"),
+        "winner_car_model_id": winner_result.get("car_model_id"),
+        "winner_car_name_raw": winner_result.get("car_name_raw"),
+        "winner_car_name": winner_result.get("car_name"),
+        "best_lap": race.get("best_lap"),
+        "best_lap_driver": race.get("best_lap_driver"),
+        "best_lap_public_id": race.get("best_lap_public_id"),
+        "best_lap_car_model_id": race.get("best_lap_car_model_id"),
+        "best_lap_car_name_raw": race.get("best_lap_car_name_raw"),
+        "best_lap_car_name": race.get("best_lap_car_name"),
+        "total_penalties": race.get("total_penalties"),
+        "details_path": build_v2_race_detail_path(race),
+    }
+
+
+def is_v2_hourly_race(race: dict) -> bool:
+    source_text = " ".join(
+        str(value or "")
+        for value in (
+            race.get("result_source"),
+            race.get("race_type"),
+            race.get("source_file"),
+            race.get("server_name"),
+            race.get("meta_data"),
+        )
+    ).lower()
+    return "hourly" in source_text
+
+
+def build_v2_races_summary(races: list[dict]) -> dict:
+    total_races = len(races)
+    active_drivers_total = 0
+    overtakes_total = 0
+    winner_counts = {}
+
+    for race in races:
+        for result in race.get("results") or []:
+            if not result.get("counted_for_stats", True):
+                continue
+            active_drivers_total += 1
+            delta = result.get("positions_delta")
+            if isinstance(delta, (int, float)):
+                overtakes_total += max(0, delta)
+
+        if race.get("winner"):
+            key = race.get("winner_public_id") or race.get("winner")
+            entry = winner_counts.setdefault(
+                key,
+                {
+                    "name": race.get("winner"),
+                    "public_id": race.get("winner_public_id"),
+                    "count": 0,
+                },
+            )
+            entry["count"] += 1
+
+    top_winner = (
+        sorted(
+            winner_counts.values(),
+            key=lambda item: (-item["count"], str(item.get("name") or "")),
+        )[0]
+        if winner_counts
+        else None
+    )
+    latest_race = races[0] if races else None
+
+    return {
+        "total_races": total_races,
+        "average_active_drivers": round(active_drivers_total / total_races, 2) if total_races else 0,
+        "average_overtakes": round(overtakes_total / total_races, 2) if total_races else 0,
+        "top_winner": top_winner,
+        "latest_race": build_v2_race_summary_row(latest_race) if latest_race else None,
+    }
+
+
+def normalize_v2_activity_score(value, max_value):
+    if not isinstance(value, (int, float)) or value <= 0:
+        return 0
+    safe_max = max(1, max_value if isinstance(max_value, (int, float)) else 1)
+    return round((value / safe_max) * 100)
+
+
+def build_v2_race_activity(races: list[dict]) -> list[dict]:
+    day_map = {}
+
+    for race in races:
+        finished_at = race.get("finished_at")
+        if not finished_at:
+            continue
+
+        day_key = str(finished_at)[:10]
+        hour_key = "00"
+        match = re.search(r"T(\d{2})", str(finished_at))
+        if match:
+            hour_key = match.group(1)
+
+        participants = race.get("results") or []
+        participants_count = race.get("participants_count") if isinstance(race.get("participants_count"), int) else len(participants)
+
+        day = day_map.setdefault(
+            day_key,
+            {
+                "date": day_key,
+                "races": 0,
+                "entries": 0,
+                "unique_players": set(),
+                "tracks": set(),
+                "hours": {},
+                "participants": {},
+            },
+        )
+        day["races"] += 1
+        day["entries"] += participants_count
+        if race.get("track"):
+            day["tracks"].add(race.get("track"))
+
+        hour = day["hours"].setdefault(
+            hour_key,
+            {
+                "hour": hour_key,
+                "label": f"{hour_key}:00",
+                "races": 0,
+                "entries": 0,
+                "unique_players": set(),
+            },
+        )
+        hour["races"] += 1
+        hour["entries"] += participants_count
+
+        for result in participants:
+            player_id = result.get("player_id")
+            if not player_id:
+                continue
+            day["unique_players"].add(player_id)
+            hour["unique_players"].add(player_id)
+
+            participant = day["participants"].setdefault(
+                player_id,
+                {
+                    "player_id": player_id,
+                    "public_id": result.get("public_id"),
+                    "driver": result.get("driver") or "-",
+                    "races": 0,
+                    "points": 0,
+                    "wins": 0,
+                    "average_finish_sum": 0,
+                    "average_finish_count": 0,
+                    "average_finish": None,
+                    "best_lap": None,
+                    "best_lap_ms": None,
+                },
+            )
+            participant["races"] += 1
+            participant["points"] += result.get("points") or 0
+
+            position = result.get("position")
+            if isinstance(position, (int, float)) and position > 0:
+                participant["average_finish_sum"] += position
+                participant["average_finish_count"] += 1
+                participant["average_finish"] = round(participant["average_finish_sum"] / participant["average_finish_count"], 2)
+                if position == 1:
+                    participant["wins"] += 1
+
+            best_lap_ms = result.get("best_lap_ms")
+            if isinstance(best_lap_ms, (int, float)) and best_lap_ms > 0:
+                if not isinstance(participant["best_lap_ms"], (int, float)) or best_lap_ms < participant["best_lap_ms"]:
+                    participant["best_lap_ms"] = best_lap_ms
+                    participant["best_lap"] = result.get("best_lap") or participant["best_lap"]
+
+    day_entries = list(day_map.values())
+    max_day_races = max([day["races"] for day in day_entries] or [1])
+    max_day_entries = max([day["entries"] for day in day_entries] or [1])
+    max_day_unique = max([len(day["unique_players"]) for day in day_entries] or [1])
+    all_hours = [hour for day in day_entries for hour in day["hours"].values()]
+    max_hour_races = max([hour["races"] for hour in all_hours] or [1])
+    max_hour_entries = max([hour["entries"] for hour in all_hours] or [1])
+    max_hour_unique = max([len(hour["unique_players"]) for hour in all_hours] or [1])
+
+    output = []
+    for day in sorted(day_entries, key=lambda item: item["date"], reverse=True):
+        normalized_races = normalize_v2_activity_score(day["races"], max_day_races)
+        normalized_entries = normalize_v2_activity_score(day["entries"], max_day_entries)
+        normalized_unique = normalize_v2_activity_score(len(day["unique_players"]), max_day_unique)
+        activity_score = round(normalized_unique * 0.45 + normalized_entries * 0.4 + normalized_races * 0.15)
+
+        hours = []
+        for index in range(24):
+            key = f"{index:02d}"
+            bucket = day["hours"].get(
+                key,
+                {
+                    "hour": key,
+                    "label": f"{key}:00",
+                    "races": 0,
+                    "entries": 0,
+                    "unique_players": set(),
+                },
+            )
+            normalized_hour_races = normalize_v2_activity_score(bucket["races"], max_hour_races)
+            normalized_hour_entries = normalize_v2_activity_score(bucket["entries"], max_hour_entries)
+            normalized_hour_unique = normalize_v2_activity_score(len(bucket["unique_players"]), max_hour_unique)
+            hour_score = round(normalized_hour_unique * 0.5 + normalized_hour_entries * 0.35 + normalized_hour_races * 0.15)
+            hours.append(
+                {
+                    "hour": key,
+                    "label": bucket["label"],
+                    "races": bucket["races"],
+                    "entries": bucket["entries"],
+                    "unique_players": len(bucket["unique_players"]),
+                    "activity_score": hour_score,
+                }
+            )
+
+        peak_hour = (
+            sorted(
+                hours,
+                key=lambda item: (
+                    -item["activity_score"],
+                    -item["entries"],
+                    -item["unique_players"],
+                    -item["races"],
+                    item["hour"],
+                ),
+            )[0]
+            if hours
+            else None
+        )
+
+        participants = []
+        for item in sorted(
+            day["participants"].values(),
+            key=lambda row: (
+                -row["races"],
+                -row["points"],
+                -row["wins"],
+                row["average_finish"] if row["average_finish"] is not None else 9999,
+                str(row["driver"] or ""),
+            ),
+        ):
+            participants.append(
+                {
+                    "player_id": item["player_id"],
+                    "public_id": item["public_id"],
+                    "driver": item["driver"],
+                    "races": item["races"],
+                    "points": item["points"],
+                    "wins": item["wins"],
+                    "average_finish": item["average_finish"],
+                    "best_lap": item["best_lap"],
+                }
+            )
+
+        output.append(
+            {
+                "date": day["date"],
+                "races": day["races"],
+                "entries": day["entries"],
+                "unique_players": len(day["unique_players"]),
+                "avg_players_per_race": round(day["entries"] / day["races"], 2) if day["races"] else 0,
+                "activity_score": activity_score,
+                "tracks": sorted(day["tracks"]),
+                "peak_hour": peak_hour if peak_hour and peak_hour["activity_score"] > 0 else None,
+                "hours": hours,
+                "participants": participants,
+            }
+        )
+
+    return output
+
+
+def build_v2_race_page_payload(race_summaries: list[dict], page: int, summary: dict) -> dict:
+    total_items = len(race_summaries)
+    total_pages = max(1, math.ceil(total_items / V2_RACE_PAGE_SIZE))
+    safe_page = min(max(1, page), total_pages)
+    start = (safe_page - 1) * V2_RACE_PAGE_SIZE
+    end = start + V2_RACE_PAGE_SIZE
+
+    return {
+        "schema_version": V2_SCHEMA_VERSION,
+        "page": safe_page,
+        "page_size": V2_RACE_PAGE_SIZE,
+        "total_pages": total_pages,
+        "total_items": total_items,
+        "start_index": start + 1 if total_items else 0,
+        "end_index": min(end, total_items),
+        "summary": summary,
+        "items": race_summaries[start:end],
+    }
+
+
+def build_v2_home_payload(snapshot: dict, races_output: list[dict], races_summary: dict) -> dict:
+    latest_hourly_race = next((race for race in races_output if is_v2_hourly_race(race)), None)
+    return {
+        "schema_version": V2_SCHEMA_VERSION,
+        "generated_at": snapshot.get("generated_at"),
+        "leaderboard": snapshot.get("leaderboard", []),
+        "bestlaps": snapshot.get("bestlaps", []),
+        "safety": snapshot.get("safety", []),
+        "online": snapshot.get("online", []),
+        "global_stats": snapshot.get("global_stats"),
+        "driver_of_the_day": snapshot.get("driver_of_the_day"),
+        "server_status": snapshot.get("server_status"),
+        "race_activity": build_v2_race_activity(races_output),
+        "races_summary": races_summary,
+        "latest_hourly_race": build_v2_race_summary_row(latest_hourly_race) if latest_hourly_race else None,
+    }
+
+
+def save_top_v2_outputs(snapshot: dict, races_output: list[dict], changed_files: list[str]):
+    generated_at = snapshot.get("generated_at") or datetime.now().isoformat(timespec="seconds")
+    version = hashlib.sha1(generated_at.encode("utf-8")).hexdigest()[:12]
+    race_summaries = [build_v2_race_summary_row(race) for race in races_output]
+    races_summary = build_v2_races_summary(races_output)
+
+    home_payload = build_v2_home_payload(snapshot, races_output, races_summary)
+    races_summary_payload = {
+        "schema_version": V2_SCHEMA_VERSION,
+        "generated_at": generated_at,
+        "summary": races_summary,
+    }
+    manifest_payload = {
+        "schema_version": V2_SCHEMA_VERSION,
+        "generated_at": generated_at,
+        "version": version,
+        "home": "home.json",
+        "overlay": "overlay.json",
+        "races": {
+            "summary": "races/summary.json",
+            "page_path": "races/page-{page}.json",
+            "details_path": "races/details/{race_id}.json",
+            "page_size": V2_RACE_PAGE_SIZE,
+            "total_items": len(race_summaries),
+            "total_pages": max(1, math.ceil(len(race_summaries) / V2_RACE_PAGE_SIZE)),
+        },
+    }
+    overlay_payload = {
+        "schema_version": V2_SCHEMA_VERSION,
+        "generated_at": generated_at,
+        "leaderboard": snapshot.get("leaderboard", [])[:100],
+        "bestlaps": snapshot.get("bestlaps", [])[:10],
+    }
+
+    if save_json_if_changed(V2_HOME_FILE, home_payload):
+        changed_files.append("v2/home.json")
+    if save_json_if_changed(V2_OVERLAY_FILE, overlay_payload):
+        changed_files.append("v2/overlay.json")
+    if save_json_if_changed(V2_RACES_SUMMARY_FILE, races_summary_payload):
+        changed_files.append("v2/races/summary.json")
+    if save_json_if_changed(V2_MANIFEST_FILE, manifest_payload):
+        changed_files.append("v2/manifest.json")
+
+    for page in range(1, manifest_payload["races"]["total_pages"] + 1):
+        page_payload = build_v2_race_page_payload(race_summaries, page, races_summary)
+        page_path = V2_RACES_DIR / f"page-{page}.json"
+        if save_json_if_changed(page_path, page_payload):
+            changed_files.append(f"v2/races/page-{page}.json")
+
+    for race in races_output:
+        detail_filename = build_v2_race_detail_filename(race.get("race_id") or race.get("source_file"))
+        detail_path = V2_RACE_DETAILS_DIR / detail_filename
+        if save_json_if_changed(detail_path, race):
+            changed_files.append(f"v2/races/details/{detail_filename}")
+
+
 def build_driver_of_the_day_output(state: dict):
     daily_stats = get_today_stats(state)
     drivers = list(daily_stats["driver_day_stats"].values())
@@ -2378,6 +2787,7 @@ def rebuild_all():
         profile_path = DRIVERS_DIR / f"{public_id}.json"
         if save_json_if_changed(profile_path, profile):
             changed_files.append(f"drivers/{public_id}.json")
+    save_top_v2_outputs(snapshot, races_output, changed_files)
 
     logging.info("Drivers in leaderboard: %s", len(snapshot["leaderboard"]))
     logging.info("Drivers in bestlaps: %s", len(snapshot["bestlaps"]))
