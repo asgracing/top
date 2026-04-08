@@ -5834,6 +5834,9 @@ async function init() {
     if (Array.isArray(data.raceActivity)) {
       raceActivityInsights = data.raceActivity;
       racesData = [];
+    } else if (ENABLE_TOP_DATA_V2) {
+      raceActivityInsights = [];
+      racesData = [];
     } else {
       const raceArchive = await loadFullRacesData().catch(() => []);
       racesData = Array.isArray(raceArchive) ? raceArchive : [];
