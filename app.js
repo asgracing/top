@@ -67,6 +67,8 @@ let racesData = [];
 let carsData = [];
 let topDataV2Manifest = null;
 let topDataV2Version = "";
+let topDataV2TableMeta = null;
+const topDataV2TableLoadPromises = new Map();
 let latestHourlyRaceData = null;
 let racesArchiveMeta = null;
 let racesArchiveSummary = null;
@@ -2138,7 +2140,6 @@ async function refreshTwitchWidgetState() {
       twitchWidgetState.dismissed = true;
     }
     if (!wasLive && result.live) {
-      twitchWidgetState.dismissed = false;
       twitchWidgetState.expanded = false;
     }
     if (previousPlatform && previousPlatform !== result.platform) {
@@ -3136,6 +3137,64 @@ async function loadSiteDataV2() {
   return normalizeSnapshotPayload(data);
 }
 
+function getTopDataV2TableMeta(tableName) {
+  const homeMeta = topDataV2TableMeta?.[tableName];
+  const manifestMeta = topDataV2Manifest?.tables?.[tableName];
+  return homeMeta || manifestMeta || null;
+}
+
+function getTopDataV2TableData(tableName) {
+  if (tableName === "leaderboard") return leaderboardData;
+  if (tableName === "bestlaps") return bestlapsData;
+  if (tableName === "safety") return safetyData;
+  return [];
+}
+
+function setTopDataV2TableData(tableName, items) {
+  if (tableName === "leaderboard") {
+    leaderboardData = items;
+  } else if (tableName === "bestlaps") {
+    bestlapsData = items;
+  } else if (tableName === "safety") {
+    safetyData = items;
+  }
+}
+
+function isTopDataV2TablePreview(tableName) {
+  if (!ENABLE_TOP_DATA_V2) return false;
+  const meta = getTopDataV2TableMeta(tableName);
+  if (!meta) return false;
+  const totalItems = Number(meta.total_items) || 0;
+  return totalItems > getTopDataV2TableData(tableName).length;
+}
+
+async function loadFullTopDataV2Table(tableName) {
+  if (!isTopDataV2TablePreview(tableName)) {
+    return getTopDataV2TableData(tableName);
+  }
+
+  if (topDataV2TableLoadPromises.has(tableName)) {
+    return topDataV2TableLoadPromises.get(tableName);
+  }
+
+  const promise = (async () => {
+    const meta = getTopDataV2TableMeta(tableName);
+    const payload = await loadTopDataV2Json(meta?.full || `tables/${tableName}.json`);
+    const items = Array.isArray(payload)
+      ? payload
+      : Array.isArray(payload?.items)
+        ? payload.items
+        : [];
+    setTopDataV2TableData(tableName, items);
+    return items;
+  })().finally(() => {
+    topDataV2TableLoadPromises.delete(tableName);
+  });
+
+  topDataV2TableLoadPromises.set(tableName, promise);
+  return promise;
+}
+
 function debounce(fn, wait = 180) {
   let timeoutId = null;
   return (...args) => {
@@ -3155,7 +3214,8 @@ function normalizeSnapshotPayload(snapshot) {
     online: Array.isArray(snapshot?.online) ? snapshot.online : [],
     raceActivity: Array.isArray(snapshot?.race_activity) ? snapshot.race_activity : null,
     latestHourlyRace: snapshot?.latest_hourly_race && typeof snapshot.latest_hourly_race === "object" ? snapshot.latest_hourly_race : null,
-    racesSummary: snapshot?.races_summary && typeof snapshot.races_summary === "object" ? snapshot.races_summary : null
+    racesSummary: snapshot?.races_summary && typeof snapshot.races_summary === "object" ? snapshot.races_summary : null,
+    tables: snapshot?.tables && typeof snapshot.tables === "object" ? snapshot.tables : null
   };
 }
 
@@ -3761,6 +3821,28 @@ function paginate(data, page, pageSize) {
   };
 }
 
+function getPreviewAwareTablePage(tableName, data, page, pageSize) {
+  const result = paginate(data, page, pageSize);
+  const meta = getTopDataV2TableMeta(tableName);
+  const totalItems = Number(meta?.total_items) || result.totalItems;
+  if (!ENABLE_TOP_DATA_V2 || totalItems <= result.totalItems) return result;
+
+  const totalPages = Math.max(1, Math.ceil(totalItems / pageSize));
+  const safePage = Math.min(Math.max(1, page), totalPages);
+  const start = (safePage - 1) * pageSize;
+  const end = start + pageSize;
+
+  return {
+    ...result,
+    page: safePage,
+    totalPages,
+    totalItems,
+    startIndex: totalItems ? start + 1 : 0,
+    endIndex: Math.min(end, totalItems),
+    items: data.slice(start, end)
+  };
+}
+
 function getPageList(current, total) {
   if (total <= 7) return Array.from({ length: total }, (_, i) => i + 1);
   if (current <= 4) return [1, 2, 3, 4, 5, "...", total];
@@ -3844,7 +3926,8 @@ function renderBestlapsHeaders() {
 }
 
 function bindLeaderboardSortHandlers() {
-  bindSortableHeaders("#leaderboard-table th[data-sort-key]", leaderboardSort, (key) => {
+  bindSortableHeaders("#leaderboard-table th[data-sort-key]", leaderboardSort, async (key) => {
+    await loadFullTopDataV2Table("leaderboard").catch(() => null);
     leaderboardSort = cycleSort(leaderboardSort, key);
     leaderboardPage = 1;
     renderLeaderboardTablePage();
@@ -3852,7 +3935,8 @@ function bindLeaderboardSortHandlers() {
 }
 
 function bindBestlapsSortHandlers() {
-  bindSortableHeaders("#bestlaps-table th[data-sort-key]", bestlapsSort, (key) => {
+  bindSortableHeaders("#bestlaps-table th[data-sort-key]", bestlapsSort, async (key) => {
+    await loadFullTopDataV2Table("bestlaps").catch(() => null);
     bestlapsSort = cycleSort(bestlapsSort, key);
     bestlapsPage = 1;
     renderBestLapsTablePage();
@@ -3860,7 +3944,7 @@ function bindBestlapsSortHandlers() {
 }
 
 function renderLeaderboardTablePage() {
-  const result = paginate(getProcessedLeaderboard(), leaderboardPage, PAGE_SIZE);
+  const result = getPreviewAwareTablePage("leaderboard", getProcessedLeaderboard(), leaderboardPage, PAGE_SIZE);
   leaderboardPage = result.page;
 
   const tableEl = document.getElementById("leaderboard-table");
@@ -3918,7 +4002,10 @@ function renderLeaderboardTablePage() {
     result.totalItems,
     result.startIndex,
     result.endIndex,
-    (page) => {
+    async (page) => {
+      if (page > Math.ceil(leaderboardData.length / PAGE_SIZE)) {
+        await loadFullTopDataV2Table("leaderboard").catch(() => null);
+      }
       leaderboardPage = page;
       renderLeaderboardTablePage();
       document.getElementById("championship")?.scrollIntoView({ behavior: "smooth", block: "start" });
@@ -3927,7 +4014,7 @@ function renderLeaderboardTablePage() {
 }
 
 function renderBestLapsTablePage() {
-  const result = paginate(getProcessedBestlaps(), bestlapsPage, PAGE_SIZE);
+  const result = getPreviewAwareTablePage("bestlaps", getProcessedBestlaps(), bestlapsPage, PAGE_SIZE);
   bestlapsPage = result.page;
 
   const tableEl = document.getElementById("bestlaps-table");
@@ -3986,7 +4073,10 @@ function renderBestLapsTablePage() {
     result.totalItems,
     result.startIndex,
     result.endIndex,
-    (page) => {
+    async (page) => {
+      if (page > Math.ceil(bestlapsData.length / PAGE_SIZE)) {
+        await loadFullTopDataV2Table("bestlaps").catch(() => null);
+      }
       bestlapsPage = page;
       renderBestLapsTablePage();
       document.getElementById("bestlaps")?.scrollIntoView({ behavior: "smooth", block: "start" });
@@ -3999,7 +4089,8 @@ function renderSafetyHeaders() {
 }
 
 function bindSafetySortHandlers() {
-  bindSortableHeaders("#safety-table th[data-sort-key]", safetySort, (key) => {
+  bindSortableHeaders("#safety-table th[data-sort-key]", safetySort, async (key) => {
+    await loadFullTopDataV2Table("safety").catch(() => null);
     safetySort = cycleSort(safetySort, key);
     safetyPage = 1;
     renderSafetyTablePage();
@@ -4016,7 +4107,7 @@ function renderSafetyPenaltyBreakdown(row) {
 }
 
 function renderSafetyTablePage() {
-  const result = paginate(getProcessedSafety(), safetyPage, PAGE_SIZE);
+  const result = getPreviewAwareTablePage("safety", getProcessedSafety(), safetyPage, PAGE_SIZE);
   safetyPage = result.page;
 
   const tableEl = document.getElementById("safety-table");
@@ -4067,7 +4158,10 @@ function renderSafetyTablePage() {
     result.totalItems,
     result.startIndex,
     result.endIndex,
-    (page) => {
+    async (page) => {
+      if (page > Math.ceil(safetyData.length / PAGE_SIZE)) {
+        await loadFullTopDataV2Table("safety").catch(() => null);
+      }
       safetyPage = page;
       renderSafetyTablePage();
       document.getElementById("worst-safety")?.scrollIntoView({ behavior: "smooth", block: "start" });
@@ -4187,17 +4281,20 @@ function bindSearchInputs() {
   const leaderboardInput = document.getElementById("leaderboard-search");
   const bestlapsInput = document.getElementById("bestlaps-search");
   const safetyInput = document.getElementById("safety-search");
-  const handleLeaderboardInput = debounce((value) => {
+  const handleLeaderboardInput = debounce(async (value) => {
+    if (value) await loadFullTopDataV2Table("leaderboard").catch(() => null);
     leaderboardSearch = value || "";
     leaderboardPage = 1;
     renderLeaderboardTablePage();
   });
-  const handleBestlapsInput = debounce((value) => {
+  const handleBestlapsInput = debounce(async (value) => {
+    if (value) await loadFullTopDataV2Table("bestlaps").catch(() => null);
     bestlapsSearch = value || "";
     bestlapsPage = 1;
     renderBestLapsTablePage();
   });
-  const handleSafetyInput = debounce((value) => {
+  const handleSafetyInput = debounce(async (value) => {
+    if (value) await loadFullTopDataV2Table("safety").catch(() => null);
     safetySearch = value || "";
     safetyPage = 1;
     renderSafetyTablePage();
@@ -5830,6 +5927,7 @@ async function init() {
     hourlyAnnouncementData = hourlyAnnouncement;
     latestHourlyRaceData = data.latestHourlyRace;
     racesArchiveSummary = data.racesSummary;
+    topDataV2TableMeta = data.tables;
 
     if (Array.isArray(data.raceActivity)) {
       raceActivityInsights = data.raceActivity;
@@ -5846,7 +5944,7 @@ async function init() {
 
     const driversCountEl = document.getElementById("drivers-count");
     if (driversCountEl) {
-      driversCountEl.textContent = leaderboardData.length;
+      driversCountEl.textContent = getTopDataV2TableMeta("leaderboard")?.total_items || leaderboardData.length;
     }
 
     const bestLapHighlightEl = document.getElementById("best-lap-highlight");

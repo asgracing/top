@@ -91,6 +91,7 @@ RACES_DIR = OUTPUT_DIR / "races"
 DRIVERS_DIR = OUTPUT_DIR / "drivers"
 CARS_DIR = OUTPUT_DIR / "cars"
 V2_DIR = OUTPUT_DIR / "v2"
+V2_TABLES_DIR = V2_DIR / "tables"
 V2_RACES_DIR = V2_DIR / "races"
 V2_RACE_DETAILS_DIR = V2_RACES_DIR / "details"
 
@@ -102,6 +103,9 @@ V2_MANIFEST_FILE = V2_DIR / "manifest.json"
 V2_HOME_FILE = V2_DIR / "home.json"
 V2_OVERLAY_FILE = V2_DIR / "overlay.json"
 V2_RACES_SUMMARY_FILE = V2_RACES_DIR / "summary.json"
+V2_LEADERBOARD_FILE = V2_TABLES_DIR / "leaderboard.json"
+V2_BESTLAPS_FILE = V2_TABLES_DIR / "bestlaps.json"
+V2_SAFETY_FILE = V2_TABLES_DIR / "safety.json"
 STATE_FILE = TOOL_DIR / "parser_state.json"
 LOG_FILE = TOOL_DIR / "parser.log"
 
@@ -112,6 +116,7 @@ COMMIT_MESSAGE_PREFIX = "ACC stats update"
 SCHEMA_VERSION = 9
 V2_SCHEMA_VERSION = 1
 V2_RACE_PAGE_SIZE = 10
+V2_HOME_TABLE_PREVIEW_LIMIT = 100
 
 SERVER_PROCESS_NAME = "accServer.exe"
 SERVER_PORT_GROUPS = {
@@ -2315,7 +2320,6 @@ def build_v2_race_activity(races: list[dict]) -> list[dict]:
                 "unique_players": set(),
                 "tracks": set(),
                 "hours": {},
-                "participants": {},
             },
         )
         day["races"] += 1
@@ -2342,39 +2346,6 @@ def build_v2_race_activity(races: list[dict]) -> list[dict]:
                 continue
             day["unique_players"].add(player_id)
             hour["unique_players"].add(player_id)
-
-            participant = day["participants"].setdefault(
-                player_id,
-                {
-                    "player_id": player_id,
-                    "public_id": result.get("public_id"),
-                    "driver": result.get("driver") or "-",
-                    "races": 0,
-                    "points": 0,
-                    "wins": 0,
-                    "average_finish_sum": 0,
-                    "average_finish_count": 0,
-                    "average_finish": None,
-                    "best_lap": None,
-                    "best_lap_ms": None,
-                },
-            )
-            participant["races"] += 1
-            participant["points"] += result.get("points") or 0
-
-            position = result.get("position")
-            if isinstance(position, (int, float)) and position > 0:
-                participant["average_finish_sum"] += position
-                participant["average_finish_count"] += 1
-                participant["average_finish"] = round(participant["average_finish_sum"] / participant["average_finish_count"], 2)
-                if position == 1:
-                    participant["wins"] += 1
-
-            best_lap_ms = result.get("best_lap_ms")
-            if isinstance(best_lap_ms, (int, float)) and best_lap_ms > 0:
-                if not isinstance(participant["best_lap_ms"], (int, float)) or best_lap_ms < participant["best_lap_ms"]:
-                    participant["best_lap_ms"] = best_lap_ms
-                    participant["best_lap"] = result.get("best_lap") or participant["best_lap"]
 
     day_entries = list(day_map.values())
     max_day_races = max([day["races"] for day in day_entries] or [1])
@@ -2435,30 +2406,6 @@ def build_v2_race_activity(races: list[dict]) -> list[dict]:
             else None
         )
 
-        participants = []
-        for item in sorted(
-            day["participants"].values(),
-            key=lambda row: (
-                -row["races"],
-                -row["points"],
-                -row["wins"],
-                row["average_finish"] if row["average_finish"] is not None else 9999,
-                str(row["driver"] or ""),
-            ),
-        ):
-            participants.append(
-                {
-                    "player_id": item["player_id"],
-                    "public_id": item["public_id"],
-                    "driver": item["driver"],
-                    "races": item["races"],
-                    "points": item["points"],
-                    "wins": item["wins"],
-                    "average_finish": item["average_finish"],
-                    "best_lap": item["best_lap"],
-                }
-            )
-
         output.append(
             {
                 "date": day["date"],
@@ -2470,7 +2417,6 @@ def build_v2_race_activity(races: list[dict]) -> list[dict]:
                 "tracks": sorted(day["tracks"]),
                 "peak_hour": peak_hour if peak_hour and peak_hour["activity_score"] > 0 else None,
                 "hours": hours,
-                "participants": participants,
             }
         )
 
@@ -2497,14 +2443,34 @@ def build_v2_race_page_payload(race_summaries: list[dict], page: int, summary: d
     }
 
 
+def build_v2_table_payload(generated_at: str, items: list[dict]) -> dict:
+    return {
+        "schema_version": V2_SCHEMA_VERSION,
+        "generated_at": generated_at,
+        "total_items": len(items),
+        "items": items,
+    }
+
+
+def build_v2_table_meta(items: list[dict], path: str) -> dict:
+    return {
+        "total_items": len(items),
+        "preview_items": min(len(items), V2_HOME_TABLE_PREVIEW_LIMIT),
+        "full": path,
+    }
+
+
 def build_v2_home_payload(snapshot: dict, races_output: list[dict], races_summary: dict) -> dict:
     latest_hourly_race = next((race for race in races_output if is_v2_hourly_race(race)), None)
+    leaderboard = snapshot.get("leaderboard", [])
+    bestlaps = snapshot.get("bestlaps", [])
+    safety = snapshot.get("safety", [])
     return {
         "schema_version": V2_SCHEMA_VERSION,
         "generated_at": snapshot.get("generated_at"),
-        "leaderboard": snapshot.get("leaderboard", []),
-        "bestlaps": snapshot.get("bestlaps", []),
-        "safety": snapshot.get("safety", []),
+        "leaderboard": leaderboard[:V2_HOME_TABLE_PREVIEW_LIMIT],
+        "bestlaps": bestlaps[:V2_HOME_TABLE_PREVIEW_LIMIT],
+        "safety": safety[:V2_HOME_TABLE_PREVIEW_LIMIT],
         "online": snapshot.get("online", []),
         "global_stats": snapshot.get("global_stats"),
         "driver_of_the_day": snapshot.get("driver_of_the_day"),
@@ -2512,6 +2478,11 @@ def build_v2_home_payload(snapshot: dict, races_output: list[dict], races_summar
         "race_activity": build_v2_race_activity(races_output),
         "races_summary": races_summary,
         "latest_hourly_race": build_v2_race_summary_row(latest_hourly_race) if latest_hourly_race else None,
+        "tables": {
+            "leaderboard": build_v2_table_meta(leaderboard, "tables/leaderboard.json"),
+            "bestlaps": build_v2_table_meta(bestlaps, "tables/bestlaps.json"),
+            "safety": build_v2_table_meta(safety, "tables/safety.json"),
+        },
     }
 
 
@@ -2522,6 +2493,9 @@ def save_top_v2_outputs(snapshot: dict, races_output: list[dict], changed_files:
     races_summary = build_v2_races_summary(races_output)
 
     home_payload = build_v2_home_payload(snapshot, races_output, races_summary)
+    leaderboard = snapshot.get("leaderboard", [])
+    bestlaps = snapshot.get("bestlaps", [])
+    safety = snapshot.get("safety", [])
     races_summary_payload = {
         "schema_version": V2_SCHEMA_VERSION,
         "generated_at": generated_at,
@@ -2541,6 +2515,11 @@ def save_top_v2_outputs(snapshot: dict, races_output: list[dict], changed_files:
             "total_items": len(race_summaries),
             "total_pages": max(1, math.ceil(len(race_summaries) / V2_RACE_PAGE_SIZE)),
         },
+        "tables": {
+            "leaderboard": build_v2_table_meta(leaderboard, "tables/leaderboard.json"),
+            "bestlaps": build_v2_table_meta(bestlaps, "tables/bestlaps.json"),
+            "safety": build_v2_table_meta(safety, "tables/safety.json"),
+        },
     }
     overlay_payload = {
         "schema_version": V2_SCHEMA_VERSION,
@@ -2557,6 +2536,12 @@ def save_top_v2_outputs(snapshot: dict, races_output: list[dict], changed_files:
         changed_files.append("v2/races/summary.json")
     if save_json_if_changed(V2_MANIFEST_FILE, manifest_payload):
         changed_files.append("v2/manifest.json")
+    if save_json_if_changed(V2_LEADERBOARD_FILE, build_v2_table_payload(generated_at, leaderboard)):
+        changed_files.append("v2/tables/leaderboard.json")
+    if save_json_if_changed(V2_BESTLAPS_FILE, build_v2_table_payload(generated_at, bestlaps)):
+        changed_files.append("v2/tables/bestlaps.json")
+    if save_json_if_changed(V2_SAFETY_FILE, build_v2_table_payload(generated_at, safety)):
+        changed_files.append("v2/tables/safety.json")
 
     for page in range(1, manifest_payload["races"]["total_pages"] + 1):
         page_payload = build_v2_race_page_payload(race_summaries, page, races_summary)
