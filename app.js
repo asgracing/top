@@ -3333,10 +3333,13 @@ async function loadRacesPageData(page = 1) {
 }
 
 function buildRaceDetailsPath(raceId) {
-  const encodedRaceId = encodeURIComponent(String(raceId || "unknown"));
-  const filename = encodedRaceId.toLowerCase().endsWith(".json")
-    ? encodedRaceId
-    : `${encodedRaceId}.json`;
+  const normalizedRaceId = String(raceId || "unknown")
+    .trim()
+    .toLowerCase()
+    .replace(/\.json$/i, "")
+    .replace(/[^a-z0-9._-]+/g, "_")
+    .replace(/^[._-]+|[._-]+$/g, "") || "unknown";
+  const filename = `${normalizedRaceId}.json`;
   return `races/details/${filename}`;
 }
 
@@ -3351,13 +3354,24 @@ async function loadRaceDetailsCached(race) {
     return raceDetailsCache.get(raceId);
   }
 
-  const detailsPath = race.details_path || buildRaceDetailsPath(raceId);
-  const promise = loadTopDataV2Json(detailsPath)
-    .then(details => details && typeof details === "object" ? { ...race, ...details } : race)
-    .catch(error => {
-      raceDetailsCache.delete(raceId);
-      throw error;
-    });
+  const fallbackDetailsPath = buildRaceDetailsPath(raceId);
+  const detailsPaths = [race.details_path, fallbackDetailsPath].filter(Boolean)
+    .filter((path, index, list) => list.indexOf(path) === index);
+  const promise = (async () => {
+    let lastError = null;
+    for (const detailsPath of detailsPaths) {
+      try {
+        const details = await loadTopDataV2Json(detailsPath);
+        return details && typeof details === "object" ? { ...race, ...details } : race;
+      } catch (error) {
+        lastError = error;
+      }
+    }
+    throw lastError || new Error("Failed to load race details.");
+  })().catch(error => {
+    raceDetailsCache.delete(raceId);
+    throw error;
+  });
 
   raceDetailsCache.set(raceId, promise);
   return promise;

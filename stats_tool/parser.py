@@ -9,9 +9,6 @@ import time
 import hashlib
 from datetime import date, datetime
 from pathlib import Path
-from urllib.parse import quote
-
-
 TOOL_DIR = Path(__file__).resolve().parent
 ENV_BASE_DIR = "ACC_SERVER_BASE_DIR"
 ENV_GIT_EXE = "ACC_GIT_EXE"
@@ -2179,8 +2176,11 @@ def build_global_stats_output(state: dict):
 
 
 def build_v2_race_detail_filename(race_id) -> str:
-    safe_race_id = quote(str(race_id or "unknown"), safe="")
-    return safe_race_id if safe_race_id.lower().endswith(".json") else f"{safe_race_id}.json"
+    base_name = str(race_id or "unknown").strip().lower()
+    if base_name.endswith(".json"):
+        base_name = base_name[:-5]
+    safe_race_id = re.sub(r"[^a-z0-9._-]+", "_", base_name).strip("._-") or "unknown"
+    return f"{safe_race_id}.json"
 
 
 def build_v2_race_detail_path(race: dict) -> str:
