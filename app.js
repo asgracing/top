@@ -5651,6 +5651,28 @@ function optimizeBackgroundMedia() {
   const video = document.querySelector(".site-bg-video");
   if (!video) return;
 
+  const unloadBackgroundVideo = () => {
+    video.pause();
+    video.removeAttribute("autoplay");
+    video.removeAttribute("src");
+    video.replaceChildren();
+    video.load?.();
+    delete video.dataset.loaded;
+  };
+
+  const loadBackgroundVideo = () => {
+    if (video.dataset.loaded === "true") return;
+    const videoSrc = video.dataset.bgSrc;
+    if (!videoSrc) return;
+
+    const source = document.createElement("source");
+    source.src = videoSrc;
+    source.type = "video/mp4";
+    video.appendChild(source);
+    video.dataset.loaded = "true";
+    video.load?.();
+  };
+
   const reduceMotion = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
   const shouldUseStaticBackground =
     reduceMotion ||
@@ -5663,15 +5685,18 @@ function optimizeBackgroundMedia() {
 
   if (shouldUseStaticBackground) {
     document.body.classList.add("lite-background");
-    video.pause();
-    video.removeAttribute("autoplay");
+    unloadBackgroundVideo();
     return;
   }
 
   document.body.classList.remove("lite-background");
+  loadBackgroundVideo();
+  video.setAttribute("autoplay", "");
+  video.muted = true;
   const playPromise = video.play?.();
   if (playPromise && typeof playPromise.catch === "function") {
     playPromise.catch(() => {
+      unloadBackgroundVideo();
       document.body.classList.add("lite-background");
     });
   }
