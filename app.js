@@ -21,6 +21,7 @@ const serverStatusUrl = `${TOP_DATA_BASE_URL}/server_status.json`;
 const onlineUrl = `${TOP_DATA_BASE_URL}/online.json`;
 const hourlyAnnouncementUrl = `${HOURLY_DATA_BASE_URL}/announcement.json`;
 const hourlyVotesApiUrl = "https://hourly-votes.asgracing.workers.dev";
+const HOURLY_SITE_BASE_URL = "/hourly";
 const TWITCH_CHANNEL_NAME = "asgracing";
 const TWITCH_CHANNEL_URL = `https://www.twitch.tv/${TWITCH_CHANNEL_NAME}`;
 const TWITCH_LIVE_PREVIEW_URL = `https://static-cdn.jtvnw.net/previews-ttv/live_user_${TWITCH_CHANNEL_NAME}-440x248.jpg`;
@@ -129,15 +130,15 @@ const driverProfileCache = new Map();
 const raceDetailsCache = new Map();
 let legacyRaceArchivePromise = null;
 const HOURLY_TRACK_BACKGROUNDS = {
-  monza: "https://asgracing.github.io/hourly/assets/tracks/monza.jpg",
-  silverstone: "https://asgracing.github.io/hourly/assets/tracks/silverstone.jpg",
-  spa: "https://asgracing.github.io/hourly/assets/tracks/spa.jpg",
-  nurburgring: "https://asgracing.github.io/hourly/assets/tracks/nurburgring.jpg"
+  monza: `${HOURLY_SITE_BASE_URL}/assets/tracks/monza.jpg`,
+  silverstone: `${HOURLY_SITE_BASE_URL}/assets/tracks/silverstone.jpg`,
+  spa: `${HOURLY_SITE_BASE_URL}/assets/tracks/spa.jpg`,
+  nurburgring: `${HOURLY_SITE_BASE_URL}/assets/tracks/nurburgring.jpg`
 };
 const HOURLY_WEATHER_ICON_PATHS = {
-  clouds: "https://asgracing.github.io/hourly/assets/weather/cloudness.png",
-  rain: "https://asgracing.github.io/hourly/assets/weather/rain.png",
-  random: "https://asgracing.github.io/hourly/assets/weather/random.png"
+  clouds: `${HOURLY_SITE_BASE_URL}/assets/weather/cloudness.png`,
+  rain: `${HOURLY_SITE_BASE_URL}/assets/weather/rain.png`,
+  random: `${HOURLY_SITE_BASE_URL}/assets/weather/random.png`
 };
 
 const translations = {
