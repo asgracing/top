@@ -15,12 +15,38 @@ ENV_GIT_EXE = "ACC_GIT_EXE"
 ENV_SUNSET_SERVER_BASE_DIR = "ACC_SUNSET_SERVER_BASE_DIR"
 ENV_HOURLY_RESULTS_DIR = "ACC_HOURLY_RESULTS_DIR"
 ENV_AUTO_GIT_PUSH = "ACC_STATS_AUTO_GIT_PUSH"
+ENV_SERVER_PORT_GROUPS_JSON = "ACC_SERVER_PORT_GROUPS_JSON"
+
+
+def normalize_server_base_dir(path: Path) -> Path:
+    expanded = path.expanduser()
+    if expanded.name.lower() == "server":
+        return expanded
+
+    server_child = expanded / "server"
+    if server_child.exists():
+        return server_child
+
+    return expanded
+
+
+def normalize_results_dir(path: Path) -> Path:
+    expanded = path.expanduser()
+    if expanded.name.lower() == "results":
+        return expanded
+
+    normalized_base = normalize_server_base_dir(expanded)
+    results_child = normalized_base / "results"
+    if results_child.exists() or normalized_base.exists():
+        return results_child
+
+    return expanded
 
 
 def resolve_base_dir() -> Path:
     env_value = os.environ.get(ENV_BASE_DIR, "").strip()
     if env_value:
-        return Path(env_value).expanduser()
+        return normalize_server_base_dir(Path(env_value))
 
     sibling_server_dir = TOOL_DIR.parent
     if sibling_server_dir.name.lower() == "server":
@@ -32,9 +58,9 @@ def resolve_base_dir() -> Path:
     ]
     for candidate in known_locations:
         if candidate.exists():
-            return candidate
+            return normalize_server_base_dir(candidate)
 
-    return known_locations[0]
+    return normalize_server_base_dir(known_locations[0])
 
 
 def resolve_git_executable():
@@ -64,17 +90,65 @@ def resolve_git_executable():
 def resolve_sunset_base_dir() -> Path:
     env_value = os.environ.get(ENV_SUNSET_SERVER_BASE_DIR, "").strip()
     if env_value:
-        return Path(env_value).expanduser()
+        return normalize_server_base_dir(Path(env_value))
 
-    return Path(r"C:\Assetto Corsa Competizione Dedicated Server Public 08.2025 Sunset\server")
+    return normalize_server_base_dir(Path(r"C:\Assetto Corsa Competizione Dedicated Server Public 08.2025 Sunset\server"))
 
 
 def resolve_hourly_results_dir() -> Path:
     env_value = os.environ.get(ENV_HOURLY_RESULTS_DIR, "").strip()
     if env_value:
-        return Path(env_value).expanduser()
+        return normalize_results_dir(Path(env_value))
 
-    return Path(r"C:\ACCHOURLY")
+    return normalize_results_dir(Path(r"C:\Assetto Corsa Competizione Dedicated Server Race"))
+
+
+def default_server_port_groups() -> dict:
+    return {
+        "main": {
+            "tcp_port": 10040,
+            "udp_port": 10039,
+            "broadcast_port": 8999,
+        },
+        "sunset": {
+            "tcp_port": 10038,
+            "udp_port": 10037,
+            "broadcast_port": None,
+        },
+    }
+
+
+def resolve_server_port_groups() -> dict:
+    raw_value = os.environ.get(ENV_SERVER_PORT_GROUPS_JSON, "").strip()
+    if not raw_value:
+        return default_server_port_groups()
+
+    try:
+        parsed = json.loads(raw_value)
+    except Exception:
+        return default_server_port_groups()
+
+    if not isinstance(parsed, dict):
+        return default_server_port_groups()
+
+    normalized = {}
+    for name, ports in parsed.items():
+        if not isinstance(name, str) or not isinstance(ports, dict):
+            continue
+
+        tcp_port = ports.get("tcp_port")
+        udp_port = ports.get("udp_port")
+        broadcast_port = ports.get("broadcast_port")
+        if not isinstance(tcp_port, int) or not isinstance(udp_port, int):
+            continue
+
+        normalized[name.strip().lower() or name] = {
+            "tcp_port": tcp_port,
+            "udp_port": udp_port,
+            "broadcast_port": broadcast_port if isinstance(broadcast_port, int) else None,
+        }
+
+    return normalized or default_server_port_groups()
 
 
 BASE_DIR = resolve_base_dir()
@@ -93,6 +167,7 @@ V2_RACES_DIR = V2_DIR / "races"
 V2_RACE_DETAILS_DIR = V2_RACES_DIR / "details"
 
 SNAPSHOT_FILE = OUTPUT_DIR / "snapshot.json"
+SERVER_STATUS_FILE = OUTPUT_DIR / "server_status.json"
 RACES_FILE = RACES_DIR / "races.json"
 DRIVERS_INDEX_FILE = DRIVERS_DIR / "drivers.json"
 CARS_FILE = CARS_DIR / "cars.json"
@@ -116,18 +191,7 @@ V2_RACE_PAGE_SIZE = 10
 V2_HOME_TABLE_PREVIEW_LIMIT = 100
 
 SERVER_PROCESS_NAME = "accServer.exe"
-SERVER_PORT_GROUPS = {
-    "main": {
-        "tcp_port": 10040,
-        "udp_port": 10039,
-        "broadcast_port": 8999,
-    },
-    "sunset": {
-        "tcp_port": 10038,
-        "udp_port": 10037,
-        "broadcast_port": None,
-    },
-}
+SERVER_PORT_GROUPS = resolve_server_port_groups()
 
 POINTS_MAP = {
     1: 25,
@@ -1411,6 +1475,29 @@ def build_server_status_output():
         "main": servers.get("main"),
         "sunset": servers.get("sunset"),
     }
+
+
+def save_server_status_output(server_status: dict, changed_files: list[str] | None = None) -> bool:
+    changed = save_json_if_changed(SERVER_STATUS_FILE, server_status)
+    if changed and isinstance(changed_files, list):
+        changed_files.append("server_status.json")
+    return changed
+
+
+def publish_server_status_only() -> dict:
+    server_status = build_server_status_output()
+    changed_files = []
+    save_server_status_output(server_status, changed_files)
+
+    logging.info(
+        "Standalone server status refresh: %s (%s players)%s",
+        server_status["status"],
+        server_status["players_online"],
+        " [changed]" if changed_files else "",
+    )
+
+    git_publish_if_needed(changed_files)
+    return server_status
 
 
 def process_file(path: Path, state: dict):
@@ -2760,6 +2847,7 @@ def rebuild_all():
     drivers_index, driver_profiles = build_drivers_index(state)
 
     changed_files = []
+    save_server_status_output(server_status, changed_files)
     if save_json_if_changed(SNAPSHOT_FILE, snapshot):
         changed_files.append("snapshot.json")
     if save_json_if_changed(RACES_FILE, races_output):

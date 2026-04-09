@@ -3256,10 +3256,32 @@ function normalizeLegacyPayload(results) {
   };
 }
 
+async function loadStandaloneServerStatus() {
+  try {
+    const data = await loadJson(serverStatusUrl);
+    return data && typeof data === "object" ? data : null;
+  } catch (_error) {
+    return null;
+  }
+}
+
+function mergeStandaloneServerStatus(data, standaloneStatus) {
+  if (!standaloneStatus || typeof standaloneStatus !== "object") {
+    return data;
+  }
+
+  return {
+    ...data,
+    serverStatus: standaloneStatus,
+  };
+}
+
 async function loadSiteData() {
   if (ENABLE_TOP_DATA_V2) {
     try {
-      return await loadSiteDataV2();
+      const data = await loadSiteDataV2();
+      const standaloneStatus = await loadStandaloneServerStatus();
+      return mergeStandaloneServerStatus(data, standaloneStatus);
     } catch (v2Error) {
       console.warn("top-data v2 is unavailable, falling back to legacy JSON files.", v2Error);
     }
@@ -3267,7 +3289,8 @@ async function loadSiteData() {
 
   try {
     const snapshot = await loadJson(snapshotUrl);
-    return normalizeSnapshotPayload(snapshot);
+    const standaloneStatus = await loadStandaloneServerStatus();
+    return mergeStandaloneServerStatus(normalizeSnapshotPayload(snapshot), standaloneStatus);
   } catch (snapshotError) {
     console.warn("snapshot.json is unavailable, falling back to legacy JSON files.", snapshotError);
   }
@@ -3282,7 +3305,12 @@ async function loadSiteData() {
     loadJson(onlineUrl)
   ]);
 
-  return normalizeLegacyPayload(legacyResults);
+  return mergeStandaloneServerStatus(
+    normalizeLegacyPayload(legacyResults),
+    legacyResults[5].status === "fulfilled" && legacyResults[5].value && typeof legacyResults[5].value === "object"
+      ? legacyResults[5].value
+      : null,
+  );
 }
 
 async function loadHourlyAnnouncementData() {
