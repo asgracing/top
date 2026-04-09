@@ -206,6 +206,7 @@ POINTS_MAP = {
     10: 1,
 }
 
+HOURLY_POINTS_MAP = {position: 26 - position for position in range(1, 26)}
 BEST_LAP_BONUS = 1
 HOURLY_POINTS_MULTIPLIER = 5
 INVALID_LAP_VALUES = {0, -1, 2147483647, 4294967295}
@@ -1027,11 +1028,29 @@ def calculate_scaled_points(base_points, participant_count: int):
     return normalize_points_value(base_points * scale)
 
 
-def calculate_race_points(position: int, participant_count: int, has_best_lap: bool = False):
-    points = calculate_scaled_points(POINTS_MAP.get(position, 0), participant_count)
+def calculate_race_points(position: int, participant_count: int, points_map: dict, has_best_lap: bool = False):
+    points = calculate_scaled_points(points_map.get(position, 0), participant_count)
     if has_best_lap:
         points = normalize_points_value(points + BEST_LAP_BONUS)
     return points
+
+
+def get_points_map_for_source(source: str) -> dict:
+    if source == "hourly":
+        return HOURLY_POINTS_MAP
+    return POINTS_MAP
+
+
+def get_points_rule_for_source(source: str) -> str:
+    if source == "hourly":
+        return "scaled_25_to_1_by_classified_x5_all_participants"
+    return "scaled_top10_by_classified"
+
+
+def is_points_eligible_for_source(source: str, counted_for_stats: bool) -> bool:
+    if source == "hourly":
+        return True
+    return counted_for_stats
 
 
 def build_comparison_snapshot(state: dict):
@@ -1184,7 +1203,7 @@ def build_race_history_entry(
     data: dict,
     race_order: list,
     normalized_lines: list,
-    participant_count: int,
+    scoring_participants_count: int,
     best_lap_driver_id,
     qualifying_snapshot,
     file_modified: str,
@@ -1194,7 +1213,9 @@ def build_race_history_entry(
     track_name = data.get("trackName", "unknown")
     source_file = get_relative_result_path(path)
     result_source = get_result_source(path)
+    points_map = get_points_map_for_source(result_source)
     points_multiplier = get_points_multiplier_for_source(result_source)
+    points_rule = get_points_rule_for_source(result_source)
     participants = []
     winner_name = None
     winner_public_id = None
@@ -1226,12 +1247,13 @@ def build_race_history_entry(
         )
         positions_delta = qualifying_position - position if isinstance(qualifying_position, int) else None
         has_best_lap = best_lap_driver_id == item["player_id"]
+        points_eligible = is_points_eligible_for_source(result_source, counted_for_stats)
         points = (
             apply_points_multiplier(
-                calculate_race_points(position, participant_count, has_best_lap),
+                calculate_race_points(position, scoring_participants_count, points_map, has_best_lap),
                 points_multiplier,
             )
-            if counted_for_stats
+            if points_eligible
             else 0
         )
 
@@ -1279,6 +1301,7 @@ def build_race_history_entry(
                 "gap_ms": gap_ms,
                 "gap": format_total_time(gap_ms) if gap_ms is not None else None,
                 "counted_for_stats": counted_for_stats,
+                "counted_for_points": points_eligible,
                 "points": points,
                 "had_best_lap": has_best_lap,
                 "penalty_count": penalty_data["count"],
@@ -1301,6 +1324,8 @@ def build_race_history_entry(
         "server_name": data.get("serverName"),
         "meta_data": data.get("metaData"),
         "participants_count": len(participants),
+        "scoring_participants_count": scoring_participants_count,
+        "points_rule": points_rule,
         "winner": winner_name,
         "winner_public_id": winner_public_id,
         "best_lap": race_best_lap,
@@ -1583,6 +1608,7 @@ def process_file(path: Path, state: dict):
         return
 
     result_source = get_result_source(path)
+    points_map = get_points_map_for_source(result_source)
     points_multiplier = get_points_multiplier_for_source(result_source)
     before_snapshot = build_comparison_snapshot(state)
     process_driver_pace_laps(
@@ -1596,6 +1622,7 @@ def process_file(path: Path, state: dict):
     best_lap_in_race = None
     best_lap_driver_id = None
     participant_count = 0
+    scoring_participants_count = 0
     line_by_id = {id(item["line"]): item for item in normalized_lines}
 
     for ordered in race_order:
@@ -1605,6 +1632,8 @@ def process_file(path: Path, state: dict):
 
         participant_count += 1
         daily_stats["unique_players_set"].add(item["player_id"])
+        if is_counted_race_result(ordered["line"]):
+            scoring_participants_count += 1
 
         best_lap = item["best_lap"]
         if best_lap is not None and (best_lap_in_race is None or best_lap < best_lap_in_race):
@@ -1620,7 +1649,7 @@ def process_file(path: Path, state: dict):
         data=data,
         race_order=race_order,
         normalized_lines=normalized_lines,
-        participant_count=participant_count,
+        scoring_participants_count=scoring_participants_count,
         best_lap_driver_id=best_lap_driver_id,
         qualifying_snapshot=qualifying_snapshot,
         file_modified=file_modified,
@@ -1646,29 +1675,29 @@ def process_file(path: Path, state: dict):
         driver_stats = ensure_driver(state["drivers"], player_id, display_name)
         driver_stats["last_track"] = track_name
         driver_stats["last_seen"] = file_modified
+        points_eligible = is_points_eligible_for_source(result_source, counted_for_stats)
+        gained_points = 0
+        if points_eligible:
+            gained_points = calculate_race_points(
+                position,
+                scoring_participants_count,
+                points_map,
+                has_best_lap=best_lap_driver_id == player_id,
+            )
+            gained_points = apply_points_multiplier(gained_points, points_multiplier)
 
         if counted_for_stats:
             driver_stats["races"] += 1
             driver_stats["average_finish_sum"] += position
             driver_stats["average_finish"] = round(driver_stats["average_finish_sum"] / driver_stats["races"], 2)
-
-            gained_points = calculate_race_points(
-                position,
-                participant_count,
-                has_best_lap=best_lap_driver_id == player_id,
-            )
-            gained_points = apply_points_multiplier(gained_points, points_multiplier)
             if position == 1:
                 driver_stats["wins"] += 1
             if position <= 3:
                 driver_stats["podiums"] += 1
 
-            driver_stats["points"] += gained_points
             update_average_positions_delta(driver_stats, positions_delta)
 
             daily_stats["driver_races_today"][player_id] = daily_stats["driver_races_today"].get(player_id, 0) + 1
-            daily_stats["points_earned_today"] += gained_points
-            add_driver_points_day(daily_stats, player_id, display_name, gained_points)
             add_driver_day_result(
                 daily_stats,
                 player_id,
@@ -1688,6 +1717,11 @@ def process_file(path: Path, state: dict):
                 daily_stats["wins_today"] += 1
             if position <= 3:
                 daily_stats["podiums_today"] += 1
+
+        if points_eligible:
+            driver_stats["points"] += gained_points
+            daily_stats["points_earned_today"] += gained_points
+            add_driver_points_day(daily_stats, player_id, display_name, gained_points)
 
     after_snapshot = build_comparison_snapshot(state)
     latest_comparisons = apply_latest_comparisons(
@@ -1914,6 +1948,9 @@ def build_driver_profiles(state: dict):
                     "car_name": result.get("car_name"),
                     "position": result.get("position"),
                     "participants_count": race.get("participants_count"),
+                    "scoring_participants_count": race.get("scoring_participants_count"),
+                    "points_rule": race.get("points_rule"),
+                    "points_multiplier": race.get("points_multiplier"),
                     "winner": race.get("winner"),
                     "points": result.get("points", 0),
                     "qualifying_position": result.get("qualifying_position"),
@@ -1930,6 +1967,7 @@ def build_driver_profiles(state: dict):
                     "gap_ms": result.get("gap_ms"),
                     "lap_count": result.get("lap_count"),
                     "counted_for_stats": result.get("counted_for_stats", True),
+                    "counted_for_points": result.get("counted_for_points", result.get("counted_for_stats", True)),
                     "had_best_lap": result.get("had_best_lap", False),
                     "penalty_count": result.get("penalty_count", 0),
                     "penalty_points": result.get("penalty_points", 0),
@@ -2297,6 +2335,9 @@ def build_v2_race_summary_row(race: dict) -> dict:
         "server_name": race.get("server_name"),
         "meta_data": race.get("meta_data"),
         "participants_count": race.get("participants_count"),
+        "scoring_participants_count": race.get("scoring_participants_count"),
+        "points_multiplier": race.get("points_multiplier"),
+        "points_rule": race.get("points_rule"),
         "winner": race.get("winner"),
         "winner_public_id": race.get("winner_public_id"),
         "winner_player_id": winner_result.get("player_id"),
