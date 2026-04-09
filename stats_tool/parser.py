@@ -1024,6 +1024,8 @@ def process_penalties(data: dict, lines: list, safety_stats: dict, file_modified
         penalty_value = item.get("penaltyValue", 0)
         penalty_reason = item.get("reason") or "Unknown"
         penalty_type = item.get("penalty") or "Unknown"
+        if str(penalty_type).strip().lower() == "postracetime":
+            continue
 
         mapped = car_driver_map.get((car_id, driver_index)) or car_driver_map.get((car_id, 0))
         if not mapped:
@@ -1219,6 +1221,9 @@ def build_penalty_lookup(data: dict):
                 continue
 
             driver_index = item.get("driverIndex", 0)
+            penalty_type = item.get("penalty") or "Unknown"
+            if str(penalty_type).strip().lower() == "postracetime":
+                continue
             key = (car_id, driver_index)
             entry = penalty_lookup.setdefault(
                 key,
@@ -1236,7 +1241,7 @@ def build_penalty_lookup(data: dict):
 
             entry["items"].append(
                 {
-                    "type": item.get("penalty") or "Unknown",
+                    "type": penalty_type,
                     "reason": item.get("reason") or "Unknown",
                     "value": penalty_value if isinstance(penalty_value, (int, float)) else 0,
                     "bucket": bucket_name,
