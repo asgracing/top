@@ -1569,6 +1569,13 @@ def build_server_status_output():
 
 
 def save_server_status_output(server_status: dict, changed_files: list[str] | None = None) -> bool:
+    previous_status = load_json(SERVER_STATUS_FILE, {}) if SERVER_STATUS_FILE.exists() else {}
+    previous_players_online = previous_status.get("players_online")
+    next_players_online = server_status.get("players_online")
+
+    if previous_players_online == next_players_online:
+        return False
+
     changed = save_json_if_changed(SERVER_STATUS_FILE, server_status)
     if changed and isinstance(changed_files, list):
         changed_files.append("server_status.json")
