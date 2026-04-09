@@ -1007,7 +1007,9 @@ def process_driver_pace_laps(data: dict, lines: list, drivers: dict):
 
 
 def process_penalties(data: dict, lines: list, safety_stats: dict, file_modified: str):
-    penalties = data.get("penalties") or []
+    penalties = []
+    for bucket_name in ("penalties", "post_race_penalties"):
+        penalties.extend(data.get(bucket_name) or [])
     if not penalties:
         return
 

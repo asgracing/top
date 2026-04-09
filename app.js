@@ -424,13 +424,13 @@ onlineNoData: "No data",
     racesTableSubtitle: "Row click opens quick view. Name opens full profile.",
     raceModalEyebrow: "Race details",
     racesCols: ["Date", "Track", "Winner", "Drivers", "Best Lap"],
-    raceModalCols: ["Pos", "Start", "Δ", "Driver", "Best Lap", "Car", "Gap", "Pts", "Pen"],
+    raceModalCols: ["Pos", "Start", "Δ", "Driver", "Best Lap", "Car", "Gap", "Pts", "Pen pts"],
     notCountedBadge: "Not counted",
     raceSummaryTrack: "Track",
     raceSummaryWinner: "Winner",
     raceSummaryDrivers: "Drivers",
     raceSummaryBestLap: "Best lap",
-    racePenaltyShort: "Pen",
+    racePenaltyShort: "Pen pts",
     raceBestLapBadge: "Fastest lap",
     noWinner: "No winner",
     pageTitleDriver: "ASG Racing Driver Profile | Assetto Corsa Competizione Stats",
@@ -782,13 +782,13 @@ onlineNoData: "Нет данных",
     racesTableSubtitle: "Клик по строке открывает модалку. Имя открывает полный профиль.",
     raceModalEyebrow: "Детали гонки",
     racesCols: ["Дата", "Трасса", "Победитель", "Пилоты", "Лучший круг"],
-    raceModalCols: ["Pos", "Старт", "Δ", "Пилот", "Лучший круг", "Машина", "Отставание", "Очки", "Штр."],
+    raceModalCols: ["Pos", "Старт", "Δ", "Пилот", "Лучший круг", "Машина", "Отставание", "Очки", "Штр. очки"],
     notCountedBadge: "Не засчитано",
     raceSummaryTrack: "Трасса",
     raceSummaryWinner: "Победитель",
     raceSummaryDrivers: "Пилотов",
     raceSummaryBestLap: "Лучший круг",
-    racePenaltyShort: "Штр.",
+    racePenaltyShort: "Штр. очки",
     raceBestLapBadge: "Быстрый круг",
     noWinner: "Нет победителя",
     pageTitleDriver: "ASG Racing Профиль пилота | Статистика Assetto Corsa Competizione",
@@ -4966,7 +4966,7 @@ function renderRaceResultsModal() {
       </td>
       <td>${escapeHtml(row.gap || (row.position === 1 ? "-" : "-"))}</td>
       <td>${escapeHtml(row.points ?? 0)}</td>
-      <td>${escapeHtml(row.penalty_count ?? 0)}</td>
+      <td>${escapeHtml(row.penalty_points ?? 0)}</td>
     </tr>
   `).join("");
 
