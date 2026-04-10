@@ -258,6 +258,11 @@ onlineNoData: "No data",
     top3Subtitle: "Current championship leaders by points.",
     championshipTitle: "Championship Leaderboard",
     championshipSubtitle: "Row click opens quick view. Name opens full profile.",
+    supportWidgetTitle: "Support ASG Racing",
+    supportWidgetText: "If you enjoy the server, streams and stats site, you can help the project keep rolling with a quick support drop.",
+    supportWidgetButton: "Support the project",
+    supportWidgetButtonAria: "Open DonationAlerts support page for ASG Racing",
+    supportWidgetQrNote: "Open DonationAlerts or scan the QR code from your phone.",
     bestLapsTitle: "Best Laps",
     bestLapsSubtitle: "Row click opens quick view. Name opens full profile.",
     worstSafetyTitle: "Worst Safety",
@@ -675,6 +680,11 @@ onlineNoData: "Нет данных",
     top3Subtitle: "Текущие лидеры чемпионата по очкам.",
     championshipTitle: "Таблица чемпионата",
     championshipSubtitle: "Строка открывает быстрый просмотр, имя пилота ведёт в полный профиль.",
+    supportWidgetTitle: "Поддержать ASG Racing",
+    supportWidgetText: "Если тебе нравится сервер, стримы и сайт со статистикой, можно быстро поддержать проект донатом и помочь ему двигаться дальше.",
+    supportWidgetButton: "Поддержать проект",
+    supportWidgetButtonAria: "Открыть страницу поддержки ASG Racing в DonationAlerts",
+    supportWidgetQrNote: "Открой DonationAlerts по кнопке или отсканируй QR-код с телефона.",
     bestLapsTitle: "Лучшие круги",
     bestLapsSubtitle: "Строка открывает быстрый просмотр, имя пилота ведёт в полный профиль.",
     worstSafetyTitle: "Худшая безопасность",
@@ -1584,9 +1594,7 @@ function renderHourlyHeroCard() {
 
   const data = hourlyAnnouncementData;
   trackEl.textContent = data?.track_name || t("hourlyNoEvent");
-  startsEl.textContent = data?.start_time_local && data?.timezone
-    ? `${data.start_time_local} ${data.timezone}`
-    : "—";
+  startsEl.textContent = formatHeroHourlyDateTime(data?.date, data?.start_time_local, data?.timezone);
   const trackCode = String(data?.track_code || "").trim().toLowerCase();
   const backgroundUrl = HOURLY_TRACK_BACKGROUNDS[trackCode];
   cardEl.style.setProperty("--hero-hourly-track-photo", backgroundUrl ? `url("${backgroundUrl}")` : "none");
@@ -1866,6 +1874,22 @@ function formatDateOnlyForHourly(dateString, lang = currentLang) {
     year: "numeric",
     timeZone: "Europe/Moscow"
   }).format(date);
+}
+
+function formatHeroHourlyDateTime(dateString, timeString, timezoneString) {
+  const safeTime = String(timeString || "").trim();
+  const safeTimezone = String(timezoneString || "").trim();
+  if (!dateString && !safeTime && !safeTimezone) return "—";
+
+  const [year, month, day] = String(dateString || "").split("-");
+  if (year && month && day) {
+    const formattedDate = `${day}.${month}.${year}`;
+    const tail = [safeTime, safeTimezone].filter(Boolean).join(" ");
+    return tail ? `${formattedDate} ${tail}` : formattedDate;
+  }
+
+  const fallback = [dateString, safeTime, safeTimezone].filter(Boolean).join(" ");
+  return fallback || "—";
 }
 
 function getTwitchEmbedParents() {
