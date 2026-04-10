@@ -2923,15 +2923,25 @@ def git_publish_if_needed(changed_files):
 
 def discover_processing_plan_from_signatures(known_signatures: dict):
     result_files = collect_result_files()
-    current_files = {get_relative_result_path(path): path for path in result_files}
-    current_signatures = {rel_path: get_file_signature(path) for rel_path, path in current_files.items()}
+    remaining_known_paths = set((known_signatures or {}).keys())
+    new_files = []
+    new_or_changed_signatures = {}
+    changed_files = []
 
-    missing_files = sorted(set(known_signatures) - set(current_signatures))
-    changed_files = sorted(
-        rel_path
-        for rel_path, signature in known_signatures.items()
-        if rel_path in current_signatures and current_signatures[rel_path] != signature
-    )
+    for file_path in result_files:
+        rel_path = get_relative_result_path(file_path)
+        remaining_known_paths.discard(rel_path)
+        signature = get_file_signature(file_path)
+        known_signature = known_signatures.get(rel_path)
+
+        if known_signature is None:
+            new_files.append(file_path)
+            new_or_changed_signatures[rel_path] = signature
+        elif known_signature != signature:
+            changed_files.append(rel_path)
+            new_or_changed_signatures[rel_path] = signature
+
+    missing_files = sorted(remaining_known_paths)
 
     full_rebuild = bool(missing_files or changed_files)
     if full_rebuild:
@@ -2939,17 +2949,23 @@ def discover_processing_plan_from_signatures(known_signatures: dict):
             logging.info("Full rebuild required. Removed processed files: %s", ", ".join(missing_files))
         if changed_files:
             logging.info("Full rebuild required. Changed processed files: %s", ", ".join(changed_files))
+
+        current_signatures = dict(new_or_changed_signatures)
+        for file_path in result_files:
+            rel_path = get_relative_result_path(file_path)
+            if rel_path not in current_signatures:
+                current_signatures[rel_path] = get_file_signature(file_path)
+
         return {
             "mode": "full_rebuild",
             "files": result_files,
             "signatures": current_signatures,
         }
 
-    new_files = [current_files[rel_path] for rel_path in sorted(current_files.keys()) if rel_path not in known_signatures]
     return {
         "mode": "incremental",
         "files": new_files,
-        "signatures": current_signatures,
+        "signatures": new_or_changed_signatures,
     }
 
 
