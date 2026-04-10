@@ -3187,8 +3187,9 @@ async function loadFullTopDataV2Table(tableName) {
       : Array.isArray(payload?.items)
         ? payload.items
         : [];
-    setTopDataV2TableData(tableName, items);
-    return items;
+    const hydratedItems = hydrateTableTrendFields(items, tableName);
+    setTopDataV2TableData(tableName, hydratedItems);
+    return hydratedItems;
   })().finally(() => {
     topDataV2TableLoadPromises.delete(tableName);
   });
@@ -3205,10 +3206,42 @@ function debounce(fn, wait = 180) {
   };
 }
 
+function hydrateTableTrendFields(items, tableName) {
+  if (!Array.isArray(items)) return [];
+
+  return items.map((item) => {
+    if (!item || typeof item !== "object") return item;
+
+    const latestChanges = item.latest_changes && typeof item.latest_changes === "object"
+      ? item.latest_changes
+      : null;
+
+    if (!latestChanges) return item;
+
+    const next = { ...item };
+
+    if (tableName === "leaderboard" && !next.rank_change && latestChanges.championship_rank) {
+      next.rank_change = latestChanges.championship_rank;
+    }
+
+    if (tableName === "bestlaps" && !next.rank_change && latestChanges.bestlap_rank) {
+      next.rank_change = latestChanges.bestlap_rank;
+    }
+
+    return next;
+  });
+}
+
 function normalizeSnapshotPayload(snapshot) {
   return {
-    leaderboard: Array.isArray(snapshot?.leaderboard) ? snapshot.leaderboard : [],
-    bestlaps: Array.isArray(snapshot?.bestlaps) ? snapshot.bestlaps : [],
+    leaderboard: hydrateTableTrendFields(
+      Array.isArray(snapshot?.leaderboard) ? snapshot.leaderboard : [],
+      "leaderboard"
+    ),
+    bestlaps: hydrateTableTrendFields(
+      Array.isArray(snapshot?.bestlaps) ? snapshot.bestlaps : [],
+      "bestlaps"
+    ),
     globalStats: snapshot?.global_stats && typeof snapshot.global_stats === "object" ? snapshot.global_stats : null,
     safety: Array.isArray(snapshot?.safety) ? snapshot.safety : [],
     driverOfDay: snapshot?.driver_of_the_day && typeof snapshot.driver_of_the_day === "object" ? snapshot.driver_of_the_day : null,
@@ -3234,10 +3267,10 @@ function normalizeLegacyPayload(results) {
 
   return {
     leaderboard: leaderboardResult.status === "fulfilled" && Array.isArray(leaderboardResult.value)
-      ? leaderboardResult.value
+      ? hydrateTableTrendFields(leaderboardResult.value, "leaderboard")
       : [],
     bestlaps: bestlapsResult.status === "fulfilled" && Array.isArray(bestlapsResult.value)
-      ? bestlapsResult.value
+      ? hydrateTableTrendFields(bestlapsResult.value, "bestlaps")
       : [],
     globalStats: globalStatsResult.status === "fulfilled" && globalStatsResult.value && typeof globalStatsResult.value === "object"
       ? globalStatsResult.value
@@ -3875,6 +3908,11 @@ function renderRankBadgeWithTrend(rank, change) {
   `;
 }
 
+function getChampionshipRankChange(row) {
+  if (!row || typeof row !== "object") return null;
+  return row.rank_change || row.latest_changes?.championship_rank || null;
+}
+
 function renderStatValueWithTrend(valueMarkup, change, metric) {
   return `
     <div class="stat-with-trend">
@@ -3908,7 +3946,7 @@ function renderTop3Compact(data) {
       <div class="pilot-topline">
         <div class="pilot-rank-wrap">
           <div class="pilot-rank">#${escapeHtml(row.rank)}</div>
-          ${renderTrendBadge(row.rank_change, "championship_rank", { compact: true })}
+          ${renderTrendBadge(getChampionshipRankChange(row), "championship_rank", { compact: true })}
         </div>
         <h3 class="pilot-name">${renderDriverLink(row.driver, row.public_id, "driver-link driver-link-heading", row.player_id)}</h3>
         ${renderCarImage(row, { className: "car-thumb car-thumb-inline pilot-topline-car", alt: row.best_lap_car_name || row.car_name || "" })}
@@ -4090,7 +4128,7 @@ function renderLeaderboardTablePage() {
 
   const rows = result.items.map(row => `
     <tr ${buildDriverPreviewRowAttributes(row)}>
-      <td>${renderRankBadgeWithTrend(row.rank, row.rank_change)}</td>
+      <td>${renderRankBadgeWithTrend(row.rank, getChampionshipRankChange(row))}</td>
       <td>
         <div class="driver-cell">
           <div class="driver-avatar">${escapeHtml(initials(row.driver))}</div>
