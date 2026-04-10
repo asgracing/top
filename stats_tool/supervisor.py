@@ -55,8 +55,8 @@ def should_rebuild(plan: dict) -> bool:
 
 
 def run_results_rebuild_if_needed() -> bool:
-    state = stats_parser.load_state()
-    plan = stats_parser.discover_processing_plan(state)
+    known_signatures = stats_parser.load_processed_file_signatures()
+    plan = stats_parser.discover_processing_plan_from_signatures(known_signatures)
     if not should_rebuild(plan):
         return False
 
