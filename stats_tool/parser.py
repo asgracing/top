@@ -179,6 +179,7 @@ V2_LEADERBOARD_FILE = V2_TABLES_DIR / "leaderboard.json"
 V2_BESTLAPS_FILE = V2_TABLES_DIR / "bestlaps.json"
 V2_SAFETY_FILE = V2_TABLES_DIR / "safety.json"
 STATE_FILE = TOOL_DIR / "parser_state.json"
+WATCH_STATE_FILE = TOOL_DIR / "parser_watch_state.json"
 LOG_FILE = TOOL_DIR / "parser.log"
 
 GIT_EXE = resolve_git_executable()
@@ -1876,6 +1877,31 @@ def serialize_state(state: dict):
     return serializable
 
 
+def serialize_watch_state(processed_files: dict):
+    return {
+        "schema_version": SCHEMA_VERSION,
+        "processed_files": dict(sorted((processed_files or {}).items())),
+    }
+
+
+def load_processed_file_signatures():
+    if WATCH_STATE_FILE.exists():
+        raw = load_json(WATCH_STATE_FILE, {})
+        if raw.get("schema_version") == SCHEMA_VERSION and isinstance(raw.get("processed_files"), dict):
+            return raw.get("processed_files", {})
+
+    if not STATE_FILE.exists():
+        return {}
+
+    raw = load_json(STATE_FILE, {})
+    if raw.get("schema_version") != SCHEMA_VERSION or not isinstance(raw.get("processed_files"), dict):
+        return {}
+
+    processed_files = raw.get("processed_files", {})
+    save_json_if_changed(WATCH_STATE_FILE, serialize_watch_state(processed_files))
+    return processed_files
+
+
 def load_state():
     if not STATE_FILE.exists():
         return create_state()
@@ -1912,6 +1938,7 @@ def load_state():
 def save_state(state: dict):
     state["updated_at"] = datetime.now().isoformat(timespec="seconds")
     save_json_if_changed(STATE_FILE, serialize_state(state))
+    save_json_if_changed(WATCH_STATE_FILE, serialize_watch_state(state.get("processed_files", {})))
 
 
 def build_leaderboard_output(drivers: dict):
@@ -2894,11 +2921,10 @@ def git_publish_if_needed(changed_files):
     logging.info("GitHub Pages update pushed successfully.")
 
 
-def discover_processing_plan(state: dict):
+def discover_processing_plan_from_signatures(known_signatures: dict):
     result_files = collect_result_files()
     current_files = {get_relative_result_path(path): path for path in result_files}
     current_signatures = {rel_path: get_file_signature(path) for rel_path, path in current_files.items()}
-    known_signatures = state.get("processed_files", {})
 
     missing_files = sorted(set(known_signatures) - set(current_signatures))
     changed_files = sorted(
@@ -2925,6 +2951,10 @@ def discover_processing_plan(state: dict):
         "files": new_files,
         "signatures": current_signatures,
     }
+
+
+def discover_processing_plan(state: dict):
+    return discover_processing_plan_from_signatures(state.get("processed_files", {}))
 
 
 def rebuild_all():
