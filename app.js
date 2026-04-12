@@ -1094,14 +1094,31 @@ function getLast7DaysOnline(data) {
     }));
 }
 
-function buildScaleValues(maxValue) {
+function getOnlineWidgetMaxValue(items = []) {
+  const values = items
+    .map(item => Number(item?.value) || 0)
+    .filter(value => Number.isFinite(value));
+
+  return Math.max(1, ...values);
+}
+
+function buildOnlineScaleValues(maxValue) {
   const safeMax = Math.max(1, Number(maxValue) || 1);
   return [
     safeMax,
-    Math.round(safeMax * 0.66),
+    Math.round(safeMax * 0.67),
     Math.round(safeMax * 0.33),
     0
   ];
+}
+
+function getOnlineBarHeightPercent(value, maxValue) {
+  const safeValue = Number(value) || 0;
+  if (!Number.isFinite(safeValue) || safeValue <= 0) return 0;
+
+  const safeMax = Math.max(1, Number(maxValue) || 1);
+  const percent = (safeValue / safeMax) * 100;
+  return Math.min(100, Math.max(0, Number(percent.toFixed(2))));
 }
 
 function normalizeActivityScore(value, maxValue) {
@@ -1308,20 +1325,22 @@ function renderOnlineWidget() {
     return;
   }
 
-  const maxValue = Math.max(...prepared.map(item => item.value), 1);
-  const scaleValues = buildScaleValues(maxValue);
+  const maxValue = getOnlineWidgetMaxValue(prepared);
+  scaleEl.innerHTML = buildOnlineScaleValues(maxValue)
+    .map(value => `<span>${escapeHtml(value)}</span>`)
+    .join("");
 
   chartEl.innerHTML = prepared.map(item => {
-    const heightPercent = Math.max(4, Math.round((item.value / maxValue) * 100));
+    const heightPercent = getOnlineBarHeightPercent(item.value, maxValue);
     return `
       <div class="hero-online-bar-group" title="${escapeHtml(item.label)} - ${escapeHtml(item.value)}">
-        <div class="hero-online-bar" style="height:${heightPercent}%"></div>
+        <div class="hero-online-bar-stage">
+          <div class="hero-online-bar" style="height:${heightPercent}%"></div>
+        </div>
         <div class="hero-online-date">${escapeHtml(item.label)}</div>
       </div>
     `;
   }).join("");
-
-  scaleEl.innerHTML = scaleValues.map(value => `<span>${escapeHtml(value)}</span>`).join("");
 
   const first = prepared[0];
   const last = prepared[prepared.length - 1];
