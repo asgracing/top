@@ -23,10 +23,10 @@ let overlayRotationTimer = 0;
 let overlayRotationStarted = false;
 
 function formatUpdatedAt(value) {
-  if (!value) return "Update time unavailable";
+  if (!value) return "Время обновления недоступно";
   const date = new Date(value);
-  if (Number.isNaN(date.getTime())) return "Update time unavailable";
-  return `Updated ${date.toLocaleString("en-GB", {
+  if (Number.isNaN(date.getTime())) return "Время обновления недоступно";
+  return `Обновлено ${date.toLocaleString("ru-RU", {
     day: "2-digit",
     month: "2-digit",
     year: "numeric",
@@ -106,7 +106,7 @@ function resolveBestLap(row) {
 }
 
 function resolveDriverName(row) {
-  return row?.driver || row?.name || row?.player_name || "Unknown";
+  return row?.driver || row?.name || row?.player_name || "Неизвестно";
 }
 
 function sortLeaderboardRows(items) {
@@ -147,11 +147,11 @@ function renderLeaderboardTable(items, page = 1) {
   const pageTo = endIndex;
 
   if (sectionTitle) {
-    sectionTitle.textContent = `Server Standings ${pageFrom}-${pageTo}`;
+    sectionTitle.textContent = `Рейтинг сервера ${pageFrom}-${pageTo}`;
   }
 
   if (visibleItems.length === 0) {
-    body.innerHTML = '<tr><td colspan="5" class="overlay-empty">No drivers on this page yet.</td></tr>';
+    body.innerHTML = '<tr><td colspan="5" class="overlay-empty">На этой странице пока нет пилотов.</td></tr>';
     return;
   }
 
@@ -226,8 +226,8 @@ function renderBestLapCard(items) {
   const topLap = Array.isArray(items) && items.length ? items[0] : null;
   if (!topLap) {
     bestLapTimeEl.textContent = "--:--.---";
-    bestLapDriverEl.textContent = "No data yet";
-    bestLapMetaEl.textContent = "Waiting for the first record";
+    bestLapDriverEl.textContent = "Пока нет данных";
+    bestLapMetaEl.textContent = "Ждём первый результат";
     return;
   }
 
@@ -272,7 +272,7 @@ async function refreshOverlay() {
     overlayRotationStarted = false;
     renderLeaderboardTable([], 1);
     renderBestLapCard([]);
-    if (updatedEl) updatedEl.textContent = "Load error";
+    if (updatedEl) updatedEl.textContent = "Ошибка загрузки";
   }
 }
 

@@ -151,7 +151,7 @@ const translations = {
     openRaceDetailsLabel: "Open race details",
     openDriverPreviewLabel: "Open driver quick view",
     onlineTitle: "Unique players",
-onlineNoData: "No data",
+    onlineNoData: "No data",
     onlineActivityTitle: "Prime time by day",
     onlineActivityOpenLabel: "Open race activity details",
     onlineActivityEmpty: "Not enough race data yet.",
@@ -216,14 +216,32 @@ onlineNoData: "No data",
     pageTitleFunStats: "ASG Racing Fun Stats | Weekly and Monthly ACC Stories",
     metaDescription:
       "ASG Racing ACC Leaderboard - race stats, wins, podiums and best laps from the public Assetto Corsa Competizione server.",
+    metaDescriptionRaces:
+      "Latest ASG Racing ACC race results with winner, track, best lap and full finishing order.",
+    metaDescriptionCars:
+      "ASG Racing car statistics with wins, win rate, podiums, drivers and best lap by car model.",
+    metaDescriptionDriver:
+      "Driver profile with race history, best lap, points and safety stats from ASG Racing ACC.",
     metaDescriptionFunStats:
       "Weekly and monthly fun stats from ASG Racing ACC: comeback heroes, clean racers, hot laps, grind leaders and more.",
     ogDescription:
       "Race stats, wins, podiums and best laps from the ASG Racing server in Assetto Corsa Competizione.",
+    ogDescriptionRaces:
+      "Latest race sessions from ASG Racing with winner, track, best lap and full finishing order.",
+    ogDescriptionCars:
+      "Performance overview by car model with wins, podiums, usage and best lap data from ASG Racing ACC.",
+    ogDescriptionDriver:
+      "Driver profile with race history, points, best lap and safety stats from ASG Racing ACC.",
     ogDescriptionFunStats:
       "Weekly and monthly stories from the ASG Racing server: points bosses, comeback heroes, clean racers and hot lap heroes.",
     twitterDescription:
       "Races, wins, podiums and best laps from the public ACC server of ASG Racing.",
+    twitterDescriptionRaces:
+      "Latest race sessions from ASG Racing with winner, track, best lap and full finishing order.",
+    twitterDescriptionCars:
+      "Performance overview by car model with wins, podiums, usage and best lap data from ASG Racing ACC.",
+    twitterDescriptionDriver:
+      "Driver profile with race history, points, best lap and safety stats from ASG Racing ACC.",
     twitterDescriptionFunStats:
       "Weekly and monthly ASG Racing fun stats with the most active, fastest and wildest drivers on the server.",
     ogLocale: "en_US",
@@ -231,7 +249,8 @@ onlineNoData: "No data",
     heroSubtitle:
       "<strong>ASG Racing</strong> is an ACC community of enthusiasts. The public server runs 24/7 on Monza, and we also host daily one-hour events at 14:00 and 20:00 MSK. Data is automatically updated based on dedicated server results.",
     btnChampionship: "Championship",
-    btnLastRaces: "Last Races",
+    btnLastRaces: "Race Archive",
+    btnSpecialEvent: "Special Event",
     btnCars: "Cars",
     btnFunStats: "Fun Stats",
     lastRacesBtn: "Last Races",
@@ -509,18 +528,18 @@ onlineNoData: "No data",
     closeLabel: "Закрыть",
     homeAriaLabel: "Главная ASG Racing",
     langSwitcherLabel: "Переключение языка",
-    navMore: "Еще",
+    navMore: "Ещё",
     navMoreAriaLabel: "Открыть дополнительную навигацию",
     openRaceDetailsLabel: "Открыть детали гонки",
     openDriverPreviewLabel: "Открыть быстрое превью пилота",
-    onlineTitle: "Уникальные игроки",
-onlineNoData: "Нет данных",
-    onlineActivityTitle: "Прайм-тайм по дням",
+    onlineTitle: "Уникальные пилоты",
+    onlineNoData: "Нет данных",
+    onlineActivityTitle: "Пик активности по дням",
     onlineActivityOpenLabel: "Открыть активность гонок",
     onlineActivityEmpty: "Пока недостаточно данных по гонкам.",
     onlineActivitySubtitle: "{date} · активность {score}/100",
-    onlineActivityPrimeTime: "Прайм-тайм {hour} · индекс {score}",
-    onlineActivityHoursTitle: "Почасовая активность, уникальные пилоты",
+    onlineActivityPrimeTime: "Пик активности {hour} · индекс {score}",
+    onlineActivityHoursTitle: "Почасовая активность: уникальные пилоты",
     onlineActivityMonthLabel: "Месяц",
     onlineActivityUniqueLabel: "Уникальные пилоты",
     onlineActivityRacesLabel: "Гонки",
@@ -533,7 +552,7 @@ onlineNoData: "Нет данных",
     hourlyEyebrow: "Ближайшая часовая гонка",
     hourlyStartsLabel: "Старт",
     hourlyTrackLabel: "Трасса",
-    hourlyOpenBtn: "Часовая Гонка!",
+    hourlyOpenBtn: "Часовая гонка!",
     hourlyVoteBtn: "Я хочу поехать!",
     hourlyVoteDone: "Ты в списке",
     hourlyVoteSending: "Сохраняем...",
@@ -542,8 +561,8 @@ onlineNoData: "Нет данных",
     hourlyVotesZero: "Нет регистраций",
     hourlyVotesOne: "{value} участник",
     hourlyVotesMany: "{value} участников",
-    hourlyPromoTitle: "x5 очки за гонку!!!",
-    hourlyPromoNote: "Часовой заезд бьет по чемпионату сильнее.",
+    hourlyPromoTitle: "x5 очков за гонку!!!",
+    hourlyPromoNote: "Часовой заезд сильнее влияет на чемпионат.",
     hourlyLastWinnerLabel: "Последний победитель",
     hourlyLastWinnerEmpty: "Пока нет завершенной часовой гонки",
     todayStatsBtn: "Статистика за сегодня",
@@ -560,15 +579,15 @@ onlineNoData: "Нет данных",
     todayBestLap: "Лучший круг сегодня",
     todayMostActive: "Самый активный пилот",
     todayMostSuccessful: "Самый успешный пилот",
-    driverOfDayBtn: "Гонщик дня: {driver}",
+    driverOfDayBtn: "Пилот дня: {driver}",
     driverOfDayEyebrow: "Лучший пилот дня",
-    driverOfDayTitle: "Гонщик дня",
+    driverOfDayTitle: "Пилот дня",
     driverOfDayName: "Пилот",
     driverOfDayPoints: "Очки за сегодня",
     driverOfDayRaces: "Гонок сегодня",
     driverOfDayWins: "Побед сегодня",
     driverOfDayAvgFinish: "Ср. финиш",
-    driverOfDayAvgGain: "Ср. дельта поз.",
+    driverOfDayAvgGain: "Ср. изменение поз.",
     driverOfDayBestLap: "Лучший круг сегодня",
     driverOfDayBestLapTrack: "Трасса",
     driverOfDayNoData: "Сегодня ещё нет данных по гонкам.",
@@ -589,9 +608,9 @@ onlineNoData: "Нет данных",
     metaLabelWins: "Победы",
     carsTableTitle: "Таблица машин",
     carsTableSubtitle: "Сортировка по клику на заголовки столбцов.",
-    carsCols: ["Машина", "Гонки", "Победы", "Винрейт", "Подиумы", "Пилоты", "Ср. финиш", "Лучшие круги", "Бестлап"],
+    carsCols: ["Машина", "Гонки", "Победы", "Процент побед", "Подиумы", "Пилоты", "Ср. финиш", "Лучшие круги", "Лучший круг"],
     funStatsEyebrow: "Пульс недели и месяца",
-    funStatsPageTitle: "Фан-стата",
+    funStatsPageTitle: "Фан-статистика",
     funStatsPageSubtitle:
       "Не только победы и подиумы. Здесь собраны самые живые истории последних гонок ASG Racing: активность, камбэки, чистые заезды, быстрые круги и немного хаоса.",
     funStatsWeekTab: "Последние 7 дней",
@@ -601,7 +620,7 @@ onlineNoData: "Нет данных",
     funStatsSummaryRaces: "Проведено гонок",
     funStatsSummaryDrivers: "Активных пилотов",
     funStatsSummaryFastestLapsLeader: "Лидер по быстрым кругам",
-    funStatsSummaryOvertakes: "Отбитых позиций",
+    funStatsSummaryOvertakes: "Отыгранных позиций",
     funStatsAwardsTitle: "Фан-награды",
     funStatsAwardsSubtitle: "Более живой недельный и месячный взгляд на то, что происходило на сервере.",
     funStatsLeaderboardsTitle: "Быстрые рейтинги",
@@ -617,7 +636,7 @@ onlineNoData: "Нет данных",
     funStatsAwardGrindKing: "Король наката",
     funStatsAwardPodiumHunter: "Охотник за подиумами",
     funStatsAwardComebackHero: "Герой камбэков",
-    funStatsAwardCleanOperator: "Чистый оператор",
+    funStatsAwardCleanOperator: "Чистый пилот",
     funStatsAwardHotLapHero: "Герой быстрого круга",
     funStatsAwardChaosMagnet: "Магнит для хаоса",
     funStatsAwardGarageFavorite: "Любимчик гаража",
@@ -640,27 +659,46 @@ onlineNoData: "Нет данных",
     pageTitleRaces: "ASG Racing Последние гонки | Результаты Assetto Corsa Competizione",
     metaDescription:
       "ASG Racing ACC Leaderboard - статистика гонок, побед, подиумов и лучших кругов на публичном сервере Assetto Corsa Competizione.",
+    metaDescriptionRaces:
+      "Последние результаты гонок ASG Racing ACC: победитель, трасса, лучший круг и полный порядок финиша.",
+    metaDescriptionCars:
+      "Статистика машин ASG Racing: победы, процент побед, подиумы, пилоты и лучший круг по каждой модели.",
+    metaDescriptionDriver:
+      "Профиль пилота ASG Racing ACC с историей гонок, лучшим кругом, очками и штрафами.",
     metaDescriptionFunStats:
       "Недельная и месячная фан-статистика ASG Racing ACC: камбэки, чистые гонщики, быстрые круги, активность и самые яркие истории сервера.",
     ogDescription:
       "Статистика гонок, побед, подиумов и лучших кругов на сервере ASG Racing в Assetto Corsa Competizione.",
+    ogDescriptionRaces:
+      "Последние гоночные сессии ASG Racing: победитель, трасса, лучший круг и полный порядок финиша.",
+    ogDescriptionCars:
+      "Обзор результатов по моделям машин: победы, подиумы, популярность и лучшие круги ASG Racing ACC.",
+    ogDescriptionDriver:
+      "Профиль пилота ASG Racing с историей гонок, очками, лучшим кругом и штрафами.",
     ogDescriptionFunStats:
       "Недельные и месячные истории ASG Racing: лидеры по очкам, камбэки, чистые гонщики, быстрые круги и самые активные пилоты.",
     twitterDescription:
       "Гонки, победы, подиумы и лучшие круги на публичном ACC сервере ASG Racing.",
+    twitterDescriptionRaces:
+      "Последние гоночные сессии ASG Racing: победитель, трасса, лучший круг и полный порядок финиша.",
+    twitterDescriptionCars:
+      "Обзор результатов по моделям машин: победы, подиумы, популярность и лучшие круги ASG Racing ACC.",
+    twitterDescriptionDriver:
+      "Профиль пилота ASG Racing с историей гонок, очками, лучшим кругом и штрафами.",
     twitterDescriptionFunStats:
       "Фановая недельная и месячная статистика ASG Racing с самыми активными, быстрыми и безумными пилотами сервера.",
     ogLocale: "ru_RU",
     heroTitle: "🏁 ASG Racing Leaderboard",
     heroSubtitle:
-      "<strong>ASG Racing</strong> - сообщество энтузиастов ACC. Открытый сервер работает 24/7 на трассе Monza. Мы также проводим ежедневные часовые эвенты в 14 и 20 мск. Данные обновляются автоматически на основе результатов dedicated server.",
-    btnChampionship: "Рейтинг",
-    btnLastRaces: "Гонки",
+      "<strong>ASG Racing</strong> - сообщество энтузиастов ACC. Открытый сервер работает 24/7 на трассе Monza. Мы также проводим ежедневные часовые заезды в 14:00 и 20:00 МСК. Данные обновляются автоматически на основе файлов результатов ACC Dedicated Server.",
+    btnChampionship: "Чемпионат",
+    btnLastRaces: "Архив гонок",
+    btnSpecialEvent: "Спец. ивент",
     lastRacesBtn: "Последние гонки",
     btnBackHome: "Главная",
-    btnBestLaps: "Круги",
+    btnBestLaps: "Лучшие круги",
     btnWorstSafety: "Штрафы",
-    btnAboutServer: "Сервер",
+    btnAboutServer: "О сервере",
     serversLabel: "Серверы",
     serverStatusLabel: "Сервер",
     serverStatusOnline: "ОНЛАЙН",
@@ -670,7 +708,7 @@ onlineNoData: "Нет данных",
     serverTotalPlayersNote: "Серверы",
     serversWidgetTitle: "Статус серверов",
     serverMainLabel: "Главный",
-    serverSunsetLabel: "На закате",
+    serverSunsetLabel: "Sunset",
     driversCountLabel: "Пилотов в рейтинге",
     driversCountNote: "Уникальные участники, попавшие в статистику.",
     bestLapHighlightLabel: "Лучший круг",
@@ -687,13 +725,13 @@ onlineNoData: "Нет данных",
     supportWidgetQrNote: "Открой DonationAlerts по кнопке или отсканируй QR-код с телефона.",
     bestLapsTitle: "Лучшие круги",
     bestLapsSubtitle: "Строка открывает быстрый просмотр, имя пилота ведёт в полный профиль.",
-    worstSafetyTitle: "Худшая безопасность",
-    worstSafetySubtitle: "Количество штрафов, штрафные баллы и разбивка по типам penalty.",
+    worstSafetyTitle: "Штрафы и нарушения",
+    worstSafetySubtitle: "Количество штрафов, штрафные баллы и разбивка по типам нарушений.",
     aboutTitle: "О сервере ASG Racing",
     aboutSubtitle: "Публичный сервер Assetto Corsa Competizione",
     aboutP1:
-      "<strong>ASG Racing</strong> - это публичный сервер <strong>Assetto Corsa Competizione</strong>, где пилоты соревнуются на популярных GT3 трассах, улучшают свои времена круга и сравнивают статистику с другими гонщиками.",
-    aboutP2: "На этой странице автоматически публикуется leaderboard сервера, включающий:",
+      "<strong>ASG Racing</strong> - это публичный сервер <strong>Assetto Corsa Competizione</strong>, где пилоты соревнуются на популярных GT3 трассах, улучшают свои времена круга и сравнивают статистику с другими пилотами.",
+    aboutP2: "На этой странице автоматически публикуется рейтинг сервера, включающий:",
     aboutList1: "🏁 количество гонок",
     aboutList2: "🥇 победы",
     aboutList3: "🏆 подиумы",
@@ -711,7 +749,7 @@ onlineNoData: "Нет данных",
       "Все дробные значения округляются до целых: 0.1-0.5 вниз, 0.6-0.9 вверх. За лучший круг пилот всегда получает <strong>+1 очко</strong>.",
     bestLapsInfoTitle: "Лучшие круги",
     bestLapsInfoP1:
-      "Таблица <strong>Best Laps</strong> содержит лучшие времена круга, показанные как в квалификации, так и в гонках. Это позволяет сравнить абсолютную скорость пилотов.",
+      "Таблица <strong>лучших кругов</strong> содержит лучшие времена круга, показанные как в квалификации, так и в гонках. Это позволяет сравнить абсолютную скорость пилотов.",
     joinTitle: "Присоединиться к серверу",
     joinP1: "Чтобы участвовать в гонках и попасть в таблицу лидеров, подключайтесь к серверу:",
     serverName: "ASG Racing ACC Public Server",
@@ -743,33 +781,33 @@ onlineNoData: "Нет данных",
     topGuideStepWelcomeTitle: "Добро пожаловать в статистику сервера",
     topGuideStepWelcomeText: "Здесь собрана статистика ASG Racing: рейтинг пилотов, статус сервера, история гонок и быстрые переходы в комьюнити.",
     topGuideStepChampionshipTitle: "Начните с чемпионата",
-    topGuideStepChampionshipText: "Это главный рейтинг пилотов. Здесь можно найти себя, сравнить очки и перейти в полный профиль водителя.",
+    topGuideStepChampionshipText: "Это главный рейтинг пилотов. Здесь можно найти себя, сравнить очки и перейти в полный профиль пилота.",
     topGuideStepSearchTitle: "Найди себя в топе",
     topGuideStepSearchText: "Используйте это поле поиска, чтобы быстро найти себя в таблице, а не просматривать весь рейтинг вручную.",
     topGuideStepProfileTitle: "Открой детальную статистику пилота",
     topGuideStepProfileText: "Кликните по своему имени в таблице чемпионата, чтобы открыть полный профиль пилота с историей гонок, темпом и детальной статистикой.",
     topGuideStepRacesTitle: "Здесь последние гонки",
     topGuideStepRacesText: "Эта кнопка ведет в архив недавних гонок, где у каждого заезда есть полный протокол и порядок финиша.",
-    topGuideStepHourlyTitle: "А здесь часовые ивенты",
+    topGuideStepHourlyTitle: "А здесь часовые гонки",
     topGuideStepHourlyText: "В этой карточке показана ближайшая часовая гонка: трасса, время старта, регистрации и подробности слота.",
     communityTiktokTitle: "TikTok",
-    communityTiktokText: "Короткие яркие моменты: обгоны, хаос, эмоции и самые залипательные эпизоды ASG Racing.",
+    communityTiktokText: "Короткие яркие моменты: обгоны, хаос, эмоции и самые цепляющие эпизоды ASG Racing.",
     communityTiktokCta: "Поймать лучшие моменты",
     footerText:
       "Данные собираются из файлов результатов ACC Dedicated Server и публикуются через GitHub Pages.",
     loading: "Загрузка...",
     loadingRaces: "Загрузка гонок...",
-    loadingLeaderboard: "Загрузка leaderboard...",
-    loadingBestLaps: "Загрузка best laps...",
-    loadingSafety: "Загрузка safety...",
+    loadingLeaderboard: "Загрузка таблицы чемпионата...",
+    loadingBestLaps: "Загрузка лучших кругов...",
+    loadingSafety: "Загрузка штрафов...",
     emptyTop3: "Пока нет данных для топ-3.",
-    emptyLeaderboard: "Пока нет данных leaderboard.",
-    emptyBestLaps: "Пока нет данных best laps.",
+    emptyLeaderboard: "Пока нет данных рейтинга.",
+    emptyBestLaps: "Пока нет данных по лучшим кругам.",
     emptyRaces: "Пока нет данных о гонках.",
     emptySearch: "Совпадений не найдено.",
     errorLoading: "Ошибка загрузки данных.",
-    errorLeaderboard: "Не удалось загрузить leaderboard.json",
-    errorBestlaps: "Не удалось загрузить bestlaps.json",
+    errorLeaderboard: "Не удалось загрузить таблицу чемпионата.",
+    errorBestlaps: "Не удалось загрузить лучшие круги.",
     racesEyebrow: "Архив гонок",
     racesPageTitle: "Последние гонки",
     racesPageSubtitle: "Последние гоночные сессии ASG Racing. Нажмите на строку, чтобы открыть полный протокол.",
@@ -790,10 +828,10 @@ onlineNoData: "Нет данных",
     racesSummaryLatestWinner: "Последний победитель",
     racesSummaryLastWinnerBestLap: "Лучший круг победителя",
     racesTableTitle: "Результаты гонок",
-    racesTableSubtitle: "Клик по строке открывает модалку. Имя открывает полный профиль.",
+    racesTableSubtitle: "Клик по строке открывает окно деталей. Имя открывает полный профиль.",
     raceModalEyebrow: "Детали гонки",
     racesCols: ["Дата", "Трасса", "Победитель", "Пилоты", "Лучший круг"],
-    raceModalCols: ["Pos", "Старт", "Δ", "Пилот", "Лучший круг", "Машина", "Отставание", "Очки", "Штр. очки"],
+    raceModalCols: ["Поз.", "Старт", "Δ", "Пилот", "Лучший круг", "Машина", "Отставание", "Очки", "Штр. очки"],
     notCountedBadge: "Не засчитано",
     raceSummaryTrack: "Трасса",
     raceSummaryWinner: "Победитель",
@@ -807,12 +845,12 @@ onlineNoData: "Нет данных",
     driverPreviewEyebrow: "Быстрый просмотр пилота",
     driverPreviewSubtitle: "Ключевые показатели темпа и результатов на сервере ASG Racing.",
     driverPreviewOpenPage: "Перейти на страницу пилота",
-    driverPreviewRowHint: "Клик по строке открывает модалку",
+    driverPreviewRowHint: "Клик по строке открывает окно деталей",
     driverPreviewLinkHint: "Имя открывает полный профиль",
-    driverPageSubtitle: "Личная история гонок, темп и safety-метрики на сервере ASG Racing.",
+    driverPageSubtitle: "Личная история гонок, темп и штрафная статистика на сервере ASG Racing.",
     driverSummaryPoints: "Очки",
     driverSummaryAvgPoints: "Ср. очков / гонку",
-    driverSummaryAvgGain: "Ср. дельта поз.",
+    driverSummaryAvgGain: "Ср. изменение поз.",
     driverSummaryRaces: "Гонки",
     driverSummaryWins: "Победы",
     driverSummaryPodiums: "Подиумы",
@@ -823,7 +861,7 @@ onlineNoData: "Нет данных",
     driverSummaryFastestLaps: "Лучшие круги в гонке",
     driverSectionOverview: "Обзор",
     driverSectionRaces: "История гонок",
-    driverSectionRacesSubtitle: "Клик по строке открывает модалку.",
+    driverSectionRacesSubtitle: "Клик по строке открывает окно деталей.",
     driverSectionTracks: "Статистика по трассам",
     driverSectionPenalties: "Разбор штрафов",
     driverRecentForm: "Последние результаты",
@@ -866,7 +904,7 @@ onlineNoData: "Нет данных",
     sessionQualifying: "Квала",
     paginationShown: "Показано {start}-{end} из {total}",
     prev: "← Назад",
-    next: "Вперед →"
+    next: "Вперёд →"
   }
 };
 
@@ -917,13 +955,13 @@ Object.assign(translations.ru, {
   updatedPrefix: "Обновлено",
   todayRacesNote: "Гонок за сегодня: {value}",
   todayPointsNote: "Очков за сегодня: {value}",
-  heroFunnelTitle: "Monza 24/7, ежедневные ивенты, помощь новичкам",
-  heroFunnelNote: "<a class=\"hero-funnel-link hero-funnel-link-telegram\" href=\"https://t.me/+JUymrENgddcyMTdi\" target=\"_blank\" rel=\"noopener noreferrer\">Telegram</a> и <a class=\"hero-funnel-link hero-funnel-link-discord\" href=\"https://discord.gg/cEPFHXXtTC\" target=\"_blank\" rel=\"noopener noreferrer\">Discord</a> - самые удобные способы общения в комьюнити. Здесь ты найдешь: напоминания, результаты, голосования, живое общение на симрейсинговые темы.",
+  heroFunnelTitle: "Monza 24/7, ежедневные заезды, помощь новичкам",
+  heroFunnelNote: "<a class=\"hero-funnel-link hero-funnel-link-telegram\" href=\"https://t.me/+JUymrENgddcyMTdi\" target=\"_blank\" rel=\"noopener noreferrer\">Telegram</a> и <a class=\"hero-funnel-link hero-funnel-link-discord\" href=\"https://discord.gg/cEPFHXXtTC\" target=\"_blank\" rel=\"noopener noreferrer\">Discord</a> - самые удобные способы общения в комьюнити. Здесь ты найдёшь напоминания, результаты, голосования и живое общение на симрейсинговые темы.",
   joinTelegramBtn: "Вступить в Telegram",
   joinDiscordBtn: "Вступить в Discord",
   heroOpenHourlyBtn: "Ближайшая часовая гонка",
   hourlyModalEyebrow: "Детали слота",
-  hourlyOpenDetailsLabel: "Открыть детали часового события",
+  hourlyOpenDetailsLabel: "Открыть детали часовой гонки",
   hourlyServerLabel: "Сервер",
   hourlyPasswordLabel: "Пароль",
   hourlyDateTimeLabel: "Дата + время",
@@ -939,7 +977,7 @@ Object.assign(translations.ru, {
   hourlyEntrySafety: "SAFETY {value}",
   hourlyEntryTrackMedals: "{value} медалей",
   hourlyEntryRacecraft: "RC {value}",
-  hourlyPitNoMandatory: "Без обязательного пита",
+  hourlyPitNoMandatory: "Без обязательного пит-стопа",
   hourlyMandatoryPitstopCount: "{value} обязательный пит-стоп",
   hourlyMandatoryPitstopCountPlural: "{value} обязательных пит-стопа",
   hourlyPitWindow: "Окно {value}м",
@@ -953,7 +991,7 @@ Object.assign(translations.ru, {
   hourlyWeatherTemp: "{value}°C",
   hourlyWeatherClouds: "Облака {value}%",
   hourlyWeatherRain: "Дождь {value}%",
-  hourlyWeatherRandom: "Рандом {value}"
+  hourlyWeatherRandom: "Случайность {value}"
 });
 
 currentLang = resolveInitialLanguage();
@@ -3620,20 +3658,45 @@ function applyStaticTranslations() {
   const ogDescriptionMeta = document.querySelector('meta[property="og:description"]');
   const twitterDescriptionMeta = document.querySelector('meta[name="twitter:description"]');
   const ogLocaleMeta = document.querySelector('meta[property="og:locale"]');
+  const descriptionKey = IS_DRIVER_PAGE
+    ? "metaDescriptionDriver"
+    : IS_CARS_PAGE
+      ? "metaDescriptionCars"
+      : IS_FUN_STATS_PAGE
+        ? "metaDescriptionFunStats"
+        : IS_RACES_PAGE
+          ? "metaDescriptionRaces"
+          : "metaDescription";
+  const ogDescriptionKey = IS_DRIVER_PAGE
+    ? "ogDescriptionDriver"
+    : IS_CARS_PAGE
+      ? "ogDescriptionCars"
+      : IS_FUN_STATS_PAGE
+        ? "ogDescriptionFunStats"
+        : IS_RACES_PAGE
+          ? "ogDescriptionRaces"
+          : "ogDescription";
+  const twitterDescriptionKey = IS_DRIVER_PAGE
+    ? "twitterDescriptionDriver"
+    : IS_CARS_PAGE
+      ? "twitterDescriptionCars"
+      : IS_FUN_STATS_PAGE
+        ? "twitterDescriptionFunStats"
+        : IS_RACES_PAGE
+          ? "twitterDescriptionRaces"
+          : "twitterDescription";
 
-  if (!IS_RACES_PAGE) {
-    if (descriptionMeta) {
-      descriptionMeta.setAttribute("content", IS_FUN_STATS_PAGE ? t("metaDescriptionFunStats") : t("metaDescription"));
-    }
-    if (ogDescriptionMeta) {
-      ogDescriptionMeta.setAttribute("content", IS_FUN_STATS_PAGE ? t("ogDescriptionFunStats") : t("ogDescription"));
-    }
-    if (twitterDescriptionMeta) {
-      twitterDescriptionMeta.setAttribute("content", IS_FUN_STATS_PAGE ? t("twitterDescriptionFunStats") : t("twitterDescription"));
-    }
-    if (ogLocaleMeta) {
-      ogLocaleMeta.setAttribute("content", t("ogLocale"));
-    }
+  if (descriptionMeta) {
+    descriptionMeta.setAttribute("content", t(descriptionKey));
+  }
+  if (ogDescriptionMeta) {
+    ogDescriptionMeta.setAttribute("content", t(ogDescriptionKey));
+  }
+  if (twitterDescriptionMeta) {
+    twitterDescriptionMeta.setAttribute("content", t(twitterDescriptionKey));
+  }
+  if (ogLocaleMeta) {
+    ogLocaleMeta.setAttribute("content", t("ogLocale"));
   }
 
   document.querySelectorAll("[data-i18n]").forEach(el => {
@@ -4447,7 +4510,9 @@ function bindTopNavMoreMenu() {
 
     hiddenItems.forEach(item => {
       const clone = item.cloneNode(true);
-      clone.className = "top-nav-more-link";
+      clone.className = item.classList.contains("top-nav-link-special")
+        ? "top-nav-more-link top-nav-more-link-special"
+        : "top-nav-more-link";
       clone.hidden = false;
       clone.removeAttribute("data-nav-item");
       menu.appendChild(clone);
