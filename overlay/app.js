@@ -23,10 +23,10 @@ let overlayRotationTimer = 0;
 let overlayRotationStarted = false;
 
 function formatUpdatedAt(value) {
-  if (!value) return "Время обновления недоступно";
+  if (!value) return "updated unavailable";
   const date = new Date(value);
-  if (Number.isNaN(date.getTime())) return "Время обновления недоступно";
-  return `Обновлено ${date.toLocaleString("ru-RU", {
+  if (Number.isNaN(date.getTime())) return "updated unavailable";
+  return `updated ${date.toLocaleString("en-GB", {
     day: "2-digit",
     month: "2-digit",
     year: "numeric",
@@ -106,7 +106,7 @@ function resolveBestLap(row) {
 }
 
 function resolveDriverName(row) {
-  return row?.driver || row?.name || row?.player_name || "Неизвестно";
+  return row?.driver || row?.name || row?.player_name || "Unknown";
 }
 
 function sortLeaderboardRows(items) {
@@ -136,22 +136,20 @@ function renderTrendBadge(change) {
 
 function renderLeaderboardTable(items, page = 1) {
   const body = document.getElementById("overlay-leaderboard-body");
-  const sectionTitle = document.querySelector(".section-title");
+  const sectionTitle = document.getElementById("overlay-rating-title");
   if (!body) return;
 
   const safePage = Math.max(1, Math.min(page, OVERLAY_TOTAL_PAGES));
   const startIndex = (safePage - 1) * OVERLAY_PAGE_SIZE;
   const endIndex = startIndex + OVERLAY_PAGE_SIZE;
   const visibleItems = Array.isArray(items) ? items.slice(startIndex, endIndex) : [];
-  const pageFrom = startIndex + 1;
-  const pageTo = endIndex;
 
   if (sectionTitle) {
-    sectionTitle.textContent = `Рейтинг сервера ${pageFrom}-${pageTo}`;
+    sectionTitle.textContent = "Server rating";
   }
 
   if (visibleItems.length === 0) {
-    body.innerHTML = '<tr><td colspan="5" class="overlay-empty">На этой странице пока нет пилотов.</td></tr>';
+    body.innerHTML = '<tr><td colspan="5" class="overlay-empty">No pilots on this page yet.</td></tr>';
     return;
   }
 
@@ -226,8 +224,8 @@ function renderBestLapCard(items) {
   const topLap = Array.isArray(items) && items.length ? items[0] : null;
   if (!topLap) {
     bestLapTimeEl.textContent = "--:--.---";
-    bestLapDriverEl.textContent = "Пока нет данных";
-    bestLapMetaEl.textContent = "Ждём первый результат";
+    bestLapDriverEl.textContent = "No data yet";
+    bestLapMetaEl.textContent = "Waiting for the first result";
     return;
   }
 
@@ -272,7 +270,7 @@ async function refreshOverlay() {
     overlayRotationStarted = false;
     renderLeaderboardTable([], 1);
     renderBestLapCard([]);
-    if (updatedEl) updatedEl.textContent = "Ошибка загрузки";
+    if (updatedEl) updatedEl.textContent = "update failed";
   }
 }
 

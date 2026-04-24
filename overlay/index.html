@@ -1,9 +1,9 @@
 <!doctype html>
-<html lang="ru">
+<html lang="en">
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <title>ASG Racing Оверлей рейтинга</title>
+  <title>ASG Racing Server Standings</title>
   <meta name="robots" content="noindex,nofollow" />
   <link rel="icon" href="../favicon.ico" />
   <link rel="stylesheet" href="./styles.css" />
@@ -15,15 +15,15 @@
         <div class="overlay-brand">
           <img class="overlay-logo" src="../social/asg.png" alt="ASG Racing" />
           <div class="overlay-title-wrap">
-            <h1 class="overlay-title" id="overlay-title">ASG Racing<br />Рейтинг сервера</h1>
+            <h1 class="overlay-title" id="overlay-title">ASG Racing<br />Server Standings</h1>
           </div>
         </div>
         <div class="overlay-qr overlay-qr-site">
-          <div class="overlay-qr-label">САЙТ</div>
+          <div class="overlay-qr-label">website</div>
           <img
             id="overlay-qr-site"
             class="overlay-qr-image"
-            alt="QR-код сайта ASG Racing"
+            alt="ASG Racing website QR code"
           />
         </div>
       </header>
@@ -31,25 +31,25 @@
       <section class="overlay-section">
         <div class="section-head">
           <div>
-            <h2 class="section-title">Рейтинг сервера</h2>
+            <h2 class="section-title" id="overlay-rating-title">Server rating</h2>
           </div>
-          <div class="section-updated" id="overlay-updated">Обновляем...</div>
+          <div class="section-updated" id="overlay-updated">updating...</div>
         </div>
 
         <div class="leaderboard-card">
-          <table class="overlay-table" aria-label="Топ-10 рейтинга ASG Racing">
+          <table class="overlay-table" aria-label="ASG Racing top 10 standings">
             <thead>
               <tr>
-                <th class="col-rank">№</th>
-                <th class="col-driver">Пилот</th>
-                <th class="col-points">Очки</th>
-                <th class="col-wins">Победы</th>
-                <th class="col-bestlap">Лучший круг</th>
+                <th class="col-rank">#</th>
+                <th class="col-driver">Pilot</th>
+                <th class="col-points">Points</th>
+                <th class="col-wins">Wins</th>
+                <th class="col-bestlap">bestlap</th>
               </tr>
             </thead>
             <tbody id="overlay-leaderboard-body">
               <tr>
-                <td colspan="5" class="overlay-empty">Загрузка рейтинга...</td>
+                <td colspan="5" class="overlay-empty">Loading standings...</td>
               </tr>
             </tbody>
           </table>
@@ -58,10 +58,10 @@
 
       <section class="overlay-section overlay-bottom-grid">
         <article class="bestlap-card">
-          <h2 class="section-title">Лучший круг сервера</h2>
+          <h2 class="section-title">Server bestlap</h2>
           <div class="bestlap-time" id="overlay-bestlap-time">--:--.---</div>
-          <div class="bestlap-driver" id="overlay-bestlap-driver">Имя пилота</div>
-          <div class="bestlap-meta" id="overlay-bestlap-meta">Трасса / машина</div>
+          <div class="bestlap-driver" id="overlay-bestlap-driver">Pilot name</div>
+          <div class="bestlap-meta" id="overlay-bestlap-meta">Track / car</div>
         </article>
 
         <div class="qr-grid">
@@ -70,7 +70,7 @@
             <img
               id="overlay-qr-telegram"
               class="overlay-qr-image"
-              alt="QR-код Telegram ASG Racing"
+              alt="ASG Racing Telegram QR code"
             />
           </article>
 
@@ -79,7 +79,7 @@
             <img
               id="overlay-qr-discord"
               class="overlay-qr-image"
-              alt="QR-код Discord ASG Racing"
+              alt="ASG Racing Discord QR code"
             />
           </article>
         </div>
