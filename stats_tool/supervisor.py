@@ -9,8 +9,6 @@ from pathlib import Path
 SCRIPT_DIR = Path(__file__).resolve().parent
 PARSER_PATH = SCRIPT_DIR / "parser.py"
 ENV_RESULTS_POLL_INTERVAL_SECONDS = "ACC_RESULTS_WATCH_INTERVAL_SECONDS"
-ENV_STATUS_POLL_INTERVAL_SECONDS = "ACC_STATUS_REFRESH_INTERVAL_SECONDS"
-ENV_STATUS_REFRESH_ON_START = "ACC_STATUS_REFRESH_ON_START"
 ENV_IDLE_LOG_INTERVAL_SECONDS = "ACC_WATCHER_IDLE_LOG_INTERVAL_SECONDS"
 
 
@@ -41,13 +39,6 @@ def env_int(name: str, default: int, minimum: int = 1) -> int:
     return max(minimum, value)
 
 
-def env_bool(name: str, default: bool) -> bool:
-    raw = os.getenv(name, "").strip().lower()
-    if not raw:
-        return default
-    return raw not in {"0", "false", "no", "off"}
-
-
 def should_rebuild(plan: dict) -> bool:
     if plan.get("mode") == "full_rebuild":
         return True
@@ -69,28 +60,20 @@ def run_results_rebuild_if_needed() -> bool:
     return True
 
 
-def refresh_server_status() -> None:
-    stats_parser.publish_server_status_only()
-
-
 def main():
     stats_parser.configure_logging()
 
     results_poll_interval = env_int(ENV_RESULTS_POLL_INTERVAL_SECONDS, 60)
-    status_poll_interval = env_int(ENV_STATUS_POLL_INTERVAL_SECONDS, 300)
     idle_log_interval = env_int(ENV_IDLE_LOG_INTERVAL_SECONDS, 1800)
-    status_refresh_on_start = env_bool(ENV_STATUS_REFRESH_ON_START, True)
 
     logging.info(
-        "Top stats supervisor started. results_poll=%ss status_poll=%ss output_dir=%s results_dir=%s hourly_results_dir=%s",
+        "Top stats supervisor started. results_poll=%ss output_dir=%s results_dir=%s hourly_results_dir=%s",
         results_poll_interval,
-        status_poll_interval,
         stats_parser.OUTPUT_DIR,
         stats_parser.RESULTS_DIR,
         stats_parser.HOURLY_RESULTS_DIR,
     )
 
-    next_status_at = time.time() if status_refresh_on_start else time.time() + status_poll_interval
     last_idle_log_at = 0.0
 
     try:
@@ -98,19 +81,12 @@ def main():
             loop_started_at = time.time()
 
             try:
-                rebuilt = run_results_rebuild_if_needed()
+                run_results_rebuild_if_needed()
                 now = time.time()
 
-                if rebuilt:
-                    next_status_at = now + status_poll_interval
-                elif now >= next_status_at:
-                    refresh_server_status()
-                    next_status_at = time.time() + status_poll_interval
-                elif idle_log_interval > 0 and now - last_idle_log_at >= idle_log_interval:
-                    seconds_until_status = max(0, int(next_status_at - now))
+                if idle_log_interval > 0 and now - last_idle_log_at >= idle_log_interval:
                     logging.info(
-                        "Watcher idle: no new result files. Next standalone status refresh in ~%ss.",
-                        seconds_until_status,
+                        "Watcher idle: no new result files detected.",
                     )
                     last_idle_log_at = now
 
