@@ -1764,13 +1764,20 @@ function normalizeHourlyEventId(value) {
     .replace(/^_+|_+$/g, "");
 }
 
+function canonicalizeHourlyEventId(value) {
+  const normalized = normalizeHourlyEventId(value);
+  const match = normalized.match(/^hourly_(\d{4}-\d{2}-\d{2})_(\d{4})(?:_.+)?$/);
+  if (!match) return normalized;
+  return `hourly_${match[1]}_${match[2]}`;
+}
+
 function buildHourlyAnnouncementEventId(item) {
-  const explicitId = normalizeHourlyEventId(item?.event_id);
+  const explicitId = canonicalizeHourlyEventId(item?.event_id);
   if (explicitId) return explicitId;
   const date = String(item?.date || "").trim();
   const time = String(item?.start_time_local || "").trim().replace(":", "");
-  const trackCode = normalizeHourlyEventId(item?.track_code || item?.track_name || "slot");
-  return normalizeHourlyEventId(`hourly_${date}_${time}_${trackCode}`);
+  if (!date || !time) return "";
+  return normalizeHourlyEventId(`hourly_${date}_${time}`);
 }
 
 async function loadHourlyVotes(announcement) {
