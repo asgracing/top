@@ -40,6 +40,63 @@ const racesUrl = `${TOP_DATA_BASE_URL}/races/races.json`;
 const carsUrl = `${TOP_DATA_BASE_URL}/cars/cars.json`;
 const driverIndexUrl = `${TOP_DATA_BASE_URL}/drivers/drivers.json`;
 const PAGE_SIZE = 10;
+const VOTER_ID_STORAGE_TTL_MS = 365 * 24 * 60 * 60 * 1000;
+
+function getLegalUrls() {
+  const fallbackBase =
+    document.querySelector('meta[name="legal-base-path"]')?.getAttribute("content")?.trim() || SITE_BASE_PATH;
+  return window.ASGLegal?.getUrls?.() || {
+    privacy: `${fallbackBase}privacy/`,
+    cookies: `${fallbackBase}cookies/`
+  };
+}
+
+function buildHourlyVoteLegalNoteHtml() {
+  const { privacy } = getLegalUrls();
+  if (currentLang === "ru") {
+    return `Для голосования используется ID браузера. <a href="${escapeHtml(privacy)}">Подробнее</a>`;
+  }
+  return `Voting uses a browser ID. <a href="${escapeHtml(privacy)}">Details</a>`;
+}
+
+function getExpiringStorageValue(storageKey, ttlMs) {
+  const rawValue = localStorage.getItem(storageKey);
+  const now = Date.now();
+
+  if (rawValue) {
+    try {
+      const parsed = JSON.parse(rawValue);
+      if (parsed && typeof parsed.value === "string") {
+        if (!parsed.expiresAt || Number(parsed.expiresAt) > now) {
+          return parsed.value;
+        }
+      }
+    } catch (error) {
+      if (rawValue.trim()) {
+        localStorage.setItem(
+          storageKey,
+          JSON.stringify({
+            value: rawValue.trim(),
+            createdAt: now,
+            expiresAt: now + ttlMs
+          })
+        );
+        return rawValue.trim();
+      }
+    }
+  }
+
+  const generated = `browser-${now.toString(36)}-${Math.random().toString(36).slice(2, 10)}`;
+  localStorage.setItem(
+    storageKey,
+    JSON.stringify({
+      value: generated,
+      createdAt: now,
+      expiresAt: now + ttlMs
+    })
+  );
+  return generated;
+}
 
 function resolveInitialLanguage() {
   const urlLang = new URLSearchParams(window.location.search).get("lang");
@@ -169,7 +226,7 @@ const translations = {
     heroEyebrow: "ACC Public Leaderboard",
     hourlyEyebrow: "Next 1-Hour Race",
     hourlyStartsLabel: "Starts",
-    hourlyTrackLabel: "Track",
+    hourlyTrackLabel: "",
     hourlyOpenBtn: "1-Hour Race!",
     hourlyVoteBtn: "I want to race!",
     hourlyVoteDone: "You're in",
@@ -551,7 +608,7 @@ const translations = {
     heroEyebrow: "Чемпионат публичного сервера ACC",
     hourlyEyebrow: "Ближайшая часовая гонка",
     hourlyStartsLabel: "Старт",
-    hourlyTrackLabel: "Трасса",
+    hourlyTrackLabel: "",
     hourlyOpenBtn: "Часовая гонка!",
     hourlyVoteBtn: "Я хочу поехать!",
     hourlyVoteDone: "Ты в списке",
@@ -1587,6 +1644,7 @@ function buildHourlyHeroModalContent(data) {
         ${!canVote || hourlyVotePending ? "disabled" : ""}
       >${escapeHtml(voteLabel)} <span aria-hidden="true">♥</span></button>
       <div class="hourly-modal-cta-meta" id="hourly-modal-votes-summary">${escapeHtml(getHourlyVotesLabel())}</div>
+      <div class="legal-inline-note">${buildHourlyVoteLegalNoteHtml()}</div>
     </div>
   `;
 }
@@ -1657,6 +1715,15 @@ function renderHourlyHeroCard() {
   cardEl.style.setProperty("--hero-hourly-track-photo", backgroundUrl ? `url("${backgroundUrl}")` : "none");
 
   votesEl.textContent = getHourlyVotesLabel();
+
+  let legalNoteEl = document.getElementById("hourly-vote-legal-note");
+  if (!legalNoteEl) {
+    legalNoteEl = document.createElement("div");
+    legalNoteEl.className = "legal-inline-note";
+    legalNoteEl.id = "hourly-vote-legal-note";
+    voteBtn.parentElement?.insertAdjacentElement("afterend", legalNoteEl);
+  }
+  legalNoteEl.innerHTML = buildHourlyVoteLegalNoteHtml();
 
   voteBtn.textContent = hourlyVotePending
     ? t("hourlyVoteSending")
@@ -1905,12 +1972,7 @@ function minutesFromSeconds(value) {
 
 function getHourlyBrowserVoterId() {
   const storageKey = "hourlyVoteVoterId";
-  let value = localStorage.getItem(storageKey);
-  if (!value) {
-    value = `browser-${Date.now().toString(36)}-${Math.random().toString(36).slice(2, 10)}`;
-    localStorage.setItem(storageKey, value);
-  }
-  return value;
+  return getExpiringStorageValue(storageKey, VOTER_ID_STORAGE_TTL_MS);
 }
 
 function escapeHtml(value) {
