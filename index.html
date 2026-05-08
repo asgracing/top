@@ -52,7 +52,7 @@
   <meta name="twitter:image" content="https://asgracing.ru/social/og.jpg" />
   <meta name="twitter:image:alt" content="ASG Racing ACC Leaderboard preview" />
 
-  <link rel="stylesheet" href="./styles.css?v=20260326b" />
+  <link rel="stylesheet" href="./styles.css?v=20260508a" />
   <link rel="stylesheet" href="./legal.css" />
 </head>
 <body id="top">
@@ -60,6 +60,24 @@
   <video class="site-bg-video" muted loop playsinline preload="none" data-bg-src="./media/background.mp4"></video>
 </div>
 <div class="site-video-overlay" aria-hidden="true"></div>
+<button
+  class="bg-video-sound-toggle"
+  id="bg-video-sound-toggle"
+  type="button"
+  hidden
+  aria-pressed="false"
+>
+  <span class="bg-video-sound-toggle-orbit" aria-hidden="true"></span>
+  <span class="bg-video-sound-toggle-icon" aria-hidden="true">
+    <span class="bg-video-sound-toggle-bar"></span>
+    <span class="bg-video-sound-toggle-bar"></span>
+    <span class="bg-video-sound-toggle-bar"></span>
+  </span>
+  <span class="bg-video-sound-toggle-copy">
+    <span class="bg-video-sound-toggle-title" data-bg-video-toggle-title>Watch with sound</span>
+    <span class="bg-video-sound-toggle-note" data-bg-video-toggle-note>Dim the site and unmute the clip</span>
+  </span>
+</button>
 
 
 <nav class="top-nav" id="top-nav">
@@ -839,6 +857,6 @@
   </div>
 
   <script src="./legal.js" defer></script>
-  <script src="./app.js?v=20260408d" defer></script>
+  <script src="./app.js?v=20260508a" defer></script>
 </body>
 </html>

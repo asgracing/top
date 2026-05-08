@@ -182,6 +182,10 @@ let topGuideState = {
   highlightedElement: null,
   mediaQuery: null
 };
+let backgroundVideoSoundState = {
+  available: false,
+  enabled: false
+};
 let funStatsPeriod = "week";
 const driverProfileCache = new Map();
 const raceDetailsCache = new Map();
@@ -339,6 +343,12 @@ const translations = {
     supportWidgetButton: "Support the project",
     supportWidgetButtonAria: "Open DonationAlerts support page for ASG Racing",
     supportWidgetQrNote: "Open DonationAlerts or scan the QR code from your phone.",
+    bgVideoSoundToggleTitle: "Watch with sound",
+    bgVideoSoundToggleNote: "Dim the site and unmute the clip",
+    bgVideoSoundToggleTitleActive: "Back to site",
+    bgVideoSoundToggleNoteActive: "Mute the clip and restore the page",
+    bgVideoSoundToggleAria: "Play the background video with sound and dim the site",
+    bgVideoSoundToggleAriaActive: "Mute the background video and return the site to normal mode",
     bestLapsTitle: "Best Laps",
     bestLapsSubtitle: "Row click opens quick view. Name opens full profile.",
     worstSafetyTitle: "Worst Safety",
@@ -780,6 +790,12 @@ const translations = {
     supportWidgetButton: "Поддержать проект",
     supportWidgetButtonAria: "Открыть страницу поддержки ASG Racing в DonationAlerts",
     supportWidgetQrNote: "Открой DonationAlerts по кнопке или отсканируй QR-код с телефона.",
+    bgVideoSoundToggleTitle: "Смотреть со звуком",
+    bgVideoSoundToggleNote: "Сделать сайт почти прозрачным и включить звук",
+    bgVideoSoundToggleTitleActive: "Вернуть сайт",
+    bgVideoSoundToggleNoteActive: "Выключить звук и вернуть обычный режим",
+    bgVideoSoundToggleAria: "Включить фоновое видео со звуком и сделать сайт почти прозрачным",
+    bgVideoSoundToggleAriaActive: "Выключить звук фонового видео и вернуть обычный режим сайта",
     bestLapsTitle: "Лучшие круги",
     bestLapsSubtitle: "Строка открывает быстрый просмотр, имя пилота ведёт в полный профиль.",
     worstSafetyTitle: "Штрафы и нарушения",
@@ -3807,6 +3823,7 @@ function applyStaticTranslations() {
   updateDriverOfDayButtonLabel();
   renderTwitchWidget();
   renderTopGuide();
+  renderBackgroundVideoSoundToggle();
   document.getElementById("top-nav-more")?.rebuildOverflowMenu?.();
 }
 
@@ -6112,6 +6129,84 @@ function initHourlyHeroModal() {
   cardEl.dataset.modalBound = "true";
 }
 
+function renderBackgroundVideoSoundToggle() {
+  const toggle = document.getElementById("bg-video-sound-toggle");
+  if (!toggle) return;
+
+  const isEnabled = backgroundVideoSoundState.available && backgroundVideoSoundState.enabled;
+  const titleEl = toggle.querySelector("[data-bg-video-toggle-title]");
+  const noteEl = toggle.querySelector("[data-bg-video-toggle-note]");
+  const titleKey = isEnabled ? "bgVideoSoundToggleTitleActive" : "bgVideoSoundToggleTitle";
+  const noteKey = isEnabled ? "bgVideoSoundToggleNoteActive" : "bgVideoSoundToggleNote";
+  const ariaKey = isEnabled ? "bgVideoSoundToggleAriaActive" : "bgVideoSoundToggleAria";
+
+  toggle.hidden = !backgroundVideoSoundState.available;
+  toggle.classList.toggle("is-active", isEnabled);
+  toggle.setAttribute("aria-pressed", isEnabled ? "true" : "false");
+  toggle.setAttribute("aria-label", t(ariaKey));
+  toggle.title = t(ariaKey);
+
+  if (titleEl) titleEl.textContent = t(titleKey);
+  if (noteEl) noteEl.textContent = t(noteKey);
+}
+
+function syncBackgroundVideoSoundState(video = document.querySelector(".site-bg-video")) {
+  const isEnabled = Boolean(video && backgroundVideoSoundState.available && backgroundVideoSoundState.enabled);
+
+  document.body.classList.toggle("background-audio-focus", isEnabled);
+
+  if (video) {
+    video.muted = !isEnabled;
+    if (isEnabled) video.volume = 1;
+  }
+
+  renderBackgroundVideoSoundToggle();
+}
+
+function setBackgroundVideoSoundAvailability(available) {
+  backgroundVideoSoundState.available = Boolean(available);
+  if (!backgroundVideoSoundState.available) {
+    backgroundVideoSoundState.enabled = false;
+  }
+  syncBackgroundVideoSoundState();
+}
+
+function bindBackgroundVideoSoundToggle() {
+  const toggle = document.getElementById("bg-video-sound-toggle");
+  const video = document.querySelector(".site-bg-video");
+
+  if (!toggle || !video || toggle.dataset.bound === "true") {
+    renderBackgroundVideoSoundToggle();
+    return;
+  }
+
+  toggle.addEventListener("click", () => {
+    if (!backgroundVideoSoundState.available) return;
+
+    backgroundVideoSoundState.enabled = !backgroundVideoSoundState.enabled;
+    syncBackgroundVideoSoundState(video);
+
+    if (!backgroundVideoSoundState.enabled) return;
+
+    const playPromise = video.play?.();
+    if (playPromise && typeof playPromise.catch === "function") {
+      playPromise.catch(() => {
+        backgroundVideoSoundState.enabled = false;
+        syncBackgroundVideoSoundState(video);
+      });
+    }
+  });
+
+  document.addEventListener("keydown", event => {
+    if (event.key !== "Escape" || !backgroundVideoSoundState.enabled) return;
+    backgroundVideoSoundState.enabled = false;
+    syncBackgroundVideoSoundState(video);
+  });
+
+  toggle.dataset.bound = "true";
+  renderBackgroundVideoSoundToggle();
+}
+
 function optimizeBackgroundMedia() {
   const video = document.querySelector(".site-bg-video");
   if (!video) return;
@@ -6150,17 +6245,20 @@ function optimizeBackgroundMedia() {
 
   if (shouldUseStaticBackground) {
     document.body.classList.add("lite-background");
+    setBackgroundVideoSoundAvailability(false);
     unloadBackgroundVideo();
     return;
   }
 
   document.body.classList.remove("lite-background");
+  setBackgroundVideoSoundAvailability(true);
   loadBackgroundVideo();
   video.setAttribute("autoplay", "");
-  video.muted = true;
+  syncBackgroundVideoSoundState(video);
   const playPromise = video.play?.();
   if (playPromise && typeof playPromise.catch === "function") {
     playPromise.catch(() => {
+      setBackgroundVideoSoundAvailability(false);
       unloadBackgroundVideo();
       document.body.classList.add("lite-background");
     });
@@ -6228,6 +6326,7 @@ async function init() {
   ensureTopGuide();
   initTwitchWidget();
   updateTopNavModalOffset();
+  bindBackgroundVideoSoundToggle();
   optimizeBackgroundMedia();
   window.addEventListener("resize", debounce(() => {
     updateTopNavModalOffset();
