@@ -32,6 +32,7 @@ const YOUTUBE_LIVE_AUTO_DETECT = false;
 const TWITCH_WIDGET_CHECK_INTERVAL_MS = 120000;
 const TOP_GUIDE_STORAGE_KEY = "asgTopGuideSeen";
 const TOP_GUIDE_MEDIA_QUERY = "(min-width: 1280px)";
+const BG_VIDEO_VOLUME_STORAGE_KEY = "asgBgVideoVolume";
 const SERVER_CARD_BACKGROUNDS = {
   main: `${SITE_BASE_PATH}assets/main.jpg`,
   sunset: `${SITE_BASE_PATH}assets/sunset.jpeg`
@@ -184,7 +185,8 @@ let topGuideState = {
 };
 let backgroundVideoSoundState = {
   available: false,
-  enabled: false
+  enabled: false,
+  volume: 0.5
 };
 let funStatsPeriod = "week";
 const driverProfileCache = new Map();
@@ -201,6 +203,30 @@ const HOURLY_WEATHER_ICON_PATHS = {
   rain: `${HOURLY_SITE_BASE_URL}/assets/weather/rain.png`,
   random: `${HOURLY_SITE_BASE_URL}/assets/weather/random.png`
 };
+
+function clampBackgroundVideoVolume(value) {
+  const numericValue = Number(value);
+  if (!Number.isFinite(numericValue)) return 0.5;
+  return Math.min(1, Math.max(0, numericValue));
+}
+
+function loadBackgroundVideoVolume() {
+  try {
+    const storedVolume = localStorage.getItem(BG_VIDEO_VOLUME_STORAGE_KEY);
+    if (storedVolume === null) return 0.5;
+    return clampBackgroundVideoVolume(Number(storedVolume) / 100);
+  } catch (error) {
+    return 0.5;
+  }
+}
+
+function saveBackgroundVideoVolume(volume) {
+  try {
+    localStorage.setItem(BG_VIDEO_VOLUME_STORAGE_KEY, String(Math.round(clampBackgroundVideoVolume(volume) * 100)));
+  } catch (error) {
+    // Volume persistence is nice to have; playback should keep working if storage is blocked.
+  }
+}
 
 const translations = {
   en: {
@@ -349,6 +375,8 @@ const translations = {
     bgVideoSoundToggleNoteActive: "Mute the clip and restore the page",
     bgVideoSoundToggleAria: "Play the background video with sound and dim the site",
     bgVideoSoundToggleAriaActive: "Mute the background video and return the site to normal mode",
+    bgVideoVolumeLabel: "Volume",
+    bgVideoVolumeAria: "Background video volume",
     bestLapsTitle: "Best Laps",
     bestLapsSubtitle: "Row click opens quick view. Name opens full profile.",
     worstSafetyTitle: "Worst Safety",
@@ -796,6 +824,8 @@ const translations = {
     bgVideoSoundToggleNoteActive: "Выключить звук и вернуть обычный режим",
     bgVideoSoundToggleAria: "Включить фоновое видео со звуком и сделать сайт почти прозрачным",
     bgVideoSoundToggleAriaActive: "Выключить звук фонового видео и вернуть обычный режим сайта",
+    bgVideoVolumeLabel: "Громкость",
+    bgVideoVolumeAria: "Громкость фонового видео",
     bestLapsTitle: "Лучшие круги",
     bestLapsSubtitle: "Строка открывает быстрый просмотр, имя пилота ведёт в полный профиль.",
     worstSafetyTitle: "Штрафы и нарушения",
@@ -6136,9 +6166,13 @@ function renderBackgroundVideoSoundToggle() {
   const isEnabled = backgroundVideoSoundState.available && backgroundVideoSoundState.enabled;
   const titleEl = toggle.querySelector("[data-bg-video-toggle-title]");
   const noteEl = toggle.querySelector("[data-bg-video-toggle-note]");
+  const volumeLabelEl = toggle.querySelector("[data-bg-video-volume-label]");
+  const volumeValueEl = toggle.querySelector("[data-bg-video-volume-value]");
+  const volumeSlider = document.getElementById("bg-video-volume-slider");
   const titleKey = isEnabled ? "bgVideoSoundToggleTitleActive" : "bgVideoSoundToggleTitle";
   const noteKey = isEnabled ? "bgVideoSoundToggleNoteActive" : "bgVideoSoundToggleNote";
   const ariaKey = isEnabled ? "bgVideoSoundToggleAriaActive" : "bgVideoSoundToggleAria";
+  const volumePercent = Math.round(clampBackgroundVideoVolume(backgroundVideoSoundState.volume) * 100);
 
   toggle.hidden = !backgroundVideoSoundState.available;
   toggle.classList.toggle("is-active", isEnabled);
@@ -6148,6 +6182,12 @@ function renderBackgroundVideoSoundToggle() {
 
   if (titleEl) titleEl.textContent = t(titleKey);
   if (noteEl) noteEl.textContent = t(noteKey);
+  if (volumeLabelEl) volumeLabelEl.textContent = t("bgVideoVolumeLabel");
+  if (volumeValueEl) volumeValueEl.textContent = `${volumePercent}%`;
+  if (volumeSlider) {
+    volumeSlider.value = String(volumePercent);
+    volumeSlider.setAttribute("aria-label", t("bgVideoVolumeAria"));
+  }
 }
 
 function syncBackgroundVideoSoundState(video = document.querySelector(".site-bg-video")) {
@@ -6157,7 +6197,7 @@ function syncBackgroundVideoSoundState(video = document.querySelector(".site-bg-
 
   if (video) {
     video.muted = !isEnabled;
-    if (isEnabled) video.volume = 1;
+    video.volume = clampBackgroundVideoVolume(backgroundVideoSoundState.volume);
   }
 
   renderBackgroundVideoSoundToggle();
@@ -6174,13 +6214,14 @@ function setBackgroundVideoSoundAvailability(available) {
 function bindBackgroundVideoSoundToggle() {
   const toggle = document.getElementById("bg-video-sound-toggle");
   const video = document.querySelector(".site-bg-video");
+  const volumeSlider = document.getElementById("bg-video-volume-slider");
 
   if (!toggle || !video || toggle.dataset.bound === "true") {
     renderBackgroundVideoSoundToggle();
     return;
   }
 
-  toggle.addEventListener("click", () => {
+  const toggleBackgroundVideoSound = () => {
     if (!backgroundVideoSoundState.available) return;
 
     backgroundVideoSoundState.enabled = !backgroundVideoSoundState.enabled;
@@ -6195,7 +6236,36 @@ function bindBackgroundVideoSoundToggle() {
         syncBackgroundVideoSoundState(video);
       });
     }
+  };
+
+  toggle.addEventListener("click", () => {
+    toggleBackgroundVideoSound();
   });
+
+  toggle.addEventListener("keydown", event => {
+    if (event.key !== "Enter" && event.key !== " ") return;
+    if (event.target === volumeSlider) return;
+    event.preventDefault();
+    toggleBackgroundVideoSound();
+  });
+
+  if (volumeSlider) {
+    volumeSlider.closest(".bg-video-volume")?.addEventListener("click", event => {
+      event.stopPropagation();
+    });
+    volumeSlider.addEventListener("click", event => {
+      event.stopPropagation();
+    });
+    volumeSlider.addEventListener("keydown", event => {
+      event.stopPropagation();
+    });
+    volumeSlider.addEventListener("input", event => {
+      event.stopPropagation();
+      backgroundVideoSoundState.volume = clampBackgroundVideoVolume(Number(volumeSlider.value) / 100);
+      saveBackgroundVideoVolume(backgroundVideoSoundState.volume);
+      syncBackgroundVideoSoundState(video);
+    });
+  }
 
   document.addEventListener("keydown", event => {
     if (event.key !== "Escape" || !backgroundVideoSoundState.enabled) return;
@@ -6233,9 +6303,20 @@ function optimizeBackgroundMedia() {
     video.load?.();
   };
 
+  if (video.dataset.availabilityBound !== "true") {
+    video.addEventListener("error", () => {
+      setBackgroundVideoSoundAvailability(false);
+      unloadBackgroundVideo();
+      document.body.classList.add("lite-background");
+    });
+    video.dataset.availabilityBound = "true";
+  }
+
   const reduceMotion = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+  const supportsMp4Video = typeof video.canPlayType !== "function" || video.canPlayType("video/mp4") !== "";
   const shouldUseStaticBackground =
     reduceMotion ||
+    !supportsMp4Video ||
     IS_DRIVER_PAGE ||
     IS_RACES_PAGE ||
     IS_CARS_PAGE ||
@@ -6258,9 +6339,7 @@ function optimizeBackgroundMedia() {
   const playPromise = video.play?.();
   if (playPromise && typeof playPromise.catch === "function") {
     playPromise.catch(() => {
-      setBackgroundVideoSoundAvailability(false);
-      unloadBackgroundVideo();
-      document.body.classList.add("lite-background");
+      video.pause?.();
     });
   }
 }
@@ -6318,6 +6397,7 @@ function rerenderUI() {
 }
 
 async function init() {
+  backgroundVideoSoundState.volume = loadBackgroundVideoVolume();
   updateServerCardBackgrounds();
   bindLanguageButtons();
   bindTopNavMoreMenu();

@@ -197,7 +197,7 @@ body.background-audio-focus .site-bg-video {
   display: flex;
   align-items: center;
   gap: 14px;
-  width: min(290px, calc(100vw - 24px));
+  width: min(310px, calc(100vw - 24px));
   padding: 14px 18px 14px 16px;
   border: 1px solid rgba(255, 198, 122, 0.42);
   border-right: 0;
@@ -365,6 +365,35 @@ body.background-audio-focus .site-bg-video {
   font-size: 11px;
   line-height: 1.35;
   color: rgba(255, 245, 229, 0.84);
+}
+
+.bg-video-volume {
+  display: grid;
+  grid-template-columns: auto minmax(84px, 1fr) auto;
+  align-items: center;
+  gap: 8px;
+  margin-top: 4px;
+  max-width: 188px;
+}
+
+.bg-video-volume-label,
+.bg-video-volume-value {
+  font-size: 10px;
+  font-weight: 700;
+  line-height: 1;
+  color: rgba(255, 245, 229, 0.82);
+}
+
+.bg-video-volume-slider {
+  width: 100%;
+  height: 18px;
+  margin: 0;
+  accent-color: #ffd166;
+  cursor: pointer;
+}
+
+.bg-video-sound-toggle.is-active .bg-video-volume-slider {
+  accent-color: #67d1ff;
 }
 
 body.background-audio-focus .bg-video-sound-toggle {

@@ -60,10 +60,11 @@
   <video class="site-bg-video" muted loop playsinline preload="none" data-bg-src="./media/background.mp4"></video>
 </div>
 <div class="site-video-overlay" aria-hidden="true"></div>
-<button
+<div
   class="bg-video-sound-toggle"
   id="bg-video-sound-toggle"
-  type="button"
+  role="button"
+  tabindex="0"
   hidden
   aria-pressed="false"
 >
@@ -76,8 +77,22 @@
   <span class="bg-video-sound-toggle-copy">
     <span class="bg-video-sound-toggle-title" data-bg-video-toggle-title>Watch with sound</span>
     <span class="bg-video-sound-toggle-note" data-bg-video-toggle-note>Dim the site and unmute the clip</span>
+    <span class="bg-video-volume">
+      <span class="bg-video-volume-label" data-bg-video-volume-label>Volume</span>
+      <input
+        class="bg-video-volume-slider"
+        id="bg-video-volume-slider"
+        type="range"
+        min="0"
+        max="100"
+        step="1"
+        value="50"
+        aria-label="Background video volume"
+      />
+      <span class="bg-video-volume-value" data-bg-video-volume-value>50%</span>
+    </span>
   </span>
-</button>
+</div>
 
 
 <nav class="top-nav" id="top-nav">
