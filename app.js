@@ -6305,6 +6305,7 @@ function optimizeBackgroundMedia() {
 
   if (video.dataset.availabilityBound !== "true") {
     video.addEventListener("error", () => {
+      document.body.dataset.bgVideoStatus = "video-error";
       setBackgroundVideoSoundAvailability(false);
       unloadBackgroundVideo();
       document.body.classList.add("lite-background");
@@ -6314,28 +6315,47 @@ function optimizeBackgroundMedia() {
 
   const reduceMotion = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
   const supportsMp4Video = typeof video.canPlayType !== "function" || video.canPlayType("video/mp4") !== "";
+  const bgVideoBlockReason = !supportsMp4Video
+    ? "unsupported-mp4"
+    : IS_DRIVER_PAGE
+      ? "driver-page"
+      : IS_RACES_PAGE
+        ? "races-page"
+        : IS_CARS_PAGE
+          ? "cars-page"
+          : IS_FUN_STATS_PAGE
+            ? "fun-stats-page"
+            : window.innerWidth <= 768
+              ? "mobile-width"
+              : "";
+  const shouldAutoplayBackground = !reduceMotion && !navigator.connection?.saveData;
   const shouldUseStaticBackground =
-    reduceMotion ||
     !supportsMp4Video ||
     IS_DRIVER_PAGE ||
     IS_RACES_PAGE ||
     IS_CARS_PAGE ||
     IS_FUN_STATS_PAGE ||
-    window.innerWidth < 900 ||
-    navigator.connection?.saveData;
+    window.innerWidth <= 768;
 
   if (shouldUseStaticBackground) {
+    document.body.dataset.bgVideoStatus = bgVideoBlockReason || "static-background";
     document.body.classList.add("lite-background");
     setBackgroundVideoSoundAvailability(false);
     unloadBackgroundVideo();
     return;
   }
 
+  document.body.dataset.bgVideoStatus = shouldAutoplayBackground ? "available" : "available-no-autoplay";
   document.body.classList.remove("lite-background");
   setBackgroundVideoSoundAvailability(true);
   loadBackgroundVideo();
-  video.setAttribute("autoplay", "");
   syncBackgroundVideoSoundState(video);
+  if (!shouldAutoplayBackground) {
+    video.removeAttribute("autoplay");
+    return;
+  }
+
+  video.setAttribute("autoplay", "");
   const playPromise = video.play?.();
   if (playPromise && typeof playPromise.catch === "function") {
     playPromise.catch(() => {
