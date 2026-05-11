@@ -8528,6 +8528,39 @@ body.modal-open {
   }
 }
 
+/* ===== HERO POST-PROD TUNE 1105 V22 ===== */
+
+.hero-actions-stacked-mobile .btn-today-stats {
+  font-size: 0.8rem;
+}
+
+.hero-actions-stacked-mobile .btn-driver-day,
+.driver-day-btn-name {
+  font-size: 1.12rem;
+}
+
+.driver-day-btn-label {
+  font-size: 0.82rem;
+}
+
+@media (min-width: 1181px) {
+  .hero-stats-row {
+    position: relative;
+  }
+
+  .hero-stats-row::before {
+    content: "";
+    position: absolute;
+    top: 4px;
+    bottom: 4px;
+    left: 50%;
+    width: 1px;
+    background: rgba(255, 255, 255, 0.12);
+    transform: translateX(-0.5px);
+    pointer-events: none;
+  }
+}
+
 /* ===== HERO STACK RESPONSIVE FIX 1105 V20 ===== */
 
 .hero-grid {
