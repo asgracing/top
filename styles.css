@@ -1784,7 +1784,7 @@ tr.is-interactive-row:focus-visible {
   gap: 2px;
   align-content: center;
   justify-items: center;
-  font-size: 0.72rem;
+  font-size: 0.78rem;
   overflow: hidden;
 }
 
@@ -1798,13 +1798,13 @@ tr.is-interactive-row:focus-visible {
 }
 
 .driver-day-btn-label {
-  font-size: clamp(0.58rem, 0.9vw, 0.74rem);
+  font-size: 0.66rem;
   line-height: 1.05;
   opacity: 0.82;
 }
 
 .driver-day-btn-name {
-  font-size: clamp(0.66rem, 1vw, 0.88rem);
+  font-size: 0.78rem;
   line-height: 1.08;
   overflow-wrap: anywhere;
 }
@@ -1865,12 +1865,13 @@ tr.is-interactive-row:focus-visible {
 
 .hero-online-card-inline {
   min-height: 136px;
-  justify-content: start;
+  justify-content: flex-start;
 }
 
 .hero-online-card-inline .hero-online-chart,
 .hero-online-card-inline .hero-online-scale {
-  min-height: 74px;
+  height: 100%;
+  min-height: 0;
 }
 
 .hero-online-card-inline .hero-online-chart {
@@ -1883,7 +1884,8 @@ tr.is-interactive-row:focus-visible {
 }
 
 .hero-online-card-inline .hero-online-chart-wrap {
-  flex: 0 0 auto;
+  flex: 1 1 auto;
+  align-items: stretch;
 }
 
 .mini-stat {
