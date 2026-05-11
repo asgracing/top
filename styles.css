@@ -1865,15 +1865,25 @@ tr.is-interactive-row:focus-visible {
 
 .hero-online-card-inline {
   min-height: 136px;
+  justify-content: start;
 }
 
 .hero-online-card-inline .hero-online-chart,
 .hero-online-card-inline .hero-online-scale {
-  min-height: 82px;
+  min-height: 74px;
 }
 
 .hero-online-card-inline .hero-online-chart {
   gap: 7px;
+  padding-top: 0;
+}
+
+.hero-online-card-inline .hero-online-head {
+  margin-bottom: 0;
+}
+
+.hero-online-card-inline .hero-online-chart-wrap {
+  flex: 0 0 auto;
 }
 
 .mini-stat {
