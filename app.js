@@ -6416,49 +6416,6 @@ function rerenderUI() {
   applyRevealAnimations();
 }
 
-function initSupportCursorPrank() {
-  const widget = document.querySelector(".support-sticky-widget");
-  if (!widget) return;
-
-  document.documentElement.classList.add("support-cursor-prank");
-
-  let cursorX = Math.round(window.innerWidth * 0.5);
-  let cursorY = Math.round(window.innerHeight * 0.5);
-  let animationFrame = 0;
-
-  const placeWidget = () => {
-    const rect = widget.getBoundingClientRect();
-    const gap = 12;
-    const offset = 18;
-    const maxX = Math.max(gap, window.innerWidth - rect.width - gap);
-    const maxY = Math.max(gap, window.innerHeight - rect.height - gap);
-    const x = Math.min(Math.max(cursorX + offset, gap), maxX);
-    const y = Math.min(Math.max(cursorY + offset, gap), maxY);
-
-    widget.style.setProperty("--support-prank-x", `${Math.round(x)}px`);
-    widget.style.setProperty("--support-prank-y", `${Math.round(y)}px`);
-    animationFrame = 0;
-  };
-
-  const schedulePlaceWidget = (x, y) => {
-    cursorX = x;
-    cursorY = y;
-    if (!animationFrame) {
-      animationFrame = window.requestAnimationFrame(placeWidget);
-    }
-  };
-
-  window.addEventListener("pointermove", event => {
-    schedulePlaceWidget(event.clientX, event.clientY);
-  }, { passive: true });
-
-  window.addEventListener("resize", () => {
-    schedulePlaceWidget(cursorX, cursorY);
-  }, { passive: true });
-
-  schedulePlaceWidget(cursorX, cursorY);
-}
-
 async function init() {
   backgroundVideoSoundState.volume = loadBackgroundVideoVolume();
   updateServerCardBackgrounds();
@@ -6468,7 +6425,6 @@ async function init() {
   bindSearchInputs();
   ensureTopGuide();
   initTwitchWidget();
-  initSupportCursorPrank();
   updateTopNavModalOffset();
   bindBackgroundVideoSoundToggle();
   optimizeBackgroundMedia();
