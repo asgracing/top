@@ -1247,33 +1247,38 @@ h1 {
 }
 
 .support-inline-widget.support-center-widget .support-widget-card {
-  grid-template-columns: minmax(0, 1fr) minmax(138px, auto) 82px;
-  grid-template-rows: minmax(58px, auto);
+  grid-template-columns: minmax(0, 1fr) minmax(156px, auto) 82px;
+  grid-template-rows: minmax(66px, auto);
   align-items: center;
-  gap: 12px;
-  min-height: 68px;
-  padding: 10px 12px;
+  gap: 14px;
+  min-height: 76px;
+  padding: 12px 14px;
 }
 
 .support-inline-widget.support-center-widget .support-widget-copy-block {
-  gap: 4px;
+  gap: 6px;
 }
 
 .support-inline-widget.support-center-widget .support-widget-title {
-  font-size: 0.78rem;
+  font-size: 0.95rem;
 }
 
 .support-inline-widget.support-center-widget .support-widget-copy {
-  font-size: 0.68rem;
-  line-height: 1.22;
+  font-size: 0.78rem;
+  line-height: 1.3;
   -webkit-line-clamp: 2;
 }
 
 .support-inline-widget.support-center-widget .support-widget-btn {
-  min-height: 38px;
-  font-size: 0.76rem;
+  min-height: 44px;
+  font-size: 0.9rem;
   justify-self: end;
-  min-width: 138px;
+  min-width: 156px;
+  animation-duration: 2.4s;
+  box-shadow:
+    0 16px 30px rgba(255, 91, 46, 0.34),
+    0 0 0 4px rgba(255, 163, 86, 0.1),
+    inset 0 1px 0 rgba(255, 255, 255, 0.24);
 }
 
 .support-inline-widget.support-center-widget .support-widget-qr-shell {
@@ -1869,11 +1874,12 @@ tr.is-interactive-row:focus-visible {
   display: grid;
   grid-template-columns: minmax(0, 1fr) auto;
   grid-template-rows: auto 1fr;
-  column-gap: 10px;
+  column-gap: 12px;
   row-gap: 2px;
-  align-content: start;
-  min-height: 48px;
-  padding: 7px 10px;
+  align-content: center;
+  align-items: center;
+  min-height: 58px;
+  padding: 8px 12px;
 }
 
 .hero-side-compact .mini-label {
@@ -1885,7 +1891,7 @@ tr.is-interactive-row:focus-visible {
   grid-column: 2;
   grid-row: 1;
   margin: 0;
-  align-self: start;
+  align-self: center;
   text-align: right;
   white-space: nowrap;
 }
@@ -1893,14 +1899,15 @@ tr.is-interactive-row:focus-visible {
 .hero-side-compact .mini-note {
   grid-column: 1 / -1;
   margin: 0;
+  align-self: center;
 }
 
 .hero-side-compact .mini-stat-bestlap .mini-value {
-  font-size: 1rem;
+  font-size: 1.16rem;
 }
 
 .hero-side-compact #drivers-count {
-  font-size: 1rem;
+  font-size: 1.18rem;
 }
 
 .mini-stat:hover,
