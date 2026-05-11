@@ -1906,6 +1906,16 @@ tr.is-interactive-row:focus-visible {
   font-size: 1.16rem;
 }
 
+.hero-side-compact .mini-stat-drivers-count {
+  align-content: center;
+  grid-template-rows: auto auto;
+}
+
+.hero-side-compact .mini-stat-drivers-count .mini-label,
+.hero-side-compact .mini-stat-drivers-count .mini-value {
+  align-self: center;
+}
+
 .hero-side-compact #drivers-count {
   font-size: 1.18rem;
 }
