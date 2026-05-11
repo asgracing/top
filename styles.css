@@ -5246,20 +5246,20 @@ body.modal-open {
       "online";
   }
 
-  .support-hourly-widget .support-widget-card,
-  .support-center-widget .support-widget-card {
+  .support-inline-widget.support-hourly-widget .support-widget-card,
+  .support-inline-widget.support-center-widget .support-widget-card {
     grid-template-columns: minmax(0, 1fr) auto;
     grid-template-rows: auto;
     align-items: center;
   }
 
-  .support-hourly-widget .support-widget-qr-shell,
-  .support-center-widget .support-widget-qr-shell {
+  .support-inline-widget.support-hourly-widget .support-widget-qr-shell,
+  .support-inline-widget.support-center-widget .support-widget-qr-shell {
     display: none;
   }
 
-  .support-hourly-widget .support-widget-copy,
-  .support-center-widget .support-widget-copy {
+  .support-inline-widget.support-hourly-widget .support-widget-copy,
+  .support-inline-widget.support-center-widget .support-widget-copy {
     -webkit-line-clamp: 2;
   }
 
