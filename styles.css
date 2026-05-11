@@ -772,7 +772,7 @@ body.background-audio-focus .bg-video-sound-toggle {
 
 .hero-grid {
   display: grid;
-  grid-template-columns: minmax(0, 2fr) minmax(280px, 1fr);
+  grid-template-columns: minmax(0, 2.05fr) minmax(156px, 0.42fr) minmax(272px, 0.78fr);
   gap: 10px 12px;
   align-items: stretch;
 }
@@ -830,7 +830,7 @@ h1 {
 .hero-hourly-promo {
   position: relative;
   overflow: hidden;
-  grid-column: 2 / 3;
+  grid-column: 2 / 4;
   grid-row: 1;
   display: grid;
   gap: 14px;
@@ -1007,12 +1007,13 @@ h1 {
 .hero-hourly-card {
   --hero-hourly-track-photo: none;
   position: relative;
-  grid-column: 2 / 3;
+  grid-column: 3 / 4;
   grid-row: 2;
   display: flex;
   flex-direction: column;
   gap: 8px;
   align-self: start;
+  min-height: 100%;
   padding: 18px 18px 16px;
   border: 1px solid rgba(255, 209, 102, 0.26);
   border-radius: 20px;
@@ -1184,12 +1185,12 @@ h1 {
 
 .hero-actions.hero-actions-stacked-mobile {
   display: grid;
-  grid-template-columns: minmax(250px, 0.9fr) repeat(3, minmax(0, 1fr));
-  grid-template-rows: minmax(70px, auto) minmax(86px, auto);
+  grid-template-columns: repeat(5, minmax(0, 1fr));
+  grid-template-rows: minmax(54px, auto) minmax(74px, auto);
   grid-template-areas:
-    "support today races driver"
-    "support stats stats online";
-  gap: 10px;
+    "today races driver online online"
+    "stats stats stats online online";
+  gap: 8px;
   margin-top: 0;
   align-items: stretch;
   justify-content: flex-start;
@@ -1199,8 +1200,8 @@ h1 {
   width: 100%;
   min-width: 0;
   max-width: none;
-  min-height: 70px;
-  padding: 12px 14px;
+  min-height: 54px;
+  padding: 9px 12px;
   align-self: stretch;
   flex: 0 0 auto;
 }
@@ -1226,15 +1227,22 @@ h1 {
   min-width: 0;
 }
 
+.support-hourly-widget {
+  grid-area: auto;
+  grid-column: 2 / 3;
+  grid-row: 2;
+  align-self: stretch;
+}
+
 .support-inline-widget .support-widget-card {
   height: 100%;
   display: grid;
-  grid-template-columns: minmax(0, 1fr) 72px;
-  grid-template-rows: 1fr auto;
-  gap: 9px 12px;
+  grid-template-columns: minmax(0, 1fr);
+  grid-template-rows: auto auto 1fr;
+  gap: 8px;
   align-items: stretch;
-  padding: 14px;
-  border-radius: 20px;
+  padding: 12px;
+  border-radius: 18px;
   border-color: rgba(255, 170, 82, 0.38);
   background:
     radial-gradient(circle at 12% 0%, rgba(255, 209, 102, 0.2), transparent 36%),
@@ -1246,22 +1254,24 @@ h1 {
 
 .support-inline-widget .support-widget-copy-block {
   align-content: start;
-  gap: 6px;
+  gap: 5px;
   min-width: 0;
 }
 
 .support-inline-widget .support-widget-title {
-  font-size: 0.88rem;
-  line-height: 1.12;
+  font-size: 0.76rem;
+  line-height: 1.08;
   letter-spacing: 0;
 }
 
 .support-inline-widget .support-widget-qr-shell {
-  grid-column: 2;
-  grid-row: 1 / 3;
-  align-self: stretch;
+  grid-column: auto;
+  grid-row: auto;
+  align-self: end;
+  justify-self: center;
+  width: 84px;
   padding: 7px;
-  border-radius: 18px;
+  border-radius: 16px;
   border-color: rgba(255, 255, 255, 0.12);
   background:
     linear-gradient(180deg, rgba(255, 255, 255, 0.92), rgba(255, 246, 229, 0.86));
@@ -1282,17 +1292,18 @@ h1 {
   display: -webkit-box;
   overflow: hidden;
   color: rgba(255, 225, 199, 0.88);
-  font-size: 0.7rem;
-  line-height: 1.32;
+  font-size: 0.64rem;
+  line-height: 1.25;
   -webkit-box-orient: vertical;
-  -webkit-line-clamp: 2;
+  -webkit-line-clamp: 4;
 }
 
 .support-inline-widget .support-widget-btn {
-  min-height: 40px;
-  padding: 0 12px;
-  border-radius: 14px;
-  font-size: 0.8rem;
+  min-height: 34px;
+  padding: 0 10px;
+  border-radius: 12px;
+  font-size: 0.72rem;
+  line-height: 1.12;
   box-shadow:
     0 12px 22px rgba(255, 91, 46, 0.24),
     inset 0 1px 0 rgba(255, 255, 255, 0.2);
@@ -1307,8 +1318,8 @@ h1 {
   display: flex;
   flex-direction: column;
   justify-content: space-between;
-  min-height: 86px;
-  padding: 10px 12px 9px;
+  min-height: 136px;
+  padding: 10px 14px 9px;
   border: 1px solid rgba(99, 169, 255, 0.18);
   border-radius: 18px;
   background:
@@ -1355,8 +1366,8 @@ h1 {
 
 .hero-online-chart-wrap {
   display: grid;
-  grid-template-columns: minmax(0, 1fr) 28px;
-  gap: 6px;
+  grid-template-columns: minmax(0, 1fr) 24px;
+  gap: 8px;
   align-items: end;
   flex: 1;
   min-height: 0;
@@ -1366,7 +1377,7 @@ h1 {
   display: grid;
   grid-template-columns: repeat(7, minmax(0, 1fr));
   align-items: stretch;
-  gap: 5px;
+  gap: 7px;
   min-height: 100px;
   padding-top: 8px;
 }
@@ -1681,11 +1692,11 @@ tr.is-interactive-row:focus-visible {
 .hero-actions-stacked-mobile .btn-last-races,
 .hero-actions-stacked-mobile .btn-driver-day {
   min-width: 0;
-  min-height: 70px;
-  padding: 12px 14px;
-  border-radius: 18px;
-  font-size: 0.94rem;
-  line-height: 1.14;
+  min-height: 54px;
+  padding: 8px 10px;
+  border-radius: 16px;
+  font-size: 0.8rem;
+  line-height: 1.08;
   letter-spacing: 0;
   border-color: rgba(255, 255, 255, 0.1);
   background:
@@ -1711,7 +1722,7 @@ tr.is-interactive-row:focus-visible {
 }
 
 .hero-actions-stacked-mobile .btn-driver-day {
-  font-size: 0.88rem;
+  font-size: 0.72rem;
 }
 
 .hero-actions-stacked-mobile .btn:hover,
@@ -1764,26 +1775,26 @@ tr.is-interactive-row:focus-visible {
 
 .hero-side-compact {
   display: grid;
-  grid-template-columns: minmax(0, 1.35fr) minmax(150px, 0.85fr);
-  gap: 10px;
+  grid-template-columns: minmax(0, 1.2fr) minmax(132px, 0.8fr);
+  gap: 8px;
 }
 
 .hero-online-card-inline {
-  min-height: 86px;
+  min-height: 136px;
 }
 
 .hero-online-card-inline .hero-online-chart,
 .hero-online-card-inline .hero-online-scale {
-  min-height: 42px;
+  min-height: 82px;
 }
 
 .hero-online-card-inline .hero-online-chart {
-  gap: 5px;
+  gap: 7px;
 }
 
 .mini-stat {
-  min-height: 86px;
-  padding: 12px 14px;
+  min-height: 74px;
+  padding: 9px 12px;
   border: 1px solid rgba(255, 255, 255, 0.09);
   border-radius: 18px;
   background:
@@ -1794,6 +1805,7 @@ tr.is-interactive-row:focus-visible {
 }
 
 .mini-stat-bestlap {
+  min-height: 74px;
   border-color: rgba(172, 97, 255, 0.28);
   background:
     radial-gradient(circle at top left, rgba(173, 82, 255, 0.24), transparent 42%),
@@ -1810,8 +1822,8 @@ tr.is-interactive-row:focus-visible {
 }
 
 .mini-label {
-  margin-bottom: 9px;
-  font-size: 11px;
+  margin-bottom: 6px;
+  font-size: 10px;
   font-weight: 800;
   letter-spacing: 0.04em;
   text-transform: uppercase;
@@ -1819,15 +1831,15 @@ tr.is-interactive-row:focus-visible {
 }
 
 .mini-value {
-  margin-bottom: 6px;
-  font-size: 20px;
+  margin-bottom: 4px;
+  font-size: 17px;
   font-weight: 900;
   line-height: 1.05;
 }
 
 .mini-note {
-  font-size: 12px;
-  line-height: 1.28;
+  font-size: 11px;
+  line-height: 1.2;
   color: rgba(218, 229, 245, 0.68);
 }
 
@@ -4714,6 +4726,7 @@ body.modal-open {
   .hero-copy,
   .hero-main-column,
   .hero-hourly-promo,
+  .support-hourly-widget,
   .hero-hourly-card,
   .hero-actions-row,
   .hero-side {
@@ -4825,10 +4838,10 @@ body.modal-open {
     grid-template-columns: repeat(2, minmax(0, 1fr));
     grid-template-rows: auto;
     grid-template-areas:
-      "support support"
       "today races"
       "driver driver"
-      "stats online";
+      "stats stats"
+      "online online";
     gap: 10px;
     align-items: stretch;
   }
@@ -4854,8 +4867,19 @@ body.modal-open {
     line-height: 1.2;
   }
 
-  .support-inline-widget .support-widget-card {
+  .support-hourly-widget .support-widget-card {
     grid-template-columns: minmax(0, 1fr) 96px;
+    grid-template-rows: auto auto;
+  }
+
+  .support-hourly-widget .support-widget-qr-shell {
+    grid-column: 2;
+    grid-row: 1 / 3;
+    width: 96px;
+  }
+
+  .support-hourly-widget .support-widget-copy {
+    -webkit-line-clamp: 2;
   }
 
   .hero-actions-row {
@@ -5118,7 +5142,6 @@ body.modal-open {
   .hero-actions.hero-actions-stacked-mobile {
     grid-template-columns: 1fr;
     grid-template-areas:
-      "support"
       "today"
       "races"
       "driver"
@@ -5126,15 +5149,15 @@ body.modal-open {
       "online";
   }
 
-  .support-inline-widget .support-widget-card {
+  .support-hourly-widget .support-widget-card {
     grid-template-columns: minmax(0, 1fr);
   }
 
-  .support-inline-widget .support-widget-qr-shell {
+  .support-hourly-widget .support-widget-qr-shell {
     display: none;
   }
 
-  .support-inline-widget .support-widget-copy {
+  .support-hourly-widget .support-widget-copy {
     -webkit-line-clamp: 2;
   }
 
