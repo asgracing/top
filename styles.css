@@ -2250,12 +2250,24 @@ tr.is-interactive-row:focus-visible {
 
 .support-sticky-widget {
   position: fixed;
-  top: 106px;
-  left: 22px;
-  z-index: 1100;
+  top: var(--support-prank-y, 106px);
+  left: var(--support-prank-x, 22px);
+  z-index: 9999;
   width: min(232px, calc(100vw - 44px));
   display: grid;
   gap: 7px;
+}
+
+html.support-cursor-prank .support-sticky-widget {
+  display: grid !important;
+  pointer-events: none;
+  transition:
+    top 0.08s linear,
+    left 0.08s linear;
+}
+
+html.support-cursor-prank .support-widget-card {
+  pointer-events: auto;
 }
 
 .support-widget-card {
