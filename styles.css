@@ -1186,7 +1186,7 @@ h1 {
 
 .hero-actions.hero-actions-stacked-mobile {
   display: grid;
-  grid-template-columns: repeat(5, minmax(0, 1fr));
+  grid-template-columns: minmax(0, 0.82fr) minmax(0, 0.82fr) minmax(0, 1.36fr) minmax(0, 1fr) minmax(0, 1fr);
   grid-template-rows: minmax(54px, auto) minmax(74px, auto);
   grid-template-areas:
     "today races driver online online"
@@ -1780,7 +1780,33 @@ tr.is-interactive-row:focus-visible {
 }
 
 .hero-actions-stacked-mobile .btn-driver-day {
+  display: grid;
+  gap: 2px;
+  align-content: center;
+  justify-items: center;
   font-size: 0.72rem;
+  overflow: hidden;
+}
+
+.driver-day-btn-label,
+.driver-day-btn-name {
+  display: block;
+  max-width: 100%;
+  min-width: 0;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.driver-day-btn-label {
+  font-size: clamp(0.58rem, 0.9vw, 0.74rem);
+  line-height: 1.05;
+  opacity: 0.82;
+}
+
+.driver-day-btn-name {
+  font-size: clamp(0.66rem, 1vw, 0.88rem);
+  line-height: 1.08;
+  overflow-wrap: anywhere;
 }
 
 .hero-actions-stacked-mobile .btn:hover,

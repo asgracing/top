@@ -3865,9 +3865,15 @@ function updateDriverOfDayButtonLabel() {
   const btn = document.getElementById("driver-of-day-btn");
   if (!btn) return;
 
-  btn.textContent = replaceTokens(t("driverOfDayBtn"), {
-    driver: getDriverOfDayName()
-  });
+  const labelTemplate = t("driverOfDayBtn");
+  const driverName = getDriverOfDayName();
+  const fallbackLabel = replaceTokens(labelTemplate, { driver: "" }).replace(/[:\s-]+$/u, "").trim();
+  const label = fallbackLabel || (currentLang === "ru" ? "Пилот дня" : "Driver of the day");
+
+  btn.innerHTML = `
+    <span class="driver-day-btn-label">${escapeHtml(label)}</span>
+    <span class="driver-day-btn-name">${escapeHtml(driverName)}</span>
+  `;
 }
 
 function formatAverageFinish(value) {
