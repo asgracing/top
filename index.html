@@ -162,19 +162,6 @@
 </nav>
 
   <div class="container">
-    <div class="support-mobile-cta">
-      <a
-        class="support-mobile-btn"
-        href="https://www.donationalerts.com/r/asgracing"
-        target="_blank"
-        rel="noopener noreferrer"
-        data-i18n="supportWidgetButton"
-        data-i18n-aria-label="supportWidgetButtonAria"
-      >
-        Support the project
-      </a>
-    </div>
-
     <section class="hero">
       <div class="hero-card">
         
@@ -196,6 +183,42 @@
 
     <div class="hero-actions-row">
       <div class="hero-actions hero-actions-stacked-mobile">
+        <aside class="support-inline-widget" aria-labelledby="support-widget-title">
+          <div class="support-widget-card">
+            <div class="support-widget-copy-block">
+              <h3 class="support-widget-title" id="support-widget-title" data-i18n="supportWidgetTitle">Support ASG Racing</h3>
+              <p class="support-widget-copy" data-i18n="supportWidgetText">
+                If you enjoy the server, streams and stats site, you can help the project keep rolling with a quick support drop.
+              </p>
+            </div>
+
+            <a
+              class="support-widget-btn"
+              href="https://www.donationalerts.com/r/asgracing"
+              target="_blank"
+              rel="noopener noreferrer"
+              data-i18n="supportWidgetButton"
+              data-i18n-aria-label="supportWidgetButtonAria"
+            >
+              Support the project
+            </a>
+
+            <div class="support-widget-qr-shell">
+              <img
+                class="support-widget-qr"
+                src="https://files.donationalerts.com/uploads/qr/9055152/qr_4df1b4ad36b732d700f04a21d318b3fe.png"
+                alt="ASG Racing DonationAlerts QR code"
+                loading="lazy"
+                decoding="async"
+              />
+            </div>
+
+            <p class="support-widget-note" data-i18n="supportWidgetQrNote">
+              Open DonationAlerts or scan the QR code from your phone.
+            </p>
+          </div>
+        </aside>
+
         <div class="hero-primary-actions">
           <button
             class="btn btn-today-stats"
@@ -224,7 +247,7 @@
         </button>
 
         <div
-          class="hero-online-card"
+          class="hero-online-card hero-online-card-inline"
           id="hero-online-card"
           role="button"
           tabindex="0"
@@ -255,7 +278,7 @@
           </div>
 
           <div class="hero-stats-row">
-            <div class="mini-stat mini-stat-compact">
+            <div class="mini-stat hero-server-total-stat">
               <div class="mini-label" data-i18n="serversLabel">Servers</div>
               <div class="mini-value server-status-wrap server-status-wrap-total">
                 <span class="server-total-label" id="serverStatusValue" data-i18n="serverTotalPlayersLabel">Total players</span>
@@ -263,7 +286,7 @@
               </div>
             </div>
 
-            <div class="mini-stat mini-stat-compact">
+            <div class="mini-stat">
               <div class="mini-label" data-i18n="driversCountLabel">Drivers in leaderboard</div>
               <div class="mini-value" id="drivers-count">—</div>
             </div>
@@ -337,10 +360,11 @@
       </div>
     </section>
 
-    <aside class="support-sticky-widget" aria-labelledby="support-widget-title">
+    <!-- Legacy sticky support widget kept disabled after moving support into the hero actions. -->
+    <aside class="support-sticky-widget" aria-labelledby="support-widget-title-legacy" hidden>
       <div class="support-widget-card">
         <div class="support-widget-copy-block">
-          <h3 class="support-widget-title" id="support-widget-title" data-i18n="supportWidgetTitle">Support ASG Racing</h3>
+          <h3 class="support-widget-title" id="support-widget-title-legacy" data-i18n="supportWidgetTitle">Support ASG Racing</h3>
           <p class="support-widget-copy" data-i18n="supportWidgetText">
             If you enjoy the server, streams and stats site, you can help the project keep rolling with a quick support drop.
           </p>
@@ -390,7 +414,7 @@
           </div>
         </div>
 
-        <div class="server-sticky-card server-sticky-card-sunset" id="server-card-sunset">
+        <div class="server-sticky-card server-sticky-card-sunset" id="server-card-sunset" hidden>
           <div class="server-sticky-card-overlay"></div>
           <div class="server-sticky-card-content">
             <div class="server-sticky-card-name" data-i18n="serverSunsetLabel">Sunset</div>

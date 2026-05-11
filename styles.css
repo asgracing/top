@@ -1184,11 +1184,10 @@ h1 {
 
 .hero-actions.hero-actions-stacked-mobile {
   display: grid;
-  grid-template-columns: repeat(4, minmax(0, 1fr));
+  grid-template-columns: minmax(210px, 0.92fr) repeat(3, minmax(0, 1fr));
   grid-template-areas:
-    "today races online online"
-    "driver driver online online"
-    "stats stats stats stats";
+    "support today races driver"
+    "support stats stats online";
   gap: 8px;
   margin-top: 0;
   align-items: stretch;
@@ -1219,6 +1218,37 @@ h1 {
 
 .btn-driver-day {
   grid-area: driver;
+}
+
+.support-inline-widget {
+  grid-area: support;
+  min-width: 0;
+}
+
+.support-inline-widget .support-widget-card {
+  height: 100%;
+  gap: 10px;
+  padding: 14px;
+  border-radius: 20px;
+}
+
+.support-inline-widget .support-widget-qr-shell {
+  padding: 8px;
+}
+
+.support-inline-widget .support-widget-qr {
+  width: min(100%, 108px);
+  padding: 6px;
+  border-radius: 16px;
+}
+
+.support-inline-widget .support-widget-copy {
+  font-size: 0.76rem;
+}
+
+.support-inline-widget .support-widget-btn {
+  min-height: 44px;
+  border-radius: 14px;
 }
 
 .hero-online-card {
@@ -1631,8 +1661,21 @@ tr.is-interactive-row:focus-visible {
 
 .hero-side-compact {
   display: grid;
-  grid-template-columns: minmax(0, 1.6fr) minmax(120px, 0.7fr) minmax(120px, 0.7fr);
+  grid-template-columns: minmax(0, 1.5fr) minmax(150px, 0.85fr);
   gap: 6px;
+}
+
+.hero-online-card-inline {
+  min-height: 90px;
+}
+
+.hero-online-card-inline .hero-online-chart,
+.hero-online-card-inline .hero-online-scale {
+  min-height: 46px;
+}
+
+.hero-online-card-inline .hero-online-chart {
+  gap: 5px;
 }
 
 .mini-stat {
@@ -1677,26 +1720,15 @@ tr.is-interactive-row:focus-visible {
   min-height: 56px;
 }
 
-.mini-stat-compact {
-  min-height: 42px;
-  padding: 5px 12px;
-}
-
-.mini-stat-compact .mini-value {
-  margin-top: 6px;
-  font-size: clamp(1rem, 2vw, 1rem);
-  line-height: 0.8;
-}
-
-
-.mini-stat-compact .mini-note {
-  margin-top: 4px;
-  font-size: 0.88rem;
-  line-height: 1.35;
-}
-
 .hero-stats-row {
   display: contents;
+}
+
+.hero-server-total-stat,
+.support-sticky-widget,
+.support-mobile-cta,
+.server-sticky-card-sunset {
+  display: none !important;
 }
 
 .hero-top3-panel {
@@ -4677,20 +4709,20 @@ body.modal-open {
     display: grid;
     grid-template-columns: repeat(2, minmax(0, 1fr));
     grid-template-areas:
+      "support support"
       "today races"
       "driver driver"
-      "online online"
-      "stats stats";
+      "stats online";
     gap: 10px;
     align-items: stretch;
   }
 
   .hero-side {
-    grid-column: 1 / -1;
+    grid-area: stats;
   }
 
   .hero-side-compact {
-    grid-template-columns: minmax(0, 1.4fr) minmax(110px, 0.8fr) minmax(110px, 0.8fr);
+    grid-template-columns: minmax(0, 1fr) minmax(110px, 0.82fr);
   }
 
   .hero-actions-stacked-mobile .btn,
@@ -4966,11 +4998,12 @@ body.modal-open {
   .hero-actions.hero-actions-stacked-mobile {
     grid-template-columns: 1fr;
     grid-template-areas:
+      "support"
       "today"
       "races"
       "driver"
-      "online"
-      "stats";
+      "stats"
+      "online";
   }
 
   .hero-side-compact,
@@ -5035,10 +5068,6 @@ body.modal-open {
 
   .hero-stats-row {
     grid-template-columns: 1fr;
-  }
-
-  .mini-stat-compact {
-    padding: 12px 14px;
   }
 
   .page-hero-stats {
