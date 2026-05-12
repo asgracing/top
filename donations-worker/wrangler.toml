@@ -1,0 +1,18 @@
+name = "donations"
+main = "src/index.js"
+compatibility_date = "2026-05-12"
+
+[vars]
+ALLOWED_ORIGIN = "https://asgracing.ru,https://www.asgracing.ru,https://asgracing.github.io"
+DONATIONALERTS_CLIENT_ID = "18938"
+DONATIONALERTS_REDIRECT_URI = "https://donations.asgracing.workers.dev/oauth/callback"
+DONATIONALERTS_SCOPE = "oauth-donation-index"
+DONATIONS_LIMIT = "50"
+DONATIONS_CACHE_TTL_SECONDS = "120"
+DONATIONS_MIN_DATE = "2026-01-01"
+
+# Create this namespace before deploy and paste the generated id here:
+# wrangler kv namespace create DONATION_ALERTS_KV
+[[kv_namespaces]]
+binding = "DONATION_ALERTS_KV"
+id = "fede0a20b207480b98f7423c0e0a4019"

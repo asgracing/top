@@ -19,6 +19,7 @@ const safetyUrl = `${TOP_DATA_BASE_URL}/safety.json`;
 const driverOfDayUrl = `${TOP_DATA_BASE_URL}/driver_of_the_day.json`;
 const serverStatusUrl = `${TOP_DATA_BASE_URL}/server_status.json`;
 const onlineUrl = `${TOP_DATA_BASE_URL}/online.json`;
+const donationsApiUrl = "https://donations.asgracing.workers.dev/recent";
 const hourlyAnnouncementUrl = `${HOURLY_DATA_BASE_URL}/announcement.json`;
 const hourlyVotesApiUrl = "https://hourly-votes.asgracing.workers.dev";
 const HOURLY_SITE_BASE_URL = "/hourly";
@@ -160,6 +161,9 @@ let selectedRace = null;
 let driverIndexData = [];
 let driverProfileData = null;
 let driverPreviewState = null;
+let donationAlertsData = null;
+let donationAlertsLoading = false;
+let donationAlertsFailed = false;
 let driverPreviewModalController = null;
 let hourlyHeroModalController = null;
 let onlineActivityModalController = null;
@@ -253,6 +257,12 @@ const translations = {
     onlineActivityTracksLabel: "Tracks",
     onlineActivityHourRaces: "{value} races",
     onlineActivityHourUnique: "{value} unique",
+    donationsWidgetEyebrow: "Project support",
+    donationsWidgetTitle: "Recent supporters",
+    donationsWidgetSupportAria: "Support ASG Racing on DonationAlerts",
+    donationsWidgetLoading: "Loading supporters...",
+    donationsWidgetEmpty: "No supporters yet.",
+    donationsWidgetError: "Supporters are unavailable.",
     heroEyebrow: "ACC Public Leaderboard",
     hourlyEyebrow: "Next 1-Hour Race",
     hourlyStartsLabel: "Starts",
@@ -643,6 +653,12 @@ const translations = {
     onlineActivityTracksLabel: "Трассы",
     onlineActivityHourRaces: "{value} гонок",
     onlineActivityHourUnique: "{value} уникальных",
+    donationsWidgetEyebrow: "Поддержка проекта",
+    donationsWidgetTitle: "Последние донаты",
+    donationsWidgetSupportAria: "Поддержать ASG Racing через DonationAlerts",
+    donationsWidgetLoading: "Загружаем донаты...",
+    donationsWidgetEmpty: "Донатов пока нет.",
+    donationsWidgetError: "Донаты сейчас недоступны.",
     heroEyebrow: "Чемпионат публичного сервера ACC",
     hourlyEyebrow: "Ближайшая часовая гонка",
     hourlyStartsLabel: "Старт",
@@ -2031,6 +2047,82 @@ function escapeHtml(value) {
 
 function escapeAttribute(value) {
   return encodeURIComponent(String(value ?? ""));
+}
+
+function formatDonationAmount(amount, currency) {
+  const numericAmount = Number(amount);
+  const safeCurrency = String(currency || "RUB").trim().toUpperCase() || "RUB";
+  if (!Number.isFinite(numericAmount)) return safeCurrency;
+
+  try {
+    return new Intl.NumberFormat(currentLang === "ru" ? "ru-RU" : "en-US", {
+      style: "currency",
+      currency: safeCurrency,
+      maximumFractionDigits: numericAmount % 1 === 0 ? 0 : 2
+    }).format(numericAmount);
+  } catch (error) {
+    return `${numericAmount.toLocaleString(currentLang === "ru" ? "ru-RU" : "en-US")} ${safeCurrency}`;
+  }
+}
+
+function renderDonationAlertsWidget() {
+  const listEl = document.getElementById("donation-alerts-list");
+  if (!listEl) return;
+
+  if (donationAlertsLoading && !donationAlertsData) {
+    listEl.innerHTML = `<div class="donation-alerts-state">${escapeHtml(t("donationsWidgetLoading"))}</div>`;
+    return;
+  }
+
+  if (donationAlertsFailed && !donationAlertsData) {
+    listEl.innerHTML = `<div class="donation-alerts-state">${escapeHtml(t("donationsWidgetError"))}</div>`;
+    return;
+  }
+
+  const items = Array.isArray(donationAlertsData?.items) ? donationAlertsData.items : [];
+  if (!items.length) {
+    listEl.innerHTML = `<div class="donation-alerts-state">${escapeHtml(t("donationsWidgetEmpty"))}</div>`;
+    return;
+  }
+
+  listEl.innerHTML = items.map(item => {
+    const message = String(item?.message || "").trim();
+    const createdAt = item?.created_at ? formatDateTimeLocal(item.created_at, currentLang) : "";
+    return `
+      <article class="donation-alerts-item">
+        <div class="donation-alerts-item-top">
+          <div class="donation-alerts-name">${escapeHtml(item?.username || "Anonymous")}</div>
+          <div class="donation-alerts-amount">${escapeHtml(formatDonationAmount(item?.amount, item?.currency))}</div>
+        </div>
+        ${message ? `<div class="donation-alerts-message">${escapeHtml(message)}</div>` : ""}
+        ${createdAt ? `<div class="donation-alerts-time">${escapeHtml(createdAt)}</div>` : ""}
+      </article>
+    `;
+  }).join("");
+}
+
+async function initDonationAlertsWidget() {
+  const listEl = document.getElementById("donation-alerts-list");
+  if (!listEl || listEl.dataset.bound === "true") return;
+
+  listEl.dataset.bound = "true";
+  donationAlertsLoading = true;
+  donationAlertsFailed = false;
+  renderDonationAlertsWidget();
+
+  try {
+    const response = await fetch(donationsApiUrl, { cache: "no-store" });
+    if (!response.ok) throw new Error(`Donations API ${response.status}`);
+    const data = await response.json();
+    if (!data?.ok) throw new Error(data?.error || "Donations API returned an error");
+    donationAlertsData = data;
+    donationAlertsFailed = false;
+  } catch (error) {
+    donationAlertsFailed = true;
+  } finally {
+    donationAlertsLoading = false;
+    renderDonationAlertsWidget();
+  }
 }
 
 function formatDateOnlyForHourly(dateString, lang = currentLang) {
@@ -6419,6 +6511,7 @@ function rerenderUI() {
   renderHourlyHeroCard();
   renderHourlyWinnerCard();
   renderOnlineWidget();
+  renderDonationAlertsWidget();
   applyRevealAnimations();
 }
 
@@ -6434,6 +6527,7 @@ async function init() {
   updateTopNavModalOffset();
   bindBackgroundVideoSoundToggle();
   optimizeBackgroundMedia();
+  initDonationAlertsWidget();
   window.addEventListener("resize", debounce(() => {
     updateTopNavModalOffset();
     optimizeBackgroundMedia();

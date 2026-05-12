@@ -8402,6 +8402,214 @@ body.modal-open {
   }
 }
 
+/* ===== DONATION ALERTS RECENT SUPPORTERS ===== */
+
+.donation-alerts-widget {
+  position: fixed;
+  top: 116px;
+  left: 12px;
+  z-index: 950;
+  width: 260px;
+  max-width: calc(100vw - 24px);
+  min-width: 0;
+  padding: 12px;
+  overflow: hidden;
+  border: 1px solid rgba(255, 209, 102, 0.24);
+  border-radius: 20px;
+  background:
+    radial-gradient(circle at 16% 0%, rgba(255, 209, 102, 0.16), transparent 42%),
+    linear-gradient(180deg, rgba(18, 25, 34, 0.9), rgba(11, 15, 20, 0.78));
+  box-shadow:
+    inset 0 1px 0 rgba(255, 255, 255, 0.08),
+    0 18px 38px rgba(0, 0, 0, 0.28);
+  backdrop-filter: blur(16px) saturate(135%);
+  -webkit-backdrop-filter: blur(16px) saturate(135%);
+}
+
+.donation-alerts-widget::after {
+  content: "";
+  position: absolute;
+  right: 0;
+  bottom: 0;
+  left: 0;
+  height: 42px;
+  pointer-events: none;
+  background: linear-gradient(180deg, rgba(11, 15, 20, 0), rgba(11, 15, 20, 0.92));
+}
+
+.donation-alerts-head {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 10px;
+  margin-bottom: 10px;
+}
+
+.donation-alerts-eyebrow {
+  color: rgba(255, 209, 102, 0.9);
+  font-size: 0.64rem;
+  font-weight: 900;
+  letter-spacing: 0.08em;
+  line-height: 1.1;
+  text-transform: uppercase;
+}
+
+.donation-alerts-title {
+  margin: 3px 0 0;
+  color: #fff4df;
+  font-size: 1rem;
+  line-height: 1.1;
+  letter-spacing: 0;
+}
+
+.donation-alerts-support-link {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  flex: 0 0 30px;
+  width: 30px;
+  height: 30px;
+  border: 1px solid rgba(255, 209, 102, 0.38);
+  border-radius: 10px;
+  background: linear-gradient(135deg, rgba(255, 91, 46, 0.95), rgba(255, 170, 82, 0.88));
+  color: #fff;
+  font-size: 1.1rem;
+  font-weight: 900;
+  line-height: 1;
+  text-decoration: none;
+  box-shadow: 0 10px 22px rgba(255, 91, 46, 0.28);
+}
+
+.donation-alerts-list {
+  display: grid;
+  gap: 8px;
+  max-height: min(520px, calc(100vh - 210px));
+  min-width: 0;
+  max-width: 100%;
+  overflow-y: auto;
+  overflow-x: hidden;
+  overscroll-behavior: contain;
+  padding-right: 4px;
+  padding-bottom: 24px;
+  scrollbar-color: rgba(255, 209, 102, 0.46) rgba(255, 255, 255, 0.08);
+  scrollbar-width: thin;
+}
+
+.donation-alerts-list::-webkit-scrollbar {
+  width: 6px;
+}
+
+.donation-alerts-list::-webkit-scrollbar-track {
+  background: rgba(255, 255, 255, 0.08);
+  border-radius: 999px;
+}
+
+.donation-alerts-list::-webkit-scrollbar-thumb {
+  border-radius: 999px;
+  background: rgba(255, 209, 102, 0.46);
+}
+
+.donation-alerts-item {
+  display: grid;
+  gap: 4px;
+  min-width: 0;
+  max-width: 100%;
+  padding: 9px 10px;
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  border-radius: 12px;
+  background: rgba(255, 255, 255, 0.055);
+}
+
+.donation-alerts-item-top {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) auto;
+  align-items: baseline;
+  gap: 8px;
+  min-width: 0;
+}
+
+.donation-alerts-name {
+  min-width: 0;
+  overflow: hidden;
+  color: #f8fbff;
+  font-size: 0.84rem;
+  font-weight: 850;
+  line-height: 1.15;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.donation-alerts-amount {
+  min-width: 0;
+  max-width: 92px;
+  overflow: hidden;
+  color: #ffd166;
+  font-size: 0.8rem;
+  font-weight: 900;
+  line-height: 1;
+  text-align: right;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.donation-alerts-message,
+.donation-alerts-time,
+.donation-alerts-state {
+  color: rgba(236, 243, 255, 0.72);
+  font-size: 0.7rem;
+  line-height: 1.32;
+}
+
+.donation-alerts-message {
+  display: -webkit-box;
+  overflow: hidden;
+  max-width: 100%;
+  overflow-wrap: anywhere;
+  word-break: break-word;
+  -webkit-box-orient: vertical;
+  -webkit-line-clamp: 4;
+}
+
+.donation-alerts-time {
+  overflow: hidden;
+  max-width: 100%;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.donation-alerts-state {
+  padding: 10px;
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  border-radius: 12px;
+  background: rgba(255, 255, 255, 0.05);
+}
+
+@media (max-width: 1500px) {
+  .donation-alerts-widget {
+    width: 220px;
+  }
+}
+
+@media (max-width: 1360px) {
+  .donation-alerts-widget {
+    top: auto;
+    right: 12px;
+    bottom: 12px;
+    left: auto;
+    width: min(260px, calc(100vw - 24px));
+  }
+
+  .donation-alerts-list {
+    max-height: 300px;
+  }
+}
+
+@media (max-width: 760px) {
+  .donation-alerts-widget {
+    display: none;
+  }
+}
+
 /* ===== HERO FINAL STACK OVERRIDE 1105 V21 ===== */
 
 @media (min-width: 1181px) {
