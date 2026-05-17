@@ -16,6 +16,7 @@ ENV_SUNSET_SERVER_BASE_DIR = "ACC_SUNSET_SERVER_BASE_DIR"
 ENV_HOURLY_RESULTS_DIR = "ACC_HOURLY_RESULTS_DIR"
 ENV_AUTO_GIT_PUSH = "ACC_STATS_AUTO_GIT_PUSH"
 ENV_SERVER_PORT_GROUPS_JSON = "ACC_SERVER_PORT_GROUPS_JSON"
+ENV_LEGACY_RACES_ARCHIVE_MODE = "ACC_STATS_LEGACY_RACES_ARCHIVE"
 
 
 def normalize_server_base_dir(path: Path) -> Path:
@@ -190,6 +191,7 @@ SCHEMA_VERSION = 9
 V2_SCHEMA_VERSION = 1
 V2_RACE_PAGE_SIZE = 10
 V2_HOME_TABLE_PREVIEW_LIMIT = 100
+LEGACY_RACES_ARCHIVE_MODE = os.getenv(ENV_LEGACY_RACES_ARCHIVE_MODE, "summary").strip().lower()
 
 SERVER_PROCESS_NAME = "accServer.exe"
 SERVER_PORT_GROUPS = resolve_server_port_groups()
@@ -2249,6 +2251,16 @@ def build_races_output(races: dict):
     return result
 
 
+def build_legacy_races_output(races_output: list[dict]):
+    if LEGACY_RACES_ARCHIVE_MODE == "full":
+        return races_output
+
+    if LEGACY_RACES_ARCHIVE_MODE in {"0", "false", "no", "off"}:
+        return []
+
+    return [build_v2_race_summary_row(race) for race in races_output]
+
+
 def build_cars_output(races: dict):
     cars = {}
 
@@ -3011,7 +3023,7 @@ def rebuild_all():
     save_server_status_output(server_status, changed_files)
     if save_json_if_changed(SNAPSHOT_FILE, snapshot):
         changed_files.append("snapshot.json")
-    if save_json_if_changed(RACES_FILE, races_output):
+    if save_json_if_changed(RACES_FILE, build_legacy_races_output(races_output)):
         changed_files.append("races/races.json")
     if save_json_if_changed(CARS_FILE, cars_output):
         changed_files.append("cars/cars.json")
@@ -3026,6 +3038,7 @@ def rebuild_all():
     logging.info("Drivers in leaderboard: %s", len(snapshot["leaderboard"]))
     logging.info("Drivers in bestlaps: %s", len(snapshot["bestlaps"]))
     logging.info("Races in archive: %s", len(races_output))
+    logging.info("Legacy races archive mode: %s", LEGACY_RACES_ARCHIVE_MODE or "summary")
     logging.info("Cars in archive: %s", len(cars_output))
     logging.info("Driver profiles: %s", len(driver_profiles))
     logging.info("Safety rows: %s", len(snapshot["safety"]))
