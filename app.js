@@ -38,6 +38,20 @@ const SERVER_CARD_BACKGROUNDS = {
   main: `${SITE_BASE_PATH}assets/main.jpg`,
   sunset: `${SITE_BASE_PATH}assets/sunset.jpeg`
 };
+const ACC_CONNECT_SERVER_FALLBACKS = {
+  main: {
+    hostname: "95.165.92.3",
+    port: null,
+    name: "ASG Racing Main",
+    persistent: true
+  },
+  hourly: {
+    hostname: "95.165.92.3",
+    port: null,
+    name: "ASG Racing 1H Race",
+    persistent: true
+  }
+};
 const racesUrl = `${TOP_DATA_BASE_URL}/races/races.json`;
 const carsUrl = `${TOP_DATA_BASE_URL}/cars/cars.json`;
 const driverIndexUrl = `${TOP_DATA_BASE_URL}/drivers/drivers.json`;
@@ -365,6 +379,10 @@ const translations = {
     serversWidgetTitle: "Server status",
     serverMainLabel: "Main",
     serverSunsetLabel: "Sunset",
+    serverHourlyLabel: "Hourly",
+    serverConnectBtn: "Connect",
+    serverConnectHowTo: "How to?",
+    serverConnectUnavailable: "Add public server IP/host to enable direct connect",
     driversCountLabel: "Drivers in leaderboard",
     driversCountNote: "Unique participants included in the stats.",
     bestLapHighlightLabel: "Best lap record",
@@ -820,6 +838,10 @@ const translations = {
     serversWidgetTitle: "Статус серверов",
     serverMainLabel: "Главный",
     serverSunsetLabel: "Sunset",
+    serverHourlyLabel: "Часовая",
+    serverConnectBtn: "Подключиться",
+    serverConnectHowTo: "Как подключиться?",
+    serverConnectUnavailable: "Укажите публичный IP/host сервера, чтобы включить прямое подключение",
     driversCountLabel: "Пилотов в рейтинге",
     driversCountNote: "Уникальные участники, попавшие в статистику.",
     bestLapHighlightLabel: "Лучший круг",
@@ -4900,6 +4922,61 @@ function getLocalizedServerStatus(status, lang = currentLang) {
   return tForLang(lang, "serverStatusOffline");
 }
 
+function pickFirstNonEmpty(...values) {
+  return values.find(value => String(value ?? "").trim()) ?? "";
+}
+
+function normalizeAccConnectConfig(status, fallback = {}) {
+  const hostname = String(pickFirstNonEmpty(
+    status?.acc_connect_hostname,
+    status?.connect_hostname,
+    status?.hostname,
+    status?.host,
+    status?.ip,
+    fallback.hostname
+  )).trim();
+  const port = Number(pickFirstNonEmpty(
+    status?.acc_connect_port,
+    status?.tcp_port,
+    status?.tcpPort,
+    status?.port,
+    fallback.port
+  ));
+  const name = String(pickFirstNonEmpty(
+    status?.acc_connect_name,
+    fallback.name,
+    status?.server_name,
+    status?.name
+  )).trim();
+
+  return {
+    hostname,
+    port,
+    name,
+    persistent: status?.persistent ?? fallback.persistent ?? true
+  };
+}
+
+function buildAccConnectHref(config) {
+  if (!config?.hostname || !Number.isFinite(config.port) || config.port <= 0) return "";
+  const url = new URL(`acc-connect://${config.hostname}:${config.port}/`);
+  if (config.name) url.searchParams.set("name", config.name);
+  if (config.persistent) url.searchParams.set("persistent", "true");
+  return url.href;
+}
+
+function updateAccConnectLink(elementId, status, fallback) {
+  const link = document.getElementById(elementId);
+  if (!link) return;
+
+  const href = buildAccConnectHref(normalizeAccConnectConfig(status, fallback));
+  link.textContent = t("serverConnectBtn");
+  link.classList.toggle("is-disabled", !href);
+  link.setAttribute("aria-disabled", href ? "false" : "true");
+  link.setAttribute("title", href ? t("serverConnectBtn") : t("serverConnectUnavailable"));
+  link.href = href || "#";
+}
+
 function resolveNamedServerStatus(serverStatus, name) {
   if (!serverStatus || typeof serverStatus !== "object") return null;
   if (serverStatus[name] && typeof serverStatus[name] === "object") return serverStatus[name];
@@ -6650,7 +6727,10 @@ async function init() {
     }
 
     const mainServer = resolveNamedServerStatus(data.serverStatus, "main");
-    const sunsetServer = resolveNamedServerStatus(data.serverStatus, "sunset");
+    const sunsetServer =
+      resolveNamedServerStatus(data.serverStatus, "hourly") ||
+      resolveNamedServerStatus(data.serverStatus, "sunset") ||
+      hourlyAnnouncementData?.server;
 
     if (mainServerStatusEl && mainServerPlayersEl) {
       const mainStatus = String(mainServer?.status || "offline").toLowerCase();
@@ -6659,6 +6739,7 @@ async function init() {
       mainServerPlayersEl.textContent = mainPlayers;
       applyServerStatusClass(mainServerStatusEl, mainStatus);
     }
+    updateAccConnectLink("serverMainConnectLink", mainServer, ACC_CONNECT_SERVER_FALLBACKS.main);
 
     if (sunsetServerStatusEl && sunsetServerPlayersEl) {
       const sunsetStatus = String(sunsetServer?.status || "offline").toLowerCase();
@@ -6667,6 +6748,7 @@ async function init() {
       sunsetServerPlayersEl.textContent = sunsetPlayers;
       applyServerStatusClass(sunsetServerStatusEl, sunsetStatus);
     }
+    updateAccConnectLink("serverHourlyConnectLink", sunsetServer, ACC_CONNECT_SERVER_FALLBACKS.hourly);
 
     rerenderUI();
   } catch (error) {
@@ -6764,6 +6846,7 @@ async function init() {
     if (mainServerPlayersEl) {
       mainServerPlayersEl.textContent = "--";
     }
+    updateAccConnectLink("serverMainConnectLink", null, ACC_CONNECT_SERVER_FALLBACKS.main);
 
     if (sunsetServerStatusEl) {
       sunsetServerStatusEl.textContent = getLocalizedServerStatus("offline", currentLang);
@@ -6773,6 +6856,7 @@ async function init() {
     if (sunsetServerPlayersEl) {
       sunsetServerPlayersEl.textContent = "--";
     }
+    updateAccConnectLink("serverHourlyConnectLink", null, ACC_CONNECT_SERVER_FALLBACKS.hourly);
   }
 }
 

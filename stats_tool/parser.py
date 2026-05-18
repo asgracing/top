@@ -13,6 +13,7 @@ TOOL_DIR = Path(__file__).resolve().parent
 ENV_BASE_DIR = "ACC_SERVER_BASE_DIR"
 ENV_GIT_EXE = "ACC_GIT_EXE"
 ENV_SUNSET_SERVER_BASE_DIR = "ACC_SUNSET_SERVER_BASE_DIR"
+ENV_HOURLY_SERVER_BASE_DIR = "ACC_HOURLY_SERVER_BASE_DIR"
 ENV_HOURLY_RESULTS_DIR = "ACC_HOURLY_RESULTS_DIR"
 ENV_AUTO_GIT_PUSH = "ACC_STATS_AUTO_GIT_PUSH"
 ENV_SERVER_PORT_GROUPS_JSON = "ACC_SERVER_PORT_GROUPS_JSON"
@@ -21,6 +22,9 @@ ENV_LEGACY_RACES_ARCHIVE_MODE = "ACC_STATS_LEGACY_RACES_ARCHIVE"
 
 def normalize_server_base_dir(path: Path) -> Path:
     expanded = path.expanduser()
+    if expanded.name.lower() == "cfg" and expanded.parent.name.lower() == "server":
+        return expanded.parent
+
     if expanded.name.lower() == "server":
         return expanded
 
@@ -96,24 +100,68 @@ def resolve_sunset_base_dir() -> Path:
     return normalize_server_base_dir(Path(r"C:\Assetto Corsa Competizione Dedicated Server Public 08.2025 Sunset\server"))
 
 
+def resolve_hourly_base_dir() -> Path:
+    env_value = os.environ.get(ENV_HOURLY_SERVER_BASE_DIR, "").strip()
+    if env_value:
+        return normalize_server_base_dir(Path(env_value))
+
+    return normalize_server_base_dir(Path(r"C:\Assetto Corsa Competizione Dedicated Server Race"))
+
+
 def resolve_hourly_results_dir() -> Path:
     env_value = os.environ.get(ENV_HOURLY_RESULTS_DIR, "").strip()
     if env_value:
         return normalize_results_dir(Path(env_value))
 
-    return normalize_results_dir(Path(r"C:\Assetto Corsa Competizione Dedicated Server Race"))
+    return normalize_results_dir(resolve_hourly_base_dir())
+
+
+def load_server_configuration_ports(base_dir: Path, fallback_tcp: int, fallback_udp: int) -> dict:
+    config_path = normalize_server_base_dir(base_dir) / "cfg" / "configuration.json"
+    if not config_path.exists():
+        return {"tcp_port": fallback_tcp, "udp_port": fallback_udp}
+
+    try:
+        raw = config_path.read_bytes()
+        text = ""
+        for encoding in ("utf-8-sig", "utf-16", "utf-16-le", "cp1251"):
+            try:
+                text = raw.decode(encoding).replace("\ufeff", "").replace("\x00", "")
+                break
+            except Exception:
+                continue
+
+        data = json.loads(text)
+        tcp_port = data.get("tcpPort")
+        udp_port = data.get("udpPort")
+        return {
+            "tcp_port": tcp_port if isinstance(tcp_port, int) else fallback_tcp,
+            "udp_port": udp_port if isinstance(udp_port, int) else fallback_udp,
+        }
+    except Exception as exc:
+        logging.warning("Failed to read ACC server ports from %s: %s", config_path, exc)
+        return {"tcp_port": fallback_tcp, "udp_port": fallback_udp}
 
 
 def default_server_port_groups() -> dict:
+    main_ports = load_server_configuration_ports(resolve_base_dir(), 10040, 10039)
+    hourly_ports = load_server_configuration_ports(resolve_hourly_base_dir(), 10035, 10034)
+    sunset_ports = load_server_configuration_ports(resolve_sunset_base_dir(), 10038, 10037)
+
     return {
         "main": {
-            "tcp_port": 10040,
-            "udp_port": 10039,
+            "tcp_port": main_ports["tcp_port"],
+            "udp_port": main_ports["udp_port"],
             "broadcast_port": 8999,
         },
+        "hourly": {
+            "tcp_port": hourly_ports["tcp_port"],
+            "udp_port": hourly_ports["udp_port"],
+            "broadcast_port": None,
+        },
         "sunset": {
-            "tcp_port": 10038,
-            "udp_port": 10037,
+            "tcp_port": sunset_ports["tcp_port"],
+            "udp_port": sunset_ports["udp_port"],
             "broadcast_port": None,
         },
     }
@@ -154,6 +202,7 @@ def resolve_server_port_groups() -> dict:
 
 BASE_DIR = resolve_base_dir()
 SUNSET_BASE_DIR = resolve_sunset_base_dir()
+HOURLY_BASE_DIR = resolve_hourly_base_dir()
 RESULTS_DIR = BASE_DIR / "results"
 SUNSET_RESULTS_DIR = SUNSET_BASE_DIR / "results"
 HOURLY_RESULTS_DIR = resolve_hourly_results_dir()
@@ -283,7 +332,9 @@ def configure_logging():
     )
     logging.info("Resolved ACC server base directory: %s", BASE_DIR)
     logging.info("Resolved Sunset server base directory: %s", SUNSET_BASE_DIR)
+    logging.info("Resolved hourly server base directory: %s", HOURLY_BASE_DIR)
     logging.info("Resolved hourly results directory: %s", HOURLY_RESULTS_DIR)
+    logging.info("Resolved server port groups: %s", SERVER_PORT_GROUPS)
     if GIT_EXE:
         logging.info("Resolved Git executable: %s", GIT_EXE)
     else:
@@ -1567,22 +1618,49 @@ def build_server_status_output():
         "server_process_count": process_info.get("count", 0) if process_info else 0,
         "servers": servers,
         "main": servers.get("main"),
+        "hourly": servers.get("hourly"),
         "sunset": servers.get("sunset"),
     }
 
 
-def save_server_status_output(server_status: dict, changed_files: list[str] | None = None) -> bool:
-    previous_status = load_json(SERVER_STATUS_FILE, {}) if SERVER_STATUS_FILE.exists() else {}
-    previous_players_online = previous_status.get("players_online")
-    next_players_online = server_status.get("players_online")
+def server_status_change_signature(server_status: dict) -> dict:
+    servers = server_status.get("servers") if isinstance(server_status, dict) else {}
+    if not isinstance(servers, dict):
+        servers = {}
 
-    if previous_players_online == next_players_online:
+    return {
+        "status": server_status.get("status"),
+        "server_online": server_status.get("server_online"),
+        "players_online": server_status.get("players_online"),
+        "tcp_listening": server_status.get("tcp_listening"),
+        "udp_listening": server_status.get("udp_listening"),
+        "broadcast_listening": server_status.get("broadcast_listening"),
+        "server_process_count": server_status.get("server_process_count"),
+        "servers": {
+            name: {
+                "status": server.get("status"),
+                "server_online": server.get("server_online"),
+                "players_online": server.get("players_online"),
+                "tcp_listening": server.get("tcp_listening"),
+                "udp_listening": server.get("udp_listening"),
+                "broadcast_listening": server.get("broadcast_listening"),
+            }
+            for name, server in sorted(servers.items())
+            if isinstance(server, dict)
+        },
+    }
+
+
+def save_server_status_output(server_status: dict, changed_files: list[str] | None = None) -> bool:
+    status_file_exists = SERVER_STATUS_FILE.exists()
+    previous_status = load_json(SERVER_STATUS_FILE, {}) if status_file_exists else {}
+    if status_file_exists and server_status_change_signature(previous_status) == server_status_change_signature(server_status):
         return False
 
     changed = save_json_if_changed(SERVER_STATUS_FILE, server_status)
-    if changed and isinstance(changed_files, list):
+    if (changed or not status_file_exists) and isinstance(changed_files, list):
         changed_files.append("server_status.json")
-    return changed
+    return changed or not status_file_exists
 
 
 def publish_server_status_only() -> dict:

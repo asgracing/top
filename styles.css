@@ -191,7 +191,7 @@ body.background-audio-focus .site-bg-video {
 
 .bg-video-sound-toggle {
   position: fixed;
-  top: 50%;
+  top: 58%;
   right: clamp(10px, 1.8vw, 28px);
   z-index: 1105;
   display: flex;
@@ -1999,8 +1999,7 @@ tr.is-interactive-row:focus-visible {
 
 .hero-server-total-stat,
 .support-sticky-widget,
-.support-mobile-cta,
-.server-sticky-card-sunset {
+.support-mobile-cta {
   display: none !important;
 }
 
@@ -2519,6 +2518,56 @@ tr.is-interactive-row:focus-visible {
   color: #ffffff;
   opacity: 1;
   text-shadow: 0 2px 10px rgba(0, 0, 0, 0.32);
+}
+
+.server-sticky-actions {
+  display: grid;
+  gap: 6px;
+}
+
+.server-connect-btn,
+.server-connect-help {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 30px;
+  padding: 0 10px;
+  border-radius: 999px;
+  font-size: 0.72rem;
+  font-weight: 900;
+  text-align: center;
+  text-decoration: none;
+  transition:
+    transform 0.18s ease,
+    background 0.18s ease,
+    opacity 0.18s ease;
+}
+
+.server-connect-btn {
+  border: 1px solid rgba(255, 209, 102, 0.48);
+  background: linear-gradient(135deg, rgba(255, 209, 102, 0.92), rgba(255, 91, 46, 0.92));
+  color: #101418;
+  box-shadow: 0 10px 22px rgba(255, 91, 46, 0.22);
+}
+
+.server-connect-help {
+  border: 1px solid rgba(255, 255, 255, 0.16);
+  background: rgba(255, 255, 255, 0.08);
+  color: rgba(236, 243, 255, 0.9);
+}
+
+.server-connect-btn:hover,
+.server-connect-btn:focus-visible,
+.server-connect-help:hover,
+.server-connect-help:focus-visible {
+  transform: translateY(-1px);
+}
+
+.server-connect-btn.is-disabled {
+  cursor: not-allowed;
+  pointer-events: none;
+  opacity: 0.58;
+  filter: grayscale(0.35);
 }
 
 
