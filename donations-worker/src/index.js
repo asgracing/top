@@ -195,8 +195,7 @@ async function exchangeCodeForTokens(env, code) {
 async function refreshTokens(env, tokens) {
   const data = await tokenRequest(env, {
     grant_type: "refresh_token",
-    refresh_token: tokens.refresh_token,
-    scope: requireEnv(env, "DONATIONALERTS_SCOPE")
+    refresh_token: tokens.refresh_token
   });
   return writeTokens(env, {
     ...data,
@@ -261,8 +260,7 @@ async function fetchDonationGoal(env, tokens) {
     }
   });
   if (response.status === 401) {
-    const refreshedTokens = await refreshTokens(env, tokens);
-    return fetchDonationGoal(env, refreshedTokens);
+    return null;
   }
   if (!response.ok) return null;
   const data = await response.json();
@@ -314,22 +312,35 @@ async function handleRecent(env, origin) {
     return jsonResponse({ ok: true, ...cache }, 200, origin, { "cache-control": "public, max-age=60" });
   }
 
-  const tokens = await getUsableTokens(env);
-  if (!tokens) {
-    return jsonResponse({ ok: false, error: "DonationAlerts OAuth is not connected yet." }, 503, origin);
-  }
+  try {
+    const tokens = await getUsableTokens(env);
+    if (!tokens) {
+      if (cache) {
+        return jsonResponse({ ok: true, stale: true, ...cache }, 200, origin, { "cache-control": "public, max-age=30" });
+      }
+      return jsonResponse({ ok: false, error: "DonationAlerts OAuth is not connected yet." }, 503, origin);
+    }
 
-  const [donations, goal] = await Promise.all([
-    fetchDonations(env, tokens),
-    fetchDonationGoal(env, tokens).catch(() => null)
-  ]);
-  const payload = {
-    items: donations.slice(0, getLimit(env)).map(sanitizeDonation),
-    goal,
-    cached_at: new Date().toISOString()
-  };
-  await writeRecentCache(env, payload);
-  return jsonResponse({ ok: true, ...payload }, 200, origin, { "cache-control": "public, max-age=60" });
+    const donations = await fetchDonations(env, tokens);
+    const goal = await fetchDonationGoal(env, tokens).catch(() => null);
+    const payload = {
+      items: donations.slice(0, getLimit(env)).map(sanitizeDonation),
+      goal,
+      cached_at: new Date().toISOString()
+    };
+    await writeRecentCache(env, payload);
+    return jsonResponse({ ok: true, ...payload }, 200, origin, { "cache-control": "public, max-age=60" });
+  } catch (error) {
+    if (cache) {
+      return jsonResponse(
+        { ok: true, stale: true, ...cache, warning: error instanceof Error ? error.message : "DonationAlerts request failed" },
+        200,
+        origin,
+        { "cache-control": "public, max-age=30" }
+      );
+    }
+    return jsonResponse({ ok: false, error: error instanceof Error ? error.message : "Unknown error" }, 500, origin);
+  }
 }
 
 export default {
@@ -345,13 +356,13 @@ export default {
         return jsonResponse({ ok: true }, 200, origin);
       }
       if (url.pathname === "/oauth/start" && request.method === "GET") {
-        return handleOauthStart(env);
+        return await handleOauthStart(env);
       }
       if (url.pathname === "/oauth/callback" && request.method === "GET") {
-        return handleOauthCallback(request, env);
+        return await handleOauthCallback(request, env);
       }
       if (url.pathname === "/recent" && request.method === "GET") {
-        return handleRecent(env, origin);
+        return await handleRecent(env, origin);
       }
       return jsonResponse({ ok: false, error: "Not found" }, 404, origin);
     } catch (error) {
