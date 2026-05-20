@@ -8,6 +8,7 @@ const DONATIONALERTS_TOKEN_URL = "https://www.donationalerts.com/oauth/token";
 const DONATIONALERTS_AUTHORIZE_URL = "https://www.donationalerts.com/oauth/authorize";
 const DONATIONALERTS_DONATIONS_URL = "https://www.donationalerts.com/api/v1/alerts/donations";
 const DONATIONALERTS_GOAL_URL = "https://www.donationalerts.com/api/v1/donationgoal";
+const DONATIONALERTS_WIDGET_TOKEN_URL = "https://www.donationalerts.com/api/v1/token/widget";
 
 function getAllowedOrigin(request, env) {
   const requestOrigin = request.headers.get("origin") || "";
@@ -133,6 +134,25 @@ function sanitizeDonationGoal(goal) {
     started_at: safeString(goal?.started_at, 32),
     expires_at: goal?.expires_at ? safeString(goal.expires_at, 32) : null
   };
+}
+
+async function getWidgetApiToken(env) {
+  const url = new URL(DONATIONALERTS_WIDGET_TOKEN_URL);
+  url.searchParams.set("token", requireEnv(env, "DONATIONALERTS_WIDGET_TOKEN"));
+  const response = await fetch(url, {
+    headers: {
+      accept: "application/json"
+    }
+  });
+  if (!response.ok) {
+    throw new Error(`DonationAlerts widget token request failed: ${response.status}`);
+  }
+  const data = await response.json();
+  const token = data?.data?.token;
+  if (!token) {
+    throw new Error("DonationAlerts widget token response has no token");
+  }
+  return token;
 }
 
 async function readTokens(env) {
@@ -267,6 +287,31 @@ async function fetchDonationGoal(env, tokens) {
   return sanitizeDonationGoal(normalizeGoalPayload(data));
 }
 
+async function fetchDonationGoalFromWidget(env) {
+  const goalId = requireEnv(env, "DONATIONALERTS_GOAL_ID");
+  const widgetApiToken = await getWidgetApiToken(env);
+  const url = new URL(`${DONATIONALERTS_GOAL_URL}/${encodeURIComponent(goalId)}`);
+  url.searchParams.set("include_timestamps", "1");
+  const response = await fetch(url, {
+    headers: {
+      authorization: `Bearer ${widgetApiToken}`,
+      accept: "application/json"
+    }
+  });
+  if (!response.ok) {
+    throw new Error(`DonationAlerts widget goal request failed: ${response.status}`);
+  }
+  const data = await response.json();
+  return sanitizeDonationGoal(normalizeGoalPayload(data));
+}
+
+async function getDonationGoal(env, tokens) {
+  const widgetGoal = await fetchDonationGoalFromWidget(env).catch(() => null);
+  if (widgetGoal) return widgetGoal;
+  if (!tokens) return null;
+  return fetchDonationGoal(env, tokens).catch(() => null);
+}
+
 async function readRecentCache(env) {
   const cache = await env.DONATION_ALERTS_KV.get(RECENT_CACHE_KV_KEY, "json");
   if (!cache?.items || !cache?.cached_at) return null;
@@ -309,23 +354,38 @@ async function handleRecent(env, origin) {
   const cache = await readRecentCache(env);
   const cacheTtlMs = getCacheTtlMs(env);
   if (cache && Date.now() - Date.parse(cache.cached_at) < cacheTtlMs) {
+    if (!cache.goal) {
+      const goal = await getDonationGoal(env, null).catch(() => null);
+      if (goal) {
+        const payload = { ...cache, goal, cached_at: new Date().toISOString() };
+        await writeRecentCache(env, payload);
+        return jsonResponse({ ok: true, ...payload }, 200, origin, { "cache-control": "public, max-age=60" });
+      }
+    }
     return jsonResponse({ ok: true, ...cache }, 200, origin, { "cache-control": "public, max-age=60" });
   }
+
+  const goal = await getDonationGoal(env, null).catch(() => cache?.goal || null);
 
   try {
     const tokens = await getUsableTokens(env);
     if (!tokens) {
       if (cache) {
-        return jsonResponse({ ok: true, stale: true, ...cache }, 200, origin, { "cache-control": "public, max-age=30" });
+        return jsonResponse({ ok: true, stale: true, ...cache, goal }, 200, origin, { "cache-control": "public, max-age=30" });
       }
-      return jsonResponse({ ok: false, error: "DonationAlerts OAuth is not connected yet." }, 503, origin);
+      return jsonResponse(
+        { ok: true, stale: true, items: [], goal, cached_at: new Date().toISOString(), warning: "DonationAlerts OAuth is not connected yet." },
+        200,
+        origin,
+        { "cache-control": "public, max-age=30" }
+      );
     }
 
     const donations = await fetchDonations(env, tokens);
-    const goal = await fetchDonationGoal(env, tokens).catch(() => null);
+    const freshGoal = goal || await getDonationGoal(env, tokens).catch(() => null);
     const payload = {
       items: donations.slice(0, getLimit(env)).map(sanitizeDonation),
-      goal,
+      goal: freshGoal,
       cached_at: new Date().toISOString()
     };
     await writeRecentCache(env, payload);
@@ -333,13 +393,18 @@ async function handleRecent(env, origin) {
   } catch (error) {
     if (cache) {
       return jsonResponse(
-        { ok: true, stale: true, ...cache, warning: error instanceof Error ? error.message : "DonationAlerts request failed" },
+        { ok: true, stale: true, ...cache, goal, warning: error instanceof Error ? error.message : "DonationAlerts request failed" },
         200,
         origin,
         { "cache-control": "public, max-age=30" }
       );
     }
-    return jsonResponse({ ok: false, error: error instanceof Error ? error.message : "Unknown error" }, 500, origin);
+    return jsonResponse(
+      { ok: true, stale: true, items: [], goal, cached_at: new Date().toISOString(), warning: error instanceof Error ? error.message : "Unknown error" },
+      200,
+      origin,
+      { "cache-control": "public, max-age=30" }
+    );
   }
 }
 
