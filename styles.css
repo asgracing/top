@@ -8639,7 +8639,7 @@ body.modal-open {
 .donation-alerts-list {
   display: grid;
   gap: 8px;
-  max-height: clamp(220px, calc(100vh - 410px), 320px);
+  max-height: clamp(220px, calc(100vh - 360px), 370px);
   min-width: 0;
   max-width: 100%;
   overflow-y: auto;
