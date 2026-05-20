@@ -272,6 +272,7 @@ const translations = {
     onlineActivityHourRaces: "{value} races",
     onlineActivityHourUnique: "{value} unique",
     donationsWidgetTitle: "Project supporters:",
+    donationsWidgetGoalEyebrow: "Fundraising goal",
     donationsWidgetSpecialThanks: "Special thanks",
     donationsWidgetSupportAria: "Support ASG Racing on DonationAlerts",
     donationsWidgetLoading: "Loading supporters...",
@@ -672,6 +673,7 @@ const translations = {
     onlineActivityHourRaces: "{value} гонок",
     onlineActivityHourUnique: "{value} уникальных",
     donationsWidgetTitle: "Поддержали проект:",
+    donationsWidgetGoalEyebrow: "Цель сбора",
     donationsWidgetSpecialThanks: "Особая благодарность",
     donationsWidgetSupportAria: "Поддержать ASG Racing через DonationAlerts",
     donationsWidgetLoading: "Загружаем донаты...",
@@ -2089,7 +2091,33 @@ function formatDonationAmount(amount, currency) {
 
 function renderDonationAlertsWidget() {
   const listEl = document.getElementById("donation-alerts-list");
+  const goalEl = document.getElementById("donation-alerts-goal");
   if (!listEl) return;
+
+  if (goalEl) {
+    const goal = donationAlertsData?.goal;
+    const raisedAmount = Number(goal?.raised_amount);
+    const goalAmount = Number(goal?.goal_amount);
+    if (goal && Number.isFinite(raisedAmount) && Number.isFinite(goalAmount) && goalAmount > 0) {
+      const percent = Math.max(0, Math.min(100, Math.round((raisedAmount / goalAmount) * 100)));
+      goalEl.hidden = false;
+      goalEl.innerHTML = `
+        <div class="donation-alerts-goal-eyebrow">${escapeHtml(t("donationsWidgetGoalEyebrow"))}</div>
+        <div class="donation-alerts-goal-title">${escapeHtml(goal.title || t("donationsWidgetGoalEyebrow"))}</div>
+        <div class="donation-alerts-goal-meter" aria-hidden="true">
+          <span style="width:${percent}%"></span>
+        </div>
+        <div class="donation-alerts-goal-row">
+          <span>${escapeHtml(formatDonationAmount(raisedAmount, goal.currency))}</span>
+          <span>${escapeHtml(formatDonationAmount(goalAmount, goal.currency))}</span>
+        </div>
+        <div class="donation-alerts-goal-percent">${percent}%</div>
+      `;
+    } else {
+      goalEl.hidden = true;
+      goalEl.innerHTML = "";
+    }
+  }
 
   if (donationAlertsLoading && !donationAlertsData) {
     listEl.innerHTML = `<div class="donation-alerts-state">${escapeHtml(t("donationsWidgetLoading"))}</div>`;

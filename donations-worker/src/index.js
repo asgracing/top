@@ -7,6 +7,7 @@ const RECENT_CACHE_KV_KEY = "donationalerts:recent-cache";
 const DONATIONALERTS_TOKEN_URL = "https://www.donationalerts.com/oauth/token";
 const DONATIONALERTS_AUTHORIZE_URL = "https://www.donationalerts.com/oauth/authorize";
 const DONATIONALERTS_DONATIONS_URL = "https://www.donationalerts.com/api/v1/alerts/donations";
+const DONATIONALERTS_GOAL_URL = "https://www.donationalerts.com/api/v1/donationgoal";
 
 function getAllowedOrigin(request, env) {
   const requestOrigin = request.headers.get("origin") || "";
@@ -109,6 +110,31 @@ function isDonationAtOrAfterMinDate(item, env) {
   return Number.isFinite(donationTimestamp) && donationTimestamp >= minTimestamp;
 }
 
+function normalizeGoalPayload(data) {
+  const rawGoal = Array.isArray(data?.data)
+    ? data.data.find(item => Number(item?.is_active) === 1) || data.data[0]
+    : data?.data || data?.goal || data;
+  if (!rawGoal || typeof rawGoal !== "object") return null;
+  return rawGoal;
+}
+
+function sanitizeDonationGoal(goal) {
+  const raisedAmount = safeAmount(goal?.raised_amount);
+  const goalAmount = safeAmount(goal?.goal_amount);
+  if (raisedAmount === null || goalAmount === null || goalAmount <= 0) return null;
+  return {
+    id: safeString(goal?.id, 64),
+    is_active: Number(goal?.is_active) === 1,
+    title: safeString(goal?.title, 120),
+    currency: safeString(goal?.currency, 8).toUpperCase(),
+    start_amount: safeAmount(goal?.start_amount),
+    raised_amount: raisedAmount,
+    goal_amount: goalAmount,
+    started_at: safeString(goal?.started_at, 32),
+    expires_at: goal?.expires_at ? safeString(goal.expires_at, 32) : null
+  };
+}
+
 async function readTokens(env) {
   const raw = await env.DONATION_ALERTS_KV.get(TOKEN_KV_KEY, "json");
   if (!raw?.access_token || !raw?.refresh_token) return null;
@@ -126,6 +152,7 @@ async function writeTokens(env, tokens) {
     expires_at: expiresIn > 0 ? Date.now() + Math.max(0, expiresIn - 60) * 1000 : null
   };
   await env.DONATION_ALERTS_KV.put(TOKEN_KV_KEY, JSON.stringify(payload));
+  await env.DONATION_ALERTS_KV.delete(RECENT_CACHE_KV_KEY);
   return payload;
 }
 
@@ -223,6 +250,25 @@ async function fetchDonations(env, tokens) {
   return donations.slice(0, limit);
 }
 
+async function fetchDonationGoal(env, tokens) {
+  const url = new URL(DONATIONALERTS_GOAL_URL);
+  url.searchParams.set("is_active", "1");
+  url.searchParams.set("include_timestamps", "1");
+  const response = await fetch(url, {
+    headers: {
+      authorization: `Bearer ${tokens.access_token}`,
+      accept: "application/json"
+    }
+  });
+  if (response.status === 401) {
+    const refreshedTokens = await refreshTokens(env, tokens);
+    return fetchDonationGoal(env, refreshedTokens);
+  }
+  if (!response.ok) return null;
+  const data = await response.json();
+  return sanitizeDonationGoal(normalizeGoalPayload(data));
+}
+
 async function readRecentCache(env) {
   const cache = await env.DONATION_ALERTS_KV.get(RECENT_CACHE_KV_KEY, "json");
   if (!cache?.items || !cache?.cached_at) return null;
@@ -273,9 +319,13 @@ async function handleRecent(env, origin) {
     return jsonResponse({ ok: false, error: "DonationAlerts OAuth is not connected yet." }, 503, origin);
   }
 
-  const donations = await fetchDonations(env, tokens);
+  const [donations, goal] = await Promise.all([
+    fetchDonations(env, tokens),
+    fetchDonationGoal(env, tokens).catch(() => null)
+  ]);
   const payload = {
     items: donations.slice(0, getLimit(env)).map(sanitizeDonation),
+    goal,
     cached_at: new Date().toISOString()
   };
   await writeRecentCache(env, payload);
