@@ -10,7 +10,7 @@ DONATIONALERTS_SCOPE = "oauth-donation-index oauth-goal-subscribe"
 DONATIONS_LIMIT = "50"
 DONATIONS_CACHE_TTL_SECONDS = "120"
 DONATIONS_MIN_DATE = "2026-01-01"
-DONATIONALERTS_GOAL_ID = "9620081"
+DONATIONALERTS_GOAL_ID = "9638333"
 
 # Create this namespace before deploy and paste the generated id here:
 # wrangler kv namespace create DONATION_ALERTS_KV
