@@ -1922,12 +1922,12 @@ function renderHourlyWinnerCard() {
   const winnerPublicId = race.winner_public_id || winnerResult?.public_id || null;
   const winnerPlayerId = winnerResult?.player_id || null;
   const carName = winnerResult?.car_name || winnerResult?.car_name_raw || "";
-  const trackName = humanizeTrackName(race.track || race.track_name || "—");
+  const trackName = race.track_name || humanizeTrackName(race.track || race.track_code || "");
   const raceDate = formatDateTimeLocal(race.finished_at || race.date, currentLang);
 
   cardEl.classList.remove("is-empty");
   nameEl.innerHTML = renderDriverLink(winnerName, winnerPublicId, "driver-link driver-link-heading", winnerPlayerId);
-  metaEl.textContent = [trackName, raceDate, carName].filter(Boolean).join(" · ");
+  metaEl.textContent = [trackName, raceDate, carName].filter(Boolean).join(" · ") || "—";
   mediaEl.innerHTML = renderCarImage(
     winnerResult || {},
     { className: "hero-hourly-winner-car", alt: carName || winnerName }
