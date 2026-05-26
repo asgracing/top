@@ -5,9 +5,25 @@ const IS_FUN_STATS_PAGE = /\/fun-stats(?:\/|\/index\.html)?$/i.test(window.locat
 const SITE_BASE_PATH = (IS_RACES_PAGE || IS_DRIVER_PAGE || IS_CARS_PAGE || IS_FUN_STATS_PAGE) ? "../" : "./";
 const CAR_IMAGE_BASE_PATH = `${SITE_BASE_PATH}assets/car-icons`;
 const pageParams = new URLSearchParams(window.location.search);
-const TOP_DATA_BASE_URL = pageParams.get("topDataBase") || "https://asgracing.github.io/top-data";
-const TOP_DATA_V2_BASE_URL = `${TOP_DATA_BASE_URL}/v2`;
-const HOURLY_DATA_BASE_URL = "https://asgracing.github.io/hourly-data";
+function normalizeBaseUrl(value) {
+  return String(value || "").replace(/\/+$/, "");
+}
+const IS_ASG_PUBLIC_SITE = /(^|\.)asgracing\.ru$/i.test(window.location.hostname);
+const DEFAULT_TOP_DATA_BASE_URL = IS_ASG_PUBLIC_SITE
+  ? "https://data.asgracing.ru/top-data"
+  : window.location.hostname === "asgracing.github.io"
+    ? "https://asgracing.github.io/top-data"
+    : "/top-data";
+const DEFAULT_HOURLY_DATA_BASE_URL = IS_ASG_PUBLIC_SITE
+  ? "https://data.asgracing.ru/hourly-data"
+  : window.location.hostname === "asgracing.github.io"
+    ? "https://asgracing.github.io/hourly-data"
+    : "/hourly-data";
+const TOP_DATA_BASE_URL = pageParams.get("topDataBase") || DEFAULT_TOP_DATA_BASE_URL;
+const TOP_API_BASE_URL = normalizeBaseUrl(pageParams.get("topApiBase"));
+const TOP_DATA_V2_BASE_URL = TOP_API_BASE_URL || `${TOP_DATA_BASE_URL}/v2`;
+const TOP_API_ROOT_URL = TOP_API_BASE_URL.replace(/\/top-data\/v2$/i, "");
+const HOURLY_DATA_BASE_URL = normalizeBaseUrl(pageParams.get("hourlyApiBase")) || DEFAULT_HOURLY_DATA_BASE_URL;
 const dataMode = pageParams.get("data") || "v2";
 const ENABLE_TOP_DATA_V2 = dataMode !== "legacy";
 const snapshotUrl = `${TOP_DATA_BASE_URL}/snapshot.json`;
@@ -17,7 +33,7 @@ const bestlapsUrl = `${TOP_DATA_BASE_URL}/bestlaps.json`;
 const globalStatsUrl = `${TOP_DATA_BASE_URL}/global_stats.json`;
 const safetyUrl = `${TOP_DATA_BASE_URL}/safety.json`;
 const driverOfDayUrl = `${TOP_DATA_BASE_URL}/driver_of_the_day.json`;
-const serverStatusUrl = `${TOP_DATA_BASE_URL}/server_status.json`;
+const serverStatusUrl = pageParams.get("serverStatusUrl") || (TOP_API_ROOT_URL ? `${TOP_API_ROOT_URL}/server-status` : `${TOP_DATA_BASE_URL}/server_status.json`);
 const onlineUrl = `${TOP_DATA_BASE_URL}/online.json`;
 const donationsApiUrl = "https://donations.asgracing.workers.dev/recent";
 const hourlyAnnouncementUrl = `${HOURLY_DATA_BASE_URL}/announcement.json`;
@@ -53,8 +69,8 @@ const ACC_CONNECT_SERVER_FALLBACKS = {
   }
 };
 const racesUrl = `${TOP_DATA_BASE_URL}/races/races.json`;
-const carsUrl = `${TOP_DATA_BASE_URL}/cars/cars.json`;
-const driverIndexUrl = `${TOP_DATA_BASE_URL}/drivers/drivers.json`;
+const carsUrl = TOP_API_BASE_URL ? topDataV2Path("cars/cars.json") : `${TOP_DATA_BASE_URL}/cars/cars.json`;
+const driverIndexUrl = TOP_API_BASE_URL ? topDataV2Path("drivers/drivers.json") : `${TOP_DATA_BASE_URL}/drivers/drivers.json`;
 const PAGE_SIZE = 10;
 const VOTER_ID_STORAGE_TTL_MS = 365 * 24 * 60 * 60 * 1000;
 
@@ -143,9 +159,14 @@ let topDataV2Manifest = null;
 let topDataV2Version = "";
 let topDataV2TableMeta = null;
 const topDataV2TableLoadPromises = new Map();
+const topDataV2PagedTables = {
+  leaderboard: null,
+  bestlaps: null
+};
 let latestHourlyRaceData = null;
 let racesArchiveMeta = null;
 let racesArchiveSummary = null;
+let funStatsApiData = null;
 let leaderboardPage = 1;
 let bestlapsPage = 1;
 let safetyPage = 1;
@@ -486,6 +507,7 @@ const translations = {
     emptyTop3: "No top-3 data available yet.",
     emptyLeaderboard: "No leaderboard data yet.",
     emptyBestLaps: "No best lap data yet.",
+    emptySafety: "No penalty data yet.",
     emptyRaces: "No race results yet.",
     emptySearch: "No matching drivers found.",
     errorLoading: "Data loading error.",
@@ -946,6 +968,7 @@ const translations = {
     emptyTop3: "Пока нет данных для топ-3.",
     emptyLeaderboard: "Пока нет данных рейтинга.",
     emptyBestLaps: "Пока нет данных по лучшим кругам.",
+    emptySafety: "Пока нет данных по штрафам.",
     emptyRaces: "Пока нет данных о гонках.",
     emptySearch: "Совпадений не найдено.",
     errorLoading: "Ошибка загрузки данных.",
@@ -2823,15 +2846,24 @@ function makePublicDriverId(playerId) {
   return `drv_${sha1(playerId).slice(0, 12)}`;
 }
 
+function withCurrentDataParams(href) {
+  const url = new URL(href, window.location.href);
+  ["topApiBase", "hourlyApiBase", "serverStatusUrl", "topDataBase", "data"].forEach(key => {
+    const value = pageParams.get(key);
+    if (value) url.searchParams.set(key, value);
+  });
+  return `${url.pathname}${url.search}${url.hash}`;
+}
+
 function getDriverProfileHref(publicId, playerId = null) {
   const resolvedId = publicId || makePublicDriverId(playerId);
   if (!resolvedId) return null;
-  return `${SITE_BASE_PATH}driver/?id=${encodeURIComponent(resolvedId)}`;
+  return withCurrentDataParams(`${SITE_BASE_PATH}driver/?id=${encodeURIComponent(resolvedId)}`);
 }
 
 function getCarsPageHref(carName) {
   if (!carName) return null;
-  return `${SITE_BASE_PATH}cars/?car=${encodeURIComponent(carName)}`;
+  return withCurrentDataParams(`${SITE_BASE_PATH}cars/?car=${encodeURIComponent(carName)}`);
 }
 
 function renderDriverLink(name, publicId, className = "driver-link", playerId = null) {
@@ -3119,6 +3151,16 @@ function createFunDriverRecord(row) {
 }
 
 function aggregateFunStats(period) {
+  const apiData = funStatsApiData?.[period];
+  if (apiData && typeof apiData === "object") {
+    const start = apiData.range_start ? formatDateLocal(apiData.range_start, currentLang) : "";
+    const end = apiData.range_end ? formatDateLocal(apiData.range_end, currentLang) : "";
+    return {
+      ...apiData,
+      rangeLabel: start && end ? `${start} - ${end}` : "-"
+    };
+  }
+
   const periodRaces = getFunStatsPeriodRaces(period);
   const { start, end } = getFunStatsPeriodWindow(period);
   const driverMap = new Map();
@@ -3474,7 +3516,16 @@ async function loadSiteDataV2() {
   const manifest = await loadTopDataV2Manifest();
   const homePath = manifest?.home || "home.json";
   const data = await loadTopDataV2Json(homePath);
-  return normalizeSnapshotPayload(data);
+  const normalized = normalizeSnapshotPayload(data);
+  if (TOP_API_BASE_URL) {
+    const [leaderboardPageData, bestlapsPageData] = await Promise.all([
+      loadServerPagedTopDataV2Table("leaderboard", 1).catch(() => null),
+      loadServerPagedTopDataV2Table("bestlaps", 1).catch(() => null)
+    ]);
+    if (leaderboardPageData?.items) normalized.leaderboard = leaderboardPageData.items;
+    if (bestlapsPageData?.items) normalized.bestlaps = bestlapsPageData.items;
+  }
+  return normalized;
 }
 
 function getTopDataV2TableMeta(tableName) {
@@ -3534,6 +3585,80 @@ async function loadFullTopDataV2Table(tableName) {
 
   topDataV2TableLoadPromises.set(tableName, promise);
   return promise;
+}
+
+function isServerPagedTopDataV2Table(tableName) {
+  return Boolean(TOP_API_BASE_URL && ENABLE_TOP_DATA_V2 && (tableName === "leaderboard" || tableName === "bestlaps"));
+}
+
+function getServerPagedTableSearch(tableName) {
+  if (tableName === "leaderboard") return leaderboardSearch;
+  if (tableName === "bestlaps") return bestlapsSearch;
+  return "";
+}
+
+function getServerPagedTableSort(tableName) {
+  if (tableName === "leaderboard") return leaderboardSort;
+  if (tableName === "bestlaps") return bestlapsSort;
+  return { key: null, direction: null };
+}
+
+function getServerPagedTableSignature(tableName, page) {
+  const sortState = getServerPagedTableSort(tableName);
+  return JSON.stringify({
+    tableName,
+    page,
+    search: getServerPagedTableSearch(tableName) || "",
+    sort: sortState?.key || "",
+    direction: sortState?.direction || ""
+  });
+}
+
+function getServerPagedTableResult(tableName, page) {
+  const state = topDataV2PagedTables[tableName];
+  if (!state || state.signature !== getServerPagedTableSignature(tableName, page)) return null;
+  return state.result;
+}
+
+async function loadServerPagedTopDataV2Table(tableName, page) {
+  if (!isServerPagedTopDataV2Table(tableName)) return null;
+  await loadTopDataV2Manifest();
+  const meta = getTopDataV2TableMeta(tableName);
+  const url = new URL(topDataV2Path(meta?.full || `tables/${tableName}.json`), window.location.href);
+  const sortState = getServerPagedTableSort(tableName);
+  const search = getServerPagedTableSearch(tableName);
+  url.searchParams.set("page", String(page));
+  url.searchParams.set("page_size", String(PAGE_SIZE));
+  if (search) url.searchParams.set("search", search);
+  if (sortState?.key) {
+    url.searchParams.set("sort", sortState.key);
+    url.searchParams.set("direction", sortState.direction || "asc");
+  }
+  if (topDataV2Version) url.searchParams.set("v", topDataV2Version);
+
+  const payload = await loadJson(url.toString());
+  const items = hydrateTableTrendFields(Array.isArray(payload?.items) ? payload.items : [], tableName);
+  const totalItems = Number(payload?.total_items) || items.length;
+  const pageSize = Number(payload?.page_size) || PAGE_SIZE;
+  const safePage = Number(payload?.page) || page;
+  const result = {
+    items,
+    page: safePage,
+    totalPages: Number(payload?.total_pages) || Math.max(1, Math.ceil(totalItems / pageSize)),
+    totalItems,
+    startIndex: totalItems ? ((safePage - 1) * pageSize) + 1 : 0,
+    endIndex: Math.min(safePage * pageSize, totalItems)
+  };
+  topDataV2PagedTables[tableName] = {
+    signature: getServerPagedTableSignature(tableName, safePage),
+    result
+  };
+  return result;
+}
+
+async function ensureServerPagedTopDataV2Table(tableName, page) {
+  if (!isServerPagedTopDataV2Table(tableName)) return null;
+  return getServerPagedTableResult(tableName, page) || loadServerPagedTopDataV2Table(tableName, page);
 }
 
 function debounce(fn, wait = 180) {
@@ -3713,10 +3838,27 @@ async function loadRacesData() {
 }
 
 async function loadFullRacesData() {
+  if (ENABLE_TOP_DATA_V2 && TOP_API_BASE_URL) {
+    try {
+      const payload = await loadTopDataV2Json("races/fun-stats.json");
+      racesArchiveMeta = null;
+      racesArchiveSummary = null;
+      return Array.isArray(payload?.items) ? payload.items : [];
+    } catch (v2Error) {
+      console.warn("top-data v2 fun-stats races are unavailable, falling back to the full race archive.", v2Error);
+    }
+  }
+
   const data = await loadJson(racesUrl);
   racesArchiveMeta = null;
   racesArchiveSummary = null;
   return Array.isArray(data) ? data : [];
+}
+
+async function loadFunStatsData() {
+  if (!ENABLE_TOP_DATA_V2 || !TOP_API_BASE_URL) return null;
+  const payload = await loadTopDataV2Json("fun-stats.json");
+  return payload && typeof payload === "object" ? payload : null;
 }
 
 async function loadRacesPageData(page = 1) {
@@ -3876,7 +4018,10 @@ function getRequestedDriverId() {
 
 async function loadDriverProfile(publicId) {
   if (!publicId) return null;
-  const data = await loadJson(`${TOP_DATA_BASE_URL}/drivers/${encodeURIComponent(publicId)}.json`);
+  const profileUrl = TOP_API_BASE_URL
+    ? topDataV2Path(`drivers/${encodeURIComponent(publicId)}.json`)
+    : `${TOP_DATA_BASE_URL}/drivers/${encodeURIComponent(publicId)}.json`;
+  const data = await loadJson(profileUrl);
   return data && typeof data === "object" ? data : null;
 }
 
@@ -4465,24 +4610,33 @@ function renderBestlapsHeaders() {
 
 function bindLeaderboardSortHandlers() {
   bindSortableHeaders("#leaderboard-table th[data-sort-key]", leaderboardSort, async (key) => {
-    await loadFullTopDataV2Table("leaderboard").catch(() => null);
     leaderboardSort = cycleSort(leaderboardSort, key);
     leaderboardPage = 1;
+    if (isServerPagedTopDataV2Table("leaderboard")) {
+      await loadServerPagedTopDataV2Table("leaderboard", leaderboardPage).catch(() => null);
+    } else {
+      await loadFullTopDataV2Table("leaderboard").catch(() => null);
+    }
     renderLeaderboardTablePage();
   });
 }
 
 function bindBestlapsSortHandlers() {
   bindSortableHeaders("#bestlaps-table th[data-sort-key]", bestlapsSort, async (key) => {
-    await loadFullTopDataV2Table("bestlaps").catch(() => null);
     bestlapsSort = cycleSort(bestlapsSort, key);
     bestlapsPage = 1;
+    if (isServerPagedTopDataV2Table("bestlaps")) {
+      await loadServerPagedTopDataV2Table("bestlaps", bestlapsPage).catch(() => null);
+    } else {
+      await loadFullTopDataV2Table("bestlaps").catch(() => null);
+    }
     renderBestLapsTablePage();
   });
 }
 
 function renderLeaderboardTablePage() {
-  const result = getPreviewAwareTablePage("leaderboard", getProcessedLeaderboard(), leaderboardPage, PAGE_SIZE);
+  const result = getServerPagedTableResult("leaderboard", leaderboardPage) ||
+    getPreviewAwareTablePage("leaderboard", getProcessedLeaderboard(), leaderboardPage, PAGE_SIZE);
   leaderboardPage = result.page;
 
   const tableEl = document.getElementById("leaderboard-table");
@@ -4541,7 +4695,9 @@ function renderLeaderboardTablePage() {
     result.startIndex,
     result.endIndex,
     async (page) => {
-      if (page > Math.ceil(leaderboardData.length / PAGE_SIZE)) {
+      if (isServerPagedTopDataV2Table("leaderboard")) {
+        await ensureServerPagedTopDataV2Table("leaderboard", page).catch(() => null);
+      } else if (page > Math.ceil(leaderboardData.length / PAGE_SIZE)) {
         await loadFullTopDataV2Table("leaderboard").catch(() => null);
       }
       leaderboardPage = page;
@@ -4552,7 +4708,8 @@ function renderLeaderboardTablePage() {
 }
 
 function renderBestLapsTablePage() {
-  const result = getPreviewAwareTablePage("bestlaps", getProcessedBestlaps(), bestlapsPage, PAGE_SIZE);
+  const result = getServerPagedTableResult("bestlaps", bestlapsPage) ||
+    getPreviewAwareTablePage("bestlaps", getProcessedBestlaps(), bestlapsPage, PAGE_SIZE);
   bestlapsPage = result.page;
 
   const tableEl = document.getElementById("bestlaps-table");
@@ -4612,7 +4769,9 @@ function renderBestLapsTablePage() {
     result.startIndex,
     result.endIndex,
     async (page) => {
-      if (page > Math.ceil(bestlapsData.length / PAGE_SIZE)) {
+      if (isServerPagedTopDataV2Table("bestlaps")) {
+        await ensureServerPagedTopDataV2Table("bestlaps", page).catch(() => null);
+      } else if (page > Math.ceil(bestlapsData.length / PAGE_SIZE)) {
         await loadFullTopDataV2Table("bestlaps").catch(() => null);
       }
       bestlapsPage = page;
@@ -4654,7 +4813,7 @@ function renderSafetyTablePage() {
   if (!tableEl || !wrapEl) return;
 
   if (!result.totalItems) {
-    tableEl.innerHTML = `<div class="empty-box">${escapeHtml(safetySearch ? t("emptySearch") : t("errorLoading"))}</div>`;
+    tableEl.innerHTML = `<div class="empty-box">${escapeHtml(safetySearch ? t("emptySearch") : t("emptySafety"))}</div>`;
     wrapEl.style.display = "none";
     return;
   }
@@ -4822,15 +4981,23 @@ function bindSearchInputs() {
   const bestlapsInput = document.getElementById("bestlaps-search");
   const safetyInput = document.getElementById("safety-search");
   const handleLeaderboardInput = debounce(async (value) => {
-    if (value) await loadFullTopDataV2Table("leaderboard").catch(() => null);
     leaderboardSearch = value || "";
     leaderboardPage = 1;
+    if (isServerPagedTopDataV2Table("leaderboard")) {
+      await loadServerPagedTopDataV2Table("leaderboard", leaderboardPage).catch(() => null);
+    } else if (value) {
+      await loadFullTopDataV2Table("leaderboard").catch(() => null);
+    }
     renderLeaderboardTablePage();
   });
   const handleBestlapsInput = debounce(async (value) => {
-    if (value) await loadFullTopDataV2Table("bestlaps").catch(() => null);
     bestlapsSearch = value || "";
     bestlapsPage = 1;
+    if (isServerPagedTopDataV2Table("bestlaps")) {
+      await loadServerPagedTopDataV2Table("bestlaps", bestlapsPage).catch(() => null);
+    } else if (value) {
+      await loadFullTopDataV2Table("bestlaps").catch(() => null);
+    }
     renderBestLapsTablePage();
   });
   const handleSafetyInput = debounce(async (value) => {
@@ -6669,12 +6836,15 @@ async function init() {
     }
 
     if (IS_FUN_STATS_PAGE) {
-      const [raceArchive, data] = await Promise.all([
-        loadFullRacesData(),
+      const [apiFunStats, data] = await Promise.all([
+        loadFunStatsData().catch(() => null),
         loadSiteData().catch(() => ({ safety: [] }))
       ]);
-      racesData = raceArchive;
+      funStatsApiData = apiFunStats;
       safetyData = Array.isArray(data?.safety) ? data.safety : [];
+      if (!funStatsApiData) {
+        racesData = await loadFullRacesData().catch(() => []);
+      }
       rerenderUI();
       return;
     }
@@ -6712,7 +6882,10 @@ async function init() {
       racesData = Array.isArray(raceArchive) ? raceArchive : [];
       raceActivityInsights = buildRaceActivityInsights(racesData);
     }
-    await loadHourlyVotes(hourlyAnnouncementData);
+    loadHourlyVotes(hourlyAnnouncementData).finally(() => {
+      renderHourlyHeroCard();
+      renderHourlyHeroModal();
+    });
 
     const driversCountEl = document.getElementById("drivers-count");
     if (driversCountEl) {
