@@ -181,6 +181,8 @@ let carsSearch = "";
 let carsMinRacesFilter = "0";
 let driverRaceSort = { key: "finished_at", direction: "desc" };
 let driverTrackSort = { key: "points", direction: "desc" };
+let driverRacePage = 1;
+let driverTrackPage = 1;
 let leaderboardSort = { key: null, direction: null };
 let bestlapsSort = { key: null, direction: null };
 let safetySort = { key: null, direction: null };
@@ -3857,7 +3859,7 @@ async function loadRacesData() {
 }
 
 async function loadFullRacesData() {
-  if (ENABLE_TOP_DATA_V2 && TOP_API_BASE_URL) {
+  if (ENABLE_TOP_DATA_V2) {
     try {
       const payload = await loadTopDataV2Json("races/fun-stats.json");
       racesArchiveMeta = null;
@@ -3875,7 +3877,7 @@ async function loadFullRacesData() {
 }
 
 async function loadFunStatsData() {
-  if (!ENABLE_TOP_DATA_V2 || !TOP_API_BASE_URL) return null;
+  if (!ENABLE_TOP_DATA_V2) return null;
   const payload = await loadTopDataV2Json("fun-stats.json");
   return payload && typeof payload === "object" ? payload : null;
 }
@@ -5906,10 +5908,15 @@ function renderDriverRaceHistory() {
   if (!tableEl) return;
 
   const rawData = Array.isArray(driverProfileData?.race_history) ? driverProfileData.race_history : [];
-  const rowsData = sortData(rawData, driverRaceSort, driverRaceColumns);
+  const sortedData = sortData(rawData, driverRaceSort, driverRaceColumns);
+  const result = paginate(sortedData, driverRacePage, PAGE_SIZE);
+  driverRacePage = result.page;
+  const rowsData = result.items;
   const fastestLapMs = getFastestLapMs(rawData);
   if (!rowsData.length) {
     tableEl.innerHTML = `<div class="empty-box">${escapeHtml(t("driverNoData"))}</div>`;
+    const wrapEl = document.getElementById("driver-races-pagination-wrap");
+    if (wrapEl) wrapEl.style.display = "none";
     return;
   }
 
@@ -5947,6 +5954,7 @@ function renderDriverRaceHistory() {
 
   bindSortableHeaders("#driver-races-table th.sortable", driverRaceSort, (key) => {
     driverRaceSort = cycleSort(driverRaceSort, key);
+    driverRacePage = 1;
     renderDriverRaceHistory();
   });
 
@@ -5955,6 +5963,21 @@ function renderDriverRaceHistory() {
     const race = getRaceById(raceId) || rawData.find(item => item?.race_id === raceId) || null;
     openRaceResultsModal(race, row);
   });
+
+  renderPagination(
+    "driver-races-pagination",
+    "driver-races-pagination-info",
+    "driver-races-pagination-wrap",
+    result.page,
+    result.totalPages,
+    result.totalItems,
+    result.startIndex,
+    result.endIndex,
+    (page) => {
+      driverRacePage = page;
+      renderDriverRaceHistory();
+    }
+  );
 }
 
 function renderDriverTrackStats() {
@@ -5962,9 +5985,14 @@ function renderDriverTrackStats() {
   if (!tableEl) return;
 
   const rawData = Array.isArray(driverProfileData?.track_stats) ? driverProfileData.track_stats : [];
-  const rowsData = sortData(rawData, driverTrackSort, driverTrackColumns);
+  const sortedData = sortData(rawData, driverTrackSort, driverTrackColumns);
+  const result = paginate(sortedData, driverTrackPage, PAGE_SIZE);
+  driverTrackPage = result.page;
+  const rowsData = result.items;
   if (!rowsData.length) {
     tableEl.innerHTML = `<div class="empty-box">${escapeHtml(t("driverNoData"))}</div>`;
+    const wrapEl = document.getElementById("driver-tracks-pagination-wrap");
+    if (wrapEl) wrapEl.style.display = "none";
     return;
   }
 
@@ -5990,8 +6018,24 @@ function renderDriverTrackStats() {
 
   bindSortableHeaders("#driver-tracks-table th.sortable", driverTrackSort, (key) => {
     driverTrackSort = cycleSort(driverTrackSort, key);
+    driverTrackPage = 1;
     renderDriverTrackStats();
   });
+
+  renderPagination(
+    "driver-tracks-pagination",
+    "driver-tracks-pagination-info",
+    "driver-tracks-pagination-wrap",
+    result.page,
+    result.totalPages,
+    result.totalItems,
+    result.startIndex,
+    result.endIndex,
+    (page) => {
+      driverTrackPage = page;
+      renderDriverTrackStats();
+    }
+  );
 }
 
 function renderPenaltyList(containerId, entries, labelKey) {
