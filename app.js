@@ -6777,15 +6777,13 @@ function optimizeBackgroundMedia() {
               ? "mobile-width"
               : "";
   const shouldAutoplayBackground = !reduceMotion && !navigator.connection?.saveData;
-  const allowBackgroundVideo = pageParams.get("bgVideo") === "1";
   const shouldUseStaticBackground =
     !supportsMp4Video ||
     IS_DRIVER_PAGE ||
     IS_RACES_PAGE ||
     IS_CARS_PAGE ||
     IS_FUN_STATS_PAGE ||
-    window.innerWidth <= 768 ||
-    !allowBackgroundVideo;
+    window.innerWidth <= 768;
 
   if (shouldUseStaticBackground) {
     document.body.dataset.bgVideoStatus = bgVideoBlockReason || "static-background";
