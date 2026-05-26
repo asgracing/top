@@ -3524,6 +3524,13 @@ async function loadSiteDataV2() {
     ]);
     if (leaderboardPageData?.items) normalized.leaderboard = leaderboardPageData.items;
     if (bestlapsPageData?.items) normalized.bestlaps = bestlapsPageData.items;
+  } else if (!normalized.leaderboard.length || !normalized.bestlaps.length) {
+    const [leaderboardPreview, bestlapsPreview] = await Promise.all([
+      normalized.leaderboard.length ? Promise.resolve(null) : loadTopDataV2TablePreview("leaderboard").catch(() => null),
+      normalized.bestlaps.length ? Promise.resolve(null) : loadTopDataV2TablePreview("bestlaps").catch(() => null)
+    ]);
+    if (leaderboardPreview?.length) normalized.leaderboard = leaderboardPreview;
+    if (bestlapsPreview?.length) normalized.bestlaps = bestlapsPreview;
   }
   return normalized;
 }
@@ -3585,6 +3592,18 @@ async function loadFullTopDataV2Table(tableName) {
 
   topDataV2TableLoadPromises.set(tableName, promise);
   return promise;
+}
+
+async function loadTopDataV2TablePreview(tableName, limit = PAGE_SIZE) {
+  await loadTopDataV2Manifest();
+  const meta = getTopDataV2TableMeta(tableName);
+  const payload = await loadTopDataV2Json(meta?.full || `tables/${tableName}.json`);
+  const items = Array.isArray(payload)
+    ? payload
+    : Array.isArray(payload?.items)
+      ? payload.items
+      : [];
+  return hydrateTableTrendFields(items.slice(0, limit), tableName);
 }
 
 function isServerPagedTopDataV2Table(tableName) {
