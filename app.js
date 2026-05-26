@@ -3598,6 +3598,10 @@ async function loadFullTopDataV2Table(tableName) {
 
 async function loadTopDataV2TablePreview(tableName, limit = PAGE_SIZE) {
   await loadTopDataV2Manifest();
+  if (isServerPagedTopDataV2Table(tableName)) {
+    const pageData = await loadServerPagedTopDataV2Table(tableName, 1);
+    return pageData?.items || [];
+  }
   const meta = getTopDataV2TableMeta(tableName);
   const payload = await loadTopDataV2Json(meta?.full || `tables/${tableName}.json`);
   const items = Array.isArray(payload)
@@ -3609,7 +3613,11 @@ async function loadTopDataV2TablePreview(tableName, limit = PAGE_SIZE) {
 }
 
 function isServerPagedTopDataV2Table(tableName) {
-  return Boolean(TOP_API_BASE_URL && ENABLE_TOP_DATA_V2 && (tableName === "leaderboard" || tableName === "bestlaps"));
+  if (!ENABLE_TOP_DATA_V2 || (tableName !== "leaderboard" && tableName !== "bestlaps")) return false;
+  if (TOP_API_BASE_URL) return true;
+  const meta = getTopDataV2TableMeta(tableName);
+  const sortState = getServerPagedTableSort(tableName);
+  return Boolean(meta?.page_path && !getServerPagedTableSearch(tableName) && !sortState?.key);
 }
 
 function getServerPagedTableSearch(tableName) {
@@ -3645,15 +3653,20 @@ async function loadServerPagedTopDataV2Table(tableName, page) {
   if (!isServerPagedTopDataV2Table(tableName)) return null;
   await loadTopDataV2Manifest();
   const meta = getTopDataV2TableMeta(tableName);
-  const url = new URL(topDataV2Path(meta?.full || `tables/${tableName}.json`), window.location.href);
+  const pagePath = meta?.page_path
+    ? String(meta.page_path).replace("{page}", String(page))
+    : null;
+  const url = new URL(topDataV2Path(pagePath || meta?.full || `tables/${tableName}.json`), window.location.href);
   const sortState = getServerPagedTableSort(tableName);
   const search = getServerPagedTableSearch(tableName);
-  url.searchParams.set("page", String(page));
-  url.searchParams.set("page_size", String(PAGE_SIZE));
-  if (search) url.searchParams.set("search", search);
-  if (sortState?.key) {
-    url.searchParams.set("sort", sortState.key);
-    url.searchParams.set("direction", sortState.direction || "asc");
+  if (TOP_API_BASE_URL) {
+    url.searchParams.set("page", String(page));
+    url.searchParams.set("page_size", String(PAGE_SIZE));
+    if (search) url.searchParams.set("search", search);
+    if (sortState?.key) {
+      url.searchParams.set("sort", sortState.key);
+      url.searchParams.set("direction", sortState.direction || "asc");
+    }
   }
   if (topDataV2Version) url.searchParams.set("v", topDataV2Version);
 
@@ -6762,13 +6775,15 @@ function optimizeBackgroundMedia() {
               ? "mobile-width"
               : "";
   const shouldAutoplayBackground = !reduceMotion && !navigator.connection?.saveData;
+  const allowBackgroundVideo = pageParams.get("bgVideo") === "1";
   const shouldUseStaticBackground =
     !supportsMp4Video ||
     IS_DRIVER_PAGE ||
     IS_RACES_PAGE ||
     IS_CARS_PAGE ||
     IS_FUN_STATS_PAGE ||
-    window.innerWidth <= 768;
+    window.innerWidth <= 768 ||
+    !allowBackgroundVideo;
 
   if (shouldUseStaticBackground) {
     document.body.dataset.bgVideoStatus = bgVideoBlockReason || "static-background";
