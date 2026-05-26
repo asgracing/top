@@ -3599,8 +3599,8 @@ async function loadFullTopDataV2Table(tableName) {
 async function loadTopDataV2TablePreview(tableName, limit = PAGE_SIZE) {
   await loadTopDataV2Manifest();
   if (isServerPagedTopDataV2Table(tableName)) {
-    const pageData = await loadServerPagedTopDataV2Table(tableName, 1);
-    return pageData?.items || [];
+    const pageData = await loadServerPagedTopDataV2Table(tableName, 1).catch(() => null);
+    if (pageData?.items?.length) return pageData.items;
   }
   const meta = getTopDataV2TableMeta(tableName);
   const payload = await loadTopDataV2Json(meta?.full || `tables/${tableName}.json`);
@@ -4730,7 +4730,8 @@ function renderLeaderboardTablePage() {
     result.endIndex,
     async (page) => {
       if (isServerPagedTopDataV2Table("leaderboard")) {
-        await ensureServerPagedTopDataV2Table("leaderboard", page).catch(() => null);
+        const pageData = await ensureServerPagedTopDataV2Table("leaderboard", page).catch(() => null);
+        if (!pageData?.items?.length) await loadFullTopDataV2Table("leaderboard").catch(() => null);
       } else if (page > Math.ceil(leaderboardData.length / PAGE_SIZE)) {
         await loadFullTopDataV2Table("leaderboard").catch(() => null);
       }
@@ -4804,7 +4805,8 @@ function renderBestLapsTablePage() {
     result.endIndex,
     async (page) => {
       if (isServerPagedTopDataV2Table("bestlaps")) {
-        await ensureServerPagedTopDataV2Table("bestlaps", page).catch(() => null);
+        const pageData = await ensureServerPagedTopDataV2Table("bestlaps", page).catch(() => null);
+        if (!pageData?.items?.length) await loadFullTopDataV2Table("bestlaps").catch(() => null);
       } else if (page > Math.ceil(bestlapsData.length / PAGE_SIZE)) {
         await loadFullTopDataV2Table("bestlaps").catch(() => null);
       }
