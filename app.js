@@ -3899,12 +3899,19 @@ async function loadRacesPageData(page = 1) {
   const manifest = await loadTopDataV2Manifest();
   const pagePathTemplate = manifest?.races?.page_path || "races/page-{page}.json";
   const pagePath = pagePathTemplate.replace("{page}", String(page));
-  const payload = await loadTopDataV2Json(pagePath);
+  const summaryPath = manifest?.races?.summary || "races/summary.json";
+  const [payload, summaryPayload] = await Promise.all([
+    loadTopDataV2Json(pagePath),
+    loadTopDataV2Json(summaryPath).catch(() => null)
+  ]);
 
   racesArchiveMeta = payload && typeof payload === "object" ? payload : null;
-  racesArchiveSummary = racesArchiveMeta?.summary && typeof racesArchiveMeta.summary === "object"
-    ? racesArchiveMeta.summary
-    : null;
+  racesArchiveSummary =
+    summaryPayload?.summary && typeof summaryPayload.summary === "object"
+      ? summaryPayload.summary
+      : racesArchiveMeta?.summary && typeof racesArchiveMeta.summary === "object"
+        ? racesArchiveMeta.summary
+        : null;
 
   return Array.isArray(racesArchiveMeta?.items) ? racesArchiveMeta.items : [];
 }
