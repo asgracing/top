@@ -398,12 +398,15 @@ class AccBanWatcher:
         connection = CONNECTION_RE.search(message)
         if connection:
             connection_id = int(connection.group(1))
+            player_name = connection.group(2).strip()
+            player_id = connection.group(3)
             self.connections[connection_id] = {
                 **self.connections.get(connection_id, {}),
-                "name": connection.group(2).strip(),
-                "playerID": connection.group(3),
+                "name": player_name,
+                "playerID": player_id,
                 "carModel": int(connection.group(4)),
             }
+            self.remember_admin_alias(player_id, player_name)
             if connection_id not in self.live_by_connection and connection_id not in self.pending_connection_ids:
                 self.pending_connection_ids.append(connection_id)
                 if len(self.pending_connection_ids) > MAX_CONNECTION_CACHE:
