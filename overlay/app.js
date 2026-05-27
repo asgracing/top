@@ -148,7 +148,7 @@ function renderLeaderboardTable(items, page = 1) {
   const sectionTitle = document.getElementById("overlay-rating-title");
   if (!body) return;
 
-  const safePage = Math.max(1, Math.min(page, OVERLAY_TOTAL_PAGES));
+  const safePage = Math.max(1, Math.min(page, overlayTotalPages || 1));
   const startIndex = (safePage - 1) * OVERLAY_PAGE_SIZE;
   const endIndex = startIndex + OVERLAY_PAGE_SIZE;
   const visibleItems = Array.isArray(items) ? items.slice(startIndex, endIndex) : [];
@@ -217,7 +217,10 @@ function scheduleNextOverlayPage() {
 }
 
 function restartOverlayRotation() {
-  overlayTotalPages = OVERLAY_TOTAL_PAGES;
+  overlayTotalPages = Math.max(
+    1,
+    Math.min(OVERLAY_TOTAL_PAGES, Math.ceil(overlayLeaderboardRows.length / OVERLAY_PAGE_SIZE))
+  );
   overlayCurrentPage = 1;
   renderLeaderboardTable(overlayLeaderboardRows, overlayCurrentPage);
   scheduleNextOverlayPage();
@@ -267,7 +270,10 @@ async function refreshOverlay() {
   try {
     const data = await loadOverlayData();
     overlayLeaderboardRows = sortLeaderboardRows(data.leaderboard);
-    overlayTotalPages = OVERLAY_TOTAL_PAGES;
+    overlayTotalPages = Math.max(
+      1,
+      Math.min(OVERLAY_TOTAL_PAGES, Math.ceil(overlayLeaderboardRows.length / OVERLAY_PAGE_SIZE))
+    );
     overlayCurrentPage = Math.max(1, Math.min(overlayCurrentPage, overlayTotalPages));
     renderLeaderboardTable(overlayLeaderboardRows, overlayCurrentPage);
     if (!overlayRotationStarted) restartOverlayRotation();
