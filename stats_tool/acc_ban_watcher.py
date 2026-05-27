@@ -136,11 +136,12 @@ class AccBanWatcher:
         self.live_by_car: dict[int, dict] = {}
         self.live_by_name: dict[str, list[dict]] = {}
         self.pending_bans: list[dict] = []
+        self.admin_aliases: dict[str, dict] = self.read_admin_aliases_file()
 
     def load_admins(self) -> set[str]:
         return normalize_admins(load_json(self.admins_file, {"admins": []}))
 
-    def load_admin_aliases(self) -> dict[str, dict]:
+    def read_admin_aliases_file(self) -> dict[str, dict]:
         raw = load_json(self.admin_aliases_file, {})
         if not isinstance(raw, dict):
             return {}
@@ -163,6 +164,9 @@ class AccBanWatcher:
                 }
         return aliases
 
+    def load_admin_aliases(self) -> dict[str, dict]:
+        return dict(self.admin_aliases)
+
     def remember_admin_alias(self, player_id: str | None, name: str | None) -> None:
         player_id = normalize_steam_id(player_id or "")
         name = str(name or "").strip()
@@ -176,6 +180,7 @@ class AccBanWatcher:
             "name": name,
             "lastSeenAt": utc_now_iso(),
         }
+        self.admin_aliases = aliases
         if self.dry_run:
             logging.info("DRY RUN: would remember admin alias %r -> %s", name, player_id)
             return
@@ -457,7 +462,7 @@ class AccBanWatcher:
             return remainder[-MAX_BUFFER_CHARS:]
         return remainder
 
-    def follow(self, poll_seconds: float, from_start: bool = False) -> None:
+    def follow(self, poll_seconds: float, from_start: bool = False, replay_once: bool = False) -> None:
         self.write_entrylist()
         buffer = ""
         position = 0
@@ -468,6 +473,8 @@ class AccBanWatcher:
         while True:
             if not self.log_file.exists():
                 logging.warning("Log file not found: %s", self.log_file)
+                if replay_once:
+                    return
                 time.sleep(poll_seconds)
                 continue
 
@@ -484,6 +491,11 @@ class AccBanWatcher:
 
             if chunk:
                 buffer = self.process_text(buffer + chunk)
+            elif replay_once:
+                if buffer.strip():
+                    self.process_text(buffer)
+                logging.info("Replay finished at byte %s", position)
+                return
 
             time.sleep(poll_seconds)
 
@@ -518,6 +530,7 @@ def parse_args():
     parser.add_argument("--poll-seconds", type=float, default=None, help="Log polling interval.")
     parser.add_argument("--confirm-window-ms", type=int, default=None, help="Milliseconds to confirm ban disconnect.")
     parser.add_argument("--from-start", action="store_true", help="Read existing server.log from the beginning.")
+    parser.add_argument("--replay-once", action="store_true", help="Read available log content once, then exit.")
     parser.add_argument("--dry-run", action="store_true", help="Parse and log actions without writing JSON files.")
     parser.add_argument("--build-once", action="store_true", help="Only rebuild entrylist.json from admins.json and banlist.json.")
     return parser.parse_args()
@@ -551,7 +564,7 @@ def main() -> None:
         watcher.write_entrylist()
         return
 
-    watcher.follow(poll_seconds, from_start=from_start)
+    watcher.follow(poll_seconds, from_start=from_start, replay_once=args.replay_once)
 
 
 if __name__ == "__main__":
