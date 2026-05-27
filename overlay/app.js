@@ -1,12 +1,21 @@
 const pageParams = new URLSearchParams(window.location.search);
-const TOP_DATA_BASE_URL = pageParams.get("topDataBase") || "https://asgracing.github.io/top-data";
+function normalizeBaseUrl(value) {
+  return String(value || "").replace(/\/+$/, "");
+}
+const IS_ASG_PUBLIC_SITE = /(^|\.)asgracing\.ru$/i.test(window.location.hostname);
+const DEFAULT_TOP_DATA_BASE_URL = IS_ASG_PUBLIC_SITE
+  ? "https://data.asgracing.ru/top-data"
+  : window.location.hostname === "asgracing.github.io"
+    ? "https://data.asgracing.ru/top-data"
+    : "/top-data";
+const TOP_DATA_BASE_URL = normalizeBaseUrl(pageParams.get("topDataBase") || DEFAULT_TOP_DATA_BASE_URL);
 const TOP_DATA_V2_BASE_URL = `${TOP_DATA_BASE_URL}/v2`;
 const snapshotUrl = `${TOP_DATA_BASE_URL}/snapshot.json`;
 const overlayV2Url = `${TOP_DATA_V2_BASE_URL}/overlay.json`;
 const leaderboardUrl = `${TOP_DATA_BASE_URL}/leaderboard.json`;
 const bestlapsUrl = `${TOP_DATA_BASE_URL}/bestlaps.json`;
 
-const SITE_URL = "https://asgracing.github.io/top/";
+const SITE_URL = "https://asgracing.ru/";
 const TELEGRAM_URL = "https://t.me/+JUymrENgddcyMTdi";
 const DISCORD_URL = "https://discord.gg/cEPFHXXtTC";
 
