@@ -5415,7 +5415,7 @@ function renderRacesSummary() {
   if (racesArchiveSummary) {
     const topWinner = racesArchiveSummary.top_winner || null;
     const latestSummaryRace = racesArchiveSummary.latest_race || latestRace || null;
-    totalEl.textContent = racesArchiveSummary.total_races || "-";
+    totalEl.textContent = racesArchiveSummary.total_races || racesArchiveSummary.total_items || "-";
     avgActiveEl.textContent = racesArchiveSummary.average_active_drivers ?? "-";
     avgOvertakesEl.textContent = racesArchiveSummary.average_overtakes ?? "-";
     topWinnerEl.innerHTML = topWinner
@@ -5424,8 +5424,8 @@ function renderRacesSummary() {
     winnerEl.innerHTML = latestSummaryRace
       ? renderDriverLink(latestSummaryRace.winner || t("noWinner"), latestSummaryRace.winner_public_id, "driver-link")
       : t("noWinner");
-    lastWinnerBestLapEl.textContent = latestSummaryRace?.best_lap || "-";
-    lastWinnerBestLapNoteEl.textContent = latestSummaryRace?.best_lap_car_name || "";
+    lastWinnerBestLapEl.textContent = latestSummaryRace?.winner_best_lap || latestSummaryRace?.best_lap || "-";
+    lastWinnerBestLapNoteEl.textContent = latestSummaryRace?.winner_best_lap_car_name || latestSummaryRace?.best_lap_car_name || "";
     return;
   }
 
@@ -6419,8 +6419,13 @@ function renderOnlineActivityModal() {
     : t("onlineActivityEmpty");
 
   const hours = Array.isArray(selectedDay.hours) ? selectedDay.hours : [];
+  const maxUniquePlayers = Math.max(
+    1,
+    ...hours.map(hour => Number(hour?.unique_players) || 0)
+  );
   hoursEl.innerHTML = hours.map(hour => {
-    const height = hour.activity_score > 0 ? Math.max(8, hour.activity_score) : 2;
+    const uniquePlayers = Number(hour?.unique_players) || 0;
+    const height = uniquePlayers > 0 ? Math.max(8, Math.round((uniquePlayers / maxUniquePlayers) * 100)) : 2;
     const isPrime = peakHour && hour.hour === peakHour.hour;
     const tooltip = [
       hour.label || `${hour.hour}:00`,
