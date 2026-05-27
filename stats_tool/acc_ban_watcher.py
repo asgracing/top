@@ -19,6 +19,7 @@ ENV_FROM_START = "ACC_BAN_WATCH_FROM_START"
 
 LOG_FILE_NAME = "server.log"
 ADMINS_FILE_NAME = "admins.json"
+ADMIN_ALIASES_FILE_NAME = "admin_aliases.json"
 BANLIST_FILE_NAME = "banlist.json"
 ENTRYLIST_FILE_NAME = "entrylist.json"
 WATCHER_LOG_FILE_NAME = "ban_watcher.log"
@@ -53,6 +54,17 @@ def normalize_name(name: str) -> str:
     return re.sub(r"\s+", " ", (name or "").strip()).casefold()
 
 
+def normalize_steam_id(value: str) -> str:
+    player_id = str(value or "").strip()
+    if not player_id:
+        return ""
+    if player_id[:1].upper() == "S":
+        return "S" + player_id[1:].strip()
+    if player_id.isdigit():
+        return "S" + player_id
+    return player_id
+
+
 def load_json(path: Path, default):
     if not path.exists():
         return default
@@ -77,7 +89,7 @@ def write_json_atomic(path: Path, payload) -> None:
 
 def normalize_admins(raw) -> set[str]:
     admins = raw.get("admins", []) if isinstance(raw, dict) else []
-    return {str(value).strip() for value in admins if str(value).strip().startswith("S")}
+    return {normalize_steam_id(value) for value in admins if normalize_steam_id(value).startswith("S")}
 
 
 def normalize_banlist(raw) -> list[dict]:
@@ -110,6 +122,7 @@ class AccBanWatcher:
         self.cfg_dir = server_dir / "cfg"
         self.log_file = log_file
         self.admins_file = self.cfg_dir / ADMINS_FILE_NAME
+        self.admin_aliases_file = self.cfg_dir / ADMIN_ALIASES_FILE_NAME
         self.banlist_file = self.cfg_dir / BANLIST_FILE_NAME
         self.entrylist_file = self.cfg_dir / ENTRYLIST_FILE_NAME
         self.forbidden_car_model = forbidden_car_model
@@ -123,6 +136,50 @@ class AccBanWatcher:
         self.live_by_car: dict[int, dict] = {}
         self.live_by_name: dict[str, list[dict]] = {}
         self.pending_bans: list[dict] = []
+
+    def load_admins(self) -> set[str]:
+        return normalize_admins(load_json(self.admins_file, {"admins": []}))
+
+    def load_admin_aliases(self) -> dict[str, dict]:
+        raw = load_json(self.admin_aliases_file, {})
+        if not isinstance(raw, dict):
+            return {}
+
+        aliases = {}
+        for key, value in raw.items():
+            if isinstance(value, dict):
+                player_id = normalize_steam_id(value.get("playerID") or value.get("playerId") or "")
+                name = str(value.get("name") or key or "").strip()
+            else:
+                player_id = normalize_steam_id(value)
+                name = str(key or "").strip()
+
+            name_key = normalize_name(name or key)
+            if name_key and player_id.startswith("S"):
+                aliases[name_key] = {
+                    "playerID": player_id,
+                    "name": name or key,
+                    "lastSeenAt": value.get("lastSeenAt") if isinstance(value, dict) else None,
+                }
+        return aliases
+
+    def remember_admin_alias(self, player_id: str | None, name: str | None) -> None:
+        player_id = normalize_steam_id(player_id or "")
+        name = str(name or "").strip()
+        name_key = normalize_name(name)
+        if not player_id or not name_key or player_id not in self.load_admins():
+            return
+
+        aliases = self.load_admin_aliases()
+        aliases[name_key] = {
+            "playerID": player_id,
+            "name": name,
+            "lastSeenAt": utc_now_iso(),
+        }
+        if self.dry_run:
+            logging.info("DRY RUN: would remember admin alias %r -> %s", name, player_id)
+            return
+        write_json_atomic(self.admin_aliases_file, aliases)
 
     def build_entrylist(self) -> dict:
         admins = normalize_admins(load_json(self.admins_file, {"admins": []}))
@@ -184,6 +241,7 @@ class AccBanWatcher:
                 item for item in self.live_by_name[name_key] if item.get("connectionId") != connection_id
             ]
             self.live_by_name[name_key].append(driver)
+            self.remember_admin_alias(driver.get("playerID"), driver.get("name"))
 
         logging.info(
             "Live driver #%s conn=%s car=%s steam=%s name=%s",
@@ -194,18 +252,25 @@ class AccBanWatcher:
             driver.get("name"),
         )
 
-    def resolve_admin_player_id(self, chat_name: str) -> str | None:
+    def resolve_admin_player_id(self, chat_name: str, admins: set[str]) -> str | None:
         matches = self.live_by_name.get(normalize_name(chat_name), [])
-        player_ids = {item.get("playerID") for item in matches if item.get("playerID")}
+        player_ids = {item.get("playerID") for item in matches if item.get("playerID") in admins}
         if len(player_ids) == 1:
             return next(iter(player_ids))
         if len(player_ids) > 1:
             logging.warning("Ambiguous chat admin name %r, matches=%s", chat_name, sorted(player_ids))
+
+        alias = self.load_admin_aliases().get(normalize_name(chat_name), {})
+        alias_player_id = normalize_steam_id(alias.get("playerID") or "")
+        if alias_player_id in admins:
+            logging.info("Resolved admin %r via saved alias: %s", chat_name, alias_player_id)
+            return alias_player_id
+
         return None
 
     def queue_ban(self, log_ms: int, admin_name: str, race_number: int) -> None:
-        admins = normalize_admins(load_json(self.admins_file, {"admins": []}))
-        admin_player_id = self.resolve_admin_player_id(admin_name)
+        admins = self.load_admins()
+        admin_player_id = self.resolve_admin_player_id(admin_name, admins)
         if admin_player_id not in admins:
             logging.info("Ignoring /ban from non-admin or unknown chat name=%r steam=%s", admin_name, admin_player_id)
             return
