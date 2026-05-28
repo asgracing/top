@@ -22,6 +22,7 @@ ADMINS_FILE_NAME = "admins.json"
 ADMIN_ALIASES_FILE_NAME = "admin_aliases.json"
 BANLIST_FILE_NAME = "banlist.json"
 ENTRYLIST_FILE_NAME = "entrylist.json"
+LIVE_STATE_FILE_NAME = "live_drivers.json"
 WATCHER_LOG_FILE_NAME = "ban_watcher.log"
 
 DEFAULT_FORBIDDEN_CAR_MODEL = 50
@@ -41,9 +42,17 @@ CAR_RE = re.compile(
     r"Creating new car connection:\s+carId\s+(\d+),\s+carModel\s+(\d+),\s+raceNumber\s+#?(\d+)",
     re.I,
 )
+RECONNECT_RE = re.compile(
+    r"Recognized reconnect:\s+carId\s+(\d+),\s+carModel\s+(\d+),\s+raceNumber\s+#?(\d+)",
+    re.I,
+)
+HANDSHAKE_RE = re.compile(r"Sent handshake response for car\s+(\d+)\s+connection\s+(\d+)\b", re.I)
 CHAT_BAN_RE = re.compile(r"CHAT\s+(.+?):\s*/ban\s+#?(\d+)\b", re.I)
-REMOVE_CONN_RE = re.compile(r"Removing dead connection\s+(\d+)\b", re.I)
+REMOVE_CONN_RE = re.compile(r"(?:Removing dead connection\s+|Removed connection due to \(quick\) reconnect:\s*)(\d+)\b", re.I)
+CLIENT_CLOSED_RE = re.compile(r"Client\s+(\d+)\s+closed the connection", re.I)
 REMOVE_CAR_RE = re.compile(r"car\s+(\d+)\s+has no driving connection anymore,\s+will remove it", re.I)
+PURGE_CAR_RE = re.compile(r"Purging car_id\s+(\d+)", re.I)
+RESET_CONNECTIONS_RE = re.compile(r"Server starting|Listening to TCP", re.I)
 
 
 def utc_now_iso() -> str:
@@ -125,6 +134,7 @@ class AccBanWatcher:
         self.admin_aliases_file = self.cfg_dir / ADMIN_ALIASES_FILE_NAME
         self.banlist_file = self.cfg_dir / BANLIST_FILE_NAME
         self.entrylist_file = self.cfg_dir / ENTRYLIST_FILE_NAME
+        self.live_state_file = self.cfg_dir / LIVE_STATE_FILE_NAME
         self.forbidden_car_model = forbidden_car_model
         self.confirm_window_ms = confirm_window_ms
         self.dry_run = dry_run
@@ -135,8 +145,11 @@ class AccBanWatcher:
         self.live_by_connection: dict[int, dict] = {}
         self.live_by_car: dict[int, dict] = {}
         self.live_by_name: dict[str, list[dict]] = {}
+        self.car_specs: dict[int, dict] = {}
         self.pending_bans: list[dict] = []
         self.admin_aliases: dict[str, dict] = self.read_admin_aliases_file()
+        self.live_state_dirty = False
+        self.last_live_state_write_monotonic = 0.0
 
     def load_admins(self) -> set[str]:
         return normalize_admins(load_json(self.admins_file, {"admins": []}))
@@ -224,8 +237,80 @@ class AccBanWatcher:
         write_json_atomic(self.entrylist_file, entrylist)
         logging.info("Wrote %s with %s entries", self.entrylist_file, len(entrylist["entries"]))
 
+    def live_drivers(self) -> list[dict]:
+        drivers = list(self.live_by_connection.values())
+        latest_by_player: dict[str, dict] = {}
+        anonymous = []
+        for driver in drivers:
+            player_id = normalize_steam_id(driver.get("playerID") or "")
+            row = {
+                "position": 0,
+                "raceNumber": driver.get("raceNumber"),
+                "car_number": driver.get("raceNumber"),
+                "connectionId": driver.get("connectionId"),
+                "carId": driver.get("carId"),
+                "carModel": driver.get("carModel"),
+                "car_model": driver.get("carModel"),
+                "playerID": player_id,
+                "steam_id": player_id,
+                "name": driver.get("name") or "",
+                "lastSeenAt": driver.get("lastSeenAt"),
+                "source": "ban_watcher",
+            }
+            if player_id:
+                current = latest_by_player.get(player_id)
+                if not current or (row.get("connectionId") or -1) >= (current.get("connectionId") or -1):
+                    latest_by_player[player_id] = row
+            else:
+                anonymous.append(row)
+
+        result = list(latest_by_player.values()) + anonymous
+        result.sort(key=lambda item: (item.get("raceNumber") if item.get("raceNumber") is not None else 9999, item.get("name") or ""))
+        for index, item in enumerate(result, start=1):
+            item["position"] = index
+        return result
+
+    def write_live_state(self, force: bool = False) -> None:
+        if not force and not self.live_state_dirty:
+            return
+        now = time.monotonic()
+        if not force and now - self.last_live_state_write_monotonic < 2.0:
+            return
+        payload = {
+            "updatedAt": utc_now_iso(),
+            "source": "acc_ban_watcher",
+            "drivers": self.live_drivers(),
+        }
+        if self.dry_run:
+            logging.info("DRY RUN: would write %s with %s live drivers", self.live_state_file, len(payload["drivers"]))
+        else:
+            write_json_atomic(self.live_state_file, payload)
+        self.live_state_dirty = False
+        self.last_live_state_write_monotonic = now
+
+    def reset_live_state(self, clear_connections: bool = False) -> None:
+        self.pending_connection_ids.clear()
+        self.live_by_race_number.clear()
+        self.live_by_connection.clear()
+        self.live_by_car.clear()
+        self.live_by_name.clear()
+        self.car_specs.clear()
+        self.pending_bans.clear()
+        if clear_connections:
+            self.connections.clear()
+        self.live_state_dirty = True
+
     def add_live_driver(self, race_number: int, car_id: int, car_model: int, connection_id: int) -> None:
         connection = self.connections.get(connection_id, {})
+        old_for_conn = self.live_by_connection.get(connection_id)
+        if old_for_conn:
+            self.remove_live_driver(old_for_conn, remove_connection=False)
+        old_for_car = self.live_by_car.get(car_id)
+        if old_for_car:
+            self.remove_live_driver(old_for_car, remove_connection=False)
+        old_for_number = self.live_by_race_number.get(race_number)
+        if old_for_number:
+            self.remove_live_driver(old_for_number, remove_connection=False)
         driver = {
             "connectionId": connection_id,
             "carId": car_id,
@@ -238,6 +323,7 @@ class AccBanWatcher:
         self.live_by_race_number[race_number] = driver
         self.live_by_connection[connection_id] = driver
         self.live_by_car[car_id] = driver
+        self.car_specs[car_id] = {"raceNumber": race_number, "carModel": car_model}
 
         name_key = normalize_name(driver.get("name"))
         if name_key:
@@ -248,6 +334,7 @@ class AccBanWatcher:
             self.live_by_name[name_key].append(driver)
             self.remember_admin_alias(driver.get("playerID"), driver.get("name"))
 
+        self.live_state_dirty = True
         logging.info(
             "Live driver #%s conn=%s car=%s steam=%s name=%s",
             race_number,
@@ -255,6 +342,47 @@ class AccBanWatcher:
             car_id,
             driver.get("playerID"),
             driver.get("name"),
+        )
+
+    def remove_live_driver(self, driver: dict | None, remove_connection: bool = True) -> None:
+        if not driver:
+            return
+        connection_id = driver.get("connectionId")
+        car_id = driver.get("carId")
+        race_number = driver.get("raceNumber")
+        if connection_id is not None:
+            self.live_by_connection.pop(connection_id, None)
+            if remove_connection:
+                self.connections.pop(connection_id, None)
+            self.pending_connection_ids = [item for item in self.pending_connection_ids if item != connection_id]
+        if car_id is not None:
+            self.live_by_car.pop(car_id, None)
+        if race_number is not None:
+            current = self.live_by_race_number.get(race_number)
+            if not current or current.get("connectionId") == connection_id:
+                self.live_by_race_number.pop(race_number, None)
+        name_key = normalize_name(driver.get("name"))
+        if name_key in self.live_by_name:
+            self.live_by_name[name_key] = [
+                item for item in self.live_by_name[name_key] if item.get("connectionId") != connection_id
+            ]
+            if not self.live_by_name[name_key]:
+                self.live_by_name.pop(name_key, None)
+        self.live_state_dirty = True
+
+    def attach_car_to_connection(self, car_id: int, connection_id: int) -> None:
+        spec = self.car_specs.get(car_id)
+        connection = self.connections.get(connection_id)
+        if not spec or not connection:
+            return
+        current = self.live_by_car.get(car_id)
+        if current and current.get("connectionId") == connection_id and current.get("playerID"):
+            return
+        self.add_live_driver(
+            race_number=int(spec.get("raceNumber")),
+            car_id=car_id,
+            car_model=int(spec.get("carModel")),
+            connection_id=connection_id,
         )
 
     def resolve_admin_player_id(self, chat_name: str, admins: set[str]) -> str | None:
@@ -342,32 +470,64 @@ class AccBanWatcher:
         return True
 
     def mark_disconnect(self, log_ms: int, connection_id: int) -> None:
+        disconnected_driver = self.live_by_connection.get(connection_id)
         for pending in self.pending_bans:
             if pending.get("connectionId") == connection_id and self.is_within_confirm_window(log_ms, pending):
                 pending["seenDisconnect"] = True
+                if disconnected_driver and disconnected_driver.get("playerID"):
+                    pending.update(
+                        {
+                            "connectionId": disconnected_driver.get("connectionId"),
+                            "carId": disconnected_driver.get("carId"),
+                            "playerID": disconnected_driver.get("playerID"),
+                            "name": disconnected_driver.get("name"),
+                            "raceNumber": disconnected_driver.get("raceNumber"),
+                        }
+                    )
                 logging.info("Pending ban #%s saw disconnect conn=%s", pending["raceNumber"], connection_id)
+            elif pending.get("raceNumber") and disconnected_driver and pending.get("raceNumber") == disconnected_driver.get("raceNumber") and self.is_within_confirm_window(log_ms, pending):
+                pending["seenDisconnect"] = True
+                pending.update(
+                    {
+                        "connectionId": disconnected_driver.get("connectionId"),
+                        "carId": disconnected_driver.get("carId"),
+                        "playerID": disconnected_driver.get("playerID"),
+                        "name": disconnected_driver.get("name"),
+                        "raceNumber": disconnected_driver.get("raceNumber"),
+                    }
+                )
+                logging.info("Pending ban #%s matched disconnect conn=%s target=%s", pending["raceNumber"], connection_id, pending.get("playerID"))
 
     def mark_car_remove(self, log_ms: int, car_id: int) -> None:
+        removed_driver = self.live_by_car.get(car_id)
         for pending in self.pending_bans:
             if pending.get("carId") == car_id and self.is_within_confirm_window(log_ms, pending):
                 pending["seenCarRemove"] = True
+                if removed_driver and removed_driver.get("playerID"):
+                    pending.update(
+                        {
+                            "connectionId": removed_driver.get("connectionId"),
+                            "carId": removed_driver.get("carId"),
+                            "playerID": removed_driver.get("playerID"),
+                            "name": removed_driver.get("name"),
+                            "raceNumber": removed_driver.get("raceNumber"),
+                        }
+                    )
                 logging.info("Pending ban #%s saw car remove car=%s", pending["raceNumber"], car_id)
+            elif pending.get("raceNumber") and removed_driver and pending.get("raceNumber") == removed_driver.get("raceNumber") and self.is_within_confirm_window(log_ms, pending):
+                pending["seenCarRemove"] = True
+                pending.update(
+                    {
+                        "connectionId": removed_driver.get("connectionId"),
+                        "carId": removed_driver.get("carId"),
+                        "playerID": removed_driver.get("playerID"),
+                        "name": removed_driver.get("name"),
+                        "raceNumber": removed_driver.get("raceNumber"),
+                    }
+                )
+                logging.info("Pending ban #%s matched car remove car=%s target=%s", pending["raceNumber"], car_id, pending.get("playerID"))
 
-        driver = self.live_by_car.pop(car_id, None)
-        if not driver:
-            return
-
-        connection_id = driver.get("connectionId")
-        self.live_by_connection.pop(connection_id, None)
-        self.live_by_race_number.pop(driver.get("raceNumber"), None)
-        self.connections.pop(connection_id, None)
-        name_key = normalize_name(driver.get("name"))
-        if name_key in self.live_by_name:
-            self.live_by_name[name_key] = [
-                item for item in self.live_by_name[name_key] if item.get("carId") != car_id
-            ]
-            if not self.live_by_name[name_key]:
-                self.live_by_name.pop(name_key, None)
+        self.remove_live_driver(removed_driver)
 
     def is_within_confirm_window(self, log_ms: int, pending: dict) -> bool:
         return 0 <= log_ms - int(pending.get("logMs", 0)) <= self.confirm_window_ms
@@ -389,52 +549,67 @@ class AccBanWatcher:
         self.pending_bans = kept
 
     def process_record(self, log_ms: int, message: str) -> None:
-        located = LOCATED_ENTRY_RE.search(message)
-        if located:
-            connection_id = int(located.group(1))
-            self.connections.setdefault(connection_id, {})["playerID"] = located.group(2)
-            self.prune_connection_cache()
+        for line in message.splitlines() or [message]:
+            if RESET_CONNECTIONS_RE.search(line):
+                self.reset_live_state(clear_connections=True)
+                continue
 
-        connection = CONNECTION_RE.search(message)
-        if connection:
-            connection_id = int(connection.group(1))
-            player_name = connection.group(2).strip()
-            player_id = connection.group(3)
-            self.connections[connection_id] = {
-                **self.connections.get(connection_id, {}),
-                "name": player_name,
-                "playerID": player_id,
-                "carModel": int(connection.group(4)),
-            }
-            self.remember_admin_alias(player_id, player_name)
-            if connection_id not in self.live_by_connection and connection_id not in self.pending_connection_ids:
-                self.pending_connection_ids.append(connection_id)
-                if len(self.pending_connection_ids) > MAX_CONNECTION_CACHE:
-                    self.pending_connection_ids = self.pending_connection_ids[-MAX_CONNECTION_CACHE:]
-            self.prune_connection_cache()
+            located = LOCATED_ENTRY_RE.search(line)
+            if located:
+                connection_id = int(located.group(1))
+                self.connections.setdefault(connection_id, {})["playerID"] = located.group(2)
+                self.prune_connection_cache()
 
-        car = CAR_RE.search(message)
-        if car:
-            self.add_live_driver(
-                race_number=int(car.group(3)),
-                car_id=int(car.group(1)),
-                car_model=int(car.group(2)),
-                connection_id=self.pop_pending_connection(),
-            )
+            connection = CONNECTION_RE.search(line)
+            if connection:
+                connection_id = int(connection.group(1))
+                player_name = connection.group(2).strip()
+                player_id = connection.group(3)
+                self.connections[connection_id] = {
+                    **self.connections.get(connection_id, {}),
+                    "name": player_name,
+                    "playerID": player_id,
+                    "carModel": int(connection.group(4)),
+                }
+                self.remember_admin_alias(player_id, player_name)
+                if connection_id not in self.live_by_connection and connection_id not in self.pending_connection_ids:
+                    self.pending_connection_ids.append(connection_id)
+                    if len(self.pending_connection_ids) > MAX_CONNECTION_CACHE:
+                        self.pending_connection_ids = self.pending_connection_ids[-MAX_CONNECTION_CACHE:]
+                self.prune_connection_cache()
 
-        chat_ban = CHAT_BAN_RE.search(message)
-        if chat_ban:
-            self.queue_ban(log_ms, chat_ban.group(1).strip(), int(chat_ban.group(2)))
+            car = CAR_RE.search(line) or RECONNECT_RE.search(line)
+            if car:
+                car_id = int(car.group(1))
+                self.car_specs[car_id] = {
+                    "carModel": int(car.group(2)),
+                    "raceNumber": int(car.group(3)),
+                }
+                self.add_live_driver(
+                    race_number=int(car.group(3)),
+                    car_id=car_id,
+                    car_model=int(car.group(2)),
+                    connection_id=self.pop_pending_connection(),
+                )
 
-        remove_conn = REMOVE_CONN_RE.search(message)
-        if remove_conn:
-            self.mark_disconnect(log_ms, int(remove_conn.group(1)))
+            handshake = HANDSHAKE_RE.search(line)
+            if handshake:
+                self.attach_car_to_connection(int(handshake.group(1)), int(handshake.group(2)))
 
-        remove_car = REMOVE_CAR_RE.search(message)
-        if remove_car:
-            self.mark_car_remove(log_ms, int(remove_car.group(1)))
+            chat_ban = CHAT_BAN_RE.search(line)
+            if chat_ban:
+                self.queue_ban(log_ms, chat_ban.group(1).strip(), int(chat_ban.group(2)))
+
+            remove_conn = CLIENT_CLOSED_RE.search(line) or REMOVE_CONN_RE.search(line)
+            if remove_conn:
+                self.mark_disconnect(log_ms, int(remove_conn.group(1)))
+
+            remove_car = REMOVE_CAR_RE.search(line) or PURGE_CAR_RE.search(line)
+            if remove_car:
+                self.mark_car_remove(log_ms, int(remove_car.group(1)))
 
         self.prune_pending_bans(log_ms)
+        self.write_live_state()
 
     def pop_pending_connection(self) -> int:
         while self.pending_connection_ids:
@@ -497,8 +672,11 @@ class AccBanWatcher:
             elif replay_once:
                 if buffer.strip():
                     self.process_text(buffer)
+                self.write_live_state(force=True)
                 logging.info("Replay finished at byte %s", position)
                 return
+            else:
+                self.write_live_state()
 
             time.sleep(poll_seconds)
 
@@ -552,7 +730,8 @@ def main() -> None:
     confirm_window_ms = args.confirm_window_ms or int(
         os.getenv(ENV_CONFIRM_WINDOW_MS, DEFAULT_CONFIRM_WINDOW_MS)
     )
-    from_start = args.from_start or os.getenv(ENV_FROM_START, "").strip().lower() in {"1", "true", "yes", "on"}
+    from_start_value = os.getenv(ENV_FROM_START, "").strip().lower()
+    from_start = args.from_start or from_start_value not in {"0", "false", "no", "off", "end"}
 
     configure_logging(server_dir)
     watcher = AccBanWatcher(
@@ -565,6 +744,7 @@ def main() -> None:
 
     if args.build_once:
         watcher.write_entrylist()
+        watcher.write_live_state(force=True)
         return
 
     watcher.follow(poll_seconds, from_start=from_start, replay_once=args.replay_once)
