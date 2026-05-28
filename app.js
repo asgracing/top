@@ -599,10 +599,12 @@ const translations = {
     racesCols: ["Date", "Track", "Winner", "Drivers", "Best Lap"],
     raceModalCols: ["Pos", "Start", "Δ", "Driver", "Best Lap", "Car", "Gap", "Pts", "Pen pts"],
     notCountedBadge: "Not counted",
+    countedBadge: "Counted",
     raceSummaryTrack: "Track",
     raceSummaryWinner: "Winner",
     raceSummaryDrivers: "Drivers",
     raceSummaryBestLap: "Best lap",
+    raceSummaryStatus: "Status",
     racePenaltyShort: "Pen pts",
     raceBestLapBadge: "Fastest lap",
     noWinner: "No winner",
@@ -1001,10 +1003,12 @@ const translations = {
     racesCols: ["Дата", "Трасса", "Победитель", "Пилоты", "Лучший круг"],
     raceModalCols: ["Поз.", "Старт", "Δ", "Пилот", "Лучший круг", "Машина", "Отставание", "Очки", "Штр. очки"],
     notCountedBadge: "Не засчитано",
+    countedBadge: "Засчитано",
     raceSummaryTrack: "Трасса",
     raceSummaryWinner: "Победитель",
     raceSummaryDrivers: "Пилотов",
     raceSummaryBestLap: "Лучший круг",
+    raceSummaryStatus: "Статус",
     racePenaltyShort: "Штр. очки",
     raceBestLapBadge: "Быстрый круг",
     noWinner: "Нет победителя",
@@ -5588,6 +5592,11 @@ function renderRaceResultsModal() {
 
   titleEl.textContent = humanizeTrackName(selectedRace.track);
   subtitleEl.textContent = formatDateTimeLocal(selectedRace.finished_at, currentLang);
+  const raceCountedLabel = selectedRace.counted_for_stats === false
+    ? t("notCountedBadge")
+    : selectedRace.counted_for_stats === true
+      ? t("countedBadge")
+      : "-";
 
   summaryEl.innerHTML = `
     <div class="race-summary-card">
@@ -5605,6 +5614,10 @@ function renderRaceResultsModal() {
     <div class="race-summary-card">
       <div class="race-summary-label">${escapeHtml(t("raceSummaryBestLap"))}</div>
       <div class="race-summary-value best-lap-value">${escapeHtml(selectedRace.best_lap || "-")}</div>
+    </div>
+    <div class="race-summary-card">
+      <div class="race-summary-label">${escapeHtml(t("raceSummaryStatus"))}</div>
+      <div class="race-summary-value">${escapeHtml(raceCountedLabel)}</div>
     </div>
   `;
 
