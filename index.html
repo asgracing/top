@@ -435,7 +435,7 @@
       </div>
 
       <div class="server-sticky-cards">
-        <div class="server-sticky-card server-sticky-card-main" id="server-card-main">
+        <div class="server-sticky-card server-sticky-card-main server-sticky-card-clickable" id="server-card-main" role="button" tabindex="0" aria-controls="server-players-modal">
           <div class="server-sticky-card-overlay"></div>
           <div class="server-sticky-card-content">
             <div class="server-sticky-card-name" data-i18n="serverMainLabel">Main</div>
@@ -727,6 +727,23 @@
       </div>
 
       <div class="driver-highlights-grid" id="driver-preview-highlights"></div>
+    </div>
+  </div>
+</div>
+<div class="modal-overlay" id="server-players-modal" aria-hidden="true">
+  <div class="modal-card modal-card-server-players" role="dialog" aria-modal="true" aria-labelledby="server-players-title">
+    <button class="modal-close" id="server-players-close" type="button" aria-label="Close" data-i18n-aria-label="closeLabel">✕</button>
+
+    <div class="modal-header">
+      <div>
+        <div class="eyebrow" data-i18n="serverPlayersEyebrow">Live server</div>
+        <h3 id="server-players-title" class="modal-title" data-i18n="playersOnlineTitle">Players online</h3>
+        <p class="modal-subtitle" id="server-players-subtitle">—</p>
+      </div>
+    </div>
+
+    <div class="server-players-list" id="server-players-list">
+      <div class="empty-box">—</div>
     </div>
   </div>
 </div>

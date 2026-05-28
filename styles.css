@@ -2475,6 +2475,27 @@ tr.is-interactive-row:focus-visible {
   backdrop-filter: blur(8px);
 }
 
+.server-sticky-card-clickable {
+  cursor: pointer;
+}
+
+.server-sticky-card-clickable::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  border-radius: inherit;
+  border: 1px solid transparent;
+  transition: border-color 160ms ease, box-shadow 160ms ease, background 160ms ease;
+}
+
+.server-sticky-card-clickable:hover::after,
+.server-sticky-card-clickable:focus-visible::after {
+  border-color: rgba(255, 255, 255, 0.38);
+  box-shadow: inset 0 0 0 1px rgba(255, 255, 255, 0.12), 0 0 0 3px rgba(255, 255, 255, 0.08);
+  background: rgba(255, 255, 255, 0.05);
+}
+
 .server-sticky-card-overlay {
   position: absolute;
   inset: 0;
@@ -3569,6 +3590,10 @@ tbody tr:last-child td {
   max-height: calc(100dvh - var(--top-nav-modal-offset, 140px) - var(--modal-offset-bottom, 20px));
 }
 
+.modal-card-server-players {
+  width: min(680px, 100%);
+}
+
 .modal-card-slot {
   --modal-track-photo: none;
   max-height: none;
@@ -3617,6 +3642,63 @@ tbody tr:last-child td {
 .modal-close:hover {
   background: rgba(255, 255, 255, 0.14);
   transform: scale(1.03);
+}
+
+.server-players-list {
+  display: grid;
+  gap: 8px;
+  padding-top: 6px;
+}
+
+.server-player-row {
+  display: grid;
+  grid-template-columns: 38px minmax(0, 1fr) 82px;
+  align-items: center;
+  gap: 12px;
+  min-height: 54px;
+  padding: 8px 10px;
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  border-radius: 8px;
+  background: rgba(255, 255, 255, 0.035);
+}
+
+.server-player-position {
+  width: 30px;
+  height: 30px;
+  display: inline-grid;
+  place-items: center;
+  border-radius: 999px;
+  background: rgba(255, 255, 255, 0.1);
+  color: #fff;
+  font-weight: 900;
+  font-size: 0.78rem;
+}
+
+.server-player-main {
+  min-width: 0;
+}
+
+.server-player-name {
+  color: #fff;
+  font-weight: 850;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.server-player-meta {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  margin-top: 2px;
+  color: rgba(255, 255, 255, 0.62);
+  font-size: 0.78rem;
+}
+
+.server-player-car {
+  justify-self: end;
+  max-width: 82px;
+  max-height: 34px;
 }
 
 .today-stats-grid {

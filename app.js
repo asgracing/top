@@ -204,6 +204,7 @@ let donationAlertsFailed = false;
 let driverPreviewModalController = null;
 let hourlyHeroModalController = null;
 let onlineActivityModalController = null;
+let serverPlayersModalController = null;
 let selectedActivityDate = null;
 let selectedActivityMonth = null;
 let twitchWidgetCheckTimer = null;
@@ -230,6 +231,7 @@ let backgroundVideoSoundState = {
   volume: 0.5
 };
 let funStatsPeriod = "week";
+let serverStatusData = null;
 const driverProfileCache = new Map();
 const raceDetailsCache = new Map();
 let legacyRaceArchivePromise = null;
@@ -407,6 +409,10 @@ const translations = {
     serverConnectBtn: "Connect",
     serverConnectHowTo: "How to?",
     serverConnectUnavailable: "Add public server IP/host to enable direct connect",
+    serverPlayersEyebrow: "Live server",
+    playersOnlineTitle: "Players online",
+    playersOnlineEmpty: "No players online.",
+    playersOnlineUpdated: "Updated {time}",
     driversCountLabel: "Drivers in leaderboard",
     driversCountNote: "Unique participants included in the stats.",
     bestLapHighlightLabel: "Best lap record",
@@ -870,6 +876,10 @@ const translations = {
     serverConnectBtn: "Подключиться",
     serverConnectHowTo: "Как подключиться?",
     serverConnectUnavailable: "Укажите публичный IP/host сервера, чтобы включить прямое подключение",
+    serverPlayersEyebrow: "Live сервер",
+    playersOnlineTitle: "Игроки онлайн",
+    playersOnlineEmpty: "Сейчас на сервере никого нет.",
+    playersOnlineUpdated: "Обновлено {time}",
     driversCountLabel: "Пилотов в рейтинге",
     driversCountNote: "Уникальные участники, попавшие в статистику.",
     bestLapHighlightLabel: "Лучший круг",
@@ -5237,6 +5247,79 @@ function applyServerStatusClass(element, status) {
   );
 }
 
+function getServerDrivers(server) {
+  if (!server || typeof server !== "object") return [];
+  const drivers = Array.isArray(server.drivers)
+    ? server.drivers
+    : Array.isArray(server.live_drivers)
+      ? server.live_drivers
+      : [];
+  return drivers
+    .filter(Boolean)
+    .map((driver, index) => ({ ...driver, position: driver.position || index + 1 }));
+}
+
+function renderServerPlayersModal() {
+  const titleEl = document.getElementById("server-players-title");
+  const subtitleEl = document.getElementById("server-players-subtitle");
+  const listEl = document.getElementById("server-players-list");
+  if (!titleEl || !subtitleEl || !listEl) return;
+
+  const mainServer = resolveNamedServerStatus(serverStatusData, "main");
+  const drivers = getServerDrivers(mainServer);
+  titleEl.textContent = t("playersOnlineTitle");
+  subtitleEl.textContent = replaceTokens(t("playersOnlineUpdated"), {
+    time: formatDateTimeLocal(serverStatusData?.updated_at || mainServer?.updated_at, currentLang) || "-"
+  });
+
+  if (!drivers.length) {
+    listEl.innerHTML = `<div class="empty-box">${escapeHtml(t("playersOnlineEmpty"))}</div>`;
+    return;
+  }
+
+  listEl.innerHTML = drivers.map((driver, index) => {
+    const raceNumber = driver.raceNumber ?? driver.car_number ?? driver.race_number;
+    const carName = getResultCarName(driver);
+    return `
+      <article class="server-player-row">
+        <div class="server-player-position">${escapeHtml(driver.position || index + 1)}</div>
+        <div class="server-player-main">
+          <div class="server-player-name">${escapeHtml(driver.name || "-")}</div>
+          <div class="server-player-meta">
+            ${raceNumber != null ? `<span>#${escapeHtml(raceNumber)}</span>` : ""}
+            <span>${escapeHtml(carName)}</span>
+          </div>
+        </div>
+        ${renderCarImage(driver, { className: "car-thumb car-thumb-inline server-player-car", alt: carName })}
+      </article>
+    `;
+  }).join("");
+}
+
+function initServerPlayersModal() {
+  serverPlayersModalController = createModalController({
+    modalId: "server-players-modal",
+    closeButtonId: "server-players-close",
+    onOpen: renderServerPlayersModal
+  });
+
+  const cardEl = document.getElementById("server-card-main");
+  if (!cardEl || cardEl.dataset.playersModalBound === "true") return;
+
+  const openFromCard = (event) => {
+    if (event?.target?.closest?.("a, button")) return;
+    serverPlayersModalController?.open(cardEl);
+  };
+  cardEl.addEventListener("click", openFromCard);
+  cardEl.addEventListener("keydown", (event) => {
+    if (event.key !== "Enter" && event.key !== " ") return;
+    if (event.target?.closest?.("a, button")) return;
+    event.preventDefault();
+    serverPlayersModalController?.open(cardEl);
+  });
+  cardEl.dataset.playersModalBound = "true";
+}
+
 function updateServerCardBackgrounds() {
   const mainCard = document.getElementById("server-card-main");
   const sunsetCard = document.getElementById("server-card-sunset");
@@ -6915,6 +6998,7 @@ async function init() {
     initDriverOfDayModal();
     initDriverPreviewModal();
     initHourlyHeroModal();
+    initServerPlayersModal();
   }
   applyStaticTranslations();
 
@@ -6973,6 +7057,7 @@ async function init() {
     latestHourlyRaceData = data.latestHourlyRace;
     racesArchiveSummary = data.racesSummary;
     topDataV2TableMeta = data.tables;
+    serverStatusData = data.serverStatus;
 
     if (Array.isArray(data.raceActivity)) {
       raceActivityInsights = data.raceActivity;
@@ -7041,6 +7126,7 @@ async function init() {
       const mainPlayers = Number.isFinite(mainServer?.players_online) ? mainServer.players_online : 0;
       mainServerStatusEl.textContent = getLocalizedServerStatus(mainStatus, currentLang);
       mainServerPlayersEl.textContent = mainPlayers;
+      mainServerPlayersEl.title = t("playersOnlineTitle");
       applyServerStatusClass(mainServerStatusEl, mainStatus);
     }
     updateAccConnectLink("serverMainConnectLink", mainServer, ACC_CONNECT_SERVER_FALLBACKS.main);
