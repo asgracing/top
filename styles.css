@@ -2262,6 +2262,102 @@ tr.is-interactive-row:focus-visible {
   background: rgba(255, 255, 255, 0.05);
 }
 
+.elo-badge {
+  --elo-bg: rgba(255, 255, 255, 0.06);
+  --elo-border: rgba(255, 255, 255, 0.16);
+  --elo-fg: var(--text);
+  --elo-accent: var(--accent-2);
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  min-height: 38px;
+  padding: 0 12px;
+  border: 1px solid var(--elo-border);
+  border-radius: 999px;
+  background: var(--elo-bg);
+  color: var(--elo-fg);
+  font: inherit;
+  font-size: 0.86rem;
+  font-weight: 900;
+  line-height: 1;
+  white-space: nowrap;
+  cursor: pointer;
+  box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.06);
+  transition: transform 0.18s ease, box-shadow 0.18s ease, border-color 0.18s ease;
+}
+
+.elo-badge:hover,
+.elo-badge:focus-visible {
+  transform: translateY(-1px);
+  border-color: var(--elo-accent);
+  box-shadow: 0 12px 26px rgba(0, 0, 0, 0.18), inset 0 1px 0 rgba(255, 255, 255, 0.12);
+}
+
+.elo-badge-compact {
+  min-height: 32px;
+  padding: 0 10px;
+  font-size: 0.78rem;
+}
+
+.elo-badge-rank {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-width: 28px;
+  min-height: 22px;
+  padding: 0 6px;
+  border-radius: 999px;
+  color: var(--elo-accent);
+  background: rgba(255, 255, 255, 0.12);
+}
+
+.elo-badge-value {
+  color: inherit;
+}
+
+.elo-cat-1 {
+  --elo-bg: linear-gradient(135deg, rgba(255, 215, 102, 0.95), rgba(255, 153, 64, 0.86));
+  --elo-border: rgba(255, 226, 145, 0.72);
+  --elo-fg: #1b1510;
+  --elo-accent: #5c3200;
+}
+
+.elo-cat-2 {
+  --elo-bg: linear-gradient(135deg, rgba(213, 238, 255, 0.95), rgba(132, 182, 218, 0.86));
+  --elo-border: rgba(216, 244, 255, 0.72);
+  --elo-fg: #102232;
+  --elo-accent: #0b536e;
+}
+
+.elo-cat-3 {
+  --elo-bg: linear-gradient(135deg, rgba(255, 214, 128, 0.86), rgba(196, 137, 45, 0.72));
+  --elo-border: rgba(255, 215, 126, 0.56);
+  --elo-fg: #20160a;
+  --elo-accent: #6a3d00;
+}
+
+.elo-cat-4 {
+  --elo-bg: linear-gradient(135deg, rgba(184, 205, 230, 0.8), rgba(88, 121, 158, 0.62));
+  --elo-border: rgba(202, 223, 244, 0.42);
+  --elo-fg: #f6fbff;
+  --elo-accent: #dcecff;
+}
+
+.elo-cat-5 {
+  --elo-bg: linear-gradient(135deg, rgba(86, 217, 157, 0.72), rgba(31, 132, 97, 0.62));
+  --elo-border: rgba(116, 242, 184, 0.38);
+  --elo-fg: #effff8;
+  --elo-accent: #c9ffe7;
+}
+
+.elo-cat-6 {
+  --elo-bg: linear-gradient(135deg, rgba(239, 97, 97, 0.68), rgba(113, 52, 73, 0.62));
+  --elo-border: rgba(255, 139, 139, 0.34);
+  --elo-fg: #fff5f5;
+  --elo-accent: #ffd6d6;
+}
+
 .driver-stats-grid {
   display: grid;
   grid-template-columns: repeat(3, minmax(0, 1fr));
@@ -3191,6 +3287,49 @@ tbody tr.is-driver-preview-row:focus-visible {
   background: rgba(255, 91, 46, 0.07);
   transform: translateY(-1px);
   box-shadow: inset 0 0 0 1px rgba(255, 138, 76, 0.22);
+}
+
+tbody tr.elo-row {
+  position: relative;
+}
+
+tbody tr.elo-row td:first-child {
+  box-shadow: inset 3px 0 0 var(--elo-row-accent, rgba(255, 255, 255, 0.18));
+}
+
+tbody tr.elo-cat-1 {
+  --elo-row-accent: rgba(255, 201, 87, 0.94);
+  background: linear-gradient(90deg, rgba(255, 201, 87, 0.15), rgba(255, 201, 87, 0.03) 52%, transparent);
+}
+
+tbody tr.elo-cat-2 {
+  --elo-row-accent: rgba(164, 218, 255, 0.88);
+  background: linear-gradient(90deg, rgba(164, 218, 255, 0.13), rgba(164, 218, 255, 0.025) 52%, transparent);
+}
+
+tbody tr.elo-cat-3 {
+  --elo-row-accent: rgba(241, 178, 82, 0.82);
+  background: linear-gradient(90deg, rgba(241, 178, 82, 0.11), rgba(241, 178, 82, 0.025) 52%, transparent);
+}
+
+tbody tr.elo-cat-4 {
+  --elo-row-accent: rgba(148, 176, 210, 0.78);
+  background: linear-gradient(90deg, rgba(148, 176, 210, 0.1), rgba(148, 176, 210, 0.02) 52%, transparent);
+}
+
+tbody tr.elo-cat-5 {
+  --elo-row-accent: rgba(75, 211, 149, 0.78);
+  background: linear-gradient(90deg, rgba(75, 211, 149, 0.09), rgba(75, 211, 149, 0.02) 52%, transparent);
+}
+
+tbody tr.elo-cat-6 {
+  --elo-row-accent: rgba(239, 97, 97, 0.78);
+  background: linear-gradient(90deg, rgba(239, 97, 97, 0.1), rgba(239, 97, 97, 0.02) 52%, transparent);
+}
+
+tbody tr.elo-row:hover,
+tbody tr.elo-row:focus-visible {
+  background-color: rgba(255, 255, 255, 0.035);
 }
 
 tbody tr.is-driver-preview-row td:last-child {
@@ -4225,6 +4364,202 @@ body.modal-open {
   padding-bottom: 8px;
 }
 
+.modal-card-elo {
+  width: min(960px, 100%);
+}
+
+.elo-modal-summary {
+  display: grid;
+  grid-template-columns: minmax(160px, 0.45fr) minmax(0, 1fr);
+  gap: 12px;
+  margin-bottom: 14px;
+}
+
+.elo-modal-rating,
+.elo-modal-category {
+  min-height: 82px;
+  padding: 16px;
+  border: 1px solid var(--line);
+  border-radius: 18px;
+  background: rgba(255, 255, 255, 0.045);
+}
+
+.elo-modal-rating {
+  color: var(--elo-fg);
+  background: var(--elo-bg);
+  border-color: var(--elo-border);
+}
+
+.elo-modal-label {
+  display: block;
+  margin-bottom: 8px;
+  color: inherit;
+  opacity: 0.72;
+  font-size: 0.78rem;
+  font-weight: 800;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+}
+
+.elo-modal-value {
+  display: block;
+  font-size: clamp(2rem, 5vw, 3.5rem);
+  font-weight: 950;
+  line-height: 0.95;
+}
+
+.elo-modal-category-name {
+  color: var(--text);
+  font-size: clamp(1.2rem, 2.4vw, 1.8rem);
+  font-weight: 900;
+  line-height: 1.1;
+}
+
+.elo-modal-controls {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  flex-wrap: wrap;
+  margin-bottom: 14px;
+}
+
+.segmented-control {
+  display: inline-flex;
+  gap: 4px;
+  padding: 4px;
+  border: 1px solid var(--line);
+  border-radius: 999px;
+  background: rgba(255, 255, 255, 0.04);
+}
+
+.segmented-control button {
+  min-height: 32px;
+  padding: 0 12px;
+  border: 0;
+  border-radius: 999px;
+  background: transparent;
+  color: var(--muted);
+  font: inherit;
+  font-size: 0.82rem;
+  font-weight: 800;
+  cursor: pointer;
+}
+
+.segmented-control button.active,
+.segmented-control button:hover,
+.segmented-control button:focus-visible {
+  background: rgba(255, 255, 255, 0.12);
+  color: var(--text);
+}
+
+.elo-chart-wrap {
+  min-height: 260px;
+  padding: 12px;
+  border: 1px solid var(--line);
+  border-radius: 18px;
+  background: rgba(9, 13, 18, 0.42);
+  overflow: hidden;
+}
+
+.elo-chart {
+  display: block;
+  width: 100%;
+  height: auto;
+}
+
+.elo-chart-grid-line {
+  stroke: rgba(255, 255, 255, 0.09);
+  stroke-width: 1;
+}
+
+.elo-chart-axis {
+  fill: rgba(232, 238, 248, 0.64);
+  font-size: 12px;
+  font-weight: 700;
+}
+
+.elo-chart-area {
+  fill: rgba(255, 122, 61, 0.14);
+}
+
+.elo-chart-line {
+  fill: none;
+  stroke: #ffd166;
+  stroke-width: 3;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+}
+
+.elo-chart-dot {
+  fill: #ffd166;
+  stroke: #111820;
+  stroke-width: 2;
+}
+
+.elo-chart-empty {
+  display: grid;
+  min-height: 240px;
+  place-items: center;
+  color: var(--muted);
+  font-weight: 800;
+}
+
+.elo-about-block {
+  display: grid;
+  grid-template-columns: minmax(0, 0.95fr) minmax(320px, 1.25fr);
+  gap: 18px;
+  margin: 26px 0;
+  padding: 20px;
+  border: 1px solid var(--line);
+  border-radius: 18px;
+  background: linear-gradient(180deg, rgba(255, 255, 255, 0.055), rgba(255, 255, 255, 0.03));
+}
+
+.elo-about-copy h3 {
+  margin: 0 0 10px;
+  color: var(--text);
+}
+
+.elo-about-copy p:last-child {
+  margin-bottom: 0;
+}
+
+.elo-category-grid {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 10px;
+}
+
+.elo-category-card {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  min-height: 58px;
+  padding: 10px 12px;
+  border: 1px solid var(--elo-border);
+  border-radius: 16px;
+  background: var(--elo-bg);
+  color: var(--elo-fg);
+}
+
+.elo-category-card span {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 38px;
+  height: 32px;
+  border-radius: 999px;
+  background: rgba(255, 255, 255, 0.16);
+  color: var(--elo-accent);
+  font-weight: 950;
+}
+
+.elo-category-card strong {
+  font-size: 0.86rem;
+  line-height: 1.15;
+}
+
 #driver-of-day-content.is-empty {
   opacity: 0.45;
 }
@@ -4293,6 +4628,28 @@ body.modal-open {
 
 .table-card-modal {
   border-radius: 18px;
+}
+
+@media (max-width: 760px) {
+  .elo-modal-summary,
+  .elo-about-block,
+  .elo-category-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .elo-modal-controls {
+    align-items: stretch;
+  }
+
+  .segmented-control {
+    width: 100%;
+    justify-content: space-between;
+  }
+
+  .segmented-control button {
+    flex: 1 1 auto;
+    padding: 0 8px;
+  }
 }
 
 /* ===== FOOTER ===== */

@@ -198,10 +198,12 @@ let selectedRace = null;
 let driverIndexData = [];
 let driverProfileData = null;
 let driverPreviewState = null;
+let eloModalState = null;
 let donationAlertsData = null;
 let donationAlertsLoading = false;
 let donationAlertsFailed = false;
 let driverPreviewModalController = null;
+let eloModalController = null;
 let hourlyHeroModalController = null;
 let onlineActivityModalController = null;
 let serverPlayersModalController = null;
@@ -653,6 +655,7 @@ const translations = {
     leaderboardCols: [
       "#",
       "Driver",
+      "ELO",
       "Points",
       "Wins",
       "Podiums",
@@ -662,7 +665,7 @@ const translations = {
       "Car",
       "Session"
     ],
-    bestlapsCols: ["#", "Driver", "Best Lap", "Car", "Session", "Updated"],
+    bestlapsCols: ["#", "Driver", "ELO", "Best Lap", "Car", "Session", "Updated"],
     safetyBaseCols: ["#", "Driver", "Penalties", "Penalty Points"],
     leaderboardSearchPlaceholder: "Search driver...",
     bestlapsSearchPlaceholder: "Search driver...",
@@ -1061,6 +1064,7 @@ const translations = {
     leaderboardCols: [
       "№",
       "Пилот",
+      "ELO",
       "Очки",
       "Победы",
       "Подиумы",
@@ -1070,7 +1074,7 @@ const translations = {
       "Машина",
       "Сессия"
     ],
-    bestlapsCols: ["№", "Пилот", "Лучший круг", "Машина", "Сессия", "Обновлено"],
+    bestlapsCols: ["№", "Пилот", "ELO", "Лучший круг", "Машина", "Сессия", "Обновлено"],
     safetyBaseCols: ["№", "Пилот", "Нарушения", "Штрафные баллы"],
     leaderboardSearchPlaceholder: "Поиск пилота...",
     bestlapsSearchPlaceholder: "Поиск пилота...",
@@ -1176,11 +1180,70 @@ Object.assign(translations.ru, {
   hourlyWeatherRandom: "Случайность {value}"
 });
 
+Object.assign(translations.en, {
+  eloColumn: "ELO",
+  eloTitle: "ELO rating",
+  eloModalEyebrow: "Driver strength",
+  eloModalSubtitle: "Rating history across counted races.",
+  eloCurrentRating: "Current ELO",
+  eloCategoryLabel: "Rank",
+  eloNoData: "ELO data is not available yet.",
+  eloHistoryEmpty: "No ELO history for this driver yet.",
+  eloPeriodAll: "All",
+  eloPeriod365: "1Y",
+  eloPeriod180: "180D",
+  eloPeriod90: "90D",
+  eloPeriod30: "30D",
+  eloGridLow: "Low",
+  eloGridMedium: "Medium",
+  eloGridHigh: "High",
+  eloGridLabel: "Grid",
+  eloAboutTitle: "ELO rating",
+  eloAboutP1: "ELO is a form-based strength rating. Drivers start from a baseline, then gain or lose rating after counted races depending on finish position, field size and the strength of rivals.",
+  eloAboutP2: "Categories make the rating easier to read at a glance. A higher category means the driver has repeatedly performed well against the field.",
+  eloCategory1: "Category 1 — Champion",
+  eloCategory2: "Category 2 — Platinum",
+  eloCategory3: "Category 3 — Gold",
+  eloCategory4: "Category 4 — Silver",
+  eloCategory5: "Category 5 — Rookie",
+  eloCategory6: "Category 6 — Fallen"
+});
+
+Object.assign(translations.ru, {
+  eloColumn: "ELO",
+  eloTitle: "ELO рейтинг",
+  eloModalEyebrow: "Сила пилота",
+  eloModalSubtitle: "История изменения рейтинга по засчитанным гонкам.",
+  eloCurrentRating: "Текущий ELO",
+  eloCategoryLabel: "Ранг",
+  eloNoData: "Данные ELO пока недоступны.",
+  eloHistoryEmpty: "У этого пилота пока нет истории ELO.",
+  eloPeriodAll: "Все",
+  eloPeriod365: "1Г",
+  eloPeriod180: "180Д",
+  eloPeriod90: "90Д",
+  eloPeriod30: "30Д",
+  eloGridLow: "Низкая",
+  eloGridMedium: "Средняя",
+  eloGridHigh: "Высокая",
+  eloGridLabel: "Сетка",
+  eloAboutTitle: "ELO рейтинг",
+  eloAboutP1: "ELO — рейтинг силы по форме. Пилоты начинают с базового значения, а после засчитанных гонок получают или теряют рейтинг в зависимости от финиша, размера поля и силы соперников.",
+  eloAboutP2: "Категории помогают быстро читать рейтинг. Чем выше категория, тем стабильнее пилот показывает результат против общего поля.",
+  eloCategory1: "Категория 1 — Чемпион",
+  eloCategory2: "Категория 2 — Платина",
+  eloCategory3: "Категория 3 — Золото",
+  eloCategory4: "Категория 4 — Серебро",
+  eloCategory5: "Категория 5 — Новичок",
+  eloCategory6: "Категория 6 — Fallen"
+});
+
 currentLang = resolveInitialLanguage();
 
 const leaderboardColumns = [
   { key: "rank", type: "number" },
   { key: "driver", type: "string" },
+  { key: "elo", type: "number", sortable: false },
   { key: "points", type: "number" },
   { key: "wins", type: "number" },
   { key: "podiums", type: "number" },
@@ -1194,6 +1257,7 @@ const leaderboardColumns = [
 const bestlapsColumns = [
   { key: "rank", type: "number" },
   { key: "driver", type: "string" },
+  { key: "elo", type: "number", sortable: false },
   { key: "best_lap", type: "time" },
   { key: "car_name", type: "string" },
   { key: "session_type", type: "string" },
@@ -2919,12 +2983,131 @@ function getDriverPreviewRowData(row) {
   };
 }
 
+const ELO_CATEGORY_FALLBACKS = {
+  1: { threshold: 1350, labelKey: "eloCategory1", short: "C1" },
+  2: { threshold: 1250, labelKey: "eloCategory2", short: "C2" },
+  3: { threshold: 1150, labelKey: "eloCategory3", short: "C3" },
+  4: { threshold: 1050, labelKey: "eloCategory4", short: "C4" },
+  5: { threshold: 950, labelKey: "eloCategory5", short: "C5" },
+  6: { threshold: null, labelKey: "eloCategory6", short: "C6" }
+};
+
+function getEloCategoryId(value) {
+  const explicit = Number(value?.elo_category_id ?? value?.summary?.elo_category_id);
+  if (Number.isFinite(explicit) && explicit >= 1 && explicit <= 6) return explicit;
+  const rating = Number(value?.elo ?? value?.summary?.elo ?? value?.elo_internal_rating ?? value?.summary?.elo_internal_rating);
+  if (!Number.isFinite(rating)) return null;
+  if (rating >= 1350) return 1;
+  if (rating >= 1250) return 2;
+  if (rating >= 1150) return 3;
+  if (rating >= 1050) return 4;
+  if (rating >= 950) return 5;
+  return 6;
+}
+
+function getEloCategoryName(value, categoryId = null) {
+  const explicit = value?.elo_category_name || value?.summary?.elo_category_name;
+  if (explicit) return String(explicit);
+  const id = categoryId || getEloCategoryId(value);
+  return id ? t(ELO_CATEGORY_FALLBACKS[id]?.labelKey || "eloCategory6") : "";
+}
+
+function normalizeEloHistory(source) {
+  const history = source?.elo_history || source?.summary?.elo_history || [];
+  if (!Array.isArray(history)) return [];
+  return history
+    .map((item, index) => {
+      const rating = Number(item?.new_rating ?? item?.rating ?? item?.elo);
+      if (!Number.isFinite(rating)) return null;
+      const date = parseEloHistoryDate(item?.finished_at || item?.date || item?.race_file);
+      return {
+        index,
+        rating,
+        delta: Number(item?.rating_delta),
+        date,
+        label: item?.race_file || item?.date || `#${index + 1}`
+      };
+    })
+    .filter(Boolean);
+}
+
+function getEloInfo(source) {
+  if (!source || typeof source !== "object") return null;
+  const summary = source.summary || {};
+  const rating = Number(source.elo ?? summary.elo ?? source.elo_internal_rating ?? summary.elo_internal_rating);
+  if (!Number.isFinite(rating)) return null;
+  const categoryId = getEloCategoryId(source) || 6;
+  return {
+    rating: Math.round(rating),
+    internalRating: Number(source.elo_internal_rating ?? summary.elo_internal_rating),
+    rd: Number(source.elo_rd ?? summary.elo_rd),
+    categoryId,
+    categoryName: getEloCategoryName(source, categoryId),
+    categoryShort: ELO_CATEGORY_FALLBACKS[categoryId]?.short || `C${categoryId}`,
+    history: normalizeEloHistory(source),
+    driver: source.driver || summary.driver || source.name || "-",
+    publicId: source.public_id || summary.public_id || null,
+    playerId: source.player_id || summary.player_id || null
+  };
+}
+
+function getEloRowClass(source) {
+  const info = getEloInfo(source);
+  return info ? `elo-row elo-cat-${info.categoryId}` : "";
+}
+
+function findEloSource(publicId, playerId = null) {
+  const matches = [
+    driverProfileData,
+    driverPreviewState?.profile,
+    ...(Array.isArray(leaderboardData) ? leaderboardData : []),
+    ...(Array.isArray(bestlapsData) ? bestlapsData : []),
+    ...(Array.isArray(driverIndexData) ? driverIndexData : [])
+  ];
+  return matches.find(item => {
+    if (!item) return false;
+    return (publicId && item.public_id === publicId) || (playerId && item.player_id === playerId);
+  }) || null;
+}
+
+function renderEloBadge(source, { compact = false } = {}) {
+  const info = getEloInfo(source);
+  if (!info) return "";
+  return `
+    <button
+      class="elo-badge elo-cat-${escapeHtml(info.categoryId)} ${compact ? "elo-badge-compact" : ""}"
+      type="button"
+      data-elo-public-id="${escapeAttribute(info.publicId || "")}"
+      data-elo-player-id="${escapeAttribute(info.playerId || "")}"
+      title="${escapeAttribute(`${t("eloTitle")}: ${info.rating} · ${info.categoryName}`)}"
+    >
+      <span class="elo-badge-rank">${escapeHtml(info.categoryShort)}</span>
+      <span class="elo-badge-value">${escapeHtml(info.rating)}</span>
+    </button>
+  `;
+}
+
+function parseEloHistoryDate(value) {
+  const raw = String(value || "").trim();
+  if (!raw) return null;
+  const isoDate = new Date(raw);
+  if (!Number.isNaN(isoDate.getTime())) return isoDate;
+  const match = raw.match(/(\d{2})(\d{2})(\d{2})[_-](\d{2})(\d{2})(\d{2})/);
+  if (!match) return null;
+  const year = 2000 + Number(match[1]);
+  return new Date(year, Number(match[2]) - 1, Number(match[3]), Number(match[4]), Number(match[5]), Number(match[6]));
+}
+
+function buildDriverPreviewRowClass(row) {
+  return ["is-interactive-row", "is-driver-preview-row", getEloRowClass(row)].filter(Boolean).join(" ");
+}
+
 function buildDriverPreviewRowAttributes(row) {
   const preview = getDriverPreviewRowData(row);
   if (!preview) return "";
 
   return [
-    'class="is-interactive-row is-driver-preview-row"',
+    `class="${escapeAttribute(buildDriverPreviewRowClass(row))}"`,
     'tabindex="0"',
     'role="button"',
     `aria-label="${escapeAttribute(`${t("openDriverPreviewLabel")}: ${preview.driver}`)}"`,
@@ -3064,7 +3247,7 @@ function bindSortableHeaders(selector, sortState, onSort) {
 
 function renderSortableHeaders(columns, labels, sortState) {
   return columns.map((col, index) => `
-    <th class="sortable ${getSortClass(sortState, col.key)}" data-sort-key="${escapeHtml(col.key)}" tabindex="0" role="button" aria-sort="${getAriaSort(sortState, col.key)}">
+    <th class="${col.sortable === false ? "" : "sortable"} ${col.sortable === false ? "" : getSortClass(sortState, col.key)}" ${col.sortable === false ? "" : `data-sort-key="${escapeHtml(col.key)}" tabindex="0" role="button" aria-sort="${getAriaSort(sortState, col.key)}"`}>
       ${escapeHtml(Array.isArray(labels) ? labels[index] : col.label ?? col.key)}
     </th>
   `).join("");
@@ -4478,6 +4661,162 @@ function renderRankBadgeWithTrend(rank, change) {
   `;
 }
 
+function renderEloCell(row) {
+  return renderEloBadge(row, { compact: true }) || `<span class="empty-inline">-</span>`;
+}
+
+function getFilteredEloHistory(info, periodDays = "all") {
+  const history = Array.isArray(info?.history) ? info.history : [];
+  if (!history.length || periodDays === "all") return history;
+  const days = Number(periodDays);
+  if (!Number.isFinite(days)) return history;
+  const dated = history.filter(item => item.date instanceof Date && !Number.isNaN(item.date.getTime()));
+  if (!dated.length) return history.slice(-Math.min(history.length, 40));
+  const lastTime = Math.max(...dated.map(item => item.date.getTime()));
+  const minTime = lastTime - days * 24 * 60 * 60 * 1000;
+  return history.filter(item => item.date instanceof Date && item.date.getTime() >= minTime);
+}
+
+function renderEloChart(info, period = "all", grid = "medium") {
+  const points = getFilteredEloHistory(info, period);
+  if (!points.length) {
+    return `<div class="elo-chart-empty">${escapeHtml(t("eloHistoryEmpty"))}</div>`;
+  }
+
+  const width = 820;
+  const height = 280;
+  const pad = { left: 48, right: 18, top: 22, bottom: 42 };
+  const ratings = points.map(item => item.rating);
+  const minRating = Math.min(...ratings);
+  const maxRating = Math.max(...ratings);
+  const spread = Math.max(40, maxRating - minRating);
+  const yMin = Math.floor((minRating - spread * 0.18) / 25) * 25;
+  const yMax = Math.ceil((maxRating + spread * 0.18) / 25) * 25;
+  const xMax = Math.max(1, points.length - 1);
+  const gridCount = grid === "high" ? 6 : grid === "low" ? 3 : 4;
+  const x = (index) => pad.left + (index / xMax) * (width - pad.left - pad.right);
+  const y = (rating) => pad.top + ((yMax - rating) / Math.max(1, yMax - yMin)) * (height - pad.top - pad.bottom);
+  const path = points.map((item, index) => `${index ? "L" : "M"}${x(index).toFixed(1)} ${y(item.rating).toFixed(1)}`).join(" ");
+  const area = `${path} L${x(points.length - 1).toFixed(1)} ${height - pad.bottom} L${pad.left} ${height - pad.bottom} Z`;
+  const gridLines = Array.from({ length: gridCount + 1 }, (_, index) => {
+    const value = yMin + ((yMax - yMin) / gridCount) * index;
+    const yy = y(value);
+    return `
+      <line x1="${pad.left}" y1="${yy.toFixed(1)}" x2="${width - pad.right}" y2="${yy.toFixed(1)}" class="elo-chart-grid-line" />
+      <text x="${pad.left - 10}" y="${(yy + 4).toFixed(1)}" class="elo-chart-axis" text-anchor="end">${Math.round(value)}</text>
+    `;
+  }).join("");
+  const dots = points.map((item, index) => `
+    <circle cx="${x(index).toFixed(1)}" cy="${y(item.rating).toFixed(1)}" r="${index === points.length - 1 ? 5 : 3}" class="elo-chart-dot">
+      <title>${escapeHtml(`${item.label}: ${item.rating}${Number.isFinite(item.delta) ? ` (${item.delta > 0 ? "+" : ""}${item.delta})` : ""}`)}</title>
+    </circle>
+  `).join("");
+  const first = points[0];
+  const last = points[points.length - 1];
+  const firstLabel = first.date ? formatDateLocal(first.date.toISOString(), currentLang) : first.label;
+  const lastLabel = last.date ? formatDateLocal(last.date.toISOString(), currentLang) : last.label;
+
+  return `
+    <svg class="elo-chart" viewBox="0 0 ${width} ${height}" role="img" aria-label="${escapeAttribute(t("eloTitle"))}">
+      ${gridLines}
+      <path d="${area}" class="elo-chart-area"></path>
+      <path d="${path}" class="elo-chart-line"></path>
+      ${dots}
+      <text x="${pad.left}" y="${height - 12}" class="elo-chart-axis">${escapeHtml(firstLabel)}</text>
+      <text x="${width - pad.right}" y="${height - 12}" class="elo-chart-axis" text-anchor="end">${escapeHtml(lastLabel)}</text>
+    </svg>
+  `;
+}
+
+function renderEloModal() {
+  const titleEl = document.getElementById("elo-modal-title");
+  const subtitleEl = document.getElementById("elo-modal-subtitle");
+  const bodyEl = document.getElementById("elo-modal-body");
+  if (!titleEl || !subtitleEl || !bodyEl) return;
+
+  const info = getEloInfo(eloModalState?.source);
+  if (!info) {
+    titleEl.textContent = t("eloTitle");
+    subtitleEl.textContent = t("eloNoData");
+    bodyEl.innerHTML = `<div class="empty-box">${escapeHtml(t("eloNoData"))}</div>`;
+    return;
+  }
+
+  const period = eloModalState?.period || "all";
+  const grid = eloModalState?.grid || "medium";
+  titleEl.textContent = info.driver || t("eloTitle");
+  subtitleEl.textContent = t("eloModalSubtitle");
+  const periods = ["all", "365", "180", "90", "30"];
+  const grids = ["low", "medium", "high"];
+
+  bodyEl.innerHTML = `
+    <div class="elo-modal-summary">
+      <div class="elo-modal-rating elo-cat-${escapeHtml(info.categoryId)}">
+        <span class="elo-modal-label">${escapeHtml(t("eloCurrentRating"))}</span>
+        <span class="elo-modal-value">${escapeHtml(info.rating)}</span>
+      </div>
+      <div class="elo-modal-category">
+        <span class="elo-modal-label">${escapeHtml(t("eloCategoryLabel"))}</span>
+        <span class="elo-modal-category-name">${escapeHtml(info.categoryName)}</span>
+      </div>
+    </div>
+    <div class="elo-modal-controls">
+      <div class="segmented-control">
+        ${periods.map(value => `<button type="button" class="${period === value ? "active" : ""}" data-elo-period="${value}">${escapeHtml(t(`eloPeriod${value === "all" ? "All" : value}`))}</button>`).join("")}
+      </div>
+      <div class="segmented-control segmented-control-grid" aria-label="${escapeAttribute(t("eloGridLabel"))}">
+        ${grids.map(value => `<button type="button" class="${grid === value ? "active" : ""}" data-elo-grid="${value}">${escapeHtml(t(`eloGrid${value[0].toUpperCase()}${value.slice(1)}`))}</button>`).join("")}
+      </div>
+    </div>
+    <div class="elo-chart-wrap">${renderEloChart(info, period, grid)}</div>
+  `;
+}
+
+function openEloModalForSource(source, trigger = null) {
+  if (!source) return;
+  eloModalState = {
+    source,
+    period: eloModalState?.period || "all",
+    grid: eloModalState?.grid || "medium"
+  };
+  eloModalController?.open(trigger);
+}
+
+function initEloModal() {
+  eloModalController = createModalController({
+    modalId: "elo-modal",
+    closeButtonId: "elo-modal-close",
+    onOpen: renderEloModal,
+    onClose: () => {
+      eloModalState = null;
+    }
+  });
+
+  document.addEventListener("click", (event) => {
+    const eloButton = event.target?.closest?.("[data-elo-public-id], [data-elo-player-id]");
+    if (eloButton) {
+      event.preventDefault();
+      event.stopPropagation();
+      const source = findEloSource(eloButton.dataset.eloPublicId, eloButton.dataset.eloPlayerId);
+      openEloModalForSource(source, eloButton);
+      return;
+    }
+
+    const periodButton = event.target?.closest?.("[data-elo-period]");
+    if (periodButton && document.getElementById("elo-modal")?.contains(periodButton)) {
+      eloModalState = { ...(eloModalState || {}), period: periodButton.dataset.eloPeriod || "all" };
+      renderEloModal();
+      return;
+    }
+
+    const gridButton = event.target?.closest?.("[data-elo-grid]");
+    if (gridButton && document.getElementById("elo-modal")?.contains(gridButton)) {
+      eloModalState = { ...(eloModalState || {}), grid: gridButton.dataset.eloGrid || "medium" };
+      renderEloModal();
+    }
+  });
+}
+
 function getChampionshipRankChange(row) {
   if (!row || typeof row !== "object") return null;
   return row.rank_change || row.latest_changes?.championship_rank || null;
@@ -4717,6 +5056,7 @@ function renderLeaderboardTablePage() {
           </div>
         </div>
       </td>
+      <td>${renderEloCell(row)}</td>
       <td>${escapeHtml(row.points ?? 0)}</td>
       <td>${escapeHtml(row.wins ?? 0)}</td>
       <td>${escapeHtml(row.podiums ?? 0)}</td>
@@ -4796,6 +5136,7 @@ function renderBestLapsTablePage() {
           </div>
         </div>
       </td>
+      <td>${renderEloCell(row)}</td>
       <td>${renderStatValueWithTrend(escapeHtml(row.best_lap ?? "-"), row.latest_changes?.best_lap_ms, "best_lap_ms")}</td>
       <td><span class="car-label-inline">${renderCarImage(row, { className: "car-thumb car-thumb-inline", alt: row.car_name || "" })}<span>${escapeHtml(row.car_name ?? "-")}</span></span></td>
       <td>${sessionLabel(row.session_type)}</td>
@@ -5931,8 +6272,10 @@ function renderRecentForm(items = []) {
 function buildDriverHeroTitle(profile) {
   if (!profile) return "-";
   const rankInfo = getDriverRankInfo(profile);
+  const eloSource = getEloInfo(profile) ? profile : findEloSource(profile.public_id, profile.player_id);
   return `
     <span class="driver-title-name">${escapeHtml(profile.driver || "-")}</span>
+    ${renderEloBadge(eloSource)}
     ${rankInfo ? `<span class="driver-rank-pill ${escapeHtml(rankInfo.rankClass)}" title="${escapeAttribute(t("driverRankingPosition"))}"><span class="driver-rank-label">${escapeHtml(t("driverRankingPosition"))}:</span><span class="driver-rank-value">#${escapeHtml(rankInfo.rank)}</span>${renderTrendBadge(rankInfo.change, "championship_rank", { compact: true })}</span>` : ""}
   `;
 }
@@ -7000,6 +7343,7 @@ async function init() {
     initHourlyHeroModal();
     initServerPlayersModal();
   }
+  initEloModal();
   applyStaticTranslations();
 
   try {

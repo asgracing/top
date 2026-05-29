@@ -50,7 +50,7 @@
   <meta name="twitter:image" content="https://asgracing.github.io/top/social/og.jpg" />
   <meta name="twitter:image:alt" content="ASG Racing driver profile preview" />
 
-  <link rel="stylesheet" href="../styles.css?v=20260508a" />
+  <link rel="stylesheet" href="../styles.css?v=20260529elo1" />
   <link rel="stylesheet" href="../legal.css" />
 </head>
 <body id="top" class="monza-bg-page">
@@ -221,6 +221,22 @@
       </div>
     </div>
 
+    <div class="modal-overlay" id="elo-modal" aria-hidden="true">
+      <div class="modal-card modal-card-elo" role="dialog" aria-modal="true" aria-labelledby="elo-modal-title">
+        <button class="modal-close" id="elo-modal-close" type="button" aria-label="Close" data-i18n-aria-label="closeLabel">✕</button>
+
+        <div class="modal-header">
+          <div>
+            <div class="eyebrow" data-i18n="eloModalEyebrow">Driver strength</div>
+            <h3 id="elo-modal-title" class="modal-title">ELO rating</h3>
+            <p class="modal-subtitle" id="elo-modal-subtitle" data-i18n="eloModalSubtitle">Rating history across counted races.</p>
+          </div>
+        </div>
+
+        <div id="elo-modal-body"></div>
+      </div>
+    </div>
+
     <footer class="footer">
       <div class="footer-inner">
         <div class="footer-left">
@@ -249,7 +265,7 @@
   </div>
 
   <script src="../legal.js" defer></script>
-  <script src="../app.js?v=20260526vps4" defer></script>
+  <script src="../app.js?v=20260529elo1" defer></script>
 </body>
 </html>
 
