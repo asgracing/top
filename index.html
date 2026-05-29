@@ -52,7 +52,7 @@
   <meta name="twitter:image" content="https://asgracing.ru/social/og.jpg" />
   <meta name="twitter:image:alt" content="ASG Racing ACC Leaderboard preview" />
 
-  <link rel="stylesheet" href="./styles.css?v=20260520goal3" />
+  <link rel="stylesheet" href="./styles.css?v=20260529elo1" />
   <link rel="stylesheet" href="./legal.css" />
 </head>
 <body id="top">
@@ -680,6 +680,26 @@
             All scaled values are rounded to whole points: 0.1-0.5 rounds down, 0.6-0.9 rounds up. The fastest lap always gives <strong>+1 point</strong>.
           </p>
 
+          <div class="elo-about-block">
+            <div class="elo-about-copy">
+              <h3 data-i18n="eloAboutTitle">ELO rating</h3>
+              <p data-i18n="eloAboutP1">
+                ELO is a form-based strength rating. Drivers start from a baseline, then gain or lose rating after counted races depending on finish position, field size and the strength of rivals.
+              </p>
+              <p data-i18n="eloAboutP2">
+                Categories make the rating easier to read at a glance. A higher category means the driver has repeatedly performed well against the field.
+              </p>
+            </div>
+            <div class="elo-category-grid" aria-label="ELO categories">
+              <div class="elo-category-card elo-cat-1"><span>C1</span><strong data-i18n="eloCategory1">Category 1 — Champion</strong></div>
+              <div class="elo-category-card elo-cat-2"><span>C2</span><strong data-i18n="eloCategory2">Category 2 — Platinum</strong></div>
+              <div class="elo-category-card elo-cat-3"><span>C3</span><strong data-i18n="eloCategory3">Category 3 — Gold</strong></div>
+              <div class="elo-category-card elo-cat-4"><span>C4</span><strong data-i18n="eloCategory4">Category 4 — Silver</strong></div>
+              <div class="elo-category-card elo-cat-5"><span>C5</span><strong data-i18n="eloCategory5">Category 5 — Rookie</strong></div>
+              <div class="elo-category-card elo-cat-6"><span>C6</span><strong data-i18n="eloCategory6">Category 6 — Fallen</strong></div>
+            </div>
+          </div>
+
           <h3 style="margin-top:26px; color:var(--text);" data-i18n="bestLapsInfoTitle">Best laps</h3>
 
           <p data-i18n="bestLapsInfoP1">
@@ -728,6 +748,21 @@
 
       <div class="driver-highlights-grid" id="driver-preview-highlights"></div>
     </div>
+  </div>
+</div>
+<div class="modal-overlay" id="elo-modal" aria-hidden="true">
+  <div class="modal-card modal-card-elo" role="dialog" aria-modal="true" aria-labelledby="elo-modal-title">
+    <button class="modal-close" id="elo-modal-close" type="button" aria-label="Close" data-i18n-aria-label="closeLabel">✕</button>
+
+    <div class="modal-header">
+      <div>
+        <div class="eyebrow" data-i18n="eloModalEyebrow">Driver strength</div>
+        <h3 id="elo-modal-title" class="modal-title">ELO rating</h3>
+        <p class="modal-subtitle" id="elo-modal-subtitle" data-i18n="eloModalSubtitle">Rating history across counted races.</p>
+      </div>
+    </div>
+
+    <div id="elo-modal-body"></div>
   </div>
 </div>
 <div class="modal-overlay" id="server-players-modal" aria-hidden="true">
@@ -953,6 +988,6 @@
   </div>
 
   <script src="./legal.js" defer></script>
-  <script src="./app.js?v=20260526perf3" defer></script>
+  <script src="./app.js?v=20260529elo1" defer></script>
 </body>
 </html>
