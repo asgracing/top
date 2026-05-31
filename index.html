@@ -128,7 +128,7 @@
         <a class="top-nav-link top-nav-link-secondary" href="./fun-stats/" data-i18n="btnFunStats" data-nav-item="true">Fun Stats</a>
         <a class="top-nav-link top-nav-link-secondary" href="#championship" data-i18n="btnChampionship" data-nav-item="true">Championship</a>
         <a class="top-nav-link top-nav-link-secondary" href="#bestlaps" data-i18n="btnBestLaps" data-nav-item="true">Best Laps</a>
-        <a class="top-nav-link top-nav-link-secondary" href="#worst-safety" data-i18n="btnWorstSafety" data-nav-item="true">Worst Safety</a>
+        <a class="top-nav-link top-nav-link-secondary" href="#worst-safety" data-i18n="btnWorstSafety" data-nav-item="true">Safety Rating</a>
         <a class="top-nav-link top-nav-link-secondary" href="#about-server" data-i18n="btnAboutServer" data-nav-item="true">About Server</a>
         <div class="top-nav-more" id="top-nav-more">
           <button
@@ -514,8 +514,8 @@
     <section class="section" id="worst-safety">
       <div class="section-header">
         <div>
-          <h2 class="section-title" data-i18n="worstSafetyTitle">Worst Safety</h2>
-          <p class="section-subtitle" data-i18n="worstSafetySubtitle">Penalty count, penalty points and breakdown by penalty type.</p>
+          <h2 class="section-title" data-i18n="worstSafetyTitle">Safety Rating</h2>
+          <p class="section-subtitle" data-i18n="worstSafetySubtitle">Driver safety score based on invalid laps and automatic race penalties.</p>
         </div>
         <div class="table-tools">
           <input id="safety-search" class="search-input" type="text" autocomplete="off" />
@@ -763,6 +763,21 @@
     </div>
 
     <div id="elo-modal-body"></div>
+  </div>
+</div>
+<div class="modal-overlay" id="safety-modal" aria-hidden="true">
+  <div class="modal-card modal-card-elo" role="dialog" aria-modal="true" aria-labelledby="safety-modal-title">
+    <button class="modal-close" id="safety-modal-close" type="button" aria-label="Close" data-i18n-aria-label="closeLabel">✕</button>
+
+    <div class="modal-header">
+      <div>
+        <div class="eyebrow" data-i18n="safetyModalEyebrow">Racecraft</div>
+        <h3 id="safety-modal-title" class="modal-title">Safety Rating</h3>
+        <p class="modal-subtitle" id="safety-modal-subtitle" data-i18n="safetyModalSubtitle">Safety Rating history across counted races.</p>
+      </div>
+    </div>
+
+    <div id="safety-modal-body"></div>
   </div>
 </div>
 <div class="modal-overlay" id="server-players-modal" aria-hidden="true">
