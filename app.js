@@ -605,7 +605,7 @@ const translations = {
     racesTableSubtitle: "Row click opens quick view. Name opens full profile.",
     raceModalEyebrow: "Race details",
     racesCols: ["Date", "Track", "Winner", "Drivers", "Avg ELO", "Best Lap"],
-    raceModalCols: ["Pos", "Start", "Δ", "Driver", "Best Lap", "Car", "ELO Δ", "Gap", "Pts", "Pen pts"],
+    raceModalCols: ["Pos", "Start", "Δ", "Driver", "Best Lap", "Car", "Gap", "ELO Δ", "Pts", "Pen pts"],
     notCountedBadge: "Not counted",
     countedBadge: "Counted",
     raceSummaryTrack: "Track",
@@ -648,7 +648,7 @@ const translations = {
     driverRankingPosition: "Ranking position",
     driverNoData: "Driver profile not found.",
     driverLoading: "Loading driver profile...",
-    driverRaceCols: ["Date", "Track", "Start", "Pos", "Δ", "Points", "Best Lap", "Car", "Gap", "Pen"],
+    driverRaceCols: ["Date", "Track", "Start", "Pos", "Δ", "Points", "Best Lap", "Car", "Gap", "ELO Δ", "Pen"],
     driverTrackCols: ["Track", "Races", "Wins", "Podiums", "Points", "Avg finish", "Best lap"],
     driverPenaltyReason: "Reason",
     driverPenaltyType: "Type",
@@ -1013,7 +1013,7 @@ const translations = {
     racesTableSubtitle: "Клик по строке открывает окно деталей. Имя открывает полный профиль.",
     raceModalEyebrow: "Детали гонки",
     racesCols: ["Дата", "Трасса", "Победитель", "Пилоты", "Ср. ELO", "Лучший круг"],
-    raceModalCols: ["Поз.", "Старт", "Δ", "Пилот", "Лучший круг", "Машина", "ELO Δ", "Отставание", "Очки", "Штр. очки"],
+    raceModalCols: ["Поз.", "Старт", "Δ", "Пилот", "Лучший круг", "Машина", "Отставание", "ELO Δ", "Очки", "Штр. очки"],
     notCountedBadge: "Не засчитано",
     countedBadge: "Засчитано",
     raceSummaryTrack: "Трасса",
@@ -1056,7 +1056,7 @@ const translations = {
     driverRankingPosition: "Позиция в рейтинге",
     driverNoData: "Профиль пилота не найден.",
     driverLoading: "Загрузка профиля пилота...",
-    driverRaceCols: ["Дата", "Трасса", "Старт", "Поз", "Δ", "Очки", "Лучший круг", "Машина", "Отставание", "Штр"],
+    driverRaceCols: ["Дата", "Трасса", "Старт", "Поз", "Δ", "Очки", "Лучший круг", "Машина", "Отставание", "ELO Δ", "Штр"],
     driverTrackCols: ["Трасса", "Гонки", "Победы", "Подиумы", "Очки", "Ср. финиш", "Лучший круг"],
     driverPenaltyReason: "Причина",
     driverPenaltyType: "Тип",
@@ -1201,7 +1201,7 @@ Object.assign(translations.en, {
   eloGridHigh: "High",
   eloGridLabel: "Grid",
   eloAboutTitle: "ELO rating",
-  eloAboutP1: "ELO is recalculated after counted races. Finish position is compared with the field strength, so beating stronger rivals gives more rating and losing to weaker rivals costs more.",
+  eloAboutP1: "ELO is recalculated after counted races. Finish position is compared with lobby strength, so beating stronger rivals gives more rating and losing to weaker rivals removes more ELO.",
   eloAboutP2: "Ranks are based on ELO thresholds: C1 1350+, C2 1250+, C3 1150+, C4 1050+, C5 950+, C6 below 950.",
   eloCategory1: "Category 1 — Champion",
   eloCategory2: "Category 2 — Platinum",
@@ -1234,7 +1234,7 @@ Object.assign(translations.ru, {
   eloGridHigh: "Высокая",
   eloGridLabel: "Сетка",
   eloAboutTitle: "ELO рейтинг",
-  eloAboutP1: "ELO пересчитывается после зачтенных гонок. Финиш сравнивается с силой поля: победа над сильными соперниками дает больше рейтинга, проигрыш более слабым стоит дороже.",
+  eloAboutP1: "ELO пересчитывается после зачтенных гонок. Финиш сравнивается с силой лобби: победа над сильными соперниками дает больше рейтинга, проигрыш слабым снимает больше ELO.",
   eloAboutP2: "Ранги считаются по порогам ELO: C1 1350+, C2 1250+, C3 1150+, C4 1050+, C5 950+, C6 ниже 950.",
   eloCategory1: "Категория 1 — Чемпион",
   eloCategory2: "Категория 2 — Платина",
@@ -1249,7 +1249,7 @@ currentLang = resolveInitialLanguage();
 const leaderboardColumns = [
   { key: "rank", type: "number" },
   { key: "driver", type: "string" },
-  { key: "elo", type: "number", sortable: false },
+  { key: "elo", type: "number" },
   { key: "points", type: "number" },
   { key: "wins", type: "number" },
   { key: "podiums", type: "number" },
@@ -1262,7 +1262,7 @@ const leaderboardColumns = [
 const bestlapsColumns = [
   { key: "rank", type: "number" },
   { key: "driver", type: "string" },
-  { key: "elo", type: "number", sortable: false },
+  { key: "elo", type: "number" },
   { key: "best_lap", type: "time" },
   { key: "car_name", type: "string" },
   { key: "session_type", type: "string" },
@@ -1340,6 +1340,7 @@ const driverRaceColumns = [
   { key: "best_lap", type: "time" },
   { key: "car_name", type: "string" },
   { key: "gap", type: "string" },
+  { key: "elo_rating_delta", type: "number" },
   { key: "penalty_points", type: "number" }
 ];
 
@@ -3040,7 +3041,15 @@ function normalizeEloHistory(source) {
 function getEloInfo(source) {
   if (!source || typeof source !== "object") return null;
   const summary = source.summary || {};
-  const rating = Number(source.elo ?? summary.elo ?? source.elo_internal_rating ?? summary.elo_internal_rating);
+  const rating = Number(
+    source.elo
+    ?? summary.elo
+    ?? source.elo_internal_rating
+    ?? summary.elo_internal_rating
+    ?? source.elo_rating_after
+    ?? source.elo_after
+    ?? source.new_rating
+  );
   if (!Number.isFinite(rating)) return null;
   const categoryId = getEloCategoryId(source) || 6;
   return {
@@ -4675,8 +4684,35 @@ function renderEloCell(row) {
   return renderEloBadge(row, { compact: true }) || `<span class="empty-inline">-</span>`;
 }
 
+function getEloDeltaValue(row) {
+  const candidates = [
+    row?.elo_rating_delta,
+    row?.elo_delta,
+    row?.rating_delta,
+    row?.ratingDelta,
+    row?.elo_change,
+    row?.eloChange,
+    row?.elo?.rating_delta,
+    row?.elo?.delta,
+    row?.summary?.elo_rating_delta,
+    row?.summary?.rating_delta,
+    row?.changes?.elo?.delta,
+    row?.latest_changes?.elo?.delta,
+  ];
+
+  for (const candidate of candidates) {
+    const value = typeof candidate === "object" && candidate !== null
+      ? candidate.delta ?? candidate.rating_delta ?? candidate.value
+      : candidate;
+    const numeric = Number(value);
+    if (Number.isFinite(numeric)) return numeric;
+  }
+
+  return NaN;
+}
+
 function renderEloDeltaCell(row) {
-  const delta = Number(row?.elo_rating_delta ?? row?.elo_delta ?? row?.rating_delta);
+  const delta = getEloDeltaValue(row);
   if (!Number.isFinite(delta) || delta === 0) return `<span class="empty-inline">-</span>`;
   const cls = delta > 0 ? "delta-positive" : "delta-negative";
   return `<span class="positions-delta ${cls}">${escapeHtml(`${delta > 0 ? "+" : ""}${Math.round(delta)}`)}</span>`;
@@ -6105,7 +6141,10 @@ function renderRaceResultsModal() {
 
   const headers = t("raceModalCols").map(label => `<th>${escapeHtml(label)}</th>`).join("");
   const highlightedDriverPublicId = IS_DRIVER_PAGE ? driverProfileData?.public_id : null;
-  const rows = raceResults.map(row => `
+  const rows = raceResults.map(row => {
+    const eloSource = getEloInfo(row) ? row : findEloSource(row.public_id, row.player_id);
+    const eloBadge = renderEloBadge(eloSource, { compact: true });
+    return `
     <tr class="${row.public_id && highlightedDriverPublicId && row.public_id === highlightedDriverPublicId ? "race-result-row-highlight" : ""}">
       <td>${renderRankBadgeWithTrend(row.position, row.rank_change)}</td>
       <td>${escapeHtml(formatStartPosition(row))}</td>
@@ -6114,7 +6153,10 @@ function renderRaceResultsModal() {
         <div class="driver-cell">
           <div class="driver-avatar">${escapeHtml(initials(row.driver))}</div>
           <div class="driver-name-wrap">
-            <div class="driver-name">${renderDriverLink(row.driver, row.public_id, "driver-link", row.player_id)}</div>
+            <div class="race-driver-title">
+              <span class="driver-name">${renderDriverLink(row.driver, row.public_id, "driver-link", row.player_id)}</span>
+              ${eloBadge ? `<span class="race-driver-elo">${eloBadge}</span>` : ""}
+            </div>
             <div class="race-note">${escapeHtml(row.race_number != null ? `#${row.race_number}` : "")}</div>
           </div>
         </div>
@@ -6123,16 +6165,17 @@ function renderRaceResultsModal() {
         <div class="${getBestLapClass(Boolean(row.had_best_lap))}">${escapeHtml(row.best_lap || "-")}</div>
         <div class="race-note">${row.had_best_lap ? escapeHtml(t("raceBestLapBadge")) : ""}</div>
       </td>
-      <td>
+      <td class="race-result-car-cell">
         <div>${renderCarLink(row.car_name || "-", "driver-link driver-link-subtle")}</div>
         <div class="race-note">${row.counted_for_stats === false ? escapeHtml(t("notCountedBadge")) : ""}</div>
       </td>
-      <td>${renderEloDeltaCell(row)}</td>
       <td>${escapeHtml(row.gap || (row.position === 1 ? "-" : "-"))}</td>
+      <td>${renderEloDeltaCell(row)}</td>
       <td>${escapeHtml(row.points ?? 0)}</td>
       <td>${escapeHtml(row.penalty_points ?? 0)}</td>
     </tr>
-  `).join("");
+  `;
+  }).join("");
 
   tableEl.innerHTML = `
     <table>
@@ -6454,6 +6497,7 @@ function renderDriverRaceHistory() {
         <div class="race-note">${row.counted_for_stats === false ? escapeHtml(t("notCountedBadge")) : ""}</div>
       </td>
       <td>${escapeHtml(row.gap ?? "-")}</td>
+      <td>${renderEloDeltaCell(row)}</td>
       <td>${escapeHtml(row.penalty_points ?? 0)}</td>
     </tr>
   `).join("");
@@ -7332,6 +7376,7 @@ function updateTopNavModalOffset() {
 
 function rerenderUI() {
   applyStaticTranslations();
+  if (eloModalState) renderEloModal();
 
   if (IS_DRIVER_PAGE) {
     renderDriverPage();

@@ -4631,6 +4631,74 @@ body.modal-open {
   color: inherit;
 }
 
+.race-driver-title {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  flex-wrap: wrap;
+  min-width: 0;
+}
+
+.race-driver-title .driver-name {
+  min-width: 0;
+}
+
+.race-driver-elo .elo-badge {
+  min-height: 26px;
+  padding: 0 8px;
+  font-size: 0.72rem;
+}
+
+.race-driver-elo .elo-badge-rank {
+  min-width: 24px;
+  min-height: 18px;
+  padding: 0 5px;
+}
+
+.race-result-car-cell {
+  width: 150px;
+  max-width: 170px;
+}
+
+.race-result-car-cell .car-label-inline {
+  max-width: 100%;
+}
+
+.race-result-car-cell .car-label-inline > span,
+.race-result-car-cell .car-label-inline > a {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+#bestlaps-table th {
+  padding-top: 12px;
+  padding-bottom: 12px;
+}
+
+#bestlaps-table td {
+  padding-top: 6px;
+  padding-bottom: 6px;
+}
+
+#bestlaps-table .rank-badge {
+  height: 30px;
+  min-width: 30px;
+}
+
+#bestlaps-table .elo-badge-compact {
+  min-height: 28px;
+}
+
+#bestlaps-table .car-thumb-inline {
+  width: 42px;
+  height: 28px;
+}
+
+#bestlaps-table .driver-cell {
+  gap: 8px;
+}
+
 .status-badge {
   display: inline-flex;
   align-items: center;
