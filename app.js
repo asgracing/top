@@ -6420,7 +6420,7 @@ function renderDriverRaceHistory() {
   if (!tableEl) return;
 
   const rawData = Array.isArray(driverProfileData?.race_history) ? driverProfileData.race_history : [];
-  const countedData = rawData.filter(row => row?.counted_for_stats !== false);
+  const countedData = rawData.filter(row => row?.counted_for_stats !== false && row?.counted_for_stats !== 0);
   const sortedData = sortData(countedData, driverRaceSort, driverRaceColumns);
   const result = paginate(sortedData, driverRacePage, PAGE_SIZE);
   driverRacePage = result.page;
