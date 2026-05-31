@@ -6420,11 +6420,12 @@ function renderDriverRaceHistory() {
   if (!tableEl) return;
 
   const rawData = Array.isArray(driverProfileData?.race_history) ? driverProfileData.race_history : [];
-  const sortedData = sortData(rawData, driverRaceSort, driverRaceColumns);
+  const countedData = rawData.filter(row => row?.counted_for_stats !== false);
+  const sortedData = sortData(countedData, driverRaceSort, driverRaceColumns);
   const result = paginate(sortedData, driverRacePage, PAGE_SIZE);
   driverRacePage = result.page;
   const rowsData = result.items;
-  const fastestLapMs = getFastestLapMs(rawData);
+  const fastestLapMs = getFastestLapMs(countedData);
   if (!rowsData.length) {
     tableEl.innerHTML = `<div class="empty-box">${escapeHtml(t("driverNoData"))}</div>`;
     const wrapEl = document.getElementById("driver-races-pagination-wrap");
@@ -6472,7 +6473,7 @@ function renderDriverRaceHistory() {
 
   bindInteractiveRows(tableEl, "tbody tr[data-race-id]", (row) => {
     const raceId = row.dataset.raceId;
-    const race = getRaceById(raceId) || rawData.find(item => item?.race_id === raceId) || null;
+    const race = getRaceById(raceId) || countedData.find(item => item?.race_id === raceId) || null;
     openRaceResultsModal(race, row);
   });
 
