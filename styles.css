@@ -2317,10 +2317,10 @@ tr.is-interactive-row:focus-visible {
 }
 
 .elo-cat-1 {
-  --elo-bg: linear-gradient(135deg, rgba(255, 215, 102, 0.95), rgba(255, 153, 64, 0.86));
-  --elo-border: rgba(255, 226, 145, 0.72);
-  --elo-fg: #1b1510;
-  --elo-accent: #5c3200;
+  --elo-bg: linear-gradient(135deg, rgba(196, 169, 255, 0.94), rgba(137, 104, 218, 0.82));
+  --elo-border: rgba(213, 194, 255, 0.66);
+  --elo-fg: #171124;
+  --elo-accent: #4b2c8a;
 }
 
 .elo-cat-2 {
@@ -2345,10 +2345,10 @@ tr.is-interactive-row:focus-visible {
 }
 
 .elo-cat-5 {
-  --elo-bg: linear-gradient(135deg, rgba(86, 217, 157, 0.72), rgba(31, 132, 97, 0.62));
-  --elo-border: rgba(116, 242, 184, 0.38);
-  --elo-fg: #effff8;
-  --elo-accent: #c9ffe7;
+  --elo-bg: linear-gradient(135deg, rgba(205, 127, 50, 0.86), rgba(124, 73, 34, 0.72));
+  --elo-border: rgba(226, 153, 79, 0.48);
+  --elo-fg: #fff8ee;
+  --elo-accent: #ffe0b6;
 }
 
 .elo-cat-6 {
@@ -3298,8 +3298,8 @@ tbody tr.elo-row td:first-child {
 }
 
 tbody tr.elo-cat-1 {
-  --elo-row-accent: rgba(255, 201, 87, 0.94);
-  background: linear-gradient(90deg, rgba(255, 201, 87, 0.15), rgba(255, 201, 87, 0.03) 52%, transparent);
+  --elo-row-accent: rgba(180, 145, 255, 0.9);
+  background: linear-gradient(90deg, rgba(180, 145, 255, 0.14), rgba(180, 145, 255, 0.03) 52%, transparent);
 }
 
 tbody tr.elo-cat-2 {
@@ -3318,8 +3318,8 @@ tbody tr.elo-cat-4 {
 }
 
 tbody tr.elo-cat-5 {
-  --elo-row-accent: rgba(75, 211, 149, 0.78);
-  background: linear-gradient(90deg, rgba(75, 211, 149, 0.09), rgba(75, 211, 149, 0.02) 52%, transparent);
+  --elo-row-accent: rgba(205, 127, 50, 0.82);
+  background: linear-gradient(90deg, rgba(205, 127, 50, 0.1), rgba(205, 127, 50, 0.025) 52%, transparent);
 }
 
 tbody tr.elo-cat-6 {
