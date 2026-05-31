@@ -3494,7 +3494,7 @@ tbody tr:last-child td {
 }
 
 .driver-avatar {
-  display: inline-flex;
+  display: none;
   align-items: center;
   justify-content: center;
   width: 38px;
@@ -3505,6 +3505,30 @@ tbody tr:last-child td {
   color: #101418;
   font-size: 14px;
   font-weight: 900;
+}
+
+.elo-period-pager {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
+  color: var(--muted);
+  font-size: 13px;
+}
+
+.elo-period-pager button {
+  width: 32px;
+  height: 32px;
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  background: rgba(255, 255, 255, 0.06);
+  color: var(--text);
+  cursor: pointer;
+}
+
+.elo-period-pager button:disabled {
+  cursor: default;
+  opacity: 0.35;
 }
 
 .driver-name-wrap {
@@ -4560,12 +4584,21 @@ body.modal-open {
   line-height: 1.15;
 }
 
+.elo-category-card small {
+  margin-left: auto;
+  color: inherit;
+  font-size: 0.78rem;
+  font-weight: 900;
+  opacity: 0.78;
+  white-space: nowrap;
+}
+
 #driver-of-day-content.is-empty {
   opacity: 0.45;
 }
 
 .modal-card-race {
-  width: min(1080px, 100%);
+  width: min(1280px, 100%);
 }
 
 .race-modal-summary {
