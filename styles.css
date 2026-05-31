@@ -2324,15 +2324,15 @@ tr.is-interactive-row:focus-visible {
   display: inline-flex;
   align-items: center;
   justify-content: center;
-  gap: 8px;
-  min-height: 38px;
-  padding: 0 12px;
+  gap: 6px;
+  min-height: 32px;
+  padding: 0 10px;
   border: 1px solid var(--sr-border);
   border-radius: 999px;
   background: var(--sr-bg);
   color: var(--sr-fg);
   font: inherit;
-  font-size: 0.86rem;
+  font-size: 0.82rem;
   font-weight: 900;
   line-height: 1;
   white-space: nowrap;
@@ -2349,21 +2349,14 @@ tr.is-interactive-row:focus-visible {
 }
 
 .sr-badge-compact {
-  min-height: 32px;
-  padding: 0 10px;
-  font-size: 0.78rem;
+  min-height: 26px;
+  padding: 0 8px;
+  font-size: 0.72rem;
 }
 
 .sr-badge-rank {
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-  min-width: 24px;
-  min-height: 22px;
-  padding: 0 6px;
-  border-radius: 999px;
+  display: contents;
   color: var(--sr-accent);
-  background: rgba(255, 255, 255, 0.13);
 }
 
 .sr-badge-value,
@@ -2372,11 +2365,11 @@ tr.is-interactive-row:focus-visible {
 }
 
 .sr-badge-delta.positive {
-  color: #d9ffe8;
+  color: #27ff86;
 }
 
 .sr-badge-delta.negative {
-  color: #ffe0df;
+  color: #ff4f5e;
 }
 
 .sr-cat-A {
@@ -2485,6 +2478,14 @@ tr.is-interactive-row:focus-visible {
   font-size: 1rem;
   font-weight: 800;
   line-height: 1.15;
+}
+
+.driver-stat-badge,
+.driver-highlight-value {
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 8px;
 }
 
 .stat-with-trend {
@@ -3501,11 +3502,11 @@ tbody tr.is-driver-preview-row:focus-visible td:last-child::after {
 }
 
 .positions-delta.delta-positive {
-  color: var(--green);
+  color: #2dff91;
 }
 
 .positions-delta.delta-negative {
-  color: var(--red);
+  color: #ff5365;
 }
 
 .positions-delta.delta-neutral {
@@ -4697,6 +4698,71 @@ body.modal-open {
   white-space: nowrap;
 }
 
+.safety-about-block {
+  margin-top: 18px;
+}
+
+.safety-category-grid {
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+}
+
+.safety-category-grid .elo-category-card {
+  border-color: var(--sr-border);
+  background: var(--sr-bg);
+  color: var(--sr-fg);
+}
+
+.safety-category-grid .elo-category-card span {
+  background: rgba(255, 255, 255, 0.14);
+  color: var(--sr-accent);
+}
+
+.safety-reason-card {
+  margin-top: 14px;
+  padding: 14px;
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  border-radius: 16px;
+  background: rgba(255, 255, 255, 0.045);
+}
+
+.safety-reason-title {
+  font-size: 0.9rem;
+  font-weight: 900;
+  color: var(--text);
+}
+
+.safety-reason-card p {
+  margin: 8px 0 0;
+  color: var(--muted);
+}
+
+.safety-reason-card dl {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 8px 14px;
+  margin: 12px 0 0;
+}
+
+.safety-reason-card dl > div {
+  display: flex;
+  justify-content: space-between;
+  gap: 10px;
+  padding-top: 8px;
+  border-top: 1px solid rgba(255, 255, 255, 0.08);
+}
+
+.safety-reason-card dt {
+  color: var(--muted);
+  font-size: 0.78rem;
+}
+
+.safety-reason-card dd {
+  margin: 0;
+  color: var(--text);
+  font-weight: 900;
+  text-align: right;
+}
+
 #driver-of-day-content.is-empty {
   opacity: 0.45;
 }
@@ -4743,6 +4809,14 @@ body.modal-open {
   min-width: 0;
 }
 
+.race-driver-meta-line {
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 6px;
+  margin-top: 4px;
+}
+
 .race-driver-title .driver-name {
   min-width: 0;
 }
@@ -4760,8 +4834,8 @@ body.modal-open {
 }
 
 .race-result-car-cell {
-  width: 150px;
-  max-width: 170px;
+  width: 118px;
+  max-width: 130px;
 }
 
 .race-result-car-cell .car-label-inline {
@@ -4796,6 +4870,13 @@ body.modal-open {
 
 #bestlaps-table .sr-badge-compact {
   min-height: 28px;
+}
+
+#leaderboard-table th {
+  padding-top: 10px;
+  padding-bottom: 10px;
+  font-size: 0.74rem;
+  line-height: 1.1;
 }
 
 #bestlaps-table .car-thumb-inline {

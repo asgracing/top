@@ -1260,6 +1260,21 @@ Object.assign(translations.en, {
   safetyCategoryA: "Category A",
   safetyCategoryB: "Category B",
   safetyCategoryC: "Category C",
+  safetyAboutTitle: "Safety Rating",
+  safetyAboutP1: "SR is calculated only from counted main-server race finishes. Clean races increase the rating; invalid laps and automatic race penalties reduce it. Manual/admin penalties are ignored.",
+  safetyAboutP2: "Categories are simple: A is 5.00+, B is 2.50-4.99, C is below 2.50.",
+  safetyCategoryRangeA: "A - clean",
+  safetyCategoryRangeB: "B - stable",
+  safetyCategoryRangeC: "C - risky",
+  safetyReasonTitle: "Why SR changed",
+  safetyReasonCompletedLaps: "Completed laps",
+  safetyReasonValidInvalid: "Valid / invalid laps",
+  safetyReasonDistance: "Race distance",
+  safetyReasonBaseDelta: "Clean-race delta",
+  safetyReasonPenaltyDelta: "Penalty delta",
+  safetyReasonFinalDelta: "Final delta",
+  safetyReasonAutoPenalties: "Automatic penalties",
+  safetyReasonIgnoredPenalties: "Ignored penalties",
   worstSafetyTitle: "Safety Rating",
   worstSafetySubtitle: "Driver safety score based on invalid laps and automatic race penalties.",
   loadingSafety: "Loading Safety Rating...",
@@ -1278,6 +1293,21 @@ Object.assign(translations.ru, {
   safetyCategoryA: "Категория A",
   safetyCategoryB: "Категория B",
   safetyCategoryC: "Категория C",
+  safetyAboutTitle: "Safety Rating",
+  safetyAboutP1: "SR считается только по зачтенным финишам гонок основного сервера. Чистые гонки повышают рейтинг, грязные круги и автоматические гоночные штрафы снижают его. Ручные штрафы админов не учитываются.",
+  safetyAboutP2: "Категории простые: A - 5.00+, B - 2.50-4.99, C - ниже 2.50.",
+  safetyCategoryRangeA: "A - чисто",
+  safetyCategoryRangeB: "B - стабильно",
+  safetyCategoryRangeC: "C - риск",
+  safetyReasonTitle: "Почему изменился SR",
+  safetyReasonCompletedLaps: "Пройдено кругов",
+  safetyReasonValidInvalid: "Валидные / грязные круги",
+  safetyReasonDistance: "Дистанция гонки",
+  safetyReasonBaseDelta: "Дельта за чистоту",
+  safetyReasonPenaltyDelta: "Дельта за штрафы",
+  safetyReasonFinalDelta: "Итоговая дельта",
+  safetyReasonAutoPenalties: "Автоштрафы",
+  safetyReasonIgnoredPenalties: "Игнор. штрафы",
   worstSafetyTitle: "Safety Rating",
   worstSafetySubtitle: "Оценка безопасности пилота по грязным кругам и автоматическим гоночным штрафам.",
   loadingSafety: "Загрузка Safety Rating...",
@@ -3200,8 +3230,67 @@ function getSafetyInfo(source) {
     driver: source.driver || summary.driver || source.name || "-",
     publicId: source.public_id || summary.public_id || null,
     playerId: source.player_id || summary.player_id || null,
-    explanation: source.safety_explanation || summary.safety_explanation || ""
+    explanation: source.safety_explanation || summary.safety_explanation || "",
+    validLaps: source.safety_valid_laps ?? summary.safety_valid_laps,
+    invalidLaps: source.safety_invalid_laps ?? summary.safety_invalid_laps,
+    completedLaps: source.safety_completed_laps ?? summary.safety_completed_laps,
+    leaderLaps: source.safety_leader_laps ?? summary.safety_leader_laps,
+    distanceRatio: source.safety_distance_ratio ?? summary.safety_distance_ratio,
+    baseDelta: source.safety_base_delta ?? summary.safety_base_delta,
+    baseReason: source.safety_base_reason ?? summary.safety_base_reason,
+    penaltyDelta: source.safety_penalty_delta ?? summary.safety_penalty_delta,
+    finalDelta: source.safety_final_delta ?? summary.safety_final_delta,
+    finalReason: source.safety_final_reason ?? summary.safety_final_reason,
+    countedPenalties: source.safety_counted_penalties ?? summary.safety_counted_penalties,
+    ignoredPenalties: source.safety_ignored_penalties ?? summary.safety_ignored_penalties,
+    raceId: source.race_id || summary.race_id || null
   };
+}
+
+function formatSafetyDetailValue(value, formatter = null) {
+  if (value === null || value === undefined || value === "") return "-";
+  if (formatter) return formatter(value);
+  return String(value);
+}
+
+function renderSafetyReasonDetails(info) {
+  const deltaFormatter = (value) => {
+    const numeric = Number(value);
+    if (!Number.isFinite(numeric)) return String(value);
+    return `${numeric > 0 ? "+" : ""}${numeric.toFixed(2)}`;
+  };
+  const percentFormatter = (value) => {
+    const numeric = Number(value);
+    if (!Number.isFinite(numeric)) return String(value);
+    return `${Math.round(numeric * 100)}%`;
+  };
+  const rows = [
+    ["safetyReasonCompletedLaps", formatSafetyDetailValue(info.completedLaps)],
+    ["safetyReasonValidInvalid", `${formatSafetyDetailValue(info.validLaps)} / ${formatSafetyDetailValue(info.invalidLaps)}`],
+    ["safetyReasonDistance", formatSafetyDetailValue(info.distanceRatio, percentFormatter)],
+    ["safetyReasonBaseDelta", formatSafetyDetailValue(info.baseDelta, deltaFormatter)],
+    ["safetyReasonPenaltyDelta", formatSafetyDetailValue(info.penaltyDelta, deltaFormatter)],
+    ["safetyReasonFinalDelta", formatSafetyDetailValue(info.finalDelta ?? info.delta, deltaFormatter)],
+    ["safetyReasonAutoPenalties", formatSafetyDetailValue(info.countedPenalties)],
+    ["safetyReasonIgnoredPenalties", formatSafetyDetailValue(info.ignoredPenalties)]
+  ];
+  const text = info.finalReason || info.baseReason || info.explanation || "";
+  const hasAny = text || rows.some(([, value]) => value !== "-");
+  if (!hasAny) return "";
+  return `
+    <div class="safety-reason-card">
+      <div class="safety-reason-title">${escapeHtml(t("safetyReasonTitle"))}</div>
+      ${text ? `<p>${escapeHtml(text)}</p>` : ""}
+      <dl>
+        ${rows.map(([labelKey, value]) => `
+          <div>
+            <dt>${escapeHtml(t(labelKey))}</dt>
+            <dd>${escapeHtml(value)}</dd>
+          </div>
+        `).join("")}
+      </dl>
+    </div>
+  `;
 }
 
 function findSafetySource(publicId, playerId = null, raceId = null) {
@@ -3248,8 +3337,7 @@ function renderSafetyBadge(source, { compact = false, showDelta = false } = {}) 
       data-sr-race-id="${escapeAttribute(source?.race_id || "")}"
       title="${escapeAttribute(`${t("safetyRatingTitle")}: ${info.category} ${info.rating}`)}"
     >
-      <span class="sr-badge-rank">${escapeHtml(info.category)}</span>
-      <span class="sr-badge-value">${escapeHtml(info.rating)}</span>${deltaText}
+      <span class="sr-badge-value"><strong>${escapeHtml(info.category)}</strong> ${escapeHtml(info.rating)}</span>${deltaText}
     </button>
   `;
 }
@@ -4901,7 +4989,7 @@ function renderEloPeriodLabel(points, period) {
   return `${formatDateLocal(first.date.toISOString(), currentLang)} - ${formatDateLocal(last.date.toISOString(), currentLang)}`;
 }
 
-function renderEloChart(info, period = "all", grid = "medium", periodOffset = 0) {
+function renderEloChart(info, period = "all", grid = "medium", periodOffset = 0, options = {}) {
   const points = getFilteredEloHistory(info, period, periodOffset);
   if (!points.length) {
     return `<div class="elo-chart-empty">${escapeHtml(t("eloHistoryEmpty"))}</div>`;
@@ -4911,10 +4999,11 @@ function renderEloChart(info, period = "all", grid = "medium", periodOffset = 0)
   const height = 280;
   const pad = { left: 48, right: 18, top: 22, bottom: 42 };
   const ratings = points.map(item => item.rating);
-  const minRating = Math.min(...ratings);
-  const maxRating = Math.max(...ratings);
+  const minRating = Number.isFinite(options.minRating) ? Number(options.minRating) : Math.min(...ratings);
+  const maxRating = Math.max(...ratings, minRating + 1);
   const spread = Math.max(40, maxRating - minRating);
-  const yMin = Math.floor((minRating - spread * 0.18) / 25) * 25;
+  const yMinRaw = Math.floor((minRating - spread * 0.18) / 25) * 25;
+  const yMin = Number.isFinite(options.minRating) ? Number(options.minRating) : yMinRaw;
   const yMax = Math.ceil((maxRating + spread * 0.18) / 25) * 25;
   const xMax = Math.max(1, points.length - 1);
   const gridCount = grid === "high" ? 6 : grid === "low" ? 3 : 4;
@@ -5113,8 +5202,8 @@ function renderSafetyModal() {
         <button type="button" data-sr-period-step="newer" ${periodOffset <= 0 ? "disabled" : ""} title="${escapeAttribute(t("eloNextPeriod"))}">›</button>
       </div>
     ` : ""}
-    <div class="elo-chart-wrap">${info.history.length ? renderEloChart(info, period, grid, periodOffset) : `<div class="empty-box">${escapeHtml(t("safetyHistoryEmpty"))}</div>`}</div>
-    ${info.explanation ? `<p class="race-note">${escapeHtml(info.explanation)}</p>` : ""}
+    <div class="elo-chart-wrap">${info.history.length ? renderEloChart(info, period, grid, periodOffset, { minRating: 0 }) : `<div class="empty-box">${escapeHtml(t("safetyHistoryEmpty"))}</div>`}</div>
+    ${renderSafetyReasonDetails(info)}
   `;
 }
 
@@ -6360,6 +6449,29 @@ function renderRacesTablePage() {
   );
 }
 
+function renderRaceDriverIdentity(row) {
+  const eloSource = getEloInfo(row) ? row : findEloSource(row.public_id, row.player_id);
+  const safetySource = getSafetyInfo(row) ? row : findSafetySource(row.public_id, row.player_id, row.race_id);
+  const eloBadge = renderEloBadge(eloSource, { compact: true });
+  const safetyBadge = renderSafetyBadge(safetySource, { compact: true, showDelta: true });
+  const raceNumber = row.race_number != null ? `#${row.race_number}` : "";
+  return `
+    <div class="driver-cell">
+      <div class="driver-avatar">${escapeHtml(initials(row.driver))}</div>
+      <div class="driver-name-wrap">
+        <div class="race-driver-title">
+          <span class="driver-name">${renderDriverLink(row.driver, row.public_id, "driver-link", row.player_id)}</span>
+        </div>
+        <div class="race-driver-meta-line">
+          ${raceNumber ? `<span class="race-note">${escapeHtml(raceNumber)}</span>` : ""}
+          ${eloBadge ? `<span class="race-driver-elo">${eloBadge}</span>` : ""}
+          ${safetyBadge ? `<span class="race-driver-sr">${safetyBadge}</span>` : ""}
+        </div>
+      </div>
+    </div>
+  `;
+}
+
 function renderRaceResultsModal() {
   const titleEl = document.getElementById("race-results-title");
   const subtitleEl = document.getElementById("race-results-subtitle");
@@ -6414,25 +6526,13 @@ function renderRaceResultsModal() {
   const headers = t("raceModalCols").map(label => `<th>${escapeHtml(label)}</th>`).join("");
   const highlightedDriverPublicId = IS_DRIVER_PAGE ? driverProfileData?.public_id : null;
   const rows = raceResults.map(row => {
-    const eloSource = getEloInfo(row) ? row : findEloSource(row.public_id, row.player_id);
-    const eloBadge = renderEloBadge(eloSource, { compact: true });
+    const rowWithRaceId = row.race_id ? row : { ...row, race_id: selectedRace?.race_id };
     return `
-    <tr class="${row.public_id && highlightedDriverPublicId && row.public_id === highlightedDriverPublicId ? "race-result-row-highlight" : ""}">
+    <tr class="${rowWithRaceId.public_id && highlightedDriverPublicId && rowWithRaceId.public_id === highlightedDriverPublicId ? "race-result-row-highlight" : ""}">
       <td>${renderRankBadgeWithTrend(row.position, row.rank_change)}</td>
       <td>${escapeHtml(formatStartPosition(row))}</td>
       <td>${renderPositionsDelta(row.positions_delta)}</td>
-      <td>
-        <div class="driver-cell">
-          <div class="driver-avatar">${escapeHtml(initials(row.driver))}</div>
-          <div class="driver-name-wrap">
-            <div class="race-driver-title">
-              <span class="driver-name">${renderDriverLink(row.driver, row.public_id, "driver-link", row.player_id)}</span>
-              ${eloBadge ? `<span class="race-driver-elo">${eloBadge}</span>` : ""}
-            </div>
-            <div class="race-note">${escapeHtml(row.race_number != null ? `#${row.race_number}` : "")}</div>
-          </div>
-        </div>
-      </td>
+      <td>${renderRaceDriverIdentity(rowWithRaceId)}</td>
       <td>
         <div class="${getBestLapClass(Boolean(row.had_best_lap))}">${escapeHtml(row.best_lap || "-")}</div>
         <div class="race-note">${row.had_best_lap ? escapeHtml(t("raceBestLapBadge")) : ""}</div>
@@ -6443,7 +6543,7 @@ function renderRaceResultsModal() {
       </td>
       <td>${escapeHtml(row.gap || (row.position === 1 ? "-" : "-"))}</td>
       <td>${renderEloDeltaCell(row)}</td>
-      <td>${renderSafetyRaceCell(row)}</td>
+      <td>${renderSafetyRaceCell(rowWithRaceId)}</td>
       <td>${escapeHtml(row.points ?? 0)}</td>
     </tr>
   `;
@@ -6639,11 +6739,9 @@ function buildDriverHeroTitle(profile) {
   if (!profile) return "-";
   const rankInfo = getDriverRankInfo(profile);
   const eloSource = getEloInfo(profile) ? profile : findEloSource(profile.public_id, profile.player_id);
-  const safetySource = getSafetyInfo(profile) ? profile : findSafetySource(profile.public_id, profile.player_id);
   return `
     <span class="driver-title-name">${escapeHtml(profile.driver || "-")}</span>
     ${renderEloBadge(eloSource)}
-    ${renderSafetyBadge(safetySource)}
     ${rankInfo ? `<span class="driver-rank-pill ${escapeHtml(rankInfo.rankClass)}" title="${escapeAttribute(t("driverRankingPosition"))}"><span class="driver-rank-label">${escapeHtml(t("driverRankingPosition"))}:</span><span class="driver-rank-value">#${escapeHtml(rankInfo.rank)}</span>${renderTrendBadge(rankInfo.change, "championship_rank", { compact: true })}</span>` : ""}
   `;
 }
@@ -6656,6 +6754,7 @@ function buildDriverStatsMarkup(profile) {
   const summary = profile.summary || {};
   const favoriteCarName = getFavoriteCarName(profile);
   const averagePace = summary.average_pace ?? "-";
+  const eloSource = getEloInfo(profile) ? profile : findEloSource(profile.public_id, profile.player_id);
 
   return `
     <div class="driver-stat-card">
@@ -6669,6 +6768,10 @@ function buildDriverStatsMarkup(profile) {
     <div class="driver-stat-card">
       <div class="driver-stat-label">${escapeHtml(t("driverSummaryAvgPoints"))}</div>
       <div class="driver-stat-value">${escapeHtml(summary.average_points_per_race ?? 0)}</div>
+    </div>
+    <div class="driver-stat-card">
+      <div class="driver-stat-label">${escapeHtml(t("eloCategoryLabel"))}</div>
+      <div class="driver-stat-value driver-stat-badge">${renderEloBadge(eloSource, { compact: true }) || `<span class="empty-inline">-</span>`}</div>
     </div>
     <div class="driver-stat-card">
       <div class="driver-stat-label">${escapeHtml(t("driverSummaryRaces"))}</div>
@@ -6715,6 +6818,7 @@ function buildDriverStatsMarkup(profile) {
 function buildDriverHighlightsMarkup(profile) {
   if (!profile) return "";
   const summary = profile.summary || {};
+  const safetySource = getSafetyInfo(profile) ? profile : findSafetySource(profile.public_id, profile.player_id);
 
   return `
     <div class="driver-highlight-card">
@@ -6726,8 +6830,8 @@ function buildDriverHighlightsMarkup(profile) {
       <div class="driver-highlight-value">${escapeHtml(summary.fastest_lap_awards ?? 0)}</div>
     </div>
     <div class="driver-highlight-card">
-      <div class="driver-highlight-label">${escapeHtml(t("driverSummaryPenaltyPoints"))}</div>
-      <div class="driver-highlight-value">${escapeHtml(summary.penalty_points ?? 0)}</div>
+      <div class="driver-highlight-label">${escapeHtml(t("safetyRatingTitle"))}</div>
+      <div class="driver-highlight-value">${renderSafetyBadge(safetySource) || `<span class="empty-inline">-</span>`}</div>
     </div>
   `;
 }
