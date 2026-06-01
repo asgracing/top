@@ -1270,7 +1270,7 @@ Object.assign(translations.en, {
 
 Object.assign(translations.ru, {
   btnWorstSafety: "Safety Rating",
-  safetyRatingTitle: "Safety Rating",
+  safetyRatingTitle: "Рейтинг безопасности",
   safetyModalEyebrow: "Безопасность пилота",
   safetyModalSubtitle: "История изменения Safety Rating по зачтенным гонкам.",
   safetyCurrentRating: "Текущий SR",
@@ -3076,6 +3076,13 @@ function getEloCategoryName(value, categoryId = null) {
   return explicit ? String(explicit) : "";
 }
 
+function getEloCategoryDisplayName(value, categoryId = null) {
+  return getEloCategoryName(value, categoryId)
+    .replace(/^Category\s+\d+\s+[—-]\s*/i, "")
+    .replace(/^Категория\s+\d+\s+[—-]\s*/i, "")
+    .trim();
+}
+
 function normalizeEloHistory(source) {
   const history = source?.elo_history || source?.summary?.elo_history || [];
   if (!Array.isArray(history)) return [];
@@ -3115,6 +3122,7 @@ function getEloInfo(source) {
     rd: Number(source.elo_rd ?? summary.elo_rd),
     categoryId,
     categoryName: getEloCategoryName(source, categoryId),
+    categoryDisplayName: getEloCategoryDisplayName(source, categoryId),
     categoryShort: ELO_CATEGORY_FALLBACKS[categoryId]?.short || `C${categoryId}`,
     history: normalizeEloHistory(source),
     driver: source.driver || summary.driver || source.name || "-",
@@ -3146,9 +3154,12 @@ function findEloSource(publicId, playerId = null) {
   }) || null;
 }
 
-function renderEloBadge(source, { compact = false } = {}) {
+function renderEloBadge(source, { compact = false, showCategoryName = false } = {}) {
   const info = getEloInfo(source);
   if (!info) return "";
+  const valueText = showCategoryName && info.categoryDisplayName
+    ? `${info.rating} / ${info.categoryDisplayName}`
+    : String(info.rating);
   return `
     <button
       class="elo-badge elo-cat-${escapeHtml(info.categoryId)} ${compact ? "elo-badge-compact" : ""}"
@@ -3158,7 +3169,7 @@ function renderEloBadge(source, { compact = false } = {}) {
       title="${escapeAttribute(`${t("eloTitle")}: ${info.rating} · ${info.categoryName}`)}"
     >
       <span class="elo-badge-rank">${escapeHtml(info.categoryShort)}</span>
-      <span class="elo-badge-value">${escapeHtml(info.rating)}</span>
+      <span class="elo-badge-value">${escapeHtml(valueText)}</span>
     </button>
   `;
 }
@@ -3199,18 +3210,32 @@ function normalizeSafetyHistory(source) {
 function getSafetyInfo(source) {
   if (!source || typeof source !== "object") return null;
   const summary = source.summary || {};
+  const rawHistory = Array.isArray(source.safety_history)
+    ? source.safety_history
+    : Array.isArray(summary.safety_history)
+      ? summary.safety_history
+      : [];
+  const latestHistory = rawHistory.length ? rawHistory[rawHistory.length - 1] : {};
   const rating = Number(
     source.safety_rating
     ?? summary.safety_rating
     ?? source.safety_rating_after
     ?? source.new_sr
+    ?? latestHistory.new_sr
   );
   if (!Number.isFinite(rating)) return null;
   const category = normalizeSafetyCategory(source) || "C";
+  const completedLaps = source.safety_completed_laps ?? summary.safety_completed_laps ?? latestHistory.completed_laps;
+  const invalidLaps = source.safety_invalid_laps ?? summary.safety_invalid_laps ?? latestHistory.invalid_laps;
+  const validLaps = source.safety_valid_laps
+    ?? summary.safety_valid_laps
+    ?? (Number.isFinite(Number(completedLaps)) && Number.isFinite(Number(invalidLaps))
+      ? Math.max(0, Number(completedLaps) - Number(invalidLaps))
+      : undefined);
   return {
     rating: rating.toFixed(2),
     ratingNumber: rating,
-    delta: Number(source.safety_delta ?? source.safety_last_delta ?? summary.safety_last_delta),
+    delta: Number(source.safety_delta ?? source.safety_last_delta ?? summary.safety_last_delta ?? latestHistory.delta_sr),
     category,
     categoryName: getSafetyCategoryName(category),
     history: normalizeSafetyHistory(source),
@@ -3218,19 +3243,19 @@ function getSafetyInfo(source) {
     publicId: source.public_id || summary.public_id || null,
     playerId: source.player_id || summary.player_id || null,
     explanation: source.safety_explanation || summary.safety_explanation || "",
-    validLaps: source.safety_valid_laps ?? summary.safety_valid_laps,
-    invalidLaps: source.safety_invalid_laps ?? summary.safety_invalid_laps,
-    completedLaps: source.safety_completed_laps ?? summary.safety_completed_laps,
-    leaderLaps: source.safety_leader_laps ?? summary.safety_leader_laps,
+    validLaps,
+    invalidLaps,
+    completedLaps,
+    leaderLaps: source.safety_leader_laps ?? summary.safety_leader_laps ?? latestHistory.leader_laps,
     distanceRatio: source.safety_distance_ratio ?? summary.safety_distance_ratio,
     baseDelta: source.safety_base_delta ?? summary.safety_base_delta,
     baseReason: source.safety_base_reason ?? summary.safety_base_reason,
     penaltyDelta: source.safety_penalty_delta ?? summary.safety_penalty_delta,
-    finalDelta: source.safety_final_delta ?? summary.safety_final_delta,
+    finalDelta: source.safety_final_delta ?? summary.safety_final_delta ?? latestHistory.delta_sr,
     finalReason: source.safety_final_reason ?? summary.safety_final_reason,
-    countedPenalties: source.safety_counted_penalties ?? summary.safety_counted_penalties,
-    ignoredPenalties: source.safety_ignored_penalties ?? summary.safety_ignored_penalties,
-    raceId: source.race_id || summary.race_id || null
+    countedPenalties: source.safety_counted_penalties ?? summary.safety_counted_penalties ?? latestHistory.counted_penalties_count,
+    ignoredPenalties: source.safety_ignored_penalties ?? summary.safety_ignored_penalties ?? latestHistory.ignored_penalties_count,
+    raceId: source.race_id || summary.race_id || latestHistory.race_id || null
   };
 }
 
@@ -4059,9 +4084,10 @@ async function loadTopDataV2TablePreview(tableName, limit = PAGE_SIZE) {
 
 function isServerPagedTopDataV2Table(tableName) {
   if (tableName !== "leaderboard" && tableName !== "bestlaps") return false;
+  const sortState = getServerPagedTableSort(tableName);
+  if (sortState?.key === "elo") return false;
   if (TOP_API_BASE_URL) return true;
   const meta = getTopDataV2TableMeta(tableName);
-  const sortState = getServerPagedTableSort(tableName);
   return Boolean(meta?.page_path && !getServerPagedTableSearch(tableName) && !sortState?.key);
 }
 
@@ -6288,9 +6314,7 @@ function renderRacesTablePage() {
 
 function renderRaceDriverIdentity(row) {
   const eloSource = getEloInfo(row) ? row : findEloSource(row.public_id, row.player_id);
-  const safetySource = getSafetyInfo(row) ? row : findSafetySource(row.public_id, row.player_id, row.race_id);
   const eloBadge = renderEloBadge(eloSource, { compact: true });
-  const safetyBadge = renderSafetyBadge(safetySource, { compact: true, showDelta: true });
   const raceNumber = row.race_number != null ? `#${row.race_number}` : "";
   return `
     <div class="driver-cell">
@@ -6302,7 +6326,6 @@ function renderRaceDriverIdentity(row) {
         <div class="race-driver-meta-line">
           ${raceNumber ? `<span class="race-note">${escapeHtml(raceNumber)}</span>` : ""}
           ${eloBadge ? `<span class="race-driver-elo">${eloBadge}</span>` : ""}
-          ${safetyBadge ? `<span class="race-driver-sr">${safetyBadge}</span>` : ""}
         </div>
       </div>
     </div>
@@ -6578,7 +6601,7 @@ function buildDriverHeroTitle(profile) {
   const eloSource = getEloInfo(profile) ? profile : findEloSource(profile.public_id, profile.player_id);
   return `
     <span class="driver-title-name">${escapeHtml(profile.driver || "-")}</span>
-    ${renderEloBadge(eloSource)}
+    ${renderEloBadge(eloSource, { showCategoryName: true })}
     ${rankInfo ? `<span class="driver-rank-pill ${escapeHtml(rankInfo.rankClass)}" title="${escapeAttribute(t("driverRankingPosition"))}"><span class="driver-rank-label">${escapeHtml(t("driverRankingPosition"))}:</span><span class="driver-rank-value">#${escapeHtml(rankInfo.rank)}</span>${renderTrendBadge(rankInfo.change, "championship_rank", { compact: true })}</span>` : ""}
   `;
 }
@@ -6591,8 +6614,6 @@ function buildDriverStatsMarkup(profile) {
   const summary = profile.summary || {};
   const favoriteCarName = getFavoriteCarName(profile);
   const averagePace = summary.average_pace ?? "-";
-  const eloSource = getEloInfo(profile) ? profile : findEloSource(profile.public_id, profile.player_id);
-
   return `
     <div class="driver-stat-card">
       <div class="driver-stat-label">${escapeHtml(t("driverSummaryPoints"))}</div>
@@ -6605,10 +6626,6 @@ function buildDriverStatsMarkup(profile) {
     <div class="driver-stat-card">
       <div class="driver-stat-label">${escapeHtml(t("driverSummaryAvgPoints"))}</div>
       <div class="driver-stat-value">${escapeHtml(summary.average_points_per_race ?? 0)}</div>
-    </div>
-    <div class="driver-stat-card">
-      <div class="driver-stat-label">${escapeHtml(t("eloCategoryLabel"))}</div>
-      <div class="driver-stat-value driver-stat-badge">${renderEloBadge(eloSource, { compact: true }) || `<span class="empty-inline">-</span>`}</div>
     </div>
     <div class="driver-stat-card">
       <div class="driver-stat-label">${escapeHtml(t("driverSummaryRaces"))}</div>
@@ -6734,7 +6751,7 @@ function renderDriverRaceHistory() {
     const raceId = row.dataset.raceId;
     const race = getRaceById(raceId) || countedData.find(item => item?.race_id === raceId) || null;
     openRaceResultsModal(race, row);
-  });
+  }, { ignoreSelector: "a, button" });
 
   renderPagination(
     "driver-races-pagination",
@@ -7592,6 +7609,7 @@ function updateTopNavModalOffset() {
 function rerenderUI() {
   applyStaticTranslations();
   if (eloModalState) renderEloModal();
+  if (safetyModalState) renderSafetyModal();
 
   if (IS_DRIVER_PAGE) {
     renderDriverPage();
