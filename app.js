@@ -1262,6 +1262,13 @@ Object.assign(translations.en, {
   safetyReasonFinalDelta: "Final delta",
   safetyReasonAutoPenalties: "Automatic penalties",
   safetyReasonIgnoredPenalties: "Ignored penalties",
+  safetySummaryTitle: "Safety Rating summary",
+  safetySummaryRaces: "Counted SR races",
+  safetySummaryTotalDelta: "Total SR delta",
+  safetySummaryTotalLaps: "Total laps",
+  safetySummaryInvalidLaps: "Invalid laps",
+  safetySummaryInvalidRate: "Invalid lap rate",
+  safetySummaryAutoPenalties: "Automatic penalties",
   worstSafetyTitle: "Safety Rating",
   worstSafetySubtitle: "Driver safety score based on invalid laps and automatic race penalties.",
   loadingSafety: "Loading Safety Rating...",
@@ -1295,6 +1302,13 @@ Object.assign(translations.ru, {
   safetyReasonFinalDelta: "Итоговая дельта",
   safetyReasonAutoPenalties: "Автоштрафы",
   safetyReasonIgnoredPenalties: "Игнор. штрафы",
+  safetySummaryTitle: "Статистика Safety Rating",
+  safetySummaryRaces: "Гонок в SR",
+  safetySummaryTotalDelta: "Суммарная дельта SR",
+  safetySummaryTotalLaps: "Всего кругов",
+  safetySummaryInvalidLaps: "Грязные круги",
+  safetySummaryInvalidRate: "Доля грязных кругов",
+  safetySummaryAutoPenalties: "Автоштрафы",
   worstSafetyTitle: "Safety Rating",
   worstSafetySubtitle: "Оценка безопасности пилота по грязным кругам и автоматическим гоночным штрафам.",
   loadingSafety: "Загрузка Safety Rating...",
@@ -3215,18 +3229,26 @@ function getSafetyInfo(source) {
     : Array.isArray(summary.safety_history)
       ? summary.safety_history
       : [];
-  const latestHistory = rawHistory.length ? rawHistory[rawHistory.length - 1] : {};
+  const isRaceSpecific = Boolean(
+    source.race_id && (
+      source.safety_rating_after !== undefined
+      || source.safety_delta !== undefined
+      || source.safety_completed_laps !== undefined
+      || source.safety_invalid_laps !== undefined
+      || source.safety_base_delta !== undefined
+      || source.safety_final_delta !== undefined
+    )
+  );
   const rating = Number(
-    source.safety_rating
+    (isRaceSpecific ? source.safety_rating_after : undefined)
+    ?? source.safety_rating
     ?? summary.safety_rating
-    ?? source.safety_rating_after
     ?? source.new_sr
-    ?? latestHistory.new_sr
   );
   if (!Number.isFinite(rating)) return null;
   const category = normalizeSafetyCategory(source) || "C";
-  const completedLaps = source.safety_completed_laps ?? summary.safety_completed_laps ?? latestHistory.completed_laps;
-  const invalidLaps = source.safety_invalid_laps ?? summary.safety_invalid_laps ?? latestHistory.invalid_laps;
+  const completedLaps = isRaceSpecific ? (source.safety_completed_laps ?? summary.safety_completed_laps) : undefined;
+  const invalidLaps = isRaceSpecific ? (source.safety_invalid_laps ?? summary.safety_invalid_laps) : undefined;
   const validLaps = source.safety_valid_laps
     ?? summary.safety_valid_laps
     ?? (Number.isFinite(Number(completedLaps)) && Number.isFinite(Number(invalidLaps))
@@ -3235,7 +3257,7 @@ function getSafetyInfo(source) {
   return {
     rating: rating.toFixed(2),
     ratingNumber: rating,
-    delta: Number(source.safety_delta ?? source.safety_last_delta ?? summary.safety_last_delta ?? latestHistory.delta_sr),
+    delta: Number(isRaceSpecific ? source.safety_delta : (source.safety_last_delta ?? summary.safety_last_delta)),
     category,
     categoryName: getSafetyCategoryName(category),
     history: normalizeSafetyHistory(source),
@@ -3246,16 +3268,23 @@ function getSafetyInfo(source) {
     validLaps,
     invalidLaps,
     completedLaps,
-    leaderLaps: source.safety_leader_laps ?? summary.safety_leader_laps ?? latestHistory.leader_laps,
-    distanceRatio: source.safety_distance_ratio ?? summary.safety_distance_ratio,
-    baseDelta: source.safety_base_delta ?? summary.safety_base_delta,
-    baseReason: source.safety_base_reason ?? summary.safety_base_reason,
-    penaltyDelta: source.safety_penalty_delta ?? summary.safety_penalty_delta,
-    finalDelta: source.safety_final_delta ?? summary.safety_final_delta ?? latestHistory.delta_sr,
-    finalReason: source.safety_final_reason ?? summary.safety_final_reason,
-    countedPenalties: source.safety_counted_penalties ?? summary.safety_counted_penalties ?? latestHistory.counted_penalties_count,
-    ignoredPenalties: source.safety_ignored_penalties ?? summary.safety_ignored_penalties ?? latestHistory.ignored_penalties_count,
-    raceId: source.race_id || summary.race_id || latestHistory.race_id || null
+    leaderLaps: isRaceSpecific ? (source.safety_leader_laps ?? summary.safety_leader_laps) : undefined,
+    distanceRatio: isRaceSpecific ? (source.safety_distance_ratio ?? summary.safety_distance_ratio) : undefined,
+    baseDelta: isRaceSpecific ? (source.safety_base_delta ?? summary.safety_base_delta) : undefined,
+    baseReason: isRaceSpecific ? (source.safety_base_reason ?? summary.safety_base_reason) : undefined,
+    penaltyDelta: isRaceSpecific ? (source.safety_penalty_delta ?? summary.safety_penalty_delta) : undefined,
+    finalDelta: isRaceSpecific ? (source.safety_final_delta ?? summary.safety_final_delta) : undefined,
+    finalReason: isRaceSpecific ? (source.safety_final_reason ?? summary.safety_final_reason) : undefined,
+    countedPenalties: isRaceSpecific ? (source.safety_counted_penalties ?? summary.safety_counted_penalties) : undefined,
+    ignoredPenalties: isRaceSpecific ? (source.safety_ignored_penalties ?? summary.safety_ignored_penalties) : undefined,
+    totalDelta: source.safety_total_delta ?? summary.safety_total_delta ?? source.total_delta,
+    totalLaps: source.safety_total_laps ?? summary.safety_total_laps ?? source.total_laps,
+    totalInvalidLaps: source.safety_total_invalid_laps ?? summary.safety_total_invalid_laps ?? source.total_invalid_laps,
+    invalidLapRate: source.safety_invalid_lap_rate ?? summary.safety_invalid_lap_rate ?? source.invalid_lap_rate,
+    totalCountedPenalties: source.safety_total_counted_penalties ?? summary.safety_total_counted_penalties ?? source.total_counted_penalties,
+    racesCount: source.safety_races ?? summary.safety_races ?? source.races_count,
+    isRaceSpecific,
+    raceId: isRaceSpecific ? (source.race_id || summary.race_id || null) : null
   };
 }
 
@@ -3276,6 +3305,31 @@ function renderSafetyReasonDetails(info) {
     if (!Number.isFinite(numeric)) return String(value);
     return `${Math.round(numeric * 100)}%`;
   };
+  if (!info.isRaceSpecific) {
+    const rows = [
+      ["safetySummaryRaces", formatSafetyDetailValue(info.racesCount)],
+      ["safetySummaryTotalDelta", formatSafetyDetailValue(info.totalDelta, deltaFormatter)],
+      ["safetySummaryTotalLaps", formatSafetyDetailValue(info.totalLaps)],
+      ["safetySummaryInvalidLaps", formatSafetyDetailValue(info.totalInvalidLaps)],
+      ["safetySummaryInvalidRate", formatSafetyDetailValue(info.invalidLapRate, percentFormatter)],
+      ["safetySummaryAutoPenalties", formatSafetyDetailValue(info.totalCountedPenalties)]
+    ];
+    const hasAny = rows.some(([, value]) => value !== "-");
+    if (!hasAny) return "";
+    return `
+      <div class="safety-reason-card">
+        <div class="safety-reason-title">${escapeHtml(t("safetySummaryTitle"))}</div>
+        <dl>
+          ${rows.map(([labelKey, value]) => `
+            <div>
+              <dt>${escapeHtml(t(labelKey))}</dt>
+              <dd>${escapeHtml(value)}</dd>
+            </div>
+          `).join("")}
+        </dl>
+      </div>
+    `;
+  }
   const rows = [
     ["safetyReasonCompletedLaps", formatSafetyDetailValue(info.completedLaps)],
     ["safetyReasonValidInvalid", `${formatSafetyDetailValue(info.validLaps)} / ${formatSafetyDetailValue(info.invalidLaps)}`],
