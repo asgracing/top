@@ -24,17 +24,8 @@ const TOP_API_BASE_URL = normalizeBaseUrl(pageParams.get("topApiBase"));
 const TOP_DATA_V2_BASE_URL = TOP_API_BASE_URL || `${TOP_DATA_BASE_URL}/v2`;
 const TOP_API_ROOT_URL = TOP_API_BASE_URL.replace(/\/top-data\/v2$/i, "");
 const HOURLY_DATA_BASE_URL = normalizeBaseUrl(pageParams.get("hourlyApiBase")) || DEFAULT_HOURLY_DATA_BASE_URL;
-const dataMode = pageParams.get("data") || "v2";
-const ENABLE_TOP_DATA_V2 = dataMode !== "legacy";
-const snapshotUrl = `${TOP_DATA_BASE_URL}/snapshot.json`;
 const topDataV2ManifestUrl = `${TOP_DATA_V2_BASE_URL}/manifest.json`;
-const leaderboardUrl = `${TOP_DATA_BASE_URL}/leaderboard.json`;
-const bestlapsUrl = `${TOP_DATA_BASE_URL}/bestlaps.json`;
-const globalStatsUrl = `${TOP_DATA_BASE_URL}/global_stats.json`;
-const safetyUrl = `${TOP_DATA_BASE_URL}/safety.json`;
-const driverOfDayUrl = `${TOP_DATA_BASE_URL}/driver_of_the_day.json`;
 const serverStatusUrl = pageParams.get("serverStatusUrl") || (TOP_API_ROOT_URL ? `${TOP_API_ROOT_URL}/server-status` : `${TOP_DATA_BASE_URL}/server_status.json`);
-const onlineUrl = `${TOP_DATA_BASE_URL}/online.json`;
 const donationsApiUrl = "https://donations.asgracing.workers.dev/recent";
 const hourlyAnnouncementUrl = `${HOURLY_DATA_BASE_URL}/announcement.json`;
 const hourlyVotesApiUrl = "https://hourly-votes.asgracing.workers.dev";
@@ -68,9 +59,6 @@ const ACC_CONNECT_SERVER_FALLBACKS = {
     persistent: true
   }
 };
-const racesUrl = `${TOP_DATA_BASE_URL}/races/races.json`;
-const carsUrl = TOP_API_BASE_URL ? topDataV2Path("cars/cars.json") : `${TOP_DATA_BASE_URL}/cars/cars.json`;
-const driverIndexUrl = TOP_API_BASE_URL ? topDataV2Path("drivers/drivers.json") : `${TOP_DATA_BASE_URL}/drivers/drivers.json`;
 const PAGE_SIZE = 10;
 const VOTER_ID_STORAGE_TTL_MS = 365 * 24 * 60 * 60 * 1000;
 
@@ -238,7 +226,6 @@ let funStatsPeriod = "week";
 let serverStatusData = null;
 const driverProfileCache = new Map();
 const raceDetailsCache = new Map();
-let legacyRaceArchivePromise = null;
 const HOURLY_TRACK_BACKGROUNDS = {
   monza: `${HOURLY_SITE_BASE_URL}/assets/tracks/monza.jpg`,
   silverstone: `${HOURLY_SITE_BASE_URL}/assets/tracks/silverstone.jpg`,
@@ -3957,7 +3944,6 @@ function withTopDataV2Version(url) {
 }
 
 async function loadTopDataV2Manifest() {
-  if (!ENABLE_TOP_DATA_V2) return null;
   if (topDataV2Manifest) return topDataV2Manifest;
 
   const url = `${topDataV2ManifestUrl}?t=${Date.now()}`;
@@ -4021,7 +4007,6 @@ function setTopDataV2TableData(tableName, items) {
 }
 
 function isTopDataV2TablePreview(tableName) {
-  if (!ENABLE_TOP_DATA_V2) return false;
   const meta = getTopDataV2TableMeta(tableName);
   if (!meta) return false;
   const totalItems = Number(meta.total_items) || 0;
@@ -4073,7 +4058,7 @@ async function loadTopDataV2TablePreview(tableName, limit = PAGE_SIZE) {
 }
 
 function isServerPagedTopDataV2Table(tableName) {
-  if (!ENABLE_TOP_DATA_V2 || (tableName !== "leaderboard" && tableName !== "bestlaps")) return false;
+  if (tableName !== "leaderboard" && tableName !== "bestlaps") return false;
   if (TOP_API_BASE_URL) return true;
   const meta = getTopDataV2TableMeta(tableName);
   const sortState = getServerPagedTableSort(tableName);
@@ -4211,42 +4196,6 @@ function normalizeSnapshotPayload(snapshot) {
   };
 }
 
-function normalizeLegacyPayload(results) {
-  const [
-    leaderboardResult,
-    bestlapsResult,
-    globalStatsResult,
-    safetyResult,
-    driverOfDayResult,
-    serverStatusResult,
-    onlineResult
-  ] = results;
-
-  return {
-    leaderboard: leaderboardResult.status === "fulfilled" && Array.isArray(leaderboardResult.value)
-      ? hydrateTableTrendFields(leaderboardResult.value, "leaderboard")
-      : [],
-    bestlaps: bestlapsResult.status === "fulfilled" && Array.isArray(bestlapsResult.value)
-      ? hydrateTableTrendFields(bestlapsResult.value, "bestlaps")
-      : [],
-    globalStats: globalStatsResult.status === "fulfilled" && globalStatsResult.value && typeof globalStatsResult.value === "object"
-      ? globalStatsResult.value
-      : null,
-    safety: safetyResult.status === "fulfilled" && Array.isArray(safetyResult.value)
-      ? safetyResult.value
-      : [],
-    driverOfDay: driverOfDayResult.status === "fulfilled" && driverOfDayResult.value && typeof driverOfDayResult.value === "object"
-      ? driverOfDayResult.value
-      : null,
-    serverStatus: serverStatusResult.status === "fulfilled" && serverStatusResult.value && typeof serverStatusResult.value === "object"
-      ? serverStatusResult.value
-      : null,
-    online: onlineResult.status === "fulfilled" && Array.isArray(onlineResult.value)
-      ? onlineResult.value
-      : []
-  };
-}
-
 async function loadStandaloneServerStatus() {
   try {
     const data = await loadJson(serverStatusUrl);
@@ -4268,40 +4217,9 @@ function mergeStandaloneServerStatus(data, standaloneStatus) {
 }
 
 async function loadSiteData() {
-  if (ENABLE_TOP_DATA_V2) {
-    try {
-      const data = await loadSiteDataV2();
-      const standaloneStatus = await loadStandaloneServerStatus();
-      return mergeStandaloneServerStatus(data, standaloneStatus);
-    } catch (v2Error) {
-      console.warn("top-data v2 is unavailable, falling back to legacy JSON files.", v2Error);
-    }
-  }
-
-  try {
-    const snapshot = await loadJson(snapshotUrl);
-    const standaloneStatus = await loadStandaloneServerStatus();
-    return mergeStandaloneServerStatus(normalizeSnapshotPayload(snapshot), standaloneStatus);
-  } catch (snapshotError) {
-    console.warn("snapshot.json is unavailable, falling back to legacy JSON files.", snapshotError);
-  }
-
-  const legacyResults = await Promise.allSettled([
-    loadJson(leaderboardUrl),
-    loadJson(bestlapsUrl),
-    loadJson(globalStatsUrl),
-    loadJson(safetyUrl),
-    loadJson(driverOfDayUrl),
-    loadJson(serverStatusUrl),
-    loadJson(onlineUrl)
-  ]);
-
-  return mergeStandaloneServerStatus(
-    normalizeLegacyPayload(legacyResults),
-    legacyResults[5].status === "fulfilled" && legacyResults[5].value && typeof legacyResults[5].value === "object"
-      ? legacyResults[5].value
-      : null,
-  );
+  const data = await loadSiteDataV2();
+  const standaloneStatus = await loadStandaloneServerStatus();
+  return mergeStandaloneServerStatus(data, standaloneStatus);
 }
 
 async function loadHourlyAnnouncementData() {
@@ -4315,42 +4233,17 @@ async function loadHourlyAnnouncementData() {
 }
 
 async function loadRacesData() {
-  if (ENABLE_TOP_DATA_V2) {
-    try {
-      return await loadRacesPageData(1);
-    } catch (v2Error) {
-      console.warn("top-data v2 races are unavailable, falling back to the full race archive.", v2Error);
-      racesArchiveMeta = null;
-      racesArchiveSummary = null;
-    }
-  }
-
-  const data = await loadJson(racesUrl);
-  racesArchiveMeta = null;
-  racesArchiveSummary = null;
-  return Array.isArray(data) ? data : [];
+  return await loadRacesPageData(1);
 }
 
 async function loadFullRacesData() {
-  if (ENABLE_TOP_DATA_V2) {
-    try {
-      const payload = await loadTopDataV2Json("races/fun-stats.json");
-      racesArchiveMeta = null;
-      racesArchiveSummary = null;
-      return Array.isArray(payload?.items) ? payload.items : [];
-    } catch (v2Error) {
-      console.warn("top-data v2 fun-stats races are unavailable, falling back to the full race archive.", v2Error);
-    }
-  }
-
-  const data = await loadJson(racesUrl);
+  const payload = await loadTopDataV2Json("races/fun-stats.json");
   racesArchiveMeta = null;
   racesArchiveSummary = null;
-  return Array.isArray(data) ? data : [];
+  return Array.isArray(payload?.items) ? payload.items : [];
 }
 
 async function loadFunStatsData() {
-  if (!ENABLE_TOP_DATA_V2) return null;
   const payload = await loadTopDataV2Json("fun-stats.json");
   return payload && typeof payload === "object" ? payload : null;
 }
@@ -4419,53 +4312,6 @@ function mergeRaceDetails(race, details) {
   return merged;
 }
 
-async function loadLegacyRaceArchiveCached() {
-  if (!legacyRaceArchivePromise) {
-    legacyRaceArchivePromise = loadJson(racesUrl)
-      .then((data) => (Array.isArray(data) ? data : []))
-      .catch((error) => {
-        legacyRaceArchivePromise = null;
-        throw error;
-      });
-  }
-
-  return legacyRaceArchivePromise;
-}
-
-function findLegacyRaceByIdentity(race, archive) {
-  if (!race || !Array.isArray(archive) || !archive.length) return null;
-
-  const candidates = getRaceIdentityCandidates(race);
-  const identityMatch = archive.find((entry) => {
-    const entryCandidates = getRaceIdentityCandidates(entry);
-    for (const candidate of entryCandidates) {
-      if (candidates.has(candidate)) return true;
-    }
-    return false;
-  });
-  if (identityMatch) return identityMatch;
-
-  const finishedAt = String(race.finished_at || "").trim();
-  const track = String(race.track || "").trim().toLowerCase();
-  const winner = String(race.winner || "").trim().toLowerCase();
-
-  return archive.find((entry) => (
-    String(entry?.finished_at || "").trim() === finishedAt
-    && String(entry?.track || "").trim().toLowerCase() === track
-    && (!winner || String(entry?.winner || "").trim().toLowerCase() === winner)
-  )) || null;
-}
-
-async function loadLegacyRaceDetails(race) {
-  const archive = await loadLegacyRaceArchiveCached();
-  const details = findLegacyRaceByIdentity(race, archive);
-  if (!details) {
-    const raceId = race?.race_id || race?.source_file || "unknown race";
-    throw new Error(`Race details were not found in the legacy archive for ${raceId}`);
-  }
-  return mergeRaceDetails(race, details);
-}
-
 async function loadRaceDetailsCached(race) {
   if (!race) return null;
   if (Array.isArray(race.results) && race.results.length) return race;
@@ -4491,12 +4337,6 @@ async function loadRaceDetailsCached(race) {
       }
     }
 
-    try {
-      return await loadLegacyRaceDetails(race);
-    } catch (legacyError) {
-      lastError = legacyError;
-    }
-
     throw lastError || new Error("Failed to load race details.");
   })().catch(error => {
     raceDetailsCache.delete(raceId);
@@ -4508,7 +4348,7 @@ async function loadRaceDetailsCached(race) {
 }
 
 async function loadCarsData() {
-  const data = await loadJson(carsUrl);
+  const data = await loadTopDataV2Json("cars/cars.json");
   return Array.isArray(data) ? data : [];
 }
 
@@ -4519,10 +4359,7 @@ function getRequestedDriverId() {
 
 async function loadDriverProfile(publicId) {
   if (!publicId) return null;
-  const profileUrl = TOP_API_BASE_URL
-    ? topDataV2Path(`drivers/${encodeURIComponent(publicId)}.json`)
-    : `${TOP_DATA_BASE_URL}/drivers/${encodeURIComponent(publicId)}.json`;
-  const data = await loadJson(profileUrl);
+  const data = await loadTopDataV2Json(`drivers/${encodeURIComponent(publicId)}.json`);
   return data && typeof data === "object" ? data : null;
 }
 
@@ -4541,7 +4378,7 @@ async function loadDriverProfileCached(publicId) {
 }
 
 async function loadDriverIndex() {
-  const data = await loadJson(driverIndexUrl);
+  const data = await loadTopDataV2Json("drivers/drivers.json");
   return Array.isArray(data) ? data : [];
 }
 
@@ -5349,7 +5186,7 @@ function getPreviewAwareTablePage(tableName, data, page, pageSize) {
   const result = paginate(data, page, pageSize);
   const meta = getTopDataV2TableMeta(tableName);
   const totalItems = Number(meta?.total_items) || result.totalItems;
-  if (!ENABLE_TOP_DATA_V2 || totalItems <= result.totalItems) return result;
+  if (totalItems <= result.totalItems) return result;
 
   const totalPages = Math.max(1, Math.ceil(totalItems / pageSize));
   const safePage = Math.min(Math.max(1, page), totalPages);
@@ -7883,17 +7720,8 @@ async function init() {
     topDataV2TableMeta = data.tables;
     serverStatusData = data.serverStatus;
 
-    if (Array.isArray(data.raceActivity)) {
-      raceActivityInsights = data.raceActivity;
-      racesData = [];
-    } else if (ENABLE_TOP_DATA_V2) {
-      raceActivityInsights = [];
-      racesData = [];
-    } else {
-      const raceArchive = await loadFullRacesData().catch(() => []);
-      racesData = Array.isArray(raceArchive) ? raceArchive : [];
-      raceActivityInsights = buildRaceActivityInsights(racesData);
-    }
+    raceActivityInsights = Array.isArray(data.raceActivity) ? data.raceActivity : [];
+    racesData = [];
     loadHourlyVotes(hourlyAnnouncementData).finally(() => {
       renderHourlyHeroCard();
       renderHourlyHeroModal();
