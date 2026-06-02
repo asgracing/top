@@ -140,6 +140,11 @@ const translations = {
     scheduleModalDateTime: "Date & time",
     scheduleModalSlot: "Slot",
     scheduleModalRain: "Rain forecast",
+    calendarSummary: "Full event calendar",
+    calendarEmpty: "No calendar events yet.",
+    championshipBadge: "Championship Event",
+    hourlyBadge: "Hourly Race",
+    votingDisabledChampionship: "Voting is disabled for championship events",
     voteButton: "I want to race!",
     voteButtonDone: "You're in",
     voteCountZero: "No votes yet",
@@ -330,10 +335,15 @@ Object.assign(translations.ru, {
   scheduleModalEyebrow: "Детали слота",
   scheduleModalDateTime: "Дата и время",
   scheduleModalSlot: "Слот",
-  scheduleModalRain: "Прогноз дождя"
+    scheduleModalRain: "Прогноз дождя"
 });
 
 Object.assign(translations.ru, {
+  calendarSummary: "Полный календарь событий",
+  calendarEmpty: "Пока нет событий в календаре.",
+  championshipBadge: "Событие чемпионата",
+  hourlyBadge: "Часовая гонка",
+  votingDisabledChampionship: "Голосование для событий чемпионата отключено",
   voteButton: "Я хочу поехать!",
   voteButtonDone: "Ты в списке",
   voteCountZero: "Пока никто не отметился",
@@ -376,6 +386,16 @@ function buildScheduleItems(schedule, announcement) {
       rain_level: announcement.weather?.rain_level
     }
   ];
+}
+function isChampionshipEvent(item) {
+  return String(item?.event_type || item?.type || "").trim().toLowerCase() === "championship";
+}
+function isVotingDisabledForItem(item) {
+  return Boolean(item?.voting_disabled) || isChampionshipEvent(item);
+}
+function eventBadgeLabel(item) {
+  if (item?.badge_label) return getLocalizedField(item, "badge_label", item.badge_label);
+  return isChampionshipEvent(item) ? t("championshipBadge") : t("hourlyBadge");
 }
 let recentRacesPage = 1;
 let recentRacesPageSize = 10;
@@ -771,11 +791,12 @@ function buildScheduleModalDetails(item) {
   const session = announcementData?.session || {};
   const rules = announcementData?.rules || {};
   const weather = item?.weather || announcementData?.weather || {};
+  const detailsUrl = item?.details_url ? String(item.details_url) : "";
   return `
     <div class="schedule-modal-hero">
       <div class="schedule-modal-vote">
         ${buildVoteControls(item, "hero")}
-        <div class="legal-inline-note">${buildCompactVoteLegalNoteHtml()}</div>
+        ${isVotingDisabledForItem(item) ? "" : `<div class="legal-inline-note">${buildCompactVoteLegalNoteHtml()}</div>`}
       </div>
 
       <section class="hero-server-card schedule-modal-hero-pane">
@@ -810,6 +831,11 @@ function buildScheduleModalDetails(item) {
           <div class="value">${renderHeroTokenGroups(buildWeatherTokenGroups(weather))}</div>
         </div>
       </aside>
+      ${
+        detailsUrl
+          ? `<a class="event-details-link" href="${escapeHtml(detailsUrl)}">${escapeHtml(eventBadgeLabel(item))}</a>`
+          : ""
+      }
     </div>
   `;
 }
@@ -895,7 +921,7 @@ async function loadVotesForSchedule(items) {
     voteStateByEventId = {};
     return;
   }
-  const eventIds = items.map(buildSlotEventId).filter(Boolean);
+  const eventIds = items.filter(item => !isVotingDisabledForItem(item)).map(buildSlotEventId).filter(Boolean);
   if (!eventIds.length) return;
   try {
     const url = new URL("/votes", votesApiBase);
@@ -916,6 +942,7 @@ async function loadVotesForSchedule(items) {
 }
 async function submitVote(item) {
   if (!votesApiBase) return;
+  if (isVotingDisabledForItem(item)) return;
   const eventId = buildSlotEventId(item);
   if (!eventId || pendingVoteEventIds.has(eventId) || voteStateByEventId[eventId]?.already_voted) return;
   pendingVoteEventIds.add(eventId);
@@ -954,6 +981,7 @@ async function submitVote(item) {
 }
 async function submitUnvote(item) {
   if (!votesApiBase) return;
+  if (isVotingDisabledForItem(item)) return;
   const eventId = buildSlotEventId(item);
   if (!eventId || pendingVoteEventIds.has(eventId)) return;
   pendingVoteEventIds.add(eventId);
@@ -989,6 +1017,14 @@ async function submitUnvote(item) {
   }
 }
 function buildVoteControls(item, context = "card") {
+  if (isVotingDisabledForItem(item)) {
+    const baseClass = context === "hero" ? "hero-vote" : "schedule-event-vote";
+    return `
+      <div class="${baseClass} ${baseClass}-locked">
+        <div class="${baseClass}-meta">${escapeHtml(t("votingDisabledChampionship"))}</div>
+      </div>
+    `;
+  }
   const voteState = getVoteState(item);
   const voteCountLabel = voteState.failed
     ? t("voteFailed")
@@ -1178,7 +1214,7 @@ function renderScheduleTable(rows) {
     const backgroundUrl = HERO_TRACK_BACKGROUNDS[trackCode];
     return `
       <article
-        class="schedule-event-card is-interactive-row"
+        class="schedule-event-card is-interactive-row${isChampionshipEvent(row) ? " is-championship-event" : ""}"
         data-schedule-index="${index}"
         tabindex="0"
         role="button"
@@ -1186,6 +1222,7 @@ function renderScheduleTable(rows) {
         style="--schedule-track-photo: ${backgroundUrl ? `url('${escapeHtml(backgroundUrl)}')` : "none"};"
       >
         <div class="schedule-event-card-inner">
+          <div class="event-type-badge">${escapeHtml(eventBadgeLabel(row))}</div>
           <div class="schedule-event-time">${escapeHtml(formatScheduleCardDateTime(row))}</div>
           <div class="schedule-event-track">${escapeHtml(getLocalizedField(row, "track_name", row.track_name || "--"))}</div>
           <div class="schedule-event-weather"><span>${escapeHtml(buildScheduleCardWeather(row))}</span><img src="./assets/weather/rain.png" alt="" /></div>
@@ -1201,6 +1238,37 @@ function renderScheduleTable(rows) {
     card.addEventListener("keydown", event => { if (event.key === "Enter" || event.key === " ") { event.preventDefault(); openCard(); } });
   });
   bindVoteControls(container);
+}
+function renderCalendar(rows) {
+  const grid = document.getElementById("calendar-grid");
+  const count = document.getElementById("calendar-count");
+  if (!grid) return;
+  const items = Array.isArray(rows) ? rows : [];
+  if (count) count.textContent = items.length ? String(items.length) : "--";
+  if (!items.length) {
+    grid.innerHTML = `<div class="empty">${escapeHtml(t("calendarEmpty"))}</div>`;
+    return;
+  }
+  grid.innerHTML = items.map((row, index) => {
+    const trackCode = String(row?.track_code || "").trim().toLowerCase();
+    const backgroundUrl = HERO_TRACK_BACKGROUNDS[trackCode];
+    return `
+      <button
+        class="calendar-event${isChampionshipEvent(row) ? " is-championship-event" : ""}"
+        type="button"
+        data-calendar-index="${index}"
+        style="--calendar-track-photo: ${backgroundUrl ? `url('${escapeHtml(backgroundUrl)}')` : "none"};"
+      >
+        <span class="calendar-event-date">${escapeHtml(formatDate(row?.date))}</span>
+        <span class="calendar-event-time">${escapeHtml(row?.start_time_local || "--")}</span>
+        <span class="calendar-event-track">${escapeHtml(getLocalizedField(row, "track_name", row?.track_name || row?.track_code || "--"))}</span>
+        <span class="event-type-badge">${escapeHtml(eventBadgeLabel(row))}</span>
+      </button>
+    `;
+  }).join("");
+  grid.querySelectorAll("[data-calendar-index]").forEach(button => {
+    button.addEventListener("click", () => openScheduleModal(scheduleItems[Number(button.dataset.calendarIndex)] || null));
+  });
 }
 function renderRecentRaces(rows) {
   const container = document.getElementById("recent-races-table");
@@ -1338,7 +1406,15 @@ function renderScheduleModal() {
     return;
   }
   applyScheduleModalTrackBackground(selectedScheduleItem.track_code);
-  titleEl.textContent = getLocalizedField(selectedScheduleItem, "track_name", selectedScheduleItem.track_name || "--");
+  titleEl.textContent = getLocalizedField(
+    selectedScheduleItem,
+    "title",
+    selectedScheduleItem.title ||
+      selectedScheduleItem.championship_title ||
+      selectedScheduleItem.track_name ||
+      selectedScheduleItem.track_code ||
+      "--"
+  );
   const server = announcementData?.server || {};
   const startTime = getLocalizedField(selectedScheduleItem, "start_time_local", selectedScheduleItem?.start_time_local || "--");
   const timezone = getLocalizedField(selectedScheduleItem, "timezone", selectedScheduleItem?.timezone || "UTC+3");
@@ -1528,6 +1604,7 @@ function renderUI() {
   renderHeroDetails(announcementData || {});
   renderHeroVote();
   renderScheduleTable(scheduleItems);
+  renderCalendar(scheduleItems);
   renderRecentRaces(recentRaceItems);
   renderScheduleModal();
   renderRaceResultsModal();
