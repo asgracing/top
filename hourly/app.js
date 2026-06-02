@@ -144,6 +144,9 @@ const translations = {
     calendarEmpty: "No calendar events yet.",
     championshipBadge: "Championship Event",
     hourlyBadge: "Hourly Race",
+    championshipEyebrow: "Championship",
+    championshipOpenButton: "Open championship",
+    championshipNoDescription: "Follow the active championship progress, upcoming races and standings.",
     votingDisabledChampionship: "Voting is disabled for championship events",
     voteButton: "I want to race!",
     voteButtonDone: "You're in",
@@ -192,12 +195,12 @@ const translations = {
     weatherMixed: "Mixed clouds",
     weatherCloudy: "Cloudy",
     weatherWet: "Wet risk",
-    weatherTemp: "{value}°C",
+    weatherTemp: "{value}C",
     weatherClouds: "clouds {value}%",
     weatherRain: "rain {value}%",
     weatherRandomness: "randomness {value}",
     weatherTempHintTitle: "Ambient temperature",
-    weatherTempHintBody: "Air temperature around the session start: {value}°C. It affects tyre warm-up and overall grip.",
+    weatherTempHintBody: "Air temperature around the session start: {value}C. It affects tyre warm-up and overall grip.",
     weatherCloudsHintTitle: "Cloud cover",
     weatherCloudsHintBody: "{value}% cloud cover expected for this slot. More clouds usually mean a cooler, flatter track.",
     weatherRainHintTitle: "Rain chance",
@@ -234,9 +237,11 @@ const translations = {
     ogLocale: "ru_RU",
     homeAriaLabel: "Главная ASG Racing",
     langSwitcherLabel: "Переключение языка",
-    navMore: "Ещё",
+    navMore: "Еще",
     navMoreAriaLabel: "Открыть дополнительную навигацию",
     navLeaderboard: "На главную",
+    navLastRaces: "Последние гонки",
+    navCars: "Машины",
     navHourly: "Часовая гонка",
     heroServerLabel: "Сервер",
     heroPasswordLabel: "Пароль",
@@ -271,8 +276,8 @@ const translations = {
     entryRacecraft: "RC {value}+",
     preRaceWait: "Престарт {value}м",
     overtime: "Овертайм {value}м",
-    timeMultiplierChip: "ускорение x{value}",
-    mandatoryPitstopCount: "{value} обязательный пит-стоп",
+    timeMultiplierChip: "x{value} время",
+    mandatoryPitstopCount: "{value} обязательный пит",
     mandatoryPitstopCountPlural: "{value} обязательных пит-стопа",
     pitWindow: "окно {value}м",
     pitNoMandatory: "Без обязательного пит-стопа",
@@ -292,18 +297,18 @@ const translations = {
     weatherMixed: "Переменная облачность",
     weatherCloudy: "Облачно",
     weatherWet: "Есть риск дождя",
-    weatherTemp: "{value}°C",
+    weatherTemp: "{value}C",
     weatherClouds: "облачность {value}%",
     weatherRain: "дождь {value}%",
-    weatherRandomness: "случайность {value}",
+    weatherRandomness: "рандомность {value}",
     weatherTempHintTitle: "Температура воздуха",
-    weatherTempHintBody: "Температура воздуха к началу сессии: {value}°C. Она влияет на прогрев шин и общий уровень сцепления.",
+    weatherTempHintBody: "Температура воздуха к началу сессии: {value}C. Она влияет на прогрев шин и общий уровень сцепления.",
     weatherCloudsHintTitle: "Облачность",
-    weatherCloudsHintBody: "Ожидаемая облачность для этого слота: {value}%. Чем её больше, тем прохладнее и ровнее покрытие.",
+    weatherCloudsHintBody: "Ожидаемая облачность для этого слота: {value}%. Чем ее больше, тем прохладнее и ровнее покрытие.",
     weatherRainHintTitle: "Вероятность дождя",
     weatherRainHintBody: "Вероятность дождя для этого слота: {value}%. Чем выше значение, тем больше шанс влажной трассы.",
-    weatherRandomHintTitle: "Случайность погоды",
-    weatherRandomHintBody: "Уровень случайности: {value}. Чем он выше, тем менее предсказуемой будет погода по ходу события.",
+    weatherRandomHintTitle: "Рандомность погоды",
+    weatherRandomHintBody: "Уровень рандомности: {value}. Чем он выше, тем менее предсказуемой будет погода по ходу ивента.",
     weatherModalEyebrow: "Детали погоды",
     weatherModalTitle: "Погода на гонку",
     weatherModalSubtitle: "Нажми на показатель, чтобы понять, что именно он означает.",
@@ -335,15 +340,18 @@ Object.assign(translations.ru, {
   scheduleModalEyebrow: "Детали слота",
   scheduleModalDateTime: "Дата и время",
   scheduleModalSlot: "Слот",
-    scheduleModalRain: "Прогноз дождя"
-});
-
-Object.assign(translations.ru, {
+  scheduleModalRain: "Прогноз дождя",
   calendarSummary: "Полный календарь событий",
   calendarEmpty: "Пока нет событий в календаре.",
   championshipBadge: "Событие чемпионата",
   hourlyBadge: "Часовая гонка",
-  votingDisabledChampionship: "Голосование для событий чемпионата отключено",
+  championshipEyebrow: "Чемпионат",
+  championshipOpenButton: "Открыть чемпионат",
+  championshipNoDescription: "Следи за прогрессом активного чемпионата, ближайшими гонками и таблицей.",
+  votingDisabledChampionship: "Голосование для событий чемпионата отключено"
+});
+
+Object.assign(translations.ru, {
   voteButton: "Я хочу поехать!",
   voteButtonDone: "Ты в списке",
   voteCountZero: "Пока никто не отметился",
@@ -356,8 +364,8 @@ Object.assign(translations.ru, {
 });
 
 Object.assign(translations.ru, {
-  copyAction: "Скопировать {field}",
-  copiedAction: "{field} скопирован"
+  copyAction: "РЎРєРѕРїРёСЂРѕРІР°С‚СЊ {field}",
+  copiedAction: "{field} СЃРєРѕРїРёСЂРѕРІР°РЅ"
 });
 
 let currentLang = "en";
@@ -844,6 +852,15 @@ async function loadJson(url) {
   if (!response.ok) throw new Error(`HTTP ${response.status} for ${url}`);
   return response.json();
 }
+async function fetchWithTimeout(url, options = {}, timeoutMs = 2500) {
+  const controller = new AbortController();
+  const timeoutId = window.setTimeout(() => controller.abort(), timeoutMs);
+  try {
+    return await fetch(url, { ...options, signal: controller.signal });
+  } finally {
+    window.clearTimeout(timeoutId);
+  }
+}
 function formatDate(isoDate) {
   if (!isoDate) return "--";
   const date = new Date(`${isoDate}T00:00:00+03:00`);
@@ -963,7 +980,7 @@ async function loadVotesForSchedule(items) {
     const url = new URL("/votes", votesApiBase);
     url.searchParams.set("event_ids", eventIds.join(","));
     url.searchParams.set("voter_id", getBrowserVoterId());
-    const response = await fetch(url, { cache: "no-store" });
+    const response = await fetchWithTimeout(url, { cache: "no-store" });
     if (!response.ok) throw new Error(`HTTP ${response.status}`);
     const payload = await response.json();
     if (payload?.items && typeof payload.items === "object") {
@@ -978,7 +995,6 @@ async function loadVotesForSchedule(items) {
 }
 async function submitVote(item) {
   if (!votesApiBase) return;
-  if (isVotingDisabledForItem(item)) return;
   const eventId = buildSlotEventId(item);
   if (!eventId || pendingVoteEventIds.has(eventId) || voteStateByEventId[eventId]?.already_voted) return;
   pendingVoteEventIds.add(eventId);
@@ -1017,7 +1033,6 @@ async function submitVote(item) {
 }
 async function submitUnvote(item) {
   if (!votesApiBase) return;
-  if (isVotingDisabledForItem(item)) return;
   const eventId = buildSlotEventId(item);
   if (!eventId || pendingVoteEventIds.has(eventId)) return;
   pendingVoteEventIds.add(eventId);
@@ -1221,6 +1236,18 @@ function renderHeroDetails(data) {
   setHeroTokenValue("hero-tyre-rules", buildTyreTokenGroups(rules));
   setHeroTokenValue("hero-weather", buildWeatherTokenGroups(weather));
   updateHeroConnectLink(server);
+}
+function renderChampionshipHero(data) {
+  const titleEl = document.getElementById("hero-championship-title");
+  const metaEl = document.getElementById("hero-championship-meta");
+  const descriptionEl = document.getElementById("hero-championship-description");
+  const buttonEl = document.querySelector(".championship-summary-btn");
+  const championship = data?.championship || {};
+  const title = data?.championship_title || championship.title || t("championshipBadge");
+  if (titleEl) titleEl.textContent = title;
+  if (metaEl) metaEl.textContent = [championship.period, championship.status].filter(Boolean).join(" · ") || eventBadgeLabel(data);
+  if (descriptionEl) descriptionEl.textContent = championship.description || t("championshipNoDescription");
+  if (buttonEl) buttonEl.textContent = title;
 }
 function renderSchedule(rows) {
   const container = document.getElementById("schedule-list");
@@ -1469,15 +1496,7 @@ function renderScheduleModal() {
     return;
   }
   applyScheduleModalTrackBackground(selectedScheduleItem.track_code);
-  titleEl.textContent = getLocalizedField(
-    selectedScheduleItem,
-    "title",
-    selectedScheduleItem.title ||
-      selectedScheduleItem.championship_title ||
-      selectedScheduleItem.track_name ||
-      selectedScheduleItem.track_code ||
-      "--"
-  );
+  titleEl.textContent = getLocalizedField(selectedScheduleItem, "track_name", selectedScheduleItem.track_name || "--");
   const server = announcementData?.server || {};
   const startTime = getLocalizedField(selectedScheduleItem, "start_time_local", selectedScheduleItem?.start_time_local || "--");
   const timezone = getLocalizedField(selectedScheduleItem, "timezone", selectedScheduleItem?.timezone || "UTC+3");
@@ -1665,6 +1684,7 @@ function renderUI() {
   }
   renderAnnouncement(announcementData || {});
   renderHeroDetails(announcementData || {});
+  renderChampionshipHero(announcementData || {});
   renderHeroVote();
   renderScheduleTable(scheduleItems);
   renderCalendar(scheduleItems);
@@ -1797,9 +1817,11 @@ async function init() {
     serverStatusData = serverStatus && typeof serverStatus === "object" ? serverStatus : null;
     scheduleItems = buildScheduleItems(schedule, announcementData);
     recentRaceItems = Array.isArray(recentRaces) ? recentRaces : [];
-    await loadVotesForSchedule(scheduleItems.slice(0, 3));
     hasLoadError = false;
     renderUI();
+    loadVotesForSchedule(scheduleItems.slice(0, 3)).finally(() => {
+      renderUI();
+    });
   } catch (error) {
     console.error(error);
     hasLoadError = true;

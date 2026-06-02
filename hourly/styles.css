@@ -36,64 +36,31 @@ body {
 }
 
 .top-nav {
-  --top-nav-band-width: min(1440px, calc(100% - 16px));
   position: sticky;
   top: 0;
   width: 100%;
   z-index: 1000;
-  background: transparent;
-  border-bottom: 0;
-  box-shadow: none;
-}
-
-.top-nav::before {
-  content: "";
-  position: absolute;
-  inset: 0 auto 0 50%;
-  width: var(--top-nav-band-width);
-  transform: translateX(-50%);
-  pointer-events: none;
-  z-index: 0;
   backdrop-filter: blur(18px);
-  -webkit-backdrop-filter: blur(18px);
   background:
-    linear-gradient(
-      90deg,
-      rgba(12, 17, 26, 0) 0%,
-      rgba(12, 17, 26, 0.58) 14%,
-      rgba(12, 17, 26, 0.94) 30%,
-      rgba(12, 17, 26, 0.94) 70%,
-      rgba(12, 17, 26, 0.58) 86%,
-      rgba(12, 17, 26, 0) 100%
-    );
+    linear-gradient(180deg, rgba(12, 17, 26, 0.94), rgba(12, 17, 26, 0.88));
   border-bottom: 1px solid rgba(255, 255, 255, 0.12);
   box-shadow: 0 14px 36px rgba(0, 0, 0, 0.28);
-  -webkit-mask-image: linear-gradient(90deg, transparent 0%, #000 16%, #000 84%, transparent 100%);
-  mask-image: linear-gradient(90deg, transparent 0%, #000 16%, #000 84%, transparent 100%);
 }
 
 .top-nav-inner {
-  position: relative;
-  z-index: 1;
   max-width: 1440px;
   margin: 0 auto;
-  padding: 8px 20px 10px;
+  padding: 10px 20px;
   display: grid;
-  grid-template-columns: auto auto auto;
-  grid-template-areas:
-    "brand socials actions"
-    "menu menu menu";
-  justify-content: center;
+  grid-template-columns: auto auto 1fr auto;
   align-items: center;
-  gap: 7px 12px;
+  gap: 12px;
 }
 
 .top-nav-brand {
-  grid-area: brand;
-  justify-self: start;
   display: inline-flex;
   align-items: center;
-  gap: 8px;
+  gap: 10px;
   color: var(--text);
   text-decoration: none;
   font-weight: 900;
@@ -103,8 +70,8 @@ body {
 
 .top-nav-brand-logo {
   display: block;
-  width: 32px;
-  height: 32px;
+  width: 34px;
+  height: 34px;
   object-fit: cover;
   border-radius: 10px;
   box-shadow: 0 10px 24px rgba(0, 0, 0, 0.24);
@@ -116,29 +83,24 @@ body {
 }
 
 .top-nav-center {
-  grid-area: menu;
   display: flex;
   justify-content: center;
-  width: 100%;
   min-width: 0;
   position: relative;
 }
 
 .top-nav-socials {
-  grid-area: socials;
-  justify-self: center;
   display: flex;
   align-items: center;
-  gap: 7px;
+  gap: 8px;
 }
 
 .top-nav-menu {
   display: flex;
   align-items: center;
   justify-content: center;
-  gap: 7px;
+  gap: 8px;
   flex-wrap: nowrap;
-  width: 100%;
   min-width: 0;
 }
 
@@ -147,9 +109,7 @@ body {
 }
 
 .top-nav-actions {
-  grid-area: actions;
   display: flex;
-  justify-self: end;
   justify-content: flex-end;
 }
 
@@ -212,10 +172,10 @@ body {
   display: inline-flex;
   align-items: center;
   justify-content: center;
-  padding: 6px 12px;
+  padding: 6px 14px;
   border-radius: 999px;
   font-weight: 800;
-  font-size: 0.72rem;
+  font-size: 0.76rem;
   letter-spacing: 0.01em;
   text-decoration: none;
   white-space: nowrap;
@@ -261,10 +221,10 @@ body {
 }
 
 .nav-social {
-  min-width: 36px;
-  min-height: 36px;
-  padding: 8px;
-  font-size: 0.78rem;
+  min-width: 42px;
+  min-height: 42px;
+  padding: 10px;
+  font-size: 0.86rem;
   letter-spacing: 0.015em;
   box-shadow: 0 12px 28px rgba(0, 0, 0, 0.24);
 }
@@ -397,14 +357,14 @@ body {
 }
 
 .hero {
-  padding: 10px 0 8px;
+  padding: 6px 0 6px;
 }
 
 .hero-card {
   --hero-track-photo: none;
   position: relative;
   overflow: hidden;
-  padding: 8px;
+  padding: 6px;
   border: 1px solid var(--line);
   border-radius: 30px;
   background:
@@ -432,7 +392,7 @@ body {
   z-index: 1;
   display: grid;
   grid-template-columns: minmax(0, 1fr) minmax(320px, 400px);
-  gap: 8px;
+  gap: 6px;
   align-items: stretch;
 }
 
@@ -472,9 +432,9 @@ h2 {
   display: flex;
   flex-direction: column;
   justify-content: space-between;
-  gap: 14px;
+  gap: 10px;
   min-height: 100%;
-  padding: 8px;
+  padding: 6px;
   border: 1px solid rgba(255, 255, 255, 0.08);
   border-radius: 22px;
   background: rgba(255, 255, 255, 0.03);
@@ -484,17 +444,25 @@ h2 {
 .hero-server-grid {
   display: grid;
   grid-template-columns: repeat(2, minmax(0, 1fr));
-  gap: 12px 16px;
+  gap: 10px 12px;
 }
 
 .hero-server-grid-rules {
   grid-template-columns: repeat(3, minmax(0, 1fr));
-  gap: 12px;
+  gap: 8px;
 }
 
 .hero-server-stack {
   display: grid;
-  gap: 12px;
+  gap: 8px;
+}
+
+.hero-event-grid {
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+}
+
+.hero-event-track {
+  grid-column: 1 / -1;
 }
 
 .hero-connect-actions {
@@ -549,18 +517,18 @@ h2 {
 
 .hero-server-item {
   min-width: 0;
-  padding: 14px 15px;
+  padding: 11px 12px;
   border: 1px solid rgba(255, 255, 255, 0.06);
   border-radius: 16px;
   background: rgba(9, 14, 21, 0.5);
   display: flex;
   align-items: center;
   justify-content: center;
-  gap: 12px;
+  gap: 10px;
 }
 
 .hero-server-item .value {
-  line-height: 1.45;
+  line-height: 1.35;
   overflow-wrap: anywhere;
   font-size: 0.98rem;
   font-weight: 600;
@@ -571,7 +539,7 @@ h2 {
 .hero-token-list {
   display: flex;
   flex-wrap: wrap;
-  gap: 8px;
+  gap: 6px;
   justify-content: flex-end;
   margin-left: auto;
 }
@@ -580,8 +548,8 @@ h2 {
   display: inline-flex;
   align-items: center;
   position: relative;
-  min-height: 30px;
-  padding: 6px 10px;
+  min-height: 28px;
+  padding: 5px 9px;
   border-radius: 999px;
   border: 1px solid rgba(255, 255, 255, 0.08);
   background: rgba(255, 255, 255, 0.06);
@@ -727,7 +695,7 @@ h2 {
 }
 
 .hero-server-item-emphasis .label {
-  margin-bottom: 6px;
+  margin-bottom: 4px;
   text-align: left;
 }
 
@@ -745,7 +713,7 @@ h2 {
   align-items: flex-start;
   justify-content: flex-start;
   flex-direction: column;
-  gap: 10px;
+  gap: 8px;
 }
 
 .hero-server-grid-rules .hero-server-item .label {
@@ -768,7 +736,7 @@ h2 {
   display: flex;
   align-items: center;
   justify-content: center;
-  gap: 10px;
+  gap: 8px;
   margin-left: 0;
 }
 
@@ -833,8 +801,8 @@ h2 {
   display: flex;
   flex-direction: column;
   justify-content: space-between;
-  gap: 18px;
-  padding: 18px;
+  gap: 12px;
+  padding: 14px;
   border: 1px solid rgba(255, 209, 102, 0.26);
   border-radius: 20px;
   background:
@@ -849,24 +817,24 @@ h2 {
   display: flex;
   align-items: flex-start;
   justify-content: space-between;
-  gap: 14px;
+  gap: 10px;
 }
 
 .hero-announcement-eyebrow {
-  margin-bottom: 8px;
+  margin-bottom: 4px;
   color: #ffcc5c;
 }
 
 .hero-announcement-meta {
   display: grid;
   grid-template-columns: repeat(2, minmax(0, 1fr));
-  gap: 14px;
+  gap: 10px;
 }
 
 .hero-announcement-inline-meta {
   display: grid;
   grid-template-columns: 1fr;
-  gap: 12px;
+  gap: 8px;
 }
 
 .hero-announcement-inline-stat {
@@ -878,7 +846,7 @@ h2 {
 .hero-announcement-inline-stat-combined {
   align-items: stretch;
   justify-content: center;
-  gap: 12px;
+  gap: 8px;
 }
 
 .hero-announcement-inline-stat .value {
@@ -901,12 +869,12 @@ h2 {
 .hero-announcement-inline-stat-combined .hero-token-list {
   justify-content: center;
   flex-wrap: nowrap;
-  gap: 6px;
+  gap: 4px;
 }
 
 .hero-announcement-inline-stat-combined .hero-token {
-  min-height: 28px;
-  padding: 5px 8px;
+  min-height: 26px;
+  padding: 4px 7px;
   font-size: 0.74rem;
 }
 
@@ -922,7 +890,7 @@ h2 {
 }
 
 .hero-announcement-weather {
-  padding: 14px 15px;
+  padding: 11px 12px;
   border: 1px solid rgba(255, 209, 102, 0.14);
   border-radius: 16px;
   background:
@@ -941,12 +909,52 @@ h2 {
   font-size: 0.88rem;
 }
 
+.championship-summary {
+  display: grid;
+  gap: 12px;
+  height: 100%;
+  align-content: center;
+}
+
+.championship-summary-title {
+  color: #f5edff;
+  font-size: clamp(1.55rem, 3vw, 2.35rem);
+  font-weight: 950;
+  line-height: 1;
+}
+
+.championship-summary-meta {
+  color: #d8b4fe;
+  font-weight: 900;
+  line-height: 1.25;
+}
+
+.championship-summary-text {
+  color: #d9ccef;
+  font-weight: 650;
+  line-height: 1.45;
+}
+
+.championship-summary-btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 44px;
+  padding: 0 16px;
+  border-radius: 999px;
+  background: linear-gradient(135deg, rgba(126, 34, 206, 0.98), rgba(168, 85, 247, 0.94));
+  color: #ffffff;
+  font-weight: 950;
+  text-decoration: none;
+  box-shadow: 0 16px 32px rgba(126, 34, 206, 0.28);
+}
+
 .hero-announcement-weather,
 .hero-announcement-meta .stat {
   display: flex;
   align-items: center;
   justify-content: center;
-  gap: 12px;
+  gap: 10px;
 }
 
 .hero-announcement-weather .label,
@@ -993,8 +1001,8 @@ h2 {
   justify-content: center;
   gap: 6px;
   flex-wrap: wrap;
-  margin-top: 4px;
-  padding: 12px 14px;
+  margin-top: 2px;
+  padding: 9px 12px;
   border: 1px solid rgba(255, 255, 255, 0.06);
   border-radius: 16px;
   background: rgba(8, 12, 18, 0.5);
@@ -1004,7 +1012,7 @@ h2 {
 .schedule-event-vote-actions {
   display: flex;
   align-items: center;
-  gap: 10px;
+  gap: 8px;
   flex-wrap: wrap;
 }
 
@@ -1014,8 +1022,8 @@ h2 {
   align-items: center;
   justify-content: center;
   gap: 10px;
-  min-height: 42px;
-  padding: 10px 14px;
+  min-height: 38px;
+  padding: 8px 12px;
   border: 1px solid rgba(255, 209, 102, 0.24);
   border-radius: 999px;
   background: linear-gradient(135deg, rgba(255, 107, 44, 0.88), rgba(255, 145, 77, 0.88));
@@ -1068,8 +1076,8 @@ h2 {
   display: inline-flex;
   align-items: center;
   justify-content: center;
-  width: 42px;
-  height: 42px;
+  width: 38px;
+  height: 38px;
   padding: 0;
   border: 1px solid rgba(255, 107, 107, 0.34);
   border-radius: 999px;
@@ -1355,14 +1363,6 @@ tbody tr:not(.is-interactive-row):hover {
   box-shadow: 0 18px 44px rgba(255, 157, 77, 0.12), 0 18px 40px rgba(0, 0, 0, 0.24);
 }
 
-.schedule-event-card.is-championship-event .event-type-badge,
-.calendar-event.is-championship-event .event-type-badge {
-  border-color: rgba(193, 132, 252, 0.72);
-  background: linear-gradient(135deg, rgba(126, 34, 206, 0.96), rgba(168, 85, 247, 0.9));
-  color: #fbf5ff;
-  box-shadow: 0 10px 24px rgba(126, 34, 206, 0.32);
-}
-
 .schedule-event-card-inner {
   display: inline-flex;
   flex-direction: column;
@@ -1394,6 +1394,14 @@ tbody tr:not(.is-interactive-row):hover {
   line-height: 1;
   text-transform: uppercase;
   letter-spacing: 0.06em;
+}
+
+.schedule-event-card.is-championship-event .event-type-badge,
+.calendar-event.is-championship-event .event-type-badge {
+  border-color: rgba(193, 132, 252, 0.72);
+  background: linear-gradient(135deg, rgba(126, 34, 206, 0.96), rgba(168, 85, 247, 0.9));
+  color: #fbf5ff;
+  box-shadow: 0 10px 24px rgba(126, 34, 206, 0.32);
 }
 
 .schedule-event-time {
@@ -2038,19 +2046,17 @@ body.modal-open {
   }
 
   .top-nav-inner {
-    grid-template-columns: minmax(0, 1fr) auto minmax(0, 1fr);
+    grid-template-columns: 1fr auto;
     grid-template-areas:
-      "brand socials actions"
-      "menu menu menu";
+      "brand actions"
+      "menu menu";
     align-items: center;
-    gap: 7px 10px;
-    padding: 8px 16px 10px;
+    gap: 10px;
+    padding: 10px 16px 12px;
   }
 
   .top-nav-socials {
-    grid-area: socials;
-    display: flex;
-    justify-content: center;
+    display: none;
   }
 
   .top-nav-brand {
@@ -2075,9 +2081,9 @@ body.modal-open {
   .top-nav-menu {
     display: flex;
     width: 100%;
-    gap: 6px;
+    gap: 8px;
     flex-wrap: nowrap;
-    justify-content: center;
+    justify-content: flex-start;
     overflow: visible;
     padding: 2px 0 0;
   }
@@ -2085,26 +2091,24 @@ body.modal-open {
   .top-nav-link-primary,
   .top-nav-link-secondary {
     flex: 0 0 auto;
-    padding: 7px 11px;
-    font-size: 0.72rem;
+    padding: 9px 15px;
+    font-size: 0.8rem;
   }
 
   .nav-social {
-    min-width: 34px;
-    min-height: 34px;
-    padding: 7px;
-    font-size: 0.74rem;
+    min-width: 44px;
+    min-height: 44px;
+    padding: 10px;
+    font-size: 0.84rem;
   }
 }
 
 @media (max-width: 1420px) and (min-width: 721px) {
   .top-nav-inner {
-    grid-template-columns: minmax(0, 1fr) auto minmax(0, 1fr);
-    grid-template-areas:
-      "brand socials actions"
-      "menu menu menu";
+    grid-template-columns: auto auto 1fr auto;
+    grid-template-areas: "brand socials menu actions";
     align-items: center;
-    padding: 8px 16px 10px;
+    padding: 10px 16px;
   }
 
   .top-nav-socials {
@@ -2121,10 +2125,10 @@ body.modal-open {
   }
 
   .top-nav-menu {
-    width: 100%;
+    width: auto;
     overflow: visible;
     justify-content: center;
-    padding: 2px 0 0;
+    padding: 0;
   }
 }
 
@@ -2139,8 +2143,8 @@ body.modal-open {
       "brand socials actions"
       "menu menu menu";
     align-items: center;
-    gap: 7px 9px;
-    padding: 8px 12px 10px;
+    gap: 10px;
+    padding: 10px 14px 12px;
   }
 
   .top-nav-brand {
@@ -2172,7 +2176,7 @@ body.modal-open {
   .top-nav-menu {
     display: flex;
     width: 100%;
-    gap: 6px;
+    gap: 8px;
     flex-wrap: nowrap;
     justify-content: flex-start;
     overflow: visible;
@@ -2182,41 +2186,45 @@ body.modal-open {
   .top-nav-link-primary,
   .top-nav-link-secondary {
     flex: 0 0 auto;
-    padding: 7px 11px;
-    font-size: 0.72rem;
+    padding: 10px 15px;
+    font-size: 0.8rem;
   }
 
   .nav-social {
-    min-width: 34px;
-    min-height: 34px;
-    padding: 7px;
-    font-size: 0.74rem;
+    min-width: 44px;
+    min-height: 44px;
+    padding: 10px;
+    font-size: 0.84rem;
   }
 
 }
 
 @media (max-width: 840px) and (min-width: 721px) {
   .hero {
-    padding-top: 18px;
+    padding-top: 12px;
   }
 
   .hero-card {
-    padding: 8px;
+    padding: 6px;
     border-radius: 22px;
   }
 
   .hero-grid {
     grid-template-columns: 1fr;
-    gap: 16px;
+    gap: 12px;
   }
 
   .hero-announcement-card {
     order: -1;
-    padding: 9px;
-    gap: 9px;
+    padding: 7px;
+    gap: 7px;
   }
 
   .hero-server-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .hero-event-grid {
     grid-template-columns: 1fr;
   }
 
@@ -2241,14 +2249,14 @@ body.modal-open {
   }
 
   .hero-server-card {
-    gap: 10px;
-    padding: 8px;
+    gap: 8px;
+    padding: 6px;
   }
 
   .hero-server-item,
   .hero-announcement-meta .stat,
   .hero-announcement-weather {
-    padding: 7px 8px;
+    padding: 6px 7px;
   }
 
   .hero-server-item .label,
@@ -2393,24 +2401,20 @@ body.modal-open {
     width: min(100% - 20px, 1200px);
   }
 
-  .top-nav {
-    --top-nav-band-width: min(1200px, calc(100% - 20px));
-  }
-
   .top-nav-inner {
     grid-template-columns: auto 1fr auto;
     grid-template-areas:
       "brand socials actions"
       "menu menu menu";
     align-items: center;
-    gap: 6px 7px;
-    padding: 8px 10px;
+    gap: 10px;
+    padding: 10px 12px;
   }
 
   .top-nav-brand {
     display: inline-flex;
     align-items: center;
-    gap: 6px;
+    gap: 0;
     grid-area: brand;
     min-width: 0;
     overflow: hidden;
@@ -2418,13 +2422,12 @@ body.modal-open {
   }
 
   .top-nav-brand-text {
-    display: inline-block;
-    font-size: 0.82rem;
+    display: none;
   }
 
   .top-nav-brand-logo {
-    width: 34px;
-    height: 34px;
+    width: 38px;
+    height: 38px;
   }
 
   .top-nav-socials {
@@ -2456,64 +2459,57 @@ body.modal-open {
   .top-nav-link-primary,
   .top-nav-link-secondary {
     flex: 0 0 auto;
-    padding: 7px 10px;
-    font-size: 0.7rem;
+    padding: 10px 15px;
+    font-size: 0.8rem;
   }
 
   .nav-social {
-    min-width: 31px;
-    min-height: 31px;
-    padding: 6px;
-    font-size: 0.68rem;
+    min-height: 44px;
+    padding: 10px 18px;
+    font-size: 0.84rem;
   }
 
   .lang-btn {
-    min-width: 40px;
-    min-height: 32px;
-    padding: 0 6px;
+    min-width: 45px;
+    min-height: 34px;
+    padding: 0 7px;
   }
 
   .lang-flag {
-    width: 22px;
-    height: 16px;
-  }
-
-  .lang-switch {
-    gap: 4px;
-    padding: 4px;
-    border-radius: 12px;
+    width: 24px;
+    height: 17px;
   }
 
   .nav-social {
-    min-width: 31px;
-    min-height: 31px;
-    padding: 6px;
-    font-size: 0.68rem;
+    min-width: 36px;
+    min-height: 36px;
+    padding: 7px;
+    font-size: 0.72rem;
   }
 
   .social-icon {
-    width: 15px;
-    height: 15px;
+    width: 16px;
+    height: 16px;
   }
 
   .hero {
-    padding-top: 18px;
+    padding-top: 12px;
   }
 
   .hero-card {
-    padding: 8px;
+    padding: 6px;
     border-radius: 22px;
   }
 
   .hero-grid {
     grid-template-columns: 1fr;
-    gap: 16px;
+    gap: 12px;
   }
 
   .hero-announcement-card {
     order: -1;
-    padding: 9px;
-    gap: 9px;
+    padding: 7px;
+    gap: 7px;
   }
 
   .hero-server-grid {
@@ -2557,7 +2553,7 @@ body.modal-open {
 
   .hero-announcement-meta .stat,
   .hero-announcement-weather {
-    padding: 7px 8px;
+    padding: 6px 7px;
   }
 
   .hero-server-item .label,
@@ -2814,73 +2810,5 @@ body.modal-open {
   .section-head {
     flex-direction: column;
     align-items: flex-start;
-  }
-}
-
-@media (max-width: 420px) {
-  .top-nav-inner {
-    padding: 7px 8px 9px;
-    gap: 6px 5px;
-  }
-
-  .top-nav-brand-logo {
-    width: 28px;
-    height: 28px;
-  }
-
-  .top-nav-socials {
-    gap: 3px;
-  }
-
-  .top-nav-link-primary,
-  .top-nav-link-secondary {
-    padding: 6px 9px;
-    font-size: 0.68rem;
-  }
-
-  .nav-social {
-    min-width: 24px;
-    min-height: 24px;
-    padding: 4px;
-  }
-
-  .social-icon {
-    width: 13px;
-    height: 13px;
-  }
-
-  .lang-switch {
-    gap: 3px;
-    padding: 3px;
-    border-radius: 10px;
-  }
-
-  .lang-btn {
-    min-width: 31px;
-    min-height: 28px;
-    padding: 0 3px;
-  }
-
-  .lang-flag {
-    width: 18px;
-    height: 14px;
-  }
-
-  .top-nav-more-toggle {
-    gap: 6px;
-  }
-
-  .top-nav-more-icon {
-    font-size: 0.9rem;
-  }
-}
-
-@media (max-width: 360px) {
-  .top-nav-brand {
-    gap: 0;
-  }
-
-  .top-nav-brand-text {
-    display: none;
   }
 }
