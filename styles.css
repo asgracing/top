@@ -2354,6 +2354,16 @@ tr.is-interactive-row:focus-visible {
   font-size: 0.72rem;
 }
 
+.top-nav-link-championship,
+.top-nav-more-link-championship {
+  background: linear-gradient(135deg, rgba(126, 34, 206, 0.96), rgba(168, 85, 247, 0.92));
+  border-color: rgba(216, 180, 254, 0.6);
+  color: #ffffff;
+  box-shadow:
+    inset 0 1px 0 rgba(255, 255, 255, 0.16),
+    0 12px 26px rgba(126, 34, 206, 0.28);
+}
+
 .sr-badge-rank {
   display: contents;
   color: var(--sr-accent);
@@ -9446,6 +9456,27 @@ body.modal-open {
   .hero-hourly-card {
     height: auto;
   }
+}
+
+.hero-hourly-card.is-championship-event {
+  border-color: rgba(216, 180, 254, 0.62) !important;
+  background:
+    radial-gradient(circle at 20% 0%, rgba(168, 85, 247, 0.22), transparent 38%),
+    linear-gradient(180deg, rgba(126, 34, 206, 0.18), rgba(30, 18, 48, 0.9)) !important;
+  box-shadow:
+    0 0 0 1px rgba(216, 180, 254, 0.14),
+    0 20px 42px rgba(126, 34, 206, 0.28) !important;
+}
+
+.hero-hourly-card.is-championship-event::before {
+  background:
+    linear-gradient(160deg, rgba(31, 13, 48, 0.68), rgba(31, 13, 48, 0.2)),
+    var(--hero-hourly-track-photo) !important;
+}
+
+.hero-hourly-card.is-championship-event .hero-hourly-eyebrow,
+.hero-hourly-card.is-championship-event .hero-hourly-votes {
+  color: #f3e8ff !important;
 }
 
 /* ===== DONATION ALERTS RECENT SUPPORTERS ===== */

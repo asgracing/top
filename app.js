@@ -29,6 +29,7 @@ const topDataV2ManifestUrl = `${TOP_DATA_V2_BASE_URL}/manifest.json`;
 const serverStatusUrl = pageParams.get("serverStatusUrl") || (TOP_API_ROOT_URL ? `${TOP_API_ROOT_URL}/server-status` : `${TOP_DATA_BASE_URL}/server_status.json`);
 const donationsApiUrl = "https://donations.asgracing.workers.dev/recent";
 const hourlyAnnouncementUrl = `${HOURLY_DATA_BASE_URL}/announcement.json`;
+const hourlyScheduleUrl = `${HOURLY_DATA_BASE_URL}/schedule.json`;
 const hourlyVotesApiUrl = "https://hourly-votes.asgracing.workers.dev";
 const communityLikesApiUrl =
   document.querySelector('meta[name="community-likes-api"]')?.getAttribute("content")?.trim() || "";
@@ -180,6 +181,7 @@ let safetySort = { key: null, direction: null };
 let carsSort = { key: "wins", direction: "desc" };
 let onlineData = [];
 let hourlyAnnouncementData = null;
+let hourlyScheduleData = null;
 let hourlyVotesCount = null;
 let hourlyVoteAlreadyVoted = false;
 let hourlyVotePending = false;
@@ -390,7 +392,8 @@ const translations = {
     heroTitle: "🏁 ASG Racing Leaderboard",
     heroSubtitle:
       "<strong>ASG Racing</strong> is an ACC community of enthusiasts. The public server runs 24/7 on Monza, and we also host daily one-hour events at 14:00 and 20:00 MSK. Data is automatically updated based on dedicated server results.",
-    btnChampionship: "Championship",
+    btnChampionship: "Rating",
+    btnChampionshipEvent: "Championship",
     btnLastRaces: "Race Archive",
     btnSpecialEvent: "Special Event",
     btnCars: "Cars",
@@ -426,7 +429,7 @@ const translations = {
     bestLapNoteTemplate: "{driver} · {track}",
     top3Title: "Top 3 Drivers",
     top3Subtitle: "Current championship leaders by points.",
-    championshipTitle: "Championship Leaderboard",
+    championshipTitle: "Rating",
     championshipSubtitle: "Row click opens quick view. Name opens full profile.",
     supportWidgetTitle: "Support ASG Racing",
     supportWidgetText: "If you enjoy the server, streams and stats site, you can help the project keep rolling with a quick support drop.",
@@ -899,7 +902,8 @@ const translations = {
     heroTitle: "🏁 ASG Racing Leaderboard",
     heroSubtitle:
       "<strong>ASG Racing</strong> - сообщество энтузиастов ACC. Открытый сервер работает 24/7 на трассе Monza. Мы также проводим ежедневные часовые заезды в 14:00 и 20:00 МСК. Данные обновляются автоматически на основе файлов результатов ACC Dedicated Server.",
-    btnChampionship: "Чемпионат",
+    btnChampionship: "Рейтинг",
+    btnChampionshipEvent: "Чемпионат",
     btnLastRaces: "Архив гонок",
     btnSpecialEvent: "Спец. ивент",
     lastRacesBtn: "Последние гонки",
@@ -932,7 +936,7 @@ const translations = {
     bestLapNoteTemplate: "{driver} · {track}",
     top3Title: "Топ-3 пилота",
     top3Subtitle: "Текущие лидеры чемпионата по очкам.",
-    championshipTitle: "Таблица чемпионата",
+    championshipTitle: "Рейтинг",
     championshipSubtitle: "Строка открывает быстрый просмотр, имя пилота ведёт в полный профиль.",
     supportWidgetTitle: "Поддержать ASG Racing",
     supportWidgetText: "Если тебе нравится сервер, стримы и сайт со статистикой, можно быстро поддержать проект донатом и помочь ему двигаться дальше.",
@@ -2030,13 +2034,19 @@ function renderHourlyHeroCard() {
   if (!startsEl || !trackEl || !votesEl || !cardEl || !voteBtn) return;
 
   const data = hourlyAnnouncementData;
+  const isChampionship = isHourlyChampionshipEvent(data);
   trackEl.textContent = data?.track_name || t("hourlyNoEvent");
   startsEl.textContent = formatHeroHourlyDateTime(data?.date, data?.start_time_local, data?.timezone);
   const trackCode = String(data?.track_code || "").trim().toLowerCase();
   const backgroundUrl = HOURLY_TRACK_BACKGROUNDS[trackCode];
   cardEl.style.setProperty("--hero-hourly-track-photo", backgroundUrl ? `url("${backgroundUrl}")` : "none");
+  cardEl.classList.toggle("is-championship-event", isChampionship);
+  const eyebrowEl = document.getElementById("hourly-eyebrow");
+  if (eyebrowEl) {
+    eyebrowEl.textContent = isChampionship ? getActiveChampionshipTitle(data) : t("hourlyEyebrow");
+  }
 
-  votesEl.textContent = getHourlyVotesLabel();
+  votesEl.textContent = isChampionship ? (currentLang === "ru" ? "Особое событие чемпионата" : "Special championship event") : getHourlyVotesLabel();
 
   let legalNoteEl = document.getElementById("hourly-vote-legal-note");
   if (!legalNoteEl) {
@@ -2045,7 +2055,8 @@ function renderHourlyHeroCard() {
     legalNoteEl.id = "hourly-vote-legal-note";
     voteBtn.parentElement?.insertAdjacentElement("afterend", legalNoteEl);
   }
-  legalNoteEl.innerHTML = buildHourlyVoteLegalNoteHtml();
+  legalNoteEl.innerHTML = isChampionship ? "" : buildHourlyVoteLegalNoteHtml();
+  legalNoteEl.hidden = isChampionship;
 
   voteBtn.textContent = hourlyVotePending
     ? t("hourlyVoteSending")
@@ -2053,7 +2064,8 @@ function renderHourlyHeroCard() {
       ? t("hourlyVoteDone")
       : t("hourlyVoteBtn");
 
-  voteBtn.disabled = !data?.event_id && !data?.track_name || hourlyVotePending;
+  voteBtn.hidden = isChampionship;
+  voteBtn.disabled = isChampionship || (!data?.event_id && !data?.track_name) || hourlyVotePending;
   voteBtn.classList.toggle("is-voted", hourlyVoteAlreadyVoted);
   voteBtn.classList.toggle("pulse-attention", !hourlyVoteAlreadyVoted && !hourlyVotePending && Boolean(data?.event_id || data?.track_name));
   cardEl.setAttribute(
@@ -2061,6 +2073,7 @@ function renderHourlyHeroCard() {
     `${t("hourlyOpenDetailsLabel")}: ${data?.track_name || t("hourlyNoEvent")}`
   );
   cardEl.setAttribute("aria-disabled", (!data?.event_id && !data?.track_name) ? "true" : "false");
+  updateTopChampionshipLink();
 
   if (!voteBtn.dataset.bound) {
     voteBtn.addEventListener("click", (event) => {
@@ -2170,6 +2183,12 @@ function buildHourlyAnnouncementEventId(item) {
 }
 
 async function loadHourlyVotes(announcement) {
+  if (isHourlyChampionshipEvent(announcement)) {
+    hourlyVotesCount = null;
+    hourlyVoteAlreadyVoted = false;
+    hourlyVoteFailed = false;
+    return;
+  }
   const eventId = buildHourlyAnnouncementEventId(announcement);
   if (!eventId) {
     hourlyVotesCount = null;
@@ -2198,6 +2217,7 @@ async function loadHourlyVotes(announcement) {
 }
 
 async function submitHourlyHeroVote() {
+  if (isHourlyChampionshipEvent(hourlyAnnouncementData)) return;
   const eventId = buildHourlyAnnouncementEventId(hourlyAnnouncementData);
   if (!eventId || hourlyVotePending) return;
 
@@ -4683,8 +4703,43 @@ async function loadHourlyAnnouncementData() {
   }
 }
 
+async function loadHourlyScheduleData() {
+  try {
+    const data = await loadJson(hourlyScheduleUrl);
+    return data && typeof data === "object" ? data : null;
+  } catch (error) {
+    console.warn("hourly schedule is unavailable.", error);
+    return null;
+  }
+}
+
+function mergeHourlyAnnouncementWithSchedule(announcement, schedule) {
+  const items = Array.isArray(schedule?.items) ? schedule.items : [];
+  if (!announcement || !items.length) return announcement;
+  const match = items.find(item =>
+    item?.event_id === announcement.event_id ||
+    (item?.date === announcement.date && item?.start_time_local === announcement.start_time_local)
+  );
+  return match ? { ...match, ...announcement, event_type: announcement.event_type || match.event_type, voting_disabled: announcement.voting_disabled ?? match.voting_disabled } : announcement;
+}
+
 async function loadRacesData() {
   return await loadRacesPageData(1);
+}
+
+function isHourlyChampionshipEvent(data = hourlyAnnouncementData) {
+  return String(data?.event_type || data?.type || "").trim().toLowerCase() === "championship";
+}
+
+function getActiveChampionshipTitle(data = hourlyAnnouncementData) {
+  return data?.championship_title || data?.championship?.title || t("btnChampionshipEvent");
+}
+
+function updateTopChampionshipLink() {
+  const link = document.getElementById("top-nav-championship-link");
+  if (!link) return;
+  link.textContent = getActiveChampionshipTitle();
+  link.href = "/hourly/championship/";
 }
 
 async function loadFullRacesData() {
@@ -6041,11 +6096,16 @@ function bindTopNavMoreMenu() {
     items.forEach(item => {
       item.hidden = false;
     });
+    items.forEach(item => {
+      if (item.dataset.navOverflow === "true") {
+        item.hidden = true;
+      }
+    });
 
     root.classList.remove("is-visible");
     closeMenu();
 
-    if (window.innerWidth > 980) {
+    if (window.innerWidth > 980 && !items.some(item => item.hidden)) {
       return;
     }
 
@@ -6058,10 +6118,7 @@ function bindTopNavMoreMenu() {
     const maxVisibleRight = Math.max(0, availableWidth - toggleWidth - gap);
 
     items.forEach(item => {
-      item.hidden = false;
-    });
-
-    items.forEach(item => {
+      if (item.hidden) return;
       const itemRightEdge = item.offsetLeft + item.offsetWidth;
       if (itemRightEdge > maxVisibleRight) {
         item.hidden = true;
@@ -6079,7 +6136,9 @@ function bindTopNavMoreMenu() {
       const clone = item.cloneNode(true);
       clone.className = item.classList.contains("top-nav-link-special")
         ? "top-nav-more-link top-nav-more-link-special"
-        : "top-nav-more-link";
+        : item.classList.contains("top-nav-link-championship")
+          ? "top-nav-more-link top-nav-more-link-championship"
+          : "top-nav-more-link";
       clone.hidden = false;
       clone.removeAttribute("data-nav-item");
       menu.appendChild(clone);
@@ -8171,9 +8230,10 @@ async function init() {
       return;
     }
 
-    const [data, hourlyAnnouncement] = await Promise.all([
+    const [data, hourlyAnnouncement, hourlySchedule] = await Promise.all([
       loadSiteData(),
-      loadHourlyAnnouncementData()
+      loadHourlyAnnouncementData(),
+      loadHourlyScheduleData()
     ]);
 
     leaderboardData = data.leaderboard;
@@ -8182,7 +8242,8 @@ async function init() {
     safetyData = data.safety;
     driverOfDayData = data.driverOfDay;
     onlineData = data.online;
-    hourlyAnnouncementData = hourlyAnnouncement;
+    hourlyScheduleData = hourlySchedule;
+    hourlyAnnouncementData = mergeHourlyAnnouncementWithSchedule(hourlyAnnouncement, hourlySchedule);
     latestHourlyRaceData = data.latestHourlyRace;
     racesArchiveSummary = data.racesSummary;
     topDataV2TableMeta = data.tables;
