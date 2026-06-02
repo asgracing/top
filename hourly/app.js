@@ -1258,15 +1258,31 @@ function findNextChampionshipEvent(rows) {
 function renderChampionshipHero(data) {
   const titleEl = document.getElementById("hero-championship-title");
   const metaEl = document.getElementById("hero-championship-meta");
+  const badgeEl = document.getElementById("hero-championship-badge");
+  const trackEl = document.getElementById("hero-championship-track");
+  const dateEl = document.getElementById("hero-championship-date");
+  const weatherEl = document.getElementById("hero-championship-weather");
+  const formatEl = document.getElementById("hero-championship-format");
+  const pitEl = document.getElementById("hero-championship-pit");
   const descriptionEl = document.getElementById("hero-championship-description");
   const buttonEl = document.querySelector(".championship-summary-btn");
   const championship = data?.championship || {};
+  const session = data?.session || {};
+  const rules = data?.rules || {};
   const nextChampionshipEvent = findNextChampionshipEvent(scheduleItems);
   const title = data?.championship_title || championship.title || (nextChampionshipEvent ? getLocalizedField(nextChampionshipEvent, "track_name", nextChampionshipEvent.track_name || nextChampionshipEvent.track_code || t("championshipBadge")) : t("championshipBadge"));
   const meta = [championship.period, championship.status].filter(Boolean).join(" · ") || (nextChampionshipEvent ? `${formatDate(nextChampionshipEvent.date)} · ${nextChampionshipEvent.start_time_local || "--"}` : eventBadgeLabel(data));
   const description = championship.description || (nextChampionshipEvent ? `${currentLang === "ru" ? "Ближайшая гонка чемпионата:" : "Next championship event:"} ${getLocalizedField(nextChampionshipEvent, "track_name", nextChampionshipEvent.track_name || nextChampionshipEvent.track_code || "--")}` : t("championshipNoDescription"));
   if (titleEl) titleEl.textContent = title;
   if (metaEl) metaEl.textContent = meta;
+  if (badgeEl) badgeEl.textContent = nextChampionshipEvent ? eventBadgeLabel(nextChampionshipEvent) : t("championshipBadge");
+  if (trackEl) trackEl.textContent = nextChampionshipEvent ? getLocalizedField(nextChampionshipEvent, "track_name", nextChampionshipEvent.track_code || "--") : t("unknownValue");
+  if (dateEl) dateEl.textContent = nextChampionshipEvent ? formatScheduleDateTime(nextChampionshipEvent) : t("unknownValue");
+  if (weatherEl) weatherEl.textContent = nextChampionshipEvent ? buildScheduleCardWeather(nextChampionshipEvent) : t("unknownValue");
+  if (formatEl) formatEl.textContent = session.format_label || t("unknownValue");
+  if (pitEl) pitEl.textContent = typeof rules.mandatory_pitstop_count === "number"
+    ? `${t("heroPitstopLabel")}: ${rules.mandatory_pitstop_count}${rules.pit_window_length_minutes ? ` / ${rules.pit_window_length_minutes}m` : ""}`
+    : t("unknownValue");
   if (descriptionEl) descriptionEl.textContent = description;
   if (buttonEl) buttonEl.textContent = title;
 }
