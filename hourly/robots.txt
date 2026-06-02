@@ -1,4 +1,4 @@
 User-agent: *
 Allow: /
 
-Sitemap: https://asgracing.ru/hourly/sitemap.xml
+Sitemap: https://asgracing.github.io/hourly/sitemap.xml
