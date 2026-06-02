@@ -432,11 +432,11 @@ h2 {
   display: flex;
   flex-direction: column;
   justify-content: space-between;
-  gap: 10px;
+  gap: 6px;
   min-height: 100%;
-  padding: 6px;
+  padding: 4px;
   border: 1px solid rgba(255, 255, 255, 0.08);
-  border-radius: 22px;
+  border-radius: 18px;
   background: rgba(255, 255, 255, 0.03);
   box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.03);
 }
@@ -444,7 +444,7 @@ h2 {
 .hero-server-grid {
   display: grid;
   grid-template-columns: repeat(2, minmax(0, 1fr));
-  gap: 10px 12px;
+  gap: 6px 8px;
 }
 
 .hero-server-grid-rules {

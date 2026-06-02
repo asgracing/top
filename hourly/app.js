@@ -1237,16 +1237,37 @@ function renderHeroDetails(data) {
   setHeroTokenValue("hero-weather", buildWeatherTokenGroups(weather));
   updateHeroConnectLink(server);
 }
+function findNextChampionshipEvent(rows) {
+  if (!Array.isArray(rows)) return null;
+  const today = getMoscowDateParts();
+  return rows
+    .filter(isChampionshipEvent)
+    .map(item => ({ item, dateParts: parseIsoDateParts(item?.date) }))
+    .filter(({ dateParts }) => dateParts && (
+      dateParts.year > today.year ||
+      dateParts.year === today.year && dateParts.month > today.month ||
+      dateParts.year === today.year && dateParts.month === today.month && dateParts.day >= today.day
+    ))
+    .sort((a, b) =>
+      a.dateParts.year - b.dateParts.year ||
+      a.dateParts.month - b.dateParts.month ||
+      a.dateParts.day - b.dateParts.day
+    )
+    .map(({ item }) => item)[0] || null;
+}
 function renderChampionshipHero(data) {
   const titleEl = document.getElementById("hero-championship-title");
   const metaEl = document.getElementById("hero-championship-meta");
   const descriptionEl = document.getElementById("hero-championship-description");
   const buttonEl = document.querySelector(".championship-summary-btn");
   const championship = data?.championship || {};
-  const title = data?.championship_title || championship.title || t("championshipBadge");
+  const nextChampionshipEvent = findNextChampionshipEvent(scheduleItems);
+  const title = data?.championship_title || championship.title || (nextChampionshipEvent ? getLocalizedField(nextChampionshipEvent, "track_name", nextChampionshipEvent.track_name || nextChampionshipEvent.track_code || t("championshipBadge")) : t("championshipBadge"));
+  const meta = [championship.period, championship.status].filter(Boolean).join(" · ") || (nextChampionshipEvent ? `${formatDate(nextChampionshipEvent.date)} · ${nextChampionshipEvent.start_time_local || "--"}` : eventBadgeLabel(data));
+  const description = championship.description || (nextChampionshipEvent ? `${currentLang === "ru" ? "Ближайшая гонка чемпионата:" : "Next championship event:"} ${getLocalizedField(nextChampionshipEvent, "track_name", nextChampionshipEvent.track_name || nextChampionshipEvent.track_code || "--")}` : t("championshipNoDescription"));
   if (titleEl) titleEl.textContent = title;
-  if (metaEl) metaEl.textContent = [championship.period, championship.status].filter(Boolean).join(" · ") || eventBadgeLabel(data);
-  if (descriptionEl) descriptionEl.textContent = championship.description || t("championshipNoDescription");
+  if (metaEl) metaEl.textContent = meta;
+  if (descriptionEl) descriptionEl.textContent = description;
   if (buttonEl) buttonEl.textContent = title;
 }
 function renderSchedule(rows) {

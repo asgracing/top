@@ -10,6 +10,7 @@ const defaultDataBase = isAsgPublicSite
     : "/hourly-data";
 const dataBase = normalizeBaseUrl(params.get("hourlyApiBase")) || defaultDataBase;
 let currentLang = localStorage.getItem("asgLang") || (((navigator.language || "").toLowerCase().startsWith("ru")) ? "ru" : "en");
+let championshipSchedule = [];
 
 function esc(value) {
   return String(value ?? "").replace(/[&<>"']/g, char => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" }[char]));
@@ -31,6 +32,17 @@ function raceDateLabel(item) {
     ? new Intl.DateTimeFormat(currentLang === "ru" ? "ru-RU" : "en-GB", { day: "numeric", month: "long", year: "numeric", timeZone: "Europe/Moscow" }).format(date)
     : item?.date || "--";
   return `${dateText} · ${item?.start_time_local || "--"} ${item?.timezone || "UTC+3"}`;
+}
+
+function findNextChampionshipEvent(items) {
+  if (!Array.isArray(items)) return null;
+  const now = new Date();
+  return items
+    .filter(isChampionshipEvent)
+    .map(item => ({ item, date: item?.date ? new Date(`${item.date}T00:00:00+03:00`) : null }))
+    .filter(({ date }) => date instanceof Date && !Number.isNaN(date.getTime()) && date >= now)
+    .sort((a, b) => a.date - b.date)
+    .map(({ item }) => item)[0] || null;
 }
 
 function renderUpcoming(items) {
@@ -111,6 +123,7 @@ async function init() {
       loadJson(`${dataBase}/announcement.json`),
       loadJson(`${dataBase}/schedule.json`)
     ]);
+    championshipSchedule = Array.isArray(schedule?.items) ? schedule.items : [];
     const slug = params.get("slug") || announcement?.championship_slug || announcement?.championship?.slug || "championship";
     const data = await loadJson(`${dataBase}/events/${encodeURIComponent(slug)}/index.json`);
     document.getElementById("championship-title").textContent = data.title || announcement?.championship_title || slug;
@@ -121,7 +134,20 @@ async function init() {
     renderStandings(data);
   } catch (error) {
     console.error(error);
-    document.getElementById("championship-description").textContent = currentLang === "ru" ? "Не удалось загрузить данные чемпионата." : "Failed to load championship data.";
+    const nextEvent = findNextChampionshipEvent(championshipSchedule);
+    if (nextEvent) {
+      document.getElementById("championship-title").textContent = currentLang === "ru" ? "Чемпионат ASG Racing" : "ASG Racing Championship";
+      document.getElementById("championship-status").textContent = `${nextEvent.date || "--"} · ${nextEvent.start_time_local || "--"}`;
+      document.getElementById("championship-description").textContent = currentLang === "ru" ? `Ближайшая гонка чемпионата: ${nextEvent.track_name || nextEvent.track_code || "--"}.` : `Next championship event: ${nextEvent.track_name || nextEvent.track_code || "--"}.`;
+      renderProgress({}, { items: championshipSchedule });
+      renderUpcoming(championshipSchedule);
+      renderStandings({});
+    } else {
+      document.getElementById("championship-description").textContent = currentLang === "ru" ? "Не удалось загрузить данные чемпионата." : "Failed to load championship data.";
+      renderProgress({}, { items: championshipSchedule });
+      renderUpcoming(championshipSchedule);
+      renderStandings({});
+    }
   }
 }
 
