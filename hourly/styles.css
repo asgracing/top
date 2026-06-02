@@ -1355,6 +1355,14 @@ tbody tr:not(.is-interactive-row):hover {
   box-shadow: 0 18px 44px rgba(255, 157, 77, 0.12), 0 18px 40px rgba(0, 0, 0, 0.24);
 }
 
+.schedule-event-card.is-championship-event .event-type-badge,
+.calendar-event.is-championship-event .event-type-badge {
+  border-color: rgba(193, 132, 252, 0.72);
+  background: linear-gradient(135deg, rgba(126, 34, 206, 0.96), rgba(168, 85, 247, 0.9));
+  color: #fbf5ff;
+  box-shadow: 0 10px 24px rgba(126, 34, 206, 0.32);
+}
+
 .schedule-event-card-inner {
   display: inline-flex;
   flex-direction: column;
@@ -1463,20 +1471,63 @@ tbody tr:not(.is-interactive-row):hover {
 
 .calendar-grid {
   display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
-  gap: 10px;
+  grid-template-columns: repeat(7, minmax(0, 1fr));
+  gap: 6px;
   padding: 0 14px 14px;
+}
+
+.calendar-weekday {
+  padding: 7px 4px;
+  color: var(--muted);
+  font-size: 0.72rem;
+  font-weight: 900;
+  text-align: center;
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+}
+
+.calendar-day {
+  display: grid;
+  grid-template-rows: auto 1fr;
+  gap: 6px;
+  min-height: 116px;
+  padding: 8px;
+  border: 1px solid rgba(255, 255, 255, 0.07);
+  border-radius: 12px;
+  background: rgba(8, 12, 18, 0.38);
+}
+
+.calendar-day-empty {
+  border-color: transparent;
+  background: transparent;
+}
+
+.calendar-day.is-past {
+  opacity: 0.5;
+}
+
+.calendar-day-number {
+  color: #f4f8ff;
+  font-size: 0.78rem;
+  font-weight: 900;
+  line-height: 1;
+}
+
+.calendar-day-events {
+  display: grid;
+  gap: 6px;
+  align-content: start;
 }
 
 .calendar-event {
   --calendar-track-photo: none;
   position: relative;
   display: grid;
-  gap: 7px;
-  min-height: 132px;
-  padding: 12px;
+  gap: 5px;
+  min-height: 86px;
+  padding: 9px;
   border: 1px solid rgba(255, 255, 255, 0.08);
-  border-radius: 12px;
+  border-radius: 10px;
   overflow: hidden;
   text-align: left;
   color: var(--text);
@@ -1488,7 +1539,6 @@ tbody tr:not(.is-interactive-row):hover {
   cursor: pointer;
 }
 
-.calendar-event-date,
 .calendar-event-time,
 .calendar-event-track,
 .calendar-event .event-type-badge {
@@ -1496,22 +1546,25 @@ tbody tr:not(.is-interactive-row):hover {
   z-index: 1;
 }
 
-.calendar-event-date {
-  color: #ffd9bb;
-  font-size: 0.78rem;
-  font-weight: 800;
-}
-
 .calendar-event-time {
   color: #ffffff;
-  font-size: 1.2rem;
+  font-size: 0.88rem;
   font-weight: 950;
 }
 
 .calendar-event-track {
   color: #dce8f7;
-  font-size: 0.92rem;
+  font-size: 0.78rem;
   font-weight: 800;
+  line-height: 1.2;
+}
+
+.calendar-event .event-type-badge {
+  max-width: 100%;
+  padding: 4px 7px;
+  font-size: 0.56rem;
+  line-height: 1.15;
+  white-space: normal;
 }
 
 .schedule-table td:first-child {
@@ -2677,6 +2730,44 @@ body.modal-open {
 
   .schedule-cards-grid {
     grid-template-columns: 1fr;
+  }
+
+  .calendar-grid {
+    gap: 4px;
+    padding: 0 8px 8px;
+  }
+
+  .calendar-weekday {
+    padding: 6px 1px;
+    font-size: 0.58rem;
+  }
+
+  .calendar-day {
+    min-height: 82px;
+    padding: 5px;
+    border-radius: 9px;
+  }
+
+  .calendar-day-number {
+    font-size: 0.68rem;
+  }
+
+  .calendar-event {
+    min-height: 62px;
+    padding: 6px;
+  }
+
+  .calendar-event-time {
+    font-size: 0.72rem;
+  }
+
+  .calendar-event-track {
+    font-size: 0.64rem;
+  }
+
+  .calendar-event .event-type-badge {
+    padding: 3px 5px;
+    font-size: 0.48rem;
   }
 
   .grid.two {
