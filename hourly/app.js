@@ -1155,6 +1155,12 @@ function applyHeroTrackBackground(trackCode) {
   const backgroundUrl = HERO_TRACK_BACKGROUNDS[String(trackCode || "").trim().toLowerCase()];
   heroCard.style.setProperty("--hero-track-photo", backgroundUrl ? `url("${backgroundUrl}")` : "none");
 }
+function applyHeroChampionshipCardBackground(trackCode) {
+  const card = document.querySelector(".hero-announcement-card");
+  if (!card) return;
+  const backgroundUrl = HERO_TRACK_BACKGROUNDS[String(trackCode || "").trim().toLowerCase()];
+  card.style.setProperty("--hero-announcement-photo", backgroundUrl ? `url("${backgroundUrl}")` : "none");
+}
 function applyScheduleModalTrackBackground(trackCode) {
   const modalCard = document.querySelector("#schedule-modal .modal-card-slot");
   if (!modalCard) return;
@@ -1270,7 +1276,9 @@ function renderChampionshipHero(data) {
   const session = data?.session || {};
   const rules = data?.rules || {};
   const nextChampionshipEvent = findNextChampionshipEvent(scheduleItems);
-  const title = data?.championship_title || championship.title || (nextChampionshipEvent ? getLocalizedField(nextChampionshipEvent, "track_name", nextChampionshipEvent.track_name || nextChampionshipEvent.track_code || t("championshipBadge")) : t("championshipBadge"));
+  const title = data?.championship_title || championship.title || nextChampionshipEvent?.championship_title || "ASG Racing June 2026";
+  const slug = data?.championship_slug || championship.slug || nextChampionshipEvent?.championship_slug;
+  const championshipUrl = slug ? `./championship/?slug=${encodeURIComponent(slug)}` : "./championship/";
   const meta = [championship.period, championship.status].filter(Boolean).join(" · ") || (nextChampionshipEvent ? `${formatDate(nextChampionshipEvent.date)} · ${nextChampionshipEvent.start_time_local || "--"}` : eventBadgeLabel(data));
   const description = championship.description || (nextChampionshipEvent ? `${currentLang === "ru" ? "Ближайшая гонка чемпионата:" : "Next championship event:"} ${getLocalizedField(nextChampionshipEvent, "track_name", nextChampionshipEvent.track_name || nextChampionshipEvent.track_code || "--")}` : t("championshipNoDescription"));
   if (titleEl) titleEl.textContent = title;
@@ -1284,7 +1292,13 @@ function renderChampionshipHero(data) {
     ? `${t("heroPitstopLabel")}: ${rules.mandatory_pitstop_count}${rules.pit_window_length_minutes ? ` / ${rules.pit_window_length_minutes}m` : ""}`
     : t("unknownValue");
   if (descriptionEl) descriptionEl.textContent = description;
-  if (buttonEl) buttonEl.textContent = title;
+  if (buttonEl) {
+    buttonEl.textContent = title;
+    buttonEl.href = championshipUrl;
+  }
+  const card = document.querySelector(".hero-announcement-card");
+  if (card) card.dataset.href = championshipUrl;
+  applyHeroChampionshipCardBackground(data?.track_code);
 }
 function renderSchedule(rows) {
   const container = document.getElementById("schedule-list");
@@ -1697,6 +1711,22 @@ function bindWeatherModal() {
     });
   }
 }
+function bindChampionshipCardLink() {
+  const card = document.querySelector(".hero-announcement-card");
+  if (!card || card.dataset.linkBound === "true") return;
+  card.dataset.linkBound = "true";
+  const open = event => {
+    if (event.target.closest("a, button")) return;
+    const href = card.dataset.href || "./championship/";
+    window.location.href = href;
+  };
+  card.addEventListener("click", open);
+  card.addEventListener("keydown", event => {
+    if (event.key !== "Enter" && event.key !== " ") return;
+    event.preventDefault();
+    open(event);
+  });
+}
 function renderErrorState() {
   document.getElementById("schedule-list").innerHTML = `<div class="empty">${escapeHtml(t("loadError"))}</div>`;
   document.getElementById("recent-races-table").innerHTML = `<div class="empty">${escapeHtml(t("loadError"))}</div>`;
@@ -1842,6 +1872,7 @@ async function init() {
   bindScheduleModal();
   bindRaceModal();
   bindWeatherModal();
+  bindChampionshipCardLink();
   renderUI();
   try {
     const [announcement, schedule, recentRaces, serverStatus] = await Promise.all([
