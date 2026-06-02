@@ -2,7 +2,8 @@
 const IS_DRIVER_PAGE = /\/driver(?:\/|\/index\.html)?$/i.test(window.location.pathname);
 const IS_CARS_PAGE = /\/cars(?:\/|\/index\.html)?$/i.test(window.location.pathname);
 const IS_FUN_STATS_PAGE = /\/fun-stats(?:\/|\/index\.html)?$/i.test(window.location.pathname);
-const SITE_BASE_PATH = (IS_RACES_PAGE || IS_DRIVER_PAGE || IS_CARS_PAGE || IS_FUN_STATS_PAGE) ? "../" : "./";
+const IS_COMMUNITY_PAGE = /\/community(?:\/|\/index\.html)?$/i.test(window.location.pathname);
+const SITE_BASE_PATH = (IS_RACES_PAGE || IS_DRIVER_PAGE || IS_CARS_PAGE || IS_FUN_STATS_PAGE || IS_COMMUNITY_PAGE) ? "../" : "./";
 const CAR_IMAGE_BASE_PATH = `${SITE_BASE_PATH}assets/car-icons`;
 const pageParams = new URLSearchParams(window.location.search);
 function normalizeBaseUrl(value) {
@@ -342,6 +343,7 @@ const translations = {
     pageTitleRaces: "ASG Racing Last Races | Assetto Corsa Competizione Results",
     pageTitleCars: "ASG Racing Cars | Assetto Corsa Competizione Stats",
     pageTitleFunStats: "ASG Racing Fun Stats | Weekly and Monthly ACC Stories",
+    pageTitleCommunity: "ASG Racing Community | Event Stories and Photos",
     metaDescription:
       "ASG Racing ACC Leaderboard - race stats, wins, podiums and best laps from the public Assetto Corsa Competizione server.",
     metaDescriptionRaces:
@@ -352,6 +354,8 @@ const translations = {
       "Driver profile with race history, best lap, points and safety stats from ASG Racing ACC.",
     metaDescriptionFunStats:
       "Weekly and monthly fun stats from ASG Racing ACC: comeback heroes, clean racers, hot laps, grind leaders and more.",
+    metaDescriptionCommunity:
+      "Community stories from ASG Racing ACC events with short recaps, photos and highlights from recent races.",
     ogDescription:
       "Race stats, wins, podiums and best laps from the ASG Racing server in Assetto Corsa Competizione.",
     ogDescriptionRaces:
@@ -362,6 +366,8 @@ const translations = {
       "Driver profile with race history, points, best lap and safety stats from ASG Racing ACC.",
     ogDescriptionFunStats:
       "Weekly and monthly stories from the ASG Racing server: points bosses, comeback heroes, clean racers and hot lap heroes.",
+    ogDescriptionCommunity:
+      "Community stories from ASG Racing ACC events with short recaps, photos and highlights from recent races.",
     twitterDescription:
       "Races, wins, podiums and best laps from the public ACC server of ASG Racing.",
     twitterDescriptionRaces:
@@ -372,6 +378,8 @@ const translations = {
       "Driver profile with race history, points, best lap and safety stats from ASG Racing ACC.",
     twitterDescriptionFunStats:
       "Weekly and monthly ASG Racing fun stats with the most active, fastest and wildest drivers on the server.",
+    twitterDescriptionCommunity:
+      "ASG Racing community event recaps, photos and highlights from recent ACC races.",
     ogLocale: "en_US",
     heroTitle: "🏁 ASG Racing Leaderboard",
     heroSubtitle:
@@ -381,6 +389,7 @@ const translations = {
     btnSpecialEvent: "Special Event",
     btnCars: "Cars",
     btnFunStats: "Fun Stats",
+    btnCommunity: "Community",
     lastRacesBtn: "Last Races",
     btnBackHome: "Back to Home",
     btnBestLaps: "Best Laps",
@@ -542,6 +551,13 @@ const translations = {
     funStatsPageTitle: "Fun Stats",
     funStatsPageSubtitle:
       "Not just wins and podiums. This page highlights the busiest, fastest, cleanest and most chaotic stories from recent ASG Racing races.",
+    communityEyebrow: "Community journal",
+    communityPageTitle: "Community",
+    communityPageSubtitle:
+      "Short stories from ASG Racing events: what happened, who showed up, and the moments worth remembering after the session.",
+    communityFeedTitle: "Latest Stories",
+    communityFeedSubtitle: "Newest posts first. Each story is a compact recap with 1-2 photos.",
+    communityEmpty: "Community stories will appear here soon.",
     funStatsWeekTab: "Last 7 days",
     funStatsMonthTab: "Last 30 days",
     funStatsPeriodSwitcherLabel: "Period switcher",
@@ -749,8 +765,10 @@ const translations = {
     htmlLang: "ru",
     pageTitleFunStats: "ASG Racing Fun Stats | Недельные и месячные истории ACC",
     pageTitleCars: "ASG Racing Cars | Статистика Assetto Corsa Competizione",
+    pageTitleCommunity: "ASG Racing Сообщество | Истории и фото мероприятий",
     btnCars: "Машины",
     btnFunStats: "Фан-стата",
+    btnCommunity: "Сообщество",
     carsEyebrow: "Статистика машин",
     carsPageTitle: "Машины",
     carsPageSubtitle: "Обзор результатов по моделям машин на основе сохраненных гоночных результатов.",
@@ -768,6 +786,13 @@ const translations = {
     funStatsPageTitle: "Фан-статистика",
     funStatsPageSubtitle:
       "Не только победы и подиумы. Здесь собраны самые живые истории последних гонок ASG Racing: активность, камбэки, чистые заезды, быстрые круги и немного хаоса.",
+    communityEyebrow: "Журнал сообщества",
+    communityPageTitle: "Сообщество",
+    communityPageSubtitle:
+      "Короткие истории с мероприятий ASG Racing: что происходило, кто участвовал и какие моменты хочется вспомнить после финиша.",
+    communityFeedTitle: "Последние истории",
+    communityFeedSubtitle: "Новые записи сверху. Каждая история - компактный отчет с 1-2 фотографиями.",
+    communityEmpty: "Скоро здесь появятся истории сообщества.",
     funStatsWeekTab: "Последние 7 дней",
     funStatsMonthTab: "Последние 30 дней",
     funStatsPeriodSwitcherLabel: "Переключатель периода",
@@ -822,6 +847,8 @@ const translations = {
       "Профиль пилота ASG Racing ACC с историей гонок, лучшим кругом, очками и штрафами.",
     metaDescriptionFunStats:
       "Недельная и месячная фан-статистика ASG Racing ACC: камбэки, чистые гонщики, быстрые круги, активность и самые яркие истории сервера.",
+    metaDescriptionCommunity:
+      "Истории сообщества ASG Racing ACC: короткие отчеты о мероприятиях, фотографии и яркие моменты прошедших гонок.",
     ogDescription:
       "Статистика гонок, побед, подиумов и лучших кругов на сервере ASG Racing в Assetto Corsa Competizione.",
     ogDescriptionRaces:
@@ -832,6 +859,8 @@ const translations = {
       "Профиль пилота ASG Racing с историей гонок, очками, лучшим кругом и штрафами.",
     ogDescriptionFunStats:
       "Недельные и месячные истории ASG Racing: лидеры по очкам, камбэки, чистые гонщики, быстрые круги и самые активные пилоты.",
+    ogDescriptionCommunity:
+      "Истории сообщества ASG Racing ACC: короткие отчеты о мероприятиях, фотографии и яркие моменты прошедших гонок.",
     twitterDescription:
       "Гонки, победы, подиумы и лучшие круги на публичном ACC сервере ASG Racing.",
     twitterDescriptionRaces:
@@ -842,6 +871,8 @@ const translations = {
       "Профиль пилота ASG Racing с историей гонок, очками, лучшим кругом и штрафами.",
     twitterDescriptionFunStats:
       "Фановая недельная и месячная статистика ASG Racing с самыми активными, быстрыми и безумными пилотами сервера.",
+    twitterDescriptionCommunity:
+      "Истории сообщества ASG Racing: отчеты, фотографии и хайлайты прошедших ACC-заездов.",
     ogLocale: "ru_RU",
     heroTitle: "🏁 ASG Racing Leaderboard",
     heroSubtitle:
@@ -2690,7 +2721,7 @@ function initTwitchWidget() {
 }
 
 function shouldEnableTopGuide() {
-  return !IS_RACES_PAGE && !IS_DRIVER_PAGE && !IS_CARS_PAGE && !IS_FUN_STATS_PAGE;
+  return !IS_RACES_PAGE && !IS_DRIVER_PAGE && !IS_CARS_PAGE && !IS_FUN_STATS_PAGE && !IS_COMMUNITY_PAGE;
 }
 
 function isTopGuideDesktop() {
@@ -3995,6 +4026,73 @@ function bindFunStatsControls() {
   });
 }
 
+function getLocalizedCommunityValue(value, fallback = "") {
+  if (value && typeof value === "object" && !Array.isArray(value)) {
+    return value[currentLang] ?? value.en ?? value.ru ?? fallback;
+  }
+  return value ?? fallback;
+}
+
+function normalizeCommunityImages(images = []) {
+  return Array.isArray(images)
+    ? images.filter(image => image && image.src).slice(0, 2)
+    : [];
+}
+
+function renderCommunityPost(post) {
+  const title = getLocalizedCommunityValue(post?.title, "-");
+  const text = getLocalizedCommunityValue(post?.text, "");
+  const paragraphs = Array.isArray(text)
+    ? text
+    : String(text || "").split(/\n{2,}/);
+  const images = normalizeCommunityImages(post?.images);
+  const dateLabel = post?.date ? formatDateLocal(`${post.date}T00:00:00`, currentLang) : "-";
+
+  return `
+    <article class="community-feed-card reveal">
+      <div class="community-feed-copy">
+        <time class="community-feed-date" datetime="${escapeAttribute(post?.date || "")}">${escapeHtml(dateLabel)}</time>
+        <h3 class="community-feed-title">${escapeHtml(title)}</h3>
+        <div class="community-feed-text">
+          ${paragraphs
+            .map(paragraph => String(paragraph || "").trim())
+            .filter(Boolean)
+            .map(paragraph => `<p>${escapeHtml(paragraph)}</p>`)
+            .join("")}
+        </div>
+      </div>
+      ${images.length ? `
+        <div class="community-feed-gallery community-feed-gallery-${images.length}">
+          ${images.map(image => {
+            const alt = getLocalizedCommunityValue(image.alt, title);
+            return `
+              <figure class="community-feed-photo">
+                <img src="${escapeHtml(image.src)}" alt="${escapeHtml(alt)}" loading="lazy" />
+              </figure>
+            `;
+          }).join("")}
+        </div>
+      ` : ""}
+    </article>
+  `;
+}
+
+function renderCommunityPage() {
+  const listEl = document.getElementById("community-feed");
+  if (!listEl) return;
+
+  const posts = Array.isArray(window.ASG_COMMUNITY_POSTS) ? window.ASG_COMMUNITY_POSTS : [];
+  const sortedPosts = [...posts].sort((a, b) => {
+    const bTime = new Date(b?.date || 0).getTime();
+    const aTime = new Date(a?.date || 0).getTime();
+    return (Number.isFinite(bTime) ? bTime : 0) - (Number.isFinite(aTime) ? aTime : 0);
+  });
+
+  listEl.innerHTML = sortedPosts.length
+    ? sortedPosts.map(renderCommunityPost).join("")
+    : `<div class="empty-box">${escapeHtml(t("communityEmpty"))}</div>`;
+}
+
 function getBestLapClass(isHighlighted) {
   return isHighlighted ? "best-lap-value" : "";
 }
@@ -4470,9 +4568,11 @@ function applyStaticTranslations() {
       ? t("pageTitleCars")
       : IS_FUN_STATS_PAGE
         ? t("pageTitleFunStats")
-        : IS_RACES_PAGE
-          ? t("pageTitleRaces")
-          : t("pageTitle");
+        : IS_COMMUNITY_PAGE
+          ? t("pageTitleCommunity")
+          : IS_RACES_PAGE
+            ? t("pageTitleRaces")
+            : t("pageTitle");
 
   const descriptionMeta = document.querySelector('meta[name="description"]');
   const ogDescriptionMeta = document.querySelector('meta[property="og:description"]');
@@ -4484,27 +4584,33 @@ function applyStaticTranslations() {
       ? "metaDescriptionCars"
       : IS_FUN_STATS_PAGE
         ? "metaDescriptionFunStats"
-        : IS_RACES_PAGE
-          ? "metaDescriptionRaces"
-          : "metaDescription";
+        : IS_COMMUNITY_PAGE
+          ? "metaDescriptionCommunity"
+          : IS_RACES_PAGE
+            ? "metaDescriptionRaces"
+            : "metaDescription";
   const ogDescriptionKey = IS_DRIVER_PAGE
     ? "ogDescriptionDriver"
     : IS_CARS_PAGE
       ? "ogDescriptionCars"
       : IS_FUN_STATS_PAGE
         ? "ogDescriptionFunStats"
-        : IS_RACES_PAGE
-          ? "ogDescriptionRaces"
-          : "ogDescription";
+        : IS_COMMUNITY_PAGE
+          ? "ogDescriptionCommunity"
+          : IS_RACES_PAGE
+            ? "ogDescriptionRaces"
+            : "ogDescription";
   const twitterDescriptionKey = IS_DRIVER_PAGE
     ? "twitterDescriptionDriver"
     : IS_CARS_PAGE
       ? "twitterDescriptionCars"
       : IS_FUN_STATS_PAGE
         ? "twitterDescriptionFunStats"
-        : IS_RACES_PAGE
-          ? "twitterDescriptionRaces"
-          : "twitterDescription";
+        : IS_COMMUNITY_PAGE
+          ? "twitterDescriptionCommunity"
+          : IS_RACES_PAGE
+            ? "twitterDescriptionRaces"
+            : "twitterDescription";
 
   if (descriptionMeta) {
     descriptionMeta.setAttribute("content", t(descriptionKey));
@@ -7608,12 +7714,14 @@ function optimizeBackgroundMedia() {
     ? "unsupported-mp4"
     : IS_DRIVER_PAGE
       ? "driver-page"
-      : IS_RACES_PAGE
-        ? "races-page"
-        : IS_CARS_PAGE
-          ? "cars-page"
-          : IS_FUN_STATS_PAGE
-            ? "fun-stats-page"
+    : IS_RACES_PAGE
+      ? "races-page"
+      : IS_CARS_PAGE
+        ? "cars-page"
+        : IS_FUN_STATS_PAGE
+          ? "fun-stats-page"
+          : IS_COMMUNITY_PAGE
+            ? "community-page"
             : window.innerWidth <= 768
               ? "mobile-width"
               : "";
@@ -7624,6 +7732,7 @@ function optimizeBackgroundMedia() {
     IS_RACES_PAGE ||
     IS_CARS_PAGE ||
     IS_FUN_STATS_PAGE ||
+    IS_COMMUNITY_PAGE ||
     window.innerWidth <= 768;
 
   if (shouldUseStaticBackground) {
@@ -7684,6 +7793,12 @@ function rerenderUI() {
     return;
   }
 
+  if (IS_COMMUNITY_PAGE) {
+    renderCommunityPage();
+    applyRevealAnimations();
+    return;
+  }
+
   if (IS_RACES_PAGE) {
     renderRacesPage();
     applyRevealAnimations();
@@ -7727,7 +7842,7 @@ async function init() {
   }, 120));
   if (IS_RACES_PAGE || IS_DRIVER_PAGE) {
     initRaceResultsModal();
-  } else if (!IS_DRIVER_PAGE && !IS_CARS_PAGE) {
+  } else if (!IS_DRIVER_PAGE && !IS_CARS_PAGE && !IS_COMMUNITY_PAGE) {
     initTodayStatsModal();
     initOnlineActivityModal();
     initDriverOfDayModal();
@@ -7765,6 +7880,11 @@ async function init() {
       if (!funStatsApiData) {
         racesData = await loadFullRacesData().catch(() => []);
       }
+      rerenderUI();
+      return;
+    }
+
+    if (IS_COMMUNITY_PAGE) {
       rerenderUI();
       return;
     }

@@ -26,6 +26,12 @@
   </url>
 
   <url>
+    <loc>https://asgracing.ru/community/</loc>
+    <changefreq>weekly</changefreq>
+    <priority>0.7</priority>
+  </url>
+
+  <url>
     <loc>https://asgracing.ru/driver/</loc>
     <changefreq>daily</changefreq>
     <priority>0.7</priority>
