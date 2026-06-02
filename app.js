@@ -30,6 +30,8 @@ const serverStatusUrl = pageParams.get("serverStatusUrl") || (TOP_API_ROOT_URL ?
 const donationsApiUrl = "https://donations.asgracing.workers.dev/recent";
 const hourlyAnnouncementUrl = `${HOURLY_DATA_BASE_URL}/announcement.json`;
 const hourlyVotesApiUrl = "https://hourly-votes.asgracing.workers.dev";
+const communityLikesApiUrl =
+  document.querySelector('meta[name="community-likes-api"]')?.getAttribute("content")?.trim() || "";
 const HOURLY_SITE_BASE_URL = "/hourly";
 const TWITCH_CHANNEL_NAME = "asgracing";
 const TWITCH_CHANNEL_URL = `https://www.twitch.tv/${TWITCH_CHANNEL_NAME}`;
@@ -190,6 +192,8 @@ let driverPreviewState = null;
 let eloModalState = null;
 let safetyModalState = null;
 let communityLightboxState = null;
+let communityLikeStateByPostId = {};
+const pendingCommunityLikePostIds = new Set();
 let donationAlertsData = null;
 let donationAlertsLoading = false;
 let donationAlertsFailed = false;
@@ -561,6 +565,13 @@ const translations = {
     communityFeedSubtitle: "Newest posts first. Each story is a compact recap with 1-2 photos.",
     communityEmpty: "Community stories will appear here soon.",
     communityOpenImageLabel: "Open full-size image",
+    communityLikeButton: "Like",
+    communityLikedButton: "Liked",
+    communityLikesZero: "No likes yet",
+    communityLikesOne: "{value} like",
+    communityLikesMany: "{value} likes",
+    communityLikesLoading: "Loading likes...",
+    communityLikesFailed: "Likes are unavailable",
     funStatsWeekTab: "Last 7 days",
     funStatsMonthTab: "Last 30 days",
     funStatsPeriodSwitcherLabel: "Period switcher",
@@ -797,6 +808,13 @@ const translations = {
     communityFeedSubtitle: "Новые записи сверху. Каждая история - компактный отчет с 1-2 фотографиями.",
     communityEmpty: "Скоро здесь появятся истории сообщества.",
     communityOpenImageLabel: "Открыть изображение полностью",
+    communityLikeButton: "Лайк",
+    communityLikedButton: "Лайк поставлен",
+    communityLikesZero: "Пока нет лайков",
+    communityLikesOne: "{value} лайк",
+    communityLikesMany: "{value} лайков",
+    communityLikesLoading: "Загружаем лайки...",
+    communityLikesFailed: "Лайки недоступны",
     funStatsWeekTab: "Последние 7 дней",
     funStatsMonthTab: "Последние 30 дней",
     funStatsPeriodSwitcherLabel: "Переключатель периода",
@@ -4064,8 +4082,135 @@ function formatCommunityDateLong(dateString, lang = currentLang) {
   return lang === "ru" ? formatted.replace(/\s*г\.$/, "") : formatted;
 }
 
+function getCommunityPostId(post) {
+  return String(post?.id || post?.date || "").trim();
+}
+
+function getCommunityBrowserVoterId() {
+  return getExpiringStorageValue("communityLikeVoterId", VOTER_ID_STORAGE_TTL_MS);
+}
+
+function getCommunityLikesLabel(state) {
+  if (state?.failed) return t("communityLikesFailed");
+  if (!state || state.loading || typeof state.likes !== "number") return t("communityLikesLoading");
+  if (state.likes <= 0) return t("communityLikesZero");
+  return replaceTokens(t(state.likes === 1 ? "communityLikesOne" : "communityLikesMany"), { value: state.likes });
+}
+
+function renderCommunityLikes() {
+  document.querySelectorAll("[data-community-like-post-id]").forEach(button => {
+    const postId = button.dataset.communityLikePostId;
+    const state = communityLikeStateByPostId[postId] || { likes: null, already_liked: false, loading: Boolean(communityLikesApiUrl) };
+    const isPending = pendingCommunityLikePostIds.has(postId);
+    const alreadyLiked = Boolean(state.already_liked);
+    const labelEl = button.querySelector("[data-community-like-label]");
+    const countEl = button.closest(".community-feed-actions")?.querySelector("[data-community-like-count]");
+
+    button.classList.toggle("is-liked", alreadyLiked);
+    button.disabled = !communityLikesApiUrl || isPending || alreadyLiked || state.failed;
+    button.setAttribute("aria-pressed", alreadyLiked ? "true" : "false");
+    if (labelEl) labelEl.textContent = alreadyLiked ? t("communityLikedButton") : t("communityLikeButton");
+    if (countEl) countEl.textContent = isPending ? t("communityLikesLoading") : getCommunityLikesLabel(state);
+  });
+}
+
+function getCommunityPostIds() {
+  return (Array.isArray(window.ASG_COMMUNITY_POSTS) ? window.ASG_COMMUNITY_POSTS : [])
+    .map(getCommunityPostId)
+    .filter(Boolean);
+}
+
+async function loadCommunityLikes() {
+  const postIds = getCommunityPostIds();
+  if (!communityLikesApiUrl || !postIds.length) {
+    renderCommunityLikes();
+    return;
+  }
+
+  postIds.forEach(postId => {
+    communityLikeStateByPostId[postId] = {
+      ...(communityLikeStateByPostId[postId] || {}),
+      loading: true,
+      failed: false
+    };
+  });
+  renderCommunityLikes();
+
+  try {
+    const url = new URL("/likes", communityLikesApiUrl);
+    url.searchParams.set("post_ids", postIds.join(","));
+    url.searchParams.set("voter_id", getCommunityBrowserVoterId());
+    const response = await fetch(url, { cache: "no-store" });
+    if (!response.ok) throw new Error(`HTTP ${response.status}`);
+    const payload = await response.json();
+    const items = payload?.items && typeof payload.items === "object" ? payload.items : {};
+    communityLikeStateByPostId = {
+      ...communityLikeStateByPostId,
+      ...Object.fromEntries(postIds.map(postId => {
+        const item = items[postId] || {};
+        return [postId, {
+          likes: typeof item.likes === "number" ? item.likes : 0,
+          already_liked: Boolean(item.already_liked),
+          loading: false,
+          failed: false
+        }];
+      }))
+    };
+  } catch (error) {
+    console.warn("community likes are unavailable.", error);
+    postIds.forEach(postId => {
+      communityLikeStateByPostId[postId] = {
+        ...(communityLikeStateByPostId[postId] || {}),
+        loading: false,
+        failed: true
+      };
+    });
+  } finally {
+    renderCommunityLikes();
+  }
+}
+
+async function submitCommunityLike(postId) {
+  if (!communityLikesApiUrl || !postId || pendingCommunityLikePostIds.has(postId)) return;
+  const state = communityLikeStateByPostId[postId] || {};
+  if (state.already_liked) return;
+
+  pendingCommunityLikePostIds.add(postId);
+  renderCommunityLikes();
+
+  try {
+    const response = await fetch(new URL("/like", communityLikesApiUrl), {
+      method: "POST",
+      headers: { "content-type": "application/json; charset=utf-8" },
+      body: JSON.stringify({
+        post_id: postId,
+        voter_id: getCommunityBrowserVoterId()
+      })
+    });
+    if (!response.ok) throw new Error(`HTTP ${response.status}`);
+    const payload = await response.json();
+    communityLikeStateByPostId[postId] = {
+      likes: typeof payload?.likes === "number" ? payload.likes : (state.likes || 0),
+      already_liked: Boolean(payload?.already_liked),
+      loading: false,
+      failed: false
+    };
+  } catch (error) {
+    console.warn("community like failed.", error);
+    communityLikeStateByPostId[postId] = {
+      ...state,
+      loading: false,
+      failed: true
+    };
+  } finally {
+    pendingCommunityLikePostIds.delete(postId);
+    renderCommunityLikes();
+  }
+}
+
 function renderCommunityPost(post) {
   const title = getLocalizedCommunityValue(post?.title, "-");
+  const postId = getCommunityPostId(post);
   const text = getLocalizedCommunityValue(post?.text, "");
   const paragraphs = Array.isArray(text)
     ? text
@@ -4085,6 +4230,20 @@ function renderCommunityPost(post) {
             .map(paragraph => `<p>${escapeHtml(paragraph)}</p>`)
             .join("")}
         </div>
+        ${postId ? `
+          <div class="community-feed-actions">
+            <button
+              class="community-like-btn"
+              type="button"
+              data-community-like-post-id="${escapeHtml(postId)}"
+              aria-pressed="false"
+            >
+              <span class="community-like-heart" aria-hidden="true">♥</span>
+              <span data-community-like-label>${escapeHtml(t("communityLikeButton"))}</span>
+            </button>
+            <span class="community-like-count" data-community-like-count>${escapeHtml(t("communityLikesLoading"))}</span>
+          </div>
+        ` : ""}
       </div>
       ${images.length ? `
         <div class="community-feed-gallery community-feed-gallery-${images.length}">
@@ -4126,6 +4285,22 @@ function renderCommunityPage() {
     ? sortedPosts.map(renderCommunityPost).join("")
     : `<div class="empty-box">${escapeHtml(t("communityEmpty"))}</div>`;
   updateCommunityLightboxAvailability();
+  bindCommunityLikeControls();
+  renderCommunityLikes();
+}
+
+function bindCommunityLikeControls() {
+  const listEl = document.getElementById("community-feed");
+  if (!listEl || listEl.dataset.likesBound === "true") return;
+
+  listEl.addEventListener("click", (event) => {
+    const button = event.target?.closest?.("[data-community-like-post-id]");
+    if (!button || !listEl.contains(button)) return;
+    event.preventDefault();
+    void submitCommunityLike(button.dataset.communityLikePostId);
+  });
+
+  listEl.dataset.likesBound = "true";
 }
 
 function updateCommunityLightboxAvailability() {
@@ -7986,6 +8161,7 @@ async function init() {
 
     if (IS_COMMUNITY_PAGE) {
       rerenderUI();
+      void loadCommunityLikes();
       return;
     }
 

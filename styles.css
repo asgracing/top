@@ -6775,6 +6775,75 @@ body.modal-open {
   margin: 0;
 }
 
+.community-feed-actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+  align-items: center;
+  margin-top: 4px;
+}
+
+.community-like-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  min-height: 38px;
+  padding: 8px 13px;
+  border: 1px solid rgba(255, 255, 255, 0.12);
+  border-radius: 999px;
+  color: var(--text);
+  background:
+    linear-gradient(180deg, rgba(255, 255, 255, 0.06), rgba(255, 255, 255, 0.02)),
+    rgba(255, 255, 255, 0.04);
+  font: inherit;
+  font-size: 0.92rem;
+  font-weight: 800;
+  cursor: pointer;
+  transition: transform 0.16s ease, border-color 0.16s ease, background 0.16s ease, opacity 0.16s ease;
+}
+
+.community-like-btn:hover:not(:disabled),
+.community-like-btn:focus-visible:not(:disabled) {
+  transform: translateY(-1px);
+  border-color: rgba(255, 76, 48, 0.45);
+  background:
+    linear-gradient(180deg, rgba(255, 76, 48, 0.18), rgba(255, 255, 255, 0.04)),
+    rgba(255, 76, 48, 0.08);
+}
+
+.community-like-btn:focus-visible {
+  outline: 2px solid rgba(255, 76, 48, 0.65);
+  outline-offset: 2px;
+}
+
+.community-like-btn:disabled {
+  cursor: default;
+  opacity: 0.74;
+}
+
+.community-like-btn.is-liked {
+  border-color: rgba(255, 76, 48, 0.54);
+  color: #fff;
+  background:
+    linear-gradient(180deg, rgba(255, 76, 48, 0.28), rgba(255, 76, 48, 0.11)),
+    rgba(255, 76, 48, 0.12);
+}
+
+.community-like-heart {
+  color: var(--accent);
+  line-height: 1;
+}
+
+.community-like-btn.is-liked .community-like-heart {
+  color: #ff6b4a;
+}
+
+.community-like-count {
+  color: var(--muted);
+  font-size: 0.9rem;
+  font-weight: 700;
+}
+
 .community-feed-gallery {
   display: grid;
   gap: 10px;

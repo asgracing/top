@@ -2,6 +2,7 @@
 // Send future updates in this shape: title + date, 3-5 sentences, and 1-2 photo paths.
 window.ASG_COMMUNITY_POSTS = [
   {
+    id: "ford-monza-flashmob-2026-06-01",
     date: "2026-06-01",
     title: {
       en: "Flash Mob: Everyone in a Ford",
@@ -33,6 +34,7 @@ window.ASG_COMMUNITY_POSTS = [
     ]
   },
   {
+    id: "ups-fundraising-report-2026-05-31",
     date: "2026-05-31",
     title: {
       en: "UPS Fundraising Report",

@@ -1,0 +1,12 @@
+name = "community-likes"
+main = "src/index.js"
+compatibility_date = "2026-06-02"
+
+[vars]
+ALLOWED_ORIGIN = "https://asgracing.ru,https://www.asgracing.ru,https://asgracing.github.io,http://127.0.0.1:5500,http://localhost:5500,http://127.0.0.1:3000,http://localhost:3000"
+
+# Create this namespace before deploy and paste the generated id here:
+# wrangler kv namespace create COMMUNITY_LIKES_KV
+[[kv_namespaces]]
+binding = "COMMUNITY_LIKES_KV"
+id = "2d480d2477fd4552bda618f8c1a454a9"
