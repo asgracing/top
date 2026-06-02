@@ -1349,6 +1349,12 @@ tbody tr:not(.is-interactive-row):hover {
   box-shadow: 0 24px 44px rgba(0, 0, 0, 0.3);
 }
 
+.schedule-event-card.is-championship-event,
+.calendar-event.is-championship-event {
+  border-color: rgba(255, 209, 102, 0.42);
+  box-shadow: 0 18px 44px rgba(255, 157, 77, 0.12), 0 18px 40px rgba(0, 0, 0, 0.24);
+}
+
 .schedule-event-card-inner {
   display: inline-flex;
   flex-direction: column;
@@ -1363,6 +1369,23 @@ tbody tr:not(.is-interactive-row):hover {
   background: rgba(8, 12, 18, 0.5);
   backdrop-filter: blur(8px);
   box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.03);
+}
+
+.event-type-badge {
+  align-self: flex-start;
+  display: inline-flex;
+  align-items: center;
+  min-height: 24px;
+  padding: 4px 9px;
+  border: 1px solid rgba(255, 209, 102, 0.32);
+  border-radius: 999px;
+  background: rgba(255, 209, 102, 0.14);
+  color: #ffe5ae;
+  font-size: 0.68rem;
+  font-weight: 900;
+  line-height: 1;
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
 }
 
 .schedule-event-time {
@@ -1400,6 +1423,95 @@ tbody tr:not(.is-interactive-row):hover {
   display: grid;
   gap: 8px;
   margin-top: 4px;
+}
+
+.schedule-event-vote-locked,
+.hero-vote-locked {
+  justify-items: start;
+  border-style: dashed;
+}
+
+.calendar-panel {
+  margin-top: 14px;
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  border-radius: 14px;
+  background: rgba(8, 12, 18, 0.44);
+  overflow: hidden;
+}
+
+.calendar-panel summary {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  min-height: 48px;
+  padding: 0 16px;
+  cursor: pointer;
+  color: #f4f8ff;
+  font-weight: 900;
+}
+
+.calendar-panel-count {
+  min-width: 32px;
+  padding: 4px 8px;
+  border-radius: 999px;
+  background: rgba(255, 255, 255, 0.08);
+  color: var(--muted);
+  text-align: center;
+  font-size: 0.78rem;
+}
+
+.calendar-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+  gap: 10px;
+  padding: 0 14px 14px;
+}
+
+.calendar-event {
+  --calendar-track-photo: none;
+  position: relative;
+  display: grid;
+  gap: 7px;
+  min-height: 132px;
+  padding: 12px;
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  border-radius: 12px;
+  overflow: hidden;
+  text-align: left;
+  color: var(--text);
+  background:
+    linear-gradient(180deg, rgba(8, 12, 18, 0.44), rgba(8, 12, 18, 0.86)),
+    var(--calendar-track-photo);
+  background-size: cover;
+  background-position: center;
+  cursor: pointer;
+}
+
+.calendar-event-date,
+.calendar-event-time,
+.calendar-event-track,
+.calendar-event .event-type-badge {
+  position: relative;
+  z-index: 1;
+}
+
+.calendar-event-date {
+  color: #ffd9bb;
+  font-size: 0.78rem;
+  font-weight: 800;
+}
+
+.calendar-event-time {
+  color: #ffffff;
+  font-size: 1.2rem;
+  font-weight: 950;
+}
+
+.calendar-event-track {
+  color: #dce8f7;
+  font-size: 0.92rem;
+  font-weight: 800;
 }
 
 .schedule-table td:first-child {
@@ -1617,6 +1729,21 @@ tbody tr:not(.is-interactive-row):hover {
 .schedule-modal-vote {
   grid-column: 1 / -1;
   order: 2;
+}
+
+.event-details-link {
+  grid-column: 1 / -1;
+  order: 3;
+  display: inline-flex;
+  justify-self: start;
+  align-items: center;
+  min-height: 38px;
+  padding: 0 14px;
+  border-radius: 999px;
+  background: rgba(255, 209, 102, 0.16);
+  color: #ffe5ae;
+  font-weight: 900;
+  text-decoration: none;
 }
 
 #schedule-modal .schedule-modal-vote .hero-vote {
