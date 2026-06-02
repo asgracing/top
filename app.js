@@ -189,6 +189,7 @@ let driverProfileData = null;
 let driverPreviewState = null;
 let eloModalState = null;
 let safetyModalState = null;
+let communityLightboxState = null;
 let donationAlertsData = null;
 let donationAlertsLoading = false;
 let donationAlertsFailed = false;
@@ -198,6 +199,7 @@ let safetyModalController = null;
 let hourlyHeroModalController = null;
 let onlineActivityModalController = null;
 let serverPlayersModalController = null;
+let communityLightboxController = null;
 let selectedActivityDate = null;
 let selectedActivityMonth = null;
 let twitchWidgetCheckTimer = null;
@@ -558,6 +560,7 @@ const translations = {
     communityFeedTitle: "Latest Stories",
     communityFeedSubtitle: "Newest posts first. Each story is a compact recap with 1-2 photos.",
     communityEmpty: "Community stories will appear here soon.",
+    communityOpenImageLabel: "Open full-size image",
     funStatsWeekTab: "Last 7 days",
     funStatsMonthTab: "Last 30 days",
     funStatsPeriodSwitcherLabel: "Period switcher",
@@ -793,6 +796,7 @@ const translations = {
     communityFeedTitle: "Последние истории",
     communityFeedSubtitle: "Новые записи сверху. Каждая история - компактный отчет с 1-2 фотографиями.",
     communityEmpty: "Скоро здесь появятся истории сообщества.",
+    communityOpenImageLabel: "Открыть изображение полностью",
     funStatsWeekTab: "Последние 7 дней",
     funStatsMonthTab: "Последние 30 дней",
     funStatsPeriodSwitcherLabel: "Переключатель периода",
@@ -4039,6 +4043,27 @@ function normalizeCommunityImages(images = []) {
     : [];
 }
 
+function isCommunityLightboxDesktop() {
+  return typeof window !== "undefined"
+    && typeof window.matchMedia === "function"
+    && window.matchMedia("(min-width: 900px)").matches;
+}
+
+function formatCommunityDateLong(dateString, lang = currentLang) {
+  if (!dateString) return "-";
+
+  const locale = lang === "ru" ? "ru-RU" : "en-US";
+  const date = new Date(`${dateString}T00:00:00`);
+  if (Number.isNaN(date.getTime())) return dateString;
+
+  const formatted = new Intl.DateTimeFormat(locale, {
+    day: "numeric",
+    month: "long",
+    year: "numeric"
+  }).format(date);
+  return lang === "ru" ? formatted.replace(/\s*г\.$/, "") : formatted;
+}
+
 function renderCommunityPost(post) {
   const title = getLocalizedCommunityValue(post?.title, "-");
   const text = getLocalizedCommunityValue(post?.text, "");
@@ -4046,7 +4071,7 @@ function renderCommunityPost(post) {
     ? text
     : String(text || "").split(/\n{2,}/);
   const images = normalizeCommunityImages(post?.images);
-  const dateLabel = post?.date ? formatDateLocal(`${post.date}T00:00:00`, currentLang) : "-";
+  const dateLabel = formatCommunityDateLong(post?.date, currentLang);
 
   return `
     <article class="community-feed-card reveal">
@@ -4065,9 +4090,18 @@ function renderCommunityPost(post) {
         <div class="community-feed-gallery community-feed-gallery-${images.length}">
           ${images.map(image => {
             const alt = getLocalizedCommunityValue(image.alt, title);
+            const src = String(image.src || "");
             return `
               <figure class="community-feed-photo">
-                <img src="${escapeHtml(image.src)}" alt="${escapeHtml(alt)}" loading="lazy" />
+                <button
+                  class="community-feed-photo-btn"
+                  type="button"
+                  data-community-image-src="${escapeHtml(src)}"
+                  data-community-image-alt="${escapeHtml(alt)}"
+                  aria-label="${escapeHtml(t("communityOpenImageLabel"))}: ${escapeHtml(alt)}"
+                >
+                  <img src="${escapeHtml(src)}" alt="${escapeHtml(alt)}" loading="lazy" />
+                </button>
               </figure>
             `;
           }).join("")}
@@ -4091,6 +4125,70 @@ function renderCommunityPage() {
   listEl.innerHTML = sortedPosts.length
     ? sortedPosts.map(renderCommunityPost).join("")
     : `<div class="empty-box">${escapeHtml(t("communityEmpty"))}</div>`;
+  updateCommunityLightboxAvailability();
+}
+
+function updateCommunityLightboxAvailability() {
+  const isEnabled = isCommunityLightboxDesktop();
+  document.querySelectorAll("[data-community-image-src]").forEach(button => {
+    button.disabled = !isEnabled;
+  });
+}
+
+function renderCommunityLightbox() {
+  const imageEl = document.getElementById("community-lightbox-image");
+  if (!imageEl) return;
+
+  if (!communityLightboxState?.src) {
+    imageEl.removeAttribute("src");
+    imageEl.alt = "";
+    return;
+  }
+
+  imageEl.src = communityLightboxState.src;
+  imageEl.alt = communityLightboxState.alt || "";
+}
+
+function openCommunityLightbox(src, alt, trigger = null) {
+  if (!communityLightboxController || !isCommunityLightboxDesktop() || !src) return;
+  communityLightboxState = { src, alt: alt || "" };
+  communityLightboxController.open(trigger);
+}
+
+function bindCommunityLightboxTriggers() {
+  const listEl = document.getElementById("community-feed");
+  if (!listEl || listEl.dataset.lightboxBound === "true") return;
+
+  listEl.addEventListener("click", (event) => {
+    const button = event.target?.closest?.("[data-community-image-src]");
+    if (!button || !listEl.contains(button)) return;
+    openCommunityLightbox(button.dataset.communityImageSrc, button.dataset.communityImageAlt, button);
+  });
+
+  listEl.addEventListener("keydown", (event) => {
+    if (event.key !== "Enter" && event.key !== " ") return;
+    const button = event.target?.closest?.("[data-community-image-src]");
+    if (!button || !listEl.contains(button)) return;
+    event.preventDefault();
+    openCommunityLightbox(button.dataset.communityImageSrc, button.dataset.communityImageAlt, button);
+  });
+
+  listEl.dataset.lightboxBound = "true";
+}
+
+function initCommunityLightbox() {
+  communityLightboxController = createModalController({
+    modalId: "community-lightbox-modal",
+    closeButtonId: "community-lightbox-close",
+    onOpen: renderCommunityLightbox,
+    onClose: () => {
+      communityLightboxState = null;
+      renderCommunityLightbox();
+    }
+  });
+  bindCommunityLightboxTriggers();
+  updateCommunityLightboxAvailability();
+  window.addEventListener("resize", debounce(updateCommunityLightboxAvailability, 120));
 }
 
 function getBestLapClass(isHighlighted) {
@@ -7842,6 +7940,8 @@ async function init() {
   }, 120));
   if (IS_RACES_PAGE || IS_DRIVER_PAGE) {
     initRaceResultsModal();
+  } else if (IS_COMMUNITY_PAGE) {
+    initCommunityLightbox();
   } else if (!IS_DRIVER_PAGE && !IS_CARS_PAGE && !IS_COMMUNITY_PAGE) {
     initTodayStatsModal();
     initOnlineActivityModal();
