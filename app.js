@@ -665,6 +665,7 @@ const translations = {
     driverRecentForm: "Recent form",
     driverMostRacedTrack: "Most raced track",
     driverFavoriteCar: "Favorite car",
+    bannedLabel: "BANNED",
     driverWinRate: "Win rate",
     driverPodiumRate: "Podium rate",
     driverRankingPosition: "Ranking position",
@@ -1098,6 +1099,7 @@ const translations = {
     driverRecentForm: "Последние результаты",
     driverMostRacedTrack: "Любимая трасса",
     driverFavoriteCar: "Любимая машина",
+    bannedLabel: "ЗАБАНЕН",
     driverWinRate: "Процент побед",
     driverPodiumRate: "Процент подиумов",
     driverRankingPosition: "Позиция в рейтинге",
@@ -3489,6 +3491,20 @@ function renderSafetyRaceCell(row) {
   return renderSafetyBadge(row, { compact: true, showDelta: true }) || `<span class="empty-inline">-</span>`;
 }
 
+function isDriverBanned(source) {
+  if (!source || typeof source !== "object") return false;
+  return Boolean(source.is_banned || source.banned || source.ban || source.summary?.is_banned || source.summary?.ban);
+}
+
+function renderBannedBadge({ compact = false } = {}) {
+  return `<span class="banned-badge${compact ? " banned-badge-compact" : ""}">${escapeHtml(t("bannedLabel"))}</span>`;
+}
+
+function renderCarOrBanned(row, fallback = "-") {
+  if (isDriverBanned(row)) return renderBannedBadge({ compact: true });
+  return escapeHtml(row?.best_lap_car_name ?? row?.car_name ?? fallback);
+}
+
 function parseEloHistoryDate(value) {
   const raw = String(value || "").trim();
   if (!raw) return null;
@@ -5862,7 +5878,7 @@ function renderLeaderboardTablePage() {
       <td>${escapeHtml(row.races ?? 0)}</td>
       <td>${escapeHtml(row.average_finish ?? "-")}</td>
       <td>${escapeHtml(row.best_lap ?? "-")}</td>
-      <td>${escapeHtml(row.best_lap_car_name ?? "-")}</td>
+      <td>${renderCarOrBanned(row)}</td>
     </tr>
   `).join("");
 
@@ -5937,7 +5953,7 @@ function renderBestLapsTablePage() {
       <td>${renderEloCell(row)}</td>
       <td>${renderSafetyCell(row)}</td>
       <td>${renderStatValueWithTrend(escapeHtml(row.best_lap ?? "-"), row.latest_changes?.best_lap_ms, "best_lap_ms")}</td>
-      <td><span class="car-label-inline">${renderCarImage(row, { className: "car-thumb car-thumb-inline", alt: row.car_name || "" })}<span>${escapeHtml(row.car_name ?? "-")}</span></span></td>
+      <td>${isDriverBanned(row) ? renderBannedBadge({ compact: true }) : `<span class="car-label-inline">${renderCarImage(row, { className: "car-thumb car-thumb-inline", alt: row.car_name || "" })}<span>${escapeHtml(row.car_name ?? "-")}</span></span>`}</td>
       <td>${sessionLabel(row.session_type)}</td>
       <td>${escapeHtml(row.updated_at ?? "-")}</td>
     </tr>
@@ -6016,7 +6032,7 @@ function renderSafetyTablePage() {
   }
 
   const rows = result.items.map(row => `
-    <tr class="safety-row sr-row sr-cat-${escapeHtml(normalizeSafetyCategory(row) || "C")}">
+    <tr class="safety-row sr-row ${isDriverBanned(row) ? "is-banned" : `sr-cat-${escapeHtml(normalizeSafetyCategory(row) || "C")}`}">
       <td><span class="rank-badge rank-${escapeHtml(row.rank)}">#${escapeHtml(row.rank)}</span></td>
       <td>
         <div class="driver-cell">
@@ -6026,7 +6042,7 @@ function renderSafetyTablePage() {
         </div>
       </td>
       <td>${renderSafetyCell(row)}</td>
-      <td>${escapeHtml(getSafetyCategoryName(normalizeSafetyCategory(row) || "C"))}</td>
+      <td>${isDriverBanned(row) ? renderBannedBadge({ compact: true }) : escapeHtml(getSafetyCategoryName(normalizeSafetyCategory(row) || "C"))}</td>
       <td>${escapeHtml(row.races_count ?? 0)}</td>
       <td>${escapeHtml(Number(row.total_delta ?? 0).toFixed(2))}</td>
       <td>${escapeHtml(row.total_invalid_laps ?? 0)}</td>
@@ -7105,6 +7121,9 @@ function buildDriverStatsMarkup(profile) {
 
   const summary = profile.summary || {};
   const favoriteCarName = getFavoriteCarName(profile);
+  const favoriteCarMarkup = isDriverBanned(profile)
+    ? renderBannedBadge()
+    : renderCarLink(favoriteCarName || "-", "driver-link driver-link-heading");
   const averagePace = summary.average_pace ?? "-";
   return `
     <div class="driver-stat-card">
@@ -7156,7 +7175,7 @@ function buildDriverStatsMarkup(profile) {
     </div>
     <div class="driver-stat-card">
       <div class="driver-stat-label">${escapeHtml(t("driverFavoriteCar"))}</div>
-      <div class="driver-stat-value">${renderCarLink(favoriteCarName || "-", "driver-link driver-link-heading")}</div>
+      <div class="driver-stat-value">${favoriteCarMarkup}</div>
     </div>
   `;
 }
