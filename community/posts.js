@@ -10,10 +10,34 @@ window.ASG_COMMUNITY_POSTS = [
     },
     text: {
       en: [
-        "Salute to all racers! We have great news: four new ASG Racing servers are now open. The new lineup includes Monza SA Gainer 2 for newcomers with 50 SA, Monza Dynamic Weather, Spa Dynamic Weather, and Nordschleife. Special thanks to Roman Dynin for helping with the computer, and to everyone who took part. Big thanks as well to Dmitry A. for supporting the server fund."
+        "Salute to all racers!",
+        "We have great news: four new ASG Racing servers are now open:",
+        {
+          type: "list",
+          items: [
+            "Monza SA Gainer 2 for newcomers with 50 SA",
+            "Monza Dynamic Weather",
+            "Spa Dynamic Weather",
+            "Nordschleife"
+          ]
+        },
+        "Special thanks to Roman Dynin for helping with the computer, and to everyone who took part.",
+        "Big thanks as well to Dmitry A. for supporting the server fund."
       ],
       ru: [
-        "Всем гонщикам салют! У нас радостная новость - мы открыли 4 новых сервера: Monza SA Gainer 2 для новичков с 50 SA, Monza Dynamic Weather, Spa Dynamic Weather и Nordschleife. Отдельная благодарность за помощь с компом Роману Дынину и всем, кто принимал участие. А также Дмитрию А. за фонд поддержки сервера =)"
+        "Всем гонщикам салют!",
+        "У нас радостная новость - мы открыли 4 новых сервера:",
+        {
+          type: "list",
+          items: [
+            "Monza SA Gainer 2 для новичков с 50 SA",
+            "Monza Dynamic Weather",
+            "Spa Dynamic Weather",
+            "Nordschleife"
+          ]
+        },
+        "Отдельная благодарность за помощь с компом Роману Дынину! И всем, кто принимал участие.",
+        "А также Дмитрию А. за фонд поддержки сервера =)"
       ]
     },
     images: [

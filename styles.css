@@ -6872,6 +6872,17 @@ body.modal-open {
   margin: 0;
 }
 
+.community-feed-text ul {
+  display: grid;
+  gap: 6px;
+  margin: 0;
+  padding-left: 22px;
+}
+
+.community-feed-text li {
+  padding-left: 2px;
+}
+
 .community-feed-actions {
   display: flex;
   flex-wrap: wrap;

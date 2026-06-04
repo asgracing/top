@@ -4289,9 +4289,6 @@ function renderCommunityPost(post) {
   const title = getLocalizedCommunityValue(post?.title, "-");
   const postId = getCommunityPostId(post);
   const text = getLocalizedCommunityValue(post?.text, "");
-  const paragraphs = Array.isArray(text)
-    ? text
-    : String(text || "").split(/\n{2,}/);
   const images = normalizeCommunityImages(post?.images);
   const dateLabel = formatCommunityDateLong(post?.date, currentLang);
 
@@ -4301,11 +4298,7 @@ function renderCommunityPost(post) {
         <time class="community-feed-date" datetime="${escapeAttribute(post?.date || "")}">${escapeHtml(dateLabel)}</time>
         <h3 class="community-feed-title">${escapeHtml(title)}</h3>
         <div class="community-feed-text">
-          ${paragraphs
-            .map(paragraph => String(paragraph || "").trim())
-            .filter(Boolean)
-            .map(paragraph => `<p>${escapeHtml(paragraph)}</p>`)
-            .join("")}
+          ${renderCommunityTextBlocks(text)}
         </div>
         ${postId ? `
           <div class="community-feed-actions">
@@ -7219,6 +7212,35 @@ function buildDriverStatsMarkup(profile) {
       <div class="driver-stat-value">${favoriteCarMarkup}</div>
     </div>
   `;
+}
+
+function renderCommunityTextBlocks(text) {
+  const blocks = Array.isArray(text)
+    ? text
+    : String(text || "").split(/\n{2,}/);
+
+  return blocks
+    .map(block => {
+      if (typeof block === "string") {
+        const paragraph = block.trim();
+        return paragraph ? `<p>${escapeHtml(paragraph)}</p>` : "";
+      }
+
+      if (!block || typeof block !== "object") return "";
+
+      if (block.type === "list" && Array.isArray(block.items)) {
+        const items = block.items
+          .map(item => String(item || "").trim())
+          .filter(Boolean)
+          .map(item => `<li>${escapeHtml(item)}</li>`)
+          .join("");
+        return items ? `<ul>${items}</ul>` : "";
+      }
+
+      const paragraph = String(block.text || "").trim();
+      return paragraph ? `<p>${escapeHtml(paragraph)}</p>` : "";
+    })
+    .join("");
 }
 
 function buildDriverHighlightsMarkup(profile) {
