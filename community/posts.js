@@ -2,6 +2,38 @@
 // Send future updates in this shape: title + date, 3-5 sentences, and 1-2 photo paths.
 window.ASG_COMMUNITY_POSTS = [
   {
+    id: "new-asg-racing-servers-2026-06-04",
+    date: "2026-06-04",
+    title: {
+      en: "New ASG Racing Servers Are Open",
+      ru: "Открыты новые сервера ASG Racing"
+    },
+    text: {
+      en: [
+        "Salute to all racers! We have great news: four new ASG Racing servers are now open. The new lineup includes Monza SA Gainer 2 for newcomers with 50 SA, Monza Dynamic Weather, Spa Dynamic Weather, and Nordschleife. Special thanks to Roman Dynin for helping with the computer, and to everyone who took part. Big thanks as well to Dmitry A. for supporting the server fund."
+      ],
+      ru: [
+        "Всем гонщикам салют! У нас радостная новость - мы открыли 4 новых сервера: Monza SA Gainer 2 для новичков с 50 SA, Monza Dynamic Weather, Spa Dynamic Weather и Nordschleife. Отдельная благодарность за помощь с компом Роману Дынину и всем, кто принимал участие. А также Дмитрию А. за фонд поддержки сервера =)"
+      ]
+    },
+    images: [
+      {
+        src: "./newserv1.png",
+        alt: {
+          en: "ASG Racing new server announcement",
+          ru: "Анонс новых серверов ASG Racing"
+        }
+      },
+      {
+        src: "./newserv2.png",
+        alt: {
+          en: "ASG Racing new server announcement",
+          ru: "Анонс новых серверов ASG Racing"
+        }
+      }
+    ]
+  },
+  {
     id: "ford-monza-flashmob-2026-06-01",
     date: "2026-06-01",
     title: {
