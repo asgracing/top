@@ -36,6 +36,7 @@ const communityLikesApiUrl =
 const HOURLY_SITE_BASE_URL = "/hourly";
 const TWITCH_CHANNEL_NAME = "asgracing";
 const TWITCH_CHANNEL_URL = `https://www.twitch.tv/${TWITCH_CHANNEL_NAME}`;
+const TWITCH_LAUNCHER_SESSION_HIDE_KEY = "asgTwitchLauncherHidden";
 const TWITCH_LIVE_PREVIEW_URL = `https://static-cdn.jtvnw.net/previews-ttv/live_user_${TWITCH_CHANNEL_NAME}-440x248.jpg`;
 const YOUTUBE_CHANNEL_HANDLE = "@ASGRacingACC";
 const YOUTUBE_CHANNEL_URL = "https://www.youtube.com/@ASGRacingACC";
@@ -214,6 +215,7 @@ let twitchWidgetState = {
   live: false,
   expanded: false,
   dismissed: true,
+  launcherHiddenForSession: false,
   checking: false,
   platform: null,
   embedUrl: "",
@@ -2540,6 +2542,7 @@ async function detectActiveLiveStream() {
 
 function ensureTwitchWidget() {
   if (twitchWidgetState.initialized) return;
+  twitchWidgetState.launcherHiddenForSession = isTwitchLauncherHiddenForSession();
 
   const root = document.createElement("aside");
   root.className = "twitch-widget";
@@ -2589,11 +2592,19 @@ function ensureTwitchWidget() {
           ></iframe>
         </div>
       </div>
-      <button
-        class="twitch-widget-launcher"
-        id="twitch-widget-launcher"
-        type="button"
-      >${escapeHtml(t("twitchWidgetShow"))}</button>
+      <div class="twitch-widget-launcher-wrap" id="twitch-widget-launcher-wrap">
+        <button
+          class="twitch-widget-launcher"
+          id="twitch-widget-launcher"
+          type="button"
+        >${escapeHtml(t("twitchWidgetShow"))}</button>
+        <button
+          class="twitch-widget-launcher-close"
+          id="twitch-widget-launcher-close"
+          type="button"
+          aria-label="Hide stream button"
+        >×</button>
+      </div>
     `;
 
     document.body.appendChild(root);
@@ -2631,8 +2642,35 @@ function ensureTwitchWidget() {
     });
   }
 
+  const launcherCloseBtn = root.querySelector("#twitch-widget-launcher-close");
+  if (launcherCloseBtn) {
+    launcherCloseBtn.addEventListener("click", (event) => {
+      event.preventDefault();
+      event.stopPropagation();
+      twitchWidgetState.launcherHiddenForSession = true;
+      hideTwitchLauncherForSession();
+      renderTwitchWidget();
+    });
+  }
+
   twitchWidgetState.initialized = true;
   renderTwitchWidget();
+}
+
+function isTwitchLauncherHiddenForSession() {
+  try {
+    return window.sessionStorage.getItem(TWITCH_LAUNCHER_SESSION_HIDE_KEY) === "1";
+  } catch (error) {
+    return false;
+  }
+}
+
+function hideTwitchLauncherForSession() {
+  try {
+    window.sessionStorage.setItem(TWITCH_LAUNCHER_SESSION_HIDE_KEY, "1");
+  } catch (error) {
+    // Session-only hiding is optional; the widget should keep working if storage is blocked.
+  }
 }
 
 function renderTwitchWidget() {
@@ -2645,9 +2683,11 @@ function renderTwitchWidget() {
   const expandEl = document.getElementById("twitch-widget-expand");
   const hideEl = document.getElementById("twitch-widget-hide");
   const launcherEl = document.getElementById("twitch-widget-launcher");
+  const launcherWrapEl = document.getElementById("twitch-widget-launcher-wrap");
+  const launcherCloseEl = document.getElementById("twitch-widget-launcher-close");
   const titleWrapEl = document.getElementById("twitch-widget-link");
   const shellEl = root.querySelector(".twitch-widget-shell");
-  if (!root || !frame || !titleEl || !openEl || !expandEl || !hideEl || !launcherEl || !shellEl) return;
+  if (!root || !frame || !titleEl || !openEl || !expandEl || !hideEl || !launcherEl || !launcherWrapEl || !shellEl) return;
 
   titleEl.textContent = t("twitchWidgetTitle");
   openEl.textContent = t("twitchWidgetOpen");
@@ -2660,25 +2700,26 @@ function renderTwitchWidget() {
   hideEl.textContent = t("twitchWidgetHide");
   launcherEl.textContent = t("twitchWidgetShow");
   launcherEl.setAttribute("aria-label", t("twitchWidgetShow"));
+  if (launcherCloseEl) launcherCloseEl.setAttribute("aria-label", t("twitchWidgetHide"));
   root.classList.toggle("is-platform-youtube", twitchWidgetState.platform === "youtube");
   root.classList.toggle("is-platform-twitch", twitchWidgetState.platform === "twitch");
 
   if (!twitchWidgetState.live) {
-      root.hidden = false;
+      root.hidden = twitchWidgetState.launcherHiddenForSession;
       root.classList.add("is-visible", "is-collapsed");
       root.classList.remove("is-expanded");
       shellEl.hidden = true;
-      launcherEl.hidden = false;
+      launcherWrapEl.hidden = twitchWidgetState.launcherHiddenForSession;
       if (frame.getAttribute("src") !== "about:blank") frame.setAttribute("src", "about:blank");
       return;
     }
 
-    root.hidden = false;
+    root.hidden = twitchWidgetState.dismissed && twitchWidgetState.launcherHiddenForSession;
     root.classList.add("is-visible");
     root.classList.toggle("is-expanded", twitchWidgetState.expanded && !twitchWidgetState.dismissed);
     root.classList.toggle("is-collapsed", twitchWidgetState.dismissed);
     shellEl.hidden = twitchWidgetState.dismissed;
-    launcherEl.hidden = !twitchWidgetState.dismissed;
+    launcherWrapEl.hidden = !twitchWidgetState.dismissed || twitchWidgetState.launcherHiddenForSession;
 
     if (twitchWidgetState.dismissed) {
       if (frame.getAttribute("src") !== "about:blank") frame.setAttribute("src", "about:blank");
