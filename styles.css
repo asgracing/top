@@ -3945,10 +3945,14 @@ tbody tr:last-child td {
 }
 
 .server-player-main {
+  display: flex;
+  align-items: baseline;
+  gap: 12px;
   min-width: 0;
 }
 
 .server-player-name {
+  min-width: 0;
   color: #fff;
   font-weight: 850;
   white-space: nowrap;
@@ -3958,11 +3962,22 @@ tbody tr:last-child td {
 
 .server-player-meta {
   display: flex;
-  flex-wrap: wrap;
+  flex: 0 0 auto;
+  align-items: center;
+  flex-wrap: nowrap;
   gap: 8px;
-  margin-top: 2px;
   color: rgba(255, 255, 255, 0.62);
   font-size: 0.78rem;
+  white-space: nowrap;
+}
+
+.server-player-meta span {
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.server-player-meta span:last-child {
+  max-width: min(220px, 34vw);
 }
 
 .server-player-car {
