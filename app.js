@@ -436,6 +436,7 @@ const translations = {
     bestLapTracksTitle: "Best laps by track",
     bestLapTracksSubtitle: "One fastest recorded lap for each track.",
     driverBestLapTracksSubtitle: "Driver best recorded lap for each track.",
+    bestLapTracksTooltip: "Open a track-by-track list of best laps with driver, car and lap time.",
     bestlapsTrackFilterLabel: "Track",
     bestLapNoteFallback: "Best lap highlight will appear here.",
     bestLapNoteTemplate: "{driver} · {track}",
@@ -949,6 +950,7 @@ const translations = {
     bestLapTracksTitle: "Лучшие круги треков",
     bestLapTracksSubtitle: "По одному лучшему кругу для каждой трассы.",
     driverBestLapTracksSubtitle: "Лучший круг пилота на каждой трассе.",
+    bestLapTracksTooltip: "Открыть список лучших кругов по трассам: пилот, машина и время круга.",
     bestlapsTrackFilterLabel: "Трасса",
     bestLapNoteFallback: "Лучший круг будет показан здесь.",
     bestLapNoteTemplate: "{driver} · {track}",
@@ -5079,6 +5081,7 @@ function applyStaticTranslations() {
   if (carsInput) carsInput.placeholder = t("carsSearchPlaceholder");
 
   const bestLapNoteEl = document.getElementById("best-lap-note");
+  applyBestlapTracksButtonText();
   if (bestlapsData.length > 0 && bestLapNoteEl) {
     updateBestLapNote(bestlapsData[0].driver, bestlapsData[0].track, bestlapsData[0].car_name);
   } else if (bestLapNoteEl) {
@@ -5736,6 +5739,14 @@ function updateBestLapNote(driver, track, carName) {
   noteEl.textContent = carName ? `${base} · ${carName}` : base;
 }
 
+function applyBestlapTracksButtonText(root = document) {
+  root.querySelectorAll?.(".bestlap-tracks-open, [data-driver-bestlap-tracks]").forEach(button => {
+    button.textContent = t("bestLapTracksButton");
+    button.setAttribute("title", t("bestLapTracksTooltip"));
+    button.setAttribute("aria-label", t("bestLapTracksTooltip"));
+  });
+}
+
 function bestlapTrackOptions() {
   const source = Array.isArray(bestlapTracksData) && bestlapTracksData.length
     ? bestlapTracksData
@@ -5834,6 +5845,7 @@ function initBestlapTracksModal() {
     button.addEventListener("click", () => openBestlapTracksModal(bestlapTrackLeadersData, button));
     button.dataset.bound = "true";
   }
+  applyBestlapTracksButtonText();
 }
 
 function renderTop3Compact(data) {
@@ -7344,7 +7356,7 @@ function buildDriverStatsMarkup(profile) {
       <div class="driver-stat-value">${escapeHtml(summary.podium_rate ?? 0)}%</div>
     </div>
     <div class="driver-stat-card">
-      <button class="driver-stat-label driver-stat-label-button" type="button" data-driver-bestlap-tracks>${escapeHtml(t("bestLapTracksButton"))}</button>
+      <button class="driver-stat-label driver-stat-label-button bestlap-track-cta" type="button" data-driver-bestlap-tracks title="${escapeAttribute(t("bestLapTracksTooltip"))}" aria-label="${escapeAttribute(t("bestLapTracksTooltip"))}">${escapeHtml(t("bestLapTracksButton"))}</button>
       <div class="driver-stat-value driver-stat-mainline">
         <span class="best-lap-value stat-with-trend">${escapeHtml(summary.best_lap ?? "-")}${renderTrendBadge(summary.latest_changes?.best_lap_ms, "best_lap_ms", { compact: true })}</span>
         <span class="driver-stat-side">${renderCarLink(summary.best_lap_car_name ?? "-", "driver-link driver-link-subtle")}</span>
@@ -7661,6 +7673,7 @@ function bindDriverBestlapTracksButton(root = document, profile = driverProfileD
     });
   });
   button.dataset.bound = "true";
+  applyBestlapTracksButtonText(root);
 }
 
 function renderDriverPreviewModal() {
@@ -8517,12 +8530,12 @@ async function init() {
 
     if (bestlapsData.length > 0) {
       if (bestLapHighlightEl) {
-        bestLapHighlightEl.textContent = t("bestLapTracksButton");
+        applyBestlapTracksButtonText();
       }
       updateBestLapNote(bestlapsData[0].driver, bestlapsData[0].track, bestlapsData[0].car_name);
     } else {
       if (bestLapHighlightEl) {
-        bestLapHighlightEl.textContent = t("bestLapTracksButton");
+        applyBestlapTracksButtonText();
       }
       if (bestLapNoteEl) {
         bestLapNoteEl.textContent = t("bestLapNoteFallback");

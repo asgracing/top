@@ -8420,6 +8420,149 @@ body.modal-open {
   }
 }
 
+/* ===== BEST LAP TRACK CTA + VIDEO SOUND TUNE 0605 ===== */
+
+.bestlap-track-cta,
+.bestlap-tracks-open.bestlap-track-cta,
+.driver-stat-label-button.bestlap-track-cta,
+.mini-stat-bestlap .mini-value.bestlap-track-cta,
+.hero-side-compact .mini-stat-bestlap .mini-value.bestlap-track-cta {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: fit-content;
+  max-width: 100%;
+  min-height: 36px;
+  padding: 8px 14px;
+  border: 1px solid rgba(216, 180, 254, 0.52);
+  border-radius: 999px;
+  background:
+    radial-gradient(circle at 20% 0%, rgba(216, 180, 254, 0.32), transparent 48%),
+    linear-gradient(135deg, rgba(147, 51, 234, 0.96), rgba(109, 40, 217, 0.94));
+  box-shadow:
+    0 12px 28px rgba(126, 34, 206, 0.34),
+    inset 0 1px 0 rgba(255, 255, 255, 0.18);
+  color: #ffffff !important;
+  font-size: 0.76rem;
+  font-weight: 900;
+  line-height: 1.12;
+  letter-spacing: 0;
+  text-align: center;
+  text-decoration: none;
+  text-shadow: 0 1px 12px rgba(40, 12, 72, 0.45) !important;
+  cursor: pointer;
+  transition:
+    transform 0.18s ease,
+    border-color 0.18s ease,
+    box-shadow 0.18s ease,
+    filter 0.18s ease;
+}
+
+.bestlap-track-cta:hover,
+.bestlap-track-cta:focus-visible {
+  transform: translateY(-1px);
+  border-color: rgba(237, 233, 254, 0.78);
+  filter: brightness(1.05);
+  box-shadow:
+    0 16px 34px rgba(126, 34, 206, 0.44),
+    0 0 0 1px rgba(216, 180, 254, 0.18),
+    inset 0 1px 0 rgba(255, 255, 255, 0.22);
+}
+
+.bestlap-track-cta:focus-visible {
+  outline: 2px solid rgba(237, 233, 254, 0.75);
+  outline-offset: 3px;
+}
+
+.mini-stat-bestlap {
+  align-content: center;
+}
+
+.mini-stat-bestlap .bestlap-track-cta {
+  width: 100%;
+  min-height: 38px;
+  margin: 2px 0 0;
+}
+
+.mini-stat-bestlap .mini-label,
+.mini-stat-bestlap .mini-note {
+  display: none;
+}
+
+.driver-stat-label-button.bestlap-track-cta {
+  margin-bottom: 8px;
+  font-size: 0.7rem;
+}
+
+.bg-video-sound-toggle {
+  top: auto !important;
+  right: clamp(10px, 1.8vw, 22px);
+  bottom: 84px;
+  gap: 9px;
+  width: min(224px, calc(100vw - 24px));
+  padding: 8px 12px 8px 10px;
+  border-radius: 18px 0 0 18px;
+  transform: none !important;
+}
+
+.bg-video-sound-toggle:hover,
+.bg-video-sound-toggle:focus-visible {
+  transform: translateX(-4px) !important;
+}
+
+.bg-video-sound-toggle-icon {
+  flex-basis: 38px;
+  width: 38px;
+  height: 38px;
+  padding: 8px;
+  border-radius: 13px;
+}
+
+.bg-video-sound-toggle-icon::before {
+  inset: 5px;
+  border-radius: 10px;
+}
+
+.bg-video-sound-toggle-bar {
+  width: 4px;
+}
+
+.bg-video-sound-toggle-bar:nth-child(1) {
+  height: 11px;
+}
+
+.bg-video-sound-toggle-bar:nth-child(2) {
+  height: 17px;
+}
+
+.bg-video-sound-toggle-bar:nth-child(3) {
+  height: 14px;
+}
+
+.bg-video-sound-toggle-title {
+  font-size: 11px;
+  letter-spacing: 0.055em;
+}
+
+.bg-video-sound-toggle-note,
+.bg-video-volume {
+  display: none;
+}
+
+.bg-video-sound-toggle::after {
+  inset: auto 16px 7px 56px;
+}
+
+body.background-audio-focus .bg-video-sound-toggle {
+  transform: translateX(-4px) scale(1.01) !important;
+}
+
+@media (max-width: 768px) {
+  .bg-video-sound-toggle {
+    display: none !important;
+  }
+}
+
 /* ===== HERO THREE COLUMN LAYOUT 1105 V3 ===== */
 
 .hero-card {
@@ -9672,6 +9815,55 @@ body.modal-open {
   .hero-hourly-card {
     height: auto;
   }
+}
+
+/* ===== FINAL BEST LAP CTA + VIDEO SOUND OVERRIDE 0605 ===== */
+
+.bestlap-track-cta,
+.bestlap-tracks-open.bestlap-track-cta,
+.driver-stat-label-button.bestlap-track-cta,
+.mini-stat-bestlap .mini-value.bestlap-track-cta,
+.hero-side-compact .mini-stat-bestlap .mini-value.bestlap-track-cta {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  max-width: 100%;
+  min-height: 36px;
+  padding: 8px 14px;
+  border: 1px solid rgba(216, 180, 254, 0.52);
+  border-radius: 999px;
+  background:
+    radial-gradient(circle at 20% 0%, rgba(216, 180, 254, 0.32), transparent 48%),
+    linear-gradient(135deg, rgba(147, 51, 234, 0.96), rgba(109, 40, 217, 0.94));
+  box-shadow:
+    0 12px 28px rgba(126, 34, 206, 0.34),
+    inset 0 1px 0 rgba(255, 255, 255, 0.18);
+  color: #ffffff !important;
+  font-size: 0.76rem !important;
+  font-weight: 900;
+  line-height: 1.12;
+  letter-spacing: 0;
+  text-align: center;
+  text-shadow: 0 1px 12px rgba(40, 12, 72, 0.45) !important;
+}
+
+.mini-stat-bestlap .bestlap-track-cta {
+  width: 100%;
+  min-height: 38px;
+  margin: 2px 0 0;
+}
+
+.mini-stat-bestlap .mini-label,
+.mini-stat-bestlap .mini-note {
+  display: none;
+}
+
+.bg-video-sound-toggle {
+  top: auto !important;
+  bottom: 84px;
+  width: min(224px, calc(100vw - 24px));
+  padding: 8px 12px 8px 10px;
+  transform: none !important;
 }
 
 .hero-hourly-card.is-championship-event {
