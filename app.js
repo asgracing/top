@@ -6544,6 +6544,9 @@ function getLocalizedServerStatus(status, lang = currentLang) {
 function cleanServerDisplayName(value, fallback = "") {
   const raw = String(value || fallback || "").trim();
   if (!raw) return fallback || "-";
+  if (/^ASG Racing Monza RUS #2 Sunset - Leaderboard$/i.test(raw)) {
+    return "ASG Racing Monza - SA Gainer";
+  }
   const cleaned = raw
     .replace(/\s+-\s+www(?:\..*)?$/i, "")
     .replace(/\s+-\s+www\..*$/i, "")
