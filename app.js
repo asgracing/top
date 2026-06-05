@@ -48,10 +48,11 @@ const TOP_GUIDE_MEDIA_QUERY = "(min-width: 1280px)";
 const BG_VIDEO_VOLUME_STORAGE_KEY = "asgBgVideoVolume";
 const SERVER_CARD_BACKGROUNDS = {
   main: `${SITE_BASE_PATH}assets/main.jpg`,
-  sunset: `${SITE_BASE_PATH}assets/sunset.jpeg`,
+  sunset: `${SITE_BASE_PATH}assets/sunset.jpg`,
   monza: `${SITE_BASE_PATH}assets/main.jpg`,
   spa: `${SITE_BASE_PATH}assets/spa.jpg`,
   nurburgring: `${SITE_BASE_PATH}assets/nurburgring.jpg`,
+  nurburgring24h: `${SITE_BASE_PATH}assets/Nurburgring24h.jpg`,
   silverstone: `${SITE_BASE_PATH}assets/silverstone.jpg`
 };
 const ACC_CONNECT_SERVER_FALLBACKS = {
@@ -6729,6 +6730,7 @@ function updateHeroServerSummary(serverStatus = serverStatusData) {
 function getServerCardBackgroundKey(key, index = 0) {
   const normalized = String(key || "").toLowerCase();
   if (normalized.includes("spa")) return "spa";
+  if (normalized.includes("nurburgring_24") || normalized.includes("nord")) return "nurburgring24h";
   if (normalized.includes("nord") || normalized.includes("nurb")) return "nurburgring";
   if (normalized.includes("silverstone")) return "silverstone";
   if (normalized.includes("monza")) return "monza";
@@ -6740,6 +6742,7 @@ function getServerCardBackgroundKey(key, index = 0) {
 function getServerTrackBackgroundKey(key, label, server, index = 0) {
   const haystack = `${key || ""} ${label || ""} ${server?.track_code || ""} ${server?.track || ""}`.toLowerCase();
   if (haystack.includes("spa")) return "spa";
+  if (haystack.includes("nurburgring_24") || haystack.includes("nord")) return "nurburgring24h";
   if (haystack.includes("nord") || haystack.includes("nurburgring_24h") || haystack.includes("nurb")) return "nurburgring";
   if (haystack.includes("silverstone")) return "silverstone";
   if (haystack.includes("monza")) return "monza";
