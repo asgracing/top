@@ -2080,7 +2080,7 @@ function renderHourlyHeroCard() {
     eyebrowEl.textContent = isChampionship ? getActiveChampionshipTitle(data) : t("hourlyEyebrow");
   }
 
-  votesEl.textContent = isChampionship ? (currentLang === "ru" ? "Особое событие чемпионата" : "Special championship event") : getHourlyVotesLabel();
+  votesEl.textContent = getHourlyVotesLabel();
 
   let legalNoteEl = document.getElementById("hourly-vote-legal-note");
   if (!legalNoteEl) {
@@ -2089,8 +2089,8 @@ function renderHourlyHeroCard() {
     legalNoteEl.id = "hourly-vote-legal-note";
     voteBtn.parentElement?.insertAdjacentElement("afterend", legalNoteEl);
   }
-  legalNoteEl.innerHTML = isChampionship ? "" : buildHourlyVoteLegalNoteHtml();
-  legalNoteEl.hidden = isChampionship;
+  legalNoteEl.innerHTML = buildHourlyVoteLegalNoteHtml();
+  legalNoteEl.hidden = false;
 
   voteBtn.textContent = hourlyVotePending
     ? t("hourlyVoteSending")
@@ -2098,8 +2098,8 @@ function renderHourlyHeroCard() {
       ? t("hourlyVoteDone")
       : t("hourlyVoteBtn");
 
-  voteBtn.hidden = isChampionship;
-  voteBtn.disabled = isChampionship || (!data?.event_id && !data?.track_name) || hourlyVotePending;
+  voteBtn.hidden = false;
+  voteBtn.disabled = (!data?.event_id && !data?.track_name) || hourlyVotePending;
   voteBtn.classList.toggle("is-voted", hourlyVoteAlreadyVoted);
   voteBtn.classList.toggle("pulse-attention", !hourlyVoteAlreadyVoted && !hourlyVotePending && Boolean(data?.event_id || data?.track_name));
   cardEl.setAttribute(
@@ -2217,12 +2217,6 @@ function buildHourlyAnnouncementEventId(item) {
 }
 
 async function loadHourlyVotes(announcement) {
-  if (isHourlyChampionshipEvent(announcement)) {
-    hourlyVotesCount = null;
-    hourlyVoteAlreadyVoted = false;
-    hourlyVoteFailed = false;
-    return;
-  }
   const eventId = buildHourlyAnnouncementEventId(announcement);
   if (!eventId) {
     hourlyVotesCount = null;
@@ -2251,7 +2245,6 @@ async function loadHourlyVotes(announcement) {
 }
 
 async function submitHourlyHeroVote() {
-  if (isHourlyChampionshipEvent(hourlyAnnouncementData)) return;
   const eventId = buildHourlyAnnouncementEventId(hourlyAnnouncementData);
   if (!eventId || hourlyVotePending) return;
 
