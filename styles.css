@@ -9866,6 +9866,145 @@ body.background-audio-focus .bg-video-sound-toggle {
   transform: none !important;
 }
 
+/* ===== FINAL HERO SERVER SUMMARY 0605 ===== */
+
+.hero-side-compact {
+  display: grid !important;
+  grid-template-columns: repeat(2, minmax(0, 1fr)) !important;
+  grid-template-rows: repeat(2, minmax(58px, auto)) !important;
+  gap: 10px !important;
+  padding-top: 10px !important;
+}
+
+.hero-side-compact .hero-stats-row {
+  display: contents !important;
+}
+
+.hero-side-compact .mini-stat,
+.hero-side-compact .mini-stat:first-child,
+.hero-side-compact .mini-stat + .mini-stat,
+.hero-side-compact .hero-stats-row .mini-stat {
+  display: grid !important;
+  min-width: 0;
+  min-height: 58px;
+  padding: 10px 12px !important;
+  border: 1px solid rgba(255, 255, 255, 0.085) !important;
+  border-radius: 14px !important;
+  background:
+    radial-gradient(circle at top left, rgba(255, 255, 255, 0.08), transparent 46%),
+    rgba(255, 255, 255, 0.045) !important;
+  box-shadow: none !important;
+}
+
+.hero-side-compact .mini-stat::before,
+.hero-side-compact .mini-stat::after {
+  display: none;
+}
+
+.hero-server-online-stat {
+  appearance: none;
+  -webkit-appearance: none;
+  border: 1px solid rgba(57, 217, 138, 0.26) !important;
+  color: inherit;
+  font: inherit;
+  text-align: left;
+  cursor: pointer;
+}
+
+.hero-server-online-stat:hover,
+.hero-server-online-stat:focus-visible {
+  transform: translateY(-1px);
+  border-color: rgba(57, 217, 138, 0.48) !important;
+  background:
+    radial-gradient(circle at top left, rgba(57, 217, 138, 0.16), transparent 48%),
+    rgba(255, 255, 255, 0.06) !important;
+}
+
+.hero-server-online-stat:focus-visible {
+  outline: 2px solid rgba(57, 217, 138, 0.58);
+  outline-offset: 3px;
+}
+
+.hero-side-compact .mini-label {
+  display: block !important;
+  margin: 0 0 6px !important;
+  color: rgba(218, 229, 245, 0.58);
+  font-size: 0.64rem !important;
+  font-weight: 850;
+  letter-spacing: 0.07em;
+  line-height: 1.12;
+  text-transform: uppercase;
+}
+
+.hero-side-compact .mini-value,
+.hero-side-compact #drivers-count,
+.hero-side-compact #servers-online-count,
+.hero-side-compact #serverPlayersValue {
+  grid-column: auto !important;
+  grid-row: auto !important;
+  align-self: end;
+  margin: 0 !important;
+  color: rgba(248, 251, 255, 0.96);
+  font-size: clamp(1.16rem, 1.45vw, 1.52rem) !important;
+  font-weight: 950;
+  line-height: 1;
+  text-align: left !important;
+  white-space: nowrap;
+}
+
+.hero-side-compact .server-status-wrap,
+.hero-side-compact .server-status-wrap-total {
+  display: block !important;
+}
+
+.hero-side-compact .mini-stat-bestlap .mini-label,
+.hero-side-compact .mini-stat-bestlap .mini-note {
+  display: none !important;
+}
+
+.hero-side-compact .mini-stat-bestlap .bestlap-track-cta {
+  align-self: center;
+  width: 100%;
+  min-height: 38px;
+}
+
+.driver-stat-label-button.bestlap-track-cta {
+  width: 100%;
+  min-height: 44px;
+  margin: 0;
+}
+
+.server-status-row {
+  grid-template-columns: minmax(0, 1fr) auto;
+  align-items: center;
+}
+
+.server-status-row-count {
+  display: grid;
+  justify-items: end;
+  gap: 2px;
+  min-width: 86px;
+}
+
+.server-status-row-count strong {
+  color: #f8fbff;
+  font-size: 1.35rem;
+  line-height: 1;
+}
+
+.server-status-row-count span {
+  color: var(--muted);
+  font-size: 0.72rem;
+  font-weight: 800;
+}
+
+@media (max-width: 560px) {
+  .hero-side-compact {
+    grid-template-columns: 1fr !important;
+    grid-template-rows: auto !important;
+  }
+}
+
 .hero-hourly-card.is-championship-event {
   border-color: rgba(216, 180, 254, 0.62) !important;
   background:

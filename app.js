@@ -412,6 +412,9 @@ const translations = {
     btnWorstSafety: "Worst Safety",
     btnAboutServer: "About Server",
     serversLabel: "Servers",
+    serversOnlineLabel: "Servers online",
+    serversOnlineTooltip: "Show server status",
+    serverPlayersCountLabel: "players",
     serverStatusLabel: "Server",
     serverStatusOnline: "ONLINE",
     serverStatusOffline: "OFFLINE",
@@ -926,6 +929,9 @@ const translations = {
     btnWorstSafety: "Штрафы",
     btnAboutServer: "О сервере",
     serversLabel: "Серверы",
+    serversOnlineLabel: "Серверы онлайн",
+    serversOnlineTooltip: "Показать статус серверов",
+    serverPlayersCountLabel: "игроков",
     serverStatusLabel: "Сервер",
     serverStatusOnline: "ОНЛАЙН",
     serverStatusOffline: "ОФФЛАЙН",
@@ -6614,38 +6620,94 @@ function getServerDrivers(server) {
     .map((driver, index) => ({ ...driver, position: driver.position || index + 1 }));
 }
 
+function getServerStatusItems(serverStatus = serverStatusData) {
+  const configured = [
+    ["main", t("serverMainLabel")],
+    ["hourly", t("serverHourlyLabel")],
+    ["sunset", t("serverSunsetLabel")]
+  ];
+  const seen = new Set();
+  const result = [];
+
+  configured.forEach(([key, label]) => {
+    const server = resolveNamedServerStatus(serverStatus, key);
+    if (!server) return;
+    seen.add(key);
+    result.push({ key, label, server });
+  });
+
+  const servers = serverStatus?.servers;
+  if (servers && typeof servers === "object") {
+    Object.entries(servers).forEach(([key, server]) => {
+      if (seen.has(key) || !server || typeof server !== "object") return;
+      result.push({ key, label: server.name || key, server });
+    });
+  }
+
+  return result;
+}
+
+function serverPlayersOnline(server) {
+  if (!server || typeof server !== "object") return 0;
+  if (Number.isFinite(server.players_online)) return server.players_online;
+  return getServerDrivers(server).length;
+}
+
+function serverIsOnline(server) {
+  const status = String(server?.status || "").toLowerCase();
+  return status === "online" || status === "online_process_only" || serverPlayersOnline(server) > 0;
+}
+
+function updateHeroServerSummary(serverStatus = serverStatusData) {
+  const onlineCountEl = document.getElementById("servers-online-count");
+  const onlineButtonEl = document.getElementById("hero-server-online-stat");
+  const totalPlayersEl = document.getElementById("serverPlayersValue");
+  const items = getServerStatusItems(serverStatus);
+  const onlineCount = items.filter(item => serverIsOnline(item.server)).length;
+  const totalPlayers = Number.isFinite(serverStatus?.players_online)
+    ? serverStatus.players_online
+    : items.reduce((sum, item) => sum + serverPlayersOnline(item.server), 0);
+
+  if (onlineCountEl) onlineCountEl.textContent = onlineCount;
+  if (totalPlayersEl) totalPlayersEl.textContent = totalPlayers;
+  if (onlineButtonEl) {
+    onlineButtonEl.title = t("serversOnlineTooltip");
+    onlineButtonEl.setAttribute("aria-label", t("serversOnlineTooltip"));
+  }
+}
+
 function renderServerPlayersModal() {
   const titleEl = document.getElementById("server-players-title");
   const subtitleEl = document.getElementById("server-players-subtitle");
   const listEl = document.getElementById("server-players-list");
   if (!titleEl || !subtitleEl || !listEl) return;
 
-  const mainServer = resolveNamedServerStatus(serverStatusData, "main");
-  const drivers = getServerDrivers(mainServer);
-  titleEl.textContent = t("playersOnlineTitle");
+  const items = getServerStatusItems(serverStatusData);
+  titleEl.textContent = t("serversWidgetTitle");
   subtitleEl.textContent = replaceTokens(t("playersOnlineUpdated"), {
-    time: formatDateTimeLocal(serverStatusData?.updated_at || mainServer?.updated_at, currentLang) || "-"
+    time: formatDateTimeLocal(serverStatusData?.updated_at, currentLang) || "-"
   });
 
-  if (!drivers.length) {
+  if (!items.length) {
     listEl.innerHTML = `<div class="empty-box">${escapeHtml(t("playersOnlineEmpty"))}</div>`;
     return;
   }
 
-  listEl.innerHTML = drivers.map((driver, index) => {
-    const raceNumber = driver.raceNumber ?? driver.car_number ?? driver.race_number;
-    const carName = getResultCarName(driver);
+  listEl.innerHTML = items.map(({ label, server }) => {
+    const players = serverPlayersOnline(server);
+    const status = String(server?.status || "offline").toLowerCase();
     return `
-      <article class="server-player-row">
-        <div class="server-player-position">${escapeHtml(driver.position || index + 1)}</div>
+      <article class="server-player-row server-status-row">
         <div class="server-player-main">
-          <div class="server-player-name">${escapeHtml(driver.name || "-")}</div>
+          <div class="server-player-name">${escapeHtml(label)}</div>
           <div class="server-player-meta">
-            ${raceNumber != null ? `<span>#${escapeHtml(raceNumber)}</span>` : ""}
-            <span>${escapeHtml(carName)}</span>
+            <span>${escapeHtml(getLocalizedServerStatus(status, currentLang))}</span>
           </div>
         </div>
-        ${renderCarImage(driver, { className: "car-thumb car-thumb-inline server-player-car", alt: carName })}
+        <div class="server-status-row-count">
+          <strong>${escapeHtml(players)}</strong>
+          <span>${escapeHtml(t("serverPlayersCountLabel"))}</span>
+        </div>
       </article>
     `;
   }).join("");
@@ -6659,6 +6721,7 @@ function initServerPlayersModal() {
   });
 
   const cardEl = document.getElementById("server-card-main");
+  const heroCardEl = document.getElementById("hero-server-online-stat");
   if (!cardEl || cardEl.dataset.playersModalBound === "true") return;
 
   const openFromCard = (event) => {
@@ -6673,6 +6736,11 @@ function initServerPlayersModal() {
     serverPlayersModalController?.open(cardEl);
   });
   cardEl.dataset.playersModalBound = "true";
+
+  if (heroCardEl && heroCardEl.dataset.playersModalBound !== "true") {
+    heroCardEl.addEventListener("click", () => serverPlayersModalController?.open(heroCardEl));
+    heroCardEl.dataset.playersModalBound = "true";
+  }
 }
 
 function updateServerCardBackgrounds() {
@@ -7357,10 +7425,6 @@ function buildDriverStatsMarkup(profile) {
     </div>
     <div class="driver-stat-card">
       <button class="driver-stat-label driver-stat-label-button bestlap-track-cta" type="button" data-driver-bestlap-tracks title="${escapeAttribute(t("bestLapTracksTooltip"))}" aria-label="${escapeAttribute(t("bestLapTracksTooltip"))}">${escapeHtml(t("bestLapTracksButton"))}</button>
-      <div class="driver-stat-value driver-stat-mainline">
-        <span class="best-lap-value stat-with-trend">${escapeHtml(summary.best_lap ?? "-")}${renderTrendBadge(summary.latest_changes?.best_lap_ms, "best_lap_ms", { compact: true })}</span>
-        <span class="driver-stat-side">${renderCarLink(summary.best_lap_car_name ?? "-", "driver-link driver-link-subtle")}</span>
-      </div>
     </div>
     <div class="driver-stat-card">
       <div class="driver-stat-label">${escapeHtml(t("driverSummaryAvgPace"))}</div>
@@ -7661,7 +7725,9 @@ function renderDriverPage() {
 function bindDriverBestlapTracksButton(root = document, profile = driverProfileData) {
   const button = root?.querySelector?.("[data-driver-bestlap-tracks]");
   if (!button || button.dataset.bound === "true") return;
-  button.addEventListener("click", () => {
+  button.addEventListener("click", (event) => {
+    event.preventDefault();
+    event.stopPropagation();
     const items = Array.isArray(profile?.best_laps_by_track)
       ? profile.best_laps_by_track
       : Array.isArray(profile?.bestlap_tracks)
@@ -8412,6 +8478,7 @@ function rerenderUI() {
   renderHourlyHeroCard();
   renderHourlyWinnerCard();
   renderOnlineWidget();
+  updateHeroServerSummary(serverStatusData);
   renderDonationAlertsWidget();
   applyRevealAnimations();
 }
@@ -8542,23 +8609,12 @@ async function init() {
       }
     }
 
-    const serverStatusEl = document.getElementById("serverStatusValue");
-    const serverPlayersEl = document.getElementById("serverPlayersValue");
     const mainServerStatusEl = document.getElementById("serverMainStatusValue");
     const mainServerPlayersEl = document.getElementById("serverMainPlayersValue");
     const sunsetServerStatusEl = document.getElementById("serverSunsetStatusValue");
     const sunsetServerPlayersEl = document.getElementById("serverSunsetPlayersValue");
 
-    if (serverStatusEl && serverPlayersEl) {
-      const totalPlayers =
-        data.serverStatus && Number.isFinite(data.serverStatus.players_online)
-          ? data.serverStatus.players_online
-          : 0;
-
-      serverStatusEl.textContent = t("serverTotalPlayersLabel");
-      serverPlayersEl.textContent = totalPlayers;
-      serverStatusEl.classList.remove("online", "offline", "degraded");
-    }
+    updateHeroServerSummary(data.serverStatus);
 
     const mainServer = resolveNamedServerStatus(data.serverStatus, "main");
     const sunsetServer =
@@ -8657,21 +8713,12 @@ async function init() {
       safetyWrapEl.style.display = "none";
     }
 
-    const serverStatusEl = document.getElementById("serverStatusValue");
-    const serverPlayersEl = document.getElementById("serverPlayersValue");
     const mainServerStatusEl = document.getElementById("serverMainStatusValue");
     const mainServerPlayersEl = document.getElementById("serverMainPlayersValue");
     const sunsetServerStatusEl = document.getElementById("serverSunsetStatusValue");
     const sunsetServerPlayersEl = document.getElementById("serverSunsetPlayersValue");
 
-    if (serverStatusEl) {
-      serverStatusEl.textContent = t("serverTotalPlayersLabel");
-      serverStatusEl.classList.remove("online", "offline", "degraded");
-    }
-
-    if (serverPlayersEl) {
-      serverPlayersEl.textContent = "--";
-    }
+    updateHeroServerSummary(null);
 
     if (mainServerStatusEl) {
       mainServerStatusEl.textContent = getLocalizedServerStatus("offline", currentLang);
