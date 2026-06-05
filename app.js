@@ -212,6 +212,7 @@ let hourlyHeroModalController = null;
 let onlineActivityModalController = null;
 let serverPlayersModalController = null;
 let serverPlayersModalMode = "mainPlayers";
+let selectedServerPlayersKey = "main";
 let communityLightboxController = null;
 let selectedActivityDate = null;
 let selectedActivityMonth = null;
@@ -6536,6 +6537,32 @@ function getLocalizedServerStatus(status, lang = currentLang) {
   return tForLang(lang, "serverStatusOffline");
 }
 
+function cleanServerDisplayName(value, fallback = "") {
+  const raw = String(value || fallback || "").trim();
+  if (!raw) return fallback || "-";
+  const cleaned = raw
+    .replace(/\s+-\s+www(?:\..*)?$/i, "")
+    .replace(/\s+-\s+www\..*$/i, "")
+    .replace(/\s+-\s+asgracing\.ru.*$/i, "")
+    .replace(/\s+-\s+discord\.gg.*$/i, "")
+    .replace(/\s+-\s+zahodi\b.*$/i, "")
+    .trim();
+  return cleaned || raw;
+}
+
+function isGenericServerName(value, key = "") {
+  const normalized = String(value || "").trim().toLowerCase();
+  return !normalized || normalized === String(key || "").trim().toLowerCase();
+}
+
+function getServerDisplayLabel(key, server, fallbackLabel = "") {
+  const cleanedName = cleanServerDisplayName(server?.name || server?.display_name || server?.server_name || "", "");
+  if (cleanedName && !isGenericServerName(cleanedName, key)) {
+    return cleanedName;
+  }
+  return fallbackLabel || key || cleanedName || "-";
+}
+
 function pickFirstNonEmpty(...values) {
   return values.find(value => String(value ?? "").trim()) ?? "";
 }
@@ -6634,14 +6661,14 @@ function getServerStatusItems(serverStatus = serverStatusData) {
     const server = resolveNamedServerStatus(serverStatus, key);
     if (!server) return;
     seen.add(key);
-    result.push({ key, label, server });
+    result.push({ key, label: getServerDisplayLabel(key, server, label), server });
   });
 
   const servers = serverStatus?.servers;
   if (servers && typeof servers === "object") {
     Object.entries(servers).forEach(([key, server]) => {
       if (seen.has(key) || !server || typeof server !== "object") return;
-      result.push({ key, label: server.name || key, server });
+      result.push({ key, label: getServerDisplayLabel(key, server, key), server });
     });
   }
 
@@ -6677,6 +6704,61 @@ function updateHeroServerSummary(serverStatus = serverStatusData) {
   }
 }
 
+function getServerCardBackgroundKey(key, index = 0) {
+  const normalized = String(key || "").toLowerCase();
+  if (normalized === "main") return "main";
+  if (normalized === "hourly" || normalized === "sunset") return "sunset";
+  return index % 2 === 0 ? "main" : "sunset";
+}
+
+function getServerConnectFallback(key) {
+  if (key === "hourly") return ACC_CONNECT_SERVER_FALLBACKS.hourly;
+  return ACC_CONNECT_SERVER_FALLBACKS.main;
+}
+
+function renderServerStickyWidget(serverStatus = serverStatusData) {
+  const cardsEl = document.querySelector(".server-sticky-cards");
+  if (!cardsEl) return;
+
+  const items = getServerStatusItems(serverStatus).slice(0, 7);
+  if (!items.length) {
+    cardsEl.innerHTML = "";
+    return;
+  }
+
+  cardsEl.innerHTML = items.map(({ key, label, server }, index) => {
+    const status = String(server?.status || "offline").toLowerCase();
+    const players = serverPlayersOnline(server);
+    const fallback = getServerConnectFallback(key);
+    const href = buildAccConnectHref(normalizeAccConnectConfig(server, fallback));
+    const bgKey = getServerCardBackgroundKey(key, index);
+    const bgUrl = SERVER_CARD_BACKGROUNDS[bgKey] || SERVER_CARD_BACKGROUNDS.main;
+    return `
+      <div
+        class="server-sticky-card server-sticky-card-${escapeHtml(bgKey)} server-sticky-card-clickable"
+        data-server-key="${escapeHtml(key)}"
+        role="button"
+        tabindex="0"
+        aria-controls="server-players-modal"
+        style="--server-card-bg: url('${escapeHtml(bgUrl)}')"
+      >
+        <div class="server-sticky-card-overlay"></div>
+        <div class="server-sticky-card-content">
+          <div class="server-sticky-card-name">${escapeHtml(label)}</div>
+          <div class="server-sticky-card-status">
+            <span class="server-status ${escapeHtml(status === "online" ? "online" : status === "online_process_only" ? "degraded" : "offline")}">${escapeHtml(getLocalizedServerStatus(status, currentLang))}</span>
+            <span class="server-players">${escapeHtml(players)}</span>
+          </div>
+          <div class="server-sticky-actions">
+            <a class="server-connect-btn ${href ? "" : "is-disabled"}" href="${escapeHtml(href || "#")}" aria-disabled="${href ? "false" : "true"}" title="${escapeHtml(href ? t("serverConnectBtn") : t("serverConnectUnavailable"))}">${escapeHtml(t("serverConnectBtn"))}</a>
+            <a class="server-connect-help" href="https://github.com/lonemeow/acc-connector" target="_blank" rel="noopener noreferrer">${escapeHtml(t("serverConnectHowTo"))}</a>
+          </div>
+        </div>
+      </div>
+    `;
+  }).join("");
+}
+
 function renderServerStatusSummaryModal(titleEl, subtitleEl, listEl) {
   const items = getServerStatusItems(serverStatusData);
   titleEl.textContent = t("serversWidgetTitle");
@@ -6709,12 +6791,14 @@ function renderServerStatusSummaryModal(titleEl, subtitleEl, listEl) {
   }).join("");
 }
 
-function renderMainServerPlayersModal(titleEl, subtitleEl, listEl) {
-  const mainServer = resolveNamedServerStatus(serverStatusData, "main");
-  const drivers = getServerDrivers(mainServer);
-  titleEl.textContent = t("playersOnlineTitle");
+function renderSelectedServerPlayersModal(titleEl, subtitleEl, listEl) {
+  const items = getServerStatusItems(serverStatusData);
+  const selected = items.find(item => item.key === selectedServerPlayersKey) || items.find(item => item.key === "main") || items[0];
+  const server = selected?.server || null;
+  const drivers = getServerDrivers(server);
+  titleEl.textContent = selected?.label || t("playersOnlineTitle");
   subtitleEl.textContent = replaceTokens(t("playersOnlineUpdated"), {
-    time: formatDateTimeLocal(serverStatusData?.updated_at || mainServer?.updated_at, currentLang) || "-"
+    time: formatDateTimeLocal(server?.updated_at || serverStatusData?.updated_at, currentLang) || "-"
   });
 
   if (!drivers.length) {
@@ -6752,7 +6836,7 @@ function renderServerPlayersModal() {
     return;
   }
 
-  renderMainServerPlayersModal(titleEl, subtitleEl, listEl);
+  renderSelectedServerPlayersModal(titleEl, subtitleEl, listEl);
 }
 
 function initServerPlayersModal() {
@@ -6762,24 +6846,31 @@ function initServerPlayersModal() {
     onOpen: renderServerPlayersModal
   });
 
-  const cardEl = document.getElementById("server-card-main");
+  const cardsEl = document.querySelector(".server-sticky-cards");
   const heroCardEl = document.getElementById("hero-server-online-stat");
-  if (!cardEl || cardEl.dataset.playersModalBound === "true") return;
 
-  const openFromCard = (event) => {
-    if (event?.target?.closest?.("a, button")) return;
-    serverPlayersModalMode = "mainPlayers";
-    serverPlayersModalController?.open(cardEl);
-  };
-  cardEl.addEventListener("click", openFromCard);
-  cardEl.addEventListener("keydown", (event) => {
-    if (event.key !== "Enter" && event.key !== " ") return;
-    if (event.target?.closest?.("a, button")) return;
-    event.preventDefault();
-    serverPlayersModalMode = "mainPlayers";
-    serverPlayersModalController?.open(cardEl);
-  });
-  cardEl.dataset.playersModalBound = "true";
+  if (cardsEl && cardsEl.dataset.playersModalBound !== "true") {
+    const openFromCard = (card) => {
+      selectedServerPlayersKey = card?.dataset?.serverKey || "main";
+      serverPlayersModalMode = "serverPlayers";
+      serverPlayersModalController?.open(card);
+    };
+    cardsEl.addEventListener("click", (event) => {
+      if (event?.target?.closest?.("a, button")) return;
+      const card = event.target?.closest?.(".server-sticky-card-clickable");
+      if (!card) return;
+      openFromCard(card);
+    });
+    cardsEl.addEventListener("keydown", (event) => {
+      if (event.key !== "Enter" && event.key !== " ") return;
+      if (event.target?.closest?.("a, button")) return;
+      const card = event.target?.closest?.(".server-sticky-card-clickable");
+      if (!card) return;
+      event.preventDefault();
+      openFromCard(card);
+    });
+    cardsEl.dataset.playersModalBound = "true";
+  }
 
   if (heroCardEl && heroCardEl.dataset.playersModalBound !== "true") {
     heroCardEl.addEventListener("click", () => {
@@ -8526,6 +8617,7 @@ function rerenderUI() {
   renderHourlyWinnerCard();
   renderOnlineWidget();
   updateHeroServerSummary(serverStatusData);
+  renderServerStickyWidget(serverStatusData);
   renderDonationAlertsWidget();
   applyRevealAnimations();
 }
@@ -8656,37 +8748,8 @@ async function init() {
       }
     }
 
-    const mainServerStatusEl = document.getElementById("serverMainStatusValue");
-    const mainServerPlayersEl = document.getElementById("serverMainPlayersValue");
-    const sunsetServerStatusEl = document.getElementById("serverSunsetStatusValue");
-    const sunsetServerPlayersEl = document.getElementById("serverSunsetPlayersValue");
-
     updateHeroServerSummary(data.serverStatus);
-
-    const mainServer = resolveNamedServerStatus(data.serverStatus, "main");
-    const sunsetServer =
-      resolveNamedServerStatus(data.serverStatus, "hourly") ||
-      resolveNamedServerStatus(data.serverStatus, "sunset") ||
-      hourlyAnnouncementData?.server;
-
-    if (mainServerStatusEl && mainServerPlayersEl) {
-      const mainStatus = String(mainServer?.status || "offline").toLowerCase();
-      const mainPlayers = Number.isFinite(mainServer?.players_online) ? mainServer.players_online : 0;
-      mainServerStatusEl.textContent = getLocalizedServerStatus(mainStatus, currentLang);
-      mainServerPlayersEl.textContent = mainPlayers;
-      mainServerPlayersEl.title = t("playersOnlineTitle");
-      applyServerStatusClass(mainServerStatusEl, mainStatus);
-    }
-    updateAccConnectLink("serverMainConnectLink", mainServer, ACC_CONNECT_SERVER_FALLBACKS.main);
-
-    if (sunsetServerStatusEl && sunsetServerPlayersEl) {
-      const sunsetStatus = String(sunsetServer?.status || "offline").toLowerCase();
-      const sunsetPlayers = Number.isFinite(sunsetServer?.players_online) ? sunsetServer.players_online : 0;
-      sunsetServerStatusEl.textContent = getLocalizedServerStatus(sunsetStatus, currentLang);
-      sunsetServerPlayersEl.textContent = sunsetPlayers;
-      applyServerStatusClass(sunsetServerStatusEl, sunsetStatus);
-    }
-    updateAccConnectLink("serverHourlyConnectLink", sunsetServer, ACC_CONNECT_SERVER_FALLBACKS.hourly);
+    renderServerStickyWidget(data.serverStatus);
 
     rerenderUI();
   } catch (error) {
@@ -8760,32 +8823,8 @@ async function init() {
       safetyWrapEl.style.display = "none";
     }
 
-    const mainServerStatusEl = document.getElementById("serverMainStatusValue");
-    const mainServerPlayersEl = document.getElementById("serverMainPlayersValue");
-    const sunsetServerStatusEl = document.getElementById("serverSunsetStatusValue");
-    const sunsetServerPlayersEl = document.getElementById("serverSunsetPlayersValue");
-
     updateHeroServerSummary(null);
-
-    if (mainServerStatusEl) {
-      mainServerStatusEl.textContent = getLocalizedServerStatus("offline", currentLang);
-      applyServerStatusClass(mainServerStatusEl, "offline");
-    }
-
-    if (mainServerPlayersEl) {
-      mainServerPlayersEl.textContent = "--";
-    }
-    updateAccConnectLink("serverMainConnectLink", null, ACC_CONNECT_SERVER_FALLBACKS.main);
-
-    if (sunsetServerStatusEl) {
-      sunsetServerStatusEl.textContent = getLocalizedServerStatus("offline", currentLang);
-      applyServerStatusClass(sunsetServerStatusEl, "offline");
-    }
-
-    if (sunsetServerPlayersEl) {
-      sunsetServerPlayersEl.textContent = "--";
-    }
-    updateAccConnectLink("serverHourlyConnectLink", null, ACC_CONNECT_SERVER_FALLBACKS.hourly);
+    renderServerStickyWidget(null);
   }
 }
 
