@@ -143,6 +143,8 @@ function resolveInitialLanguage() {
 
 let leaderboardData = [];
 let bestlapsData = [];
+let bestlapTracksData = [];
+let bestlapTrackLeadersData = [];
 let todayStatsData = null;
 let safetyData = [];
 let driverOfDayData = null;
@@ -167,6 +169,7 @@ let racesPage = 1;
 let currentLang = "en";
 let leaderboardSearch = "";
 let bestlapsSearch = "";
+let bestlapsTrackFilter = "monza";
 let safetySearch = "";
 let racesSearch = "";
 let racesTrackFilter = "";
@@ -203,6 +206,8 @@ let donationAlertsFailed = false;
 let driverPreviewModalController = null;
 let eloModalController = null;
 let safetyModalController = null;
+let bestlapTracksModalController = null;
+let bestlapTracksModalState = null;
 let hourlyHeroModalController = null;
 let onlineActivityModalController = null;
 let serverPlayersModalController = null;
@@ -427,6 +432,11 @@ const translations = {
     driversCountLabel: "Drivers in leaderboard",
     driversCountNote: "Unique participants included in the stats.",
     bestLapHighlightLabel: "Best lap record",
+    bestLapTracksButton: "Best laps by track",
+    bestLapTracksTitle: "Best laps by track",
+    bestLapTracksSubtitle: "One fastest recorded lap for each track.",
+    driverBestLapTracksSubtitle: "Driver best recorded lap for each track.",
+    bestlapsTrackFilterLabel: "Track",
     bestLapNoteFallback: "Best lap highlight will appear here.",
     bestLapNoteTemplate: "{driver} · {track}",
     top3Title: "Top 3 Drivers",
@@ -935,6 +945,11 @@ const translations = {
     driversCountLabel: "Пилотов в рейтинге",
     driversCountNote: "Уникальные участники, попавшие в статистику.",
     bestLapHighlightLabel: "Лучший круг",
+    bestLapTracksButton: "Лучшие круги треков",
+    bestLapTracksTitle: "Лучшие круги треков",
+    bestLapTracksSubtitle: "По одному лучшему кругу для каждой трассы.",
+    driverBestLapTracksSubtitle: "Лучший круг пилота на каждой трассе.",
+    bestlapsTrackFilterLabel: "Трасса",
     bestLapNoteFallback: "Лучший круг будет показан здесь.",
     bestLapNoteTemplate: "{driver} · {track}",
     top3Title: "Топ-3 пилота",
@@ -3737,8 +3752,11 @@ function getProcessedLeaderboard() {
 }
 
 function getProcessedBestlaps() {
+  const trackFiltered = bestlapsTrackFilter
+    ? bestlapsData.filter(row => String(row?.track_code || row?.track || "").trim().toLowerCase() === bestlapsTrackFilter)
+    : bestlapsData;
   return sortData(
-    filterByDriver(bestlapsData, bestlapsSearch),
+    filterByDriver(trackFiltered, bestlapsSearch),
     bestlapsSort,
     bestlapsColumns
   );
@@ -4485,6 +4503,14 @@ async function loadSiteDataV2() {
   const homePath = manifest?.home || "home.json";
   const data = await loadTopDataV2Json(homePath);
   const normalized = normalizeSnapshotPayload(data);
+  const bestlapsMeta = data?.tables?.bestlaps || manifest?.tables?.bestlaps || {};
+  const [tracksPayload, leadersPayload] = await Promise.all([
+    bestlapsMeta.tracks ? loadTopDataV2Json(bestlapsMeta.tracks).catch(() => null) : Promise.resolve(null),
+    bestlapsMeta.track_leaders ? loadTopDataV2Json(bestlapsMeta.track_leaders).catch(() => null) : Promise.resolve(null)
+  ]);
+  normalized.bestlapTracks = Array.isArray(tracksPayload?.items) ? tracksPayload.items : [];
+  normalized.bestlapTrackLeaders = Array.isArray(leadersPayload?.items) ? leadersPayload.items : [];
+  bestlapsTrackFilter = String(bestlapsMeta.default_track || tracksPayload?.default_track || bestlapsTrackFilter || "monza").trim().toLowerCase();
   if (TOP_API_BASE_URL) {
     const [leaderboardPageData, bestlapsPageData] = await Promise.all([
       loadServerPagedTopDataV2Table("leaderboard", 1).catch(() => null),
@@ -4534,17 +4560,25 @@ function isTopDataV2TablePreview(tableName) {
 }
 
 async function loadFullTopDataV2Table(tableName) {
-  if (!isTopDataV2TablePreview(tableName)) {
+  const useTrackFile = tableName === "bestlaps" && bestlapsTrackFilter && !TOP_API_BASE_URL;
+  if (!useTrackFile && !isTopDataV2TablePreview(tableName)) {
     return getTopDataV2TableData(tableName);
   }
 
-  if (topDataV2TableLoadPromises.has(tableName)) {
-    return topDataV2TableLoadPromises.get(tableName);
+  const promiseKey = useTrackFile ? `${tableName}:${bestlapsTrackFilter}` : tableName;
+  if (topDataV2TableLoadPromises.has(promiseKey)) {
+    return topDataV2TableLoadPromises.get(promiseKey);
   }
 
   const promise = (async () => {
     const meta = getTopDataV2TableMeta(tableName);
-    const payload = await loadTopDataV2Json(meta?.full || `tables/${tableName}.json`);
+    const trackSafe = String(bestlapsTrackFilter || "").replace(/[^a-z0-9_-]+/g, "");
+    const fullPath = useTrackFile ? `tables/bestlaps-${trackSafe}.json` : meta?.full || `tables/${tableName}.json`;
+    const payload = await loadTopDataV2Json(fullPath);
+    if (tableName === "bestlaps") {
+      bestlapTracksData = Array.isArray(payload?.tracks) ? payload.tracks : bestlapTracksData;
+      if (payload?.selected_track) bestlapsTrackFilter = String(payload.selected_track).trim().toLowerCase();
+    }
     const items = Array.isArray(payload)
       ? payload
       : Array.isArray(payload?.items)
@@ -4554,10 +4588,10 @@ async function loadFullTopDataV2Table(tableName) {
     setTopDataV2TableData(tableName, hydratedItems);
     return hydratedItems;
   })().finally(() => {
-    topDataV2TableLoadPromises.delete(tableName);
+    topDataV2TableLoadPromises.delete(promiseKey);
   });
 
-  topDataV2TableLoadPromises.set(tableName, promise);
+  topDataV2TableLoadPromises.set(promiseKey, promise);
   return promise;
 }
 
@@ -4604,6 +4638,7 @@ function getServerPagedTableSignature(tableName, page) {
     tableName,
     page,
     search: getServerPagedTableSearch(tableName) || "",
+    track: tableName === "bestlaps" ? bestlapsTrackFilter || "" : "",
     sort: sortState?.key || "",
     direction: sortState?.direction || ""
   });
@@ -4619,9 +4654,13 @@ async function loadServerPagedTopDataV2Table(tableName, page) {
   if (!isServerPagedTopDataV2Table(tableName)) return null;
   await loadTopDataV2Manifest();
   const meta = getTopDataV2TableMeta(tableName);
-  const pagePath = meta?.page_path
-    ? String(meta.page_path).replace("{page}", String(page))
-    : null;
+  const useTrackFile = tableName === "bestlaps" && bestlapsTrackFilter && !TOP_API_BASE_URL;
+  const trackSafe = String(bestlapsTrackFilter || "").replace(/[^a-z0-9_-]+/g, "");
+  const pagePath = useTrackFile
+    ? `tables/bestlaps-${trackSafe}/page-${page}.json`
+    : meta?.page_path
+      ? String(meta.page_path).replace("{page}", String(page))
+      : null;
   const url = new URL(topDataV2Path(pagePath || meta?.full || `tables/${tableName}.json`), window.location.href);
   const sortState = getServerPagedTableSort(tableName);
   const search = getServerPagedTableSearch(tableName);
@@ -4629,6 +4668,7 @@ async function loadServerPagedTopDataV2Table(tableName, page) {
     url.searchParams.set("page", String(page));
     url.searchParams.set("page_size", String(PAGE_SIZE));
     if (search) url.searchParams.set("search", search);
+    if (tableName === "bestlaps" && bestlapsTrackFilter) url.searchParams.set("track", bestlapsTrackFilter);
     if (sortState?.key) {
       url.searchParams.set("sort", sortState.key);
       url.searchParams.set("direction", sortState.direction || "asc");
@@ -4637,6 +4677,10 @@ async function loadServerPagedTopDataV2Table(tableName, page) {
   if (topDataV2Version) url.searchParams.set("v", topDataV2Version);
 
   const payload = await loadJson(url.toString());
+  if (tableName === "bestlaps") {
+    bestlapTracksData = Array.isArray(payload?.tracks) ? payload.tracks : bestlapTracksData;
+    if (payload?.selected_track) bestlapsTrackFilter = String(payload.selected_track).trim().toLowerCase();
+  }
   const items = hydrateTableTrendFields(Array.isArray(payload?.items) ? payload.items : [], tableName);
   const totalItems = Number(payload?.total_items) || items.length;
   const pageSize = Number(payload?.page_size) || PAGE_SIZE;
@@ -4713,7 +4757,9 @@ function normalizeSnapshotPayload(snapshot) {
     raceActivity: Array.isArray(snapshot?.race_activity) ? snapshot.race_activity : null,
     latestHourlyRace: snapshot?.latest_hourly_race && typeof snapshot.latest_hourly_race === "object" ? snapshot.latest_hourly_race : null,
     racesSummary: snapshot?.races_summary && typeof snapshot.races_summary === "object" ? snapshot.races_summary : null,
-    tables: snapshot?.tables && typeof snapshot.tables === "object" ? snapshot.tables : null
+    tables: snapshot?.tables && typeof snapshot.tables === "object" ? snapshot.tables : null,
+    bestlapTracks: [],
+    bestlapTrackLeaders: []
   };
 }
 
@@ -5690,6 +5736,106 @@ function updateBestLapNote(driver, track, carName) {
   noteEl.textContent = carName ? `${base} · ${carName}` : base;
 }
 
+function bestlapTrackOptions() {
+  const source = Array.isArray(bestlapTracksData) && bestlapTracksData.length
+    ? bestlapTracksData
+    : bestlapsData.map(row => ({ track: row?.track_code || row?.track }));
+  const seen = new Set();
+  return source
+    .map(item => String(item?.track_code || item?.track || "").trim().toLowerCase())
+    .filter(track => {
+      if (!track || seen.has(track)) return false;
+      seen.add(track);
+      return true;
+    })
+    .map(track => ({ track, label: humanizeTrackName(track) }));
+}
+
+function renderBestlapsTrackFilter() {
+  const select = document.getElementById("bestlaps-track-filter");
+  if (!select) return;
+  const options = bestlapTrackOptions();
+  if (!options.find(item => item.track === bestlapsTrackFilter)) {
+    bestlapsTrackFilter = options[0]?.track || bestlapsTrackFilter || "monza";
+  }
+  select.innerHTML = options.map(item => `
+    <option value="${escapeAttribute(item.track)}" ${item.track === bestlapsTrackFilter ? "selected" : ""}>${escapeHtml(item.label)}</option>
+  `).join("");
+  if (select.dataset.bound !== "true") {
+    select.addEventListener("change", async () => {
+      bestlapsTrackFilter = String(select.value || "").trim().toLowerCase();
+      bestlapsPage = 1;
+      topDataV2PagedTables.bestlaps = null;
+      if (isServerPagedTopDataV2Table("bestlaps")) {
+        await loadServerPagedTopDataV2Table("bestlaps", bestlapsPage).catch(() => null);
+      } else {
+        await loadFullTopDataV2Table("bestlaps").catch(() => null);
+      }
+      renderBestLapsTablePage();
+    });
+    select.dataset.bound = "true";
+  }
+}
+
+function renderBestlapTracksRows(items = []) {
+  if (!Array.isArray(items) || !items.length) {
+    return `<div class="empty-box">-</div>`;
+  }
+  return `
+    <div class="bestlap-track-list">
+      ${items.map(item => `
+        <div class="bestlap-track-row">
+          <div class="bestlap-track-main">
+            <span class="bestlap-track-name">${escapeHtml(humanizeTrackName(item.track_code || item.track))}</span>
+            <span class="bestlap-track-driver">${item.driver ? renderDriverLink(item.driver, item.public_id, "driver-link driver-link-subtle", item.player_id) : ""}</span>
+          </div>
+          <div class="bestlap-track-side">
+            <span class="best-lap-value">${escapeHtml(item.best_lap || item.lap || "-")}</span>
+            <span>${escapeHtml(item.car_name || item.best_lap_car_name || "-")}</span>
+          </div>
+        </div>
+      `).join("")}
+    </div>
+  `;
+}
+
+function renderBestlapTracksModal() {
+  const titleEl = document.getElementById("bestlap-tracks-title");
+  const subtitleEl = document.getElementById("bestlap-tracks-subtitle");
+  const bodyEl = document.getElementById("bestlap-tracks-body");
+  if (!titleEl || !subtitleEl || !bodyEl) return;
+  const state = bestlapTracksModalState || {};
+  titleEl.textContent = state.title || t("bestLapTracksTitle");
+  subtitleEl.textContent = state.subtitle || t("bestLapTracksSubtitle");
+  bodyEl.innerHTML = renderBestlapTracksRows(state.items || []);
+}
+
+function openBestlapTracksModal(items, trigger, options = {}) {
+  bestlapTracksModalState = {
+    title: options.title || t("bestLapTracksTitle"),
+    subtitle: options.subtitle || t("bestLapTracksSubtitle"),
+    items: Array.isArray(items) ? items : []
+  };
+  bestlapTracksModalController?.open(trigger || document.getElementById("best-lap-highlight"));
+}
+
+function initBestlapTracksModal() {
+  bestlapTracksModalController = createModalController({
+    modalId: "bestlap-tracks-modal",
+    closeButtonId: "bestlap-tracks-close",
+    onOpen: renderBestlapTracksModal,
+    onClose: () => {
+      bestlapTracksModalState = null;
+    }
+  });
+
+  const button = document.getElementById("best-lap-highlight");
+  if (button && button.dataset.bound !== "true") {
+    button.addEventListener("click", () => openBestlapTracksModal(bestlapTrackLeadersData, button));
+    button.dataset.bound = "true";
+  }
+}
+
 function renderTop3Compact(data) {
   if (!Array.isArray(data) || !data.length) {
     return `<div class="empty-box">${escapeHtml(t("emptyTop3"))}</div>`;
@@ -5952,6 +6098,7 @@ function renderLeaderboardTablePage() {
 }
 
 function renderBestLapsTablePage() {
+  renderBestlapsTrackFilter();
   const result = getServerPagedTableResult("bestlaps", bestlapsPage) ||
     getPreviewAwareTablePage("bestlaps", getProcessedBestlaps(), bestlapsPage, PAGE_SIZE);
   bestlapsPage = result.page;
@@ -7197,7 +7344,7 @@ function buildDriverStatsMarkup(profile) {
       <div class="driver-stat-value">${escapeHtml(summary.podium_rate ?? 0)}%</div>
     </div>
     <div class="driver-stat-card">
-      <div class="driver-stat-label">${escapeHtml(t("driverSummaryBestLap"))}</div>
+      <button class="driver-stat-label driver-stat-label-button" type="button" data-driver-bestlap-tracks>${escapeHtml(t("bestLapTracksButton"))}</button>
       <div class="driver-stat-value driver-stat-mainline">
         <span class="best-lap-value stat-with-trend">${escapeHtml(summary.best_lap ?? "-")}${renderTrendBadge(summary.latest_changes?.best_lap_ms, "best_lap_ms", { compact: true })}</span>
         <span class="driver-stat-side">${renderCarLink(summary.best_lap_car_name ?? "-", "driver-link driver-link-subtle")}</span>
@@ -7496,6 +7643,24 @@ function renderDriverPage() {
   renderDriverTrackStats();
   renderPenaltyList("driver-penalty-reasons", driverProfileData.penalties?.reasons, "driverPenaltyReason");
   renderPenaltyList("driver-penalty-types", driverProfileData.penalties?.types, "driverPenaltyType");
+  bindDriverBestlapTracksButton(statsEl, driverProfileData);
+}
+
+function bindDriverBestlapTracksButton(root = document, profile = driverProfileData) {
+  const button = root?.querySelector?.("[data-driver-bestlap-tracks]");
+  if (!button || button.dataset.bound === "true") return;
+  button.addEventListener("click", () => {
+    const items = Array.isArray(profile?.best_laps_by_track)
+      ? profile.best_laps_by_track
+      : Array.isArray(profile?.bestlap_tracks)
+        ? profile.bestlap_tracks
+        : [];
+    openBestlapTracksModal(items, button, {
+      title: t("bestLapTracksTitle"),
+      subtitle: t("driverBestLapTracksSubtitle")
+    });
+  });
+  button.dataset.bound = "true";
 }
 
 function renderDriverPreviewModal() {
@@ -7531,6 +7696,7 @@ function renderDriverPreviewModal() {
     subtitleEl.textContent = t("driverPreviewSubtitle");
     statsEl.innerHTML = buildDriverStatsMarkup(profile);
     highlightsEl.innerHTML = buildDriverHighlightsMarkup(profile);
+    bindDriverBestlapTracksButton(statsEl, profile);
   }
 
   if (driverPreviewState.href) {
@@ -8268,6 +8434,7 @@ async function init() {
   }
   initEloModal();
   initSafetyModal();
+  initBestlapTracksModal();
   applyStaticTranslations();
 
   try {
@@ -8320,6 +8487,8 @@ async function init() {
 
     leaderboardData = data.leaderboard;
     bestlapsData = data.bestlaps;
+    bestlapTracksData = Array.isArray(data.bestlapTracks) ? data.bestlapTracks : [];
+    bestlapTrackLeadersData = Array.isArray(data.bestlapTrackLeaders) ? data.bestlapTrackLeaders : [];
     todayStatsData = data.globalStats;
     safetyData = data.safety;
     driverOfDayData = data.driverOfDay;
@@ -8348,12 +8517,12 @@ async function init() {
 
     if (bestlapsData.length > 0) {
       if (bestLapHighlightEl) {
-        bestLapHighlightEl.textContent = bestlapsData[0].best_lap || "-";
+        bestLapHighlightEl.textContent = t("bestLapTracksButton");
       }
       updateBestLapNote(bestlapsData[0].driver, bestlapsData[0].track, bestlapsData[0].car_name);
     } else {
       if (bestLapHighlightEl) {
-        bestLapHighlightEl.textContent = "-";
+        bestLapHighlightEl.textContent = t("bestLapTracksButton");
       }
       if (bestLapNoteEl) {
         bestLapNoteEl.textContent = t("bestLapNoteFallback");
