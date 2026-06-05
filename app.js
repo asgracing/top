@@ -211,6 +211,7 @@ let bestlapTracksModalState = null;
 let hourlyHeroModalController = null;
 let onlineActivityModalController = null;
 let serverPlayersModalController = null;
+let serverPlayersModalMode = "mainPlayers";
 let communityLightboxController = null;
 let selectedActivityDate = null;
 let selectedActivityMonth = null;
@@ -6676,12 +6677,7 @@ function updateHeroServerSummary(serverStatus = serverStatusData) {
   }
 }
 
-function renderServerPlayersModal() {
-  const titleEl = document.getElementById("server-players-title");
-  const subtitleEl = document.getElementById("server-players-subtitle");
-  const listEl = document.getElementById("server-players-list");
-  if (!titleEl || !subtitleEl || !listEl) return;
-
+function renderServerStatusSummaryModal(titleEl, subtitleEl, listEl) {
   const items = getServerStatusItems(serverStatusData);
   titleEl.textContent = t("serversWidgetTitle");
   subtitleEl.textContent = replaceTokens(t("playersOnlineUpdated"), {
@@ -6713,6 +6709,52 @@ function renderServerPlayersModal() {
   }).join("");
 }
 
+function renderMainServerPlayersModal(titleEl, subtitleEl, listEl) {
+  const mainServer = resolveNamedServerStatus(serverStatusData, "main");
+  const drivers = getServerDrivers(mainServer);
+  titleEl.textContent = t("playersOnlineTitle");
+  subtitleEl.textContent = replaceTokens(t("playersOnlineUpdated"), {
+    time: formatDateTimeLocal(serverStatusData?.updated_at || mainServer?.updated_at, currentLang) || "-"
+  });
+
+  if (!drivers.length) {
+    listEl.innerHTML = `<div class="empty-box">${escapeHtml(t("playersOnlineEmpty"))}</div>`;
+    return;
+  }
+
+  listEl.innerHTML = drivers.map((driver, index) => {
+    const raceNumber = driver.raceNumber ?? driver.car_number ?? driver.race_number;
+    const carName = getResultCarName(driver);
+    return `
+      <article class="server-player-row">
+        <div class="server-player-position">${escapeHtml(driver.position || index + 1)}</div>
+        <div class="server-player-main">
+          <div class="server-player-name">${escapeHtml(driver.name || "-")}</div>
+          <div class="server-player-meta">
+            ${raceNumber != null ? `<span>#${escapeHtml(raceNumber)}</span>` : ""}
+            <span>${escapeHtml(carName)}</span>
+          </div>
+        </div>
+        ${renderCarImage(driver, { className: "car-thumb car-thumb-inline server-player-car", alt: carName })}
+      </article>
+    `;
+  }).join("");
+}
+
+function renderServerPlayersModal() {
+  const titleEl = document.getElementById("server-players-title");
+  const subtitleEl = document.getElementById("server-players-subtitle");
+  const listEl = document.getElementById("server-players-list");
+  if (!titleEl || !subtitleEl || !listEl) return;
+
+  if (serverPlayersModalMode === "summary") {
+    renderServerStatusSummaryModal(titleEl, subtitleEl, listEl);
+    return;
+  }
+
+  renderMainServerPlayersModal(titleEl, subtitleEl, listEl);
+}
+
 function initServerPlayersModal() {
   serverPlayersModalController = createModalController({
     modalId: "server-players-modal",
@@ -6726,6 +6768,7 @@ function initServerPlayersModal() {
 
   const openFromCard = (event) => {
     if (event?.target?.closest?.("a, button")) return;
+    serverPlayersModalMode = "mainPlayers";
     serverPlayersModalController?.open(cardEl);
   };
   cardEl.addEventListener("click", openFromCard);
@@ -6733,12 +6776,16 @@ function initServerPlayersModal() {
     if (event.key !== "Enter" && event.key !== " ") return;
     if (event.target?.closest?.("a, button")) return;
     event.preventDefault();
+    serverPlayersModalMode = "mainPlayers";
     serverPlayersModalController?.open(cardEl);
   });
   cardEl.dataset.playersModalBound = "true";
 
   if (heroCardEl && heroCardEl.dataset.playersModalBound !== "true") {
-    heroCardEl.addEventListener("click", () => serverPlayersModalController?.open(heroCardEl));
+    heroCardEl.addEventListener("click", () => {
+      serverPlayersModalMode = "summary";
+      serverPlayersModalController?.open(heroCardEl);
+    });
     heroCardEl.dataset.playersModalBound = "true";
   }
 }

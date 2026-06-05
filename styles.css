@@ -10005,6 +10005,51 @@ body.background-audio-focus .bg-video-sound-toggle {
   }
 }
 
+/* ===== FINAL HERO SERVER SUMMARY COMPACT TUNE 0605 ===== */
+
+.hero-side-compact {
+  grid-template-rows: repeat(2, minmax(50px, auto)) !important;
+  gap: 8px !important;
+}
+
+.hero-side-compact .mini-stat,
+.hero-side-compact .mini-stat:first-child,
+.hero-side-compact .mini-stat + .mini-stat,
+.hero-side-compact .hero-stats-row .mini-stat {
+  min-height: 50px;
+  padding: 8px 10px !important;
+}
+
+.hero-side-compact .mini-label {
+  margin-bottom: 4px !important;
+  font-size: 0.58rem !important;
+  line-height: 1.05;
+}
+
+.hero-side-compact #servers-online-count,
+.hero-side-compact #serverPlayersValue,
+.hero-side-compact #drivers-count {
+  font-size: clamp(0.98rem, 1.12vw, 1.18rem) !important;
+  line-height: 0.95;
+}
+
+.hero-side-compact .mini-stat-bestlap {
+  padding: 6px 8px !important;
+}
+
+.hero-side-compact .mini-stat-bestlap .bestlap-track-cta {
+  width: 100%;
+  min-height: 32px;
+  padding: 6px 10px;
+  font-size: 0.68rem !important;
+  line-height: 1.05;
+}
+
+.hero-side-compact .hero-stats-row::before {
+  content: none !important;
+  display: none !important;
+}
+
 .hero-hourly-card.is-championship-event {
   border-color: rgba(216, 180, 254, 0.62) !important;
   background:
