@@ -2799,25 +2799,25 @@ tr.is-interactive-row:focus-visible {
 .server-sticky-widget {
   top: 92px;
   right: 18px;
-  width: min(390px, calc(100vw - 36px));
+  width: min(210px, calc(100vw - 36px));
   max-height: calc(100vh - 236px);
   overflow: auto;
   scrollbar-width: thin;
 }
 
 .server-sticky-cards {
-  grid-template-columns: repeat(2, minmax(0, 1fr));
-  gap: 6px;
+  grid-template-columns: 1fr;
+  gap: 5px;
 }
 
 .server-sticky-card {
-  min-height: 58px;
+  min-height: 54px;
   border-radius: 12px;
 }
 
 .server-sticky-card-content {
-  gap: 5px;
-  padding: 7px 8px;
+  gap: 4px;
+  padding: 6px 8px;
 }
 
 .server-sticky-card-name {
@@ -2828,17 +2828,23 @@ tr.is-interactive-row:focus-visible {
 }
 
 .server-sticky-card-status {
-  gap: 6px;
+  justify-content: center;
+  gap: 9px;
+  min-width: 0;
 }
 
 .server-sticky-card-status .server-status {
   font-size: 0.58rem;
   line-height: 1;
+  min-width: 62px;
+  text-align: right;
 }
 
 .server-sticky-card-status .server-players {
-  font-size: 0.78rem;
+  min-width: 24px;
+  font-size: 0.76rem;
   line-height: 1;
+  text-align: left;
 }
 
 .server-sticky-actions {
@@ -2859,10 +2865,6 @@ tr.is-interactive-row:focus-visible {
   .server-sticky-widget {
     width: min(210px, calc(100vw - 24px));
     right: 12px;
-  }
-
-  .server-sticky-cards {
-    grid-template-columns: 1fr;
   }
 }
 

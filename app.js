@@ -48,7 +48,11 @@ const TOP_GUIDE_MEDIA_QUERY = "(min-width: 1280px)";
 const BG_VIDEO_VOLUME_STORAGE_KEY = "asgBgVideoVolume";
 const SERVER_CARD_BACKGROUNDS = {
   main: `${SITE_BASE_PATH}assets/main.jpg`,
-  sunset: `${SITE_BASE_PATH}assets/sunset.jpeg`
+  sunset: `${SITE_BASE_PATH}assets/sunset.jpeg`,
+  monza: `${SITE_BASE_PATH}assets/main.jpg`,
+  spa: `${SITE_BASE_PATH}assets/spa.jpg`,
+  nurburgring: `${SITE_BASE_PATH}assets/nurburgring.jpg`,
+  silverstone: `${SITE_BASE_PATH}assets/silverstone.jpg`
 };
 const ACC_CONNECT_SERVER_FALLBACKS = {
   main: {
@@ -6563,6 +6567,19 @@ function getServerDisplayLabel(key, server, fallbackLabel = "") {
   return fallbackLabel || key || cleanedName || "-";
 }
 
+function getServerSortWeight(key, label, server) {
+  const haystack = `${key || ""} ${label || ""} ${server?.track_code || ""} ${server?.track || ""}`.toLowerCase();
+  if (haystack.includes("hourly") || haystack.includes("час")) return 10;
+  if (key === "main" || haystack.includes("глав")) return 20;
+  if (haystack.includes("nord") || haystack.includes("nurburgring_24h") || haystack.includes("nurb")) return 30;
+  if (haystack.includes("monza") && (haystack.includes("dynamic") || haystack.includes("dyn"))) return 40;
+  if (haystack.includes("spa") && (haystack.includes("dynamic") || haystack.includes("dyn"))) return 50;
+  if (haystack.includes("sa gainer 1") || haystack.includes("low sa1")) return 60;
+  if (haystack.includes("sa gainer 2") || haystack.includes("low sa2") || haystack.includes("sunset")) return 70;
+  if (haystack.includes("monza")) return 80;
+  return 100;
+}
+
 function pickFirstNonEmpty(...values) {
   return values.find(value => String(value ?? "").trim()) ?? "";
 }
@@ -6672,7 +6689,9 @@ function getServerStatusItems(serverStatus = serverStatusData) {
     });
   }
 
-  return result;
+  return result
+    .map((item, index) => ({ ...item, originalIndex: index }))
+    .sort((a, b) => getServerSortWeight(a.key, a.label, a.server) - getServerSortWeight(b.key, b.label, b.server) || a.originalIndex - b.originalIndex);
 }
 
 function serverPlayersOnline(server) {
@@ -6706,9 +6725,22 @@ function updateHeroServerSummary(serverStatus = serverStatusData) {
 
 function getServerCardBackgroundKey(key, index = 0) {
   const normalized = String(key || "").toLowerCase();
+  if (normalized.includes("spa")) return "spa";
+  if (normalized.includes("nord") || normalized.includes("nurb")) return "nurburgring";
+  if (normalized.includes("silverstone")) return "silverstone";
+  if (normalized.includes("monza")) return "monza";
   if (normalized === "main") return "main";
   if (normalized === "hourly" || normalized === "sunset") return "sunset";
   return index % 2 === 0 ? "main" : "sunset";
+}
+
+function getServerTrackBackgroundKey(key, label, server, index = 0) {
+  const haystack = `${key || ""} ${label || ""} ${server?.track_code || ""} ${server?.track || ""}`.toLowerCase();
+  if (haystack.includes("spa")) return "spa";
+  if (haystack.includes("nord") || haystack.includes("nurburgring_24h") || haystack.includes("nurb")) return "nurburgring";
+  if (haystack.includes("silverstone")) return "silverstone";
+  if (haystack.includes("monza")) return "monza";
+  return getServerCardBackgroundKey(key, index);
 }
 
 function getServerConnectFallback(key) {
@@ -6731,7 +6763,7 @@ function renderServerStickyWidget(serverStatus = serverStatusData) {
     const players = serverPlayersOnline(server);
     const fallback = getServerConnectFallback(key);
     const href = buildAccConnectHref(normalizeAccConnectConfig(server, fallback));
-    const bgKey = getServerCardBackgroundKey(key, index);
+    const bgKey = getServerTrackBackgroundKey(key, label, server, index);
     const bgUrl = SERVER_CARD_BACKGROUNDS[bgKey] || SERVER_CARD_BACKGROUNDS.main;
     return `
       <div
