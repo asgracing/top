@@ -200,6 +200,7 @@ let selectedRace = null;
 let driverIndexData = [];
 let driverProfileData = null;
 let driverPreviewState = null;
+const bestLapTrackSelection = new Map();
 const averagePaceTrackSelection = new Map();
 let eloModalState = null;
 let safetyModalState = null;
@@ -678,6 +679,8 @@ const translations = {
     driverSummaryPodiums: "Podiums",
     driverSummaryAvgFinish: "Avg finish",
     driverSummaryBestLap: "Best lap",
+    driverSummaryBestLapTrack: "Track for best lap",
+    driverSummaryBestLapTooltip: "Fastest recorded lap on the selected track",
     driverSummaryAvgPace: "Average pace",
     driverSummaryAvgPaceTrack: "Track for average pace",
     driverSummaryAvgPaceTooltip: "Average lap from the last 5 counted races on the selected track",
@@ -1123,6 +1126,8 @@ const translations = {
     driverSummaryPodiums: "Подиумы",
     driverSummaryAvgFinish: "Ср. финиш",
     driverSummaryBestLap: "Лучший круг",
+    driverSummaryBestLapTrack: "Трасса для лучшего круга",
+    driverSummaryBestLapTooltip: "Лучший записанный круг на выбранной трассе",
     driverSummaryAvgPace: "Средний темп",
     driverSummaryAvgPaceTrack: "Трасса для среднего темпа",
     driverSummaryAvgPaceTooltip: "Средний круг за 5 последних зачтенных гонок на выбранной трассе",
@@ -7549,6 +7554,54 @@ function buildDriverHeroTitle(profile) {
   `;
 }
 
+function getDriverSelectionKey(profile) {
+  return String(profile?.public_id || profile?.player_id || profile?.driver || "driver");
+}
+
+function getBestLapTrackItems(profile) {
+  const items = Array.isArray(profile?.best_laps_by_track)
+    ? profile.best_laps_by_track
+    : Array.isArray(profile?.bestlap_tracks)
+      ? profile.bestlap_tracks
+      : [];
+  return items
+    .map(item => {
+      const trackCode = String(item?.track_code || item?.track || item?.best_lap_track || "").trim();
+      if (!trackCode) return null;
+      const lapMs = Number(item?.best_lap_ms || 0);
+      const lapLabel = item?.best_lap || (lapMs > 0 ? formatLapTimeFromMs(lapMs) : "");
+      if (!lapLabel) return null;
+      return {
+        ...item,
+        track_code: trackCode,
+        best_lap: lapLabel,
+        best_lap_ms: lapMs > 0 ? lapMs : null,
+        car_name: item?.best_lap_car_name || item?.car_name || item?.car_name_raw || item?.best_lap_car_name_raw || ""
+      };
+    })
+    .filter(Boolean);
+}
+
+function getSelectedBestLapTrack(profile, items) {
+  if (!items.length) return null;
+  const key = getDriverSelectionKey(profile);
+  const selected = bestLapTrackSelection.get(key);
+  return items.find(item => item.track_code === selected) || items[0];
+}
+
+function renderBestLapTrackSelect(profile, items, selectedTrackCode) {
+  if (items.length <= 1) return "";
+  const key = getDriverSelectionKey(profile);
+  const options = items.map(item => `
+    <option value="${escapeAttribute(item.track_code)}" ${item.track_code === selectedTrackCode ? "selected" : ""}>${escapeHtml(humanizeTrackName(item.track_code))}</option>
+  `).join("");
+  return `
+    <select class="driver-stat-track-select" data-bestlap-track="${escapeAttribute(key)}" title="${escapeAttribute(t("driverSummaryBestLapTrack"))}" aria-label="${escapeAttribute(t("driverSummaryBestLapTrack"))}">
+      ${options}
+    </select>
+  `;
+}
+
 function getAveragePaceTrackItems(profile) {
   const items = Array.isArray(profile?.average_pace_by_track)
     ? profile.average_pace_by_track
@@ -7574,7 +7627,7 @@ function getAveragePaceTrackItems(profile) {
 }
 
 function getAveragePaceSelectionKey(profile) {
-  return String(profile?.public_id || profile?.player_id || profile?.driver || "driver");
+  return getDriverSelectionKey(profile);
 }
 
 function getSelectedAveragePaceTrack(profile, items) {
@@ -7607,14 +7660,21 @@ function buildDriverStatsMarkup(profile) {
   const favoriteCarMarkup = isDriverBanned(profile)
     ? renderBannedBadge()
     : renderCarLink(favoriteCarName || "-", "driver-link driver-link-heading");
+  const bestLapTracks = getBestLapTrackItems(profile);
+  const bestLapTrack = getSelectedBestLapTrack(profile, bestLapTracks);
+  const bestLap = bestLapTrack?.best_lap || summary.best_lap || "-";
+  const bestLapTrackCode = bestLapTrack?.track_code || summary.best_lap_track || "";
+  const bestLapTrackSelect = renderBestLapTrackSelect(profile, bestLapTracks, bestLapTrackCode);
+  const bestLapCar = bestLapTrack?.car_name || summary.best_lap_car_name || summary.car_name || "";
+  const bestLapMeta = [
+    bestLapCar,
+    bestLapTrackCode ? humanizeTrackName(bestLapTrackCode) : ""
+  ].filter(Boolean).join(" · ");
   const averagePaceTracks = getAveragePaceTrackItems(profile);
   const averagePaceTrack = getSelectedAveragePaceTrack(profile, averagePaceTracks);
   const averagePace = averagePaceTrack?.average_pace || summary.average_pace || "-";
   const averagePaceTrackCode = averagePaceTrack?.track_code || "";
   const averagePaceTrackSelect = renderAveragePaceTrackSelect(profile, averagePaceTracks, averagePaceTrackCode);
-  const averagePaceNote = averagePaceTrackCode
-    ? `${humanizeTrackName(averagePaceTrackCode)}${averagePaceTrack?.sample_races ? ` · ${averagePaceTrack.sample_races}/5` : ""}`
-    : "";
   return `
     <div class="driver-stat-card">
       <div class="driver-stat-label">${escapeHtml(t("driverSummaryPoints"))}</div>
@@ -7653,7 +7713,12 @@ function buildDriverStatsMarkup(profile) {
       <div class="driver-stat-value">${escapeHtml(summary.podium_rate ?? 0)}%</div>
     </div>
     <div class="driver-stat-card">
-      <button class="driver-stat-label driver-stat-label-button bestlap-track-cta" type="button" data-driver-bestlap-tracks title="${escapeAttribute(t("bestLapTracksTooltip"))}" aria-label="${escapeAttribute(t("bestLapTracksTooltip"))}">${escapeHtml(t("bestLapTracksButton"))}</button>
+      <div class="driver-stat-label driver-stat-label-with-control" title="${escapeAttribute(t("driverSummaryBestLapTooltip"))}">
+        <span>${escapeHtml(t("driverSummaryBestLap"))}</span>
+        ${bestLapTrackSelect}
+      </div>
+      <div class="driver-stat-value">${renderStatValueWithTrend(escapeHtml(bestLap), bestLapTrack ? null : summary.latest_changes?.best_lap_ms, "best_lap_ms")}</div>
+      ${bestLapMeta ? `<div class="driver-stat-meta">${escapeHtml(bestLapMeta)}</div>` : ""}
     </div>
     <div class="driver-stat-card">
       <div class="driver-stat-label driver-stat-label-with-control" title="${escapeAttribute(t("driverSummaryAvgPaceTooltip"))}">
@@ -7661,7 +7726,6 @@ function buildDriverStatsMarkup(profile) {
         ${averagePaceTrackSelect}
       </div>
       <div class="driver-stat-value">${renderStatValueWithTrend(escapeHtml(averagePace), averagePaceTrack ? null : summary.latest_changes?.average_pace_ms, "average_pace_ms")}</div>
-      ${averagePaceNote ? `<div class="driver-stat-note">${escapeHtml(averagePaceNote)}</div>` : ""}
     </div>
     <div class="driver-stat-card">
       <div class="driver-stat-label">${escapeHtml(t("driverFavoriteCar"))}</div>
@@ -7956,6 +8020,7 @@ function renderDriverPage() {
   renderPenaltyList("driver-penalty-reasons", driverProfileData.penalties?.reasons, "driverPenaltyReason");
   renderPenaltyList("driver-penalty-types", driverProfileData.penalties?.types, "driverPenaltyType");
   bindDriverBestlapTracksButton(statsEl, driverProfileData);
+  bindBestLapTrackSelect(statsEl, driverProfileData);
   bindAveragePaceTrackSelect(statsEl, driverProfileData);
 }
 
@@ -7979,6 +8044,23 @@ function bindDriverBestlapTracksButton(root = document, profile = driverProfileD
   applyBestlapTracksButtonText(root);
 }
 
+function bindBestLapTrackSelect(root = document, profile = driverProfileData) {
+  root?.querySelectorAll?.("[data-bestlap-track]").forEach(select => {
+    if (select.dataset.bound === "true") return;
+    select.addEventListener("change", () => {
+      const key = select.dataset.bestlapTrack || getDriverSelectionKey(profile);
+      bestLapTrackSelection.set(key, select.value);
+      const container = select.closest(".driver-stats-grid") || root;
+      if (!container) return;
+      container.innerHTML = buildDriverStatsMarkup(profile);
+      bindDriverBestlapTracksButton(container, profile);
+      bindBestLapTrackSelect(container, profile);
+      bindAveragePaceTrackSelect(container, profile);
+    });
+    select.dataset.bound = "true";
+  });
+}
+
 function bindAveragePaceTrackSelect(root = document, profile = driverProfileData) {
   root?.querySelectorAll?.("[data-average-pace-track]").forEach(select => {
     if (select.dataset.bound === "true") return;
@@ -7989,6 +8071,7 @@ function bindAveragePaceTrackSelect(root = document, profile = driverProfileData
       if (!container) return;
       container.innerHTML = buildDriverStatsMarkup(profile);
       bindDriverBestlapTracksButton(container, profile);
+      bindBestLapTrackSelect(container, profile);
       bindAveragePaceTrackSelect(container, profile);
     });
     select.dataset.bound = "true";
@@ -8029,6 +8112,7 @@ function renderDriverPreviewModal() {
     statsEl.innerHTML = buildDriverStatsMarkup(profile);
     highlightsEl.innerHTML = buildDriverHighlightsMarkup(profile);
     bindDriverBestlapTracksButton(statsEl, profile);
+    bindBestLapTrackSelect(statsEl, profile);
     bindAveragePaceTrackSelect(statsEl, profile);
   }
 

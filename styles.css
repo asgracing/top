@@ -2523,6 +2523,14 @@ tr.is-interactive-row:focus-visible {
   margin-top: 4px;
 }
 
+.driver-stat-meta {
+  margin-top: 5px;
+  color: rgba(210, 226, 247, 0.68);
+  font-size: 0.76rem;
+  font-weight: 700;
+  line-height: 1.25;
+}
+
 .driver-stat-label-with-control {
   display: flex;
   align-items: center;
