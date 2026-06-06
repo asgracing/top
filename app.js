@@ -7666,7 +7666,6 @@ function buildDriverStatsMarkup(profile) {
   const bestLapTrackCode = bestLapTrack?.track_code || summary.best_lap_track || "";
   const bestLapTrackSelect = renderBestLapTrackSelect(profile, bestLapTracks, bestLapTrackCode);
   const bestLapCar = bestLapTrack?.car_name || summary.best_lap_car_name || summary.car_name || "";
-  const bestLapTrackLabel = bestLapTrackCode ? humanizeTrackName(bestLapTrackCode) : "";
   const averagePaceTracks = getAveragePaceTrackItems(profile);
   const averagePaceTrack = getSelectedAveragePaceTrack(profile, averagePaceTracks);
   const averagePace = averagePaceTrack?.average_pace || summary.average_pace || "-";
@@ -7718,7 +7717,6 @@ function buildDriverStatsMarkup(profile) {
         <div class="driver-stat-value driver-stat-value-bestlap">${renderStatValueWithTrend(escapeHtml(bestLap), bestLapTrack ? null : summary.latest_changes?.best_lap_ms, "best_lap_ms")}</div>
         ${bestLapCar ? `<div class="driver-stat-side driver-stat-bestlap-car">${escapeHtml(bestLapCar)}</div>` : ""}
       </div>
-      ${bestLapTrackLabel ? `<div class="driver-stat-meta">${escapeHtml(bestLapTrackLabel)}</div>` : ""}
     </div>
     <div class="driver-stat-card">
       <div class="driver-stat-label driver-stat-label-with-control" title="${escapeAttribute(t("driverSummaryAvgPaceTooltip"))}">
