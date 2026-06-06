@@ -2531,6 +2531,23 @@ tr.is-interactive-row:focus-visible {
   line-height: 1.25;
 }
 
+.driver-stat-bestlap-mainline {
+  align-items: center;
+}
+
+.driver-stat-value-bestlap {
+  color: #d8b4fe;
+  text-shadow: 0 0 18px rgba(168, 85, 247, 0.24);
+}
+
+.driver-stat-bestlap-car {
+  max-width: 46%;
+  overflow: hidden;
+  color: rgba(232, 221, 255, 0.78);
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
 .driver-stat-label-with-control {
   display: flex;
   align-items: center;
