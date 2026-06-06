@@ -2523,6 +2523,40 @@ tr.is-interactive-row:focus-visible {
   margin-top: 4px;
 }
 
+.driver-stat-label-with-control {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 8px;
+}
+
+.driver-stat-track-select {
+  max-width: 128px;
+  min-width: 86px;
+  height: 26px;
+  border: 1px solid rgba(216, 180, 254, 0.34);
+  border-radius: 999px;
+  background:
+    linear-gradient(180deg, rgba(33, 23, 48, 0.95), rgba(18, 24, 34, 0.94));
+  color: var(--text);
+  color-scheme: dark;
+  padding: 0 22px 0 9px;
+  font-size: 0.72rem;
+  font-weight: 800;
+  outline: none;
+}
+
+.driver-stat-track-select:focus {
+  border-color: rgba(216, 180, 254, 0.78);
+  box-shadow: 0 0 0 3px rgba(168, 85, 247, 0.18);
+}
+
+.driver-stat-track-select option {
+  background: #111821;
+  color: var(--text);
+  font-weight: 700;
+}
+
 .driver-highlights-grid {
   display: grid;
   grid-template-columns: repeat(3, minmax(0, 1fr));
