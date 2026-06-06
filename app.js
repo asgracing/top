@@ -6744,6 +6744,29 @@ function serverPlayersOnline(server) {
   return getServerDrivers(server).length;
 }
 
+function getServerSessionShortLabel(server) {
+  if (!server || typeof server !== "object") return "";
+  const explicit = server.session_label || server.session_status_label || server.session_short_label;
+  if (explicit) return String(explicit).trim();
+  const rawType = String(server.session_type || server.current_session || server.session || "").trim().toLowerCase();
+  const short = String(server.session_short || (
+    rawType.startsWith("race") ? "R" :
+    rawType.startsWith("qual") ? "Q" :
+    rawType.startsWith("practice") ? "P" :
+    rawType ? rawType.slice(0, 1).toUpperCase() :
+    ""
+  )).trim();
+  const rawMinutes = server.session_remaining_minutes ?? server.remaining_minutes ?? server.session_time_left_minutes;
+  const minutes = Number(rawMinutes);
+  if (!short || !Number.isFinite(minutes)) return "";
+  return `${short} ${Math.max(0, Math.round(minutes))}`;
+}
+
+function appendServerSessionLabel(label, server) {
+  const sessionLabel = getServerSessionShortLabel(server);
+  return sessionLabel ? `${label} (${sessionLabel})` : label;
+}
+
 function serverIsOnline(server) {
   const status = String(server?.status || "").toLowerCase();
   return status === "online" || status === "online_process_only" || serverPlayersOnline(server) > 0;
@@ -6807,6 +6830,7 @@ function renderServerStickyWidget(serverStatus = serverStatusData) {
   cardsEl.innerHTML = items.map(({ key, label, server }, index) => {
     const status = String(server?.status || "offline").toLowerCase();
     const players = serverPlayersOnline(server);
+    const sessionLabel = getServerSessionShortLabel(server);
     const fallback = getServerConnectFallback(key);
     const href = buildAccConnectHref(normalizeAccConnectConfig(server, fallback));
     const bgKey = getServerTrackBackgroundKey(key, label, server, index);
@@ -6825,7 +6849,7 @@ function renderServerStickyWidget(serverStatus = serverStatusData) {
           <div class="server-sticky-card-name">${escapeHtml(label)}</div>
           <div class="server-sticky-card-status">
             <span class="server-status ${escapeHtml(status === "online" ? "online" : status === "online_process_only" ? "degraded" : "offline")}">${escapeHtml(getLocalizedServerStatus(status, currentLang))}</span>
-            <span class="server-players">${escapeHtml(players)}</span>
+            <span class="server-players">${escapeHtml(players)}${sessionLabel ? ` <span class="server-session-mini">(${escapeHtml(sessionLabel)})</span>` : ""}</span>
           </div>
           <div class="server-sticky-actions">
             <a class="server-connect-btn ${href ? "" : "is-disabled"}" href="${escapeHtml(href || "#")}" aria-disabled="${href ? "false" : "true"}" title="${escapeHtml(href ? t("serverConnectBtn") : t("serverConnectUnavailable"))}">${escapeHtml(t("serverConnectBtn"))}</a>
@@ -6852,10 +6876,11 @@ function renderServerStatusSummaryModal(titleEl, subtitleEl, listEl) {
   listEl.innerHTML = items.map(({ label, server }) => {
     const players = serverPlayersOnline(server);
     const status = String(server?.status || "offline").toLowerCase();
+    const serverLabel = appendServerSessionLabel(label, server);
     return `
       <article class="server-player-row server-status-row">
         <div class="server-player-main">
-          <div class="server-player-name">${escapeHtml(label)}</div>
+          <div class="server-player-name">${escapeHtml(serverLabel)}</div>
           <div class="server-player-meta">
             <span>${escapeHtml(getLocalizedServerStatus(status, currentLang))}</span>
           </div>
@@ -6874,7 +6899,7 @@ function renderSelectedServerPlayersModal(titleEl, subtitleEl, listEl) {
   const selected = items.find(item => item.key === selectedServerPlayersKey) || items.find(item => item.key === "main") || items[0];
   const server = selected?.server || null;
   const drivers = getServerDrivers(server);
-  titleEl.textContent = selected?.label || t("playersOnlineTitle");
+  titleEl.textContent = appendServerSessionLabel(selected?.label || t("playersOnlineTitle"), server);
   subtitleEl.textContent = replaceTokens(t("playersOnlineUpdated"), {
     time: formatDateTimeLocal(server?.updated_at || serverStatusData?.updated_at, currentLang) || "-"
   });
