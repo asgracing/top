@@ -78,15 +78,7 @@ const SERVER_STATUS_LABELS_BY_ID = {
   "assetto-corsa-competizione-dedic-6": "ASG Racing Spa - Live Leaderboard"
 };
 const SERVER_STATUS_ORDER_BY_ID = {
-  hourly: 10,
-  main: 20,
-  sunset: 30,
-  "assetto-corsa-competizione-dedic-4": 40,
-  "assetto-corsa-competizione-dedic-2": 50,
-  "assetto-corsa-competizione-dedic-3": 60,
-  "assetto-corsa-competizione-dedic-5": 70,
-  "assetto-corsa-competizione-dedic": 80,
-  "assetto-corsa-competizione-dedic-6": 90
+  hourly: 0
 };
 const PAGE_SIZE = 10;
 const VOTER_ID_STORAGE_TTL_MS = 365 * 24 * 60 * 60 * 1000;
@@ -6604,18 +6596,28 @@ function getServerDisplayLabel(key, server, fallbackLabel = "") {
   return fallbackLabel || key || cleanedName || "-";
 }
 
-function getServerSortWeight(key, label, server) {
-  if (Number.isFinite(SERVER_STATUS_ORDER_BY_ID[key])) return SERVER_STATUS_ORDER_BY_ID[key];
+function getServerTrackSortKey(key, label, server) {
   const haystack = `${key || ""} ${label || ""} ${server?.track_code || ""} ${server?.track || ""}`.toLowerCase();
-  if (haystack.includes("hourly") || haystack.includes("час")) return 10;
-  if (key === "main" || haystack.includes("глав")) return 20;
-  if (haystack.includes("nord") || haystack.includes("nurburgring_24h") || haystack.includes("nurb")) return 30;
-  if (haystack.includes("monza") && (haystack.includes("dynamic") || haystack.includes("dyn"))) return 40;
-  if (haystack.includes("spa") && (haystack.includes("dynamic") || haystack.includes("dyn"))) return 50;
-  if (haystack.includes("sa gainer 1") || haystack.includes("low sa1")) return 60;
-  if (haystack.includes("sa gainer 2") || haystack.includes("low sa2") || haystack.includes("sunset")) return 70;
-  if (haystack.includes("monza")) return 80;
-  return 100;
+  if (haystack.includes("nordschleife") || haystack.includes("nurburgring_24h")) return "nordschleife";
+  if (haystack.includes("nurburgring")) return "nurburgring";
+  if (haystack.includes("monza")) return "monza";
+  if (haystack.includes("spa")) return "spa";
+  if (haystack.includes("silverstone")) return "silverstone";
+  return String(label || key || "").toLowerCase();
+}
+
+function compareServerStatusItems(a, b) {
+  const orderA = SERVER_STATUS_ORDER_BY_ID[a.key];
+  const orderB = SERVER_STATUS_ORDER_BY_ID[b.key];
+  if (Number.isFinite(orderA) || Number.isFinite(orderB)) {
+    return (Number.isFinite(orderA) ? orderA : 1000) - (Number.isFinite(orderB) ? orderB : 1000);
+  }
+  const trackCompare = getServerTrackSortKey(a.key, a.label, a.server)
+    .localeCompare(getServerTrackSortKey(b.key, b.label, b.server), currentLang === "ru" ? "ru" : "en", { sensitivity: "base" });
+  if (trackCompare) return trackCompare;
+  const labelCompare = String(a.label || a.key || "")
+    .localeCompare(String(b.label || b.key || ""), currentLang === "ru" ? "ru" : "en", { sensitivity: "base" });
+  return labelCompare || a.originalIndex - b.originalIndex;
 }
 
 function pickFirstNonEmpty(...values) {
@@ -6733,7 +6735,7 @@ function getServerStatusItems(serverStatus = serverStatusData) {
 
   return result
     .map((item, index) => ({ ...item, originalIndex: index }))
-    .sort((a, b) => getServerSortWeight(a.key, a.label, a.server) - getServerSortWeight(b.key, b.label, b.server) || a.originalIndex - b.originalIndex);
+    .sort(compareServerStatusItems);
 }
 
 function serverPlayersOnline(server) {
