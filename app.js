@@ -310,6 +310,10 @@ const translations = {
     onlineActivityAvgPlayersLabel: "Avg drivers per race",
     onlineActivityScoreLabel: "Activity",
     onlineActivityTracksLabel: "Tracks",
+    onlineActivityActiveDaysLabel: "Active days",
+    onlineActivityMonthScoreLabel: "Month activity",
+    onlineActivityMonthCardTitle: "{month} · {score}/100",
+    onlineActivityMonthCardMeta: "{days} active days · {races} races · avg {avg}",
     onlineActivityHourRaces: "{value} races",
     onlineActivityHourUnique: "{value} unique",
     donationsWidgetTitle: "Project supporters:",
@@ -757,6 +761,10 @@ const translations = {
     onlineActivityAvgPlayersLabel: "Среднее пилотов на гонку",
     onlineActivityScoreLabel: "Активность",
     onlineActivityTracksLabel: "Трассы",
+    onlineActivityActiveDaysLabel: "Активные дни",
+    onlineActivityMonthScoreLabel: "Активность месяца",
+    onlineActivityMonthCardTitle: "{month} · {score}/100",
+    onlineActivityMonthCardMeta: "{days} активных дней · {races} гонок · ср. {avg}",
     onlineActivityHourRaces: "{value} гонок",
     onlineActivityHourUnique: "{value} уникальных",
     donationsWidgetTitle: "Поддержали проект:",
@@ -8236,8 +8244,89 @@ function getAvailableActivityMonths(days = []) {
     .sort((a, b) => String(b).localeCompare(String(a)));
 }
 
-function getSelectedActivityInsightsDay() {
-  const days = Array.isArray(raceActivityInsights) ? raceActivityInsights : [];
+function getActivityDayEntries(day) {
+  const explicit = Number(day?.race_participants_total ?? day?.entries);
+  if (Number.isFinite(explicit) && explicit > 0) return explicit;
+  const races = Number(day?.races) || 0;
+  const avg = Number(day?.avg_players_per_race) || 0;
+  return races > 0 && avg > 0 ? races * avg : 0;
+}
+
+function getActivityDayScore(day, maxima) {
+  const racesScore = normalizeActivityScore(Number(day?.races) || 0, maxima.races);
+  const entriesScore = normalizeActivityScore(getActivityDayEntries(day), maxima.entries);
+  const uniqueScore = normalizeActivityScore(Number(day?.unique_players) || 0, maxima.uniquePlayers);
+  return Math.round(uniqueScore * 0.45 + entriesScore * 0.4 + racesScore * 0.15);
+}
+
+function buildRelativeActivityDays(rawDays = []) {
+  const days = Array.isArray(rawDays) ? rawDays.filter(day => day?.date) : [];
+  const maxima = {
+    races: Math.max(1, ...days.map(day => Number(day?.races) || 0)),
+    entries: Math.max(1, ...days.map(day => getActivityDayEntries(day))),
+    uniquePlayers: Math.max(1, ...days.map(day => Number(day?.unique_players) || 0))
+  };
+  return days.map(day => ({
+    ...day,
+    source_activity_score: day?.activity_score,
+    activity_score: getActivityDayScore(day, maxima)
+  }));
+}
+
+function buildActivityMonthInsights(days = []) {
+  const monthMap = new Map();
+  days.forEach(day => {
+    const month = String(day?.date || "").slice(0, 7);
+    if (!month) return;
+    const entry = monthMap.get(month) || {
+      month,
+      active_days: 0,
+      races: 0,
+      entries: 0,
+      tracks: new Set()
+    };
+    entry.active_days += 1;
+    entry.races += Number(day?.races) || 0;
+    entry.entries += getActivityDayEntries(day);
+    if (Array.isArray(day?.tracks)) {
+      day.tracks.forEach(track => {
+        if (track) entry.tracks.add(track);
+      });
+    }
+    monthMap.set(month, entry);
+  });
+
+  const months = [...monthMap.values()];
+  const maxima = {
+    races: Math.max(1, ...months.map(month => month.races || 0)),
+    entries: Math.max(1, ...months.map(month => month.entries || 0)),
+    activeDays: Math.max(1, ...months.map(month => month.active_days || 0))
+  };
+
+  return months
+    .map(month => {
+      const racesScore = normalizeActivityScore(month.races, maxima.races);
+      const entriesScore = normalizeActivityScore(month.entries, maxima.entries);
+      const daysScore = normalizeActivityScore(month.active_days, maxima.activeDays);
+      const activityScore = Math.round(entriesScore * 0.55 + racesScore * 0.3 + daysScore * 0.15);
+      return {
+        ...month,
+        tracks_count: month.tracks.size,
+        avg_players_per_race: month.races ? Number((month.entries / month.races).toFixed(2)) : 0,
+        activity_score: activityScore
+      };
+    })
+    .sort((a, b) => String(b.month).localeCompare(String(a.month)));
+}
+
+function getSelectedActivityMonthInsight(months = []) {
+  return months.find(month => month.month === selectedActivityMonth) || months[0] || null;
+}
+
+function getSelectedActivityInsightsDay(source = null) {
+  const days = buildRelativeActivityDays(
+    Array.isArray(source) ? source : (Array.isArray(raceActivityInsights) ? raceActivityInsights : [])
+  );
   if (!days.length) return null;
   const months = getAvailableActivityMonths(days);
   if (!selectedActivityMonth || !months.includes(selectedActivityMonth)) {
@@ -8261,21 +8350,32 @@ function buildActivitySummaryCard(label, value, accent = false) {
   `;
 }
 
+function buildActivitySummaryCardWithClass(label, value, className = "", accent = false) {
+  return `
+    <article class="activity-summary-card${accent ? " activity-summary-card-accent" : ""}${className ? ` ${escapeHtml(className)}` : ""}">
+      <div class="activity-summary-label">${escapeHtml(label)}</div>
+      <div class="activity-summary-value">${escapeHtml(value)}</div>
+    </article>
+  `;
+}
+
 function renderOnlineActivityModal() {
   const daysEl = document.getElementById("online-activity-days");
   const monthsEl = document.getElementById("online-activity-months");
+  const monthOverviewEl = document.getElementById("online-activity-month-overview");
   const summaryEl = document.getElementById("online-activity-summary");
   const subtitleEl = document.getElementById("online-activity-subtitle");
   const primeTimeEl = document.getElementById("online-activity-prime-time");
   const hoursEl = document.getElementById("online-activity-hours");
 
-  if (!daysEl || !monthsEl || !summaryEl || !subtitleEl || !primeTimeEl || !hoursEl) return;
+  if (!daysEl || !monthsEl || !monthOverviewEl || !summaryEl || !subtitleEl || !primeTimeEl || !hoursEl) return;
 
-  const days = Array.isArray(raceActivityInsights) ? raceActivityInsights : [];
+  const days = buildRelativeActivityDays(Array.isArray(raceActivityInsights) ? raceActivityInsights : []);
   if (!days.length) {
     subtitleEl.textContent = t("onlineActivityEmpty");
     daysEl.innerHTML = "";
     monthsEl.innerHTML = "";
+    monthOverviewEl.innerHTML = "";
     summaryEl.innerHTML = `<div class="empty-box">${escapeHtml(t("onlineActivityEmpty"))}</div>`;
     primeTimeEl.textContent = t("onlineActivityEmpty");
     hoursEl.innerHTML = `<div class="empty-box">${escapeHtml(t("onlineActivityEmpty"))}</div>`;
@@ -8283,12 +8383,13 @@ function renderOnlineActivityModal() {
   }
 
   const months = getAvailableActivityMonths(days);
+  const monthInsights = buildActivityMonthInsights(days);
   if (!selectedActivityMonth || !months.includes(selectedActivityMonth)) {
     selectedActivityMonth = months[0] || null;
   }
   monthsEl.innerHTML = months.map(month => `
     <option value="${escapeHtml(month)}"${month === selectedActivityMonth ? " selected" : ""}>
-      ${escapeHtml(formatActivityMonthLabel(month, currentLang))}
+      ${escapeHtml(`${formatActivityMonthLabel(month, currentLang)} · ${monthInsights.find(item => item.month === month)?.activity_score ?? 0}/100`)}
     </option>
   `).join("");
 
@@ -8301,7 +8402,36 @@ function renderOnlineActivityModal() {
     monthsEl.dataset.bound = "true";
   }
 
-  const selectedDay = getSelectedActivityInsightsDay();
+  const selectedMonth = getSelectedActivityMonthInsight(monthInsights);
+  monthOverviewEl.innerHTML = monthInsights.map(month => {
+    const isActive = month.month === selectedActivityMonth;
+    const title = replaceTokens(t("onlineActivityMonthCardTitle"), {
+      month: formatActivityMonthLabel(month.month, currentLang),
+      score: month.activity_score ?? 0
+    });
+    const meta = replaceTokens(t("onlineActivityMonthCardMeta"), {
+      days: month.active_days ?? 0,
+      races: month.races ?? 0,
+      avg: typeof month.avg_players_per_race === "number" ? month.avg_players_per_race.toFixed(2) : "-"
+    });
+    return `
+      <button class="activity-month-card${isActive ? " is-active" : ""}" type="button" data-activity-month="${escapeHtml(month.month)}">
+        <span>${escapeHtml(title)}</span>
+        <small>${escapeHtml(meta)}</small>
+      </button>
+    `;
+  }).join("");
+  monthOverviewEl.querySelectorAll("[data-activity-month]").forEach(button => {
+    if (button.dataset.bound === "true") return;
+    button.addEventListener("click", () => {
+      selectedActivityMonth = button.dataset.activityMonth || selectedActivityMonth;
+      selectedActivityDate = null;
+      renderOnlineActivityModal();
+    });
+    button.dataset.bound = "true";
+  });
+
+  const selectedDay = getSelectedActivityInsightsDay(days);
   if (!selectedDay) return;
   const visibleDays = selectedActivityMonth
     ? days.filter(day => String(day?.date || "").startsWith(selectedActivityMonth))
@@ -8344,8 +8474,9 @@ function renderOnlineActivityModal() {
       t("onlineActivityAvgPlayersLabel"),
       typeof selectedDay.avg_players_per_race === "number" ? selectedDay.avg_players_per_race.toFixed(2) : "-"
     ),
-    buildActivitySummaryCard(t("onlineActivityTracksLabel"), tracksLabel),
-    buildActivitySummaryCard(t("onlineActivityScoreLabel"), `${selectedDay.activity_score ?? 0}/100`, true)
+    buildActivitySummaryCardWithClass(t("onlineActivityTracksLabel"), tracksLabel, "activity-summary-card-tracks"),
+    buildActivitySummaryCard(t("onlineActivityScoreLabel"), `${selectedDay.activity_score ?? 0}/100`, true),
+    buildActivitySummaryCard(t("onlineActivityMonthScoreLabel"), `${selectedMonth?.activity_score ?? 0}/100`, true)
   ].join("");
 
   primeTimeEl.textContent = peakHour

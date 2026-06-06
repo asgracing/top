@@ -4240,6 +4240,48 @@ tbody tr:last-child td {
   padding-bottom: 6px;
 }
 
+.activity-month-overview {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 10px;
+  margin: -2px 0 16px;
+}
+
+.activity-month-card {
+  display: grid;
+  gap: 5px;
+  min-width: 0;
+  padding: 12px 14px;
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  border-radius: 14px;
+  background: rgba(255, 255, 255, 0.04);
+  color: var(--text);
+  cursor: pointer;
+  text-align: left;
+  transition: border-color 0.18s ease, background 0.18s ease, transform 0.18s ease;
+}
+
+.activity-month-card span {
+  font-size: 0.88rem;
+  font-weight: 850;
+  line-height: 1.2;
+}
+
+.activity-month-card small {
+  overflow: hidden;
+  color: var(--muted);
+  font-size: 0.74rem;
+  line-height: 1.25;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.activity-month-card:hover,
+.activity-month-card.is-active {
+  border-color: rgba(184, 77, 255, 0.42);
+  background: rgba(184, 77, 255, 0.12);
+}
+
 .activity-day-pill {
   display: inline-flex;
   align-items: center;
@@ -4267,7 +4309,7 @@ tbody tr:last-child td {
 
 .activity-summary-grid {
   display: grid;
-  grid-template-columns: repeat(5, minmax(0, 1fr));
+  grid-template-columns: repeat(6, minmax(0, 1fr));
   gap: 12px;
   margin-bottom: 16px;
 }
@@ -4297,6 +4339,14 @@ tbody tr:last-child td {
   line-height: 1.35;
   font-weight: 800;
   color: var(--text);
+}
+
+.activity-summary-card-tracks .activity-summary-value {
+  font-size: 0.78rem;
+  font-weight: 750;
+  line-height: 1.35;
+  color: rgba(232, 241, 255, 0.82);
+  word-break: break-word;
 }
 
 .activity-layout {
@@ -6201,6 +6251,7 @@ body.modal-open {
   }
 
   .activity-controls,
+  .activity-month-overview,
   .activity-summary-grid {
     grid-template-columns: 1fr;
   }
