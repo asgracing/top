@@ -2858,8 +2858,8 @@ tr.is-interactive-row:focus-visible {
 .server-sticky-widget {
   top: 92px;
   right: 18px;
-  width: min(210px, calc(100vw - 36px));
-  max-height: calc(100vh - 236px);
+  width: min(196px, calc(100vw - 36px));
+  max-height: calc(100vh - 170px);
   overflow: auto;
   scrollbar-width: thin;
 }
@@ -2870,18 +2870,18 @@ tr.is-interactive-row:focus-visible {
 }
 
 .server-sticky-card {
-  min-height: 54px;
+  min-height: 48px;
   border-radius: 12px;
 }
 
 .server-sticky-card-content {
-  gap: 4px;
-  padding: 6px 8px;
+  gap: 3px;
+  padding: 5px 7px;
 }
 
 .server-sticky-card-name {
-  min-height: 2.2em;
-  font-size: 0.64rem;
+  min-height: 2em;
+  font-size: 0.58rem;
   line-height: 1.1;
   text-align: left;
 }
@@ -2913,10 +2913,10 @@ tr.is-interactive-row:focus-visible {
 
 .server-connect-btn,
 .server-connect-help {
-  min-height: 20px;
+  min-height: 18px;
   padding: 0 6px;
   border-radius: 8px;
-  font-size: 0.56rem;
+  font-size: 0.52rem;
   line-height: 1;
 }
 
@@ -10044,10 +10044,21 @@ body.background-audio-focus .bg-video-sound-toggle {
 
 .bg-video-sound-toggle {
   top: auto !important;
+  left: clamp(10px, 1.8vw, 22px);
+  right: auto !important;
   bottom: 84px;
   width: min(224px, calc(100vw - 24px));
   padding: 8px 12px 8px 10px;
+  border-right: 1px solid rgba(255, 198, 122, 0.42);
+  border-left: 0;
+  border-radius: 0 18px 18px 0;
   transform: none !important;
+}
+
+.bg-video-sound-toggle:hover,
+.bg-video-sound-toggle:focus-visible,
+body.background-audio-focus .bg-video-sound-toggle {
+  transform: translateX(4px) !important;
 }
 
 /* ===== FINAL HERO SERVER SUMMARY 0605 ===== */

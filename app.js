@@ -69,6 +69,25 @@ const ACC_CONNECT_SERVER_FALLBACKS = {
     persistent: true
   }
 };
+const SERVER_STATUS_LABELS_BY_ID = {
+  "assetto-corsa-competizione-dedic": "ASG Racing Monza - SA Gainer 2",
+  "assetto-corsa-competizione-dedic-2": "ASG Racing Monza - Dynamic Weather",
+  "assetto-corsa-competizione-dedic-3": "ASG Racing Nurburgring - Live Leaderboard",
+  "assetto-corsa-competizione-dedic-4": "ASG Racing Nordschleife - Live Leaderboard",
+  "assetto-corsa-competizione-dedic-5": "ASG Racing Spa - Dynamic Weather",
+  "assetto-corsa-competizione-dedic-6": "ASG Racing Spa - Live Leaderboard"
+};
+const SERVER_STATUS_ORDER_BY_ID = {
+  hourly: 10,
+  main: 20,
+  sunset: 30,
+  "assetto-corsa-competizione-dedic-4": 40,
+  "assetto-corsa-competizione-dedic-2": 50,
+  "assetto-corsa-competizione-dedic-3": 60,
+  "assetto-corsa-competizione-dedic-5": 70,
+  "assetto-corsa-competizione-dedic": 80,
+  "assetto-corsa-competizione-dedic-6": 90
+};
 const PAGE_SIZE = 10;
 const VOTER_ID_STORAGE_TTL_MS = 365 * 24 * 60 * 60 * 1000;
 
@@ -6579,10 +6598,14 @@ function getServerDisplayLabel(key, server, fallbackLabel = "") {
   if (cleanedName && !isGenericServerName(cleanedName, key)) {
     return cleanedName;
   }
+  if (SERVER_STATUS_LABELS_BY_ID[key]) {
+    return SERVER_STATUS_LABELS_BY_ID[key];
+  }
   return fallbackLabel || key || cleanedName || "-";
 }
 
 function getServerSortWeight(key, label, server) {
+  if (Number.isFinite(SERVER_STATUS_ORDER_BY_ID[key])) return SERVER_STATUS_ORDER_BY_ID[key];
   const haystack = `${key || ""} ${label || ""} ${server?.track_code || ""} ${server?.track || ""}`.toLowerCase();
   if (haystack.includes("hourly") || haystack.includes("час")) return 10;
   if (key === "main" || haystack.includes("глав")) return 20;
@@ -6610,6 +6633,10 @@ function normalizeAccConnectConfig(status, fallback = {}) {
   )).trim();
   const port = Number(pickFirstNonEmpty(
     status?.acc_connect_port,
+    status?.connect_port,
+    status?.public_tcp_port,
+    status?.public_port,
+    status?.tcp,
     status?.tcp_port,
     status?.tcpPort,
     status?.port,
@@ -6769,7 +6796,7 @@ function renderServerStickyWidget(serverStatus = serverStatusData) {
   const cardsEl = document.querySelector(".server-sticky-cards");
   if (!cardsEl) return;
 
-  const items = getServerStatusItems(serverStatus).slice(0, 7);
+  const items = getServerStatusItems(serverStatus);
   if (!items.length) {
     cardsEl.innerHTML = "";
     return;
