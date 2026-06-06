@@ -7814,26 +7814,29 @@ function renderPenaltyList(containerId, entries, labelKey) {
 function getDriverRankInfo(profile) {
   const publicId = profile?.public_id;
   const summaryRank = profile?.summary?.championship_rank;
-  if (summaryRank) {
+  const rankingSource = Array.isArray(leaderboardData) && leaderboardData.length
+    ? leaderboardData
+    : Array.isArray(driverIndexData) && driverIndexData.length
+      ? driverIndexData
+      : [];
+  const index = publicId && rankingSource.length
+    ? rankingSource.findIndex(row => row?.public_id === publicId)
+    : -1;
+  const liveRow = index >= 0 ? rankingSource[index] : null;
+  const liveRank = liveRow?.rank || (index >= 0 ? index + 1 : null);
+  const liveChange = liveRow?.rank_change || liveRow?.latest_changes?.championship_rank || null;
+
+  if (liveRank) {
     return {
-      rank: summaryRank,
-      rankClass: summaryRank === 1 ? "rank-1" : summaryRank === 2 ? "rank-2" : summaryRank === 3 ? "rank-3" : "rank-default",
-      change: profile?.summary?.latest_changes?.championship_rank || null,
+      rank: liveRank,
+      rankClass: liveRank === 1 ? "rank-1" : liveRank === 2 ? "rank-2" : liveRank === 3 ? "rank-3" : "rank-default",
+      change: liveChange,
     };
   }
-  const rankingSource = Array.isArray(driverIndexData) && driverIndexData.length
-    ? driverIndexData
-    : Array.isArray(leaderboardData) && leaderboardData.length
-      ? leaderboardData
-      : [];
-  if (!publicId || !rankingSource.length) return null;
-
-  const index = rankingSource.findIndex(row => row?.public_id === publicId);
-  if (index === -1) return null;
-
+  if (!summaryRank) return null;
   return {
-    rank: profile?.summary?.championship_rank || index + 1,
-    rankClass: index === 0 ? "rank-1" : index === 1 ? "rank-2" : index === 2 ? "rank-3" : "rank-default",
+    rank: summaryRank,
+    rankClass: summaryRank === 1 ? "rank-1" : summaryRank === 2 ? "rank-2" : summaryRank === 3 ? "rank-3" : "rank-default",
     change: profile?.summary?.latest_changes?.championship_rank || null,
   };
 }
