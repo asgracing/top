@@ -82,6 +82,8 @@ const SERVER_STATUS_ORDER_BY_ID = {
 };
 const PAGE_SIZE = 10;
 const VOTER_ID_STORAGE_TTL_MS = 365 * 24 * 60 * 60 * 1000;
+const HOURLY_VOTE_STATE_STORAGE_KEY = "hourlyVoteStateByEventId";
+const HOURLY_VOTE_STATE_STORAGE_TTL_MS = 30 * 24 * 60 * 60 * 1000;
 
 function getLegalUrls() {
   const fallbackBase =
@@ -137,6 +139,81 @@ function getExpiringStorageValue(storageKey, ttlMs) {
     })
   );
   return generated;
+}
+
+function loadHourlyStoredVoteState() {
+  try {
+    const rawValue = localStorage.getItem(HOURLY_VOTE_STATE_STORAGE_KEY);
+    if (!rawValue) return {};
+    const parsed = JSON.parse(rawValue);
+    if (!parsed || typeof parsed !== "object") return {};
+    if (parsed.expiresAt && Number(parsed.expiresAt) <= Date.now()) {
+      localStorage.removeItem(HOURLY_VOTE_STATE_STORAGE_KEY);
+      return {};
+    }
+    return parsed.items && typeof parsed.items === "object" ? parsed.items : {};
+  } catch (error) {
+    return {};
+  }
+}
+
+function normalizeHourlyVoteStateItems(items) {
+  return Object.fromEntries(
+    Object.entries(items || {})
+      .filter(([eventId, state]) => eventId && state && typeof state === "object")
+      .map(([eventId, state]) => [
+        eventId,
+        {
+          event_id: state.event_id || eventId,
+          votes: typeof state.votes === "number" ? state.votes : 0,
+          already_voted: Boolean(state.already_voted)
+        }
+      ])
+  );
+}
+
+function saveHourlyStoredVoteState(items) {
+  try {
+    localStorage.setItem(
+      HOURLY_VOTE_STATE_STORAGE_KEY,
+      JSON.stringify({
+        items: normalizeHourlyVoteStateItems(items),
+        updatedAt: Date.now(),
+        expiresAt: Date.now() + HOURLY_VOTE_STATE_STORAGE_TTL_MS
+      })
+    );
+  } catch (error) {
+    // Vote cache is only a UI sync layer between pages.
+  }
+}
+
+function mergeHourlyStoredVoteStateItems(items) {
+  const mergedItems = {
+    ...loadHourlyStoredVoteState(),
+    ...normalizeHourlyVoteStateItems(items)
+  };
+  saveHourlyStoredVoteState(mergedItems);
+  return mergedItems;
+}
+
+function applyHourlyAnnouncementVoteState(state) {
+  if (!state || typeof state !== "object") return false;
+  hourlyVotesCount = typeof state.votes === "number" ? state.votes : 0;
+  hourlyVoteAlreadyVoted = Boolean(state.already_voted);
+  hourlyVoteFailed = false;
+  return true;
+}
+
+function applyHourlyAnnouncementVoteStateFromCache(announcement = hourlyAnnouncementData) {
+  const eventId = buildHourlyAnnouncementEventId(announcement);
+  if (!eventId) return false;
+  return applyHourlyAnnouncementVoteState(loadHourlyStoredVoteState()[eventId]);
+}
+
+function syncHourlyVoteStateFromStorage() {
+  if (!applyHourlyAnnouncementVoteStateFromCache()) return;
+  renderHourlyHeroCard();
+  renderHourlyHeroModal();
 }
 
 function resolveInitialLanguage() {
@@ -2253,6 +2330,7 @@ async function loadHourlyVotes(announcement) {
     hourlyVoteFailed = false;
     return;
   }
+  applyHourlyAnnouncementVoteStateFromCache(announcement);
   try {
     const url = new URL("/votes", hourlyVotesApiUrl);
     url.searchParams.set("event_ids", eventId);
@@ -2261,10 +2339,8 @@ async function loadHourlyVotes(announcement) {
     if (!response.ok) throw new Error(`HTTP ${response.status}`);
     const payload = await response.json();
     const item = payload?.items?.[eventId];
-    const count = item?.votes;
-    hourlyVotesCount = typeof count === "number" ? count : 0;
-    hourlyVoteAlreadyVoted = Boolean(item?.already_voted);
-    hourlyVoteFailed = false;
+    applyHourlyAnnouncementVoteState(item);
+    mergeHourlyStoredVoteStateItems({ [eventId]: item });
   } catch (error) {
     console.warn("hourly votes are unavailable.", error);
     hourlyVotesCount = null;
@@ -2304,9 +2380,13 @@ async function submitHourlyHeroVote() {
     });
     if (!response.ok) throw new Error(`HTTP ${response.status}`);
     const payload = await response.json();
-    hourlyVotesCount = typeof payload?.votes === "number" ? payload.votes : hourlyVotesCount;
-    hourlyVoteAlreadyVoted = Boolean(payload?.already_voted);
-    hourlyVoteFailed = false;
+    const nextState = {
+      event_id: eventId,
+      votes: typeof payload?.votes === "number" ? payload.votes : hourlyVotesCount,
+      already_voted: Boolean(payload?.already_voted)
+    };
+    applyHourlyAnnouncementVoteState(nextState);
+    mergeHourlyStoredVoteStateItems({ [eventId]: nextState });
   } catch (error) {
     console.warn("hourly hero vote failed.", error);
     hourlyVoteFailed = true;
@@ -9018,6 +9098,11 @@ async function init() {
   bindBackgroundVideoSoundToggle();
   optimizeBackgroundMedia();
   initDonationAlertsWidget();
+  window.addEventListener("storage", event => {
+    if (event.key === HOURLY_VOTE_STATE_STORAGE_KEY) {
+      syncHourlyVoteStateFromStorage();
+    }
+  });
   window.addEventListener("resize", debounce(() => {
     updateTopNavModalOffset();
     optimizeBackgroundMedia();
