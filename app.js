@@ -71,7 +71,7 @@ const ACC_CONNECT_SERVER_FALLBACKS = {
 };
 const SERVER_STATUS_LABELS_BY_ID = {
   "assetto-corsa-competizione-dedic": "ASG Racing Monza - SA Gainer 2",
-  "assetto-corsa-competizione-dedic-2": "ASG Racing Monza - Dynamic Weather",
+  "assetto-corsa-competizione-dedic-2": "ASG Racing Nordschleife Practice",
   "assetto-corsa-competizione-dedic-3": "ASG Racing Nurburgring - Live Leaderboard",
   "assetto-corsa-competizione-dedic-4": "ASG Racing Nordschleife - Live Leaderboard",
   "assetto-corsa-competizione-dedic-5": "ASG Racing Spa - Dynamic Weather",
