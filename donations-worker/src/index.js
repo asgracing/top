@@ -122,10 +122,12 @@ function normalizeGoalPayload(data) {
 function sanitizeDonationGoal(goal) {
   const raisedAmount = safeAmount(goal?.raised_amount);
   const goalAmount = safeAmount(goal?.goal_amount);
+  const isActive = Number(goal?.is_active) === 1;
   if (raisedAmount === null || goalAmount === null || goalAmount <= 0) return null;
+  if (!isActive) return null;
   return {
     id: safeString(goal?.id, 64),
-    is_active: Number(goal?.is_active) === 1,
+    is_active: isActive,
     title: safeString(goal?.title, 120),
     currency: safeString(goal?.currency, 8).toUpperCase(),
     start_amount: safeAmount(goal?.start_amount),
@@ -306,15 +308,19 @@ async function fetchDonationGoalFromWidget(env) {
 }
 
 async function getDonationGoal(env, tokens) {
-  const widgetGoal = await fetchDonationGoalFromWidget(env).catch(() => null);
-  if (widgetGoal) return widgetGoal;
-  if (!tokens) return null;
-  return fetchDonationGoal(env, tokens).catch(() => null);
+  if (tokens) {
+    const activeGoal = await fetchDonationGoal(env, tokens).catch(() => null);
+    if (activeGoal) return activeGoal;
+  }
+  return fetchDonationGoalFromWidget(env).catch(() => null);
 }
 
 async function readRecentCache(env) {
   const cache = await env.DONATION_ALERTS_KV.get(RECENT_CACHE_KV_KEY, "json");
   if (!cache?.items || !cache?.cached_at) return null;
+  if (cache.goal && !cache.goal.is_active) {
+    return { ...cache, goal: null };
+  }
   return cache;
 }
 
@@ -365,10 +371,10 @@ async function handleRecent(env, origin) {
     return jsonResponse({ ok: true, ...cache }, 200, origin, { "cache-control": "public, max-age=60" });
   }
 
-  const goal = await getDonationGoal(env, null).catch(() => cache?.goal || null);
-
+  let goal = cache?.goal || null;
   try {
     const tokens = await getUsableTokens(env);
+    goal = await getDonationGoal(env, tokens).catch(() => cache?.goal || null);
     if (!tokens) {
       if (cache) {
         return jsonResponse({ ok: true, stale: true, ...cache, goal }, 200, origin, { "cache-control": "public, max-age=30" });
@@ -382,10 +388,9 @@ async function handleRecent(env, origin) {
     }
 
     const donations = await fetchDonations(env, tokens);
-    const freshGoal = goal || await getDonationGoal(env, tokens).catch(() => null);
     const payload = {
       items: donations.slice(0, getLimit(env)).map(sanitizeDonation),
-      goal: freshGoal,
+      goal,
       cached_at: new Date().toISOString()
     };
     await writeRecentCache(env, payload);
