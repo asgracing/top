@@ -2482,6 +2482,7 @@ function formatDonationAmount(amount, currency) {
 function renderDonationAlertsWidget() {
   const listEl = document.getElementById("donation-alerts-list");
   const goalEl = document.getElementById("donation-alerts-goal");
+  const goalFallbackEl = document.getElementById("donation-alerts-goal-fallback");
   if (!listEl) return;
 
   if (goalEl) {
@@ -2491,6 +2492,7 @@ function renderDonationAlertsWidget() {
     if (goal && Number.isFinite(raisedAmount) && Number.isFinite(goalAmount) && goalAmount > 0) {
       const percent = Math.max(0, Math.min(100, Math.round((raisedAmount / goalAmount) * 100)));
       goalEl.hidden = false;
+      if (goalFallbackEl) goalFallbackEl.hidden = true;
       goalEl.innerHTML = `
         <div class="donation-alerts-goal-eyebrow">${escapeHtml(t("donationsWidgetGoalEyebrow"))}</div>
         <div class="donation-alerts-goal-title">${escapeHtml(goal.title || t("donationsWidgetGoalEyebrow"))}</div>
@@ -2506,6 +2508,7 @@ function renderDonationAlertsWidget() {
     } else {
       goalEl.hidden = true;
       goalEl.innerHTML = "";
+      if (goalFallbackEl) goalFallbackEl.hidden = false;
     }
   }
 
