@@ -2667,7 +2667,7 @@ function renderDonationAlertsWidget() {
     } else {
       goalEl.hidden = true;
       goalEl.innerHTML = "";
-      if (goalFallbackEl) goalFallbackEl.hidden = false;
+      if (goalFallbackEl) goalFallbackEl.hidden = true;
     }
   }
 
