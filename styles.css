@@ -10602,13 +10602,13 @@ body.background-audio-focus .bg-video-sound-toggle {
   .donation-alerts-widget {
     top: auto;
     right: 12px;
-    bottom: 12px;
+    bottom: 154px;
     left: auto;
     width: min(260px, calc(100vw - 24px));
   }
 
   .donation-alerts-list {
-    max-height: 300px;
+    max-height: 240px;
   }
 }
 
