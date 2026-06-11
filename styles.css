@@ -10053,6 +10053,18 @@ body.background-audio-focus .bg-video-sound-toggle {
   display: none;
 }
 
+.mini-stat-bestlap.bestlap-tracks-open {
+  width: 100%;
+  appearance: none;
+  cursor: pointer;
+  text-align: left;
+}
+
+.mini-stat-bestlap.bestlap-tracks-open:focus-visible {
+  outline: 2px solid rgba(237, 233, 254, 0.75);
+  outline-offset: 3px;
+}
+
 .bg-video-sound-toggle {
   top: auto !important;
   left: clamp(10px, 1.8vw, 22px);
