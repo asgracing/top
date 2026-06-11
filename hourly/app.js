@@ -7,13 +7,18 @@ const topApiBase = normalizeBaseUrl(pageParams.get("topApiBase"));
 const topApiRoot = topApiBase.replace(/\/top-data\/v2$/i, "");
 const hourlyApiRoot = hourlyApiBase.replace(/\/hourly-data$/i, "");
 const isAsgPublicSite = /(^|\.)asgracing\.ru$/i.test(window.location.hostname);
+const isLocalDevHost = /^(localhost|127\.0\.0\.1|::1)$/i.test(window.location.hostname);
 const defaultHourlyDataBaseUrl = isAsgPublicSite
   ? "https://data.asgracing.ru/hourly-data"
+  : isLocalDevHost
+    ? "https://data.asgracing.ru/hourly-data"
   : window.location.hostname === "asgracing.github.io"
     ? "https://asgracing.github.io/hourly-data"
     : "/hourly-data";
 const defaultTopDataBaseUrl = isAsgPublicSite
   ? "https://data.asgracing.ru/top-data"
+  : isLocalDevHost
+    ? "https://data.asgracing.ru/top-data"
   : window.location.hostname === "asgracing.github.io"
     ? "https://asgracing.github.io/top-data"
     : "/top-data";

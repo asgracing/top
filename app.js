@@ -10,13 +10,18 @@ function normalizeBaseUrl(value) {
   return String(value || "").replace(/\/+$/, "");
 }
 const IS_ASG_PUBLIC_SITE = /(^|\.)asgracing\.ru$/i.test(window.location.hostname);
+const IS_LOCAL_DEV_HOST = /^(localhost|127\.0\.0\.1|::1)$/i.test(window.location.hostname);
 const DEFAULT_TOP_DATA_BASE_URL = IS_ASG_PUBLIC_SITE
   ? "https://data.asgracing.ru/top-data"
+  : IS_LOCAL_DEV_HOST
+    ? "https://data.asgracing.ru/top-data"
   : window.location.hostname === "asgracing.github.io"
     ? "https://asgracing.github.io/top-data"
     : "/top-data";
 const DEFAULT_HOURLY_DATA_BASE_URL = IS_ASG_PUBLIC_SITE
   ? "https://data.asgracing.ru/hourly-data"
+  : IS_LOCAL_DEV_HOST
+    ? "https://data.asgracing.ru/hourly-data"
   : window.location.hostname === "asgracing.github.io"
     ? "https://asgracing.github.io/hourly-data"
     : "/hourly-data";
