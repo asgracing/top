@@ -74,10 +74,14 @@ function getExpiringStorageValue(storageKey, ttlMs) {
       const parsed = JSON.parse(rawValue);
       if (parsed && typeof parsed.value === "string") {
         if (!parsed.expiresAt || Number(parsed.expiresAt) > now) {
+          console.log(`[STORAGE] ${storageKey}: найдено сохраненное значение (expires in ${Number(parsed.expiresAt) - now}ms)`);
           return parsed.value;
+        } else {
+          console.log(`[STORAGE] ${storageKey}: значение истекло`);
         }
       }
     } catch (error) {
+      console.warn(`[STORAGE] ${storageKey}: ошибка парсинга`, error);
       if (rawValue.trim()) {
         localStorage.setItem(
           storageKey,
@@ -93,14 +97,19 @@ function getExpiringStorageValue(storageKey, ttlMs) {
   }
 
   const generated = `browser-${now.toString(36)}-${Math.random().toString(36).slice(2, 10)}`;
-  localStorage.setItem(
-    storageKey,
-    JSON.stringify({
-      value: generated,
-      createdAt: now,
-      expiresAt: now + ttlMs
-    })
-  );
+  console.log(`[STORAGE] ${storageKey}: генерируем новое значение: ${generated}`);
+  try {
+    localStorage.setItem(
+      storageKey,
+      JSON.stringify({
+        value: generated,
+        createdAt: now,
+        expiresAt: now + ttlMs
+      })
+    );
+  } catch (error) {
+    console.error(`[STORAGE] ${storageKey}: ошибка при сохранении в localStorage:`, error);
+  }
   return generated;
 }
 
@@ -120,20 +129,24 @@ function loadStoredVoteState() {
   }
 }
 
+function normalizeVoteStateItems(items) {
+  return Object.fromEntries(
+    Object.entries(items || {})
+      .filter(([eventId, state]) => eventId && state && typeof state === "object")
+      .map(([eventId, state]) => [
+        eventId,
+        {
+          event_id: state.event_id || eventId,
+          votes: typeof state.votes === "number" ? state.votes : 0,
+          already_voted: Boolean(state.already_voted)
+        }
+      ])
+  );
+}
+
 function saveStoredVoteState(items) {
   try {
-    const normalizedItems = Object.fromEntries(
-      Object.entries(items || {})
-        .filter(([eventId, state]) => eventId && state && typeof state === "object")
-        .map(([eventId, state]) => [
-          eventId,
-          {
-            event_id: state.event_id || eventId,
-            votes: typeof state.votes === "number" ? state.votes : 0,
-            already_voted: Boolean(state.already_voted)
-          }
-        ])
-    );
+    const normalizedItems = normalizeVoteStateItems(items);
     localStorage.setItem(
       VOTE_STATE_STORAGE_KEY,
       JSON.stringify({
@@ -144,6 +157,25 @@ function saveStoredVoteState(items) {
     );
   } catch (error) {
     // Vote cache is only a UI fallback; the worker remains the source of truth.
+  }
+}
+
+function mergeVoteStateItems(items) {
+  voteStateByEventId = {
+    ...voteStateByEventId,
+    ...normalizeVoteStateItems(items)
+  };
+  saveStoredVoteState(voteStateByEventId);
+}
+
+function syncVoteStateFromStorage() {
+  voteStateByEventId = loadStoredVoteState();
+  if (Array.isArray(scheduleItems) && scheduleItems.length) {
+    renderScheduleTable(scheduleItems);
+    renderHeroVote();
+  }
+  if (selectedScheduleItem && typeof renderScheduleModal === "function") {
+    renderScheduleModal();
   }
 }
 
@@ -462,6 +494,12 @@ let recentRacesTotalPages = 1;
 let selectedScheduleItem = null;
 let selectedRace = null;
 let hasLoadError = false;
+const hourlyLoadState = {
+  core: true,
+  recent: true
+};
+let recentRacesLoadPromise = null;
+let recentRacesObserver = null;
 let votesEnabled = Boolean(votesApiBase);
 let votesLoaded = false;
 let voteStateByEventId = loadStoredVoteState();
@@ -518,6 +556,77 @@ function setHtml(id, value) {
   if (element) element.innerHTML = value || escapeHtml(t("unknownValue"));
 }
 function compactJoin(parts) { return parts.filter(Boolean).join(" · "); }
+function renderLoadingMarkup(label = "") {
+  return `<div class="empty">${escapeHtml(label || t("loadingShort"))}</div>`;
+}
+function renderCoreLoadingState() {
+  setText("announcement-date", t("loadingShort"));
+  setText("announcement-time", t("loadingShort"));
+  setText("announcement-track", t("loadingShort"));
+  setText("hero-server-name", t("loadingShort"));
+  setText("hero-server-password", t("loadingShort"));
+  setText("hero-entry-rules", t("loadingShort"));
+  setText("hero-race-format", t("loadingShort"));
+  setText("hero-pitstop-rules", t("loadingShort"));
+  setText("hero-refuel-rules", t("loadingShort"));
+  setText("hero-tyre-rules", t("loadingShort"));
+  setText("hero-weather", t("loadingShort"));
+  setText("hero-championship-title", t("loadingShort"));
+  setText("hero-championship-meta", t("loadingShort"));
+  setText("hero-championship-badge", t("loadingShort"));
+  setText("hero-championship-track", t("loadingShort"));
+  setText("hero-championship-date", t("loadingShort"));
+  setText("hero-championship-weather", t("loadingShort"));
+  setText("hero-championship-format", t("loadingShort"));
+  setText("hero-championship-pit", t("loadingShort"));
+  setText("hero-championship-description", t("loadingShort"));
+
+  const voteEl = document.getElementById("hero-vote");
+  if (voteEl) voteEl.innerHTML = renderLoadingMarkup(t("loadingShort"));
+  const scheduleEl = document.getElementById("schedule-list");
+  if (scheduleEl) scheduleEl.innerHTML = renderLoadingMarkup(t("loadingShort"));
+  const calendarGridEl = document.getElementById("calendar-grid");
+  if (calendarGridEl) calendarGridEl.innerHTML = renderLoadingMarkup(t("loadingShort"));
+  const calendarCountEl = document.getElementById("calendar-count");
+  if (calendarCountEl) calendarCountEl.textContent = t("loadingShort");
+}
+function renderRecentRacesLoadingState() {
+  const container = document.getElementById("recent-races-table");
+  if (container) container.innerHTML = renderLoadingMarkup(t("loadingShort"));
+}
+function setupRecentRacesLazyLoad() {
+  if (recentRacesObserver || recentRacesLoadPromise) return;
+  const target = document.getElementById("recent-races");
+  if (!target || !("IntersectionObserver" in window)) {
+    void ensureRecentRacesLoaded();
+    return;
+  }
+
+  recentRacesObserver = new IntersectionObserver((entries) => {
+    if (!entries.some(entry => entry.isIntersecting)) return;
+    recentRacesObserver?.disconnect();
+    recentRacesObserver = null;
+    void ensureRecentRacesLoaded();
+  }, { rootMargin: "240px 0px" });
+
+  recentRacesObserver.observe(target);
+}
+async function ensureRecentRacesLoaded() {
+  if (recentRacesLoadPromise) return recentRacesLoadPromise;
+
+  recentRacesLoadPromise = (async () => {
+    try {
+      await loadRecentRacesPage(1);
+    } catch (error) {
+      console.error(error);
+    } finally {
+      hourlyLoadState.recent = false;
+      renderUI();
+    }
+  })();
+
+  return recentRacesLoadPromise;
+}
 function setHeroCopyButtonLabel(button, copied = false) {
   if (!button) return;
   const fieldLabel = t(button.dataset.copyLabelKey || "") || "";
@@ -999,7 +1108,7 @@ function buildSlotEventId(item) {
   const explicitId = canonicalizeSlotEventId(item?.event_id);
   if (explicitId) return explicitId;
   const date = String(item?.date || "").trim();
-  const time = String(item?.start_time_local || "").trim().replace(":", "");
+  const time = String(item?.start_time_local || "").trim().replace(/[^0-9]/g, "");
   if (!date || !time) return "";
   return normalizeEventId(`hourly_${date}_${time}`);
 }
@@ -1033,13 +1142,14 @@ async function loadVotesForSchedule(items) {
     url.searchParams.set("event_ids", eventIds.join(","));
     url.searchParams.set("voter_id", getBrowserVoterId());
     const response = await fetchWithTimeout(url, { cache: "no-store" });
-    if (!response.ok) throw new Error(`HTTP ${response.status}`);
+    if (!response.ok) {
+      throw new Error(`HTTP ${response.status}`);
+    }
     const payload = await response.json();
     if (payload?.items && typeof payload.items === "object") {
-      voteStateByEventId = { ...voteStateByEventId, ...payload.items };
+      mergeVoteStateItems(payload.items);
       votesEnabled = true;
       votesLoaded = true;
-      saveStoredVoteState(voteStateByEventId);
     }
   } catch (error) {
     if (error?.name !== "AbortError") {
@@ -1055,25 +1165,29 @@ async function submitVote(item) {
   pendingVoteEventIds.add(eventId);
   renderScheduleTable(scheduleItems);
   try {
+    const voterId = getBrowserVoterId();
+    const body = {
+      event_id: eventId,
+      track: getLocalizedField(item, "track_name", item?.track_name || item?.track_code || "-"),
+      date: item?.date || "",
+      time: item?.start_time_local || "",
+      voter_id: voterId
+    };
     const response = await fetch(new URL("/vote", votesApiBase), {
       method: "POST",
       headers: { "content-type": "application/json; charset=utf-8" },
-      body: JSON.stringify({
-        event_id: eventId,
-        track: getLocalizedField(item, "track_name", item?.track_name || item?.track_code || "-"),
-        date: item?.date || "",
-        time: item?.start_time_local || "",
-        voter_id: getBrowserVoterId()
-      })
+      body: JSON.stringify(body)
     });
-    if (!response.ok) throw new Error(`HTTP ${response.status}`);
+    if (!response.ok) {
+      throw new Error(`HTTP ${response.status}`);
+    }
     const payload = await response.json();
     voteStateByEventId[eventId] = {
       event_id: eventId,
       votes: typeof payload?.votes === "number" ? payload.votes : 0,
       already_voted: Boolean(payload?.already_voted)
     };
-    saveStoredVoteState(voteStateByEventId);
+    mergeVoteStateItems({ [eventId]: voteStateByEventId[eventId] });
   } catch (error) {
     console.warn("hourly vote failed.", error);
     voteStateByEventId[eventId] = {
@@ -1112,7 +1226,7 @@ async function submitUnvote(item) {
       votes: typeof payload?.votes === "number" ? payload.votes : 0,
       already_voted: Boolean(payload?.already_voted)
     };
-    saveStoredVoteState(voteStateByEventId);
+    mergeVoteStateItems({ [eventId]: voteStateByEventId[eventId] });
   } catch (error) {
     console.warn("hourly unvote failed.", error);
     voteStateByEventId[eventId] = {
@@ -1302,24 +1416,6 @@ function renderHeroDetails(data) {
   setHeroTokenValue("hero-weather", buildWeatherTokenGroups(weather));
   updateHeroConnectLink(server);
 }
-function findNextChampionshipEvent(rows) {
-  if (!Array.isArray(rows)) return null;
-  const today = getMoscowDateParts();
-  return rows
-    .filter(isChampionshipEvent)
-    .map(item => ({ item, dateParts: parseIsoDateParts(item?.date) }))
-    .filter(({ dateParts }) => dateParts && (
-      dateParts.year > today.year ||
-      dateParts.year === today.year && dateParts.month > today.month ||
-      dateParts.year === today.year && dateParts.month === today.month && dateParts.day >= today.day
-    ))
-    .sort((a, b) =>
-      a.dateParts.year - b.dateParts.year ||
-      a.dateParts.month - b.dateParts.month ||
-      a.dateParts.day - b.dateParts.day
-    )
-    .map(({ item }) => item)[0] || null;
-}
 function renderChampionshipHero(data) {
   const titleEl = document.getElementById("hero-championship-title");
   const metaEl = document.getElementById("hero-championship-meta");
@@ -1334,23 +1430,21 @@ function renderChampionshipHero(data) {
   const championship = data?.championship || {};
   const session = data?.session || {};
   const rules = data?.rules || {};
-  const nextChampionshipEvent = findNextChampionshipEvent(scheduleItems);
-  const title = data?.championship_title || championship.title || nextChampionshipEvent?.championship_title || "ASG Racing June 2026";
-  const slug = data?.championship_slug || championship.slug || nextChampionshipEvent?.championship_slug;
+  const nextChampionship = scheduleItems.find(isChampionshipEvent) || (isChampionshipEvent(data) ? data : null);
+  const title = data?.championship_title || championship.title || nextChampionship?.championship_title || "ASG Racing June 2026";
+  const slug = data?.championship_slug || championship.slug || nextChampionship?.championship_slug;
   const championshipUrl = slug ? `./championship/?slug=${encodeURIComponent(slug)}` : "./championship/";
-  const meta = [championship.period, championship.status].filter(Boolean).join(" · ") || (nextChampionshipEvent ? `${formatDate(nextChampionshipEvent.date)} · ${nextChampionshipEvent.start_time_local || "--"}` : eventBadgeLabel(data));
-  const description = championship.description || (nextChampionshipEvent ? `${currentLang === "ru" ? "Ближайшая гонка чемпионата:" : "Next championship event:"} ${getLocalizedField(nextChampionshipEvent, "track_name", nextChampionshipEvent.track_name || nextChampionshipEvent.track_code || "--")}` : t("championshipNoDescription"));
   if (titleEl) titleEl.textContent = title;
-  if (metaEl) metaEl.textContent = meta;
-  if (badgeEl) badgeEl.textContent = nextChampionshipEvent ? eventBadgeLabel(nextChampionshipEvent) : t("championshipBadge");
-  if (trackEl) trackEl.textContent = nextChampionshipEvent ? getLocalizedField(nextChampionshipEvent, "track_name", nextChampionshipEvent.track_code || "--") : t("unknownValue");
-  if (dateEl) dateEl.textContent = nextChampionshipEvent ? formatScheduleDateTime(nextChampionshipEvent) : t("unknownValue");
-  if (weatherEl) weatherEl.textContent = nextChampionshipEvent ? buildScheduleCardWeather(nextChampionshipEvent) : t("unknownValue");
+  if (metaEl) metaEl.textContent = [championship.period, championship.status].filter(Boolean).join(" · ") || eventBadgeLabel(nextChampionship || data);
+  if (badgeEl) badgeEl.textContent = nextChampionship ? eventBadgeLabel(nextChampionship) : t("championshipBadge");
+  if (trackEl) trackEl.textContent = nextChampionship ? getLocalizedField(nextChampionship, "track_name", nextChampionship.track_code || "--") : t("unknownValue");
+  if (dateEl) dateEl.textContent = nextChampionship ? formatScheduleDateTime(nextChampionship) : t("unknownValue");
+  if (weatherEl) weatherEl.textContent = nextChampionship ? buildScheduleCardWeather(nextChampionship) : t("unknownValue");
   if (formatEl) formatEl.textContent = session.format_label || t("unknownValue");
   if (pitEl) pitEl.textContent = typeof rules.mandatory_pitstop_count === "number"
     ? `${t("heroPitstopLabel")}: ${rules.mandatory_pitstop_count}${rules.pit_window_length_minutes ? ` / ${rules.pit_window_length_minutes}m` : ""}`
     : t("unknownValue");
-  if (descriptionEl) descriptionEl.textContent = description;
+  if (descriptionEl) descriptionEl.textContent = championship.description || t("championshipNoDescription");
   if (buttonEl) {
     buttonEl.textContent = title;
     buttonEl.href = championshipUrl;
@@ -1808,13 +1902,19 @@ function renderUI() {
     renderErrorState();
     return;
   }
+  if (hourlyLoadState.core) {
+    renderCoreLoadingState();
+    if (hourlyLoadState.recent) renderRecentRacesLoadingState();
+    return;
+  }
   renderAnnouncement(announcementData || {});
   renderHeroDetails(announcementData || {});
   renderChampionshipHero(announcementData || {});
   renderHeroVote();
   renderScheduleTable(scheduleItems);
   renderCalendar(scheduleItems);
-  renderRecentRaces(recentRaceItems);
+  if (hourlyLoadState.recent) renderRecentRacesLoadingState();
+  else renderRecentRaces(recentRaceItems);
   renderScheduleModal();
   renderRaceResultsModal();
 }
@@ -1927,6 +2027,11 @@ function bindTopNavMoreMenu() {
 }
 
 async function init() {
+  window.addEventListener("storage", event => {
+    if (event.key === VOTE_STATE_STORAGE_KEY) {
+      syncVoteStateFromStorage();
+    }
+  });
   currentLang = resolveInitialLanguage();
   bindLanguageButtons();
   bindTopNavMoreMenu();
@@ -1936,18 +2041,18 @@ async function init() {
   bindChampionshipCardLink();
   renderUI();
   try {
-    const [announcement, schedule, recentRaces, serverStatus] = await Promise.all([
+    const [announcement, schedule, serverStatus] = await Promise.all([
       loadJson(announcementUrl),
       loadJson(scheduleUrl),
-      loadRecentRacesPage(1),
       loadJson(serverStatusUrl).catch(() => null)
     ]);
     announcementData = announcement || {};
     serverStatusData = serverStatus && typeof serverStatus === "object" ? serverStatus : null;
     scheduleItems = buildScheduleItems(schedule, announcementData);
-    recentRaceItems = Array.isArray(recentRaces) ? recentRaces : [];
     hasLoadError = false;
+    hourlyLoadState.core = false;
     renderUI();
+    setupRecentRacesLazyLoad();
     loadVotesForSchedule(scheduleItems.slice(0, 3)).finally(() => {
       renderUI();
     });

@@ -258,6 +258,135 @@ const topDataV2PagedTables = {
 };
 let latestHourlyRaceData = null;
 let racesArchiveMeta = null;
+const IS_TOP_HOME_PAGE = !(IS_RACES_PAGE || IS_DRIVER_PAGE || IS_CARS_PAGE || IS_FUN_STATS_PAGE || IS_COMMUNITY_PAGE);
+const topLoadState = {
+  home: IS_TOP_HOME_PAGE,
+  hourly: IS_TOP_HOME_PAGE,
+  races: IS_RACES_PAGE,
+  driver: IS_DRIVER_PAGE,
+  cars: IS_CARS_PAGE,
+  funStats: IS_FUN_STATS_PAGE,
+  community: IS_COMMUNITY_PAGE
+};
+const topHomeDeferredSections = {
+  leaderboard: !IS_TOP_HOME_PAGE,
+  bestlaps: !IS_TOP_HOME_PAGE,
+  safety: !IS_TOP_HOME_PAGE
+};
+let topHomeDeferredObserver = null;
+
+function renderLoadingMarkup(label = "") {
+  return `<div class="loading">${escapeHtml(label || t("loading"))}</div>`;
+}
+
+function setLoadingMarkup(containerId, labelKey = "loading") {
+  const element = document.getElementById(containerId);
+  if (!element) return;
+  element.innerHTML = renderLoadingMarkup(t(labelKey));
+}
+
+function setLoadingText(elementId, labelKey = "loading") {
+  const element = document.getElementById(elementId);
+  if (element) element.textContent = t(labelKey);
+}
+
+function renderDeferredHomeTableLoading(tableId, paginationWrapId, labelKey) {
+  setLoadingMarkup(tableId, labelKey);
+  const wrap = document.getElementById(paginationWrapId);
+  if (wrap) wrap.style.display = "none";
+}
+
+function applyInitialTopLoadingState() {
+  if (IS_DRIVER_PAGE) {
+    const statsEl = document.getElementById("driver-stat-cards");
+    if (statsEl) statsEl.innerHTML = renderLoadingMarkup(t("driverLoading"));
+    setLoadingMarkup("driver-races-table", "driverLoading");
+    setLoadingMarkup("driver-tracks-table", "driverLoading");
+    return;
+  }
+
+  if (IS_CARS_PAGE) {
+    setLoadingMarkup("cars-table", "loading");
+    return;
+  }
+
+  if (IS_FUN_STATS_PAGE) {
+    setLoadingMarkup("fun-stats-summary", "loading");
+    setLoadingMarkup("fun-stats-awards", "loading");
+    setLoadingText("fun-stats-range", "loading");
+    return;
+  }
+
+  if (IS_COMMUNITY_PAGE) {
+    setLoadingMarkup("community-feed", "loading");
+    return;
+  }
+
+  if (IS_RACES_PAGE) {
+    setLoadingMarkup("races-table", "loading");
+    return;
+  }
+
+  const top3El = document.getElementById("top3-content");
+  if (top3El) top3El.innerHTML = renderLoadingMarkup(t("loading"));
+
+  renderDeferredHomeTableLoading("leaderboard-table", "leaderboard-pagination-wrap", "loadingLeaderboard");
+  renderDeferredHomeTableLoading("bestlaps-table", "bestlaps-pagination-wrap", "loadingBestLaps");
+  renderDeferredHomeTableLoading("safety-table", "safety-pagination-wrap", "loadingSafety");
+
+  setLoadingText("drivers-count");
+  setLoadingText("servers-online-count");
+  setLoadingText("serverPlayersValue");
+  setLoadingText("best-lap-highlight");
+  setLoadingText("best-lap-note");
+  setLoadingText("hourly-track-value");
+  setLoadingText("hourly-starts-value");
+  setLoadingText("hourly-votes-summary");
+  setLoadingText("hero-hourly-winner-name");
+  setLoadingText("hero-hourly-winner-meta");
+
+  const onlineChartEl = document.getElementById("online-chart");
+  const onlineRangeEl = document.getElementById("online-range");
+  const onlineScaleEl = document.getElementById("online-scale");
+  if (onlineChartEl) onlineChartEl.innerHTML = `<div class="hero-online-empty">${escapeHtml(t("loading"))}</div>`;
+  if (onlineRangeEl) onlineRangeEl.textContent = t("loading");
+  if (onlineScaleEl) onlineScaleEl.innerHTML = `<span>0</span>`;
+
+  const serverCardsEl = document.querySelector(".server-sticky-cards");
+  if (serverCardsEl) serverCardsEl.innerHTML = renderLoadingMarkup(t("loading"));
+}
+
+function setupTopHomeDeferredSections() {
+  if (!IS_TOP_HOME_PAGE || topHomeDeferredObserver) return;
+  if (!("IntersectionObserver" in window)) {
+    topHomeDeferredSections.leaderboard = true;
+    topHomeDeferredSections.bestlaps = true;
+    topHomeDeferredSections.safety = true;
+    return;
+  }
+
+  const sectionMap = {
+    championship: "leaderboard",
+    bestlaps: "bestlaps",
+    "worst-safety": "safety"
+  };
+
+  topHomeDeferredObserver = new IntersectionObserver((entries) => {
+    entries.forEach((entry) => {
+      if (!entry.isIntersecting) return;
+      const key = sectionMap[entry.target.id];
+      if (!key || topHomeDeferredSections[key]) return;
+      topHomeDeferredSections[key] = true;
+      topHomeDeferredObserver?.unobserve(entry.target);
+      rerenderUI();
+    });
+  }, { rootMargin: "240px 0px" });
+
+  Object.keys(sectionMap).forEach((sectionId) => {
+    const element = document.getElementById(sectionId);
+    if (element) topHomeDeferredObserver.observe(element);
+  });
+}
 let racesArchiveSummary = null;
 let funStatsApiData = null;
 let leaderboardPage = 1;
@@ -1882,6 +2011,13 @@ function renderOnlineWidget() {
   if (cardEl) cardEl.setAttribute("aria-label", t("onlineActivityOpenLabel"));
   if (!chartEl || !scaleEl || !rangeEl) return;
 
+  if (topLoadState.home && !onlineData.length) {
+    chartEl.innerHTML = `<div class="hero-online-empty">${escapeHtml(t("loading"))}</div>`;
+    scaleEl.innerHTML = `<span>0</span>`;
+    rangeEl.textContent = t("loading");
+    return;
+  }
+
   const prepared = getLast7DaysOnline(onlineData);
 
   if (!prepared.length) {
@@ -2178,6 +2314,16 @@ function renderHourlyHeroCard() {
 
   if (!startsEl || !trackEl || !votesEl || !cardEl || !voteBtn) return;
 
+  if (topLoadState.hourly && !hourlyAnnouncementData) {
+    trackEl.textContent = t("loading");
+    startsEl.textContent = t("loading");
+    votesEl.textContent = t("loading");
+    voteBtn.textContent = t("loading");
+    voteBtn.disabled = true;
+    voteBtn.hidden = false;
+    return;
+  }
+
   const data = hourlyAnnouncementData;
   const isChampionship = isHourlyChampionshipEvent(data);
   trackEl.textContent = data?.track_name || t("hourlyNoEvent");
@@ -2269,6 +2415,14 @@ function renderHourlyWinnerCard() {
   const metaEl = document.getElementById("hero-hourly-winner-meta");
   const mediaEl = document.getElementById("hero-hourly-winner-media");
   if (!cardEl || !nameEl || !metaEl || !mediaEl) return;
+
+  if (topLoadState.hourly && !latestHourlyRaceData) {
+    cardEl.classList.add("is-empty");
+    nameEl.textContent = t("loading");
+    metaEl.textContent = t("loading");
+    mediaEl.innerHTML = "";
+    return;
+  }
 
   const race = getLatestHourlyRace();
   if (!race) {
@@ -4110,6 +4264,14 @@ function renderFunStatsPage() {
 
   if (!summaryEl || !awardsEl || !leaderboardsEl || !rangeEl) return;
 
+  if (topLoadState.funStats) {
+    summaryEl.innerHTML = renderLoadingMarkup(t("loading"));
+    awardsEl.innerHTML = renderLoadingMarkup(t("loading"));
+    leaderboardsEl.innerHTML = "";
+    rangeEl.textContent = t("loading");
+    return;
+  }
+
   toggleButtons.forEach(button => {
     const active = button.dataset.funPeriod === funStatsPeriod;
     button.classList.toggle("active", active);
@@ -4486,6 +4648,11 @@ function renderCommunityPost(post) {
 function renderCommunityPage() {
   const listEl = document.getElementById("community-feed");
   if (!listEl) return;
+
+  if (topLoadState.community) {
+    listEl.innerHTML = renderLoadingMarkup(t("loading"));
+    return;
+  }
 
   const posts = Array.isArray(window.ASG_COMMUNITY_POSTS) ? window.ASG_COMMUNITY_POSTS : [];
   const sortedPosts = [...posts].sort((a, b) => {
@@ -6158,14 +6325,20 @@ function bindBestlapsSortHandlers() {
 }
 
 function renderLeaderboardTablePage() {
-  const result = getServerPagedTableResult("leaderboard", leaderboardPage) ||
-    getPreviewAwareTablePage("leaderboard", getProcessedLeaderboard(), leaderboardPage, PAGE_SIZE);
-  leaderboardPage = result.page;
-
   const tableEl = document.getElementById("leaderboard-table");
   const wrapEl = document.getElementById("leaderboard-pagination-wrap");
 
   if (!tableEl || !wrapEl) return;
+
+  if (topLoadState.home && !leaderboardData.length) {
+    tableEl.innerHTML = renderLoadingMarkup(t("loadingLeaderboard"));
+    wrapEl.style.display = "none";
+    return;
+  }
+
+  const result = getServerPagedTableResult("leaderboard", leaderboardPage) ||
+    getPreviewAwareTablePage("leaderboard", getProcessedLeaderboard(), leaderboardPage, PAGE_SIZE);
+  leaderboardPage = result.page;
 
   if (!result.totalItems) {
     tableEl.innerHTML = `<div class="empty-box">${escapeHtml(leaderboardSearch ? t("emptySearch") : t("emptyLeaderboard"))}</div>`;
@@ -6234,14 +6407,20 @@ function renderLeaderboardTablePage() {
 
 function renderBestLapsTablePage() {
   renderBestlapsTrackFilter();
-  const result = getServerPagedTableResult("bestlaps", bestlapsPage) ||
-    getPreviewAwareTablePage("bestlaps", getProcessedBestlaps(), bestlapsPage, PAGE_SIZE);
-  bestlapsPage = result.page;
-
   const tableEl = document.getElementById("bestlaps-table");
   const wrapEl = document.getElementById("bestlaps-pagination-wrap");
 
   if (!tableEl || !wrapEl) return;
+
+  if (topLoadState.home && !bestlapsData.length) {
+    tableEl.innerHTML = renderLoadingMarkup(t("loadingBestLaps"));
+    wrapEl.style.display = "none";
+    return;
+  }
+
+  const result = getServerPagedTableResult("bestlaps", bestlapsPage) ||
+    getPreviewAwareTablePage("bestlaps", getProcessedBestlaps(), bestlapsPage, PAGE_SIZE);
+  bestlapsPage = result.page;
 
   if (!result.totalItems) {
     tableEl.innerHTML = `<div class="empty-box">${escapeHtml(bestlapsSearch ? t("emptySearch") : t("emptyBestLaps"))}</div>`;
@@ -6333,13 +6512,19 @@ function renderSafetyPenaltyBreakdown(row) {
 }
 
 function renderSafetyTablePage() {
-  const result = getPreviewAwareTablePage("safety", getProcessedSafety(), safetyPage, PAGE_SIZE);
-  safetyPage = result.page;
-
   const tableEl = document.getElementById("safety-table");
   const wrapEl = document.getElementById("safety-pagination-wrap");
 
   if (!tableEl || !wrapEl) return;
+
+  if (topLoadState.home && !safetyData.length) {
+    tableEl.innerHTML = renderLoadingMarkup(t("loadingSafety"));
+    wrapEl.style.display = "none";
+    return;
+  }
+
+  const result = getPreviewAwareTablePage("safety", getProcessedSafety(), safetyPage, PAGE_SIZE);
+  safetyPage = result.page;
 
   if (!result.totalItems) {
     tableEl.innerHTML = `<div class="empty-box">${escapeHtml(safetySearch ? t("emptySearch") : t("emptySafety"))}</div>`;
@@ -6910,6 +7095,10 @@ function renderServerStickyWidget(serverStatus = serverStatusData) {
   if (!cardsEl) return;
 
   const items = getServerStatusItems(serverStatus);
+  if (topLoadState.home && !items.length) {
+    cardsEl.innerHTML = renderLoadingMarkup(t("loading"));
+    return;
+  }
   if (!items.length) {
     cardsEl.innerHTML = "";
     return;
@@ -7580,6 +7769,11 @@ function initDriverPreviewModal() {
 }
 
 function renderRacesPage() {
+  if (topLoadState.races) {
+    setLoadingMarkup("races-table", "loading");
+    renderRaceResultsModal();
+    return;
+  }
   renderRacesSummary();
   renderRacesTablePage();
   renderRaceResultsModal();
@@ -7636,6 +7830,10 @@ function renderCarsSummary() {
 }
 
 function renderCarsPage() {
+  if (topLoadState.cars) {
+    setLoadingMarkup("cars-table", "loading");
+    return;
+  }
   renderCarsSummary();
   renderCarsTable();
 }
@@ -8144,6 +8342,18 @@ function renderDriverPage() {
   const statsEl = document.getElementById("driver-stat-cards");
   const highlightsEl = document.getElementById("driver-highlights");
   if (!nameEl || !subtitleEl || !statsEl || !highlightsEl) return;
+
+  if (topLoadState.driver) {
+    nameEl.textContent = "-";
+    subtitleEl.textContent = t("driverPreviewSubtitle");
+    statsEl.innerHTML = renderLoadingMarkup(t("driverLoading"));
+    highlightsEl.innerHTML = "";
+    setLoadingMarkup("driver-races-table", "driverLoading");
+    setLoadingMarkup("driver-tracks-table", "driverLoading");
+    renderPenaltyList("driver-penalty-reasons", {}, "driverPenaltyReason");
+    renderPenaltyList("driver-penalty-types", {}, "driverPenaltyType");
+    return;
+  }
 
   if (!driverProfileData) {
     nameEl.textContent = "-";
@@ -9074,11 +9284,21 @@ function rerenderUI() {
   }
 
   const top3El = document.getElementById("top3-content");
-  if (top3El) top3El.innerHTML = renderTop3Compact(leaderboardData);
+  if (top3El) {
+    top3El.innerHTML = (topLoadState.home && !leaderboardData.length)
+      ? renderLoadingMarkup(t("loading"))
+      : renderTop3Compact(leaderboardData);
+  }
 
-  renderLeaderboardTablePage();
-  renderBestLapsTablePage();
-  renderSafetyTablePage();
+  if (topHomeDeferredSections.leaderboard) renderLeaderboardTablePage();
+  else renderDeferredHomeTableLoading("leaderboard-table", "leaderboard-pagination-wrap", "loadingLeaderboard");
+
+  if (topHomeDeferredSections.bestlaps) renderBestLapsTablePage();
+  else renderDeferredHomeTableLoading("bestlaps-table", "bestlaps-pagination-wrap", "loadingBestLaps");
+
+  if (topHomeDeferredSections.safety) renderSafetyTablePage();
+  else renderDeferredHomeTableLoading("safety-table", "safety-pagination-wrap", "loadingSafety");
+
   renderTodayStatsModal();
   renderOnlineActivityModal();
   renderDriverOfDayModal();
@@ -9131,6 +9351,9 @@ async function init() {
   initSafetyModal();
   initBestlapTracksModal();
   applyStaticTranslations();
+  applyInitialTopLoadingState();
+  setupTopHomeDeferredSections();
+  rerenderUI();
 
   try {
     if (IS_DRIVER_PAGE) {
@@ -9138,12 +9361,14 @@ async function init() {
       driverProfileData = profile;
       driverIndexData = [];
       racesData = [];
+      topLoadState.driver = false;
       rerenderUI();
       return;
     }
 
     if (IS_CARS_PAGE) {
       carsData = await loadCarsData();
+      topLoadState.cars = false;
       rerenderUI();
       return;
     }
@@ -9158,11 +9383,13 @@ async function init() {
       if (!funStatsApiData) {
         racesData = await loadFullRacesData().catch(() => []);
       }
+      topLoadState.funStats = false;
       rerenderUI();
       return;
     }
 
     if (IS_COMMUNITY_PAGE) {
+      topLoadState.community = false;
       rerenderUI();
       void loadCommunityLikes();
       return;
@@ -9170,15 +9397,16 @@ async function init() {
 
     if (IS_RACES_PAGE) {
       racesData = await loadRacesData();
+      topLoadState.races = false;
       rerenderUI();
       return;
     }
 
-    const [data, hourlyAnnouncement, hourlySchedule] = await Promise.all([
-      loadSiteData(),
+    const hourlyDataPromise = Promise.allSettled([
       loadHourlyAnnouncementData(),
       loadHourlyScheduleData()
     ]);
+    const data = await loadSiteData();
 
     leaderboardData = data.leaderboard;
     bestlapsData = data.bestlaps;
@@ -9188,8 +9416,6 @@ async function init() {
     safetyData = data.safety;
     driverOfDayData = data.driverOfDay;
     onlineData = data.online;
-    hourlyScheduleData = hourlySchedule;
-    hourlyAnnouncementData = mergeHourlyAnnouncementWithSchedule(hourlyAnnouncement, hourlySchedule);
     latestHourlyRaceData = data.latestHourlyRace;
     racesArchiveSummary = data.racesSummary;
     topDataV2TableMeta = data.tables;
@@ -9197,10 +9423,7 @@ async function init() {
 
     raceActivityInsights = Array.isArray(data.raceActivity) ? data.raceActivity : [];
     racesData = [];
-    loadHourlyVotes(hourlyAnnouncementData).finally(() => {
-      renderHourlyHeroCard();
-      renderHourlyHeroModal();
-    });
+    topLoadState.home = false;
 
     const driversCountEl = document.getElementById("drivers-count");
     if (driversCountEl) {
@@ -9228,6 +9451,19 @@ async function init() {
     renderServerStickyWidget(data.serverStatus);
 
     rerenderUI();
+
+    const [hourlyAnnouncementResult, hourlyScheduleResult] = await hourlyDataPromise;
+    const hourlyAnnouncement = hourlyAnnouncementResult.status === "fulfilled" ? hourlyAnnouncementResult.value : null;
+    const hourlySchedule = hourlyScheduleResult.status === "fulfilled" ? hourlyScheduleResult.value : null;
+    hourlyScheduleData = hourlySchedule;
+    hourlyAnnouncementData = mergeHourlyAnnouncementWithSchedule(hourlyAnnouncement, hourlySchedule);
+    topLoadState.hourly = false;
+    rerenderUI();
+
+    loadHourlyVotes(hourlyAnnouncementData).finally(() => {
+      renderHourlyHeroCard();
+      renderHourlyHeroModal();
+    });
   } catch (error) {
     console.error(error);
 
@@ -9269,6 +9505,7 @@ async function init() {
       return;
     }
 
+    const top3Content = document.getElementById("top3-content");
     if (top3Content) {
       top3Content.innerHTML = `<div class="empty-box">${escapeHtml(t("errorLoading"))}</div>`;
     }
