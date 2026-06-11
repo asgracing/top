@@ -2662,7 +2662,6 @@ function renderDonationAlertsWidget() {
           <span>${escapeHtml(formatDonationAmount(raisedAmount, goal.currency))}</span>
           <span>${escapeHtml(formatDonationAmount(goalAmount, goal.currency))}</span>
         </div>
-        <div class="donation-alerts-goal-percent">${percent}%</div>
       `;
     } else {
       goalEl.hidden = true;
