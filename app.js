@@ -108,42 +108,47 @@ function buildHourlyVoteLegalNoteHtml() {
 }
 
 function getExpiringStorageValue(storageKey, ttlMs) {
-  const rawValue = localStorage.getItem(storageKey);
   const now = Date.now();
 
-  if (rawValue) {
-    try {
-      const parsed = JSON.parse(rawValue);
-      if (parsed && typeof parsed.value === "string") {
-        if (!parsed.expiresAt || Number(parsed.expiresAt) > now) {
-          return parsed.value;
+  try {
+    const rawValue = localStorage.getItem(storageKey);
+
+    if (rawValue) {
+      try {
+        const parsed = JSON.parse(rawValue);
+        if (parsed && typeof parsed.value === "string") {
+          if (!parsed.expiresAt || Number(parsed.expiresAt) > now) {
+            return parsed.value;
+          }
+        }
+      } catch (error) {
+        if (rawValue.trim()) {
+          localStorage.setItem(
+            storageKey,
+            JSON.stringify({
+              value: rawValue.trim(),
+              createdAt: now,
+              expiresAt: now + ttlMs
+            })
+          );
+          return rawValue.trim();
         }
       }
-    } catch (error) {
-      if (rawValue.trim()) {
-        localStorage.setItem(
-          storageKey,
-          JSON.stringify({
-            value: rawValue.trim(),
-            createdAt: now,
-            expiresAt: now + ttlMs
-          })
-        );
-        return rawValue.trim();
-      }
     }
-  }
 
-  const generated = `browser-${now.toString(36)}-${Math.random().toString(36).slice(2, 10)}`;
-  localStorage.setItem(
-    storageKey,
-    JSON.stringify({
-      value: generated,
-      createdAt: now,
-      expiresAt: now + ttlMs
-    })
-  );
-  return generated;
+    const generated = `browser-${now.toString(36)}-${Math.random().toString(36).slice(2, 10)}`;
+    localStorage.setItem(
+      storageKey,
+      JSON.stringify({
+        value: generated,
+        createdAt: now,
+        expiresAt: now + ttlMs
+      })
+    );
+    return generated;
+  } catch (error) {
+    return `browser-${now.toString(36)}-${Math.random().toString(36).slice(2, 10)}`;
+  }
 }
 
 function loadHourlyStoredVoteState() {
@@ -225,7 +230,12 @@ function resolveInitialLanguage() {
   const urlLang = new URLSearchParams(window.location.search).get("lang");
   if (urlLang && translations[urlLang]) return urlLang;
 
-  const storedLang = localStorage.getItem("asgLang");
+  let storedLang = null;
+  try {
+    storedLang = localStorage.getItem("asgLang");
+  } catch (error) {
+    storedLang = null;
+  }
   if (storedLang && translations[storedLang]) return storedLang;
 
   const browserLanguages = Array.isArray(navigator.languages) && navigator.languages.length
@@ -9312,19 +9322,39 @@ function rerenderUI() {
   applyRevealAnimations();
 }
 
+function runInitStep(stepName, action) {
+  try {
+    const result = action();
+    if (result && typeof result.catch === "function") {
+      result.catch((error) => {
+        console.error(`[INIT:${stepName}]`, error);
+      });
+    }
+    return result;
+  } catch (error) {
+    console.error(`[INIT:${stepName}]`, error);
+    return null;
+  }
+}
+
 async function init() {
+  document.body.classList.remove("background-audio-focus");
+  applyInitialTopLoadingState();
+  setupTopHomeDeferredSections();
+  rerenderUI();
+
   backgroundVideoSoundState.volume = loadBackgroundVideoVolume();
-  updateServerCardBackgrounds();
-  bindLanguageButtons();
-  bindTopNavMoreMenu();
-  bindFunStatsControls();
-  bindSearchInputs();
-  ensureTopGuide();
-  initTwitchWidget();
-  updateTopNavModalOffset();
-  bindBackgroundVideoSoundToggle();
-  optimizeBackgroundMedia();
-  initDonationAlertsWidget();
+  runInitStep("updateServerCardBackgrounds", () => updateServerCardBackgrounds());
+  runInitStep("bindLanguageButtons", () => bindLanguageButtons());
+  runInitStep("bindTopNavMoreMenu", () => bindTopNavMoreMenu());
+  runInitStep("bindFunStatsControls", () => bindFunStatsControls());
+  runInitStep("bindSearchInputs", () => bindSearchInputs());
+  runInitStep("ensureTopGuide", () => ensureTopGuide());
+  runInitStep("initTwitchWidget", () => initTwitchWidget());
+  runInitStep("updateTopNavModalOffset", () => updateTopNavModalOffset());
+  runInitStep("bindBackgroundVideoSoundToggle", () => bindBackgroundVideoSoundToggle());
+  runInitStep("optimizeBackgroundMedia", () => optimizeBackgroundMedia());
+  runInitStep("initDonationAlertsWidget", () => initDonationAlertsWidget());
   window.addEventListener("storage", event => {
     if (event.key === HOURLY_VOTE_STATE_STORAGE_KEY) {
       syncHourlyVoteStateFromStorage();
@@ -9335,24 +9365,21 @@ async function init() {
     optimizeBackgroundMedia();
   }, 120));
   if (IS_RACES_PAGE || IS_DRIVER_PAGE) {
-    initRaceResultsModal();
+    runInitStep("initRaceResultsModal", () => initRaceResultsModal());
   } else if (IS_COMMUNITY_PAGE) {
-    initCommunityLightbox();
+    runInitStep("initCommunityLightbox", () => initCommunityLightbox());
   } else if (!IS_DRIVER_PAGE && !IS_CARS_PAGE && !IS_COMMUNITY_PAGE) {
-    initTodayStatsModal();
-    initOnlineActivityModal();
-    initDriverOfDayModal();
-    initDriverPreviewModal();
-    initHourlyHeroModal();
-    initServerPlayersModal();
+    runInitStep("initTodayStatsModal", () => initTodayStatsModal());
+    runInitStep("initOnlineActivityModal", () => initOnlineActivityModal());
+    runInitStep("initDriverOfDayModal", () => initDriverOfDayModal());
+    runInitStep("initDriverPreviewModal", () => initDriverPreviewModal());
+    runInitStep("initHourlyHeroModal", () => initHourlyHeroModal());
+    runInitStep("initServerPlayersModal", () => initServerPlayersModal());
   }
-  initEloModal();
-  initSafetyModal();
-  initBestlapTracksModal();
-  applyStaticTranslations();
-  applyInitialTopLoadingState();
-  setupTopHomeDeferredSections();
-  rerenderUI();
+  runInitStep("initEloModal", () => initEloModal());
+  runInitStep("initSafetyModal", () => initSafetyModal());
+  runInitStep("initBestlapTracksModal", () => initBestlapTracksModal());
+  runInitStep("applyStaticTranslations", () => applyStaticTranslations());
 
   try {
     if (IS_DRIVER_PAGE) {
