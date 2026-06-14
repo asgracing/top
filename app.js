@@ -646,6 +646,52 @@ const translations = {
       "<strong>ASG Racing</strong> is an ACC community of enthusiasts. The public server runs 24/7 on Monza, and we also host daily one-hour events at 14:00 and 20:00 MSK. Data is automatically updated based on dedicated server results.",
     btnChampionship: "Rating",
     btnChampionshipEvent: "Championship",
+    btnRules: "Rules",
+    rulesBadge: "Internal Racing Rules",
+    rulesTitle: "Mandatory for all closed ASG Racing events",
+    rulesLead:
+      "Below are the internal rules for closed races dated June 2026. Every participant is required to follow them in full.",
+    rulesSectionTitle: "Internal rules for closed races, June 2026",
+    rulesPenaltyTitle: "Penalties",
+    rulesItem1:
+      "It is strictly forbidden to cross the pit entry or pit exit line with any part of the car.",
+    rulesItem2:
+      "A fight for position is considered started if the overtaking car gets its front bumper alongside the leading car before the corner. The overlap zone begins at the rear wheel of the car ahead.",
+    rulesItem3:
+      "The start of the corner is the moment steering input begins to change the car from straight-line motion toward the turn.",
+    rulesItem4: "Entering the overlap zone under braking is allowed.",
+    rulesItem5:
+      "If the cars enter a corner as described in rule No. 2, both drivers must leave enough room in the turn, at least one car width to the white line.",
+    rulesItem6: "Only one change of line is allowed while defending a position.",
+    rulesItem7: "Blocking another car by any means is prohibited.",
+    rulesItem8:
+      "Blue flags must be obeyed. If shown a blue flag, you are strongly advised to let the faster car through before the next corner and must do so within one sector.",
+    rulesItem9:
+      "If a car gains an advantage in attack or defense by leaving the track during a fight, that car must give the position back to the rival.",
+    rulesItem10:
+      "A car is considered to have left the racing surface if none of its wheels remain in contact with the track, including the boundary lines.",
+    rulesItem11:
+      "Drivers must take all necessary actions to avoid contact with rival cars.",
+    rulesItem12:
+      "An overtake is considered completed when there is no overlap and both cars can follow the optimal line for the situation without contact.",
+    rulesPenalty1: "15 seconds for contact.",
+    rulesPenalty2: "Drive-through (DT) for a collision that causes car damage.",
+    rulesPenalty3: "SG30 for actions that lead to a mass crash.",
+    rulesPenalty4: "15 seconds for ignoring blue flags.",
+    rulesPenalty5:
+      "DT for repeated ignoring of blue flags / DSQ for blatant and intentional ignoring.",
+    rulesPenalty6:
+      "15 seconds for not giving the position back after gaining advantage off track in a fight (see rule 9).",
+    rulesPenalty7:
+      "DT for crossing the pit entry or pit exit line (see rule 1).",
+    rulesPenalty8: "15 seconds for blocking another car.",
+    rulesPenalty9:
+      "DT for an unsafe rejoin to the racing surface that causes a collision.",
+    rulesPenalty10: "15 seconds for repeated line changes while battling.",
+    rulesPenalty11:
+      "DT for the third contact after two previous 15-second penalties under item 1.",
+    rulesPenalty12: "Disqualification for unsafe driving and repeated mistakes.",
+    rulesPenalty13: "DT for intentional blocking.",
     btnLastRaces: "Race Archive",
     btnSpecialEvent: "Special Event",
     btnCars: "Cars",
@@ -1174,6 +1220,51 @@ const translations = {
       "<strong>ASG Racing</strong> - сообщество энтузиастов ACC. Открытый сервер работает 24/7 на трассе Monza. Мы также проводим ежедневные часовые заезды в 14:00 и 20:00 МСК. Данные обновляются автоматически на основе файлов результатов ACC Dedicated Server.",
     btnChampionship: "Рейтинг",
     btnChampionshipEvent: "Чемпионат",
+    btnRules: "Правила",
+    rulesBadge: "Внутренние гоночные правила",
+    rulesTitle: "Обязательны к соблюдению на закрытых гонках ASG Racing",
+    rulesLead:
+      "Ниже опубликованы внутренние правила для закрытых гонок от июня 2026. Все участники обязаны соблюдать их в полном объеме.",
+    rulesSectionTitle: "Внутренние правила для закрытых гонок от июня 2026",
+    rulesPenaltyTitle: "Штрафы",
+    rulesItem1:
+      "Строго запрещено пересекать любой частью автомобиля линию разметки на въезде и выезде из питлейна.",
+    rulesItem2:
+      "Борьба за позицию считается начавшейся, если обгоняющий автомобиль до поворота \"вошел в базу\" впередиидущего автомобиля своим габаритом (передним бампером). База начинается от заднего колеса автомобиля.",
+    rulesItem3:
+      "Началом поворота считается момент, когда происходит движение рулем для изменения прямолинейного движения в сторону поворота.",
+    rulesItem4: "На торможении можно \"входить в базу\".",
+    rulesItem5:
+      "Если автомобили входят в поворота так, как это описано в пункте №2 (обгоняющий успел \"войти в базу\"), то оба пилота обязаны оставлять достаточное место в повороте (как минимум одну ширину автомобиля до белой ленточки).",
+    rulesItem6: "В борьбе за позицию разрешено только одно изменение траектории.",
+    rulesItem7: "Блокирование автомобиля любыми способами - запрещено.",
+    rulesItem8:
+      "Соблюдение синих флагов обязательно. В случае, если вам показали синий флаг, настоятельно рекомендуется пропустить догоняющую машину до поворота, обязательно пропустить в течение 1 сектора.",
+    rulesItem9:
+      "В случае, если во время борьбы один из автомобилей получил преимущество в обороне или нападении за счет выезда за пределы трассы - этот автомобиль должен уступить позицию сопернику.",
+    rulesItem10:
+      "Автомобиль будет считаться покинувшим Гоночную дорожку, если ни одно его колесо не будет соприкасаться с Гоночной дорожкой, включая линии, обозначающие её границу.",
+    rulesItem11:
+      "Гонщики обязаны предпринимать все необходимые действия для избегания контактов с автомобилями соперников.",
+    rulesItem12:
+      "Обгон считается завершенным, если отсутствует перекрытие, и движение автомобилей по оптимальной в данной ситуации траектории не приведет к контакту.",
+    rulesPenalty1: "15 секунд за контакт",
+    rulesPenalty2: "Проезд по питлейну (DT), за столкновение повреждением авто",
+    rulesPenalty3: "SG30 за действия, которые привели к массовой аварии",
+    rulesPenalty4: "15 секунд за игнорирование синих флагов",
+    rulesPenalty5:
+      "DT за повторное игнорирование синих флагов / DSQ за злостное и намеренное игнорирование",
+    rulesPenalty6:
+      "15 секунд за непредоставление позиции в случае выезда за пределы трассы в борьбе (см пункт 9)",
+    rulesPenalty7:
+      "DT за пересечение линии разметки на въезде или выезде из питов (см пункт 1)",
+    rulesPenalty8: "15 секунд за блокирование автомобиля",
+    rulesPenalty9:
+      "DT за небезопасное возвращение на гоночную дорожку, повлекшее за собой столкновение",
+    rulesPenalty10: "15 секунд за неоднократную смену траектории в борьбе",
+    rulesPenalty11: "DT за 3-ий контакт после 2-ух по п.1 15 сек",
+    rulesPenalty12: "Дисквалификация = за небезопасную езду и повторение ошибок",
+    rulesPenalty13: "DT за намеренное блокирование автомобиля",
     btnLastRaces: "Архив гонок",
     btnSpecialEvent: "Спец. ивент",
     lastRacesBtn: "Последние гонки",
