@@ -551,6 +551,9 @@ const translations = {
     newsArticleMissing: "This news entry was not found.",
     newsListEmpty: "No news published yet.",
     newsReadMore: "Read more",
+    navGroupRacing: "Racing",
+    navGroupStats: "Stats",
+    navGroupCommunity: "Community",
     navMore: "More",
     navMoreAriaLabel: "Open extra navigation",
     openRaceDetailsLabel: "Open race details",
@@ -1069,6 +1072,9 @@ const translations = {
     newsArticleMissing: "Такая новость не найдена.",
     newsListEmpty: "Новостей пока нет.",
     newsReadMore: "Читать полностью",
+    navGroupRacing: "Гонки",
+    navGroupStats: "Статистика",
+    navGroupCommunity: "Сообщество",
     navMore: "Ещё",
     navMoreAriaLabel: "Открыть дополнительную навигацию",
     openRaceDetailsLabel: "Открыть детали гонки",
@@ -7268,6 +7274,13 @@ function bindTopNavMoreMenu() {
   const toggle = document.getElementById("top-nav-more-toggle");
   const menu = document.getElementById("top-nav-more-menu");
   const navMenu = document.querySelector(".top-nav-menu");
+  if (navMenu?.querySelector(".top-nav-group")) {
+    if (root) {
+      root.hidden = true;
+      root.classList.remove("is-visible", "is-open");
+    }
+    return;
+  }
   const items = navMenu ? [...navMenu.querySelectorAll("[data-nav-item='true']")] : [];
   if (!root || !toggle || !menu || !navMenu || !items.length || root.dataset.bound === "true") return;
 
@@ -7363,6 +7376,61 @@ function bindTopNavMoreMenu() {
   window.addEventListener("load", rebuildOverflowMenu, { once: true });
   root.rebuildOverflowMenu = rebuildOverflowMenu;
   root.dataset.bound = "true";
+}
+
+function bindTopNavGroups() {
+  const groups = [...document.querySelectorAll(".top-nav-group")];
+  if (!groups.length || document.body.dataset.topNavGroupsBound === "true") return;
+  const navMenu = document.querySelector(".top-nav-menu");
+  navMenu?.classList.add("has-nav-groups");
+
+  const closeGroup = (group) => {
+    const toggle = group.querySelector(".top-nav-group-toggle");
+    const menu = group.querySelector(".top-nav-group-menu");
+    if (!toggle || !menu) return;
+    toggle.setAttribute("aria-expanded", "false");
+    menu.hidden = true;
+    group.classList.remove("is-open");
+  };
+
+  const closeAllGroups = (exceptGroup = null) => {
+    groups.forEach(group => {
+      if (group !== exceptGroup) closeGroup(group);
+    });
+  };
+
+  groups.forEach(group => {
+    const toggle = group.querySelector(".top-nav-group-toggle");
+    const menu = group.querySelector(".top-nav-group-menu");
+    if (!toggle || !menu) return;
+
+    toggle.addEventListener("click", (event) => {
+      event.preventDefault();
+      const shouldOpen = menu.hidden;
+      closeAllGroups(shouldOpen ? group : null);
+      if (shouldOpen) {
+        toggle.setAttribute("aria-expanded", "true");
+        menu.hidden = false;
+        group.classList.add("is-open");
+      } else {
+        closeGroup(group);
+      }
+    });
+
+    menu.addEventListener("click", (event) => {
+      if (event.target.closest("a")) closeGroup(group);
+    });
+  });
+
+  document.addEventListener("click", (event) => {
+    if (!event.target.closest(".top-nav-group")) closeAllGroups();
+  });
+
+  document.addEventListener("keydown", (event) => {
+    if (event.key === "Escape") closeAllGroups();
+  });
+
+  document.body.dataset.topNavGroupsBound = "true";
 }
 
 function bindSearchInputs() {
@@ -10015,6 +10083,7 @@ async function init() {
   backgroundVideoSoundState.volume = loadBackgroundVideoVolume();
   runInitStep("updateServerCardBackgrounds", () => updateServerCardBackgrounds());
   runInitStep("bindLanguageButtons", () => bindLanguageButtons());
+  runInitStep("bindTopNavGroups", () => bindTopNavGroups());
   runInitStep("bindTopNavMoreMenu", () => bindTopNavMoreMenu());
   runInitStep("initNewsNotificationsModal", () => initNewsNotificationsModal());
   runInitStep("bindFunStatsControls", () => bindFunStatsControls());
