@@ -1,0 +1,45 @@
+{
+  "items": [
+    {
+      "id": "racing-rules-section-open",
+      "slug": "racing-rules-section-open",
+      "title": "Открыт раздел гоночных правил / Racing Rules Section Is Now Open",
+      "summary": "Открылся раздел гоночных правил ASG Racing. Ознакомление с правилами обязательно перед участием в заездах. / The ASG Racing racing rules section is now open. Reading and following the rules is mandatory before taking part in races.",
+      "body": [
+        "На основном сайте ASG Racing открыт отдельный раздел гоночных правил. Просим всех участников обязательно ознакомиться с ним перед заездами и соблюдать правила на трассе.",
+        "Этот раздел вводится как обязательная база для участия в гонках. Незнание правил не освобождает от ответственности за нарушения.",
+        "Если вы регулярно ездите на серверах ASG Racing, рекомендуем проверить раздел уже сейчас и использовать его как основной ориентир по поведению в гонке.",
+        {
+          "type": "link",
+          "href": "/#rules",
+          "label": "Перейти к разделу гоночных правил"
+        },
+        "The main ASG Racing site now includes a dedicated racing rules section. All participants are required to read it before joining races and to follow the rules on track.",
+        "This section is introduced as a mandatory baseline for race participation. Not knowing the rules does not exempt a driver from responsibility for violations.",
+        "If you race regularly on ASG Racing servers, we strongly recommend reviewing the section now and using it as the primary reference for race conduct.",
+        {
+          "type": "link",
+          "href": "/#rules",
+          "label": "Open the racing rules section"
+        },
+        {
+          "type": "list",
+          "items": [
+            "RU: Ознакомление с правилами обязательно перед гонками.",
+            "RU: Соблюдение правил обязательно для всех участников.",
+            "EN: Reading the rules before races is mandatory.",
+            "EN: Following the rules is mandatory for all participants."
+          ]
+        }
+      ],
+      "thumbnail_url": "/news-content/images/racing-rules-section-open/cover.jpg",
+      "cover_image_url": "/news-content/images/racing-rules-section-open/cover.jpg",
+      "image_alt": "ASG Racing racing rules announcement",
+      "published_at": "2026-06-15T12:00:00Z",
+      "expires_at": "",
+      "kind": "announcement",
+      "priority": 100,
+      "is_pinned": true
+    }
+  ]
+}

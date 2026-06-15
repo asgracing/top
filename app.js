@@ -3,7 +3,8 @@ const IS_DRIVER_PAGE = /\/driver(?:\/|\/index\.html)?$/i.test(window.location.pa
 const IS_CARS_PAGE = /\/cars(?:\/|\/index\.html)?$/i.test(window.location.pathname);
 const IS_FUN_STATS_PAGE = /\/fun-stats(?:\/|\/index\.html)?$/i.test(window.location.pathname);
 const IS_COMMUNITY_PAGE = /\/community(?:\/|\/index\.html)?$/i.test(window.location.pathname);
-const SITE_BASE_PATH = (IS_RACES_PAGE || IS_DRIVER_PAGE || IS_CARS_PAGE || IS_FUN_STATS_PAGE || IS_COMMUNITY_PAGE) ? "../" : "./";
+const IS_NEWS_PAGE = /\/news(?:\/|\/index\.html)?$/i.test(window.location.pathname);
+const SITE_BASE_PATH = (IS_RACES_PAGE || IS_DRIVER_PAGE || IS_CARS_PAGE || IS_FUN_STATS_PAGE || IS_COMMUNITY_PAGE || IS_NEWS_PAGE) ? "../" : "./";
 const CAR_IMAGE_BASE_PATH = `${SITE_BASE_PATH}assets/car-icons`;
 const pageParams = new URLSearchParams(window.location.search);
 function normalizeBaseUrl(value) {
@@ -30,6 +31,8 @@ const TOP_API_BASE_URL = normalizeBaseUrl(pageParams.get("topApiBase"));
 const TOP_DATA_V2_BASE_URL = TOP_API_BASE_URL || `${TOP_DATA_BASE_URL}/v2`;
 const TOP_API_ROOT_URL = TOP_API_BASE_URL.replace(/\/top-data\/v2$/i, "");
 const HOURLY_DATA_BASE_URL = normalizeBaseUrl(pageParams.get("hourlyApiBase")) || DEFAULT_HOURLY_DATA_BASE_URL;
+const TOP_NEWS_DATA_URL = `${TOP_DATA_BASE_URL}/news.json`;
+const LOCAL_NEWS_DATA_URL = `${SITE_BASE_PATH}news-content/news.json`;
 const topDataV2ManifestUrl = `${TOP_DATA_V2_BASE_URL}/manifest.json`;
 const serverStatusUrl = pageParams.get("serverStatusUrl") || (TOP_API_ROOT_URL ? `${TOP_API_ROOT_URL}/server-status` : `${TOP_DATA_BASE_URL}/server_status.json`);
 const donationsApiUrl = "https://donations.asgracing.workers.dev/recent";
@@ -89,6 +92,7 @@ const PAGE_SIZE = 10;
 const VOTER_ID_STORAGE_TTL_MS = 365 * 24 * 60 * 60 * 1000;
 const HOURLY_VOTE_STATE_STORAGE_KEY = "hourlyVoteStateByEventId";
 const HOURLY_VOTE_STATE_STORAGE_TTL_MS = 30 * 24 * 60 * 60 * 1000;
+const NEWS_READ_STORAGE_KEY = "asgReadNewsIds";
 
 function getLegalUrls() {
   const fallbackBase =
@@ -268,7 +272,7 @@ const topDataV2PagedTables = {
 };
 let latestHourlyRaceData = null;
 let racesArchiveMeta = null;
-const IS_TOP_HOME_PAGE = !(IS_RACES_PAGE || IS_DRIVER_PAGE || IS_CARS_PAGE || IS_FUN_STATS_PAGE || IS_COMMUNITY_PAGE);
+const IS_TOP_HOME_PAGE = !(IS_RACES_PAGE || IS_DRIVER_PAGE || IS_CARS_PAGE || IS_FUN_STATS_PAGE || IS_COMMUNITY_PAGE || IS_NEWS_PAGE);
 const topLoadState = {
   home: IS_TOP_HOME_PAGE,
   hourly: IS_TOP_HOME_PAGE,
@@ -276,7 +280,8 @@ const topLoadState = {
   driver: IS_DRIVER_PAGE,
   cars: IS_CARS_PAGE,
   funStats: IS_FUN_STATS_PAGE,
-  community: IS_COMMUNITY_PAGE
+  community: IS_COMMUNITY_PAGE,
+  news: IS_NEWS_PAGE
 };
 const topHomeDeferredSections = {
   leaderboard: !IS_TOP_HOME_PAGE,
@@ -329,6 +334,11 @@ function applyInitialTopLoadingState() {
 
   if (IS_COMMUNITY_PAGE) {
     setLoadingMarkup("community-feed", "loading");
+    return;
+  }
+
+  if (IS_NEWS_PAGE) {
+    setLoadingMarkup("news-feed", "loading");
     return;
   }
 
@@ -439,6 +449,9 @@ let safetyModalState = null;
 let communityLightboxState = null;
 let communityLikeStateByPostId = {};
 const pendingCommunityLikePostIds = new Set();
+let newsFeedData = [];
+let newsFeedSourceUrl = TOP_NEWS_DATA_URL;
+let newsModalController = null;
 let donationAlertsData = null;
 let donationAlertsLoading = false;
 let donationAlertsFailed = false;
@@ -524,6 +537,20 @@ const translations = {
     closeLabel: "Close",
     homeAriaLabel: "ASG Racing home",
     langSwitcherLabel: "Language switcher",
+    btnNews: "News",
+    newsBellAriaLabel: "Open notifications",
+    newsBellUnreadLabel: "{count} unread notifications",
+    newsBellEmpty: "No new notifications yet.",
+    newsModalTitle: "Notifications",
+    newsModalSubtitle: "Latest updates, maintenance notes and community news.",
+    newsModalOpenAll: "Open all news",
+    newsPageEyebrow: "Newsroom",
+    newsPageTitle: "News",
+    newsPageSubtitle: "Updates, maintenance notes and fresh announcements from ASG Racing.",
+    newsBackToList: "Back to all news",
+    newsArticleMissing: "This news entry was not found.",
+    newsListEmpty: "No news published yet.",
+    newsReadMore: "Read more",
     navMore: "More",
     navMoreAriaLabel: "Open extra navigation",
     openRaceDetailsLabel: "Open race details",
@@ -604,6 +631,7 @@ const translations = {
     pageTitleCars: "ASG Racing Cars | Assetto Corsa Competizione Stats",
     pageTitleFunStats: "ASG Racing Fun Stats | Weekly and Monthly ACC Stories",
     pageTitleCommunity: "ASG Racing Community | Event Stories and Photos",
+    pageTitleNews: "ASG Racing News | Updates and Announcements",
     metaDescription:
       "ASG Racing ACC Leaderboard - race stats, wins, podiums and best laps from the public Assetto Corsa Competizione server.",
     metaDescriptionRaces:
@@ -616,6 +644,8 @@ const translations = {
       "Weekly and monthly fun stats from ASG Racing ACC: comeback heroes, clean racers, hot laps, grind leaders and more.",
     metaDescriptionCommunity:
       "Community stories from ASG Racing ACC events with short recaps, photos and highlights from recent races.",
+    metaDescriptionNews:
+      "Latest ASG Racing updates, announcements and technical news from the ACC community site.",
     ogDescription:
       "Race stats, wins, podiums and best laps from the ASG Racing server in Assetto Corsa Competizione.",
     ogDescriptionRaces:
@@ -628,6 +658,8 @@ const translations = {
       "Weekly and monthly stories from the ASG Racing server: points bosses, comeback heroes, clean racers and hot lap heroes.",
     ogDescriptionCommunity:
       "Community stories from ASG Racing ACC events with short recaps, photos and highlights from recent races.",
+    ogDescriptionNews:
+      "Latest ASG Racing updates, announcements and technical notes from the ACC community site.",
     twitterDescription:
       "Races, wins, podiums and best laps from the public ACC server of ASG Racing.",
     twitterDescriptionRaces:
@@ -640,6 +672,8 @@ const translations = {
       "Weekly and monthly ASG Racing fun stats with the most active, fastest and wildest drivers on the server.",
     twitterDescriptionCommunity:
       "ASG Racing community event recaps, photos and highlights from recent ACC races.",
+    twitterDescriptionNews:
+      "Latest ASG Racing updates, announcements and technical notes.",
     ogLocale: "en_US",
     heroTitle: "🏁 ASG Racing Leaderboard",
     heroSubtitle:
@@ -1021,6 +1055,20 @@ const translations = {
     closeLabel: "Закрыть",
     homeAriaLabel: "Главная ASG Racing",
     langSwitcherLabel: "Переключение языка",
+    btnNews: "Новости",
+    newsBellAriaLabel: "Открыть уведомления",
+    newsBellUnreadLabel: "{count} непрочитанных уведомлений",
+    newsBellEmpty: "Пока нет новых уведомлений.",
+    newsModalTitle: "Уведомления",
+    newsModalSubtitle: "Последние обновления, техработы и новости сообщества.",
+    newsModalOpenAll: "Открыть все новости",
+    newsPageEyebrow: "Лента новостей",
+    newsPageTitle: "Новости",
+    newsPageSubtitle: "Обновления, технические заметки и свежие объявления ASG Racing.",
+    newsBackToList: "Ко всем новостям",
+    newsArticleMissing: "Такая новость не найдена.",
+    newsListEmpty: "Новостей пока нет.",
+    newsReadMore: "Читать полностью",
     navMore: "Ещё",
     navMoreAriaLabel: "Открыть дополнительную навигацию",
     openRaceDetailsLabel: "Открыть детали гонки",
@@ -1099,6 +1147,7 @@ const translations = {
     pageTitleFunStats: "ASG Racing Fun Stats | Недельные и месячные истории ACC",
     pageTitleCars: "ASG Racing Cars | Статистика Assetto Corsa Competizione",
     pageTitleCommunity: "ASG Racing Сообщество | Истории и фото мероприятий",
+    pageTitleNews: "ASG Racing Новости | Обновления и объявления",
     btnCars: "Машины",
     btnFunStats: "Фан-стата",
     btnCommunity: "Сообщество",
@@ -1190,6 +1239,8 @@ const translations = {
       "Недельная и месячная фан-статистика ASG Racing ACC: камбэки, чистые гонщики, быстрые круги, активность и самые яркие истории сервера.",
     metaDescriptionCommunity:
       "Истории сообщества ASG Racing ACC: короткие отчеты о мероприятиях, фотографии и яркие моменты прошедших гонок.",
+    metaDescriptionNews:
+      "Последние обновления, объявления и технические новости ASG Racing ACC.",
     ogDescription:
       "Статистика гонок, побед, подиумов и лучших кругов на сервере ASG Racing в Assetto Corsa Competizione.",
     ogDescriptionRaces:
@@ -1202,6 +1253,8 @@ const translations = {
       "Недельные и месячные истории ASG Racing: лидеры по очкам, камбэки, чистые гонщики, быстрые круги и самые активные пилоты.",
     ogDescriptionCommunity:
       "Истории сообщества ASG Racing ACC: короткие отчеты о мероприятиях, фотографии и яркие моменты прошедших гонок.",
+    ogDescriptionNews:
+      "Последние обновления, объявления и технические заметки ASG Racing ACC.",
     twitterDescription:
       "Гонки, победы, подиумы и лучшие круги на публичном ACC сервере ASG Racing.",
     twitterDescriptionRaces:
@@ -1214,6 +1267,8 @@ const translations = {
       "Фановая недельная и месячная статистика ASG Racing с самыми активными, быстрыми и безумными пилотами сервера.",
     twitterDescriptionCommunity:
       "Истории сообщества ASG Racing: отчеты, фотографии и хайлайты прошедших ACC-заездов.",
+    twitterDescriptionNews:
+      "Последние обновления, объявления и технические заметки ASG Racing ACC.",
     ogLocale: "ru_RU",
     heroTitle: "🏁 ASG Racing Leaderboard",
     heroSubtitle:
@@ -4564,6 +4619,18 @@ function formatCommunityDateLong(dateString, lang = currentLang) {
   return lang === "ru" ? formatted.replace(/\s*г\.$/, "") : formatted;
 }
 
+function formatNewsDateTime(dateString) {
+  if (!dateString) return "-";
+  const date = new Date(dateString);
+  if (Number.isNaN(date.getTime())) return dateString;
+  const day = String(date.getDate()).padStart(2, "0");
+  const month = String(date.getMonth() + 1).padStart(2, "0");
+  const year = String(date.getFullYear()).padStart(4, "0");
+  const hours = String(date.getHours()).padStart(2, "0");
+  const minutes = String(date.getMinutes()).padStart(2, "0");
+  return `${day}.${month}.${year} ${hours}:${minutes}`;
+}
+
 function getCommunityPostId(post) {
   return String(post?.id || post?.date || "").trim();
 }
@@ -4844,6 +4911,500 @@ function initCommunityLightbox() {
   bindCommunityLightboxTriggers();
   updateCommunityLightboxAvailability();
   window.addEventListener("resize", debounce(updateCommunityLightboxAvailability, 120));
+}
+
+function getNewsListHref() {
+  return `${SITE_BASE_PATH}news/`;
+}
+
+function getNewsArticleHref(slug) {
+  const baseHref = getNewsListHref();
+  if (!slug) return baseHref;
+  return `${baseHref}?slug=${encodeURIComponent(slug)}`;
+}
+
+function getRequestedNewsSlug() {
+  const slug = new URLSearchParams(window.location.search).get("slug");
+  return String(slug || "").trim();
+}
+
+function loadNewsReadState() {
+  try {
+    const rawValue = localStorage.getItem(NEWS_READ_STORAGE_KEY);
+    if (!rawValue) return {};
+    const parsed = JSON.parse(rawValue);
+    return parsed && typeof parsed === "object" ? parsed : {};
+  } catch (error) {
+    return {};
+  }
+}
+
+function saveNewsReadState(items) {
+  try {
+    localStorage.setItem(NEWS_READ_STORAGE_KEY, JSON.stringify(items || {}));
+  } catch (error) {
+    // News read state is a local convenience feature.
+  }
+}
+
+function isNewsItemRead(item) {
+  const state = loadNewsReadState();
+  const key = String(item?.id || item?.slug || "").trim();
+  return Boolean(key && state[key]);
+}
+
+function markNewsItemRead(item) {
+  const key = String(item?.id || item?.slug || "").trim();
+  if (!key) return;
+  const state = loadNewsReadState();
+  if (state[key]) return;
+  state[key] = Date.now();
+  saveNewsReadState(state);
+}
+
+function isNewsRecordPublished(item) {
+  const publishedAt = Date.parse(String(item?.published_at || ""));
+  return !Number.isFinite(publishedAt) || publishedAt <= Date.now();
+}
+
+function isNewsRecordExpired(item) {
+  const expiresAt = Date.parse(String(item?.expires_at || ""));
+  return Number.isFinite(expiresAt) && expiresAt < Date.now();
+}
+
+function normalizeNewsImageUrl(value) {
+  const sourceValue = String(value || "").trim();
+  if (!sourceValue) return "";
+  if (/^(?:https?:)?\/\//i.test(sourceValue)) return sourceValue;
+  if (sourceValue.startsWith("/")) {
+    if (sourceValue.startsWith("/news-content/") && window.location.pathname.startsWith("/top/")) {
+      return `/top${sourceValue}`;
+    }
+    return sourceValue;
+  }
+  try {
+    const resolved = new URL(sourceValue, newsFeedSourceUrl || window.location.href);
+    if (resolved.origin === window.location.origin) {
+      return `${resolved.pathname}${resolved.search}${resolved.hash}`;
+    }
+    return resolved.toString();
+  } catch (error) {
+    return sourceValue;
+  }
+}
+
+function normalizeNewsItem(rawItem) {
+  if (!rawItem || typeof rawItem !== "object") return null;
+  const slug = String(rawItem.slug || rawItem.id || "").trim();
+  const title = String(rawItem.title || "").trim();
+  if (!slug || !title) return null;
+
+  const body = Array.isArray(rawItem.body)
+    ? rawItem.body.filter(Boolean).map(item => typeof item === "string" ? item.trim() : item)
+    : typeof rawItem.body === "string"
+      ? [rawItem.body.trim()]
+      : [];
+  const summary = String(rawItem.summary || "").trim() || body.find(item => typeof item === "string") || "";
+  const thumbnailUrl = normalizeNewsImageUrl(rawItem.thumbnail_url || rawItem.image?.thumbnail || rawItem.cover_image_url || rawItem.image?.cover);
+  const coverUrl = normalizeNewsImageUrl(rawItem.cover_image_url || rawItem.image?.cover || rawItem.thumbnail_url || rawItem.image?.thumbnail);
+  const imageAlt = String(rawItem.image_alt || rawItem.image?.alt || title).trim();
+
+  return {
+    id: String(rawItem.id || slug).trim(),
+    slug,
+    title,
+    summary,
+    body,
+    thumbnail_url: thumbnailUrl,
+    cover_image_url: coverUrl,
+    image_alt: imageAlt,
+    published_at: String(rawItem.published_at || rawItem.date || "").trim(),
+    expires_at: String(rawItem.expires_at || "").trim(),
+    kind: String(rawItem.kind || "update").trim(),
+    priority: Number(rawItem.priority) || 0,
+    is_pinned: Boolean(rawItem.is_pinned)
+  };
+}
+
+function getSortedNewsFeed(items = newsFeedData) {
+  return [...items]
+    .filter(Boolean)
+    .filter(isNewsRecordPublished)
+    .filter(item => !isNewsRecordExpired(item))
+    .sort((a, b) => {
+      if (Boolean(a.is_pinned) !== Boolean(b.is_pinned)) return a.is_pinned ? -1 : 1;
+      if ((Number(a.priority) || 0) !== (Number(b.priority) || 0)) return (Number(b.priority) || 0) - (Number(a.priority) || 0);
+      return Date.parse(String(b.published_at || "")) - Date.parse(String(a.published_at || ""));
+    });
+}
+
+function getUnreadNewsCount(items = newsFeedData) {
+  return getSortedNewsFeed(items).filter(item => !isNewsItemRead(item)).length;
+}
+
+async function loadNewsFeed() {
+  const candidates = [TOP_NEWS_DATA_URL, LOCAL_NEWS_DATA_URL];
+  let payload = null;
+  let resolvedUrl = candidates[candidates.length - 1];
+
+  for (const url of candidates) {
+    try {
+      const response = await fetch(url, { cache: "no-store" });
+      if (!response.ok) throw new Error(`HTTP ${response.status}`);
+      payload = await response.json();
+      resolvedUrl = url;
+      break;
+    } catch (error) {
+      payload = null;
+    }
+  }
+
+  const items = Array.isArray(payload?.items)
+    ? payload.items
+    : Array.isArray(payload)
+      ? payload
+      : [];
+
+  newsFeedSourceUrl = resolvedUrl;
+  newsFeedData = items
+    .map(normalizeNewsItem)
+    .filter(Boolean);
+  return newsFeedData;
+}
+
+function renderNewsBodyBlocks(blocks) {
+  const items = Array.isArray(blocks) ? blocks : [blocks];
+  return items.map((block) => {
+    if (typeof block === "string") {
+      return `<p>${escapeHtml(block)}</p>`;
+    }
+    if (block && typeof block === "object" && block.type === "list" && Array.isArray(block.items)) {
+      return `<ul>${block.items.map(item => `<li>${escapeHtml(String(item || ""))}</li>`).join("")}</ul>`;
+    }
+    if (block && typeof block === "object" && block.type === "link" && block.href) {
+      const href = String(block.href || "").trim();
+      const label = String(block.label || href).trim();
+      return `<p><a class="news-inline-link" href="${escapeAttribute(href)}">${escapeHtml(label)}</a></p>`;
+    }
+    return "";
+  }).join("");
+}
+
+function renderNewsThumb(item, className = "") {
+  const imageUrl = item?.thumbnail_url || item?.cover_image_url || "";
+  const altText = String(item?.image_alt || item?.title || "").trim();
+  if (imageUrl) {
+    return `<img class="news-thumb${className ? ` ${escapeHtml(className)}` : ""}" src="${escapeHtml(imageUrl)}" alt="${escapeHtml(altText)}" loading="lazy" />`;
+  }
+  return `<div class="news-thumb news-thumb-placeholder${className ? ` ${escapeHtml(className)}` : ""}" aria-hidden="true"><span>NEWS</span></div>`;
+}
+
+function renderNewsNotificationBilingualText(text, primaryClass, secondaryClass) {
+  const value = String(text || "").trim();
+  if (!value) return "";
+  const parts = value.split(/\s+\/\s+/);
+  if (parts.length < 2) {
+    return `<span class="${escapeAttribute(primaryClass)}">${escapeHtml(value)}</span>`;
+  }
+  const [ruPart, ...restParts] = parts;
+  const enPart = restParts.join(" / ").trim();
+  return `
+    <span class="news-bilingual-stack">
+      <span class="${escapeAttribute(primaryClass)}">${escapeHtml(ruPart.trim())}</span>
+      <span class="${escapeAttribute(secondaryClass)}">${escapeHtml(enPart)}</span>
+    </span>
+  `;
+}
+
+function renderNewsNotificationItem(item) {
+  const href = getNewsArticleHref(item.slug);
+  const unread = !isNewsItemRead(item);
+  const publishedLabel = formatNewsDateTime(item.published_at);
+  return `
+    <a class="news-notification-card${unread ? " is-unread" : ""}" href="${escapeHtml(href)}" data-news-open-slug="${escapeHtml(item.slug)}">
+      <span class="news-notification-copy">
+        <span class="news-notification-meta">${escapeHtml(publishedLabel)}</span>
+        ${renderNewsNotificationBilingualText(item.title, "news-notification-title", "news-notification-title-secondary")}
+        ${renderNewsThumb(item, "news-notification-thumb")}
+      </span>
+    </a>
+  `;
+}
+
+function renderNewsNotificationsModal() {
+  const listEl = document.getElementById("news-notifications-list");
+  if (!listEl) return;
+  const items = getSortedNewsFeed(newsFeedData).slice(0, 6);
+  listEl.innerHTML = items.length
+    ? items.map(renderNewsNotificationItem).join("")
+    : `<div class="empty-box">${escapeHtml(t("newsBellEmpty"))}</div>`;
+}
+
+function renderNewsBell() {
+  const button = document.getElementById("news-bell-button");
+  const badge = document.getElementById("news-bell-badge");
+  const panel = document.getElementById("news-notifications-panel");
+  if (!button || !badge) return;
+
+  const unreadCount = getUnreadNewsCount(newsFeedData);
+  badge.hidden = unreadCount <= 0;
+  badge.textContent = unreadCount > 99 ? "99+" : String(unreadCount);
+  button.setAttribute(
+    "aria-label",
+    unreadCount > 0
+      ? replaceTokens(t("newsBellUnreadLabel"), { count: unreadCount })
+      : t("newsBellAriaLabel")
+  );
+  if (panel) {
+    button.setAttribute("aria-expanded", panel.hidden ? "false" : "true");
+  }
+}
+
+function bindNewsNotificationsModalLinks() {
+  const listEl = document.getElementById("news-notifications-list");
+  if (!listEl || listEl.dataset.bound === "true") return;
+
+  listEl.addEventListener("click", (event) => {
+    const link = event.target?.closest?.("[data-news-open-slug]");
+    if (!link) return;
+    const slug = String(link.dataset.newsOpenSlug || "").trim();
+    const item = newsFeedData.find(entry => entry.slug === slug);
+    if (item) markNewsItemRead(item);
+    closeNewsNotificationsPopover();
+    renderNewsBell();
+    renderNewsNotificationsModal();
+  });
+
+  listEl.dataset.bound = "true";
+}
+
+function ensureNewsNavigationLink() {
+  const navMenu = document.querySelector(".top-nav-menu");
+  if (!navMenu || navMenu.querySelector("[data-news-nav-link='true'], [data-i18n='btnNews']")) return;
+
+  const link = document.createElement("a");
+  link.className = `top-nav-link top-nav-link-secondary${IS_NEWS_PAGE ? " is-current" : ""}`;
+  link.href = getNewsListHref();
+  link.dataset.i18n = "btnNews";
+  link.dataset.navItem = "true";
+  link.dataset.newsNavLink = "true";
+  link.textContent = t("btnNews");
+
+  const communityLink = navMenu.querySelector('[href="./community/"], [href="../community/"], [href="/community/"]');
+  if (communityLink?.parentNode) {
+    communityLink.parentNode.insertBefore(link, communityLink);
+  } else {
+    const moreEl = navMenu.querySelector(".top-nav-more");
+    if (moreEl?.parentNode) {
+      moreEl.parentNode.insertBefore(link, moreEl);
+    } else {
+      navMenu.appendChild(link);
+    }
+  }
+}
+
+function ensureNewsNotificationsUi() {
+  ensureNewsNavigationLink();
+
+  const actionsEl = document.querySelector(".top-nav-actions");
+  if (actionsEl && !document.getElementById("news-bell-button")) {
+    const wrapper = document.createElement("div");
+    wrapper.className = "top-nav-news-bell";
+    wrapper.innerHTML = `
+      <button
+        class="news-bell-btn"
+        id="news-bell-button"
+        type="button"
+        aria-label="${escapeHtml(t("newsBellAriaLabel"))}"
+        aria-haspopup="dialog"
+        aria-expanded="false"
+        aria-controls="news-notifications-panel"
+      >
+        <span class="news-bell-icon" aria-hidden="true">&#128276;</span>
+        <span class="news-bell-badge" id="news-bell-badge" hidden>0</span>
+      </button>
+      <div class="news-notifications-panel" id="news-notifications-panel" role="dialog" aria-modal="false" aria-labelledby="news-notifications-title" hidden>
+        <div class="news-notifications-popover-head">
+          <div>
+            <h3 id="news-notifications-title" class="news-notifications-popover-title" data-i18n="newsModalTitle">${escapeHtml(t("newsModalTitle"))}</h3>
+            <p class="news-notifications-popover-subtitle" data-i18n="newsModalSubtitle">${escapeHtml(t("newsModalSubtitle"))}</p>
+          </div>
+        </div>
+        <div class="news-notifications-list" id="news-notifications-list"></div>
+        <div class="news-notifications-footer">
+          <a class="btn btn-last-races news-notifications-open-all" href="${escapeHtml(getNewsListHref())}" id="news-notifications-open-all" data-i18n="newsModalOpenAll">${escapeHtml(t("newsModalOpenAll"))}</a>
+        </div>
+      </div>
+    `;
+    actionsEl.insertBefore(wrapper, actionsEl.firstChild || null);
+  }
+
+  bindNewsNotificationsModalLinks();
+}
+
+function findNewsBySlug(slug) {
+  const key = String(slug || "").trim();
+  return newsFeedData.find(item => item.slug === key) || null;
+}
+
+function renderNewsListPage(items) {
+  const listEl = document.getElementById("news-feed");
+  const articleEl = document.getElementById("news-article");
+  const titleEl = document.getElementById("news-page-title");
+  const subtitleEl = document.getElementById("news-page-subtitle");
+  if (!listEl || !articleEl || !titleEl || !subtitleEl) return;
+
+  titleEl.textContent = t("newsPageTitle");
+  subtitleEl.textContent = t("newsPageSubtitle");
+  articleEl.hidden = true;
+  listEl.hidden = false;
+  listEl.innerHTML = items.length
+    ? items.map(item => `
+      <article class="news-feed-card">
+        <a class="news-feed-card-link" href="${escapeHtml(getNewsArticleHref(item.slug))}" data-news-open-slug="${escapeHtml(item.slug)}">
+          ${renderNewsThumb(item, "news-feed-thumb")}
+          <div class="news-feed-copy">
+            <time class="news-feed-date" datetime="${escapeAttribute(item.published_at || "")}">${escapeHtml(formatNewsDateTime(item.published_at))}</time>
+            <h2 class="news-feed-title">${escapeHtml(item.title)}</h2>
+            <p class="news-feed-summary">${escapeHtml(item.summary || "")}</p>
+            <span class="news-feed-cta">${escapeHtml(t("newsReadMore"))}</span>
+          </div>
+        </a>
+      </article>
+    `).join("")
+    : `<div class="empty-box">${escapeHtml(t("newsListEmpty"))}</div>`;
+}
+
+function renderNewsDetailPage(item) {
+  const listEl = document.getElementById("news-feed");
+  const articleEl = document.getElementById("news-article");
+  const titleEl = document.getElementById("news-page-title");
+  const subtitleEl = document.getElementById("news-page-subtitle");
+  if (!listEl || !articleEl || !titleEl || !subtitleEl) return;
+
+  markNewsItemRead(item);
+  renderNewsBell();
+  renderNewsNotificationsModal();
+
+  titleEl.textContent = item.title;
+  subtitleEl.textContent = formatNewsDateTime(item.published_at);
+  listEl.hidden = true;
+  articleEl.hidden = false;
+  articleEl.innerHTML = `
+    <a class="news-back-link" href="${escapeHtml(getNewsListHref())}">${escapeHtml(t("newsBackToList"))}</a>
+    <article class="news-article-card">
+      ${item.cover_image_url ? `
+        <div class="news-article-cover-wrap">
+          <img class="news-article-cover" src="${escapeHtml(item.cover_image_url)}" alt="${escapeHtml(item.image_alt || item.title)}" loading="lazy" />
+        </div>
+      ` : ""}
+      <div class="news-article-body">
+        ${renderNewsBodyBlocks(item.body)}
+      </div>
+    </article>
+  `;
+}
+
+function renderMissingNewsPage() {
+  const listEl = document.getElementById("news-feed");
+  const articleEl = document.getElementById("news-article");
+  const titleEl = document.getElementById("news-page-title");
+  const subtitleEl = document.getElementById("news-page-subtitle");
+  if (!listEl || !articleEl || !titleEl || !subtitleEl) return;
+
+  titleEl.textContent = t("newsPageTitle");
+  subtitleEl.textContent = "";
+  listEl.hidden = true;
+  articleEl.hidden = false;
+  articleEl.innerHTML = `
+    <a class="news-back-link" href="${escapeHtml(getNewsListHref())}">${escapeHtml(t("newsBackToList"))}</a>
+    <div class="empty-box">${escapeHtml(t("newsArticleMissing"))}</div>
+  `;
+}
+
+function bindNewsPageLinks() {
+  const root = document.getElementById("news-feed");
+  if (!root || root.dataset.bound === "true") return;
+  root.addEventListener("click", (event) => {
+    const link = event.target?.closest?.("[data-news-open-slug]");
+    if (!link) return;
+    const item = findNewsBySlug(link.dataset.newsOpenSlug);
+    if (item) markNewsItemRead(item);
+  });
+  root.dataset.bound = "true";
+}
+
+function renderNewsPage() {
+  const listEl = document.getElementById("news-feed");
+  if (!listEl) return;
+  const items = getSortedNewsFeed(newsFeedData);
+  const slug = getRequestedNewsSlug();
+  const item = slug ? findNewsBySlug(slug) : null;
+
+  if (slug && item) {
+    renderNewsDetailPage(item);
+  } else if (slug) {
+    renderMissingNewsPage();
+  } else {
+    renderNewsListPage(items);
+  }
+
+  bindNewsPageLinks();
+}
+
+function closeNewsNotificationsPopover() {
+  const panel = document.getElementById("news-notifications-panel");
+  const button = document.getElementById("news-bell-button");
+  if (!panel || panel.hidden) return;
+  panel.hidden = true;
+  button?.setAttribute("aria-expanded", "false");
+}
+
+function openNewsNotificationsPopover() {
+  const panel = document.getElementById("news-notifications-panel");
+  const button = document.getElementById("news-bell-button");
+  if (!panel || !button) return;
+  renderNewsNotificationsModal();
+  panel.hidden = false;
+  button.setAttribute("aria-expanded", "true");
+}
+
+function toggleNewsNotificationsPopover() {
+  const panel = document.getElementById("news-notifications-panel");
+  if (!panel) return;
+  if (panel.hidden) openNewsNotificationsPopover();
+  else closeNewsNotificationsPopover();
+}
+
+function initNewsNotificationsModal() {
+  if (newsModalController) return;
+  const wrapper = document.querySelector(".top-nav-news-bell");
+  const button = document.getElementById("news-bell-button");
+  const panel = document.getElementById("news-notifications-panel");
+  if (!wrapper || !button || !panel) return;
+
+  button.addEventListener("click", (event) => {
+    event.preventDefault();
+    event.stopPropagation();
+    toggleNewsNotificationsPopover();
+  });
+
+  panel.addEventListener("click", (event) => {
+    event.stopPropagation();
+  });
+
+  document.addEventListener("click", (event) => {
+    if (!wrapper.contains(event.target)) closeNewsNotificationsPopover();
+  });
+
+  document.addEventListener("keydown", (event) => {
+    if (event.key === "Escape") closeNewsNotificationsPopover();
+  });
+
+  newsModalController = {
+    open: openNewsNotificationsPopover,
+    close: closeNewsNotificationsPopover
+  };
 }
 
 function getBestLapClass(isHighlighted) {
@@ -5386,7 +5947,9 @@ function applyStaticTranslations() {
         ? t("pageTitleFunStats")
         : IS_COMMUNITY_PAGE
           ? t("pageTitleCommunity")
-          : IS_RACES_PAGE
+          : IS_NEWS_PAGE
+            ? t("pageTitleNews")
+            : IS_RACES_PAGE
             ? t("pageTitleRaces")
             : t("pageTitle");
 
@@ -5402,7 +5965,9 @@ function applyStaticTranslations() {
         ? "metaDescriptionFunStats"
         : IS_COMMUNITY_PAGE
           ? "metaDescriptionCommunity"
-          : IS_RACES_PAGE
+          : IS_NEWS_PAGE
+            ? "metaDescriptionNews"
+            : IS_RACES_PAGE
             ? "metaDescriptionRaces"
             : "metaDescription";
   const ogDescriptionKey = IS_DRIVER_PAGE
@@ -5413,7 +5978,9 @@ function applyStaticTranslations() {
         ? "ogDescriptionFunStats"
         : IS_COMMUNITY_PAGE
           ? "ogDescriptionCommunity"
-          : IS_RACES_PAGE
+          : IS_NEWS_PAGE
+            ? "ogDescriptionNews"
+            : IS_RACES_PAGE
             ? "ogDescriptionRaces"
             : "ogDescription";
   const twitterDescriptionKey = IS_DRIVER_PAGE
@@ -5424,7 +5991,9 @@ function applyStaticTranslations() {
         ? "twitterDescriptionFunStats"
         : IS_COMMUNITY_PAGE
           ? "twitterDescriptionCommunity"
-          : IS_RACES_PAGE
+          : IS_NEWS_PAGE
+            ? "twitterDescriptionNews"
+            : IS_RACES_PAGE
             ? "twitterDescriptionRaces"
             : "twitterDescription";
 
@@ -9349,6 +9918,8 @@ function updateTopNavModalOffset() {
 
 function rerenderUI() {
   applyStaticTranslations();
+  renderNewsBell();
+  renderNewsNotificationsModal();
   if (eloModalState) renderEloModal();
   if (safetyModalState) renderSafetyModal();
 
@@ -9373,6 +9944,12 @@ function rerenderUI() {
 
   if (IS_COMMUNITY_PAGE) {
     renderCommunityPage();
+    applyRevealAnimations();
+    return;
+  }
+
+  if (IS_NEWS_PAGE) {
+    renderNewsPage();
     applyRevealAnimations();
     return;
   }
@@ -9432,12 +10009,14 @@ async function init() {
   document.body.classList.remove("background-audio-focus");
   applyInitialTopLoadingState();
   setupTopHomeDeferredSections();
+  ensureNewsNotificationsUi();
   rerenderUI();
 
   backgroundVideoSoundState.volume = loadBackgroundVideoVolume();
   runInitStep("updateServerCardBackgrounds", () => updateServerCardBackgrounds());
   runInitStep("bindLanguageButtons", () => bindLanguageButtons());
   runInitStep("bindTopNavMoreMenu", () => bindTopNavMoreMenu());
+  runInitStep("initNewsNotificationsModal", () => initNewsNotificationsModal());
   runInitStep("bindFunStatsControls", () => bindFunStatsControls());
   runInitStep("bindSearchInputs", () => bindSearchInputs());
   runInitStep("ensureTopGuide", () => ensureTopGuide());
@@ -9449,6 +10028,11 @@ async function init() {
   window.addEventListener("storage", event => {
     if (event.key === HOURLY_VOTE_STATE_STORAGE_KEY) {
       syncHourlyVoteStateFromStorage();
+    }
+    if (event.key === NEWS_READ_STORAGE_KEY) {
+      renderNewsBell();
+      renderNewsNotificationsModal();
+      if (IS_NEWS_PAGE) renderNewsPage();
     }
   });
   window.addEventListener("resize", debounce(() => {
@@ -9512,6 +10096,14 @@ async function init() {
       return;
     }
 
+    if (IS_NEWS_PAGE) {
+      await loadNewsFeed().catch(() => []);
+      topLoadState.news = false;
+      renderNewsBell();
+      rerenderUI();
+      return;
+    }
+
     if (IS_RACES_PAGE) {
       racesData = await loadRacesData();
       topLoadState.races = false;
@@ -9523,6 +10115,12 @@ async function init() {
       loadHourlyAnnouncementData(),
       loadHourlyScheduleData()
     ]);
+    void loadNewsFeed()
+      .catch(() => [])
+      .then(() => {
+        renderNewsBell();
+        renderNewsNotificationsModal();
+      });
     const data = await loadSiteData();
 
     leaderboardData = data.leaderboard;
