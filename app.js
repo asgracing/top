@@ -5090,7 +5090,7 @@ function renderNewsBodyBlocks(blocks) {
     if (block && typeof block === "object" && block.type === "link" && block.href) {
       const href = String(block.href || "").trim();
       const label = String(block.label || href).trim();
-      return `<p><a class="news-inline-link" href="${escapeAttribute(href)}">${escapeHtml(label)}</a></p>`;
+      return `<p><a class="news-inline-link" href="${escapeHtml(href)}">${escapeHtml(label)}</a></p>`;
     }
     return "";
   }).join("");
