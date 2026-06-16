@@ -11,7 +11,7 @@
         "Если вы регулярно ездите на серверах ASG Racing, рекомендуем проверить раздел уже сейчас и использовать его как основной ориентир по поведению в гонке.",
         {
           "type": "link",
-          "href": "https://asgracing.ru/#rules",
+          "href": "/#rules",
           "label": "Перейти к разделу гоночных правил"
         },
         "The main ASG Racing site now includes a dedicated racing rules section. All participants are required to read it before joining races and to follow the rules on track.",
@@ -19,7 +19,7 @@
         "If you race regularly on ASG Racing servers, we strongly recommend reviewing the section now and using it as the primary reference for race conduct.",
         {
           "type": "link",
-          "href": "https://asgracing.ru/#rules",
+          "href": "/#rules",
           "label": "Open the racing rules section"
         },
         {
