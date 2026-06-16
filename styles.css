@@ -8558,16 +8558,19 @@ body.modal-open {
   }
 
   .top-nav-menu {
-    gap: 8px;
+    gap: 6px;
   }
 
   .top-nav-group {
-    width: calc(50% - 4px);
+    width: calc(50% - 3px);
     min-width: min(220px, 100%);
   }
 
   .top-nav-group-toggle {
     width: 100%;
+    justify-content: space-between;
+    padding-left: 10px;
+    padding-right: 10px;
   }
 
   .top-nav-group-menu {
