@@ -6649,8 +6649,7 @@ body.modal-open {
   }
 
   .top-nav-brand-text {
-    display: inline-block;
-    font-size: 0.82rem;
+    display: none;
   }
 
   .top-nav-brand-logo {
