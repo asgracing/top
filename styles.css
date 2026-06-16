@@ -8568,7 +8568,8 @@ body.modal-open {
 
   .top-nav-group-toggle {
     width: 100%;
-    justify-content: space-between;
+    justify-content: center;
+    gap: 6px;
     padding-left: 10px;
     padding-right: 10px;
   }
