@@ -6973,6 +6973,18 @@ body.modal-open {
     gap: 6px 5px;
   }
 
+  .news-notifications-panel {
+    right: -6px;
+    width: calc(100vw - 12px);
+    max-width: calc(100vw - 12px);
+    padding: 14px;
+    border-radius: 20px;
+  }
+
+  .news-notifications-panel::before {
+    right: 15px;
+  }
+
   .top-nav-group {
     width: auto;
     min-width: 0;
@@ -8555,6 +8567,17 @@ body.modal-open {
 @media (max-width: 640px) {
   .hero {
     padding-top: 14px;
+  }
+
+  .news-notifications-panel {
+    right: -10px;
+    width: min(460px, calc(100vw - 20px));
+    max-width: calc(100vw - 20px);
+    padding: 16px;
+  }
+
+  .news-notifications-panel::before {
+    right: 20px;
   }
 
   .top-nav-menu {
