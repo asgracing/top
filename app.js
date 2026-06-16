@@ -5366,11 +5366,31 @@ function closeNewsNotificationsPopover() {
   button?.setAttribute("aria-expanded", "false");
 }
 
+function syncNewsNotificationsPopoverPosition() {
+  const panel = document.getElementById("news-notifications-panel");
+  const button = document.getElementById("news-bell-button");
+  if (!panel || !button) return;
+
+  const viewportWidth = window.innerWidth || document.documentElement.clientWidth || 0;
+  if (viewportWidth > 640) {
+    panel.style.removeProperty("--news-popover-top");
+    panel.style.removeProperty("--news-popover-inset");
+    return;
+  }
+
+  const rect = button.getBoundingClientRect();
+  const inset = viewportWidth <= 420 ? 6 : 10;
+  const top = Math.max(56, Math.round(rect.bottom + 10));
+  panel.style.setProperty("--news-popover-top", `${top}px`);
+  panel.style.setProperty("--news-popover-inset", `${inset}px`);
+}
+
 function openNewsNotificationsPopover() {
   const panel = document.getElementById("news-notifications-panel");
   const button = document.getElementById("news-bell-button");
   if (!panel || !button) return;
   renderNewsNotificationsModal();
+  syncNewsNotificationsPopoverPosition();
   panel.hidden = false;
   button.setAttribute("aria-expanded", "true");
 }
@@ -5405,6 +5425,10 @@ function initNewsNotificationsModal() {
 
   document.addEventListener("keydown", (event) => {
     if (event.key === "Escape") closeNewsNotificationsPopover();
+  });
+
+  window.addEventListener("resize", () => {
+    if (!panel.hidden) syncNewsNotificationsPopoverPosition();
   });
 
   newsModalController = {
