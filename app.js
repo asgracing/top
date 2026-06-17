@@ -4,7 +4,8 @@ const IS_CARS_PAGE = /\/cars(?:\/|\/index\.html)?$/i.test(window.location.pathna
 const IS_FUN_STATS_PAGE = /\/fun-stats(?:\/|\/index\.html)?$/i.test(window.location.pathname);
 const IS_COMMUNITY_PAGE = /\/community(?:\/|\/index\.html)?$/i.test(window.location.pathname);
 const IS_NEWS_PAGE = /\/news(?:\/|\/index\.html)?$/i.test(window.location.pathname);
-const SITE_BASE_PATH = (IS_RACES_PAGE || IS_DRIVER_PAGE || IS_CARS_PAGE || IS_FUN_STATS_PAGE || IS_COMMUNITY_PAGE || IS_NEWS_PAGE) ? "../" : "./";
+const IS_BANS_PAGE = /\/bans(?:\/|\/index\.html)?$/i.test(window.location.pathname);
+const SITE_BASE_PATH = (IS_RACES_PAGE || IS_DRIVER_PAGE || IS_CARS_PAGE || IS_FUN_STATS_PAGE || IS_COMMUNITY_PAGE || IS_NEWS_PAGE || IS_BANS_PAGE) ? "../" : "./";
 const CAR_IMAGE_BASE_PATH = `${SITE_BASE_PATH}assets/car-icons`;
 const pageParams = new URLSearchParams(window.location.search);
 function normalizeBaseUrl(value) {
@@ -32,6 +33,7 @@ const TOP_DATA_V2_BASE_URL = TOP_API_BASE_URL || `${TOP_DATA_BASE_URL}/v2`;
 const TOP_API_ROOT_URL = TOP_API_BASE_URL.replace(/\/top-data\/v2$/i, "");
 const HOURLY_DATA_BASE_URL = normalizeBaseUrl(pageParams.get("hourlyApiBase")) || DEFAULT_HOURLY_DATA_BASE_URL;
 const TOP_NEWS_DATA_URL = `${TOP_DATA_BASE_URL}/news.json`;
+const TOP_BANS_DATA_URL = `${TOP_DATA_BASE_URL}/bans.json`;
 const LOCAL_NEWS_DATA_URL = `${SITE_BASE_PATH}news-content/news.json`;
 const topDataV2ManifestUrl = `${TOP_DATA_V2_BASE_URL}/manifest.json`;
 const serverStatusUrl = pageParams.get("serverStatusUrl") || (TOP_API_ROOT_URL ? `${TOP_API_ROOT_URL}/server-status` : `${TOP_DATA_BASE_URL}/server_status.json`);
@@ -262,6 +264,7 @@ let safetyData = [];
 let driverOfDayData = null;
 let racesData = [];
 let carsData = [];
+let bansData = [];
 let topDataV2Manifest = null;
 let topDataV2Version = "";
 let topDataV2TableMeta = null;
@@ -272,7 +275,7 @@ const topDataV2PagedTables = {
 };
 let latestHourlyRaceData = null;
 let racesArchiveMeta = null;
-const IS_TOP_HOME_PAGE = !(IS_RACES_PAGE || IS_DRIVER_PAGE || IS_CARS_PAGE || IS_FUN_STATS_PAGE || IS_COMMUNITY_PAGE || IS_NEWS_PAGE);
+const IS_TOP_HOME_PAGE = !(IS_RACES_PAGE || IS_DRIVER_PAGE || IS_CARS_PAGE || IS_FUN_STATS_PAGE || IS_COMMUNITY_PAGE || IS_NEWS_PAGE || IS_BANS_PAGE);
 const topLoadState = {
   home: IS_TOP_HOME_PAGE,
   hourly: IS_TOP_HOME_PAGE,
@@ -281,7 +284,8 @@ const topLoadState = {
   cars: IS_CARS_PAGE,
   funStats: IS_FUN_STATS_PAGE,
   community: IS_COMMUNITY_PAGE,
-  news: IS_NEWS_PAGE
+  news: IS_NEWS_PAGE,
+  bans: IS_BANS_PAGE
 };
 const topHomeDeferredSections = {
   leaderboard: !IS_TOP_HOME_PAGE,
@@ -339,6 +343,11 @@ function applyInitialTopLoadingState() {
 
   if (IS_NEWS_PAGE) {
     setLoadingMarkup("news-feed", "loading");
+    return;
+  }
+
+  if (IS_BANS_PAGE) {
+    setLoadingMarkup("bans-table", "loading");
     return;
   }
 
@@ -547,6 +556,16 @@ const translations = {
     newsPageEyebrow: "Newsroom",
     newsPageTitle: "News",
     newsPageSubtitle: "Updates, maintenance notes and fresh announcements from ASG Racing.",
+    btnBans: "Ban List",
+    bansPageEyebrow: "Moderation",
+    bansPageTitle: "Ban List",
+    bansPageSubtitle: "Public list of banned drivers from the ASG Racing servers. Steam IDs stay private.",
+    bansSummaryTotal: "Drivers banned",
+    bansSummaryLatest: "Latest ban",
+    bansTableTitle: "Banned Drivers",
+    bansTableSubtitle: "Public moderation list without Steam IDs, sorted by latest ban date.",
+    bansEmpty: "No public bans found yet.",
+    bansCols: ["Driver", "Banned at"],
     newsBackToList: "Back to all news",
     newsArticleMissing: "This news entry was not found.",
     newsListEmpty: "No news published yet.",
@@ -635,6 +654,7 @@ const translations = {
     pageTitleFunStats: "ASG Racing Fun Stats | Weekly and Monthly ACC Stories",
     pageTitleCommunity: "ASG Racing Community | Event Stories and Photos",
     pageTitleNews: "ASG Racing News | Updates and Announcements",
+    pageTitleBans: "ASG Racing Ban List | Public Moderation Board",
     metaDescription:
       "ASG Racing ACC Leaderboard - race stats, wins, podiums and best laps from the public Assetto Corsa Competizione server.",
     metaDescriptionRaces:
@@ -649,6 +669,8 @@ const translations = {
       "Community stories from ASG Racing ACC events with short recaps, photos and highlights from recent races.",
     metaDescriptionNews:
       "Latest ASG Racing updates, announcements and technical news from the ACC community site.",
+    metaDescriptionBans:
+      "Public ASG Racing ban list with banned driver names and ban dates. Steam IDs are hidden.",
     ogDescription:
       "Race stats, wins, podiums and best laps from the ASG Racing server in Assetto Corsa Competizione.",
     ogDescriptionRaces:
@@ -663,6 +685,8 @@ const translations = {
       "Community stories from ASG Racing ACC events with short recaps, photos and highlights from recent races.",
     ogDescriptionNews:
       "Latest ASG Racing updates, announcements and technical notes from the ACC community site.",
+    ogDescriptionBans:
+      "Public ASG Racing ban list with banned driver names and ban dates. Steam IDs are hidden.",
     twitterDescription:
       "Races, wins, podiums and best laps from the public ACC server of ASG Racing.",
     twitterDescriptionRaces:
@@ -677,6 +701,8 @@ const translations = {
       "ASG Racing community event recaps, photos and highlights from recent ACC races.",
     twitterDescriptionNews:
       "Latest ASG Racing updates, announcements and technical notes.",
+    twitterDescriptionBans:
+      "Public ASG Racing ban list with banned driver names and ban dates. Steam IDs are hidden.",
     ogLocale: "en_US",
     heroTitle: "🏁 ASG Racing Leaderboard",
     heroSubtitle:
@@ -1068,6 +1094,16 @@ const translations = {
     newsPageEyebrow: "Лента новостей",
     newsPageTitle: "Новости",
     newsPageSubtitle: "Обновления, технические заметки и свежие объявления ASG Racing.",
+    btnBans: "Баны",
+    bansPageEyebrow: "Модерация",
+    bansPageTitle: "Список банов",
+    bansPageSubtitle: "Публичный список забаненных пилотов серверов ASG Racing. Steam ID не публикуются.",
+    bansSummaryTotal: "Всего в бане",
+    bansSummaryLatest: "Последний бан",
+    bansTableTitle: "Забаненные пилоты",
+    bansTableSubtitle: "Публичный список модерации без Steam ID, отсортирован по дате бана.",
+    bansEmpty: "Пока нет публичных записей о банах.",
+    bansCols: ["Пилот", "Дата бана"],
     newsBackToList: "Ко всем новостям",
     newsArticleMissing: "Такая новость не найдена.",
     newsListEmpty: "Новостей пока нет.",
@@ -1154,6 +1190,7 @@ const translations = {
     pageTitleCars: "ASG Racing Cars | Статистика Assetto Corsa Competizione",
     pageTitleCommunity: "ASG Racing Сообщество | Истории и фото мероприятий",
     pageTitleNews: "ASG Racing Новости | Обновления и объявления",
+    pageTitleBans: "ASG Racing Список банов | Публичная доска модерации",
     btnCars: "Машины",
     btnFunStats: "Фан-стата",
     btnCommunity: "Сообщество",
@@ -1247,6 +1284,8 @@ const translations = {
       "Истории сообщества ASG Racing ACC: короткие отчеты о мероприятиях, фотографии и яркие моменты прошедших гонок.",
     metaDescriptionNews:
       "Последние обновления, объявления и технические новости ASG Racing ACC.",
+    metaDescriptionBans:
+      "Публичный список банов ASG Racing с именами пилотов и датой бана. Steam ID скрыты.",
     ogDescription:
       "Статистика гонок, побед, подиумов и лучших кругов на сервере ASG Racing в Assetto Corsa Competizione.",
     ogDescriptionRaces:
@@ -1261,6 +1300,8 @@ const translations = {
       "Истории сообщества ASG Racing ACC: короткие отчеты о мероприятиях, фотографии и яркие моменты прошедших гонок.",
     ogDescriptionNews:
       "Последние обновления, объявления и технические заметки ASG Racing ACC.",
+    ogDescriptionBans:
+      "Публичный список банов ASG Racing с именами пилотов и датой бана. Steam ID скрыты.",
     twitterDescription:
       "Гонки, победы, подиумы и лучшие круги на публичном ACC сервере ASG Racing.",
     twitterDescriptionRaces:
@@ -1275,6 +1316,8 @@ const translations = {
       "Истории сообщества ASG Racing: отчеты, фотографии и хайлайты прошедших ACC-заездов.",
     twitterDescriptionNews:
       "Последние обновления, объявления и технические заметки ASG Racing ACC.",
+    twitterDescriptionBans:
+      "Публичный список банов ASG Racing с именами пилотов и датой бана. Steam ID скрыты.",
     ogLocale: "ru_RU",
     heroTitle: "🏁 ASG Racing Leaderboard",
     heroSubtitle:
@@ -3261,7 +3304,7 @@ function initTwitchWidget() {
 }
 
 function shouldEnableTopGuide() {
-  return !IS_RACES_PAGE && !IS_DRIVER_PAGE && !IS_CARS_PAGE && !IS_FUN_STATS_PAGE && !IS_COMMUNITY_PAGE;
+  return !IS_RACES_PAGE && !IS_DRIVER_PAGE && !IS_CARS_PAGE && !IS_FUN_STATS_PAGE && !IS_COMMUNITY_PAGE && !IS_BANS_PAGE;
 }
 
 function isTopGuideDesktop() {
@@ -5967,6 +6010,27 @@ async function loadDriverIndex() {
   return Array.isArray(data) ? data : [];
 }
 
+async function loadBansData() {
+  const response = await fetch(TOP_BANS_DATA_URL, { cache: "no-store" });
+  if (!response.ok) {
+    throw new Error(`Failed to load bans feed: ${response.status}`);
+  }
+
+  const payload = await response.json();
+  const items = Array.isArray(payload?.items) ? payload.items : [];
+  return items
+    .map((item) => ({
+      name: String(item?.name || "").trim(),
+      banned_at: String(item?.banned_at || "").trim()
+    }))
+    .filter((item) => item.name)
+    .sort((a, b) => {
+      const timeA = a.banned_at ? Date.parse(a.banned_at) : 0;
+      const timeB = b.banned_at ? Date.parse(b.banned_at) : 0;
+      return timeB - timeA;
+    });
+}
+
 function applyStaticTranslations() {
   document.documentElement.lang = t("htmlLang");
   document.title = IS_DRIVER_PAGE
@@ -5979,6 +6043,8 @@ function applyStaticTranslations() {
           ? t("pageTitleCommunity")
           : IS_NEWS_PAGE
             ? t("pageTitleNews")
+            : IS_BANS_PAGE
+              ? t("pageTitleBans")
             : IS_RACES_PAGE
             ? t("pageTitleRaces")
             : t("pageTitle");
@@ -5997,6 +6063,8 @@ function applyStaticTranslations() {
           ? "metaDescriptionCommunity"
           : IS_NEWS_PAGE
             ? "metaDescriptionNews"
+            : IS_BANS_PAGE
+              ? "metaDescriptionBans"
             : IS_RACES_PAGE
             ? "metaDescriptionRaces"
             : "metaDescription";
@@ -6010,6 +6078,8 @@ function applyStaticTranslations() {
           ? "ogDescriptionCommunity"
           : IS_NEWS_PAGE
             ? "ogDescriptionNews"
+            : IS_BANS_PAGE
+              ? "ogDescriptionBans"
             : IS_RACES_PAGE
             ? "ogDescriptionRaces"
             : "ogDescription";
@@ -6023,6 +6093,8 @@ function applyStaticTranslations() {
           ? "twitterDescriptionCommunity"
           : IS_NEWS_PAGE
             ? "twitterDescriptionNews"
+            : IS_BANS_PAGE
+              ? "twitterDescriptionBans"
             : IS_RACES_PAGE
             ? "twitterDescriptionRaces"
             : "twitterDescription";
@@ -8647,6 +8719,56 @@ function renderCarsTable() {
   });
 }
 
+function renderBansSummary() {
+  const totalEl = document.getElementById("bans-total-count");
+  const latestEl = document.getElementById("bans-latest-date");
+
+  if (totalEl) {
+    totalEl.textContent = String(bansData.length || 0);
+  }
+
+  if (latestEl) {
+    latestEl.textContent = bansData[0]?.banned_at
+      ? formatDateTimeLocal(bansData[0].banned_at, currentLang)
+      : "—";
+  }
+}
+
+function renderBansTable() {
+  const tableEl = document.getElementById("bans-table");
+  if (!tableEl) return;
+
+  if (!bansData.length) {
+    tableEl.innerHTML = `<div class="empty-box">${escapeHtml(t("bansEmpty"))}</div>`;
+    return;
+  }
+
+  const headers = t("bansCols").map(label => `<th>${escapeHtml(label)}</th>`).join("");
+  const rows = bansData.map(item => `
+    <tr>
+      <td>${escapeHtml(item.name || "—")}</td>
+      <td>${escapeHtml(item.banned_at ? formatDateTimeLocal(item.banned_at, currentLang) : "—")}</td>
+    </tr>
+  `).join("");
+
+  tableEl.innerHTML = `
+    <table>
+      <thead><tr>${headers}</tr></thead>
+      <tbody>${rows}</tbody>
+    </table>
+  `;
+}
+
+function renderBansPage() {
+  if (topLoadState.bans) {
+    setLoadingMarkup("bans-table", "loading");
+    return;
+  }
+
+  renderBansSummary();
+  renderBansTable();
+}
+
 function renderRecentForm(items = []) {
   if (!Array.isArray(items) || !items.length) return `<span class="empty-inline">-</span>`;
   return items.map(item => `<span class="form-pill">${escapeHtml(item)}</span>`).join("");
@@ -9971,6 +10093,7 @@ function optimizeBackgroundMedia() {
     IS_RACES_PAGE ||
     IS_CARS_PAGE ||
     IS_FUN_STATS_PAGE ||
+    IS_BANS_PAGE ||
     IS_COMMUNITY_PAGE ||
     window.innerWidth <= 768;
 
@@ -10042,6 +10165,12 @@ function rerenderUI() {
 
   if (IS_NEWS_PAGE) {
     renderNewsPage();
+    applyRevealAnimations();
+    return;
+  }
+
+  if (IS_BANS_PAGE) {
+    renderBansPage();
     applyRevealAnimations();
     return;
   }
@@ -10136,7 +10265,7 @@ async function init() {
     runInitStep("initRaceResultsModal", () => initRaceResultsModal());
   } else if (IS_COMMUNITY_PAGE) {
     runInitStep("initCommunityLightbox", () => initCommunityLightbox());
-  } else if (!IS_DRIVER_PAGE && !IS_CARS_PAGE && !IS_COMMUNITY_PAGE) {
+  } else if (!IS_DRIVER_PAGE && !IS_CARS_PAGE && !IS_COMMUNITY_PAGE && !IS_BANS_PAGE) {
     runInitStep("initTodayStatsModal", () => initTodayStatsModal());
     runInitStep("initOnlineActivityModal", () => initOnlineActivityModal());
     runInitStep("initDriverOfDayModal", () => initDriverOfDayModal());
@@ -10193,6 +10322,13 @@ async function init() {
       await loadNewsFeed().catch(() => []);
       topLoadState.news = false;
       renderNewsBell();
+      rerenderUI();
+      return;
+    }
+
+    if (IS_BANS_PAGE) {
+      bansData = await loadBansData();
+      topLoadState.bans = false;
       rerenderUI();
       return;
     }
@@ -10297,6 +10433,14 @@ async function init() {
       const carsTableEl = document.getElementById("cars-table");
       if (carsTableEl) {
         carsTableEl.innerHTML = `<div class="empty-box">${escapeHtml(t("errorLoading"))}</div>`;
+      }
+      return;
+    }
+
+    if (IS_BANS_PAGE) {
+      const bansTableEl = document.getElementById("bans-table");
+      if (bansTableEl) {
+        bansTableEl.innerHTML = `<div class="empty-box">${escapeHtml(t("errorLoading"))}</div>`;
       }
       return;
     }
