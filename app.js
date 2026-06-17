@@ -5810,8 +5810,10 @@ function mergeStandaloneServerStatus(data, standaloneStatus) {
 }
 
 async function loadSiteData() {
-  const data = await loadSiteDataV2();
-  const standaloneStatus = await loadStandaloneServerStatus();
+  const [data, standaloneStatus] = await Promise.all([
+    loadSiteDataV2(),
+    loadStandaloneServerStatus()
+  ]);
   return mergeStandaloneServerStatus(data, standaloneStatus);
 }
 
@@ -10044,6 +10046,7 @@ function optimizeBackgroundMedia() {
     video.replaceChildren();
     video.load?.();
     delete video.dataset.loaded;
+    delete video.dataset.loadScheduled;
   };
 
   const loadBackgroundVideo = () => {
@@ -10057,6 +10060,47 @@ function optimizeBackgroundMedia() {
     video.appendChild(source);
     video.dataset.loaded = "true";
     video.load?.();
+  };
+
+  const scheduleBackgroundVideoLoad = () => {
+    if (video.dataset.loadScheduled === "true" || video.dataset.loaded === "true") return;
+    video.dataset.loadScheduled = "true";
+
+    const startLoading = () => {
+      if (document.body.classList.contains("lite-background")) {
+        delete video.dataset.loadScheduled;
+        return;
+      }
+      loadBackgroundVideo();
+      syncBackgroundVideoSoundState(video);
+      if (!shouldAutoplayBackground) {
+        video.removeAttribute("autoplay");
+        return;
+      }
+
+      video.setAttribute("autoplay", "");
+      const playPromise = video.play?.();
+      if (playPromise && typeof playPromise.catch === "function") {
+        playPromise.catch(() => {
+          video.pause?.();
+        });
+      }
+    };
+
+    const scheduleIdleLoad = () => {
+      if (typeof window.requestIdleCallback === "function") {
+        window.requestIdleCallback(startLoading, { timeout: 2000 });
+      } else {
+        window.setTimeout(startLoading, 1200);
+      }
+    };
+
+    if (document.readyState === "complete") {
+      scheduleIdleLoad();
+      return;
+    }
+
+    window.addEventListener("load", scheduleIdleLoad, { once: true });
   };
 
   if (video.dataset.availabilityBound !== "true") {
@@ -10108,20 +10152,7 @@ function optimizeBackgroundMedia() {
   document.body.dataset.bgVideoStatus = shouldAutoplayBackground ? "available" : "available-no-autoplay";
   document.body.classList.remove("lite-background");
   setBackgroundVideoSoundAvailability(true);
-  loadBackgroundVideo();
-  syncBackgroundVideoSoundState(video);
-  if (!shouldAutoplayBackground) {
-    video.removeAttribute("autoplay");
-    return;
-  }
-
-  video.setAttribute("autoplay", "");
-  const playPromise = video.play?.();
-  if (playPromise && typeof playPromise.catch === "function") {
-    playPromise.catch(() => {
-      video.pause?.();
-    });
-  }
+  scheduleBackgroundVideoLoad();
 }
 
 function updateTopNavModalOffset() {
