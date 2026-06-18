@@ -1,10 +1,10 @@
 # News Content
 
-This folder is the local fallback source for main-site news and notifications.
+This folder is the source of truth for main-site news and notifications.
 
 Current frontend behavior:
-- First tries `/top-data/news.json`
-- Falls back to `./news-content/news.json`
+- Reads `./news-content/news.json` directly from the site repository
+- Does not depend on `/top-data/news.json`
 
 Recommended structure:
 - `news.json` for records

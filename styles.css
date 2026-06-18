@@ -7593,6 +7593,20 @@ body.modal-open {
   box-shadow: 0 10px 28px rgba(0, 0, 0, 0.24);
 }
 
+.news-bell-btn.has-unread {
+  border-color: rgba(255, 110, 69, 0.62);
+  background:
+    linear-gradient(180deg, rgba(255, 110, 69, 0.24), rgba(255, 255, 255, 0.04)),
+    rgba(255, 110, 69, 0.12);
+  box-shadow:
+    0 0 0 1px rgba(255, 110, 69, 0.18),
+    0 12px 30px rgba(255, 75, 33, 0.28);
+}
+
+.news-bell-btn.has-unread .news-bell-icon {
+  color: #fff2d9;
+}
+
 .news-bell-btn:focus-visible {
   outline: 2px solid rgba(255, 91, 46, 0.58);
   outline-offset: 2px;

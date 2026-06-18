@@ -32,7 +32,6 @@ const TOP_API_BASE_URL = normalizeBaseUrl(pageParams.get("topApiBase"));
 const TOP_DATA_V2_BASE_URL = TOP_API_BASE_URL || `${TOP_DATA_BASE_URL}/v2`;
 const TOP_API_ROOT_URL = TOP_API_BASE_URL.replace(/\/top-data\/v2$/i, "");
 const HOURLY_DATA_BASE_URL = normalizeBaseUrl(pageParams.get("hourlyApiBase")) || DEFAULT_HOURLY_DATA_BASE_URL;
-const TOP_NEWS_DATA_URL = `${TOP_DATA_BASE_URL}/news.json`;
 const TOP_BANS_DATA_URL = `${TOP_DATA_BASE_URL}/bans.json`;
 const LOCAL_NEWS_DATA_URL = `${SITE_BASE_PATH}news-content/news.json`;
 const topDataV2ManifestUrl = `${TOP_DATA_V2_BASE_URL}/manifest.json`;
@@ -94,7 +93,7 @@ const PAGE_SIZE = 10;
 const VOTER_ID_STORAGE_TTL_MS = 365 * 24 * 60 * 60 * 1000;
 const HOURLY_VOTE_STATE_STORAGE_KEY = "hourlyVoteStateByEventId";
 const HOURLY_VOTE_STATE_STORAGE_TTL_MS = 30 * 24 * 60 * 60 * 1000;
-const NEWS_READ_STORAGE_KEY = "asgReadNewsIds";
+const NEWS_READ_STORAGE_KEY = "asgReadNewsIds.v2";
 
 function getLegalUrls() {
   const fallbackBase =
@@ -459,7 +458,7 @@ let communityLightboxState = null;
 let communityLikeStateByPostId = {};
 const pendingCommunityLikePostIds = new Set();
 let newsFeedData = [];
-let newsFeedSourceUrl = TOP_NEWS_DATA_URL;
+let newsFeedSourceUrl = LOCAL_NEWS_DATA_URL;
 let newsModalController = null;
 let donationAlertsData = null;
 let donationAlertsLoading = false;
@@ -704,7 +703,7 @@ const translations = {
     twitterDescriptionBans:
       "Public ASG Racing ban list with banned driver names and ban dates. Steam IDs are hidden.",
     ogLocale: "en_US",
-    heroTitle: "?? ASG Racing Leaderboard",
+    heroTitle: "\u{1F3C1} ASG Racing Leaderboard",
     heroSubtitle:
       "<strong>ASG Racing</strong> is an ACC community of enthusiasts. The public server runs 24/7 on Monza, and we also host daily one-hour events at 14:00 and 20:00 MSK. Data is automatically updated based on dedicated server results.",
     btnChampionship: "Rating",
@@ -1319,7 +1318,7 @@ const translations = {
     twitterDescriptionBans:
       "Публичный список банов ASG Racing с именами пилотов и датой бана. Steam ID скрыты.",
     ogLocale: "ru_RU",
-    heroTitle: "?? ASG Racing Leaderboard",
+    heroTitle: "\u{1F3C1} ASG Racing Leaderboard",
     heroSubtitle:
       "<strong>ASG Racing</strong> - сообщество энтузиастов ACC. Открытый сервер работает 24/7 на трассе Monza. Мы также проводим ежедневные часовые заезды в 14:00 и 20:00 МСК. Данные обновляются автоматически на основе файлов результатов ACC Dedicated Server.",
     btnChampionship: "Рейтинг",
@@ -3116,7 +3115,7 @@ function ensureTwitchWidget() {
           id="twitch-widget-launcher-close"
           type="button"
           aria-label="Hide stream button"
-        >?</button>
+        >&times;</button>
       </div>
     `;
 
@@ -3897,10 +3896,10 @@ function getSafetyInfo(source) {
     validLaps,
     invalidLaps,
     completedLaps,
-    leaderLaps: isRaceSpecific ? (source.safety_leader_laps ?? summary.safety_leader_laps) : undefined,
-    distanceRatio: isRaceSpecific ? (source.safety_distance_ratio ?? summary.safety_distance_ratio) : undefined,
-    baseDelta: isRaceSpecific ? (source.safety_base_delta ?? summary.safety_base_delta) : undefined,
-    baseReason: isRaceSpecific ? (source.safety_base_reason ?? summary.safety_base_reason) : undefined,
+      leaderLaps: isRaceSpecific ? (source.safety_leader_laps ?? summary.safety_leader_laps) : undefined,
+      distanceRatio: isRaceSpecific ? (source.safety_distance_ratio ?? summary.safety_distance_ratio) : undefined,
+      baseDelta: isRaceSpecific ? (source.safety_base_delta ?? summary.safety_base_delta) : undefined,
+      baseReason: isRaceSpecific ? (source.safety_base_reason ?? summary.safety_base_reason) : undefined,
       penaltyDelta: isRaceSpecific ? (source.safety_penalty_delta ?? summary.safety_penalty_delta) : undefined,
       incidentPenaltyDelta: isRaceSpecific ? (source.safety_incident_penalty_delta ?? summary.safety_incident_penalty_delta) : undefined,
       finalDelta: isRaceSpecific ? (source.safety_final_delta ?? summary.safety_final_delta) : undefined,
@@ -3912,18 +3911,18 @@ function getSafetyInfo(source) {
       incidentClustersCount: isRaceSpecific ? (source.safety_incident_clusters_count ?? summary.safety_incident_clusters_count ?? source.incident_clusters_count) : undefined,
       incidentBurstsCount: isRaceSpecific ? (source.safety_incident_bursts_count ?? summary.safety_incident_bursts_count ?? source.incident_bursts_count) : undefined,
       incidentBindingStatus: isRaceSpecific ? (source.safety_incident_binding_status ?? summary.safety_incident_binding_status) : undefined,
-    totalDelta: source.safety_total_delta ?? summary.safety_total_delta ?? source.total_delta,
-    totalLaps: source.safety_total_laps ?? summary.safety_total_laps ?? source.total_laps,
-    totalInvalidLaps: source.safety_total_invalid_laps ?? summary.safety_total_invalid_laps ?? source.total_invalid_laps,
+      totalDelta: source.safety_total_delta ?? summary.safety_total_delta ?? source.total_delta,
+      totalLaps: source.safety_total_laps ?? summary.safety_total_laps ?? source.total_laps,
+      totalInvalidLaps: source.safety_total_invalid_laps ?? summary.safety_total_invalid_laps ?? source.total_invalid_laps,
       invalidLapRate: source.safety_invalid_lap_rate ?? summary.safety_invalid_lap_rate ?? source.invalid_lap_rate,
       totalCountedPenalties: source.safety_total_counted_penalties ?? summary.safety_total_counted_penalties ?? source.total_counted_penalties,
       totalIncidentPoints: source.safety_total_incident_points ?? summary.safety_total_incident_points ?? source.total_incident_points,
       totalIncidentClusters: source.safety_total_incident_clusters ?? summary.safety_total_incident_clusters ?? source.total_incident_clusters,
       totalIncidentBursts: source.safety_total_incident_bursts ?? summary.safety_total_incident_bursts ?? source.total_incident_bursts,
       racesCount: source.safety_races ?? summary.safety_races ?? source.races_count,
-    isRaceSpecific,
-    raceId: isRaceSpecific ? (source.race_id || summary.race_id || null) : null
-  };
+      isRaceSpecific,
+      raceId: isRaceSpecific ? (source.race_id || summary.race_id || null) : null
+    };
 }
 
 function formatSafetyDetailValue(value, formatter = null) {
@@ -3943,18 +3942,18 @@ function renderSafetyReasonDetails(info) {
     if (!Number.isFinite(numeric)) return String(value);
     return `${Math.round(numeric * 100)}%`;
   };
-  if (!info.isRaceSpecific) {
-    const rows = [
-      ["safetySummaryRaces", formatSafetyDetailValue(info.racesCount)],
-      ["safetySummaryTotalDelta", formatSafetyDetailValue(info.totalDelta, deltaFormatter)],
-      ["safetySummaryTotalLaps", formatSafetyDetailValue(info.totalLaps)],
-      ["safetySummaryInvalidLaps", formatSafetyDetailValue(info.totalInvalidLaps)],
+    if (!info.isRaceSpecific) {
+      const rows = [
+        ["safetySummaryRaces", formatSafetyDetailValue(info.racesCount)],
+        ["safetySummaryTotalDelta", formatSafetyDetailValue(info.totalDelta, deltaFormatter)],
+        ["safetySummaryTotalLaps", formatSafetyDetailValue(info.totalLaps)],
+        ["safetySummaryInvalidLaps", formatSafetyDetailValue(info.totalInvalidLaps)],
         ["safetySummaryInvalidRate", formatSafetyDetailValue(info.invalidLapRate, percentFormatter)],
         ["safetySummaryAutoPenalties", formatSafetyDetailValue(info.totalCountedPenalties)],
         ["safetySummaryIncidents", formatSafetyDetailValue(info.totalIncidentPoints)],
         ["safetySummaryIncidentBursts", formatSafetyDetailValue(info.totalIncidentBursts)],
         ["safetySummaryIncidentClusters", formatSafetyDetailValue(info.totalIncidentClusters)]
-    ];
+      ];
     const hasAny = rows.some(([, value]) => value !== "-");
     if (!hasAny) return "";
     return `
@@ -3971,11 +3970,11 @@ function renderSafetyReasonDetails(info) {
       </div>
     `;
   }
-  const rows = [
-    ["safetyReasonCompletedLaps", formatSafetyDetailValue(info.completedLaps)],
-    ["safetyReasonValidInvalid", `${formatSafetyDetailValue(info.validLaps)} / ${formatSafetyDetailValue(info.invalidLaps)}`],
-    ["safetyReasonDistance", formatSafetyDetailValue(info.distanceRatio, percentFormatter)],
-    ["safetyReasonBaseDelta", formatSafetyDetailValue(info.baseDelta, deltaFormatter)],
+    const rows = [
+      ["safetyReasonCompletedLaps", formatSafetyDetailValue(info.completedLaps)],
+      ["safetyReasonValidInvalid", `${formatSafetyDetailValue(info.validLaps)} / ${formatSafetyDetailValue(info.invalidLaps)}`],
+      ["safetyReasonDistance", formatSafetyDetailValue(info.distanceRatio, percentFormatter)],
+      ["safetyReasonBaseDelta", formatSafetyDetailValue(info.baseDelta, deltaFormatter)],
       ["safetyReasonPenaltyDelta", formatSafetyDetailValue(info.penaltyDelta, deltaFormatter)],
       ["safetyReasonIncidentDelta", formatSafetyDetailValue(info.incidentPenaltyDelta, deltaFormatter)],
       ["safetyReasonFinalDelta", formatSafetyDetailValue(info.finalDelta ?? info.delta, deltaFormatter)],
@@ -3984,7 +3983,7 @@ function renderSafetyReasonDetails(info) {
       ["safetyReasonIncidentBursts", formatSafetyDetailValue(info.incidentBurstsCount)],
       ["safetyReasonIncidentClusters", formatSafetyDetailValue(info.incidentClustersCount)],
       ["safetyReasonIgnoredPenalties", formatSafetyDetailValue(info.ignoredPenalties)]
-  ];
+    ];
   const text = info.finalReason || info.baseReason || info.explanation || "";
   const hasAny = text || rows.some(([, value]) => value !== "-");
   if (!hasAny) return "";
@@ -5123,20 +5122,15 @@ function getUnreadNewsCount(items = newsFeedData) {
 }
 
 async function loadNewsFeed() {
-  const candidates = [TOP_NEWS_DATA_URL, LOCAL_NEWS_DATA_URL];
   let payload = null;
-  let resolvedUrl = candidates[candidates.length - 1];
+  const resolvedUrl = LOCAL_NEWS_DATA_URL;
 
-  for (const url of candidates) {
-    try {
-      const response = await fetch(url, { cache: "no-store" });
-      if (!response.ok) throw new Error(`HTTP ${response.status}`);
-      payload = await response.json();
-      resolvedUrl = url;
-      break;
-    } catch (error) {
-      payload = null;
-    }
+  try {
+    const response = await fetch(resolvedUrl, { cache: "no-store" });
+    if (!response.ok) throw new Error(`HTTP ${response.status}`);
+    payload = await response.json();
+  } catch (error) {
+    payload = null;
   }
 
   const items = Array.isArray(payload?.items)
@@ -5227,6 +5221,7 @@ function renderNewsBell() {
   if (!button || !badge) return;
 
   const unreadCount = getUnreadNewsCount(newsFeedData);
+  button.classList.toggle("has-unread", unreadCount > 0);
   badge.hidden = unreadCount <= 0;
   badge.textContent = unreadCount > 99 ? "99+" : String(unreadCount);
   button.setAttribute(
@@ -7348,13 +7343,13 @@ function renderSafetyTablePage() {
       </td>
       <td>${renderSafetyCell(row)}</td>
       <td>${isDriverBanned(row) ? renderBannedBadge({ compact: true }) : escapeHtml(getSafetyCategoryName(normalizeSafetyCategory(row) || "C"))}</td>
-      <td>${escapeHtml(row.races_count ?? 0)}</td>
-      <td>${escapeHtml(Number(row.total_delta ?? 0).toFixed(2))}</td>
-      <td>${escapeHtml(row.total_invalid_laps ?? 0)}</td>
-      <td>${escapeHtml(row.total_counted_penalties ?? 0)}</td>
-      <td>${escapeHtml(row.total_incident_points ?? 0)}</td>
+        <td>${escapeHtml(row.races_count ?? 0)}</td>
+        <td>${escapeHtml(Number(row.total_delta ?? 0).toFixed(2))}</td>
+        <td>${escapeHtml(row.total_invalid_laps ?? 0)}</td>
+        <td>${escapeHtml(row.total_counted_penalties ?? 0)}</td>
+        <td>${escapeHtml(row.total_incident_points ?? 0)}</td>
       </tr>
-  `).join("");
+    `).join("");
 
   tableEl.innerHTML = `
     <table class="safety-table-dynamic">
