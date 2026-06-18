@@ -704,7 +704,7 @@ const translations = {
     twitterDescriptionBans:
       "Public ASG Racing ban list with banned driver names and ban dates. Steam IDs are hidden.",
     ogLocale: "en_US",
-    heroTitle: "🏁 ASG Racing Leaderboard",
+    heroTitle: "?? ASG Racing Leaderboard",
     heroSubtitle:
       "<strong>ASG Racing</strong> is an ACC community of enthusiasts. The public server runs 24/7 on Monza, and we also host daily one-hour events at 14:00 and 20:00 MSK. Data is automatically updated based on dedicated server results.",
     btnChampionship: "Rating",
@@ -823,11 +823,11 @@ const translations = {
     aboutP1:
       "<strong>ASG Racing</strong> is a public <strong>Assetto Corsa Competizione</strong> server where drivers compete on popular GT3 tracks, improve their lap times and compare their statistics with other racers.",
     aboutP2: "This page automatically publishes the server leaderboard including:",
-    aboutList1: "🏁 number of races",
-    aboutList2: "🥇 wins",
-    aboutList3: "🏆 podium finishes",
-    aboutList4: "📊 average finish position",
-    aboutList5: "⚡ best laps",
+    aboutList1: "?? number of races",
+    aboutList2: "?? wins",
+    aboutList3: "?? podium finishes",
+    aboutList4: "?? average finish position",
+    aboutList5: "? best laps",
     aboutP3:
       "Statistics are generated automatically from <strong>ACC Dedicated Server</strong> result files. After each race the data is recalculated and published on the website.",
     pointsTitle: "How points are calculated",
@@ -997,7 +997,7 @@ const translations = {
     racesTableSubtitle: "Row click opens quick view. Name opens full profile.",
     raceModalEyebrow: "Race details",
     racesCols: ["Date", "Track", "Winner", "Drivers", "Avg ELO", "Best Lap"],
-    raceModalCols: ["Pos", "Start", "Δ", "Driver", "Best Lap", "Car", "Gap", "ELO Δ", "SR", "Pts"],
+    raceModalCols: ["Pos", "Start", "?", "Driver", "Best Lap", "Car", "Gap", "ELO ?", "SR", "Pts"],
     notCountedBadge: "Not counted",
     countedBadge: "Counted",
     raceSummaryTrack: "Track",
@@ -1045,7 +1045,7 @@ const translations = {
     driverRankingPosition: "Ranking position",
     driverNoData: "Driver profile not found.",
     driverLoading: "Loading driver profile...",
-    driverRaceCols: ["Date", "Track", "Start", "Pos", "Δ", "Points", "Best Lap", "Car", "Gap", "ELO Δ", "SR"],
+    driverRaceCols: ["Date", "Track", "Start", "Pos", "?", "Points", "Best Lap", "Car", "Gap", "ELO ?", "SR"],
     driverTrackCols: ["Track", "Races", "Wins", "Podiums", "Points", "Avg finish", "Best lap"],
     driverPenaltyReason: "Reason",
     driverPenaltyType: "Type",
@@ -1063,7 +1063,7 @@ const translations = {
       "Car"
     ],
     bestlapsCols: ["#", "Driver", "ELO", "SR", "Best Lap", "Car", "Session", "Updated"],
-    safetyBaseCols: ["#", "Driver", "SR", "Category", "Races", "Δ SR", "Invalid Laps", "Auto Penalties"],
+    safetyBaseCols: ["#", "Driver", "SR", "Category", "Races", "Δ SR", "Invalid Laps", "Auto Penalties", "Incidents"],
     leaderboardSearchPlaceholder: "Search driver...",
     bestlapsSearchPlaceholder: "Search driver...",
     safetySearchPlaceholder: "Search driver...",
@@ -1077,8 +1077,8 @@ const translations = {
     sessionRace: "Race",
     sessionQualifying: "Quali",
     paginationShown: "Showing {start}-{end} of {total}",
-    prev: "← Prev",
-    next: "Next →"
+    prev: "< Prev",
+    next: "Next >"
   },
   ru: {
     closeLabel: "Закрыть",
@@ -1319,7 +1319,7 @@ const translations = {
     twitterDescriptionBans:
       "Публичный список банов ASG Racing с именами пилотов и датой бана. Steam ID скрыты.",
     ogLocale: "ru_RU",
-    heroTitle: "🏁 ASG Racing Leaderboard",
+    heroTitle: "?? ASG Racing Leaderboard",
     heroSubtitle:
       "<strong>ASG Racing</strong> - сообщество энтузиастов ACC. Открытый сервер работает 24/7 на трассе Monza. Мы также проводим ежедневные часовые заезды в 14:00 и 20:00 МСК. Данные обновляются автоматически на основе файлов результатов ACC Dedicated Server.",
     btnChampionship: "Рейтинг",
@@ -1434,11 +1434,11 @@ const translations = {
     aboutP1:
       "<strong>ASG Racing</strong> - это публичный сервер <strong>Assetto Corsa Competizione</strong>, где пилоты соревнуются на популярных GT3 трассах, улучшают свои времена круга и сравнивают статистику с другими пилотами.",
     aboutP2: "На этой странице автоматически публикуется рейтинг сервера, включающий:",
-    aboutList1: "🏁 количество гонок",
-    aboutList2: "🥇 победы",
-    aboutList3: "🏆 подиумы",
-    aboutList4: "📊 средний финиш",
-    aboutList5: "⚡ лучшие круги",
+    aboutList1: "?? количество гонок",
+    aboutList2: "?? победы",
+    aboutList3: "?? подиумы",
+    aboutList4: "?? средний финиш",
+    aboutList5: "? лучшие круги",
     aboutP3:
       "Статистика обновляется автоматически на основе файлов результатов <strong>ACC Dedicated Server</strong>. После каждой гонки данные пересчитываются и публикуются на сайте.",
     pointsTitle: "Как считается рейтинг",
@@ -1534,7 +1534,7 @@ const translations = {
     racesTableSubtitle: "Клик по строке открывает окно деталей. Имя открывает полный профиль.",
     raceModalEyebrow: "Детали гонки",
     racesCols: ["Дата", "Трасса", "Победитель", "Пилоты", "Ср. ELO", "Лучший круг"],
-    raceModalCols: ["Поз.", "Старт", "Δ", "Пилот", "Лучший круг", "Машина", "Отставание", "ELO Δ", "SR", "Очки"],
+    raceModalCols: ["Поз.", "Старт", "?", "Пилот", "Лучший круг", "Машина", "Отставание", "ELO ?", "SR", "Очки"],
     notCountedBadge: "Не засчитано",
     countedBadge: "Засчитано",
     raceSummaryTrack: "Трасса",
@@ -1582,7 +1582,7 @@ const translations = {
     driverRankingPosition: "Позиция в рейтинге",
     driverNoData: "Профиль пилота не найден.",
     driverLoading: "Загрузка профиля пилота...",
-    driverRaceCols: ["Дата", "Трасса", "Старт", "Поз", "Δ", "Очки", "Лучший круг", "Машина", "Отставание", "ELO Δ", "SR"],
+    driverRaceCols: ["Дата", "Трасса", "Старт", "Поз", "?", "Очки", "Лучший круг", "Машина", "Отставание", "ELO ?", "SR"],
     driverTrackCols: ["Трасса", "Гонки", "Победы", "Подиумы", "Очки", "Ср. финиш", "Лучший круг"],
     driverPenaltyReason: "Причина",
     driverPenaltyType: "Тип",
@@ -1600,7 +1600,7 @@ const translations = {
       "Машина"
     ],
     bestlapsCols: ["№", "Пилот", "ELO", "SR", "Лучший круг", "Машина", "Сессия", "Обновлено"],
-    safetyBaseCols: ["№", "Пилот", "SR", "Категория", "Гонки", "Δ SR", "Грязные круги", "Автоштрафы"],
+    safetyBaseCols: ["№", "Пилот", "SR", "Категория", "Гонки", "Δ SR", "Грязные круги", "Автоштрафы", "Инциденты"],
     leaderboardSearchPlaceholder: "Поиск пилота...",
     bestlapsSearchPlaceholder: "Поиск пилота...",
     safetySearchPlaceholder: "Поиск пилота...",
@@ -1614,8 +1614,8 @@ const translations = {
     sessionRace: "Гонка",
     sessionQualifying: "Квала",
     paginationShown: "Показано {start}-{end} из {total}",
-    prev: "← Назад",
-    next: "Вперёд →"
+    prev: "< Назад",
+    next: "Вперёд >"
   }
 };
 
@@ -1784,7 +1784,7 @@ Object.assign(translations.en, {
   safetyCategoryB: "Category B",
   safetyCategoryC: "Category C",
   safetyAboutTitle: "Safety Rating",
-  safetyAboutP1: "SR is calculated only from counted main-server race finishes. Clean races increase the rating; invalid laps and automatic race penalties reduce it. Manual/admin penalties are ignored.",
+  safetyAboutP1: "SR is calculated only from counted main-server race finishes. Clean races increase the rating; invalid laps, automatic race penalties, and incidents reduce it. Manual/admin penalties are ignored.",
   safetyAboutP2: "Categories are simple: A is 5.00+, B is 2.50-4.99, C is below 2.50.",
   safetyCategoryRangeA: "A - clean",
   safetyCategoryRangeB: "B - stable",
@@ -1795,8 +1795,12 @@ Object.assign(translations.en, {
   safetyReasonDistance: "Race distance",
   safetyReasonBaseDelta: "Clean-race delta",
   safetyReasonPenaltyDelta: "Penalty delta",
+  safetyReasonIncidentDelta: "Incident delta",
   safetyReasonFinalDelta: "Final delta",
   safetyReasonAutoPenalties: "Automatic penalties",
+  safetyReasonIncidents: "Incidents",
+  safetyReasonIncidentBursts: "Incident bursts",
+  safetyReasonIncidentClusters: "Incident clusters",
   safetyReasonIgnoredPenalties: "Ignored penalties",
   safetySummaryTitle: "Safety Rating summary",
   safetySummaryRaces: "Counted SR races",
@@ -1805,8 +1809,11 @@ Object.assign(translations.en, {
   safetySummaryInvalidLaps: "Invalid laps",
   safetySummaryInvalidRate: "Invalid lap rate",
   safetySummaryAutoPenalties: "Automatic penalties",
+  safetySummaryIncidents: "Incidents",
+  safetySummaryIncidentBursts: "Incident bursts",
+  safetySummaryIncidentClusters: "Incident clusters",
   worstSafetyTitle: "Safety Rating",
-  worstSafetySubtitle: "Driver safety score based on invalid laps and automatic race penalties.",
+  worstSafetySubtitle: "Driver safety score based on invalid laps, automatic race penalties, and incidents.",
   loadingSafety: "Loading Safety Rating...",
   emptySafety: "No Safety Rating data yet."
 });
@@ -1824,7 +1831,7 @@ Object.assign(translations.ru, {
   safetyCategoryB: "Категория B",
   safetyCategoryC: "Категория C",
   safetyAboutTitle: "Safety Rating",
-  safetyAboutP1: "SR считается только по зачтенным финишам гонок основного сервера. Чистые гонки повышают рейтинг, грязные круги и автоматические гоночные штрафы снижают его. Ручные штрафы админов не учитываются.",
+  safetyAboutP1: "SR считается только по зачтенным финишам гонок основного сервера. Чистые гонки повышают рейтинг, грязные круги, автоматические гоночные штрафы и инциденты снижают его. Ручные штрафы админов не учитываются.",
   safetyAboutP2: "Категории простые: A - 5.00+, B - 2.50-4.99, C - ниже 2.50.",
   safetyCategoryRangeA: "A - чисто",
   safetyCategoryRangeB: "B - стабильно",
@@ -1835,8 +1842,12 @@ Object.assign(translations.ru, {
   safetyReasonDistance: "Дистанция гонки",
   safetyReasonBaseDelta: "Дельта за чистоту",
   safetyReasonPenaltyDelta: "Дельта за штрафы",
+  safetyReasonIncidentDelta: "Дельта за инциденты",
   safetyReasonFinalDelta: "Итоговая дельта",
   safetyReasonAutoPenalties: "Автоштрафы",
+  safetyReasonIncidents: "Инциденты",
+  safetyReasonIncidentBursts: "Серии инцидентов",
+  safetyReasonIncidentClusters: "Кластеры инцидентов",
   safetyReasonIgnoredPenalties: "Игнор. штрафы",
   safetySummaryTitle: "Статистика Safety Rating",
   safetySummaryRaces: "Гонок в SR",
@@ -1845,8 +1856,11 @@ Object.assign(translations.ru, {
   safetySummaryInvalidLaps: "Грязные круги",
   safetySummaryInvalidRate: "Доля грязных кругов",
   safetySummaryAutoPenalties: "Автоштрафы",
+  safetySummaryIncidents: "Инциденты",
+  safetySummaryIncidentBursts: "Серии инцидентов",
+  safetySummaryIncidentClusters: "Кластеры инцидентов",
   worstSafetyTitle: "Safety Rating",
-  worstSafetySubtitle: "Оценка безопасности пилота по грязным кругам и автоматическим гоночным штрафам.",
+  worstSafetySubtitle: "Оценка безопасности пилота по грязным кругам, автоматическим гоночным штрафам и инцидентам.",
   loadingSafety: "Загрузка Safety Rating...",
   emptySafety: "Пока нет данных Safety Rating."
 });
@@ -1929,7 +1943,7 @@ const carModelNames = {
   26: "Ferrari 488 Challenge Evo",
   27: "BMW M2 CS Racing",
   28: "Porsche 911 GT3 Cup (Type 992)",
-  29: "Lamborghini Huracán Super Trofeo EVO2",
+  29: "Lamborghini Huracan Super Trofeo EVO2",
   30: "BMW M4 GT3",
   31: "Audi R8 LMS GT3 evo II",
   32: "Ferrari 296 GT3",
@@ -2454,7 +2468,7 @@ function buildHourlyHeroModalContent(data) {
         id="hourly-modal-vote-btn"
         type="button"
         ${!canVote || hourlyVotePending ? "disabled" : ""}
-      >${escapeHtml(voteLabel)} <span aria-hidden="true">♥</span></button>
+      >${escapeHtml(voteLabel)} <span aria-hidden="true">¦</span></button>
       <div class="hourly-modal-cta-meta" id="hourly-modal-votes-summary">${escapeHtml(getHourlyVotesLabel())}</div>
       <div class="legal-inline-note">${buildHourlyVoteLegalNoteHtml()}</div>
     </div>
@@ -2770,7 +2784,8 @@ function getSafetyColumns() {
     { key: "races_count", type: "number", label: t("safetyBaseCols")[4] },
     { key: "total_delta", type: "number", label: t("safetyBaseCols")[5] },
     { key: "total_invalid_laps", type: "number", label: t("safetyBaseCols")[6] },
-    { key: "total_counted_penalties", type: "number", label: t("safetyBaseCols")[7] }
+    { key: "total_counted_penalties", type: "number", label: t("safetyBaseCols")[7] },
+    { key: "total_incident_points", type: "number", label: t("safetyBaseCols")[8] }
   ];
 }
 
@@ -3101,7 +3116,7 @@ function ensureTwitchWidget() {
           id="twitch-widget-launcher-close"
           type="button"
           aria-label="Hide stream button"
-        >×</button>
+        >?</button>
       </div>
     `;
 
@@ -3886,17 +3901,26 @@ function getSafetyInfo(source) {
     distanceRatio: isRaceSpecific ? (source.safety_distance_ratio ?? summary.safety_distance_ratio) : undefined,
     baseDelta: isRaceSpecific ? (source.safety_base_delta ?? summary.safety_base_delta) : undefined,
     baseReason: isRaceSpecific ? (source.safety_base_reason ?? summary.safety_base_reason) : undefined,
-    penaltyDelta: isRaceSpecific ? (source.safety_penalty_delta ?? summary.safety_penalty_delta) : undefined,
-    finalDelta: isRaceSpecific ? (source.safety_final_delta ?? summary.safety_final_delta) : undefined,
-    finalReason: isRaceSpecific ? (source.safety_final_reason ?? summary.safety_final_reason) : undefined,
-    countedPenalties: isRaceSpecific ? (source.safety_counted_penalties ?? summary.safety_counted_penalties) : undefined,
-    ignoredPenalties: isRaceSpecific ? (source.safety_ignored_penalties ?? summary.safety_ignored_penalties) : undefined,
+      penaltyDelta: isRaceSpecific ? (source.safety_penalty_delta ?? summary.safety_penalty_delta) : undefined,
+      incidentPenaltyDelta: isRaceSpecific ? (source.safety_incident_penalty_delta ?? summary.safety_incident_penalty_delta) : undefined,
+      finalDelta: isRaceSpecific ? (source.safety_final_delta ?? summary.safety_final_delta) : undefined,
+      finalReason: isRaceSpecific ? (source.safety_final_reason ?? summary.safety_final_reason) : undefined,
+      countedPenalties: isRaceSpecific ? (source.safety_counted_penalties ?? summary.safety_counted_penalties) : undefined,
+      ignoredPenalties: isRaceSpecific ? (source.safety_ignored_penalties ?? summary.safety_ignored_penalties) : undefined,
+      incidentPoints: isRaceSpecific ? (source.safety_incident_points ?? summary.safety_incident_points ?? source.incident_points) : undefined,
+      incidentEffectivePoints: isRaceSpecific ? (source.safety_incident_effective_points ?? summary.safety_incident_effective_points ?? source.incident_effective_points) : undefined,
+      incidentClustersCount: isRaceSpecific ? (source.safety_incident_clusters_count ?? summary.safety_incident_clusters_count ?? source.incident_clusters_count) : undefined,
+      incidentBurstsCount: isRaceSpecific ? (source.safety_incident_bursts_count ?? summary.safety_incident_bursts_count ?? source.incident_bursts_count) : undefined,
+      incidentBindingStatus: isRaceSpecific ? (source.safety_incident_binding_status ?? summary.safety_incident_binding_status) : undefined,
     totalDelta: source.safety_total_delta ?? summary.safety_total_delta ?? source.total_delta,
     totalLaps: source.safety_total_laps ?? summary.safety_total_laps ?? source.total_laps,
     totalInvalidLaps: source.safety_total_invalid_laps ?? summary.safety_total_invalid_laps ?? source.total_invalid_laps,
-    invalidLapRate: source.safety_invalid_lap_rate ?? summary.safety_invalid_lap_rate ?? source.invalid_lap_rate,
-    totalCountedPenalties: source.safety_total_counted_penalties ?? summary.safety_total_counted_penalties ?? source.total_counted_penalties,
-    racesCount: source.safety_races ?? summary.safety_races ?? source.races_count,
+      invalidLapRate: source.safety_invalid_lap_rate ?? summary.safety_invalid_lap_rate ?? source.invalid_lap_rate,
+      totalCountedPenalties: source.safety_total_counted_penalties ?? summary.safety_total_counted_penalties ?? source.total_counted_penalties,
+      totalIncidentPoints: source.safety_total_incident_points ?? summary.safety_total_incident_points ?? source.total_incident_points,
+      totalIncidentClusters: source.safety_total_incident_clusters ?? summary.safety_total_incident_clusters ?? source.total_incident_clusters,
+      totalIncidentBursts: source.safety_total_incident_bursts ?? summary.safety_total_incident_bursts ?? source.total_incident_bursts,
+      racesCount: source.safety_races ?? summary.safety_races ?? source.races_count,
     isRaceSpecific,
     raceId: isRaceSpecific ? (source.race_id || summary.race_id || null) : null
   };
@@ -3925,8 +3949,11 @@ function renderSafetyReasonDetails(info) {
       ["safetySummaryTotalDelta", formatSafetyDetailValue(info.totalDelta, deltaFormatter)],
       ["safetySummaryTotalLaps", formatSafetyDetailValue(info.totalLaps)],
       ["safetySummaryInvalidLaps", formatSafetyDetailValue(info.totalInvalidLaps)],
-      ["safetySummaryInvalidRate", formatSafetyDetailValue(info.invalidLapRate, percentFormatter)],
-      ["safetySummaryAutoPenalties", formatSafetyDetailValue(info.totalCountedPenalties)]
+        ["safetySummaryInvalidRate", formatSafetyDetailValue(info.invalidLapRate, percentFormatter)],
+        ["safetySummaryAutoPenalties", formatSafetyDetailValue(info.totalCountedPenalties)],
+        ["safetySummaryIncidents", formatSafetyDetailValue(info.totalIncidentPoints)],
+        ["safetySummaryIncidentBursts", formatSafetyDetailValue(info.totalIncidentBursts)],
+        ["safetySummaryIncidentClusters", formatSafetyDetailValue(info.totalIncidentClusters)]
     ];
     const hasAny = rows.some(([, value]) => value !== "-");
     if (!hasAny) return "";
@@ -3949,10 +3976,14 @@ function renderSafetyReasonDetails(info) {
     ["safetyReasonValidInvalid", `${formatSafetyDetailValue(info.validLaps)} / ${formatSafetyDetailValue(info.invalidLaps)}`],
     ["safetyReasonDistance", formatSafetyDetailValue(info.distanceRatio, percentFormatter)],
     ["safetyReasonBaseDelta", formatSafetyDetailValue(info.baseDelta, deltaFormatter)],
-    ["safetyReasonPenaltyDelta", formatSafetyDetailValue(info.penaltyDelta, deltaFormatter)],
-    ["safetyReasonFinalDelta", formatSafetyDetailValue(info.finalDelta ?? info.delta, deltaFormatter)],
-    ["safetyReasonAutoPenalties", formatSafetyDetailValue(info.countedPenalties)],
-    ["safetyReasonIgnoredPenalties", formatSafetyDetailValue(info.ignoredPenalties)]
+      ["safetyReasonPenaltyDelta", formatSafetyDetailValue(info.penaltyDelta, deltaFormatter)],
+      ["safetyReasonIncidentDelta", formatSafetyDetailValue(info.incidentPenaltyDelta, deltaFormatter)],
+      ["safetyReasonFinalDelta", formatSafetyDetailValue(info.finalDelta ?? info.delta, deltaFormatter)],
+      ["safetyReasonAutoPenalties", formatSafetyDetailValue(info.countedPenalties)],
+      ["safetyReasonIncidents", formatSafetyDetailValue(info.incidentPoints)],
+      ["safetyReasonIncidentBursts", formatSafetyDetailValue(info.incidentBurstsCount)],
+      ["safetyReasonIncidentClusters", formatSafetyDetailValue(info.incidentClustersCount)],
+      ["safetyReasonIgnoredPenalties", formatSafetyDetailValue(info.ignoredPenalties)]
   ];
   const text = info.finalReason || info.baseReason || info.explanation || "";
   const hasAny = text || rows.some(([, value]) => value !== "-");
@@ -4829,7 +4860,7 @@ function renderCommunityPost(post) {
               data-community-like-post-id="${escapeHtml(postId)}"
               aria-pressed="false"
             >
-              <span class="community-like-heart" aria-hidden="true">♥</span>
+              <span class="community-like-heart" aria-hidden="true">¦</span>
               <span data-community-like-label>${escapeHtml(t("communityLikeButton"))}</span>
             </button>
             <span class="community-like-count" data-community-like-count>${escapeHtml(t("communityLikesLoading"))}</span>
@@ -6414,7 +6445,7 @@ function renderTrendBadge(change, metric, { compact = false } = {}) {
   if (!change || !change.trend || change.trend === "same") return "";
 
   const trendClass = change.trend === "up" ? "trend-up" : "trend-down";
-  const arrow = change.trend === "up" ? "▲" : "▼";
+  const arrow = change.trend === "up" ? "^" : "Ў";
   const deltaLabel = formatTrendDelta(change, metric);
   const beforeText = formatTrendTitleValue(metric, change.before);
   const afterText = formatTrendTitleValue(metric, change.after);
@@ -7321,7 +7352,8 @@ function renderSafetyTablePage() {
       <td>${escapeHtml(Number(row.total_delta ?? 0).toFixed(2))}</td>
       <td>${escapeHtml(row.total_invalid_laps ?? 0)}</td>
       <td>${escapeHtml(row.total_counted_penalties ?? 0)}</td>
-    </tr>
+      <td>${escapeHtml(row.total_incident_points ?? 0)}</td>
+      </tr>
   `).join("");
 
   tableEl.innerHTML = `
@@ -10525,3 +10557,4 @@ async function init() {
 }
 
 document.addEventListener("DOMContentLoaded", init);
+
