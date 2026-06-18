@@ -1,6 +1,32 @@
 {
   "items": [
     {
+      "id": "safety-rating-maintenance-june-18",
+      "slug": "safety-rating-maintenance-june-18",
+      "title": "Настройка Safety Rating / Safety Rating Maintenance",
+      "summary": "Ведутся работы по настройке системы Safety Rating. Возможны задержки публикации данных на сайт и временные ошибки в отображении SR. / Safety Rating configuration is in progress. Site data publication may be delayed and SR may show temporary errors.",
+      "body": [
+        "РУССКИЙ",
+        "────────",
+        "Ведутся работы по настройке системы Safety Rating.",
+        "В ближайшее время возможны задержки публикации данных на сайт, неполные пересчеты и временные ошибки в отображении SR в отдельных разделах.",
+        "Если данные по гонке или рейтинг Safety Rating появились не сразу, это ожидаемое поведение на время настройки и повторной синхронизации.",
+        "ENGLISH",
+        "────────",
+        "Safety Rating configuration is currently in progress.",
+        "During this period, site data publication may be delayed, some recalculations may be incomplete, and SR may show temporary errors in selected sections.",
+        "If race data or Safety Rating does not appear immediately, this is expected while the system is being tuned and resynchronized."
+      ],
+      "thumbnail_url": "",
+      "cover_image_url": "",
+      "image_alt": "ASG Racing Safety Rating maintenance notice",
+      "published_at": "2026-06-18T14:50:00Z",
+      "expires_at": "",
+      "kind": "announcement",
+      "priority": 200,
+      "is_pinned": true
+    },
+    {
       "id": "racing-rules-section-open",
       "slug": "racing-rules-section-open",
       "title": "Открыт раздел гоночных правил / Racing Rules Section Is Now Open",
