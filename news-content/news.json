@@ -1,6 +1,38 @@
 {
   "items": [
     {
+      "id": "safety-rating-v2-live",
+      "slug": "safety-rating-v2-live",
+      "title": "Запущен Safety Rating v2 / Safety Rating v2 Is Live",
+      "summary": "На серверах ASG Racing запущена новая система Safety Rating v2. Теперь SR сильнее опирается на инциденты, а влияние грязных кругов и автоштрафов снижено. / The new Safety Rating v2 system is now live on ASG Racing servers. SR now relies more on incidents, while dirty laps and automatic penalties have reduced weight.",
+      "body": [
+        "РУССКИЙ",
+        "────────",
+        "На серверах ASG Racing запущена новая система Safety Rating v2.",
+        "Новый SR стартует с 3.00 и считается только по зачтенным финишам гонок. Гонка влияет на рейтинг только если пилот проехал не меньше 50% дистанции лидера. Диапазон SR ограничен значениями от 1.00 до 9.99.",
+        "Основное изменение: влияние инцидентов стало ключевым. Чистая гонка без очков инцидентов дает бонус, небольшое количество инцидентов почти не наказывает, а тяжелые контактные гонки снижают SR заметно сильнее.",
+        "Влияние грязных кругов и автоштрафов снижено в 2 раза относительно старой логики. Это значит, что SR теперь лучше отражает именно чистоту борьбы с соперниками, а не только аккуратность по границам трассы.",
+        "В модалке Safety Rating и в истории гонок теперь можно увидеть, из чего складывается изменение SR: чистота, штрафы, инциденты и очки инцидентов.",
+        "Категории рейтинга остались простыми: A — 5.00+, B — 2.50–4.99, C — ниже 2.50.",
+        "ENGLISH",
+        "────────",
+        "The new Safety Rating v2 system is now live on ASG Racing servers.",
+        "The new SR starts from 3.00 and is calculated only from counted race finishes. A race affects the rating only if the driver completes at least 50% of the leader's distance. The SR range is capped between 1.00 and 9.99.",
+        "The main change is that incidents now carry the most weight. A clean race with zero incident points gives a bonus, a small number of incidents is only lightly punished, and heavy contact races reduce SR much more noticeably.",
+        "The impact of dirty laps and automatic penalties has been reduced by half compared to the old logic. This means SR now reflects racecraft against other drivers better, instead of focusing mostly on track limits.",
+        "In the Safety Rating modal and race history, you can now see what the SR change is made of: clean score, penalties, incidents, and incident points.",
+        "Rating categories remain simple: A is 5.00+, B is 2.50–4.99, C is below 2.50."
+      ],
+      "thumbnail_url": "/news-content/images/sr2/sr2.png",
+      "cover_image_url": "/news-content/images/sr2/sr2.png",
+      "image_alt": "ASG Racing Safety Rating v2 announcement",
+      "published_at": "2026-06-19T10:30:00Z",
+      "expires_at": "",
+      "kind": "announcement",
+      "priority": 300,
+      "is_pinned": true
+    },
+    {
       "id": "safety-rating-maintenance-june-18",
       "slug": "safety-rating-maintenance-june-18",
       "title": "Настройка Safety Rating / Safety Rating Maintenance",
