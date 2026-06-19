@@ -4087,16 +4087,14 @@ function renderSafetyBreakdownContent(model, { canOpenRace = false } = {}) {
   ];
   return `
     ${getSafetyBreakdownRaceSummaryMarkup(model)}
-    <table class="sr-breakdown-table">
-      <tbody>
-        ${rows.map(([label, value]) => `
-          <tr>
-            <th scope="row">${escapeHtml(label)}</th>
-            <td>${escapeHtml(value)}</td>
-          </tr>
-        `).join("")}
-      </tbody>
-    </table>
+    <dl class="sr-breakdown-table">
+      ${rows.map(([label, value]) => `
+        <div class="sr-breakdown-row">
+          <dt>${escapeHtml(label)}</dt>
+          <dd>${escapeHtml(value)}</dd>
+        </div>
+      `).join("")}
+    </dl>
     ${canOpenRace && model.raceId ? `
       <button type="button" class="btn btn-secondary sr-breakdown-open-race" data-sr-breakdown-open-race="${escapeAttribute(model.raceId)}">
         ${escapeHtml(t("safetyBreakdownOpenRace"))}
