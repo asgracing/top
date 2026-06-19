@@ -1785,8 +1785,8 @@ Object.assign(translations.en, {
   safetyCategoryB: "Category B",
   safetyCategoryC: "Category C",
   safetyAboutTitle: "Safety Rating",
-  safetyAboutP1: "SR is calculated only from counted main-server race finishes. Clean races increase the rating; invalid laps, automatic race penalties, and incidents reduce it. Manual/admin penalties are ignored.",
-  safetyAboutP2: "Categories are simple: A is 5.00+, B is 2.50-4.99, C is below 2.50.",
+  safetyAboutP1: "SR v2 starts from 3.00 and is recalculated only from counted race finishes. A race changes SR only if the driver covers at least 50% of the leader's distance. The scale is capped to 1.00-9.99: A is 5.00+, B is 2.50-4.99, C is below 2.50.",
+  safetyAboutP2: "Clean-lap score: 0 invalid laps = +0.10 SR, 1-3 = +0.05, 4-5 = 0.00, 6+ = -0.025 per lap above 5. Automatic race penalties for Cutting, PitSpeeding, and Trolling are counted with x0.5 weight. Incidents use a separate scale and matter more: 0 points = +0.10, 1-2 = +0.05, 3 = 0.00, 4 = -0.02, 5-6 = -0.05, 7-9 = -0.10, 10-13 = -0.18, 14+ = -0.30. Manual/admin penalties are ignored.",
   safetyCategoryRangeA: "A - clean",
   safetyCategoryRangeB: "B - stable",
   safetyCategoryRangeC: "C - risky",
@@ -1840,8 +1840,8 @@ Object.assign(translations.ru, {
   safetyCategoryB: "Категория B",
   safetyCategoryC: "Категория C",
   safetyAboutTitle: "Safety Rating",
-  safetyAboutP1: "SR считается только по зачтенным финишам гонок основного сервера. Чистые гонки повышают рейтинг, грязные круги, автоматические гоночные штрафы и инциденты снижают его. Ручные штрафы админов не учитываются.",
-  safetyAboutP2: "Категории простые: A - 5.00+, B - 2.50-4.99, C - ниже 2.50.",
+  safetyAboutP1: "SR v2 стартует с 3.00 и считается только по зачтенным финишам гонок. Гонка влияет на SR, только если пилот проехал не меньше 50% дистанции лидера. Диапазон рейтинга ограничен 1.00-9.99: A - 5.00+, B - 2.50-4.99, C - ниже 2.50.",
+  safetyAboutP2: "Шкала за чистоту кругов: 0 грязных кругов = +0.10 SR, 1-3 = +0.05, 4-5 = 0.00, 6+ = -0.025 за каждый круг сверх 5. Автоштрафы за Cutting, PitSpeeding и Trolling учитываются с весом x0.5. Инциденты считаются отдельно и влияют сильнее: 0 очков = +0.10, 1-2 = +0.05, 3 = 0.00, 4 = -0.02, 5-6 = -0.05, 7-9 = -0.10, 10-13 = -0.18, 14+ = -0.30. Ручные штрафы админов не учитываются.",
   safetyCategoryRangeA: "A - чисто",
   safetyCategoryRangeB: "B - стабильно",
   safetyCategoryRangeC: "C - риск",
@@ -7038,6 +7038,30 @@ function renderSafetyModal() {
     ` : ""}
     <div class="elo-chart-wrap">${info.history.length ? renderSafetyChart(info, period, grid, periodOffset) : `<div class="empty-box">${escapeHtml(t("safetyHistoryEmpty"))}</div>`}</div>
     ${renderSafetyReasonDetails(info)}
+    <div class="elo-about-block safety-about-block">
+      <div class="elo-about-copy">
+        <h3>${escapeHtml(t("safetyAboutTitle"))}</h3>
+        <p>${escapeHtml(t("safetyAboutP1"))}</p>
+        <p>${escapeHtml(t("safetyAboutP2"))}</p>
+      </div>
+      <div class="elo-category-grid safety-category-grid" aria-label="${escapeAttribute(t("safetyAboutTitle"))}">
+        <div class="elo-category-card">
+          <span>A</span>
+          <strong>${escapeHtml(t("safetyCategoryA"))}</strong>
+          <small>${escapeHtml(t("safetyCategoryRangeA"))}</small>
+        </div>
+        <div class="elo-category-card">
+          <span>B</span>
+          <strong>${escapeHtml(t("safetyCategoryB"))}</strong>
+          <small>${escapeHtml(t("safetyCategoryRangeB"))}</small>
+        </div>
+        <div class="elo-category-card">
+          <span>C</span>
+          <strong>${escapeHtml(t("safetyCategoryC"))}</strong>
+          <small>${escapeHtml(t("safetyCategoryRangeC"))}</small>
+        </div>
+      </div>
+    </div>
   `;
 }
 

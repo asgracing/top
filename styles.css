@@ -4812,14 +4812,14 @@ body.modal-open {
 .elo-modal-summary {
   display: grid;
   grid-template-columns: minmax(160px, 0.45fr) minmax(0, 1fr);
-  gap: 12px;
-  margin-bottom: 14px;
+  gap: 10px;
+  margin-bottom: 12px;
 }
 
 .elo-modal-rating,
 .elo-modal-category {
-  min-height: 82px;
-  padding: 16px;
+  min-height: 66px;
+  padding: 11px 13px;
   border: 1px solid var(--line);
   border-radius: 18px;
   background: rgba(255, 255, 255, 0.045);
@@ -4841,10 +4841,10 @@ body.modal-open {
 
 .elo-modal-label {
   display: block;
-  margin-bottom: 8px;
+  margin-bottom: 6px;
   color: inherit;
   opacity: 0.72;
-  font-size: 0.78rem;
+  font-size: 0.72rem;
   font-weight: 800;
   letter-spacing: 0.04em;
   text-transform: uppercase;
@@ -4852,14 +4852,14 @@ body.modal-open {
 
 .elo-modal-value {
   display: block;
-  font-size: clamp(2rem, 5vw, 3.5rem);
+  font-size: clamp(1.5rem, 3.8vw, 2.45rem);
   font-weight: 950;
   line-height: 0.95;
 }
 
 .elo-modal-category-name {
   color: var(--text);
-  font-size: clamp(1.2rem, 2.4vw, 1.8rem);
+  font-size: clamp(0.96rem, 1.8vw, 1.32rem);
   font-weight: 900;
   line-height: 1.1;
 }
@@ -4870,27 +4870,28 @@ body.modal-open {
   justify-content: space-between;
   gap: 12px;
   flex-wrap: wrap;
-  margin-bottom: 14px;
+  margin-bottom: 12px;
+  font-size: 0.84rem;
 }
 
 .segmented-control {
   display: inline-flex;
   gap: 4px;
-  padding: 4px;
+  padding: 3px;
   border: 1px solid var(--line);
   border-radius: 999px;
   background: rgba(255, 255, 255, 0.04);
 }
 
 .segmented-control button {
-  min-height: 32px;
-  padding: 0 12px;
+  min-height: 29px;
+  padding: 0 10px;
   border: 0;
   border-radius: 999px;
   background: transparent;
   color: var(--muted);
   font: inherit;
-  font-size: 0.82rem;
+  font-size: 0.69rem;
   font-weight: 800;
   cursor: pointer;
 }
@@ -4903,8 +4904,8 @@ body.modal-open {
 }
 
 .elo-chart-wrap {
-  min-height: 260px;
-  padding: 12px;
+  min-height: 186px;
+  padding: 10px;
   border: 1px solid var(--line);
   border-radius: 18px;
   background: rgba(9, 13, 18, 0.42);
@@ -5127,21 +5128,37 @@ body.modal-open {
 
 .safety-about-block {
   margin-top: 18px;
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 14px;
 }
 
 .safety-category-grid {
   grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 12px;
 }
 
 .safety-category-grid .elo-category-card {
+  min-height: 48px;
+  padding: 9px 12px;
   border-color: var(--sr-border);
   background: var(--sr-bg);
   color: var(--sr-fg);
 }
 
 .safety-category-grid .elo-category-card span {
+  width: 34px;
+  height: 28px;
   background: rgba(255, 255, 255, 0.14);
   color: var(--sr-accent);
+}
+
+.safety-category-grid .elo-category-card strong {
+  font-size: 0.8rem;
+}
+
+.safety-category-grid .elo-category-card small {
+  font-size: 0.72rem;
 }
 
 .safety-reason-card {
@@ -5165,13 +5182,15 @@ body.modal-open {
 
 .safety-reason-card dl {
   display: grid;
-  grid-template-columns: repeat(2, minmax(0, 1fr));
-  gap: 8px 14px;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 8px 12px;
   margin: 12px 0 0;
 }
 
 .safety-reason-card dl > div {
   display: flex;
+  flex-direction: row;
+  align-items: baseline;
   justify-content: space-between;
   gap: 10px;
   padding-top: 8px;
@@ -5180,7 +5199,8 @@ body.modal-open {
 
 .safety-reason-card dt {
   color: var(--muted);
-  font-size: 0.78rem;
+  font-size: 0.72rem;
+  line-height: 1.2;
 }
 
 .safety-reason-card dd {
@@ -5188,6 +5208,17 @@ body.modal-open {
   color: var(--text);
   font-weight: 900;
   text-align: right;
+  white-space: nowrap;
+  font-size: 0.92rem;
+}
+
+.elo-period-pager {
+  font-size: 0.76rem;
+}
+
+.elo-period-pager button {
+  min-width: 28px;
+  min-height: 28px;
 }
 
 #driver-of-day-content.is-empty {
@@ -5491,6 +5522,20 @@ body.modal-open {
   .segmented-control button {
     flex: 1 1 auto;
     padding: 0 8px;
+  }
+
+  .safety-reason-card dl {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+
+  .safety-category-grid {
+    grid-template-columns: 1fr;
+  }
+}
+
+@media (max-width: 560px) {
+  .safety-reason-card dl {
+    grid-template-columns: 1fr;
   }
 }
 
