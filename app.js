@@ -454,6 +454,8 @@ const bestLapTrackSelection = new Map();
 const averagePaceTrackSelection = new Map();
 let eloModalState = null;
 let safetyModalState = null;
+let srBreakdownPopoverState = null;
+let srBreakdownPopoverRequestId = 0;
 let communityLightboxState = null;
 let communityLikeStateByPostId = {};
 const pendingCommunityLikePostIds = new Set();
@@ -1801,6 +1803,14 @@ Object.assign(translations.en, {
   safetyReasonIncidentBursts: "Incident bursts",
   safetyReasonIncidentClusters: "Incident clusters",
   safetyReasonIgnoredPenalties: "Ignored penalties",
+  safetyBreakdownSr: "SR",
+  safetyBreakdownClean: "Clean",
+  safetyBreakdownPenalties: "Penalties",
+  safetyBreakdownIncidents: "Incidents",
+  safetyBreakdownIncidentPoints: "Incident points",
+  safetyBreakdownOpenRace: "Open race details",
+  safetyBreakdownLoading: "Loading SR breakdown...",
+  safetyBreakdownNoData: "SR breakdown is not available for this race yet.",
   safetySummaryTitle: "Safety Rating summary",
   safetySummaryRaces: "Counted SR races",
   safetySummaryTotalDelta: "Total SR delta",
@@ -1848,6 +1858,14 @@ Object.assign(translations.ru, {
   safetyReasonIncidentBursts: "Серии инцидентов",
   safetyReasonIncidentClusters: "Кластеры инцидентов",
   safetyReasonIgnoredPenalties: "Игнор. штрафы",
+  safetyBreakdownSr: "SR",
+  safetyBreakdownClean: "Чистота",
+  safetyBreakdownPenalties: "Штрафы",
+  safetyBreakdownIncidents: "Инциденты",
+  safetyBreakdownIncidentPoints: "Очки инцидентов",
+  safetyBreakdownOpenRace: "Открыть детали гонки",
+  safetyBreakdownLoading: "Загрузка расшифровки SR...",
+  safetyBreakdownNoData: "Расшифровка SR для этой гонки пока недоступна.",
   safetySummaryTitle: "Статистика Safety Rating",
   safetySummaryRaces: "Гонок в SR",
   safetySummaryTotalDelta: "Суммарная дельта SR",
@@ -3843,7 +3861,10 @@ function normalizeSafetyHistory(source) {
         rating,
         delta: Number(item?.delta_sr ?? item?.rating_delta),
         date: parseEloHistoryDate(item?.finished_at || item?.date || item?.race_file),
-        label: item?.race_file || item?.race_id || `#${index + 1}`
+        label: item?.race_file || item?.race_id || `#${index + 1}`,
+        raceId: item?.race_id || item?.raceId || null,
+        raceFile: item?.race_file || item?.raceFile || null,
+        finishedAt: item?.finished_at || item?.date || null
       };
     })
     .filter(Boolean);
@@ -4003,6 +4024,113 @@ function renderSafetyReasonDetails(info) {
   `;
 }
 
+function formatSafetyBreakdownDelta(value) {
+  const numeric = Number(value);
+  if (!Number.isFinite(numeric)) return "0.00";
+  return `${numeric > 0 ? "+" : ""}${numeric.toFixed(2)}`;
+}
+
+function hasInlineSafetyBreakdown(source) {
+  return Boolean(
+    source?.race_id && (
+      source?.safety_base_delta !== undefined
+      || source?.safety_penalty_delta !== undefined
+      || source?.safety_incident_penalty_delta !== undefined
+      || source?.safety_final_delta !== undefined
+      || source?.safety_delta !== undefined
+    )
+  );
+}
+
+function buildSafetyBreakdownModel(source) {
+  const info = getSafetyInfo(source);
+  if (!info?.isRaceSpecific) return null;
+  const sr = Number(info.finalDelta ?? info.delta ?? 0);
+  const penalties = Number(info.penaltyDelta ?? 0);
+  const incidents = Number(info.incidentPenaltyDelta ?? 0);
+  const clean = Number((sr - penalties - incidents).toFixed(2));
+  return {
+    raceId: source?.race_id || info.raceId || null,
+    raceFile: source?.source_file || source?.race_file || null,
+    finishedAt: source?.finished_at || null,
+    track: source?.track || source?.track_code || null,
+    driver: source?.driver || info.driver || "-",
+    sr,
+    clean,
+    penalties,
+    incidents,
+    incidentPoints: Number.isFinite(Number(info.incidentPoints)) ? Number(info.incidentPoints) : 0
+  };
+}
+
+function getSafetyBreakdownRaceSummaryMarkup(model) {
+  const summaryParts = [];
+  if (model?.track) summaryParts.push(humanizeTrackName(model.track));
+  if (model?.finishedAt) summaryParts.push(formatDateTimeLocal(model.finishedAt, currentLang));
+  return summaryParts.length
+    ? `<div class="sr-breakdown-summary">${escapeHtml(summaryParts.join(" / "))}</div>`
+    : "";
+}
+
+function renderSafetyBreakdownContent(model, { canOpenRace = false } = {}) {
+  if (!model) {
+    return `
+      <div class="sr-breakdown-empty">${escapeHtml(t("safetyBreakdownNoData"))}</div>
+    `;
+  }
+  const rows = [
+    [t("safetyBreakdownSr"), formatSafetyBreakdownDelta(model.sr)],
+    [t("safetyBreakdownClean"), formatSafetyBreakdownDelta(model.clean)],
+    [t("safetyBreakdownPenalties"), formatSafetyBreakdownDelta(model.penalties)],
+    [t("safetyBreakdownIncidents"), formatSafetyBreakdownDelta(model.incidents)],
+    [t("safetyBreakdownIncidentPoints"), String(model.incidentPoints ?? 0)]
+  ];
+  return `
+    ${getSafetyBreakdownRaceSummaryMarkup(model)}
+    <table class="sr-breakdown-table">
+      <tbody>
+        ${rows.map(([label, value]) => `
+          <tr>
+            <th scope="row">${escapeHtml(label)}</th>
+            <td>${escapeHtml(value)}</td>
+          </tr>
+        `).join("")}
+      </tbody>
+    </table>
+    ${canOpenRace && model.raceId ? `
+      <button type="button" class="btn btn-secondary sr-breakdown-open-race" data-sr-breakdown-open-race="${escapeAttribute(model.raceId)}">
+        ${escapeHtml(t("safetyBreakdownOpenRace"))}
+      </button>
+    ` : ""}
+  `;
+}
+
+function findRaceResultParticipant(details, publicId = null, playerId = null) {
+  const results = Array.isArray(details?.results) ? details.results : [];
+  return results.find(row =>
+    (publicId && row?.public_id === publicId) || (playerId && row?.player_id === playerId)
+  ) || null;
+}
+
+async function resolveSafetyBreakdownSource({ source = null, publicId = null, playerId = null, raceId = null } = {}) {
+  if (hasInlineSafetyBreakdown(source)) return source;
+  const resolvedRaceId = raceId || source?.race_id || null;
+  if (!resolvedRaceId) return null;
+  try {
+    const details = await loadRaceDetailsCached({
+      race_id: resolvedRaceId,
+      source_file: source?.race_file || source?.source_file || null
+    });
+    const participant = findRaceResultParticipant(details, publicId || source?.public_id || null, playerId || source?.player_id || null);
+    return participant
+      ? { ...participant, race_id: details?.race_id || resolvedRaceId, source_file: details?.source_file || source?.race_file || source?.source_file || null }
+      : null;
+  } catch (error) {
+    console.warn("Failed to resolve SR breakdown source.", error);
+    return null;
+  }
+}
+
 function findSafetySource(publicId, playerId = null, raceId = null) {
   const pagedItems = Object.values(topDataV2PagedTables || {}).flatMap((state) =>
     Array.isArray(state?.result?.items) ? state.result.items : []
@@ -4031,7 +4159,7 @@ function findSafetySource(publicId, playerId = null, raceId = null) {
   }) || null;
 }
 
-function renderSafetyBadge(source, { compact = false, showDelta = false } = {}) {
+function renderSafetyBadge(source, { compact = false, showDelta = false, breakdownMode = "modal" } = {}) {
   const info = getSafetyInfo(source);
   if (!info) return "";
   const delta = Number(info.delta);
@@ -4045,6 +4173,7 @@ function renderSafetyBadge(source, { compact = false, showDelta = false } = {}) 
       data-sr-public-id="${escapeAttribute(info.publicId || "")}"
       data-sr-player-id="${escapeAttribute(info.playerId || "")}"
       data-sr-race-id="${escapeAttribute(source?.race_id || "")}"
+      data-sr-breakdown-mode="${escapeAttribute(breakdownMode)}"
       title="${escapeAttribute(`${t("safetyRatingTitle")}: ${info.category} ${info.rating}`)}"
     >
       <span class="sr-badge-value"><strong>${escapeHtml(info.category)}</strong> ${escapeHtml(info.rating)}</span>${deltaText}
@@ -4057,7 +4186,7 @@ function renderSafetyCell(row) {
 }
 
 function renderSafetyRaceCell(row) {
-  return renderSafetyBadge(row, { compact: true, showDelta: true }) || `<span class="empty-inline">-</span>`;
+  return renderSafetyBadge(row, { compact: true, showDelta: true, breakdownMode: "inline" }) || `<span class="empty-inline">-</span>`;
 }
 
 function isDriverBanned(source) {
@@ -6580,6 +6709,174 @@ function renderEloChart(info, period = "all", grid = "medium", periodOffset = 0,
   `;
 }
 
+function formatSafetyChartAxisValue(value) {
+  const numeric = Number(value);
+  if (!Number.isFinite(numeric)) return "-";
+  if (Math.abs(numeric - Math.round(numeric)) < 0.001) return String(Math.round(numeric));
+  return numeric.toFixed(1);
+}
+
+function renderSafetyChart(info, period = "all", grid = "medium", periodOffset = 0) {
+  const points = getFilteredEloHistory(info, period, periodOffset);
+  if (!points.length) {
+    return `<div class="elo-chart-empty">${escapeHtml(t("safetyHistoryEmpty"))}</div>`;
+  }
+
+  const width = 820;
+  const height = 280;
+  const pad = { left: 48, right: 18, top: 22, bottom: 42 };
+  const yMin = 0;
+  const yMax = 10;
+  const xMax = Math.max(1, points.length - 1);
+  const gridCount = grid === "high" ? 6 : grid === "low" ? 3 : 4;
+  const x = (index) => pad.left + (index / xMax) * (width - pad.left - pad.right);
+  const y = (rating) => pad.top + ((yMax - rating) / Math.max(1, yMax - yMin)) * (height - pad.top - pad.bottom);
+  const path = points.map((item, index) => `${index ? "L" : "M"}${x(index).toFixed(1)} ${y(item.rating).toFixed(1)}`).join(" ");
+  const area = `${path} L${x(points.length - 1).toFixed(1)} ${height - pad.bottom} L${pad.left} ${height - pad.bottom} Z`;
+  const gridLines = Array.from({ length: gridCount + 1 }, (_, index) => {
+    const value = yMin + ((yMax - yMin) / gridCount) * index;
+    const yy = y(value);
+    return `
+      <line x1="${pad.left}" y1="${yy.toFixed(1)}" x2="${width - pad.right}" y2="${yy.toFixed(1)}" class="elo-chart-grid-line" />
+      <text x="${pad.left - 10}" y="${(yy + 4).toFixed(1)}" class="elo-chart-axis" text-anchor="end">${escapeHtml(formatSafetyChartAxisValue(value))}</text>
+    `;
+  }).join("");
+  const dots = points.map((item, index) => `
+    <g
+      class="elo-chart-dot-button"
+      role="button"
+      tabindex="0"
+      data-sr-history-race-id="${escapeAttribute(item.raceId || "")}"
+      data-sr-history-race-file="${escapeAttribute(item.raceFile || "")}"
+      data-sr-history-index="${escapeAttribute(index)}"
+      title="${escapeAttribute(`${item.label}: ${item.rating}${Number.isFinite(item.delta) ? ` (${item.delta > 0 ? "+" : ""}${item.delta})` : ""}`)}"
+      aria-label="${escapeAttribute(`${item.label}: ${item.rating}${Number.isFinite(item.delta) ? ` (${item.delta > 0 ? "+" : ""}${item.delta})` : ""}`)}"
+    >
+      <circle cx="${x(index).toFixed(1)}" cy="${y(item.rating).toFixed(1)}" r="${index === points.length - 1 ? 12 : 10}" class="elo-chart-dot-hit"></circle>
+      <circle cx="${x(index).toFixed(1)}" cy="${y(item.rating).toFixed(1)}" r="${index === points.length - 1 ? 5 : 3}" class="elo-chart-dot"></circle>
+    </g>
+  `).join("");
+  const first = points[0];
+  const last = points[points.length - 1];
+  const firstLabel = first.date ? formatDateLocal(first.date.toISOString(), currentLang) : first.label;
+  const lastLabel = last.date ? formatDateLocal(last.date.toISOString(), currentLang) : last.label;
+
+  return `
+    <svg class="elo-chart" viewBox="0 0 ${width} ${height}" role="img" aria-label="${escapeAttribute(t("safetyRatingTitle"))}">
+      ${gridLines}
+      <path d="${area}" class="elo-chart-area"></path>
+      <path d="${path}" class="elo-chart-line"></path>
+      ${dots}
+      <text x="${pad.left}" y="${height - 12}" class="elo-chart-axis">${escapeHtml(firstLabel)}</text>
+      <text x="${width - pad.right}" y="${height - 12}" class="elo-chart-axis" text-anchor="end">${escapeHtml(lastLabel)}</text>
+    </svg>
+  `;
+}
+
+function ensureSafetyBreakdownPopover() {
+  let element = document.getElementById("sr-breakdown-popover");
+  if (element) return element;
+  element = document.createElement("div");
+  element.id = "sr-breakdown-popover";
+  element.className = "sr-breakdown-popover";
+  element.hidden = true;
+  document.body.appendChild(element);
+  return element;
+}
+
+function canOpenRaceFromBreakdown() {
+  return Boolean(raceResultsModalController && document.getElementById("race-results-modal"));
+}
+
+function positionSafetyBreakdownPopover() {
+  const popover = ensureSafetyBreakdownPopover();
+  const trigger = srBreakdownPopoverState?.trigger;
+  if (!trigger || !popover || popover.hidden) return;
+  const rect = trigger.getBoundingClientRect();
+  const margin = 12;
+  const viewportWidth = window.innerWidth;
+  const viewportHeight = window.innerHeight;
+  const popoverRect = popover.getBoundingClientRect();
+  let left = rect.left;
+  let top = rect.bottom + 10;
+
+  if (left + popoverRect.width > viewportWidth - margin) {
+    left = Math.max(margin, viewportWidth - popoverRect.width - margin);
+  }
+  if (top + popoverRect.height > viewportHeight - margin) {
+    top = Math.max(margin, rect.top - popoverRect.height - 10);
+  }
+
+  popover.style.left = `${Math.round(left)}px`;
+  popover.style.top = `${Math.round(top)}px`;
+}
+
+function closeSafetyBreakdownPopover() {
+  srBreakdownPopoverState = null;
+  const popover = document.getElementById("sr-breakdown-popover");
+  if (!popover) return;
+  popover.hidden = true;
+  popover.innerHTML = "";
+}
+
+function renderSafetyBreakdownPopover() {
+  const popover = ensureSafetyBreakdownPopover();
+  if (!srBreakdownPopoverState) {
+    popover.hidden = true;
+    popover.innerHTML = "";
+    return;
+  }
+  const { loading, model } = srBreakdownPopoverState;
+  popover.innerHTML = `
+    <div class="sr-breakdown-popover-card">
+      ${loading
+        ? `<div class="sr-breakdown-loading">${escapeHtml(t("safetyBreakdownLoading"))}</div>`
+        : renderSafetyBreakdownContent(model, { canOpenRace: canOpenRaceFromBreakdown() })}
+    </div>
+  `;
+  popover.hidden = false;
+  positionSafetyBreakdownPopover();
+}
+
+async function openSafetyBreakdownPopover({ trigger, source = null, publicId = null, playerId = null, raceId = null } = {}) {
+  if (!trigger) return;
+  const requestId = ++srBreakdownPopoverRequestId;
+  srBreakdownPopoverState = {
+    trigger,
+    source,
+    publicId,
+    playerId,
+    raceId: raceId || source?.race_id || null,
+    loading: true,
+    model: null
+  };
+  renderSafetyBreakdownPopover();
+
+  const resolvedSource = await resolveSafetyBreakdownSource({
+    source,
+    publicId,
+    playerId,
+    raceId: raceId || source?.race_id || null
+  });
+  if (!srBreakdownPopoverState || requestId !== srBreakdownPopoverRequestId) return;
+  srBreakdownPopoverState = {
+    ...srBreakdownPopoverState,
+    loading: false,
+    model: buildSafetyBreakdownModel(resolvedSource)
+  };
+  renderSafetyBreakdownPopover();
+}
+
+async function openRaceFromSafetyBreakdown(raceId, trigger = null) {
+  if (!raceId || !canOpenRaceFromBreakdown()) return;
+  const race = await loadRaceDetailsCached({ race_id: raceId });
+  closeSafetyBreakdownPopover();
+  if (safetyModalController?.modal?.classList.contains("is-open")) {
+    safetyModalController.close();
+  }
+  openRaceResultsModal(race, trigger);
+}
+
 function renderEloModal() {
   const titleEl = document.getElementById("elo-modal-title");
   const subtitleEl = document.getElementById("elo-modal-subtitle");
@@ -6741,7 +7038,7 @@ function renderSafetyModal() {
         <button type="button" data-sr-period-step="newer" ${periodOffset <= 0 ? "disabled" : ""} title="${escapeAttribute(t("eloNextPeriod"))}">›</button>
       </div>
     ` : ""}
-    <div class="elo-chart-wrap">${info.history.length ? renderEloChart(info, period, grid, periodOffset, { minRating: 0 }) : `<div class="empty-box">${escapeHtml(t("safetyHistoryEmpty"))}</div>`}</div>
+    <div class="elo-chart-wrap">${info.history.length ? renderSafetyChart(info, period, grid, periodOffset) : `<div class="empty-box">${escapeHtml(t("safetyHistoryEmpty"))}</div>`}</div>
     ${renderSafetyReasonDetails(info)}
   `;
 }
@@ -6764,6 +7061,7 @@ function initSafetyModal() {
     onOpen: renderSafetyModal,
     onClose: () => {
       safetyModalState = null;
+      closeSafetyBreakdownPopover();
     }
   });
 
@@ -6773,13 +7071,48 @@ function initSafetyModal() {
       event.preventDefault();
       event.stopPropagation();
       const source = findSafetySource(safetyButton.dataset.srPublicId, safetyButton.dataset.srPlayerId, safetyButton.dataset.srRaceId);
-      openSafetyModalForSource(source, safetyButton);
+      const breakdownMode = safetyButton.dataset.srBreakdownMode || "modal";
+      if (breakdownMode === "inline") {
+        openSafetyBreakdownPopover({
+          trigger: safetyButton,
+          source,
+          publicId: safetyButton.dataset.srPublicId || null,
+          playerId: safetyButton.dataset.srPlayerId || null,
+          raceId: safetyButton.dataset.srRaceId || null
+        });
+      } else {
+        closeSafetyBreakdownPopover();
+        openSafetyModalForSource(source, safetyButton);
+      }
+      return;
+    }
+
+    const historyPoint = event.target?.closest?.("[data-sr-history-race-id]");
+    if (historyPoint) {
+      event.preventDefault();
+      event.stopPropagation();
+      openSafetyBreakdownPopover({
+        trigger: historyPoint,
+        source: null,
+        publicId: safetyModalState?.source?.public_id || safetyModalState?.source?.summary?.public_id || null,
+        playerId: safetyModalState?.source?.player_id || safetyModalState?.source?.summary?.player_id || null,
+        raceId: historyPoint.dataset.srHistoryRaceId || null
+      });
+      return;
+    }
+
+    const openRaceButton = event.target?.closest?.("[data-sr-breakdown-open-race]");
+    if (openRaceButton) {
+      event.preventDefault();
+      event.stopPropagation();
+      openRaceFromSafetyBreakdown(openRaceButton.dataset.srBreakdownOpenRace || null, openRaceButton);
       return;
     }
 
     const periodButton = event.target?.closest?.("[data-sr-period]");
     if (periodButton && document.getElementById("safety-modal")?.contains(periodButton)) {
       safetyModalState = { ...(safetyModalState || {}), period: periodButton.dataset.srPeriod || "all", periodOffset: 0 };
+      closeSafetyBreakdownPopover();
       renderSafetyModal();
       return;
     }
@@ -6791,6 +7124,7 @@ function initSafetyModal() {
         ? currentOffset + 1
         : Math.max(0, currentOffset - 1);
       safetyModalState = { ...(safetyModalState || {}), periodOffset: nextOffset };
+      closeSafetyBreakdownPopover();
       renderSafetyModal();
       return;
     }
@@ -6798,9 +7132,44 @@ function initSafetyModal() {
     const gridButton = event.target?.closest?.("[data-sr-grid]");
     if (gridButton && document.getElementById("safety-modal")?.contains(gridButton)) {
       safetyModalState = { ...(safetyModalState || {}), grid: gridButton.dataset.srGrid || "medium" };
+      closeSafetyBreakdownPopover();
       renderSafetyModal();
+      return;
+    }
+
+    if (
+      srBreakdownPopoverState
+      && !event.target?.closest?.("#sr-breakdown-popover")
+      && !event.target?.closest?.("[data-sr-breakdown-mode='inline']")
+      && !event.target?.closest?.("[data-sr-history-race-id]")
+    ) {
+      closeSafetyBreakdownPopover();
     }
   });
+
+  document.addEventListener("keydown", (event) => {
+    const historyPoint = event.target?.closest?.("[data-sr-history-race-id]");
+    if (!historyPoint) {
+      if (event.key === "Escape" && srBreakdownPopoverState) closeSafetyBreakdownPopover();
+      return;
+    }
+    if (event.key !== "Enter" && event.key !== " ") return;
+    event.preventDefault();
+    openSafetyBreakdownPopover({
+      trigger: historyPoint,
+      source: null,
+      publicId: safetyModalState?.source?.public_id || safetyModalState?.source?.summary?.public_id || null,
+      playerId: safetyModalState?.source?.player_id || safetyModalState?.source?.summary?.player_id || null,
+      raceId: historyPoint.dataset.srHistoryRaceId || null
+    });
+  });
+
+  window.addEventListener("resize", () => {
+    if (srBreakdownPopoverState) positionSafetyBreakdownPopover();
+  });
+  window.addEventListener("scroll", () => {
+    if (srBreakdownPopoverState) positionSafetyBreakdownPopover();
+  }, true);
 }
 
 function getChampionshipRankChange(row) {
