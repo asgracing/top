@@ -454,6 +454,7 @@ const bestLapTrackSelection = new Map();
 const averagePaceTrackSelection = new Map();
 let eloModalState = null;
 let safetyModalState = null;
+let safetyModalRequestId = 0;
 let srBreakdownPopoverState = null;
 let srBreakdownPopoverRequestId = 0;
 let communityLightboxState = null;
@@ -998,7 +999,7 @@ const translations = {
     racesTableSubtitle: "Row click opens quick view. Name opens full profile.",
     raceModalEyebrow: "Race details",
     racesCols: ["Date", "Track", "Winner", "Drivers", "Avg ELO", "Best Lap"],
-    raceModalCols: ["Pos", "Start", "?", "Driver", "Best Lap", "Car", "Gap", "ELO ?", "SR", "Pts"],
+    raceModalCols: ["Pos", "Start", "?", "Driver", "Best Lap", "Car", "Gap", "ΔELO", "SR", "Pts"],
     notCountedBadge: "Not counted",
     countedBadge: "Counted",
     raceSummaryTrack: "Track",
@@ -1046,7 +1047,7 @@ const translations = {
     driverRankingPosition: "Ranking position",
     driverNoData: "Driver profile not found.",
     driverLoading: "Loading driver profile...",
-    driverRaceCols: ["Date", "Track", "Start", "Pos", "?", "Points", "Best Lap", "Car", "Gap", "ELO ?", "SR"],
+    driverRaceCols: ["Date", "Track", "Start", "Pos", "?", "Points", "Best Lap", "Car", "Gap", "ΔELO", "SR"],
     driverTrackCols: ["Track", "Races", "Wins", "Podiums", "Points", "Avg finish", "Best lap"],
     driverPenaltyReason: "Reason",
     driverPenaltyType: "Type",
@@ -1535,7 +1536,7 @@ const translations = {
     racesTableSubtitle: "Клик по строке открывает окно деталей. Имя открывает полный профиль.",
     raceModalEyebrow: "Детали гонки",
     racesCols: ["Дата", "Трасса", "Победитель", "Пилоты", "Ср. ELO", "Лучший круг"],
-    raceModalCols: ["Поз.", "Старт", "?", "Пилот", "Лучший круг", "Машина", "Отставание", "ELO ?", "SR", "Очки"],
+    raceModalCols: ["Поз.", "Старт", "?", "Пилот", "Лучший круг", "Машина", "Отставание", "ΔELO", "SR", "Очки"],
     notCountedBadge: "Не засчитано",
     countedBadge: "Засчитано",
     raceSummaryTrack: "Трасса",
@@ -1583,7 +1584,7 @@ const translations = {
     driverRankingPosition: "Позиция в рейтинге",
     driverNoData: "Профиль пилота не найден.",
     driverLoading: "Загрузка профиля пилота...",
-    driverRaceCols: ["Дата", "Трасса", "Старт", "Поз", "?", "Очки", "Лучший круг", "Машина", "Отставание", "ELO ?", "SR"],
+    driverRaceCols: ["Дата", "Трасса", "Старт", "Поз", "?", "Очки", "Лучший круг", "Машина", "Отставание", "ΔELO", "SR"],
     driverTrackCols: ["Трасса", "Гонки", "Победы", "Подиумы", "Очки", "Ср. финиш", "Лучший круг"],
     driverPenaltyReason: "Причина",
     driverPenaltyType: "Тип",
@@ -4151,10 +4152,25 @@ function findSafetySource(publicId, playerId = null, raceId = null) {
     ...(Array.isArray(driverIndexData) ? driverIndexData : []),
     ...pagedItems
   ];
-  return matches.find(item => {
+  const matchedItems = matches.filter(item => {
     if (!item) return false;
     return (publicId && item.public_id === publicId) || (playerId && item.player_id === playerId);
-  }) || null;
+  });
+  if (!matchedItems.length) return null;
+
+  const scoreSafetySource = (item) => {
+    let score = 0;
+    if (Array.isArray(item?.summary?.safety_history)) score += 120;
+    if (Array.isArray(item?.safety_history)) score += 100;
+    if (Array.isArray(item?.race_history)) score += 80;
+    if (raceId && item?.race_id === raceId) score += 60;
+    if (hasInlineSafetyBreakdown(item)) score += 40;
+    const rating = Number(item?.safety_rating ?? item?.summary?.safety_rating ?? item?.safety_rating_after);
+    if (Number.isFinite(rating)) score += 20;
+    return score;
+  };
+
+  return matchedItems.sort((left, right) => scoreSafetySource(right) - scoreSafetySource(left))[0] || null;
 }
 
 function renderSafetyBadge(source, { compact = false, showDelta = false, breakdownMode = "modal" } = {}) {
@@ -6082,8 +6098,8 @@ function getRaceIdentityCandidates(race) {
 
 function mergeRaceDetails(race, details) {
   const merged = {
-    ...(details && typeof details === "object" ? details : {}),
     ...(race && typeof race === "object" ? race : {}),
+    ...(details && typeof details === "object" ? details : {}),
     _detailsLoading: false,
     _detailsError: false,
   };
@@ -7065,8 +7081,9 @@ function renderSafetyModal() {
   `;
 }
 
-function openSafetyModalForSource(source, trigger = null) {
+async function openSafetyModalForSource(source, trigger = null) {
   if (!source) return;
+  const requestId = ++safetyModalRequestId;
   safetyModalState = {
     source,
     period: safetyModalState?.period || "all",
@@ -7074,6 +7091,22 @@ function openSafetyModalForSource(source, trigger = null) {
     periodOffset: safetyModalState?.periodOffset || 0
   };
   safetyModalController?.open(trigger);
+
+  const publicId = source?.public_id || source?.summary?.public_id || null;
+  if (normalizeSafetyHistory(source).length > 0 || !publicId) return;
+
+  try {
+    const profile = await loadDriverProfileCached(publicId);
+    if (!profile || requestId !== safetyModalRequestId) return;
+    if (normalizeSafetyHistory(profile).length === 0) return;
+    safetyModalState = {
+      ...(safetyModalState || {}),
+      source: profile
+    };
+    renderSafetyModal();
+  } catch (error) {
+    console.warn("Failed to enrich safety modal source.", error);
+  }
 }
 
 function initSafetyModal() {
