@@ -4316,13 +4316,28 @@ function getNestedValue(row, key) {
 
 function getSortableEloValue(row) {
   const info = getEloInfo(row);
-  if (info && Number.isFinite(info.rating)) return info.rating;
-  return parseNumeric(
+  if (info && Number.isFinite(info.rating) && info.rating > 0) return info.rating;
+  const fallback = parseNumeric(
     row?.elo
     ?? row?.summary?.elo
     ?? row?.elo_internal_rating
     ?? row?.summary?.elo_internal_rating
   );
+  return Number.isFinite(fallback) && fallback > 0 ? fallback : null;
+}
+
+function compareEloValues(a, b, direction) {
+  const av = getSortableEloValue(a);
+  const bv = getSortableEloValue(b);
+  const aMissing = !Number.isFinite(av);
+  const bMissing = !Number.isFinite(bv);
+
+  if (aMissing && bMissing) return 0;
+  if (aMissing) return 1;
+  if (bMissing) return -1;
+  if (av < bv) return direction === "asc" ? -1 : 1;
+  if (av > bv) return direction === "asc" ? 1 : -1;
+  return 0;
 }
 
 function getComparableValue(row, column) {
@@ -4352,6 +4367,10 @@ function sortData(data, sortState, columns) {
   if (!column) return [...data];
 
   return [...data].sort((a, b) => {
+    if (column.key === "elo") {
+      const eloDiff = compareEloValues(a, b, sortState.direction);
+      if (eloDiff !== 0) return eloDiff;
+    }
     const av = getComparableValue(a, column);
     const bv = getComparableValue(b, column);
     if (av < bv) return sortState.direction === "asc" ? -1 : 1;
