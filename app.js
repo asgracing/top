@@ -4314,7 +4314,21 @@ function getNestedValue(row, key) {
   return key.split(".").reduce((acc, part) => acc?.[part], row);
 }
 
+function getSortableEloValue(row) {
+  const info = getEloInfo(row);
+  if (info && Number.isFinite(info.rating)) return info.rating;
+  return parseNumeric(
+    row?.elo
+    ?? row?.summary?.elo
+    ?? row?.elo_internal_rating
+    ?? row?.summary?.elo_internal_rating
+  );
+}
+
 function getComparableValue(row, column) {
+  if (column.key === "elo") {
+    return getSortableEloValue(row);
+  }
   const value = getNestedValue(row, column.key);
   switch (column.type) {
     case "number":
