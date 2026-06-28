@@ -825,11 +825,11 @@ const translations = {
     aboutP1:
       "<strong>ASG Racing</strong> is a public <strong>Assetto Corsa Competizione</strong> server where drivers compete on popular GT3 tracks, improve their lap times and compare their statistics with other racers.",
     aboutP2: "This page automatically publishes the server leaderboard including:",
-    aboutList1: "?? number of races",
-    aboutList2: "?? wins",
-    aboutList3: "?? podium finishes",
-    aboutList4: "?? average finish position",
-    aboutList5: "? best laps",
+    aboutList1: "\u2022 number of races",
+    aboutList2: "\u2022 wins",
+    aboutList3: "\u2022 podium finishes",
+    aboutList4: "\u2022 average finish position",
+    aboutList5: "\u2022 best laps",
     aboutP3:
       "Statistics are generated automatically from <strong>ACC Dedicated Server</strong> result files. After each race the data is recalculated and published on the website.",
     pointsTitle: "How points are calculated",
@@ -999,7 +999,7 @@ const translations = {
     racesTableSubtitle: "Row click opens quick view. Name opens full profile.",
     raceModalEyebrow: "Race details",
     racesCols: ["Date", "Track", "Winner", "Drivers", "Avg ELO", "Best Lap"],
-    raceModalCols: ["Pos", "Start", "?", "Driver", "Best Lap", "Car", "Gap", "ΔELO", "SR", "Pts"],
+    raceModalCols: ["Pos", "Start", "\u0394 Pos", "Driver", "Best Lap", "Car", "Gap", "\u0394ELO", "SR", "Pts"],
     notCountedBadge: "Not counted",
     countedBadge: "Counted",
     raceSummaryTrack: "Track",
@@ -1047,7 +1047,7 @@ const translations = {
     driverRankingPosition: "Ranking position",
     driverNoData: "Driver profile not found.",
     driverLoading: "Loading driver profile...",
-    driverRaceCols: ["Date", "Track", "Start", "Pos", "?", "Points", "Best Lap", "Car", "Gap", "ΔELO", "SR"],
+    driverRaceCols: ["Date", "Track", "Start", "Pos", "\u0394 Pos", "Points", "Best Lap", "Car", "Gap", "\u0394ELO", "SR"],
     driverTrackCols: ["Track", "Races", "Wins", "Podiums", "Points", "Avg finish", "Best lap"],
     driverPenaltyReason: "Reason",
     driverPenaltyType: "Type",
@@ -1065,7 +1065,7 @@ const translations = {
       "Car"
     ],
     bestlapsCols: ["#", "Driver", "ELO", "SR", "Best Lap", "Car", "Session", "Updated"],
-    safetyBaseCols: ["#", "Driver", "SR", "Category", "Races", "Δ SR", "Invalid Laps", "Auto Penalties", "Incidents"],
+    safetyBaseCols: ["#", "Driver", "SR", "Category", "Races", "\u0394 SR", "Invalid Laps", "Auto Penalties", "Incidents"],
     leaderboardSearchPlaceholder: "Search driver...",
     bestlapsSearchPlaceholder: "Search driver...",
     safetySearchPlaceholder: "Search driver...",
@@ -1436,11 +1436,11 @@ const translations = {
     aboutP1:
       "<strong>ASG Racing</strong> - это публичный сервер <strong>Assetto Corsa Competizione</strong>, где пилоты соревнуются на популярных GT3 трассах, улучшают свои времена круга и сравнивают статистику с другими пилотами.",
     aboutP2: "На этой странице автоматически публикуется рейтинг сервера, включающий:",
-    aboutList1: "?? количество гонок",
-    aboutList2: "?? победы",
-    aboutList3: "?? подиумы",
-    aboutList4: "?? средний финиш",
-    aboutList5: "? лучшие круги",
+    aboutList1: "\u2022 количество гонок",
+    aboutList2: "\u2022 победы",
+    aboutList3: "\u2022 подиумы",
+    aboutList4: "\u2022 средний финиш",
+    aboutList5: "\u2022 лучшие круги",
     aboutP3:
       "Статистика обновляется автоматически на основе файлов результатов <strong>ACC Dedicated Server</strong>. После каждой гонки данные пересчитываются и публикуются на сайте.",
     pointsTitle: "Как считается рейтинг",
@@ -1536,7 +1536,7 @@ const translations = {
     racesTableSubtitle: "Клик по строке открывает окно деталей. Имя открывает полный профиль.",
     raceModalEyebrow: "Детали гонки",
     racesCols: ["Дата", "Трасса", "Победитель", "Пилоты", "Ср. ELO", "Лучший круг"],
-    raceModalCols: ["Поз.", "Старт", "?", "Пилот", "Лучший круг", "Машина", "Отставание", "ΔELO", "SR", "Очки"],
+    raceModalCols: ["Поз.", "Старт", "\u0394 Поз.", "Пилот", "Лучший круг", "Машина", "Отставание", "\u0394ELO", "SR", "Очки"],
     notCountedBadge: "Не засчитано",
     countedBadge: "Засчитано",
     raceSummaryTrack: "Трасса",
@@ -1584,7 +1584,7 @@ const translations = {
     driverRankingPosition: "Позиция в рейтинге",
     driverNoData: "Профиль пилота не найден.",
     driverLoading: "Загрузка профиля пилота...",
-    driverRaceCols: ["Дата", "Трасса", "Старт", "Поз", "?", "Очки", "Лучший круг", "Машина", "Отставание", "ΔELO", "SR"],
+    driverRaceCols: ["Дата", "Трасса", "Старт", "Поз", "\u0394 Поз.", "Очки", "Лучший круг", "Машина", "Отставание", "\u0394ELO", "SR"],
     driverTrackCols: ["Трасса", "Гонки", "Победы", "Подиумы", "Очки", "Ср. финиш", "Лучший круг"],
     driverPenaltyReason: "Причина",
     driverPenaltyType: "Тип",
@@ -1602,7 +1602,7 @@ const translations = {
       "Машина"
     ],
     bestlapsCols: ["№", "Пилот", "ELO", "SR", "Лучший круг", "Машина", "Сессия", "Обновлено"],
-    safetyBaseCols: ["№", "Пилот", "SR", "Категория", "Гонки", "Δ SR", "Грязные круги", "Автоштрафы", "Инциденты"],
+    safetyBaseCols: ["№", "Пилот", "SR", "Категория", "Гонки", "\u0394 SR", "Грязные круги", "Автоштрафы", "Инциденты"],
     leaderboardSearchPlaceholder: "Поиск пилота...",
     bestlapsSearchPlaceholder: "Поиск пилота...",
     safetySearchPlaceholder: "Поиск пилота...",
@@ -6616,7 +6616,7 @@ function renderTrendBadge(change, metric, { compact = false } = {}) {
   if (!change || !change.trend || change.trend === "same") return "";
 
   const trendClass = change.trend === "up" ? "trend-up" : "trend-down";
-  const arrow = change.trend === "up" ? "^" : "Ў";
+  const arrow = change.trend === "up" ? "&#9650;" : "&#9660;";
   const deltaLabel = formatTrendDelta(change, metric);
   const beforeText = formatTrendTitleValue(metric, change.before);
   const afterText = formatTrendTitleValue(metric, change.after);
