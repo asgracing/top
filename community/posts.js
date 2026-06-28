@@ -2,6 +2,37 @@
 // Send future updates in this shape: title + date, 3-5 sentences, and 1-2 photo paths.
 window.ASG_COMMUNITY_POSTS = [
   {
+    id: "asg-racing-june-2026-championship-finished",
+    date: "2026-06-28",
+    title: {
+      en: "ASG Racing June 2026 Championship Has Concluded",
+      ru: "Завершился чемпионат ASG Racing June 2026"
+    },
+    text: {
+      en: [
+        "The ASG Racing June 2026 Championship is now complete.",
+        "Thank you to every driver who took part in the series and kept the level of competition high from round to round.",
+        "The final top three are Vahe Gabrielyan in 1st place, Alan Ortabaev (RU) in 2nd place, and Sergey Saltaev in 3rd place.",
+        "Congratulations to the podium finishers on a strong and well-earned result. We appreciate everyone who made this championship season special."
+      ],
+      ru: [
+        "Чемпионат ASG Racing June 2026 официально завершен.",
+        "Спасибо всем пилотам, которые приняли участие в серии и поддерживали высокий уровень борьбы от этапа к этапу.",
+        "Итоговая тройка призеров: 1 место — Vahe Gabrielyan, 2 место — Alan Ortabaev (RU), 3 место — Sergey Saltaev.",
+        "Поздравляем победителя и призеров с заслуженным результатом. Благодарим всех, кто сделал этот чемпионат по-настоящему яркой частью сезона ASG Racing."
+      ]
+    },
+    images: [
+      {
+        src: "../news-content/images/ASGRacing_June2026/asgracingjune2026.png",
+        alt: {
+          en: "ASG Racing June 2026 Championship winners announcement",
+          ru: "Объявление победителей чемпионата ASG Racing June 2026"
+        }
+      }
+    ]
+  },
+  {
     id: "new-asg-racing-servers-2026-06-04",
     date: "2026-06-04",
     title: {

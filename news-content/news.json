@@ -1,6 +1,52 @@
 {
   "items": [
     {
+      "id": "asg-racing-june-2026-championship-finished",
+      "slug": "asg-racing-june-2026-championship-finished",
+      "title": "Завершился чемпионат ASG Racing June 2026 / ASG Racing June 2026 Championship Has Concluded",
+      "summary": "Чемпионат ASG Racing June 2026 завершен. Благодарим всех участников и поздравляем призеров сезона. / The ASG Racing June 2026 Championship has concluded. We thank all participants and congratulate the season's prize winners.",
+      "body": [
+        "РУССКИЙ",
+        "────────",
+        "Чемпионат ASG Racing June 2026 официально завершен.",
+        "Благодарим всех пилотов, которые приняли участие в заездах чемпионата, поддерживали высокий уровень борьбы и сделали этот сезон по-настоящему конкурентным и зрелищным.",
+        "По итогам чемпионата призовые места распределились следующим образом:",
+        {
+          "type": "list",
+          "items": [
+            "1 место — Vahe Gabrielyan",
+            "2 место — Alan Ortabaev (RU)",
+            "3 место — Sergey Saltaev"
+          ]
+        },
+        "Поздравляем победителя и призеров с заслуженным результатом. Для ASG Racing этот чемпионат стал важной частью сезона, и мы отдельно отмечаем дисциплину, скорость и стабильность участников на протяжении всей серии.",
+        "Спасибо всем, кто был с нами в June 2026. Увидимся в следующих событиях ASG Racing.",
+        "ENGLISH",
+        "────────",
+        "The ASG Racing June 2026 Championship has officially concluded.",
+        "We thank every driver who took part in the championship rounds, maintained a high standard of racing, and made this season truly competitive and memorable.",
+        "The final podium of the championship is as follows:",
+        {
+          "type": "list",
+          "items": [
+            "1st place — Vahe Gabrielyan",
+            "2nd place — Alan Ortabaev (RU)",
+            "3rd place — Sergey Saltaev"
+          ]
+        },
+        "We congratulate the champion and the prize winners on their well-earned result. For ASG Racing, this championship became an important part of the season, and we would like to highlight the discipline, pace, and consistency shown throughout the series.",
+        "Thank you to everyone who joined us in June 2026. We will see you in the next ASG Racing events."
+      ],
+      "thumbnail_url": "/news-content/images/ASGRacing_June2026/asgracingjune2026.png",
+      "cover_image_url": "/news-content/images/ASGRacing_June2026/asgracingjune2026.png",
+      "image_alt": "ASG Racing June 2026 Championship podium announcement",
+      "published_at": "2026-06-28T10:55:00Z",
+      "expires_at": "",
+      "kind": "announcement",
+      "priority": 400,
+      "is_pinned": true
+    },
+    {
       "id": "safety-rating-v2-live",
       "slug": "safety-rating-v2-live",
       "title": "Запущен Safety Rating v2 / Safety Rating v2 Is Live",
