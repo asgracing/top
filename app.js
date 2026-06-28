@@ -5035,7 +5035,7 @@ function renderCommunityPost(post) {
               data-community-like-post-id="${escapeHtml(postId)}"
               aria-pressed="false"
             >
-              <span class="community-like-heart" aria-hidden="true">¦</span>
+              <span class="community-like-heart" aria-hidden="true">&hearts;</span>
               <span data-community-like-label>${escapeHtml(t("communityLikeButton"))}</span>
             </button>
             <span class="community-like-count" data-community-like-count>${escapeHtml(t("communityLikesLoading"))}</span>
