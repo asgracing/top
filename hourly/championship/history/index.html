@@ -1,0 +1,112 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Past Championships | ASG Racing</title>
+  <meta name="description" content="Archived ASG Racing hourly championships with winners, standings and race result links." />
+  <meta name="robots" content="index, follow" />
+  <meta name="theme-color" content="#0b0f14" />
+  <link rel="canonical" href="https://asgracing.ru/hourly/championship/history/" />
+  <link rel="stylesheet" href="../../styles.css?v=20260630history1" />
+  <link rel="stylesheet" href="../styles.css?v=20260630history1" />
+  <link rel="stylesheet" href="./styles.css?v=20260630history1" />
+</head>
+<body id="top" class="championship-body championship-history-body">
+  <nav class="top-nav" id="top-nav">
+    <div class="top-nav-inner">
+      <a class="top-nav-brand" href="/" aria-label="ASG Racing home">
+        <img class="top-nav-brand-logo" src="../../../social/asg.png" alt="" />
+        <span class="top-nav-brand-text">ASG Racing</span>
+      </a>
+      <div class="top-nav-socials">
+        <a class="top-nav-link-primary nav-social nav-social-discord" href="https://discord.gg/cEPFHXXtTC" target="_blank" rel="noopener noreferrer" aria-label="Discord" title="Discord"><img class="social-icon" src="../../../social/discord.svg" alt="" /></a>
+        <a class="top-nav-link-primary nav-social nav-social-telegram" href="https://t.me/+JUymrENgddcyMTdi" target="_blank" rel="noopener noreferrer" aria-label="Telegram" title="Telegram"><img class="social-icon" src="../../../social/telegram.svg" alt="" /></a>
+        <a class="top-nav-link-primary nav-social nav-social-tiktok" href="https://www.tiktok.com/@asgracingacc" target="_blank" rel="noopener noreferrer" aria-label="TikTok" title="TikTok"><img class="social-icon" src="../../../social/tiktok.svg" alt="" /></a>
+        <a class="top-nav-link-primary nav-social nav-social-youtube" href="https://www.youtube.com/channel/UCwVcW5iUFxcT5Z8AHVqPhTg" target="_blank" rel="noopener noreferrer" aria-label="YouTube" title="YouTube"><img class="social-icon" src="../../../social/youtube.svg" alt="" /></a>
+        <a class="top-nav-link-primary nav-social nav-social-twitch" href="https://www.twitch.tv/asgracing" target="_blank" rel="noopener noreferrer" aria-label="Twitch" title="Twitch"><img class="social-icon" src="../../../social/twitch.svg" alt="" /></a>
+      </div>
+      <div class="top-nav-center">
+        <div class="top-nav-menu">
+          <a class="top-nav-link top-nav-link-secondary top-nav-link-hourly" href="../../" data-i18n="navHourly" data-nav-item="true">Hourly Race</a>
+          <div class="top-nav-group is-current" data-nav-item="true">
+            <button class="top-nav-link top-nav-link-secondary top-nav-group-toggle" type="button" aria-expanded="false" aria-haspopup="true">
+              <span data-i18n="navGroupChampionship">Championship</span>
+              <span class="top-nav-group-caret" aria-hidden="true">&#9662;</span>
+            </button>
+            <div class="top-nav-group-menu" hidden>
+              <a class="top-nav-group-link" href="../" data-i18n="navCurrentChampionship">Current championship</a>
+              <a class="top-nav-group-link" href="./" data-i18n="navPastChampionships">Past championships</a>
+            </div>
+          </div>
+          <div class="top-nav-group" data-nav-item="true">
+            <button class="top-nav-link top-nav-link-secondary top-nav-group-toggle" type="button" aria-expanded="false" aria-haspopup="true">
+              <span data-i18n="navGroupAsg">ASG Racing</span>
+              <span class="top-nav-group-caret" aria-hidden="true">&#9662;</span>
+            </button>
+            <div class="top-nav-group-menu" hidden>
+              <a class="top-nav-group-link" href="/" data-i18n="navLeaderboard">Back to Main</a>
+              <a class="top-nav-group-link" href="/#rules" data-i18n="btnRules">Rules</a>
+              <a class="top-nav-group-link" href="/news/" data-i18n="btnNews">News</a>
+              <a class="top-nav-group-link" href="/#championship" data-i18n="btnChampionship">Rating</a>
+              <a class="top-nav-group-link" href="/#bestlaps" data-i18n="btnBestLaps">Best Laps</a>
+              <a class="top-nav-group-link" href="/#worst-safety" data-i18n="btnWorstSafety">Safety Rating</a>
+              <a class="top-nav-group-link" href="/bans/" data-i18n="btnBans">Ban List</a>
+              <a class="top-nav-group-link" href="/community/" data-i18n="btnCommunity">Community</a>
+              <a class="top-nav-group-link" href="/#about-server" data-i18n="btnAboutServer">About Server</a>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="top-nav-actions">
+        <div class="lang-switch top-nav-lang" aria-label="Language switcher">
+          <button class="lang-btn active" type="button" data-lang="en" aria-label="English"><span class="lang-flag"><img src="../../../social/cif--gb.svg" alt="" /></span></button>
+          <button class="lang-btn" type="button" data-lang="ru" aria-label="Russian"><span class="lang-flag"><img src="../../../social/cif--ru.svg" alt="" /></span></button>
+        </div>
+      </div>
+    </div>
+  </nav>
+
+  <main class="page championship-page">
+    <section class="championship-hero championship-history-hero">
+      <div>
+        <div class="eyebrow" data-i18n="historyEyebrow">Archive</div>
+        <h1 data-i18n="historyTitle">Past championships</h1>
+        <p data-i18n="historySubtitle">Browse completed ASG Racing hourly championships, inspect winners and open detailed standings for each season.</p>
+      </div>
+      <div class="championship-progress championship-history-progress" id="history-summary"></div>
+    </section>
+
+    <section class="card championship-section">
+      <div class="section-head">
+        <div>
+          <div class="eyebrow" data-i18n="historyListEyebrow">Seasons</div>
+          <h2 data-i18n="historyListTitle">Championship archive</h2>
+          <p class="section-subtitle" data-i18n="historyListSubtitle">The list is scrollable and supports quick search when archived championships accumulate.</p>
+        </div>
+      </div>
+      <div class="championship-history-toolbar">
+        <label class="championship-history-search">
+          <span class="sr-only" data-i18n="historySearchLabel">Search championships</span>
+          <input id="history-search" type="search" placeholder="Search championships" data-i18n-placeholder="historySearchPlaceholder" />
+        </label>
+        <div class="championship-history-filters" id="history-filters">
+          <button class="championship-history-filter is-active" type="button" data-filter="all" data-i18n="historyFilterAll">All</button>
+          <button class="championship-history-filter" type="button" data-filter="finished" data-i18n="historyFilterFinished">Finished</button>
+          <button class="championship-history-filter" type="button" data-filter="archived" data-i18n="historyFilterArchived">Archived</button>
+        </div>
+      </div>
+      <div class="championship-history-layout">
+        <div class="championship-history-list-panel">
+          <div class="championship-history-scroll" id="history-list"></div>
+        </div>
+        <aside class="championship-history-detail card-subtle" id="history-detail">
+          <div class="empty" data-i18n="historyLoading">Loading...</div>
+        </aside>
+      </div>
+    </section>
+  </main>
+
+  <script src="./app.js?v=20260630history1" defer></script>
+</body>
+</html>

@@ -36,6 +36,8 @@ const translations = {
     navLeaderboard: "Back to Main",
     navStandings: "Standings",
     navPastRaces: "Past races",
+    navCurrentChampionship: "Current championship",
+    navPastChampionships: "Past championships",
     navMore: "More",
     navMoreAriaLabel: "Open extra navigation",
     navGroupChampionship: "Championship",
@@ -222,6 +224,8 @@ const translations = {
 Object.assign(translations.ru, {
   navLeaderboard: "\u041d\u0430 \u0433\u043b\u0430\u0432\u043d\u0443\u044e",
   navGroupChampionship: "\u0427\u0435\u043c\u043f\u0438\u043e\u043d\u0430\u0442",
+  navCurrentChampionship: "\u0422\u0435\u043a\u0443\u0449\u0438\u0439 \u0447\u0435\u043c\u043f\u0438\u043e\u043d\u0430\u0442",
+  navPastChampionships: "\u041f\u0440\u043e\u0448\u0435\u0434\u0448\u0438\u0435 \u0447\u0435\u043c\u043f\u0438\u043e\u043d\u0430\u0442\u044b",
   navGroupAsg: "ASG Racing",
   btnRules: "\u041f\u0440\u0430\u0432\u0438\u043b\u0430",
   btnNews: "\u041d\u043e\u0432\u043e\u0441\u0442\u0438",
