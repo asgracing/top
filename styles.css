@@ -396,6 +396,63 @@ body.background-audio-focus .site-bg-video {
   accent-color: #67d1ff;
 }
 
+.bg-video-playback-toggle {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 10px;
+  width: 100%;
+  margin-top: 6px;
+  padding: 8px 10px;
+  border: 1px solid rgba(255, 244, 214, 0.18);
+  border-radius: 12px;
+  background: rgba(13, 18, 25, 0.28);
+  color: inherit;
+  cursor: pointer;
+  transition: border-color 0.2s ease, background 0.2s ease, transform 0.2s ease;
+}
+
+.bg-video-playback-toggle:hover,
+.bg-video-playback-toggle:focus-visible {
+  border-color: rgba(255, 225, 170, 0.42);
+  background: rgba(255, 255, 255, 0.08);
+}
+
+.bg-video-playback-toggle:focus-visible {
+  outline: 2px solid rgba(255, 231, 176, 0.85);
+  outline-offset: 2px;
+}
+
+.bg-video-playback-label {
+  font-size: 10px;
+  font-weight: 700;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: rgba(255, 245, 229, 0.82);
+}
+
+.bg-video-playback-state {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-width: 48px;
+  padding: 4px 8px;
+  border-radius: 999px;
+  background: rgba(103, 209, 255, 0.2);
+  color: #effcff;
+  font-size: 11px;
+  font-weight: 800;
+}
+
+.bg-video-sound-toggle.is-disabled .bg-video-playback-state {
+  background: rgba(255, 159, 69, 0.2);
+  color: #fff2df;
+}
+
+.bg-video-sound-toggle.is-disabled .bg-video-volume {
+  opacity: 0.56;
+}
+
 body.background-audio-focus .bg-video-sound-toggle {
   transform: translate3d(-6px, -50%, 0) scale(1.02);
 }

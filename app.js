@@ -55,6 +55,7 @@ const TWITCH_WIDGET_CHECK_INTERVAL_MS = 120000;
 const TOP_GUIDE_STORAGE_KEY = "asgTopGuideSeen";
 const TOP_GUIDE_MEDIA_QUERY = "(min-width: 1280px)";
 const BG_VIDEO_VOLUME_STORAGE_KEY = "asgBgVideoVolume";
+const BG_VIDEO_DISABLED_STORAGE_KEY = "asgBgVideoDisabled";
 const SERVER_CARD_BACKGROUNDS = {
   main: `${SITE_BASE_PATH}assets/main.jpg`,
   sunset: `${SITE_BASE_PATH}assets/sunset.jpg`,
@@ -504,7 +505,8 @@ let topGuideState = {
 let backgroundVideoSoundState = {
   available: false,
   enabled: false,
-  volume: 0.5
+  volume: 0.5,
+  disabled: false
 };
 let funStatsPeriod = "week";
 let serverStatusData = null;
@@ -543,6 +545,22 @@ function saveBackgroundVideoVolume(volume) {
     localStorage.setItem(BG_VIDEO_VOLUME_STORAGE_KEY, String(Math.round(clampBackgroundVideoVolume(volume) * 100)));
   } catch (error) {
     // Volume persistence is nice to have; playback should keep working if storage is blocked.
+  }
+}
+
+function loadBackgroundVideoDisabledPreference() {
+  try {
+    return localStorage.getItem(BG_VIDEO_DISABLED_STORAGE_KEY) === "1";
+  } catch (error) {
+    return false;
+  }
+}
+
+function saveBackgroundVideoDisabledPreference(disabled) {
+  try {
+    localStorage.setItem(BG_VIDEO_DISABLED_STORAGE_KEY, disabled ? "1" : "0");
+  } catch (error) {
+    // Preference persistence is nice to have; video control should still work if storage is blocked.
   }
 }
 
@@ -816,10 +834,17 @@ const translations = {
     bgVideoSoundToggleNote: "Dim the site and unmute the clip",
     bgVideoSoundToggleTitleActive: "Back to site",
     bgVideoSoundToggleNoteActive: "Mute the clip and restore the page",
+    bgVideoSoundToggleTitleDisabled: "Video is off",
+    bgVideoSoundToggleNoteDisabled: "Background playback is disabled for this browser",
     bgVideoSoundToggleAria: "Play the background video with sound and dim the site",
     bgVideoSoundToggleAriaActive: "Mute the background video and return the site to normal mode",
     bgVideoVolumeLabel: "Volume",
     bgVideoVolumeAria: "Background video volume",
+    bgVideoPlaybackToggleLabel: "Background video",
+    bgVideoPlaybackToggleOn: "On",
+    bgVideoPlaybackToggleOff: "Off",
+    bgVideoPlaybackToggleAriaOn: "Disable background video playback on this device",
+    bgVideoPlaybackToggleAriaOff: "Enable background video playback on this device",
     bestLapsTitle: "Best Laps",
     bestLapsSubtitle: "Row click opens quick view. Name opens full profile.",
     worstSafetyTitle: "Worst Safety",
@@ -1438,10 +1463,17 @@ const translations = {
     bgVideoSoundToggleNote: "Сделать сайт почти прозрачным и включить звук",
     bgVideoSoundToggleTitleActive: "Вернуть сайт",
     bgVideoSoundToggleNoteActive: "Выключить звук и вернуть обычный режим",
+    bgVideoSoundToggleTitleDisabled: "Видео отключено",
+    bgVideoSoundToggleNoteDisabled: "Фоновое видео выключено для этого браузера",
     bgVideoSoundToggleAria: "Включить фоновое видео со звуком и сделать сайт почти прозрачным",
     bgVideoSoundToggleAriaActive: "Выключить звук фонового видео и вернуть обычный режим сайта",
     bgVideoVolumeLabel: "Громкость",
     bgVideoVolumeAria: "Громкость фонового видео",
+    bgVideoPlaybackToggleLabel: "Фоновое видео",
+    bgVideoPlaybackToggleOn: "Вкл",
+    bgVideoPlaybackToggleOff: "Выкл",
+    bgVideoPlaybackToggleAriaOn: "Выключить воспроизведение фонового видео на этом устройстве",
+    bgVideoPlaybackToggleAriaOff: "Включить воспроизведение фонового видео на этом устройстве",
     bestLapsTitle: "Лучшие круги",
     bestLapsSubtitle: "Строка открывает быстрый просмотр, имя пилота ведёт в полный профиль.",
     worstSafetyTitle: "Штрафы и нарушения",
@@ -10851,19 +10883,32 @@ function renderBackgroundVideoSoundToggle() {
   const toggle = document.getElementById("bg-video-sound-toggle");
   if (!toggle) return;
 
-  const isEnabled = backgroundVideoSoundState.available && backgroundVideoSoundState.enabled;
+  const isEnabled = backgroundVideoSoundState.available && !backgroundVideoSoundState.disabled && backgroundVideoSoundState.enabled;
   const titleEl = toggle.querySelector("[data-bg-video-toggle-title]");
   const noteEl = toggle.querySelector("[data-bg-video-toggle-note]");
   const volumeLabelEl = toggle.querySelector("[data-bg-video-volume-label]");
   const volumeValueEl = toggle.querySelector("[data-bg-video-volume-value]");
   const volumeSlider = document.getElementById("bg-video-volume-slider");
-  const titleKey = isEnabled ? "bgVideoSoundToggleTitleActive" : "bgVideoSoundToggleTitle";
-  const noteKey = isEnabled ? "bgVideoSoundToggleNoteActive" : "bgVideoSoundToggleNote";
+  const playbackToggle = document.getElementById("bg-video-playback-toggle");
+  const playbackLabelEl = toggle.querySelector("[data-bg-video-playback-label]");
+  const playbackStateEl = toggle.querySelector("[data-bg-video-playback-state]");
+  const titleKey = backgroundVideoSoundState.disabled
+    ? "bgVideoSoundToggleTitleDisabled"
+    : isEnabled
+      ? "bgVideoSoundToggleTitleActive"
+      : "bgVideoSoundToggleTitle";
+  const noteKey = backgroundVideoSoundState.disabled
+    ? "bgVideoSoundToggleNoteDisabled"
+    : isEnabled
+      ? "bgVideoSoundToggleNoteActive"
+      : "bgVideoSoundToggleNote";
   const ariaKey = isEnabled ? "bgVideoSoundToggleAriaActive" : "bgVideoSoundToggleAria";
+  const playbackAriaKey = backgroundVideoSoundState.disabled ? "bgVideoPlaybackToggleAriaOff" : "bgVideoPlaybackToggleAriaOn";
   const volumePercent = Math.round(clampBackgroundVideoVolume(backgroundVideoSoundState.volume) * 100);
 
-  toggle.hidden = !backgroundVideoSoundState.available;
+  toggle.hidden = !backgroundVideoSoundState.available && !backgroundVideoSoundState.disabled;
   toggle.classList.toggle("is-active", isEnabled);
+  toggle.classList.toggle("is-disabled", backgroundVideoSoundState.disabled);
   toggle.setAttribute("aria-pressed", isEnabled ? "true" : "false");
   toggle.setAttribute("aria-label", t(ariaKey));
   toggle.title = t(ariaKey);
@@ -10872,16 +10917,30 @@ function renderBackgroundVideoSoundToggle() {
   if (noteEl) noteEl.textContent = t(noteKey);
   if (volumeLabelEl) volumeLabelEl.textContent = t("bgVideoVolumeLabel");
   if (volumeValueEl) volumeValueEl.textContent = `${volumePercent}%`;
+  if (playbackLabelEl) playbackLabelEl.textContent = t("bgVideoPlaybackToggleLabel");
+  if (playbackStateEl) playbackStateEl.textContent = t(backgroundVideoSoundState.disabled ? "bgVideoPlaybackToggleOff" : "bgVideoPlaybackToggleOn");
   if (volumeSlider) {
     volumeSlider.value = String(volumePercent);
     volumeSlider.setAttribute("aria-label", t("bgVideoVolumeAria"));
+    volumeSlider.disabled = backgroundVideoSoundState.disabled;
+  }
+  if (playbackToggle) {
+    playbackToggle.setAttribute("aria-pressed", backgroundVideoSoundState.disabled ? "false" : "true");
+    playbackToggle.setAttribute("aria-label", t(playbackAriaKey));
+    playbackToggle.title = t(playbackAriaKey);
   }
 }
 
 function syncBackgroundVideoSoundState(video = document.querySelector(".site-bg-video")) {
-  const isEnabled = Boolean(video && backgroundVideoSoundState.available && backgroundVideoSoundState.enabled);
+  const isEnabled = Boolean(
+    video
+    && backgroundVideoSoundState.available
+    && !backgroundVideoSoundState.disabled
+    && backgroundVideoSoundState.enabled
+  );
 
   document.body.classList.toggle("background-audio-focus", isEnabled);
+  document.body.classList.toggle("bg-video-disabled", backgroundVideoSoundState.disabled);
 
   if (video) {
     video.muted = !isEnabled;
@@ -10903,6 +10962,7 @@ function bindBackgroundVideoSoundToggle() {
   const toggle = document.getElementById("bg-video-sound-toggle");
   const video = document.querySelector(".site-bg-video");
   const volumeSlider = document.getElementById("bg-video-volume-slider");
+  const playbackToggle = document.getElementById("bg-video-playback-toggle");
 
   if (!toggle || !video || toggle.dataset.bound === "true") {
     renderBackgroundVideoSoundToggle();
@@ -10926,6 +10986,15 @@ function bindBackgroundVideoSoundToggle() {
     }
   };
 
+  const toggleBackgroundVideoPlayback = () => {
+    backgroundVideoSoundState.disabled = !backgroundVideoSoundState.disabled;
+    if (backgroundVideoSoundState.disabled) {
+      backgroundVideoSoundState.enabled = false;
+    }
+    saveBackgroundVideoDisabledPreference(backgroundVideoSoundState.disabled);
+    optimizeBackgroundMedia();
+  };
+
   toggle.addEventListener("click", () => {
     toggleBackgroundVideoSound();
   });
@@ -10936,6 +11005,20 @@ function bindBackgroundVideoSoundToggle() {
     event.preventDefault();
     toggleBackgroundVideoSound();
   });
+
+  if (playbackToggle) {
+    playbackToggle.addEventListener("click", event => {
+      event.stopPropagation();
+      toggleBackgroundVideoPlayback();
+    });
+
+    playbackToggle.addEventListener("keydown", event => {
+      if (event.key !== "Enter" && event.key !== " ") return;
+      event.preventDefault();
+      event.stopPropagation();
+      toggleBackgroundVideoPlayback();
+    });
+  }
 
   if (volumeSlider) {
     volumeSlider.closest(".bg-video-volume")?.addEventListener("click", event => {
@@ -11071,6 +11154,14 @@ function optimizeBackgroundMedia() {
     IS_COMMUNITY_PAGE ||
     window.innerWidth <= 768;
 
+  if (backgroundVideoSoundState.disabled) {
+    document.body.dataset.bgVideoStatus = "disabled-by-user";
+    document.body.classList.add("lite-background");
+    setBackgroundVideoSoundAvailability(true);
+    unloadBackgroundVideo();
+    return;
+  }
+
   if (shouldUseStaticBackground) {
     document.body.dataset.bgVideoStatus = bgVideoBlockReason || "static-background";
     document.body.classList.add("lite-background");
@@ -11195,6 +11286,7 @@ async function init() {
   rerenderUI();
 
   backgroundVideoSoundState.volume = loadBackgroundVideoVolume();
+  backgroundVideoSoundState.disabled = loadBackgroundVideoDisabledPreference();
   runInitStep("updateServerCardBackgrounds", () => updateServerCardBackgrounds());
   runInitStep("bindLanguageButtons", () => bindLanguageButtons());
   runInitStep("bindTopNavGroups", () => bindTopNavGroups());
@@ -11220,6 +11312,10 @@ async function init() {
     if (event.key === NEWS_SEEN_STORAGE_KEY) {
       renderNewsBell();
       renderNewsNotificationsModal();
+    }
+    if (event.key === BG_VIDEO_DISABLED_STORAGE_KEY) {
+      backgroundVideoSoundState.disabled = loadBackgroundVideoDisabledPreference();
+      optimizeBackgroundMedia();
     }
   });
   window.addEventListener("resize", debounce(() => {
