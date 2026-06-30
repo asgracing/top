@@ -3771,6 +3771,11 @@ function getCarsPageHref(carName) {
   return withCurrentDataParams(`${SITE_BASE_PATH}cars/?car=${encodeURIComponent(carName)}`);
 }
 
+function getRaceArchiveHref(raceId) {
+  if (!raceId) return null;
+  return withCurrentDataParams(`${SITE_BASE_PATH}races/?race_id=${encodeURIComponent(raceId)}`);
+}
+
 function renderDriverLink(name, publicId, className = "driver-link", playerId = null) {
   const safeName = escapeHtml(name || "-");
   const href = getDriverProfileHref(publicId, playerId);
@@ -7203,7 +7208,31 @@ function openEloHistoryPopover(trigger, point) {
 }
 
 function canOpenRaceFromBreakdown() {
-  return Boolean(raceResultsModalController && document.getElementById("race-results-modal"));
+  return Boolean(getRaceArchiveHref("race"));
+}
+
+function getRequestedRaceId() {
+  return normalizeRaceIdentity(pageParams.get("race_id") || pageParams.get("raceId") || null);
+}
+
+function syncRequestedRaceId(raceId, { replace = false } = {}) {
+  if (!IS_RACES_PAGE) return;
+  if (raceId) pageParams.set("race_id", raceId);
+  else pageParams.delete("race_id");
+  pageParams.delete("raceId");
+  const nextSearch = pageParams.toString();
+  const nextUrl = `${window.location.pathname}${nextSearch ? `?${nextSearch}` : ""}${window.location.hash || ""}`;
+  window.history[replace ? "replaceState" : "pushState"]({}, "", nextUrl);
+}
+
+function maybeOpenRequestedRaceFromUrl() {
+  if (!IS_RACES_PAGE || topLoadState.races) return;
+  const requestedRaceId = getRequestedRaceId();
+  if (!requestedRaceId || autoOpenedRequestedRaceId === requestedRaceId) return;
+  const race = getRaceById(requestedRaceId);
+  if (!race) return;
+  autoOpenedRequestedRaceId = requestedRaceId;
+  openRaceResultsModal(race);
 }
 
 function positionSafetyBreakdownPopover() {
@@ -7286,13 +7315,25 @@ async function openSafetyBreakdownPopover({ trigger, source = null, publicId = n
 }
 
 async function openRaceFromSafetyBreakdown(raceId, trigger = null) {
-  if (!raceId || !canOpenRaceFromBreakdown()) return;
-  const race = await loadRaceDetailsCached({ race_id: raceId });
+  const href = getRaceArchiveHref(raceId);
+  if (!raceId || !href) return;
   closeSafetyBreakdownPopover();
+  closeEloHistoryPopover();
+  if (eloModalController?.modal?.classList.contains("is-open")) {
+    eloModalController.close();
+  }
   if (safetyModalController?.modal?.classList.contains("is-open")) {
     safetyModalController.close();
   }
-  openRaceResultsModal(race, trigger);
+  if (IS_RACES_PAGE && raceResultsModalController) {
+    syncRequestedRaceId(raceId);
+    const race = getRaceById(raceId) || await loadRaceDetailsCached({ race_id: raceId }).catch(() => null);
+    if (race) {
+      openRaceResultsModal(race, trigger);
+      return;
+    }
+  }
+  window.location.href = href;
 }
 
 function renderEloModal() {
@@ -9470,6 +9511,7 @@ function renderRaceResultsModal() {
 let raceResultsModalController = null;
 let driverOfDayModalController = null;
 let todayStatsModalController = null;
+let autoOpenedRequestedRaceId = null;
 
 function openRaceResultsModal(race, trigger = null) {
   if (!raceResultsModalController || !race) return;
@@ -9538,6 +9580,7 @@ function renderRacesPage() {
   renderRacesSummary();
   renderRacesTablePage();
   renderRaceResultsModal();
+  maybeOpenRequestedRaceFromUrl();
 }
 
 function getRaceById(raceId) {
