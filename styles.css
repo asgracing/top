@@ -285,6 +285,41 @@ body.background-audio-focus .site-bg-video {
   opacity: 0.72;
 }
 
+.bg-video-settings-trigger {
+  position: absolute;
+  top: 12px;
+  right: 14px;
+  z-index: 2;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 32px;
+  height: 32px;
+  border: 1px solid rgba(255, 244, 214, 0.18);
+  border-radius: 12px;
+  background: rgba(13, 18, 25, 0.28);
+  color: #fff7e7;
+  cursor: pointer;
+  transition: border-color 0.2s ease, background 0.2s ease, transform 0.2s ease;
+}
+
+.bg-video-settings-trigger:hover,
+.bg-video-settings-trigger:focus-visible,
+.bg-video-sound-toggle.is-settings-open .bg-video-settings-trigger {
+  border-color: rgba(255, 225, 170, 0.42);
+  background: rgba(255, 255, 255, 0.08);
+}
+
+.bg-video-settings-trigger:focus-visible {
+  outline: 2px solid rgba(255, 231, 176, 0.85);
+  outline-offset: 2px;
+}
+
+.bg-video-settings-trigger span {
+  font-size: 16px;
+  line-height: 1;
+}
+
 .bg-video-sound-toggle-icon {
   position: relative;
   display: flex;
@@ -410,6 +445,12 @@ body.background-audio-focus .site-bg-video {
   color: inherit;
   cursor: pointer;
   transition: border-color 0.2s ease, background 0.2s ease, transform 0.2s ease;
+}
+
+.bg-video-settings-menu {
+  display: block;
+  margin-top: 8px;
+  padding-top: 4px;
 }
 
 .bg-video-playback-toggle:hover,

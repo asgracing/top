@@ -69,6 +69,17 @@
   aria-pressed="false"
 >
   <span class="bg-video-sound-toggle-orbit" aria-hidden="true"></span>
+  <button
+    class="bg-video-settings-trigger"
+    id="bg-video-settings-trigger"
+    type="button"
+    aria-expanded="false"
+    aria-controls="bg-video-settings-menu"
+    aria-label="Background video settings"
+    title="Background video settings"
+  >
+    <span aria-hidden="true">&#9881;</span>
+  </button>
   <span class="bg-video-sound-toggle-icon" aria-hidden="true">
     <span class="bg-video-sound-toggle-bar"></span>
     <span class="bg-video-sound-toggle-bar"></span>
@@ -91,15 +102,17 @@
       />
       <span class="bg-video-volume-value" data-bg-video-volume-value>50%</span>
     </span>
-    <button
-      class="bg-video-playback-toggle"
-      id="bg-video-playback-toggle"
-      type="button"
-      aria-pressed="true"
-    >
-      <span class="bg-video-playback-label" data-bg-video-playback-label>Background video</span>
-      <span class="bg-video-playback-state" data-bg-video-playback-state>On</span>
-    </button>
+    <span class="bg-video-settings-menu" id="bg-video-settings-menu" hidden>
+      <button
+        class="bg-video-playback-toggle"
+        id="bg-video-playback-toggle"
+        type="button"
+        aria-pressed="true"
+      >
+        <span class="bg-video-playback-label" data-bg-video-playback-label>Background video</span>
+        <span class="bg-video-playback-state" data-bg-video-playback-state>On</span>
+      </button>
+    </span>
   </span>
 </div>
 

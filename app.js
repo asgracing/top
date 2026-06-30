@@ -508,6 +508,7 @@ let backgroundVideoSoundState = {
   volume: 0.5,
   disabled: false
 };
+let backgroundVideoSettingsOpen = false;
 let funStatsPeriod = "week";
 let serverStatusData = null;
 const driverProfileCache = new Map();
@@ -845,6 +846,8 @@ const translations = {
     bgVideoPlaybackToggleOff: "Off",
     bgVideoPlaybackToggleAriaOn: "Disable background video playback on this device",
     bgVideoPlaybackToggleAriaOff: "Enable background video playback on this device",
+    bgVideoSettingsAria: "Open background video settings",
+    bgVideoSettingsAriaExpanded: "Close background video settings",
     bestLapsTitle: "Best Laps",
     bestLapsSubtitle: "Row click opens quick view. Name opens full profile.",
     worstSafetyTitle: "Worst Safety",
@@ -1474,6 +1477,8 @@ const translations = {
     bgVideoPlaybackToggleOff: "Выкл",
     bgVideoPlaybackToggleAriaOn: "Выключить воспроизведение фонового видео на этом устройстве",
     bgVideoPlaybackToggleAriaOff: "Включить воспроизведение фонового видео на этом устройстве",
+    bgVideoSettingsAria: "Открыть настройки фонового видео",
+    bgVideoSettingsAriaExpanded: "Закрыть настройки фонового видео",
     bestLapsTitle: "Лучшие круги",
     bestLapsSubtitle: "Строка открывает быстрый просмотр, имя пилота ведёт в полный профиль.",
     worstSafetyTitle: "Штрафы и нарушения",
@@ -10890,6 +10895,8 @@ function renderBackgroundVideoSoundToggle() {
   const volumeValueEl = toggle.querySelector("[data-bg-video-volume-value]");
   const volumeSlider = document.getElementById("bg-video-volume-slider");
   const playbackToggle = document.getElementById("bg-video-playback-toggle");
+  const settingsTrigger = document.getElementById("bg-video-settings-trigger");
+  const settingsMenu = document.getElementById("bg-video-settings-menu");
   const playbackLabelEl = toggle.querySelector("[data-bg-video-playback-label]");
   const playbackStateEl = toggle.querySelector("[data-bg-video-playback-state]");
   const titleKey = backgroundVideoSoundState.disabled
@@ -10909,6 +10916,7 @@ function renderBackgroundVideoSoundToggle() {
   toggle.hidden = !backgroundVideoSoundState.available && !backgroundVideoSoundState.disabled;
   toggle.classList.toggle("is-active", isEnabled);
   toggle.classList.toggle("is-disabled", backgroundVideoSoundState.disabled);
+  toggle.classList.toggle("is-settings-open", backgroundVideoSettingsOpen);
   toggle.setAttribute("aria-pressed", isEnabled ? "true" : "false");
   toggle.setAttribute("aria-label", t(ariaKey));
   toggle.title = t(ariaKey);
@@ -10928,6 +10936,15 @@ function renderBackgroundVideoSoundToggle() {
     playbackToggle.setAttribute("aria-pressed", backgroundVideoSoundState.disabled ? "false" : "true");
     playbackToggle.setAttribute("aria-label", t(playbackAriaKey));
     playbackToggle.title = t(playbackAriaKey);
+  }
+  if (settingsTrigger) {
+    const settingsAriaKey = backgroundVideoSettingsOpen ? "bgVideoSettingsAriaExpanded" : "bgVideoSettingsAria";
+    settingsTrigger.setAttribute("aria-expanded", backgroundVideoSettingsOpen ? "true" : "false");
+    settingsTrigger.setAttribute("aria-label", t(settingsAriaKey));
+    settingsTrigger.title = t(settingsAriaKey);
+  }
+  if (settingsMenu) {
+    settingsMenu.hidden = !backgroundVideoSettingsOpen;
   }
 }
 
@@ -10963,6 +10980,8 @@ function bindBackgroundVideoSoundToggle() {
   const video = document.querySelector(".site-bg-video");
   const volumeSlider = document.getElementById("bg-video-volume-slider");
   const playbackToggle = document.getElementById("bg-video-playback-toggle");
+  const settingsTrigger = document.getElementById("bg-video-settings-trigger");
+  const settingsMenu = document.getElementById("bg-video-settings-menu");
 
   if (!toggle || !video || toggle.dataset.bound === "true") {
     renderBackgroundVideoSoundToggle();
@@ -10995,6 +11014,11 @@ function bindBackgroundVideoSoundToggle() {
     optimizeBackgroundMedia();
   };
 
+  const setBackgroundVideoSettingsOpen = (nextOpen) => {
+    backgroundVideoSettingsOpen = Boolean(nextOpen);
+    renderBackgroundVideoSoundToggle();
+  };
+
   toggle.addEventListener("click", () => {
     toggleBackgroundVideoSound();
   });
@@ -11005,6 +11029,21 @@ function bindBackgroundVideoSoundToggle() {
     event.preventDefault();
     toggleBackgroundVideoSound();
   });
+
+  if (settingsTrigger) {
+    settingsTrigger.addEventListener("click", event => {
+      event.preventDefault();
+      event.stopPropagation();
+      setBackgroundVideoSettingsOpen(!backgroundVideoSettingsOpen);
+    });
+
+    settingsTrigger.addEventListener("keydown", event => {
+      if (event.key !== "Enter" && event.key !== " ") return;
+      event.preventDefault();
+      event.stopPropagation();
+      setBackgroundVideoSettingsOpen(!backgroundVideoSettingsOpen);
+    });
+  }
 
   if (playbackToggle) {
     playbackToggle.addEventListener("click", event => {
@@ -11019,6 +11058,14 @@ function bindBackgroundVideoSoundToggle() {
       toggleBackgroundVideoPlayback();
     });
   }
+
+  settingsMenu?.addEventListener("click", event => {
+    event.stopPropagation();
+  });
+
+  settingsMenu?.addEventListener("keydown", event => {
+    event.stopPropagation();
+  });
 
   if (volumeSlider) {
     volumeSlider.closest(".bg-video-volume")?.addEventListener("click", event => {
@@ -11039,9 +11086,19 @@ function bindBackgroundVideoSoundToggle() {
   }
 
   document.addEventListener("keydown", event => {
+    if (event.key === "Escape" && backgroundVideoSettingsOpen) {
+      setBackgroundVideoSettingsOpen(false);
+      return;
+    }
     if (event.key !== "Escape" || !backgroundVideoSoundState.enabled) return;
     backgroundVideoSoundState.enabled = false;
     syncBackgroundVideoSoundState(video);
+  });
+
+  document.addEventListener("click", event => {
+    if (!backgroundVideoSettingsOpen) return;
+    if (event.target?.closest?.("#bg-video-sound-toggle")) return;
+    setBackgroundVideoSettingsOpen(false);
   });
 
   toggle.dataset.bound = "true";
