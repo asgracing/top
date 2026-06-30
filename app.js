@@ -7139,6 +7139,9 @@ function renderEloHistoryPopover() {
           <dd>${escapeHtml(point.date ? formatDateLocal(point.date.toISOString(), currentLang) : point.label || "-")}</dd>
         </div>
       </dl>
+      ${point.raceId && canOpenRaceFromBreakdown()
+        ? `<button type="button" class="btn btn-secondary sr-breakdown-open-race" data-elo-history-open-race="${escapeAttribute(point.raceId)}">${escapeHtml(t("openRaceDetailsLabel"))}</button>`
+        : ""}
     </div>
   `;
   popover.hidden = false;
@@ -7374,6 +7377,14 @@ function initEloModal() {
       const points = getFilteredEloHistory(info, eloModalState?.period || "all", Number(eloModalState?.periodOffset || 0));
       const point = points[Number(historyPoint.dataset.eloHistoryIndex)];
       if (point) openEloHistoryPopover(historyPoint, point);
+      return;
+    }
+
+    const openRaceButton = event.target?.closest?.("[data-elo-history-open-race]");
+    if (openRaceButton) {
+      event.preventDefault();
+      event.stopPropagation();
+      openRaceFromSafetyBreakdown(openRaceButton.dataset.eloHistoryOpenRace || null, openRaceButton);
       return;
     }
 
