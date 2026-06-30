@@ -6065,6 +6065,35 @@ body.modal-open {
   margin-top: 18px;
 }
 
+.join-community-links {
+  display: grid;
+  gap: 12px;
+  margin-top: 14px;
+}
+
+.join-community-item {
+  display: grid;
+  grid-template-columns: 44px minmax(0, 1fr);
+  gap: 12px;
+  align-items: center;
+}
+
+.join-community-icon-link {
+  width: 44px;
+  height: 44px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 14px;
+  border: 1px solid rgba(255, 255, 255, 0.12);
+  background: rgba(255, 255, 255, 0.06);
+}
+
+.join-community-copy {
+  color: var(--muted);
+  line-height: 1.5;
+}
+
 .rules-callout {
   margin-bottom: 28px;
   padding: 24px;
