@@ -94,6 +94,7 @@ const VOTER_ID_STORAGE_TTL_MS = 365 * 24 * 60 * 60 * 1000;
 const HOURLY_VOTE_STATE_STORAGE_KEY = "hourlyVoteStateByEventId";
 const HOURLY_VOTE_STATE_STORAGE_TTL_MS = 30 * 24 * 60 * 60 * 1000;
 const NEWS_READ_STORAGE_KEY = "asgReadNewsIds.v2";
+const NEWS_SEEN_STORAGE_KEY = "asgSeenNewsNotifications.v1";
 
 function getLegalUrls() {
   const fallbackBase =
@@ -5269,6 +5270,25 @@ function saveNewsReadState(items) {
   }
 }
 
+function loadNewsSeenState() {
+  try {
+    const rawValue = localStorage.getItem(NEWS_SEEN_STORAGE_KEY);
+    if (!rawValue) return {};
+    const parsed = JSON.parse(rawValue);
+    return parsed && typeof parsed === "object" ? parsed : {};
+  } catch (error) {
+    return {};
+  }
+}
+
+function saveNewsSeenState(items) {
+  try {
+    localStorage.setItem(NEWS_SEEN_STORAGE_KEY, JSON.stringify(items || {}));
+  } catch (error) {
+    // Notification seen state is a local convenience feature.
+  }
+}
+
 function isNewsItemRead(item) {
   const state = loadNewsReadState();
   const key = String(item?.id || item?.slug || "").trim();
@@ -5282,6 +5302,30 @@ function markNewsItemRead(item) {
   if (state[key]) return;
   state[key] = Date.now();
   saveNewsReadState(state);
+}
+
+function isNewsNotificationSeen(item) {
+  const state = loadNewsSeenState();
+  const key = String(item?.id || item?.slug || "").trim();
+  return Boolean(key && state[key]);
+}
+
+function markNewsNotificationSeen(item) {
+  const key = String(item?.id || item?.slug || "").trim();
+  if (!key) return false;
+  const state = loadNewsSeenState();
+  if (state[key]) return false;
+  state[key] = Date.now();
+  saveNewsSeenState(state);
+  return true;
+}
+
+function markNewsNotificationsSeen(items = []) {
+  let changed = false;
+  items.forEach(item => {
+    if (markNewsNotificationSeen(item)) changed = true;
+  });
+  return changed;
 }
 
 function isNewsRecordPublished(item) {
@@ -5361,7 +5405,7 @@ function getSortedNewsFeed(items = newsFeedData) {
 }
 
 function getUnreadNewsCount(items = newsFeedData) {
-  return getSortedNewsFeed(items).filter(item => !isNewsItemRead(item)).length;
+  return getSortedNewsFeed(items).filter(item => !isNewsNotificationSeen(item)).length;
 }
 
 async function loadNewsFeed() {
@@ -5435,7 +5479,7 @@ function renderNewsNotificationBilingualText(text, primaryClass, secondaryClass)
 
 function renderNewsNotificationItem(item) {
   const href = getNewsArticleHref(item.slug);
-  const unread = !isNewsItemRead(item);
+  const unread = !isNewsNotificationSeen(item);
   const publishedLabel = formatNewsDateTime(item.published_at);
   return `
     <a class="news-notification-card${unread ? " is-unread" : ""}" href="${escapeHtml(href)}" data-news-open-slug="${escapeHtml(item.slug)}">
@@ -5701,7 +5745,13 @@ function openNewsNotificationsPopover() {
   const panel = document.getElementById("news-notifications-panel");
   const button = document.getElementById("news-bell-button");
   if (!panel || !button) return;
+  const visibleItems = getSortedNewsFeed(newsFeedData).slice(0, 6);
   renderNewsNotificationsModal();
+  const changed = markNewsNotificationsSeen(visibleItems);
+  if (changed) {
+    renderNewsBell();
+    renderNewsNotificationsModal();
+  }
   syncNewsNotificationsPopoverPosition();
   panel.hidden = false;
   button.setAttribute("aria-expanded", "true");
@@ -10837,6 +10887,10 @@ async function init() {
       renderNewsBell();
       renderNewsNotificationsModal();
       if (IS_NEWS_PAGE) renderNewsPage();
+    }
+    if (event.key === NEWS_SEEN_STORAGE_KEY) {
+      renderNewsBell();
+      renderNewsNotificationsModal();
     }
   });
   window.addEventListener("resize", debounce(() => {
