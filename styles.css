@@ -1216,7 +1216,8 @@ h1 {
 }
 
 .hero-hourly-actions {
-  display: grid;
+  display: flex;
+  align-items: center;
   gap: 10px;
 }
 
@@ -1229,6 +1230,38 @@ h1 {
   background: linear-gradient(135deg, #ffd166, #ffb347);
   color: #101418;
   box-shadow: 0 14px 28px rgba(255, 209, 102, 0.22);
+}
+
+.hero-hourly-cancel,
+.hourly-modal-cta-cancel {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  flex: 0 0 42px;
+  width: 42px;
+  height: 42px;
+  padding: 0;
+  border: 1px solid rgba(255, 107, 107, 0.34);
+  border-radius: 999px;
+  background: rgba(180, 35, 35, 0.92);
+  color: #fff;
+  font-size: 1.3rem;
+  font-weight: 900;
+  line-height: 1;
+  cursor: pointer;
+  transition: transform 0.18s ease, filter 0.18s ease, opacity 0.18s ease;
+}
+
+.hero-hourly-cancel:hover:not(:disabled),
+.hourly-modal-cta-cancel:hover:not(:disabled) {
+  transform: translateY(-1px);
+  filter: brightness(1.06);
+}
+
+.hero-hourly-cancel:disabled,
+.hourly-modal-cta-cancel:disabled {
+  cursor: default;
+  opacity: 0.84;
 }
 
 .hero-hourly-votes {
@@ -4564,6 +4597,13 @@ body.modal-open {
   border-radius: 999px;
   background: linear-gradient(135deg, #ff9a43, #ff6b2d);
   box-shadow: 0 12px 24px rgba(255, 107, 45, 0.24);
+}
+
+.hourly-modal-cta-actions {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  flex-wrap: wrap;
 }
 
 .hourly-modal-cta-meta {

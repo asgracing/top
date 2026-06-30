@@ -614,6 +614,7 @@ const translations = {
     hourlyVoteBtn: "I want to race!",
     hourlyVoteDone: "You're in",
     hourlyVoteSending: "Saving...",
+    hourlyUnvoteBtn: "Remove vote",
     hourlyVoteFailed: "Try again",
     hourlyNoEvent: "No scheduled event yet",
     hourlyVotesZero: "No registrations yet",
@@ -1152,6 +1153,7 @@ const translations = {
     hourlyVoteBtn: "Я хочу поехать!",
     hourlyVoteDone: "Ты в списке",
     hourlyVoteSending: "Сохраняем...",
+    hourlyUnvoteBtn: "Отменить голос",
     hourlyVoteFailed: "Повтори позже",
     hourlyNoEvent: "Пока нет запланированного события",
     hourlyVotesZero: "Нет регистраций",
@@ -2481,12 +2483,25 @@ function buildHourlyHeroModalContent(data) {
       </aside>
     </div>
     <div class="hourly-modal-details-cta">
-      <button
-        class="btn hero-hourly-btn hourly-modal-cta-btn${hourlyVoteAlreadyVoted ? " is-voted" : ""}${!hourlyVoteAlreadyVoted && !hourlyVotePending && canVote ? " pulse-attention" : ""}"
-        id="hourly-modal-vote-btn"
-        type="button"
-        ${!canVote || hourlyVotePending ? "disabled" : ""}
-      >${escapeHtml(voteLabel)} <span aria-hidden="true">¦</span></button>
+      <div class="hourly-modal-cta-actions">
+        <button
+          class="btn hero-hourly-btn hourly-modal-cta-btn${hourlyVoteAlreadyVoted ? " is-voted" : ""}${!hourlyVoteAlreadyVoted && !hourlyVotePending && canVote ? " pulse-attention" : ""}"
+          id="hourly-modal-vote-btn"
+          type="button"
+          ${!canVote || hourlyVotePending || hourlyVoteAlreadyVoted ? "disabled" : ""}
+        >${escapeHtml(voteLabel)} <span aria-hidden="true">¦</span></button>
+        ${
+          hourlyVoteAlreadyVoted
+            ? `<button
+                class="hourly-modal-cta-cancel"
+                id="hourly-modal-unvote-btn"
+                type="button"
+                aria-label="${escapeAttribute(t("hourlyUnvoteBtn"))}"
+                ${hourlyVotePending ? "disabled" : ""}
+              >×</button>`
+            : ""
+        }
+      </div>
       <div class="hourly-modal-cta-meta" id="hourly-modal-votes-summary">${escapeHtml(getHourlyVotesLabel())}</div>
       <div class="legal-inline-note">${buildHourlyVoteLegalNoteHtml()}</div>
     </div>
@@ -2540,6 +2555,14 @@ function renderHourlyHeroModal() {
     });
     modalVoteBtn.dataset.bound = "true";
   }
+  const modalUnvoteBtn = document.getElementById("hourly-modal-unvote-btn");
+  if (modalUnvoteBtn && modalUnvoteBtn.dataset.bound !== "true") {
+    modalUnvoteBtn.addEventListener("click", (event) => {
+      event.stopPropagation();
+      void submitHourlyHeroUnvote();
+    });
+    modalUnvoteBtn.dataset.bound = "true";
+  }
 }
 
 function renderHourlyHeroCard() {
@@ -2548,8 +2571,9 @@ function renderHourlyHeroCard() {
   const votesEl = document.getElementById("hourly-votes-summary");
   const cardEl = document.getElementById("hero-hourly-card");
   const voteBtn = document.getElementById("hourly-vote-btn");
+  const unvoteBtn = document.getElementById("hourly-unvote-btn");
 
-  if (!startsEl || !trackEl || !votesEl || !cardEl || !voteBtn) return;
+  if (!startsEl || !trackEl || !votesEl || !cardEl || !voteBtn || !unvoteBtn) return;
 
   if (topLoadState.hourly && !hourlyAnnouncementData) {
     trackEl.textContent = t("loading");
@@ -2558,6 +2582,7 @@ function renderHourlyHeroCard() {
     voteBtn.textContent = t("loading");
     voteBtn.disabled = true;
     voteBtn.hidden = false;
+    unvoteBtn.hidden = true;
     return;
   }
 
@@ -2593,9 +2618,12 @@ function renderHourlyHeroCard() {
       : t("hourlyVoteBtn");
 
   voteBtn.hidden = false;
-  voteBtn.disabled = (!data?.event_id && !data?.track_name) || hourlyVotePending;
+  voteBtn.disabled = (!data?.event_id && !data?.track_name) || hourlyVotePending || hourlyVoteAlreadyVoted;
   voteBtn.classList.toggle("is-voted", hourlyVoteAlreadyVoted);
   voteBtn.classList.toggle("pulse-attention", !hourlyVoteAlreadyVoted && !hourlyVotePending && Boolean(data?.event_id || data?.track_name));
+  unvoteBtn.hidden = !hourlyVoteAlreadyVoted;
+  unvoteBtn.disabled = hourlyVotePending;
+  unvoteBtn.setAttribute("aria-label", t("hourlyUnvoteBtn"));
   cardEl.setAttribute(
     "aria-label",
     `${t("hourlyOpenDetailsLabel")}: ${data?.track_name || t("hourlyNoEvent")}`
@@ -2612,6 +2640,16 @@ function renderHourlyHeroCard() {
       event.stopPropagation();
     });
     voteBtn.dataset.bound = "true";
+  }
+  if (!unvoteBtn.dataset.bound) {
+    unvoteBtn.addEventListener("click", (event) => {
+      event.stopPropagation();
+      void submitHourlyHeroUnvote();
+    });
+    unvoteBtn.addEventListener("keydown", (event) => {
+      event.stopPropagation();
+    });
+    unvoteBtn.dataset.bound = "true";
   }
 }
 
@@ -2747,7 +2785,7 @@ async function loadHourlyVotes(announcement) {
 
 async function submitHourlyHeroVote() {
   const eventId = buildHourlyAnnouncementEventId(hourlyAnnouncementData);
-  if (!eventId || hourlyVotePending) return;
+  if (!eventId || hourlyVotePending || hourlyVoteAlreadyVoted) return;
 
   hourlyVotePending = true;
   hourlyVoteFailed = false;
@@ -2755,24 +2793,16 @@ async function submitHourlyHeroVote() {
   renderHourlyHeroModal();
 
   try {
-    const endpoint = hourlyVoteAlreadyVoted ? "/unvote" : "/vote";
-    const body = hourlyVoteAlreadyVoted
-      ? {
-          event_id: eventId,
-          voter_id: getHourlyBrowserVoterId()
-        }
-      : {
-          event_id: eventId,
-          track: hourlyAnnouncementData?.track_name || hourlyAnnouncementData?.track_code || "-",
-          date: hourlyAnnouncementData?.date || "",
-          time: hourlyAnnouncementData?.start_time_local || "",
-          voter_id: getHourlyBrowserVoterId()
-        };
-
-    const response = await fetch(new URL(endpoint, hourlyVotesApiUrl), {
+    const response = await fetch(new URL("/vote", hourlyVotesApiUrl), {
       method: "POST",
       headers: { "content-type": "application/json; charset=utf-8" },
-      body: JSON.stringify(body)
+      body: JSON.stringify({
+        event_id: eventId,
+        track: hourlyAnnouncementData?.track_name || hourlyAnnouncementData?.track_code || "-",
+        date: hourlyAnnouncementData?.date || "",
+        time: hourlyAnnouncementData?.start_time_local || "",
+        voter_id: getHourlyBrowserVoterId()
+      })
     });
     if (!response.ok) throw new Error(`HTTP ${response.status}`);
     const payload = await response.json();
@@ -2785,6 +2815,43 @@ async function submitHourlyHeroVote() {
     mergeHourlyStoredVoteStateItems({ [eventId]: nextState });
   } catch (error) {
     console.warn("hourly hero vote failed.", error);
+    hourlyVoteFailed = true;
+  } finally {
+    hourlyVotePending = false;
+    renderHourlyHeroCard();
+    renderHourlyHeroModal();
+  }
+}
+
+async function submitHourlyHeroUnvote() {
+  const eventId = buildHourlyAnnouncementEventId(hourlyAnnouncementData);
+  if (!eventId || hourlyVotePending || !hourlyVoteAlreadyVoted) return;
+
+  hourlyVotePending = true;
+  hourlyVoteFailed = false;
+  renderHourlyHeroCard();
+  renderHourlyHeroModal();
+
+  try {
+    const response = await fetch(new URL("/unvote", hourlyVotesApiUrl), {
+      method: "POST",
+      headers: { "content-type": "application/json; charset=utf-8" },
+      body: JSON.stringify({
+        event_id: eventId,
+        voter_id: getHourlyBrowserVoterId()
+      })
+    });
+    if (!response.ok) throw new Error(`HTTP ${response.status}`);
+    const payload = await response.json();
+    const nextState = {
+      event_id: eventId,
+      votes: typeof payload?.votes === "number" ? payload.votes : hourlyVotesCount,
+      already_voted: Boolean(payload?.already_voted)
+    };
+    applyHourlyAnnouncementVoteState(nextState);
+    mergeHourlyStoredVoteStateItems({ [eventId]: nextState });
+  } catch (error) {
+    console.warn("hourly hero unvote failed.", error);
     hourlyVoteFailed = true;
   } finally {
     hourlyVotePending = false;
