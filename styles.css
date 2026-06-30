@@ -11420,6 +11420,24 @@ body.background-audio-focus .bg-video-sound-toggle {
   box-shadow: 0 10px 22px rgba(255, 91, 46, 0.28);
 }
 
+/* ===== PERFORMANCE DIAGNOSTIC OVERRIDES ===== */
+
+body *,
+body *::before,
+body *::after {
+  backdrop-filter: none !important;
+  -webkit-backdrop-filter: none !important;
+}
+
+.bg-video-sound-toggle-orbit,
+.bg-video-sound-toggle-bar,
+.pulse-attention,
+.hero-hourly-promo-title.pulse-attention,
+.support-widget-btn,
+.support-mobile-btn {
+  animation: none !important;
+}
+
 .donation-alerts-goal {
   display: grid;
   gap: 6px;
