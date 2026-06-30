@@ -15,7 +15,7 @@ const defaultDataBase = isAsgPublicSite
     : "/hourly-data";
 const dataBase = normalizeBaseUrl(params.get("hourlyApiBase")) || defaultDataBase;
 const githubDataBase = "https://asgracing.github.io/hourly-data";
-const hourlyAssetBase = "https://asgracing.github.io/hourly/assets";
+const hourlyAssetBase = "../assets";
 const votesApiBase = "https://hourly-votes.asgracing.workers.dev";
 const VOTE_STATE_STORAGE_KEY = "hourlyVoteStateByEventId";
 const VOTE_STATE_STORAGE_TTL_MS = 30 * 24 * 60 * 60 * 1000;
@@ -250,6 +250,7 @@ const TRACK_BACKGROUNDS = {
   silverstone: `${hourlyAssetBase}/tracks/silverstone.jpg`,
   spa: `${hourlyAssetBase}/tracks/spa.jpg`,
   nurburgring: `${hourlyAssetBase}/tracks/nurburgring.jpg`,
+  nurburgring_24h: `${hourlyAssetBase}/tracks/nurburgring_24h.jpg`,
   nurburgring24h: `${hourlyAssetBase}/tracks/nurburgring_24h.jpg`,
   "nurburgring-24h": `${hourlyAssetBase}/tracks/nurburgring_24h.jpg`,
   nordschl: `${hourlyAssetBase}/tracks/nurburgring_24h.jpg`,
@@ -803,8 +804,9 @@ function resolveHourlyAssetUrl(value) {
   const rawValue = String(value || "").trim();
   if (!rawValue) return "";
   if (/^(https?:)?\/\//i.test(rawValue)) return rawValue;
-  if (rawValue.startsWith("/hourly/assets/")) return `https://asgracing.github.io${rawValue}`;
+  if (rawValue.startsWith("/hourly/assets/")) return rawValue;
   if (rawValue.startsWith("/")) return rawValue;
+  if (rawValue.startsWith("../assets/") || rawValue.startsWith("./assets/")) return rawValue;
   const assetPath = rawValue.replace(/^(\.\.\/|\.\/)?assets\//, "").replace(/^\.?\//, "");
   return `${hourlyAssetBase}/${assetPath}`;
 }
