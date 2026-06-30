@@ -116,6 +116,21 @@ function championshipUrl(slug) {
   return slug ? `../?slug=${encodeURIComponent(slug)}` : "../";
 }
 
+function extractDriverName(value) {
+  if (typeof value === "string" && value.trim()) return value.trim();
+  if (!value || typeof value !== "object") return "";
+  return [
+    value.driver,
+    value.display_name,
+    value.name,
+    value.full_name,
+    value.nickname,
+    value.public_id,
+    value.user_name,
+    value.username
+  ].find(item => typeof item === "string" && item.trim())?.trim() || "";
+}
+
 async function loadJson(url) {
   const response = await fetch(url, { credentials: "omit" });
   if (!response.ok) throw new Error(String(response.status));
@@ -134,7 +149,7 @@ function normalizeChampionship(item, activeSlug) {
     title: String(item.title || slug).trim(),
     period: String(item.period || "").trim(),
     description: String(item.description || "").trim(),
-    winner: String(top3[0]?.driver || top3[0]?.public_id || item.winner || "").trim(),
+    winner: extractDriverName(top3[0]) || extractDriverName(item.winner),
     raceCount: Number(item.race_count || 0),
     driverCount: Number(item.driver_count || standings.length || 0),
     status: rawStatus === "archived" ? "archived" : "finished",
@@ -201,7 +216,7 @@ function renderDetail(item) {
       ${item.top3.map((row, index) => `
         <div class="championship-history-detail-stat">
           <div class="championship-history-detail-label">#${index + 1}</div>
-          <div class="championship-history-detail-value">${esc(row.driver || row.public_id || "-")}</div>
+          <div class="championship-history-detail-value">${esc(extractDriverName(row) || "-")}</div>
         </div>
       `).join("")}
     </div>
