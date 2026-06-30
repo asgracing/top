@@ -3,6 +3,18 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <script>
+    (function () {
+      try {
+        const savedLang = localStorage.getItem("asgLang");
+        if (savedLang === "ru" || savedLang === "en") {
+          document.documentElement.lang = savedLang;
+        }
+      } catch (error) {
+        // Ignore storage access errors and keep the default language.
+      }
+    })();
+  </script>
   <meta name="robots" content="index, follow" />
   <meta name="author" content="ASG Racing" />
   <meta name="description" content="Политика в отношении обработки персональных данных проекта ASG Racing." />

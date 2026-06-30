@@ -18,6 +18,44 @@
     accurateTrackBounce: true,
     webvisor: true
   };
+  const LEGAL_PAGE_TEXTS = {
+    cookies: {
+      ru: {
+        title: "Cookies и аналитика | ASG Racing",
+        description: "Информация о cookies, localStorage и аналитике на сайтах ASG Racing.",
+        backLink: "← На сайт ASG Racing",
+        heroTitle: "Уведомление об использовании cookies, localStorage и аналитики",
+        updatedAt: "Дата обновления: 30.04.2026",
+        languageNotice: ""
+      },
+      en: {
+        title: "Cookies and Analytics | ASG Racing",
+        description: "Information about cookies, localStorage, and analytics on ASG Racing websites.",
+        backLink: "← Back to ASG Racing",
+        heroTitle: "Cookies, localStorage, and analytics notice",
+        updatedAt: "Last updated: April 30, 2026",
+        languageNotice: "The full legal text of this notice is currently maintained in Russian. The English interface is applied automatically, but the Russian text prevails until a full approved translation is published."
+      }
+    },
+    privacy: {
+      ru: {
+        title: "Политика обработки персональных данных | ASG Racing",
+        description: "Политика в отношении обработки персональных данных проекта ASG Racing.",
+        backLink: "← На сайт ASG Racing",
+        heroTitle: "Политика в отношении обработки персональных данных",
+        updatedAt: "Дата обновления: 30.04.2026",
+        languageNotice: ""
+      },
+      en: {
+        title: "Privacy Policy | ASG Racing",
+        description: "Privacy policy for personal data processing on the ASG Racing project.",
+        backLink: "← Back to ASG Racing",
+        heroTitle: "Privacy policy for personal data processing",
+        updatedAt: "Last updated: April 30, 2026",
+        languageNotice: "The full legal text of this policy is currently maintained in Russian. The English interface is applied automatically, but the Russian text prevails until a full approved translation is published."
+      }
+    }
+  };
   const METRIKA_COOKIE_NAMES = [
     "_ym_d",
     "_ym_debug",
@@ -69,8 +107,17 @@
 
   let metrikaLoaded = false;
 
+  function getStoredLanguage() {
+    try {
+      const stored = localStorage.getItem("asgLang");
+      return stored === "ru" || stored === "en" ? stored : "";
+    } catch (error) {
+      return "";
+    }
+  }
+
   function getLanguage() {
-    const stored = localStorage.getItem("asgLang");
+    const stored = getStoredLanguage();
     if (stored === "ru" || stored === "en") return stored;
 
     const htmlLang = String(document.documentElement.lang || "").trim().toLowerCase();
@@ -83,6 +130,108 @@
   function t(key) {
     const lang = getLanguage();
     return texts[lang]?.[key] || texts.en[key] || "";
+  }
+
+  function getLegalPageKey() {
+    const pathname = window.location.pathname.toLowerCase();
+    if (pathname.includes("/cookies/")) return "cookies";
+    if (pathname.includes("/privacy/")) return "privacy";
+    return "";
+  }
+
+  function getLegalPageCopy() {
+    const pageKey = getLegalPageKey();
+    if (!pageKey) return null;
+    const lang = getLanguage();
+    return LEGAL_PAGE_TEXTS[pageKey]?.[lang] || LEGAL_PAGE_TEXTS[pageKey]?.ru || null;
+  }
+
+  function setStoredLanguage(lang) {
+    if (lang !== "ru" && lang !== "en") return;
+    try {
+      localStorage.setItem("asgLang", lang);
+    } catch (error) {
+      // Ignore storage write failures; the page can still switch language for the current session.
+    }
+    document.documentElement.lang = lang;
+  }
+
+  function ensureLegalPageToolbar() {
+    const layout = document.querySelector(".legal-layout");
+    const backLink = document.querySelector(".legal-back-link");
+    if (!layout || !backLink) return;
+
+    let toolbar = layout.querySelector(".legal-page-toolbar");
+    if (!toolbar) {
+      toolbar = document.createElement("div");
+      toolbar.className = "legal-page-toolbar";
+      layout.insertBefore(toolbar, backLink);
+      toolbar.append(backLink);
+    }
+
+    let switcher = toolbar.querySelector(".legal-lang-switch");
+    if (!switcher) {
+      switcher = document.createElement("div");
+      switcher.className = "legal-lang-switch";
+      switcher.setAttribute("aria-label", "Language switcher");
+      ["ru", "en"].forEach(lang => {
+        const button = document.createElement("button");
+        button.type = "button";
+        button.className = "legal-lang-btn";
+        button.dataset.lang = lang;
+        button.textContent = lang.toUpperCase();
+        button.addEventListener("click", () => {
+          if (getLanguage() === lang) return;
+          setStoredLanguage(lang);
+          rerenderUi();
+        });
+        switcher.append(button);
+      });
+      toolbar.append(switcher);
+    }
+  }
+
+  function renderLegalLanguageWarning(copy) {
+    const hero = document.querySelector(".legal-hero");
+    if (!hero) return;
+
+    let warning = document.querySelector(".legal-language-warning");
+    if (!warning) {
+      warning = document.createElement("section");
+      warning.className = "legal-warning legal-language-warning";
+      hero.insertAdjacentElement("afterend", warning);
+    }
+
+    warning.textContent = copy?.languageNotice || "";
+    warning.hidden = !copy?.languageNotice;
+  }
+
+  function renderLegalPageChrome() {
+    if (!document.body.classList.contains("legal-page")) return;
+    const copy = getLegalPageCopy();
+    if (!copy) return;
+
+    ensureLegalPageToolbar();
+
+    const descriptionMeta = document.querySelector('meta[name="description"]');
+    const backLink = document.querySelector(".legal-back-link");
+    const heroTitle = document.querySelector(".legal-hero h1");
+    const updatedLabel = document.querySelector(".legal-updated");
+
+    document.documentElement.lang = getLanguage();
+    document.title = copy.title;
+    if (descriptionMeta) descriptionMeta.setAttribute("content", copy.description);
+    if (backLink) backLink.textContent = copy.backLink;
+    if (heroTitle) heroTitle.textContent = copy.heroTitle;
+    if (updatedLabel) updatedLabel.textContent = copy.updatedAt;
+
+    document.querySelectorAll(".legal-lang-btn").forEach(button => {
+      const active = button.dataset.lang === getLanguage();
+      button.classList.toggle("is-active", active);
+      button.setAttribute("aria-pressed", active ? "true" : "false");
+    });
+
+    renderLegalLanguageWarning(copy);
   }
 
   function getCookieDomain() {
@@ -404,11 +553,13 @@
   }
 
   function rerenderUi() {
+    renderLegalPageChrome();
     renderFooterLinks();
     showBanner(Boolean(document.querySelector(".asg-legal-banner.is-visible")));
   }
 
   function init() {
+    renderLegalPageChrome();
     renderFooterLinks();
 
     const consent = readConsent();
