@@ -52,6 +52,20 @@
 
   <link rel="stylesheet" href="../styles.css?v=20260615news1" />
   <link rel="stylesheet" href="../legal.css" />
+  <style>
+    html.news-detail-pending #news-feed {
+      display: none !important;
+    }
+  </style>
+  <script>
+    (function () {
+      try {
+        if (new URLSearchParams(window.location.search).get("slug")) {
+          document.documentElement.classList.add("news-detail-pending");
+        }
+      } catch (_) {}
+    })();
+  </script>
 </head>
 <body id="top" class="monza-bg-page news-page">
   <div class="site-video-bg" aria-hidden="true">

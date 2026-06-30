@@ -5663,6 +5663,7 @@ function renderNewsDetailPage(item) {
   titleEl.textContent = item.title;
   subtitleEl.textContent = formatNewsDateTime(item.published_at);
   listEl.hidden = true;
+  listEl.innerHTML = "";
   articleEl.hidden = false;
   articleEl.innerHTML = `
     <a class="news-back-link" href="${escapeHtml(getNewsListHref())}">${escapeHtml(t("newsBackToList"))}</a>
@@ -5689,6 +5690,7 @@ function renderMissingNewsPage() {
   titleEl.textContent = t("newsPageTitle");
   subtitleEl.textContent = "";
   listEl.hidden = true;
+  listEl.innerHTML = "";
   articleEl.hidden = false;
   articleEl.innerHTML = `
     <a class="news-back-link" href="${escapeHtml(getNewsListHref())}">${escapeHtml(t("newsBackToList"))}</a>
