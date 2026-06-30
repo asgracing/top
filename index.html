@@ -52,7 +52,7 @@
   <meta name="twitter:image" content="https://asgracing.ru/social/og.jpg" />
   <meta name="twitter:image:alt" content="ASG Racing ACC Leaderboard preview" />
 
-  <link rel="stylesheet" href="./styles.css?v=20260630widgetfix1" />
+  <link rel="stylesheet" href="./styles.css?v=20260630videotoggle1" />
   <link rel="stylesheet" href="./legal.css" />
 </head>
 <body id="top">
@@ -69,17 +69,6 @@
   aria-pressed="false"
 >
   <span class="bg-video-sound-toggle-orbit" aria-hidden="true"></span>
-  <button
-    class="bg-video-settings-trigger"
-    id="bg-video-settings-trigger"
-    type="button"
-    aria-expanded="false"
-    aria-controls="bg-video-settings-menu"
-    aria-label="Background video settings"
-    title="Background video settings"
-  >
-    <span aria-hidden="true">&#9881;</span>
-  </button>
   <span class="bg-video-sound-toggle-icon" aria-hidden="true">
     <span class="bg-video-sound-toggle-bar"></span>
     <span class="bg-video-sound-toggle-bar"></span>
@@ -102,18 +91,15 @@
       />
       <span class="bg-video-volume-value" data-bg-video-volume-value>50%</span>
     </span>
-    <span class="bg-video-settings-menu" id="bg-video-settings-menu" hidden>
-      <button
-        class="bg-video-playback-toggle"
-        id="bg-video-playback-toggle"
-        type="button"
-        aria-pressed="true"
-      >
-        <span class="bg-video-playback-label" data-bg-video-playback-label>Background video</span>
-        <span class="bg-video-playback-state" data-bg-video-playback-state>On</span>
-      </button>
-    </span>
   </span>
+  <button
+    class="bg-video-playback-toggle"
+    id="bg-video-playback-toggle"
+    type="button"
+    aria-pressed="true"
+  >
+    <span class="bg-video-playback-state" data-bg-video-playback-state>On</span>
+  </button>
 </div>
 
 
@@ -403,7 +389,7 @@
     </div>
   </div>
 
-  <div class="hero-hourly-stack">
+  <div class="hero-hourly-stack" id="hero-hourly-stack">
   <div class="hero-hourly-promo">
     <a class="hero-hourly-promo-title pulse-attention" href="/hourly/" data-i18n="hourlyPromoTitle">x5 points for the race!!!</a>
     <div class="hero-hourly-promo-note" data-i18n="hourlyPromoNote">The hourly event hits the championship harder.</div>
@@ -1182,7 +1168,7 @@
   </div>
 
   <script src="./legal.js" defer></script>
-  <script src="./app.js?v=20260630widgetfix1" defer></script>
+  <script src="./app.js?v=20260630videotoggle1" defer></script>
 </body>
 </html>
 

@@ -96,6 +96,8 @@ const HOURLY_VOTE_STATE_STORAGE_KEY = "hourlyVoteStateByEventId";
 const HOURLY_VOTE_STATE_STORAGE_TTL_MS = 30 * 24 * 60 * 60 * 1000;
 const NEWS_READ_STORAGE_KEY = "asgReadNewsIds.v2";
 const NEWS_SEEN_STORAGE_KEY = "asgSeenNewsNotifications.v1";
+const ENABLE_HOURLY_HOME_WIDGET = true;
+const ENABLE_BACKGROUND_VIDEO = true;
 
 function getLegalUrls() {
   const fallbackBase =
@@ -279,7 +281,7 @@ let racesArchiveMeta = null;
 const IS_TOP_HOME_PAGE = !(IS_RACES_PAGE || IS_DRIVER_PAGE || IS_CARS_PAGE || IS_FUN_STATS_PAGE || IS_COMMUNITY_PAGE || IS_NEWS_PAGE || IS_BANS_PAGE);
 const topLoadState = {
   home: IS_TOP_HOME_PAGE,
-  hourly: IS_TOP_HOME_PAGE,
+  hourly: IS_TOP_HOME_PAGE && ENABLE_HOURLY_HOME_WIDGET,
   races: IS_RACES_PAGE,
   driver: IS_DRIVER_PAGE,
   cars: IS_CARS_PAGE,
@@ -317,6 +319,27 @@ function renderDeferredHomeTableLoading(tableId, paginationWrapId, labelKey) {
 }
 
 function applyInitialTopLoadingState() {
+  const hourlyStackEl = document.getElementById("hero-hourly-stack");
+  if (hourlyStackEl) {
+    hourlyStackEl.hidden = !ENABLE_HOURLY_HOME_WIDGET;
+    hourlyStackEl.style.display = ENABLE_HOURLY_HOME_WIDGET ? "" : "none";
+  }
+  const bgVideoEl = document.querySelector(".site-video-bg");
+  const bgOverlayEl = document.querySelector(".site-video-overlay");
+  const bgToggleEl = document.getElementById("bg-video-sound-toggle");
+  if (bgVideoEl) {
+    bgVideoEl.hidden = !ENABLE_BACKGROUND_VIDEO;
+    bgVideoEl.style.display = ENABLE_BACKGROUND_VIDEO ? "" : "none";
+  }
+  if (bgOverlayEl) {
+    bgOverlayEl.hidden = !ENABLE_BACKGROUND_VIDEO;
+    bgOverlayEl.style.display = ENABLE_BACKGROUND_VIDEO ? "" : "none";
+  }
+  if (bgToggleEl) {
+    bgToggleEl.hidden = !ENABLE_BACKGROUND_VIDEO;
+    bgToggleEl.style.display = ENABLE_BACKGROUND_VIDEO ? "" : "none";
+  }
+
   if (IS_DRIVER_PAGE) {
     const statsEl = document.getElementById("driver-stat-cards");
     if (statsEl) statsEl.innerHTML = renderLoadingMarkup(t("driverLoading"));
@@ -508,7 +531,6 @@ let backgroundVideoSoundState = {
   volume: 0.5,
   disabled: false
 };
-let backgroundVideoSettingsOpen = false;
 let funStatsPeriod = "week";
 let serverStatusData = null;
 const driverProfileCache = new Map();
@@ -10895,9 +10917,6 @@ function renderBackgroundVideoSoundToggle() {
   const volumeValueEl = toggle.querySelector("[data-bg-video-volume-value]");
   const volumeSlider = document.getElementById("bg-video-volume-slider");
   const playbackToggle = document.getElementById("bg-video-playback-toggle");
-  const settingsTrigger = document.getElementById("bg-video-settings-trigger");
-  const settingsMenu = document.getElementById("bg-video-settings-menu");
-  const playbackLabelEl = toggle.querySelector("[data-bg-video-playback-label]");
   const playbackStateEl = toggle.querySelector("[data-bg-video-playback-state]");
   const titleKey = backgroundVideoSoundState.disabled
     ? "bgVideoSoundToggleTitleDisabled"
@@ -10916,7 +10935,6 @@ function renderBackgroundVideoSoundToggle() {
   toggle.hidden = !backgroundVideoSoundState.available && !backgroundVideoSoundState.disabled;
   toggle.classList.toggle("is-active", isEnabled);
   toggle.classList.toggle("is-disabled", backgroundVideoSoundState.disabled);
-  toggle.classList.toggle("is-settings-open", backgroundVideoSettingsOpen);
   toggle.setAttribute("aria-pressed", isEnabled ? "true" : "false");
   toggle.setAttribute("aria-label", t(ariaKey));
   toggle.title = t(ariaKey);
@@ -10925,7 +10943,6 @@ function renderBackgroundVideoSoundToggle() {
   if (noteEl) noteEl.textContent = t(noteKey);
   if (volumeLabelEl) volumeLabelEl.textContent = t("bgVideoVolumeLabel");
   if (volumeValueEl) volumeValueEl.textContent = `${volumePercent}%`;
-  if (playbackLabelEl) playbackLabelEl.textContent = t("bgVideoPlaybackToggleLabel");
   if (playbackStateEl) playbackStateEl.textContent = t(backgroundVideoSoundState.disabled ? "bgVideoPlaybackToggleOff" : "bgVideoPlaybackToggleOn");
   if (volumeSlider) {
     volumeSlider.value = String(volumePercent);
@@ -10936,15 +10953,6 @@ function renderBackgroundVideoSoundToggle() {
     playbackToggle.setAttribute("aria-pressed", backgroundVideoSoundState.disabled ? "false" : "true");
     playbackToggle.setAttribute("aria-label", t(playbackAriaKey));
     playbackToggle.title = t(playbackAriaKey);
-  }
-  if (settingsTrigger) {
-    const settingsAriaKey = backgroundVideoSettingsOpen ? "bgVideoSettingsAriaExpanded" : "bgVideoSettingsAria";
-    settingsTrigger.setAttribute("aria-expanded", backgroundVideoSettingsOpen ? "true" : "false");
-    settingsTrigger.setAttribute("aria-label", t(settingsAriaKey));
-    settingsTrigger.title = t(settingsAriaKey);
-  }
-  if (settingsMenu) {
-    settingsMenu.hidden = !backgroundVideoSettingsOpen;
   }
 }
 
@@ -10980,8 +10988,6 @@ function bindBackgroundVideoSoundToggle() {
   const video = document.querySelector(".site-bg-video");
   const volumeSlider = document.getElementById("bg-video-volume-slider");
   const playbackToggle = document.getElementById("bg-video-playback-toggle");
-  const settingsTrigger = document.getElementById("bg-video-settings-trigger");
-  const settingsMenu = document.getElementById("bg-video-settings-menu");
 
   if (!toggle || !video || toggle.dataset.bound === "true") {
     renderBackgroundVideoSoundToggle();
@@ -11014,11 +11020,6 @@ function bindBackgroundVideoSoundToggle() {
     optimizeBackgroundMedia();
   };
 
-  const setBackgroundVideoSettingsOpen = (nextOpen) => {
-    backgroundVideoSettingsOpen = Boolean(nextOpen);
-    renderBackgroundVideoSoundToggle();
-  };
-
   toggle.addEventListener("click", () => {
     toggleBackgroundVideoSound();
   });
@@ -11030,22 +11031,14 @@ function bindBackgroundVideoSoundToggle() {
     toggleBackgroundVideoSound();
   });
 
-  if (settingsTrigger) {
-    settingsTrigger.addEventListener("click", event => {
-      event.preventDefault();
-      event.stopPropagation();
-      setBackgroundVideoSettingsOpen(!backgroundVideoSettingsOpen);
-    });
-
-    settingsTrigger.addEventListener("keydown", event => {
-      if (event.key !== "Enter" && event.key !== " ") return;
-      event.preventDefault();
-      event.stopPropagation();
-      setBackgroundVideoSettingsOpen(!backgroundVideoSettingsOpen);
-    });
-  }
-
   if (playbackToggle) {
+    const stopPlaybackToggleEvent = event => {
+      event.stopPropagation();
+    };
+
+    playbackToggle.addEventListener("pointerdown", stopPlaybackToggleEvent);
+    playbackToggle.addEventListener("mousedown", stopPlaybackToggleEvent);
+    playbackToggle.addEventListener("touchstart", stopPlaybackToggleEvent, { passive: true });
     playbackToggle.addEventListener("click", event => {
       event.stopPropagation();
       toggleBackgroundVideoPlayback();
@@ -11058,14 +11051,6 @@ function bindBackgroundVideoSoundToggle() {
       toggleBackgroundVideoPlayback();
     });
   }
-
-  settingsMenu?.addEventListener("click", event => {
-    event.stopPropagation();
-  });
-
-  settingsMenu?.addEventListener("keydown", event => {
-    event.stopPropagation();
-  });
 
   if (volumeSlider) {
     volumeSlider.closest(".bg-video-volume")?.addEventListener("click", event => {
@@ -11086,19 +11071,9 @@ function bindBackgroundVideoSoundToggle() {
   }
 
   document.addEventListener("keydown", event => {
-    if (event.key === "Escape" && backgroundVideoSettingsOpen) {
-      setBackgroundVideoSettingsOpen(false);
-      return;
-    }
     if (event.key !== "Escape" || !backgroundVideoSoundState.enabled) return;
     backgroundVideoSoundState.enabled = false;
     syncBackgroundVideoSoundState(video);
-  });
-
-  document.addEventListener("click", event => {
-    if (!backgroundVideoSettingsOpen) return;
-    if (event.target?.closest?.("#bg-video-sound-toggle")) return;
-    setBackgroundVideoSettingsOpen(false);
   });
 
   toggle.dataset.bound = "true";
@@ -11388,7 +11363,9 @@ async function init() {
     runInitStep("initOnlineActivityModal", () => initOnlineActivityModal());
     runInitStep("initDriverOfDayModal", () => initDriverOfDayModal());
     runInitStep("initDriverPreviewModal", () => initDriverPreviewModal());
-    runInitStep("initHourlyHeroModal", () => initHourlyHeroModal());
+    if (ENABLE_HOURLY_HOME_WIDGET) {
+      runInitStep("initHourlyHeroModal", () => initHourlyHeroModal());
+    }
     runInitStep("initServerPlayersModal", () => initServerPlayersModal());
   }
   runInitStep("initEloModal", () => initEloModal());
@@ -11458,10 +11435,15 @@ async function init() {
       return;
     }
 
-    const hourlyDataPromise = Promise.allSettled([
-      loadHourlyAnnouncementData(),
-      loadHourlyScheduleData()
-    ]);
+    const hourlyDataPromise = ENABLE_HOURLY_HOME_WIDGET
+      ? Promise.allSettled([
+          loadHourlyAnnouncementData(),
+          loadHourlyScheduleData()
+        ])
+      : Promise.resolve([
+          { status: "fulfilled", value: null },
+          { status: "fulfilled", value: null }
+        ]);
     void loadNewsFeed()
       .catch(() => [])
       .then(() => {
@@ -11514,18 +11496,20 @@ async function init() {
 
     rerenderUI();
 
-    const [hourlyAnnouncementResult, hourlyScheduleResult] = await hourlyDataPromise;
-    const hourlyAnnouncement = hourlyAnnouncementResult.status === "fulfilled" ? hourlyAnnouncementResult.value : null;
-    const hourlySchedule = hourlyScheduleResult.status === "fulfilled" ? hourlyScheduleResult.value : null;
-    hourlyScheduleData = hourlySchedule;
-    hourlyAnnouncementData = mergeHourlyAnnouncementWithSchedule(hourlyAnnouncement, hourlySchedule);
-    topLoadState.hourly = false;
-    rerenderUI();
+    if (ENABLE_HOURLY_HOME_WIDGET) {
+      const [hourlyAnnouncementResult, hourlyScheduleResult] = await hourlyDataPromise;
+      const hourlyAnnouncement = hourlyAnnouncementResult.status === "fulfilled" ? hourlyAnnouncementResult.value : null;
+      const hourlySchedule = hourlyScheduleResult.status === "fulfilled" ? hourlyScheduleResult.value : null;
+      hourlyScheduleData = hourlySchedule;
+      hourlyAnnouncementData = mergeHourlyAnnouncementWithSchedule(hourlyAnnouncement, hourlySchedule);
+      topLoadState.hourly = false;
+      rerenderUI();
 
-    loadHourlyVotes(hourlyAnnouncementData).finally(() => {
-      renderHourlyHeroCard();
-      renderHourlyHeroModal();
-    });
+      loadHourlyVotes(hourlyAnnouncementData).finally(() => {
+        renderHourlyHeroCard();
+        renderHourlyHeroModal();
+      });
+    }
   } catch (error) {
     console.error(error);
 
