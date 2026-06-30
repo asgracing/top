@@ -298,6 +298,22 @@ function esc(value) {
   return String(value ?? "").replace(/[&<>"']/g, char => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" }[char]));
 }
 
+function getDriverProfileHref(publicId) {
+  const resolvedId = String(publicId || "").trim();
+  if (!resolvedId) return null;
+  const url = new URL(`${topSiteBaseUrl}/driver/?id=${encodeURIComponent(resolvedId)}`, window.location.href);
+  const hourlyApiBase = params.get("hourlyApiBase");
+  if (hourlyApiBase) url.searchParams.set("hourlyApiBase", hourlyApiBase);
+  return `${url.pathname}${url.search}${url.hash}`;
+}
+
+function renderDriverLink(name, publicId, className = "driver-link") {
+  const safeName = esc(name || "-");
+  const href = getDriverProfileHref(publicId);
+  if (!href) return `<span class="${esc(className)}">${safeName}</span>`;
+  return `<a class="${esc(className)}" href="${esc(href)}">${safeName}</a>`;
+}
+
 function formatNewsDateTime(dateString) {
   if (!dateString) return "-";
   const date = new Date(dateString);
@@ -869,6 +885,14 @@ function normalizeStandings(data) {
   });
 }
 
+function resolveDriverName(row) {
+  return row?.driver || row?.display_name || row?.name || row?.public_id || "-";
+}
+
+function resolveDriverPublicId(row) {
+  return row?.public_id || row?.driver_public_id || row?.winner_public_id || null;
+}
+
 function normalizeUpcoming(data, schedule, slug) {
   const source = Array.isArray(data?.upcoming_races) && data.upcoming_races.length
     ? data.upcoming_races
@@ -1047,7 +1071,7 @@ function renderWinners(standings) {
   root.innerHTML = winners.map((row, index) => `
     <article class="championship-winner-card is-${medals[index]}">
       <div class="championship-winner-medal">${index + 1}</div>
-      <div class="championship-winner-name">${esc(row.driver || row.public_id || "-")}</div>
+      <div class="championship-winner-name">${renderDriverLink(resolveDriverName(row), resolveDriverPublicId(row), "driver-link driver-link-heading")}</div>
       <div class="championship-winner-points">${esc(row.points || 0)} ${esc(t("points"))}</div>
     </article>
   `).join("");
@@ -1326,7 +1350,7 @@ function renderStandings(data, races) {
         ${standings.map((row, index) => `
           <tr>
             <td>${esc(index + 1)}</td>
-            <td>${esc(row.driver || row.public_id || "-")}</td>
+            <td>${renderDriverLink(resolveDriverName(row), resolveDriverPublicId(row), "driver-link")}</td>
             ${raceColumns.map((race, raceIndex) => {
               const value = row.race_points?.[raceEventId(race, raceIndex)];
               return `<td>${esc(value ?? "-")}</td>`;
@@ -1357,7 +1381,7 @@ function renderRaceResults(races) {
             <p>${esc(race.finished_at_local || formatDate(race.date))}</p>
           </div>
           <div class="championship-race-summary">
-            <span>${esc(t("winner"))}: ${esc(race.winner || "-")}</span>
+            <span>${esc(t("winner"))}: ${renderDriverLink(race.winner || "-", race.winner_public_id, "driver-link")}</span>
             <span>${esc(t("bestLap"))}: ${esc(race.best_lap || "-")}</span>
             <span>${esc(t("participants"))}: ${esc(race.participants_count || results.length || "-")}</span>
           </div>
@@ -1372,7 +1396,7 @@ function renderRaceResults(races) {
                       ${results.map(result => `
                         <tr>
                           <td>${esc(result.position || "-")}</td>
-                          <td>${esc(result.driver || result.public_id || "-")}</td>
+                          <td>${renderDriverLink(resolveDriverName(result), resolveDriverPublicId(result), "driver-link")}</td>
                           <td>${esc(result.points ?? "-")}</td>
                           <td>${esc(result.best_lap || "-")}</td>
                         </tr>

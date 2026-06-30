@@ -14,6 +14,11 @@ const defaultDataBase = isAsgPublicSite
       ? "https://asgracing.github.io/hourly-data"
       : "/hourly-data";
 const dataBase = normalizeBaseUrl(params.get("hourlyApiBase")) || defaultDataBase;
+const topSiteBaseUrl = isAsgPublicSite || isLocalDevHost
+  ? "https://asgracing.ru"
+  : window.location.hostname === "asgracing.github.io"
+    ? "https://asgracing.github.io/top"
+    : "/top";
 let currentLang = localStorage.getItem("asgLang") || (((navigator.language || "").toLowerCase().startsWith("ru")) ? "ru" : "en");
 
 const translations = {
@@ -108,6 +113,22 @@ function esc(value) {
   return String(value ?? "").replace(/[&<>"']/g, char => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" }[char]));
 }
 
+function getDriverProfileHref(publicId) {
+  const resolvedId = String(publicId || "").trim();
+  if (!resolvedId) return null;
+  const url = new URL(`${topSiteBaseUrl}/driver/?id=${encodeURIComponent(resolvedId)}`, window.location.href);
+  const hourlyApiBase = params.get("hourlyApiBase");
+  if (hourlyApiBase) url.searchParams.set("hourlyApiBase", hourlyApiBase);
+  return `${url.pathname}${url.search}${url.hash}`;
+}
+
+function renderDriverLink(name, publicId, className = "driver-link") {
+  const safeName = esc(name || "-");
+  const href = getDriverProfileHref(publicId);
+  if (!href) return `<span class="${esc(className)}">${safeName}</span>`;
+  return `<a class="${esc(className)}" href="${esc(href)}">${safeName}</a>`;
+}
+
 function statusLabel(status) {
   return status === "archived" ? t("statusArchived") : t("statusFinished");
 }
@@ -131,6 +152,11 @@ function extractDriverName(value) {
   ].find(item => typeof item === "string" && item.trim())?.trim() || "";
 }
 
+function extractDriverPublicId(value) {
+  if (!value || typeof value !== "object") return "";
+  return String(value.public_id || value.driver_public_id || value.winner_public_id || "").trim();
+}
+
 async function loadJson(url) {
   const response = await fetch(url, { credentials: "omit" });
   if (!response.ok) throw new Error(String(response.status));
@@ -150,6 +176,7 @@ function normalizeChampionship(item, activeSlug) {
     period: String(item.period || "").trim(),
     description: String(item.description || "").trim(),
     winner: extractDriverName(top3[0]) || extractDriverName(item.winner),
+    winnerPublicId: extractDriverPublicId(top3[0]) || extractDriverPublicId(item.winner),
     raceCount: Number(item.race_count || 0),
     driverCount: Number(item.driver_count || standings.length || 0),
     status: rawStatus === "archived" ? "archived" : "finished",
@@ -201,7 +228,7 @@ function renderDetail(item) {
     <div class="championship-history-detail-grid">
       <div class="championship-history-detail-stat">
         <div class="championship-history-detail-label">${esc(t("historyDetailWinner"))}</div>
-        <div class="championship-history-detail-value">${esc(item.winner || "-")}</div>
+        <div class="championship-history-detail-value">${renderDriverLink(item.winner || "-", item.winnerPublicId, "driver-link")}</div>
       </div>
       <div class="championship-history-detail-stat">
         <div class="championship-history-detail-label">${esc(t("historyDetailRaces"))}</div>
@@ -216,7 +243,7 @@ function renderDetail(item) {
       ${item.top3.map((row, index) => `
         <div class="championship-history-detail-stat">
           <div class="championship-history-detail-label">#${index + 1}</div>
-          <div class="championship-history-detail-value">${esc(extractDriverName(row) || "-")}</div>
+          <div class="championship-history-detail-value">${renderDriverLink(extractDriverName(row) || "-", extractDriverPublicId(row), "driver-link")}</div>
         </div>
       `).join("")}
     </div>
