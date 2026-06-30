@@ -449,6 +449,7 @@ let hourlyVoteFailed = false;
 let raceActivityInsights = null;
 let selectedRace = null;
 let driverIndexData = [];
+let driverIndexLoadPromise = null;
 let driverProfileData = null;
 let driverPreviewState = null;
 const bestLapTrackSelection = new Map();
@@ -3948,6 +3949,7 @@ function renderEloBadge(source, { compact = false, showCategoryName = false } = 
       type="button"
       data-elo-public-id="${escapeAttribute(info.publicId || "")}"
       data-elo-player-id="${escapeAttribute(info.playerId || "")}"
+      data-elo-driver-name="${escapeAttribute(info.driver || "")}"
       title="${escapeAttribute(`${t("eloTitle")}: ${info.rating} · ${info.categoryName}`)}"
     >
       <span class="elo-badge-rank">${escapeHtml(info.categoryShort)}</span>
@@ -6386,6 +6388,22 @@ async function loadDriverIndex() {
   return Array.isArray(data) ? data : [];
 }
 
+async function ensureDriverIndexLoaded() {
+  if (Array.isArray(driverIndexData) && driverIndexData.length) return driverIndexData;
+  if (!driverIndexLoadPromise) {
+    driverIndexLoadPromise = loadDriverIndex()
+      .then((items) => {
+        driverIndexData = Array.isArray(items) ? items : [];
+        return driverIndexData;
+      })
+      .catch((error) => {
+        driverIndexLoadPromise = null;
+        throw error;
+      });
+  }
+  return driverIndexLoadPromise;
+}
+
 async function loadBansData() {
   const response = await fetch(TOP_BANS_DATA_URL, { cache: "no-store" });
   if (!response.ok) {
@@ -7272,6 +7290,23 @@ function openEloModalForSource(source, trigger = null) {
   eloModalController?.open(trigger);
 }
 
+async function openEloModalForButton(button) {
+  if (!button) return;
+  let source = findEloSource(button.dataset.eloPublicId, button.dataset.eloPlayerId)
+    || findDriverRecordByName(button.dataset.eloDriverName);
+  if (!source) {
+    try {
+      await ensureDriverIndexLoaded();
+      source = findEloSource(button.dataset.eloPublicId, button.dataset.eloPlayerId)
+        || findDriverRecordByName(button.dataset.eloDriverName);
+    } catch (error) {
+      console.warn("Failed to load driver index for ELO modal.", error);
+    }
+  }
+  if (!source) return;
+  openEloModalForSource(source, button);
+}
+
 function initEloModal() {
   eloModalController = createModalController({
     modalId: "elo-modal",
@@ -7288,8 +7323,7 @@ function initEloModal() {
     if (eloButton) {
       event.preventDefault();
       event.stopPropagation();
-      const source = findEloSource(eloButton.dataset.eloPublicId, eloButton.dataset.eloPlayerId);
-      openEloModalForSource(source, eloButton);
+      void openEloModalForButton(eloButton);
       return;
     }
 
