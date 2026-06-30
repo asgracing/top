@@ -183,7 +183,6 @@
         button.addEventListener("click", () => {
           if (getLanguage() === lang) return;
           setStoredLanguage(lang);
-          rerenderUi();
         });
         switcher.append(button);
       });
@@ -218,7 +217,9 @@
     const heroTitle = document.querySelector(".legal-hero h1");
     const updatedLabel = document.querySelector(".legal-updated");
 
-    document.documentElement.lang = getLanguage();
+    if (document.documentElement.lang !== getLanguage()) {
+      document.documentElement.lang = getLanguage();
+    }
     document.title = copy.title;
     if (descriptionMeta) descriptionMeta.setAttribute("content", copy.description);
     if (backLink) backLink.textContent = copy.backLink;
