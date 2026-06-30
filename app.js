@@ -3925,11 +3925,14 @@ function resolveRaceDriverSource(row) {
   const matchedSource = findEloSource(row.public_id, row.player_id) || findDriverRecordByName(row.driver);
   if (!matchedSource) return row;
   return {
-    ...matchedSource,
     ...row,
+    ...matchedSource,
     public_id: row.public_id || matchedSource.public_id || matchedSource.summary?.public_id || null,
     player_id: row.player_id || matchedSource.player_id || matchedSource.summary?.player_id || null,
-    driver: row.driver || matchedSource.driver || matchedSource.name || matchedSource.summary?.driver || "-"
+    driver: row.driver || matchedSource.driver || matchedSource.name || matchedSource.summary?.driver || "-",
+    race_id: row.race_id || matchedSource.race_id || null,
+    race_number: row.race_number ?? matchedSource.race_number,
+    position: row.position ?? matchedSource.position
   };
 }
 
