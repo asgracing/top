@@ -5054,6 +5054,11 @@ body.modal-open {
   max-width: min(236px, calc(100vw - 24px));
 }
 
+.elo-history-popover {
+  width: min(248px, calc(100vw - 24px));
+  max-width: min(248px, calc(100vw - 24px));
+}
+
 .sr-breakdown-popover-card {
   display: grid;
   gap: 8px;

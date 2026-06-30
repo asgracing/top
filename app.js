@@ -454,6 +454,7 @@ let driverPreviewState = null;
 const bestLapTrackSelection = new Map();
 const averagePaceTrackSelection = new Map();
 let eloModalState = null;
+let eloHistoryPopoverState = null;
 let safetyModalState = null;
 let safetyModalRequestId = 0;
 let srBreakdownPopoverState = null;
@@ -1740,7 +1741,12 @@ Object.assign(translations.en, {
   eloCategory3: "Category 3 — Gold",
   eloCategory4: "Category 4 — Silver",
   eloCategory5: "Category 5 — Bronze",
-  eloCategory6: "Category 6 — Rookie"
+  eloCategory6: "Category 6 — Rookie",
+  eloHistoryDelta: "ELO change",
+  eloHistoryGain: "Gain",
+  eloHistoryLoss: "Loss",
+  eloHistoryRace: "Race",
+  eloHistoryRating: "Rating after"
 });
 
 Object.assign(translations.ru, {
@@ -1773,7 +1779,12 @@ Object.assign(translations.ru, {
   eloCategory3: "Категория 3 — Золото",
   eloCategory4: "Категория 4 — Серебро",
   eloCategory5: "Категория 5 — Бронза",
-  eloCategory6: "Категория 6 — Новичок"
+  eloCategory6: "Категория 6 — Новичок",
+  eloHistoryDelta: "Изменение ELO",
+  eloHistoryGain: "Прирост",
+  eloHistoryLoss: "Потеря",
+  eloHistoryRace: "Гонка",
+  eloHistoryRating: "Рейтинг после"
 });
 
 Object.assign(translations.en, {
@@ -3825,7 +3836,8 @@ function normalizeEloHistory(source) {
         rating,
         delta: Number(item?.rating_delta),
         date,
-        label: item?.race_file || item?.date || `#${index + 1}`
+        label: item?.race_file || item?.date || `#${index + 1}`,
+        raceId: item?.race_id || item?.id || null
       };
     })
     .filter(Boolean);
@@ -6852,9 +6864,17 @@ function renderEloChart(info, period = "all", grid = "medium", periodOffset = 0,
     `;
   }).join("");
   const dots = points.map((item, index) => `
-    <circle cx="${x(index).toFixed(1)}" cy="${y(item.rating).toFixed(1)}" r="${index === points.length - 1 ? 5 : 3}" class="elo-chart-dot">
-      <title>${escapeHtml(`${item.label}: ${item.rating}${Number.isFinite(item.delta) ? ` (${item.delta > 0 ? "+" : ""}${item.delta})` : ""}`)}</title>
-    </circle>
+    <g
+      class="elo-chart-dot-button"
+      role="button"
+      tabindex="0"
+      data-elo-history-index="${escapeAttribute(index)}"
+      title="${escapeAttribute(`${item.label}: ${item.rating}${Number.isFinite(item.delta) ? ` (${item.delta > 0 ? "+" : ""}${item.delta})` : ""}`)}"
+      aria-label="${escapeAttribute(`${item.label}: ${item.rating}${Number.isFinite(item.delta) ? ` (${item.delta > 0 ? "+" : ""}${item.delta})` : ""}`)}"
+    >
+      <circle cx="${x(index).toFixed(1)}" cy="${y(item.rating).toFixed(1)}" r="${index === points.length - 1 ? 12 : 10}" class="elo-chart-dot-hit"></circle>
+      <circle cx="${x(index).toFixed(1)}" cy="${y(item.rating).toFixed(1)}" r="${index === points.length - 1 ? 5 : 3}" class="elo-chart-dot"></circle>
+    </g>
   `).join("");
   const first = points[0];
   const last = points[points.length - 1];
@@ -6946,6 +6966,109 @@ function ensureSafetyBreakdownPopover() {
   element.hidden = true;
   document.body.appendChild(element);
   return element;
+}
+
+function ensureEloHistoryPopover() {
+  let element = document.getElementById("elo-history-popover");
+  if (element) return element;
+  element = document.createElement("div");
+  element.id = "elo-history-popover";
+  element.className = "sr-breakdown-popover elo-history-popover";
+  element.hidden = true;
+  document.body.appendChild(element);
+  return element;
+}
+
+function positionEloHistoryPopover() {
+  const popover = ensureEloHistoryPopover();
+  const trigger = eloHistoryPopoverState?.trigger;
+  if (!trigger || !popover || popover.hidden) return;
+  const rect = trigger.getBoundingClientRect();
+  const margin = 12;
+  const viewportWidth = window.innerWidth;
+  const viewportHeight = window.innerHeight;
+  const popoverRect = popover.getBoundingClientRect();
+  let left = rect.left;
+  let top = rect.bottom + 10;
+
+  if (left + popoverRect.width > viewportWidth - margin) {
+    left = Math.max(margin, viewportWidth - popoverRect.width - margin);
+  }
+  if (top + popoverRect.height > viewportHeight - margin) {
+    top = Math.max(margin, rect.top - popoverRect.height - 10);
+  }
+
+  popover.style.left = `${Math.round(left)}px`;
+  popover.style.top = `${Math.round(top)}px`;
+}
+
+function closeEloHistoryPopover() {
+  eloHistoryPopoverState = null;
+  const popover = document.getElementById("elo-history-popover");
+  if (!popover) return;
+  popover.hidden = true;
+  popover.innerHTML = "";
+}
+
+function renderEloHistoryPopover() {
+  const popover = ensureEloHistoryPopover();
+  const point = eloHistoryPopoverState?.point;
+  if (!point) {
+    popover.hidden = true;
+    popover.innerHTML = "";
+    return;
+  }
+
+  const delta = Number(point.delta);
+  const deltaLabel = Number.isFinite(delta)
+    ? `${delta > 0 ? "+" : ""}${Math.round(delta)}`
+    : "—";
+  const deltaClass = Number.isFinite(delta)
+    ? delta > 0
+      ? "delta-positive"
+      : delta < 0
+        ? "delta-negative"
+        : "delta-neutral"
+    : "delta-neutral";
+  const deltaKind = Number.isFinite(delta)
+    ? delta > 0
+      ? t("eloHistoryGain")
+      : delta < 0
+        ? t("eloHistoryLoss")
+        : t("eloHistoryDelta")
+    : t("eloHistoryDelta");
+
+  popover.innerHTML = `
+    <div class="sr-breakdown-popover-card elo-history-popover-card">
+      <div class="sr-breakdown-summary">${escapeHtml(point.label || "")}</div>
+      <dl class="sr-breakdown-table">
+        <div class="sr-breakdown-row">
+          <dt>${escapeHtml(t("eloHistoryDelta"))}</dt>
+          <dd><span class="positions-delta ${escapeHtml(deltaClass)}">${escapeHtml(deltaLabel)}</span></dd>
+        </div>
+        <div class="sr-breakdown-row">
+          <dt>${escapeHtml(deltaKind)}</dt>
+          <dd>${escapeHtml(deltaLabel)}</dd>
+        </div>
+        <div class="sr-breakdown-row">
+          <dt>${escapeHtml(t("eloHistoryRating"))}</dt>
+          <dd>${escapeHtml(point.rating)}</dd>
+        </div>
+        <div class="sr-breakdown-row">
+          <dt>${escapeHtml(t("eloHistoryRace"))}</dt>
+          <dd>${escapeHtml(point.date ? formatDateLocal(point.date.toISOString(), currentLang) : point.label || "-")}</dd>
+        </div>
+      </dl>
+    </div>
+  `;
+  popover.hidden = false;
+  positionEloHistoryPopover();
+}
+
+function openEloHistoryPopover(trigger, point) {
+  if (!trigger || !point) return;
+  eloHistoryPopoverState = { trigger, point };
+  renderEloHistoryPopover();
 }
 
 function canOpenRaceFromBreakdown() {
@@ -7113,6 +7236,7 @@ function initEloModal() {
     onOpen: renderEloModal,
     onClose: () => {
       eloModalState = null;
+      closeEloHistoryPopover();
     }
   });
 
@@ -7129,6 +7253,7 @@ function initEloModal() {
     const periodButton = event.target?.closest?.("[data-elo-period]");
     if (periodButton && document.getElementById("elo-modal")?.contains(periodButton)) {
       eloModalState = { ...(eloModalState || {}), period: periodButton.dataset.eloPeriod || "all", periodOffset: 0 };
+      closeEloHistoryPopover();
       renderEloModal();
       return;
     }
@@ -7140,16 +7265,59 @@ function initEloModal() {
         ? currentOffset + 1
         : Math.max(0, currentOffset - 1);
       eloModalState = { ...(eloModalState || {}), periodOffset: nextOffset };
+      closeEloHistoryPopover();
       renderEloModal();
+      return;
+    }
+
+    const historyPoint = event.target?.closest?.("[data-elo-history-index]");
+    if (historyPoint && document.getElementById("elo-modal")?.contains(historyPoint)) {
+      event.preventDefault();
+      event.stopPropagation();
+      const info = getEloInfo(eloModalState?.source);
+      const points = getFilteredEloHistory(info, eloModalState?.period || "all", Number(eloModalState?.periodOffset || 0));
+      const point = points[Number(historyPoint.dataset.eloHistoryIndex)];
+      if (point) openEloHistoryPopover(historyPoint, point);
       return;
     }
 
     const gridButton = event.target?.closest?.("[data-elo-grid]");
     if (gridButton && document.getElementById("elo-modal")?.contains(gridButton)) {
       eloModalState = { ...(eloModalState || {}), grid: gridButton.dataset.eloGrid || "medium" };
+      closeEloHistoryPopover();
       renderEloModal();
+      return;
+    }
+
+    if (
+      eloHistoryPopoverState
+      && !event.target?.closest?.("#elo-history-popover")
+      && !event.target?.closest?.("[data-elo-history-index]")
+    ) {
+      closeEloHistoryPopover();
     }
   });
+
+  document.addEventListener("keydown", (event) => {
+    const historyPoint = event.target?.closest?.("[data-elo-history-index]");
+    if (!historyPoint) {
+      if (event.key === "Escape" && eloHistoryPopoverState) closeEloHistoryPopover();
+      return;
+    }
+    if (event.key !== "Enter" && event.key !== " ") return;
+    event.preventDefault();
+    const info = getEloInfo(eloModalState?.source);
+    const points = getFilteredEloHistory(info, eloModalState?.period || "all", Number(eloModalState?.periodOffset || 0));
+    const point = points[Number(historyPoint.dataset.eloHistoryIndex)];
+    if (point) openEloHistoryPopover(historyPoint, point);
+  });
+
+  window.addEventListener("resize", () => {
+    if (eloHistoryPopoverState) positionEloHistoryPopover();
+  });
+  window.addEventListener("scroll", () => {
+    if (eloHistoryPopoverState) positionEloHistoryPopover();
+  }, true);
 }
 
 function renderSafetyModal() {
