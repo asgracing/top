@@ -581,7 +581,11 @@ const HERO_TRACK_BACKGROUNDS = {
   monza: "./assets/tracks/monza.jpg",
   silverstone: "./assets/tracks/silverstone.jpg",
   spa: "./assets/tracks/spa.jpg",
-  nurburgring: "./assets/tracks/nurburgring.jpg"
+  nurburgring: "./assets/tracks/nurburgring.jpg",
+  nurburgring24h: "./assets/tracks/nurburgring_24h.jpg",
+  "nurburgring-24h": "./assets/tracks/nurburgring_24h.jpg",
+  nordschl: "./assets/tracks/nurburgring_24h.jpg",
+  nordschleife: "./assets/tracks/nurburgring_24h.jpg"
 };
 const WEATHER_ICON_PATHS = {
   clouds: "./assets/weather/cloudness.png",

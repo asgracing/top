@@ -249,7 +249,11 @@ const TRACK_BACKGROUNDS = {
   "monza-tg": `${hourlyAssetBase}/tracks/monzaTG.jpg`,
   silverstone: `${hourlyAssetBase}/tracks/silverstone.jpg`,
   spa: `${hourlyAssetBase}/tracks/spa.jpg`,
-  nurburgring: `${hourlyAssetBase}/tracks/nurburgring.jpg`
+  nurburgring: `${hourlyAssetBase}/tracks/nurburgring.jpg`,
+  nurburgring24h: `${hourlyAssetBase}/tracks/nurburgring_24h.jpg`,
+  "nurburgring-24h": `${hourlyAssetBase}/tracks/nurburgring_24h.jpg`,
+  nordschl: `${hourlyAssetBase}/tracks/nurburgring_24h.jpg`,
+  nordschleife: `${hourlyAssetBase}/tracks/nurburgring_24h.jpg`
 };
 const WEATHER_ICON_PATHS = {
   clouds: `${hourlyAssetBase}/weather/cloudness.png`,
