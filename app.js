@@ -6432,11 +6432,21 @@ async function loadBansData() {
 
   const payload = await response.json();
   const items = Array.isArray(payload?.items) ? payload.items : [];
+  try {
+    await ensureDriverIndexLoaded();
+  } catch {
+    // Bans page can still render without profile links.
+  }
   return items
-    .map((item) => ({
-      name: String(item?.name || "").trim(),
-      banned_at: String(item?.banned_at || "").trim()
-    }))
+    .map((item) => {
+      const name = String(item?.name || "").trim();
+      const matchedDriver = item?.public_id ? null : findDriverRecordByName(name);
+      return {
+        name,
+        public_id: String(item?.public_id || matchedDriver?.public_id || "").trim(),
+        banned_at: String(item?.banned_at || "").trim()
+      };
+    })
     .filter((item) => item.name)
     .sort((a, b) => {
       const timeA = a.banned_at ? Date.parse(a.banned_at) : 0;
@@ -9625,7 +9635,7 @@ function renderBansTable() {
   const headers = t("bansCols").map(label => `<th>${escapeHtml(label)}</th>`).join("");
   const rows = bansData.map(item => `
     <tr>
-      <td>${escapeHtml(item.name || "—")}</td>
+      <td>${renderDriverLink(item.name || "—", item.public_id || null, "driver-link")}</td>
       <td>${escapeHtml(item.banned_at ? formatDateTimeLocal(item.banned_at, currentLang) : "—")}</td>
     </tr>
   `).join("");
