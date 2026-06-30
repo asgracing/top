@@ -3895,6 +3895,44 @@ function findEloSource(publicId, playerId = null) {
   }) || null;
 }
 
+function normalizeDriverLookupName(value) {
+  return String(value || "").trim().replace(/\s+/g, " ").toLowerCase();
+}
+
+function findDriverRecordByName(name) {
+  const needle = normalizeDriverLookupName(name);
+  if (!needle) return null;
+  const pagedItems = Object.values(topDataV2PagedTables || {}).flatMap((state) =>
+    Array.isArray(state?.result?.items) ? state.result.items : []
+  );
+  const matches = [
+    driverProfileData,
+    driverPreviewState?.profile,
+    ...(Array.isArray(leaderboardData) ? leaderboardData : []),
+    ...(Array.isArray(bestlapsData) ? bestlapsData : []),
+    ...(Array.isArray(driverIndexData) ? driverIndexData : []),
+    ...pagedItems
+  ];
+  return matches.find(item => {
+    if (!item || typeof item !== "object") return false;
+    const itemName = normalizeDriverLookupName(item.driver || item.name || item.player || item.summary?.driver);
+    return itemName === needle;
+  }) || null;
+}
+
+function resolveRaceDriverSource(row) {
+  if (!row || typeof row !== "object") return null;
+  const matchedSource = findEloSource(row.public_id, row.player_id) || findDriverRecordByName(row.driver);
+  if (!matchedSource) return row;
+  return {
+    ...matchedSource,
+    ...row,
+    public_id: row.public_id || matchedSource.public_id || matchedSource.summary?.public_id || null,
+    player_id: row.player_id || matchedSource.player_id || matchedSource.summary?.player_id || null,
+    driver: row.driver || matchedSource.driver || matchedSource.name || matchedSource.summary?.driver || "-"
+  };
+}
+
 function renderEloBadge(source, { compact = false, showCategoryName = false } = {}) {
   const info = getEloInfo(source);
   if (!info) return "";
@@ -9206,7 +9244,8 @@ function renderRacesTablePage() {
 }
 
 function renderRaceDriverIdentity(row) {
-  const eloSource = getEloInfo(row) ? row : findEloSource(row.public_id, row.player_id);
+  const driverSource = resolveRaceDriverSource(row);
+  const eloSource = getEloInfo(driverSource) ? driverSource : findEloSource(driverSource?.public_id, driverSource?.player_id);
   const eloBadge = renderEloBadge(eloSource, { compact: true });
   const raceNumber = row.race_number != null ? `#${row.race_number}` : "";
   return `
@@ -9214,7 +9253,7 @@ function renderRaceDriverIdentity(row) {
       <div class="driver-avatar">${escapeHtml(initials(row.driver))}</div>
       <div class="driver-name-wrap">
         <div class="race-driver-title">
-          <span class="driver-name">${renderDriverLink(row.driver, row.public_id, "driver-link", row.player_id)}</span>
+          <span class="driver-name">${renderDriverLink(driverSource?.driver || row.driver, driverSource?.public_id || row.public_id, "driver-link", driverSource?.player_id || row.player_id)}</span>
         </div>
         <div class="race-driver-meta-line">
           ${raceNumber ? `<span class="race-note">${escapeHtml(raceNumber)}</span>` : ""}
