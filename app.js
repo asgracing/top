@@ -7496,17 +7496,17 @@ function renderSafetyModal() {
         <p>${escapeHtml(t("safetyAboutP2"))}</p>
       </div>
       <div class="elo-category-grid safety-category-grid" aria-label="${escapeAttribute(t("safetyAboutTitle"))}">
-        <div class="elo-category-card">
+        <div class="elo-category-card sr-cat-A">
           <span>A</span>
           <strong>${escapeHtml(t("safetyCategoryA"))}</strong>
           <small>${escapeHtml(t("safetyCategoryRangeA"))}</small>
         </div>
-        <div class="elo-category-card">
+        <div class="elo-category-card sr-cat-B">
           <span>B</span>
           <strong>${escapeHtml(t("safetyCategoryB"))}</strong>
           <small>${escapeHtml(t("safetyCategoryRangeB"))}</small>
         </div>
-        <div class="elo-category-card">
+        <div class="elo-category-card sr-cat-C">
           <span>C</span>
           <strong>${escapeHtml(t("safetyCategoryC"))}</strong>
           <small>${escapeHtml(t("safetyCategoryRangeC"))}</small>
