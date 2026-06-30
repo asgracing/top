@@ -3847,6 +3847,7 @@ function normalizeEloHistory(source) {
 function getEloInfo(source) {
   if (!source || typeof source !== "object") return null;
   const summary = source.summary || {};
+  const playerId = source.player_id || summary.player_id || null;
   const rating = Number(
     source.elo
     ?? summary.elo
@@ -3868,8 +3869,8 @@ function getEloInfo(source) {
     categoryShort: ELO_CATEGORY_FALLBACKS[categoryId]?.short || `C${categoryId}`,
     history: normalizeEloHistory(source),
     driver: source.driver || summary.driver || source.name || "-",
-    publicId: source.public_id || summary.public_id || null,
-    playerId: source.player_id || summary.player_id || null
+    publicId: source.public_id || summary.public_id || makePublicDriverId(playerId),
+    playerId
   };
 }
 
@@ -3948,7 +3949,6 @@ function renderEloBadge(source, { compact = false, showCategoryName = false } = 
       class="elo-badge elo-cat-${escapeHtml(info.categoryId)} ${compact ? "elo-badge-compact" : ""}"
       type="button"
       data-elo-public-id="${escapeAttribute(info.publicId || "")}"
-      data-elo-player-id="${escapeAttribute(info.playerId || "")}"
       data-elo-driver-name="${escapeAttribute(info.driver || "")}"
       title="${escapeAttribute(`${t("eloTitle")}: ${info.rating} · ${info.categoryName}`)}"
     >
@@ -4022,6 +4022,7 @@ function getSafetyInfo(source) {
   const category = normalizeSafetyCategory(source) || "C";
   const completedLaps = isRaceSpecific ? (source.safety_completed_laps ?? summary.safety_completed_laps) : undefined;
   const invalidLaps = isRaceSpecific ? (source.safety_invalid_laps ?? summary.safety_invalid_laps) : undefined;
+  const playerId = source.player_id || summary.player_id || null;
   const validLaps = source.safety_valid_laps
     ?? summary.safety_valid_laps
     ?? (Number.isFinite(Number(completedLaps)) && Number.isFinite(Number(invalidLaps))
@@ -4035,8 +4036,8 @@ function getSafetyInfo(source) {
     categoryName: getSafetyCategoryName(category),
     history: normalizeSafetyHistory(source),
     driver: source.driver || summary.driver || source.name || "-",
-    publicId: source.public_id || summary.public_id || null,
-    playerId: source.player_id || summary.player_id || null,
+    publicId: source.public_id || summary.public_id || makePublicDriverId(playerId),
+    playerId,
     explanation: source.safety_explanation || summary.safety_explanation || "",
     validLaps,
     invalidLaps,
@@ -4308,7 +4309,7 @@ function renderSafetyBadge(source, { compact = false, showDelta = false, breakdo
       class="sr-badge sr-cat-${escapeHtml(info.category)} ${compact ? "sr-badge-compact" : ""}"
       type="button"
       data-sr-public-id="${escapeAttribute(info.publicId || "")}"
-      data-sr-player-id="${escapeAttribute(info.playerId || "")}"
+      data-sr-driver-name="${escapeAttribute(info.driver || "")}"
       data-sr-race-id="${escapeAttribute(source?.race_id || "")}"
       data-sr-breakdown-mode="${escapeAttribute(breakdownMode)}"
       title="${escapeAttribute(`${t("safetyRatingTitle")}: ${info.category} ${info.rating}`)}"
@@ -4366,7 +4367,6 @@ function buildDriverPreviewRowAttributes(row) {
     `aria-label="${escapeAttribute(`${t("openDriverPreviewLabel")}: ${preview.driver}`)}"`,
     `data-driver-preview="true"`,
     `data-public-id="${escapeAttribute(preview.publicId)}"`,
-    `data-player-id="${escapeAttribute(preview.playerId || "")}"`,
     `data-driver-name="${escapeAttribute(preview.driver)}"`
   ].join(" ");
 }
@@ -6659,15 +6659,14 @@ function getDriverPreviewTriggerRow(target, tableRoot) {
 
 function openDriverPreviewFromRowElement(rowEl, trigger) {
   const publicId = rowEl?.dataset?.publicId || null;
-  const playerId = rowEl?.dataset?.playerId || null;
   const driver = rowEl?.dataset?.driverName || "-";
   if (!publicId || !driverPreviewModalController) return;
 
   driverPreviewState = {
     publicId,
-    playerId,
+    playerId: null,
     driver,
-    href: getDriverProfileHref(publicId, playerId),
+    href: getDriverProfileHref(publicId, null),
     loading: true,
     error: false,
     profile: null
@@ -7292,12 +7291,12 @@ function openEloModalForSource(source, trigger = null) {
 
 async function openEloModalForButton(button) {
   if (!button) return;
-  let source = findEloSource(button.dataset.eloPublicId, button.dataset.eloPlayerId)
+  let source = findEloSource(button.dataset.eloPublicId, null)
     || findDriverRecordByName(button.dataset.eloDriverName);
   if (!source) {
     try {
       await ensureDriverIndexLoaded();
-      source = findEloSource(button.dataset.eloPublicId, button.dataset.eloPlayerId)
+      source = findEloSource(button.dataset.eloPublicId, null)
         || findDriverRecordByName(button.dataset.eloDriverName);
     } catch (error) {
       console.warn("Failed to load driver index for ELO modal.", error);
@@ -7319,7 +7318,7 @@ function initEloModal() {
   });
 
   document.addEventListener("click", (event) => {
-    const eloButton = event.target?.closest?.("[data-elo-public-id], [data-elo-player-id]");
+    const eloButton = event.target?.closest?.("[data-elo-public-id]");
     if (eloButton) {
       event.preventDefault();
       event.stopPropagation();
@@ -7516,18 +7515,18 @@ function initSafetyModal() {
   });
 
   document.addEventListener("click", (event) => {
-    const safetyButton = event.target?.closest?.("[data-sr-public-id], [data-sr-player-id]");
+    const safetyButton = event.target?.closest?.("[data-sr-public-id]");
     if (safetyButton) {
       event.preventDefault();
       event.stopPropagation();
-      const source = findSafetySource(safetyButton.dataset.srPublicId, safetyButton.dataset.srPlayerId, safetyButton.dataset.srRaceId);
+      const source = findSafetySource(safetyButton.dataset.srPublicId, null, safetyButton.dataset.srRaceId) || findDriverRecordByName(safetyButton.dataset.srDriverName);
       const breakdownMode = safetyButton.dataset.srBreakdownMode || "modal";
       if (breakdownMode === "inline") {
         openSafetyBreakdownPopover({
           trigger: safetyButton,
           source,
           publicId: safetyButton.dataset.srPublicId || null,
-          playerId: safetyButton.dataset.srPlayerId || null,
+          playerId: null,
           raceId: safetyButton.dataset.srRaceId || null
         });
       } else {
