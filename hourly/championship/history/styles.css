@@ -141,6 +141,17 @@
   gap: 8px;
 }
 
+.championship-history-body .driver-link,
+.championship-history-body .driver-link:visited {
+  color: #fff;
+  text-decoration: none;
+}
+
+.championship-history-body .driver-link:hover,
+.championship-history-body .driver-link:focus-visible {
+  color: #fff;
+}
+
 .championship-history-chip {
   display: inline-flex;
   align-items: center;

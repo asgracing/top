@@ -97,6 +97,17 @@
   -webkit-overflow-scrolling: touch;
 }
 
+.championship-page .driver-link,
+.championship-page .driver-link:visited {
+  color: #fff;
+  text-decoration: none;
+}
+
+.championship-page .driver-link:hover,
+.championship-page .driver-link:focus-visible {
+  color: #fff;
+}
+
 .championship-standings-table th,
 .championship-standings-table td,
 .championship-race-table th,
