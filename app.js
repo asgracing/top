@@ -3899,22 +3899,60 @@ function getEloRowClass(source) {
   return info ? `elo-row elo-cat-${info.categoryId}` : "";
 }
 
+function decodeAttributeValue(value) {
+  const raw = String(value ?? "");
+  if (!raw) return "";
+  try {
+    return decodeURIComponent(raw);
+  } catch {
+    return raw;
+  }
+}
+
 function findEloSource(publicId, playerId = null) {
   const pagedItems = Object.values(topDataV2PagedTables || {}).flatMap((state) =>
     Array.isArray(state?.result?.items) ? state.result.items : []
   );
+  const selectedRaceMatches = [
+    ...(Array.isArray(selectedRace?.results) ? selectedRace.results : []),
+    ...(Array.isArray(driverProfileData?.race_history) ? driverProfileData.race_history : [])
+  ].filter(item =>
+    item && ((publicId && item.public_id === publicId) || (playerId && item.player_id === playerId))
+  );
   const matches = [
+    ...selectedRaceMatches,
     driverProfileData,
     driverPreviewState?.profile,
     ...(Array.isArray(leaderboardData) ? leaderboardData : []),
     ...(Array.isArray(bestlapsData) ? bestlapsData : []),
     ...(Array.isArray(driverIndexData) ? driverIndexData : []),
     ...pagedItems
-  ];
-  return matches.find(item => {
+  ].filter(item => {
     if (!item) return false;
     return (publicId && item.public_id === publicId) || (playerId && item.player_id === playerId);
-  }) || null;
+  });
+  if (!matches.length) return null;
+
+  const scoreEloSource = (item) => {
+    let score = 0;
+    if (Array.isArray(item?.summary?.elo_history)) score += 120;
+    if (Array.isArray(item?.elo_history)) score += 100;
+    if (Array.isArray(item?.race_history)) score += 80;
+    if (selectedRaceMatches.includes(item)) score += 40;
+    const rating = Number(
+      item?.elo
+      ?? item?.summary?.elo
+      ?? item?.elo_internal_rating
+      ?? item?.summary?.elo_internal_rating
+      ?? item?.elo_rating_after
+      ?? item?.elo_after
+      ?? item?.new_rating
+    );
+    if (Number.isFinite(rating)) score += 20;
+    return score;
+  };
+
+  return matches.sort((left, right) => scoreEloSource(right) - scoreEloSource(left))[0] || null;
 }
 
 function normalizeDriverLookupName(value) {
@@ -7324,13 +7362,14 @@ function openEloModalForSource(source, trigger = null) {
 
 async function openEloModalForButton(button) {
   if (!button) return;
+  const decodedDriverName = decodeAttributeValue(button.dataset.eloDriverName);
   let source = findEloSource(button.dataset.eloPublicId, null)
-    || findDriverRecordByName(button.dataset.eloDriverName);
+    || findDriverRecordByName(decodedDriverName);
   if (!source) {
     try {
       await ensureDriverIndexLoaded();
       source = findEloSource(button.dataset.eloPublicId, null)
-        || findDriverRecordByName(button.dataset.eloDriverName);
+        || findDriverRecordByName(decodedDriverName);
     } catch (error) {
       console.warn("Failed to load driver index for ELO modal.", error);
     }
