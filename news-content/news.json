@@ -1,6 +1,62 @@
 {
   "items": [
     {
+      "id": "asg-racing-july-2026-championship-open",
+      "slug": "asg-racing-july-2026-championship-open",
+      "title": "Стартует чемпионат ASG Racing July 2026 / ASG Racing July 2026 Championship Starts",
+      "summary": "Июльский чемпионат ASG Racing стартует на Nordschleife. В программе две субботние гонки 11 и 25 июля, отдельная таблица очков и награда чемпиону. / The ASG Racing July 2026 championship starts on Nordschleife. The series includes two Saturday races on July 11 and July 25, a dedicated points table, and a prize for the champion.",
+      "body": [
+        "РУССКИЙ",
+        "────────",
+        "ASG Racing July 2026 стартует на трассе Nordschleife.",
+        "Это июльский чемпионат ASG Racing с отдельным зачётом и двумя субботними гонками, которые пройдут 11 и 25 июля.",
+        "Формат чемпионата:",
+        {
+          "type": "list",
+          "items": [
+            "Трасса чемпионата — Nordschleife",
+            "Даты гонок — 11 июля и 25 июля",
+            "Для серии действует отдельная таблица очков",
+            "Чемпион сезона получит награду"
+          ]
+        },
+        "Если вы хотите побороться за титул в июльской серии, следите за расписанием, готовьтесь к двум этапам и сохраняйте стабильность по ходу всего чемпионата.",
+        {
+          "type": "link",
+          "href": "/hourly/championship/",
+          "label": "Открыть страницу чемпионата"
+        },
+        "ENGLISH",
+        "────────",
+        "ASG Racing July 2026 starts on Nordschleife.",
+        "This is the July ASG Racing championship with a dedicated standings table and two Saturday races scheduled for July 11 and July 25.",
+        "Championship format:",
+        {
+          "type": "list",
+          "items": [
+            "Championship track: Nordschleife",
+            "Race dates: July 11 and July 25",
+            "The series uses a dedicated points table",
+            "The season champion will receive a prize"
+          ]
+        },
+        "If you want to fight for the title in this July series, keep an eye on the schedule, prepare for both rounds, and stay consistent throughout the championship.",
+        {
+          "type": "link",
+          "href": "/hourly/championship/",
+          "label": "Open the championship page"
+        }
+      ],
+      "thumbnail_url": "/news-content/images/ASGRacing_July2026/asgracingjuly2026.png",
+      "cover_image_url": "/news-content/images/ASGRacing_July2026/asgracingjuly2026.png",
+      "image_alt": "ASG Racing July 2026 championship announcement for Nordschleife",
+      "published_at": "2026-07-01T09:00:00Z",
+      "expires_at": "",
+      "kind": "announcement",
+      "priority": 500,
+      "is_pinned": true
+    },
+    {
       "id": "asg-racing-june-2026-championship-finished",
       "slug": "asg-racing-june-2026-championship-finished",
       "title": "Завершился чемпионат ASG Racing June 2026 / ASG Racing June 2026 Championship Has Concluded",
