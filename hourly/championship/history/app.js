@@ -14,8 +14,10 @@ const defaultDataBase = isAsgPublicSite
       ? "https://asgracing.github.io/hourly-data"
       : "/hourly-data";
 const dataBase = normalizeBaseUrl(params.get("hourlyApiBase")) || defaultDataBase;
-const topSiteBaseUrl = isAsgPublicSite || isLocalDevHost
+const topSiteBaseUrl = isAsgPublicSite
   ? "https://asgracing.ru"
+  : isLocalDevHost
+    ? "/top"
   : window.location.hostname === "asgracing.github.io"
     ? "https://asgracing.github.io/top"
     : "/top";

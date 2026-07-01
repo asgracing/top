@@ -35,8 +35,10 @@ const VOTER_ID_STORAGE_TTL_MS = 365 * 24 * 60 * 60 * 1000;
 const VOTE_STATE_STORAGE_KEY = "hourlyVoteStateByEventId";
 const VOTE_STATE_STORAGE_TTL_MS = 30 * 24 * 60 * 60 * 1000;
 const NEWS_READ_STORAGE_KEY = "asgReadNewsIds.v2";
-const topSiteBaseUrl = isAsgPublicSite || isLocalDevHost
+const topSiteBaseUrl = isAsgPublicSite
   ? "https://asgracing.ru"
+  : isLocalDevHost
+    ? "/top"
   : window.location.hostname === "asgracing.github.io"
     ? "https://asgracing.github.io/top"
     : "/top";
@@ -582,6 +584,7 @@ const HERO_TRACK_BACKGROUNDS = {
   silverstone: "./assets/tracks/silverstone.jpg",
   spa: "./assets/tracks/spa.jpg",
   nurburgring: "./assets/tracks/nurburgring.jpg",
+  nurburgring_24h: "./assets/tracks/nurburgring_24h.jpg",
   nurburgring24h: "./assets/tracks/nurburgring_24h.jpg",
   "nurburgring-24h": "./assets/tracks/nurburgring_24h.jpg",
   nordschl: "./assets/tracks/nurburgring_24h.jpg",

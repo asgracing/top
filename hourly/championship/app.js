@@ -20,8 +20,10 @@ const votesApiBase = "https://hourly-votes.asgracing.workers.dev";
 const VOTE_STATE_STORAGE_KEY = "hourlyVoteStateByEventId";
 const VOTE_STATE_STORAGE_TTL_MS = 30 * 24 * 60 * 60 * 1000;
 const NEWS_READ_STORAGE_KEY = "asgReadNewsIds.v2";
-const topSiteBaseUrl = isAsgPublicSite || isLocalDevHost
+const topSiteBaseUrl = isAsgPublicSite
   ? "https://asgracing.ru"
+  : isLocalDevHost
+    ? "/top"
   : window.location.hostname === "asgracing.github.io"
     ? "https://asgracing.github.io/top"
     : "/top";
