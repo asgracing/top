@@ -859,6 +859,10 @@ function percentValue(value) {
   return Math.round(normalized);
 }
 
+function minutesFromSeconds(value) {
+  return typeof value === "number" && !Number.isNaN(value) ? Math.round(value / 60) : null;
+}
+
 function weatherLabel(weather) {
   const state = String(weather?.summary_key || "").trim().toLowerCase();
   const stateLabel = state === "clear" ? t("weatherClear")
@@ -1178,46 +1182,156 @@ function renderUpcoming(items, standings) {
   });
 }
 
+function eventDetailsIcon(name, className = "") {
+  const icons = {
+    calendar: `<svg viewBox="0 0 24 24"><path d="M8 3v3M16 3v3M4 9h16M5.75 5.75h12.5a2 2 0 0 1 2 2v10.5a2 2 0 0 1-2 2H5.75a2 2 0 0 1-2-2V7.75a2 2 0 0 1 2-2Z" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"></path></svg>`,
+    copy: `<svg viewBox="0 0 24 24"><path d="M9 9h11v11H9z" fill="none" stroke="currentColor" stroke-width="1.8"></path><path d="M4 4h11v11H4z" fill="none" stroke="currentColor" stroke-width="1.8"></path></svg>`,
+    check: `<svg viewBox="0 0 24 24"><path d="M5 12.5 9.2 16.7 19 7.5" fill="none" stroke="currentColor" stroke-width="2.1" stroke-linecap="round" stroke-linejoin="round"></path></svg>`,
+    close: `<svg viewBox="0 0 24 24"><path d="m6 6 12 12M18 6 6 18" fill="none" stroke="currentColor" stroke-width="2.1" stroke-linecap="round"></path></svg>`,
+    server: `<svg viewBox="0 0 24 24"><path d="M4.75 6.5h14.5M4.75 12h14.5M4.75 17.5h14.5M6.75 4.75h10.5a2 2 0 0 1 2 2v10.5a2 2 0 0 1-2 2H6.75a2 2 0 0 1-2-2V6.75a2 2 0 0 1 2-2Z" fill="none" stroke="currentColor" stroke-width="1.85" stroke-linecap="round" stroke-linejoin="round"></path></svg>`,
+    flag: `<svg viewBox="0 0 24 24"><path d="m5 4 11 2.5-4 4 4 3.5-4 4L16 20 5 17.5V4Z" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"></path></svg>`,
+    wrench: `<svg viewBox="0 0 24 24"><path d="m14.4 6.6 3-3a2.12 2.12 0 0 1 3 3l-3 3M13 8l3 3-8.75 8.75H4.25v-3L13 8Z" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"></path></svg>`,
+    timer: `<svg viewBox="0 0 24 24"><circle cx="12" cy="13" r="7.25" fill="none" stroke="currentColor" stroke-width="1.9"></circle><path d="M12 13V9.25M9.25 2.75h5.5M14.75 5.5l1.5-1.5" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"></path></svg>`,
+    stopwatch: `<svg viewBox="0 0 24 24"><circle cx="12" cy="13" r="7.25" fill="none" stroke="currentColor" stroke-width="1.9"></circle><path d="M9.25 2.75h5.5M12 13l3.25-2.25M14.75 5.5l1.5-1.5" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"></path></svg>`,
+    play: `<svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="8" fill="none" stroke="currentColor" stroke-width="1.9"></circle><path d="m10.25 8.75 5 3.25-5 3.25V8.75Z" fill="currentColor"></path></svg>`,
+    sun: `<svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="4.25" fill="none" stroke="currentColor" stroke-width="1.9"></circle><path d="M12 2.75v2.5M12 18.75v2.5M21.25 12h-2.5M5.25 12h-2.5M18.54 5.46l-1.77 1.77M7.23 16.77l-1.77 1.77M18.54 18.54l-1.77-1.77M7.23 7.23 5.46 5.46" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round"></path></svg>`,
+    fast: `<svg viewBox="0 0 24 24"><path d="m4.5 6.75 6.5 5.25-6.5 5.25V6.75Zm8.5 0 6.5 5.25-6.5 5.25V6.75Z" fill="currentColor"></path></svg>`,
+    fuel: `<svg viewBox="0 0 24 24"><path d="M6.25 5.25h7.5a1.5 1.5 0 0 1 1.5 1.5v10.5a1.5 1.5 0 0 1-1.5 1.5h-7.5a1.5 1.5 0 0 1-1.5-1.5V6.75a1.5 1.5 0 0 1 1.5-1.5Zm9-1.5 3 3v7.25a1.75 1.75 0 0 1-3.5 0V12" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"></path></svg>`,
+    drop: `<svg viewBox="0 0 24 24"><path d="M12 4.25c3.4 4.16 5.1 6.95 5.1 9.1A5.1 5.1 0 1 1 6.9 13.35c0-2.15 1.7-4.94 5.1-9.1Z" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"></path></svg>`,
+    tyre: `<svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="7.25" fill="none" stroke="currentColor" stroke-width="1.9"></circle><circle cx="12" cy="12" r="2.5" fill="none" stroke="currentColor" stroke-width="1.9"></circle></svg>`,
+    temp: `<svg viewBox="0 0 24 24"><path d="M10.25 6a2.25 2.25 0 1 1 4.5 0v7.2a4 4 0 1 1-4.5 0V6Z" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"></path><path d="M12.5 10v5" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round"></path></svg>`,
+    cloud: `<svg viewBox="0 0 24 24"><path d="M7.25 18.25h9a4 4 0 0 0 .42-7.98A5.25 5.25 0 0 0 6.4 9.35 3.75 3.75 0 0 0 7.25 18.25Z" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"></path></svg>`,
+    rain: `<svg viewBox="0 0 24 24"><path d="M7.25 15.5h9a4 4 0 0 0 .42-7.98A5.25 5.25 0 0 0 6.4 6.6a3.75 3.75 0 0 0 .85 8.9Z" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"></path><path d="M9 17.75 8.25 20M13 17.75 12.25 20M17 17.75 16.25 20" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round"></path></svg>`,
+    wind: `<svg viewBox="0 0 24 24"><path d="M4 9.25h9.5a2.75 2.75 0 1 0-2.7-3.25M4 14h13.5a2.25 2.25 0 1 1-2.2 2.75M4 18.25h7.5a2.25 2.25 0 1 0-2.2 2.75" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"></path></svg>`,
+    users: `<svg viewBox="0 0 24 24"><path d="M8.5 11.25a2.75 2.75 0 1 0 0-5.5 2.75 2.75 0 0 0 0 5.5Zm7 2a2.5 2.5 0 1 0 0-5 2.5 2.5 0 0 0 0 5ZM3.75 18c.5-2.55 2.66-4.25 5.25-4.25S13.75 15.45 14.25 18M13.25 18c.38-1.78 1.88-3 3.75-3s3.37 1.22 3.75 3" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"></path></svg>`
+  };
+  return `<span class="event-details-v2-icon${className}" aria-hidden="true">${icons[name] || icons.server}</span>`;
+}
+
+function buildEventDetailsRow(label, value, iconName, options = {}) {
+  const rowClass = options.rowClass ? ` ${options.rowClass}` : "";
+  const labelClass = options.accent ? " event-details-v2-info-label-accent" : "";
+  const valueClass = options.accent ? " event-details-v2-info-value-accent" : "";
+  const iconClass = options.accent ? " event-details-v2-info-icon-accent" : "";
+  return `<div class="event-details-v2-info-row${rowClass}"><div class="event-details-v2-info-label${labelClass}">${eventDetailsIcon(iconName, ` event-details-v2-info-icon${iconClass}`)}<span>${esc(label)}</span></div><div class="event-details-v2-info-value${valueClass}">${value}</div></div>`;
+}
+
+function buildEventDetailsCard(title, iconName, className, rowsHtml) {
+  return `<section class="event-details-v2-card ${esc(className)}"><div class="event-details-v2-card-header">${eventDetailsIcon(iconName, " event-details-v2-card-icon")}<h4 class="event-details-v2-card-title">${esc(title)}</h4></div><div class="event-details-v2-card-body">${rowsHtml}</div></section>`;
+}
+
+function getChampionshipEventDetailsText(key) {
+  const copy = {
+    eyebrow: { en: "Event details", ru: "Детали события" },
+    connection: { en: "Connection", ru: "Подключение" },
+    format: { en: "Event format", ru: "Формат события" },
+    conditions: { en: "Race conditions", ru: "Условия гонки" },
+    classLabel: { en: "Class", ru: "Класс" },
+    slotsLabel: { en: "Slots", ru: "Слоты" },
+    safetyLabel: { en: "Safety Rating", ru: "Safety Rating" },
+    preparationLabel: { en: "Preparation", ru: "Подготовка" },
+    qualifyingLabel: { en: "Qualifying", ru: "Квалификация" },
+    raceLabel: { en: "Race", ru: "Гонка" },
+    gameTimeLabel: { en: "In-game time", ru: "Игровое время" },
+    timeMultiplierLabel: { en: "Time acceleration", ru: "Ускорение времени" },
+    pitWindowLabel: { en: "Pit window", ru: "Окно пит-стопа" },
+    refuelAllowedLabel: { en: "Refuel", ru: "Заправка" },
+    mandatoryRefuelLabel: { en: "Mandatory refuel", ru: "Обязательная заправка" },
+    fixedRefuelLabel: { en: "Fixed refuel time", ru: "Фикс. время заправки" },
+    temperatureLabel: { en: "Temperature", ru: "Температура" },
+    cloudsLabel: { en: "Cloud cover", ru: "Облачность" },
+    rainLabel: { en: "Rain chance", ru: "Вероятность дождя" },
+    randomnessLabel: { en: "Randomness", ru: "Изменчивость" },
+    notAvailable: { en: "N/A", ru: "н/д" },
+    allowed: { en: "allowed", ru: "разрешена" },
+    forbidden: { en: "forbidden", ru: "запрещена" },
+    yes: { en: "yes", ru: "да" },
+    no: { en: "no", ru: "нет" },
+    votingNotice: { en: "Voting uses a browser ID", ru: "Для голосования используется ID браузера" }
+  };
+  return copy[key]?.[currentLang] || copy[key]?.en || key;
+}
+
 function buildScheduleModalDetails(item) {
   const server = championshipAnnouncementData?.server || {};
   const session = championshipAnnouncementData?.session || {};
   const rules = championshipAnnouncementData?.rules || {};
   const weather = item?.weather || championshipAnnouncementData?.weather || {};
+  const voteState = getVoteState(item);
   const detailsUrl = item?.details_url ? String(item.details_url) : "";
+  const startTime = getLocalizedField(item, "start_time_local", item?.start_time_local || "--");
+  const timezone = getLocalizedField(item, "timezone", item?.timezone || "UTC+3");
+  const passwordId = `championship-modal-password-${String(item?.event_id || item?.date || "slot").replace(/[^a-z0-9_-]+/gi, "-")}`;
+  const gameTime = typeof (session.hour_of_day ?? session.game_hour_of_day ?? session.session_hour ?? session.time_of_day_hour) === "number"
+    ? `${String(Math.round(session.hour_of_day ?? session.game_hour_of_day ?? session.session_hour ?? session.time_of_day_hour)).padStart(2, "0")}:00`
+    : getChampionshipEventDetailsText("notAvailable");
+  const multiplier = typeof (session.time_multiplier ?? session.timeMultiplier ?? session.session_time_multiplier ?? session.time_scale) === "number"
+    ? `x${session.time_multiplier ?? session.timeMultiplier ?? session.session_time_multiplier ?? session.time_scale}`
+    : getChampionshipEventDetailsText("notAvailable");
+  const cloudPercent = percentValue(weather.cloud_level);
+  const rainPercent = percentValue(weather.rain_level);
+  const connectionRows = [
+    buildEventDetailsRow(t("heroServerLabel"), esc(server.name || server.full_name || t("unknown")), "server"),
+    buildEventDetailsRow(t("heroPasswordLabel"), `<div class="event-details-v2-password-row"><span class="event-details-v2-password" id="${esc(passwordId)}">${esc(server.password || t("passwordNone"))}</span><button class="event-details-v2-copy-button" type="button" data-copy-target="${esc(passwordId)}" aria-label="${esc(t("heroPasswordLabel"))}">${eventDetailsIcon("copy", " event-details-v2-info-icon hero-copy-icon-copy")}${eventDetailsIcon("check", " event-details-v2-info-icon hero-copy-icon-done")}</button></div>`, "copy"),
+    buildEventDetailsRow(getChampionshipEventDetailsText("classLabel"), `<span class="event-details-v2-class-badge">${esc(server.car_group || getChampionshipEventDetailsText("notAvailable"))}</span>`, "flag"),
+    buildEventDetailsRow(getChampionshipEventDetailsText("slotsLabel"), esc(server.max_car_slots ?? getChampionshipEventDetailsText("notAvailable")), "users"),
+    buildEventDetailsRow(getChampionshipEventDetailsText("safetyLabel"), esc(server.safety_rating_requirement ?? getChampionshipEventDetailsText("notAvailable")), "flag")
+  ].join("");
+  const formatRows = [
+    buildEventDetailsRow(getChampionshipEventDetailsText("preparationLabel"), esc(typeof minutesFromSeconds(session.pre_race_waiting_time_seconds) === "number" ? `${minutesFromSeconds(session.pre_race_waiting_time_seconds)} мин` : getChampionshipEventDetailsText("notAvailable")), "timer"),
+    buildEventDetailsRow(getChampionshipEventDetailsText("qualifyingLabel"), esc(typeof session.qualifying_duration_minutes === "number" ? `${session.qualifying_duration_minutes} мин` : getChampionshipEventDetailsText("notAvailable")), "stopwatch"),
+    buildEventDetailsRow(getChampionshipEventDetailsText("raceLabel"), esc(typeof session.race_duration_minutes === "number" ? `${session.race_duration_minutes} мин` : getChampionshipEventDetailsText("notAvailable")), "play"),
+    buildEventDetailsRow(getChampionshipEventDetailsText("gameTimeLabel"), esc(gameTime), "sun"),
+    buildEventDetailsRow(getChampionshipEventDetailsText("timeMultiplierLabel"), esc(multiplier), "fast")
+  ].join("");
+  const conditionsRows = [
+    buildEventDetailsRow(t("heroPitstopLabel"), esc(typeof rules.mandatory_pitstop_count === "number" && rules.mandatory_pitstop_count > 0 ? `${rules.mandatory_pitstop_count}` : getChampionshipEventDetailsText("notAvailable")), "wrench", { accent: true }),
+    buildEventDetailsRow(getChampionshipEventDetailsText("pitWindowLabel"), esc(typeof rules.pit_window_length_minutes === "number" ? `${rules.pit_window_length_minutes} мин` : getChampionshipEventDetailsText("notAvailable")), "timer", { accent: true }),
+    buildEventDetailsRow(getChampionshipEventDetailsText("refuelAllowedLabel"), esc(rules.refuelling_allowed_in_race === true ? getChampionshipEventDetailsText("allowed") : rules.refuelling_allowed_in_race === false ? getChampionshipEventDetailsText("forbidden") : getChampionshipEventDetailsText("notAvailable")), "fuel"),
+    buildEventDetailsRow(getChampionshipEventDetailsText("mandatoryRefuelLabel"), esc(rules.mandatory_pitstop_refuelling_required === true ? getChampionshipEventDetailsText("yes") : rules.mandatory_pitstop_refuelling_required === false ? getChampionshipEventDetailsText("no") : getChampionshipEventDetailsText("notAvailable")), "drop"),
+    buildEventDetailsRow(getChampionshipEventDetailsText("fixedRefuelLabel"), esc(rules.refuelling_time_fixed === true ? getChampionshipEventDetailsText("yes") : rules.refuelling_time_fixed === false ? getChampionshipEventDetailsText("no") : getChampionshipEventDetailsText("notAvailable")), "timer"),
+    buildEventDetailsRow(t("heroTyresLabel"), esc(rules.tyre_set_count ?? getChampionshipEventDetailsText("notAvailable")), "tyre", { rowClass: " event-details-v2-divider-row" }),
+    buildEventDetailsRow(getChampionshipEventDetailsText("temperatureLabel"), esc(typeof weather.ambient_temp_c === "number" ? `${Math.round(weather.ambient_temp_c)}°C` : getChampionshipEventDetailsText("notAvailable")), "temp"),
+    buildEventDetailsRow(getChampionshipEventDetailsText("cloudsLabel"), esc(typeof cloudPercent === "number" ? `${cloudPercent}%` : getChampionshipEventDetailsText("notAvailable")), "cloud"),
+    buildEventDetailsRow(getChampionshipEventDetailsText("rainLabel"), esc(typeof rainPercent === "number" ? `${rainPercent}%` : getChampionshipEventDetailsText("notAvailable")), "rain"),
+    buildEventDetailsRow(getChampionshipEventDetailsText("randomnessLabel"), esc(weather.weather_randomness ?? getChampionshipEventDetailsText("notAvailable")), "wind")
+  ].join("");
   return `
-    <div class="schedule-modal-hero">
-      <section class="hero-server-card schedule-modal-hero-pane">
-        <div class="hero-server-stack">
-          <div class="hero-server-grid hero-server-grid-rules">
-            <div class="hero-server-item">
-              <div class="label">${esc(t("heroPitstopLabel"))}</div>
-              <div class="value">${renderHeroTokenGroups(buildPitstopTokenGroups(rules))}</div>
-            </div>
-            <div class="hero-server-item">
-              <div class="label">${esc(t("heroRefuelLabel"))}</div>
-              <div class="value">${renderHeroTokenGroups(buildRefuelTokenGroups(rules))}</div>
-            </div>
-            <div class="hero-server-item">
-              <div class="label">${esc(t("heroTyresLabel"))}</div>
-              <div class="value">${renderHeroTokenGroups(buildTyreTokenGroups(rules))}</div>
-            </div>
+    <div class="event-details-v2">
+      <div class="event-details-v2-background"></div>
+      <div class="event-details-v2-shade"></div>
+      <div class="event-details-v2-inner">
+        <header class="event-details-v2-header">
+          <div class="event-details-v2-title-block">
+            <div class="event-details-v2-eyebrow">${esc(getChampionshipEventDetailsText("eyebrow"))}</div>
+            <h2 class="event-details-v2-title">${esc(getLocalizedField(item, "track_name", item?.track_code || "--"))}</h2>
           </div>
-        </div>
-      </section>
-      <aside class="hero-announcement-card schedule-modal-hero-pane">
-        <div class="hero-announcement-inline-meta">
-          <div class="stat hero-announcement-inline-stat hero-announcement-inline-stat-combined">
-            <div class="value">${renderHeroTokenGroups(buildEntryTokenGroups(server))}</div>
-            <div class="hero-announcement-inline-divider" aria-hidden="true"></div>
-            <div class="value">${renderHeroTokenGroups(buildRaceFormatTokenGroups(session))}</div>
+          <div class="event-details-v2-date-time">
+            ${eventDetailsIcon("calendar", " event-details-v2-date-time-icon")}
+            <span>${esc(formatDate(item?.date))}</span>
+            <span aria-hidden="true">•</span>
+            <span>${esc(`${startTime} ${timezone}`.trim())}</span>
           </div>
+        </header>
+        <div class="event-details-v2-grid">
+          ${buildEventDetailsCard(getChampionshipEventDetailsText("connection"), "server", "event-details-v2-card-connection", connectionRows)}
+          ${buildEventDetailsCard(getChampionshipEventDetailsText("format"), "flag", "event-details-v2-card-format", formatRows)}
+          ${buildEventDetailsCard(getChampionshipEventDetailsText("conditions"), "wrench", "event-details-v2-card-conditions", conditionsRows)}
         </div>
-        <div class="hero-announcement-weather has-token-value">
-          <div class="label">${esc(t("weather"))}</div>
-          <div class="value">${renderHeroTokenGroups(buildWeatherTokenGroups(weather))}</div>
-        </div>
-      </aside>
-      ${detailsUrl ? `<a class="event-details-link" href="${esc(detailsUrl)}">${esc(t("eventDetailsLink"))}</a>` : ""}
+        <footer class="event-details-v2-footer">
+          <button class="event-details-v2-participation-button${voteState.already_voted ? " is-voted" : ""}" type="button" data-v2-vote-action="true" ${voteState.pending || voteState.already_voted ? "disabled" : ""}>
+            ${eventDetailsIcon("check", " event-details-v2-participation-icon")}
+            <span>${esc(voteState.already_voted ? t("voteButtonDone") : t("voteButton"))}</span>
+          </button>
+          ${voteState.already_voted ? `<button class="event-details-v2-cancel-button" type="button" data-v2-vote-action="true" aria-label="${esc(t("unvoteButton"))}" ${voteState.pending ? "disabled" : ""}>${eventDetailsIcon("close", " event-details-v2-cancel-icon")}</button>` : `<div class="event-details-v2-cancel-placeholder" aria-hidden="true"></div>`}
+          <div class="event-details-v2-participant-count">
+            ${eventDetailsIcon("users", " event-details-v2-participant-icon")}
+            <span>${esc(getVoteLabel(voteState.votes))}</span>
+          </div>
+          <div class="event-details-v2-voting-notice">${esc(getChampionshipEventDetailsText("votingNotice"))}</div>
+          ${detailsUrl ? `<a class="event-details-v2-details-link" href="${esc(detailsUrl)}">${esc(t("eventDetailsLink"))}</a>` : ""}
+        </footer>
+      </div>
     </div>
   `;
 }
@@ -1232,39 +1346,52 @@ function applyScheduleModalTrackBackground(itemOrTrackCode) {
 }
 
 function renderScheduleModal() {
+  const modalCard = document.querySelector("#schedule-modal .modal-card-slot");
+  const headerEl = document.querySelector("#schedule-modal .modal-header");
   const titleEl = document.getElementById("schedule-modal-title");
   const subtitleEl = document.getElementById("schedule-modal-subtitle");
   const detailsEl = document.getElementById("schedule-modal-details");
-  if (!titleEl || !subtitleEl || !detailsEl) return;
+  if (!modalCard || !headerEl || !titleEl || !subtitleEl || !detailsEl) return;
   if (!selectedScheduleItem) {
     applyScheduleModalTrackBackground("");
     titleEl.textContent = "-";
     subtitleEl.textContent = "-";
     detailsEl.innerHTML = "";
+    modalCard.classList.remove("is-event-details-v2");
+    headerEl.classList.remove("event-details-v2-legacy-header");
     return;
   }
+  modalCard.classList.add("is-event-details-v2");
+  headerEl.classList.add("event-details-v2-legacy-header");
   applyScheduleModalTrackBackground(selectedScheduleItem);
   titleEl.textContent = getLocalizedField(selectedScheduleItem, "track_name", selectedScheduleItem.track_code || t("unknown"));
-  const server = championshipAnnouncementData?.server || {};
   const startTime = getLocalizedField(selectedScheduleItem, "start_time_local", selectedScheduleItem?.start_time_local || "--");
   const timezone = getLocalizedField(selectedScheduleItem, "timezone", selectedScheduleItem?.timezone || "UTC+3");
-  subtitleEl.innerHTML = `
-    <span class="schedule-modal-subtitle-grid">
-      <span class="schedule-modal-subtitle-card">
-        <span class="schedule-modal-subtitle-label">${esc(t("heroServerLabel"))}</span>
-        <span class="schedule-modal-subtitle-value">${esc(server.name || server.full_name || t("unknown"))}</span>
-      </span>
-      <span class="schedule-modal-subtitle-card">
-        <span class="schedule-modal-subtitle-label">${esc(t("heroPasswordLabel"))}</span>
-        <span class="schedule-modal-subtitle-value">${esc(server.password || t("passwordNone"))}</span>
-      </span>
-      <span class="schedule-modal-subtitle-card">
-        <span class="schedule-modal-subtitle-label">${esc(`${t("labelDate")} + ${t("labelTime")}`)}</span>
-        <span class="schedule-modal-subtitle-value">${esc(formatSlotDateTime(selectedScheduleItem)).replace(" · ", "<br>")}</span>
-      </span>
-    </span>
-  `;
+  subtitleEl.textContent = `${formatDate(selectedScheduleItem?.date)} • ${startTime} ${timezone}`;
   detailsEl.innerHTML = buildScheduleModalDetails(selectedScheduleItem);
+  detailsEl.querySelectorAll("[data-copy-target]").forEach(button => {
+    if (button.dataset.bound === "true") return;
+    button.addEventListener("click", async () => {
+      const target = document.getElementById(button.dataset.copyTarget || "");
+      if (!target) return;
+      try {
+        await navigator.clipboard.writeText(target.textContent || "");
+        button.classList.add("is-copied");
+        window.setTimeout(() => button.classList.remove("is-copied"), 1200);
+      } catch (error) {
+        console.warn("championship modal copy failed.", error);
+      }
+    });
+    button.dataset.bound = "true";
+  });
+  detailsEl.querySelectorAll("[data-v2-vote-action]").forEach(button => {
+    if (button.dataset.bound === "true") return;
+    button.addEventListener("click", event => {
+      event.stopPropagation();
+      if (selectedScheduleItem) void submitVote(selectedScheduleItem);
+    });
+    button.dataset.bound = "true";
+  });
 }
 
 function openScheduleModal(item) {

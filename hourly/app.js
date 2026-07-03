@@ -35,6 +35,8 @@ const VOTER_ID_STORAGE_TTL_MS = 365 * 24 * 60 * 60 * 1000;
 const VOTE_STATE_STORAGE_KEY = "hourlyVoteStateByEventId";
 const VOTE_STATE_STORAGE_TTL_MS = 30 * 24 * 60 * 60 * 1000;
 const NEWS_READ_STORAGE_KEY = "asgReadNewsIds.v2";
+const EVENT_MODAL_VERSION_STORAGE_KEY = "hourlyEventModalVersion";
+const DEFAULT_EVENT_MODAL_VERSION = "v2";
 const topSiteBaseUrl = isAsgPublicSite
   ? "https://asgracing.ru"
   : isLocalDevHost
@@ -187,6 +189,19 @@ function syncVoteStateFromStorage() {
   if (selectedScheduleItem && typeof renderScheduleModal === "function") {
     renderScheduleModal();
   }
+}
+
+function resolveEventModalVersion() {
+  const queryValue = String(pageParams.get("eventModalVersion") || pageParams.get("eventModal") || "").trim().toLowerCase();
+  if (queryValue === "v1" || queryValue === "legacy") return "v1";
+  if (queryValue === "v2") return "v2";
+  const storedValue = String(localStorage.getItem(EVENT_MODAL_VERSION_STORAGE_KEY) || "").trim().toLowerCase();
+  if (storedValue === "v1" || storedValue === "v2") return storedValue;
+  return DEFAULT_EVENT_MODAL_VERSION;
+}
+
+function useEventModalV2() {
+  return eventModalVersion === "v2";
 }
 
 const translations = {
@@ -509,6 +524,70 @@ Object.assign(translations.ru, {
   copiedAction: "{field} СЃРєРѕРїРёСЂРѕРІР°РЅ"
 });
 
+Object.assign(translations.en, {
+  modalVersionLabel: "Modal",
+  modalVersionV1: "V1",
+  modalVersionV2: "V2",
+  modalConnectionTitle: "Connection",
+  modalFormatTitle: "Event format",
+  modalConditionsTitle: "Race conditions",
+  modalClassLabel: "Class",
+  modalSlotsLabel: "Slots",
+  modalSafetyLabel: "Safety Rating",
+  modalPreparationLabel: "Preparation",
+  modalQualifyingLabel: "Qualifying",
+  modalRaceLabel: "Race",
+  modalGameTimeLabel: "In-game time",
+  modalTimeMultiplierLabel: "Time acceleration",
+  modalPitWindowLabel: "Pit window",
+  modalRefuelAllowedLabel: "Refuel",
+  modalMandatoryRefuelLabel: "Mandatory refuel",
+  modalRefuelFixedLabel: "Fixed refuel time",
+  modalTemperatureLabel: "Temperature",
+  modalCloudsLabel: "Cloud cover",
+  modalRainLabel: "Rain chance",
+  modalRandomnessLabel: "Randomness",
+  modalNotSpecified: "Not specified",
+  modalAllowed: "allowed",
+  modalForbidden: "forbidden",
+  modalYes: "yes",
+  modalNo: "no",
+  modalParticipantOne: "{value} participant",
+  modalParticipantMany: "{value} participants"
+});
+
+Object.assign(translations.ru, {
+  modalVersionLabel: "\u041c\u043e\u0434\u0430\u043b\u043a\u0430",
+  modalVersionV1: "V1",
+  modalVersionV2: "V2",
+  modalConnectionTitle: "\u041f\u043e\u0434\u043a\u043b\u044e\u0447\u0435\u043d\u0438\u0435",
+  modalFormatTitle: "\u0424\u043e\u0440\u043c\u0430\u0442 \u0441\u043e\u0431\u044b\u0442\u0438\u044f",
+  modalConditionsTitle: "\u0423\u0441\u043b\u043e\u0432\u0438\u044f \u0433\u043e\u043d\u043a\u0438",
+  modalClassLabel: "\u041a\u043b\u0430\u0441\u0441",
+  modalSlotsLabel: "\u0421\u043b\u043e\u0442\u044b",
+  modalSafetyLabel: "Safety Rating",
+  modalPreparationLabel: "\u041f\u043e\u0434\u0433\u043e\u0442\u043e\u0432\u043a\u0430",
+  modalQualifyingLabel: "\u041a\u0432\u0430\u043b\u0438\u0444\u0438\u043a\u0430\u0446\u0438\u044f",
+  modalRaceLabel: "\u0413\u043e\u043d\u043a\u0430",
+  modalGameTimeLabel: "\u0418\u0433\u0440\u043e\u0432\u043e\u0435 \u0432\u0440\u0435\u043c\u044f",
+  modalTimeMultiplierLabel: "\u0423\u0441\u043a\u043e\u0440\u0435\u043d\u0438\u0435 \u0432\u0440\u0435\u043c\u0435\u043d\u0438",
+  modalPitWindowLabel: "\u041e\u043a\u043d\u043e \u043f\u0438\u0442-\u0441\u0442\u043e\u043f\u0430",
+  modalRefuelAllowedLabel: "\u0417\u0430\u043f\u0440\u0430\u0432\u043a\u0430",
+  modalMandatoryRefuelLabel: "\u041e\u0431\u044f\u0437\u0430\u0442\u0435\u043b\u044c\u043d\u0430\u044f \u0437\u0430\u043f\u0440\u0430\u0432\u043a\u0430",
+  modalRefuelFixedLabel: "\u0424\u0438\u043a\u0441. \u0432\u0440\u0435\u043c\u044f \u0437\u0430\u043f\u0440\u0430\u0432\u043a\u0438",
+  modalTemperatureLabel: "\u0422\u0435\u043c\u043f\u0435\u0440\u0430\u0442\u0443\u0440\u0430",
+  modalCloudsLabel: "\u041e\u0431\u043b\u0430\u0447\u043d\u043e\u0441\u0442\u044c",
+  modalRainLabel: "\u0412\u0435\u0440\u043e\u044f\u0442\u043d\u043e\u0441\u0442\u044c \u0434\u043e\u0436\u0434\u044f",
+  modalRandomnessLabel: "\u0418\u0437\u043c\u0435\u043d\u0447\u0438\u0432\u043e\u0441\u0442\u044c",
+  modalNotSpecified: "\u041d\u0435 \u0443\u043a\u0430\u0437\u0430\u043d\u043e",
+  modalAllowed: "\u0440\u0430\u0437\u0440\u0435\u0448\u0435\u043d\u0430",
+  modalForbidden: "\u0437\u0430\u043f\u0440\u0435\u0449\u0435\u043d\u0430",
+  modalYes: "\u0434\u0430",
+  modalNo: "\u043d\u0435\u0442",
+  modalParticipantOne: "{value} \u0443\u0447\u0430\u0441\u0442\u043d\u0438\u043a",
+  modalParticipantMany: "{value} \u0443\u0447\u0430\u0441\u0442\u043d\u0438\u043a\u043e\u0432"
+});
+
 let currentLang = "en";
 Object.assign(translations.ru, {
   championshipHistoryTitle: "РСЃС‚РѕСЂРёСЏ С‡РµРјРїРёРѕРЅР°С‚РѕРІ",
@@ -527,6 +606,8 @@ let serverStatusData = null;
 let scheduleItems = [];
 let championshipItems = [];
 let recentRaceItems = [];
+let eventModalVersion = resolveEventModalVersion();
+let lastScheduleModalTrigger = null;
 
 function buildScheduleItems(schedule, announcement) {
   const items = Array.isArray(schedule?.items) ? schedule.items : [];
@@ -584,7 +665,6 @@ const HERO_TRACK_BACKGROUNDS = {
   silverstone: "./assets/tracks/silverstone.jpg",
   spa: "./assets/tracks/spa.jpg",
   nurburgring: "./assets/tracks/nurburgring.jpg",
-  nurburgring_24h: "./assets/tracks/nurburgring_24h.jpg",
   nurburgring24h: "./assets/tracks/nurburgring_24h.jpg",
   "nurburgring-24h": "./assets/tracks/nurburgring_24h.jpg",
   nordschl: "./assets/tracks/nurburgring_24h.jpg",
@@ -1314,7 +1394,7 @@ function formatScheduleDateTime(item) {
   const timezone = getLocalizedField(item, "timezone", item?.timezone || "UTC+3");
   return `${formatDate(item?.date)} · ${startTime} ${timezone}`;
 }
-function buildScheduleModalDetails(item) {
+function buildScheduleModalDetailsLegacy(item) {
   const server = announcementData?.server || {};
   const session = announcementData?.session || {};
   const rules = announcementData?.rules || {};
@@ -1364,6 +1444,362 @@ function buildScheduleModalDetails(item) {
           ? `<a class="event-details-link" href="${escapeHtml(detailsUrl)}">${escapeHtml(eventBadgeLabel(item))}</a>`
           : ""
       }
+    </div>
+  `;
+}
+function getFirstDefinedValue(source, keys) {
+  for (const key of keys) {
+    const value = source?.[key];
+    if (value !== undefined && value !== null && value !== "") return value;
+  }
+  return null;
+}
+
+function getNumericModalValue(source, keys) {
+  const value = getFirstDefinedValue(source, keys);
+  if (typeof value === "number" && Number.isFinite(value)) return value;
+  if (typeof value === "string" && value.trim() !== "") {
+    const parsed = Number(value);
+    if (Number.isFinite(parsed)) return parsed;
+  }
+  return null;
+}
+
+function getBooleanModalValue(source, keys) {
+  const value = getFirstDefinedValue(source, keys);
+  if (value === true || value === false) return value;
+  if (typeof value === "number") return value !== 0;
+  if (typeof value === "string") {
+    const normalized = value.trim().toLowerCase();
+    if (["true", "1", "yes", "allowed"].includes(normalized)) return true;
+    if (["false", "0", "no", "forbidden"].includes(normalized)) return false;
+  }
+  return null;
+}
+
+function formatModalHourOfDay(value) {
+  if (typeof value === "string" && value.trim()) {
+    const rawValue = value.trim();
+    if (/^\d{1,2}:\d{2}$/.test(rawValue)) return rawValue.padStart(5, "0");
+  }
+  const numericValue = typeof value === "number" ? value : Number(value);
+  if (!Number.isFinite(numericValue)) return t("modalNotSpecified");
+  const hours = Math.max(0, Math.min(23, Math.floor(numericValue)));
+  return `${String(hours).padStart(2, "0")}:00`;
+}
+
+function getSessionGameTimeValue(session) {
+  const directValue = getFirstDefinedValue(session, [
+    "in_game_start_time",
+    "inGameStartTime",
+    "session_start_time",
+    "sessionStartTime"
+  ]);
+  if (typeof directValue === "string" && directValue.trim()) return formatModalHourOfDay(directValue);
+  const hourValue = getNumericModalValue(session, ["hour_of_day", "hourOfDay"]);
+  return hourValue === null ? t("modalNotSpecified") : formatModalHourOfDay(hourValue);
+}
+
+function getSessionTimeMultiplierValue(session) {
+  return getNumericModalValue(session, [
+    "time_multiplier",
+    "timeMultiplier",
+    "race_time_multiplier",
+    "raceTimeMultiplier",
+    "session_time_multiplier",
+    "sessionTimeMultiplier"
+  ]);
+}
+
+function formatModalAllowedValue(value) {
+  if (value === true) return t("modalAllowed");
+  if (value === false) return t("modalForbidden");
+  return t("modalNotSpecified");
+}
+
+function formatModalYesNoValue(value) {
+  if (value === true) return t("modalYes");
+  if (value === false) return t("modalNo");
+  return t("modalNotSpecified");
+}
+
+function formatModalMinutesValue(value) {
+  return typeof value === "number" && Number.isFinite(value)
+    ? `${value} ${currentLang === "ru" ? "мин" : "min"}`
+    : t("modalNotSpecified");
+}
+
+function formatModalTimeMultiplierValue(value) {
+  return typeof value === "number" && Number.isFinite(value)
+    ? `×${value}`
+    : t("modalNotSpecified");
+}
+
+function formatModalTemperatureValue(value) {
+  return typeof value === "number" && Number.isFinite(value)
+    ? `${Math.round(value)}°C`
+    : t("modalNotSpecified");
+}
+
+function formatModalPercentValue(value) {
+  return typeof value === "number" && Number.isFinite(value)
+    ? `${Math.round(value)}%`
+    : t("modalNotSpecified");
+}
+
+function formatModalMandatoryPitstopCountValue(value) {
+  if (typeof value !== "number" || !Number.isFinite(value) || value <= 0) return t("modalNotSpecified");
+  if (currentLang !== "ru") return value === 1 ? "1 mandatory" : `${value} mandatory`;
+  const mod100 = value % 100;
+  const mod10 = value % 10;
+  const suffix = mod100 >= 11 && mod100 <= 14
+    ? "\u043e\u0431\u044f\u0437\u0430\u0442\u0435\u043b\u044c\u043d\u044b\u0445"
+    : mod10 === 1
+      ? "\u043e\u0431\u044f\u0437\u0430\u0442\u0435\u043b\u044c\u043d\u044b\u0439"
+      : "\u043e\u0431\u044f\u0437\u0430\u0442\u0435\u043b\u044c\u043d\u044b\u0445";
+  return `${value} ${suffix}`;
+}
+
+function formatModalTyreSetCountValue(value) {
+  if (typeof value !== "number" || !Number.isFinite(value)) return t("modalNotSpecified");
+  if (currentLang !== "ru") return value === 1 ? "1 set" : `${value} sets`;
+  const mod100 = Math.abs(value) % 100;
+  const mod10 = mod100 % 10;
+  const suffix = mod100 >= 11 && mod100 <= 14
+    ? "\u043a\u043e\u043c\u043f\u043b\u0435\u043a\u0442\u043e\u0432"
+    : mod10 === 1
+      ? "\u043a\u043e\u043c\u043f\u043b\u0435\u043a\u0442"
+      : mod10 >= 2 && mod10 <= 4
+        ? "\u043a\u043e\u043c\u043f\u043b\u0435\u043a\u0442\u0430"
+        : "\u043a\u043e\u043c\u043f\u043b\u0435\u043a\u0442\u043e\u0432";
+  return `${value} ${suffix}`;
+}
+
+function getModalParticipantCountLabel(value) {
+  if (typeof value !== "number" || value <= 0) return t("voteCountZero");
+  return tf(value === 1 ? "modalParticipantOne" : "modalParticipantMany", { value });
+}
+
+function getScheduleModalViewModel(item) {
+  const server = announcementData?.server || {};
+  const session = announcementData?.session || {};
+  const rules = announcementData?.rules || {};
+  const weather = item?.weather || announcementData?.weather || {};
+  const voteState = getVoteState(item);
+  const startTime = getLocalizedField(item, "start_time_local", item?.start_time_local || "--");
+  const timezone = getLocalizedField(item, "timezone", item?.timezone || "UTC+3");
+  return {
+    item,
+    trackName: getLocalizedField(item, "track_name", item?.track_name || "--"),
+    startDateLabel: formatDate(item?.date),
+    startTimeLabel: startTime,
+    timezoneLabel: timezone,
+    serverName: server.name || server.full_name || t("unknownValue"),
+    password: server.password || t("passwordNone"),
+    carClass: server.car_group || t("modalNotSpecified"),
+    slotCount: getNumericModalValue(server, ["max_car_slots", "maxCarSlots"]),
+    safetyRating: getNumericModalValue(server, ["safety_rating_requirement", "safetyRatingRequirement"]),
+    preparationMinutes: minutesFromSeconds(session.pre_race_waiting_time_seconds),
+    qualifyingMinutes: getNumericModalValue(session, ["qualifying_duration_minutes", "qualifyingDurationMinutes"]),
+    raceMinutes: getNumericModalValue(session, ["race_duration_minutes", "raceDurationMinutes"]),
+    inGameTime: getSessionGameTimeValue(session),
+    timeMultiplier: getSessionTimeMultiplierValue(session),
+    mandatoryPitstopCount: getNumericModalValue(rules, ["mandatory_pitstop_count", "mandatoryPitstopCount"]),
+    pitWindowMinutes: getNumericModalValue(rules, ["pit_window_length_minutes", "pitWindowLengthMinutes"]),
+    refuellingAllowed: getBooleanModalValue(rules, ["refuelling_allowed_in_race", "refuellingAllowedInRace"]),
+    mandatoryRefuelling: getBooleanModalValue(rules, ["mandatory_pitstop_refuelling_required", "mandatoryPitstopRefuellingRequired"]),
+    fixedRefuellingTime: getBooleanModalValue(rules, ["refuelling_time_fixed", "refuellingTimeFixed"]),
+    tyreSetCount: getNumericModalValue(rules, ["tyre_set_count", "tyreSetCount"]),
+    temperatureC: getNumericModalValue(weather, ["ambient_temp_c", "ambientTempC"]),
+    cloudLevelPercent: percentValue(weather.cloud_level),
+    rainProbabilityPercent: percentValue(weather.rain_level),
+    weatherRandomness: getNumericModalValue(weather, ["weather_randomness", "weatherRandomness"]),
+    voteState,
+    detailsUrl: item?.details_url ? String(item.details_url) : ""
+  };
+}
+
+function getEventDetailsV2IconSvg(name) {
+  const icons = {
+    calendar: `<svg viewBox="0 0 24 24" focusable="false" aria-hidden="true"><path d="M8 3v3M16 3v3M4 9h16M5.75 5.75h12.5a2 2 0 0 1 2 2v10.5a2 2 0 0 1-2 2H5.75a2 2 0 0 1-2-2V7.75a2 2 0 0 1 2-2Z" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"></path></svg>`,
+    close: `<svg viewBox="0 0 24 24" focusable="false" aria-hidden="true"><path d="m6 6 12 12M18 6 6 18" fill="none" stroke="currentColor" stroke-width="2.1" stroke-linecap="round"></path></svg>`,
+    copy: `<svg viewBox="0 0 24 24" focusable="false" aria-hidden="true"><path d="M9 9h11v11H9z" fill="none" stroke="currentColor" stroke-width="1.8"></path><path d="M4 4h11v11H4z" fill="none" stroke="currentColor" stroke-width="1.8"></path></svg>`,
+    check: `<svg viewBox="0 0 24 24" focusable="false" aria-hidden="true"><path d="M5 12.5 9.2 16.7 19 7.5" fill="none" stroke="currentColor" stroke-width="2.1" stroke-linecap="round" stroke-linejoin="round"></path></svg>`,
+    server: `<svg viewBox="0 0 24 24" focusable="false" aria-hidden="true"><path d="M4.75 6.5h14.5M4.75 12h14.5M4.75 17.5h14.5M6.75 4.75h10.5a2 2 0 0 1 2 2v10.5a2 2 0 0 1-2 2H6.75a2 2 0 0 1-2-2V6.75a2 2 0 0 1 2-2Z" fill="none" stroke="currentColor" stroke-width="1.85" stroke-linecap="round" stroke-linejoin="round"></path></svg>`,
+    flag: `<svg viewBox="0 0 24 24" focusable="false" aria-hidden="true"><path d="m5 4 11 2.5-4 4 4 3.5-4 4L16 20 5 17.5V4Z" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"></path></svg>`,
+    wrench: `<svg viewBox="0 0 24 24" focusable="false" aria-hidden="true"><path d="m14.4 6.6 3-3a2.12 2.12 0 0 1 3 3l-3 3M13 8l3 3-8.75 8.75H4.25v-3L13 8Z" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"></path></svg>`,
+    timer: `<svg viewBox="0 0 24 24" focusable="false" aria-hidden="true"><circle cx="12" cy="13" r="7.25" fill="none" stroke="currentColor" stroke-width="1.9"></circle><path d="M12 13V9.25M9.25 2.75h5.5M14.75 5.5l1.5-1.5" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"></path></svg>`,
+    stopwatch: `<svg viewBox="0 0 24 24" focusable="false" aria-hidden="true"><circle cx="12" cy="13" r="7.25" fill="none" stroke="currentColor" stroke-width="1.9"></circle><path d="M9.25 2.75h5.5M12 13l3.25-2.25M14.75 5.5l1.5-1.5" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"></path></svg>`,
+    play: `<svg viewBox="0 0 24 24" focusable="false" aria-hidden="true"><circle cx="12" cy="12" r="8" fill="none" stroke="currentColor" stroke-width="1.9"></circle><path d="m10.25 8.75 5 3.25-5 3.25V8.75Z" fill="currentColor"></path></svg>`,
+    sun: `<svg viewBox="0 0 24 24" focusable="false" aria-hidden="true"><circle cx="12" cy="12" r="4.25" fill="none" stroke="currentColor" stroke-width="1.9"></circle><path d="M12 2.75v2.5M12 18.75v2.5M21.25 12h-2.5M5.25 12h-2.5M18.54 5.46l-1.77 1.77M7.23 16.77l-1.77 1.77M18.54 18.54l-1.77-1.77M7.23 7.23 5.46 5.46" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round"></path></svg>`,
+    fast: `<svg viewBox="0 0 24 24" focusable="false" aria-hidden="true"><path d="m4.5 6.75 6.5 5.25-6.5 5.25V6.75Zm8.5 0 6.5 5.25-6.5 5.25V6.75Z" fill="currentColor"></path></svg>`,
+    fuel: `<svg viewBox="0 0 24 24" focusable="false" aria-hidden="true"><path d="M6.25 5.25h7.5a1.5 1.5 0 0 1 1.5 1.5v10.5a1.5 1.5 0 0 1-1.5 1.5h-7.5a1.5 1.5 0 0 1-1.5-1.5V6.75a1.5 1.5 0 0 1 1.5-1.5Zm9-1.5 3 3v7.25a1.75 1.75 0 0 1-3.5 0V12" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"></path></svg>`,
+    drop: `<svg viewBox="0 0 24 24" focusable="false" aria-hidden="true"><path d="M12 4.25c3.4 4.16 5.1 6.95 5.1 9.1A5.1 5.1 0 1 1 6.9 13.35c0-2.15 1.7-4.94 5.1-9.1Z" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"></path></svg>`,
+    tyre: `<svg viewBox="0 0 24 24" focusable="false" aria-hidden="true"><circle cx="12" cy="12" r="7.25" fill="none" stroke="currentColor" stroke-width="1.9"></circle><circle cx="12" cy="12" r="2.5" fill="none" stroke="currentColor" stroke-width="1.9"></circle></svg>`,
+    temp: `<svg viewBox="0 0 24 24" focusable="false" aria-hidden="true"><path d="M10.25 6a2.25 2.25 0 1 1 4.5 0v7.2a4 4 0 1 1-4.5 0V6Z" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"></path><path d="M12.5 10v5" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round"></path></svg>`,
+    cloud: `<svg viewBox="0 0 24 24" focusable="false" aria-hidden="true"><path d="M7.25 18.25h9a4 4 0 0 0 .42-7.98A5.25 5.25 0 0 0 6.4 9.35 3.75 3.75 0 0 0 7.25 18.25Z" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"></path></svg>`,
+    rain: `<svg viewBox="0 0 24 24" focusable="false" aria-hidden="true"><path d="M7.25 15.5h9a4 4 0 0 0 .42-7.98A5.25 5.25 0 0 0 6.4 6.6a3.75 3.75 0 0 0 .85 8.9Z" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"></path><path d="M9 17.75 8.25 20M13 17.75 12.25 20M17 17.75 16.25 20" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round"></path></svg>`,
+    wind: `<svg viewBox="0 0 24 24" focusable="false" aria-hidden="true"><path d="M4 9.25h9.5a2.75 2.75 0 1 0-2.7-3.25M4 14h13.5a2.25 2.25 0 1 1-2.2 2.75M4 18.25h7.5a2.25 2.25 0 1 0-2.2 2.75" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"></path></svg>`,
+    users: `<svg viewBox="0 0 24 24" focusable="false" aria-hidden="true"><path d="M8.5 11.25a2.75 2.75 0 1 0 0-5.5 2.75 2.75 0 0 0 0 5.5Zm7 2a2.5 2.5 0 1 0 0-5 2.5 2.5 0 0 0 0 5ZM3.75 18c.5-2.55 2.66-4.25 5.25-4.25S13.75 15.45 14.25 18M13.25 18c.38-1.78 1.88-3 3.75-3s3.37 1.22 3.75 3" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"></path></svg>`
+  };
+  return icons[name] || icons.server;
+}
+
+function buildEventDetailsV2Icon(name, className = "") {
+  return `<span class="event-details-v2-icon${className ? ` ${className}` : ""}" aria-hidden="true">${getEventDetailsV2IconSvg(name)}</span>`;
+}
+
+function buildEventDetailsV2CopyButton(targetId) {
+  return `
+    <button
+      class="hero-copy-btn event-details-v2-copy-button"
+      type="button"
+      data-copy-target="${escapeHtml(targetId)}"
+      data-copy-label-key="heroPasswordLabel"
+    >
+      <span class="hero-copy-icon hero-copy-icon-copy" aria-hidden="true">${getEventDetailsV2IconSvg("copy")}</span>
+      <span class="hero-copy-icon hero-copy-icon-done" aria-hidden="true">${getEventDetailsV2IconSvg("check")}</span>
+    </button>
+  `;
+}
+
+function buildEventDetailsV2Row(label, value, iconName, options = {}) {
+  const rowClass = options.rowClass ? ` ${options.rowClass}` : "";
+  const labelClass = options.accent ? " event-details-v2-info-label-accent" : "";
+  const valueClass = options.accent ? " event-details-v2-info-value-accent" : "";
+  const iconClass = options.accent ? " event-details-v2-info-icon-accent" : "";
+  return `
+    <div class="event-details-v2-info-row${rowClass}">
+      <div class="event-details-v2-info-label${labelClass}">
+        ${buildEventDetailsV2Icon(iconName, `event-details-v2-info-icon${iconClass}`)}
+        <span>${escapeHtml(label)}</span>
+      </div>
+      <div class="event-details-v2-info-value${valueClass}">${value}</div>
+    </div>
+  `;
+}
+
+function buildEventDetailsV2Card(title, iconName, bodyClassName, rowsHtml) {
+  return `
+    <section class="event-details-v2-card ${escapeHtml(bodyClassName)}">
+      <div class="event-details-v2-card-header">
+        ${buildEventDetailsV2Icon(iconName, "event-details-v2-card-icon")}
+        <h4 class="event-details-v2-card-title">${escapeHtml(title)}</h4>
+      </div>
+      <div class="event-details-v2-card-body">
+        ${rowsHtml}
+      </div>
+    </section>
+  `;
+}
+
+function buildEventDetailsV2Footer(viewModel) {
+  const detailsLinkHtml = viewModel.detailsUrl
+    ? `<a class="event-details-v2-details-link" href="${escapeHtml(viewModel.detailsUrl)}">${escapeHtml(currentLang === "ru" ? "\u041f\u043e\u0434\u0440\u043e\u0431\u043d\u0435\u0435" : "Details")}</a>`
+    : "";
+  if (isVotingDisabledForItem(viewModel.item)) {
+    return `
+      <footer class="event-details-v2-footer event-details-v2-footer-locked">
+        <div class="event-details-v2-voting-notice">${escapeHtml(t("votingDisabledChampionship"))}</div>
+        ${detailsLinkHtml}
+      </footer>
+    `;
+  }
+  const voteState = viewModel.voteState;
+  const voteLabel = voteState.already_voted ? t("voteButtonDone") : t("voteButton");
+  return `
+    <footer class="event-details-v2-footer">
+      <button
+        class="event-details-v2-participation-button${voteState.already_voted ? " is-voted" : ""}"
+        type="button"
+        data-vote-event-id="${escapeHtml(voteState.eventId)}"
+        ${(!votesApiBase || voteState.already_voted || voteState.pending) ? "disabled" : ""}
+      >
+        ${buildEventDetailsV2Icon("check", "event-details-v2-participation-icon")}
+        <span>${escapeHtml(voteLabel)}</span>
+      </button>
+      ${
+        voteState.already_voted
+          ? `
+            <button
+              class="event-details-v2-cancel-button"
+              type="button"
+              data-unvote-event-id="${escapeHtml(voteState.eventId)}"
+              aria-label="${escapeHtml(t("unvoteButton"))}"
+              ${voteState.pending ? "disabled" : ""}
+            >
+              ${buildEventDetailsV2Icon("close", "event-details-v2-cancel-icon")}
+            </button>
+          `
+          : `<div class="event-details-v2-cancel-placeholder" aria-hidden="true"></div>`
+      }
+      <div class="event-details-v2-participant-count">
+        ${buildEventDetailsV2Icon("users", "event-details-v2-participant-icon")}
+        <span>${escapeHtml(getModalParticipantCountLabel(voteState.votes))}</span>
+      </div>
+      <div class="event-details-v2-voting-notice">${buildCompactVoteLegalNoteHtml()}</div>
+      ${detailsLinkHtml}
+    </footer>
+  `;
+}
+
+function buildScheduleModalDetailsV2(item) {
+  const viewModel = getScheduleModalViewModel(item);
+  const passwordId = `schedule-modal-password-v2-${escapeHtml(String(item?.event_id || item?.date || "slot"))}`;
+  const connectionRows = [
+    buildEventDetailsV2Row(t("heroServerLabel"), escapeHtml(viewModel.serverName), "server"),
+    buildEventDetailsV2Row(
+      t("heroPasswordLabel"),
+      `<div class="event-details-v2-password-row"><span class="event-details-v2-password" id="${passwordId}">${escapeHtml(viewModel.password)}</span>${buildEventDetailsV2CopyButton(passwordId)}</div>`,
+      "copy"
+    ),
+    buildEventDetailsV2Row(t("modalClassLabel"), `<span class="event-details-v2-class-badge">${escapeHtml(viewModel.carClass)}</span>`, "flag"),
+    buildEventDetailsV2Row(t("modalSlotsLabel"), escapeHtml(viewModel.slotCount ?? t("modalNotSpecified")), "users"),
+    buildEventDetailsV2Row(t("modalSafetyLabel"), escapeHtml(viewModel.safetyRating ?? t("modalNotSpecified")), "flag")
+  ].join("");
+  const formatRows = [
+    buildEventDetailsV2Row(t("modalPreparationLabel"), escapeHtml(formatModalMinutesValue(viewModel.preparationMinutes)), "timer"),
+    buildEventDetailsV2Row(t("modalQualifyingLabel"), escapeHtml(formatModalMinutesValue(viewModel.qualifyingMinutes)), "stopwatch"),
+    buildEventDetailsV2Row(t("modalRaceLabel"), escapeHtml(formatModalMinutesValue(viewModel.raceMinutes)), "play"),
+    buildEventDetailsV2Row(t("modalGameTimeLabel"), escapeHtml(viewModel.inGameTime), "sun"),
+    buildEventDetailsV2Row(t("modalTimeMultiplierLabel"), escapeHtml(formatModalTimeMultiplierValue(viewModel.timeMultiplier)), "fast")
+  ].join("");
+  const conditionsRows = [
+    buildEventDetailsV2Row(t("heroPitstopLabel"), escapeHtml(formatModalMandatoryPitstopCountValue(viewModel.mandatoryPitstopCount)), "wrench", { accent: true }),
+    buildEventDetailsV2Row(t("modalPitWindowLabel"), escapeHtml(formatModalMinutesValue(viewModel.pitWindowMinutes)), "timer", { accent: true }),
+    buildEventDetailsV2Row(t("modalRefuelAllowedLabel"), escapeHtml(formatModalAllowedValue(viewModel.refuellingAllowed)), "fuel"),
+    buildEventDetailsV2Row(t("modalMandatoryRefuelLabel"), escapeHtml(formatModalYesNoValue(viewModel.mandatoryRefuelling)), "drop"),
+    buildEventDetailsV2Row(t("modalRefuelFixedLabel"), escapeHtml(formatModalYesNoValue(viewModel.fixedRefuellingTime)), "timer"),
+    buildEventDetailsV2Row(t("heroTyresLabel"), escapeHtml(formatModalTyreSetCountValue(viewModel.tyreSetCount)), "tyre", { rowClass: " event-details-v2-divider-row" }),
+    buildEventDetailsV2Row(t("modalTemperatureLabel"), escapeHtml(formatModalTemperatureValue(viewModel.temperatureC)), "temp"),
+    buildEventDetailsV2Row(t("modalCloudsLabel"), escapeHtml(formatModalPercentValue(viewModel.cloudLevelPercent)), "cloud"),
+    buildEventDetailsV2Row(t("modalRainLabel"), escapeHtml(formatModalPercentValue(viewModel.rainProbabilityPercent)), "rain"),
+    buildEventDetailsV2Row(t("modalRandomnessLabel"), escapeHtml(viewModel.weatherRandomness ?? t("modalNotSpecified")), "wind")
+  ].join("");
+  return `
+    <div class="event-details-v2" data-testid="event-details-modal-v2">
+      <div class="event-details-v2-background"></div>
+      <div class="event-details-v2-shade"></div>
+      <div class="event-details-v2-inner">
+        <header class="event-details-v2-header">
+          <div class="event-details-v2-title-block">
+            <div class="event-details-v2-eyebrow">${escapeHtml(t("scheduleModalEyebrow"))}</div>
+            <h2 class="event-details-v2-title">${escapeHtml(viewModel.trackName)}</h2>
+          </div>
+          <div class="event-details-v2-date-time">
+            ${buildEventDetailsV2Icon("calendar", "event-details-v2-date-time-icon")}
+            <span>${escapeHtml(viewModel.startDateLabel)}</span>
+            <span aria-hidden="true">•</span>
+            <span>${escapeHtml(`${viewModel.startTimeLabel} ${viewModel.timezoneLabel}`.trim())}</span>
+          </div>
+        </header>
+        <div class="event-details-v2-grid">
+          ${buildEventDetailsV2Card(t("modalConnectionTitle"), "server", "event-details-v2-card-connection", connectionRows)}
+          ${buildEventDetailsV2Card(t("modalFormatTitle"), "flag", "event-details-v2-card-format", formatRows)}
+          ${buildEventDetailsV2Card(t("modalConditionsTitle"), "wrench", "event-details-v2-card-conditions", conditionsRows)}
+        </div>
+        ${buildEventDetailsV2Footer(viewModel)}
+      </div>
     </div>
   `;
 }
@@ -1733,6 +2169,31 @@ function applyTranslations() {
   renderNewsBell();
   renderNewsNotificationsModal();
   document.getElementById("top-nav-more")?.rebuildOverflowMenu?.();
+  renderEventModalVersionToggle();
+}
+
+function renderEventModalVersionToggle() {
+  document.querySelectorAll("[data-modal-version]").forEach(button => {
+    const isActive = button.dataset.modalVersion === eventModalVersion;
+    button.classList.toggle("is-active", isActive);
+    button.setAttribute("aria-pressed", isActive ? "true" : "false");
+  });
+}
+
+function bindEventModalVersionToggle() {
+  const root = document.getElementById("modal-version-switch");
+  if (!root || root.dataset.bound === "true") return;
+  root.dataset.bound = "true";
+  root.querySelectorAll("[data-modal-version]").forEach(button => {
+    button.addEventListener("click", () => {
+      const nextVersion = button.dataset.modalVersion === "v1" ? "v1" : "v2";
+      if (nextVersion === eventModalVersion) return;
+      eventModalVersion = nextVersion;
+      localStorage.setItem(EVENT_MODAL_VERSION_STORAGE_KEY, eventModalVersion);
+      renderEventModalVersionToggle();
+      if (selectedScheduleItem) renderScheduleModal();
+    });
+  });
 }
 
 function renderAnnouncement(data) {
@@ -1912,7 +2373,7 @@ function renderScheduleTable(rows) {
   }).join("");
   container.innerHTML = `<div class="schedule-cards-grid">${cardsHtml}</div>`;
   container.querySelectorAll(".schedule-event-card[data-schedule-index]").forEach(card => {
-    const openCard = () => openScheduleModal(scheduleItems[Number(card.dataset.scheduleIndex)] || null);
+    const openCard = () => openScheduleModal(scheduleItems[Number(card.dataset.scheduleIndex)] || null, card);
     card.addEventListener("click", event => { if (!event.target.closest("a")) openCard(); });
     card.addEventListener("keydown", event => { if (event.key === "Enter" || event.key === " ") { event.preventDefault(); openCard(); } });
   });
@@ -1973,7 +2434,7 @@ function renderCalendar(rows) {
   });
   grid.innerHTML = `${weekdayHeaders}${leadingBlanks.join("")}${dayCells.join("")}`;
   grid.querySelectorAll("[data-calendar-index]").forEach(button => {
-    button.addEventListener("click", () => openScheduleModal(scheduleItems[Number(button.dataset.calendarIndex)] || null));
+    button.addEventListener("click", () => openScheduleModal(scheduleItems[Number(button.dataset.calendarIndex)] || null, button));
   });
 }
 function renderRecentRaces(rows) {
@@ -2100,18 +2561,37 @@ function renderRaceResultsModal() {
   tableEl.innerHTML = `<table><thead><tr>${headers}</tr></thead><tbody>${rows}</tbody></table>`;
 }
 function renderScheduleModal() {
+  const modal = document.getElementById("schedule-modal");
+  const modalCard = document.querySelector("#schedule-modal .modal-card-slot");
+  const headerEl = document.querySelector("#schedule-modal .modal-header");
   const titleEl = document.getElementById("schedule-modal-title");
   const subtitleEl = document.getElementById("schedule-modal-subtitle");
   const detailsEl = document.getElementById("schedule-modal-details");
-  if (!titleEl || !subtitleEl || !detailsEl) return;
+  if (!modal || !modalCard || !headerEl || !titleEl || !subtitleEl || !detailsEl) return;
   if (!selectedScheduleItem) {
     applyScheduleModalTrackBackground("");
+    modal.dataset.version = eventModalVersion;
+    modalCard.classList.remove("is-event-details-v2");
+    headerEl.classList.remove("event-details-v2-legacy-header");
     titleEl.textContent = "-";
     subtitleEl.textContent = "-";
     detailsEl.innerHTML = `<div class="empty">${escapeHtml(t("scheduleEmpty"))}</div>`;
     return;
   }
   applyScheduleModalTrackBackground(selectedScheduleItem.track_code);
+  modal.dataset.version = eventModalVersion;
+  if (useEventModalV2()) {
+    modalCard.classList.add("is-event-details-v2");
+    headerEl.classList.add("event-details-v2-legacy-header");
+    titleEl.textContent = getLocalizedField(selectedScheduleItem, "track_name", selectedScheduleItem.track_name || "--");
+    subtitleEl.textContent = `${formatDate(selectedScheduleItem?.date)} • ${`${getLocalizedField(selectedScheduleItem, "start_time_local", selectedScheduleItem?.start_time_local || "--")} ${getLocalizedField(selectedScheduleItem, "timezone", selectedScheduleItem?.timezone || "UTC+3")}`.trim()}`;
+    detailsEl.innerHTML = buildScheduleModalDetailsV2(selectedScheduleItem);
+    bindVoteControls(detailsEl);
+    bindHeroCopyButtons(detailsEl);
+    return;
+  }
+  modalCard.classList.remove("is-event-details-v2");
+  headerEl.classList.remove("event-details-v2-legacy-header");
   titleEl.textContent = getLocalizedField(selectedScheduleItem, "track_name", selectedScheduleItem.track_name || "--");
   const server = announcementData?.server || {};
   const startTime = getLocalizedField(selectedScheduleItem, "start_time_local", selectedScheduleItem?.start_time_local || "--");
@@ -2133,8 +2613,9 @@ function renderScheduleModal() {
       </span>
     </span>
   `;
-  detailsEl.innerHTML = buildScheduleModalDetails(selectedScheduleItem);
+  detailsEl.innerHTML = buildScheduleModalDetailsLegacy(selectedScheduleItem);
   bindVoteControls(detailsEl);
+  bindHeroCopyButtons(detailsEl);
 }
 function renderWeatherModal() {
   const detailsEl = document.getElementById("weather-modal-details");
@@ -2156,6 +2637,11 @@ function renderWeatherModal() {
     </article>
   `).join("");
 }
+function ensureModalMountedInBody(id) {
+  const modal = document.getElementById(id);
+  if (!modal || modal.parentElement === document.body) return;
+  document.body.appendChild(modal);
+}
 function openModal() {
   const modal = document.getElementById("race-results-modal");
   if (!modal) return;
@@ -2164,9 +2650,10 @@ function openModal() {
   document.body.classList.add("modal-open");
   renderRaceResultsModal();
 }
-function openScheduleModal(item) {
+function openScheduleModal(item, trigger = document.activeElement) {
   const modal = document.getElementById("schedule-modal");
   if (!modal || !item) return;
+  lastScheduleModalTrigger = trigger instanceof HTMLElement ? trigger : document.activeElement;
   selectedScheduleItem = item;
   modal.classList.add("is-open");
   modal.setAttribute("aria-hidden", "false");
@@ -2198,6 +2685,8 @@ function closeScheduleModal() {
   document.body.classList.remove("modal-open");
   selectedScheduleItem = null;
   applyScheduleModalTrackBackground("");
+  if (lastScheduleModalTrigger instanceof HTMLElement) lastScheduleModalTrigger.focus();
+  lastScheduleModalTrigger = null;
 }
 function closeWeatherModal() {
   const modal = document.getElementById("weather-modal");
@@ -2506,6 +2995,9 @@ function bindTopNavGroups() {
 }
 
 async function init() {
+  ensureModalMountedInBody("schedule-modal");
+  ensureModalMountedInBody("race-results-modal");
+  ensureModalMountedInBody("weather-modal");
   window.addEventListener("storage", event => {
     if (event.key === VOTE_STATE_STORAGE_KEY) {
       syncVoteStateFromStorage();
@@ -2517,6 +3009,7 @@ async function init() {
   });
   currentLang = resolveInitialLanguage();
   bindLanguageButtons();
+  bindEventModalVersionToggle();
   bindTopNavGroups();
   bindTopNavMoreMenu();
   ensureNewsNotificationsUi();

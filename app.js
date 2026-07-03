@@ -55,7 +55,6 @@ const TWITCH_WIDGET_CHECK_INTERVAL_MS = 120000;
 const TOP_GUIDE_STORAGE_KEY = "asgTopGuideSeen";
 const TOP_GUIDE_MEDIA_QUERY = "(min-width: 1280px)";
 const BG_VIDEO_VOLUME_STORAGE_KEY = "asgBgVideoVolume";
-const BG_VIDEO_DISABLED_STORAGE_KEY = "asgBgVideoDisabled";
 const SERVER_CARD_BACKGROUNDS = {
   main: `${SITE_BASE_PATH}assets/main.jpg`,
   sunset: `${SITE_BASE_PATH}assets/sunset.jpg`,
@@ -95,9 +94,6 @@ const VOTER_ID_STORAGE_TTL_MS = 365 * 24 * 60 * 60 * 1000;
 const HOURLY_VOTE_STATE_STORAGE_KEY = "hourlyVoteStateByEventId";
 const HOURLY_VOTE_STATE_STORAGE_TTL_MS = 30 * 24 * 60 * 60 * 1000;
 const NEWS_READ_STORAGE_KEY = "asgReadNewsIds.v2";
-const NEWS_SEEN_STORAGE_KEY = "asgSeenNewsNotifications.v1";
-const ENABLE_HOURLY_HOME_WIDGET = true;
-const ENABLE_BACKGROUND_VIDEO = true;
 
 function getLegalUrls() {
   const fallbackBase =
@@ -281,7 +277,7 @@ let racesArchiveMeta = null;
 const IS_TOP_HOME_PAGE = !(IS_RACES_PAGE || IS_DRIVER_PAGE || IS_CARS_PAGE || IS_FUN_STATS_PAGE || IS_COMMUNITY_PAGE || IS_NEWS_PAGE || IS_BANS_PAGE);
 const topLoadState = {
   home: IS_TOP_HOME_PAGE,
-  hourly: IS_TOP_HOME_PAGE && ENABLE_HOURLY_HOME_WIDGET,
+  hourly: IS_TOP_HOME_PAGE,
   races: IS_RACES_PAGE,
   driver: IS_DRIVER_PAGE,
   cars: IS_CARS_PAGE,
@@ -319,27 +315,6 @@ function renderDeferredHomeTableLoading(tableId, paginationWrapId, labelKey) {
 }
 
 function applyInitialTopLoadingState() {
-  const hourlyStackEl = document.getElementById("hero-hourly-stack");
-  if (hourlyStackEl) {
-    hourlyStackEl.hidden = !ENABLE_HOURLY_HOME_WIDGET;
-    hourlyStackEl.style.display = ENABLE_HOURLY_HOME_WIDGET ? "" : "none";
-  }
-  const bgVideoEl = document.querySelector(".site-video-bg");
-  const bgOverlayEl = document.querySelector(".site-video-overlay");
-  const bgToggleEl = document.getElementById("bg-video-sound-toggle");
-  if (bgVideoEl) {
-    bgVideoEl.hidden = !ENABLE_BACKGROUND_VIDEO;
-    bgVideoEl.style.display = ENABLE_BACKGROUND_VIDEO ? "" : "none";
-  }
-  if (bgOverlayEl) {
-    bgOverlayEl.hidden = !ENABLE_BACKGROUND_VIDEO;
-    bgOverlayEl.style.display = ENABLE_BACKGROUND_VIDEO ? "" : "none";
-  }
-  if (bgToggleEl) {
-    bgToggleEl.hidden = !ENABLE_BACKGROUND_VIDEO;
-    bgToggleEl.style.display = ENABLE_BACKGROUND_VIDEO ? "" : "none";
-  }
-
   if (IS_DRIVER_PAGE) {
     const statsEl = document.getElementById("driver-stat-cards");
     if (statsEl) statsEl.innerHTML = renderLoadingMarkup(t("driverLoading"));
@@ -473,13 +448,11 @@ let hourlyVoteFailed = false;
 let raceActivityInsights = null;
 let selectedRace = null;
 let driverIndexData = [];
-let driverIndexLoadPromise = null;
 let driverProfileData = null;
 let driverPreviewState = null;
 const bestLapTrackSelection = new Map();
 const averagePaceTrackSelection = new Map();
 let eloModalState = null;
-let eloHistoryPopoverState = null;
 let safetyModalState = null;
 let safetyModalRequestId = 0;
 let srBreakdownPopoverState = null;
@@ -528,8 +501,7 @@ let topGuideState = {
 let backgroundVideoSoundState = {
   available: false,
   enabled: false,
-  volume: 0.5,
-  disabled: false
+  volume: 0.5
 };
 let funStatsPeriod = "week";
 let serverStatusData = null;
@@ -568,22 +540,6 @@ function saveBackgroundVideoVolume(volume) {
     localStorage.setItem(BG_VIDEO_VOLUME_STORAGE_KEY, String(Math.round(clampBackgroundVideoVolume(volume) * 100)));
   } catch (error) {
     // Volume persistence is nice to have; playback should keep working if storage is blocked.
-  }
-}
-
-function loadBackgroundVideoDisabledPreference() {
-  try {
-    return localStorage.getItem(BG_VIDEO_DISABLED_STORAGE_KEY) === "1";
-  } catch (error) {
-    return false;
-  }
-}
-
-function saveBackgroundVideoDisabledPreference(disabled) {
-  try {
-    localStorage.setItem(BG_VIDEO_DISABLED_STORAGE_KEY, disabled ? "1" : "0");
-  } catch (error) {
-    // Preference persistence is nice to have; video control should still work if storage is blocked.
   }
 }
 
@@ -658,7 +614,6 @@ const translations = {
     hourlyVoteBtn: "I want to race!",
     hourlyVoteDone: "You're in",
     hourlyVoteSending: "Saving...",
-    hourlyUnvoteBtn: "Remove vote",
     hourlyVoteFailed: "Try again",
     hourlyNoEvent: "No scheduled event yet",
     hourlyVotesZero: "No registrations yet",
@@ -857,19 +812,10 @@ const translations = {
     bgVideoSoundToggleNote: "Dim the site and unmute the clip",
     bgVideoSoundToggleTitleActive: "Back to site",
     bgVideoSoundToggleNoteActive: "Mute the clip and restore the page",
-    bgVideoSoundToggleTitleDisabled: "Video is off",
-    bgVideoSoundToggleNoteDisabled: "Background playback is disabled for this browser",
     bgVideoSoundToggleAria: "Play the background video with sound and dim the site",
     bgVideoSoundToggleAriaActive: "Mute the background video and return the site to normal mode",
     bgVideoVolumeLabel: "Volume",
     bgVideoVolumeAria: "Background video volume",
-    bgVideoPlaybackToggleLabel: "Background video",
-    bgVideoPlaybackToggleOn: "On",
-    bgVideoPlaybackToggleOff: "Off",
-    bgVideoPlaybackToggleAriaOn: "Disable background video playback on this device",
-    bgVideoPlaybackToggleAriaOff: "Enable background video playback on this device",
-    bgVideoSettingsAria: "Open background video settings",
-    bgVideoSettingsAriaExpanded: "Close background video settings",
     bestLapsTitle: "Best Laps",
     bestLapsSubtitle: "Row click opens quick view. Name opens full profile.",
     worstSafetyTitle: "Worst Safety",
@@ -899,18 +845,8 @@ const translations = {
       "The <strong>Best Laps</strong> table contains the fastest lap times recorded both in qualifying and in race sessions. This makes it easy to compare the outright pace of the drivers.",
     joinTitle: "Join the server",
     joinP1: "To participate in races and appear in the leaderboard, join the server:",
-    joinP1b: "Open the ACC server browser and search for these server names:",
-    serverName1: "ASG Racing Live Leaderboard",
-    serverName2: "ASG Racing Monza - SA Gainer",
-    serverName3: "ASG Racing Monza - SA Gainer 2",
-    serverName4: "ASG Racing Nordschleife Practice",
-    serverName5: "ASG Racing Nurburgring - Live Leaderboard",
-    serverName6: "ASG Racing Nordschleife - Live Leaderboard",
-    serverName7: "ASG Racing Spa - SA Gainer 3",
-    serverName8: "ASG Racing Spa - Live Leaderboard",
+    serverName: "ASG Racing ACC Public Server",
     joinP2: "Community news and communication are available in our channels:",
-    joinCommunityTelegram: "Telegram: race announcements, reminders, voting, results and quick updates.",
-    joinCommunityDiscord: "Discord: voice chat, finding rivals, setup talk and race communication.",
     communityTelegramTitle: "Telegram",
     communityTelegramText: "The fastest way to catch race announcements, reminders, voting, results and all the live ASG Racing movement.",
     communityTelegramCta: "Join and stay in the loop",
@@ -1216,7 +1152,6 @@ const translations = {
     hourlyVoteBtn: "Я хочу поехать!",
     hourlyVoteDone: "Ты в списке",
     hourlyVoteSending: "Сохраняем...",
-    hourlyUnvoteBtn: "Отменить голос",
     hourlyVoteFailed: "Повтори позже",
     hourlyNoEvent: "Пока нет запланированного события",
     hourlyVotesZero: "Нет регистраций",
@@ -1488,19 +1423,10 @@ const translations = {
     bgVideoSoundToggleNote: "Сделать сайт почти прозрачным и включить звук",
     bgVideoSoundToggleTitleActive: "Вернуть сайт",
     bgVideoSoundToggleNoteActive: "Выключить звук и вернуть обычный режим",
-    bgVideoSoundToggleTitleDisabled: "Видео отключено",
-    bgVideoSoundToggleNoteDisabled: "Фоновое видео выключено для этого браузера",
     bgVideoSoundToggleAria: "Включить фоновое видео со звуком и сделать сайт почти прозрачным",
     bgVideoSoundToggleAriaActive: "Выключить звук фонового видео и вернуть обычный режим сайта",
     bgVideoVolumeLabel: "Громкость",
     bgVideoVolumeAria: "Громкость фонового видео",
-    bgVideoPlaybackToggleLabel: "Фоновое видео",
-    bgVideoPlaybackToggleOn: "Вкл",
-    bgVideoPlaybackToggleOff: "Выкл",
-    bgVideoPlaybackToggleAriaOn: "Выключить воспроизведение фонового видео на этом устройстве",
-    bgVideoPlaybackToggleAriaOff: "Включить воспроизведение фонового видео на этом устройстве",
-    bgVideoSettingsAria: "Открыть настройки фонового видео",
-    bgVideoSettingsAriaExpanded: "Закрыть настройки фонового видео",
     bestLapsTitle: "Лучшие круги",
     bestLapsSubtitle: "Строка открывает быстрый просмотр, имя пилота ведёт в полный профиль.",
     worstSafetyTitle: "Штрафы и нарушения",
@@ -1530,18 +1456,8 @@ const translations = {
       "Таблица <strong>лучших кругов</strong> содержит лучшие времена круга, показанные как в квалификации, так и в гонках. Это позволяет сравнить абсолютную скорость пилотов.",
     joinTitle: "Присоединиться к серверу",
     joinP1: "Чтобы участвовать в гонках и попасть в таблицу лидеров, подключайтесь к серверу:",
-    joinP1b: "Откройте браузер серверов ACC и ищите эти реальные названия:",
-    serverName1: "ASG Racing Live Leaderboard",
-    serverName2: "ASG Racing Monza - SA Gainer",
-    serverName3: "ASG Racing Monza - SA Gainer 2",
-    serverName4: "ASG Racing Nordschleife Practice",
-    serverName5: "ASG Racing Nurburgring - Live Leaderboard",
-    serverName6: "ASG Racing Nordschleife - Live Leaderboard",
-    serverName7: "ASG Racing Spa - SA Gainer 3",
-    serverName8: "ASG Racing Spa - Live Leaderboard",
+    serverName: "ASG Racing ACC Public Server",
     joinP2: "Общение и новости сервера доступны в наших сообществах:",
-    joinCommunityTelegram: "Telegram: анонсы гонок, напоминания, голосования, результаты и быстрые обновления.",
-    joinCommunityDiscord: "Discord: голосовое общение, поиск соперников, разговоры про сетапы и связь перед стартом.",
     communityTelegramTitle: "Telegram",
     communityTelegramText: "Самый быстрый способ не пропускать анонсы гонок, сборы, напоминания, голосования, результаты и весь движ ASG Racing.",
     communityTelegramCta: "Влететь в движ",
@@ -1821,12 +1737,7 @@ Object.assign(translations.en, {
   eloCategory3: "Category 3 — Gold",
   eloCategory4: "Category 4 — Silver",
   eloCategory5: "Category 5 — Bronze",
-  eloCategory6: "Category 6 — Rookie",
-  eloHistoryDelta: "ELO change",
-  eloHistoryGain: "Gain",
-  eloHistoryLoss: "Loss",
-  eloHistoryRace: "Race",
-  eloHistoryRating: "Rating after"
+  eloCategory6: "Category 6 — Rookie"
 });
 
 Object.assign(translations.ru, {
@@ -1859,12 +1770,7 @@ Object.assign(translations.ru, {
   eloCategory3: "Категория 3 — Золото",
   eloCategory4: "Категория 4 — Серебро",
   eloCategory5: "Категория 5 — Бронза",
-  eloCategory6: "Категория 6 — Новичок",
-  eloHistoryDelta: "Изменение ELO",
-  eloHistoryGain: "Прирост",
-  eloHistoryLoss: "Потеря",
-  eloHistoryRace: "Гонка",
-  eloHistoryRating: "Рейтинг после"
+  eloCategory6: "Категория 6 — Новичок"
 });
 
 Object.assign(translations.en, {
@@ -2521,6 +2427,183 @@ function buildHourlyWeatherTokens(weather) {
   return tokens;
 }
 
+function getHourlyEventDetailsV2Text(key) {
+  const copy = {
+    eyebrow: { en: "Event details", ru: "Детали события" },
+    connection: { en: "Connection", ru: "Подключение" },
+    format: { en: "Event format", ru: "Формат события" },
+    conditions: { en: "Race conditions", ru: "Условия гонки" },
+    classLabel: { en: "Class", ru: "Класс" },
+    slotsLabel: { en: "Slots", ru: "Слоты" },
+    safetyLabel: { en: "Safety Rating", ru: "Safety Rating" },
+    preparationLabel: { en: "Preparation", ru: "Подготовка" },
+    qualifyingLabel: { en: "Qualifying", ru: "Квалификация" },
+    raceLabel: { en: "Race", ru: "Гонка" },
+    gameTimeLabel: { en: "In-game time", ru: "Игровое время" },
+    timeMultiplierLabel: { en: "Time acceleration", ru: "Ускорение времени" },
+    pitWindowLabel: { en: "Pit window", ru: "Окно пит-стопа" },
+    refuelAllowedLabel: { en: "Refuel", ru: "Заправка" },
+    mandatoryRefuelLabel: { en: "Mandatory refuel", ru: "Обязательная заправка" },
+    fixedRefuelLabel: { en: "Fixed refuel time", ru: "Фикс. время заправки" },
+    temperatureLabel: { en: "Temperature", ru: "Температура" },
+    cloudsLabel: { en: "Cloud cover", ru: "Облачность" },
+    rainLabel: { en: "Rain chance", ru: "Вероятность дождя" },
+    randomnessLabel: { en: "Randomness", ru: "Изменчивость" },
+    notAvailable: { en: "N/A", ru: "н/д" },
+    allowed: { en: "allowed", ru: "разрешена" },
+    forbidden: { en: "forbidden", ru: "запрещена" },
+    yes: { en: "yes", ru: "да" },
+    no: { en: "no", ru: "нет" },
+    details: { en: "Details", ru: "Подробнее" }
+  };
+  return copy[key]?.[currentLang] || copy[key]?.en || key;
+}
+
+function getHourlyEventDetailsV2IconSvg(name) {
+  const icons = {
+    calendar: `<svg viewBox="0 0 24 24" focusable="false" aria-hidden="true"><path d="M8 3v3M16 3v3M4 9h16M5.75 5.75h12.5a2 2 0 0 1 2 2v10.5a2 2 0 0 1-2 2H5.75a2 2 0 0 1-2-2V7.75a2 2 0 0 1 2-2Z" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"></path></svg>`,
+    copy: `<svg viewBox="0 0 24 24" focusable="false" aria-hidden="true"><path d="M9 9h11v11H9z" fill="none" stroke="currentColor" stroke-width="1.8"></path><path d="M4 4h11v11H4z" fill="none" stroke="currentColor" stroke-width="1.8"></path></svg>`,
+    check: `<svg viewBox="0 0 24 24" focusable="false" aria-hidden="true"><path d="M5 12.5 9.2 16.7 19 7.5" fill="none" stroke="currentColor" stroke-width="2.1" stroke-linecap="round" stroke-linejoin="round"></path></svg>`,
+    close: `<svg viewBox="0 0 24 24" focusable="false" aria-hidden="true"><path d="m6 6 12 12M18 6 6 18" fill="none" stroke="currentColor" stroke-width="2.1" stroke-linecap="round"></path></svg>`,
+    server: `<svg viewBox="0 0 24 24" focusable="false" aria-hidden="true"><path d="M4.75 6.5h14.5M4.75 12h14.5M4.75 17.5h14.5M6.75 4.75h10.5a2 2 0 0 1 2 2v10.5a2 2 0 0 1-2 2H6.75a2 2 0 0 1-2-2V6.75a2 2 0 0 1 2-2Z" fill="none" stroke="currentColor" stroke-width="1.85" stroke-linecap="round" stroke-linejoin="round"></path></svg>`,
+    flag: `<svg viewBox="0 0 24 24" focusable="false" aria-hidden="true"><path d="m5 4 11 2.5-4 4 4 3.5-4 4L16 20 5 17.5V4Z" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"></path></svg>`,
+    wrench: `<svg viewBox="0 0 24 24" focusable="false" aria-hidden="true"><path d="m14.4 6.6 3-3a2.12 2.12 0 0 1 3 3l-3 3M13 8l3 3-8.75 8.75H4.25v-3L13 8Z" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"></path></svg>`,
+    timer: `<svg viewBox="0 0 24 24" focusable="false" aria-hidden="true"><circle cx="12" cy="13" r="7.25" fill="none" stroke="currentColor" stroke-width="1.9"></circle><path d="M12 13V9.25M9.25 2.75h5.5M14.75 5.5l1.5-1.5" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"></path></svg>`,
+    stopwatch: `<svg viewBox="0 0 24 24" focusable="false" aria-hidden="true"><circle cx="12" cy="13" r="7.25" fill="none" stroke="currentColor" stroke-width="1.9"></circle><path d="M9.25 2.75h5.5M12 13l3.25-2.25M14.75 5.5l1.5-1.5" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"></path></svg>`,
+    play: `<svg viewBox="0 0 24 24" focusable="false" aria-hidden="true"><circle cx="12" cy="12" r="8" fill="none" stroke="currentColor" stroke-width="1.9"></circle><path d="m10.25 8.75 5 3.25-5 3.25V8.75Z" fill="currentColor"></path></svg>`,
+    sun: `<svg viewBox="0 0 24 24" focusable="false" aria-hidden="true"><circle cx="12" cy="12" r="4.25" fill="none" stroke="currentColor" stroke-width="1.9"></circle><path d="M12 2.75v2.5M12 18.75v2.5M21.25 12h-2.5M5.25 12h-2.5M18.54 5.46l-1.77 1.77M7.23 16.77l-1.77 1.77M18.54 18.54l-1.77-1.77M7.23 7.23 5.46 5.46" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round"></path></svg>`,
+    fast: `<svg viewBox="0 0 24 24" focusable="false" aria-hidden="true"><path d="m4.5 6.75 6.5 5.25-6.5 5.25V6.75Zm8.5 0 6.5 5.25-6.5 5.25V6.75Z" fill="currentColor"></path></svg>`,
+    fuel: `<svg viewBox="0 0 24 24" focusable="false" aria-hidden="true"><path d="M6.25 5.25h7.5a1.5 1.5 0 0 1 1.5 1.5v10.5a1.5 1.5 0 0 1-1.5 1.5h-7.5a1.5 1.5 0 0 1-1.5-1.5V6.75a1.5 1.5 0 0 1 1.5-1.5Zm9-1.5 3 3v7.25a1.75 1.75 0 0 1-3.5 0V12" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"></path></svg>`,
+    drop: `<svg viewBox="0 0 24 24" focusable="false" aria-hidden="true"><path d="M12 4.25c3.4 4.16 5.1 6.95 5.1 9.1A5.1 5.1 0 1 1 6.9 13.35c0-2.15 1.7-4.94 5.1-9.1Z" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"></path></svg>`,
+    tyre: `<svg viewBox="0 0 24 24" focusable="false" aria-hidden="true"><circle cx="12" cy="12" r="7.25" fill="none" stroke="currentColor" stroke-width="1.9"></circle><circle cx="12" cy="12" r="2.5" fill="none" stroke="currentColor" stroke-width="1.9"></circle></svg>`,
+    temp: `<svg viewBox="0 0 24 24" focusable="false" aria-hidden="true"><path d="M10.25 6a2.25 2.25 0 1 1 4.5 0v7.2a4 4 0 1 1-4.5 0V6Z" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"></path><path d="M12.5 10v5" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round"></path></svg>`,
+    cloud: `<svg viewBox="0 0 24 24" focusable="false" aria-hidden="true"><path d="M7.25 18.25h9a4 4 0 0 0 .42-7.98A5.25 5.25 0 0 0 6.4 9.35 3.75 3.75 0 0 0 7.25 18.25Z" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"></path></svg>`,
+    rain: `<svg viewBox="0 0 24 24" focusable="false" aria-hidden="true"><path d="M7.25 15.5h9a4 4 0 0 0 .42-7.98A5.25 5.25 0 0 0 6.4 6.6a3.75 3.75 0 0 0 .85 8.9Z" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"></path><path d="M9 17.75 8.25 20M13 17.75 12.25 20M17 17.75 16.25 20" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round"></path></svg>`,
+    wind: `<svg viewBox="0 0 24 24" focusable="false" aria-hidden="true"><path d="M4 9.25h9.5a2.75 2.75 0 1 0-2.7-3.25M4 14h13.5a2.25 2.25 0 1 1-2.2 2.75M4 18.25h7.5a2.25 2.25 0 1 0-2.2 2.75" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"></path></svg>`,
+    users: `<svg viewBox="0 0 24 24" focusable="false" aria-hidden="true"><path d="M8.5 11.25a2.75 2.75 0 1 0 0-5.5 2.75 2.75 0 0 0 0 5.5Zm7 2a2.5 2.5 0 1 0 0-5 2.5 2.5 0 0 0 0 5ZM3.75 18c.5-2.55 2.66-4.25 5.25-4.25S13.75 15.45 14.25 18M13.25 18c.38-1.78 1.88-3 3.75-3s3.37 1.22 3.75 3" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"></path></svg>`
+  };
+  return icons[name] || icons.server;
+}
+
+function buildHourlyEventDetailsV2Icon(name, className = "") {
+  return `<span class="event-details-v2-icon${className ? ` ${className}` : ""}" aria-hidden="true">${getHourlyEventDetailsV2IconSvg(name)}</span>`;
+}
+
+function formatHourlyEventDetailsHour(value) {
+  const normalized = Number(value);
+  if (!Number.isFinite(normalized)) return getHourlyEventDetailsV2Text("notAvailable");
+  const hour = ((Math.round(normalized) % 24) + 24) % 24;
+  return `${String(hour).padStart(2, "0")}:00`;
+}
+
+function formatHourlyEventDetailsBool(value, truthyKey, falsyKey) {
+  if (value === true) return getHourlyEventDetailsV2Text(truthyKey);
+  if (value === false) return getHourlyEventDetailsV2Text(falsyKey);
+  return getHourlyEventDetailsV2Text("notAvailable");
+}
+
+function formatHourlyEventDetailsMinutes(value) {
+  return typeof value === "number" && Number.isFinite(value) && value > 0
+    ? `${Math.round(value)} мин`
+    : getHourlyEventDetailsV2Text("notAvailable");
+}
+
+function formatHourlyEventDetailsMultiplier(value) {
+  return typeof value === "number" && Number.isFinite(value) && value > 0
+    ? `x${value}`
+    : getHourlyEventDetailsV2Text("notAvailable");
+}
+
+function formatHourlyEventDetailsPercent(value) {
+  return typeof value === "number" && Number.isFinite(value)
+    ? `${Math.round(value)}%`
+    : getHourlyEventDetailsV2Text("notAvailable");
+}
+
+function formatHourlyEventDetailsTemperature(value) {
+  return typeof value === "number" && Number.isFinite(value)
+    ? `${Math.round(value)}°C`
+    : getHourlyEventDetailsV2Text("notAvailable");
+}
+
+function formatHourlyEventDetailsPitstopCount(value) {
+  if (typeof value !== "number" || !Number.isFinite(value) || value <= 0) {
+    return getHourlyEventDetailsV2Text("notAvailable");
+  }
+  return currentLang === "ru" ? `${Math.round(value)} обязательный` : `${Math.round(value)} mandatory`;
+}
+
+function getHourlyEventDetailsValue(value) {
+  if (value === null || value === undefined || value === "") return getHourlyEventDetailsV2Text("notAvailable");
+  return String(value);
+}
+
+function buildHourlyEventDetailsV2Row(label, value, iconName, options = {}) {
+  const rowClass = options.rowClass ? ` ${options.rowClass}` : "";
+  const accentClass = options.accent ? " event-details-v2-info-label-accent" : "";
+  const valueAccentClass = options.accent ? " event-details-v2-info-value-accent" : "";
+  const iconAccentClass = options.accent ? " event-details-v2-info-icon-accent" : "";
+  return `
+    <div class="event-details-v2-info-row${rowClass}">
+      <div class="event-details-v2-info-label${accentClass}">
+        ${buildHourlyEventDetailsV2Icon(iconName, `event-details-v2-info-icon${iconAccentClass}`)}
+        <span>${escapeHtml(label)}</span>
+      </div>
+      <div class="event-details-v2-info-value${valueAccentClass}">${value}</div>
+    </div>
+  `;
+}
+
+function buildHourlyEventDetailsV2Card(title, iconName, className, rowsHtml) {
+  return `
+    <section class="event-details-v2-card ${escapeHtml(className)}">
+      <div class="event-details-v2-card-header">
+        ${buildHourlyEventDetailsV2Icon(iconName, "event-details-v2-card-icon")}
+        <h4 class="event-details-v2-card-title">${escapeHtml(title)}</h4>
+      </div>
+      <div class="event-details-v2-card-body">${rowsHtml}</div>
+    </section>
+  `;
+}
+
+function bindHourlyEventDetailsV2(root) {
+  root.querySelectorAll("[data-copy-target]").forEach(button => {
+    if (button.dataset.bound === "true") return;
+    button.addEventListener("click", async () => {
+      const target = document.getElementById(button.dataset.copyTarget || "");
+      if (!target) return;
+      try {
+        await navigator.clipboard.writeText(target.textContent || "");
+        button.classList.add("is-copied");
+        window.setTimeout(() => button.classList.remove("is-copied"), 1200);
+      } catch (error) {
+        console.warn("hourly modal copy failed.", error);
+      }
+    });
+    button.dataset.bound = "true";
+  });
+
+  const voteButton = root.querySelector("[data-hourly-v2-vote]");
+  if (voteButton && voteButton.dataset.bound !== "true") {
+    voteButton.addEventListener("click", event => {
+      event.stopPropagation();
+      if (hourlyVoteAlreadyVoted) return;
+      void submitHourlyHeroVote();
+    });
+    voteButton.dataset.bound = "true";
+  }
+
+  const unvoteButton = root.querySelector("[data-hourly-v2-unvote]");
+  if (unvoteButton && unvoteButton.dataset.bound !== "true") {
+    unvoteButton.addEventListener("click", event => {
+      event.stopPropagation();
+      if (!hourlyVoteAlreadyVoted) return;
+      void submitHourlyHeroUnvote();
+    });
+    unvoteButton.dataset.bound = "true";
+  }
+}
+
 function applyHourlyModalTrackBackground(trackCode) {
   const modalCard = document.querySelector("#hourly-details-modal .modal-card-slot");
   if (!modalCard) return;
@@ -2529,82 +2612,13 @@ function applyHourlyModalTrackBackground(trackCode) {
   modalCard.style.setProperty("--modal-track-photo", backgroundUrl ? `url("${backgroundUrl}")` : "none");
 }
 
-function buildHourlyHeroModalContent(data) {
-  const server = data?.server || {};
-  const session = data?.session || {};
-  const rules = data?.rules || {};
-  const weather = data?.weather || {};
-  const canVote = Boolean(data?.event_id || data?.track_name);
-  const voteLabel = hourlyVotePending
-    ? t("hourlyVoteSending")
-    : hourlyVoteAlreadyVoted
-      ? t("hourlyVoteDone")
-      : t("hourlyVoteBtn");
-
-  return `
-    <div class="hourly-modal-grid">
-      <section class="hourly-modal-left-cluster">
-        <div class="hourly-modal-panel-grid hourly-modal-panel-grid-three">
-          <article class="hourly-modal-panel-item">
-            <div class="hourly-modal-label">${escapeHtml(t("hourlyPitstopLabel"))}</div>
-            ${renderHourlyModalTokens(buildHourlyPitstopTokens(rules))}
-          </article>
-          <article class="hourly-modal-panel-item">
-            <div class="hourly-modal-label">${escapeHtml(t("hourlyRefuelLabel"))}</div>
-            ${renderHourlyModalTokens(buildHourlyRefuelTokens(rules))}
-          </article>
-          <article class="hourly-modal-panel-item">
-            <div class="hourly-modal-label">${escapeHtml(t("hourlyTyresLabel"))}</div>
-            ${renderHourlyModalTokens(buildHourlyTyreTokens(rules))}
-          </article>
-        </div>
-      </section>
-
-      <aside class="hourly-modal-side-stack">
-        <div class="hourly-modal-side-card hourly-modal-side-card-combined">
-          <div class="hourly-modal-side-section">
-            ${renderHourlyModalTokens(buildHourlyEntryTokens(server))}
-          </div>
-          <div class="hourly-modal-side-section">
-            ${renderHourlyModalTokens(buildHourlyFormatTokens(session))}
-          </div>
-          <div class="hourly-modal-side-section hourly-modal-side-section-weather">
-            ${renderHourlyModalTokens(buildHourlyWeatherTokens(weather))}
-          </div>
-        </div>
-      </aside>
-    </div>
-    <div class="hourly-modal-details-cta">
-      <div class="hourly-modal-cta-actions">
-        <button
-          class="btn hero-hourly-btn hourly-modal-cta-btn${hourlyVoteAlreadyVoted ? " is-voted" : ""}${!hourlyVoteAlreadyVoted && !hourlyVotePending && canVote ? " pulse-attention" : ""}"
-          id="hourly-modal-vote-btn"
-          type="button"
-          ${!canVote || hourlyVotePending || hourlyVoteAlreadyVoted ? "disabled" : ""}
-        >${escapeHtml(voteLabel)} <span aria-hidden="true">¦</span></button>
-        ${
-          hourlyVoteAlreadyVoted
-            ? `<button
-                class="hourly-modal-cta-cancel"
-                id="hourly-modal-unvote-btn"
-                type="button"
-                aria-label="${escapeAttribute(t("hourlyUnvoteBtn"))}"
-                ${hourlyVotePending ? "disabled" : ""}
-              >×</button>`
-            : ""
-        }
-      </div>
-      <div class="hourly-modal-cta-meta" id="hourly-modal-votes-summary">${escapeHtml(getHourlyVotesLabel())}</div>
-      <div class="legal-inline-note">${buildHourlyVoteLegalNoteHtml()}</div>
-    </div>
-  `;
-}
-
 function renderHourlyHeroModal() {
+  const modalCardEl = document.querySelector("#hourly-details-modal .modal-card-slot");
+  const headerEl = document.querySelector("#hourly-details-modal .modal-header");
   const titleEl = document.getElementById("hourly-details-title");
   const subtitleEl = document.getElementById("hourly-details-subtitle");
   const contentEl = document.getElementById("hourly-details-content");
-  if (!titleEl || !subtitleEl || !contentEl) return;
+  if (!modalCardEl || !headerEl || !titleEl || !subtitleEl || !contentEl) return;
 
   const data = hourlyAnnouncementData;
   if (!data?.track_name && !data?.event_id) {
@@ -2612,49 +2626,131 @@ function renderHourlyHeroModal() {
     titleEl.textContent = t("hourlyNoEvent");
     subtitleEl.textContent = "—";
     contentEl.innerHTML = `<div class="empty-box">${escapeHtml(t("hourlyNoEvent"))}</div>`;
+    modalCardEl.classList.remove("is-event-details-v2");
+    headerEl.classList.remove("event-details-v2-legacy-header");
     return;
   }
 
   const server = data?.server || {};
+  const session = data?.session || {};
+  const rules = data?.rules || {};
+  const weather = data?.weather || {};
   const startTime = getHourlyLocalizedField(data, "start_time_local", "—");
   const timezone = getHourlyLocalizedField(data, "timezone", "UTC+3");
+  const passwordId = `hourly-modal-password-v2-${escapeAttribute(buildHourlyAnnouncementEventId(data) || data?.track_code || "slot")}`;
+  const canVote = Boolean(data?.event_id || data?.track_name);
+  const gameTimeRaw = session.hour_of_day ?? session.game_hour_of_day ?? session.session_hour ?? session.time_of_day_hour;
+  const timeMultiplierRaw = session.time_multiplier ?? session.timeMultiplier ?? session.session_time_multiplier ?? session.time_scale;
+  const preparationMinutes = minutesFromSeconds(session.pre_race_waiting_time_seconds);
+  const qualifyingMinutes = typeof session.qualifying_duration_minutes === "number" ? session.qualifying_duration_minutes : null;
+  const raceMinutes = typeof session.race_duration_minutes === "number" ? session.race_duration_minutes : null;
+  const slotCount = typeof server.max_car_slots === "number" ? server.max_car_slots : null;
+  const safetyRating = typeof server.safety_rating_requirement === "number" ? server.safety_rating_requirement : null;
+  const pitWindow = typeof rules.pit_window_length_minutes === "number" ? rules.pit_window_length_minutes : null;
+  const tyres = typeof rules.tyre_set_count === "number" ? rules.tyre_set_count : null;
+  const temp = typeof weather.ambient_temp_c === "number" ? weather.ambient_temp_c : null;
+  const clouds = percentValue(weather.cloud_level);
+  const rain = percentValue(weather.rain_level);
+  const randomness = typeof weather.weather_randomness === "number" ? weather.weather_randomness : null;
+  const voteLabel = hourlyVotePending
+    ? t("hourlyVoteSending")
+    : hourlyVoteAlreadyVoted
+      ? t("hourlyVoteDone")
+      : t("hourlyVoteBtn");
+
+  modalCardEl.classList.add("is-event-details-v2");
+  headerEl.classList.add("event-details-v2-legacy-header");
 
   applyHourlyModalTrackBackground(data?.track_code);
   titleEl.textContent = getHourlyLocalizedField(data, "track_name", t("hourlyUnknownValue"));
-  subtitleEl.innerHTML = `
-    <span class="hourly-modal-subtitle-grid">
-      <span class="hourly-modal-subtitle-card">
-        <span class="hourly-modal-subtitle-label">${escapeHtml(t("hourlyServerLabel"))}</span>
-        <span class="hourly-modal-subtitle-value">${escapeHtml(server.name || server.full_name || t("hourlyUnknownValue"))}</span>
-      </span>
-      <span class="hourly-modal-subtitle-card">
-        <span class="hourly-modal-subtitle-label">${escapeHtml(t("hourlyPasswordLabel"))}</span>
-        <span class="hourly-modal-subtitle-value">${escapeHtml(server.password || t("hourlyPasswordNone"))}</span>
-      </span>
-      <span class="hourly-modal-subtitle-card">
-        <span class="hourly-modal-subtitle-label">${escapeHtml(t("hourlyDateTimeLabel"))}</span>
-        <span class="hourly-modal-subtitle-value">${escapeHtml(formatDateOnlyForHourly(data?.date))}<br>${escapeHtml(`${startTime} ${timezone}`.trim())}</span>
-      </span>
-    </span>
-  `;
-  contentEl.innerHTML = buildHourlyHeroModalContent(data);
+  subtitleEl.textContent = `${formatDateOnlyForHourly(data?.date)} • ${`${startTime} ${timezone}`.trim()}`;
 
-  const modalVoteBtn = document.getElementById("hourly-modal-vote-btn");
-  if (modalVoteBtn && modalVoteBtn.dataset.bound !== "true") {
-    modalVoteBtn.addEventListener("click", (event) => {
-      event.stopPropagation();
-      void submitHourlyHeroVote();
-    });
-    modalVoteBtn.dataset.bound = "true";
-  }
-  const modalUnvoteBtn = document.getElementById("hourly-modal-unvote-btn");
-  if (modalUnvoteBtn && modalUnvoteBtn.dataset.bound !== "true") {
-    modalUnvoteBtn.addEventListener("click", (event) => {
-      event.stopPropagation();
-      void submitHourlyHeroUnvote();
-    });
-    modalUnvoteBtn.dataset.bound = "true";
-  }
+  const connectionRows = [
+    buildHourlyEventDetailsV2Row(t("hourlyServerLabel"), escapeHtml(server.name || server.full_name || t("hourlyUnknownValue")), "server"),
+    buildHourlyEventDetailsV2Row(
+      t("hourlyPasswordLabel"),
+      `<div class="event-details-v2-password-row"><span class="event-details-v2-password" id="${passwordId}">${escapeHtml(server.password || t("hourlyPasswordNone"))}</span><button class="event-details-v2-copy-button" type="button" data-copy-target="${passwordId}" aria-label="${escapeHtml(t("hourlyPasswordLabel"))}">${buildHourlyEventDetailsV2Icon("copy", "event-details-v2-info-icon hero-copy-icon-copy")}${buildHourlyEventDetailsV2Icon("check", "event-details-v2-info-icon hero-copy-icon-done")}</button></div>`,
+      "copy"
+    ),
+    buildHourlyEventDetailsV2Row(getHourlyEventDetailsV2Text("classLabel"), `<span class="event-details-v2-class-badge">${escapeHtml(server.car_group || getHourlyEventDetailsV2Text("notAvailable"))}</span>`, "flag"),
+    buildHourlyEventDetailsV2Row(getHourlyEventDetailsV2Text("slotsLabel"), escapeHtml(getHourlyEventDetailsValue(slotCount)), "users"),
+    buildHourlyEventDetailsV2Row(getHourlyEventDetailsV2Text("safetyLabel"), escapeHtml(getHourlyEventDetailsValue(safetyRating)), "flag")
+  ].join("");
+
+  const formatRows = [
+    buildHourlyEventDetailsV2Row(getHourlyEventDetailsV2Text("preparationLabel"), escapeHtml(formatHourlyEventDetailsMinutes(preparationMinutes)), "timer"),
+    buildHourlyEventDetailsV2Row(getHourlyEventDetailsV2Text("qualifyingLabel"), escapeHtml(formatHourlyEventDetailsMinutes(qualifyingMinutes)), "stopwatch"),
+    buildHourlyEventDetailsV2Row(getHourlyEventDetailsV2Text("raceLabel"), escapeHtml(formatHourlyEventDetailsMinutes(raceMinutes)), "play"),
+    buildHourlyEventDetailsV2Row(getHourlyEventDetailsV2Text("gameTimeLabel"), escapeHtml(formatHourlyEventDetailsHour(gameTimeRaw)), "sun"),
+    buildHourlyEventDetailsV2Row(getHourlyEventDetailsV2Text("timeMultiplierLabel"), escapeHtml(formatHourlyEventDetailsMultiplier(timeMultiplierRaw)), "fast")
+  ].join("");
+
+  const conditionsRows = [
+    buildHourlyEventDetailsV2Row(t("hourlyPitstopLabel"), escapeHtml(formatHourlyEventDetailsPitstopCount(rules.mandatory_pitstop_count)), "wrench", { accent: true }),
+    buildHourlyEventDetailsV2Row(getHourlyEventDetailsV2Text("pitWindowLabel"), escapeHtml(formatHourlyEventDetailsMinutes(pitWindow)), "timer", { accent: true }),
+    buildHourlyEventDetailsV2Row(getHourlyEventDetailsV2Text("refuelAllowedLabel"), escapeHtml(formatHourlyEventDetailsBool(Boolean(rules.refuelling_allowed_in_race), "allowed", "forbidden")), "fuel"),
+    buildHourlyEventDetailsV2Row(getHourlyEventDetailsV2Text("mandatoryRefuelLabel"), escapeHtml(formatHourlyEventDetailsBool(rules.mandatory_pitstop_refuelling_required, "yes", "no")), "drop"),
+    buildHourlyEventDetailsV2Row(getHourlyEventDetailsV2Text("fixedRefuelLabel"), escapeHtml(formatHourlyEventDetailsBool(rules.refuelling_time_fixed, "yes", "no")), "timer"),
+    buildHourlyEventDetailsV2Row(t("hourlyTyresLabel"), escapeHtml(getHourlyEventDetailsValue(tyres)), "tyre", { rowClass: " event-details-v2-divider-row" }),
+    buildHourlyEventDetailsV2Row(getHourlyEventDetailsV2Text("temperatureLabel"), escapeHtml(formatHourlyEventDetailsTemperature(temp)), "temp"),
+    buildHourlyEventDetailsV2Row(getHourlyEventDetailsV2Text("cloudsLabel"), escapeHtml(formatHourlyEventDetailsPercent(clouds)), "cloud"),
+    buildHourlyEventDetailsV2Row(getHourlyEventDetailsV2Text("rainLabel"), escapeHtml(formatHourlyEventDetailsPercent(rain)), "rain"),
+    buildHourlyEventDetailsV2Row(getHourlyEventDetailsV2Text("randomnessLabel"), escapeHtml(getHourlyEventDetailsValue(randomness)), "wind")
+  ].join("");
+
+  const detailsLinkHtml = data?.details_url
+    ? `<a class="event-details-v2-details-link" href="${escapeHtml(data.details_url)}">${escapeHtml(getHourlyEventDetailsV2Text("details"))}</a>`
+    : "";
+
+  contentEl.innerHTML = `
+    <div class="event-details-v2">
+      <div class="event-details-v2-background"></div>
+      <div class="event-details-v2-shade"></div>
+      <div class="event-details-v2-inner">
+        <header class="event-details-v2-header">
+          <div class="event-details-v2-title-block">
+            <div class="event-details-v2-eyebrow">${escapeHtml(getHourlyEventDetailsV2Text("eyebrow"))}</div>
+            <h2 class="event-details-v2-title">${escapeHtml(getHourlyLocalizedField(data, "track_name", t("hourlyUnknownValue")))}</h2>
+          </div>
+          <div class="event-details-v2-date-time">
+            ${buildHourlyEventDetailsV2Icon("calendar", "event-details-v2-date-time-icon")}
+            <span>${escapeHtml(formatDateOnlyForHourly(data?.date))}</span>
+            <span aria-hidden="true">•</span>
+            <span>${escapeHtml(`${startTime} ${timezone}`.trim())}</span>
+          </div>
+        </header>
+        <div class="event-details-v2-grid">
+          ${buildHourlyEventDetailsV2Card(getHourlyEventDetailsV2Text("connection"), "server", "event-details-v2-card-connection", connectionRows)}
+          ${buildHourlyEventDetailsV2Card(getHourlyEventDetailsV2Text("format"), "flag", "event-details-v2-card-format", formatRows)}
+          ${buildHourlyEventDetailsV2Card(getHourlyEventDetailsV2Text("conditions"), "wrench", "event-details-v2-card-conditions", conditionsRows)}
+        </div>
+        <footer class="event-details-v2-footer">
+          <button
+            class="event-details-v2-participation-button${hourlyVoteAlreadyVoted ? " is-voted" : ""}"
+            type="button"
+            data-hourly-v2-vote="true"
+            ${(!canVote || hourlyVotePending || hourlyVoteAlreadyVoted) ? "disabled" : ""}
+          >
+            ${buildHourlyEventDetailsV2Icon("check", "event-details-v2-participation-icon")}
+            <span>${escapeHtml(voteLabel)}</span>
+          </button>
+          ${
+            hourlyVoteAlreadyVoted
+              ? `<button class="event-details-v2-cancel-button" type="button" data-hourly-v2-unvote="true" aria-label="${escapeHtml(t("hourlyUnvoteBtn"))}" ${hourlyVotePending ? "disabled" : ""}>${buildHourlyEventDetailsV2Icon("close", "event-details-v2-cancel-icon")}</button>`
+              : `<div class="event-details-v2-cancel-placeholder" aria-hidden="true"></div>`
+          }
+          <div class="event-details-v2-participant-count">
+            ${buildHourlyEventDetailsV2Icon("users", "event-details-v2-participant-icon")}
+            <span>${escapeHtml(getHourlyVotesLabel())}</span>
+          </div>
+          <div class="event-details-v2-voting-notice">${buildHourlyVoteLegalNoteHtml()}</div>
+          ${detailsLinkHtml}
+        </footer>
+      </div>
+    </div>
+  `;
+
+  bindHourlyEventDetailsV2(contentEl);
 }
 
 function renderHourlyHeroCard() {
@@ -2896,11 +2992,11 @@ async function submitHourlyHeroVote() {
         voter_id: getHourlyBrowserVoterId()
       })
     });
-    if (!response.ok) throw new Error(`HTTP ${response.status}`);
-    const payload = await response.json();
-    const nextState = {
-      event_id: eventId,
-      votes: typeof payload?.votes === "number" ? payload.votes : hourlyVotesCount,
+      if (!response.ok) throw new Error(`HTTP ${response.status}`);
+      const payload = await response.json();
+      const nextState = {
+        event_id: eventId,
+        votes: typeof payload?.votes === "number" ? payload.votes : hourlyVotesCount,
       already_voted: Boolean(payload?.already_voted)
     };
     applyHourlyAnnouncementVoteState(nextState);
@@ -3916,8 +4012,7 @@ function normalizeEloHistory(source) {
         rating,
         delta: Number(item?.rating_delta),
         date,
-        label: item?.race_file || item?.date || `#${index + 1}`,
-        raceId: item?.race_id || item?.id || null
+        label: item?.race_file || item?.date || `#${index + 1}`
       };
     })
     .filter(Boolean);
@@ -3926,7 +4021,6 @@ function normalizeEloHistory(source) {
 function getEloInfo(source) {
   if (!source || typeof source !== "object") return null;
   const summary = source.summary || {};
-  const playerId = source.player_id || summary.player_id || null;
   const rating = Number(
     source.elo
     ?? summary.elo
@@ -3948,8 +4042,8 @@ function getEloInfo(source) {
     categoryShort: ELO_CATEGORY_FALLBACKS[categoryId]?.short || `C${categoryId}`,
     history: normalizeEloHistory(source),
     driver: source.driver || summary.driver || source.name || "-",
-    publicId: source.public_id || summary.public_id || makePublicDriverId(playerId),
-    playerId
+    publicId: source.public_id || summary.public_id || null,
+    playerId: source.player_id || summary.player_id || null
   };
 }
 
@@ -3958,69 +4052,7 @@ function getEloRowClass(source) {
   return info ? `elo-row elo-cat-${info.categoryId}` : "";
 }
 
-function decodeAttributeValue(value) {
-  const raw = String(value ?? "");
-  if (!raw) return "";
-  try {
-    return decodeURIComponent(raw);
-  } catch {
-    return raw;
-  }
-}
-
 function findEloSource(publicId, playerId = null) {
-  const pagedItems = Object.values(topDataV2PagedTables || {}).flatMap((state) =>
-    Array.isArray(state?.result?.items) ? state.result.items : []
-  );
-  const selectedRaceMatches = [
-    ...(Array.isArray(selectedRace?.results) ? selectedRace.results : []),
-    ...(Array.isArray(driverProfileData?.race_history) ? driverProfileData.race_history : [])
-  ].filter(item =>
-    item && ((publicId && item.public_id === publicId) || (playerId && item.player_id === playerId))
-  );
-  const matches = [
-    ...selectedRaceMatches,
-    driverProfileData,
-    driverPreviewState?.profile,
-    ...(Array.isArray(leaderboardData) ? leaderboardData : []),
-    ...(Array.isArray(bestlapsData) ? bestlapsData : []),
-    ...(Array.isArray(driverIndexData) ? driverIndexData : []),
-    ...pagedItems
-  ].filter(item => {
-    if (!item) return false;
-    return (publicId && item.public_id === publicId) || (playerId && item.player_id === playerId);
-  });
-  if (!matches.length) return null;
-
-  const scoreEloSource = (item) => {
-    let score = 0;
-    if (Array.isArray(item?.summary?.elo_history)) score += 120;
-    if (Array.isArray(item?.elo_history)) score += 100;
-    if (Array.isArray(item?.race_history)) score += 80;
-    if (selectedRaceMatches.includes(item)) score += 40;
-    const rating = Number(
-      item?.elo
-      ?? item?.summary?.elo
-      ?? item?.elo_internal_rating
-      ?? item?.summary?.elo_internal_rating
-      ?? item?.elo_rating_after
-      ?? item?.elo_after
-      ?? item?.new_rating
-    );
-    if (Number.isFinite(rating)) score += 20;
-    return score;
-  };
-
-  return matches.sort((left, right) => scoreEloSource(right) - scoreEloSource(left))[0] || null;
-}
-
-function normalizeDriverLookupName(value) {
-  return String(value || "").trim().replace(/\s+/g, " ").toLowerCase();
-}
-
-function findDriverRecordByName(name) {
-  const needle = normalizeDriverLookupName(name);
-  if (!needle) return null;
   const pagedItems = Object.values(topDataV2PagedTables || {}).flatMap((state) =>
     Array.isArray(state?.result?.items) ? state.result.items : []
   );
@@ -4033,26 +4065,9 @@ function findDriverRecordByName(name) {
     ...pagedItems
   ];
   return matches.find(item => {
-    if (!item || typeof item !== "object") return false;
-    const itemName = normalizeDriverLookupName(item.driver || item.name || item.player || item.summary?.driver);
-    return itemName === needle;
+    if (!item) return false;
+    return (publicId && item.public_id === publicId) || (playerId && item.player_id === playerId);
   }) || null;
-}
-
-function resolveRaceDriverSource(row) {
-  if (!row || typeof row !== "object") return null;
-  const matchedSource = findEloSource(row.public_id, row.player_id) || findDriverRecordByName(row.driver);
-  if (!matchedSource) return row;
-  return {
-    ...row,
-    ...matchedSource,
-    public_id: row.public_id || matchedSource.public_id || matchedSource.summary?.public_id || null,
-    player_id: row.player_id || matchedSource.player_id || matchedSource.summary?.player_id || null,
-    driver: row.driver || matchedSource.driver || matchedSource.name || matchedSource.summary?.driver || "-",
-    race_id: row.race_id || matchedSource.race_id || null,
-    race_number: row.race_number ?? matchedSource.race_number,
-    position: row.position ?? matchedSource.position
-  };
 }
 
 function renderEloBadge(source, { compact = false, showCategoryName = false } = {}) {
@@ -4066,7 +4081,7 @@ function renderEloBadge(source, { compact = false, showCategoryName = false } = 
       class="elo-badge elo-cat-${escapeHtml(info.categoryId)} ${compact ? "elo-badge-compact" : ""}"
       type="button"
       data-elo-public-id="${escapeAttribute(info.publicId || "")}"
-      data-elo-driver-name="${escapeAttribute(info.driver || "")}"
+      data-elo-player-id="${escapeAttribute(info.playerId || "")}"
       title="${escapeAttribute(`${t("eloTitle")}: ${info.rating} · ${info.categoryName}`)}"
     >
       <span class="elo-badge-rank">${escapeHtml(info.categoryShort)}</span>
@@ -4139,7 +4154,6 @@ function getSafetyInfo(source) {
   const category = normalizeSafetyCategory(source) || "C";
   const completedLaps = isRaceSpecific ? (source.safety_completed_laps ?? summary.safety_completed_laps) : undefined;
   const invalidLaps = isRaceSpecific ? (source.safety_invalid_laps ?? summary.safety_invalid_laps) : undefined;
-  const playerId = source.player_id || summary.player_id || null;
   const validLaps = source.safety_valid_laps
     ?? summary.safety_valid_laps
     ?? (Number.isFinite(Number(completedLaps)) && Number.isFinite(Number(invalidLaps))
@@ -4153,8 +4167,8 @@ function getSafetyInfo(source) {
     categoryName: getSafetyCategoryName(category),
     history: normalizeSafetyHistory(source),
     driver: source.driver || summary.driver || source.name || "-",
-    publicId: source.public_id || summary.public_id || makePublicDriverId(playerId),
-    playerId,
+    publicId: source.public_id || summary.public_id || null,
+    playerId: source.player_id || summary.player_id || null,
     explanation: source.safety_explanation || summary.safety_explanation || "",
     validLaps,
     invalidLaps,
@@ -4426,7 +4440,7 @@ function renderSafetyBadge(source, { compact = false, showDelta = false, breakdo
       class="sr-badge sr-cat-${escapeHtml(info.category)} ${compact ? "sr-badge-compact" : ""}"
       type="button"
       data-sr-public-id="${escapeAttribute(info.publicId || "")}"
-      data-sr-driver-name="${escapeAttribute(info.driver || "")}"
+      data-sr-player-id="${escapeAttribute(info.playerId || "")}"
       data-sr-race-id="${escapeAttribute(source?.race_id || "")}"
       data-sr-breakdown-mode="${escapeAttribute(breakdownMode)}"
       title="${escapeAttribute(`${t("safetyRatingTitle")}: ${info.category} ${info.rating}`)}"
@@ -4484,6 +4498,7 @@ function buildDriverPreviewRowAttributes(row) {
     `aria-label="${escapeAttribute(`${t("openDriverPreviewLabel")}: ${preview.driver}`)}"`,
     `data-driver-preview="true"`,
     `data-public-id="${escapeAttribute(preview.publicId)}"`,
+    `data-player-id="${escapeAttribute(preview.playerId || "")}"`,
     `data-driver-name="${escapeAttribute(preview.driver)}"`
   ].join(" ");
 }
@@ -5442,25 +5457,6 @@ function saveNewsReadState(items) {
   }
 }
 
-function loadNewsSeenState() {
-  try {
-    const rawValue = localStorage.getItem(NEWS_SEEN_STORAGE_KEY);
-    if (!rawValue) return {};
-    const parsed = JSON.parse(rawValue);
-    return parsed && typeof parsed === "object" ? parsed : {};
-  } catch (error) {
-    return {};
-  }
-}
-
-function saveNewsSeenState(items) {
-  try {
-    localStorage.setItem(NEWS_SEEN_STORAGE_KEY, JSON.stringify(items || {}));
-  } catch (error) {
-    // Notification seen state is a local convenience feature.
-  }
-}
-
 function isNewsItemRead(item) {
   const state = loadNewsReadState();
   const key = String(item?.id || item?.slug || "").trim();
@@ -5474,30 +5470,6 @@ function markNewsItemRead(item) {
   if (state[key]) return;
   state[key] = Date.now();
   saveNewsReadState(state);
-}
-
-function isNewsNotificationSeen(item) {
-  const state = loadNewsSeenState();
-  const key = String(item?.id || item?.slug || "").trim();
-  return Boolean(key && state[key]);
-}
-
-function markNewsNotificationSeen(item) {
-  const key = String(item?.id || item?.slug || "").trim();
-  if (!key) return false;
-  const state = loadNewsSeenState();
-  if (state[key]) return false;
-  state[key] = Date.now();
-  saveNewsSeenState(state);
-  return true;
-}
-
-function markNewsNotificationsSeen(items = []) {
-  let changed = false;
-  items.forEach(item => {
-    if (markNewsNotificationSeen(item)) changed = true;
-  });
-  return changed;
 }
 
 function isNewsRecordPublished(item) {
@@ -5577,7 +5549,7 @@ function getSortedNewsFeed(items = newsFeedData) {
 }
 
 function getUnreadNewsCount(items = newsFeedData) {
-  return getSortedNewsFeed(items).filter(item => !isNewsNotificationSeen(item)).length;
+  return getSortedNewsFeed(items).filter(item => !isNewsItemRead(item)).length;
 }
 
 async function loadNewsFeed() {
@@ -5651,7 +5623,7 @@ function renderNewsNotificationBilingualText(text, primaryClass, secondaryClass)
 
 function renderNewsNotificationItem(item) {
   const href = getNewsArticleHref(item.slug);
-  const unread = !isNewsNotificationSeen(item);
+  const unread = !isNewsItemRead(item);
   const publishedLabel = formatNewsDateTime(item.published_at);
   return `
     <a class="news-notification-card${unread ? " is-unread" : ""}" href="${escapeHtml(href)}" data-news-open-slug="${escapeHtml(item.slug)}">
@@ -5823,7 +5795,6 @@ function renderNewsDetailPage(item) {
   titleEl.textContent = item.title;
   subtitleEl.textContent = formatNewsDateTime(item.published_at);
   listEl.hidden = true;
-  listEl.innerHTML = "";
   articleEl.hidden = false;
   articleEl.innerHTML = `
     <a class="news-back-link" href="${escapeHtml(getNewsListHref())}">${escapeHtml(t("newsBackToList"))}</a>
@@ -5850,7 +5821,6 @@ function renderMissingNewsPage() {
   titleEl.textContent = t("newsPageTitle");
   subtitleEl.textContent = "";
   listEl.hidden = true;
-  listEl.innerHTML = "";
   articleEl.hidden = false;
   articleEl.innerHTML = `
     <a class="news-back-link" href="${escapeHtml(getNewsListHref())}">${escapeHtml(t("newsBackToList"))}</a>
@@ -5919,13 +5889,7 @@ function openNewsNotificationsPopover() {
   const panel = document.getElementById("news-notifications-panel");
   const button = document.getElementById("news-bell-button");
   if (!panel || !button) return;
-  const visibleItems = getSortedNewsFeed(newsFeedData).slice(0, 6);
   renderNewsNotificationsModal();
-  const changed = markNewsNotificationsSeen(visibleItems);
-  if (changed) {
-    renderNewsBell();
-    renderNewsNotificationsModal();
-  }
   syncNewsNotificationsPopoverPosition();
   panel.hidden = false;
   button.setAttribute("aria-expanded", "true");
@@ -6505,22 +6469,6 @@ async function loadDriverIndex() {
   return Array.isArray(data) ? data : [];
 }
 
-async function ensureDriverIndexLoaded() {
-  if (Array.isArray(driverIndexData) && driverIndexData.length) return driverIndexData;
-  if (!driverIndexLoadPromise) {
-    driverIndexLoadPromise = loadDriverIndex()
-      .then((items) => {
-        driverIndexData = Array.isArray(items) ? items : [];
-        return driverIndexData;
-      })
-      .catch((error) => {
-        driverIndexLoadPromise = null;
-        throw error;
-      });
-  }
-  return driverIndexLoadPromise;
-}
-
 async function loadBansData() {
   const response = await fetch(TOP_BANS_DATA_URL, { cache: "no-store" });
   if (!response.ok) {
@@ -6529,21 +6477,11 @@ async function loadBansData() {
 
   const payload = await response.json();
   const items = Array.isArray(payload?.items) ? payload.items : [];
-  try {
-    await ensureDriverIndexLoaded();
-  } catch {
-    // Bans page can still render without profile links.
-  }
   return items
-    .map((item) => {
-      const name = String(item?.name || "").trim();
-      const matchedDriver = item?.public_id ? null : findDriverRecordByName(name);
-      return {
-        name,
-        public_id: String(item?.public_id || matchedDriver?.public_id || "").trim(),
-        banned_at: String(item?.banned_at || "").trim()
-      };
-    })
+    .map((item) => ({
+      name: String(item?.name || "").trim(),
+      banned_at: String(item?.banned_at || "").trim()
+    }))
     .filter((item) => item.name)
     .sort((a, b) => {
       const timeA = a.banned_at ? Date.parse(a.banned_at) : 0;
@@ -6786,14 +6724,15 @@ function getDriverPreviewTriggerRow(target, tableRoot) {
 
 function openDriverPreviewFromRowElement(rowEl, trigger) {
   const publicId = rowEl?.dataset?.publicId || null;
+  const playerId = rowEl?.dataset?.playerId || null;
   const driver = rowEl?.dataset?.driverName || "-";
   if (!publicId || !driverPreviewModalController) return;
 
   driverPreviewState = {
     publicId,
-    playerId: null,
+    playerId,
     driver,
-    href: getDriverProfileHref(publicId, null),
+    href: getDriverProfileHref(publicId, playerId),
     loading: true,
     error: false,
     profile: null
@@ -7051,17 +6990,9 @@ function renderEloChart(info, period = "all", grid = "medium", periodOffset = 0,
     `;
   }).join("");
   const dots = points.map((item, index) => `
-    <g
-      class="elo-chart-dot-button"
-      role="button"
-      tabindex="0"
-      data-elo-history-index="${escapeAttribute(index)}"
-      title="${escapeAttribute(`${item.label}: ${item.rating}${Number.isFinite(item.delta) ? ` (${item.delta > 0 ? "+" : ""}${item.delta})` : ""}`)}"
-      aria-label="${escapeAttribute(`${item.label}: ${item.rating}${Number.isFinite(item.delta) ? ` (${item.delta > 0 ? "+" : ""}${item.delta})` : ""}`)}"
-    >
-      <circle cx="${x(index).toFixed(1)}" cy="${y(item.rating).toFixed(1)}" r="${index === points.length - 1 ? 12 : 10}" class="elo-chart-dot-hit"></circle>
-      <circle cx="${x(index).toFixed(1)}" cy="${y(item.rating).toFixed(1)}" r="${index === points.length - 1 ? 5 : 3}" class="elo-chart-dot"></circle>
-    </g>
+    <circle cx="${x(index).toFixed(1)}" cy="${y(item.rating).toFixed(1)}" r="${index === points.length - 1 ? 5 : 3}" class="elo-chart-dot">
+      <title>${escapeHtml(`${item.label}: ${item.rating}${Number.isFinite(item.delta) ? ` (${item.delta > 0 ? "+" : ""}${item.delta})` : ""}`)}</title>
+    </circle>
   `).join("");
   const first = points[0];
   const last = points[points.length - 1];
@@ -7155,112 +7086,6 @@ function ensureSafetyBreakdownPopover() {
   return element;
 }
 
-function ensureEloHistoryPopover() {
-  let element = document.getElementById("elo-history-popover");
-  if (element) return element;
-  element = document.createElement("div");
-  element.id = "elo-history-popover";
-  element.className = "sr-breakdown-popover elo-history-popover";
-  element.hidden = true;
-  document.body.appendChild(element);
-  return element;
-}
-
-function positionEloHistoryPopover() {
-  const popover = ensureEloHistoryPopover();
-  const trigger = eloHistoryPopoverState?.trigger;
-  if (!trigger || !popover || popover.hidden) return;
-  const rect = trigger.getBoundingClientRect();
-  const margin = 12;
-  const viewportWidth = window.innerWidth;
-  const viewportHeight = window.innerHeight;
-  const popoverRect = popover.getBoundingClientRect();
-  let left = rect.left;
-  let top = rect.bottom + 10;
-
-  if (left + popoverRect.width > viewportWidth - margin) {
-    left = Math.max(margin, viewportWidth - popoverRect.width - margin);
-  }
-  if (top + popoverRect.height > viewportHeight - margin) {
-    top = Math.max(margin, rect.top - popoverRect.height - 10);
-  }
-
-  popover.style.left = `${Math.round(left)}px`;
-  popover.style.top = `${Math.round(top)}px`;
-}
-
-function closeEloHistoryPopover() {
-  eloHistoryPopoverState = null;
-  const popover = document.getElementById("elo-history-popover");
-  if (!popover) return;
-  popover.hidden = true;
-  popover.innerHTML = "";
-}
-
-function renderEloHistoryPopover() {
-  const popover = ensureEloHistoryPopover();
-  const point = eloHistoryPopoverState?.point;
-  if (!point) {
-    popover.hidden = true;
-    popover.innerHTML = "";
-    return;
-  }
-
-  const delta = Number(point.delta);
-  const deltaLabel = Number.isFinite(delta)
-    ? `${delta > 0 ? "+" : ""}${Math.round(delta)}`
-    : "—";
-  const deltaClass = Number.isFinite(delta)
-    ? delta > 0
-      ? "delta-positive"
-      : delta < 0
-        ? "delta-negative"
-        : "delta-neutral"
-    : "delta-neutral";
-  const deltaKind = Number.isFinite(delta)
-    ? delta > 0
-      ? t("eloHistoryGain")
-      : delta < 0
-        ? t("eloHistoryLoss")
-        : t("eloHistoryDelta")
-    : t("eloHistoryDelta");
-
-  popover.innerHTML = `
-    <div class="sr-breakdown-popover-card elo-history-popover-card">
-      <div class="sr-breakdown-summary">${escapeHtml(point.label || "")}</div>
-      <dl class="sr-breakdown-table">
-        <div class="sr-breakdown-row">
-          <dt>${escapeHtml(t("eloHistoryDelta"))}</dt>
-          <dd><span class="positions-delta ${escapeHtml(deltaClass)}">${escapeHtml(deltaLabel)}</span></dd>
-        </div>
-        <div class="sr-breakdown-row">
-          <dt>${escapeHtml(deltaKind)}</dt>
-          <dd>${escapeHtml(deltaLabel)}</dd>
-        </div>
-        <div class="sr-breakdown-row">
-          <dt>${escapeHtml(t("eloHistoryRating"))}</dt>
-          <dd>${escapeHtml(point.rating)}</dd>
-        </div>
-        <div class="sr-breakdown-row">
-          <dt>${escapeHtml(t("eloHistoryRace"))}</dt>
-          <dd>${escapeHtml(point.date ? formatDateLocal(point.date.toISOString(), currentLang) : point.label || "-")}</dd>
-        </div>
-      </dl>
-      ${point.raceId && canOpenRaceFromBreakdown()
-        ? `<button type="button" class="btn btn-secondary sr-breakdown-open-race" data-elo-history-open-race="${escapeAttribute(point.raceId)}">${escapeHtml(t("openRaceDetailsLabel"))}</button>`
-        : ""}
-    </div>
-  `;
-  popover.hidden = false;
-  positionEloHistoryPopover();
-}
-
-function openEloHistoryPopover(trigger, point) {
-  if (!trigger || !point) return;
-  eloHistoryPopoverState = { trigger, point };
-  renderEloHistoryPopover();
-}
-
 function canOpenRaceFromBreakdown() {
   return Boolean(raceResultsModalController && document.getElementById("race-results-modal"));
 }
@@ -7348,10 +7173,6 @@ async function openRaceFromSafetyBreakdown(raceId, trigger = null) {
   if (!raceId || !canOpenRaceFromBreakdown()) return;
   const race = await loadRaceDetailsCached({ race_id: raceId });
   closeSafetyBreakdownPopover();
-  closeEloHistoryPopover();
-  if (eloModalController?.modal?.classList.contains("is-open")) {
-    eloModalController.close();
-  }
   if (safetyModalController?.modal?.classList.contains("is-open")) {
     safetyModalController.close();
   }
@@ -7423,24 +7244,6 @@ function openEloModalForSource(source, trigger = null) {
   eloModalController?.open(trigger);
 }
 
-async function openEloModalForButton(button) {
-  if (!button) return;
-  const decodedDriverName = decodeAttributeValue(button.dataset.eloDriverName);
-  let source = findEloSource(button.dataset.eloPublicId, null)
-    || findDriverRecordByName(decodedDriverName);
-  if (!source) {
-    try {
-      await ensureDriverIndexLoaded();
-      source = findEloSource(button.dataset.eloPublicId, null)
-        || findDriverRecordByName(decodedDriverName);
-    } catch (error) {
-      console.warn("Failed to load driver index for ELO modal.", error);
-    }
-  }
-  if (!source) return;
-  openEloModalForSource(source, button);
-}
-
 function initEloModal() {
   eloModalController = createModalController({
     modalId: "elo-modal",
@@ -7448,23 +7251,22 @@ function initEloModal() {
     onOpen: renderEloModal,
     onClose: () => {
       eloModalState = null;
-      closeEloHistoryPopover();
     }
   });
 
   document.addEventListener("click", (event) => {
-    const eloButton = event.target?.closest?.("[data-elo-public-id]");
+    const eloButton = event.target?.closest?.("[data-elo-public-id], [data-elo-player-id]");
     if (eloButton) {
       event.preventDefault();
       event.stopPropagation();
-      void openEloModalForButton(eloButton);
+      const source = findEloSource(eloButton.dataset.eloPublicId, eloButton.dataset.eloPlayerId);
+      openEloModalForSource(source, eloButton);
       return;
     }
 
     const periodButton = event.target?.closest?.("[data-elo-period]");
     if (periodButton && document.getElementById("elo-modal")?.contains(periodButton)) {
       eloModalState = { ...(eloModalState || {}), period: periodButton.dataset.eloPeriod || "all", periodOffset: 0 };
-      closeEloHistoryPopover();
       renderEloModal();
       return;
     }
@@ -7476,67 +7278,16 @@ function initEloModal() {
         ? currentOffset + 1
         : Math.max(0, currentOffset - 1);
       eloModalState = { ...(eloModalState || {}), periodOffset: nextOffset };
-      closeEloHistoryPopover();
       renderEloModal();
-      return;
-    }
-
-    const historyPoint = event.target?.closest?.("[data-elo-history-index]");
-    if (historyPoint && document.getElementById("elo-modal")?.contains(historyPoint)) {
-      event.preventDefault();
-      event.stopPropagation();
-      const info = getEloInfo(eloModalState?.source);
-      const points = getFilteredEloHistory(info, eloModalState?.period || "all", Number(eloModalState?.periodOffset || 0));
-      const point = points[Number(historyPoint.dataset.eloHistoryIndex)];
-      if (point) openEloHistoryPopover(historyPoint, point);
-      return;
-    }
-
-    const openRaceButton = event.target?.closest?.("[data-elo-history-open-race]");
-    if (openRaceButton) {
-      event.preventDefault();
-      event.stopPropagation();
-      openRaceFromSafetyBreakdown(openRaceButton.dataset.eloHistoryOpenRace || null, openRaceButton);
       return;
     }
 
     const gridButton = event.target?.closest?.("[data-elo-grid]");
     if (gridButton && document.getElementById("elo-modal")?.contains(gridButton)) {
       eloModalState = { ...(eloModalState || {}), grid: gridButton.dataset.eloGrid || "medium" };
-      closeEloHistoryPopover();
       renderEloModal();
-      return;
-    }
-
-    if (
-      eloHistoryPopoverState
-      && !event.target?.closest?.("#elo-history-popover")
-      && !event.target?.closest?.("[data-elo-history-index]")
-    ) {
-      closeEloHistoryPopover();
     }
   });
-
-  document.addEventListener("keydown", (event) => {
-    const historyPoint = event.target?.closest?.("[data-elo-history-index]");
-    if (!historyPoint) {
-      if (event.key === "Escape" && eloHistoryPopoverState) closeEloHistoryPopover();
-      return;
-    }
-    if (event.key !== "Enter" && event.key !== " ") return;
-    event.preventDefault();
-    const info = getEloInfo(eloModalState?.source);
-    const points = getFilteredEloHistory(info, eloModalState?.period || "all", Number(eloModalState?.periodOffset || 0));
-    const point = points[Number(historyPoint.dataset.eloHistoryIndex)];
-    if (point) openEloHistoryPopover(historyPoint, point);
-  });
-
-  window.addEventListener("resize", () => {
-    if (eloHistoryPopoverState) positionEloHistoryPopover();
-  });
-  window.addEventListener("scroll", () => {
-    if (eloHistoryPopoverState) positionEloHistoryPopover();
-  }, true);
 }
 
 function renderSafetyModal() {
@@ -7598,17 +7349,17 @@ function renderSafetyModal() {
         <p>${escapeHtml(t("safetyAboutP2"))}</p>
       </div>
       <div class="elo-category-grid safety-category-grid" aria-label="${escapeAttribute(t("safetyAboutTitle"))}">
-        <div class="elo-category-card sr-cat-A">
+        <div class="elo-category-card">
           <span>A</span>
           <strong>${escapeHtml(t("safetyCategoryA"))}</strong>
           <small>${escapeHtml(t("safetyCategoryRangeA"))}</small>
         </div>
-        <div class="elo-category-card sr-cat-B">
+        <div class="elo-category-card">
           <span>B</span>
           <strong>${escapeHtml(t("safetyCategoryB"))}</strong>
           <small>${escapeHtml(t("safetyCategoryRangeB"))}</small>
         </div>
-        <div class="elo-category-card sr-cat-C">
+        <div class="elo-category-card">
           <span>C</span>
           <strong>${escapeHtml(t("safetyCategoryC"))}</strong>
           <small>${escapeHtml(t("safetyCategoryRangeC"))}</small>
@@ -7658,18 +7409,18 @@ function initSafetyModal() {
   });
 
   document.addEventListener("click", (event) => {
-    const safetyButton = event.target?.closest?.("[data-sr-public-id]");
+    const safetyButton = event.target?.closest?.("[data-sr-public-id], [data-sr-player-id]");
     if (safetyButton) {
       event.preventDefault();
       event.stopPropagation();
-      const source = findSafetySource(safetyButton.dataset.srPublicId, null, safetyButton.dataset.srRaceId) || findDriverRecordByName(safetyButton.dataset.srDriverName);
+      const source = findSafetySource(safetyButton.dataset.srPublicId, safetyButton.dataset.srPlayerId, safetyButton.dataset.srRaceId);
       const breakdownMode = safetyButton.dataset.srBreakdownMode || "modal";
       if (breakdownMode === "inline") {
         openSafetyBreakdownPopover({
           trigger: safetyButton,
           source,
           publicId: safetyButton.dataset.srPublicId || null,
-          playerId: null,
+          playerId: safetyButton.dataset.srPlayerId || null,
           raceId: safetyButton.dataset.srRaceId || null
         });
       } else {
@@ -9423,8 +9174,7 @@ function renderRacesTablePage() {
 }
 
 function renderRaceDriverIdentity(row) {
-  const driverSource = resolveRaceDriverSource(row);
-  const eloSource = getEloInfo(driverSource) ? driverSource : findEloSource(driverSource?.public_id, driverSource?.player_id);
+  const eloSource = getEloInfo(row) ? row : findEloSource(row.public_id, row.player_id);
   const eloBadge = renderEloBadge(eloSource, { compact: true });
   const raceNumber = row.race_number != null ? `#${row.race_number}` : "";
   return `
@@ -9432,7 +9182,7 @@ function renderRaceDriverIdentity(row) {
       <div class="driver-avatar">${escapeHtml(initials(row.driver))}</div>
       <div class="driver-name-wrap">
         <div class="race-driver-title">
-          <span class="driver-name">${renderDriverLink(driverSource?.driver || row.driver, driverSource?.public_id || row.public_id, "driver-link", driverSource?.player_id || row.player_id)}</span>
+          <span class="driver-name">${renderDriverLink(row.driver, row.public_id, "driver-link", row.player_id)}</span>
         </div>
         <div class="race-driver-meta-line">
           ${raceNumber ? `<span class="race-note">${escapeHtml(raceNumber)}</span>` : ""}
@@ -9737,7 +9487,7 @@ function renderBansTable() {
   const headers = t("bansCols").map(label => `<th>${escapeHtml(label)}</th>`).join("");
   const rows = bansData.map(item => `
     <tr>
-      <td>${renderDriverLink(item.name || "—", item.public_id || null, "driver-link")}</td>
+      <td>${escapeHtml(item.name || "—")}</td>
       <td>${escapeHtml(item.banned_at ? formatDateTimeLocal(item.banned_at, currentLang) : "—")}</td>
     </tr>
   `).join("");
@@ -10910,31 +10660,19 @@ function renderBackgroundVideoSoundToggle() {
   const toggle = document.getElementById("bg-video-sound-toggle");
   if (!toggle) return;
 
-  const isEnabled = backgroundVideoSoundState.available && !backgroundVideoSoundState.disabled && backgroundVideoSoundState.enabled;
+  const isEnabled = backgroundVideoSoundState.available && backgroundVideoSoundState.enabled;
   const titleEl = toggle.querySelector("[data-bg-video-toggle-title]");
   const noteEl = toggle.querySelector("[data-bg-video-toggle-note]");
   const volumeLabelEl = toggle.querySelector("[data-bg-video-volume-label]");
   const volumeValueEl = toggle.querySelector("[data-bg-video-volume-value]");
   const volumeSlider = document.getElementById("bg-video-volume-slider");
-  const playbackToggle = document.getElementById("bg-video-playback-toggle");
-  const playbackStateEl = toggle.querySelector("[data-bg-video-playback-state]");
-  const titleKey = backgroundVideoSoundState.disabled
-    ? "bgVideoSoundToggleTitleDisabled"
-    : isEnabled
-      ? "bgVideoSoundToggleTitleActive"
-      : "bgVideoSoundToggleTitle";
-  const noteKey = backgroundVideoSoundState.disabled
-    ? "bgVideoSoundToggleNoteDisabled"
-    : isEnabled
-      ? "bgVideoSoundToggleNoteActive"
-      : "bgVideoSoundToggleNote";
+  const titleKey = isEnabled ? "bgVideoSoundToggleTitleActive" : "bgVideoSoundToggleTitle";
+  const noteKey = isEnabled ? "bgVideoSoundToggleNoteActive" : "bgVideoSoundToggleNote";
   const ariaKey = isEnabled ? "bgVideoSoundToggleAriaActive" : "bgVideoSoundToggleAria";
-  const playbackAriaKey = backgroundVideoSoundState.disabled ? "bgVideoPlaybackToggleAriaOff" : "bgVideoPlaybackToggleAriaOn";
   const volumePercent = Math.round(clampBackgroundVideoVolume(backgroundVideoSoundState.volume) * 100);
 
-  toggle.hidden = !backgroundVideoSoundState.available && !backgroundVideoSoundState.disabled;
+  toggle.hidden = !backgroundVideoSoundState.available;
   toggle.classList.toggle("is-active", isEnabled);
-  toggle.classList.toggle("is-disabled", backgroundVideoSoundState.disabled);
   toggle.setAttribute("aria-pressed", isEnabled ? "true" : "false");
   toggle.setAttribute("aria-label", t(ariaKey));
   toggle.title = t(ariaKey);
@@ -10943,29 +10681,16 @@ function renderBackgroundVideoSoundToggle() {
   if (noteEl) noteEl.textContent = t(noteKey);
   if (volumeLabelEl) volumeLabelEl.textContent = t("bgVideoVolumeLabel");
   if (volumeValueEl) volumeValueEl.textContent = `${volumePercent}%`;
-  if (playbackStateEl) playbackStateEl.textContent = t(backgroundVideoSoundState.disabled ? "bgVideoPlaybackToggleOff" : "bgVideoPlaybackToggleOn");
   if (volumeSlider) {
     volumeSlider.value = String(volumePercent);
     volumeSlider.setAttribute("aria-label", t("bgVideoVolumeAria"));
-    volumeSlider.disabled = backgroundVideoSoundState.disabled;
-  }
-  if (playbackToggle) {
-    playbackToggle.setAttribute("aria-pressed", backgroundVideoSoundState.disabled ? "false" : "true");
-    playbackToggle.setAttribute("aria-label", t(playbackAriaKey));
-    playbackToggle.title = t(playbackAriaKey);
   }
 }
 
 function syncBackgroundVideoSoundState(video = document.querySelector(".site-bg-video")) {
-  const isEnabled = Boolean(
-    video
-    && backgroundVideoSoundState.available
-    && !backgroundVideoSoundState.disabled
-    && backgroundVideoSoundState.enabled
-  );
+  const isEnabled = Boolean(video && backgroundVideoSoundState.available && backgroundVideoSoundState.enabled);
 
   document.body.classList.toggle("background-audio-focus", isEnabled);
-  document.body.classList.toggle("bg-video-disabled", backgroundVideoSoundState.disabled);
 
   if (video) {
     video.muted = !isEnabled;
@@ -10987,7 +10712,6 @@ function bindBackgroundVideoSoundToggle() {
   const toggle = document.getElementById("bg-video-sound-toggle");
   const video = document.querySelector(".site-bg-video");
   const volumeSlider = document.getElementById("bg-video-volume-slider");
-  const playbackToggle = document.getElementById("bg-video-playback-toggle");
 
   if (!toggle || !video || toggle.dataset.bound === "true") {
     renderBackgroundVideoSoundToggle();
@@ -11011,15 +10735,6 @@ function bindBackgroundVideoSoundToggle() {
     }
   };
 
-  const toggleBackgroundVideoPlayback = () => {
-    backgroundVideoSoundState.disabled = !backgroundVideoSoundState.disabled;
-    if (backgroundVideoSoundState.disabled) {
-      backgroundVideoSoundState.enabled = false;
-    }
-    saveBackgroundVideoDisabledPreference(backgroundVideoSoundState.disabled);
-    optimizeBackgroundMedia();
-  };
-
   toggle.addEventListener("click", () => {
     toggleBackgroundVideoSound();
   });
@@ -11030,27 +10745,6 @@ function bindBackgroundVideoSoundToggle() {
     event.preventDefault();
     toggleBackgroundVideoSound();
   });
-
-  if (playbackToggle) {
-    const stopPlaybackToggleEvent = event => {
-      event.stopPropagation();
-    };
-
-    playbackToggle.addEventListener("pointerdown", stopPlaybackToggleEvent);
-    playbackToggle.addEventListener("mousedown", stopPlaybackToggleEvent);
-    playbackToggle.addEventListener("touchstart", stopPlaybackToggleEvent, { passive: true });
-    playbackToggle.addEventListener("click", event => {
-      event.stopPropagation();
-      toggleBackgroundVideoPlayback();
-    });
-
-    playbackToggle.addEventListener("keydown", event => {
-      if (event.key !== "Enter" && event.key !== " ") return;
-      event.preventDefault();
-      event.stopPropagation();
-      toggleBackgroundVideoPlayback();
-    });
-  }
 
   if (volumeSlider) {
     volumeSlider.closest(".bg-video-volume")?.addEventListener("click", event => {
@@ -11186,14 +10880,6 @@ function optimizeBackgroundMedia() {
     IS_COMMUNITY_PAGE ||
     window.innerWidth <= 768;
 
-  if (backgroundVideoSoundState.disabled) {
-    document.body.dataset.bgVideoStatus = "disabled-by-user";
-    document.body.classList.add("lite-background");
-    setBackgroundVideoSoundAvailability(true);
-    unloadBackgroundVideo();
-    return;
-  }
-
   if (shouldUseStaticBackground) {
     document.body.dataset.bgVideoStatus = bgVideoBlockReason || "static-background";
     document.body.classList.add("lite-background");
@@ -11318,7 +11004,6 @@ async function init() {
   rerenderUI();
 
   backgroundVideoSoundState.volume = loadBackgroundVideoVolume();
-  backgroundVideoSoundState.disabled = loadBackgroundVideoDisabledPreference();
   runInitStep("updateServerCardBackgrounds", () => updateServerCardBackgrounds());
   runInitStep("bindLanguageButtons", () => bindLanguageButtons());
   runInitStep("bindTopNavGroups", () => bindTopNavGroups());
@@ -11341,14 +11026,6 @@ async function init() {
       renderNewsNotificationsModal();
       if (IS_NEWS_PAGE) renderNewsPage();
     }
-    if (event.key === NEWS_SEEN_STORAGE_KEY) {
-      renderNewsBell();
-      renderNewsNotificationsModal();
-    }
-    if (event.key === BG_VIDEO_DISABLED_STORAGE_KEY) {
-      backgroundVideoSoundState.disabled = loadBackgroundVideoDisabledPreference();
-      optimizeBackgroundMedia();
-    }
   });
   window.addEventListener("resize", debounce(() => {
     updateTopNavModalOffset();
@@ -11363,9 +11040,7 @@ async function init() {
     runInitStep("initOnlineActivityModal", () => initOnlineActivityModal());
     runInitStep("initDriverOfDayModal", () => initDriverOfDayModal());
     runInitStep("initDriverPreviewModal", () => initDriverPreviewModal());
-    if (ENABLE_HOURLY_HOME_WIDGET) {
-      runInitStep("initHourlyHeroModal", () => initHourlyHeroModal());
-    }
+    runInitStep("initHourlyHeroModal", () => initHourlyHeroModal());
     runInitStep("initServerPlayersModal", () => initServerPlayersModal());
   }
   runInitStep("initEloModal", () => initEloModal());
@@ -11435,15 +11110,10 @@ async function init() {
       return;
     }
 
-    const hourlyDataPromise = ENABLE_HOURLY_HOME_WIDGET
-      ? Promise.allSettled([
-          loadHourlyAnnouncementData(),
-          loadHourlyScheduleData()
-        ])
-      : Promise.resolve([
-          { status: "fulfilled", value: null },
-          { status: "fulfilled", value: null }
-        ]);
+    const hourlyDataPromise = Promise.allSettled([
+      loadHourlyAnnouncementData(),
+      loadHourlyScheduleData()
+    ]);
     void loadNewsFeed()
       .catch(() => [])
       .then(() => {
@@ -11496,20 +11166,18 @@ async function init() {
 
     rerenderUI();
 
-    if (ENABLE_HOURLY_HOME_WIDGET) {
-      const [hourlyAnnouncementResult, hourlyScheduleResult] = await hourlyDataPromise;
-      const hourlyAnnouncement = hourlyAnnouncementResult.status === "fulfilled" ? hourlyAnnouncementResult.value : null;
-      const hourlySchedule = hourlyScheduleResult.status === "fulfilled" ? hourlyScheduleResult.value : null;
-      hourlyScheduleData = hourlySchedule;
-      hourlyAnnouncementData = mergeHourlyAnnouncementWithSchedule(hourlyAnnouncement, hourlySchedule);
-      topLoadState.hourly = false;
-      rerenderUI();
+    const [hourlyAnnouncementResult, hourlyScheduleResult] = await hourlyDataPromise;
+    const hourlyAnnouncement = hourlyAnnouncementResult.status === "fulfilled" ? hourlyAnnouncementResult.value : null;
+    const hourlySchedule = hourlyScheduleResult.status === "fulfilled" ? hourlyScheduleResult.value : null;
+    hourlyScheduleData = hourlySchedule;
+    hourlyAnnouncementData = mergeHourlyAnnouncementWithSchedule(hourlyAnnouncement, hourlySchedule);
+    topLoadState.hourly = false;
+    rerenderUI();
 
-      loadHourlyVotes(hourlyAnnouncementData).finally(() => {
-        renderHourlyHeroCard();
-        renderHourlyHeroModal();
-      });
-    }
+    loadHourlyVotes(hourlyAnnouncementData).finally(() => {
+      renderHourlyHeroCard();
+      renderHourlyHeroModal();
+    });
   } catch (error) {
     console.error(error);
 
