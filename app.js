@@ -511,7 +511,12 @@ const HOURLY_TRACK_BACKGROUNDS = {
   monza: `${HOURLY_SITE_BASE_URL}/assets/tracks/monza.jpg`,
   silverstone: `${HOURLY_SITE_BASE_URL}/assets/tracks/silverstone.jpg`,
   spa: `${HOURLY_SITE_BASE_URL}/assets/tracks/spa.jpg`,
-  nurburgring: `${HOURLY_SITE_BASE_URL}/assets/tracks/nurburgring.jpg`
+  nurburgring: `${HOURLY_SITE_BASE_URL}/assets/tracks/nurburgring.jpg`,
+  nurburgring_24h: `${HOURLY_SITE_BASE_URL}/assets/tracks/nurburgring_24h.jpg`,
+  nurburgring24h: `${HOURLY_SITE_BASE_URL}/assets/tracks/nurburgring_24h.jpg`,
+  "nurburgring-24h": `${HOURLY_SITE_BASE_URL}/assets/tracks/nurburgring_24h.jpg`,
+  nordschl: `${HOURLY_SITE_BASE_URL}/assets/tracks/nurburgring_24h.jpg`,
+  nordschleife: `${HOURLY_SITE_BASE_URL}/assets/tracks/nurburgring_24h.jpg`
 };
 const HOURLY_WEATHER_ICON_PATHS = {
   clouds: `${HOURLY_SITE_BASE_URL}/assets/weather/cloudness.png`,
