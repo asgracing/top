@@ -665,6 +665,7 @@ const HERO_TRACK_BACKGROUNDS = {
   silverstone: "./assets/tracks/silverstone.jpg",
   spa: "./assets/tracks/spa.jpg",
   nurburgring: "./assets/tracks/nurburgring.jpg",
+  nurburgring_24h: "./assets/tracks/nurburgring_24h.jpg",
   nurburgring24h: "./assets/tracks/nurburgring_24h.jpg",
   "nurburgring-24h": "./assets/tracks/nurburgring_24h.jpg",
   nordschl: "./assets/tracks/nurburgring_24h.jpg",
