@@ -35,8 +35,6 @@ const VOTER_ID_STORAGE_TTL_MS = 365 * 24 * 60 * 60 * 1000;
 const VOTE_STATE_STORAGE_KEY = "hourlyVoteStateByEventId";
 const VOTE_STATE_STORAGE_TTL_MS = 30 * 24 * 60 * 60 * 1000;
 const NEWS_READ_STORAGE_KEY = "asgReadNewsIds.v2";
-const EVENT_MODAL_VERSION_STORAGE_KEY = "hourlyEventModalVersion";
-const DEFAULT_EVENT_MODAL_VERSION = "v2";
 const topSiteBaseUrl = isAsgPublicSite
   ? "https://asgracing.ru"
   : isLocalDevHost
@@ -191,17 +189,8 @@ function syncVoteStateFromStorage() {
   }
 }
 
-function resolveEventModalVersion() {
-  const queryValue = String(pageParams.get("eventModalVersion") || pageParams.get("eventModal") || "").trim().toLowerCase();
-  if (queryValue === "v1" || queryValue === "legacy") return "v1";
-  if (queryValue === "v2") return "v2";
-  const storedValue = String(localStorage.getItem(EVENT_MODAL_VERSION_STORAGE_KEY) || "").trim().toLowerCase();
-  if (storedValue === "v1" || storedValue === "v2") return storedValue;
-  return DEFAULT_EVENT_MODAL_VERSION;
-}
-
 function useEventModalV2() {
-  return eventModalVersion === "v2";
+  return true;
 }
 
 const translations = {
@@ -606,7 +595,7 @@ let serverStatusData = null;
 let scheduleItems = [];
 let championshipItems = [];
 let recentRaceItems = [];
-let eventModalVersion = resolveEventModalVersion();
+const eventModalVersion = "v2";
 let lastScheduleModalTrigger = null;
 
 function buildScheduleItems(schedule, announcement) {
@@ -2174,27 +2163,11 @@ function applyTranslations() {
 }
 
 function renderEventModalVersionToggle() {
-  document.querySelectorAll("[data-modal-version]").forEach(button => {
-    const isActive = button.dataset.modalVersion === eventModalVersion;
-    button.classList.toggle("is-active", isActive);
-    button.setAttribute("aria-pressed", isActive ? "true" : "false");
-  });
+  return;
 }
 
 function bindEventModalVersionToggle() {
-  const root = document.getElementById("modal-version-switch");
-  if (!root || root.dataset.bound === "true") return;
-  root.dataset.bound = "true";
-  root.querySelectorAll("[data-modal-version]").forEach(button => {
-    button.addEventListener("click", () => {
-      const nextVersion = button.dataset.modalVersion === "v1" ? "v1" : "v2";
-      if (nextVersion === eventModalVersion) return;
-      eventModalVersion = nextVersion;
-      localStorage.setItem(EVENT_MODAL_VERSION_STORAGE_KEY, eventModalVersion);
-      renderEventModalVersionToggle();
-      if (selectedScheduleItem) renderScheduleModal();
-    });
-  });
+  return;
 }
 
 function renderAnnouncement(data) {
