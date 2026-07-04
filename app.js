@@ -55,6 +55,7 @@ const TWITCH_WIDGET_CHECK_INTERVAL_MS = 120000;
 const TOP_GUIDE_STORAGE_KEY = "asgTopGuideSeen";
 const TOP_GUIDE_MEDIA_QUERY = "(min-width: 1280px)";
 const BG_VIDEO_VOLUME_STORAGE_KEY = "asgBgVideoVolume";
+const BG_VIDEO_PLAYBACK_STORAGE_KEY = "asgBgVideoPlaybackEnabled";
 const SERVER_CARD_BACKGROUNDS = {
   main: `${SITE_BASE_PATH}assets/main.jpg`,
   sunset: `${SITE_BASE_PATH}assets/sunset.jpg`,
@@ -499,7 +500,9 @@ let topGuideState = {
   mediaQuery: null
 };
 let backgroundVideoSoundState = {
+  supported: false,
   available: false,
+  playbackEnabled: true,
   enabled: false,
   volume: 0.5
 };
@@ -545,6 +548,24 @@ function saveBackgroundVideoVolume(volume) {
     localStorage.setItem(BG_VIDEO_VOLUME_STORAGE_KEY, String(Math.round(clampBackgroundVideoVolume(volume) * 100)));
   } catch (error) {
     // Volume persistence is nice to have; playback should keep working if storage is blocked.
+  }
+}
+
+function loadBackgroundVideoPlaybackEnabled() {
+  try {
+    const storedValue = localStorage.getItem(BG_VIDEO_PLAYBACK_STORAGE_KEY);
+    if (storedValue === null) return true;
+    return !["0", "false", "off", "no"].includes(String(storedValue).trim().toLowerCase());
+  } catch (error) {
+    return true;
+  }
+}
+
+function saveBackgroundVideoPlaybackEnabled(enabled) {
+  try {
+    localStorage.setItem(BG_VIDEO_PLAYBACK_STORAGE_KEY, enabled ? "true" : "false");
+  } catch (error) {
+    // Playback persistence is optional.
   }
 }
 
@@ -821,6 +842,10 @@ const translations = {
     bgVideoSoundToggleAriaActive: "Mute the background video and return the site to normal mode",
     bgVideoVolumeLabel: "Volume",
     bgVideoVolumeAria: "Background video volume",
+    bgVideoPlaybackToggleAria: "Disable the background video on this site",
+    bgVideoPlaybackToggleAriaActive: "Enable the background video on this site",
+    bgVideoPlaybackStateOn: "ON",
+    bgVideoPlaybackStateOff: "OFF",
     bestLapsTitle: "Best Laps",
     bestLapsSubtitle: "Row click opens quick view. Name opens full profile.",
     worstSafetyTitle: "Worst Safety",
@@ -1432,6 +1457,10 @@ const translations = {
     bgVideoSoundToggleAriaActive: "Выключить звук фонового видео и вернуть обычный режим сайта",
     bgVideoVolumeLabel: "Громкость",
     bgVideoVolumeAria: "Громкость фонового видео",
+    bgVideoPlaybackToggleAria: "Полностью отключить фоновое видео на сайте",
+    bgVideoPlaybackToggleAriaActive: "Снова включить фоновое видео на сайте",
+    bgVideoPlaybackStateOn: "ON",
+    bgVideoPlaybackStateOff: "OFF",
     bestLapsTitle: "Лучшие круги",
     bestLapsSubtitle: "Строка открывает быстрый просмотр, имя пилота ведёт в полный профиль.",
     worstSafetyTitle: "Штрафы и нарушения",
@@ -10666,18 +10695,22 @@ function renderBackgroundVideoSoundToggle() {
   if (!toggle) return;
 
   const isEnabled = backgroundVideoSoundState.available && backgroundVideoSoundState.enabled;
+  const playbackEnabled = backgroundVideoSoundState.supported && backgroundVideoSoundState.playbackEnabled;
   const titleEl = toggle.querySelector("[data-bg-video-toggle-title]");
   const noteEl = toggle.querySelector("[data-bg-video-toggle-note]");
   const volumeLabelEl = toggle.querySelector("[data-bg-video-volume-label]");
   const volumeValueEl = toggle.querySelector("[data-bg-video-volume-value]");
   const volumeSlider = document.getElementById("bg-video-volume-slider");
+  const playbackToggle = document.getElementById("bg-video-playback-toggle");
+  const playbackStateEl = toggle.querySelector("[data-bg-video-playback-state]");
   const titleKey = isEnabled ? "bgVideoSoundToggleTitleActive" : "bgVideoSoundToggleTitle";
   const noteKey = isEnabled ? "bgVideoSoundToggleNoteActive" : "bgVideoSoundToggleNote";
   const ariaKey = isEnabled ? "bgVideoSoundToggleAriaActive" : "bgVideoSoundToggleAria";
   const volumePercent = Math.round(clampBackgroundVideoVolume(backgroundVideoSoundState.volume) * 100);
 
-  toggle.hidden = !backgroundVideoSoundState.available;
+  toggle.hidden = !backgroundVideoSoundState.supported;
   toggle.classList.toggle("is-active", isEnabled);
+  toggle.classList.toggle("is-disabled", backgroundVideoSoundState.supported && !backgroundVideoSoundState.playbackEnabled);
   toggle.setAttribute("aria-pressed", isEnabled ? "true" : "false");
   toggle.setAttribute("aria-label", t(ariaKey));
   toggle.title = t(ariaKey);
@@ -10689,6 +10722,16 @@ function renderBackgroundVideoSoundToggle() {
   if (volumeSlider) {
     volumeSlider.value = String(volumePercent);
     volumeSlider.setAttribute("aria-label", t("bgVideoVolumeAria"));
+    volumeSlider.disabled = !playbackEnabled;
+  }
+  if (playbackToggle) {
+    const playbackAriaKey = playbackEnabled ? "bgVideoPlaybackToggleAria" : "bgVideoPlaybackToggleAriaActive";
+    playbackToggle.setAttribute("aria-pressed", playbackEnabled ? "true" : "false");
+    playbackToggle.setAttribute("aria-label", t(playbackAriaKey));
+    playbackToggle.title = t(playbackAriaKey);
+  }
+  if (playbackStateEl) {
+    playbackStateEl.textContent = t(playbackEnabled ? "bgVideoPlaybackStateOn" : "bgVideoPlaybackStateOff");
   }
 }
 
@@ -10705,8 +10748,9 @@ function syncBackgroundVideoSoundState(video = document.querySelector(".site-bg-
   renderBackgroundVideoSoundToggle();
 }
 
-function setBackgroundVideoSoundAvailability(available) {
-  backgroundVideoSoundState.available = Boolean(available);
+function setBackgroundVideoSoundAvailability(supported) {
+  backgroundVideoSoundState.supported = Boolean(supported);
+  backgroundVideoSoundState.available = backgroundVideoSoundState.supported && backgroundVideoSoundState.playbackEnabled;
   if (!backgroundVideoSoundState.available) {
     backgroundVideoSoundState.enabled = false;
   }
@@ -10717,6 +10761,7 @@ function bindBackgroundVideoSoundToggle() {
   const toggle = document.getElementById("bg-video-sound-toggle");
   const video = document.querySelector(".site-bg-video");
   const volumeSlider = document.getElementById("bg-video-volume-slider");
+  const playbackToggle = document.getElementById("bg-video-playback-toggle");
 
   if (!toggle || !video || toggle.dataset.bound === "true") {
     renderBackgroundVideoSoundToggle();
@@ -10747,6 +10792,7 @@ function bindBackgroundVideoSoundToggle() {
   toggle.addEventListener("keydown", event => {
     if (event.key !== "Enter" && event.key !== " ") return;
     if (event.target === volumeSlider) return;
+    if (event.target === playbackToggle) return;
     event.preventDefault();
     toggleBackgroundVideoSound();
   });
@@ -10766,6 +10812,28 @@ function bindBackgroundVideoSoundToggle() {
       backgroundVideoSoundState.volume = clampBackgroundVideoVolume(Number(volumeSlider.value) / 100);
       saveBackgroundVideoVolume(backgroundVideoSoundState.volume);
       syncBackgroundVideoSoundState(video);
+    });
+  }
+
+  if (playbackToggle) {
+    const togglePlayback = () => {
+      backgroundVideoSoundState.playbackEnabled = !backgroundVideoSoundState.playbackEnabled;
+      saveBackgroundVideoPlaybackEnabled(backgroundVideoSoundState.playbackEnabled);
+      if (!backgroundVideoSoundState.playbackEnabled) {
+        backgroundVideoSoundState.enabled = false;
+      }
+      optimizeBackgroundMedia();
+      renderBackgroundVideoSoundToggle();
+    };
+
+    playbackToggle.addEventListener("click", event => {
+      event.preventDefault();
+      event.stopPropagation();
+      togglePlayback();
+    });
+
+    playbackToggle.addEventListener("keydown", event => {
+      event.stopPropagation();
     });
   }
 
@@ -10875,7 +10943,7 @@ function optimizeBackgroundMedia() {
               ? "mobile-width"
               : "";
   const shouldAutoplayBackground = !reduceMotion && !navigator.connection?.saveData;
-  const shouldUseStaticBackground =
+  const runtimeBlocksBackgroundVideo =
     !supportsMp4Video ||
     IS_DRIVER_PAGE ||
     IS_RACES_PAGE ||
@@ -10884,11 +10952,14 @@ function optimizeBackgroundMedia() {
     IS_BANS_PAGE ||
     IS_COMMUNITY_PAGE ||
     window.innerWidth <= 768;
+  const shouldUseStaticBackground = runtimeBlocksBackgroundVideo || !backgroundVideoSoundState.playbackEnabled;
 
   if (shouldUseStaticBackground) {
-    document.body.dataset.bgVideoStatus = bgVideoBlockReason || "static-background";
+    document.body.dataset.bgVideoStatus = runtimeBlocksBackgroundVideo
+      ? (bgVideoBlockReason || "static-background")
+      : "user-disabled";
     document.body.classList.add("lite-background");
-    setBackgroundVideoSoundAvailability(false);
+    setBackgroundVideoSoundAvailability(!runtimeBlocksBackgroundVideo);
     unloadBackgroundVideo();
     return;
   }
@@ -11009,6 +11080,7 @@ async function init() {
   rerenderUI();
 
   backgroundVideoSoundState.volume = loadBackgroundVideoVolume();
+  backgroundVideoSoundState.playbackEnabled = loadBackgroundVideoPlaybackEnabled();
   runInitStep("updateServerCardBackgrounds", () => updateServerCardBackgrounds());
   runInitStep("bindLanguageButtons", () => bindLanguageButtons());
   runInitStep("bindTopNavGroups", () => bindTopNavGroups());
