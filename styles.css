@@ -7159,9 +7159,25 @@ body.modal-open {
   }
 
   body.experiment-combined-stats .combined-stats-shell-header,
-  .combined-stats-shell-controls {
+  body.experiment-combined-stats .combined-stats-shell-controls {
     flex-direction: column;
     align-items: stretch;
+  }
+
+  body.experiment-combined-stats .combined-stats-shell-header {
+    justify-content: flex-start;
+    gap: 10px;
+    margin-bottom: 10px;
+  }
+
+  body.experiment-combined-stats .combined-stats-shell-title {
+    flex: none;
+  }
+
+  body.experiment-combined-stats .combined-stats-shell-controls {
+    flex: none;
+    justify-content: flex-start;
+    gap: 10px;
   }
 
   .combined-stats-active-tools {
