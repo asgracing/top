@@ -790,9 +790,1032 @@ body.championship-body .top-nav-menu {
 }
 
 .page {
-  width: min(1200px, calc(100% - 32px));
+  width: min(1520px, calc(100% - 32px));
   margin: 0 auto;
-  padding: 10px 0 56px;
+  display: grid;
+  gap: 12px;
+  align-content: start;
+  padding: 8px 0 24px;
+}
+
+.page > * {
+  min-width: 0;
+}
+
+.hourly-page-content {
+  width: 100%;
+  max-width: 1360px;
+  margin: 0 auto;
+  min-width: 0;
+  display: grid;
+  grid-template-columns: minmax(0, 2fr) minmax(340px, 0.95fr);
+  grid-template-areas:
+    "main championship"
+    "upcoming upcoming";
+  gap: 16px;
+  align-items: start;
+}
+
+.hourly-page-content > * {
+  min-width: 0;
+  width: 100%;
+  align-self: stretch;
+}
+
+.hourly-home-v2 {
+  grid-area: main;
+  padding: 0;
+  min-width: 0;
+}
+
+.hourly-home-v2 > .hourly-upcoming-v2 {
+  width: 100%;
+  min-width: 0;
+}
+
+.hourly-upcoming-v2,
+.hourly-championship-v2 {
+  position: relative;
+  overflow: hidden;
+  height: 426px;
+  min-height: 426px;
+  border: 1px solid rgba(255, 255, 255, 0.14);
+  border-radius: 24px;
+  box-shadow: var(--shadow);
+}
+
+.hourly-upcoming-v2 {
+  --hourly-upcoming-track-photo: none;
+  background: rgba(13, 18, 25, 0.94);
+}
+
+.hourly-upcoming-v2-bg,
+.hourly-upcoming-v2-shade {
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+}
+
+.hourly-upcoming-v2-bg {
+  background:
+    linear-gradient(115deg, rgba(7, 11, 16, 0.1), rgba(7, 11, 16, 0.03)),
+    var(--hourly-upcoming-track-photo);
+  background-size: cover;
+  background-position: center;
+  opacity: 1;
+}
+
+.hourly-upcoming-v2-shade {
+  background:
+    linear-gradient(180deg, rgba(8, 12, 18, 0.22), rgba(8, 12, 18, 0.4)),
+    linear-gradient(90deg, rgba(8, 12, 18, 0.34), rgba(8, 12, 18, 0.12) 44%, rgba(8, 12, 18, 0.28));
+}
+
+.hourly-upcoming-v2-inner {
+  position: relative;
+  z-index: 1;
+  display: grid;
+  grid-template-rows: 36px minmax(0, 318px) 44px;
+  gap: 5px;
+  height: 100%;
+  padding: 12px 18px 8px;
+}
+
+.hourly-upcoming-v2-header {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) auto;
+  align-items: center;
+  gap: 20px;
+  min-height: 0;
+}
+
+.hourly-upcoming-v2-eyebrow,
+.hourly-championship-v2-eyebrow {
+  color: #f5a21a;
+  font-size: 0.8rem;
+  font-weight: 900;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+}
+
+.hourly-championship-v2-eyebrow {
+  color: #c77dff;
+}
+
+.hourly-upcoming-v2-title {
+  margin: 0;
+  font-size: clamp(2rem, 2.35vw, 2.25rem);
+  line-height: 0.95;
+  letter-spacing: -0.04em;
+}
+
+.hourly-upcoming-v2-date-time {
+  display: inline-flex;
+  align-items: center;
+  gap: 7px;
+  color: #f7f9fc;
+  font-size: 0.82rem;
+  font-weight: 700;
+  white-space: nowrap;
+}
+
+.hourly-upcoming-v2-date-separator {
+  color: rgba(255, 255, 255, 0.5);
+}
+
+.hourly-upcoming-v2-info-grid {
+  display: grid;
+  grid-template-columns: minmax(0, 0.92fr) minmax(0, 0.92fr) minmax(0, 1.18fr);
+  gap: 10px;
+  min-height: 0;
+  align-items: stretch;
+}
+
+.hourly-upcoming-v2 .event-details-v2-card {
+  min-width: 0;
+  height: 100%;
+  min-height: 100%;
+  padding: 12px 13px;
+  border: 1px solid rgba(255, 255, 255, 0.15);
+  border-radius: 16px;
+  background:
+    linear-gradient(180deg, rgba(18, 25, 33, 0.82), rgba(12, 17, 24, 0.86));
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+  box-shadow:
+    inset 0 1px 0 rgba(255, 255, 255, 0.05),
+    0 14px 28px rgba(0, 0, 0, 0.2);
+}
+
+.hourly-upcoming-v2 .event-details-v2-card-body {
+  min-height: 100%;
+  gap: 0;
+}
+
+.hourly-upcoming-v2 .event-details-v2-card-header {
+  margin-bottom: 8px;
+  gap: 8px;
+}
+
+.hourly-upcoming-v2 .event-details-v2-card-title {
+  font-size: 0.72rem;
+  letter-spacing: 0.08em;
+}
+
+.hourly-upcoming-v2 .event-details-v2-card-conditions .event-details-v2-info-row,
+.hourly-upcoming-v2 .event-details-v2-info-row {
+  padding: 3px 0;
+}
+
+.hourly-upcoming-v2 .event-details-v2-card-conditions .event-details-v2-info-label,
+.hourly-upcoming-v2 .event-details-v2-info-label {
+  font-size: 0.72rem;
+}
+
+.hourly-upcoming-v2 .event-details-v2-card-conditions .event-details-v2-info-value,
+.hourly-upcoming-v2 .event-details-v2-info-value {
+  font-size: 0.74rem;
+}
+
+.hourly-upcoming-v2 .event-details-v2-info-icon {
+  width: 14px;
+  height: 14px;
+}
+
+.hourly-upcoming-v2 .event-details-v2-password-row {
+  gap: 6px;
+}
+
+.hourly-upcoming-v2 .event-details-v2-copy-button {
+  width: 28px;
+  height: 28px;
+}
+
+.hourly-upcoming-v2 .event-details-v2-class-badge {
+  min-height: 28px;
+  padding: 0 10px;
+  font-size: 0.72rem;
+}
+
+.hourly-upcoming-v2-footer {
+  display: grid;
+  grid-template-columns: auto minmax(0, 1fr);
+  align-items: center;
+  gap: 8px;
+  padding: 0;
+}
+
+.hourly-v2-connect-actions {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  flex-wrap: wrap;
+}
+
+.hourly-v2-connect-button,
+.hourly-v2-help-button {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 36px;
+  padding: 0 14px;
+  border-radius: 12px;
+  text-decoration: none;
+  font-weight: 900;
+  font-size: 0.78rem;
+  transition: transform 0.18s ease, border-color 0.18s ease, background 0.18s ease;
+}
+
+.hourly-v2-connect-button {
+  border: 1px solid rgba(255, 167, 77, 0.42);
+  background: linear-gradient(135deg, rgba(255, 110, 54, 0.96), rgba(245, 162, 26, 0.9));
+  color: #fffaf4;
+}
+
+.hourly-v2-connect-button.is-disabled {
+  pointer-events: none;
+  opacity: 0.56;
+}
+
+.hourly-v2-help-button {
+  border: 1px solid rgba(255, 255, 255, 0.16);
+  background: rgba(14, 19, 27, 0.74);
+  color: #e5ebf5;
+}
+
+.hourly-v2-footer-side {
+  display: grid;
+  gap: 2px;
+  justify-items: end;
+}
+
+.hourly-v2-actions-main {
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
+  gap: 10px;
+  width: 100%;
+  min-width: 0;
+  flex-wrap: wrap;
+}
+
+.hourly-v2-actions-main-locked {
+  justify-content: flex-end;
+}
+
+.hourly-v2-participation-button {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  min-width: 208px;
+  min-height: 40px;
+  padding: 0 18px;
+  border: 1px solid rgba(255, 211, 120, 0.36);
+  border-radius: 14px;
+  background: linear-gradient(135deg, rgba(245, 162, 26, 0.96), rgba(255, 110, 54, 0.96));
+  color: #14181f;
+  font-size: 0.9rem;
+  font-weight: 950;
+  cursor: pointer;
+}
+
+.hourly-v2-participation-button.is-voted {
+  background: linear-gradient(135deg, rgba(255, 205, 84, 0.96), rgba(245, 162, 26, 0.92));
+}
+
+.hourly-v2-participation-button.is-compact {
+  min-width: 0;
+  min-height: 36px;
+  padding: 0 14px;
+  font-size: 0.8rem;
+}
+
+.hourly-v2-cancel-button,
+.hourly-v2-cancel-placeholder {
+  width: 38px;
+  height: 38px;
+  flex: 0 0 auto;
+}
+
+.hourly-v2-cancel-button {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  padding: 0;
+  border: 1px solid rgba(255, 124, 124, 0.42);
+  border-radius: 999px;
+  background: linear-gradient(180deg, rgba(210, 44, 44, 0.96), rgba(158, 16, 16, 0.96));
+  color: #fff;
+  cursor: pointer;
+}
+
+.hourly-v2-cancel-placeholder {
+  visibility: hidden;
+}
+
+.hourly-v2-participant-count {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  color: #edf3fb;
+  font-size: 0.86rem;
+  font-weight: 800;
+  white-space: nowrap;
+}
+
+.hourly-v2-participation-icon,
+.hourly-v2-cancel-icon,
+.hourly-v2-participant-icon {
+  width: 18px;
+  height: 18px;
+}
+
+.hourly-v2-voting-note {
+  color: rgba(222, 231, 242, 0.78);
+  font-size: 0.64rem;
+  font-weight: 600;
+  line-height: 1.05;
+  text-align: right;
+}
+
+.hourly-v2-voting-note a,
+.hourly-v2-details-link {
+  color: #f5a21a;
+  text-decoration: none;
+}
+
+.hourly-v2-details-link {
+  font-size: 0.8rem;
+  font-weight: 800;
+}
+
+.hourly-championship-v2 {
+  grid-area: championship;
+  --hourly-championship-track-photo: none;
+  width: 100%;
+  min-width: 0;
+  display: grid;
+  grid-template-rows: auto auto auto 1fr auto auto;
+  gap: 8px;
+  padding: 14px 16px 12px;
+  border-color: rgba(158, 82, 255, 0.38);
+  background:
+    linear-gradient(180deg, rgba(29, 23, 45, 0.84), rgba(15, 18, 29, 0.96)),
+    var(--hourly-championship-track-photo);
+  background-size: cover;
+  background-position: center;
+}
+
+.hourly-championship-v2::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background:
+    linear-gradient(180deg, rgba(22, 18, 34, 0.4), rgba(13, 15, 24, 0.58)),
+    radial-gradient(circle at top right, rgba(158, 82, 255, 0.16), transparent 34%);
+  pointer-events: none;
+}
+
+.hourly-championship-v2 > * {
+  position: relative;
+  z-index: 1;
+}
+
+.hourly-championship-v2-title {
+  font-size: 1.65rem;
+  font-weight: 950;
+  line-height: 1.05;
+  color: #f6f1ff;
+}
+
+.hourly-championship-v2-meta {
+  color: #d5b3ff;
+  font-size: 0.88rem;
+  font-weight: 800;
+}
+
+.hourly-championship-v2-event {
+  display: grid;
+  gap: 6px;
+  padding: 11px 12px;
+  border: 1px solid rgba(193, 132, 252, 0.34);
+  border-radius: 14px;
+  background: linear-gradient(180deg, rgba(59, 31, 89, 0.26), rgba(15, 18, 29, 0.56));
+}
+
+.hourly-championship-v2-event-label {
+  display: inline-flex;
+  align-items: center;
+  width: fit-content;
+  min-height: 20px;
+  padding: 0 8px;
+  border: 1px solid rgba(193, 132, 252, 0.34);
+  border-radius: 999px;
+  color: #dfbdfd;
+  font-size: 0.64rem;
+  font-weight: 900;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+}
+
+.hourly-championship-v2-event-track {
+  color: #fff;
+  font-size: 0.94rem;
+  font-weight: 900;
+}
+
+.hourly-championship-v2-event-row {
+  display: grid;
+  grid-template-columns: 18px minmax(0, 1fr);
+  gap: 6px;
+  align-items: center;
+  color: #eef2fb;
+  font-size: 0.78rem;
+  font-weight: 700;
+}
+
+.hourly-championship-v2-event-row span {
+  min-width: 0;
+}
+
+.hourly-championship-v2-event-icon {
+  width: 16px;
+  height: 16px;
+  color: #d5b3ff;
+}
+
+.hourly-championship-v2-description {
+  color: #e4d9f3;
+  font-size: 0.88rem;
+  font-weight: 650;
+  line-height: 1.32;
+}
+
+.hourly-championship-v2-button {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 40px;
+  padding: 0 14px;
+  border-radius: 14px;
+  background: linear-gradient(135deg, rgba(126, 34, 206, 0.98), rgba(168, 85, 247, 0.94));
+  color: #fff;
+  font-size: 0.9rem;
+  font-weight: 950;
+  text-decoration: none;
+}
+
+.hourly-slots-v2 {
+  grid-area: upcoming;
+  margin-top: 0;
+  width: 100%;
+  min-width: 0;
+  min-height: 236px;
+  padding: 12px 16px 10px;
+}
+
+#recent-races {
+  grid-column: 1 / -1;
+  width: 100%;
+  min-width: 0;
+}
+
+.hourly-slots-v2-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 8px;
+}
+
+.hourly-slots-v2-header h2 {
+  font-size: 0.96rem;
+  font-weight: 900;
+}
+
+.hourly-slots-v2-grid {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 12px;
+}
+
+.hourly-slot-card-v2 {
+  --hourly-slot-track-photo: none;
+  position: relative;
+  overflow: hidden;
+  min-height: 158px;
+  border: 1px solid rgba(255, 255, 255, 0.12);
+  border-radius: 18px;
+  background:
+    linear-gradient(180deg, rgba(8, 12, 18, 0.12), rgba(8, 12, 18, 0.38)),
+    linear-gradient(120deg, rgba(245, 162, 26, 0.05), transparent 32%),
+    var(--hourly-slot-track-photo);
+  background-size: cover;
+  background-position: center;
+  box-shadow: 0 18px 34px rgba(0, 0, 0, 0.24);
+  cursor: pointer;
+  transition: transform 0.18s ease, border-color 0.18s ease, box-shadow 0.18s ease;
+}
+
+.hourly-slot-card-v2:hover {
+  transform: translateY(-2px);
+  border-color: rgba(255, 209, 102, 0.32);
+}
+
+.hourly-slot-card-v2.is-championship-event {
+  border-color: rgba(158, 82, 255, 0.46);
+  box-shadow:
+    inset 0 0 0 1px rgba(158, 82, 255, 0.12),
+    0 18px 34px rgba(0, 0, 0, 0.24);
+}
+
+.hourly-slot-card-v2-inner {
+  position: relative;
+  z-index: 1;
+  display: grid;
+  gap: 6px;
+  min-height: 100%;
+  padding: 10px 12px;
+  align-content: end;
+  background: linear-gradient(180deg, rgba(8, 12, 18, 0.02), rgba(8, 12, 18, 0.4) 58%, rgba(8, 12, 18, 0.68));
+}
+
+.hourly-slot-card-v2 .event-type-badge {
+  min-height: 20px;
+  padding: 3px 8px;
+  font-size: 0.58rem;
+}
+
+.hourly-slot-card-v2-time {
+  color: #fff0d2;
+  font-size: 0.8rem;
+  font-weight: 800;
+}
+
+.hourly-slot-card-v2-track {
+  color: #fff;
+  font-size: 1.55rem;
+  font-weight: 950;
+  line-height: 0.98;
+  letter-spacing: -0.03em;
+}
+
+.hourly-slot-card-v2-weather {
+  color: #e6edf7;
+  font-size: 0.82rem;
+  font-weight: 700;
+}
+
+.hourly-slot-card-v2-footer .hourly-v2-actions-main {
+  display: grid;
+  grid-template-columns: auto 36px minmax(0, 1fr);
+  align-items: center;
+  justify-content: initial;
+  gap: 8px;
+  flex-wrap: nowrap;
+}
+
+.hourly-slot-card-v2-footer .hourly-v2-participant-count {
+  justify-self: end;
+  font-size: 0.74rem;
+}
+
+.hourly-slot-card-v2-footer .hourly-v2-cancel-button,
+.hourly-slot-card-v2-footer .hourly-v2-cancel-placeholder {
+  width: 36px;
+  height: 36px;
+}
+
+.hourly-calendar-v2 {
+  margin-top: 8px;
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  border-radius: 14px;
+  background: rgba(11, 16, 24, 0.72);
+  overflow: hidden;
+}
+
+.hourly-calendar-v2 summary {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) auto;
+  align-items: center;
+  gap: 10px;
+  min-height: 46px;
+  padding: 0 14px;
+  cursor: pointer;
+  list-style: none;
+  font-weight: 900;
+  font-size: 0.92rem;
+}
+
+.hourly-calendar-v2 summary::-webkit-details-marker {
+  display: none;
+}
+
+.hourly-calendar-v2-summary-main,
+.hourly-calendar-v2-summary-side {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.hourly-calendar-v2-summary-icon,
+.hourly-calendar-v2-summary-caret {
+  display: inline-flex;
+  width: 18px;
+  height: 18px;
+  position: relative;
+}
+
+.hourly-calendar-v2-summary-icon::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background: currentColor;
+  color: #f5a21a;
+  -webkit-mask: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24'%3E%3Cpath d='M8 3v3M16 3v3M4 9h16M5.75 5.75h12.5a2 2 0 0 1 2 2v10.5a2 2 0 0 1-2 2H5.75a2 2 0 0 1-2-2V7.75a2 2 0 0 1 2-2Z' fill='none' stroke='%23000' stroke-width='1.8' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/svg%3E") center/contain no-repeat;
+  mask: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24'%3E%3Cpath d='M8 3v3M16 3v3M4 9h16M5.75 5.75h12.5a2 2 0 0 1 2 2v10.5a2 2 0 0 1-2 2H5.75a2 2 0 0 1-2-2V7.75a2 2 0 0 1 2-2Z' fill='none' stroke='%23000' stroke-width='1.8' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/svg%3E") center/contain no-repeat;
+}
+
+.hourly-calendar-v2-summary-caret::before {
+  content: "";
+  position: absolute;
+  inset: 4px 2px 2px;
+  border-right: 2px solid rgba(255, 255, 255, 0.7);
+  border-bottom: 2px solid rgba(255, 255, 255, 0.7);
+  transform: rotate(45deg);
+  transition: transform 0.18s ease;
+}
+
+.hourly-calendar-v2[open] .hourly-calendar-v2-summary-caret::before {
+  transform: rotate(225deg);
+}
+
+.hourly-calendar-v2-summary-count {
+  display: inline-flex;
+  align-items: center;
+  min-height: 28px;
+  padding: 0 10px;
+  border-radius: 999px;
+  background: rgba(255, 255, 255, 0.08);
+  color: #dde5f0;
+  font-size: 0.74rem;
+}
+
+@media (max-width: 1199px) {
+  .page {
+    width: 100%;
+    padding: 8px 0 24px;
+  }
+
+  .hourly-page-content {
+    width: 100%;
+    max-width: 900px;
+    display: flex;
+    flex-direction: column;
+    gap: 14px;
+  }
+
+  .hourly-home-v2,
+  .hourly-championship-v2,
+  .hourly-slots-v2,
+  #recent-races {
+    order: initial;
+  }
+
+  .hourly-championship-v2,
+  .hourly-upcoming-v2 {
+    height: auto;
+    min-height: auto;
+  }
+
+  .hourly-upcoming-v2-inner {
+    grid-template-rows: auto auto auto;
+    gap: 10px;
+  }
+
+  .hourly-upcoming-v2-header,
+  .hourly-upcoming-v2-footer {
+    grid-template-columns: 1fr;
+  }
+
+  .hourly-upcoming-v2-info-grid {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+
+  .hourly-upcoming-v2-info-grid > :last-child {
+    grid-column: 1 / -1;
+  }
+
+  .hourly-v2-footer-side {
+    justify-items: start;
+  }
+
+  .hourly-v2-actions-main {
+    justify-content: flex-start;
+  }
+
+  .hourly-slots-v2 {
+    min-height: 0;
+  }
+
+  .hourly-slots-v2-grid {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+}
+
+@media (max-width: 767px) {
+  .page {
+    width: 100%;
+  }
+
+  .hourly-page-content {
+    width: calc(100% - 20px);
+    max-width: none;
+  }
+
+  .hourly-upcoming-v2,
+  .hourly-championship-v2,
+  .hourly-slots-v2,
+  #recent-races {
+    height: auto;
+    min-height: 0;
+  }
+
+  .hourly-upcoming-v2-inner {
+    padding: 16px;
+  }
+
+  .hourly-upcoming-v2-title {
+    font-size: clamp(1.7rem, 8vw, 2.1rem);
+  }
+
+  .hourly-upcoming-v2-info-grid,
+  .hourly-slots-v2-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .hourly-upcoming-v2-date-time {
+    white-space: normal;
+  }
+
+  .hourly-upcoming-v2-footer {
+    gap: 10px;
+  }
+
+  .hourly-v2-connect-actions {
+    width: 100%;
+  }
+
+  .hourly-v2-connect-button,
+  .hourly-v2-help-button {
+    flex: 1 1 0;
+    min-width: 0;
+  }
+
+  .hourly-v2-footer-side {
+    width: 100%;
+    justify-items: start;
+    text-align: left;
+  }
+
+  .hourly-v2-actions-main {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) 38px;
+    align-items: center;
+    justify-content: initial;
+    gap: 8px;
+  }
+
+  .hourly-v2-participation-button {
+    min-width: 0;
+    width: 100%;
+    padding: 0 14px;
+    font-size: 0.84rem;
+  }
+
+  .hourly-v2-cancel-button,
+  .hourly-v2-cancel-placeholder {
+    justify-self: end;
+  }
+
+  .hourly-v2-participant-count {
+    grid-column: 1 / -1;
+    white-space: normal;
+  }
+
+  .hourly-championship-v2 {
+    padding: 14px;
+    gap: 10px;
+  }
+
+  .hourly-championship-v2-title {
+    font-size: 1.2rem;
+    overflow-wrap: anywhere;
+  }
+
+  .hourly-championship-v2-description,
+  .hourly-championship-v2-event-row span {
+    overflow-wrap: anywhere;
+  }
+
+  .hourly-championship-v2-button {
+    width: 100%;
+  }
+
+  .hourly-slot-card-v2-footer .hourly-v2-actions-main {
+    grid-template-columns: minmax(0, 1fr) 36px;
+  }
+
+  .hourly-slot-card-v2-footer .hourly-v2-participation-button {
+    padding: 0 12px;
+    font-size: 0.76rem;
+  }
+
+  .hourly-slot-card-v2-footer .hourly-v2-participant-count {
+    justify-self: start;
+    font-size: 0.72rem;
+  }
+
+  .hourly-slot-card-v2-track {
+    font-size: 1.35rem;
+  }
+
+  .hourly-calendar-v2 summary {
+    grid-template-columns: 1fr;
+    align-items: start;
+    padding: 14px 18px;
+  }
+
+  .table-wrap {
+    overflow-x: visible;
+  }
+
+  .races-table,
+  .races-table thead,
+  .races-table tbody,
+  .races-table tr,
+  .races-table td {
+    display: block;
+    width: 100%;
+  }
+
+  .races-table {
+    min-width: 0;
+  }
+
+  .races-table thead {
+    display: none;
+  }
+
+  .races-table tbody {
+    padding: 8px;
+  }
+
+  .races-table tbody tr {
+    display: grid;
+    gap: 8px;
+    padding: 12px;
+    border: 1px solid var(--line);
+    border-radius: 16px;
+    background: rgba(255, 255, 255, 0.03);
+  }
+
+  .races-table tbody tr + tr {
+    margin-top: 8px;
+  }
+
+  .races-table td {
+    padding: 0;
+    border-bottom: none;
+    min-width: 0;
+  }
+
+  .races-table td::before {
+    content: attr(data-label);
+    display: block;
+    margin-bottom: 3px;
+    color: var(--muted);
+    font-size: 0.68rem;
+    font-weight: 800;
+    letter-spacing: 0.06em;
+    text-transform: uppercase;
+  }
+
+  .race-pagination {
+    flex-direction: column;
+    align-items: stretch;
+  }
+
+  .race-pagination-info {
+    white-space: normal;
+  }
+
+  .race-pagination-buttons {
+    justify-content: flex-start;
+  }
+}
+
+/* ===== FOOTER ===== */
+
+.footer {
+  width: 100%;
+  max-width: 1360px;
+  margin: 0 auto;
+  padding: 26px 0 42px;
+}
+
+.footer-inner {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 18px;
+  padding-top: 18px;
+  border-top: 1px solid var(--line);
+  color: var(--muted);
+}
+
+.footer-left {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.footer-brand {
+  color: var(--text);
+  font-size: 14px;
+  font-weight: 700;
+}
+
+.footer-text {
+  max-width: 760px;
+  font-size: 13px;
+  line-height: 1.5;
+}
+
+.footer-links {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  flex-wrap: wrap;
+}
+
+.footer-links a {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  height: 38px;
+  padding: 0 14px;
+  border: 1px solid var(--line);
+  border-radius: 12px;
+  background: rgba(255, 255, 255, 0.03);
+  color: var(--text);
+  text-decoration: none;
+  font-size: 13px;
+  font-weight: 700;
+  transition: 0.2s ease;
+}
+
+.footer-links .footer-social-link {
+  width: 38px;
+  padding: 0;
+}
+
+.footer-links a:hover {
+  transform: translateY(-1px);
+  background: rgba(255, 255, 255, 0.06);
+}
+
+@media (max-width: 1199px) {
+  .footer {
+    width: 100%;
+    max-width: 900px;
+  }
+
+  .footer-inner {
+    width: 100%;
+    flex-direction: column;
+    align-items: flex-start;
+  }
+
+  .footer-links {
+    width: 100%;
+    min-width: 0;
+  }
+
+  .footer-links a {
+    flex: 0 0 auto;
+  }
+
+  .footer-links .footer-social-link {
+    flex: 0 0 38px;
+  }
+}
+
+@media (max-width: 767px) {
+  .footer {
+    width: calc(100% - 20px);
+    max-width: none;
+  }
 }
 
 .hero {
@@ -1883,6 +2906,9 @@ h2 {
 
 .table-wrap {
   overflow-x: auto;
+  max-width: 100%;
+  overscroll-behavior-x: contain;
+  -webkit-overflow-scrolling: touch;
 }
 
 table {

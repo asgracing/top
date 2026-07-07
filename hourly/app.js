@@ -35,6 +35,7 @@ const VOTER_ID_STORAGE_TTL_MS = 365 * 24 * 60 * 60 * 1000;
 const VOTE_STATE_STORAGE_KEY = "hourlyVoteStateByEventId";
 const VOTE_STATE_STORAGE_TTL_MS = 30 * 24 * 60 * 60 * 1000;
 const NEWS_READ_STORAGE_KEY = "asgReadNewsIds.v2";
+const EVENT_MODAL_VERSION = "v2";
 const topSiteBaseUrl = isAsgPublicSite
   ? "https://asgracing.ru"
   : isLocalDevHost
@@ -183,6 +184,7 @@ function syncVoteStateFromStorage() {
   if (Array.isArray(scheduleItems) && scheduleItems.length) {
     renderScheduleTable(scheduleItems);
     renderHeroVote();
+    renderUpcomingHeroV2(announcementData || {});
   }
   if (selectedScheduleItem && typeof renderScheduleModal === "function") {
     renderScheduleModal();
@@ -514,9 +516,8 @@ Object.assign(translations.ru, {
 });
 
 Object.assign(translations.en, {
-  modalVersionLabel: "Modal",
-  modalVersionV1: "V1",
-  modalVersionV2: "V2",
+  footerText:
+    "Statistics are generated from ACC Dedicated Server result files and published via GitHub Pages.",
   modalConnectionTitle: "Connection",
   modalFormatTitle: "Event format",
   modalConditionsTitle: "Race conditions",
@@ -546,9 +547,8 @@ Object.assign(translations.en, {
 });
 
 Object.assign(translations.ru, {
-  modalVersionLabel: "\u041c\u043e\u0434\u0430\u043b\u043a\u0430",
-  modalVersionV1: "V1",
-  modalVersionV2: "V2",
+  footerText:
+    "Данные собираются из файлов результатов ACC Dedicated Server и публикуются через GitHub Pages.",
   modalConnectionTitle: "\u041f\u043e\u0434\u043a\u043b\u044e\u0447\u0435\u043d\u0438\u0435",
   modalFormatTitle: "\u0424\u043e\u0440\u043c\u0430\u0442 \u0441\u043e\u0431\u044b\u0442\u0438\u044f",
   modalConditionsTitle: "\u0423\u0441\u043b\u043e\u0432\u0438\u044f \u0433\u043e\u043d\u043a\u0438",
@@ -595,7 +595,7 @@ let serverStatusData = null;
 let scheduleItems = [];
 let championshipItems = [];
 let recentRaceItems = [];
-const eventModalVersion = "v2";
+let eventModalVersion = EVENT_MODAL_VERSION;
 let lastScheduleModalTrigger = null;
 
 function buildScheduleItems(schedule, announcement) {
@@ -973,14 +973,23 @@ function renderCoreLoadingState() {
 
   const voteEl = document.getElementById("hero-vote");
   if (voteEl) voteEl.innerHTML = renderLoadingMarkup(t("loadingShort"));
-  const scheduleEl = document.getElementById("schedule-list");
+  const scheduleEl = document.getElementById("schedule-v2-list") || document.getElementById("schedule-list");
   if (scheduleEl) scheduleEl.innerHTML = renderLoadingMarkup(t("loadingShort"));
   const championshipsEl = document.getElementById("championship-history-list");
   if (championshipsEl) championshipsEl.innerHTML = renderLoadingMarkup(t("loadingShort"));
-  const calendarGridEl = document.getElementById("calendar-grid");
+  const calendarGridEl = document.getElementById("calendar-v2-grid") || document.getElementById("calendar-grid");
   if (calendarGridEl) calendarGridEl.innerHTML = renderLoadingMarkup(t("loadingShort"));
-  const calendarCountEl = document.getElementById("calendar-count");
+  const calendarCountEl = document.getElementById("calendar-v2-count") || document.getElementById("calendar-count");
   if (calendarCountEl) calendarCountEl.textContent = t("loadingShort");
+  setText("hourly-upcoming-v2-title", t("loadingShort"));
+  setText("hourly-upcoming-v2-date-time", t("loadingShort"));
+  setHtml("hourly-upcoming-v2-info-grid", renderLoadingMarkup(t("loadingShort")));
+  const upcomingFooterEl = document.getElementById("hourly-upcoming-v2-footer");
+  if (upcomingFooterEl) upcomingFooterEl.innerHTML = "";
+  setText("hourly-championship-v2-title", t("loadingShort"));
+  setText("hourly-championship-v2-meta", t("loadingShort"));
+  setHtml("hourly-championship-v2-event", renderLoadingMarkup(t("loadingShort")));
+  setText("hourly-championship-v2-description", t("loadingShort"));
 }
 function renderRecentRacesLoadingState() {
   const container = document.getElementById("recent-races-table");
@@ -1950,6 +1959,7 @@ async function submitVote(item) {
   if (!eventId || pendingVoteEventIds.has(eventId) || voteStateByEventId[eventId]?.already_voted) return;
   pendingVoteEventIds.add(eventId);
   renderScheduleTable(scheduleItems);
+  renderUpcomingHeroV2(announcementData || {});
   try {
     const voterId = getBrowserVoterId();
     const body = {
@@ -1985,6 +1995,7 @@ async function submitVote(item) {
     if (selectedScheduleItem && buildSlotEventId(selectedScheduleItem) === eventId) renderScheduleModal();
     renderScheduleTable(scheduleItems);
     renderHeroVote();
+    renderUpcomingHeroV2(announcementData || {});
   }
 }
 async function submitUnvote(item) {
@@ -1994,6 +2005,7 @@ async function submitUnvote(item) {
   pendingVoteEventIds.add(eventId);
   renderScheduleTable(scheduleItems);
   renderHeroVote();
+  renderUpcomingHeroV2(announcementData || {});
   try {
     const response = await fetch(new URL("/unvote", votesApiBase), {
       method: "POST",
@@ -2024,6 +2036,7 @@ async function submitUnvote(item) {
     if (selectedScheduleItem && buildSlotEventId(selectedScheduleItem) === eventId) renderScheduleModal();
     renderScheduleTable(scheduleItems);
     renderHeroVote();
+    renderUpcomingHeroV2(announcementData || {});
   }
 }
 function buildVoteControls(item, context = "card") {
@@ -2133,6 +2146,227 @@ function applyRaceModalTrackBackground(trackCode) {
   modalCard.style.setProperty("--modal-track-photo", backgroundUrl ? `url("${backgroundUrl}")` : "none");
 }
 
+function getTrackBackgroundUrl(trackCode) {
+  return HERO_TRACK_BACKGROUNDS[String(trackCode || "").trim().toLowerCase()] || "";
+}
+
+function getHourlyConnectHref(server = {}) {
+  const hourlyStatus = serverStatusData?.servers?.hourly || serverStatusData?.hourly || {};
+  return buildAccConnectHref(normalizeAccConnectConfig({ ...server, ...hourlyStatus }, ACC_CONNECT_SERVER_FALLBACK));
+}
+
+function buildParticipationControlsV2(item, options = {}) {
+  const variant = options.variant === "compact" ? "compact" : "hero";
+  const showDetails = options.showDetails !== false;
+  const voteState = getVoteState(item);
+  const isLocked = isVotingDisabledForItem(item);
+  const voteLabel = voteState.already_voted ? t("voteButtonDone") : t("voteButton");
+  const countLabel = getModalParticipantCountLabel(voteState.votes);
+  const detailsLink = showDetails && item?.details_url
+    ? `<a class="hourly-v2-details-link" href="${escapeHtml(String(item.details_url))}">${escapeHtml(currentLang === "ru" ? "Подробнее" : "Details")}</a>`
+    : "";
+
+  if (isLocked) {
+    return `
+      <div class="hourly-v2-actions-main hourly-v2-actions-main-locked">
+        <div class="hourly-v2-voting-note">${escapeHtml(t("votingDisabledChampionship"))}</div>
+        ${detailsLink}
+      </div>
+    `;
+  }
+
+  return `
+    <div class="hourly-v2-actions-main">
+      <button
+        class="hourly-v2-participation-button${variant === "compact" ? " is-compact" : ""}${voteState.already_voted ? " is-voted" : ""}"
+        type="button"
+        data-vote-event-id="${escapeHtml(voteState.eventId)}"
+        ${voteState.pending ? "disabled" : ""}
+      >
+        ${buildEventDetailsV2Icon("check", "hourly-v2-participation-icon")}
+        <span>${escapeHtml(voteLabel)}</span>
+      </button>
+      ${
+        voteState.already_voted
+          ? `
+            <button
+              class="hourly-v2-cancel-button"
+              type="button"
+              data-unvote-event-id="${escapeHtml(voteState.eventId)}"
+              aria-label="${escapeHtml(t("unvoteButton"))}"
+              ${voteState.pending ? "disabled" : ""}
+            >
+              ${buildEventDetailsV2Icon("close", "hourly-v2-cancel-icon")}
+            </button>
+          `
+          : `<div class="hourly-v2-cancel-placeholder" aria-hidden="true"></div>`
+      }
+      <div class="hourly-v2-participant-count">
+        ${buildEventDetailsV2Icon("users", "hourly-v2-participant-icon")}
+        <span>${escapeHtml(countLabel)}</span>
+      </div>
+      ${detailsLink}
+    </div>
+  `;
+}
+
+function buildUpcomingEventInfoGrid(item) {
+  const viewModel = getScheduleModalViewModel(item);
+  const passwordId = `hourly-v2-password-${escapeHtml(String(item?.event_id || item?.date || "slot"))}`;
+  const connectionRows = [
+    buildEventDetailsV2Row(t("heroServerLabel"), escapeHtml(viewModel.serverName), "server"),
+    buildEventDetailsV2Row(
+      t("heroPasswordLabel"),
+      `<div class="event-details-v2-password-row"><span class="event-details-v2-password" id="${passwordId}">${escapeHtml(viewModel.password)}</span>${buildEventDetailsV2CopyButton(passwordId)}</div>`,
+      "copy"
+    ),
+    buildEventDetailsV2Row(t("modalClassLabel"), `<span class="event-details-v2-class-badge">${escapeHtml(viewModel.carClass)}</span>`, "flag"),
+    buildEventDetailsV2Row(t("modalSlotsLabel"), escapeHtml(viewModel.slotCount ?? t("modalNotSpecified")), "users"),
+    buildEventDetailsV2Row(t("modalSafetyLabel"), escapeHtml(viewModel.safetyRating ?? t("modalNotSpecified")), "flag")
+  ].join("");
+
+  const formatRows = [
+    buildEventDetailsV2Row(t("modalPreparationLabel"), escapeHtml(formatModalMinutesValue(viewModel.preparationMinutes)), "timer"),
+    buildEventDetailsV2Row(t("modalQualifyingLabel"), escapeHtml(formatModalMinutesValue(viewModel.qualifyingMinutes)), "stopwatch"),
+    buildEventDetailsV2Row(t("modalRaceLabel"), escapeHtml(formatModalMinutesValue(viewModel.raceMinutes)), "play"),
+    buildEventDetailsV2Row(t("modalGameTimeLabel"), escapeHtml(viewModel.inGameTime), "sun"),
+    buildEventDetailsV2Row(t("modalTimeMultiplierLabel"), escapeHtml(formatModalTimeMultiplierValue(viewModel.timeMultiplier)), "fast")
+  ].join("");
+
+  const conditionsRows = [
+    buildEventDetailsV2Row(t("heroPitstopLabel"), escapeHtml(formatModalMandatoryPitstopCountValue(viewModel.mandatoryPitstopCount)), "wrench", { accent: true }),
+    buildEventDetailsV2Row(t("modalPitWindowLabel"), escapeHtml(formatModalMinutesValue(viewModel.pitWindowMinutes)), "timer", { accent: true }),
+    buildEventDetailsV2Row(t("modalRefuelAllowedLabel"), escapeHtml(formatModalAllowedValue(viewModel.refuellingAllowed)), "fuel"),
+    buildEventDetailsV2Row(t("modalMandatoryRefuelLabel"), escapeHtml(formatModalYesNoValue(viewModel.mandatoryRefuelling)), "drop"),
+    buildEventDetailsV2Row(t("modalRefuelFixedLabel"), escapeHtml(formatModalYesNoValue(viewModel.fixedRefuellingTime)), "timer"),
+    buildEventDetailsV2Row(t("heroTyresLabel"), escapeHtml(formatModalTyreSetCountValue(viewModel.tyreSetCount)), "tyre", { rowClass: " event-details-v2-divider-row" }),
+    buildEventDetailsV2Row(t("modalTemperatureLabel"), escapeHtml(formatModalTemperatureValue(viewModel.temperatureC)), "temp"),
+    buildEventDetailsV2Row(t("modalCloudsLabel"), escapeHtml(formatModalPercentValue(viewModel.cloudLevelPercent)), "cloud"),
+    buildEventDetailsV2Row(t("modalRainLabel"), escapeHtml(formatModalPercentValue(viewModel.rainProbabilityPercent)), "rain"),
+    buildEventDetailsV2Row(t("modalRandomnessLabel"), escapeHtml(viewModel.weatherRandomness ?? t("modalNotSpecified")), "wind")
+  ].join("");
+
+  return [
+    buildEventDetailsV2Card(t("modalConnectionTitle"), "server", "event-details-v2-card-connection hourly-v2-info-card", connectionRows),
+    buildEventDetailsV2Card(t("modalFormatTitle"), "flag", "event-details-v2-card-format hourly-v2-info-card", formatRows),
+    buildEventDetailsV2Card(t("modalConditionsTitle"), "wrench", "event-details-v2-card-conditions hourly-v2-info-card", conditionsRows)
+  ].join("");
+}
+
+function renderUpcomingHeroV2(data) {
+  const root = document.getElementById("hourly-upcoming-v2");
+  if (!root) return;
+
+  const titleEl = document.getElementById("hourly-upcoming-v2-title");
+  const dateTimeEl = document.getElementById("hourly-upcoming-v2-date-time");
+  const infoGridEl = document.getElementById("hourly-upcoming-v2-info-grid");
+  const footerEl = document.getElementById("hourly-upcoming-v2-footer");
+  const server = data?.server || {};
+  const voteItem = scheduleItems[0] || data;
+  const connectHref = getHourlyConnectHref(server);
+  const startTime = getLocalizedField(data, "start_time_local", data?.start_time_local || "--");
+  const timezone = getLocalizedField(data, "timezone", data?.timezone || "UTC+3");
+  const trackName = getLocalizedField(data, "track_name", data?.track_name || "--");
+
+  if (titleEl) titleEl.textContent = trackName;
+  if (dateTimeEl) {
+    dateTimeEl.innerHTML = `
+      ${buildEventDetailsV2Icon("calendar", "event-details-v2-date-time-icon")}
+      <span>${escapeHtml(formatDate(data?.date))}</span>
+      <span class="hourly-upcoming-v2-date-separator" aria-hidden="true">•</span>
+      <span>${escapeHtml(`${startTime} ${timezone}`.trim())}</span>
+    `;
+  }
+  if (infoGridEl) infoGridEl.innerHTML = buildUpcomingEventInfoGrid(data);
+  if (footerEl) {
+    footerEl.innerHTML = `
+      <div class="hourly-v2-connect-actions">
+        <a
+          class="hourly-v2-connect-button${connectHref ? "" : " is-disabled"}"
+          href="${escapeHtml(connectHref || "#")}"
+          aria-disabled="${connectHref ? "false" : "true"}"
+          title="${escapeHtml(connectHref ? t("serverConnectBtn") : t("serverConnectUnavailable"))}"
+        >${escapeHtml(t("serverConnectBtn"))}</a>
+        <a class="hourly-v2-help-button" href="https://github.com/lonemeow/acc-connector" target="_blank" rel="noopener noreferrer">${escapeHtml(t("serverConnectHowTo"))}</a>
+      </div>
+      <div class="hourly-v2-footer-side">
+        ${buildParticipationControlsV2(voteItem, { showDetails: true })}
+        <div class="hourly-v2-voting-note">${buildCompactVoteLegalNoteHtml()}</div>
+      </div>
+    `;
+  }
+
+  root.style.setProperty("--hourly-upcoming-track-photo", getTrackBackgroundUrl(data?.track_code) ? `url("${getTrackBackgroundUrl(data?.track_code)}")` : "none");
+  bindHeroCopyButtons(root);
+  bindVoteControls(root);
+}
+
+function renderChampionshipHeroV2(data) {
+  const card = document.getElementById("hourly-championship-v2");
+  if (!card) return;
+
+  const championship = data?.championship || {};
+  const session = data?.session || {};
+  const rules = data?.rules || {};
+  const nextChampionship = scheduleItems.find(isChampionshipEvent) || (isChampionshipEvent(data) ? data : null);
+  const title = data?.championship_title || championship.title || nextChampionship?.championship_title || "ASG Racing June 2026";
+  const slug = data?.championship_slug || championship.slug || nextChampionship?.championship_slug;
+  const championshipUrl = slug ? `./championship/?slug=${encodeURIComponent(slug)}` : "./championship/";
+  const eventHtml = nextChampionship
+    ? `
+      <div class="hourly-championship-v2-event-label">${escapeHtml(currentLang === "ru" ? "Событие чемпионата" : "Championship event")}</div>
+      <div class="hourly-championship-v2-event-track">${escapeHtml(getLocalizedField(nextChampionship, "track_name", nextChampionship.track_code || "--"))}</div>
+      <div class="hourly-championship-v2-event-row">${buildEventDetailsV2Icon("calendar", "hourly-championship-v2-event-icon")}<span>${escapeHtml(formatScheduleDateTime(nextChampionship))}</span></div>
+      <div class="hourly-championship-v2-event-row">${buildEventDetailsV2Icon("rain", "hourly-championship-v2-event-icon")}<span>${escapeHtml(buildScheduleCardWeather(nextChampionship))}</span></div>
+      <div class="hourly-championship-v2-event-row">${buildEventDetailsV2Icon("stopwatch", "hourly-championship-v2-event-icon")}<span>${escapeHtml(`Q ${session.qualifying_duration_minutes ?? "--"}m + R ${session.race_duration_minutes ?? "--"}m`)}</span></div>
+      <div class="hourly-championship-v2-event-row">${buildEventDetailsV2Icon("wrench", "hourly-championship-v2-event-icon")}<span>${escapeHtml(`${typeof rules.mandatory_pitstop_count === "number" ? rules.mandatory_pitstop_count : t("modalNotSpecified")}${rules.pit_window_length_minutes ? ` / ${rules.pit_window_length_minutes}m` : ""}`)}</span></div>
+    `
+    : `<div class="empty">${escapeHtml(t("unknownValue"))}</div>`;
+
+  const titleEl = document.getElementById("hourly-championship-v2-title");
+  const metaEl = document.getElementById("hourly-championship-v2-meta");
+  const eventEl = document.getElementById("hourly-championship-v2-event");
+  const descriptionEl = document.getElementById("hourly-championship-v2-description");
+  const buttonEl = document.getElementById("hourly-championship-v2-button");
+
+  if (titleEl) titleEl.textContent = title;
+  if (metaEl) metaEl.textContent = [championship.period, championship.status].filter(Boolean).join(" • ") || t("championshipBadge");
+  if (eventEl) eventEl.innerHTML = eventHtml;
+  if (descriptionEl) descriptionEl.textContent = championship.description || t("championshipNoDescription");
+  if (buttonEl) {
+    buttonEl.textContent = title;
+    buttonEl.href = championshipUrl;
+  }
+
+  card.dataset.href = championshipUrl;
+  card.style.setProperty("--hourly-championship-track-photo", getTrackBackgroundUrl(nextChampionship?.track_code || data?.track_code) ? `url("${getTrackBackgroundUrl(nextChampionship?.track_code || data?.track_code)}")` : "none");
+}
+
+function buildScheduleCardV2(row, index) {
+  const backgroundUrl = getTrackBackgroundUrl(row?.track_code);
+  return `
+    <article
+      class="hourly-slot-card-v2 is-interactive-row${isChampionshipEvent(row) ? " is-championship-event" : ""}"
+      data-event-type="${escapeHtml(isChampionshipEvent(row) ? "championship" : "hourly")}"
+      data-schedule-index="${index}"
+      tabindex="0"
+      role="button"
+      aria-label="${escapeHtml(`${t("openScheduleDetailsLabel")}: ${row.track_name || row.track_code || "-"}`)}"
+      style="--hourly-slot-track-photo: ${backgroundUrl ? `url('${escapeHtml(backgroundUrl)}')` : "none"};"
+    >
+      <div class="hourly-slot-card-v2-inner">
+        <div class="event-type-badge">${escapeHtml(eventBadgeLabel(row))}</div>
+        <div class="hourly-slot-card-v2-time">${escapeHtml(formatScheduleCardDateTime(row))}</div>
+        <div class="hourly-slot-card-v2-track">${escapeHtml(getLocalizedField(row, "track_name", row.track_name || "--"))}</div>
+        <div class="hourly-slot-card-v2-weather">${escapeHtml(buildScheduleCardWeather(row))}</div>
+        <div class="hourly-slot-card-v2-footer">
+          ${buildParticipationControlsV2(row, { variant: "compact", showDetails: false })}
+        </div>
+      </div>
+    </article>
+  `;
+}
+
 function applyTranslations() {
   document.documentElement.lang = t("htmlLang");
   document.title = t("pageTitle");
@@ -2159,15 +2393,6 @@ function applyTranslations() {
   renderNewsBell();
   renderNewsNotificationsModal();
   document.getElementById("top-nav-more")?.rebuildOverflowMenu?.();
-  renderEventModalVersionToggle();
-}
-
-function renderEventModalVersionToggle() {
-  return;
-}
-
-function bindEventModalVersionToggle() {
-  return;
 }
 
 function renderAnnouncement(data) {
@@ -2317,36 +2542,14 @@ function renderSchedule(rows) {
   `).join("");
 }
 function renderScheduleTable(rows) {
-  const container = document.getElementById("schedule-list");
+  const container = document.getElementById("schedule-v2-list") || document.getElementById("schedule-list");
   if (!container) return;
   if (!Array.isArray(rows) || rows.length === 0) {
     container.innerHTML = `<div class="empty">${escapeHtml(t("scheduleEmpty"))}</div>`;
     return;
   }
-  const cardsHtml = rows.slice(0, 3).map((row, index) => {
-    const trackCode = String(row?.track_code || "").trim().toLowerCase();
-    const backgroundUrl = HERO_TRACK_BACKGROUNDS[trackCode];
-    return `
-      <article
-        class="schedule-event-card is-interactive-row${isChampionshipEvent(row) ? " is-championship-event" : ""}"
-        data-schedule-index="${index}"
-        tabindex="0"
-        role="button"
-        aria-label="${escapeHtml(`${t("openScheduleDetailsLabel")}: ${row.track_name || row.track_code || "-"}`)}"
-        style="--schedule-track-photo: ${backgroundUrl ? `url('${escapeHtml(backgroundUrl)}')` : "none"};"
-      >
-        <div class="schedule-event-card-inner">
-          <div class="event-type-badge">${escapeHtml(eventBadgeLabel(row))}</div>
-          <div class="schedule-event-time">${escapeHtml(formatScheduleCardDateTime(row))}</div>
-          <div class="schedule-event-track">${escapeHtml(getLocalizedField(row, "track_name", row.track_name || "--"))}</div>
-          <div class="schedule-event-weather"><span>${escapeHtml(buildScheduleCardWeather(row))}</span><img src="./assets/weather/rain.png" alt="" /></div>
-          ${buildVoteControls(row, "card")}
-        </div>
-      </article>
-    `;
-  }).join("");
-  container.innerHTML = `<div class="schedule-cards-grid">${cardsHtml}</div>`;
-  container.querySelectorAll(".schedule-event-card[data-schedule-index]").forEach(card => {
+  container.innerHTML = rows.slice(0, 3).map((row, index) => buildScheduleCardV2(row, index)).join("");
+  container.querySelectorAll("[data-schedule-index]").forEach(card => {
     const openCard = () => openScheduleModal(scheduleItems[Number(card.dataset.scheduleIndex)] || null, card);
     card.addEventListener("click", event => { if (!event.target.closest("a")) openCard(); });
     card.addEventListener("keydown", event => { if (event.key === "Enter" || event.key === " ") { event.preventDefault(); openCard(); } });
@@ -2354,8 +2557,8 @@ function renderScheduleTable(rows) {
   bindVoteControls(container);
 }
 function renderCalendar(rows) {
-  const grid = document.getElementById("calendar-grid");
-  const count = document.getElementById("calendar-count");
+  const grid = document.getElementById("calendar-v2-grid") || document.getElementById("calendar-grid");
+  const count = document.getElementById("calendar-v2-count") || document.getElementById("calendar-count");
   if (!grid) return;
   const items = Array.isArray(rows) ? rows : [];
   const today = getMoscowDateParts();
@@ -2418,14 +2621,15 @@ function renderRecentRaces(rows) {
     container.innerHTML = `<div class="empty">${escapeHtml(t("recentEmpty"))}</div>`;
     return;
   }
-  const headers = t("racesCols").map(label => `<th>${escapeHtml(label)}</th>`).join("");
+  const labels = t("racesCols");
+  const headers = labels.map(label => `<th>${escapeHtml(label)}</th>`).join("");
   const rowsHtml = rows.map((race, index) => `
     <tr class="is-interactive-row" data-race-index="${index}" tabindex="0" role="button" aria-label="${escapeHtml(`${t("openRaceDetailsLabel")}: ${race.track_name || race.track || "-"}`)}">
-      <td>${escapeHtml(formatDateTimeLocal(race.finished_at || race.finished_at_local))}</td>
-      <td><div class="race-track-cell"><span class="race-track-name">${escapeHtml(race.track_name || humanizeTrackName(race.track))}</span></div></td>
-      <td><span class="race-winner">${escapeHtml(race.winner || t("noWinner"))}</span></td>
-      <td>${escapeHtml(race.participants_count ?? "-")}</td>
-      <td><div>${escapeHtml(race.best_lap || "-")}</div><div class="race-note">${escapeHtml(race.best_lap_driver || "-")}</div></td>
+      <td data-label="${escapeHtml(labels[0] || "")}">${escapeHtml(formatDateTimeLocal(race.finished_at || race.finished_at_local))}</td>
+      <td data-label="${escapeHtml(labels[1] || "")}"><div class="race-track-cell"><span class="race-track-name">${escapeHtml(race.track_name || humanizeTrackName(race.track))}</span></div></td>
+      <td data-label="${escapeHtml(labels[2] || "")}"><span class="race-winner">${escapeHtml(race.winner || t("noWinner"))}</span></td>
+      <td data-label="${escapeHtml(labels[3] || "")}">${escapeHtml(race.participants_count ?? "-")}</td>
+      <td data-label="${escapeHtml(labels[4] || "")}"><div>${escapeHtml(race.best_lap || "-")}</div><div class="race-note">${escapeHtml(race.best_lap_driver || "-")}</div></td>
     </tr>
   `).join("");
   container.innerHTML = `<table class="races-table"><thead><tr>${headers}</tr></thead><tbody>${rowsHtml}</tbody></table>`;
@@ -2740,23 +2944,27 @@ function bindWeatherModal() {
   }
 }
 function bindChampionshipCardLink() {
-  const card = document.querySelector(".hero-announcement-card");
-  if (!card || card.dataset.linkBound === "true") return;
-  card.dataset.linkBound = "true";
-  const open = event => {
-    if (event.target.closest("a, button")) return;
-    const href = card.dataset.href || "./championship/";
-    window.location.href = href;
-  };
-  card.addEventListener("click", open);
-  card.addEventListener("keydown", event => {
-    if (event.key !== "Enter" && event.key !== " ") return;
-    event.preventDefault();
-    open(event);
+  document.querySelectorAll(".hero-announcement-card, .hourly-championship-v2").forEach(card => {
+    if (!card || card.dataset.linkBound === "true") return;
+    card.dataset.linkBound = "true";
+    const open = event => {
+      if (event.target.closest("a, button")) return;
+      const href = card.dataset.href || "./championship/";
+      window.location.href = href;
+    };
+    card.addEventListener("click", open);
+    card.addEventListener("keydown", event => {
+      if (event.key !== "Enter" && event.key !== " ") return;
+      event.preventDefault();
+      open(event);
+    });
   });
 }
 function renderErrorState() {
-  document.getElementById("schedule-list").innerHTML = `<div class="empty">${escapeHtml(t("loadError"))}</div>`;
+  const scheduleList = document.getElementById("schedule-v2-list") || document.getElementById("schedule-list");
+  if (scheduleList) scheduleList.innerHTML = `<div class="empty">${escapeHtml(t("loadError"))}</div>`;
+  const calendarGrid = document.getElementById("calendar-v2-grid") || document.getElementById("calendar-grid");
+  if (calendarGrid) calendarGrid.innerHTML = `<div class="empty">${escapeHtml(t("loadError"))}</div>`;
   document.getElementById("recent-races-table").innerHTML = `<div class="empty">${escapeHtml(t("loadError"))}</div>`;
   const championshipsContainer = document.getElementById("championship-history-list");
   if (championshipsContainer) championshipsContainer.innerHTML = `<div class="empty">${escapeHtml(t("loadError"))}</div>`;
@@ -2772,6 +2980,22 @@ function renderErrorState() {
   setText("hero-tyre-rules", "--");
   setText("hero-weather", "--");
   applyHeroTrackBackground("");
+  const upcomingTitle = document.getElementById("hourly-upcoming-v2-title");
+  const upcomingDateTime = document.getElementById("hourly-upcoming-v2-date-time");
+  const upcomingGrid = document.getElementById("hourly-upcoming-v2-info-grid");
+  const upcomingFooter = document.getElementById("hourly-upcoming-v2-footer");
+  const championshipTitle = document.getElementById("hourly-championship-v2-title");
+  const championshipMeta = document.getElementById("hourly-championship-v2-meta");
+  const championshipEvent = document.getElementById("hourly-championship-v2-event");
+  const championshipDescription = document.getElementById("hourly-championship-v2-description");
+  if (upcomingTitle) upcomingTitle.textContent = "--";
+  if (upcomingDateTime) upcomingDateTime.textContent = "--";
+  if (upcomingGrid) upcomingGrid.innerHTML = `<div class="empty">${escapeHtml(t("loadError"))}</div>`;
+  if (upcomingFooter) upcomingFooter.innerHTML = "";
+  if (championshipTitle) championshipTitle.textContent = "--";
+  if (championshipMeta) championshipMeta.textContent = "--";
+  if (championshipEvent) championshipEvent.innerHTML = `<div class="empty">${escapeHtml(t("loadError"))}</div>`;
+  if (championshipDescription) championshipDescription.textContent = "--";
 }
 function renderUI() {
   applyTranslations();
@@ -2787,6 +3011,8 @@ function renderUI() {
   renderAnnouncement(announcementData || {});
   renderHeroDetails(announcementData || {});
   renderChampionshipHero(announcementData || {});
+  renderUpcomingHeroV2(announcementData || {});
+  renderChampionshipHeroV2(announcementData || {});
   renderChampionshipHistory(championshipItems);
   renderHeroVote();
   renderScheduleTable(scheduleItems);
@@ -2983,7 +3209,6 @@ async function init() {
   });
   currentLang = resolveInitialLanguage();
   bindLanguageButtons();
-  bindEventModalVersionToggle();
   bindTopNavGroups();
   bindTopNavMoreMenu();
   ensureNewsNotificationsUi();

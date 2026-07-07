@@ -148,7 +148,102 @@
   </nav>
 
   <main class="page">
-    <section class="hero" id="hourly-home">
+    <div class="hourly-page-content">
+      <aside class="hourly-championship-v2" id="hourly-championship-v2" role="link" tabindex="0" aria-label="Open championship">
+        <div class="hourly-championship-v2-eyebrow" data-i18n="championshipEyebrow">Championship</div>
+        <div class="hourly-championship-v2-title" id="hourly-championship-v2-title">--</div>
+        <div class="hourly-championship-v2-meta" id="hourly-championship-v2-meta">--</div>
+        <div class="hourly-championship-v2-event" id="hourly-championship-v2-event"></div>
+        <p class="hourly-championship-v2-description" id="hourly-championship-v2-description">--</p>
+        <a class="hourly-championship-v2-button" id="hourly-championship-v2-button" href="./championship/" data-i18n="championshipOpenButton">Open championship</a>
+      </aside>
+
+      <section class="hourly-home-v2" id="hourly-home-v2">
+        <section class="hourly-upcoming-v2" id="hourly-upcoming-v2" aria-labelledby="hourly-upcoming-v2-title">
+          <div class="hourly-upcoming-v2-bg"></div>
+          <div class="hourly-upcoming-v2-shade"></div>
+          <div class="hourly-upcoming-v2-inner">
+            <header class="hourly-upcoming-v2-header">
+              <div class="hourly-upcoming-v2-title-block">
+                <h1 class="hourly-upcoming-v2-title" id="hourly-upcoming-v2-title">--</h1>
+              </div>
+              <div class="hourly-upcoming-v2-date-time" id="hourly-upcoming-v2-date-time">--</div>
+            </header>
+
+            <div class="hourly-upcoming-v2-info-grid" id="hourly-upcoming-v2-info-grid"></div>
+
+            <footer class="hourly-upcoming-v2-footer" id="hourly-upcoming-v2-footer"></footer>
+          </div>
+        </section>
+      </section>
+
+      <section class="hourly-slots-v2 card" id="schedule">
+        <div class="hourly-slots-v2-header">
+          <h2 data-i18n="scheduleTitle">Upcoming Slots</h2>
+        </div>
+        <div class="hourly-slots-v2-grid" id="schedule-v2-list">
+          <div class="empty" data-i18n="loadingShort">Loading...</div>
+        </div>
+        <details class="hourly-calendar-v2" id="calendar-panel">
+          <summary>
+            <span class="hourly-calendar-v2-summary-main">
+              <span class="hourly-calendar-v2-summary-icon" aria-hidden="true"></span>
+              <span data-i18n="calendarSummary">Full event calendar</span>
+            </span>
+            <span class="hourly-calendar-v2-summary-side">
+              <span class="hourly-calendar-v2-summary-count" id="calendar-v2-count">--</span>
+              <span class="hourly-calendar-v2-summary-caret" aria-hidden="true"></span>
+            </span>
+          </summary>
+          <div class="calendar-grid hourly-calendar-v2-grid" id="calendar-v2-grid"></div>
+        </details>
+      </section>
+      <section class="card" id="recent-races">
+        <div class="section-head">
+          <div>
+            <div class="eyebrow" data-i18n="archiveEyebrow">Archive</div>
+            <h2 data-i18n="racesTableTitle">Race Results</h2>
+            <p class="section-subtitle" data-i18n="racesTableSubtitle">Click any row to open the finishing order.</p>
+          </div>
+        </div>
+        <div class="table-card table-card-compact">
+          <div class="table-wrap" id="recent-races-table">
+            <div class="empty" data-i18n="loadingShort">Loading...</div>
+          </div>
+        </div>
+      </section>
+    </div>
+
+    <footer class="footer">
+      <div class="footer-inner">
+        <div class="footer-left">
+          <div class="footer-brand">ASG Racing ACC Leaderboard</div>
+          <div class="footer-text" data-i18n="footerText">
+            Statistics are generated from ACC Dedicated Server result files and published via GitHub Pages.
+          </div>
+        </div>
+
+        <div class="footer-links">
+          <a class="footer-social-link" href="https://discord.gg/cEPFHXXtTC" target="_blank" rel="noopener noreferrer" aria-label="Discord" title="Discord">
+            <img class="social-icon" src="../social/discord.svg" alt="" />
+          </a>
+          <a class="footer-social-link" href="https://t.me/+JUymrENgddcyMTdi" target="_blank" rel="noopener noreferrer" aria-label="Telegram" title="Telegram">
+            <img class="social-icon" src="../social/telegram.svg" alt="" />
+          </a>
+          <a class="footer-social-link" href="https://www.tiktok.com/@asgracingacc" target="_blank" rel="noopener noreferrer" aria-label="TikTok" title="TikTok">
+            <img class="social-icon" src="../social/tiktok.svg" alt="" />
+          </a>
+          <a class="footer-social-link" href="https://www.youtube.com/channel/UCwVcW5iUFxcT5Z8AHVqPhTg" target="_blank" rel="noopener noreferrer" aria-label="YouTube" title="YouTube">
+            <img class="social-icon" src="../social/youtube.svg" alt="" />
+          </a>
+          <a class="footer-social-link" href="https://www.twitch.tv/asgracing" target="_blank" rel="noopener noreferrer" aria-label="Twitch" title="Twitch">
+            <img class="social-icon" src="../social/twitch.svg" alt="" />
+          </a>
+        </div>
+      </div>
+    </footer>
+
+    <section class="hero" id="hourly-home" hidden aria-hidden="true">
       <div class="hero-card">
         <div class="hero-grid">
           <section class="hero-server-card">
@@ -270,7 +365,7 @@
       </div>
     </section>
 
-    <section class="card" id="schedule">
+    <section class="card" id="schedule-legacy" hidden aria-hidden="true">
       <div class="section-head">
         <div>
           <div class="eyebrow" data-i18n="scheduleEyebrow">Schedule</div>
@@ -289,21 +384,6 @@
         </summary>
         <div class="calendar-grid" id="calendar-grid"></div>
       </details>
-    </section>
-
-    <section class="card" id="recent-races">
-      <div class="section-head">
-        <div>
-          <div class="eyebrow" data-i18n="archiveEyebrow">Archive</div>
-          <h2 data-i18n="racesTableTitle">Race Results</h2>
-          <p class="section-subtitle" data-i18n="racesTableSubtitle">Click any row to open the finishing order.</p>
-        </div>
-      </div>
-      <div class="table-card table-card-compact">
-        <div class="table-wrap" id="recent-races-table">
-          <div class="empty" data-i18n="loadingShort">Loading...</div>
-        </div>
-      </div>
     </section>
 
     <div class="modal-overlay" id="schedule-modal" aria-hidden="true">
