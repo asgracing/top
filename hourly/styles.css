@@ -173,6 +173,88 @@ body.championship-body .top-nav-menu {
   justify-content: center;
 }
 
+@media (min-width: 1680px) and (min-height: 900px) {
+  .top-nav {
+    --top-nav-band-width: min(1760px, calc(100% - 32px));
+  }
+
+  .top-nav-inner,
+  body.championship-body .top-nav-inner {
+    max-width: none;
+    width: 100%;
+    grid-template-columns: auto auto 1fr auto;
+    grid-template-areas: "brand socials . actions";
+    padding: 10px 20px;
+    gap: 10px 14px;
+    justify-content: initial;
+  }
+
+  .top-nav-brand,
+  body.championship-body .top-nav-brand {
+    justify-self: start;
+    margin-right: 6px;
+  }
+
+  .top-nav-socials,
+  body.championship-body .top-nav-socials {
+    justify-self: start;
+  }
+
+  .top-nav-center,
+  body.championship-body .top-nav-center {
+    position: absolute;
+    left: 50%;
+    top: 50%;
+    transform: translate(-50%, -50%);
+    display: flex;
+    justify-content: center;
+    align-self: center;
+    width: max-content;
+    max-width: calc(100% - 760px);
+    z-index: 2;
+  }
+
+  .top-nav-menu,
+  body.championship-body .top-nav-menu {
+    width: auto;
+    justify-content: center;
+    gap: 6px;
+  }
+
+  .top-nav-actions {
+    align-items: center;
+    gap: 10px;
+    margin-left: auto;
+  }
+
+  .top-nav-news-bell {
+    margin-right: 0;
+  }
+
+  .top-nav-link-primary,
+  .top-nav-link-secondary {
+    padding: 6px 10px;
+    font-size: 0.7rem;
+  }
+
+  .nav-social {
+    min-width: 34px;
+    min-height: 34px;
+    padding: 7px;
+  }
+
+  .lang-switch {
+    gap: 6px;
+    padding: 5px;
+  }
+
+  .lang-btn {
+    min-width: 52px;
+    height: 40px;
+    padding: 0 8px;
+  }
+}
+
 .top-nav-more {
   position: relative;
   display: none;
