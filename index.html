@@ -531,73 +531,92 @@
       </div>
     </aside>
 
-    <section class="section" id="championship">
-      <div class="section-header">
-        <div>
-          <h2 class="section-title" data-i18n="championshipTitle">Rating</h2>
-          <p class="section-subtitle section-subtitle-hint" data-i18n="championshipSubtitle">Points, wins, podiums, average finish and best lap.</p>
+    <section class="section combined-stats-shell" id="combined-stats-shell">
+      <div class="section-header combined-stats-shell-header">
+        <div class="combined-stats-shell-title">
+          <h2 class="section-title" data-i18n="statsHubTitle">Driver Stats</h2>
+          <p class="section-subtitle section-subtitle-hint" id="combined-stats-subtitle">Points, wins, podiums, average finish and best lap.</p>
         </div>
-        <div class="table-tools">
-          <input id="leaderboard-search" class="search-input" type="text" autocomplete="off" />
-        </div>
-      </div>
-
-      <div class="table-card">
-        <div class="table-wrap" id="leaderboard-table">
-          <div class="loading" style="padding:20px;" data-i18n="loadingLeaderboard">Loading leaderboard...</div>
-        </div>
-        <div class="pagination-wrap" id="leaderboard-pagination-wrap" style="display:none;">
-          <div class="pagination-info" id="leaderboard-pagination-info"></div>
-          <div class="pagination" id="leaderboard-pagination"></div>
-        </div>
-      </div>
-    </section>
-
-    <section class="section" id="bestlaps">
-      <div class="section-header">
-        <div>
-          <h2 class="section-title" data-i18n="bestLapsTitle">Best Laps</h2>
-          <p class="section-subtitle section-subtitle-hint" data-i18n="bestLapsSubtitle">Fastest laps recorded during qualifying and race sessions.</p>
-        </div>
-        <div class="table-tools">
-          <input id="bestlaps-search" class="search-input" type="text" autocomplete="off" />
+        <div class="combined-stats-shell-controls">
+          <div class="combined-stats-tabs" role="tablist" aria-label="Driver stats tables">
+            <button class="combined-stats-tab is-active" id="combined-tab-leaderboard" type="button" role="tab" aria-selected="true" aria-controls="championship" data-stats-tab="leaderboard" data-i18n="championshipTitle">Rating</button>
+            <button class="combined-stats-tab" id="combined-tab-bestlaps" type="button" role="tab" aria-selected="false" aria-controls="bestlaps" data-stats-tab="bestlaps" data-i18n="bestLapsTitle">Best Laps</button>
+            <button class="combined-stats-tab" id="combined-tab-safety" type="button" role="tab" aria-selected="false" aria-controls="worst-safety" data-stats-tab="safety" data-i18n="worstSafetyTitle">Safety Rating</button>
+          </div>
+          <div class="combined-stats-active-tools" id="combined-stats-active-tools"></div>
         </div>
       </div>
 
-      <div class="table-card">
-        <div class="table-filter-row">
-          <label class="table-filter-label" for="bestlaps-track-filter" data-i18n="bestlapsTrackFilterLabel">Track</label>
-          <select id="bestlaps-track-filter" class="track-filter-select"></select>
-        </div>
-        <div class="table-wrap" id="bestlaps-table">
-          <div class="loading" style="padding:20px;" data-i18n="loadingBestLaps">Loading best laps...</div>
-        </div>
-        <div class="pagination-wrap" id="bestlaps-pagination-wrap" style="display:none;">
-          <div class="pagination-info" id="bestlaps-pagination-info"></div>
-          <div class="pagination" id="bestlaps-pagination"></div>
-        </div>
-      </div>
-    </section>
+      <div class="combined-stats-panels">
+        <section class="section combined-stats-panel" id="championship" data-stats-panel="leaderboard">
+          <div class="section-header">
+            <div>
+              <h2 class="section-title" data-i18n="championshipTitle">Rating</h2>
+              <p class="section-subtitle section-subtitle-hint" data-i18n="championshipSubtitle">Points, wins, podiums, average finish and best lap.</p>
+            </div>
+            <div class="table-tools">
+              <input id="leaderboard-search" class="search-input" type="text" autocomplete="off" />
+            </div>
+          </div>
 
-    <section class="section" id="worst-safety">
-      <div class="section-header">
-        <div>
-          <h2 class="section-title" data-i18n="worstSafetyTitle">Safety Rating</h2>
-          <p class="section-subtitle" data-i18n="worstSafetySubtitle">Driver safety score based on invalid laps and automatic race penalties.</p>
-        </div>
-        <div class="table-tools">
-          <input id="safety-search" class="search-input" type="text" autocomplete="off" />
-        </div>
-      </div>
+          <div class="table-card">
+            <div class="table-wrap" id="leaderboard-table">
+              <div class="loading" style="padding:20px;" data-i18n="loadingLeaderboard">Loading leaderboard...</div>
+            </div>
+            <div class="pagination-wrap" id="leaderboard-pagination-wrap" style="display:none;">
+              <div class="pagination-info" id="leaderboard-pagination-info"></div>
+              <div class="pagination" id="leaderboard-pagination"></div>
+            </div>
+          </div>
+        </section>
 
-      <div class="table-card">
-        <div class="table-wrap" id="safety-table">
-          <div class="loading" style="padding:20px;" data-i18n="loadingSafety">Loading safety...</div>
-        </div>
-        <div class="pagination-wrap" id="safety-pagination-wrap" style="display:none;">
-          <div class="pagination-info" id="safety-pagination-info"></div>
-          <div class="pagination" id="safety-pagination"></div>
-        </div>
+        <section class="section combined-stats-panel" id="bestlaps" data-stats-panel="bestlaps">
+          <div class="section-header">
+            <div>
+              <h2 class="section-title" data-i18n="bestLapsTitle">Best Laps</h2>
+              <p class="section-subtitle section-subtitle-hint" data-i18n="bestLapsSubtitle">Fastest laps recorded during qualifying and race sessions.</p>
+            </div>
+            <div class="table-tools">
+              <input id="bestlaps-search" class="search-input" type="text" autocomplete="off" />
+            </div>
+          </div>
+
+          <div class="table-card">
+            <div class="table-filter-row">
+              <label class="table-filter-label" for="bestlaps-track-filter" data-i18n="bestlapsTrackFilterLabel">Track</label>
+              <select id="bestlaps-track-filter" class="track-filter-select"></select>
+            </div>
+            <div class="table-wrap" id="bestlaps-table">
+              <div class="loading" style="padding:20px;" data-i18n="loadingBestLaps">Loading best laps...</div>
+            </div>
+            <div class="pagination-wrap" id="bestlaps-pagination-wrap" style="display:none;">
+              <div class="pagination-info" id="bestlaps-pagination-info"></div>
+              <div class="pagination" id="bestlaps-pagination"></div>
+            </div>
+          </div>
+        </section>
+
+        <section class="section combined-stats-panel" id="worst-safety" data-stats-panel="safety">
+          <div class="section-header">
+            <div>
+              <h2 class="section-title" data-i18n="worstSafetyTitle">Safety Rating</h2>
+              <p class="section-subtitle" data-i18n="worstSafetySubtitle">Driver safety score based on invalid laps and automatic race penalties.</p>
+            </div>
+            <div class="table-tools">
+              <input id="safety-search" class="search-input" type="text" autocomplete="off" />
+            </div>
+          </div>
+
+          <div class="table-card">
+            <div class="table-wrap" id="safety-table">
+              <div class="loading" style="padding:20px;" data-i18n="loadingSafety">Loading safety...</div>
+            </div>
+            <div class="pagination-wrap" id="safety-pagination-wrap" style="display:none;">
+              <div class="pagination-info" id="safety-pagination-info"></div>
+              <div class="pagination" id="safety-pagination"></div>
+            </div>
+          </div>
+        </section>
       </div>
     </section>
 

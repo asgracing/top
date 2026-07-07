@@ -293,6 +293,27 @@ const topHomeDeferredSections = {
   safety: !IS_TOP_HOME_PAGE
 };
 let topHomeDeferredObserver = null;
+const TOP_DEV_FLAGS = Object.freeze({
+  combinedStatsTabs: true
+});
+const HOME_STATS_TABS = Object.freeze({
+  leaderboard: {
+    panelId: "championship",
+    subtitleKey: "combinedStatsSubtitleLeaderboard"
+  },
+  bestlaps: {
+    panelId: "bestlaps",
+    subtitleKey: "combinedStatsSubtitleBestlaps"
+  },
+  safety: {
+    panelId: "worst-safety",
+    subtitleKey: "combinedStatsSubtitleSafety"
+  }
+});
+let activeHomeStatsTab = "leaderboard";
+let combinedStatsTabsBound = false;
+let combinedStatsLinksBound = false;
+let hostedCombinedStatsTab = null;
 
 function renderLoadingMarkup(label = "") {
   return `<div class="loading">${escapeHtml(label || t("loading"))}</div>`;
@@ -307,6 +328,125 @@ function setLoadingMarkup(containerId, labelKey = "loading") {
 function setLoadingText(elementId, labelKey = "loading") {
   const element = document.getElementById(elementId);
   if (element) element.textContent = t(labelKey);
+}
+
+function scrollTopTargetBelowHeader(target, { behavior = "smooth", extraOffset = 8 } = {}) {
+  const element = typeof target === "string" ? document.getElementById(target) : target;
+  if (!(element instanceof HTMLElement)) return;
+
+  const topNav = document.getElementById("top-nav");
+  const navHeight = topNav?.getBoundingClientRect?.().height || 0;
+  const absoluteTop = window.scrollY + element.getBoundingClientRect().top;
+  const targetTop = Math.max(0, absoluteTop - navHeight - extraOffset);
+  window.scrollTo({ top: targetTop, behavior });
+}
+
+function isCombinedStatsTabsExperimentEnabled() {
+  return IS_TOP_HOME_PAGE && TOP_DEV_FLAGS.combinedStatsTabs;
+}
+
+function updateCombinedStatsTabsUI() {
+  const enabled = isCombinedStatsTabsExperimentEnabled();
+  document.body.classList.toggle("experiment-combined-stats", enabled);
+
+  const subtitleEl = document.getElementById("combined-stats-subtitle");
+  if (subtitleEl && enabled) {
+    const subtitleKey = HOME_STATS_TABS[activeHomeStatsTab]?.subtitleKey || "championshipSubtitle";
+    subtitleEl.textContent = t(subtitleKey);
+  }
+
+  Object.entries(HOME_STATS_TABS).forEach(([tabKey, config]) => {
+    const button = document.querySelector(`[data-stats-tab="${tabKey}"]`);
+    const panel = document.getElementById(config.panelId);
+    const isActive = enabled ? tabKey === activeHomeStatsTab : true;
+
+    if (button) {
+      button.classList.toggle("is-active", isActive);
+      button.setAttribute("aria-selected", isActive ? "true" : "false");
+      button.tabIndex = isActive ? 0 : -1;
+    }
+
+    if (panel) {
+      panel.classList.toggle("is-active", isActive);
+      panel.hidden = enabled ? !isActive : false;
+    }
+  });
+
+  const toolsHost = document.getElementById("combined-stats-active-tools");
+  if (toolsHost) {
+    const hostedPanelId = hostedCombinedStatsTab ? HOME_STATS_TABS[hostedCombinedStatsTab]?.panelId : null;
+    toolsHost.querySelectorAll(".table-tools").forEach((tools) => {
+      const panelId = tools.dataset.originPanelId || hostedPanelId;
+      if (panelId && !tools.dataset.originPanelId) {
+        tools.dataset.originPanelId = panelId;
+      }
+      const panel = panelId ? document.getElementById(panelId) : null;
+      const header = panel?.querySelector(".section-header");
+      if (header) header.appendChild(tools);
+    });
+    hostedCombinedStatsTab = null;
+
+    const activePanel = document.getElementById(HOME_STATS_TABS[activeHomeStatsTab]?.panelId || "championship");
+    const activeTools = activePanel?.querySelector(".table-tools");
+
+    if (enabled && activeTools) {
+      toolsHost.appendChild(activeTools);
+      hostedCombinedStatsTab = activeHomeStatsTab;
+    } else {
+      Object.values(HOME_STATS_TABS).forEach(({ panelId }) => {
+        const panel = document.getElementById(panelId);
+        const header = panel?.querySelector(".section-header");
+        const tools = panel?.querySelector(".table-tools");
+        if (header && tools) header.appendChild(tools);
+      });
+      hostedCombinedStatsTab = null;
+    }
+  }
+}
+
+function setActiveCombinedStatsTab(tabKey) {
+  if (!HOME_STATS_TABS[tabKey]) return;
+  activeHomeStatsTab = tabKey;
+  updateCombinedStatsTabsUI();
+}
+
+function bindCombinedStatsTabs() {
+  if (combinedStatsTabsBound) return;
+  combinedStatsTabsBound = true;
+
+  document.querySelectorAll("[data-stats-tab]").forEach((button) => {
+    button.addEventListener("click", () => {
+      setActiveCombinedStatsTab(button.dataset.statsTab || "leaderboard");
+    });
+  });
+
+  Object.values(HOME_STATS_TABS).forEach(({ panelId }) => {
+    const panel = document.getElementById(panelId);
+    const tools = panel?.querySelector(".table-tools");
+    if (tools && !tools.dataset.originPanelId) {
+      tools.dataset.originPanelId = panelId;
+    }
+  });
+
+  if (combinedStatsLinksBound) return;
+  combinedStatsLinksBound = true;
+
+  document.addEventListener("click", (event) => {
+    if (!isCombinedStatsTabsExperimentEnabled()) return;
+    const link = event.target?.closest?.('a[href="#championship"], a[href="#bestlaps"], a[href="#worst-safety"]');
+    if (!link) return;
+
+    const href = String(link.getAttribute("href") || "");
+    const tabKey = href === "#bestlaps"
+      ? "bestlaps"
+      : href === "#worst-safety"
+        ? "safety"
+        : "leaderboard";
+
+    event.preventDefault();
+    setActiveCombinedStatsTab(tabKey);
+    scrollTopTargetBelowHeader("combined-stats-shell");
+  });
 }
 
 function renderDeferredHomeTableLoading(tableId, paginationWrapId, labelKey) {
@@ -387,6 +527,12 @@ function applyInitialTopLoadingState() {
 
 function setupTopHomeDeferredSections() {
   if (!IS_TOP_HOME_PAGE || topHomeDeferredObserver) return;
+  if (isCombinedStatsTabsExperimentEnabled()) {
+    topHomeDeferredSections.leaderboard = true;
+    topHomeDeferredSections.bestlaps = true;
+    topHomeDeferredSections.safety = true;
+    return;
+  }
   if (!("IntersectionObserver" in window)) {
     topHomeDeferredSections.leaderboard = true;
     topHomeDeferredSections.bestlaps = true;
@@ -829,6 +975,8 @@ const translations = {
     top3Subtitle: "Current championship leaders by points.",
     championshipTitle: "Rating",
     championshipSubtitle: "Row click opens quick view. Name opens full profile.",
+    combinedStatsSubtitleLeaderboard: "Row: quick view. Name: full profile.",
+    statsHubTitle: "Driver Stats",
     supportWidgetTitle: "Support ASG Racing",
     supportWidgetText: "If you enjoy the server, streams and stats site, you can help the project keep rolling with a quick support drop.",
     supportWidgetButton: "Support the project",
@@ -848,8 +996,10 @@ const translations = {
     bgVideoPlaybackStateOff: "OFF",
     bestLapsTitle: "Best Laps",
     bestLapsSubtitle: "Row click opens quick view. Name opens full profile.",
+    combinedStatsSubtitleBestlaps: "Row: quick view. Name: full profile.",
     worstSafetyTitle: "Worst Safety",
     worstSafetySubtitle: "Penalty count, penalty points and breakdown by penalty type.",
+    combinedStatsSubtitleSafety: "SR, penalties and incidents.",
     aboutTitle: "About ASG Racing Server",
     aboutSubtitle: "Assetto Corsa Competizione public racing server",
     aboutP1:
@@ -1455,6 +1605,8 @@ const translations = {
     top3Subtitle: "Текущие лидеры чемпионата по очкам.",
     championshipTitle: "Рейтинг",
     championshipSubtitle: "Строка открывает быстрый просмотр, имя пилота ведёт в полный профиль.",
+    combinedStatsSubtitleLeaderboard: "Строка: быстро. Имя: профиль.",
+    statsHubTitle: "Статистика пилотов",
     supportWidgetTitle: "Поддержать ASG Racing",
     supportWidgetText: "Если тебе нравится сервер, стримы и сайт со статистикой, можно быстро поддержать проект донатом и помочь ему двигаться дальше.",
     supportWidgetButton: "Поддержать проект",
@@ -1474,8 +1626,10 @@ const translations = {
     bgVideoPlaybackStateOff: "OFF",
     bestLapsTitle: "Лучшие круги",
     bestLapsSubtitle: "Строка открывает быстрый просмотр, имя пилота ведёт в полный профиль.",
+    combinedStatsSubtitleBestlaps: "Строка: быстро. Имя: профиль.",
     worstSafetyTitle: "Штрафы и нарушения",
     worstSafetySubtitle: "Количество штрафов, штрафные баллы и разбивка по типам нарушений.",
+    combinedStatsSubtitleSafety: "SR, штрафы и инциденты.",
     aboutTitle: "О сервере ASG Racing",
     aboutSubtitle: "Публичный сервер Assetto Corsa Competizione",
     aboutP1:
@@ -7967,7 +8121,7 @@ function renderLeaderboardTablePage() {
       }
       leaderboardPage = page;
       renderLeaderboardTablePage();
-      document.getElementById("championship")?.scrollIntoView({ behavior: "smooth", block: "start" });
+      scrollTopTargetBelowHeader(isCombinedStatsTabsExperimentEnabled() ? "combined-stats-shell" : "championship");
     }
   );
 }
@@ -8051,7 +8205,7 @@ function renderBestLapsTablePage() {
       }
       bestlapsPage = page;
       renderBestLapsTablePage();
-      document.getElementById("bestlaps")?.scrollIntoView({ behavior: "smooth", block: "start" });
+      scrollTopTargetBelowHeader(isCombinedStatsTabsExperimentEnabled() ? "combined-stats-shell" : "bestlaps");
     }
   );
 }
@@ -8145,7 +8299,7 @@ function renderSafetyTablePage() {
       }
       safetyPage = page;
       renderSafetyTablePage();
-      document.getElementById("worst-safety")?.scrollIntoView({ behavior: "smooth", block: "start" });
+      scrollTopTargetBelowHeader(isCombinedStatsTabsExperimentEnabled() ? "combined-stats-shell" : "worst-safety");
     }
   );
 }
@@ -11001,6 +11155,7 @@ function updateTopNavModalOffset() {
 
 function rerenderUI() {
   applyStaticTranslations();
+  updateCombinedStatsTabsUI();
   renderNewsBell();
   renderNewsNotificationsModal();
   if (eloModalState) renderEloModal();
@@ -11110,6 +11265,7 @@ async function init() {
   runInitStep("initNewsNotificationsModal", () => initNewsNotificationsModal());
   runInitStep("bindFunStatsControls", () => bindFunStatsControls());
   runInitStep("bindSearchInputs", () => bindSearchInputs());
+  runInitStep("bindCombinedStatsTabs", () => bindCombinedStatsTabs());
   runInitStep("ensureTopGuide", () => ensureTopGuide());
   runInitStep("initTwitchWidget", () => initTwitchWidget());
   runInitStep("updateTopNavModalOffset", () => updateTopNavModalOffset());
