@@ -2999,7 +2999,7 @@ tr.is-interactive-row:focus-visible {
   border-radius: 16px;
   border: 1px solid rgba(255, 255, 255, 0.1);
   background:
-    linear-gradient(180deg, rgba(8, 12, 19, 0.22), rgba(8, 12, 19, 0.78)),
+    linear-gradient(180deg, rgba(8, 12, 19, 0.165), rgba(8, 12, 19, 0.585)),
     var(--server-card-bg);
   background-position: center;
   background-size: cover;
@@ -3035,7 +3035,7 @@ tr.is-interactive-row:focus-visible {
   inset: 0;
   background:
     linear-gradient(135deg, rgba(255, 255, 255, 0.06), transparent 42%),
-    linear-gradient(180deg, rgba(8, 12, 19, 0.16), rgba(8, 12, 19, 0.7));
+    linear-gradient(180deg, rgba(8, 12, 19, 0.12), rgba(8, 12, 19, 0.525));
 }
 
 .server-sticky-card-content {

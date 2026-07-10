@@ -56,6 +56,7 @@ const TOP_GUIDE_STORAGE_KEY = "asgTopGuideSeen";
 const TOP_GUIDE_MEDIA_QUERY = "(min-width: 1280px)";
 const BG_VIDEO_VOLUME_STORAGE_KEY = "asgBgVideoVolume";
 const BG_VIDEO_PLAYBACK_STORAGE_KEY = "asgBgVideoPlaybackEnabled";
+const BG_VIDEO_SELECTION_STORAGE_KEY = "asgBgVideoSelection";
 const SERVER_CARD_BACKGROUNDS = {
   main: `${SITE_BASE_PATH}assets/main.jpg`,
   sunset: `${SITE_BASE_PATH}assets/sunset.jpg`,
@@ -2637,6 +2638,73 @@ function buildHourlyWeatherTokens(weather) {
   return tokens;
 }
 
+function formatHourlyGameTimeValue(gameTime) {
+  if (!gameTime || typeof gameTime !== "object") return "";
+  const hourValue = gameTime.hour_of_day ?? gameTime.game_time_hour;
+  const hour = typeof hourValue === "number" && !Number.isNaN(hourValue)
+    ? `${String(Math.max(0, Math.min(23, Math.round(hourValue)))).padStart(2, "0")}:00`
+    : "";
+  let label = "";
+  if (currentLang === "ru" && gameTime.label_ru) label = String(gameTime.label_ru);
+  else if (gameTime.label) label = String(gameTime.label);
+  else {
+    const code = String(gameTime.code || gameTime.profile_id || "").trim().toLowerCase();
+    if (code === "morning") label = currentLang === "ru" ? "Утро" : "Morning";
+    else if (code === "day") label = currentLang === "ru" ? "День" : "Day";
+    else if (code === "evening") label = currentLang === "ru" ? "Вечер" : "Evening";
+    else if (code === "night") label = currentLang === "ru" ? "Ночь" : "Night";
+    else if (code) label = code.replace(/[_-]+/g, " ");
+  }
+  if (label && hour) return `${label} · ${hour}`;
+  return label || hour || "";
+}
+
+function getHourlyGameTimeIconName(gameTime, fallbackHour) {
+  const code = String(gameTime?.code || gameTime?.profile_id || "").trim().toLowerCase();
+  if (["morning", "day", "evening", "night"].includes(code)) return code;
+  const hour = Number(gameTime?.hour_of_day ?? gameTime?.game_time_hour ?? fallbackHour);
+  if (!Number.isFinite(hour)) return "day";
+  if (hour >= 5 && hour < 11) return "morning";
+  if (hour >= 11 && hour < 17) return "day";
+  if (hour >= 17 && hour < 21) return "evening";
+  return "night";
+}
+
+function getHourlyGameTimeIconSvg(name) {
+  if (name === "morning") return `<svg viewBox="0 0 24 24" focusable="false" aria-hidden="true"><path d="M4 18h16M7 18a5 5 0 0 1 10 0M12 5v3M5.6 10.2l2.1 2.1M18.4 10.2l-2.1 2.1" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"/></svg>`;
+  if (name === "evening") return `<svg viewBox="0 0 24 24" focusable="false" aria-hidden="true"><path d="M4 14h16M7 14a5 5 0 0 0 10 0M12 19v2M5.6 18.5l2.1-2.1M18.4 18.5l-2.1-2.1" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"/></svg>`;
+  if (name === "night") return `<svg viewBox="0 0 24 24" focusable="false" aria-hidden="true"><path d="M19.2 15.3A7.7 7.7 0 0 1 8.7 4.8 7.8 7.8 0 1 0 19.2 15.3Z" fill="currentColor" fill-opacity=".16" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"/><path d="M17.8 4.2v2.4M16.6 5.4H19" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"/></svg>`;
+  return `<svg viewBox="0 0 24 24" focusable="false" aria-hidden="true"><circle cx="12" cy="12" r="4.25" fill="none" stroke="currentColor" stroke-width="1.9"/><path d="M12 2.75v2.5M12 18.75v2.5M21.25 12h-2.5M5.25 12h-2.5M18.54 5.46l-1.77 1.77M7.23 16.77l-1.77 1.77M18.54 18.54l-1.77-1.77M7.23 7.23 5.46 5.46" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round"/></svg>`;
+}
+
+function getHourlyWeatherMetricIconName(metric, percent) {
+  if (percent === null || percent === undefined || percent === "") return metric;
+  const value = Number(percent);
+  if (!Number.isFinite(value)) return metric;
+  if (metric === "cloud") {
+    if (value <= 25) return "cloud-clear";
+    if (value <= 59) return "cloud-mixed";
+    if (value <= 79) return "cloud-heavy";
+    return "cloud-overcast";
+  }
+  if (value <= 1) return "rain-none";
+  if (value <= 10) return "rain-light";
+  if (value <= 34) return "rain-medium";
+  if (value <= 59) return "rain-heavy";
+  return "rain-storm";
+}
+
+function getHourlyWeatherMetricIconSvg(name) {
+  if (name === "cloud-clear") return `<svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="4" fill="none" stroke="currentColor" stroke-width="1.8"/><path d="M12 3v2.2M12 18.8V21M3 12h2.2M18.8 12H21M5.6 5.6l1.5 1.5m9.8 9.8 1.5 1.5m0-12.8-1.5 1.5M7.1 16.9l-1.5 1.5" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/></svg>`;
+  if (name === "cloud-mixed") return `<svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="8" cy="8" r="3" fill="none" stroke="currentColor" stroke-width="1.7"/><path d="M8 2.8v1.3M3 8h1.3m.2-3.5 1 1M13 4.5l-1 1M7.8 18.5h9.3a3.6 3.6 0 0 0 .37-7.18 4.8 4.8 0 0 0-9.4-.65 3.95 3.95 0 0 0-.27 7.83Z" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg>`;
+  if (name === "cloud-heavy") return `<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M7.2 18.2h9a4 4 0 0 0 .42-7.98A5.25 5.25 0 0 0 6.35 9.3a3.75 3.75 0 0 0 .85 8.9Z" fill="currentColor" fill-opacity=".14" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"/></svg>`;
+  if (name === "cloud-overcast") return `<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M5.5 12.7h8.7a3.5 3.5 0 0 0 .35-6.98 4.6 4.6 0 0 0-8.98-.6 3.8 3.8 0 0 0-.07 7.58Z" fill="none" stroke="currentColor" stroke-width="1.7"/><path d="M7.2 19h9.4a3.7 3.7 0 0 0 .38-7.38 4.9 4.9 0 0 0-9.57-.65A4 4 0 0 0 7.2 19Z" fill="currentColor" fill-opacity=".2" stroke="currentColor" stroke-width="1.8"/></svg>`;
+  if (name === "rain-none") return `<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 4.5c2.8 3.5 4.2 5.9 4.2 7.8a4.2 4.2 0 1 1-8.4 0c0-1.9 1.4-4.3 4.2-7.8Z" fill="none" stroke="currentColor" stroke-width="1.8"/><path d="m5 5 14 14" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round"/></svg>`;
+  if (name === "rain-light") return `<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 4.3c3 3.8 4.5 6.3 4.5 8.3a4.5 4.5 0 1 1-9 0c0-2 1.5-4.5 4.5-8.3Z" fill="currentColor" fill-opacity=".12" stroke="currentColor" stroke-width="1.8"/></svg>`;
+  const drops = name === "rain-medium" ? "M12 17.5l-.8 2.2" : name === "rain-heavy" ? "M8.5 17.3l-.8 2.4m4.8-2.4-.8 2.4m4.8-2.4-.8 2.4" : "M7.5 17l-.9 2.8m4-2.8-.9 2.8m4-2.8-.9 2.8m4-2.8-.9 2.8";
+  return `<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M7.1 15.3h9.3a3.6 3.6 0 0 0 .35-7.18A5 5 0 0 0 7 7.45a3.95 3.95 0 0 0 .1 7.85Z" fill="currentColor" fill-opacity=".12" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/><path d="${drops}" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/></svg>`;
+}
+
 function getHourlyEventDetailsV2Text(key) {
   const copy = {
     eyebrow: { en: "Event details", ru: "Детали события" },
@@ -2670,6 +2738,8 @@ function getHourlyEventDetailsV2Text(key) {
 }
 
 function getHourlyEventDetailsV2IconSvg(name) {
+  if (name.startsWith("cloud-") || name.startsWith("rain-")) return getHourlyWeatherMetricIconSvg(name);
+  if (["morning", "day", "evening", "night"].includes(name)) return getHourlyGameTimeIconSvg(name);
   const icons = {
     calendar: `<svg viewBox="0 0 24 24" focusable="false" aria-hidden="true"><path d="M8 3v3M16 3v3M4 9h16M5.75 5.75h12.5a2 2 0 0 1 2 2v10.5a2 2 0 0 1-2 2H5.75a2 2 0 0 1-2-2V7.75a2 2 0 0 1 2-2Z" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"></path></svg>`,
     copy: `<svg viewBox="0 0 24 24" focusable="false" aria-hidden="true"><path d="M9 9h11v11H9z" fill="none" stroke="currentColor" stroke-width="1.8"></path><path d="M4 4h11v11H4z" fill="none" stroke="currentColor" stroke-width="1.8"></path></svg>`,
@@ -2850,6 +2920,8 @@ function renderHourlyHeroModal() {
   const passwordId = `hourly-modal-password-v2-${escapeAttribute(buildHourlyAnnouncementEventId(data) || data?.track_code || "slot")}`;
   const canVote = Boolean(data?.event_id || data?.track_name);
   const gameTimeRaw = session.hour_of_day ?? session.game_hour_of_day ?? session.session_hour ?? session.time_of_day_hour;
+  const gameTimeValue = formatHourlyGameTimeValue(data?.game_time)
+    || formatHourlyEventDetailsHour(gameTimeRaw);
   const timeMultiplierRaw = session.time_multiplier ?? session.timeMultiplier ?? session.session_time_multiplier ?? session.time_scale;
   const preparationMinutes = minutesFromSeconds(session.pre_race_waiting_time_seconds);
   const qualifyingMinutes = typeof session.qualifying_duration_minutes === "number" ? session.qualifying_duration_minutes : null;
@@ -2891,7 +2963,7 @@ function renderHourlyHeroModal() {
     buildHourlyEventDetailsV2Row(getHourlyEventDetailsV2Text("preparationLabel"), escapeHtml(formatHourlyEventDetailsMinutes(preparationMinutes)), "timer"),
     buildHourlyEventDetailsV2Row(getHourlyEventDetailsV2Text("qualifyingLabel"), escapeHtml(formatHourlyEventDetailsMinutes(qualifyingMinutes)), "stopwatch"),
     buildHourlyEventDetailsV2Row(getHourlyEventDetailsV2Text("raceLabel"), escapeHtml(formatHourlyEventDetailsMinutes(raceMinutes)), "play"),
-    buildHourlyEventDetailsV2Row(getHourlyEventDetailsV2Text("gameTimeLabel"), escapeHtml(formatHourlyEventDetailsHour(gameTimeRaw)), "sun"),
+    buildHourlyEventDetailsV2Row(getHourlyEventDetailsV2Text("gameTimeLabel"), escapeHtml(gameTimeValue), getHourlyGameTimeIconName(data?.game_time, gameTimeRaw)),
     buildHourlyEventDetailsV2Row(getHourlyEventDetailsV2Text("timeMultiplierLabel"), escapeHtml(formatHourlyEventDetailsMultiplier(timeMultiplierRaw)), "fast")
   ].join("");
 
@@ -2903,8 +2975,8 @@ function renderHourlyHeroModal() {
     buildHourlyEventDetailsV2Row(getHourlyEventDetailsV2Text("fixedRefuelLabel"), escapeHtml(formatHourlyEventDetailsBool(rules.refuelling_time_fixed, "yes", "no")), "timer"),
     buildHourlyEventDetailsV2Row(t("hourlyTyresLabel"), escapeHtml(getHourlyEventDetailsValue(tyres)), "tyre", { rowClass: " event-details-v2-divider-row" }),
     buildHourlyEventDetailsV2Row(getHourlyEventDetailsV2Text("temperatureLabel"), escapeHtml(formatHourlyEventDetailsTemperature(temp)), "temp"),
-    buildHourlyEventDetailsV2Row(getHourlyEventDetailsV2Text("cloudsLabel"), escapeHtml(formatHourlyEventDetailsPercent(clouds)), "cloud"),
-    buildHourlyEventDetailsV2Row(getHourlyEventDetailsV2Text("rainLabel"), escapeHtml(formatHourlyEventDetailsPercent(rain)), "rain"),
+    buildHourlyEventDetailsV2Row(getHourlyEventDetailsV2Text("cloudsLabel"), escapeHtml(formatHourlyEventDetailsPercent(clouds)), getHourlyWeatherMetricIconName("cloud", clouds)),
+    buildHourlyEventDetailsV2Row(getHourlyEventDetailsV2Text("rainLabel"), escapeHtml(formatHourlyEventDetailsPercent(rain)), getHourlyWeatherMetricIconName("rain", rain)),
     buildHourlyEventDetailsV2Row(getHourlyEventDetailsV2Text("randomnessLabel"), escapeHtml(getHourlyEventDetailsValue(randomness)), "wind")
   ].join("");
 
@@ -2962,7 +3034,6 @@ function renderHourlyHeroModal() {
 
   bindHourlyEventDetailsV2(contentEl);
 }
-
 function renderHourlyHeroCard() {
   const startsEl = document.getElementById("hourly-starts-value");
   const trackEl = document.getElementById("hourly-track-value");
@@ -3050,7 +3121,6 @@ function renderHourlyHeroCard() {
     unvoteBtn.dataset.bound = "true";
   }
 }
-
 function isHourlyRace(race) {
   const sourceText = [
     race?.result_source,
@@ -8892,8 +8962,6 @@ function renderServerStickyWidget(serverStatus = serverStatusData) {
     const status = String(server?.status || "offline").toLowerCase();
     const players = serverPlayersOnline(server);
     const sessionLabel = getServerSessionShortLabel(server);
-    const fallback = getServerConnectFallback(key);
-    const href = buildAccConnectHref(normalizeAccConnectConfig(server, fallback));
     const bgKey = getServerTrackBackgroundKey(key, label, server, index);
     const bgUrl = SERVER_CARD_BACKGROUNDS[bgKey] || SERVER_CARD_BACKGROUNDS.main;
     return `
@@ -8911,10 +8979,6 @@ function renderServerStickyWidget(serverStatus = serverStatusData) {
           <div class="server-sticky-card-status">
             <span class="server-status ${escapeHtml(status === "online" ? "online" : status === "online_process_only" ? "degraded" : "offline")}">${escapeHtml(getLocalizedServerStatus(status, currentLang))}</span>
             <span class="server-players">${escapeHtml(players)}${sessionLabel ? ` <span class="server-session-mini">(${escapeHtml(sessionLabel)})</span>` : ""}</span>
-          </div>
-          <div class="server-sticky-actions">
-            <a class="server-connect-btn ${href ? "" : "is-disabled"}" href="${escapeHtml(href || "#")}" aria-disabled="${href ? "false" : "true"}" title="${escapeHtml(href ? t("serverConnectBtn") : t("serverConnectUnavailable"))}">${escapeHtml(t("serverConnectBtn"))}</a>
-            <a class="server-connect-help" href="https://github.com/lonemeow/acc-connector" target="_blank" rel="noopener noreferrer">${escapeHtml(t("serverConnectHowTo"))}</a>
           </div>
         </div>
       </div>
@@ -10933,6 +10997,47 @@ function setBackgroundVideoSoundAvailability(supported) {
   syncBackgroundVideoSoundState();
 }
 
+function configureBackgroundVideoSource(video) {
+  if (!video || video.dataset.bgConfigured === "true") return;
+
+  const configuredOptions = String(video.dataset.bgOptions || "")
+    .split("|")
+    .map(option => option.trim())
+    .filter(Boolean);
+
+  if (!configuredOptions.length) {
+    video.dataset.bgConfigured = "true";
+    return;
+  }
+
+  let selectedOption = "";
+
+  try {
+    const storedOption = sessionStorage.getItem(BG_VIDEO_SELECTION_STORAGE_KEY);
+    if (storedOption && configuredOptions.includes(storedOption)) {
+      selectedOption = storedOption;
+    }
+  } catch (error) {
+    // Ignore sessionStorage failures and fall back to a random pick.
+  }
+
+  if (!selectedOption) {
+    const randomIndex = Math.floor(Math.random() * configuredOptions.length);
+    selectedOption = configuredOptions[randomIndex] || configuredOptions[0];
+  }
+
+  if (selectedOption) {
+    video.dataset.bgSrc = selectedOption;
+    try {
+      sessionStorage.setItem(BG_VIDEO_SELECTION_STORAGE_KEY, selectedOption);
+    } catch (error) {
+      // Ignore sessionStorage failures and keep the runtime selection only.
+    }
+  }
+
+  video.dataset.bgConfigured = "true";
+}
+
 function bindBackgroundVideoSoundToggle() {
   const toggle = document.getElementById("bg-video-sound-toggle");
   const video = document.querySelector(".site-bg-video");
@@ -11026,6 +11131,7 @@ function bindBackgroundVideoSoundToggle() {
 function optimizeBackgroundMedia() {
   const video = document.querySelector(".site-bg-video");
   if (!video) return;
+  configureBackgroundVideoSource(video);
 
   const unloadBackgroundVideo = () => {
     video.pause();

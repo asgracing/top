@@ -859,6 +859,106 @@ function percentValue(value) {
   return Math.round(normalized);
 }
 
+function getChampionshipWeatherVisualState(weather) {
+  const state = String(weather?.summary_key || "").trim().toLowerCase();
+  if (state === "wet" || state === "rain" || state === "rainy") return "wet";
+  if (state === "clear") return "clear";
+  if (state === "mixed" || state === "cloudy") return "mixed";
+  const rain = percentValue(weather?.rain_level);
+  if (rain !== null && rain > 5) return "wet";
+  const clouds = percentValue(weather?.cloud_level);
+  if (clouds === null) return "mixed";
+  return clouds >= 35 ? "mixed" : "clear";
+}
+
+function renderChampionshipWeatherStateIcon(weather) {
+  const state = getChampionshipWeatherVisualState(weather);
+  if (state === "wet") {
+    return `<svg class="weather-state-icon is-wet" viewBox="0 0 24 24" aria-hidden="true"><path d="M7.1 15.3h9.3a3.6 3.6 0 0 0 .35-7.18A5 5 0 0 0 7 7.45a3.95 3.95 0 0 0 .1 7.85Z" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/><path d="m8.5 18-1 2.3m5-2.3-1 2.3m5-2.3-1 2.3" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/></svg>`;
+  }
+  if (state === "mixed") {
+    return `<svg class="weather-state-icon is-mixed" viewBox="0 0 24 24" aria-hidden="true"><circle cx="8.2" cy="8.1" r="3.1" fill="none" stroke="currentColor" stroke-width="1.7"/><path d="M8.2 2.5v1.6m0 8v1.4M2.7 8.1h1.5m8 0h1.5M4.3 4.2l1.1 1.1m5.7 0 1.1-1.1" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round"/><path d="M8.1 18.2h9a3.5 3.5 0 0 0 .36-6.98 4.75 4.75 0 0 0-9.28-.65 3.85 3.85 0 0 0-.08 7.63Z" fill="currentColor" fill-opacity=".18" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg>`;
+  }
+  return `<svg class="weather-state-icon is-clear" viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="4.2" fill="currentColor" fill-opacity=".18" stroke="currentColor" stroke-width="1.8"/><path d="M12 2.5v2.2m0 14.6v2.2M2.5 12h2.2m14.6 0h2.2M5.3 5.3l1.6 1.6m10.2 10.2 1.6 1.6m0-13.4-1.6 1.6M6.9 17.1l-1.6 1.6" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/></svg>`;
+}
+
+function formatChampionshipGameTime(gameTime) {
+  if (!gameTime || typeof gameTime !== "object") return "";
+  const hourValue = gameTime.hour_of_day ?? gameTime.game_time_hour;
+  const numericHour = typeof hourValue === "number" ? hourValue : Number(hourValue);
+  const hour = Number.isFinite(numericHour)
+    ? `${String(Math.max(0, Math.min(23, Math.round(numericHour)))).padStart(2, "0")}:00`
+    : "";
+  let label = "";
+  if (currentLang === "ru" && gameTime.label_ru) label = String(gameTime.label_ru);
+  else if (gameTime.label) label = String(gameTime.label);
+  else {
+    const code = String(gameTime.code || gameTime.profile_id || "").trim().toLowerCase();
+    const labels = {
+      morning: { en: "Morning", ru: "\u0423\u0442\u0440\u043e" },
+      day: { en: "Day", ru: "\u0414\u0435\u043d\u044c" },
+      evening: { en: "Evening", ru: "\u0412\u0435\u0447\u0435\u0440" },
+      night: { en: "Night", ru: "\u041d\u043e\u0447\u044c" }
+    };
+    label = labels[code]?.[currentLang] || labels[code]?.en || code.replace(/[_-]+/g, " ");
+  }
+  if (label && hour) return `${label} \u00b7 ${hour}`;
+  return label || hour;
+}
+
+function getChampionshipGameTimeVisualState(gameTime, fallbackHour) {
+  const code = String(gameTime?.code || gameTime?.profile_id || "").trim().toLowerCase();
+  if (["morning", "day", "evening", "night"].includes(code)) return code;
+  const hour = Number(gameTime?.hour_of_day ?? gameTime?.game_time_hour ?? fallbackHour);
+  if (!Number.isFinite(hour)) return "day";
+  if (hour >= 5 && hour < 11) return "morning";
+  if (hour >= 11 && hour < 17) return "day";
+  if (hour >= 17 && hour < 21) return "evening";
+  return "night";
+}
+
+function getChampionshipGameTimeStateSvg(state) {
+  if (state === "morning") return `<svg class="game-time-state-icon is-morning" viewBox="0 0 24 24" aria-hidden="true"><path d="M4 18h16M7 18a5 5 0 0 1 10 0M12 5v3M5.6 10.2l2.1 2.1M18.4 10.2l-2.1 2.1" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"/></svg>`;
+  if (state === "evening") return `<svg class="game-time-state-icon is-evening" viewBox="0 0 24 24" aria-hidden="true"><path d="M4 14h16M7 14a5 5 0 0 0 10 0M12 19v2M5.6 18.5l2.1-2.1M18.4 18.5l-2.1-2.1" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"/></svg>`;
+  if (state === "night") return `<svg class="game-time-state-icon is-night" viewBox="0 0 24 24" aria-hidden="true"><path d="M19.2 15.3A7.7 7.7 0 0 1 8.7 4.8 7.8 7.8 0 1 0 19.2 15.3Z" fill="currentColor" fill-opacity=".16" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"/><path d="M17.8 4.2v2.4M16.6 5.4H19" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"/></svg>`;
+  return `<svg class="game-time-state-icon is-day" viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="4.25" fill="currentColor" fill-opacity=".14" stroke="currentColor" stroke-width="1.9"/><path d="M12 2.75v2.5M12 18.75v2.5M21.25 12h-2.5M5.25 12h-2.5M18.54 5.46l-1.77 1.77M7.23 16.77l-1.77 1.77M18.54 18.54l-1.77-1.77M7.23 7.23 5.46 5.46" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round"/></svg>`;
+}
+
+function renderChampionshipGameTime(item) {
+  const value = formatChampionshipGameTime(item?.game_time);
+  if (!value) return "";
+  const icon = getChampionshipGameTimeStateSvg(getChampionshipGameTimeVisualState(item?.game_time));
+  return `<span class="schedule-condition-separator" aria-hidden="true">\u00b7</span>${icon}<span>${esc(value)}</span>`;
+}
+
+function getChampionshipWeatherMetricIconName(metric, percent) {
+  if (percent === null || percent === undefined || percent === "") return metric;
+  const value = Number(percent);
+  if (!Number.isFinite(value)) return metric;
+  if (metric === "cloud") {
+    if (value <= 25) return "cloud-clear";
+    if (value <= 59) return "cloud-mixed";
+    if (value <= 79) return "cloud-heavy";
+    return "cloud-overcast";
+  }
+  if (value <= 1) return "rain-none";
+  if (value <= 10) return "rain-light";
+  if (value <= 34) return "rain-medium";
+  if (value <= 59) return "rain-heavy";
+  return "rain-storm";
+}
+
+function getChampionshipWeatherMetricIconSvg(name) {
+  if (name === "cloud-clear") return `<svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="4" fill="none" stroke="currentColor" stroke-width="1.8"/><path d="M12 3v2.2M12 18.8V21M3 12h2.2M18.8 12H21M5.6 5.6l1.5 1.5m9.8 9.8 1.5 1.5m0-12.8-1.5 1.5M7.1 16.9l-1.5 1.5" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/></svg>`;
+  if (name === "cloud-mixed") return `<svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="8" cy="8" r="3" fill="none" stroke="currentColor" stroke-width="1.7"/><path d="M8 2.8v1.3M3 8h1.3m.2-3.5 1 1M13 4.5l-1 1M7.8 18.5h9.3a3.6 3.6 0 0 0 .37-7.18 4.8 4.8 0 0 0-9.4-.65 3.95 3.95 0 0 0-.27 7.83Z" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg>`;
+  if (name === "cloud-heavy") return `<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M7.2 18.2h9a4 4 0 0 0 .42-7.98A5.25 5.25 0 0 0 6.35 9.3a3.75 3.75 0 0 0 .85 8.9Z" fill="currentColor" fill-opacity=".14" stroke="currentColor" stroke-width="1.9"/></svg>`;
+  if (name === "cloud-overcast") return `<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M5.5 12.7h8.7a3.5 3.5 0 0 0 .35-6.98 4.6 4.6 0 0 0-8.98-.6 3.8 3.8 0 0 0-.07 7.58Z" fill="none" stroke="currentColor" stroke-width="1.7"/><path d="M7.2 19h9.4a3.7 3.7 0 0 0 .38-7.38 4.9 4.9 0 0 0-9.57-.65A4 4 0 0 0 7.2 19Z" fill="currentColor" fill-opacity=".2" stroke="currentColor" stroke-width="1.8"/></svg>`;
+  if (name === "rain-none") return `<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 4.5c2.8 3.5 4.2 5.9 4.2 7.8a4.2 4.2 0 1 1-8.4 0c0-1.9 1.4-4.3 4.2-7.8Z" fill="none" stroke="currentColor" stroke-width="1.8"/><path d="m5 5 14 14" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round"/></svg>`;
+  if (name === "rain-light") return `<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 4.3c3 3.8 4.5 6.3 4.5 8.3a4.5 4.5 0 1 1-9 0c0-2 1.5-4.5 4.5-8.3Z" fill="currentColor" fill-opacity=".12" stroke="currentColor" stroke-width="1.8"/></svg>`;
+  const drops = name === "rain-medium" ? "M12 17.5l-.8 2.2" : name === "rain-heavy" ? "M8.5 17.3l-.8 2.4m4.8-2.4-.8 2.4m4.8-2.4-.8 2.4" : "M7.5 17l-.9 2.8m4-2.8-.9 2.8m4-2.8-.9 2.8m4-2.8-.9 2.8";
+  return `<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M7.1 15.3h9.3a3.6 3.6 0 0 0 .35-7.18A5 5 0 0 0 7 7.45a3.95 3.95 0 0 0 .1 7.85Z" fill="currentColor" fill-opacity=".12" stroke="currentColor" stroke-width="1.8"/><path d="${drops}" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/></svg>`;
+}
+
 function minutesFromSeconds(value) {
   return typeof value === "number" && !Number.isNaN(value) ? Math.round(value / 60) : null;
 }
@@ -1156,7 +1256,7 @@ function renderUpcoming(items, standings) {
           <div class="event-type-badge">${esc(t("championshipEvent"))}</div>
           <div class="schedule-event-time">${esc(formatSlotDateTime(item))}</div>
           <div class="schedule-event-track">${esc(getLocalizedField(item, "track_name", item.track_code || "--"))}</div>
-          <div class="schedule-event-weather"><span>${esc(weatherLabel(item.weather || {}))}</span><img src="${esc(WEATHER_ICON_PATHS.rain)}" alt="" /></div>
+          <div class="schedule-event-weather">${renderChampionshipWeatherStateIcon(item.weather || {})}<span>${esc(weatherLabel(item.weather || {}))}</span>${renderChampionshipGameTime(item)}</div>
           ${renderVoteControl(item)}
         </div>
       </article>
@@ -1183,6 +1283,12 @@ function renderUpcoming(items, standings) {
 }
 
 function eventDetailsIcon(name, className = "") {
+  if (name.startsWith("cloud-") || name.startsWith("rain-")) {
+    return `<span class="event-details-v2-icon${className}" aria-hidden="true">${getChampionshipWeatherMetricIconSvg(name)}</span>`;
+  }
+  if (["morning", "day", "evening", "night"].includes(name)) {
+    return `<span class="event-details-v2-icon${className}" aria-hidden="true">${getChampionshipGameTimeStateSvg(name)}</span>`;
+  }
   const icons = {
     calendar: `<svg viewBox="0 0 24 24"><path d="M8 3v3M16 3v3M4 9h16M5.75 5.75h12.5a2 2 0 0 1 2 2v10.5a2 2 0 0 1-2 2H5.75a2 2 0 0 1-2-2V7.75a2 2 0 0 1 2-2Z" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"></path></svg>`,
     copy: `<svg viewBox="0 0 24 24"><path d="M9 9h11v11H9z" fill="none" stroke="currentColor" stroke-width="1.8"></path><path d="M4 4h11v11H4z" fill="none" stroke="currentColor" stroke-width="1.8"></path></svg>`,
@@ -1262,9 +1368,11 @@ function buildScheduleModalDetails(item) {
   const startTime = getLocalizedField(item, "start_time_local", item?.start_time_local || "--");
   const timezone = getLocalizedField(item, "timezone", item?.timezone || "UTC+3");
   const passwordId = `championship-modal-password-${String(item?.event_id || item?.date || "slot").replace(/[^a-z0-9_-]+/gi, "-")}`;
-  const gameTime = typeof (session.hour_of_day ?? session.game_hour_of_day ?? session.session_hour ?? session.time_of_day_hour) === "number"
-    ? `${String(Math.round(session.hour_of_day ?? session.game_hour_of_day ?? session.session_hour ?? session.time_of_day_hour)).padStart(2, "0")}:00`
-    : getChampionshipEventDetailsText("notAvailable");
+  const sessionGameTime = session.hour_of_day ?? session.game_hour_of_day ?? session.session_hour ?? session.time_of_day_hour;
+  const gameTime = formatChampionshipGameTime(item?.game_time)
+    || (typeof sessionGameTime === "number"
+      ? `${String(Math.round(sessionGameTime)).padStart(2, "0")}:00`
+      : getChampionshipEventDetailsText("notAvailable"));
   const multiplier = typeof (session.time_multiplier ?? session.timeMultiplier ?? session.session_time_multiplier ?? session.time_scale) === "number"
     ? `x${session.time_multiplier ?? session.timeMultiplier ?? session.session_time_multiplier ?? session.time_scale}`
     : getChampionshipEventDetailsText("notAvailable");
@@ -1281,7 +1389,7 @@ function buildScheduleModalDetails(item) {
     buildEventDetailsRow(getChampionshipEventDetailsText("preparationLabel"), esc(typeof minutesFromSeconds(session.pre_race_waiting_time_seconds) === "number" ? `${minutesFromSeconds(session.pre_race_waiting_time_seconds)} мин` : getChampionshipEventDetailsText("notAvailable")), "timer"),
     buildEventDetailsRow(getChampionshipEventDetailsText("qualifyingLabel"), esc(typeof session.qualifying_duration_minutes === "number" ? `${session.qualifying_duration_minutes} мин` : getChampionshipEventDetailsText("notAvailable")), "stopwatch"),
     buildEventDetailsRow(getChampionshipEventDetailsText("raceLabel"), esc(typeof session.race_duration_minutes === "number" ? `${session.race_duration_minutes} мин` : getChampionshipEventDetailsText("notAvailable")), "play"),
-    buildEventDetailsRow(getChampionshipEventDetailsText("gameTimeLabel"), esc(gameTime), "sun"),
+    buildEventDetailsRow(getChampionshipEventDetailsText("gameTimeLabel"), esc(gameTime), getChampionshipGameTimeVisualState(item?.game_time, sessionGameTime)),
     buildEventDetailsRow(getChampionshipEventDetailsText("timeMultiplierLabel"), esc(multiplier), "fast")
   ].join("");
   const conditionsRows = [
@@ -1292,8 +1400,8 @@ function buildScheduleModalDetails(item) {
     buildEventDetailsRow(getChampionshipEventDetailsText("fixedRefuelLabel"), esc(rules.refuelling_time_fixed === true ? getChampionshipEventDetailsText("yes") : rules.refuelling_time_fixed === false ? getChampionshipEventDetailsText("no") : getChampionshipEventDetailsText("notAvailable")), "timer"),
     buildEventDetailsRow(t("heroTyresLabel"), esc(rules.tyre_set_count ?? getChampionshipEventDetailsText("notAvailable")), "tyre", { rowClass: " event-details-v2-divider-row" }),
     buildEventDetailsRow(getChampionshipEventDetailsText("temperatureLabel"), esc(typeof weather.ambient_temp_c === "number" ? `${Math.round(weather.ambient_temp_c)}°C` : getChampionshipEventDetailsText("notAvailable")), "temp"),
-    buildEventDetailsRow(getChampionshipEventDetailsText("cloudsLabel"), esc(typeof cloudPercent === "number" ? `${cloudPercent}%` : getChampionshipEventDetailsText("notAvailable")), "cloud"),
-    buildEventDetailsRow(getChampionshipEventDetailsText("rainLabel"), esc(typeof rainPercent === "number" ? `${rainPercent}%` : getChampionshipEventDetailsText("notAvailable")), "rain"),
+    buildEventDetailsRow(getChampionshipEventDetailsText("cloudsLabel"), esc(typeof cloudPercent === "number" ? `${cloudPercent}%` : getChampionshipEventDetailsText("notAvailable")), getChampionshipWeatherMetricIconName("cloud", cloudPercent)),
+    buildEventDetailsRow(getChampionshipEventDetailsText("rainLabel"), esc(typeof rainPercent === "number" ? `${rainPercent}%` : getChampionshipEventDetailsText("notAvailable")), getChampionshipWeatherMetricIconName("rain", rainPercent)),
     buildEventDetailsRow(getChampionshipEventDetailsText("randomnessLabel"), esc(weather.weather_randomness ?? getChampionshipEventDetailsText("notAvailable")), "wind")
   ].join("");
   return `

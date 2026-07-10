@@ -1321,6 +1321,20 @@ body.championship-body .top-nav-menu {
   min-width: 0;
 }
 
+.hourly-championship-v2-event-row.hourly-schedule-conditions {
+  display: flex;
+  align-items: center;
+  flex-wrap: nowrap;
+  gap: 6px;
+  white-space: nowrap;
+}
+
+.hourly-championship-v2-event-row.hourly-schedule-conditions .weather-state-icon,
+.hourly-championship-v2-event-row.hourly-schedule-conditions .game-time-state-icon {
+  width: 16px;
+  height: 16px;
+}
+
 .hourly-championship-v2-event-icon {
   width: 16px;
   height: 16px;
@@ -1443,9 +1457,65 @@ body.championship-body .top-nav-menu {
 }
 
 .hourly-slot-card-v2-weather {
+  display: inline-flex;
+  align-items: center;
+  gap: 7px;
   color: #e6edf7;
   font-size: 0.82rem;
   font-weight: 700;
+}
+
+.weather-state-icon {
+  width: 20px;
+  height: 20px;
+  flex: 0 0 auto;
+  color: #dce8f7;
+}
+
+.weather-state-icon.is-clear {
+  color: #ffd166;
+}
+
+.weather-state-icon.is-mixed {
+  color: #d8e4f2;
+}
+
+.weather-state-icon.is-wet {
+  color: #74c7ff;
+}
+
+.game-time-state-icon {
+  width: 20px;
+  height: 20px;
+  flex: 0 0 auto;
+}
+
+.game-time-state-icon.is-morning {
+  color: #ffb45c;
+}
+
+.game-time-state-icon.is-day {
+  color: #ffd166;
+}
+
+.game-time-state-icon.is-evening {
+  color: #ff8a65;
+}
+
+.game-time-state-icon.is-night {
+  color: #9fb7ff;
+}
+
+.schedule-condition-separator {
+  color: rgba(230, 237, 247, 0.58);
+}
+
+#hero-championship-weather,
+.weather-summary-inline,
+.game-time-summary-inline {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
 }
 
 .hourly-slot-card-v2-footer .hourly-v2-actions-main {

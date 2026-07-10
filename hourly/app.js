@@ -623,7 +623,7 @@ function isChampionshipEvent(item) {
   return String(item?.event_type || item?.type || "").trim().toLowerCase() === "championship";
 }
 function isVotingDisabledForItem(item) {
-  return Boolean(item?.voting_disabled);
+  return Boolean(item?.voting_disabled) && !isChampionshipEvent(item);
 }
 function eventBadgeLabel(item) {
   if (item?.badge_label) return getLocalizedField(item, "badge_label", item.badge_label);
@@ -1366,6 +1366,98 @@ function getWeatherStateLabel(weather) {
   if (state === "wet") return t("weatherWet");
   return t("unknownValue");
 }
+function getWeatherVisualState(weather) {
+  const state = String(weather?.summary_key || "").trim().toLowerCase();
+  if (state === "wet" || state === "rain" || state === "rainy") return "wet";
+  if (state === "clear") return "clear";
+  if (state === "mixed" || state === "cloudy") return "mixed";
+  const rain = percentValue(weather?.rain_level);
+  if (rain !== null && rain > 5) return "wet";
+  const clouds = percentValue(weather?.cloud_level);
+  if (clouds === null) return "mixed";
+  return clouds >= 35 ? "mixed" : "clear";
+}
+function renderWeatherStateIcon(weather, className = "") {
+  const state = getWeatherVisualState(weather);
+  const extraClass = className ? ` ${className}` : "";
+  if (state === "wet") {
+    return `<svg class="weather-state-icon is-wet${extraClass}" viewBox="0 0 24 24" aria-hidden="true"><path d="M7.1 15.3h9.3a3.6 3.6 0 0 0 .35-7.18A5 5 0 0 0 7 7.45a3.95 3.95 0 0 0 .1 7.85Z" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/><path d="m8.5 18-1 2.3m5-2.3-1 2.3m5-2.3-1 2.3" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/></svg>`;
+  }
+  if (state === "mixed") {
+    return `<svg class="weather-state-icon is-mixed${extraClass}" viewBox="0 0 24 24" aria-hidden="true"><circle cx="8.2" cy="8.1" r="3.1" fill="none" stroke="currentColor" stroke-width="1.7"/><path d="M8.2 2.5v1.6m0 8v1.4M2.7 8.1h1.5m8 0h1.5M4.3 4.2l1.1 1.1m5.7 0 1.1-1.1" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round"/><path d="M8.1 18.2h9a3.5 3.5 0 0 0 .36-6.98 4.75 4.75 0 0 0-9.28-.65 3.85 3.85 0 0 0-.08 7.63Z" fill="currentColor" fill-opacity=".18" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg>`;
+  }
+  return `<svg class="weather-state-icon is-clear${extraClass}" viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="4.2" fill="currentColor" fill-opacity=".18" stroke="currentColor" stroke-width="1.8"/><path d="M12 2.5v2.2m0 14.6v2.2M2.5 12h2.2m14.6 0h2.2M5.3 5.3l1.6 1.6m10.2 10.2 1.6 1.6m0-13.4-1.6 1.6M6.9 17.1l-1.6 1.6" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/></svg>`;
+}
+function getWeatherMetricIconName(metric, percent) {
+  if (percent === null || percent === undefined || percent === "") return metric;
+  const value = Number(percent);
+  if (!Number.isFinite(value)) return metric;
+  if (metric === "cloud") {
+    if (value <= 25) return "cloud-clear";
+    if (value <= 59) return "cloud-mixed";
+    if (value <= 79) return "cloud-heavy";
+    return "cloud-overcast";
+  }
+  if (value <= 1) return "rain-none";
+  if (value <= 10) return "rain-light";
+  if (value <= 34) return "rain-medium";
+  if (value <= 59) return "rain-heavy";
+  return "rain-storm";
+}
+function getWeatherMetricIconSvg(name) {
+  if (name === "cloud-clear") return `<svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="4" fill="none" stroke="currentColor" stroke-width="1.8"/><path d="M12 3v2.2M12 18.8V21M3 12h2.2M18.8 12H21M5.6 5.6l1.5 1.5m9.8 9.8 1.5 1.5m0-12.8-1.5 1.5M7.1 16.9l-1.5 1.5" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/></svg>`;
+  if (name === "cloud-mixed") return `<svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="8" cy="8" r="3" fill="none" stroke="currentColor" stroke-width="1.7"/><path d="M8 2.8v1.3M3 8h1.3m.2-3.5 1 1M13 4.5l-1 1M7.8 18.5h9.3a3.6 3.6 0 0 0 .37-7.18 4.8 4.8 0 0 0-9.4-.65 3.95 3.95 0 0 0-.27 7.83Z" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg>`;
+  if (name === "cloud-heavy") return `<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M7.2 18.2h9a4 4 0 0 0 .42-7.98A5.25 5.25 0 0 0 6.35 9.3a3.75 3.75 0 0 0 .85 8.9Z" fill="currentColor" fill-opacity=".14" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"/></svg>`;
+  if (name === "cloud-overcast") return `<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M5.5 12.7h8.7a3.5 3.5 0 0 0 .35-6.98 4.6 4.6 0 0 0-8.98-.6 3.8 3.8 0 0 0-.07 7.58Z" fill="none" stroke="currentColor" stroke-width="1.7"/><path d="M7.2 19h9.4a3.7 3.7 0 0 0 .38-7.38 4.9 4.9 0 0 0-9.57-.65A4 4 0 0 0 7.2 19Z" fill="currentColor" fill-opacity=".2" stroke="currentColor" stroke-width="1.8"/></svg>`;
+  if (name === "rain-none") return `<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 4.5c2.8 3.5 4.2 5.9 4.2 7.8a4.2 4.2 0 1 1-8.4 0c0-1.9 1.4-4.3 4.2-7.8Z" fill="none" stroke="currentColor" stroke-width="1.8"/><path d="m5 5 14 14" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round"/></svg>`;
+  if (name === "rain-light") return `<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 4.3c3 3.8 4.5 6.3 4.5 8.3a4.5 4.5 0 1 1-9 0c0-2 1.5-4.5 4.5-8.3Z" fill="currentColor" fill-opacity=".12" stroke="currentColor" stroke-width="1.8"/></svg>`;
+  const drops = name === "rain-medium" ? `<path d="m12 17.5-.8 2.2"/>` : name === "rain-heavy" ? `<path d="m8.5 17.3-.8 2.4m4.8-2.4-.8 2.4m4.8-2.4-.8 2.4"/>` : `<path d="m7.5 17-.9 2.8m4-2.8-.9 2.8m4-2.8-.9 2.8m4-2.8-.9 2.8"/>`;
+  return `<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M7.1 15.3h9.3a3.6 3.6 0 0 0 .35-7.18A5 5 0 0 0 7 7.45a3.95 3.95 0 0 0 .1 7.85Z" fill="currentColor" fill-opacity=".12" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/>${drops.replace("/>", ` fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/>`)}</svg>`;
+}
+function getGameTimeTitle() {
+  return currentLang === "ru" ? "Игровое время" : "In-game time";
+}
+function formatGameTimeHour(value) {
+  if (typeof value !== "number" || Number.isNaN(value)) return "";
+  return `${String(Math.max(0, Math.min(23, Math.round(value)))).padStart(2, "0")}:00`;
+}
+function getGameTimeLabel(gameTime) {
+  if (!gameTime || typeof gameTime !== "object") return "";
+  if (currentLang === "ru" && gameTime.label_ru) return String(gameTime.label_ru);
+  if (gameTime.label) return String(gameTime.label);
+  const code = String(gameTime.code || gameTime.profile_id || "").trim().toLowerCase();
+  if (code === "morning") return currentLang === "ru" ? "Утро" : "Morning";
+  if (code === "day") return currentLang === "ru" ? "День" : "Day";
+  if (code === "evening") return currentLang === "ru" ? "Вечер" : "Evening";
+  if (code === "night") return currentLang === "ru" ? "Ночь" : "Night";
+  return code ? code.replace(/[_-]+/g, " ") : "";
+}
+function formatGameTimeValue(gameTime) {
+  const label = getGameTimeLabel(gameTime);
+  const hour = formatGameTimeHour(gameTime?.hour_of_day ?? gameTime?.game_time_hour);
+  if (label && hour) return `${label} · ${hour}`;
+  return label || hour || "";
+}
+function getGameTimeVisualState(gameTime, fallbackHour) {
+  const code = String(gameTime?.code || gameTime?.profile_id || "").trim().toLowerCase();
+  if (["morning", "day", "evening", "night"].includes(code)) return code;
+  const hour = Number(gameTime?.hour_of_day ?? gameTime?.game_time_hour ?? fallbackHour);
+  if (!Number.isFinite(hour)) return "day";
+  if (hour >= 5 && hour < 11) return "morning";
+  if (hour >= 11 && hour < 17) return "day";
+  if (hour >= 17 && hour < 21) return "evening";
+  return "night";
+}
+function getGameTimeStateSvg(state, className = "") {
+  const classes = className ? ` ${className}` : "";
+  if (state === "morning") return `<svg class="game-time-state-icon is-morning${classes}" viewBox="0 0 24 24" focusable="false" aria-hidden="true"><path d="M4 18h16M7 18a5 5 0 0 1 10 0M12 5v3M5.6 10.2l2.1 2.1M18.4 10.2l-2.1 2.1" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"/></svg>`;
+  if (state === "evening") return `<svg class="game-time-state-icon is-evening${classes}" viewBox="0 0 24 24" focusable="false" aria-hidden="true"><path d="M4 14h16M7 14a5 5 0 0 0 10 0M12 19v2M5.6 18.5l2.1-2.1M18.4 18.5l-2.1-2.1" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"/></svg>`;
+  if (state === "night") return `<svg class="game-time-state-icon is-night${classes}" viewBox="0 0 24 24" focusable="false" aria-hidden="true"><path d="M19.2 15.3A7.7 7.7 0 0 1 8.7 4.8 7.8 7.8 0 1 0 19.2 15.3Z" fill="currentColor" fill-opacity=".16" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"/><path d="M17.8 4.2v2.4M16.6 5.4H19" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"/></svg>`;
+  return `<svg class="game-time-state-icon is-day${classes}" viewBox="0 0 24 24" focusable="false" aria-hidden="true"><circle cx="12" cy="12" r="4.25" fill="currentColor" fill-opacity=".14" stroke="currentColor" stroke-width="1.9"/><path d="M12 2.75v2.5M12 18.75v2.5M21.25 12h-2.5M5.25 12h-2.5M18.54 5.46l-1.77 1.77M7.23 16.77l-1.77 1.77M18.54 18.54l-1.77-1.77M7.23 7.23 5.46 5.46" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round"/></svg>`;
+}
+function renderGameTimeStateIcon(gameTime, fallbackHour, className = "") {
+  return getGameTimeStateSvg(getGameTimeVisualState(gameTime, fallbackHour), className);
+}
 function formatScheduleCardDateTime(item) {
   const startTime = getLocalizedField(item, "start_time_local", item?.start_time_local || "--");
   const timezone = getLocalizedField(item, "timezone", item?.timezone || "UTC+3");
@@ -1387,6 +1479,23 @@ function buildScheduleCardWeather(item) {
   if (state) return state;
   if (rainLevel !== null) return `${rainLevel}%`;
   return t("unknownValue");
+}
+const buildScheduleCardWeatherBase = buildScheduleCardWeather;
+buildScheduleCardWeather = function(item) {
+  const baseText = buildScheduleCardWeatherBase(item);
+  const gameTimeText = formatGameTimeValue(item?.game_time);
+  if (!gameTimeText) return baseText;
+  if (!baseText || baseText === t("unknownValue")) return gameTimeText;
+  return `${baseText} · ${gameTimeText}`;
+};
+function renderScheduleConditions(item) {
+  const weather = item?.weather || { rain_level: item?.rain_level };
+  const weatherText = buildScheduleCardWeatherBase(item);
+  const gameTimeText = formatGameTimeValue(item?.game_time);
+  const gameTimeHtml = gameTimeText
+    ? `<span class="schedule-condition-separator" aria-hidden="true">\u00b7</span>${renderGameTimeStateIcon(item?.game_time)}<span>${escapeHtml(gameTimeText)}</span>`
+    : "";
+  return `${renderWeatherStateIcon(weather)}<span>${escapeHtml(weatherText)}</span>${gameTimeHtml}`;
 }
 function formatScheduleDateTime(item) {
   const startTime = getLocalizedField(item, "start_time_local", item?.start_time_local || "--");
@@ -1601,7 +1710,8 @@ function getScheduleModalViewModel(item) {
     preparationMinutes: minutesFromSeconds(session.pre_race_waiting_time_seconds),
     qualifyingMinutes: getNumericModalValue(session, ["qualifying_duration_minutes", "qualifyingDurationMinutes"]),
     raceMinutes: getNumericModalValue(session, ["race_duration_minutes", "raceDurationMinutes"]),
-    inGameTime: getSessionGameTimeValue(session),
+    inGameTime: formatGameTimeValue(item?.game_time) || getSessionGameTimeValue(session),
+    inGameTimeIcon: getGameTimeVisualState(item?.game_time, session.hour_of_day ?? session.hourOfDay),
     timeMultiplier: getSessionTimeMultiplierValue(session),
     mandatoryPitstopCount: getNumericModalValue(rules, ["mandatory_pitstop_count", "mandatoryPitstopCount"]),
     pitWindowMinutes: getNumericModalValue(rules, ["pit_window_length_minutes", "pitWindowLengthMinutes"]),
@@ -1619,6 +1729,8 @@ function getScheduleModalViewModel(item) {
 }
 
 function getEventDetailsV2IconSvg(name) {
+  if (name.startsWith("cloud-") || name.startsWith("rain-")) return getWeatherMetricIconSvg(name);
+  if (["morning", "day", "evening", "night"].includes(name)) return getGameTimeStateSvg(name);
   const icons = {
     calendar: `<svg viewBox="0 0 24 24" focusable="false" aria-hidden="true"><path d="M8 3v3M16 3v3M4 9h16M5.75 5.75h12.5a2 2 0 0 1 2 2v10.5a2 2 0 0 1-2 2H5.75a2 2 0 0 1-2-2V7.75a2 2 0 0 1 2-2Z" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"></path></svg>`,
     close: `<svg viewBox="0 0 24 24" focusable="false" aria-hidden="true"><path d="m6 6 12 12M18 6 6 18" fill="none" stroke="currentColor" stroke-width="2.1" stroke-linecap="round"></path></svg>`,
@@ -1760,7 +1872,7 @@ function buildScheduleModalDetailsV2(item) {
     buildEventDetailsV2Row(t("modalPreparationLabel"), escapeHtml(formatModalMinutesValue(viewModel.preparationMinutes)), "timer"),
     buildEventDetailsV2Row(t("modalQualifyingLabel"), escapeHtml(formatModalMinutesValue(viewModel.qualifyingMinutes)), "stopwatch"),
     buildEventDetailsV2Row(t("modalRaceLabel"), escapeHtml(formatModalMinutesValue(viewModel.raceMinutes)), "play"),
-    buildEventDetailsV2Row(t("modalGameTimeLabel"), escapeHtml(viewModel.inGameTime), "sun"),
+    buildEventDetailsV2Row(t("modalGameTimeLabel"), escapeHtml(viewModel.inGameTime), viewModel.inGameTimeIcon),
     buildEventDetailsV2Row(t("modalTimeMultiplierLabel"), escapeHtml(formatModalTimeMultiplierValue(viewModel.timeMultiplier)), "fast")
   ].join("");
   const conditionsRows = [
@@ -1771,8 +1883,8 @@ function buildScheduleModalDetailsV2(item) {
     buildEventDetailsV2Row(t("modalRefuelFixedLabel"), escapeHtml(formatModalYesNoValue(viewModel.fixedRefuellingTime)), "timer"),
     buildEventDetailsV2Row(t("heroTyresLabel"), escapeHtml(formatModalTyreSetCountValue(viewModel.tyreSetCount)), "tyre", { rowClass: " event-details-v2-divider-row" }),
     buildEventDetailsV2Row(t("modalTemperatureLabel"), escapeHtml(formatModalTemperatureValue(viewModel.temperatureC)), "temp"),
-    buildEventDetailsV2Row(t("modalCloudsLabel"), escapeHtml(formatModalPercentValue(viewModel.cloudLevelPercent)), "cloud"),
-    buildEventDetailsV2Row(t("modalRainLabel"), escapeHtml(formatModalPercentValue(viewModel.rainProbabilityPercent)), "rain"),
+    buildEventDetailsV2Row(t("modalCloudsLabel"), escapeHtml(formatModalPercentValue(viewModel.cloudLevelPercent)), getWeatherMetricIconName("cloud", viewModel.cloudLevelPercent)),
+    buildEventDetailsV2Row(t("modalRainLabel"), escapeHtml(formatModalPercentValue(viewModel.rainProbabilityPercent)), getWeatherMetricIconName("rain", viewModel.rainProbabilityPercent)),
     buildEventDetailsV2Row(t("modalRandomnessLabel"), escapeHtml(viewModel.weatherRandomness ?? t("modalNotSpecified")), "wind")
   ].join("");
   return `
@@ -2229,7 +2341,7 @@ function buildUpcomingEventInfoGrid(item) {
     buildEventDetailsV2Row(t("modalPreparationLabel"), escapeHtml(formatModalMinutesValue(viewModel.preparationMinutes)), "timer"),
     buildEventDetailsV2Row(t("modalQualifyingLabel"), escapeHtml(formatModalMinutesValue(viewModel.qualifyingMinutes)), "stopwatch"),
     buildEventDetailsV2Row(t("modalRaceLabel"), escapeHtml(formatModalMinutesValue(viewModel.raceMinutes)), "play"),
-    buildEventDetailsV2Row(t("modalGameTimeLabel"), escapeHtml(viewModel.inGameTime), "sun"),
+    buildEventDetailsV2Row(t("modalGameTimeLabel"), escapeHtml(viewModel.inGameTime), viewModel.inGameTimeIcon),
     buildEventDetailsV2Row(t("modalTimeMultiplierLabel"), escapeHtml(formatModalTimeMultiplierValue(viewModel.timeMultiplier)), "fast")
   ].join("");
 
@@ -2241,8 +2353,8 @@ function buildUpcomingEventInfoGrid(item) {
     buildEventDetailsV2Row(t("modalRefuelFixedLabel"), escapeHtml(formatModalYesNoValue(viewModel.fixedRefuellingTime)), "timer"),
     buildEventDetailsV2Row(t("heroTyresLabel"), escapeHtml(formatModalTyreSetCountValue(viewModel.tyreSetCount)), "tyre", { rowClass: " event-details-v2-divider-row" }),
     buildEventDetailsV2Row(t("modalTemperatureLabel"), escapeHtml(formatModalTemperatureValue(viewModel.temperatureC)), "temp"),
-    buildEventDetailsV2Row(t("modalCloudsLabel"), escapeHtml(formatModalPercentValue(viewModel.cloudLevelPercent)), "cloud"),
-    buildEventDetailsV2Row(t("modalRainLabel"), escapeHtml(formatModalPercentValue(viewModel.rainProbabilityPercent)), "rain"),
+    buildEventDetailsV2Row(t("modalCloudsLabel"), escapeHtml(formatModalPercentValue(viewModel.cloudLevelPercent)), getWeatherMetricIconName("cloud", viewModel.cloudLevelPercent)),
+    buildEventDetailsV2Row(t("modalRainLabel"), escapeHtml(formatModalPercentValue(viewModel.rainProbabilityPercent)), getWeatherMetricIconName("rain", viewModel.rainProbabilityPercent)),
     buildEventDetailsV2Row(t("modalRandomnessLabel"), escapeHtml(viewModel.weatherRandomness ?? t("modalNotSpecified")), "wind")
   ].join("");
 
@@ -2263,7 +2375,6 @@ function renderUpcomingHeroV2(data) {
   const footerEl = document.getElementById("hourly-upcoming-v2-footer");
   const server = data?.server || {};
   const voteItem = scheduleItems[0] || data;
-  const connectHref = getHourlyConnectHref(server);
   const startTime = getLocalizedField(data, "start_time_local", data?.start_time_local || "--");
   const timezone = getLocalizedField(data, "timezone", data?.timezone || "UTC+3");
   const trackName = getLocalizedField(data, "track_name", data?.track_name || "--");
@@ -2280,15 +2391,6 @@ function renderUpcomingHeroV2(data) {
   if (infoGridEl) infoGridEl.innerHTML = buildUpcomingEventInfoGrid(data);
   if (footerEl) {
     footerEl.innerHTML = `
-      <div class="hourly-v2-connect-actions">
-        <a
-          class="hourly-v2-connect-button${connectHref ? "" : " is-disabled"}"
-          href="${escapeHtml(connectHref || "#")}"
-          aria-disabled="${connectHref ? "false" : "true"}"
-          title="${escapeHtml(connectHref ? t("serverConnectBtn") : t("serverConnectUnavailable"))}"
-        >${escapeHtml(t("serverConnectBtn"))}</a>
-        <a class="hourly-v2-help-button" href="https://github.com/lonemeow/acc-connector" target="_blank" rel="noopener noreferrer">${escapeHtml(t("serverConnectHowTo"))}</a>
-      </div>
       <div class="hourly-v2-footer-side">
         ${buildParticipationControlsV2(voteItem, { showDetails: true })}
         <div class="hourly-v2-voting-note">${buildCompactVoteLegalNoteHtml()}</div>
@@ -2317,7 +2419,7 @@ function renderChampionshipHeroV2(data) {
       <div class="hourly-championship-v2-event-label">${escapeHtml(currentLang === "ru" ? "Событие чемпионата" : "Championship event")}</div>
       <div class="hourly-championship-v2-event-track">${escapeHtml(getLocalizedField(nextChampionship, "track_name", nextChampionship.track_code || "--"))}</div>
       <div class="hourly-championship-v2-event-row">${buildEventDetailsV2Icon("calendar", "hourly-championship-v2-event-icon")}<span>${escapeHtml(formatScheduleDateTime(nextChampionship))}</span></div>
-      <div class="hourly-championship-v2-event-row">${buildEventDetailsV2Icon("rain", "hourly-championship-v2-event-icon")}<span>${escapeHtml(buildScheduleCardWeather(nextChampionship))}</span></div>
+      <div class="hourly-championship-v2-event-row hourly-schedule-conditions">${renderScheduleConditions(nextChampionship)}</div>
       <div class="hourly-championship-v2-event-row">${buildEventDetailsV2Icon("stopwatch", "hourly-championship-v2-event-icon")}<span>${escapeHtml(`Q ${session.qualifying_duration_minutes ?? "--"}m + R ${session.race_duration_minutes ?? "--"}m`)}</span></div>
       <div class="hourly-championship-v2-event-row">${buildEventDetailsV2Icon("wrench", "hourly-championship-v2-event-icon")}<span>${escapeHtml(`${typeof rules.mandatory_pitstop_count === "number" ? rules.mandatory_pitstop_count : t("modalNotSpecified")}${rules.pit_window_length_minutes ? ` / ${rules.pit_window_length_minutes}m` : ""}`)}</span></div>
     `
@@ -2358,7 +2460,7 @@ function buildScheduleCardV2(row, index) {
         <div class="event-type-badge">${escapeHtml(eventBadgeLabel(row))}</div>
         <div class="hourly-slot-card-v2-time">${escapeHtml(formatScheduleCardDateTime(row))}</div>
         <div class="hourly-slot-card-v2-track">${escapeHtml(getLocalizedField(row, "track_name", row.track_name || "--"))}</div>
-        <div class="hourly-slot-card-v2-weather">${escapeHtml(buildScheduleCardWeather(row))}</div>
+        <div class="hourly-slot-card-v2-weather">${renderScheduleConditions(row)}</div>
         <div class="hourly-slot-card-v2-footer">
           ${buildParticipationControlsV2(row, { variant: "compact", showDetails: false })}
         </div>
@@ -2461,7 +2563,11 @@ function renderChampionshipHero(data) {
   if (badgeEl) badgeEl.textContent = nextChampionship ? eventBadgeLabel(nextChampionship) : t("championshipBadge");
   if (trackEl) trackEl.textContent = nextChampionship ? getLocalizedField(nextChampionship, "track_name", nextChampionship.track_code || "--") : t("unknownValue");
   if (dateEl) dateEl.textContent = nextChampionship ? formatScheduleDateTime(nextChampionship) : t("unknownValue");
-  if (weatherEl) weatherEl.textContent = nextChampionship ? buildScheduleCardWeather(nextChampionship) : t("unknownValue");
+  if (weatherEl) {
+    weatherEl.innerHTML = nextChampionship
+      ? renderScheduleConditions(nextChampionship)
+      : escapeHtml(t("unknownValue"));
+  }
   if (formatEl) formatEl.textContent = session.format_label || t("unknownValue");
   if (pitEl) pitEl.textContent = typeof rules.mandatory_pitstop_count === "number"
     ? `${t("heroPitstopLabel")}: ${rules.mandatory_pitstop_count}${rules.pit_window_length_minutes ? ` / ${rules.pit_window_length_minutes}m` : ""}`
@@ -2738,6 +2844,28 @@ function renderRaceResultsModal() {
   `).join("");
   tableEl.innerHTML = `<table><thead><tr>${headers}</tr></thead><tbody>${rows}</tbody></table>`;
 }
+const renderRaceResultsModalBase = renderRaceResultsModal;
+renderRaceResultsModal = function() {
+  renderRaceResultsModalBase();
+  if (!selectedRace) return;
+  const summaryEl = document.getElementById("race-modal-summary");
+  if (!summaryEl) return;
+  const extraCards = [];
+  if (selectedRace?.weather?.summary_key) {
+    extraCards.push(
+      `<div class="race-summary-card"><div class="race-summary-label">${escapeHtml(t("heroWeatherLabel"))}</div><div class="race-summary-value weather-summary-inline">${renderWeatherStateIcon(selectedRace?.weather || { rain_level: selectedRace?.rain_level })}<span>${escapeHtml(buildScheduleCardWeatherBase(selectedRace))}</span></div></div>`
+    );
+  }
+  const gameTimeValue = formatGameTimeValue(selectedRace?.game_time);
+  if (gameTimeValue) {
+    extraCards.push(
+      `<div class="race-summary-card"><div class="race-summary-label">${escapeHtml(getGameTimeTitle())}</div><div class="race-summary-value game-time-summary-inline">${renderGameTimeStateIcon(selectedRace?.game_time)}<span>${escapeHtml(gameTimeValue)}</span></div></div>`
+    );
+  }
+  if (extraCards.length) {
+    summaryEl.insertAdjacentHTML("beforeend", extraCards.join(""));
+  }
+};
 function renderScheduleModal() {
   const modal = document.getElementById("schedule-modal");
   const modalCard = document.querySelector("#schedule-modal .modal-card-slot");
@@ -2795,6 +2923,18 @@ function renderScheduleModal() {
   bindVoteControls(detailsEl);
   bindHeroCopyButtons(detailsEl);
 }
+const renderScheduleModalBase = renderScheduleModal;
+renderScheduleModal = function() {
+  renderScheduleModalBase();
+  if (!selectedScheduleItem) return;
+  const gameTimeValue = formatGameTimeValue(selectedScheduleItem?.game_time);
+  if (!gameTimeValue) return;
+  const subtitleValues = document.querySelectorAll(".schedule-modal-subtitle-value");
+  const dateTimeValue = subtitleValues[2];
+  if (!dateTimeValue || dateTimeValue.dataset.gameTimeBound === "true") return;
+  dateTimeValue.dataset.gameTimeBound = "true";
+  dateTimeValue.innerHTML += `<br>${escapeHtml(`${getGameTimeTitle()}: ${gameTimeValue}`)}`;
+};
 function renderWeatherModal() {
   const detailsEl = document.getElementById("weather-modal-details");
   if (!detailsEl) return;

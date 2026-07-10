@@ -52,12 +52,19 @@
   <meta name="twitter:image" content="https://asgracing.ru/social/og.jpg" />
   <meta name="twitter:image:alt" content="ASG Racing ACC Leaderboard preview" />
 
-  <link rel="stylesheet" href="./styles.css?v=20260630videotoggle1" />
+  <link rel="stylesheet" href="./styles.css?v=20260710servercards1" />
   <link rel="stylesheet" href="./legal.css" />
 </head>
 <body id="top">
   <div class="site-video-bg" aria-hidden="true">
-  <video class="site-bg-video" muted loop playsinline preload="none" data-bg-src="./media/background.mp4?v=20260630fhd30a"></video>
+  <video
+    class="site-bg-video"
+    muted
+    loop
+    playsinline
+    preload="none"
+    data-bg-options="./media/background.mp4?v=20260630fhd30a|./media/background_nurb24h.mp4?v=20260710fhd30a"
+  ></video>
 </div>
 <div class="site-video-overlay" aria-hidden="true"></div>
 <div
@@ -507,10 +514,6 @@
               <span class="server-status" id="serverMainStatusValue">—</span>
               <span class="server-players" id="serverMainPlayersValue">—</span>
             </div>
-            <div class="server-sticky-actions">
-              <a class="server-connect-btn" id="serverMainConnectLink" href="#" data-i18n="serverConnectBtn">Connect</a>
-              <a class="server-connect-help" href="https://github.com/lonemeow/acc-connector" target="_blank" rel="noopener noreferrer" data-i18n="serverConnectHowTo">How to?</a>
-            </div>
           </div>
         </div>
 
@@ -521,10 +524,6 @@
             <div class="server-sticky-card-status">
               <span class="server-status" id="serverSunsetStatusValue">—</span>
               <span class="server-players" id="serverSunsetPlayersValue">—</span>
-            </div>
-            <div class="server-sticky-actions">
-              <a class="server-connect-btn" id="serverHourlyConnectLink" href="#" data-i18n="serverConnectBtn">Connect</a>
-              <a class="server-connect-help" href="https://github.com/lonemeow/acc-connector" target="_blank" rel="noopener noreferrer" data-i18n="serverConnectHowTo">How to?</a>
             </div>
           </div>
         </div>
@@ -1187,7 +1186,7 @@
   </div>
 
   <script src="./legal.js" defer></script>
-  <script src="./app.js?v=20260630videotoggle1" defer></script>
+  <script src="./app.js?v=20260710bgvideo2" defer></script>
 </body>
 </html>
 
