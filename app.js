@@ -56,7 +56,8 @@ const TOP_GUIDE_STORAGE_KEY = "asgTopGuideSeen";
 const TOP_GUIDE_MEDIA_QUERY = "(min-width: 1280px)";
 const BG_VIDEO_VOLUME_STORAGE_KEY = "asgBgVideoVolume";
 const BG_VIDEO_PLAYBACK_STORAGE_KEY = "asgBgVideoPlaybackEnabled";
-const BG_VIDEO_SELECTION_STORAGE_KEY = "asgBgVideoSelection";
+const BG_VIDEO_PLAYLIST_STORAGE_KEY = "asgBgVideoPlaylist";
+const BG_VIDEO_INDEX_STORAGE_KEY = "asgBgVideoIndex";
 const SERVER_CARD_BACKGROUNDS = {
   main: `${SITE_BASE_PATH}assets/main.jpg`,
   sunset: `${SITE_BASE_PATH}assets/sunset.jpg`,
@@ -10997,44 +10998,82 @@ function setBackgroundVideoSoundAvailability(supported) {
   syncBackgroundVideoSoundState();
 }
 
-function configureBackgroundVideoSource(video) {
-  if (!video || video.dataset.bgConfigured === "true") return;
-
-  const configuredOptions = String(video.dataset.bgOptions || "")
+function readBackgroundVideoOptions(video) {
+  return String(video?.dataset.bgOptions || "")
     .split("|")
     .map(option => option.trim())
     .filter(Boolean);
+}
 
+function saveBackgroundVideoPlaylistState(playlist, currentIndex) {
+  try {
+    sessionStorage.setItem(BG_VIDEO_PLAYLIST_STORAGE_KEY, JSON.stringify(playlist));
+    sessionStorage.setItem(BG_VIDEO_INDEX_STORAGE_KEY, String(Math.max(0, Number(currentIndex) || 0)));
+  } catch (error) {
+    // Ignore sessionStorage failures and keep the runtime state only.
+  }
+}
+
+function loadBackgroundVideoPlaylistState(configuredOptions) {
+  try {
+    const storedPlaylist = JSON.parse(sessionStorage.getItem(BG_VIDEO_PLAYLIST_STORAGE_KEY) || "null");
+    const storedIndex = Number(sessionStorage.getItem(BG_VIDEO_INDEX_STORAGE_KEY) || "0");
+    const normalizedPlaylist = Array.isArray(storedPlaylist)
+      ? storedPlaylist.map(option => String(option || "").trim()).filter(Boolean)
+      : [];
+
+    if (
+      normalizedPlaylist.length === configuredOptions.length &&
+      normalizedPlaylist.every(option => configuredOptions.includes(option))
+    ) {
+      return {
+        playlist: normalizedPlaylist,
+        currentIndex: Math.min(
+          Math.max(0, Number.isFinite(storedIndex) ? storedIndex : 0),
+          Math.max(0, normalizedPlaylist.length - 1)
+        )
+      };
+    }
+  } catch (error) {
+    // Ignore invalid session state and rebuild the playlist below.
+  }
+
+  return null;
+}
+
+function buildBackgroundVideoPlaylist(configuredOptions) {
+  const restoredState = loadBackgroundVideoPlaylistState(configuredOptions);
+  if (restoredState) {
+    return restoredState;
+  }
+
+  const startIndex = configuredOptions.length > 1
+    ? Math.floor(Math.random() * configuredOptions.length)
+    : 0;
+  const playlist = configuredOptions
+    .slice(startIndex)
+    .concat(configuredOptions.slice(0, startIndex));
+
+  saveBackgroundVideoPlaylistState(playlist, 0);
+  return {
+    playlist,
+    currentIndex: 0
+  };
+}
+
+function configureBackgroundVideoSource(video) {
+  if (!video || video.dataset.bgConfigured === "true") return;
+
+  const configuredOptions = readBackgroundVideoOptions(video);
   if (!configuredOptions.length) {
     video.dataset.bgConfigured = "true";
     return;
   }
 
-  let selectedOption = "";
-
-  try {
-    const storedOption = sessionStorage.getItem(BG_VIDEO_SELECTION_STORAGE_KEY);
-    if (storedOption && configuredOptions.includes(storedOption)) {
-      selectedOption = storedOption;
-    }
-  } catch (error) {
-    // Ignore sessionStorage failures and fall back to a random pick.
-  }
-
-  if (!selectedOption) {
-    const randomIndex = Math.floor(Math.random() * configuredOptions.length);
-    selectedOption = configuredOptions[randomIndex] || configuredOptions[0];
-  }
-
-  if (selectedOption) {
-    video.dataset.bgSrc = selectedOption;
-    try {
-      sessionStorage.setItem(BG_VIDEO_SELECTION_STORAGE_KEY, selectedOption);
-    } catch (error) {
-      // Ignore sessionStorage failures and keep the runtime selection only.
-    }
-  }
-
+  const { playlist, currentIndex } = buildBackgroundVideoPlaylist(configuredOptions);
+  video.dataset.bgPlaylist = JSON.stringify(playlist);
+  video.dataset.bgIndex = String(currentIndex);
+  video.dataset.bgSrc = playlist[currentIndex] || playlist[0] || "";
   video.dataset.bgConfigured = "true";
 }
 
@@ -11133,6 +11172,84 @@ function optimizeBackgroundMedia() {
   if (!video) return;
   configureBackgroundVideoSource(video);
 
+  const getBackgroundVideoPlaylist = () => {
+    try {
+      const playlist = JSON.parse(video.dataset.bgPlaylist || "[]");
+      return Array.isArray(playlist) ? playlist.filter(Boolean) : [];
+    } catch (error) {
+      return [];
+    }
+  };
+
+  const getBackgroundVideoIndex = () => {
+    const parsedIndex = Number(video.dataset.bgIndex || "0");
+    return Number.isFinite(parsedIndex) && parsedIndex >= 0 ? parsedIndex : 0;
+  };
+
+  const setBackgroundVideoIndex = index => {
+    const playlist = getBackgroundVideoPlaylist();
+    const safeIndex = playlist.length ? ((index % playlist.length) + playlist.length) % playlist.length : 0;
+    video.dataset.bgIndex = String(safeIndex);
+    video.dataset.bgSrc = playlist[safeIndex] || "";
+    saveBackgroundVideoPlaylistState(playlist, safeIndex);
+  };
+
+  const preloadNextBackgroundVideo = () => {
+    const playlist = getBackgroundVideoPlaylist();
+    if (playlist.length < 2) return;
+
+    const currentIndex = getBackgroundVideoIndex();
+    const nextIndex = (currentIndex + 1) % playlist.length;
+    const nextSrc = playlist[nextIndex];
+    if (!nextSrc) return;
+
+    if (!window.__asgBgVideoPreloader) {
+      const preloader = document.createElement("video");
+      preloader.preload = "auto";
+      preloader.muted = true;
+      preloader.playsInline = true;
+      window.__asgBgVideoPreloader = preloader;
+    }
+
+    const preloader = window.__asgBgVideoPreloader;
+    if (preloader.dataset.src === nextSrc) return;
+    preloader.dataset.src = nextSrc;
+    preloader.src = nextSrc;
+    preloader.load?.();
+  };
+
+  const playManagedBackgroundVideo = () => {
+    if (!shouldAutoplayBackground) {
+      video.removeAttribute("autoplay");
+      return;
+    }
+
+    video.setAttribute("autoplay", "");
+    const playPromise = video.play?.();
+    if (playPromise && typeof playPromise.catch === "function") {
+      playPromise.catch(() => {
+        video.pause?.();
+      });
+    }
+  };
+
+  const advanceBackgroundVideo = () => {
+    const playlist = getBackgroundVideoPlaylist();
+    if (playlist.length < 2) {
+      playManagedBackgroundVideo();
+      return;
+    }
+
+    const nextIndex = (getBackgroundVideoIndex() + 1) % playlist.length;
+    setBackgroundVideoIndex(nextIndex);
+    delete video.dataset.loaded;
+    delete video.dataset.loadScheduled;
+    loadBackgroundVideo();
+    syncBackgroundVideoSoundState(video);
+    playManagedBackgroundVideo();
+    preloadNextBackgroundVideo();
+  };
+
   const unloadBackgroundVideo = () => {
     video.pause();
     video.removeAttribute("autoplay");
@@ -11148,12 +11265,16 @@ function optimizeBackgroundMedia() {
     const videoSrc = video.dataset.bgSrc;
     if (!videoSrc) return;
 
+    video.pause?.();
+    video.removeAttribute("src");
+    video.replaceChildren();
     const source = document.createElement("source");
     source.src = videoSrc;
     source.type = "video/mp4";
     video.appendChild(source);
     video.dataset.loaded = "true";
     video.load?.();
+    preloadNextBackgroundVideo();
   };
 
   const scheduleBackgroundVideoLoad = () => {
@@ -11167,18 +11288,7 @@ function optimizeBackgroundMedia() {
       }
       loadBackgroundVideo();
       syncBackgroundVideoSoundState(video);
-      if (!shouldAutoplayBackground) {
-        video.removeAttribute("autoplay");
-        return;
-      }
-
-      video.setAttribute("autoplay", "");
-      const playPromise = video.play?.();
-      if (playPromise && typeof playPromise.catch === "function") {
-        playPromise.catch(() => {
-          video.pause?.();
-        });
-      }
+      playManagedBackgroundVideo();
     };
 
     const scheduleIdleLoad = () => {
@@ -11203,6 +11313,10 @@ function optimizeBackgroundMedia() {
       setBackgroundVideoSoundAvailability(false);
       unloadBackgroundVideo();
       document.body.classList.add("lite-background");
+    });
+    video.addEventListener("ended", () => {
+      if (document.body.classList.contains("lite-background")) return;
+      advanceBackgroundVideo();
     });
     video.dataset.availabilityBound = "true";
   }
