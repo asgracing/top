@@ -13035,6 +13035,12 @@ body *::after {
   background-repeat: no-repeat, no-repeat;
 }
 
+.hero-hourly-card.is-championship-event::before {
+  background-position: center center, center center;
+  background-size: cover, contain;
+  background-repeat: no-repeat, no-repeat;
+}
+
 @media (max-width: 1180px) {
   .hero-hourly-card {
     height: auto;
