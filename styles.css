@@ -13036,9 +13036,13 @@ body *::after {
 }
 
 .hero-hourly-card.is-championship-event::before {
-  background-position: center center, center center !important;
-  background-size: cover, contain !important;
-  background-repeat: no-repeat, no-repeat !important;
+  background:
+    linear-gradient(160deg, rgba(31, 13, 48, 0.62), rgba(31, 13, 48, 0.18)),
+    var(--hero-hourly-track-photo),
+    var(--hero-hourly-track-photo) !important;
+  background-position: center center, center center, center center !important;
+  background-size: cover, contain, cover !important;
+  background-repeat: no-repeat, no-repeat, no-repeat !important;
 }
 
 @media (max-width: 1180px) {
