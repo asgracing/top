@@ -1442,6 +1442,13 @@ body.championship-body .top-nav-menu {
   font-size: 0.58rem;
 }
 
+.hourly-slot-card-v2.is-championship-event .event-type-badge {
+  border-color: rgba(193, 132, 252, 0.78);
+  background: linear-gradient(135deg, #7e22ce, #a855f7);
+  color: #fbf5ff;
+  box-shadow: 0 8px 20px rgba(126, 34, 206, 0.38);
+}
+
 .hourly-slot-card-v2-time {
   color: #fff0d2;
   font-size: 0.8rem;
