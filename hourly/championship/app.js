@@ -20,6 +20,23 @@ const votesApiBase = "https://hourly-votes.asgracing.workers.dev";
 const VOTE_STATE_STORAGE_KEY = "hourlyVoteStateByEventId";
 const VOTE_STATE_STORAGE_TTL_MS = 30 * 24 * 60 * 60 * 1000;
 const NEWS_READ_STORAGE_KEY = "asgReadNewsIds.v2";
+
+function getLegalUrls() {
+  const fallbackBase =
+    document.querySelector('meta[name="legal-base-path"]')?.getAttribute("content")?.trim() || "../";
+  return window.ASGLegal?.getUrls?.() || {
+    privacy: `${fallbackBase}privacy/`,
+    cookies: `${fallbackBase}cookies/`
+  };
+}
+
+function buildCompactVoteLegalNoteHtml() {
+  const { privacy } = getLegalUrls();
+  if (currentLang === "ru") {
+    return `Голосуя, вы соглашаетесь с обработкой тех. идентификатора браузера. <a href="${esc(privacy)}">Подробнее</a>.`;
+  }
+  return `Voting means you agree to processing of a technical browser identifier. <a href="${esc(privacy)}">Details</a>.`;
+}
 const topSiteBaseUrl = isAsgPublicSite
   ? "https://asgracing.ru"
   : isLocalDevHost
@@ -729,7 +746,7 @@ async function loadJsonOrNull(url) {
 }
 
 async function loadVotesForSchedule(items) {
-  const eventIds = items.filter(item => !isVotingDisabledForItem(item)).map(buildSlotEventId).filter(Boolean);
+  const eventIds = items.map(buildSlotEventId).filter(Boolean);
   if (!eventIds.length) return;
   try {
     const url = new URL("/votes", votesApiBase);
@@ -749,7 +766,7 @@ async function loadVotesForSchedule(items) {
 
 async function submitVote(item) {
   const eventId = buildSlotEventId(item);
-  if (!eventId || pendingVoteEventIds.has(eventId) || isVotingDisabledForItem(item)) return;
+  if (!eventId || pendingVoteEventIds.has(eventId)) return;
   pendingVoteEventIds.add(eventId);
   renderUpcoming(championshipUpcomingItems, []);
   try {
@@ -789,6 +806,7 @@ async function submitVote(item) {
   } finally {
     pendingVoteEventIds.delete(eventId);
     renderUpcoming(championshipUpcomingItems, []);
+    if (selectedScheduleItem && buildSlotEventId(selectedScheduleItem) === eventId) renderScheduleModal();
   }
 }
 
@@ -1184,7 +1202,6 @@ function renderWinners(standings) {
 }
 
 function renderVoteControl(item) {
-  if (isVotingDisabledForItem(item)) return "";
   const voteState = getVoteState(item);
   const voteCountLabel = voteState.failed
     ? t("voteFailed")
@@ -1220,6 +1237,18 @@ function renderVoteControl(item) {
       <div class="schedule-event-vote-meta">${esc(voteCountLabel)}</div>
     </div>
   `;
+}
+
+function bindVoteControls(root) {
+  root?.querySelectorAll("[data-vote-event-id]").forEach(button => {
+    button.addEventListener("click", event => {
+      event.stopPropagation();
+      const eventId = button.dataset.voteEventId;
+      const item = championshipUpcomingItems.find(row => buildSlotEventId(row) === eventId)
+        || (selectedScheduleItem && buildSlotEventId(selectedScheduleItem) === eventId ? selectedScheduleItem : null);
+      if (item) void submitVote(item);
+    });
+  });
 }
 
 function renderUpcoming(items, standings) {
@@ -1258,18 +1287,12 @@ function renderUpcoming(items, standings) {
           <div class="schedule-event-track">${esc(getLocalizedField(item, "track_name", item.track_code || "--"))}</div>
           <div class="schedule-event-weather">${renderChampionshipWeatherStateIcon(item.weather || {})}<span>${esc(weatherLabel(item.weather || {}))}</span>${renderChampionshipGameTime(item)}</div>
           ${renderVoteControl(item)}
+          <div class="legal-inline-note">${buildCompactVoteLegalNoteHtml()}</div>
         </div>
       </article>
     `;
   }).join("");
-  root.querySelectorAll("[data-vote-event-id]").forEach(button => {
-    button.addEventListener("click", event => {
-      event.stopPropagation();
-      const eventId = button.dataset.voteEventId;
-      const item = championshipUpcomingItems.find(row => buildSlotEventId(row) === eventId);
-      if (item) void submitVote(item);
-    });
-  });
+  bindVoteControls(root);
   root.querySelectorAll(".schedule-event-card[data-schedule-index]").forEach(card => {
     const openCard = () => openScheduleModal(championshipUpcomingItems[Number(card.dataset.scheduleIndex)] || null);
     card.addEventListener("click", openCard);

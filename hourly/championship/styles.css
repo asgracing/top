@@ -76,6 +76,19 @@
   backdrop-filter: blur(7px);
 }
 
+#championship-upcoming .legal-inline-note {
+  max-width: 320px;
+  color: rgba(226, 232, 240, 0.72);
+  font-size: 0.7rem;
+  line-height: 1.35;
+}
+
+#championship-upcoming .legal-inline-note a {
+  color: #ffd166;
+  text-decoration: underline;
+  text-underline-offset: 2px;
+}
+
 #championship-upcoming .schedule-event-card {
   background:
     var(--schedule-track-photo),
