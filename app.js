@@ -11818,6 +11818,62 @@ async function initializeCurrentPageData() {
   await initializePageData();
 }
 
+function handleDriverPageInitializationError() {
+  const statsEl = document.getElementById("driver-stat-cards");
+  const nameEl = document.getElementById("driver-page-name");
+  const subtitleEl = document.getElementById("driver-page-subtitle");
+  if (nameEl) nameEl.textContent = "-";
+  if (subtitleEl) subtitleEl.textContent = t("driverNoData");
+  if (statsEl) replaceWithTextState(statsEl, "empty", t("driverNoData"));
+}
+
+function handleTablePageInitializationError(tableId) {
+  const tableEl = document.getElementById(tableId);
+  if (tableEl) replaceWithTextState(tableEl, "error", t("errorLoading"));
+}
+
+function handleFunStatsPageInitializationError() {
+  const summaryEl = document.getElementById("fun-stats-summary");
+  const awardsEl = document.getElementById("fun-stats-awards");
+  const leaderboardsEl = document.getElementById("fun-stats-leaderboards");
+  if (summaryEl) replaceWithTextState(summaryEl, "error", t("errorLoading"));
+  if (awardsEl) awardsEl.replaceChildren();
+  if (leaderboardsEl) leaderboardsEl.replaceChildren();
+}
+
+function handleHomePageInitializationError() {
+  const top3Content = document.getElementById("top3-content");
+  if (top3Content) replaceWithTextState(top3Content, "error", t("errorLoading"));
+  [
+    ["leaderboard-table", "leaderboard-pagination-wrap", "errorLeaderboard"],
+    ["bestlaps-table", "bestlaps-pagination-wrap", "errorBestlaps"],
+    ["safety-table", "safety-pagination-wrap", "errorLoading"]
+  ].forEach(([tableId, paginationId, messageKey]) => {
+    const tableEl = document.getElementById(tableId);
+    const paginationEl = document.getElementById(paginationId);
+    if (tableEl) replaceWithTextState(tableEl, "error", t(messageKey));
+    if (paginationEl) paginationEl.style.display = "none";
+  });
+  updateHeroServerSummary(null);
+  renderServerStickyWidget(null);
+}
+
+const pageInitializationErrorHandlers = Object.freeze({
+  driver: handleDriverPageInitializationError,
+  races: () => handleTablePageInitializationError("races-table"),
+  cars: () => handleTablePageInitializationError("cars-table"),
+  bans: () => handleTablePageInitializationError("bans-table"),
+  "fun-stats": handleFunStatsPageInitializationError,
+  community: () => {},
+  news: () => {},
+  home: handleHomePageInitializationError
+});
+
+function handleCurrentPageInitializationError(error) {
+  console.error(error);
+  pageInitializationErrorHandlers[PAGE_CONTEXT.page]?.();
+}
+
 async function init() {
   await initializeAppStorage().catch(error => console.warn("Preference storage is unavailable.", error));
   await initializeFeatureRuntime();
@@ -11851,87 +11907,7 @@ async function init() {
   try {
     await initializeCurrentPageData();
   } catch (error) {
-    console.error(error);
-
-    if (IS_DRIVER_PAGE) {
-      const statsEl = document.getElementById("driver-stat-cards");
-      const nameEl = document.getElementById("driver-page-name");
-      const subtitleEl = document.getElementById("driver-page-subtitle");
-      if (nameEl) nameEl.textContent = "-";
-      if (subtitleEl) subtitleEl.textContent = t("driverNoData");
-      if (statsEl) replaceWithTextState(statsEl, "empty", t("driverNoData"));
-      return;
-    }
-
-    if (IS_RACES_PAGE) {
-      const racesTableEl = document.getElementById("races-table");
-      if (racesTableEl) {
-        replaceWithTextState(racesTableEl, "error", t("errorLoading"));
-      }
-      return;
-    }
-
-    if (IS_CARS_PAGE) {
-      const carsTableEl = document.getElementById("cars-table");
-      if (carsTableEl) {
-        replaceWithTextState(carsTableEl, "error", t("errorLoading"));
-      }
-      return;
-    }
-
-    if (IS_BANS_PAGE) {
-      const bansTableEl = document.getElementById("bans-table");
-      if (bansTableEl) {
-        replaceWithTextState(bansTableEl, "error", t("errorLoading"));
-      }
-      return;
-    }
-
-    if (IS_FUN_STATS_PAGE) {
-      const summaryEl = document.getElementById("fun-stats-summary");
-      const awardsEl = document.getElementById("fun-stats-awards");
-      const leaderboardsEl = document.getElementById("fun-stats-leaderboards");
-      if (summaryEl) {
-        replaceWithTextState(summaryEl, "error", t("errorLoading"));
-      }
-      if (awardsEl) awardsEl.replaceChildren();
-      if (leaderboardsEl) leaderboardsEl.replaceChildren();
-      return;
-    }
-
-    const top3Content = document.getElementById("top3-content");
-    if (top3Content) {
-      replaceWithTextState(top3Content, "error", t("errorLoading"));
-    }
-
-    const leaderboardTableEl = document.getElementById("leaderboard-table");
-    const bestlapsTableEl = document.getElementById("bestlaps-table");
-    const safetyTableEl = document.getElementById("safety-table");
-    const leaderboardWrapEl = document.getElementById("leaderboard-pagination-wrap");
-    const bestlapsWrapEl = document.getElementById("bestlaps-pagination-wrap");
-    const safetyWrapEl = document.getElementById("safety-pagination-wrap");
-
-    if (leaderboardTableEl) {
-      replaceWithTextState(leaderboardTableEl, "error", t("errorLeaderboard"));
-    }
-    if (bestlapsTableEl) {
-      replaceWithTextState(bestlapsTableEl, "error", t("errorBestlaps"));
-    }
-    if (safetyTableEl) {
-      replaceWithTextState(safetyTableEl, "error", t("errorLoading"));
-    }
-    if (leaderboardWrapEl) {
-      leaderboardWrapEl.style.display = "none";
-    }
-    if (bestlapsWrapEl) {
-      bestlapsWrapEl.style.display = "none";
-    }
-    if (safetyWrapEl) {
-      safetyWrapEl.style.display = "none";
-    }
-
-    updateHeroServerSummary(null);
-    renderServerStickyWidget(null);
+    handleCurrentPageInitializationError(error);
   }
 }
 
