@@ -7052,11 +7052,27 @@ function syncModalBackgroundInertState() {
   });
 
   if (!openModals.size || !document.body) return;
-  [...document.body.children].forEach(element => {
-    if (openModals.has(element) || element.inert) return;
-    element.inert = true;
-    element.dataset.modalInertOwned = "true";
+  const activeBranches = new Set([document.body]);
+  openModals.forEach(modal => {
+    let element = modal;
+    while (element && element !== document.body) {
+      activeBranches.add(element);
+      element = element.parentElement;
+    }
   });
+
+  const isolateActiveBranches = parent => {
+    [...parent.children].forEach(element => {
+      if (activeBranches.has(element)) {
+        isolateActiveBranches(element);
+        return;
+      }
+      if (element.inert) return;
+      element.inert = true;
+      element.dataset.modalInertOwned = "true";
+    });
+  };
+  isolateActiveBranches(document.body);
 }
 
 function createModalController({ modalId, closeButtonId, openButtonId, onOpen, onClose }) {

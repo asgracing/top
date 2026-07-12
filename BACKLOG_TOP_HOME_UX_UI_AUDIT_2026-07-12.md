@@ -73,6 +73,7 @@
 - 12.07.2026 — R10: page identity и `siteBasePath` вынесены в чистый `src/runtime/page-context.js`; entrypoints валидируют и записывают явный context до legacy bootstrap, а `app.js` больше не определяет активную страницу по pathname. Добавлены проверки всех восьми page ids, home/child base paths, неизвестного контекста и document handoff; baseline расширен до 52 unit-тестов.
 - 12.07.2026 — R10 hotfix: после перехода на async module entrypoint `app.js` мог загрузиться уже после `DOMContentLoaded`, поэтому `init` не запускался и локальная страница оставалась в loading states. Bootstrap теперь проверяет `document.readyState`, подписывается с `{ once: true }` только во время parsing и иначе запускает `init` немедленно; quality gate фиксирует этот контракт.
 - 12.07.2026 — R10: document-ready lifecycle вынесен из монолита в `src/runtime/application-bootstrap.js`. Bootstrap гарантирует однократный запуск как до, так и после `DOMContentLoaded`, валидирует входной контракт и покрыт тремя unit-тестами; baseline расширен до 55 тестов.
+- 12.07.2026 — R10 hotfix: локальная проверка выявила, что modal isolation назначала `inert` общему body-контейнеру, внутри которого находилась и активная модаль, из-за чего переставали работать все способы закрытия. Алгоритм теперь сохраняет всю ancestor-ветку каждой открытой модали активной и рекурсивно изолирует только соседние DOM-ветки.
 
 ### Условия завершения R01
 
