@@ -11658,18 +11658,7 @@ function runInitStep(stepName, action) {
   }
 }
 
-async function init() {
-  await initializeAppStorage().catch(error => console.warn("Preference storage is unavailable.", error));
-  await initializeFeatureRuntime();
-  appLifecycle.listen(window, "pagehide", () => appLifecycle.destroy(), { once: true });
-  document.body.classList.remove("background-audio-focus");
-  applyInitialTopLoadingState();
-  setupTopHomeDeferredSections();
-  ensureNewsNotificationsUi();
-  rerenderUI();
-
-  backgroundVideoSoundState.volume = loadBackgroundVideoVolume();
-  backgroundVideoSoundState.playbackEnabled = loadBackgroundVideoPlaybackEnabled();
+function initializeSharedControls() {
   runInitStep("updateServerCardBackgrounds", () => updateServerCardBackgrounds());
   runInitStep("bindLanguageButtons", () => bindLanguageButtons());
   runInitStep("bindTopNavGroups", () => bindTopNavGroups());
@@ -11685,6 +11674,43 @@ async function init() {
   runInitStep("bindBackgroundVideoSoundToggle", () => bindBackgroundVideoSoundToggle());
   runInitStep("optimizeBackgroundMedia", () => optimizeBackgroundMedia());
   runInitStep("initDonationAlertsWidget", () => initDonationAlertsWidget());
+}
+
+function initializeHomeControllers() {
+  runInitStep("initTodayStatsModal", () => initTodayStatsModal());
+  runInitStep("initOnlineActivityModal", () => initOnlineActivityModal());
+  runInitStep("initDriverOfDayModal", () => initDriverOfDayModal());
+  runInitStep("initDriverPreviewModal", () => initDriverPreviewModal());
+  runInitStep("initHourlyHeroModal", () => initHourlyHeroModal());
+  runInitStep("initServerPlayersModal", () => initServerPlayersModal());
+}
+
+function initializePageControllers() {
+  if (PAGE_CONTEXT.page === "races" || PAGE_CONTEXT.page === "driver") {
+    runInitStep("initRaceResultsModal", () => initRaceResultsModal());
+  } else if (PAGE_CONTEXT.page === "community") {
+    runInitStep("initCommunityLightbox", () => initCommunityLightbox());
+  } else if (PAGE_CONTEXT.isHome) {
+    initializeHomeControllers();
+  }
+  runInitStep("initEloModal", () => initEloModal());
+  runInitStep("initSafetyModal", () => initSafetyModal());
+  runInitStep("initBestlapTracksModal", () => initBestlapTracksModal());
+}
+
+async function init() {
+  await initializeAppStorage().catch(error => console.warn("Preference storage is unavailable.", error));
+  await initializeFeatureRuntime();
+  appLifecycle.listen(window, "pagehide", () => appLifecycle.destroy(), { once: true });
+  document.body.classList.remove("background-audio-focus");
+  applyInitialTopLoadingState();
+  setupTopHomeDeferredSections();
+  ensureNewsNotificationsUi();
+  rerenderUI();
+
+  backgroundVideoSoundState.volume = loadBackgroundVideoVolume();
+  backgroundVideoSoundState.playbackEnabled = loadBackgroundVideoPlaybackEnabled();
+  initializeSharedControls();
   window.addEventListener("storage", event => {
     if (event.key === HOURLY_VOTE_STATE_STORAGE_KEY || event.key === "asg.top.v1:hourlyVoteState") {
       syncHourlyVoteStateFromStorage();
@@ -11699,21 +11725,7 @@ async function init() {
     updateTopNavModalOffset();
     optimizeBackgroundMedia();
   }, 120));
-  if (IS_RACES_PAGE || IS_DRIVER_PAGE) {
-    runInitStep("initRaceResultsModal", () => initRaceResultsModal());
-  } else if (IS_COMMUNITY_PAGE) {
-    runInitStep("initCommunityLightbox", () => initCommunityLightbox());
-  } else if (!IS_DRIVER_PAGE && !IS_CARS_PAGE && !IS_COMMUNITY_PAGE && !IS_BANS_PAGE) {
-    runInitStep("initTodayStatsModal", () => initTodayStatsModal());
-    runInitStep("initOnlineActivityModal", () => initOnlineActivityModal());
-    runInitStep("initDriverOfDayModal", () => initDriverOfDayModal());
-    runInitStep("initDriverPreviewModal", () => initDriverPreviewModal());
-    runInitStep("initHourlyHeroModal", () => initHourlyHeroModal());
-    runInitStep("initServerPlayersModal", () => initServerPlayersModal());
-  }
-  runInitStep("initEloModal", () => initEloModal());
-  runInitStep("initSafetyModal", () => initSafetyModal());
-  runInitStep("initBestlapTracksModal", () => initBestlapTracksModal());
+  initializePageControllers();
   runInitStep("applyStaticTranslations", () => applyStaticTranslations());
 
   try {

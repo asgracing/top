@@ -75,6 +75,7 @@
 - 12.07.2026 — R10: document-ready lifecycle вынесен из монолита в `src/runtime/application-bootstrap.js`. Bootstrap гарантирует однократный запуск как до, так и после `DOMContentLoaded`, валидирует входной контракт и покрыт тремя unit-тестами; baseline расширен до 55 тестов.
 - 12.07.2026 — R10 hotfix: локальная проверка выявила, что modal isolation назначала `inert` общему body-контейнеру, внутри которого находилась и активная модаль, из-за чего переставали работать все способы закрытия. Алгоритм теперь сохраняет всю ancestor-ветку каждой открытой модали активной и рекурсивно изолирует только соседние DOM-ветки.
 - 12.07.2026 — R10 modal hotfix 2: рекурсивная изоляция корректно доходила до активного overlay, но продолжала обход его descendants и блокировала внутренние SR/ELO buttons, track selects и ссылки. Обход теперь останавливается на открытой модали; весь dialog subtree остаётся интерактивным. Quality gate защищает это условие.
+- 12.07.2026 — R10: монолитный `init()` разделён на shared controls, page controller routing и отдельный home controller initializer. Домашние Today/Online/Driver Preview/Hourly/Server Players modals теперь подключаются только для явного `PAGE_CONTEXT.isHome`; races/driver и community используют собственные controller branches. Порядок вызовов и загрузка данных сохранены.
 
 ### Условия завершения R01
 

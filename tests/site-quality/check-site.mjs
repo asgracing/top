@@ -49,6 +49,7 @@ if (!js.includes('readPageContext(document)')) failures.push("Legacy application
 if (js.slice(0, 1000).includes("window.location.pathname")) failures.push("Application bootstrap must not infer its page from pathname");
 if (!js.includes("runWhenDocumentReady(document")) failures.push("Application must use the tested async document bootstrap");
 if (!js.includes("if (openModals.has(element)) return")) failures.push("Open modal descendants must remain interactive during background isolation");
+if (!js.includes("function initializeSharedControls()") || !js.includes("function initializeHomeControllers()") || !js.includes("function initializePageControllers()")) failures.push("Application init must keep shared and page controller initialization separated");
 const budgets = { important: [(css.match(/!important/g) || []).length, 106], silentCatch: [(js.match(/\.catch\(\(\)\s*=>\s*null\)/g) || []).length, 28], inlineStyle: [(html.match(/\bstyle=/g) || []).length, 10], directFetch: [(js.match(/\bfetch\s*\(/g) || []).length, 0], innerHtmlWrite: [(js.match(/\.innerHTML\s*=/g) || []).length, 91] };
 for (const [name, [actual, maximum]] of Object.entries(budgets)) if (actual > maximum) failures.push(`${name} budget exceeded: ${actual} > ${maximum}`);
 if (failures.length) { console.error(failures.join("\n")); process.exitCode = 1; }
