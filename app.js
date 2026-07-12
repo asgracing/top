@@ -3487,8 +3487,9 @@ async function initDonationAlertsWidget() {
   renderDonationAlertsWidget();
 
   try {
-    const data = await requestJson(donationsApiUrl, { cache: "no-store", retries: 1 });
-    if (!data?.ok) throw new Error(data?.error || "Donations API returned an error");
+    const rawData = await requestJson(donationsApiUrl, { cache: "no-store", retries: 1 });
+    const { normalizeDonationsPayload } = await dataSchemaModulePromise;
+    const data = normalizeDonationsPayload(rawData);
     donationAlertsData = data;
     donationAlertsFailed = false;
   } catch (error) {
@@ -5477,7 +5478,9 @@ async function loadCommunityLikes() {
     const url = new URL("/likes", communityLikesApiUrl);
     url.searchParams.set("post_ids", postIds.join(","));
     url.searchParams.set("voter_id", getCommunityBrowserVoterId());
-    const payload = await requestJson(url, { cache: "no-store", retries: 1 });
+    const rawPayload = await requestJson(url, { cache: "no-store", retries: 1 });
+    const { normalizeCommunityLikesPayload } = await dataSchemaModulePromise;
+    const payload = normalizeCommunityLikesPayload(rawPayload);
     const items = payload?.items && typeof payload.items === "object" ? payload.items : {};
     communityLikeStateByPostId = {
       ...communityLikeStateByPostId,
@@ -5831,7 +5834,9 @@ async function loadNewsFeed() {
   const resolvedUrl = LOCAL_NEWS_DATA_URL;
 
   try {
-    payload = await requestJson(resolvedUrl, { cache: "no-store", retries: 1 });
+    const rawPayload = await requestJson(resolvedUrl, { cache: "no-store", retries: 1 });
+    const { normalizeNewsPayload } = await dataSchemaModulePromise;
+    payload = normalizeNewsPayload(rawPayload);
   } catch (error) {
     payload = null;
   }
@@ -6523,7 +6528,8 @@ function normalizeSnapshotPayload(snapshot) {
 async function loadStandaloneServerStatus() {
   try {
     const data = await loadJson(serverStatusUrl);
-    return data && typeof data === "object" ? data : null;
+    const { normalizeServerStatus } = await dataSchemaModulePromise;
+    return normalizeServerStatus(data);
   } catch (_error) {
     return null;
   }
@@ -6551,7 +6557,8 @@ async function loadSiteData() {
 async function loadHourlyAnnouncementData() {
   try {
     const data = await loadJson(hourlyAnnouncementUrl);
-    return data && typeof data === "object" ? data : null;
+    const { normalizeHourlyAnnouncement } = await dataSchemaModulePromise;
+    return normalizeHourlyAnnouncement(data);
   } catch (error) {
     console.warn("hourly announcement is unavailable.", error);
     return null;
@@ -6721,7 +6728,8 @@ function getRequestedDriverId() {
 async function loadDriverProfile(publicId) {
   if (!publicId) return null;
   const data = await loadTopDataV2Json(`drivers/${encodeURIComponent(publicId)}.json`);
-  return data && typeof data === "object" ? data : null;
+  const { normalizeDriverProfile } = await dataSchemaModulePromise;
+  return normalizeDriverProfile(data);
 }
 
 async function loadDriverProfileCached(publicId) {

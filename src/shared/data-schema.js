@@ -54,3 +54,43 @@ export function normalizePagedTablePayload(payload, tableName, fallbackPage = 1,
   const totalItems = Math.max(items.length, finiteNumber(source.total_items, items.length));
   return { ...source, items, page, page_size: pageSize, total_items: totalItems, total_pages: Math.max(1, finiteNumber(source.total_pages, Math.ceil(totalItems / pageSize))) };
 }
+
+export function normalizeObjectPayload(payload, schema) {
+  const source = objectOrNull(payload);
+  if (!source) throw new SchemaError(schema, ["payload must be an object"]);
+  return source;
+}
+
+export function normalizeServerStatus(payload) {
+  return normalizeObjectPayload(payload, "server status");
+}
+
+export function normalizeHourlyAnnouncement(payload) {
+  const source = normalizeObjectPayload(payload, "hourly announcement");
+  return { ...source, date: text(source.date), start_time_local: text(source.start_time_local), track_name: text(source.track_name ?? source.track_code, "-") };
+}
+
+export function normalizeDriverProfile(payload) {
+  const source = normalizeObjectPayload(payload, "driver profile");
+  return { ...source, driver: text(source.driver, "-"), public_id: text(source.public_id), races: Array.isArray(source.races) ? source.races : [], tracks: Array.isArray(source.tracks) ? source.tracks : [] };
+}
+
+export function normalizeNewsPayload(payload) {
+  if (Array.isArray(payload)) return { items: payload.filter(item => objectOrNull(item)) };
+  const source = normalizeObjectPayload(payload, "news feed");
+  if (source.items !== undefined && !Array.isArray(source.items)) throw new SchemaError("news feed", ["items must be an array"]);
+  return { ...source, items: (source.items || []).filter(item => objectOrNull(item)) };
+}
+
+export function normalizeDonationsPayload(payload) {
+  const source = normalizeObjectPayload(payload, "donations");
+  if (source.ok === false) throw new SchemaError("donations", [text(source.error, "API returned an error")]);
+  if (source.items !== undefined && !Array.isArray(source.items)) throw new SchemaError("donations", ["items must be an array"]);
+  return { ...source, ok: true, items: (source.items || []).filter(item => objectOrNull(item)) };
+}
+
+export function normalizeCommunityLikesPayload(payload) {
+  const source = normalizeObjectPayload(payload, "community likes");
+  if (source.items !== undefined && !objectOrNull(source.items)) throw new SchemaError("community likes", ["items must be an object"]);
+  return { ...source, items: objectOrNull(source.items) || {} };
+}
