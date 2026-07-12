@@ -1,11 +1,14 @@
-﻿const IS_RACES_PAGE = /\/races(?:\/|\/index\.html)?$/i.test(window.location.pathname);
-const IS_DRIVER_PAGE = /\/driver(?:\/|\/index\.html)?$/i.test(window.location.pathname);
-const IS_CARS_PAGE = /\/cars(?:\/|\/index\.html)?$/i.test(window.location.pathname);
-const IS_FUN_STATS_PAGE = /\/fun-stats(?:\/|\/index\.html)?$/i.test(window.location.pathname);
-const IS_COMMUNITY_PAGE = /\/community(?:\/|\/index\.html)?$/i.test(window.location.pathname);
-const IS_NEWS_PAGE = /\/news(?:\/|\/index\.html)?$/i.test(window.location.pathname);
-const IS_BANS_PAGE = /\/bans(?:\/|\/index\.html)?$/i.test(window.location.pathname);
-const SITE_BASE_PATH = (IS_RACES_PAGE || IS_DRIVER_PAGE || IS_CARS_PAGE || IS_FUN_STATS_PAGE || IS_COMMUNITY_PAGE || IS_NEWS_PAGE || IS_BANS_PAGE) ? "../" : "./";
+﻿import { readPageContext } from "./src/runtime/page-context.js";
+
+const PAGE_CONTEXT = readPageContext(document);
+const IS_RACES_PAGE = PAGE_CONTEXT.page === "races";
+const IS_DRIVER_PAGE = PAGE_CONTEXT.page === "driver";
+const IS_CARS_PAGE = PAGE_CONTEXT.page === "cars";
+const IS_FUN_STATS_PAGE = PAGE_CONTEXT.page === "fun-stats";
+const IS_COMMUNITY_PAGE = PAGE_CONTEXT.page === "community";
+const IS_NEWS_PAGE = PAGE_CONTEXT.page === "news";
+const IS_BANS_PAGE = PAGE_CONTEXT.page === "bans";
+const SITE_BASE_PATH = PAGE_CONTEXT.siteBasePath;
 const httpClientModulePromise = import("./src/shared/http-client.js");
 const dataSchemaModulePromise = import("./src/shared/data-schema.js");
 const storageModulePromise = import("./src/shared/storage.js");
@@ -353,7 +356,7 @@ const topDataV2PagedTables = {
 };
 let latestHourlyRaceData = null;
 let racesArchiveMeta = null;
-const IS_TOP_HOME_PAGE = !(IS_RACES_PAGE || IS_DRIVER_PAGE || IS_CARS_PAGE || IS_FUN_STATS_PAGE || IS_COMMUNITY_PAGE || IS_NEWS_PAGE || IS_BANS_PAGE);
+const IS_TOP_HOME_PAGE = PAGE_CONTEXT.isHome;
 const topLoadState = {
   home: IS_TOP_HOME_PAGE,
   hourly: IS_TOP_HOME_PAGE,
