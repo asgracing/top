@@ -7,6 +7,7 @@ import { processBestlaps, processLeaderboard, processSafety } from "./src/pages/
 import { createHomeDeferredSectionsController } from "./src/pages/home/deferred-sections.js";
 import { createHomeStatsTabsController } from "./src/pages/home/stats-tabs-controller.js";
 import { createHomePage } from "./src/pages/home/index.js";
+import { HOME_LOADING_TEXT_IDS, applyHomeTableViewState } from "./src/pages/home/view-state-config.js";
 
 const PAGE_CONTEXT = readPageContext(document);
 const IS_RACES_PAGE = PAGE_CONTEXT.page === "races";
@@ -482,20 +483,8 @@ function applyInitialTopLoadingState() {
   const top3El = document.getElementById("top3-content");
   if (top3El) top3El.innerHTML = renderLoadingMarkup(t("loading"));
 
-  renderDeferredHomeTableLoading("leaderboard-table", "leaderboard-pagination-wrap", "loadingLeaderboard");
-  renderDeferredHomeTableLoading("bestlaps-table", "bestlaps-pagination-wrap", "loadingBestLaps");
-  renderDeferredHomeTableLoading("safety-table", "safety-pagination-wrap", "loadingSafety");
-
-  setLoadingText("drivers-count");
-  setLoadingText("servers-online-count");
-  setLoadingText("serverPlayersValue");
-  setLoadingText("best-lap-highlight");
-  setLoadingText("best-lap-note");
-  setLoadingText("hourly-track-value");
-  setLoadingText("hourly-starts-value");
-  setLoadingText("hourly-votes-summary");
-  setLoadingText("hero-hourly-winner-name");
-  setLoadingText("hero-hourly-winner-meta");
+  applyHomeTableViewState({ documentRef: document, state: "loading", translate: t, setLoadingMarkup, replaceWithTextState });
+  HOME_LOADING_TEXT_IDS.forEach(elementId => setLoadingText(elementId));
 
   const onlineChartEl = document.getElementById("online-chart");
   const onlineRangeEl = document.getElementById("online-range");
@@ -11679,16 +11668,7 @@ function handleFunStatsPageInitializationError() {
 function handleHomePageInitializationError() {
   const top3Content = document.getElementById("top3-content");
   if (top3Content) replaceWithTextState(top3Content, "error", t("errorLoading"));
-  [
-    ["leaderboard-table", "leaderboard-pagination-wrap", "errorLeaderboard"],
-    ["bestlaps-table", "bestlaps-pagination-wrap", "errorBestlaps"],
-    ["safety-table", "safety-pagination-wrap", "errorLoading"]
-  ].forEach(([tableId, paginationId, messageKey]) => {
-    const tableEl = document.getElementById(tableId);
-    const paginationEl = document.getElementById(paginationId);
-    if (tableEl) replaceWithTextState(tableEl, "error", t(messageKey));
-    if (paginationEl) paginationEl.style.display = "none";
-  });
+  applyHomeTableViewState({ documentRef: document, state: "error", translate: t, setLoadingMarkup, replaceWithTextState });
   updateHeroServerSummary(null);
   renderServerStickyWidget(null);
 }
