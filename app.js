@@ -7063,6 +7063,7 @@ function syncModalBackgroundInertState() {
 
   const isolateActiveBranches = parent => {
     [...parent.children].forEach(element => {
+      if (openModals.has(element)) return;
       if (activeBranches.has(element)) {
         isolateActiveBranches(element);
         return;
