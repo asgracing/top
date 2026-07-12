@@ -8,6 +8,7 @@ import { createHomeDeferredSectionsController } from "./src/pages/home/deferred-
 import { createHomeStatsTabsController } from "./src/pages/home/stats-tabs-controller.js";
 import { createHomePage } from "./src/pages/home/index.js";
 import { HOME_LOADING_TEXT_IDS, applyHomeTableViewState } from "./src/pages/home/view-state-config.js";
+import { createModalControllerFactory } from "./src/shared/modal-controller.js";
 
 const PAGE_CONTEXT = readPageContext(document);
 const IS_RACES_PAGE = PAGE_CONTEXT.page === "races";
@@ -6859,115 +6860,7 @@ function formatPercent(value) {
   return typeof value === "number" ? `${value.toFixed(2)}%` : "—";
 }
 
-function getFocusableElements(container) {
-  if (!container) return [];
-  return [...container.querySelectorAll(
-    'a[href], button:not([disabled]), textarea:not([disabled]), input:not([disabled]), select:not([disabled]), [tabindex]:not([tabindex="-1"])'
-  )].filter(el => !el.hasAttribute("hidden") && el.getAttribute("aria-hidden") !== "true");
-}
-
-function syncModalBackgroundInertState() {
-  const openModals = new Set(document.querySelectorAll(".modal-overlay.is-open"));
-
-  document.querySelectorAll("[data-modal-inert-owned='true']").forEach(element => {
-    element.inert = false;
-    delete element.dataset.modalInertOwned;
-  });
-
-  if (!openModals.size || !document.body) return;
-  const activeBranches = new Set([document.body]);
-  openModals.forEach(modal => {
-    let element = modal;
-    while (element && element !== document.body) {
-      activeBranches.add(element);
-      element = element.parentElement;
-    }
-  });
-
-  const isolateActiveBranches = parent => {
-    [...parent.children].forEach(element => {
-      if (openModals.has(element)) return;
-      if (activeBranches.has(element)) {
-        isolateActiveBranches(element);
-        return;
-      }
-      if (element.inert) return;
-      element.inert = true;
-      element.dataset.modalInertOwned = "true";
-    });
-  };
-  isolateActiveBranches(document.body);
-}
-
-function createModalController({ modalId, closeButtonId, openButtonId, onOpen, onClose }) {
-  const modal = document.getElementById(modalId);
-  const closeBtn = document.getElementById(closeButtonId);
-  const openBtn = openButtonId ? document.getElementById(openButtonId) : null;
-  if (!modal || !closeBtn) return null;
-
-  let lastFocusedElement = null;
-
-  const close = () => {
-    if (!modal.classList.contains("is-open")) return;
-    modal.classList.remove("is-open");
-    modal.setAttribute("aria-hidden", "true");
-    syncModalBackgroundInertState();
-    document.body.classList.toggle("modal-open", Boolean(document.querySelector(".modal-overlay.is-open")));
-    if (typeof onClose === "function") onClose();
-    if (lastFocusedElement?.isConnected && typeof lastFocusedElement.focus === "function") {
-      lastFocusedElement.focus();
-    }
-    lastFocusedElement = null;
-  };
-
-  const open = (trigger = null) => {
-    if (modal.classList.contains("is-open")) return;
-    lastFocusedElement = trigger || document.activeElement;
-    if (typeof onOpen === "function") onOpen();
-    modal.classList.add("is-open");
-    modal.setAttribute("aria-hidden", "false");
-    document.body.classList.add("modal-open");
-    syncModalBackgroundInertState();
-    window.requestAnimationFrame(() => {
-      const [firstFocusable] = getFocusableElements(modal);
-      const dialog = modal.querySelector("[role='dialog']");
-      if (dialog && !dialog.hasAttribute("tabindex")) dialog.tabIndex = -1;
-      (firstFocusable || dialog || closeBtn).focus();
-    });
-  };
-
-  closeBtn.addEventListener("click", close);
-  modal.addEventListener("click", (event) => {
-    if (event.target === modal) close();
-  });
-  modal.addEventListener("keydown", (event) => {
-    if (event.key === "Escape") {
-      event.preventDefault();
-      close();
-      return;
-    }
-
-    if (event.key !== "Tab") return;
-    const focusable = getFocusableElements(modal);
-    if (!focusable.length) return;
-
-    const first = focusable[0];
-    const last = focusable[focusable.length - 1];
-    if (event.shiftKey && document.activeElement === first) {
-      event.preventDefault();
-      last.focus();
-    } else if (!event.shiftKey && document.activeElement === last) {
-      event.preventDefault();
-      first.focus();
-    }
-  });
-
-  if (openBtn) {
-    openBtn.addEventListener("click", () => open(openBtn));
-  }
-
-  return { modal, open, close };
-}
+const createModalController = createModalControllerFactory({ documentRef: document, windowRef: window });
 
 function shouldIgnoreDriverPreviewTrigger(target) {
   return Boolean(target?.closest("a, button, input, select, textarea, summary"));
