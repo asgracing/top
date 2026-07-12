@@ -4190,7 +4190,7 @@ function ensureTopGuide() {
     renderTopGuide();
   });
 
-  window.addEventListener("resize", () => {
+  appLifecycle.listen(window, "resize", () => {
     if (topGuideState.active) renderTopGuide();
   });
 
@@ -5789,7 +5789,9 @@ function initCommunityLightbox() {
   });
   bindCommunityLightboxTriggers();
   updateCommunityLightboxAvailability();
-  window.addEventListener("resize", debounce(updateCommunityLightboxAvailability, 120));
+  const handleLightboxResize = debounce(updateCommunityLightboxAvailability, 120);
+  appLifecycle.listen(window, "resize", handleLightboxResize);
+  appLifecycle.add(() => handleLightboxResize.cancel());
 }
 
 function getNewsListHref() {
@@ -6301,7 +6303,7 @@ function initNewsNotificationsModal() {
     if (event.key === "Escape") closeNewsNotificationsPopover();
   });
 
-  window.addEventListener("resize", () => {
+  appLifecycle.listen(window, "resize", () => {
     if (!panel.hidden) syncNewsNotificationsPopoverPosition();
   });
 
@@ -7972,10 +7974,10 @@ function initSafetyModal() {
     });
   });
 
-  window.addEventListener("resize", () => {
+  appLifecycle.listen(window, "resize", () => {
     if (srBreakdownPopoverState) positionSafetyBreakdownPopover();
   });
-  window.addEventListener("scroll", () => {
+  appLifecycle.listen(window, "scroll", () => {
     if (srBreakdownPopoverState) positionSafetyBreakdownPopover();
   }, true);
 }
@@ -8665,7 +8667,7 @@ function bindTopNavMoreMenu() {
     if (event.target.closest("a")) closeMenu();
   });
 
-  window.addEventListener("resize", () => {
+  appLifecycle.listen(window, "resize", () => {
     rebuildOverflowMenu();
   });
 
@@ -11874,10 +11876,30 @@ function handleCurrentPageInitializationError(error) {
   pageInitializationErrorHandlers[PAGE_CONTEXT.page]?.();
 }
 
+function initializeWindowLifecycle() {
+  appLifecycle.listen(window, "pagehide", () => appLifecycle.destroy(), { once: true });
+  appLifecycle.listen(window, "storage", event => {
+    if (event.key === HOURLY_VOTE_STATE_STORAGE_KEY || event.key === "asg.top.v1:hourlyVoteState") {
+      syncHourlyVoteStateFromStorage();
+    }
+    if (event.key === NEWS_READ_STORAGE_KEY || event.key === "asg.top.v1:newsReadState") {
+      renderNewsBell();
+      renderNewsNotificationsModal();
+      if (PAGE_CONTEXT.page === "news") renderNewsPage();
+    }
+  });
+  const handleResize = debounce(() => {
+    updateTopNavModalOffset();
+    optimizeBackgroundMedia();
+  }, 120);
+  appLifecycle.listen(window, "resize", handleResize);
+  appLifecycle.add(() => handleResize.cancel());
+}
+
 async function init() {
   await initializeAppStorage().catch(error => console.warn("Preference storage is unavailable.", error));
   await initializeFeatureRuntime();
-  appLifecycle.listen(window, "pagehide", () => appLifecycle.destroy(), { once: true });
+  initializeWindowLifecycle();
   document.body.classList.remove("background-audio-focus");
   applyInitialTopLoadingState();
   setupTopHomeDeferredSections();
@@ -11887,20 +11909,6 @@ async function init() {
   backgroundVideoSoundState.volume = loadBackgroundVideoVolume();
   backgroundVideoSoundState.playbackEnabled = loadBackgroundVideoPlaybackEnabled();
   initializeSharedControls();
-  window.addEventListener("storage", event => {
-    if (event.key === HOURLY_VOTE_STATE_STORAGE_KEY || event.key === "asg.top.v1:hourlyVoteState") {
-      syncHourlyVoteStateFromStorage();
-    }
-    if (event.key === NEWS_READ_STORAGE_KEY || event.key === "asg.top.v1:newsReadState") {
-      renderNewsBell();
-      renderNewsNotificationsModal();
-      if (IS_NEWS_PAGE) renderNewsPage();
-    }
-  });
-  window.addEventListener("resize", debounce(() => {
-    updateTopNavModalOffset();
-    optimizeBackgroundMedia();
-  }, 120));
   initializePageControllers();
   runInitStep("applyStaticTranslations", () => applyStaticTranslations());
 

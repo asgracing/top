@@ -79,6 +79,7 @@
 - 12.07.2026 — R10: home data orchestration вынесен в `initializeHomeData()`, а применение основного payload — в `applyHomeSiteData()`. Общий `init()` больше не содержит присваивания leaderboard/bestlaps/safety/hero state; параллельная загрузка hourly/news, порядок render и финализация votes сохранены.
 - 12.07.2026 — R10: driver, cars, fun-stats, community, news, bans и races получили отдельные data initializers. Цепочка условных page-load branches удалена из общего `init()` и заменена явным immutable registry `pageDataInitializers` с единым `initializeCurrentPageData()`; существующая общая error boundary сохранена.
 - 12.07.2026 — R10: page-specific fallback UI вынесен из общего `catch` в отдельные handlers и immutable registry `pageInitializationErrorHandlers`. Home tables/hero, driver empty state, table pages и fun-stats cleanup сохранили прежние сообщения и поведение; общий `init()` теперь передаёт ошибку единому `handleCurrentPageInitializationError()`.
+- 12.07.2026 — R10: глобальные `pagehide`, `storage` и `resize` listeners вынесены в `initializeWindowLifecycle()` и зарегистрированы через `appLifecycle`. Lifecycle destroy теперь снимает все три listener и отменяет отложенный resize debounce; прямые window registrations этих типов запрещены quality gate.
 
 ### Условия завершения R01
 
