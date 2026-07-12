@@ -42,6 +42,8 @@
 
 - 12.07.2026 — R00: backlog сохранён коммитом `8bab3e08`.
 - 12.07.2026 — R01 начат: добавлены `package.json`, `.editorconfig`, quality budgets и первые unit-тесты, коммит `9fb0a020`.
+- 12.07.2026 — R01: добавлены regression fixtures и contract-тесты, коммит `a1a4930b`.
+- 12.07.2026 — R01: добавлены чистые модули и unit-тесты runtime config/URL safety и versioned storage с TTL; baseline расширен до 13 тестов.
 
 ### Условия завершения R01
 
