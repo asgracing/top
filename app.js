@@ -7,6 +7,7 @@ const IS_NEWS_PAGE = /\/news(?:\/|\/index\.html)?$/i.test(window.location.pathna
 const IS_BANS_PAGE = /\/bans(?:\/|\/index\.html)?$/i.test(window.location.pathname);
 const SITE_BASE_PATH = (IS_RACES_PAGE || IS_DRIVER_PAGE || IS_CARS_PAGE || IS_FUN_STATS_PAGE || IS_COMMUNITY_PAGE || IS_NEWS_PAGE || IS_BANS_PAGE) ? "../" : "./";
 const httpClientModulePromise = import("./src/shared/http-client.js");
+const dataSchemaModulePromise = import("./src/shared/data-schema.js");
 const requestJson = async (url, options = {}) => {
   const { createHttpClient } = await httpClientModulePromise;
   requestJson.client ||= createHttpClient({ defaultTimeoutMs: 12000 });
@@ -6237,7 +6238,9 @@ async function loadTopDataV2Manifest() {
   if (topDataV2Manifest) return topDataV2Manifest;
 
   const url = `${topDataV2ManifestUrl}?t=${Date.now()}`;
-  const manifest = await requestJson(url, { cache: "no-store", retries: 1 });
+  const manifestPayload = await requestJson(url, { cache: "no-store", retries: 1 });
+  const { normalizeManifest } = await dataSchemaModulePromise;
+  const manifest = normalizeManifest(manifestPayload);
   topDataV2Manifest = manifest && typeof manifest === "object" ? manifest : null;
   topDataV2Version = String(topDataV2Manifest?.version || topDataV2Manifest?.generated_at || "");
   return topDataV2Manifest;
@@ -6251,7 +6254,9 @@ async function loadTopDataV2Json(path) {
 async function loadSiteDataV2() {
   const manifest = await loadTopDataV2Manifest();
   const homePath = manifest?.home || "home.json";
-  const data = await loadTopDataV2Json(homePath);
+  const rawData = await loadTopDataV2Json(homePath);
+  const { normalizeHomePayload } = await dataSchemaModulePromise;
+  const data = normalizeHomePayload(rawData);
   const normalized = normalizeSnapshotPayload(data);
   const bestlapsMeta = data?.tables?.bestlaps || manifest?.tables?.bestlaps || {};
   const [tracksPayload, leadersPayload] = await Promise.all([
@@ -6426,7 +6431,9 @@ async function loadServerPagedTopDataV2Table(tableName, page) {
   }
   if (topDataV2Version) url.searchParams.set("v", topDataV2Version);
 
-  const payload = await loadJson(url.toString());
+  const rawPayload = await loadJson(url.toString());
+  const { normalizePagedTablePayload } = await dataSchemaModulePromise;
+  const payload = normalizePagedTablePayload(rawPayload, tableName, page, PAGE_SIZE);
   if (tableName === "bestlaps") {
     bestlapTracksData = Array.isArray(payload?.tracks) ? payload.tracks : bestlapTracksData;
     if (payload?.selected_track) bestlapsTrackFilter = String(payload.selected_track).trim().toLowerCase();
