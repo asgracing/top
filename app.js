@@ -12,11 +12,13 @@ const storageModulePromise = import("./src/shared/storage.js");
 const queryCacheModulePromise = import("./src/shared/query-cache.js");
 const featureStoreModulePromise = import("./src/shared/feature-store.js");
 const lifecycleModulePromise = import("./src/shared/lifecycle.js");
+const tableEngineModulePromise = import("./src/features/stats/table-engine.js");
 let appStorage = null;
 let jsonQueryCache = null;
 let tableRequestGuard = null;
 let statsStore = null;
 let appLifecycle = null;
+let renderStatsTableShell = null;
 const tableRequestControllers = new Map();
 const requestJson = async (url, options = {}) => {
   const { createHttpClient } = await httpClientModulePromise;
@@ -139,7 +141,8 @@ async function initializeQueryRuntime() {
 }
 
 async function initializeFeatureRuntime() {
-  const [{ createFeatureStore, createTableState, tablesReducer }, { createLifecycle }] = await Promise.all([featureStoreModulePromise, lifecycleModulePromise]);
+  const [{ createFeatureStore, createTableState, tablesReducer }, { createLifecycle }, { renderTableShell }] = await Promise.all([featureStoreModulePromise, lifecycleModulePromise, tableEngineModulePromise]);
+  renderStatsTableShell = renderTableShell;
   appLifecycle ||= createLifecycle();
   if (statsStore) return;
   statsStore = createFeatureStore(createTableState(["leaderboard", "bestlaps", "safety"], PAGE_SIZE), tablesReducer);
@@ -8278,17 +8281,7 @@ function renderLeaderboardTablePage() {
     </tr>
   `).join("");
 
-  tableEl.innerHTML = `
-    <table class="stats-table leaderboard-stats-table">
-      <colgroup>
-        ${leaderboardColumns.map(col => `<col class="${escapeHtml(col.className || "")}">`).join("")}
-      </colgroup>
-      <thead>
-        <tr>${renderLeaderboardHeaders()}</tr>
-      </thead>
-      <tbody>${rows}</tbody>
-    </table>
-  `;
+  tableEl.innerHTML = renderStatsTableShell({ className: "leaderboard-stats-table", columns: leaderboardColumns, headerHtml: renderLeaderboardHeaders(), rowsHtml: rows });
 
   bindDriverPreviewTableInteractions(tableEl);
 
@@ -8364,14 +8357,7 @@ function renderBestLapsTablePage() {
     </tr>
   `).join("");
 
-  tableEl.innerHTML = `
-    <table>
-      <thead>
-        <tr>${renderBestlapsHeaders()}</tr>
-      </thead>
-      <tbody>${rows}</tbody>
-    </table>
-  `;
+  tableEl.innerHTML = renderStatsTableShell({ columns: bestlapsColumns, headerHtml: renderBestlapsHeaders(), rowsHtml: rows });
 
   bindDriverPreviewTableInteractions(tableEl);
 
@@ -8461,14 +8447,7 @@ function renderSafetyTablePage() {
       </tr>
     `).join("");
 
-  tableEl.innerHTML = `
-    <table class="safety-table-dynamic">
-      <thead>
-        <tr>${renderSafetyHeaders()}</tr>
-      </thead>
-      <tbody>${rows}</tbody>
-    </table>
-  `;
+  tableEl.innerHTML = renderStatsTableShell({ className: "safety-table-dynamic", columns: getSafetyColumns(), headerHtml: renderSafetyHeaders(), rowsHtml: rows });
 
   renderPagination(
     "safety-pagination",
