@@ -8,6 +8,25 @@ const [html, css, js] = await Promise.all([
   readFile(resolve(root, "app.js"), "utf8")
 ]);
 const failures = [];
+const pageEntrypoints = {
+  home: ["index.html", "./src/entrypoints/home.js"],
+  races: ["races/index.html", "../src/entrypoints/races.js"],
+  driver: ["driver/index.html", "../src/entrypoints/driver.js"],
+  cars: ["cars/index.html", "../src/entrypoints/cars.js"],
+  "fun-stats": ["fun-stats/index.html", "../src/entrypoints/fun-stats.js"],
+  community: ["community/index.html", "../src/entrypoints/community.js"],
+  news: ["news/index.html", "../src/entrypoints/news.js"],
+  bans: ["bans/index.html", "../src/entrypoints/bans.js"]
+};
+for (const [page, [htmlPath, entrySrc]] of Object.entries(pageEntrypoints)) {
+  const [pageHtml, entrySource] = await Promise.all([
+    readFile(resolve(root, htmlPath), "utf8"),
+    readFile(resolve(root, `src/entrypoints/${page}.js`), "utf8")
+  ]);
+  if (!pageHtml.includes(`type="module" src="${entrySrc}`)) failures.push(`${page} page is missing its module entrypoint`);
+  if (/src=["'][^"']*app\.js/.test(pageHtml)) failures.push(`${page} page still loads app.js directly`);
+  if (!entrySource.includes(`bootstrapLegacyPage("${page}")`)) failures.push(`${page} entrypoint has the wrong page identity`);
+}
 const ids = [...html.matchAll(/\bid="([^"]+)"/g)].map(match => match[1]);
 const duplicates = [...new Set(ids.filter((id, index) => ids.indexOf(id) !== index))];
 if (duplicates.length) failures.push(`Duplicate HTML ids: ${duplicates.join(", ")}`);
