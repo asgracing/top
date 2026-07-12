@@ -1,6 +1,7 @@
 ﻿import { readPageContext } from "./src/runtime/page-context.js";
 
 import { runWhenDocumentReady } from "./src/runtime/application-bootstrap.js";
+import { createPageOrchestrator } from "./src/runtime/page-orchestrator.js";
 
 const PAGE_CONTEXT = readPageContext(document);
 const IS_RACES_PAGE = PAGE_CONTEXT.page === "races";
@@ -11814,12 +11815,6 @@ const pageDataInitializers = Object.freeze({
   home: initializeHomeData
 });
 
-async function initializeCurrentPageData() {
-  const initializePageData = pageDataInitializers[PAGE_CONTEXT.page];
-  if (!initializePageData) throw new Error(`Missing data initializer for ${PAGE_CONTEXT.page}`);
-  await initializePageData();
-}
-
 function handleDriverPageInitializationError() {
   const statsEl = document.getElementById("driver-stat-cards");
   const nameEl = document.getElementById("driver-page-name");
@@ -11871,10 +11866,11 @@ const pageInitializationErrorHandlers = Object.freeze({
   home: handleHomePageInitializationError
 });
 
-function handleCurrentPageInitializationError(error) {
-  console.error(error);
-  pageInitializationErrorHandlers[PAGE_CONTEXT.page]?.();
-}
+const pageOrchestrator = createPageOrchestrator({
+  page: PAGE_CONTEXT.page,
+  initializers: pageDataInitializers,
+  errorHandlers: pageInitializationErrorHandlers
+});
 
 function initializeWindowLifecycle() {
   appLifecycle.listen(window, "pagehide", () => appLifecycle.destroy(), { once: true });
@@ -11912,11 +11908,7 @@ async function init() {
   initializePageControllers();
   runInitStep("applyStaticTranslations", () => applyStaticTranslations());
 
-  try {
-    await initializeCurrentPageData();
-  } catch (error) {
-    handleCurrentPageInitializationError(error);
-  }
+  await pageOrchestrator.initialize();
 }
 
 runWhenDocumentReady(document, () => {

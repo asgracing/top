@@ -2,5 +2,5 @@ import { applyPageContext } from "../runtime/page-context.js";
 
 export async function bootstrapLegacyPage(page) {
   applyPageContext(document, page);
-  await import("../../app.js?v=20260712r10lifecycle11");
+  await import("../../app.js?v=20260712r10orchestrator12");
 }
