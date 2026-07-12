@@ -7041,6 +7041,22 @@ function getFocusableElements(container) {
   )].filter(el => !el.hasAttribute("hidden") && el.getAttribute("aria-hidden") !== "true");
 }
 
+function syncModalBackgroundInertState() {
+  const openModals = new Set(document.querySelectorAll(".modal-overlay.is-open"));
+
+  document.querySelectorAll("[data-modal-inert-owned='true']").forEach(element => {
+    element.inert = false;
+    delete element.dataset.modalInertOwned;
+  });
+
+  if (!openModals.size || !document.body) return;
+  [...document.body.children].forEach(element => {
+    if (openModals.has(element) || element.inert) return;
+    element.inert = true;
+    element.dataset.modalInertOwned = "true";
+  });
+}
+
 function createModalController({ modalId, closeButtonId, openButtonId, onOpen, onClose }) {
   const modal = document.getElementById(modalId);
   const closeBtn = document.getElementById(closeButtonId);
@@ -7050,24 +7066,31 @@ function createModalController({ modalId, closeButtonId, openButtonId, onOpen, o
   let lastFocusedElement = null;
 
   const close = () => {
+    if (!modal.classList.contains("is-open")) return;
     modal.classList.remove("is-open");
     modal.setAttribute("aria-hidden", "true");
-    document.body.classList.remove("modal-open");
+    syncModalBackgroundInertState();
+    document.body.classList.toggle("modal-open", Boolean(document.querySelector(".modal-overlay.is-open")));
     if (typeof onClose === "function") onClose();
-    if (lastFocusedElement && typeof lastFocusedElement.focus === "function") {
+    if (lastFocusedElement?.isConnected && typeof lastFocusedElement.focus === "function") {
       lastFocusedElement.focus();
     }
+    lastFocusedElement = null;
   };
 
   const open = (trigger = null) => {
+    if (modal.classList.contains("is-open")) return;
     lastFocusedElement = trigger || document.activeElement;
     if (typeof onOpen === "function") onOpen();
     modal.classList.add("is-open");
     modal.setAttribute("aria-hidden", "false");
     document.body.classList.add("modal-open");
+    syncModalBackgroundInertState();
     window.requestAnimationFrame(() => {
       const [firstFocusable] = getFocusableElements(modal);
-      (firstFocusable || closeBtn).focus();
+      const dialog = modal.querySelector("[role='dialog']");
+      if (dialog && !dialog.hasAttribute("tabindex")) dialog.tabIndex = -1;
+      (firstFocusable || dialog || closeBtn).focus();
     });
   };
 
