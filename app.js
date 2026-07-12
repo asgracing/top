@@ -114,6 +114,13 @@ async function initializeAppStorage() {
   appStorage.migrateLegacy("language", "asgLang", value => ["ru", "en"].includes(value) ? value : undefined);
   appStorage.migrateLegacy("backgroundVideoVolume", BG_VIDEO_VOLUME_STORAGE_KEY, value => clampBackgroundVideoVolume(Number(value) / 100));
   appStorage.migrateLegacy("backgroundVideoPlayback", BG_VIDEO_PLAYBACK_STORAGE_KEY, value => !["0", "false", "off", "no"].includes(String(value).trim().toLowerCase()));
+  appStorage.migrateLegacy("topGuideSeen", TOP_GUIDE_STORAGE_KEY, value => value === "1");
+  appStorage.migrateLegacy("newsReadState", NEWS_READ_STORAGE_KEY, value => {
+    try { const parsed = JSON.parse(value); return parsed && typeof parsed === "object" ? parsed : undefined; } catch { return undefined; }
+  });
+  appStorage.migrateLegacy("hourlyVoteState", HOURLY_VOTE_STATE_STORAGE_KEY, value => {
+    try { const parsed = JSON.parse(value); return parsed?.items && typeof parsed.items === "object" ? normalizeHourlyVoteStateItems(parsed.items) : undefined; } catch { return undefined; }
+  });
   currentLang = appStorage.get("language", currentLang);
 }
 
@@ -179,6 +186,7 @@ function getExpiringStorageValue(storageKey, ttlMs) {
 }
 
 function loadHourlyStoredVoteState() {
+  if (appStorage) return normalizeHourlyVoteStateItems(appStorage.get("hourlyVoteState", {}));
   try {
     const rawValue = localStorage.getItem(HOURLY_VOTE_STATE_STORAGE_KEY);
     if (!rawValue) return {};
@@ -210,6 +218,10 @@ function normalizeHourlyVoteStateItems(items) {
 }
 
 function saveHourlyStoredVoteState(items) {
+  if (appStorage) {
+    appStorage.set("hourlyVoteState", normalizeHourlyVoteStateItems(items), { ttlMs: HOURLY_VOTE_STATE_STORAGE_TTL_MS });
+    return;
+  }
   try {
     localStorage.setItem(
       HOURLY_VOTE_STATE_STORAGE_KEY,
@@ -3951,6 +3963,10 @@ function clearTopGuideHighlight() {
 }
 
 function setTopGuideSeen() {
+  if (appStorage) {
+    appStorage.set("topGuideSeen", true);
+    return;
+  }
   try {
     localStorage.setItem(TOP_GUIDE_STORAGE_KEY, "1");
   } catch {
@@ -3959,6 +3975,7 @@ function setTopGuideSeen() {
 }
 
 function hasSeenTopGuide() {
+  if (appStorage) return Boolean(appStorage.get("topGuideSeen", false));
   try {
     return localStorage.getItem(TOP_GUIDE_STORAGE_KEY) === "1";
   } catch {
@@ -5740,6 +5757,7 @@ function getRequestedNewsSlug() {
 }
 
 function loadNewsReadState() {
+  if (appStorage) return appStorage.get("newsReadState", {});
   try {
     const rawValue = localStorage.getItem(NEWS_READ_STORAGE_KEY);
     if (!rawValue) return {};
@@ -5751,6 +5769,10 @@ function loadNewsReadState() {
 }
 
 function saveNewsReadState(items) {
+  if (appStorage) {
+    appStorage.set("newsReadState", items || {});
+    return;
+  }
   try {
     localStorage.setItem(NEWS_READ_STORAGE_KEY, JSON.stringify(items || {}));
   } catch (error) {
@@ -11532,10 +11554,10 @@ async function init() {
   runInitStep("optimizeBackgroundMedia", () => optimizeBackgroundMedia());
   runInitStep("initDonationAlertsWidget", () => initDonationAlertsWidget());
   window.addEventListener("storage", event => {
-    if (event.key === HOURLY_VOTE_STATE_STORAGE_KEY) {
+    if (event.key === HOURLY_VOTE_STATE_STORAGE_KEY || event.key === "asg.top.v1:hourlyVoteState") {
       syncHourlyVoteStateFromStorage();
     }
-    if (event.key === NEWS_READ_STORAGE_KEY) {
+    if (event.key === NEWS_READ_STORAGE_KEY || event.key === "asg.top.v1:newsReadState") {
       renderNewsBell();
       renderNewsNotificationsModal();
       if (IS_NEWS_PAGE) renderNewsPage();
