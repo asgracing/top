@@ -47,6 +47,7 @@
 - 12.07.2026 — R01: пользователь подтвердил ручную проверку локальной таблицы рейтинга на `http://127.0.0.1:5500/top/`; визуальных проблем в таблице не обнаружено.
 - 12.07.2026 — R01: Live Server подтверждён (`HTTP 200`), добавлена детерминированная visual-матрица для шести viewport, RU/EN и четырёх data states. Автоматический capture ожидает восстановления подключения встроенного браузера.
 - 12.07.2026 — R02 начат: реализован dependency-free HTTP client с едиными HTTP/network/parse/timeout/aborted errors, GET retry policy и unit-тестами; baseline расширен до 20 тестов.
+- 12.07.2026 — R02: HTTP client подключён к runtime через ленивый dynamic import; manifest, versioned JSON и bans feed переведены на общий client. Число прямых `fetch` в `app.js` сокращено с 11 до 8.
 
 ### Условия завершения R01
 

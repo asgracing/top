@@ -6,6 +6,12 @@ const IS_COMMUNITY_PAGE = /\/community(?:\/|\/index\.html)?$/i.test(window.locat
 const IS_NEWS_PAGE = /\/news(?:\/|\/index\.html)?$/i.test(window.location.pathname);
 const IS_BANS_PAGE = /\/bans(?:\/|\/index\.html)?$/i.test(window.location.pathname);
 const SITE_BASE_PATH = (IS_RACES_PAGE || IS_DRIVER_PAGE || IS_CARS_PAGE || IS_FUN_STATS_PAGE || IS_COMMUNITY_PAGE || IS_NEWS_PAGE || IS_BANS_PAGE) ? "../" : "./";
+const httpClientModulePromise = import("./src/shared/http-client.js");
+const requestJson = async (url, options = {}) => {
+  const { createHttpClient } = await httpClientModulePromise;
+  requestJson.client ||= createHttpClient({ defaultTimeoutMs: 12000 });
+  return requestJson.client.requestJson(url, options);
+};
 const CAR_IMAGE_BASE_PATH = `${SITE_BASE_PATH}assets/car-icons`;
 const pageParams = new URLSearchParams(window.location.search);
 function normalizeBaseUrl(value) {
@@ -6230,9 +6236,7 @@ function getFastestLapMs(items = [], key = "best_lap_ms") {
 }
 
 async function loadJson(url) {
-  const res = await fetch(url, { cache: "default" });
-  if (!res.ok) throw new Error(`HTTP ${res.status} for ${url}`);
-  return await res.json();
+  return requestJson(url, { cache: "default", retries: 1 });
 }
 
 function topDataV2Path(path) {
@@ -6249,9 +6253,7 @@ async function loadTopDataV2Manifest() {
   if (topDataV2Manifest) return topDataV2Manifest;
 
   const url = `${topDataV2ManifestUrl}?t=${Date.now()}`;
-  const res = await fetch(url, { cache: "no-store" });
-  if (!res.ok) throw new Error(`HTTP ${res.status} for ${url}`);
-  const manifest = await res.json();
+  const manifest = await requestJson(url, { cache: "no-store", retries: 1 });
   topDataV2Manifest = manifest && typeof manifest === "object" ? manifest : null;
   topDataV2Version = String(topDataV2Manifest?.version || topDataV2Manifest?.generated_at || "");
   return topDataV2Manifest;
@@ -6751,12 +6753,7 @@ async function loadDriverIndex() {
 }
 
 async function loadBansData() {
-  const response = await fetch(TOP_BANS_DATA_URL, { cache: "no-store" });
-  if (!response.ok) {
-    throw new Error(`Failed to load bans feed: ${response.status}`);
-  }
-
-  const payload = await response.json();
+  const payload = await requestJson(TOP_BANS_DATA_URL, { cache: "no-store", retries: 1 });
   const items = Array.isArray(payload?.items) ? payload.items : [];
   return items
     .map((item) => ({
