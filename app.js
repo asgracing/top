@@ -23,6 +23,7 @@ let renderStatsTableShell = null;
 let renderStatsTableHeaders = null;
 let renderStatsTableState = null;
 let createStatsTableStateElement = null;
+let mountTrustedMarkup = null;
 const tableRequestControllers = new Map();
 const requestJson = async (url, options = {}) => {
   const { createHttpClient } = await httpClientModulePromise;
@@ -145,11 +146,12 @@ async function initializeQueryRuntime() {
 }
 
 async function initializeFeatureRuntime() {
-  const [{ createFeatureStore, createTableState, tablesReducer }, { createLifecycle }, { renderTableShell, renderSortableHeaders: renderHeaders, renderTableState }, { tableStateElement }] = await Promise.all([featureStoreModulePromise, lifecycleModulePromise, tableEngineModulePromise, safeDomModulePromise]);
+  const [{ createFeatureStore, createTableState, tablesReducer }, { createLifecycle }, { renderTableShell, renderSortableHeaders: renderHeaders, renderTableState }, { tableStateElement, trustedHtml, setTrustedHtml }] = await Promise.all([featureStoreModulePromise, lifecycleModulePromise, tableEngineModulePromise, safeDomModulePromise]);
   renderStatsTableShell = renderTableShell;
   renderStatsTableHeaders = renderHeaders;
   renderStatsTableState = renderTableState;
   createStatsTableStateElement = options => tableStateElement(document, options);
+  mountTrustedMarkup = (target, markup) => setTrustedHtml(target, trustedHtml(markup));
   appLifecycle ||= createLifecycle();
   if (statsStore) return;
   statsStore = createFeatureStore(createTableState(["leaderboard", "bestlaps", "safety"], PAGE_SIZE), tablesReducer);
@@ -8141,7 +8143,7 @@ function renderPagination(
 
   if (totalItems <= PAGE_SIZE) {
     wrap.style.display = "none";
-    container.innerHTML = "";
+    container.replaceChildren();
     info.textContent = "";
     return;
   }
@@ -8179,7 +8181,7 @@ function renderPagination(
     </button>
   `;
 
-  container.innerHTML = html;
+  mountTrustedMarkup(container, html);
 
   container.querySelectorAll(".page-btn[data-page]").forEach(btn => {
     btn.addEventListener("click", () => {
@@ -8289,7 +8291,7 @@ function renderLeaderboardTablePage() {
     </tr>
   `).join("");
 
-  tableEl.innerHTML = renderStatsTableShell({ className: "leaderboard-stats-table", columns: leaderboardColumns, headerHtml: renderLeaderboardHeaders(), rowsHtml: rows });
+  mountTrustedMarkup(tableEl, renderStatsTableShell({ className: "leaderboard-stats-table", columns: leaderboardColumns, headerHtml: renderLeaderboardHeaders(), rowsHtml: rows }));
 
   bindDriverPreviewTableInteractions(tableEl);
 
@@ -8365,7 +8367,7 @@ function renderBestLapsTablePage() {
     </tr>
   `).join("");
 
-  tableEl.innerHTML = renderStatsTableShell({ columns: bestlapsColumns, headerHtml: renderBestlapsHeaders(), rowsHtml: rows });
+  mountTrustedMarkup(tableEl, renderStatsTableShell({ columns: bestlapsColumns, headerHtml: renderBestlapsHeaders(), rowsHtml: rows }));
 
   bindDriverPreviewTableInteractions(tableEl);
 
@@ -8455,7 +8457,7 @@ function renderSafetyTablePage() {
       </tr>
     `).join("");
 
-  tableEl.innerHTML = renderStatsTableShell({ className: "safety-table-dynamic", columns: getSafetyColumns(), headerHtml: renderSafetyHeaders(), rowsHtml: rows });
+  mountTrustedMarkup(tableEl, renderStatsTableShell({ className: "safety-table-dynamic", columns: getSafetyColumns(), headerHtml: renderSafetyHeaders(), rowsHtml: rows }));
 
   renderPagination(
     "safety-pagination",
