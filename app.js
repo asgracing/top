@@ -24,6 +24,7 @@ let renderStatsTableHeaders = null;
 let renderStatsTableState = null;
 let createStatsTableStateElement = null;
 let mountTrustedMarkup = null;
+let replaceWithTextState = null;
 const tableRequestControllers = new Map();
 const requestJson = async (url, options = {}) => {
   const { createHttpClient } = await httpClientModulePromise;
@@ -151,6 +152,7 @@ async function initializeFeatureRuntime() {
   renderStatsTableHeaders = renderHeaders;
   renderStatsTableState = renderTableState;
   createStatsTableStateElement = options => tableStateElement(document, options);
+  replaceWithTextState = (target, kind, message) => target?.replaceChildren(createStatsTableStateElement({ kind, message }));
   mountTrustedMarkup = (target, markup) => setTrustedHtml(target, trustedHtml(markup));
   appLifecycle ||= createLifecycle();
   if (statsStore) return;
@@ -2990,7 +2992,7 @@ function renderHourlyHeroModal() {
     applyHourlyModalTrackBackground("");
     titleEl.textContent = t("hourlyNoEvent");
     subtitleEl.textContent = "—";
-    contentEl.innerHTML = `<div class="empty-box">${escapeHtml(t("hourlyNoEvent"))}</div>`;
+    replaceWithTextState(contentEl, "empty", t("hourlyNoEvent"));
     modalCardEl.classList.remove("is-event-details-v2");
     headerEl.classList.remove("event-details-v2-legacy-header");
     return;
@@ -5339,7 +5341,7 @@ function renderFunStatsPage() {
   `;
 
   if (!data.summary.races) {
-    awardsEl.innerHTML = `<div class="empty-box">${escapeHtml(t("funStatsEmpty"))}</div>`;
+    replaceWithTextState(awardsEl, "empty", t("funStatsEmpty"));
     leaderboardsEl.replaceChildren();
     return;
   }
@@ -7579,7 +7581,7 @@ function renderEloModal() {
   if (!info) {
     titleEl.textContent = t("eloTitle");
     subtitleEl.textContent = t("eloNoData");
-    bodyEl.innerHTML = `<div class="empty-box">${escapeHtml(t("eloNoData"))}</div>`;
+    replaceWithTextState(bodyEl, "empty", t("eloNoData"));
     return;
   }
 
@@ -7690,7 +7692,7 @@ function renderSafetyModal() {
   if (!info) {
     titleEl.textContent = t("safetyRatingTitle");
     subtitleEl.textContent = t("safetyNoData");
-    bodyEl.innerHTML = `<div class="empty-box">${escapeHtml(t("safetyNoData"))}</div>`;
+    replaceWithTextState(bodyEl, "empty", t("safetyNoData"));
     return;
   }
 
@@ -9104,7 +9106,7 @@ function renderServerStatusSummaryModal(titleEl, subtitleEl, listEl) {
   });
 
   if (!items.length) {
-    listEl.innerHTML = `<div class="empty-box">${escapeHtml(t("playersOnlineEmpty"))}</div>`;
+    replaceWithTextState(listEl, "empty", t("playersOnlineEmpty"));
     return;
   }
 
@@ -9140,7 +9142,7 @@ function renderSelectedServerPlayersModal(titleEl, subtitleEl, listEl) {
   });
 
   if (!drivers.length) {
-    listEl.innerHTML = `<div class="empty-box">${escapeHtml(t("playersOnlineEmpty"))}</div>`;
+    replaceWithTextState(listEl, "empty", t("playersOnlineEmpty"));
     return;
   }
 
@@ -9481,7 +9483,7 @@ function renderRacesTablePage() {
   racesPage = result.page;
 
   if (!result.totalItems) {
-    tableEl.innerHTML = `<div class="empty-box">${escapeHtml(t("emptyRaces"))}</div>`;
+    replaceWithTextState(tableEl, "empty", t("emptyRaces"));
     wrapEl.style.display = "none";
     return;
   }
@@ -9538,7 +9540,7 @@ function renderRacesTablePage() {
     (page) => {
       racesPage = page;
       if (isV2PagedArchive) {
-        tableEl.innerHTML = `<div class="loading">${escapeHtml(t("loading"))}</div>`;
+        replaceWithTextState(tableEl, "loading", t("loading"));
         loadRacesPageData(page)
           .then((items) => {
             racesData = items;
@@ -9589,7 +9591,7 @@ function renderRaceResultsModal() {
     titleEl.textContent = "-";
     subtitleEl.textContent = "-";
     summaryEl.replaceChildren();
-    tableEl.innerHTML = `<div class="empty-box">${escapeHtml(t("emptyRaces"))}</div>`;
+    replaceWithTextState(tableEl, "empty", t("emptyRaces"));
     return;
   }
 
@@ -9804,7 +9806,7 @@ function renderCarsTable() {
   const fastestLapMs = getFastestLapMs(rowsData);
 
   if (!rowsData.length) {
-    tableEl.innerHTML = `<div class="empty-box">${escapeHtml(t("emptyRaces"))}</div>`;
+    replaceWithTextState(tableEl, "empty", t("emptyRaces"));
     return;
   }
 
@@ -9864,7 +9866,7 @@ function renderBansTable() {
   if (!tableEl) return;
 
   if (!bansData.length) {
-    tableEl.innerHTML = `<div class="empty-box">${escapeHtml(t("bansEmpty"))}</div>`;
+    replaceWithTextState(tableEl, "empty", t("bansEmpty"));
     return;
   }
 
@@ -10150,7 +10152,7 @@ function renderDriverRaceHistory() {
   const rowsData = result.items;
   const fastestLapMs = getFastestLapMs(countedData);
   if (!rowsData.length) {
-    tableEl.innerHTML = `<div class="empty-box">${escapeHtml(t("driverNoData"))}</div>`;
+    replaceWithTextState(tableEl, "empty", t("driverNoData"));
     const wrapEl = document.getElementById("driver-races-pagination-wrap");
     if (wrapEl) wrapEl.style.display = "none";
     return;
@@ -10227,7 +10229,7 @@ function renderDriverTrackStats() {
   driverTrackPage = result.page;
   const rowsData = result.items;
   if (!rowsData.length) {
-    tableEl.innerHTML = `<div class="empty-box">${escapeHtml(t("driverNoData"))}</div>`;
+    replaceWithTextState(tableEl, "empty", t("driverNoData"));
     const wrapEl = document.getElementById("driver-tracks-pagination-wrap");
     if (wrapEl) wrapEl.style.display = "none";
     return;
@@ -10366,7 +10368,7 @@ function renderDriverPage() {
   if (!driverProfileData) {
     nameEl.textContent = "-";
     subtitleEl.textContent = t("driverNoData");
-    statsEl.innerHTML = `<div class="empty-box">${escapeHtml(t("driverNoData"))}</div>`;
+    replaceWithTextState(statsEl, "empty", t("driverNoData"));
     highlightsEl.replaceChildren();
     renderDriverRaceHistory();
     renderDriverTrackStats();
@@ -10455,7 +10457,7 @@ function renderDriverPreviewModal() {
   if (!driverPreviewState) {
     titleEl.textContent = "-";
     subtitleEl.textContent = t("driverPreviewSubtitle");
-    statsEl.innerHTML = `<div class="loading">${escapeHtml(t("driverLoading"))}</div>`;
+    replaceWithTextState(statsEl, "loading", t("driverLoading"));
     highlightsEl.replaceChildren();
     actionEl.hidden = true;
     return;
@@ -10465,12 +10467,12 @@ function renderDriverPreviewModal() {
   if (driverPreviewState.loading) {
     titleEl.textContent = driverPreviewState.driver || "-";
     subtitleEl.textContent = t("driverPreviewSubtitle");
-    statsEl.innerHTML = `<div class="loading">${escapeHtml(t("driverLoading"))}</div>`;
+    replaceWithTextState(statsEl, "loading", t("driverLoading"));
     highlightsEl.replaceChildren();
   } else if (!profile || driverPreviewState.error) {
     titleEl.textContent = driverPreviewState.driver || "-";
     subtitleEl.textContent = t("driverPreviewSubtitle");
-    statsEl.innerHTML = `<div class="empty-box">${escapeHtml(t("driverNoData"))}</div>`;
+    replaceWithTextState(statsEl, "empty", t("driverNoData"));
     highlightsEl.innerHTML = "";
   } else {
     titleEl.innerHTML = buildDriverHeroTitle(profile);
@@ -10736,9 +10738,9 @@ function renderOnlineActivityModal() {
     daysEl.replaceChildren();
     monthsEl.replaceChildren();
     monthOverviewEl.replaceChildren();
-    summaryEl.innerHTML = `<div class="empty-box">${escapeHtml(t("onlineActivityEmpty"))}</div>`;
+    replaceWithTextState(summaryEl, "empty", t("onlineActivityEmpty"));
     primeTimeEl.textContent = t("onlineActivityEmpty");
-    hoursEl.innerHTML = `<div class="empty-box">${escapeHtml(t("onlineActivityEmpty"))}</div>`;
+    replaceWithTextState(hoursEl, "empty", t("onlineActivityEmpty"));
     return;
   }
 
@@ -11787,14 +11789,14 @@ async function init() {
       const subtitleEl = document.getElementById("driver-page-subtitle");
       if (nameEl) nameEl.textContent = "-";
       if (subtitleEl) subtitleEl.textContent = t("driverNoData");
-      if (statsEl) statsEl.innerHTML = `<div class="empty-box">${escapeHtml(t("driverNoData"))}</div>`;
+      if (statsEl) replaceWithTextState(statsEl, "empty", t("driverNoData"));
       return;
     }
 
     if (IS_RACES_PAGE) {
       const racesTableEl = document.getElementById("races-table");
       if (racesTableEl) {
-        racesTableEl.innerHTML = `<div class="empty-box">${escapeHtml(t("errorLoading"))}</div>`;
+        replaceWithTextState(racesTableEl, "error", t("errorLoading"));
       }
       return;
     }
@@ -11802,7 +11804,7 @@ async function init() {
     if (IS_CARS_PAGE) {
       const carsTableEl = document.getElementById("cars-table");
       if (carsTableEl) {
-        carsTableEl.innerHTML = `<div class="empty-box">${escapeHtml(t("errorLoading"))}</div>`;
+        replaceWithTextState(carsTableEl, "error", t("errorLoading"));
       }
       return;
     }
@@ -11810,7 +11812,7 @@ async function init() {
     if (IS_BANS_PAGE) {
       const bansTableEl = document.getElementById("bans-table");
       if (bansTableEl) {
-        bansTableEl.innerHTML = `<div class="empty-box">${escapeHtml(t("errorLoading"))}</div>`;
+        replaceWithTextState(bansTableEl, "error", t("errorLoading"));
       }
       return;
     }
@@ -11820,7 +11822,7 @@ async function init() {
       const awardsEl = document.getElementById("fun-stats-awards");
       const leaderboardsEl = document.getElementById("fun-stats-leaderboards");
       if (summaryEl) {
-        summaryEl.innerHTML = `<div class="empty-box">${escapeHtml(t("errorLoading"))}</div>`;
+        replaceWithTextState(summaryEl, "error", t("errorLoading"));
       }
       if (awardsEl) awardsEl.replaceChildren();
       if (leaderboardsEl) leaderboardsEl.replaceChildren();
@@ -11829,7 +11831,7 @@ async function init() {
 
     const top3Content = document.getElementById("top3-content");
     if (top3Content) {
-      top3Content.innerHTML = `<div class="empty-box">${escapeHtml(t("errorLoading"))}</div>`;
+      replaceWithTextState(top3Content, "error", t("errorLoading"));
     }
 
     const leaderboardTableEl = document.getElementById("leaderboard-table");
@@ -11840,13 +11842,13 @@ async function init() {
     const safetyWrapEl = document.getElementById("safety-pagination-wrap");
 
     if (leaderboardTableEl) {
-      leaderboardTableEl.innerHTML = `<div class="empty-box">${escapeHtml(t("errorLeaderboard"))}</div>`;
+      replaceWithTextState(leaderboardTableEl, "error", t("errorLeaderboard"));
     }
     if (bestlapsTableEl) {
-      bestlapsTableEl.innerHTML = `<div class="empty-box">${escapeHtml(t("errorBestlaps"))}</div>`;
+      replaceWithTextState(bestlapsTableEl, "error", t("errorBestlaps"));
     }
     if (safetyTableEl) {
-      safetyTableEl.innerHTML = `<div class="empty-box">${escapeHtml(t("errorLoading"))}</div>`;
+      replaceWithTextState(safetyTableEl, "error", t("errorLoading"));
     }
     if (leaderboardWrapEl) {
       leaderboardWrapEl.style.display = "none";
