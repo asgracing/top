@@ -63,6 +63,7 @@
 - 12.07.2026 — R07 завершён: sortable headers и loading/empty states переведены в engine; header classes/alignment/aria-sort формируются из column metadata, специализированные formatter остаются изолированными; baseline расширен до 45 тестов.
 - 12.07.2026 — R08 начат: добавлен safe DOM factory с `textContent`, URL protocol guard и explicit trusted-HTML token; шесть loading/empty writes статистики переведены с `innerHTML` на `replaceChildren`, новый budget зафиксирован на 144 writes; baseline расширен до 49 тестов.
 - 12.07.2026 — R08: три сложные statistics tables и pagination переведены на explicit trusted-markup boundary; прямые `innerHTML` в `app.js` снижены до 139 и новый budget запрещает регресс.
+- 12.07.2026 — R08: все механические очистки DOM переведены с `innerHTML = ""` на `replaceChildren()`; прямые writes снижены до 119 без изменения разметки или поведения.
 
 ### Условия завершения R01
 

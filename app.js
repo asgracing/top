@@ -3248,7 +3248,7 @@ function renderHourlyWinnerCard() {
     cardEl.classList.add("is-empty");
     nameEl.textContent = t("loading");
     metaEl.textContent = t("loading");
-    mediaEl.innerHTML = "";
+    mediaEl.replaceChildren();
     return;
   }
 
@@ -3257,7 +3257,7 @@ function renderHourlyWinnerCard() {
     cardEl.classList.add("is-empty");
     nameEl.textContent = t("hourlyLastWinnerEmpty");
     metaEl.textContent = "—";
-    mediaEl.innerHTML = "";
+    mediaEl.replaceChildren();
     return;
   }
 
@@ -3519,7 +3519,7 @@ function renderDonationAlertsWidget() {
       `;
     } else {
       goalEl.hidden = true;
-      goalEl.innerHTML = "";
+      goalEl.replaceChildren();
       if (goalFallbackEl) goalFallbackEl.hidden = true;
     }
   }
@@ -5298,7 +5298,7 @@ function renderFunStatsPage() {
   if (topLoadState.funStats) {
     summaryEl.innerHTML = renderLoadingMarkup(t("loading"));
     awardsEl.innerHTML = renderLoadingMarkup(t("loading"));
-    leaderboardsEl.innerHTML = "";
+    leaderboardsEl.replaceChildren();
     rangeEl.textContent = t("loading");
     return;
   }
@@ -5340,7 +5340,7 @@ function renderFunStatsPage() {
 
   if (!data.summary.races) {
     awardsEl.innerHTML = `<div class="empty-box">${escapeHtml(t("funStatsEmpty"))}</div>`;
-    leaderboardsEl.innerHTML = "";
+    leaderboardsEl.replaceChildren();
     return;
   }
 
@@ -7508,14 +7508,14 @@ function closeSafetyBreakdownPopover() {
   const popover = document.getElementById("sr-breakdown-popover");
   if (!popover) return;
   popover.hidden = true;
-  popover.innerHTML = "";
+  popover.replaceChildren();
 }
 
 function renderSafetyBreakdownPopover() {
   const popover = ensureSafetyBreakdownPopover();
   if (!srBreakdownPopoverState) {
     popover.hidden = true;
-    popover.innerHTML = "";
+    popover.replaceChildren();
     return;
   }
   const { loading, model } = srBreakdownPopoverState;
@@ -8516,7 +8516,7 @@ function bindTopNavMoreMenu() {
   };
 
   const rebuildOverflowMenu = () => {
-    menu.innerHTML = "";
+    menu.replaceChildren();
     items.forEach(item => {
       item.hidden = false;
     });
@@ -9064,7 +9064,7 @@ function renderServerStickyWidget(serverStatus = serverStatusData) {
     return;
   }
   if (!items.length) {
-    cardsEl.innerHTML = "";
+    cardsEl.replaceChildren();
     return;
   }
 
@@ -9588,7 +9588,7 @@ function renderRaceResultsModal() {
   if (!selectedRace) {
     titleEl.textContent = "-";
     subtitleEl.textContent = "-";
-    summaryEl.innerHTML = "";
+    summaryEl.replaceChildren();
     tableEl.innerHTML = `<div class="empty-box">${escapeHtml(t("emptyRaces"))}</div>`;
     return;
   }
@@ -9779,7 +9779,7 @@ function renderCarsSummary() {
       spotlightWinsEl.textContent = String(mostUsed.wins ?? 0);
     } else {
       spotlightEl.hidden = true;
-      spotlightMediaEl.innerHTML = "";
+      spotlightMediaEl.replaceChildren();
       spotlightNameEl.textContent = "—";
       spotlightRacesEl.textContent = "—";
       spotlightWinsEl.textContent = "—";
@@ -10355,7 +10355,7 @@ function renderDriverPage() {
     nameEl.textContent = "-";
     subtitleEl.textContent = t("driverPreviewSubtitle");
     statsEl.innerHTML = renderLoadingMarkup(t("driverLoading"));
-    highlightsEl.innerHTML = "";
+    highlightsEl.replaceChildren();
     setLoadingMarkup("driver-races-table", "driverLoading");
     setLoadingMarkup("driver-tracks-table", "driverLoading");
     renderPenaltyList("driver-penalty-reasons", {}, "driverPenaltyReason");
@@ -10367,7 +10367,7 @@ function renderDriverPage() {
     nameEl.textContent = "-";
     subtitleEl.textContent = t("driverNoData");
     statsEl.innerHTML = `<div class="empty-box">${escapeHtml(t("driverNoData"))}</div>`;
-    highlightsEl.innerHTML = "";
+    highlightsEl.replaceChildren();
     renderDriverRaceHistory();
     renderDriverTrackStats();
     renderPenaltyList("driver-penalty-reasons", {}, "driverPenaltyReason");
@@ -10456,7 +10456,7 @@ function renderDriverPreviewModal() {
     titleEl.textContent = "-";
     subtitleEl.textContent = t("driverPreviewSubtitle");
     statsEl.innerHTML = `<div class="loading">${escapeHtml(t("driverLoading"))}</div>`;
-    highlightsEl.innerHTML = "";
+    highlightsEl.replaceChildren();
     actionEl.hidden = true;
     return;
   }
@@ -10466,7 +10466,7 @@ function renderDriverPreviewModal() {
     titleEl.textContent = driverPreviewState.driver || "-";
     subtitleEl.textContent = t("driverPreviewSubtitle");
     statsEl.innerHTML = `<div class="loading">${escapeHtml(t("driverLoading"))}</div>`;
-    highlightsEl.innerHTML = "";
+    highlightsEl.replaceChildren();
   } else if (!profile || driverPreviewState.error) {
     titleEl.textContent = driverPreviewState.driver || "-";
     subtitleEl.textContent = t("driverPreviewSubtitle");
@@ -10733,9 +10733,9 @@ function renderOnlineActivityModal() {
   const days = buildRelativeActivityDays(Array.isArray(raceActivityInsights) ? raceActivityInsights : []);
   if (!days.length) {
     subtitleEl.textContent = t("onlineActivityEmpty");
-    daysEl.innerHTML = "";
-    monthsEl.innerHTML = "";
-    monthOverviewEl.innerHTML = "";
+    daysEl.replaceChildren();
+    monthsEl.replaceChildren();
+    monthOverviewEl.replaceChildren();
     summaryEl.innerHTML = `<div class="empty-box">${escapeHtml(t("onlineActivityEmpty"))}</div>`;
     primeTimeEl.textContent = t("onlineActivityEmpty");
     hoursEl.innerHTML = `<div class="empty-box">${escapeHtml(t("onlineActivityEmpty"))}</div>`;
@@ -11822,8 +11822,8 @@ async function init() {
       if (summaryEl) {
         summaryEl.innerHTML = `<div class="empty-box">${escapeHtml(t("errorLoading"))}</div>`;
       }
-      if (awardsEl) awardsEl.innerHTML = "";
-      if (leaderboardsEl) leaderboardsEl.innerHTML = "";
+      if (awardsEl) awardsEl.replaceChildren();
+      if (leaderboardsEl) leaderboardsEl.replaceChildren();
       return;
     }
 
