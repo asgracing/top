@@ -77,6 +77,7 @@
 - 12.07.2026 — R10 modal hotfix 2: рекурсивная изоляция корректно доходила до активного overlay, но продолжала обход его descendants и блокировала внутренние SR/ELO buttons, track selects и ссылки. Обход теперь останавливается на открытой модали; весь dialog subtree остаётся интерактивным. Quality gate защищает это условие.
 - 12.07.2026 — R10: монолитный `init()` разделён на shared controls, page controller routing и отдельный home controller initializer. Домашние Today/Online/Driver Preview/Hourly/Server Players modals теперь подключаются только для явного `PAGE_CONTEXT.isHome`; races/driver и community используют собственные controller branches. Порядок вызовов и загрузка данных сохранены.
 - 12.07.2026 — R10: home data orchestration вынесен в `initializeHomeData()`, а применение основного payload — в `applyHomeSiteData()`. Общий `init()` больше не содержит присваивания leaderboard/bestlaps/safety/hero state; параллельная загрузка hourly/news, порядок render и финализация votes сохранены.
+- 12.07.2026 — R10: driver, cars, fun-stats, community, news, bans и races получили отдельные data initializers. Цепочка условных page-load branches удалена из общего `init()` и заменена явным immutable registry `pageDataInitializers` с единым `initializeCurrentPageData()`; существующая общая error boundary сохранена.
 
 ### Условия завершения R01
 

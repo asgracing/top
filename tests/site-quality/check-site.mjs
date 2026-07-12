@@ -51,6 +51,7 @@ if (!js.includes("runWhenDocumentReady(document")) failures.push("Application mu
 if (!js.includes("if (openModals.has(element)) return")) failures.push("Open modal descendants must remain interactive during background isolation");
 if (!js.includes("function initializeSharedControls()") || !js.includes("function initializeHomeControllers()") || !js.includes("function initializePageControllers()")) failures.push("Application init must keep shared and page controller initialization separated");
 if (!js.includes("async function initializeHomeData()") || !js.includes("function applyHomeSiteData(data)")) failures.push("Home data loading and application must stay outside the shared init body");
+if (!js.includes("const pageDataInitializers = Object.freeze({") || !js.includes("async function initializeCurrentPageData()")) failures.push("Page data initialization must use the explicit page initializer registry");
 const budgets = { important: [(css.match(/!important/g) || []).length, 106], silentCatch: [(js.match(/\.catch\(\(\)\s*=>\s*null\)/g) || []).length, 28], inlineStyle: [(html.match(/\bstyle=/g) || []).length, 10], directFetch: [(js.match(/\bfetch\s*\(/g) || []).length, 0], innerHtmlWrite: [(js.match(/\.innerHTML\s*=/g) || []).length, 91] };
 for (const [name, [actual, maximum]] of Object.entries(budgets)) if (actual > maximum) failures.push(`${name} budget exceeded: ${actual} > ${maximum}`);
 if (failures.length) { console.error(failures.join("\n")); process.exitCode = 1; }

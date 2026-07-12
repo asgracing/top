@@ -11750,6 +11750,74 @@ async function initializeHomeData() {
   });
 }
 
+async function initializeDriverPageData() {
+  driverProfileData = await loadDriverProfile(getRequestedDriverId());
+  driverIndexData = [];
+  racesData = [];
+  topLoadState.driver = false;
+  rerenderUI();
+}
+
+async function initializeCarsPageData() {
+  carsData = await loadCarsData();
+  topLoadState.cars = false;
+  rerenderUI();
+}
+
+async function initializeFunStatsPageData() {
+  const [apiFunStats, data] = await Promise.all([
+    loadFunStatsData().catch(() => null),
+    loadSiteData().catch(() => ({ safety: [] }))
+  ]);
+  funStatsApiData = apiFunStats;
+  safetyData = Array.isArray(data?.safety) ? data.safety : [];
+  if (!funStatsApiData) racesData = await loadFullRacesData().catch(() => []);
+  topLoadState.funStats = false;
+  rerenderUI();
+}
+
+async function initializeCommunityPageData() {
+  topLoadState.community = false;
+  rerenderUI();
+  void loadCommunityLikes();
+}
+
+async function initializeNewsPageData() {
+  await loadNewsFeed().catch(() => []);
+  topLoadState.news = false;
+  renderNewsBell();
+  rerenderUI();
+}
+
+async function initializeBansPageData() {
+  bansData = await loadBansData();
+  topLoadState.bans = false;
+  rerenderUI();
+}
+
+async function initializeRacesPageData() {
+  racesData = await loadRacesData();
+  topLoadState.races = false;
+  rerenderUI();
+}
+
+const pageDataInitializers = Object.freeze({
+  driver: initializeDriverPageData,
+  cars: initializeCarsPageData,
+  "fun-stats": initializeFunStatsPageData,
+  community: initializeCommunityPageData,
+  news: initializeNewsPageData,
+  bans: initializeBansPageData,
+  races: initializeRacesPageData,
+  home: initializeHomeData
+});
+
+async function initializeCurrentPageData() {
+  const initializePageData = pageDataInitializers[PAGE_CONTEXT.page];
+  if (!initializePageData) throw new Error(`Missing data initializer for ${PAGE_CONTEXT.page}`);
+  await initializePageData();
+}
+
 async function init() {
   await initializeAppStorage().catch(error => console.warn("Preference storage is unavailable.", error));
   await initializeFeatureRuntime();
@@ -11781,68 +11849,7 @@ async function init() {
   runInitStep("applyStaticTranslations", () => applyStaticTranslations());
 
   try {
-    if (IS_DRIVER_PAGE) {
-      const profile = await loadDriverProfile(getRequestedDriverId());
-      driverProfileData = profile;
-      driverIndexData = [];
-      racesData = [];
-      topLoadState.driver = false;
-      rerenderUI();
-      return;
-    }
-
-    if (IS_CARS_PAGE) {
-      carsData = await loadCarsData();
-      topLoadState.cars = false;
-      rerenderUI();
-      return;
-    }
-
-    if (IS_FUN_STATS_PAGE) {
-      const [apiFunStats, data] = await Promise.all([
-        loadFunStatsData().catch(() => null),
-        loadSiteData().catch(() => ({ safety: [] }))
-      ]);
-      funStatsApiData = apiFunStats;
-      safetyData = Array.isArray(data?.safety) ? data.safety : [];
-      if (!funStatsApiData) {
-        racesData = await loadFullRacesData().catch(() => []);
-      }
-      topLoadState.funStats = false;
-      rerenderUI();
-      return;
-    }
-
-    if (IS_COMMUNITY_PAGE) {
-      topLoadState.community = false;
-      rerenderUI();
-      void loadCommunityLikes();
-      return;
-    }
-
-    if (IS_NEWS_PAGE) {
-      await loadNewsFeed().catch(() => []);
-      topLoadState.news = false;
-      renderNewsBell();
-      rerenderUI();
-      return;
-    }
-
-    if (IS_BANS_PAGE) {
-      bansData = await loadBansData();
-      topLoadState.bans = false;
-      rerenderUI();
-      return;
-    }
-
-    if (IS_RACES_PAGE) {
-      racesData = await loadRacesData();
-      topLoadState.races = false;
-      rerenderUI();
-      return;
-    }
-
-    await initializeHomeData();
+    await initializeCurrentPageData();
   } catch (error) {
     console.error(error);
 
