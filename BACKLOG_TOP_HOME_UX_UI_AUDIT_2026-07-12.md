@@ -88,6 +88,7 @@
 - 12.07.2026 — R10: создан `src/pages/home/index.js`, объединяющий home data, controllers, deferred setup и error fallback в единый feature lifecycle. Page initializer/error registries и controller routing теперь используют объект `homePage`; добавлены три contract-теста, baseline расширен до 75 тестов.
 - 12.07.2026 — R10: декларации loading/error состояний домашних таблиц и список loading text targets вынесены в `src/pages/home/view-state-config.js`; единый helper применяет состояния и скрывает pagination без дублирования. Добавлены три unit-теста, baseline расширен до 78 тестов.
 - 13.07.2026 — R10: единый modal controller физически вынесен в `src/shared/modal-controller.js`; focus trap, Escape/overlay close, возврат фокуса и рекурсивная inert isolation больше не находятся в `app.js`. Ancestor-ветки и фильтрация focus targets покрыты двумя regression-тестами; baseline расширен до 80 тестов.
+- 13.07.2026 — R10: общая модель сортировки таблиц вынесена в `src/shared/table-model.js`; нормализация чисел, времени круга, вложенных полей, ELO с missing-last и rank tie-break больше не дублируются в `app.js`. Добавлены пять unit-тестов, baseline расширен до 85 тестов.
 
 ### Условия завершения R01
 

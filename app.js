@@ -9,6 +9,7 @@ import { createHomeStatsTabsController } from "./src/pages/home/stats-tabs-contr
 import { createHomePage } from "./src/pages/home/index.js";
 import { HOME_LOADING_TEXT_IDS, applyHomeTableViewState } from "./src/pages/home/view-state-config.js";
 import { createModalControllerFactory } from "./src/shared/modal-controller.js";
+import { parseTableNumber, sortTableRows } from "./src/shared/table-model.js";
 
 const PAGE_CONTEXT = readPageContext(document);
 const IS_RACES_PAGE = PAGE_CONTEXT.page === "races";
@@ -4723,47 +4724,6 @@ function sessionLabel(value) {
   return `<span class="pill">${escapeHtml(v || "-")}</span>`;
 }
 
-function normalizeString(value) {
-  return String(value ?? "").trim().toLocaleLowerCase(currentLang === "ru" ? "ru" : "en");
-}
-
-function parseNumeric(value) {
-  if (value === null || value === undefined || value === "" || value === "-") {
-    return Number.POSITIVE_INFINITY;
-  }
-  const num = Number(String(value).replace(",", "."));
-  return Number.isFinite(num) ? num : Number.POSITIVE_INFINITY;
-}
-
-function parseLapTime(value) {
-  if (!value || value === "-") return Number.POSITIVE_INFINITY;
-  const str = String(value).trim();
-  const parts = str.split(":");
-
-  if (parts.length === 2) {
-    const minutes = Number(parts[0]);
-    const secParts = parts[1].split(".");
-    const seconds = Number(secParts[0] || 0);
-    const millis = Number(secParts[1] || 0);
-    if ([minutes, seconds, millis].every(Number.isFinite)) {
-      return minutes * 60000 + seconds * 1000 + millis;
-    }
-  }
-
-  if (parts.length === 3) {
-    const hours = Number(parts[0]);
-    const minutes = Number(parts[1]);
-    const secParts = parts[2].split(".");
-    const seconds = Number(secParts[0] || 0);
-    const millis = Number(secParts[1] || 0);
-    if ([hours, minutes, seconds, millis].every(Number.isFinite)) {
-      return hours * 3600000 + minutes * 60000 + seconds * 1000 + millis;
-    }
-  }
-
-  return Number.POSITIVE_INFINITY;
-}
-
 function formatLapTimeFromMs(value) {
   if (!Number.isFinite(value) || value <= 0) return "-";
   const totalMs = Math.round(value);
@@ -4773,15 +4733,10 @@ function formatLapTimeFromMs(value) {
   return `${minutes}:${String(seconds).padStart(2, "0")}.${String(milliseconds).padStart(3, "0")}`;
 }
 
-function getNestedValue(row, key) {
-  if (!key.includes(".")) return row?.[key];
-  return key.split(".").reduce((acc, part) => acc?.[part], row);
-}
-
 function getSortableEloValue(row) {
   const info = getEloInfo(row);
   if (info && Number.isFinite(info.rating) && info.rating > 0) return info.rating;
-  const fallback = parseNumeric(
+  const fallback = parseTableNumber(
     row?.elo
     ?? row?.summary?.elo
     ?? row?.elo_internal_rating
@@ -4790,57 +4745,10 @@ function getSortableEloValue(row) {
   return Number.isFinite(fallback) && fallback > 0 ? fallback : null;
 }
 
-function compareEloValues(a, b, direction) {
-  const av = getSortableEloValue(a);
-  const bv = getSortableEloValue(b);
-  const aMissing = !Number.isFinite(av);
-  const bMissing = !Number.isFinite(bv);
-
-  if (aMissing && bMissing) return 0;
-  if (aMissing) return 1;
-  if (bMissing) return -1;
-  if (av < bv) return direction === "asc" ? -1 : 1;
-  if (av > bv) return direction === "asc" ? 1 : -1;
-  return 0;
-}
-
-function getComparableValue(row, column) {
-  if (column.key === "elo") {
-    return getSortableEloValue(row);
-  }
-  const value = getNestedValue(row, column.key);
-  switch (column.type) {
-    case "number":
-      return parseNumeric(value);
-    case "time":
-      return parseLapTime(value);
-    default:
-      return normalizeString(value);
-  }
-}
-
-function filterByDriver(data, search) {
-  const query = normalizeString(search);
-  if (!query) return [...data];
-  return data.filter(row => normalizeString(row.driver).includes(query));
-}
-
 function sortData(data, sortState, columns) {
-  if (!sortState.key || !sortState.direction) return [...data];
-  const column = columns.find(col => col.key === sortState.key);
-  if (!column) return [...data];
-
-  return [...data].sort((a, b) => {
-    if (column.key === "elo") {
-      const eloDiff = compareEloValues(a, b, sortState.direction);
-      if (eloDiff !== 0) return eloDiff;
-    }
-    const av = getComparableValue(a, column);
-    const bv = getComparableValue(b, column);
-    if (av < bv) return sortState.direction === "asc" ? -1 : 1;
-    if (av > bv) return sortState.direction === "asc" ? 1 : -1;
-    const rankDiff = parseNumeric(a.rank) - parseNumeric(b.rank);
-    return Number.isFinite(rankDiff) ? rankDiff : 0;
+  return sortTableRows(data, sortState, columns, {
+    locale: currentLang,
+    getEloValue: getSortableEloValue
   });
 }
 
