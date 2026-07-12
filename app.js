@@ -1,5 +1,7 @@
 ﻿import { readPageContext } from "./src/runtime/page-context.js";
 
+import { runWhenDocumentReady } from "./src/runtime/application-bootstrap.js";
+
 const PAGE_CONTEXT = readPageContext(document);
 const IS_RACES_PAGE = PAGE_CONTEXT.page === "races";
 const IS_DRIVER_PAGE = PAGE_CONTEXT.page === "driver";
@@ -11912,9 +11914,7 @@ async function init() {
   }
 }
 
-if (document.readyState === "loading") {
-  document.addEventListener("DOMContentLoaded", init, { once: true });
-} else {
+runWhenDocumentReady(document, () => {
   void init();
-}
+});
 
