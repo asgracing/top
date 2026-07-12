@@ -52,6 +52,7 @@
 - 12.07.2026 — R03 начат: добавлены `SchemaError`, schemas/normalizers для manifest, home payload, leaderboard, bestlaps, safety и paged table metadata; валидация подключена на границе загрузки, baseline расширен до 25 тестов.
 - 12.07.2026 — R03 завершён: добавлены и подключены schemas для server status, hourly announcement, driver profile, news, donations и community likes; baseline расширен до 27 тестов.
 - 12.07.2026 — R04 начат: production перестал принимать и переносить API/data overrides из query params; storage wrapper получил безопасную миграцию legacy-ключей без перезаписи актуальных данных; baseline расширен до 29 тестов.
+- 12.07.2026 — R04: shared storage подключён в начале runtime; язык, громкость и разрешение фонового видео мигрируются в versioned namespace `asg.top.v1` и далее читаются/сохраняются через wrapper.
 
 ### Условия завершения R01
 

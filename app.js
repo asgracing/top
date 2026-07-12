@@ -8,6 +8,8 @@ const IS_BANS_PAGE = /\/bans(?:\/|\/index\.html)?$/i.test(window.location.pathna
 const SITE_BASE_PATH = (IS_RACES_PAGE || IS_DRIVER_PAGE || IS_CARS_PAGE || IS_FUN_STATS_PAGE || IS_COMMUNITY_PAGE || IS_NEWS_PAGE || IS_BANS_PAGE) ? "../" : "./";
 const httpClientModulePromise = import("./src/shared/http-client.js");
 const dataSchemaModulePromise = import("./src/shared/data-schema.js");
+const storageModulePromise = import("./src/shared/storage.js");
+let appStorage = null;
 const requestJson = async (url, options = {}) => {
   const { createHttpClient } = await httpClientModulePromise;
   requestJson.client ||= createHttpClient({ defaultTimeoutMs: 12000 });
@@ -105,6 +107,15 @@ const VOTER_ID_STORAGE_TTL_MS = 365 * 24 * 60 * 60 * 1000;
 const HOURLY_VOTE_STATE_STORAGE_KEY = "hourlyVoteStateByEventId";
 const HOURLY_VOTE_STATE_STORAGE_TTL_MS = 30 * 24 * 60 * 60 * 1000;
 const NEWS_READ_STORAGE_KEY = "asgReadNewsIds.v2";
+
+async function initializeAppStorage() {
+  const { createStorage } = await storageModulePromise;
+  appStorage = createStorage("asg.top.v1", window.localStorage);
+  appStorage.migrateLegacy("language", "asgLang", value => ["ru", "en"].includes(value) ? value : undefined);
+  appStorage.migrateLegacy("backgroundVideoVolume", BG_VIDEO_VOLUME_STORAGE_KEY, value => clampBackgroundVideoVolume(Number(value) / 100));
+  appStorage.migrateLegacy("backgroundVideoPlayback", BG_VIDEO_PLAYBACK_STORAGE_KEY, value => !["0", "false", "off", "no"].includes(String(value).trim().toLowerCase()));
+  currentLang = appStorage.get("language", currentLang);
+}
 
 function getLegalUrls() {
   const fallbackBase =
@@ -690,6 +701,7 @@ function clampBackgroundVideoVolume(value) {
 }
 
 function loadBackgroundVideoVolume() {
+  if (appStorage) return clampBackgroundVideoVolume(appStorage.get("backgroundVideoVolume", 0.5));
   try {
     const storedVolume = localStorage.getItem(BG_VIDEO_VOLUME_STORAGE_KEY);
     if (storedVolume === null) return 0.5;
@@ -700,6 +712,10 @@ function loadBackgroundVideoVolume() {
 }
 
 function saveBackgroundVideoVolume(volume) {
+  if (appStorage) {
+    appStorage.set("backgroundVideoVolume", clampBackgroundVideoVolume(volume));
+    return;
+  }
   try {
     localStorage.setItem(BG_VIDEO_VOLUME_STORAGE_KEY, String(Math.round(clampBackgroundVideoVolume(volume) * 100)));
   } catch (error) {
@@ -708,6 +724,7 @@ function saveBackgroundVideoVolume(volume) {
 }
 
 function loadBackgroundVideoPlaybackEnabled() {
+  if (appStorage) return Boolean(appStorage.get("backgroundVideoPlayback", true));
   try {
     const storedValue = localStorage.getItem(BG_VIDEO_PLAYBACK_STORAGE_KEY);
     if (storedValue === null) return true;
@@ -718,6 +735,10 @@ function loadBackgroundVideoPlaybackEnabled() {
 }
 
 function saveBackgroundVideoPlaybackEnabled(enabled) {
+  if (appStorage) {
+    appStorage.set("backgroundVideoPlayback", Boolean(enabled));
+    return;
+  }
   try {
     localStorage.setItem(BG_VIDEO_PLAYBACK_STORAGE_KEY, enabled ? "true" : "false");
   } catch (error) {
@@ -8383,7 +8404,10 @@ function bindLanguageButtons() {
       const lang = btn.dataset.lang;
       if (!translations[lang] || lang === currentLang) return;
       currentLang = lang;
-      localStorage.setItem("asgLang", currentLang);
+      if (appStorage) appStorage.set("language", currentLang);
+      else {
+        try { localStorage.setItem("asgLang", currentLang); } catch (_error) { /* Keep runtime language only. */ }
+      }
       rerenderUI();
     });
   });
@@ -11484,6 +11508,7 @@ function runInitStep(stepName, action) {
 }
 
 async function init() {
+  await initializeAppStorage().catch(error => console.warn("Preference storage is unavailable.", error));
   document.body.classList.remove("background-audio-focus");
   applyInitialTopLoadingState();
   setupTopHomeDeferredSections();
