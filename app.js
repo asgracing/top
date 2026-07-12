@@ -6567,10 +6567,12 @@ async function ensureServerPagedTopDataV2Table(tableName, page) {
 
 function debounce(fn, wait = 180) {
   let timeoutId = null;
-  return (...args) => {
+  const debounced = (...args) => {
     clearTimeout(timeoutId);
     timeoutId = window.setTimeout(() => fn(...args), wait);
   };
+  debounced.cancel = () => clearTimeout(timeoutId);
+  return debounced;
 }
 
 function hydrateTableTrendFields(items, tableName) {
@@ -8184,8 +8186,28 @@ function renderBestlapsHeaders() {
   return renderSortableHeaders(bestlapsColumns, t("bestlapsCols"), bestlapsSort);
 }
 
+function bindDelegatedSortableHeaders(containerSelector, onSort) {
+  const container = document.querySelector(containerSelector);
+  if (!container || !appLifecycle) return;
+  const activate = event => {
+    const header = event.target?.closest?.("th[data-sort-key]");
+    if (!header || !container.contains(header)) return;
+    if (event.type === "keydown" && !["Enter", " "].includes(event.key)) return;
+    if (event.type === "keydown") event.preventDefault();
+    void onSort(header.dataset.sortKey);
+  };
+  appLifecycle.listen(container, "click", activate);
+  appLifecycle.listen(container, "keydown", activate);
+}
+
+function bindStatsSortHandlers() {
+  bindLeaderboardSortHandlers();
+  bindBestlapsSortHandlers();
+  bindSafetySortHandlers();
+}
+
 function bindLeaderboardSortHandlers() {
-  bindSortableHeaders("#leaderboard-table th[data-sort-key]", leaderboardSort, async (key) => {
+  bindDelegatedSortableHeaders("#leaderboard-table", async (key) => {
     const nextSort = cycleSort(leaderboardSort, key);
     statsStore?.dispatch({ type: "table/sort", table: "leaderboard", ...nextSort });
     if (isServerPagedTopDataV2Table("leaderboard")) {
@@ -8198,7 +8220,7 @@ function bindLeaderboardSortHandlers() {
 }
 
 function bindBestlapsSortHandlers() {
-  bindSortableHeaders("#bestlaps-table th[data-sort-key]", bestlapsSort, async (key) => {
+  bindDelegatedSortableHeaders("#bestlaps-table", async (key) => {
     const nextSort = cycleSort(bestlapsSort, key);
     statsStore?.dispatch({ type: "table/sort", table: "bestlaps", ...nextSort });
     if (isServerPagedTopDataV2Table("bestlaps")) {
@@ -8268,7 +8290,6 @@ function renderLeaderboardTablePage() {
     </table>
   `;
 
-  bindLeaderboardSortHandlers();
   bindDriverPreviewTableInteractions(tableEl);
 
   renderPagination(
@@ -8352,7 +8373,6 @@ function renderBestLapsTablePage() {
     </table>
   `;
 
-  bindBestlapsSortHandlers();
   bindDriverPreviewTableInteractions(tableEl);
 
   renderPagination(
@@ -8383,7 +8403,7 @@ function renderSafetyHeaders() {
 }
 
 function bindSafetySortHandlers() {
-  bindSortableHeaders("#safety-table th[data-sort-key]", safetySort, async (key) => {
+  bindDelegatedSortableHeaders("#safety-table", async (key) => {
     await loadFullTopDataV2Table("safety").catch(() => null);
     const nextSort = cycleSort(safetySort, key);
     statsStore?.dispatch({ type: "table/sort", table: "safety", ...nextSort });
@@ -8449,8 +8469,6 @@ function renderSafetyTablePage() {
       <tbody>${rows}</tbody>
     </table>
   `;
-
-  bindSafetySortHandlers();
 
   renderPagination(
     "safety-pagination",
@@ -8680,22 +8698,27 @@ function bindSearchInputs() {
   });
 
   if (leaderboardInput) {
-    leaderboardInput.addEventListener("input", (e) => {
+    appLifecycle.listen(leaderboardInput, "input", (e) => {
       handleLeaderboardInput(e.target.value);
     });
   }
 
   if (bestlapsInput) {
-    bestlapsInput.addEventListener("input", (e) => {
+    appLifecycle.listen(bestlapsInput, "input", (e) => {
       handleBestlapsInput(e.target.value);
     });
   }
 
   if (safetyInput) {
-    safetyInput.addEventListener("input", (e) => {
+    appLifecycle.listen(safetyInput, "input", (e) => {
       handleSafetyInput(e.target.value);
     });
   }
+  appLifecycle.add(() => {
+    handleLeaderboardInput.cancel();
+    handleBestlapsInput.cancel();
+    handleSafetyInput.cancel();
+  });
 }
 
 function formatDateTimeLocal(isoString, lang = "en") {
@@ -11597,6 +11620,7 @@ async function init() {
   runInitStep("initNewsNotificationsModal", () => initNewsNotificationsModal());
   runInitStep("bindFunStatsControls", () => bindFunStatsControls());
   runInitStep("bindSearchInputs", () => bindSearchInputs());
+  runInitStep("bindStatsSortHandlers", () => bindStatsSortHandlers());
   runInitStep("bindCombinedStatsTabs", () => bindCombinedStatsTabs());
   runInitStep("ensureTopGuide", () => ensureTopGuide());
   runInitStep("initTwitchWidget", () => initTwitchWidget());

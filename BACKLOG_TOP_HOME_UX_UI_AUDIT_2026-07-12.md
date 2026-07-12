@@ -16,8 +16,8 @@
 | R03 | Готово | Runtime schemas и нормализация API DTO | R02 |
 | R04 | Готово | Storage wrapper, TTL, migrations и безопасная runtime-конфигурация | R01 |
 | R05 | Готово | Query cache, дедупликация и защита от гонок | R02–R04 |
-| R06 | В работе | Feature state и lifecycle `mount/update/destroy` | R01–R05 |
-| R07 | Ожидает | Общий table engine для Rating/Best Laps/Safety | R03, R05, R06 |
+| R06 | Готово | Feature state и lifecycle `mount/update/destroy` | R01–R05 |
+| R07 | Следующий | Общий table engine для Rating/Best Laps/Safety | R03, R05, R06 |
 | R08 | Ожидает | Безопасный DOM renderer и сокращение `innerHTML` | R01, R06 |
 | R09 | Ожидает | Доступные sortable headers, modals, focus и touch interactions | R07, R08 |
 | R10 | Ожидает | Декомпозиция `app.js` и отдельные page entrypoints | R02–R09 |
@@ -58,6 +58,7 @@
 - 12.07.2026 — R05 завершён: предыдущие table requests отменяются через `AbortController`, JSON loader принимает signal/force, successful mutations инвалидируют JSON cache, добавлена prefix invalidation; baseline расширен до 35 тестов.
 - 12.07.2026 — R06 начат: добавлены immutable feature store/reducer и lifecycle registry; search state трёх статистических таблиц переведён на actions/subscription, pagehide уничтожает owned resources; baseline расширен до 40 тестов.
 - 12.07.2026 — R06: page, sort и request status статистических таблиц переведены на store actions; server-paged loading/ready/error больше не меняются неявно в разрозненных обработчиках.
+- 12.07.2026 — R06 завершён: sort headers работают через один delegated lifecycle binding на стабильный table container, search listeners принадлежат lifecycle, debounce timers отменяются при destroy; повторный `innerHTML` больше не требует повторного sort binding.
 
 ### Условия завершения R01
 
