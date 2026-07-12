@@ -19,7 +19,7 @@
 | R06 | Готово | Feature state и lifecycle `mount/update/destroy` | R01–R05 |
 | R07 | Готово | Общий table engine для Rating/Best Laps/Safety | R03, R05, R06 |
 | R08 | Готово | Безопасный DOM renderer и сокращение `innerHTML` | R01, R06 |
-| R09 | Следующий | Доступные sortable headers, modals, focus и touch interactions | R07, R08 |
+| R09 | В работе | Доступные sortable headers, modals, focus и touch interactions | R07, R08 |
 | R10 | Ожидает | Декомпозиция `app.js` и отдельные page entrypoints | R02–R09 |
 | R11 | Ожидает | CSS tokens/layers/components, z-index и breakpoint cleanup | R01 |
 | R12 | Ожидает | Hero/support/sticky/loading UI cleanup | R09, R11 |
@@ -65,6 +65,7 @@
 - 12.07.2026 — R08: три сложные statistics tables и pagination переведены на explicit trusted-markup boundary; прямые `innerHTML` в `app.js` снижены до 139 и новый budget запрещает регресс.
 - 12.07.2026 — R08: все механические очистки DOM переведены с `innerHTML = ""` на `replaceChildren()`; прямые writes снижены до 119 без изменения разметки или поведения.
 - 12.07.2026 — R08 завершён: простые loading/empty/error states всех основных страниц и модалей переведены на safe DOM nodes; прямые `innerHTML` снижены с 150 до 91, оставшиеся сложные шаблоны изолированы для последующей feature-декомпозиции.
+- 12.07.2026 — R09 начат: сортируемые заголовки Rating, Best Laps и Safety переведены с интерактивных `th` на нативные кнопки с `aria-sort`, видимым keyboard focus и скрытыми от screen reader декоративными стрелками; delegated handler использует стандартную активацию кнопки мышью, Enter и Space. Baseline: 49 тестов.
 
 ### Условия завершения R01
 

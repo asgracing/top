@@ -8205,14 +8205,11 @@ function bindDelegatedSortableHeaders(containerSelector, onSort) {
   const container = document.querySelector(containerSelector);
   if (!container || !appLifecycle) return;
   const activate = event => {
-    const header = event.target?.closest?.("th[data-sort-key]");
-    if (!header || !container.contains(header)) return;
-    if (event.type === "keydown" && !["Enter", " "].includes(event.key)) return;
-    if (event.type === "keydown") event.preventDefault();
-    void onSort(header.dataset.sortKey);
+    const control = event.target?.closest?.(".table-sort-button[data-sort-key]");
+    if (!control || !container.contains(control)) return;
+    void onSort(control.dataset.sortKey);
   };
   appLifecycle.listen(container, "click", activate);
-  appLifecycle.listen(container, "keydown", activate);
 }
 
 function bindStatsSortHandlers() {

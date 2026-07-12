@@ -23,5 +23,7 @@ test("renders accessible sortable headers from column metadata", () => {
   const html = renderSortableHeaders({ columns: [{ key: "rank", className: "rank-column", align: "center" }], labels: ["Position"], sortState: { key: "rank", direction: "desc" } });
   assert.match(html, /rank-column cell-center sortable sort-desc/);
   assert.match(html, /aria-sort="descending"/);
-  assert.match(html, />Position<\/th>/);
+  assert.match(html, /<button class="table-sort-button"/);
+  assert.match(html, /<span>Position<\/span>/);
+  assert.match(html, /aria-hidden="true">↓/);
 });

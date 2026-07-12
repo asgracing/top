@@ -6307,6 +6307,40 @@ body.modal-open {
 #leaderboard-table td.elo-column .elo-badge,
 #leaderboard-table td.sr-column .sr-badge { margin-inline: auto; }
 
+.table-sort-button {
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  min-height: 32px;
+  padding: 0;
+  border: 0;
+  background: transparent;
+  color: inherit;
+  font: inherit;
+  font-weight: inherit;
+  letter-spacing: inherit;
+  text-transform: inherit;
+  white-space: nowrap;
+  cursor: pointer;
+}
+
+.table-sort-button:focus-visible {
+  outline: 2px solid var(--accent-2);
+  outline-offset: 3px;
+  border-radius: 4px;
+}
+
+th.sortable::after { content: none; }
+
+.table-sort-button .sort-icon {
+  color: var(--muted);
+  font-size: 12px;
+  line-height: 1;
+}
+
+th.sort-asc .table-sort-button .sort-icon { color: var(--accent-2); }
+th.sort-desc .table-sort-button .sort-icon { color: var(--accent); }
+
 #bestlaps-table .car-thumb-inline {
   width: 42px;
   height: 28px;

@@ -18,8 +18,11 @@ export function renderSortableHeaders({ columns, labels = [], sortState = {}, es
     const directionClass = active && sortState.direction ? `sort-${sortState.direction}` : "";
     const ariaSort = active ? (sortState.direction === "asc" ? "ascending" : "descending") : "none";
     const classes = [escapeClass(column.className), escapeClass(column.align ? `cell-${column.align}` : ""), sortable ? "sortable" : "", directionClass].filter(Boolean).join(" ");
-    const attributes = sortable ? ` data-sort-key="${escapeText(column.key)}" tabindex="0" role="button" aria-sort="${ariaSort}"` : "";
-    return `<th class="${classes}"${attributes}>${escapeText(labels[index] ?? column.label ?? column.key)}</th>`;
+    const icon = active ? (sortState.direction === "asc" ? "↑" : "↓") : "↕";
+    const content = sortable
+      ? `<button class="table-sort-button" type="button" data-sort-key="${escapeText(column.key)}"><span>${escapeText(labels[index] ?? column.label ?? column.key)}</span><span class="sort-icon" aria-hidden="true">${icon}</span></button>`
+      : escapeText(labels[index] ?? column.label ?? column.key);
+    return `<th class="${classes}" aria-sort="${ariaSort}">${content}</th>`;
   }).join("");
 }
 
