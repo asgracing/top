@@ -11698,6 +11698,58 @@ function initializePageControllers() {
   runInitStep("initBestlapTracksModal", () => initBestlapTracksModal());
 }
 
+function applyHomeSiteData(data) {
+  leaderboardData = data.leaderboard;
+  bestlapsData = data.bestlaps;
+  bestlapTracksData = Array.isArray(data.bestlapTracks) ? data.bestlapTracks : [];
+  bestlapTrackLeadersData = Array.isArray(data.bestlapTrackLeaders) ? data.bestlapTrackLeaders : [];
+  todayStatsData = data.globalStats;
+  safetyData = data.safety;
+  driverOfDayData = data.driverOfDay;
+  onlineData = data.online;
+  latestHourlyRaceData = data.latestHourlyRace;
+  racesArchiveSummary = data.racesSummary;
+  topDataV2TableMeta = data.tables;
+  serverStatusData = data.serverStatus;
+  raceActivityInsights = Array.isArray(data.raceActivity) ? data.raceActivity : [];
+  racesData = [];
+  topLoadState.home = false;
+
+  const driversCountEl = document.getElementById("drivers-count");
+  if (driversCountEl) driversCountEl.textContent = getTopDataV2TableMeta("leaderboard")?.total_items || leaderboardData.length;
+
+  const bestLapHighlightEl = document.getElementById("best-lap-highlight");
+  const bestLapNoteEl = document.getElementById("best-lap-note");
+  if (bestLapHighlightEl) applyBestlapTracksButtonText();
+  if (bestlapsData.length > 0) updateBestLapNote(bestlapsData[0].driver, bestlapsData[0].track, bestlapsData[0].car_name);
+  else if (bestLapNoteEl) bestLapNoteEl.textContent = t("bestLapNoteFallback");
+
+  updateHeroServerSummary(data.serverStatus);
+  renderServerStickyWidget(data.serverStatus);
+  rerenderUI();
+}
+
+async function initializeHomeData() {
+  const hourlyDataPromise = Promise.allSettled([loadHourlyAnnouncementData(), loadHourlyScheduleData()]);
+  void loadNewsFeed().catch(() => []).then(() => {
+    renderNewsBell();
+    renderNewsNotificationsModal();
+  });
+  applyHomeSiteData(await loadSiteData());
+
+  const [hourlyAnnouncementResult, hourlyScheduleResult] = await hourlyDataPromise;
+  const hourlyAnnouncement = hourlyAnnouncementResult.status === "fulfilled" ? hourlyAnnouncementResult.value : null;
+  const hourlySchedule = hourlyScheduleResult.status === "fulfilled" ? hourlyScheduleResult.value : null;
+  hourlyScheduleData = hourlySchedule;
+  hourlyAnnouncementData = mergeHourlyAnnouncementWithSchedule(hourlyAnnouncement, hourlySchedule);
+  topLoadState.hourly = false;
+  rerenderUI();
+  loadHourlyVotes(hourlyAnnouncementData).finally(() => {
+    renderHourlyHeroCard();
+    renderHourlyHeroModal();
+  });
+}
+
 async function init() {
   await initializeAppStorage().catch(error => console.warn("Preference storage is unavailable.", error));
   await initializeFeatureRuntime();
@@ -11790,74 +11842,7 @@ async function init() {
       return;
     }
 
-    const hourlyDataPromise = Promise.allSettled([
-      loadHourlyAnnouncementData(),
-      loadHourlyScheduleData()
-    ]);
-    void loadNewsFeed()
-      .catch(() => [])
-      .then(() => {
-        renderNewsBell();
-        renderNewsNotificationsModal();
-      });
-    const data = await loadSiteData();
-
-    leaderboardData = data.leaderboard;
-    bestlapsData = data.bestlaps;
-    bestlapTracksData = Array.isArray(data.bestlapTracks) ? data.bestlapTracks : [];
-    bestlapTrackLeadersData = Array.isArray(data.bestlapTrackLeaders) ? data.bestlapTrackLeaders : [];
-    todayStatsData = data.globalStats;
-    safetyData = data.safety;
-    driverOfDayData = data.driverOfDay;
-    onlineData = data.online;
-    latestHourlyRaceData = data.latestHourlyRace;
-    racesArchiveSummary = data.racesSummary;
-    topDataV2TableMeta = data.tables;
-    serverStatusData = data.serverStatus;
-
-    raceActivityInsights = Array.isArray(data.raceActivity) ? data.raceActivity : [];
-    racesData = [];
-    topLoadState.home = false;
-
-    const driversCountEl = document.getElementById("drivers-count");
-    if (driversCountEl) {
-      driversCountEl.textContent = getTopDataV2TableMeta("leaderboard")?.total_items || leaderboardData.length;
-    }
-
-    const bestLapHighlightEl = document.getElementById("best-lap-highlight");
-    const bestLapNoteEl = document.getElementById("best-lap-note");
-
-    if (bestlapsData.length > 0) {
-      if (bestLapHighlightEl) {
-        applyBestlapTracksButtonText();
-      }
-      updateBestLapNote(bestlapsData[0].driver, bestlapsData[0].track, bestlapsData[0].car_name);
-    } else {
-      if (bestLapHighlightEl) {
-        applyBestlapTracksButtonText();
-      }
-      if (bestLapNoteEl) {
-        bestLapNoteEl.textContent = t("bestLapNoteFallback");
-      }
-    }
-
-    updateHeroServerSummary(data.serverStatus);
-    renderServerStickyWidget(data.serverStatus);
-
-    rerenderUI();
-
-    const [hourlyAnnouncementResult, hourlyScheduleResult] = await hourlyDataPromise;
-    const hourlyAnnouncement = hourlyAnnouncementResult.status === "fulfilled" ? hourlyAnnouncementResult.value : null;
-    const hourlySchedule = hourlyScheduleResult.status === "fulfilled" ? hourlyScheduleResult.value : null;
-    hourlyScheduleData = hourlySchedule;
-    hourlyAnnouncementData = mergeHourlyAnnouncementWithSchedule(hourlyAnnouncement, hourlySchedule);
-    topLoadState.hourly = false;
-    rerenderUI();
-
-    loadHourlyVotes(hourlyAnnouncementData).finally(() => {
-      renderHourlyHeroCard();
-      renderHourlyHeroModal();
-    });
+    await initializeHomeData();
   } catch (error) {
     console.error(error);
 
