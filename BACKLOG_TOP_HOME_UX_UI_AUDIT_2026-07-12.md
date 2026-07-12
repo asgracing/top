@@ -18,7 +18,7 @@
 | R05 | Готово | Query cache, дедупликация и защита от гонок | R02–R04 |
 | R06 | Готово | Feature state и lifecycle `mount/update/destroy` | R01–R05 |
 | R07 | Готово | Общий table engine для Rating/Best Laps/Safety | R03, R05, R06 |
-| R08 | Следующий | Безопасный DOM renderer и сокращение `innerHTML` | R01, R06 |
+| R08 | В работе | Безопасный DOM renderer и сокращение `innerHTML` | R01, R06 |
 | R09 | Ожидает | Доступные sortable headers, modals, focus и touch interactions | R07, R08 |
 | R10 | Ожидает | Декомпозиция `app.js` и отдельные page entrypoints | R02–R09 |
 | R11 | Ожидает | CSS tokens/layers/components, z-index и breakpoint cleanup | R01 |
@@ -61,6 +61,7 @@
 - 12.07.2026 — R06 завершён: sort headers работают через один delegated lifecycle binding на стабильный table container, search listeners принадлежат lifecycle, debounce timers отменяются при destroy; повторный `innerHTML` больше не требует повторного sort binding.
 - 12.07.2026 — R07 начат: добавлен shared table engine с declarative columns, colgroup и state markup; Rating, Best Laps и Safety переведены на единую table shell без изменения специализированных row formatters; baseline расширен до 44 тестов.
 - 12.07.2026 — R07 завершён: sortable headers и loading/empty states переведены в engine; header classes/alignment/aria-sort формируются из column metadata, специализированные formatter остаются изолированными; baseline расширен до 45 тестов.
+- 12.07.2026 — R08 начат: добавлен safe DOM factory с `textContent`, URL protocol guard и explicit trusted-HTML token; шесть loading/empty writes статистики переведены с `innerHTML` на `replaceChildren`, новый budget зафиксирован на 144 writes; baseline расширен до 49 тестов.
 
 ### Условия завершения R01
 

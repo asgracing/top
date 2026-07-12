@@ -13,6 +13,7 @@ const queryCacheModulePromise = import("./src/shared/query-cache.js");
 const featureStoreModulePromise = import("./src/shared/feature-store.js");
 const lifecycleModulePromise = import("./src/shared/lifecycle.js");
 const tableEngineModulePromise = import("./src/features/stats/table-engine.js");
+const safeDomModulePromise = import("./src/shared/safe-dom.js");
 let appStorage = null;
 let jsonQueryCache = null;
 let tableRequestGuard = null;
@@ -21,6 +22,7 @@ let appLifecycle = null;
 let renderStatsTableShell = null;
 let renderStatsTableHeaders = null;
 let renderStatsTableState = null;
+let createStatsTableStateElement = null;
 const tableRequestControllers = new Map();
 const requestJson = async (url, options = {}) => {
   const { createHttpClient } = await httpClientModulePromise;
@@ -143,10 +145,11 @@ async function initializeQueryRuntime() {
 }
 
 async function initializeFeatureRuntime() {
-  const [{ createFeatureStore, createTableState, tablesReducer }, { createLifecycle }, { renderTableShell, renderSortableHeaders: renderHeaders, renderTableState }] = await Promise.all([featureStoreModulePromise, lifecycleModulePromise, tableEngineModulePromise]);
+  const [{ createFeatureStore, createTableState, tablesReducer }, { createLifecycle }, { renderTableShell, renderSortableHeaders: renderHeaders, renderTableState }, { tableStateElement }] = await Promise.all([featureStoreModulePromise, lifecycleModulePromise, tableEngineModulePromise, safeDomModulePromise]);
   renderStatsTableShell = renderTableShell;
   renderStatsTableHeaders = renderHeaders;
   renderStatsTableState = renderTableState;
+  createStatsTableStateElement = options => tableStateElement(document, options);
   appLifecycle ||= createLifecycle();
   if (statsStore) return;
   statsStore = createFeatureStore(createTableState(["leaderboard", "bestlaps", "safety"], PAGE_SIZE), tablesReducer);
@@ -8247,7 +8250,7 @@ function renderLeaderboardTablePage() {
   if (!tableEl || !wrapEl) return;
 
   if (topLoadState.home && !leaderboardData.length) {
-    tableEl.innerHTML = renderStatsTableState({ kind: "loading", message: escapeHtml(t("loadingLeaderboard")) });
+    tableEl.replaceChildren(createStatsTableStateElement({ kind: "loading", message: t("loadingLeaderboard") }));
     wrapEl.style.display = "none";
     return;
   }
@@ -8257,7 +8260,7 @@ function renderLeaderboardTablePage() {
   statsStore?.dispatch({ type: "table/page", table: "leaderboard", page: result.page });
 
   if (!result.totalItems) {
-    tableEl.innerHTML = renderStatsTableState({ kind: "empty", message: escapeHtml(leaderboardSearch ? t("emptySearch") : t("emptyLeaderboard")) });
+    tableEl.replaceChildren(createStatsTableStateElement({ kind: "empty", message: leaderboardSearch ? t("emptySearch") : t("emptyLeaderboard") }));
     wrapEl.style.display = "none";
     return;
   }
@@ -8321,7 +8324,7 @@ function renderBestLapsTablePage() {
   if (!tableEl || !wrapEl) return;
 
   if (topLoadState.home && !bestlapsData.length) {
-    tableEl.innerHTML = renderStatsTableState({ kind: "loading", message: escapeHtml(t("loadingBestLaps")) });
+    tableEl.replaceChildren(createStatsTableStateElement({ kind: "loading", message: t("loadingBestLaps") }));
     wrapEl.style.display = "none";
     return;
   }
@@ -8331,7 +8334,7 @@ function renderBestLapsTablePage() {
   statsStore?.dispatch({ type: "table/page", table: "bestlaps", page: result.page });
 
   if (!result.totalItems) {
-    tableEl.innerHTML = renderStatsTableState({ kind: "empty", message: escapeHtml(bestlapsSearch ? t("emptySearch") : t("emptyBestLaps")) });
+    tableEl.replaceChildren(createStatsTableStateElement({ kind: "empty", message: bestlapsSearch ? t("emptySearch") : t("emptyBestLaps") }));
     wrapEl.style.display = "none";
     return;
   }
@@ -8418,7 +8421,7 @@ function renderSafetyTablePage() {
   if (!tableEl || !wrapEl) return;
 
   if (topLoadState.home && !safetyData.length) {
-    tableEl.innerHTML = renderStatsTableState({ kind: "loading", message: escapeHtml(t("loadingSafety")) });
+    tableEl.replaceChildren(createStatsTableStateElement({ kind: "loading", message: t("loadingSafety") }));
     wrapEl.style.display = "none";
     return;
   }
@@ -8427,7 +8430,7 @@ function renderSafetyTablePage() {
   statsStore?.dispatch({ type: "table/page", table: "safety", page: result.page });
 
   if (!result.totalItems) {
-    tableEl.innerHTML = renderStatsTableState({ kind: "empty", message: escapeHtml(safetySearch ? t("emptySearch") : t("emptySafety")) });
+    tableEl.replaceChildren(createStatsTableStateElement({ kind: "empty", message: safetySearch ? t("emptySearch") : t("emptySafety") }));
     wrapEl.style.display = "none";
     return;
   }
