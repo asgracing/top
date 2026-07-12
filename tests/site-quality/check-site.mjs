@@ -57,6 +57,7 @@ if (!js.includes("function initializeWindowLifecycle()") || /window\.addEventLis
 if (!js.includes('from "./src/pages/home/stats-config.js"') || /const (?:leaderboardColumns|bestlapsColumns|HOME_STATS_TABS)\s*=/.test(js)) failures.push("Home statistics configuration must live outside app.js");
 if (!js.includes('from "./src/pages/home/stats-model.js"') || js.includes("const trackFiltered = bestlapsTrackFilter")) failures.push("Home statistics filtering must live outside app.js");
 if (!js.includes('from "./src/pages/home/deferred-sections.js"') || js.includes("topHomeDeferredObserver")) failures.push("Home deferred-section observation must live outside app.js");
+if (!js.includes('from "./src/pages/home/stats-tabs-controller.js"') || js.includes("combinedStatsTabsBound") || js.includes("hostedCombinedStatsTab")) failures.push("Home statistics tab behavior must live outside app.js");
 const budgets = { important: [(css.match(/!important/g) || []).length, 106], silentCatch: [(js.match(/\.catch\(\(\)\s*=>\s*null\)/g) || []).length, 28], inlineStyle: [(html.match(/\bstyle=/g) || []).length, 10], directFetch: [(js.match(/\bfetch\s*\(/g) || []).length, 0], innerHtmlWrite: [(js.match(/\.innerHTML\s*=/g) || []).length, 91] };
 for (const [name, [actual, maximum]] of Object.entries(budgets)) if (actual > maximum) failures.push(`${name} budget exceeded: ${actual} > ${maximum}`);
 if (failures.length) { console.error(failures.join("\n")); process.exitCode = 1; }

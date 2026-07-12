@@ -5,6 +5,7 @@ import { createPageOrchestrator } from "./src/runtime/page-orchestrator.js";
 import { HOME_STATS_TABS, bestlapsColumns, createHomeStatsState, leaderboardColumns } from "./src/pages/home/stats-config.js";
 import { processBestlaps, processLeaderboard, processSafety } from "./src/pages/home/stats-model.js";
 import { createHomeDeferredSectionsController } from "./src/pages/home/deferred-sections.js";
+import { createHomeStatsTabsController } from "./src/pages/home/stats-tabs-controller.js";
 
 const PAGE_CONTEXT = readPageContext(document);
 const IS_RACES_PAGE = PAGE_CONTEXT.page === "races";
@@ -383,10 +384,14 @@ const homeDeferredSectionsController = createHomeDeferredSectionsController({
 const TOP_DEV_FLAGS = Object.freeze({
   combinedStatsTabs: true
 });
-let activeHomeStatsTab = initialHomeStatsState.activeTab;
-let combinedStatsTabsBound = false;
-let combinedStatsLinksBound = false;
-let hostedCombinedStatsTab = null;
+const homeStatsTabsController = createHomeStatsTabsController({
+  documentRef: document,
+  tabs: HOME_STATS_TABS,
+  initialTab: initialHomeStatsState.activeTab,
+  isEnabled: () => isCombinedStatsTabsExperimentEnabled(),
+  translate: key => t(key),
+  scrollToTabs: () => scrollTopTargetBelowHeader("combined-stats-shell")
+});
 
 function renderLoadingMarkup(label = "") {
   return `<div class="loading">${escapeHtml(label || t("loading"))}</div>`;
@@ -419,107 +424,11 @@ function isCombinedStatsTabsExperimentEnabled() {
 }
 
 function updateCombinedStatsTabsUI() {
-  const enabled = isCombinedStatsTabsExperimentEnabled();
-  document.body.classList.toggle("experiment-combined-stats", enabled);
-
-  const subtitleEl = document.getElementById("combined-stats-subtitle");
-  if (subtitleEl && enabled) {
-    const subtitleKey = HOME_STATS_TABS[activeHomeStatsTab]?.subtitleKey || "championshipSubtitle";
-    subtitleEl.textContent = t(subtitleKey);
-  }
-
-  Object.entries(HOME_STATS_TABS).forEach(([tabKey, config]) => {
-    const button = document.querySelector(`[data-stats-tab="${tabKey}"]`);
-    const panel = document.getElementById(config.panelId);
-    const isActive = enabled ? tabKey === activeHomeStatsTab : true;
-
-    if (button) {
-      button.classList.toggle("is-active", isActive);
-      button.setAttribute("aria-selected", isActive ? "true" : "false");
-      button.tabIndex = isActive ? 0 : -1;
-    }
-
-    if (panel) {
-      panel.classList.toggle("is-active", isActive);
-      panel.hidden = enabled ? !isActive : false;
-    }
-  });
-
-  const toolsHost = document.getElementById("combined-stats-active-tools");
-  if (toolsHost) {
-    const hostedPanelId = hostedCombinedStatsTab ? HOME_STATS_TABS[hostedCombinedStatsTab]?.panelId : null;
-    toolsHost.querySelectorAll(".table-tools").forEach((tools) => {
-      const panelId = tools.dataset.originPanelId || hostedPanelId;
-      if (panelId && !tools.dataset.originPanelId) {
-        tools.dataset.originPanelId = panelId;
-      }
-      const panel = panelId ? document.getElementById(panelId) : null;
-      const header = panel?.querySelector(".section-header");
-      if (header) header.appendChild(tools);
-    });
-    hostedCombinedStatsTab = null;
-
-    const activePanel = document.getElementById(HOME_STATS_TABS[activeHomeStatsTab]?.panelId || "championship");
-    const activeTools = activePanel?.querySelector(".table-tools");
-
-    if (enabled && activeTools) {
-      toolsHost.appendChild(activeTools);
-      hostedCombinedStatsTab = activeHomeStatsTab;
-    } else {
-      Object.values(HOME_STATS_TABS).forEach(({ panelId }) => {
-        const panel = document.getElementById(panelId);
-        const header = panel?.querySelector(".section-header");
-        const tools = panel?.querySelector(".table-tools");
-        if (header && tools) header.appendChild(tools);
-      });
-      hostedCombinedStatsTab = null;
-    }
-  }
-}
-
-function setActiveCombinedStatsTab(tabKey) {
-  if (!HOME_STATS_TABS[tabKey]) return;
-  activeHomeStatsTab = tabKey;
-  updateCombinedStatsTabsUI();
+  homeStatsTabsController.update();
 }
 
 function bindCombinedStatsTabs() {
-  if (combinedStatsTabsBound) return;
-  combinedStatsTabsBound = true;
-
-  document.querySelectorAll("[data-stats-tab]").forEach((button) => {
-    button.addEventListener("click", () => {
-      setActiveCombinedStatsTab(button.dataset.statsTab || "leaderboard");
-    });
-  });
-
-  Object.values(HOME_STATS_TABS).forEach(({ panelId }) => {
-    const panel = document.getElementById(panelId);
-    const tools = panel?.querySelector(".table-tools");
-    if (tools && !tools.dataset.originPanelId) {
-      tools.dataset.originPanelId = panelId;
-    }
-  });
-
-  if (combinedStatsLinksBound) return;
-  combinedStatsLinksBound = true;
-
-  document.addEventListener("click", (event) => {
-    if (!isCombinedStatsTabsExperimentEnabled()) return;
-    const link = event.target?.closest?.('a[href="#championship"], a[href="#bestlaps"], a[href="#worst-safety"]');
-    if (!link) return;
-
-    const href = String(link.getAttribute("href") || "");
-    const tabKey = href === "#bestlaps"
-      ? "bestlaps"
-      : href === "#worst-safety"
-        ? "safety"
-        : "leaderboard";
-
-    event.preventDefault();
-    setActiveCombinedStatsTab(tabKey);
-    scrollTopTargetBelowHeader("combined-stats-shell");
-  });
+  homeStatsTabsController.bind(appLifecycle);
 }
 
 function renderDeferredHomeTableLoading(tableId, paginationWrapId, labelKey) {
