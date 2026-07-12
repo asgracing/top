@@ -3244,9 +3244,7 @@ async function loadHourlyVotes(announcement) {
     const url = new URL("/votes", hourlyVotesApiUrl);
     url.searchParams.set("event_ids", eventId);
     url.searchParams.set("voter_id", getHourlyBrowserVoterId());
-    const response = await fetch(url, { cache: "no-store" });
-    if (!response.ok) throw new Error(`HTTP ${response.status}`);
-    const payload = await response.json();
+    const payload = await requestJson(url, { cache: "no-store", retries: 1 });
     const item = payload?.items?.[eventId];
     applyHourlyAnnouncementVoteState(item);
     mergeHourlyStoredVoteStateItems({ [eventId]: item });
@@ -3268,7 +3266,7 @@ async function submitHourlyHeroVote() {
   renderHourlyHeroModal();
 
   try {
-    const response = await fetch(new URL("/vote", hourlyVotesApiUrl), {
+    const payload = await requestJson(new URL("/vote", hourlyVotesApiUrl), {
       method: "POST",
       headers: { "content-type": "application/json; charset=utf-8" },
       body: JSON.stringify({
@@ -3279,8 +3277,6 @@ async function submitHourlyHeroVote() {
         voter_id: getHourlyBrowserVoterId()
       })
     });
-      if (!response.ok) throw new Error(`HTTP ${response.status}`);
-      const payload = await response.json();
       const nextState = {
         event_id: eventId,
         votes: typeof payload?.votes === "number" ? payload.votes : hourlyVotesCount,
@@ -3308,7 +3304,7 @@ async function submitHourlyHeroUnvote() {
   renderHourlyHeroModal();
 
   try {
-    const response = await fetch(new URL("/unvote", hourlyVotesApiUrl), {
+    const payload = await requestJson(new URL("/unvote", hourlyVotesApiUrl), {
       method: "POST",
       headers: { "content-type": "application/json; charset=utf-8" },
       body: JSON.stringify({
@@ -3316,8 +3312,6 @@ async function submitHourlyHeroUnvote() {
         voter_id: getHourlyBrowserVoterId()
       })
     });
-    if (!response.ok) throw new Error(`HTTP ${response.status}`);
-    const payload = await response.json();
     const nextState = {
       event_id: eventId,
       votes: typeof payload?.votes === "number" ? payload.votes : hourlyVotesCount,
@@ -3492,9 +3486,7 @@ async function initDonationAlertsWidget() {
   renderDonationAlertsWidget();
 
   try {
-    const response = await fetch(donationsApiUrl, { cache: "no-store" });
-    if (!response.ok) throw new Error(`Donations API ${response.status}`);
-    const data = await response.json();
+    const data = await requestJson(donationsApiUrl, { cache: "no-store", retries: 1 });
     if (!data?.ok) throw new Error(data?.error || "Donations API returned an error");
     donationAlertsData = data;
     donationAlertsFailed = false;
@@ -3573,9 +3565,7 @@ async function detectYouTubeLive() {
     const oembedUrl = new URL("https://www.youtube.com/oembed");
     oembedUrl.searchParams.set("url", YOUTUBE_LIVE_URL);
     oembedUrl.searchParams.set("format", "json");
-    const response = await fetch(oembedUrl.toString(), { cache: "no-store", mode: "cors" });
-    if (!response.ok) return { live: false };
-    const payload = await response.json();
+    const payload = await requestJson(oembedUrl.toString(), { cache: "no-store", mode: "cors", retries: 1 });
     const embedUrl = extractYouTubeEmbedUrl(payload);
     if (!embedUrl) return { live: false };
     return {
@@ -5486,9 +5476,7 @@ async function loadCommunityLikes() {
     const url = new URL("/likes", communityLikesApiUrl);
     url.searchParams.set("post_ids", postIds.join(","));
     url.searchParams.set("voter_id", getCommunityBrowserVoterId());
-    const response = await fetch(url, { cache: "no-store" });
-    if (!response.ok) throw new Error(`HTTP ${response.status}`);
-    const payload = await response.json();
+    const payload = await requestJson(url, { cache: "no-store", retries: 1 });
     const items = payload?.items && typeof payload.items === "object" ? payload.items : {};
     communityLikeStateByPostId = {
       ...communityLikeStateByPostId,
@@ -5525,7 +5513,7 @@ async function submitCommunityLike(postId) {
   renderCommunityLikes();
 
   try {
-    const response = await fetch(new URL("/like", communityLikesApiUrl), {
+    const payload = await requestJson(new URL("/like", communityLikesApiUrl), {
       method: "POST",
       headers: { "content-type": "application/json; charset=utf-8" },
       body: JSON.stringify({
@@ -5533,8 +5521,6 @@ async function submitCommunityLike(postId) {
         voter_id: getCommunityBrowserVoterId()
       })
     });
-    if (!response.ok) throw new Error(`HTTP ${response.status}`);
-    const payload = await response.json();
     communityLikeStateByPostId[postId] = {
       likes: typeof payload?.likes === "number" ? payload.likes : (state.likes || 0),
       already_liked: Boolean(payload?.already_liked),
@@ -5844,9 +5830,7 @@ async function loadNewsFeed() {
   const resolvedUrl = LOCAL_NEWS_DATA_URL;
 
   try {
-    const response = await fetch(resolvedUrl, { cache: "no-store" });
-    if (!response.ok) throw new Error(`HTTP ${response.status}`);
-    payload = await response.json();
+    payload = await requestJson(resolvedUrl, { cache: "no-store", retries: 1 });
   } catch (error) {
     payload = null;
   }

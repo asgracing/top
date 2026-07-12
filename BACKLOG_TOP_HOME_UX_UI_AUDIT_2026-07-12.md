@@ -12,8 +12,8 @@
 |---|---|---|---|
 | R00 | Готово | Backlog и исходные метрики зафиксированы | — |
 | R01 | Готово* | Regression baseline: fixtures, unit/static quality и visual-матрица; автоматический screenshot capture ожидает восстановления browser connection | R00 |
-| R02 | В работе | Единые ошибки и HTTP client с timeout/abort/retry policy | R01 |
-| R03 | Ожидает | Runtime schemas и нормализация API DTO | R02 |
+| R02 | Готово | Единые ошибки и HTTP client с timeout/abort/retry policy; прямые `fetch` устранены | R01 |
+| R03 | Следующий | Runtime schemas и нормализация API DTO | R02 |
 | R04 | Ожидает | Storage wrapper, TTL, migrations и безопасная runtime-конфигурация | R01 |
 | R05 | Ожидает | Query cache, дедупликация и защита от гонок | R02–R04 |
 | R06 | Ожидает | Feature state и lifecycle `mount/update/destroy` | R01–R05 |
@@ -48,6 +48,7 @@
 - 12.07.2026 — R01: Live Server подтверждён (`HTTP 200`), добавлена детерминированная visual-матрица для шести viewport, RU/EN и четырёх data states. Автоматический capture ожидает восстановления подключения встроенного браузера.
 - 12.07.2026 — R02 начат: реализован dependency-free HTTP client с едиными HTTP/network/parse/timeout/aborted errors, GET retry policy и unit-тестами; baseline расширен до 20 тестов.
 - 12.07.2026 — R02: HTTP client подключён к runtime через ленивый dynamic import; manifest, versioned JSON и bans feed переведены на общий client. Число прямых `fetch` в `app.js` сокращено с 11 до 8.
+- 12.07.2026 — R02 завершён: read-only и mutation-запросы переведены на общий client; GET использует ограниченный retry, POST не повторяется; quality gate запрещает возвращение прямых `fetch` в `app.js`.
 
 ### Условия завершения R01
 
