@@ -82,6 +82,7 @@
 - 12.07.2026 — R10: глобальные `pagehide`, `storage` и `resize` listeners вынесены в `initializeWindowLifecycle()` и зарегистрированы через `appLifecycle`. Lifecycle destroy теперь снимает все три listener и отменяет отложенный resize debounce; прямые window registrations этих типов запрещены quality gate.
 - 12.07.2026 — R10: запуск выбранного page initializer и маршрутизация ошибок вынесены в чистый `src/runtime/page-orchestrator.js`. Контракт валидирует initializer, выполняет только выбранную страницу, передаёт failure соответствующему handler и возвращает явный `{ ok, error }`; добавлены четыре unit-теста, baseline расширен до 59 тестов.
 - 12.07.2026 — R10: начат физический перенос home feature в `src/pages/home/`: columns Rating/Best Laps, tab mapping и factory начального page/search/sort/filter/deferred state вынесены в `stats-config.js`. Конфигурация покрыта тремя contract/isolation тестами; baseline расширен до 62 тестов, возврат деклараций в `app.js` запрещён quality gate.
+- 12.07.2026 — R10: чистая фильтрация Rating/Best Laps/Safety вынесена в `src/pages/home/stats-model.js`; track filter поддерживает `track_code` и `track`, поиск учитывает RU/EN locale, сортировщик передаётся как зависимость без дублирования общего sort engine. Добавлены четыре unit-теста, baseline расширен до 66 тестов.
 
 ### Условия завершения R01
 

@@ -3,6 +3,7 @@
 import { runWhenDocumentReady } from "./src/runtime/application-bootstrap.js";
 import { createPageOrchestrator } from "./src/runtime/page-orchestrator.js";
 import { HOME_STATS_TABS, bestlapsColumns, createHomeStatsState, leaderboardColumns } from "./src/pages/home/stats-config.js";
+import { processBestlaps, processLeaderboard, processSafety } from "./src/pages/home/stats-model.js";
 
 const PAGE_CONTEXT = readPageContext(document);
 const IS_RACES_PAGE = PAGE_CONTEXT.page === "races";
@@ -5018,30 +5019,15 @@ function bindInteractiveRows(container, selector, onOpen, { ignoreSelector = "a"
 }
 
 function getProcessedLeaderboard() {
-  return sortData(
-    filterByDriver(leaderboardData, leaderboardSearch),
-    leaderboardSort,
-    leaderboardColumns
-  );
+  return processLeaderboard({ rows: leaderboardData, search: leaderboardSearch, sortState: leaderboardSort, columns: leaderboardColumns, sortRows: sortData, locale: currentLang });
 }
 
 function getProcessedBestlaps() {
-  const trackFiltered = bestlapsTrackFilter
-    ? bestlapsData.filter(row => String(row?.track_code || row?.track || "").trim().toLowerCase() === bestlapsTrackFilter)
-    : bestlapsData;
-  return sortData(
-    filterByDriver(trackFiltered, bestlapsSearch),
-    bestlapsSort,
-    bestlapsColumns
-  );
+  return processBestlaps({ rows: bestlapsData, trackFilter: bestlapsTrackFilter, search: bestlapsSearch, sortState: bestlapsSort, columns: bestlapsColumns, sortRows: sortData, locale: currentLang });
 }
 
 function getProcessedSafety() {
-  return sortData(
-    filterByDriver(safetyData, safetySearch),
-    safetySort,
-    getSafetyColumns()
-  );
+  return processSafety({ rows: safetyData, search: safetySearch, sortState: safetySort, columns: getSafetyColumns(), sortRows: sortData, locale: currentLang });
 }
 
 function getProcessedCars() {
