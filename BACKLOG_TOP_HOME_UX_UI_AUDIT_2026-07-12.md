@@ -81,6 +81,7 @@
 - 12.07.2026 — R10: page-specific fallback UI вынесен из общего `catch` в отдельные handlers и immutable registry `pageInitializationErrorHandlers`. Home tables/hero, driver empty state, table pages и fun-stats cleanup сохранили прежние сообщения и поведение; общий `init()` теперь передаёт ошибку единому `handleCurrentPageInitializationError()`.
 - 12.07.2026 — R10: глобальные `pagehide`, `storage` и `resize` listeners вынесены в `initializeWindowLifecycle()` и зарегистрированы через `appLifecycle`. Lifecycle destroy теперь снимает все три listener и отменяет отложенный resize debounce; прямые window registrations этих типов запрещены quality gate.
 - 12.07.2026 — R10: запуск выбранного page initializer и маршрутизация ошибок вынесены в чистый `src/runtime/page-orchestrator.js`. Контракт валидирует initializer, выполняет только выбранную страницу, передаёт failure соответствующему handler и возвращает явный `{ ok, error }`; добавлены четыре unit-теста, baseline расширен до 59 тестов.
+- 12.07.2026 — R10: начат физический перенос home feature в `src/pages/home/`: columns Rating/Best Laps, tab mapping и factory начального page/search/sort/filter/deferred state вынесены в `stats-config.js`. Конфигурация покрыта тремя contract/isolation тестами; baseline расширен до 62 тестов, возврат деклараций в `app.js` запрещён quality gate.
 
 ### Условия завершения R01
 

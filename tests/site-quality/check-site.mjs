@@ -54,6 +54,7 @@ if (!js.includes("async function initializeHomeData()") || !js.includes("functio
 if (!js.includes("const pageDataInitializers = Object.freeze({") || !js.includes("const pageOrchestrator = createPageOrchestrator({")) failures.push("Page data initialization must use the explicit runtime orchestrator");
 if (!js.includes("const pageInitializationErrorHandlers = Object.freeze({")) failures.push("Page initialization errors must use the explicit handler registry");
 if (!js.includes("function initializeWindowLifecycle()") || /window\.addEventListener\("(?:storage|resize|pagehide)"/.test(js)) failures.push("Global window listeners must be owned by the application lifecycle");
+if (!js.includes('from "./src/pages/home/stats-config.js"') || /const (?:leaderboardColumns|bestlapsColumns|HOME_STATS_TABS)\s*=/.test(js)) failures.push("Home statistics configuration must live outside app.js");
 const budgets = { important: [(css.match(/!important/g) || []).length, 106], silentCatch: [(js.match(/\.catch\(\(\)\s*=>\s*null\)/g) || []).length, 28], inlineStyle: [(html.match(/\bstyle=/g) || []).length, 10], directFetch: [(js.match(/\bfetch\s*\(/g) || []).length, 0], innerHtmlWrite: [(js.match(/\.innerHTML\s*=/g) || []).length, 91] };
 for (const [name, [actual, maximum]] of Object.entries(budgets)) if (actual > maximum) failures.push(`${name} budget exceeded: ${actual} > ${maximum}`);
 if (failures.length) { console.error(failures.join("\n")); process.exitCode = 1; }

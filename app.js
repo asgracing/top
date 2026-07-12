@@ -2,6 +2,7 @@
 
 import { runWhenDocumentReady } from "./src/runtime/application-bootstrap.js";
 import { createPageOrchestrator } from "./src/runtime/page-orchestrator.js";
+import { HOME_STATS_TABS, bestlapsColumns, createHomeStatsState, leaderboardColumns } from "./src/pages/home/stats-config.js";
 
 const PAGE_CONTEXT = readPageContext(document);
 const IS_RACES_PAGE = PAGE_CONTEXT.page === "races";
@@ -360,6 +361,7 @@ const topDataV2PagedTables = {
 let latestHourlyRaceData = null;
 let racesArchiveMeta = null;
 const IS_TOP_HOME_PAGE = PAGE_CONTEXT.isHome;
+const initialHomeStatsState = createHomeStatsState({ isHome: IS_TOP_HOME_PAGE });
 const topLoadState = {
   home: IS_TOP_HOME_PAGE,
   hourly: IS_TOP_HOME_PAGE,
@@ -371,30 +373,12 @@ const topLoadState = {
   news: IS_NEWS_PAGE,
   bans: IS_BANS_PAGE
 };
-const topHomeDeferredSections = {
-  leaderboard: !IS_TOP_HOME_PAGE,
-  bestlaps: !IS_TOP_HOME_PAGE,
-  safety: !IS_TOP_HOME_PAGE
-};
+const topHomeDeferredSections = initialHomeStatsState.deferredSections;
 let topHomeDeferredObserver = null;
 const TOP_DEV_FLAGS = Object.freeze({
   combinedStatsTabs: true
 });
-const HOME_STATS_TABS = Object.freeze({
-  leaderboard: {
-    panelId: "championship",
-    subtitleKey: "combinedStatsSubtitleLeaderboard"
-  },
-  bestlaps: {
-    panelId: "bestlaps",
-    subtitleKey: "combinedStatsSubtitleBestlaps"
-  },
-  safety: {
-    panelId: "worst-safety",
-    subtitleKey: "combinedStatsSubtitleSafety"
-  }
-});
-let activeHomeStatsTab = "leaderboard";
+let activeHomeStatsTab = initialHomeStatsState.activeTab;
 let combinedStatsTabsBound = false;
 let combinedStatsLinksBound = false;
 let hostedCombinedStatsTab = null;
@@ -648,15 +632,15 @@ function setupTopHomeDeferredSections() {
 }
 let racesArchiveSummary = null;
 let funStatsApiData = null;
-let leaderboardPage = 1;
-let bestlapsPage = 1;
-let safetyPage = 1;
+let leaderboardPage = initialHomeStatsState.pages.leaderboard;
+let bestlapsPage = initialHomeStatsState.pages.bestlaps;
+let safetyPage = initialHomeStatsState.pages.safety;
 let racesPage = 1;
 let currentLang = "en";
-let leaderboardSearch = "";
-let bestlapsSearch = "";
-let bestlapsTrackFilter = "monza";
-let safetySearch = "";
+let leaderboardSearch = initialHomeStatsState.searches.leaderboard;
+let bestlapsSearch = initialHomeStatsState.searches.bestlaps;
+let bestlapsTrackFilter = initialHomeStatsState.bestlapsTrackFilter;
+let safetySearch = initialHomeStatsState.searches.safety;
 let racesSearch = "";
 let racesTrackFilter = "";
 let carsSearch = "";
@@ -665,9 +649,9 @@ let driverRaceSort = { key: "finished_at", direction: "desc" };
 let driverTrackSort = { key: "points", direction: "desc" };
 let driverRacePage = 1;
 let driverTrackPage = 1;
-let leaderboardSort = { key: null, direction: null };
-let bestlapsSort = { key: null, direction: null };
-let safetySort = { key: null, direction: null };
+let leaderboardSort = initialHomeStatsState.sorts.leaderboard;
+let bestlapsSort = initialHomeStatsState.sorts.bestlaps;
+let safetySort = initialHomeStatsState.sorts.safety;
 let carsSort = { key: "wins", direction: "desc" };
 let onlineData = [];
 let hourlyAnnouncementData = null;
@@ -2188,31 +2172,6 @@ Object.assign(translations.ru, {
 });
 
 currentLang = resolveInitialLanguage();
-
-const leaderboardColumns = [
-  { key: "rank", type: "number", className: "rank-column" },
-  { key: "driver", type: "string", className: "driver-column" },
-  { key: "elo", type: "number", className: "elo-column" },
-  { key: "safety_rating", type: "number", className: "sr-column" },
-  { key: "points", type: "number", className: "points-column" },
-  { key: "wins", type: "number", className: "wins-column" },
-  { key: "podiums", type: "number", className: "podiums-column" },
-  { key: "races", type: "number", className: "races-column" },
-  { key: "average_finish", type: "number", className: "avg-finish-column" },
-  { key: "best_lap", type: "time", className: "best-lap-column" },
-  { key: "best_lap_car_name", type: "string", className: "car-column" }
-];
-
-const bestlapsColumns = [
-  { key: "rank", type: "number" },
-  { key: "driver", type: "string" },
-  { key: "elo", type: "number" },
-  { key: "safety_rating", type: "number" },
-  { key: "best_lap", type: "time" },
-  { key: "car_name", type: "string" },
-  { key: "session_type", type: "string" },
-  { key: "updated_at", type: "string" }
-];
 
 const racesColumns = [
   { key: "finished_at", type: "string" },
