@@ -26,6 +26,20 @@ export function createStorage(namespace, backend, now = () => Date.now()) {
     },
     remove(key) {
       try { backend.removeItem(keyFor(key)); return true; } catch { return false; }
+    },
+    migrateLegacy(key, legacyKey, transform = value => value) {
+      try {
+        if (backend.getItem(keyFor(key))) return false;
+        const legacyValue = backend.getItem(legacyKey);
+        if (legacyValue == null) return false;
+        const value = transform(legacyValue);
+        if (value === undefined) return false;
+        if (!this.set(key, value)) return false;
+        backend.removeItem(legacyKey);
+        return true;
+      } catch {
+        return false;
+      }
     }
   };
 }

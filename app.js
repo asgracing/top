@@ -34,15 +34,16 @@ const DEFAULT_HOURLY_DATA_BASE_URL = IS_ASG_PUBLIC_SITE
   : window.location.hostname === "asgracing.github.io"
     ? "https://asgracing.github.io/hourly-data"
     : "/hourly-data";
-const TOP_DATA_BASE_URL = pageParams.get("topDataBase") || DEFAULT_TOP_DATA_BASE_URL;
-const TOP_API_BASE_URL = normalizeBaseUrl(pageParams.get("topApiBase"));
+const getDevRuntimeParam = key => IS_LOCAL_DEV_HOST ? pageParams.get(key) : null;
+const TOP_DATA_BASE_URL = getDevRuntimeParam("topDataBase") || DEFAULT_TOP_DATA_BASE_URL;
+const TOP_API_BASE_URL = normalizeBaseUrl(getDevRuntimeParam("topApiBase"));
 const TOP_DATA_V2_BASE_URL = TOP_API_BASE_URL || `${TOP_DATA_BASE_URL}/v2`;
 const TOP_API_ROOT_URL = TOP_API_BASE_URL.replace(/\/top-data\/v2$/i, "");
-const HOURLY_DATA_BASE_URL = normalizeBaseUrl(pageParams.get("hourlyApiBase")) || DEFAULT_HOURLY_DATA_BASE_URL;
+const HOURLY_DATA_BASE_URL = normalizeBaseUrl(getDevRuntimeParam("hourlyApiBase")) || DEFAULT_HOURLY_DATA_BASE_URL;
 const TOP_BANS_DATA_URL = `${TOP_DATA_BASE_URL}/bans.json`;
 const LOCAL_NEWS_DATA_URL = `${SITE_BASE_PATH}news-content/news.json`;
 const topDataV2ManifestUrl = `${TOP_DATA_V2_BASE_URL}/manifest.json`;
-const serverStatusUrl = pageParams.get("serverStatusUrl") || (TOP_API_ROOT_URL ? `${TOP_API_ROOT_URL}/server-status` : `${TOP_DATA_BASE_URL}/server_status.json`);
+const serverStatusUrl = getDevRuntimeParam("serverStatusUrl") || (TOP_API_ROOT_URL ? `${TOP_API_ROOT_URL}/server-status` : `${TOP_DATA_BASE_URL}/server_status.json`);
 const donationsApiUrl = "https://donations.asgracing.workers.dev/recent";
 const hourlyAnnouncementUrl = `${HOURLY_DATA_BASE_URL}/announcement.json`;
 const hourlyScheduleUrl = `${HOURLY_DATA_BASE_URL}/schedule.json`;
@@ -4187,10 +4188,12 @@ function makePublicDriverId(playerId) {
 
 function withCurrentDataParams(href) {
   const url = new URL(href, window.location.href);
-  ["topApiBase", "hourlyApiBase", "serverStatusUrl", "topDataBase", "data"].forEach(key => {
-    const value = pageParams.get(key);
-    if (value) url.searchParams.set(key, value);
-  });
+  if (IS_LOCAL_DEV_HOST) {
+    ["topApiBase", "hourlyApiBase", "serverStatusUrl", "topDataBase", "data"].forEach(key => {
+      const value = pageParams.get(key);
+      if (value) url.searchParams.set(key, value);
+    });
+  }
   return `${url.pathname}${url.search}${url.hash}`;
 }
 

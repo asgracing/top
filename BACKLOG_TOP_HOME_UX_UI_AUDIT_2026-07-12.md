@@ -14,7 +14,7 @@
 | R01 | Готово* | Regression baseline: fixtures, unit/static quality и visual-матрица; автоматический screenshot capture ожидает восстановления browser connection | R00 |
 | R02 | Готово | Единые ошибки и HTTP client с timeout/abort/retry policy; прямые `fetch` устранены | R01 |
 | R03 | Готово | Runtime schemas и нормализация API DTO | R02 |
-| R04 | Следующий | Storage wrapper, TTL, migrations и безопасная runtime-конфигурация | R01 |
+| R04 | В работе | Storage wrapper, TTL, migrations и безопасная runtime-конфигурация | R01 |
 | R05 | Ожидает | Query cache, дедупликация и защита от гонок | R02–R04 |
 | R06 | Ожидает | Feature state и lifecycle `mount/update/destroy` | R01–R05 |
 | R07 | Ожидает | Общий table engine для Rating/Best Laps/Safety | R03, R05, R06 |
@@ -51,6 +51,7 @@
 - 12.07.2026 — R02 завершён: read-only и mutation-запросы переведены на общий client; GET использует ограниченный retry, POST не повторяется; quality gate запрещает возвращение прямых `fetch` в `app.js`.
 - 12.07.2026 — R03 начат: добавлены `SchemaError`, schemas/normalizers для manifest, home payload, leaderboard, bestlaps, safety и paged table metadata; валидация подключена на границе загрузки, baseline расширен до 25 тестов.
 - 12.07.2026 — R03 завершён: добавлены и подключены schemas для server status, hourly announcement, driver profile, news, donations и community likes; baseline расширен до 27 тестов.
+- 12.07.2026 — R04 начат: production перестал принимать и переносить API/data overrides из query params; storage wrapper получил безопасную миграцию legacy-ключей без перезаписи актуальных данных; baseline расширен до 29 тестов.
 
 ### Условия завершения R01
 

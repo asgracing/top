@@ -31,3 +31,23 @@ test("returns fallback for corrupt or unknown records", () => {
   assert.equal(storage.get("broken", "fallback"), "fallback");
   assert.equal(storage.get("old", "fallback"), "fallback");
 });
+test("migrates a legacy key without overwriting a current value", () => {
+  const backend = memoryStorage();
+  backend.setItem("asgLang", "ru");
+  const storage = createStorage("asg", backend);
+  assert.equal(storage.migrateLegacy("lang", "asgLang"), true);
+  assert.equal(storage.get("lang"), "ru");
+  assert.equal(backend.getItem("asgLang"), null);
+  backend.setItem("asgLang", "en");
+  assert.equal(storage.migrateLegacy("lang", "asgLang"), false);
+  assert.equal(storage.get("lang"), "ru");
+});
+test("supports transforms and rejects invalid migrations", () => {
+  const backend = memoryStorage();
+  backend.setItem("volume", "75");
+  const storage = createStorage("asg", backend);
+  assert.equal(storage.migrateLegacy("volume", "volume", value => Number(value) / 100), true);
+  assert.equal(storage.get("volume"), 0.75);
+  backend.setItem("broken", "x");
+  assert.equal(storage.migrateLegacy("broken", "broken", () => undefined), false);
+});
