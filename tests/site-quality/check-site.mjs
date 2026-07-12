@@ -47,6 +47,7 @@ if (!css.includes(".table-sort-button:focus-visible")) failures.push("Sortable t
 if (!css.includes("@media (pointer: coarse)")) failures.push("Coarse-pointer touch targets are missing");
 if (!js.includes('readPageContext(document)')) failures.push("Legacy application is missing the explicit page context");
 if (js.slice(0, 1000).includes("window.location.pathname")) failures.push("Application bootstrap must not infer its page from pathname");
+if (!js.includes('document.readyState === "loading"')) failures.push("Async module bootstrap must handle an already-fired DOMContentLoaded event");
 const budgets = { important: [(css.match(/!important/g) || []).length, 106], silentCatch: [(js.match(/\.catch\(\(\)\s*=>\s*null\)/g) || []).length, 28], inlineStyle: [(html.match(/\bstyle=/g) || []).length, 10], directFetch: [(js.match(/\bfetch\s*\(/g) || []).length, 0], innerHtmlWrite: [(js.match(/\.innerHTML\s*=/g) || []).length, 91] };
 for (const [name, [actual, maximum]] of Object.entries(budgets)) if (actual > maximum) failures.push(`${name} budget exceeded: ${actual} > ${maximum}`);
 if (failures.length) { console.error(failures.join("\n")); process.exitCode = 1; }
