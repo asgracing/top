@@ -4,6 +4,7 @@ import { runWhenDocumentReady } from "./src/runtime/application-bootstrap.js";
 import { createPageOrchestrator } from "./src/runtime/page-orchestrator.js";
 import { HOME_STATS_TABS, bestlapsColumns, createHomeStatsState, leaderboardColumns } from "./src/pages/home/stats-config.js";
 import { processBestlaps, processLeaderboard, processSafety } from "./src/pages/home/stats-model.js";
+import { createHomeDeferredSectionsController } from "./src/pages/home/deferred-sections.js";
 
 const PAGE_CONTEXT = readPageContext(document);
 const IS_RACES_PAGE = PAGE_CONTEXT.page === "races";
@@ -375,7 +376,10 @@ const topLoadState = {
   bans: IS_BANS_PAGE
 };
 const topHomeDeferredSections = initialHomeStatsState.deferredSections;
-let topHomeDeferredObserver = null;
+const homeDeferredSectionsController = createHomeDeferredSectionsController({
+  initialState: topHomeDeferredSections,
+  onReveal: () => rerenderUI()
+});
 const TOP_DEV_FLAGS = Object.freeze({
   combinedStatsTabs: true
 });
@@ -595,41 +599,13 @@ function applyInitialTopLoadingState() {
 }
 
 function setupTopHomeDeferredSections() {
-  if (!IS_TOP_HOME_PAGE || topHomeDeferredObserver) return;
-  if (isCombinedStatsTabsExperimentEnabled()) {
-    topHomeDeferredSections.leaderboard = true;
-    topHomeDeferredSections.bestlaps = true;
-    topHomeDeferredSections.safety = true;
-    return;
-  }
-  if (!("IntersectionObserver" in window)) {
-    topHomeDeferredSections.leaderboard = true;
-    topHomeDeferredSections.bestlaps = true;
-    topHomeDeferredSections.safety = true;
-    return;
-  }
-
-  const sectionMap = {
-    championship: "leaderboard",
-    bestlaps: "bestlaps",
-    "worst-safety": "safety"
-  };
-
-  topHomeDeferredObserver = new IntersectionObserver((entries) => {
-    entries.forEach((entry) => {
-      if (!entry.isIntersecting) return;
-      const key = sectionMap[entry.target.id];
-      if (!key || topHomeDeferredSections[key]) return;
-      topHomeDeferredSections[key] = true;
-      topHomeDeferredObserver?.unobserve(entry.target);
-      rerenderUI();
-    });
-  }, { rootMargin: "240px 0px" });
-
-  Object.keys(sectionMap).forEach((sectionId) => {
-    const element = document.getElementById(sectionId);
-    if (element) topHomeDeferredObserver.observe(element);
+  homeDeferredSectionsController.setup({
+    isHome: IS_TOP_HOME_PAGE,
+    tabsEnabled: isCombinedStatsTabsExperimentEnabled(),
+    windowRef: window,
+    documentRef: document
   });
+  appLifecycle?.add(() => homeDeferredSectionsController.destroy());
 }
 let racesArchiveSummary = null;
 let funStatsApiData = null;
