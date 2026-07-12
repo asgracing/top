@@ -6205,6 +6205,108 @@ body.modal-open {
   line-height: 1.1;
 }
 
+#leaderboard-table { overflow-x: auto; }
+
+#leaderboard-table .leaderboard-stats-table {
+  width: 100%;
+  min-width: 1180px;
+  table-layout: fixed;
+}
+
+#leaderboard-table .rank-column { width: 62px; }
+#leaderboard-table .driver-column { width: 18%; }
+#leaderboard-table .elo-column { width: 106px; }
+#leaderboard-table .sr-column { width: 88px; }
+#leaderboard-table .points-column { width: 76px; }
+#leaderboard-table .wins-column { width: 82px; }
+#leaderboard-table .podiums-column { width: 88px; }
+#leaderboard-table .races-column { width: 76px; }
+#leaderboard-table .avg-finish-column { width: 112px; }
+#leaderboard-table .best-lap-column { width: 128px; }
+#leaderboard-table .car-column { width: 16%; }
+
+#leaderboard-table th,
+#leaderboard-table td {
+  height: 52px;
+  box-sizing: border-box;
+}
+
+#leaderboard-table th {
+  padding-left: 7px;
+  padding-right: 7px;
+  white-space: nowrap;
+}
+
+#leaderboard-table td.numeric-cell {
+  padding-left: 7px;
+  padding-right: 7px;
+  text-align: center;
+  white-space: nowrap;
+  font-variant-numeric: tabular-nums;
+}
+
+#leaderboard-table td.rank-column {
+  padding-left: 5px;
+  padding-right: 5px;
+}
+
+#leaderboard-table td.rank-column .rank-badge-wrap {
+  width: 100%;
+  min-width: 0;
+  gap: 3px;
+  justify-content: center;
+}
+
+#leaderboard-table td.rank-column .rank-badge {
+  width: 100%;
+  min-width: 0;
+  height: 30px;
+  padding: 0 4px;
+  font-size: 0.76rem;
+  line-height: 1;
+  font-variant-numeric: tabular-nums;
+}
+
+#leaderboard-table .driver-cell-wrapper,
+#leaderboard-table .car-cell-wrapper {
+  padding-left: 12px;
+  padding-right: 12px;
+}
+
+#leaderboard-table .driver-cell,
+#leaderboard-table .driver-name-wrap { min-width: 0; }
+
+#leaderboard-table .driver-name-wrap { gap: 2px; }
+
+#leaderboard-table .driver-name,
+#leaderboard-table .car-cell {
+  min-width: 0;
+  line-height: 1.15;
+  display: -webkit-box;
+  overflow: hidden;
+  -webkit-box-orient: vertical;
+  -webkit-line-clamp: 2;
+  word-break: normal;
+  overflow-wrap: normal;
+}
+
+#leaderboard-table .driver-team {
+  color: var(--muted);
+  font-size: 12px;
+  line-height: 1;
+  white-space: nowrap;
+}
+
+#leaderboard-table .elo-badge,
+#leaderboard-table .sr-badge {
+  width: fit-content;
+  max-width: 100%;
+  white-space: nowrap;
+}
+
+#leaderboard-table td.elo-column .elo-badge,
+#leaderboard-table td.sr-column .sr-badge { margin-inline: auto; }
+
 #bestlaps-table .car-thumb-inline {
   width: 42px;
   height: 28px;

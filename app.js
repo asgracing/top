@@ -2098,17 +2098,17 @@ Object.assign(translations.ru, {
 currentLang = resolveInitialLanguage();
 
 const leaderboardColumns = [
-  { key: "rank", type: "number" },
-  { key: "driver", type: "string" },
-  { key: "elo", type: "number" },
-  { key: "safety_rating", type: "number" },
-  { key: "points", type: "number" },
-  { key: "wins", type: "number" },
-  { key: "podiums", type: "number" },
-  { key: "races", type: "number" },
-  { key: "average_finish", type: "number" },
-  { key: "best_lap", type: "time" },
-  { key: "best_lap_car_name", type: "string" }
+  { key: "rank", type: "number", className: "rank-column" },
+  { key: "driver", type: "string", className: "driver-column" },
+  { key: "elo", type: "number", className: "elo-column" },
+  { key: "safety_rating", type: "number", className: "sr-column" },
+  { key: "points", type: "number", className: "points-column" },
+  { key: "wins", type: "number", className: "wins-column" },
+  { key: "podiums", type: "number", className: "podiums-column" },
+  { key: "races", type: "number", className: "races-column" },
+  { key: "average_finish", type: "number", className: "avg-finish-column" },
+  { key: "best_lap", type: "time", className: "best-lap-column" },
+  { key: "best_lap_car_name", type: "string", className: "car-column" }
 ];
 
 const bestlapsColumns = [
@@ -4946,7 +4946,7 @@ function bindSortableHeaders(selector, sortState, onSort) {
 
 function renderSortableHeaders(columns, labels, sortState) {
   return columns.map((col, index) => `
-    <th class="${col.sortable === false ? "" : "sortable"} ${col.sortable === false ? "" : getSortClass(sortState, col.key)}" ${col.sortable === false ? "" : `data-sort-key="${escapeHtml(col.key)}" tabindex="0" role="button" aria-sort="${getAriaSort(sortState, col.key)}"`}>
+    <th class="${escapeHtml(col.className || "")} ${col.sortable === false ? "" : "sortable"} ${col.sortable === false ? "" : getSortClass(sortState, col.key)}" ${col.sortable === false ? "" : `data-sort-key="${escapeHtml(col.key)}" tabindex="0" role="button" aria-sort="${getAriaSort(sortState, col.key)}"`}>
       ${escapeHtml(Array.isArray(labels) ? labels[index] : col.label ?? col.key)}
     </th>
   `).join("");
@@ -7166,10 +7166,10 @@ function renderTrendBadge(change, metric, { compact = false } = {}) {
   `;
 }
 
-function renderRankBadgeWithTrend(rank, change) {
+function renderRankBadgeWithTrend(rank, change, { showHash = true } = {}) {
   return `
     <span class="rank-badge-wrap">
-      <span class="rank-badge rank-${escapeHtml(rank)}">#${escapeHtml(rank)}</span>
+      <span class="rank-badge rank-${escapeHtml(rank)}">${showHash ? "#" : ""}${escapeHtml(rank)}</span>
       ${renderTrendBadge(change, "championship_rank", { compact: true })}
     </span>
   `;
@@ -8140,30 +8140,33 @@ function renderLeaderboardTablePage() {
 
   const rows = result.items.map(row => `
     <tr ${buildDriverPreviewRowAttributes(row)}>
-      <td>${renderRankBadgeWithTrend(row.rank, getChampionshipRankChange(row))}</td>
-      <td>
+      <td class="rank-column numeric-cell">${renderRankBadgeWithTrend(row.rank, getChampionshipRankChange(row), { showHash: false })}</td>
+      <td class="driver-column driver-cell-wrapper">
         <div class="driver-cell">
           <div class="driver-avatar">${escapeHtml(initials(row.driver))}</div>
           <div class="driver-name-wrap">
-            <div class="driver-name">${renderDriverLink(row.driver, row.public_id, "driver-link", row.player_id)}</div>
+            ${renderLeaderboardDriver(row)}
             ${renderDriverNameMeta(row)}
           </div>
         </div>
       </td>
-      <td>${renderEloCell(row)}</td>
-      <td>${renderSafetyCell(row)}</td>
-      <td>${escapeHtml(row.points ?? 0)}</td>
-      <td>${escapeHtml(row.wins ?? 0)}</td>
-      <td>${escapeHtml(row.podiums ?? 0)}</td>
-      <td>${escapeHtml(row.races ?? 0)}</td>
-      <td>${escapeHtml(row.average_finish ?? "-")}</td>
-      <td>${escapeHtml(row.best_lap ?? "-")}</td>
-      <td>${renderCarOrBanned(row)}</td>
+      <td class="elo-column numeric-cell">${renderEloCell(row)}</td>
+      <td class="sr-column numeric-cell">${renderSafetyCell(row)}</td>
+      <td class="points-column numeric-cell">${escapeHtml(row.points ?? 0)}</td>
+      <td class="wins-column numeric-cell">${escapeHtml(row.wins ?? 0)}</td>
+      <td class="podiums-column numeric-cell">${escapeHtml(row.podiums ?? 0)}</td>
+      <td class="races-column numeric-cell">${escapeHtml(row.races ?? 0)}</td>
+      <td class="avg-finish-column numeric-cell">${escapeHtml(row.average_finish ?? "-")}</td>
+      <td class="best-lap-column numeric-cell">${escapeHtml(row.best_lap ?? "-")}</td>
+      <td class="car-column car-cell-wrapper"><div class="car-cell">${renderCarOrBanned(row)}</div></td>
     </tr>
   `).join("");
 
   tableEl.innerHTML = `
-    <table>
+    <table class="stats-table leaderboard-stats-table">
+      <colgroup>
+        ${leaderboardColumns.map(col => `<col class="${escapeHtml(col.className || "")}">`).join("")}
+      </colgroup>
       <thead>
         <tr>${renderLeaderboardHeaders()}</tr>
       </thead>
@@ -10996,6 +10999,18 @@ function setBackgroundVideoSoundAvailability(supported) {
     backgroundVideoSoundState.enabled = false;
   }
   syncBackgroundVideoSoundState();
+}
+
+function splitDriverTeamTag(name) {
+  const value = String(name || "-").trim();
+  const match = value.match(/^(.*?)(\s*\[[^\]]+\])$/);
+  if (!match || !match[1].trim()) return { name: value, team: "" };
+  return { name: match[1].trim(), team: match[2].trim() };
+}
+
+function renderLeaderboardDriver(row) {
+  const parts = splitDriverTeamTag(row?.driver);
+  return `<div class="driver-name">${renderDriverLink(parts.name, row?.public_id, "driver-link", row?.player_id)}</div>${parts.team ? `<span class="driver-team">${escapeHtml(parts.team)}</span>` : ""}`;
 }
 
 function readBackgroundVideoOptions(video) {
