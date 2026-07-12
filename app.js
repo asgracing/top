@@ -7182,10 +7182,41 @@ function openDriverPreviewFromRowElement(rowEl, trigger) {
 function bindDriverPreviewTableInteractions(tableRoot) {
   if (!tableRoot || tableRoot.dataset.driverPreviewBound === "true") return;
 
+  let pointerStart = null;
+  let suppressedClick = null;
+
+  tableRoot.addEventListener("pointerdown", (event) => {
+    if (!event.isPrimary || event.button !== 0) return;
+    const row = getDriverPreviewTriggerRow(event.target, tableRoot);
+    pointerStart = row ? { row, x: event.clientX, y: event.clientY } : null;
+  }, { passive: true });
+
+  tableRoot.addEventListener("pointerup", (event) => {
+    if (!pointerStart || pointerStart.row !== getDriverPreviewTriggerRow(event.target, tableRoot)) {
+      pointerStart = null;
+      return;
+    }
+    const distance = Math.hypot(event.clientX - pointerStart.x, event.clientY - pointerStart.y);
+    suppressedClick = distance > 10
+      ? { row: pointerStart.row, until: performance.now() + 500 }
+      : null;
+    pointerStart = null;
+  }, { passive: true });
+
+  tableRoot.addEventListener("pointercancel", () => {
+    pointerStart = null;
+    suppressedClick = null;
+  }, { passive: true });
+
   tableRoot.addEventListener("click", (event) => {
     if (shouldIgnoreDriverPreviewTrigger(event.target)) return;
     const row = getDriverPreviewTriggerRow(event.target, tableRoot);
     if (!row) return;
+    if (row === suppressedClick?.row && performance.now() <= suppressedClick.until) {
+      suppressedClick = null;
+      return;
+    }
+    suppressedClick = null;
     openDriverPreviewFromRowElement(row, row);
   });
 

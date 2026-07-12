@@ -6341,6 +6341,38 @@ th.sortable::after { content: none; }
 th.sort-asc .table-sort-button .sort-icon { color: var(--accent-2); }
 th.sort-desc .table-sort-button .sort-icon { color: var(--accent); }
 
+@media (pointer: coarse) {
+  .table-sort-button,
+  .elo-badge,
+  .sr-badge,
+  .driver-link {
+    position: relative;
+    touch-action: manipulation;
+  }
+
+  .table-sort-button::before,
+  .elo-badge::before,
+  .sr-badge::before,
+  .driver-link::before {
+    content: "";
+    position: absolute;
+    inset: -9px -6px;
+    min-width: 44px;
+    min-height: 44px;
+  }
+
+  .modal-close,
+  .page-btn {
+    min-width: 44px;
+    min-height: 44px;
+    touch-action: manipulation;
+  }
+
+  tbody tr.is-driver-preview-row:hover {
+    transform: none;
+  }
+}
+
 #bestlaps-table .car-thumb-inline {
   width: 42px;
   height: 28px;
