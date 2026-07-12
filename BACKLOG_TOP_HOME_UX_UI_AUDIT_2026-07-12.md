@@ -4,6 +4,54 @@
 Область: `index.html`, `styles.css`, `app.js`, главная страница `/top`  
 Ветка на момент аудита: `feature/driver-stats-table-layout`
 
+## Исполняемая дорожная карта рефакторинга
+
+Рабочая ветка: `refactor/top-home-backlog-2026-07-12`. Каждый шаг выполняется отдельным атомарным коммитом. Переход к следующему шагу разрешён только после прохождения `npm run verify`, проверки `git diff --check` и обновления статуса ниже.
+
+| Шаг | Статус | Результат | Зависит от |
+|---|---|---|---|
+| R00 | Готово | Backlog и исходные метрики зафиксированы | — |
+| R01 | В работе | Полный regression baseline: fixtures, unit, DOM/static quality, browser/visual каркас | R00 |
+| R02 | Ожидает | Единые ошибки и HTTP client с timeout/abort/retry policy | R01 |
+| R03 | Ожидает | Runtime schemas и нормализация API DTO | R02 |
+| R04 | Ожидает | Storage wrapper, TTL, migrations и безопасная runtime-конфигурация | R01 |
+| R05 | Ожидает | Query cache, дедупликация и защита от гонок | R02–R04 |
+| R06 | Ожидает | Feature state и lifecycle `mount/update/destroy` | R01–R05 |
+| R07 | Ожидает | Общий table engine для Rating/Best Laps/Safety | R03, R05, R06 |
+| R08 | Ожидает | Безопасный DOM renderer и сокращение `innerHTML` | R01, R06 |
+| R09 | Ожидает | Доступные sortable headers, modals, focus и touch interactions | R07, R08 |
+| R10 | Ожидает | Декомпозиция `app.js` и отдельные page entrypoints | R02–R09 |
+| R11 | Ожидает | CSS tokens/layers/components, z-index и breakpoint cleanup | R01 |
+| R12 | Ожидает | Hero/support/sticky/loading UI cleanup | R09, R11 |
+| R13 | Ожидает | Responsive, reduced-motion, localization и full accessibility QA | R09, R12 |
+| R14 | Ожидает | Code splitting, media optimization и performance budgets | R10–R13 |
+| R15 | Ожидает | Проверяемый `dist`, CI quality gate и deployment smoke | R01–R14 |
+| R16 | Ожидает | Полный regression, документация, PR и план безопасного rollout | R15 |
+
+### Протокол каждого шага
+
+1. Зафиксировать baseline и конкретные acceptance criteria.
+2. Изменять только область текущего шага.
+3. Добавить или обновить тесты до завершения реализации.
+4. Выполнить syntax, unit, quality и доступные browser checks.
+5. Проверить diff на случайные изменения и утечки production-конфигурации.
+6. Сделать отдельный коммит с номером шага.
+7. Обновить таблицу статусов и журнал ниже.
+
+### Журнал выполнения
+
+- 12.07.2026 — R00: backlog сохранён коммитом `8bab3e08`.
+- 12.07.2026 — R01 начат: добавлены `package.json`, `.editorconfig`, quality budgets и первые unit-тесты, коммит `9fb0a020`.
+
+### Условия завершения R01
+
+- unit tests для чистых функций форматирования, URL/config и storage;
+- API fixtures для leaderboard, bestlaps, safety и ошибок;
+- статические проверки duplicate IDs, inline styles, `!important` и silent catches;
+- browser/visual сценарии для 1920, 1440, 1024, 768, 414 и 360 px;
+- документированный способ запуска всех проверок одной командой;
+- исходные budgets не могут ухудшаться.
+
 ## Контекст и границы аудита
 
 Проведён полный статический аудит разметки, стилей и клиентской логики главной страницы, включая навигацию, hero-блок, серверные карточки, поддержку проекта, статистические вкладки и таблицы, информационный раздел, модальные окна и footer. Дополнительно учтён фактический снимок таблицы рейтинга.

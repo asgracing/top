@@ -1,0 +1,11 @@
+{
+  "leaderboard": [
+    {"rank": 12205, "driver": "Javier Breogan.VR. [ASG]", "elo": 945, "safety_rating": null, "points": 0, "wins": 0, "podiums": 0, "races": 24, "average_finish": 18.29, "best_lap": "1:50.847", "best_lap_car_name": "McLaren 720S GT3 Evo"}
+  ],
+  "bestlaps": [
+    {"rank": 1, "driver": "Andrei Soldatenkov [ASG]", "best_lap": "1:47.212", "car_name": "Audi R8 LMS GT3 evo II", "session_type": "R"}
+  ],
+  "safety": [
+    {"rank": 1, "driver": "Kirill Bulgakov [ASG]", "safety_rating": 5.12, "category": "A", "total_invalid_laps": 0, "total_counted_penalties": 0}
+  ]
+}

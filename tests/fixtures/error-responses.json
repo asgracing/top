@@ -1,0 +1,6 @@
+{
+  "http": {"status": 503, "body": {"detail": "temporarily unavailable"}},
+  "invalidJson": "{broken",
+  "invalidLeaderboard": {"leaderboard": "not-an-array"},
+  "empty": {"leaderboard": [], "bestlaps": [], "safety": []}
+}
