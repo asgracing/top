@@ -5019,24 +5019,21 @@ function getAriaSort(sortState, key) {
 
 function bindSortableHeaders(selector, sortState, onSort) {
   document.querySelectorAll(selector).forEach(th => {
-    th.addEventListener("click", () => onSort(th.dataset.sortKey));
-    th.addEventListener("keydown", (event) => {
-      if (event.key === "Enter" || event.key === " ") {
-        event.preventDefault();
-        onSort(th.dataset.sortKey);
-      }
-    });
-    th.setAttribute("aria-sort", getAriaSort(sortState, th.dataset.sortKey));
+    const control = th.querySelector(".table-sort-button[data-sort-key]");
+    if (!control) return;
+    control.addEventListener("click", () => onSort(control.dataset.sortKey));
+    th.setAttribute("aria-sort", getAriaSort(sortState, control.dataset.sortKey));
   });
 }
 
 function renderSortableHeaders(columns, labels, sortState) {
   if (renderStatsTableHeaders) return renderStatsTableHeaders({ columns, labels: Array.isArray(labels) ? labels : columns.map(column => column.label ?? column.key), sortState, escapeText: escapeHtml });
-  return columns.map((col, index) => `
-    <th class="${escapeHtml(col.className || "")} ${col.sortable === false ? "" : "sortable"} ${col.sortable === false ? "" : getSortClass(sortState, col.key)}" ${col.sortable === false ? "" : `data-sort-key="${escapeHtml(col.key)}" tabindex="0" role="button" aria-sort="${getAriaSort(sortState, col.key)}"`}>
-      ${escapeHtml(Array.isArray(labels) ? labels[index] : col.label ?? col.key)}
-    </th>
-  `).join("");
+  return columns.map((col, index) => {
+    const label = escapeHtml(Array.isArray(labels) ? labels[index] : col.label ?? col.key);
+    if (col.sortable === false) return `<th class="${escapeHtml(col.className || "")}">${label}</th>`;
+    const direction = sortState.key === col.key ? (sortState.direction === "asc" ? "↑" : "↓") : "↕";
+    return `<th class="${escapeHtml(col.className || "")} sortable ${getSortClass(sortState, col.key)}" aria-sort="${getAriaSort(sortState, col.key)}"><button class="table-sort-button" type="button" data-sort-key="${escapeHtml(col.key)}"><span>${label}</span><span class="sort-icon" aria-hidden="true">${direction}</span></button></th>`;
+  }).join("");
 }
 
 function bindInteractiveRows(container, selector, onOpen, { ignoreSelector = "a" } = {}) {
@@ -9861,11 +9858,7 @@ function renderCarsTable() {
     return;
   }
 
-  const headers = t("carsCols").map((label, index) => `
-    <th class="sortable ${getSortClass(carsSort, carsColumns[index].key)}" data-sort-key="${carsColumns[index].key}" tabindex="0" role="button" aria-sort="${getAriaSort(carsSort, carsColumns[index].key)}">
-      ${escapeHtml(label)}
-    </th>
-  `).join("");
+  const headers = renderSortableHeaders(carsColumns, t("carsCols"), carsSort);
 
   const rows = rowsData.map(row => `
     <tr>

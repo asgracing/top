@@ -19,8 +19,8 @@
 | R06 | Готово | Feature state и lifecycle `mount/update/destroy` | R01–R05 |
 | R07 | Готово | Общий table engine для Rating/Best Laps/Safety | R03, R05, R06 |
 | R08 | Готово | Безопасный DOM renderer и сокращение `innerHTML` | R01, R06 |
-| R09 | В работе | Доступные sortable headers, modals, focus и touch interactions | R07, R08 |
-| R10 | Ожидает | Декомпозиция `app.js` и отдельные page entrypoints | R02–R09 |
+| R09 | Готово | Доступные sortable headers, modals, focus и touch interactions | R07, R08 |
+| R10 | Следующий | Декомпозиция `app.js` и отдельные page entrypoints | R02–R09 |
 | R11 | Ожидает | CSS tokens/layers/components, z-index и breakpoint cleanup | R01 |
 | R12 | Ожидает | Hero/support/sticky/loading UI cleanup | R09, R11 |
 | R13 | Ожидает | Responsive, reduced-motion, localization и full accessibility QA | R09, R12 |
@@ -68,6 +68,7 @@
 - 12.07.2026 — R09 начат: сортируемые заголовки Rating, Best Laps и Safety переведены с интерактивных `th` на нативные кнопки с `aria-sort`, видимым keyboard focus и скрытыми от screen reader декоративными стрелками; delegated handler использует стандартную активацию кнопки мышью, Enter и Space. Baseline: 49 тестов.
 - 12.07.2026 — R09: единый modal controller усилен защитой от повторного open/close, корректным scroll lock при нескольких окнах, возвратом фокуса только в существующий trigger и `inert` для фоновой страницы без перезаписи ранее заданного состояния. Девять модалей главной получили `aria-describedby`; автоматическая browser-проверка ожидает восстановления подключения встроенного браузера. Syntax, quality и 49 unit-тестов проходят.
 - 12.07.2026 — R09: touch-взаимодействия таблиц защищены от случайного открытия preview после свайпа порогом перемещения указателя; вложенные ссылки и ELO/SR buttons по-прежнему исключены из row activation. Для coarse pointer добавлены невидимые зоны нажатия не менее 44×44 px у сортировки, badges и ссылок без увеличения самих badges; modal close и pagination получили фактический минимум 44×44 px.
+- 12.07.2026 — R09 завершён: оставшиеся Cars и driver-detail sortable headers переведены с `th role="button"` на общий native-button pattern. Quality gate теперь проверяет девять dialog contracts, существование `aria-labelledby`/`aria-describedby`, запрет интерактивных `th`, focus style сортировки и coarse-pointer rules. `npm run verify`, 49 unit-тестов и `git diff --check` проходят; интерактивная browser-проверка остаётся частью итоговой regression-матрицы R16 из-за недоступного подключения браузера.
 
 ### Условия завершения R01
 
