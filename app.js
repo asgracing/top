@@ -10,9 +10,13 @@ const httpClientModulePromise = import("./src/shared/http-client.js");
 const dataSchemaModulePromise = import("./src/shared/data-schema.js");
 const storageModulePromise = import("./src/shared/storage.js");
 const queryCacheModulePromise = import("./src/shared/query-cache.js");
+const featureStoreModulePromise = import("./src/shared/feature-store.js");
+const lifecycleModulePromise = import("./src/shared/lifecycle.js");
 let appStorage = null;
 let jsonQueryCache = null;
 let tableRequestGuard = null;
+let statsStore = null;
+let appLifecycle = null;
 const tableRequestControllers = new Map();
 const requestJson = async (url, options = {}) => {
   const { createHttpClient } = await httpClientModulePromise;
@@ -132,6 +136,18 @@ async function initializeQueryRuntime() {
   const { createQueryCache, createLatestRequestGuard } = await queryCacheModulePromise;
   jsonQueryCache ||= createQueryCache({ maxEntries: 80 });
   tableRequestGuard ||= createLatestRequestGuard();
+}
+
+async function initializeFeatureRuntime() {
+  const [{ createFeatureStore, createTableState, tablesReducer }, { createLifecycle }] = await Promise.all([featureStoreModulePromise, lifecycleModulePromise]);
+  appLifecycle ||= createLifecycle();
+  if (statsStore) return;
+  statsStore = createFeatureStore(createTableState(["leaderboard", "bestlaps", "safety"], PAGE_SIZE), tablesReducer);
+  appLifecycle.add(statsStore.subscribe(state => {
+    leaderboardPage = state.leaderboard.page; leaderboardSearch = state.leaderboard.search; leaderboardSort = state.leaderboard.sort;
+    bestlapsPage = state.bestlaps.page; bestlapsSearch = state.bestlaps.search; bestlapsSort = state.bestlaps.sort;
+    safetyPage = state.safety.page; safetySearch = state.safety.search; safetySort = state.safety.sort;
+  }));
 }
 
 async function invalidateRuntimeQueries(prefix = "json:") {
@@ -8635,8 +8651,7 @@ function bindSearchInputs() {
   const bestlapsInput = document.getElementById("bestlaps-search");
   const safetyInput = document.getElementById("safety-search");
   const handleLeaderboardInput = debounce(async (value) => {
-    leaderboardSearch = value || "";
-    leaderboardPage = 1;
+    statsStore?.dispatch({ type: "table/search", table: "leaderboard", value });
     if (isServerPagedTopDataV2Table("leaderboard")) {
       await loadServerPagedTopDataV2Table("leaderboard", leaderboardPage).catch(() => null);
     } else if (value) {
@@ -8645,8 +8660,7 @@ function bindSearchInputs() {
     renderLeaderboardTablePage();
   });
   const handleBestlapsInput = debounce(async (value) => {
-    bestlapsSearch = value || "";
-    bestlapsPage = 1;
+    statsStore?.dispatch({ type: "table/search", table: "bestlaps", value });
     if (isServerPagedTopDataV2Table("bestlaps")) {
       await loadServerPagedTopDataV2Table("bestlaps", bestlapsPage).catch(() => null);
     } else if (value) {
@@ -8656,8 +8670,7 @@ function bindSearchInputs() {
   });
   const handleSafetyInput = debounce(async (value) => {
     if (value) await loadFullTopDataV2Table("safety").catch(() => null);
-    safetySearch = value || "";
-    safetyPage = 1;
+    statsStore?.dispatch({ type: "table/search", table: "safety", value });
     renderSafetyTablePage();
   });
 
@@ -11562,6 +11575,8 @@ function runInitStep(stepName, action) {
 
 async function init() {
   await initializeAppStorage().catch(error => console.warn("Preference storage is unavailable.", error));
+  await initializeFeatureRuntime();
+  appLifecycle.listen(window, "pagehide", () => appLifecycle.destroy(), { once: true });
   document.body.classList.remove("background-audio-focus");
   applyInitialTopLoadingState();
   setupTopHomeDeferredSections();
