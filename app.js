@@ -19,6 +19,8 @@ let tableRequestGuard = null;
 let statsStore = null;
 let appLifecycle = null;
 let renderStatsTableShell = null;
+let renderStatsTableHeaders = null;
+let renderStatsTableState = null;
 const tableRequestControllers = new Map();
 const requestJson = async (url, options = {}) => {
   const { createHttpClient } = await httpClientModulePromise;
@@ -141,8 +143,10 @@ async function initializeQueryRuntime() {
 }
 
 async function initializeFeatureRuntime() {
-  const [{ createFeatureStore, createTableState, tablesReducer }, { createLifecycle }, { renderTableShell }] = await Promise.all([featureStoreModulePromise, lifecycleModulePromise, tableEngineModulePromise]);
+  const [{ createFeatureStore, createTableState, tablesReducer }, { createLifecycle }, { renderTableShell, renderSortableHeaders: renderHeaders, renderTableState }] = await Promise.all([featureStoreModulePromise, lifecycleModulePromise, tableEngineModulePromise]);
   renderStatsTableShell = renderTableShell;
+  renderStatsTableHeaders = renderHeaders;
+  renderStatsTableState = renderTableState;
   appLifecycle ||= createLifecycle();
   if (statsStore) return;
   statsStore = createFeatureStore(createTableState(["leaderboard", "bestlaps", "safety"], PAGE_SIZE), tablesReducer);
@@ -5020,6 +5024,7 @@ function bindSortableHeaders(selector, sortState, onSort) {
 }
 
 function renderSortableHeaders(columns, labels, sortState) {
+  if (renderStatsTableHeaders) return renderStatsTableHeaders({ columns, labels: Array.isArray(labels) ? labels : columns.map(column => column.label ?? column.key), sortState, escapeText: escapeHtml });
   return columns.map((col, index) => `
     <th class="${escapeHtml(col.className || "")} ${col.sortable === false ? "" : "sortable"} ${col.sortable === false ? "" : getSortClass(sortState, col.key)}" ${col.sortable === false ? "" : `data-sort-key="${escapeHtml(col.key)}" tabindex="0" role="button" aria-sort="${getAriaSort(sortState, col.key)}"`}>
       ${escapeHtml(Array.isArray(labels) ? labels[index] : col.label ?? col.key)}
@@ -8242,7 +8247,7 @@ function renderLeaderboardTablePage() {
   if (!tableEl || !wrapEl) return;
 
   if (topLoadState.home && !leaderboardData.length) {
-    tableEl.innerHTML = renderLoadingMarkup(t("loadingLeaderboard"));
+    tableEl.innerHTML = renderStatsTableState({ kind: "loading", message: escapeHtml(t("loadingLeaderboard")) });
     wrapEl.style.display = "none";
     return;
   }
@@ -8252,7 +8257,7 @@ function renderLeaderboardTablePage() {
   statsStore?.dispatch({ type: "table/page", table: "leaderboard", page: result.page });
 
   if (!result.totalItems) {
-    tableEl.innerHTML = `<div class="empty-box">${escapeHtml(leaderboardSearch ? t("emptySearch") : t("emptyLeaderboard"))}</div>`;
+    tableEl.innerHTML = renderStatsTableState({ kind: "empty", message: escapeHtml(leaderboardSearch ? t("emptySearch") : t("emptyLeaderboard")) });
     wrapEl.style.display = "none";
     return;
   }
@@ -8316,7 +8321,7 @@ function renderBestLapsTablePage() {
   if (!tableEl || !wrapEl) return;
 
   if (topLoadState.home && !bestlapsData.length) {
-    tableEl.innerHTML = renderLoadingMarkup(t("loadingBestLaps"));
+    tableEl.innerHTML = renderStatsTableState({ kind: "loading", message: escapeHtml(t("loadingBestLaps")) });
     wrapEl.style.display = "none";
     return;
   }
@@ -8326,7 +8331,7 @@ function renderBestLapsTablePage() {
   statsStore?.dispatch({ type: "table/page", table: "bestlaps", page: result.page });
 
   if (!result.totalItems) {
-    tableEl.innerHTML = `<div class="empty-box">${escapeHtml(bestlapsSearch ? t("emptySearch") : t("emptyBestLaps"))}</div>`;
+    tableEl.innerHTML = renderStatsTableState({ kind: "empty", message: escapeHtml(bestlapsSearch ? t("emptySearch") : t("emptyBestLaps")) });
     wrapEl.style.display = "none";
     return;
   }
@@ -8413,7 +8418,7 @@ function renderSafetyTablePage() {
   if (!tableEl || !wrapEl) return;
 
   if (topLoadState.home && !safetyData.length) {
-    tableEl.innerHTML = renderLoadingMarkup(t("loadingSafety"));
+    tableEl.innerHTML = renderStatsTableState({ kind: "loading", message: escapeHtml(t("loadingSafety")) });
     wrapEl.style.display = "none";
     return;
   }
@@ -8422,7 +8427,7 @@ function renderSafetyTablePage() {
   statsStore?.dispatch({ type: "table/page", table: "safety", page: result.page });
 
   if (!result.totalItems) {
-    tableEl.innerHTML = `<div class="empty-box">${escapeHtml(safetySearch ? t("emptySearch") : t("emptySafety"))}</div>`;
+    tableEl.innerHTML = renderStatsTableState({ kind: "empty", message: escapeHtml(safetySearch ? t("emptySearch") : t("emptySafety")) });
     wrapEl.style.display = "none";
     return;
   }
