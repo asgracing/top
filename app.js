@@ -9,7 +9,10 @@ const SITE_BASE_PATH = (IS_RACES_PAGE || IS_DRIVER_PAGE || IS_CARS_PAGE || IS_FU
 const httpClientModulePromise = import("./src/shared/http-client.js");
 const dataSchemaModulePromise = import("./src/shared/data-schema.js");
 const storageModulePromise = import("./src/shared/storage.js");
+const queryCacheModulePromise = import("./src/shared/query-cache.js");
 let appStorage = null;
+let jsonQueryCache = null;
+let tableRequestGuard = null;
 const requestJson = async (url, options = {}) => {
   const { createHttpClient } = await httpClientModulePromise;
   requestJson.client ||= createHttpClient({ defaultTimeoutMs: 12000 });
@@ -122,6 +125,12 @@ async function initializeAppStorage() {
     try { const parsed = JSON.parse(value); return parsed?.items && typeof parsed.items === "object" ? normalizeHourlyVoteStateItems(parsed.items) : undefined; } catch { return undefined; }
   });
   currentLang = appStorage.get("language", currentLang);
+}
+
+async function initializeQueryRuntime() {
+  const { createQueryCache, createLatestRequestGuard } = await queryCacheModulePromise;
+  jsonQueryCache ||= createQueryCache({ maxEntries: 80 });
+  tableRequestGuard ||= createLatestRequestGuard();
 }
 
 function getLegalUrls() {
@@ -6272,7 +6281,9 @@ function getFastestLapMs(items = [], key = "best_lap_ms") {
 }
 
 async function loadJson(url) {
-  return requestJson(url, { cache: "default", retries: 1 });
+  await initializeQueryRuntime();
+  const key = `json:${String(url)}`;
+  return jsonQueryCache.query(key, () => requestJson(url, { cache: "default", retries: 1 }), { ttlMs: 15000 });
 }
 
 function topDataV2Path(path) {
@@ -6482,7 +6493,10 @@ async function loadServerPagedTopDataV2Table(tableName, page) {
   }
   if (topDataV2Version) url.searchParams.set("v", topDataV2Version);
 
+  await initializeQueryRuntime();
+  const requestToken = tableRequestGuard.next(tableName);
   const rawPayload = await loadJson(url.toString());
+  if (!tableRequestGuard.isCurrent(requestToken)) return getServerPagedTableResult(tableName, page);
   const { normalizePagedTablePayload } = await dataSchemaModulePromise;
   const payload = normalizePagedTablePayload(rawPayload, tableName, page, PAGE_SIZE);
   if (tableName === "bestlaps") {
