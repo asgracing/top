@@ -57,6 +57,7 @@
 - 12.07.2026 — R05 начат: добавлены LRU query cache, TTL, concurrent deduplication, stale-while-revalidate и latest-request guard; JSON loader и server-paged tables подключены к новым механизмам, baseline расширен до 34 тестов.
 - 12.07.2026 — R05 завершён: предыдущие table requests отменяются через `AbortController`, JSON loader принимает signal/force, successful mutations инвалидируют JSON cache, добавлена prefix invalidation; baseline расширен до 35 тестов.
 - 12.07.2026 — R06 начат: добавлены immutable feature store/reducer и lifecycle registry; search state трёх статистических таблиц переведён на actions/subscription, pagehide уничтожает owned resources; baseline расширен до 40 тестов.
+- 12.07.2026 — R06: page, sort и request status статистических таблиц переведены на store actions; server-paged loading/ready/error больше не меняются неявно в разрозненных обработчиках.
 
 ### Условия завершения R01
 

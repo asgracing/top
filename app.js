@@ -6523,9 +6523,13 @@ async function loadServerPagedTopDataV2Table(tableName, page) {
   const requestController = new AbortController();
   tableRequestControllers.set(tableName, requestController);
   const requestToken = tableRequestGuard.next(tableName);
+  statsStore?.dispatch({ type: "table/loading", table: tableName });
   let rawPayload;
   try {
     rawPayload = await loadJson(url.toString(), { signal: requestController.signal });
+  } catch (error) {
+    if (tableRequestGuard.isCurrent(requestToken) && error?.kind !== "aborted") statsStore?.dispatch({ type: "table/error", table: tableName, error });
+    throw error;
   } finally {
     if (tableRequestControllers.get(tableName) === requestController) tableRequestControllers.delete(tableName);
   }
@@ -6552,6 +6556,7 @@ async function loadServerPagedTopDataV2Table(tableName, page) {
     signature: getServerPagedTableSignature(tableName, safePage),
     result
   };
+  statsStore?.dispatch({ type: "table/ready", table: tableName });
   return result;
 }
 
@@ -8181,8 +8186,8 @@ function renderBestlapsHeaders() {
 
 function bindLeaderboardSortHandlers() {
   bindSortableHeaders("#leaderboard-table th[data-sort-key]", leaderboardSort, async (key) => {
-    leaderboardSort = cycleSort(leaderboardSort, key);
-    leaderboardPage = 1;
+    const nextSort = cycleSort(leaderboardSort, key);
+    statsStore?.dispatch({ type: "table/sort", table: "leaderboard", ...nextSort });
     if (isServerPagedTopDataV2Table("leaderboard")) {
       await loadServerPagedTopDataV2Table("leaderboard", leaderboardPage).catch(() => null);
     } else {
@@ -8194,8 +8199,8 @@ function bindLeaderboardSortHandlers() {
 
 function bindBestlapsSortHandlers() {
   bindSortableHeaders("#bestlaps-table th[data-sort-key]", bestlapsSort, async (key) => {
-    bestlapsSort = cycleSort(bestlapsSort, key);
-    bestlapsPage = 1;
+    const nextSort = cycleSort(bestlapsSort, key);
+    statsStore?.dispatch({ type: "table/sort", table: "bestlaps", ...nextSort });
     if (isServerPagedTopDataV2Table("bestlaps")) {
       await loadServerPagedTopDataV2Table("bestlaps", bestlapsPage).catch(() => null);
     } else {
@@ -8219,7 +8224,7 @@ function renderLeaderboardTablePage() {
 
   const result = getServerPagedTableResult("leaderboard", leaderboardPage) ||
     getPreviewAwareTablePage("leaderboard", getProcessedLeaderboard(), leaderboardPage, PAGE_SIZE);
-  leaderboardPage = result.page;
+  statsStore?.dispatch({ type: "table/page", table: "leaderboard", page: result.page });
 
   if (!result.totalItems) {
     tableEl.innerHTML = `<div class="empty-box">${escapeHtml(leaderboardSearch ? t("emptySearch") : t("emptyLeaderboard"))}</div>`;
@@ -8282,7 +8287,7 @@ function renderLeaderboardTablePage() {
       } else if (page > Math.ceil(leaderboardData.length / PAGE_SIZE)) {
         await loadFullTopDataV2Table("leaderboard").catch(() => null);
       }
-      leaderboardPage = page;
+      statsStore?.dispatch({ type: "table/page", table: "leaderboard", page });
       renderLeaderboardTablePage();
       scrollTopTargetBelowHeader(isCombinedStatsTabsExperimentEnabled() ? "combined-stats-shell" : "championship");
     }
@@ -8304,7 +8309,7 @@ function renderBestLapsTablePage() {
 
   const result = getServerPagedTableResult("bestlaps", bestlapsPage) ||
     getPreviewAwareTablePage("bestlaps", getProcessedBestlaps(), bestlapsPage, PAGE_SIZE);
-  bestlapsPage = result.page;
+  statsStore?.dispatch({ type: "table/page", table: "bestlaps", page: result.page });
 
   if (!result.totalItems) {
     tableEl.innerHTML = `<div class="empty-box">${escapeHtml(bestlapsSearch ? t("emptySearch") : t("emptyBestLaps"))}</div>`;
@@ -8366,7 +8371,7 @@ function renderBestLapsTablePage() {
       } else if (page > Math.ceil(bestlapsData.length / PAGE_SIZE)) {
         await loadFullTopDataV2Table("bestlaps").catch(() => null);
       }
-      bestlapsPage = page;
+      statsStore?.dispatch({ type: "table/page", table: "bestlaps", page });
       renderBestLapsTablePage();
       scrollTopTargetBelowHeader(isCombinedStatsTabsExperimentEnabled() ? "combined-stats-shell" : "bestlaps");
     }
@@ -8380,8 +8385,8 @@ function renderSafetyHeaders() {
 function bindSafetySortHandlers() {
   bindSortableHeaders("#safety-table th[data-sort-key]", safetySort, async (key) => {
     await loadFullTopDataV2Table("safety").catch(() => null);
-    safetySort = cycleSort(safetySort, key);
-    safetyPage = 1;
+    const nextSort = cycleSort(safetySort, key);
+    statsStore?.dispatch({ type: "table/sort", table: "safety", ...nextSort });
     renderSafetyTablePage();
   });
 }
@@ -8408,7 +8413,7 @@ function renderSafetyTablePage() {
   }
 
   const result = getPreviewAwareTablePage("safety", getProcessedSafety(), safetyPage, PAGE_SIZE);
-  safetyPage = result.page;
+  statsStore?.dispatch({ type: "table/page", table: "safety", page: result.page });
 
   if (!result.totalItems) {
     tableEl.innerHTML = `<div class="empty-box">${escapeHtml(safetySearch ? t("emptySearch") : t("emptySafety"))}</div>`;
@@ -8460,7 +8465,7 @@ function renderSafetyTablePage() {
       if (page > Math.ceil(safetyData.length / PAGE_SIZE)) {
         await loadFullTopDataV2Table("safety").catch(() => null);
       }
-      safetyPage = page;
+      statsStore?.dispatch({ type: "table/page", table: "safety", page });
       renderSafetyTablePage();
       scrollTopTargetBelowHeader(isCombinedStatsTabsExperimentEnabled() ? "combined-stats-shell" : "worst-safety");
     }
