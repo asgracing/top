@@ -28,6 +28,7 @@ export function createQueryCache({ now = () => Date.now(), maxEntries = 100 } = 
   return {
     query,
     invalidate(key) { if (key === undefined) entries.clear(); else entries.delete(key); },
+    invalidatePrefix(prefix) { for (const key of entries.keys()) if (String(key).startsWith(prefix)) entries.delete(key); },
     peek(key) { return entries.get(key)?.value; },
     get size() { return entries.size; }
   };

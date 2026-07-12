@@ -15,8 +15,8 @@
 | R02 | Готово | Единые ошибки и HTTP client с timeout/abort/retry policy; прямые `fetch` устранены | R01 |
 | R03 | Готово | Runtime schemas и нормализация API DTO | R02 |
 | R04 | Готово | Storage wrapper, TTL, migrations и безопасная runtime-конфигурация | R01 |
-| R05 | В работе | Query cache, дедупликация и защита от гонок | R02–R04 |
-| R06 | Ожидает | Feature state и lifecycle `mount/update/destroy` | R01–R05 |
+| R05 | Готово | Query cache, дедупликация и защита от гонок | R02–R04 |
+| R06 | Следующий | Feature state и lifecycle `mount/update/destroy` | R01–R05 |
 | R07 | Ожидает | Общий table engine для Rating/Best Laps/Safety | R03, R05, R06 |
 | R08 | Ожидает | Безопасный DOM renderer и сокращение `innerHTML` | R01, R06 |
 | R09 | Ожидает | Доступные sortable headers, modals, focus и touch interactions | R07, R08 |
@@ -55,6 +55,7 @@
 - 12.07.2026 — R04: shared storage подключён в начале runtime; язык, громкость и разрешение фонового видео мигрируются в versioned namespace `asg.top.v1` и далее читаются/сохраняются через wrapper.
 - 12.07.2026 — R04 завершён: guide, news-read и hourly vote state мигрированы в shared storage; TTL vote cache и межвкладочная синхронизация сохранены, legacy events поддерживаются на переходный период.
 - 12.07.2026 — R05 начат: добавлены LRU query cache, TTL, concurrent deduplication, stale-while-revalidate и latest-request guard; JSON loader и server-paged tables подключены к новым механизмам, baseline расширен до 34 тестов.
+- 12.07.2026 — R05 завершён: предыдущие table requests отменяются через `AbortController`, JSON loader принимает signal/force, successful mutations инвалидируют JSON cache, добавлена prefix invalidation; baseline расширен до 35 тестов.
 
 ### Условия завершения R01
 

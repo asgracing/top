@@ -13,6 +13,7 @@ const queryCacheModulePromise = import("./src/shared/query-cache.js");
 let appStorage = null;
 let jsonQueryCache = null;
 let tableRequestGuard = null;
+const tableRequestControllers = new Map();
 const requestJson = async (url, options = {}) => {
   const { createHttpClient } = await httpClientModulePromise;
   requestJson.client ||= createHttpClient({ defaultTimeoutMs: 12000 });
@@ -131,6 +132,11 @@ async function initializeQueryRuntime() {
   const { createQueryCache, createLatestRequestGuard } = await queryCacheModulePromise;
   jsonQueryCache ||= createQueryCache({ maxEntries: 80 });
   tableRequestGuard ||= createLatestRequestGuard();
+}
+
+async function invalidateRuntimeQueries(prefix = "json:") {
+  await initializeQueryRuntime();
+  jsonQueryCache.invalidatePrefix(prefix);
 }
 
 function getLegalUrls() {
@@ -3321,6 +3327,7 @@ async function submitHourlyHeroVote() {
         voter_id: getHourlyBrowserVoterId()
       })
     });
+      await invalidateRuntimeQueries();
       const nextState = {
         event_id: eventId,
         votes: typeof payload?.votes === "number" ? payload.votes : hourlyVotesCount,
@@ -3356,6 +3363,7 @@ async function submitHourlyHeroUnvote() {
         voter_id: getHourlyBrowserVoterId()
       })
     });
+    await invalidateRuntimeQueries();
     const nextState = {
       event_id: eventId,
       votes: typeof payload?.votes === "number" ? payload.votes : hourlyVotesCount,
@@ -5575,6 +5583,7 @@ async function submitCommunityLike(postId) {
         voter_id: getCommunityBrowserVoterId()
       })
     });
+    await invalidateRuntimeQueries();
     communityLikeStateByPostId[postId] = {
       likes: typeof payload?.likes === "number" ? payload.likes : (state.likes || 0),
       already_liked: Boolean(payload?.already_liked),
@@ -6280,10 +6289,10 @@ function getFastestLapMs(items = [], key = "best_lap_ms") {
   return values.length ? Math.min(...values) : null;
 }
 
-async function loadJson(url) {
+async function loadJson(url, { signal = null, force = false } = {}) {
   await initializeQueryRuntime();
   const key = `json:${String(url)}`;
-  return jsonQueryCache.query(key, () => requestJson(url, { cache: "default", retries: 1 }), { ttlMs: 15000 });
+  return jsonQueryCache.query(key, () => requestJson(url, { cache: "default", retries: 1, signal }), { ttlMs: 15000, force });
 }
 
 function topDataV2Path(path) {
@@ -6494,8 +6503,16 @@ async function loadServerPagedTopDataV2Table(tableName, page) {
   if (topDataV2Version) url.searchParams.set("v", topDataV2Version);
 
   await initializeQueryRuntime();
+  tableRequestControllers.get(tableName)?.abort();
+  const requestController = new AbortController();
+  tableRequestControllers.set(tableName, requestController);
   const requestToken = tableRequestGuard.next(tableName);
-  const rawPayload = await loadJson(url.toString());
+  let rawPayload;
+  try {
+    rawPayload = await loadJson(url.toString(), { signal: requestController.signal });
+  } finally {
+    if (tableRequestControllers.get(tableName) === requestController) tableRequestControllers.delete(tableName);
+  }
   if (!tableRequestGuard.isCurrent(requestToken)) return getServerPagedTableResult(tableName, page);
   const { normalizePagedTablePayload } = await dataSchemaModulePromise;
   const payload = normalizePagedTablePayload(rawPayload, tableName, page, PAGE_SIZE);

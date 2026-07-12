@@ -30,3 +30,9 @@ test("identifies only the latest request token", () => {
   const guard = createLatestRequestGuard(); const first = guard.next("leaderboard"); const second = guard.next("leaderboard");
   assert.equal(guard.isCurrent(first), false); assert.equal(guard.isCurrent(second), true); guard.invalidate("leaderboard"); assert.equal(guard.isCurrent(second), false);
 });
+test("invalidates entries by prefix", async () => {
+  const cache = createQueryCache();
+  await cache.query("json:/votes", async () => 1); await cache.query("json:/news", async () => 2);
+  cache.invalidatePrefix("json:/vote");
+  assert.equal(cache.peek("json:/votes"), undefined); assert.equal(cache.peek("json:/news"), 2);
+});
