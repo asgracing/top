@@ -85,6 +85,7 @@
 - 12.07.2026 — R10: чистая фильтрация Rating/Best Laps/Safety вынесена в `src/pages/home/stats-model.js`; track filter поддерживает `track_code` и `track`, поиск учитывает RU/EN locale, сортировщик передаётся как зависимость без дублирования общего sort engine. Добавлены четыре unit-теста, baseline расширен до 66 тестов.
 - 12.07.2026 — R10: deferred loading controller главной вынесен в `src/pages/home/deferred-sections.js`; section mapping, IntersectionObserver lifecycle, immediate reveal для tabs/no-observer и destroy теперь изолированы от `app.js`. Добавлены три unit-теста, baseline расширен до 69 тестов.
 - 12.07.2026 — R10: DOM-controller вкладок Rating/Best Laps/Safety вынесен в `src/pages/home/stats-tabs-controller.js`; active state, ARIA, panel visibility, перенос table tools и hash-link navigation инкапсулированы, listeners принадлежат `appLifecycle`. Добавлены три unit-теста, baseline расширен до 72 тестов.
+- 12.07.2026 — R10: создан `src/pages/home/index.js`, объединяющий home data, controllers, deferred setup и error fallback в единый feature lifecycle. Page initializer/error registries и controller routing теперь используют объект `homePage`; добавлены три contract-теста, baseline расширен до 75 тестов.
 
 ### Условия завершения R01
 

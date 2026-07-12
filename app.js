@@ -6,6 +6,7 @@ import { HOME_STATS_TABS, bestlapsColumns, createHomeStatsState, leaderboardColu
 import { processBestlaps, processLeaderboard, processSafety } from "./src/pages/home/stats-model.js";
 import { createHomeDeferredSectionsController } from "./src/pages/home/deferred-sections.js";
 import { createHomeStatsTabsController } from "./src/pages/home/stats-tabs-controller.js";
+import { createHomePage } from "./src/pages/home/index.js";
 
 const PAGE_CONTEXT = readPageContext(document);
 const IS_RACES_PAGE = PAGE_CONTEXT.page === "races";
@@ -11524,7 +11525,7 @@ function initializePageControllers() {
   } else if (PAGE_CONTEXT.page === "community") {
     runInitStep("initCommunityLightbox", () => initCommunityLightbox());
   } else if (PAGE_CONTEXT.isHome) {
-    initializeHomeControllers();
+    homePage.mountControllers();
   }
   runInitStep("initEloModal", () => initEloModal());
   runInitStep("initSafetyModal", () => initSafetyModal());
@@ -11634,6 +11635,13 @@ async function initializeRacesPageData() {
   rerenderUI();
 }
 
+const homePage = createHomePage({
+  initializeData: initializeHomeData,
+  initializeControllers: initializeHomeControllers,
+  setupDeferred: setupTopHomeDeferredSections,
+  handleError: handleHomePageInitializationError
+});
+
 const pageDataInitializers = Object.freeze({
   driver: initializeDriverPageData,
   cars: initializeCarsPageData,
@@ -11642,7 +11650,7 @@ const pageDataInitializers = Object.freeze({
   news: initializeNewsPageData,
   bans: initializeBansPageData,
   races: initializeRacesPageData,
-  home: initializeHomeData
+  home: homePage.initialize
 });
 
 function handleDriverPageInitializationError() {
@@ -11693,7 +11701,7 @@ const pageInitializationErrorHandlers = Object.freeze({
   "fun-stats": handleFunStatsPageInitializationError,
   community: () => {},
   news: () => {},
-  home: handleHomePageInitializationError
+  home: homePage.handleError
 });
 
 const pageOrchestrator = createPageOrchestrator({
@@ -11728,7 +11736,7 @@ async function init() {
   initializeWindowLifecycle();
   document.body.classList.remove("background-audio-focus");
   applyInitialTopLoadingState();
-  setupTopHomeDeferredSections();
+  homePage.setupDeferred();
   ensureNewsNotificationsUi();
   rerenderUI();
 
