@@ -11,8 +11,8 @@
 | Шаг | Статус | Результат | Зависит от |
 |---|---|---|---|
 | R00 | Готово | Backlog и исходные метрики зафиксированы | — |
-| R01 | В работе | Полный regression baseline: fixtures, unit, DOM/static quality, browser/visual каркас | R00 |
-| R02 | Ожидает | Единые ошибки и HTTP client с timeout/abort/retry policy | R01 |
+| R01 | Готово* | Regression baseline: fixtures, unit/static quality и visual-матрица; автоматический screenshot capture ожидает восстановления browser connection | R00 |
+| R02 | В работе | Единые ошибки и HTTP client с timeout/abort/retry policy | R01 |
 | R03 | Ожидает | Runtime schemas и нормализация API DTO | R02 |
 | R04 | Ожидает | Storage wrapper, TTL, migrations и безопасная runtime-конфигурация | R01 |
 | R05 | Ожидает | Query cache, дедупликация и защита от гонок | R02–R04 |
@@ -46,6 +46,7 @@
 - 12.07.2026 — R01: добавлены чистые модули и unit-тесты runtime config/URL safety и versioned storage с TTL; baseline расширен до 13 тестов.
 - 12.07.2026 — R01: пользователь подтвердил ручную проверку локальной таблицы рейтинга на `http://127.0.0.1:5500/top/`; визуальных проблем в таблице не обнаружено.
 - 12.07.2026 — R01: Live Server подтверждён (`HTTP 200`), добавлена детерминированная visual-матрица для шести viewport, RU/EN и четырёх data states. Автоматический capture ожидает восстановления подключения встроенного браузера.
+- 12.07.2026 — R02 начат: реализован dependency-free HTTP client с едиными HTTP/network/parse/timeout/aborted errors, GET retry policy и unit-тестами; baseline расширен до 20 тестов.
 
 ### Условия завершения R01
 
