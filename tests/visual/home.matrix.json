@@ -1,0 +1,23 @@
+{
+  "baseUrl": "http://127.0.0.1:5500/top/",
+  "viewports": [
+    {"name": "desktop-fhd", "width": 1920, "height": 1080},
+    {"name": "desktop", "width": 1440, "height": 900},
+    {"name": "tablet-landscape", "width": 1024, "height": 768},
+    {"name": "tablet-portrait", "width": 768, "height": 1024},
+    {"name": "mobile", "width": 414, "height": 896},
+    {"name": "mobile-small", "width": 360, "height": 800}
+  ],
+  "languages": ["ru", "en"],
+  "states": ["loaded", "loading", "empty", "error"],
+  "sections": ["navigation", "hero", "server-status", "stats-rating", "stats-bestlaps", "stats-safety", "rules", "footer"],
+  "assertions": [
+    "document does not overflow horizontally",
+    "fixed widgets do not cover primary content",
+    "interactive controls remain visible and keyboard reachable",
+    "statistics scrolling stays inside the table card",
+    "driver and car values occupy no more than two lines",
+    "modal overlay stays above every non-modal layer",
+    "language switch does not change controls into overlapping states"
+  ]
+}
