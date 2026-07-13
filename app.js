@@ -11,6 +11,7 @@ import { HOME_LOADING_TEXT_IDS, applyHomeTableViewState } from "./src/pages/home
 import { createModalControllerFactory } from "./src/shared/modal-controller.js";
 import { parseTableNumber, sortTableRows } from "./src/shared/table-model.js";
 import { createBansPageView } from "./src/pages/bans/index.js";
+import { countUnreadNews, sortPublishedNews } from "./src/pages/news/feed-model.js";
 
 const PAGE_CONTEXT = readPageContext(document);
 const IS_RACES_PAGE = PAGE_CONTEXT.page === "races";
@@ -5644,19 +5645,18 @@ function normalizeNewsItem(rawItem) {
 }
 
 function getSortedNewsFeed(items = newsFeedData) {
-  return [...items]
-    .filter(Boolean)
-    .filter(isNewsRecordPublished)
-    .filter(item => !isNewsRecordExpired(item))
-    .sort((a, b) => {
-      if (Boolean(a.is_pinned) !== Boolean(b.is_pinned)) return a.is_pinned ? -1 : 1;
-      if ((Number(a.priority) || 0) !== (Number(b.priority) || 0)) return (Number(b.priority) || 0) - (Number(a.priority) || 0);
-      return Date.parse(String(b.published_at || "")) - Date.parse(String(a.published_at || ""));
-    });
+  return sortPublishedNews(items, {
+    isPublished: isNewsRecordPublished,
+    isExpired: isNewsRecordExpired
+  });
 }
 
 function getUnreadNewsCount(items = newsFeedData) {
-  return getSortedNewsFeed(items).filter(item => !isNewsItemRead(item)).length;
+  return countUnreadNews(items, {
+    isPublished: isNewsRecordPublished,
+    isExpired: isNewsRecordExpired,
+    isRead: isNewsItemRead
+  });
 }
 
 async function loadNewsFeed() {

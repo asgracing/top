@@ -51,6 +51,7 @@ if (!js.includes("runWhenDocumentReady(document")) failures.push("Application mu
 if (!js.includes('from "./src/shared/modal-controller.js"') || js.includes("function createModalController({")) failures.push("Modal focus and inert behavior must live outside app.js");
 if (!js.includes('from "./src/shared/table-model.js"') || js.includes("function parseNumeric(") || js.includes("function parseLapTime(")) failures.push("Shared table sorting model must live outside app.js");
 if (!js.includes('from "./src/pages/bans/index.js"') || js.includes("function renderBansTable()") || js.includes("function renderBansSummary()")) failures.push("Bans page rendering must live outside app.js");
+if (!js.includes('from "./src/pages/news/feed-model.js"') || js.includes("return [...items]")) failures.push("News feed sorting model must live outside app.js");
 if (!js.includes("function initializeSharedControls()") || !js.includes("function initializeHomeControllers()") || !js.includes("function initializePageControllers()")) failures.push("Application init must keep shared and page controller initialization separated");
 if (!js.includes("async function initializeHomeData()") || !js.includes("function applyHomeSiteData(data)")) failures.push("Home data loading and application must stay outside the shared init body");
 if (!js.includes("const pageDataInitializers = Object.freeze({") || !js.includes("const pageOrchestrator = createPageOrchestrator({")) failures.push("Page data initialization must use the explicit runtime orchestrator");
