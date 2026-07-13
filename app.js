@@ -1,6 +1,7 @@
 ﻿import { readPageContext } from "./src/runtime/page-context.js";
 
 import { runWhenDocumentReady } from "./src/runtime/application-bootstrap.js";
+import { loadPageFeatures } from "./src/runtime/page-feature-loader.js";
 import { createPageOrchestrator } from "./src/runtime/page-orchestrator.js";
 import { HOME_STATS_TABS, bestlapsColumns, createHomeStatsState, leaderboardColumns } from "./src/pages/home/stats-config.js";
 import { processBestlaps, processLeaderboard, processSafety } from "./src/pages/home/stats-model.js";
@@ -10,24 +11,19 @@ import { createHomePage } from "./src/pages/home/index.js";
 import { HOME_LOADING_TEXT_IDS, applyHomeTableViewState } from "./src/pages/home/view-state-config.js";
 import { createModalControllerFactory } from "./src/shared/modal-controller.js";
 import { parseTableNumber, sortTableRows } from "./src/shared/table-model.js";
-import { createBansPageView } from "./src/pages/bans/index.js";
 import { countUnreadNews, sortPublishedNews } from "./src/pages/news/feed-model.js";
-import { createNewsPageView } from "./src/pages/news/page-view.js";
-import { getCommunityLikesText, getCommunityPostKey, sortCommunityPosts } from "./src/pages/community/feed-model.js";
-import { renderCommunityPostCard } from "./src/pages/community/post-view.js";
-import { createCommunityPageController } from "./src/pages/community/page-controller.js";
-import { CARS_COLUMNS, processCars } from "./src/pages/cars/model.js";
-import { createCarsTableView } from "./src/pages/cars/table-view.js";
-import { createCarsSummaryView } from "./src/pages/cars/summary-view.js";
-import { buildRacesPageState, buildRacesSummary, processRaces } from "./src/pages/races/model.js";
-import { createRacesTableView } from "./src/pages/races/table-view.js";
-import { createRacesSummaryView } from "./src/pages/races/summary-view.js";
-import { getDriverProfileKey, normalizeDriverAveragePace, normalizeDriverBestLaps, selectDriverAveragePace, selectDriverBestLap } from "./src/pages/driver/best-laps-model.js";
-import { renderDriverTrackSelect } from "./src/pages/driver/track-select-view.js";
-import { renderDriverPenaltyList } from "./src/pages/driver/penalty-list-view.js";
-import { buildDriverRaceTableState, buildDriverTrackTableState, DRIVER_RACE_COLUMNS, DRIVER_TRACK_COLUMNS } from "./src/pages/driver/tables-model.js";
 
 const PAGE_CONTEXT = readPageContext(document);
+const PAGE_FEATURES = await loadPageFeatures(PAGE_CONTEXT.page);
+const {
+  buildDriverRaceTableState, buildDriverTrackTableState, DRIVER_RACE_COLUMNS, DRIVER_TRACK_COLUMNS,
+  getDriverProfileKey, normalizeDriverAveragePace, normalizeDriverBestLaps, selectDriverAveragePace, selectDriverBestLap,
+  renderDriverTrackSelect, renderDriverPenaltyList, createBansPageView,
+  CARS_COLUMNS, processCars, createCarsTableView, createCarsSummaryView,
+  getCommunityLikesText, getCommunityPostKey, sortCommunityPosts, renderCommunityPostCard, createCommunityPageController,
+  createNewsPageView,
+  buildRacesPageState, buildRacesSummary, processRaces, createRacesTableView, createRacesSummaryView,
+} = PAGE_FEATURES;
 const IS_RACES_PAGE = PAGE_CONTEXT.page === "races";
 const IS_DRIVER_PAGE = PAGE_CONTEXT.page === "driver";
 const IS_CARS_PAGE = PAGE_CONTEXT.page === "cars";
@@ -5746,24 +5742,29 @@ function ensureNewsNotificationsUi() {
   bindNewsNotificationsModalLinks();
 }
 
-const newsPageView = createNewsPageView({
-  documentRef: document,
-  translate: t,
-  escapeHtml,
-  escapeAttribute,
-  formatDateTime: formatNewsDateTime,
-  getArticleHref: getNewsArticleHref,
-  getListHref: getNewsListHref,
-  renderThumb: renderNewsThumb,
-  markRead: markNewsItemRead,
-  onReadStateChanged: () => {
-    renderNewsBell();
-    renderNewsNotificationsModal();
-  }
-});
+let newsPageView = null;
+
+function getNewsPageView() {
+  newsPageView ||= createNewsPageView({
+    documentRef: document,
+    translate: t,
+    escapeHtml,
+    escapeAttribute,
+    formatDateTime: formatNewsDateTime,
+    getArticleHref: getNewsArticleHref,
+    getListHref: getNewsListHref,
+    renderThumb: renderNewsThumb,
+    markRead: markNewsItemRead,
+    onReadStateChanged: () => {
+      renderNewsBell();
+      renderNewsNotificationsModal();
+    }
+  });
+  return newsPageView;
+}
 
 function renderNewsPage() {
-  newsPageView.render({ items: getSortedNewsFeed(newsFeedData), slug: getRequestedNewsSlug() });
+  getNewsPageView().render({ items: getSortedNewsFeed(newsFeedData), slug: getRequestedNewsSlug() });
 }
 
 function closeNewsNotificationsPopover() {

@@ -1,0 +1,23 @@
+import test from "node:test";
+import assert from "node:assert/strict";
+import { getPageFeaturePaths, loadPageFeatures } from "../../src/runtime/page-feature-loader.js";
+
+test("home loads no child feature modules", async () => {
+  const calls = [];
+  const features = await loadPageFeatures("home", async path => { calls.push(path); return {}; });
+  assert.deepEqual(calls, []);
+  assert.deepEqual(features, {});
+});
+
+test("loads and merges only the selected page modules", async () => {
+  const paths = getPageFeaturePaths("driver");
+  const calls = [];
+  const features = await loadPageFeatures("driver", async path => { calls.push(path); return { [path]: true }; });
+  assert.deepEqual(calls, paths);
+  assert.equal(Object.keys(features).length, paths.length);
+  assert.ok(Object.isFrozen(features));
+});
+
+test("rejects an invalid importer", async () => {
+  await assert.rejects(loadPageFeatures("cars", null), /requires an importer/);
+});

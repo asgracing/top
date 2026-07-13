@@ -2,12 +2,14 @@ import { readFile } from "node:fs/promises";
 import { resolve } from "node:path";
 
 const root = resolve(import.meta.dirname, "../..");
-const [html, css, js] = await Promise.all([
+const [html, css, js, pageFeatureLoader] = await Promise.all([
   readFile(resolve(root, "index.html"), "utf8"),
   readFile(resolve(root, "styles.css"), "utf8"),
-  readFile(resolve(root, "app.js"), "utf8")
+  readFile(resolve(root, "app.js"), "utf8"),
+  readFile(resolve(root, "src/runtime/page-feature-loader.js"), "utf8")
 ]);
 const failures = [];
+const pageFeatureIsLoaded = path => pageFeatureLoader.includes(`"${path}"`);
 const pageEntrypoints = {
   home: ["index.html", "./src/entrypoints/home.js"],
   races: ["races/index.html", "../src/entrypoints/races.js"],
@@ -46,23 +48,24 @@ if (/<th[^>]*\brole="button"/i.test(html) || /<th[^>]*\brole=["']button["']/i.te
 if (!css.includes(".table-sort-button:focus-visible")) failures.push("Sortable table buttons are missing a visible focus style");
 if (!css.includes("@media (pointer: coarse)")) failures.push("Coarse-pointer touch targets are missing");
 if (!js.includes('readPageContext(document)')) failures.push("Legacy application is missing the explicit page context");
+if (!js.includes("await loadPageFeatures(PAGE_CONTEXT.page)") || /from "\.\/src\/pages\/(?:bans|cars|community|driver|races)\//.test(js)) failures.push("Child page features must be loaded only for the active route");
 if (js.slice(0, 1000).includes("window.location.pathname")) failures.push("Application bootstrap must not infer its page from pathname");
 if (!js.includes("runWhenDocumentReady(document")) failures.push("Application must use the tested async document bootstrap");
 if (!js.includes('from "./src/shared/modal-controller.js"') || js.includes("function createModalController({")) failures.push("Modal focus and inert behavior must live outside app.js");
 if (!js.includes('from "./src/shared/table-model.js"') || js.includes("function parseNumeric(") || js.includes("function parseLapTime(")) failures.push("Shared table sorting model must live outside app.js");
-if (!js.includes('from "./src/pages/bans/index.js"') || js.includes("function renderBansTable()") || js.includes("function renderBansSummary()") || js.includes("const bansPageView = createBansPageView")) failures.push("Bans page rendering must live outside app.js and initialize after shared DOM modules");
+if (!pageFeatureIsLoaded("../pages/bans/index.js") || js.includes("function renderBansTable()") || js.includes("function renderBansSummary()") || js.includes("const bansPageView = createBansPageView")) failures.push("Bans page rendering must live outside app.js and initialize after shared DOM modules");
 if (!js.includes('from "./src/pages/news/feed-model.js"') || js.includes("return [...items]")) failures.push("News feed sorting model must live outside app.js");
-if (!js.includes('from "./src/pages/news/page-view.js"') || js.includes("function renderNewsListPage(") || js.includes("function renderNewsDetailPage(")) failures.push("News page rendering must live outside app.js");
-if (!js.includes('from "./src/pages/community/feed-model.js"') || js.includes("const sortedPosts = [...posts].sort")) failures.push("Community feed model must live outside app.js");
-if (!js.includes('from "./src/pages/community/post-view.js"') || js.includes('class="community-feed-card reveal"')) failures.push("Community post rendering must live outside app.js");
-if (!js.includes('from "./src/pages/community/page-controller.js"') || js.includes("function bindCommunityLikeControls()") || js.includes("const communityPageController = createCommunityPageController")) failures.push("Community page lifecycle must use a lazy external controller");
-if (!js.includes('from "./src/pages/cars/model.js"') || js.includes("const carsColumns = [") || js.includes("function filterCars(")) failures.push("Cars table model must live outside app.js");
-if (!js.includes('from "./src/pages/cars/table-view.js"') || js.includes('bindSortableHeaders("#cars-table') || js.includes("const carsTableView = createCarsTableView")) failures.push("Cars table rendering must use a lazy external view");
-if (!js.includes('from "./src/pages/cars/summary-view.js"') || js.includes('document.getElementById("cars-total-count")') || js.includes("const carsSummaryView = createCarsSummaryView")) failures.push("Cars summary must use a lazy external view");
-if (!js.includes('from "./src/pages/races/model.js"') || js.includes("const racesColumns = [") || js.includes("function filterRaces(") || js.includes("const isV2PagedArchive") || js.includes("const winnerCounts = new Map()")) failures.push("Races table, pagination and summary model must live outside app.js");
-if (!js.includes('from "./src/pages/races/table-view.js"') || js.includes('table class="races-table"') || js.includes("const racesTableView = createRacesTableView")) failures.push("Races table rendering must use a lazy external view");
-if (!js.includes('from "./src/pages/races/summary-view.js"') || js.includes('document.getElementById("races-total-count")') || js.includes("const racesSummaryView = createRacesSummaryView")) failures.push("Races summary rendering must use a lazy external view");
-if (!js.includes('from "./src/pages/driver/best-laps-model.js"') || js.includes("item?.best_lap_track ||")) failures.push("Driver best-lap selection model must live outside app.js");
+if (!pageFeatureIsLoaded("../pages/news/page-view.js") || js.includes("function renderNewsListPage(") || js.includes("function renderNewsDetailPage(")) failures.push("News page rendering must live outside app.js");
+if (!pageFeatureIsLoaded("../pages/community/feed-model.js") || js.includes("const sortedPosts = [...posts].sort")) failures.push("Community feed model must live outside app.js");
+if (!pageFeatureIsLoaded("../pages/community/post-view.js") || js.includes('class="community-feed-card reveal"')) failures.push("Community post rendering must live outside app.js");
+if (!pageFeatureIsLoaded("../pages/community/page-controller.js") || js.includes("function bindCommunityLikeControls()") || js.includes("const communityPageController = createCommunityPageController")) failures.push("Community page lifecycle must use a lazy external controller");
+if (!pageFeatureIsLoaded("../pages/cars/model.js") || js.includes("const carsColumns = [") || js.includes("function filterCars(")) failures.push("Cars table model must live outside app.js");
+if (!pageFeatureIsLoaded("../pages/cars/table-view.js") || js.includes('bindSortableHeaders("#cars-table') || js.includes("const carsTableView = createCarsTableView")) failures.push("Cars table rendering must use a lazy external view");
+if (!pageFeatureIsLoaded("../pages/cars/summary-view.js") || js.includes('document.getElementById("cars-total-count")') || js.includes("const carsSummaryView = createCarsSummaryView")) failures.push("Cars summary must use a lazy external view");
+if (!pageFeatureIsLoaded("../pages/races/model.js") || js.includes("const racesColumns = [") || js.includes("function filterRaces(") || js.includes("const isV2PagedArchive") || js.includes("const winnerCounts = new Map()")) failures.push("Races table, pagination and summary model must live outside app.js");
+if (!pageFeatureIsLoaded("../pages/races/table-view.js") || js.includes('table class="races-table"') || js.includes("const racesTableView = createRacesTableView")) failures.push("Races table rendering must use a lazy external view");
+if (!pageFeatureIsLoaded("../pages/races/summary-view.js") || js.includes('document.getElementById("races-total-count")') || js.includes("const racesSummaryView = createRacesSummaryView")) failures.push("Races summary rendering must use a lazy external view");
+if (!pageFeatureIsLoaded("../pages/driver/best-laps-model.js") || js.includes("item?.best_lap_track ||")) failures.push("Driver best-lap selection model must live outside app.js");
 if (js.includes("Array.isArray(profile?.average_pace_by_track)")) failures.push("Driver average-pace selection model must live outside app.js");
 if (!js.includes("function initializeSharedControls()") || !js.includes("function initializeHomeControllers()") || !js.includes("function initializePageControllers()")) failures.push("Application init must keep shared and page controller initialization separated");
 if (!js.includes("async function initializeHomeData()") || !js.includes("function applyHomeSiteData(data)")) failures.push("Home data loading and application must stay outside the shared init body");
