@@ -20,7 +20,7 @@
 | R07 | Готово | Общий table engine для Rating/Best Laps/Safety | R03, R05, R06 |
 | R08 | Готово | Безопасный DOM renderer и сокращение `innerHTML` | R01, R06 |
 | R09 | Готово | Доступные sortable headers, modals, focus и touch interactions | R07, R08 |
-| R10 | В работе | Декомпозиция `app.js` и отдельные page entrypoints | R02–R09 |
+| R10 | Готово | Декомпозиция `app.js`, route-loaded page features и отдельные page entrypoints | R02–R09 |
 | R11 | Ожидает | CSS tokens/layers/components, z-index и breakpoint cleanup | R01 |
 | R12 | Ожидает | Hero/support/sticky/loading UI cleanup | R09, R11 |
 | R13 | Ожидает | Responsive, reduced-motion, localization и full accessibility QA | R09, R12 |
@@ -125,6 +125,7 @@
 - 13.07.2026 — R10: loading/error/ready DOM lifecycle Driver preview modal вынесен в lazy `preview-view.js`; action visibility и повторное подключение внутренних stats controls сохранены. Добавлены три unit-теста, baseline расширен до 187 тестов.
 - 13.07.2026 — R10: Fun Stats period switcher вынесен в route-loaded `period-controller.js`; click listeners теперь принадлежат общему lifecycle и автоматически снимаются при destroy. Добавлены два unit-теста, baseline расширен до 189 тестов.
 - 13.07.2026 — R10: полный loading/empty/ready renderer Fun Stats вынесен в route-loaded `page-view.js`; summary, восемь awards, шесть leaderboards и period ARIA state больше не формируются в `app.js`. Добавлены три unit-теста, baseline расширен до 192 тестов.
+- 13.07.2026 — R10 завершён: News feed model перенесён из child page в shared boundary; статические импорты child pages из общего runtime запрещены, page/shared modules защищены от cross-feature imports. Восемь entrypoints выбирают route context и загружают только соответствующие feature modules; home route не загружает child feature modules. `app.js` сокращён с 512966 до 457137 bytes, прямые `innerHTML` writes — до 59. Финальный baseline: 194 unit-теста, syntax/quality/diff gates проходят; локальный HTTP smoke `/top/`, races, driver, cars, fun-stats, community, news и bans возвращает 200.
 
 ### Условия завершения R01
 
