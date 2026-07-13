@@ -21,7 +21,7 @@
 | R08 | Готово | Безопасный DOM renderer и сокращение `innerHTML` | R01, R06 |
 | R09 | Готово | Доступные sortable headers, modals, focus и touch interactions | R07, R08 |
 | R10 | Готово | Декомпозиция `app.js`, route-loaded page features и отдельные page entrypoints | R02–R09 |
-| R11 | Ожидает | CSS tokens/layers/components, z-index и breakpoint cleanup | R01 |
+| R11 | В работе | CSS tokens/layers/components, z-index и breakpoint cleanup | R01 |
 | R12 | Ожидает | Hero/support/sticky/loading UI cleanup | R09, R11 |
 | R13 | Ожидает | Responsive, reduced-motion, localization и full accessibility QA | R09, R12 |
 | R14 | Ожидает | Code splitting, media optimization и performance budgets | R10–R13 |
@@ -127,6 +127,7 @@
 - 13.07.2026 — R10: полный loading/empty/ready renderer Fun Stats вынесен в route-loaded `page-view.js`; summary, восемь awards, шесть leaderboards и period ARIA state больше не формируются в `app.js`. Добавлены три unit-теста, baseline расширен до 192 тестов.
 - 13.07.2026 — R10 завершён: News feed model перенесён из child page в shared boundary; статические импорты child pages из общего runtime запрещены, page/shared modules защищены от cross-feature imports. Восемь entrypoints выбирают route context и загружают только соответствующие feature modules; home route не загружает page-only tables/lifecycle дочерних страниц. `app.js` сокращён с 512966 до 457137 bytes, прямые `innerHTML` writes — до 59. Финальный baseline: 194 unit-теста, syntax/quality/diff gates проходят; локальный HTTP smoke `/top/`, races, driver, cars, fun-stats, community, news и bans возвращает 200.
 - 13.07.2026 — R10 hotfix: локальная проверка выявила остановку home init до загрузки данных — Driver Preview используется главной, но его route-loaded factories были доступны только `/driver/`. Manifest получил общий immutable Driver Preview feature set для home и driver; page-only tables, penalties и lifecycle на home по-прежнему не загружаются. Cache token обновлён, regression-тест фиксирует точную home allowlist.
+- 13.07.2026 — R11 начат. Точная CSS-база: `styles.css` — 277504 bytes / 13221 строка, 106 `!important`, 57 media queries, 48 `z-index`, 81 custom-property declarations и 253 hex color occurrences. Цель шага: управляемые tokens/base/layout/components/pages/utilities, один основной источник стилей компонента, не более 31 `!important`, нормализованные z-index/breakpoints и отсутствие несогласованной визуальной регрессии.
 
 ### Условия завершения R01
 

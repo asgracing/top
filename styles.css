@@ -20,6 +20,37 @@
   /* ===== SHARED UI TOKENS ===== */
   --shadow: 0 20px 60px rgba(0, 0, 0, 0.35);
   --radius: 22px;
+
+  /* ===== SPACING / SHAPE TOKENS ===== */
+  --space-1: 4px;
+  --space-2: 8px;
+  --space-3: 12px;
+  --space-4: 16px;
+  --space-5: 20px;
+  --space-6: 24px;
+  --space-8: 32px;
+  --radius-sm: 8px;
+  --radius-md: 12px;
+  --radius-lg: 16px;
+  --radius-pill: 999px;
+
+  /* ===== ELEVATION / LAYER TOKENS ===== */
+  --shadow-sm: 0 8px 24px rgba(0, 0, 0, 0.24);
+  --shadow-lg: var(--shadow);
+  --layer-background: 0;
+  --layer-decoration: 1;
+  --layer-content: 2;
+  --layer-sticky: 20;
+  --layer-dropdown: 100;
+  --layer-overlay: 1000;
+  --layer-modal: 1100;
+  --layer-toast: 2600;
+
+  /* ===== MOTION / LAYOUT TOKENS ===== */
+  --duration-fast: 160ms;
+  --duration-normal: 240ms;
+  --ease-standard: ease;
+  --nav-scroll-offset: 84px;
 }
 
 /* ===== RESET / BASE ===== */
@@ -42,7 +73,7 @@ body::before {
   content: "";
   position: fixed;
   inset: 0;
-  z-index: 1;
+  z-index: var(--layer-decoration);
   pointer-events: none;
   background:
     radial-gradient(circle at top left, rgba(255, 91, 46, 0.16), transparent 28%),
@@ -50,13 +81,13 @@ body::before {
 }
 
 html {
-  scroll-padding-top: 84px;
+  scroll-padding-top: var(--nav-scroll-offset);
 }
 
 .top-nav,
 .container {
   position: relative;
-  z-index: 2;
+  z-index: var(--layer-content);
 }
 
 body {
@@ -68,7 +99,7 @@ body.monza-bg-page::after {
   content: "";
   position: fixed;
   inset: 0;
-  z-index: 0;
+  z-index: var(--layer-background);
   pointer-events: none;
   background:
     linear-gradient(180deg, rgba(8, 12, 18, 0.08) 0%, rgba(8, 12, 18, 0.12) 38%, rgba(8, 12, 18, 0.18) 100%),
