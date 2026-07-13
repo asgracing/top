@@ -18,6 +18,7 @@ import { renderCommunityPostCard } from "./src/pages/community/post-view.js";
 import { createCommunityPageController } from "./src/pages/community/page-controller.js";
 import { CARS_COLUMNS, processCars } from "./src/pages/cars/model.js";
 import { createCarsTableView } from "./src/pages/cars/table-view.js";
+import { createCarsSummaryView } from "./src/pages/cars/summary-view.js";
 
 const PAGE_CONTEXT = readPageContext(document);
 const IS_RACES_PAGE = PAGE_CONTEXT.page === "races";
@@ -9258,49 +9259,15 @@ function getRaceById(raceId) {
   return racesData.find(race => race?.race_id === raceId) || null;
 }
 
+let carsSummaryView = null;
+
+function getCarsSummaryView() {
+  carsSummaryView ||= createCarsSummaryView({ documentRef: document, renderCarLink, renderCarImage });
+  return carsSummaryView;
+}
+
 function renderCarsSummary() {
-  const totalEl = document.getElementById("cars-total-count");
-  const winnerEl = document.getElementById("cars-top-winner");
-  const usedEl = document.getElementById("cars-most-used");
-  const spotlightEl = document.getElementById("cars-hero-spotlight");
-  const spotlightMediaEl = document.getElementById("cars-hero-spotlight-media");
-  const spotlightNameEl = document.getElementById("cars-hero-spotlight-name");
-  const spotlightRacesEl = document.getElementById("cars-hero-spotlight-races");
-  const spotlightWinsEl = document.getElementById("cars-hero-spotlight-wins");
-  if (!totalEl || !winnerEl) return;
-
-  const processedCars = getProcessedCars();
-  totalEl.textContent = processedCars.length || "—";
-  const topWinner = processedCars[0] || null;
-  const mostUsed = [...processedCars].sort((a, b) => {
-    const racesDiff = (b?.races ?? 0) - (a?.races ?? 0);
-    if (racesDiff !== 0) return racesDiff;
-    return String(a?.car_name || "").localeCompare(String(b?.car_name || ""));
-  })[0] || null;
-
-  winnerEl.innerHTML = topWinner ? renderCarLink(topWinner.car_name, "driver-link") : "—";
-  if (usedEl) {
-    usedEl.innerHTML = mostUsed ? renderCarLink(mostUsed.car_name, "driver-link") : "—";
-  }
-
-  if (spotlightEl && spotlightMediaEl && spotlightNameEl && spotlightRacesEl && spotlightWinsEl) {
-    if (mostUsed) {
-      spotlightEl.hidden = false;
-      spotlightMediaEl.innerHTML = renderCarImage(
-        mostUsed,
-        { className: "cars-hero-spotlight-image", alt: mostUsed.car_name || "" }
-      );
-      spotlightNameEl.innerHTML = renderCarLink(mostUsed.car_name || "—", "driver-link");
-      spotlightRacesEl.textContent = String(mostUsed.races ?? 0);
-      spotlightWinsEl.textContent = String(mostUsed.wins ?? 0);
-    } else {
-      spotlightEl.hidden = true;
-      spotlightMediaEl.replaceChildren();
-      spotlightNameEl.textContent = "—";
-      spotlightRacesEl.textContent = "—";
-      spotlightWinsEl.textContent = "—";
-    }
-  }
+  getCarsSummaryView().render(getProcessedCars());
 }
 
 function renderCarsPage() {
