@@ -95,6 +95,7 @@
 - 13.07.2026 — R10: Community feed model вынесена в `src/pages/community/feed-model.js`; stable post key, newest-first сортировка без мутации и локализованные состояния likes отделены от DOM/API кода. Добавлены три unit-теста, baseline расширен до 99 тестов.
 - 13.07.2026 — R10 hotfix: bans page view переведён на lazy factory. Раннее создание view получало ещё не инициализированный `replaceWithTextState` и останавливало module evaluation до `init()`, оставляя `/top/` в вечном loading-state; quality gate запрещает возврат eager factory.
 - 13.07.2026 — R10: Community post card renderer вынесен в `src/pages/community/post-view.js`; локализация, форматирование, escaping, text blocks и gallery normalization передаются на вызове без eager initialization. Actions, gallery и dependency contract покрыты тремя тестами; baseline расширен до 102 тестов.
+- 13.07.2026 — R10: Community list lifecycle и delegated like binding вынесены в lazy `src/pages/community/page-controller.js`; loading/empty/posts render, lightbox availability и likes refresh объединены явным контрактом. Добавлены четыре unit-теста, baseline расширен до 106 тестов.
 
 ### Условия завершения R01
 

@@ -15,6 +15,7 @@ import { countUnreadNews, sortPublishedNews } from "./src/pages/news/feed-model.
 import { createNewsPageView } from "./src/pages/news/page-view.js";
 import { getCommunityLikesText, getCommunityPostKey, sortCommunityPosts } from "./src/pages/community/feed-model.js";
 import { renderCommunityPostCard } from "./src/pages/community/post-view.js";
+import { createCommunityPageController } from "./src/pages/community/page-controller.js";
 
 const PAGE_CONTEXT = readPageContext(document);
 const IS_RACES_PAGE = PAGE_CONTEXT.page === "races";
@@ -5382,38 +5383,27 @@ function renderCommunityPost(post) {
   });
 }
 
-function renderCommunityPage() {
-  const listEl = document.getElementById("community-feed");
-  if (!listEl) return;
+let communityPageController = null;
 
-  if (topLoadState.community) {
-    listEl.innerHTML = renderLoadingMarkup(t("loading"));
-    return;
-  }
-
-  const posts = Array.isArray(window.ASG_COMMUNITY_POSTS) ? window.ASG_COMMUNITY_POSTS : [];
-  const sortedPosts = sortCommunityPosts(posts);
-
-  listEl.innerHTML = sortedPosts.length
-    ? sortedPosts.map(renderCommunityPost).join("")
-    : `<div class="empty-box">${escapeHtml(t("communityEmpty"))}</div>`;
-  updateCommunityLightboxAvailability();
-  bindCommunityLikeControls();
-  renderCommunityLikes();
+function getCommunityPageController() {
+  communityPageController ||= createCommunityPageController({
+    documentRef: document,
+    sortPosts: sortCommunityPosts,
+    renderPost: renderCommunityPost,
+    renderLoading: () => renderLoadingMarkup(t("loading")),
+    renderEmpty: () => `<div class="empty-box">${escapeHtml(t("communityEmpty"))}</div>`,
+    submitLike: submitCommunityLike,
+    updateLightbox: updateCommunityLightboxAvailability,
+    renderLikes: renderCommunityLikes
+  });
+  return communityPageController;
 }
 
-function bindCommunityLikeControls() {
-  const listEl = document.getElementById("community-feed");
-  if (!listEl || listEl.dataset.likesBound === "true") return;
-
-  listEl.addEventListener("click", (event) => {
-    const button = event.target?.closest?.("[data-community-like-post-id]");
-    if (!button || !listEl.contains(button)) return;
-    event.preventDefault();
-    void submitCommunityLike(button.dataset.communityLikePostId);
+function renderCommunityPage() {
+  getCommunityPageController().render({
+    posts: window.ASG_COMMUNITY_POSTS,
+    loading: topLoadState.community
   });
-
-  listEl.dataset.likesBound = "true";
 }
 
 function updateCommunityLightboxAvailability() {
