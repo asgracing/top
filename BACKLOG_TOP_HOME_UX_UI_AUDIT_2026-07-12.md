@@ -145,6 +145,7 @@
 - 13.07.2026 — R11: shared button system, primary/secondary CTA variants и attention animation вынесены в `styles/components/buttons.css`. Компонент подключён на всех маршрутах до legacy, включён в совокупные budgets и защищён проверкой единственного физического источника.
 - 13.07.2026 — R11: hero card foundation, brand/content primitives и intro CTA layout вынесены в `styles/components/hero-foundation.css`. Все маршруты подключают foundation до legacy, а responsive/server-summary modules продолжают применять финальные правила после монолита; quality gate защищает порядок и единственного владельца.
 - 13.07.2026 — R11: hero actions, online widget, server summary foundation и связанный CTA contract вынесены в `styles/components/hero-actions.css`. Модуль подключён на всех маршрутах до legacy; финальный `hero-server-summary.css` остаётся поздним override, route coverage и физическое владение контролируются quality gate.
+- 13.07.2026 — R11: hero mini stats и связанные online/event/support widgets вынесены единым source-order-preserving блоком в `styles/components/hero-stats.css`. Все маршруты подключают модуль до legacy, финальные hero overrides сохраняют приоритет; совокупные budgets и единственный физический источник проверяются автоматически.
 
 ### Условия завершения R01
 

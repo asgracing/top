@@ -2,7 +2,7 @@ import { readFile } from "node:fs/promises";
 import { resolve } from "node:path";
 
 const root = resolve(import.meta.dirname, "../..");
-const [html, tokensCss, baseCss, siteBackgroundCss, topNavigationCss, languageSwitchCss, buttonsCss, heroFoundationCss, heroActionsCss, legacyCss, heroLayoutCss, heroServerSummaryCss, js, pageFeatureLoader] = await Promise.all([
+const [html, tokensCss, baseCss, siteBackgroundCss, topNavigationCss, languageSwitchCss, buttonsCss, heroFoundationCss, heroActionsCss, heroStatsCss, legacyCss, heroLayoutCss, heroServerSummaryCss, js, pageFeatureLoader] = await Promise.all([
   readFile(resolve(root, "index.html"), "utf8"),
   readFile(resolve(root, "styles/tokens.css"), "utf8"),
   readFile(resolve(root, "styles/base.css"), "utf8"),
@@ -12,13 +12,14 @@ const [html, tokensCss, baseCss, siteBackgroundCss, topNavigationCss, languageSw
   readFile(resolve(root, "styles/components/buttons.css"), "utf8"),
   readFile(resolve(root, "styles/components/hero-foundation.css"), "utf8"),
   readFile(resolve(root, "styles/components/hero-actions.css"), "utf8"),
+  readFile(resolve(root, "styles/components/hero-stats.css"), "utf8"),
   readFile(resolve(root, "styles.css"), "utf8"),
   readFile(resolve(root, "styles/components/hero-layout.css"), "utf8"),
   readFile(resolve(root, "styles/components/hero-server-summary.css"), "utf8"),
   readFile(resolve(root, "app.js"), "utf8"),
   readFile(resolve(root, "src/runtime/page-feature-loader.js"), "utf8")
 ]);
-const css = `${tokensCss}\n${baseCss}\n${siteBackgroundCss}\n${topNavigationCss}\n${languageSwitchCss}\n${buttonsCss}\n${heroFoundationCss}\n${heroActionsCss}\n${legacyCss}\n${heroLayoutCss}\n${heroServerSummaryCss}`;
+const css = `${tokensCss}\n${baseCss}\n${siteBackgroundCss}\n${topNavigationCss}\n${languageSwitchCss}\n${buttonsCss}\n${heroFoundationCss}\n${heroActionsCss}\n${heroStatsCss}\n${legacyCss}\n${heroLayoutCss}\n${heroServerSummaryCss}`;
 const failures = [];
 const pageFeatureIsLoaded = path => pageFeatureLoader.includes(`"${path}"`);
 const pageEntrypoints = {
@@ -55,6 +56,8 @@ for (const [page, [htmlPath, entrySrc]] of Object.entries(pageEntrypoints)) {
   if (!pageHtml.includes(heroHref)) failures.push(`${page} page is missing the shared hero foundation stylesheet`);
   const heroActionsHref = page === "home" ? "./styles/components/hero-actions.css?v=20260713r11heroactions1" : "../styles/components/hero-actions.css?v=20260713r11heroactions1";
   if (!pageHtml.includes(heroActionsHref)) failures.push(`${page} page is missing the shared hero actions stylesheet`);
+  const heroStatsHref = page === "home" ? "./styles/components/hero-stats.css?v=20260713r11herostats1" : "../styles/components/hero-stats.css?v=20260713r11herostats1";
+  if (!pageHtml.includes(heroStatsHref)) failures.push(`${page} page is missing the shared hero stats stylesheet`);
 }
 const ids = [...html.matchAll(/\bid="([^"]+)"/g)].map(match => match[1]);
 const duplicates = [...new Set(ids.filter((id, index) => ids.indexOf(id) !== index))];
@@ -141,6 +144,7 @@ if (!languageSwitchCss.includes("@layer components {") || !languageSwitchCss.inc
 if (!buttonsCss.includes("@layer components {") || !buttonsCss.includes(".btn-primary") || legacyCss.includes("/* ===== BUTTONS ===== */")) failures.push("Shared buttons and CTA states must have one physical component source");
 if (!heroFoundationCss.includes("@layer components {") || !heroFoundationCss.includes(".hero-card") || legacyCss.includes("/* ===== HERO ===== */")) failures.push("Shared hero foundation must have one physical component source");
 if (!heroActionsCss.includes("@layer components {") || !heroActionsCss.includes(".hero-actions") || legacyCss.includes("/* ===== HERO ACTIONS + ONLINE WIDGET ===== */")) failures.push("Hero actions and online widget foundation must have one physical component source");
+if (!heroStatsCss.includes("@layer components {") || !heroStatsCss.includes(".hero-side-compact") || !heroStatsCss.includes(".mini-stat") || legacyCss.includes("/* ===== HERO MINI STATS ===== */")) failures.push("Hero mini stats and related widgets must have one physical component source");
 const budgets = {
   important: [(css.match(/!important/g) || []).length, 12],
   mediaQuery: [(css.match(/@media\b/g) || []).length, 56],
