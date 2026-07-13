@@ -142,6 +142,7 @@
 - 13.07.2026 — R11: video background, audio-focus state и базовый sound control вынесены в `styles/components/site-background.css`. Модуль подключён на всех маршрутах перед legacy; финальные responsive sound-control overrides остаются в `hero-layout.css`, а quality gate контролирует единственного владельца foundation.
 - 13.07.2026 — R11: общий top navigation foundation (brand, меню, dropdowns и social controls) вынесен в `styles/components/top-navigation.css` и подключён на всех восьми маршрутах до legacy. Quality gate агрегирует модуль в CSS budgets и проверяет route coverage/единственного физического владельца.
 - 13.07.2026 — R11: language switch, flag controls и общий keyboard focus contract вынесены в `styles/components/language-switch.css`. Все маршруты подключают компонент до legacy; quality gate защищает route coverage и не допускает возврат блока в монолит.
+- 13.07.2026 — R11: shared button system, primary/secondary CTA variants и attention animation вынесены в `styles/components/buttons.css`. Компонент подключён на всех маршрутах до legacy, включён в совокупные budgets и защищён проверкой единственного физического источника.
 
 ### Условия завершения R01
 
