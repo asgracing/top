@@ -25,6 +25,7 @@ import { createRacesSummaryView } from "./src/pages/races/summary-view.js";
 import { getDriverProfileKey, normalizeDriverAveragePace, normalizeDriverBestLaps, selectDriverAveragePace, selectDriverBestLap } from "./src/pages/driver/best-laps-model.js";
 import { renderDriverTrackSelect } from "./src/pages/driver/track-select-view.js";
 import { renderDriverPenaltyList } from "./src/pages/driver/penalty-list-view.js";
+import { buildDriverRaceTableState, buildDriverTrackTableState, DRIVER_RACE_COLUMNS, DRIVER_TRACK_COLUMNS } from "./src/pages/driver/tables-model.js";
 
 const PAGE_CONTEXT = readPageContext(document);
 const IS_RACES_PAGE = PAGE_CONTEXT.page === "races";
@@ -2106,29 +2107,8 @@ const carModelNames = {
   36: "Ford Mustang GT3"
 };
 
-const driverRaceColumns = [
-  { key: "finished_at", type: "string" },
-  { key: "track", type: "string" },
-  { key: "start_position", type: "number" },
-  { key: "position", type: "number" },
-  { key: "positions_delta", type: "number" },
-  { key: "points", type: "number" },
-  { key: "best_lap", type: "time" },
-  { key: "car_name", type: "string" },
-  { key: "gap", type: "string" },
-  { key: "elo_rating_delta", type: "number" },
-  { key: "safety_rating", type: "number" }
-];
-
-const driverTrackColumns = [
-  { key: "track", type: "string" },
-  { key: "races", type: "number" },
-  { key: "wins", type: "number" },
-  { key: "podiums", type: "number" },
-  { key: "points", type: "number" },
-  { key: "average_finish", type: "number" },
-  { key: "best_lap", type: "time" }
-];
+const driverRaceColumns = DRIVER_RACE_COLUMNS;
+const driverTrackColumns = DRIVER_TRACK_COLUMNS;
 
 
 function getSafetyPenaltyKeys(data = []) {
@@ -9426,12 +9406,11 @@ function renderDriverRaceHistory() {
   if (!tableEl) return;
 
   const rawData = Array.isArray(driverProfileData?.race_history) ? driverProfileData.race_history : [];
-  const countedData = rawData.filter(row => row?.counted_for_stats !== false && row?.counted_for_stats !== 0);
-  const sortedData = sortData(countedData, driverRaceSort, driverRaceColumns);
-  const result = paginate(sortedData, driverRacePage, PAGE_SIZE);
+  const result = buildDriverRaceTableState({ rows: rawData, sort: driverRaceSort, page: driverRacePage, pageSize: PAGE_SIZE, sortRows: sortData, paginateRows: paginate });
   driverRacePage = result.page;
   const rowsData = result.items;
-  const fastestLapMs = getFastestLapMs(countedData);
+  const countedData = result.countedRows;
+  const fastestLapMs = result.fastestLapMs;
   if (!rowsData.length) {
     replaceWithTextState(tableEl, "empty", t("driverNoData"));
     const wrapEl = document.getElementById("driver-races-pagination-wrap");
@@ -9505,8 +9484,7 @@ function renderDriverTrackStats() {
   if (!tableEl) return;
 
   const rawData = Array.isArray(driverProfileData?.track_stats) ? driverProfileData.track_stats : [];
-  const sortedData = sortData(rawData, driverTrackSort, driverTrackColumns);
-  const result = paginate(sortedData, driverTrackPage, PAGE_SIZE);
+  const result = buildDriverTrackTableState({ rows: rawData, sort: driverTrackSort, page: driverTrackPage, pageSize: PAGE_SIZE, sortRows: sortData, paginateRows: paginate });
   driverTrackPage = result.page;
   const rowsData = result.items;
   if (!rowsData.length) {

@@ -108,6 +108,7 @@
 - 13.07.2026 — R10: Driver average-pace-by-track normalization и selection добавлены в `src/pages/driver/best-laps-model.js`; alternate fields, formatted fallback, sample count и stored-track selection используют общий profile key. Добавлен unit-тест, baseline расширен до 133 тестов.
 - 13.07.2026 — R10: Driver track select markup вынесен в `src/pages/driver/track-select-view.js`; best-lap и average-pace используют единый безопасный view contract без дублирования HTML. Добавлены три unit-теста, baseline расширен до 136 тестов.
 - 13.07.2026 — R10: Driver penalty list renderer вынесен в `src/pages/driver/penalty-list-view.js`; empty state, сортировка по количеству и escaping отделены от DOM lookup. Добавлены три unit-теста, baseline расширен до 139 тестов.
+- 13.07.2026 — R10: Driver race/track columns и подготовка table state вынесены в `src/pages/driver/tables-model.js`; модель фильтрует неучитываемые заезды, вычисляет быстрейший круг и делегирует общий sorter/paginator. Добавлены четыре unit-теста, baseline расширен до 143 тестов.
 
 ### Условия завершения R01
 
