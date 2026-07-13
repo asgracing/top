@@ -1,7 +1,5 @@
 export function sortPublishedNews(items, { isPublished, isExpired } = {}) {
-  if (typeof isPublished !== "function" || typeof isExpired !== "function") {
-    throw new TypeError("News feed sorting requires publication predicates");
-  }
+  if (typeof isPublished !== "function" || typeof isExpired !== "function") throw new TypeError("News feed sorting requires publication predicates");
   return [...(Array.isArray(items) ? items : [])]
     .filter(Boolean)
     .filter(isPublished)
@@ -10,8 +8,7 @@ export function sortPublishedNews(items, { isPublished, isExpired } = {}) {
       if (Boolean(a.is_pinned) !== Boolean(b.is_pinned)) return a.is_pinned ? -1 : 1;
       const priorityDifference = (Number(b.priority) || 0) - (Number(a.priority) || 0);
       if (priorityDifference) return priorityDifference;
-      return (Date.parse(String(b.published_at || "")) || 0)
-        - (Date.parse(String(a.published_at || "")) || 0);
+      return (Date.parse(String(b.published_at || "")) || 0) - (Date.parse(String(a.published_at || "")) || 0);
     });
 }
 

@@ -1,6 +1,6 @@
 import test from "node:test";
 import assert from "node:assert/strict";
-import { countUnreadNews, sortPublishedNews } from "../../src/pages/news/feed-model.js";
+import { countUnreadNews, sortPublishedNews } from "../../src/shared/news-feed-model.js";
 
 const predicates = {
   isPublished: item => item.published !== false,
