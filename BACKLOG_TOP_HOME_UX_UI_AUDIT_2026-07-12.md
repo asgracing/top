@@ -132,6 +132,7 @@
 - 13.07.2026 — R11: объявлен контролируемый cascade order `reset → base → layout → components → pages → utilities → legacy → overrides`. Исходный stylesheet помещён в migration boundary `legacy` с сохранением внутреннего source order; quality gate защищает слой от случайного удаления до завершения переноса компонентов.
 - 13.07.2026 — R11: `hero-side-compact` и server summary перенесены из двух поздних legacy override-блоков в один консолидированный `overrides` source. Удалено 37 `!important` (106 → 69), сохранены desktop/mobile grid, карточки, best-lap CTA и интерактивное server state; новый budget запрещает возврат долга.
 - 13.07.2026 — R11: позиционирование и interaction states `.bg-video-sound-toggle` сведены из двух конфликтующих поздних блоков в единый override source; сохранены финальная левая привязка и мобильное скрытие. `!important` снижен 69 → 60, media queries 57 → 56.
+- 13.07.2026 — R11: championship event skin, responsive hero stack и performance animation/backdrop policy перенесены в контролируемый override layer без specificity escalation. `!important` снижен 60 → 31 — выполнен критерий сокращения минимум на 70% от исходных 106; desktop/tablet/mobile значения и порядок hero-колонок сохранены.
 
 ### Условия завершения R01
 
