@@ -14,6 +14,7 @@ import { createBansPageView } from "./src/pages/bans/index.js";
 import { countUnreadNews, sortPublishedNews } from "./src/pages/news/feed-model.js";
 import { createNewsPageView } from "./src/pages/news/page-view.js";
 import { getCommunityLikesText, getCommunityPostKey, sortCommunityPosts } from "./src/pages/community/feed-model.js";
+import { renderCommunityPostCard } from "./src/pages/community/post-view.js";
 
 const PAGE_CONTEXT = readPageContext(document);
 const IS_RACES_PAGE = PAGE_CONTEXT.page === "races";
@@ -5368,58 +5369,17 @@ async function submitCommunityLike(postId) {
 }
 
 function renderCommunityPost(post) {
-  const title = getLocalizedCommunityValue(post?.title, "-");
-  const postId = getCommunityPostId(post);
-  const text = getLocalizedCommunityValue(post?.text, "");
-  const images = normalizeCommunityImages(post?.images);
-  const dateLabel = formatCommunityDateLong(post?.date, currentLang);
-
-  return `
-    <article class="community-feed-card reveal">
-      <div class="community-feed-copy">
-        <time class="community-feed-date" datetime="${escapeAttribute(post?.date || "")}">${escapeHtml(dateLabel)}</time>
-        <h3 class="community-feed-title">${escapeHtml(title)}</h3>
-        <div class="community-feed-text">
-          ${renderCommunityTextBlocks(text)}
-        </div>
-        ${postId ? `
-          <div class="community-feed-actions">
-            <button
-              class="community-like-btn"
-              type="button"
-              data-community-like-post-id="${escapeHtml(postId)}"
-              aria-pressed="false"
-            >
-              <span class="community-like-heart" aria-hidden="true">&hearts;</span>
-              <span data-community-like-label>${escapeHtml(t("communityLikeButton"))}</span>
-            </button>
-            <span class="community-like-count" data-community-like-count>${escapeHtml(t("communityLikesLoading"))}</span>
-          </div>
-        ` : ""}
-      </div>
-      ${images.length ? `
-        <div class="community-feed-gallery community-feed-gallery-${images.length}">
-          ${images.map(image => {
-            const alt = getLocalizedCommunityValue(image.alt, title);
-            const src = String(image.src || "");
-            return `
-              <figure class="community-feed-photo">
-                <button
-                  class="community-feed-photo-btn"
-                  type="button"
-                  data-community-image-src="${escapeHtml(src)}"
-                  data-community-image-alt="${escapeHtml(alt)}"
-                  aria-label="${escapeHtml(t("communityOpenImageLabel"))}: ${escapeHtml(alt)}"
-                >
-                  <img src="${escapeHtml(src)}" alt="${escapeHtml(alt)}" loading="lazy" />
-                </button>
-              </figure>
-            `;
-          }).join("")}
-        </div>
-      ` : ""}
-    </article>
-  `;
+  return renderCommunityPostCard(post, {
+    getLocalizedValue: getLocalizedCommunityValue,
+    getPostKey: getCommunityPostId,
+    normalizeImages: normalizeCommunityImages,
+    formatDate: formatCommunityDateLong,
+    renderText: renderCommunityTextBlocks,
+    translate: t,
+    escapeHtml,
+    escapeAttribute,
+    locale: currentLang
+  });
 }
 
 function renderCommunityPage() {
