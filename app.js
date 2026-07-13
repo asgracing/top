@@ -24,6 +24,7 @@ import { createRacesTableView } from "./src/pages/races/table-view.js";
 import { createRacesSummaryView } from "./src/pages/races/summary-view.js";
 import { getDriverProfileKey, normalizeDriverAveragePace, normalizeDriverBestLaps, selectDriverAveragePace, selectDriverBestLap } from "./src/pages/driver/best-laps-model.js";
 import { renderDriverTrackSelect } from "./src/pages/driver/track-select-view.js";
+import { renderDriverPenaltyList } from "./src/pages/driver/penalty-list-view.js";
 
 const PAGE_CONTEXT = readPageContext(document);
 const IS_RACES_PAGE = PAGE_CONTEXT.page === "races";
@@ -9560,19 +9561,7 @@ function renderDriverTrackStats() {
 function renderPenaltyList(containerId, entries, labelKey) {
   const el = document.getElementById(containerId);
   if (!el) return;
-
-  const items = Object.entries(entries || {}).sort((a, b) => b[1] - a[1]);
-  if (!items.length) {
-    el.innerHTML = `<div class="empty-box">-</div>`;
-    return;
-  }
-
-  el.innerHTML = items.map(([name, value]) => `
-    <div class="penalty-item">
-      <span class="penalty-name">${escapeHtml(name)}</span>
-      <span class="penalty-value">${escapeHtml(value)}</span>
-    </div>
-  `).join("");
+  el.innerHTML = renderDriverPenaltyList(entries, { escapeHtml });
 }
 
 function getDriverRankInfo(profile) {
