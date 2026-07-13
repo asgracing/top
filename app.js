@@ -17,6 +17,7 @@ const PAGE_CONTEXT = readPageContext(document);
 const PAGE_FEATURES = await loadPageFeatures(PAGE_CONTEXT.page);
 const {
   buildDriverRaceTableState, buildDriverTrackTableState, DRIVER_RACE_COLUMNS, DRIVER_TRACK_COLUMNS,
+  renderDriverRaceTableMarkup, renderDriverTrackTableMarkup,
   getDriverProfileKey, normalizeDriverAveragePace, normalizeDriverBestLaps, selectDriverAveragePace, selectDriverBestLap,
   renderDriverTrackSelect, renderDriverPenaltyList, createBansPageView, createBansPage,
   createDriverPage,
@@ -9228,30 +9229,12 @@ function renderDriverRaceHistory() {
   }
 
   const headers = renderSortableHeaders(driverRaceColumns, t("driverRaceCols"), driverRaceSort);
-  const rows = rowsData.map(row => `
-    <tr
-      class="is-interactive-row"
-      data-race-id="${escapeAttribute(row.race_id || "")}"
-      tabindex="0"
-      role="button"
-      aria-label="${escapeAttribute(`${t("openRaceDetailsLabel")}: ${humanizeTrackName(row.track)}`)}"
-    >
-      <td>${escapeHtml(formatDateTimeLocal(row.finished_at, currentLang))}</td>
-      <td>${escapeHtml(humanizeTrackName(row.track))}</td>
-      <td>${escapeHtml(formatStartPosition(row))}</td>
-      <td>${renderStatValueWithTrend(escapeHtml(row.position ?? "-"), row.rank_change, "championship_rank")}</td>
-      <td>${renderPositionsDelta(row.positions_delta)}</td>
-      <td>${escapeHtml(row.points ?? 0)}</td>
-      <td><span class="${getBestLapClass(row.best_lap_ms === fastestLapMs)}">${escapeHtml(row.best_lap ?? "-")}</span></td>
-      <td>
-        <div>${renderCarLink(row.car_name ?? "-", "driver-link driver-link-subtle")}</div>
-        <div class="race-note">${row.counted_for_stats === false ? escapeHtml(t("notCountedBadge")) : ""}</div>
-      </td>
-      <td>${escapeHtml(row.gap ?? "-")}</td>
-      <td>${renderEloDeltaCell(row)}</td>
-      <td>${renderSafetyRaceCell(row)}</td>
-    </tr>
-  `).join("");
+  const rows = renderDriverRaceTableMarkup(rowsData, fastestLapMs, {
+    escapeHtml, escapeAttribute,
+    formatDateTimeLocal: value => formatDateTimeLocal(value, currentLang),
+    humanizeTrackName, formatStartPosition, renderStatValueWithTrend, renderPositionsDelta,
+    getBestLapClass, renderCarLink, renderEloDeltaCell, renderSafetyRaceCell, translate: t,
+  });
 
   tableEl.innerHTML = `
     <table class="driver-races-table">
@@ -9304,17 +9287,7 @@ function renderDriverTrackStats() {
   }
 
   const headers = renderSortableHeaders(driverTrackColumns, t("driverTrackCols"), driverTrackSort);
-  const rows = rowsData.map(row => `
-    <tr>
-      <td>${escapeHtml(humanizeTrackName(row.track))}</td>
-      <td>${escapeHtml(row.races ?? 0)}</td>
-      <td>${escapeHtml(row.wins ?? 0)}</td>
-      <td>${escapeHtml(row.podiums ?? 0)}</td>
-      <td>${escapeHtml(row.points ?? 0)}</td>
-      <td>${escapeHtml(row.average_finish ?? "-")}</td>
-      <td>${escapeHtml(row.best_lap ?? "-")}</td>
-    </tr>
-  `).join("");
+  const rows = renderDriverTrackTableMarkup(rowsData, { escapeHtml, humanizeTrackName });
 
   tableEl.innerHTML = `
     <table>
