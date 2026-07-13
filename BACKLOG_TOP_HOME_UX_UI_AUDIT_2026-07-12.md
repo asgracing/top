@@ -124,6 +124,7 @@
 - 13.07.2026 — R10: loading/empty/ready DOM lifecycle основной Driver page вынесен в lazy `page-view.js`; title, hero, summary, highlights, tables, penalties и stats binding теперь координируются единым route-loaded view. Добавлены три unit-теста, baseline расширен до 184 тестов.
 - 13.07.2026 — R10: loading/error/ready DOM lifecycle Driver preview modal вынесен в lazy `preview-view.js`; action visibility и повторное подключение внутренних stats controls сохранены. Добавлены три unit-теста, baseline расширен до 187 тестов.
 - 13.07.2026 — R10: Fun Stats period switcher вынесен в route-loaded `period-controller.js`; click listeners теперь принадлежат общему lifecycle и автоматически снимаются при destroy. Добавлены два unit-теста, baseline расширен до 189 тестов.
+- 13.07.2026 — R10: полный loading/empty/ready renderer Fun Stats вынесен в route-loaded `page-view.js`; summary, восемь awards, шесть leaderboards и period ARIA state больше не формируются в `app.js`. Добавлены три unit-теста, baseline расширен до 192 тестов.
 
 ### Условия завершения R01
 

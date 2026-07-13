@@ -38,6 +38,7 @@ const {
   aggregateFunStatsFallback,
   createFunStatsPage,
   createFunStatsPeriodController,
+  createFunStatsPageView,
 } = PAGE_FEATURES;
 const IS_RACES_PAGE = PAGE_CONTEXT.page === "races";
 const IS_DRIVER_PAGE = PAGE_CONTEXT.page === "driver";
@@ -4850,170 +4851,28 @@ function renderFunStatsListCard(titleKey, items, valueFormatter) {
   return renderFunStatsListCardView({ titleKey, items, valueFormatter }, { escapeHtml, translate: t });
 }
 
-function renderFunStatsPage() {
-  const summaryEl = document.getElementById("fun-stats-summary");
-  const awardsEl = document.getElementById("fun-stats-awards");
-  const leaderboardsEl = document.getElementById("fun-stats-leaderboards");
-  const rangeEl = document.getElementById("fun-stats-range");
-  const toggleButtons = document.querySelectorAll("[data-fun-period]");
-
-  if (!summaryEl || !awardsEl || !leaderboardsEl || !rangeEl) return;
-
-  if (topLoadState.funStats) {
-    summaryEl.innerHTML = renderLoadingMarkup(t("loading"));
-    awardsEl.innerHTML = renderLoadingMarkup(t("loading"));
-    leaderboardsEl.replaceChildren();
-    rangeEl.textContent = t("loading");
-    return;
-  }
-
-  toggleButtons.forEach(button => {
-    const active = button.dataset.funPeriod === funStatsPeriod;
-    button.classList.toggle("active", active);
-    button.setAttribute("aria-pressed", active ? "true" : "false");
+let funStatsPageView = null;
+function getFunStatsPageView() {
+  funStatsPageView ||= createFunStatsPageView({
+    documentRef: document,
+    translate: t,
+    escapeHtml,
+    replaceTokens,
+    renderLoadingMarkup,
+    replaceWithTextState,
+    aggregate: aggregateFunStats,
+    renderSummaryCard: renderFunStatsSummaryCard,
+    renderAwardCard: renderFunStatsAwardCard,
+    renderListCard: renderFunStatsListCard,
+    renderDriverLink,
+    renderCarLink,
   });
-
-  const data = aggregateFunStats(funStatsPeriod);
-  rangeEl.textContent = `${t("funStatsWindowLabel")}: ${data.rangeLabel}`;
-
-  summaryEl.innerHTML = `
-    ${renderFunStatsSummaryCard(
-      escapeHtml(t("funStatsSummaryRaces")),
-      escapeHtml(data.summary.races)
-    )}
-    ${renderFunStatsSummaryCard(
-      escapeHtml(t("funStatsSummaryDrivers")),
-      escapeHtml(data.summary.activeDrivers)
-    )}
-    ${renderFunStatsSummaryCard(
-      escapeHtml(t("funStatsSummaryFastestLapsLeader")),
-      data.summary.fastestLapLeader
-        ? escapeHtml(replaceTokens(t("funStatsSummaryFastestLapsLeaderNote"), { value: data.summary.fastestLapLeader.fastestLapAwards }))
-        : "-",
-      data.summary.fastestLapLeader
-        ? data.summary.fastestLapLeader.driver
-        : ""
-      ,
-      "fun-summary-card-driver-note"
-    )}
-    ${renderFunStatsSummaryCard(
-      escapeHtml(t("funStatsSummaryOvertakes")),
-      escapeHtml(data.summary.overtakes)
-    )}
-  `;
-
-  if (!data.summary.races) {
-    replaceWithTextState(awardsEl, "empty", t("funStatsEmpty"));
-    leaderboardsEl.replaceChildren();
-    return;
-  }
-
-  const { pointsBoss, grindKing, podiumHunter, comebackHero, cleanOperator, hotLapHero, chaosMagnet, garageFavorite } = data.awards;
-
-  awardsEl.innerHTML = [
-    pointsBoss && renderFunStatsAwardCard(
-      "funStatsAwardPointsBoss",
-      renderDriverLink(pointsBoss.driver, pointsBoss.publicId, "driver-link driver-link-heading", pointsBoss.playerId),
-      replaceTokens(t("funStatsAwardPointsBossNote"), { value: pointsBoss.points }),
-      "accent"
-    ),
-    grindKing && renderFunStatsAwardCard(
-      "funStatsAwardGrindKing",
-      renderDriverLink(grindKing.driver, grindKing.publicId, "driver-link driver-link-heading", grindKing.playerId),
-      replaceTokens(t("funStatsAwardGrindKingNote"), { value: grindKing.starts }),
-      "warm"
-    ),
-    podiumHunter && renderFunStatsAwardCard(
-      "funStatsAwardPodiumHunter",
-      renderDriverLink(podiumHunter.driver, podiumHunter.publicId, "driver-link driver-link-heading", podiumHunter.playerId),
-      replaceTokens(t("funStatsAwardPodiumHunterNote"), { value: podiumHunter.podiums }),
-      "gold"
-    ),
-    comebackHero && renderFunStatsAwardCard(
-      "funStatsAwardComebackHero",
-      renderDriverLink(comebackHero.driver, comebackHero.publicId, "driver-link driver-link-heading", comebackHero.playerId),
-      replaceTokens(t("funStatsAwardComebackHeroNote"), { value: comebackHero.positionsGain }),
-      "cool"
-    ),
-    cleanOperator && renderFunStatsAwardCard(
-      "funStatsAwardCleanOperator",
-      renderDriverLink(cleanOperator.driver, cleanOperator.publicId, "driver-link driver-link-heading", cleanOperator.playerId),
-      replaceTokens(t("funStatsAwardCleanOperatorNote"), { value: cleanOperator.penaltyPoints, starts: cleanOperator.starts }),
-      "clean"
-    ),
-    hotLapHero && renderFunStatsAwardCard(
-      "funStatsAwardHotLapHero",
-      renderDriverLink(hotLapHero.driver, hotLapHero.publicId, "driver-link driver-link-heading", hotLapHero.playerId),
-      replaceTokens(t("funStatsAwardHotLapHeroNote"), { lap: hotLapHero.lap }),
-      "accent"
-    ),
-    chaosMagnet && renderFunStatsAwardCard(
-      "funStatsAwardChaosMagnet",
-      renderDriverLink(chaosMagnet.driver, chaosMagnet.publicId, "driver-link driver-link-heading", chaosMagnet.playerId),
-      replaceTokens(t("funStatsAwardChaosMagnetNote"), { value: chaosMagnet.penaltyPoints }),
-      "danger"
-    ),
-    garageFavorite && renderFunStatsAwardCard(
-      "funStatsAwardGarageFavorite",
-      renderCarLink(garageFavorite.car, "driver-link driver-link-heading"),
-      replaceTokens(t("funStatsAwardGarageFavoriteNote"), { value: garageFavorite.starts }),
-      "neutral"
-    )
-  ].filter(Boolean).join("");
-
-  leaderboardsEl.innerHTML = [
-    renderFunStatsListCard(
-      "funStatsListActive",
-      data.lists.active.map(item => ({
-        label: renderDriverLink(item.driver, item.publicId, "driver-link", item.playerId),
-        value: item.starts
-      })),
-      item => replaceTokens(t("funStatsListStartsValue"), { value: item.value })
-    ),
-    renderFunStatsListCard(
-      "funStatsListMovers",
-      data.lists.movers.map(item => ({
-        label: renderDriverLink(item.driver, item.publicId, "driver-link", item.playerId),
-        value: item.positionsGain
-      })),
-      item => replaceTokens(t("funStatsListGainValue"), { value: item.value })
-    ),
-    renderFunStatsListCard(
-      "funStatsListClean",
-      data.lists.clean.map(item => ({
-        label: renderDriverLink(item.driver, item.publicId, "driver-link", item.playerId),
-        value: item.penaltyPoints
-      })),
-      item => replaceTokens(t("funStatsListPenaltyValue"), { value: item.value })
-    ),
-    renderFunStatsListCard(
-      "funStatsListStable",
-      data.lists.stable.map(item => ({
-        label: renderDriverLink(item.driver, item.publicId, "driver-link", item.playerId),
-        value: item.averageFinish
-      })),
-      item => replaceTokens(t("funStatsListAvgFinishValue"), { value: Number(item.value).toFixed(2) })
-    ),
-    renderFunStatsListCard(
-      "funStatsListFastest",
-      data.lists.fastest.map(item => ({
-        label: renderDriverLink(item.driver, item.publicId, "driver-link", item.playerId),
-        value: item.fastestLapAwards
-      })),
-      item => replaceTokens(t("funStatsListFastestLapValue"), { value: item.value })
-    ),
-    renderFunStatsListCard(
-      "funStatsListCars",
-      data.lists.cars.map(item => ({
-        label: renderCarLink(item.car, "driver-link"),
-        value: item.starts
-      })),
-      item => replaceTokens(t("funStatsListCarValue"), { value: item.value })
-    )
-  ].join("");
+  return funStatsPageView;
 }
 
-let funStatsPeriodController = null;
+function renderFunStatsPage() {
+  getFunStatsPageView().render({ loading: topLoadState.funStats, period: funStatsPeriod });
+}
 function bindFunStatsControls() {
   funStatsPeriodController ||= createFunStatsPeriodController({
     documentRef: document,

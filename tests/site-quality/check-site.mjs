@@ -84,6 +84,7 @@ if (!pageFeatureIsLoaded("../pages/driver/stats-controller.js") || js.includes("
 if (!pageFeatureIsLoaded("../pages/driver/page-view.js") || js.includes("if (topLoadState.driver) {")) failures.push("Driver page DOM states must use the external view");
 if (!pageFeatureIsLoaded("../pages/driver/preview-view.js") || js.includes('document.getElementById("driver-preview-title")')) failures.push("Driver preview DOM states must use the external view");
 if (!pageFeatureIsLoaded("../pages/fun-stats/period-controller.js") || js.includes('button.addEventListener("click", () => {\n      const nextPeriod = button.dataset.funPeriod')) failures.push("Fun Stats period controls must use the external lifecycle controller");
+if (!pageFeatureIsLoaded("../pages/fun-stats/page-view.js") || js.includes("pointsBoss && renderFunStatsAwardCard")) failures.push("Fun Stats DOM rendering must use the external page view");
 if (js.includes("Array.isArray(profile?.average_pace_by_track)")) failures.push("Driver average-pace selection model must live outside app.js");
 if (!js.includes("function initializeSharedControls()") || !js.includes("function initializeHomeControllers()") || !js.includes("function initializePageControllers()")) failures.push("Application init must keep shared and page controller initialization separated");
 if (!js.includes("async function initializeHomeData()") || !js.includes("function applyHomeSiteData(data)")) failures.push("Home data loading and application must stay outside the shared init body");
