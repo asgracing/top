@@ -19,7 +19,7 @@ import { createCommunityPageController } from "./src/pages/community/page-contro
 import { CARS_COLUMNS, processCars } from "./src/pages/cars/model.js";
 import { createCarsTableView } from "./src/pages/cars/table-view.js";
 import { createCarsSummaryView } from "./src/pages/cars/summary-view.js";
-import { buildRacesPageState, processRaces } from "./src/pages/races/model.js";
+import { buildRacesPageState, buildRacesSummary, processRaces } from "./src/pages/races/model.js";
 import { createRacesTableView } from "./src/pages/races/table-view.js";
 
 const PAGE_CONTEXT = readPageContext(document);
@@ -8907,62 +8907,18 @@ function renderRacesSummary() {
   if (!totalEl || !avgActiveEl || !avgOvertakesEl || !topWinnerEl || !winnerEl || !lastWinnerBestLapEl || !lastWinnerBestLapNoteEl) return;
 
   const processedRaces = getProcessedRaces();
-  const latestRace = processedRaces[0];
-  if (racesArchiveSummary) {
-    const topWinner = racesArchiveSummary.top_winner || null;
-    const latestSummaryRace = racesArchiveSummary.latest_race || latestRace || null;
-    totalEl.textContent = racesArchiveSummary.total_races || racesArchiveSummary.total_items || "-";
-    avgActiveEl.textContent = racesArchiveSummary.average_active_drivers ?? "-";
-    avgOvertakesEl.textContent = racesArchiveSummary.average_overtakes ?? "-";
-    topWinnerEl.innerHTML = topWinner
-      ? renderDriverLink(topWinner.name || t("noWinner"), topWinner.public_id, "driver-link")
-      : t("noWinner");
-    winnerEl.innerHTML = latestSummaryRace
-      ? renderDriverLink(latestSummaryRace.winner || t("noWinner"), latestSummaryRace.winner_public_id, "driver-link")
-      : t("noWinner");
-    lastWinnerBestLapEl.textContent = latestSummaryRace?.winner_best_lap || latestSummaryRace?.best_lap || "-";
-    lastWinnerBestLapNoteEl.textContent = latestSummaryRace?.winner_best_lap_car_name || latestSummaryRace?.best_lap_car_name || "";
-    return;
-  }
-
-  const winnerCounts = new Map();
-  let activeDriversTotal = 0;
-  let overtakesTotal = 0;
-
-  processedRaces.forEach(race => {
-    if (race?.winner) {
-      const key = race.winner_public_id || race.winner;
-      const existing = winnerCounts.get(key) || { count: 0, name: race.winner, publicId: race.winner_public_id };
-      existing.count += 1;
-      winnerCounts.set(key, existing);
-    }
-
-    const activeResults = (race.results || []).filter(isActiveRaceResult);
-    activeDriversTotal += activeResults.length;
-    overtakesTotal += activeResults.reduce((sum, row) => sum + Math.max(0, row?.positions_delta ?? 0), 0);
-  });
-
-  const topWinner = [...winnerCounts.values()].sort((a, b) => b.count - a.count || a.name.localeCompare(b.name))[0] || null;
-  const latestWinnerRow = latestRace
-    ? (latestRace.results || []).find(row =>
-        (latestRace.winner_public_id && row.public_id === latestRace.winner_public_id) ||
-        row.driver === latestRace.winner
-      )
-    : null;
-  const latestWinnerCarName = getResultCarName(latestWinnerRow);
-
-  
-  totalEl.textContent = processedRaces.length || "-";
-  avgActiveEl.textContent = processedRaces.length ? (activeDriversTotal / processedRaces.length).toFixed(2) : "-";
-  avgOvertakesEl.textContent = processedRaces.length ? (overtakesTotal / processedRaces.length).toFixed(2) : "-";
-  topWinnerEl.innerHTML = topWinner
-    ? renderDriverLink(topWinner.name || t("noWinner"), topWinner.publicId, "driver-link")
+  const summary = buildRacesSummary({ rows: processedRaces, archiveSummary: racesArchiveSummary, isActiveResult: isActiveRaceResult, getCarName: getResultCarName });
+  totalEl.textContent = summary.total;
+  avgActiveEl.textContent = summary.averageActive;
+  avgOvertakesEl.textContent = summary.averageOvertakes;
+  topWinnerEl.innerHTML = summary.topWinner
+    ? renderDriverLink(summary.topWinner.name || t("noWinner"), summary.topWinner.public_id, "driver-link")
     : t("noWinner");
-  winnerEl.innerHTML = latestRace
-    ? renderDriverLink(latestRace.winner || t("noWinner"), latestRace.winner_public_id, "driver-link")
+  winnerEl.innerHTML = summary.latestRace
+    ? renderDriverLink(summary.latestRace.winner || t("noWinner"), summary.latestRace.winner_public_id, "driver-link")
     : t("noWinner");
-  lastWinnerBestLapEl.textContent = latestWinnerRow?.best_lap || "-";
-  lastWinnerBestLapNoteEl.textContent = latestWinnerCarName;
+  lastWinnerBestLapEl.textContent = summary.latestBestLap;
+  lastWinnerBestLapNoteEl.textContent = summary.latestBestLapCar;
 }
 
 function renderRacesTablePage() {

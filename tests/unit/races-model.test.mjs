@@ -1,6 +1,6 @@
 import test from "node:test";
 import assert from "node:assert/strict";
-import { buildRacesPageState, processRaces, RACES_COLUMNS } from "../../src/pages/races/model.js";
+import { buildRacesPageState, buildRacesSummary, processRaces, RACES_COLUMNS } from "../../src/pages/races/model.js";
 
 test("declares the races table contract", () => {
   assert.deepEqual(RACES_COLUMNS.map(column => column.key), ["finished_at", "track", "winner", "participants_count", "average_elo", "best_lap"]);
@@ -35,4 +35,18 @@ test("delegates local pagination", () => {
   const result = buildRacesPageState({ rows: [1, 2], page: 2, pageSize: 1, paginateRows: (rows, page, size) => ({ items: rows.slice(1), page, totalPages: 2, totalItems: rows.length, startIndex: 2, endIndex: 2, size }) });
   assert.equal(result.serverPaged, false);
   assert.deepEqual(result.items, [2]);
+});
+
+test("normalizes an archive summary", () => {
+  const result = buildRacesSummary({ rows: [], archiveSummary: { total_races: 10, average_active_drivers: 20, top_winner: { name: "A" }, latest_race: { winner: "B", winner_best_lap: "1:47" } } });
+  assert.deepEqual({ total: result.total, averageActive: result.averageActive, latestBestLap: result.latestBestLap }, { total: 10, averageActive: 20, latestBestLap: "1:47" });
+});
+
+test("calculates a fallback summary from race results", () => {
+  const rows = [{ winner: "A", winner_public_id: "1", results: [{ driver: "A", public_id: "1", positions_delta: 3, best_lap: "1:48", car_name: "Car" }] }];
+  const result = buildRacesSummary({ rows, isActiveResult: () => true, getCarName: row => row?.car_name || "" });
+  assert.equal(result.topWinner.count, 1);
+  assert.equal(result.averageActive, "1.00");
+  assert.equal(result.averageOvertakes, "3.00");
+  assert.equal(result.latestBestLapCar, "Car");
 });
