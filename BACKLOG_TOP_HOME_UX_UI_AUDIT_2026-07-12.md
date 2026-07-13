@@ -92,6 +92,7 @@
 - 13.07.2026 — R10: начата физическая декомпозиция дочерних страниц — bans summary/table view вынесен в `src/pages/bans/index.js` с явными DOM, i18n, formatting и state dependencies. Loading, empty и escaped-row contracts покрыты тремя тестами; baseline расширен до 88 тестов.
 - 13.07.2026 — R10: чистая модель News feed вынесена в `src/pages/news/feed-model.js`; фильтрация published/expired, приоритет pinned → priority → date и unread count теперь имеют явные predicate dependencies и не мутируют исходный payload. Добавлены четыре unit-теста, baseline расширен до 92 тестов.
 - 13.07.2026 — R10: News list/detail/missing renderer и page-link binding вынесены в `src/pages/news/page-view.js`; DOM, routing, escaping, dates, thumbnail и read-state callbacks передаются явно. Список, статья, missing state и contract покрыты четырьмя тестами; baseline расширен до 96 тестов.
+- 13.07.2026 — R10: Community feed model вынесена в `src/pages/community/feed-model.js`; stable post key, newest-first сортировка без мутации и локализованные состояния likes отделены от DOM/API кода. Добавлены три unit-теста, baseline расширен до 99 тестов.
 
 ### Условия завершения R01
 

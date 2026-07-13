@@ -13,6 +13,7 @@ import { parseTableNumber, sortTableRows } from "./src/shared/table-model.js";
 import { createBansPageView } from "./src/pages/bans/index.js";
 import { countUnreadNews, sortPublishedNews } from "./src/pages/news/feed-model.js";
 import { createNewsPageView } from "./src/pages/news/page-view.js";
+import { getCommunityLikesText, getCommunityPostKey, sortCommunityPosts } from "./src/pages/community/feed-model.js";
 
 const PAGE_CONTEXT = readPageContext(document);
 const IS_RACES_PAGE = PAGE_CONTEXT.page === "races";
@@ -5245,7 +5246,7 @@ function formatNewsDateTime(dateString) {
 }
 
 function getCommunityPostId(post) {
-  return String(post?.id || post?.date || "").trim();
+  return getCommunityPostKey(post);
 }
 
 function getCommunityBrowserVoterId() {
@@ -5253,10 +5254,7 @@ function getCommunityBrowserVoterId() {
 }
 
 function getCommunityLikesLabel(state) {
-  if (state?.failed) return t("communityLikesFailed");
-  if (!state || state.loading || typeof state.likes !== "number") return t("communityLikesLoading");
-  if (state.likes <= 0) return t("communityLikesZero");
-  return replaceTokens(t(state.likes === 1 ? "communityLikesOne" : "communityLikesMany"), { value: state.likes });
+  return getCommunityLikesText(state, { translate: t, replaceTokens });
 }
 
 function renderCommunityLikes() {
@@ -5434,11 +5432,7 @@ function renderCommunityPage() {
   }
 
   const posts = Array.isArray(window.ASG_COMMUNITY_POSTS) ? window.ASG_COMMUNITY_POSTS : [];
-  const sortedPosts = [...posts].sort((a, b) => {
-    const bTime = new Date(b?.date || 0).getTime();
-    const aTime = new Date(a?.date || 0).getTime();
-    return (Number.isFinite(bTime) ? bTime : 0) - (Number.isFinite(aTime) ? aTime : 0);
-  });
+  const sortedPosts = sortCommunityPosts(posts);
 
   listEl.innerHTML = sortedPosts.length
     ? sortedPosts.map(renderCommunityPost).join("")

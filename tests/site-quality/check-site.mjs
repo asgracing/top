@@ -53,6 +53,7 @@ if (!js.includes('from "./src/shared/table-model.js"') || js.includes("function 
 if (!js.includes('from "./src/pages/bans/index.js"') || js.includes("function renderBansTable()") || js.includes("function renderBansSummary()")) failures.push("Bans page rendering must live outside app.js");
 if (!js.includes('from "./src/pages/news/feed-model.js"') || js.includes("return [...items]")) failures.push("News feed sorting model must live outside app.js");
 if (!js.includes('from "./src/pages/news/page-view.js"') || js.includes("function renderNewsListPage(") || js.includes("function renderNewsDetailPage(")) failures.push("News page rendering must live outside app.js");
+if (!js.includes('from "./src/pages/community/feed-model.js"') || js.includes("const sortedPosts = [...posts].sort")) failures.push("Community feed model must live outside app.js");
 if (!js.includes("function initializeSharedControls()") || !js.includes("function initializeHomeControllers()") || !js.includes("function initializePageControllers()")) failures.push("Application init must keep shared and page controller initialization separated");
 if (!js.includes("async function initializeHomeData()") || !js.includes("function applyHomeSiteData(data)")) failures.push("Home data loading and application must stay outside the shared init body");
 if (!js.includes("const pageDataInitializers = Object.freeze({") || !js.includes("const pageOrchestrator = createPageOrchestrator({")) failures.push("Page data initialization must use the explicit runtime orchestrator");
