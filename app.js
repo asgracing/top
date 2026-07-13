@@ -23,6 +23,7 @@ const {
   createDriverPage,
   renderDriverHighlights,
   renderDriverHeroTitle: renderDriverHeroTitleView, renderDriverStatsCards,
+  createDriverStatsController,
   buildDriverRankInfo, getDriverFavoriteCar,
   CARS_COLUMNS, processCars, createCarsTableView, createCarsSummaryView, createCarsPage,
   getCommunityLikesText, getCommunityPostKey, sortCommunityPosts, renderCommunityPostCard, renderCommunityTextBlocks: renderCommunityTextBlocksView, createCommunityPageController, createCommunityPage,
@@ -9262,6 +9263,20 @@ function renderPenaltyList(containerId, entries, labelKey) {
   el.innerHTML = renderDriverPenaltyList(entries, { escapeHtml });
 }
 
+let driverStatsController = null;
+function getDriverStatsController() {
+  driverStatsController ||= createDriverStatsController({
+    bestLapSelection: bestLapTrackSelection,
+    averagePaceSelection: averagePaceTrackSelection,
+    getSelectionKey: getDriverSelectionKey,
+    renderStats: buildDriverStatsMarkup,
+    openBestLapsModal: openBestlapTracksModal,
+    applyBestLapsButtonText: applyBestlapTracksButtonText,
+    translate: t,
+  });
+  return driverStatsController;
+}
+
 function getDriverRankInfo(profile) {
   const rankingSource = Array.isArray(leaderboardData) && leaderboardData.length
     ? leaderboardData
@@ -9316,63 +9331,7 @@ function renderDriverPage() {
   renderDriverTrackStats();
   renderPenaltyList("driver-penalty-reasons", driverProfileData.penalties?.reasons, "driverPenaltyReason");
   renderPenaltyList("driver-penalty-types", driverProfileData.penalties?.types, "driverPenaltyType");
-  bindDriverBestlapTracksButton(statsEl, driverProfileData);
-  bindBestLapTrackSelect(statsEl, driverProfileData);
-  bindAveragePaceTrackSelect(statsEl, driverProfileData);
-}
-
-function bindDriverBestlapTracksButton(root = document, profile = driverProfileData) {
-  const button = root?.querySelector?.("[data-driver-bestlap-tracks]");
-  if (!button || button.dataset.bound === "true") return;
-  button.addEventListener("click", (event) => {
-    event.preventDefault();
-    event.stopPropagation();
-    const items = Array.isArray(profile?.best_laps_by_track)
-      ? profile.best_laps_by_track
-      : Array.isArray(profile?.bestlap_tracks)
-        ? profile.bestlap_tracks
-        : [];
-    openBestlapTracksModal(items, button, {
-      title: t("bestLapTracksTitle"),
-      subtitle: t("driverBestLapTracksSubtitle")
-    });
-  });
-  button.dataset.bound = "true";
-  applyBestlapTracksButtonText(root);
-}
-
-function bindBestLapTrackSelect(root = document, profile = driverProfileData) {
-  root?.querySelectorAll?.("[data-bestlap-track]").forEach(select => {
-    if (select.dataset.bound === "true") return;
-    select.addEventListener("change", () => {
-      const key = select.dataset.bestlapTrack || getDriverSelectionKey(profile);
-      bestLapTrackSelection.set(key, select.value);
-      const container = select.closest(".driver-stats-grid") || root;
-      if (!container) return;
-      container.innerHTML = buildDriverStatsMarkup(profile);
-      bindDriverBestlapTracksButton(container, profile);
-      bindBestLapTrackSelect(container, profile);
-      bindAveragePaceTrackSelect(container, profile);
-    });
-    select.dataset.bound = "true";
-  });
-}
-
-function bindAveragePaceTrackSelect(root = document, profile = driverProfileData) {
-  root?.querySelectorAll?.("[data-average-pace-track]").forEach(select => {
-    if (select.dataset.bound === "true") return;
-    select.addEventListener("change", () => {
-      const key = select.dataset.averagePaceTrack || getAveragePaceSelectionKey(profile);
-      averagePaceTrackSelection.set(key, select.value);
-      const container = select.closest(".driver-stats-grid") || root;
-      if (!container) return;
-      container.innerHTML = buildDriverStatsMarkup(profile);
-      bindDriverBestlapTracksButton(container, profile);
-      bindBestLapTrackSelect(container, profile);
-      bindAveragePaceTrackSelect(container, profile);
-    });
-    select.dataset.bound = "true";
-  });
+  getDriverStatsController().bind(statsEl, driverProfileData);
 }
 
 function renderDriverPreviewModal() {
@@ -9408,9 +9367,7 @@ function renderDriverPreviewModal() {
     subtitleEl.textContent = t("driverPreviewSubtitle");
     statsEl.innerHTML = buildDriverStatsMarkup(profile);
     highlightsEl.innerHTML = buildDriverHighlightsMarkup(profile);
-    bindDriverBestlapTracksButton(statsEl, profile);
-    bindBestLapTrackSelect(statsEl, profile);
-    bindAveragePaceTrackSelect(statsEl, profile);
+    getDriverStatsController().bind(statsEl, profile);
   }
 
   if (driverPreviewState.href) {
