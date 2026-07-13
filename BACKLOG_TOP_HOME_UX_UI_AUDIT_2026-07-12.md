@@ -134,6 +134,7 @@
 - 13.07.2026 — R11: позиционирование и interaction states `.bg-video-sound-toggle` сведены из двух конфликтующих поздних блоков в единый override source; сохранены финальная левая привязка и мобильное скрытие. `!important` снижен 69 → 60, media queries 57 → 56.
 - 13.07.2026 — R11: championship event skin, responsive hero stack и performance animation/backdrop policy перенесены в контролируемый override layer без specificity escalation. `!important` снижен 60 → 31 — выполнен критерий сокращения минимум на 70% от исходных 106; desktop/tablet/mobile значения и порядок hero-колонок сохранены.
 - 13.07.2026 — R11: Best Lap CTA, Top-3 cards, support surface, hero total и hourly spacing получили единые финальные declarations в override layer. `!important` снижен 31 → 12 (−88.7% от baseline); оставшиеся случаи ограничены защитным visibility-контрактом `[hidden]`/mobile/guide и больше не управляют layout или оформлением.
+- 13.07.2026 — R11 hotfix: ручная проверка выявила скрытую карточку общего количества игроков в hero. `.hero-server-total-stat` удалён из legacy visibility-группы с `display: none !important`; единый override `display: grid` снова управляет карточкой, support sticky/mobile CTA остаются скрыты.
 
 ### Условия завершения R01
 

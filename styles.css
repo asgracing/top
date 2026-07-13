@@ -2315,7 +2315,6 @@ tr.is-interactive-row:focus-visible {
   display: contents;
 }
 
-.hero-server-total-stat,
 .support-sticky-widget,
 .support-mobile-cta {
   display: none !important;
