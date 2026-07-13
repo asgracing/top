@@ -56,7 +56,7 @@ for (const [page, [htmlPath, entrySrc]] of Object.entries(pageEntrypoints)) {
   if (!pageHtml.includes(heroHref)) failures.push(`${page} page is missing the shared hero foundation stylesheet`);
   const heroActionsHref = page === "home" ? "./styles/components/hero-actions.css?v=20260713r11heroactions1" : "../styles/components/hero-actions.css?v=20260713r11heroactions1";
   if (!pageHtml.includes(heroActionsHref)) failures.push(`${page} page is missing the shared hero actions stylesheet`);
-  const heroStatsHref = page === "home" ? "./styles/components/hero-stats.css?v=20260713r11herostats1" : "../styles/components/hero-stats.css?v=20260713r11herostats1";
+  const heroStatsHref = page === "home" ? "./styles/components/hero-stats.css?v=20260713r11herostats2" : "../styles/components/hero-stats.css?v=20260713r11herostats2";
   if (!pageHtml.includes(heroStatsHref)) failures.push(`${page} page is missing the shared hero stats stylesheet`);
 }
 const ids = [...html.matchAll(/\bid="([^"]+)"/g)].map(match => match[1]);
@@ -145,7 +145,9 @@ if (!buttonsCss.includes("@layer components {") || !buttonsCss.includes(".btn-pr
 if (!heroFoundationCss.includes("@layer components {") || !heroFoundationCss.includes(".hero-card") || legacyCss.includes("/* ===== HERO ===== */")) failures.push("Shared hero foundation must have one physical component source");
 if (!heroActionsCss.includes("@layer components {") || !heroActionsCss.includes(".hero-actions") || legacyCss.includes("/* ===== HERO ACTIONS + ONLINE WIDGET ===== */")) failures.push("Hero actions and online widget foundation must have one physical component source");
 if (!heroStatsCss.includes("@layer components {") || !heroStatsCss.includes(".hero-side-compact") || !heroStatsCss.includes(".mini-stat") || legacyCss.includes("/* ===== HERO MINI STATS ===== */")) failures.push("Hero mini stats and related widgets must have one physical component source");
-if (!heroStatsCss.includes('--server-card-bg: url("../../assets/main.jpg")') || !heroStatsCss.includes('--server-card-bg: url("../../assets/sunset.jpg")')) failures.push("Initial server cards must keep CSS image fallbacks before runtime data is ready");
+for (const [className, imageName] of [["monza", "main.jpg"], ["sunset", "sunset.jpg"], ["spa", "spa.jpg"], ["nurburgring", "nurburgring.jpg"], ["nurburgring24h", "Nurburgring24h.jpg"], ["silverstone", "silverstone.jpg"]]) {
+  if (!heroStatsCss.includes(`.server-sticky-card-${className}`) || !heroStatsCss.includes(`--server-card-bg: url("../../assets/${imageName}")`)) failures.push(`Server card ${className} is missing its class-based image fallback`);
+}
 const budgets = {
   important: [(css.match(/!important/g) || []).length, 12],
   mediaQuery: [(css.match(/@media\b/g) || []).length, 56],
