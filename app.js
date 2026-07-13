@@ -27,6 +27,7 @@ const {
   renderFunStatsAwardCard: renderFunStatsAwardCardView,
   renderFunStatsSummaryCard: renderFunStatsSummaryCardView,
   renderFunStatsListCard: renderFunStatsListCardView,
+  aggregateFunStatsFallback,
 } = PAGE_FEATURES;
 const IS_RACES_PAGE = PAGE_CONTEXT.page === "races";
 const IS_DRIVER_PAGE = PAGE_CONTEXT.page === "driver";
@@ -4831,6 +4832,20 @@ function aggregateFunStats(period) {
 
   const periodRaces = getFunStatsPeriodRaces(period);
   const { start, end } = getFunStatsPeriodWindow(period);
+  const fallback = aggregateFunStatsFallback({
+    period,
+    races: periodRaces,
+    safety: safetyData,
+    isActiveResult: isActiveRaceResult,
+    makePublicDriverId,
+    formatLapTime: formatLapTimeFromMs,
+  });
+  return {
+    ...fallback,
+    rangeLabel: `${formatDateLocal(start, currentLang)} - ${formatDateLocal(end, currentLang)}`,
+  };
+
+  /* Legacy fallback retained temporarily until the next R10 cleanup commit. */
   const driverMap = new Map();
   const carMap = new Map();
   let overtakesTotal = 0;
