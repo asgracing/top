@@ -22,6 +22,7 @@ import { createCarsSummaryView } from "./src/pages/cars/summary-view.js";
 import { buildRacesPageState, buildRacesSummary, processRaces } from "./src/pages/races/model.js";
 import { createRacesTableView } from "./src/pages/races/table-view.js";
 import { createRacesSummaryView } from "./src/pages/races/summary-view.js";
+import { getDriverProfileKey, normalizeDriverBestLaps, selectDriverBestLap } from "./src/pages/driver/best-laps-model.js";
 
 const PAGE_CONTEXT = readPageContext(document);
 const IS_RACES_PAGE = PAGE_CONTEXT.page === "races";
@@ -9237,38 +9238,15 @@ function buildDriverHeroTitle(profile) {
 }
 
 function getDriverSelectionKey(profile) {
-  return String(profile?.public_id || profile?.player_id || profile?.driver || "driver");
+  return getDriverProfileKey(profile);
 }
 
 function getBestLapTrackItems(profile) {
-  const items = Array.isArray(profile?.best_laps_by_track)
-    ? profile.best_laps_by_track
-    : Array.isArray(profile?.bestlap_tracks)
-      ? profile.bestlap_tracks
-      : [];
-  return items
-    .map(item => {
-      const trackCode = String(item?.track_code || item?.track || item?.best_lap_track || "").trim();
-      if (!trackCode) return null;
-      const lapMs = Number(item?.best_lap_ms || 0);
-      const lapLabel = item?.best_lap || (lapMs > 0 ? formatLapTimeFromMs(lapMs) : "");
-      if (!lapLabel) return null;
-      return {
-        ...item,
-        track_code: trackCode,
-        best_lap: lapLabel,
-        best_lap_ms: lapMs > 0 ? lapMs : null,
-        car_name: item?.best_lap_car_name || item?.car_name || item?.car_name_raw || item?.best_lap_car_name_raw || ""
-      };
-    })
-    .filter(Boolean);
+  return normalizeDriverBestLaps(profile, { formatLapTime: formatLapTimeFromMs });
 }
 
 function getSelectedBestLapTrack(profile, items) {
-  if (!items.length) return null;
-  const key = getDriverSelectionKey(profile);
-  const selected = bestLapTrackSelection.get(key);
-  return items.find(item => item.track_code === selected) || items[0];
+  return selectDriverBestLap(profile, items, bestLapTrackSelection);
 }
 
 function renderBestLapTrackSelect(profile, items, selectedTrackCode) {
