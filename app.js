@@ -28,6 +28,7 @@ const {
   renderFunStatsSummaryCard: renderFunStatsSummaryCardView,
   renderFunStatsListCard: renderFunStatsListCardView,
   aggregateFunStatsFallback,
+  createFunStatsPage,
 } = PAGE_FEATURES;
 const IS_RACES_PAGE = PAGE_CONTEXT.page === "races";
 const IS_DRIVER_PAGE = PAGE_CONTEXT.page === "driver";
@@ -10844,10 +10845,15 @@ const homePage = createHomePage({
   handleError: handleHomePageInitializationError
 });
 
+const funStatsPage = IS_FUN_STATS_PAGE ? createFunStatsPage({
+  initializeData: initializeFunStatsPageData,
+  handleError: handleFunStatsPageInitializationError,
+}) : null;
+
 const pageDataInitializers = Object.freeze({
   driver: initializeDriverPageData,
   cars: initializeCarsPageData,
-  "fun-stats": initializeFunStatsPageData,
+  "fun-stats": funStatsPage?.initialize,
   community: initializeCommunityPageData,
   news: initializeNewsPageData,
   bans: initializeBansPageData,
@@ -10891,7 +10897,7 @@ const pageInitializationErrorHandlers = Object.freeze({
   races: () => handleTablePageInitializationError("races-table"),
   cars: () => handleTablePageInitializationError("cars-table"),
   bans: () => handleTablePageInitializationError("bans-table"),
-  "fun-stats": handleFunStatsPageInitializationError,
+  "fun-stats": funStatsPage?.handleError,
   community: () => {},
   news: () => {},
   home: homePage.handleError
