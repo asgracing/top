@@ -129,6 +129,7 @@
 - 13.07.2026 — R10 hotfix: локальная проверка выявила остановку home init до загрузки данных — Driver Preview используется главной, но его route-loaded factories были доступны только `/driver/`. Manifest получил общий immutable Driver Preview feature set для home и driver; page-only tables, penalties и lifecycle на home по-прежнему не загружаются. Cache token обновлён, regression-тест фиксирует точную home allowlist.
 - 13.07.2026 — R11 начат. Точная CSS-база: `styles.css` — 277504 bytes / 13221 строка, 106 `!important`, 57 media queries, 48 `z-index`, 81 custom-property declarations и 253 hex color occurrences. Цель шага: управляемые tokens/base/layout/components/pages/utilities, один основной источник стилей компонента, не более 31 `!important`, нормализованные z-index/breakpoints и отсутствие несогласованной визуальной регрессии.
 - 13.07.2026 — R11: глобальный стек слоёв переведён на семантические z-index tokens: background/content, navigation, floating widgets, guide, popover и modal tiers сохраняют прежний порядок без разрозненных magic numbers.
+- 13.07.2026 — R11: объявлен контролируемый cascade order `reset → base → layout → components → pages → utilities → legacy → overrides`. Исходный stylesheet помещён в migration boundary `legacy` с сохранением внутреннего source order; quality gate защищает слой от случайного удаления до завершения переноса компонентов.
 
 ### Условия завершения R01
 

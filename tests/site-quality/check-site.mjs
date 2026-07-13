@@ -98,6 +98,8 @@ if (!js.includes('from "./src/pages/home/deferred-sections.js"') || js.includes(
 if (!js.includes('from "./src/pages/home/stats-tabs-controller.js"') || js.includes("combinedStatsTabsBound") || js.includes("hostedCombinedStatsTab")) failures.push("Home statistics tab behavior must live outside app.js");
 if (!js.includes('from "./src/pages/home/index.js"') || !js.includes("const homePage = createHomePage({")) failures.push("Home lifecycle must be composed through the home page module");
 if (!js.includes('from "./src/pages/home/view-state-config.js"') || js.includes('["leaderboard-table", "leaderboard-pagination-wrap", "errorLeaderboard"]')) failures.push("Home loading and error table states must live outside app.js");
+if (!css.includes("@layer reset, base, layout, components, pages, utilities, legacy, overrides;")) failures.push("CSS must declare the controlled R11 cascade order");
+if (!css.includes("@layer legacy {") || !css.includes("} /* end legacy */")) failures.push("Unmigrated CSS must remain inside the explicit legacy layer");
 const budgets = {
   important: [(css.match(/!important/g) || []).length, 106],
   mediaQuery: [(css.match(/@media\b/g) || []).length, 57],

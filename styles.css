@@ -60,6 +60,14 @@
   --nav-scroll-offset: 84px;
 }
 
+@layer reset, base, layout, components, pages, utilities, legacy, overrides;
+
+/*
+ * R11 migration boundary. Existing rules keep their exact internal source order
+ * in `legacy`; consolidated rules move to the named layers above.
+ */
+@layer legacy {
+
 /* ===== RESET / BASE ===== */
 
 
@@ -11928,6 +11936,8 @@ body.background-audio-focus .bg-video-sound-toggle {
     height: auto;
   }
 }
+
+} /* end legacy */
 
 /* ===== FINAL BEST LAP CTA + VIDEO SOUND OVERRIDE 0605 ===== */
 
