@@ -140,6 +140,7 @@
 - 13.07.2026 — R11: colors, spacing, radii, motion и semantic z-index tiers вынесены в единый `styles/tokens.css` (`@layer tokens`). Все восемь route pages подключают tokens перед shared legacy stylesheet; quality gate проверяет route coverage и запрещает дублирование token declarations в монолите.
 - 13.07.2026 — R11: reset, document foundation, background modes, reveal state и общий container физически вынесены в `styles/base.css` по слоям `reset/base/layout`. Все восемь route pages подключают foundation между tokens и legacy; относительный asset URL и quality gate обновлены для нового владельца правил.
 - 13.07.2026 — R11: video background, audio-focus state и базовый sound control вынесены в `styles/components/site-background.css`. Модуль подключён на всех маршрутах перед legacy; финальные responsive sound-control overrides остаются в `hero-layout.css`, а quality gate контролирует единственного владельца foundation.
+- 13.07.2026 — R11: общий top navigation foundation (brand, меню, dropdowns и social controls) вынесен в `styles/components/top-navigation.css` и подключён на всех восьми маршрутах до legacy. Quality gate агрегирует модуль в CSS budgets и проверяет route coverage/единственного физического владельца.
 
 ### Условия завершения R01
 
