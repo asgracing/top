@@ -91,6 +91,7 @@
 - 13.07.2026 — R10: общая модель сортировки таблиц вынесена в `src/shared/table-model.js`; нормализация чисел, времени круга, вложенных полей, ELO с missing-last и rank tie-break больше не дублируются в `app.js`. Добавлены пять unit-тестов, baseline расширен до 85 тестов.
 - 13.07.2026 — R10: начата физическая декомпозиция дочерних страниц — bans summary/table view вынесен в `src/pages/bans/index.js` с явными DOM, i18n, formatting и state dependencies. Loading, empty и escaped-row contracts покрыты тремя тестами; baseline расширен до 88 тестов.
 - 13.07.2026 — R10: чистая модель News feed вынесена в `src/pages/news/feed-model.js`; фильтрация published/expired, приоритет pinned → priority → date и unread count теперь имеют явные predicate dependencies и не мутируют исходный payload. Добавлены четыре unit-теста, baseline расширен до 92 тестов.
+- 13.07.2026 — R10: News list/detail/missing renderer и page-link binding вынесены в `src/pages/news/page-view.js`; DOM, routing, escaping, dates, thumbnail и read-state callbacks передаются явно. Список, статья, missing state и contract покрыты четырьмя тестами; baseline расширен до 96 тестов.
 
 ### Условия завершения R01
 

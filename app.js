@@ -12,6 +12,7 @@ import { createModalControllerFactory } from "./src/shared/modal-controller.js";
 import { parseTableNumber, sortTableRows } from "./src/shared/table-model.js";
 import { createBansPageView } from "./src/pages/bans/index.js";
 import { countUnreadNews, sortPublishedNews } from "./src/pages/news/feed-model.js";
+import { createNewsPageView } from "./src/pages/news/page-view.js";
 
 const PAGE_CONTEXT = readPageContext(document);
 const IS_RACES_PAGE = PAGE_CONTEXT.page === "races";
@@ -5684,24 +5685,6 @@ async function loadNewsFeed() {
   return newsFeedData;
 }
 
-function renderNewsBodyBlocks(blocks) {
-  const items = Array.isArray(blocks) ? blocks : [blocks];
-  return items.map((block) => {
-    if (typeof block === "string") {
-      return `<p>${escapeHtml(block)}</p>`;
-    }
-    if (block && typeof block === "object" && block.type === "list" && Array.isArray(block.items)) {
-      return `<ul>${block.items.map(item => `<li>${escapeHtml(String(item || ""))}</li>`).join("")}</ul>`;
-    }
-    if (block && typeof block === "object" && block.type === "link" && block.href) {
-      const href = String(block.href || "").trim();
-      const label = String(block.label || href).trim();
-      return `<p><a class="news-inline-link" href="${escapeHtml(href)}">${escapeHtml(label)}</a></p>`;
-    }
-    return "";
-  }).join("");
-}
-
 function renderNewsThumb(item, className = "") {
   const imageUrl = item?.thumbnail_url || item?.cover_image_url || "";
   const altText = String(item?.image_alt || item?.title || "").trim();
@@ -5855,114 +5838,24 @@ function ensureNewsNotificationsUi() {
   bindNewsNotificationsModalLinks();
 }
 
-function findNewsBySlug(slug) {
-  const key = String(slug || "").trim();
-  return newsFeedData.find(item => item.slug === key) || null;
-}
-
-function renderNewsListPage(items) {
-  const listEl = document.getElementById("news-feed");
-  const articleEl = document.getElementById("news-article");
-  const titleEl = document.getElementById("news-page-title");
-  const subtitleEl = document.getElementById("news-page-subtitle");
-  if (!listEl || !articleEl || !titleEl || !subtitleEl) return;
-
-  titleEl.textContent = t("newsPageTitle");
-  subtitleEl.textContent = t("newsPageSubtitle");
-  articleEl.hidden = true;
-  listEl.hidden = false;
-  listEl.innerHTML = items.length
-    ? items.map(item => `
-      <article class="news-feed-card">
-        <a class="news-feed-card-link" href="${escapeHtml(getNewsArticleHref(item.slug))}" data-news-open-slug="${escapeHtml(item.slug)}">
-          ${renderNewsThumb(item, "news-feed-thumb")}
-          <div class="news-feed-copy">
-            <time class="news-feed-date" datetime="${escapeAttribute(item.published_at || "")}">${escapeHtml(formatNewsDateTime(item.published_at))}</time>
-            <h2 class="news-feed-title">${escapeHtml(item.title)}</h2>
-            <p class="news-feed-summary">${escapeHtml(item.summary || "")}</p>
-            <span class="news-feed-cta">${escapeHtml(t("newsReadMore"))}</span>
-          </div>
-        </a>
-      </article>
-    `).join("")
-    : `<div class="empty-box">${escapeHtml(t("newsListEmpty"))}</div>`;
-}
-
-function renderNewsDetailPage(item) {
-  const listEl = document.getElementById("news-feed");
-  const articleEl = document.getElementById("news-article");
-  const titleEl = document.getElementById("news-page-title");
-  const subtitleEl = document.getElementById("news-page-subtitle");
-  if (!listEl || !articleEl || !titleEl || !subtitleEl) return;
-
-  markNewsItemRead(item);
-  renderNewsBell();
-  renderNewsNotificationsModal();
-
-  titleEl.textContent = item.title;
-  subtitleEl.textContent = formatNewsDateTime(item.published_at);
-  listEl.hidden = true;
-  articleEl.hidden = false;
-  articleEl.innerHTML = `
-    <a class="news-back-link" href="${escapeHtml(getNewsListHref())}">${escapeHtml(t("newsBackToList"))}</a>
-    <article class="news-article-card">
-      ${item.cover_image_url ? `
-        <div class="news-article-cover-wrap">
-          <img class="news-article-cover" src="${escapeHtml(item.cover_image_url)}" alt="${escapeHtml(item.image_alt || item.title)}" loading="lazy" />
-        </div>
-      ` : ""}
-      <div class="news-article-body">
-        ${renderNewsBodyBlocks(item.body)}
-      </div>
-    </article>
-  `;
-}
-
-function renderMissingNewsPage() {
-  const listEl = document.getElementById("news-feed");
-  const articleEl = document.getElementById("news-article");
-  const titleEl = document.getElementById("news-page-title");
-  const subtitleEl = document.getElementById("news-page-subtitle");
-  if (!listEl || !articleEl || !titleEl || !subtitleEl) return;
-
-  titleEl.textContent = t("newsPageTitle");
-  subtitleEl.textContent = "";
-  listEl.hidden = true;
-  articleEl.hidden = false;
-  articleEl.innerHTML = `
-    <a class="news-back-link" href="${escapeHtml(getNewsListHref())}">${escapeHtml(t("newsBackToList"))}</a>
-    <div class="empty-box">${escapeHtml(t("newsArticleMissing"))}</div>
-  `;
-}
-
-function bindNewsPageLinks() {
-  const root = document.getElementById("news-feed");
-  if (!root || root.dataset.bound === "true") return;
-  root.addEventListener("click", (event) => {
-    const link = event.target?.closest?.("[data-news-open-slug]");
-    if (!link) return;
-    const item = findNewsBySlug(link.dataset.newsOpenSlug);
-    if (item) markNewsItemRead(item);
-  });
-  root.dataset.bound = "true";
-}
+const newsPageView = createNewsPageView({
+  documentRef: document,
+  translate: t,
+  escapeHtml,
+  escapeAttribute,
+  formatDateTime: formatNewsDateTime,
+  getArticleHref: getNewsArticleHref,
+  getListHref: getNewsListHref,
+  renderThumb: renderNewsThumb,
+  markRead: markNewsItemRead,
+  onReadStateChanged: () => {
+    renderNewsBell();
+    renderNewsNotificationsModal();
+  }
+});
 
 function renderNewsPage() {
-  const listEl = document.getElementById("news-feed");
-  if (!listEl) return;
-  const items = getSortedNewsFeed(newsFeedData);
-  const slug = getRequestedNewsSlug();
-  const item = slug ? findNewsBySlug(slug) : null;
-
-  if (slug && item) {
-    renderNewsDetailPage(item);
-  } else if (slug) {
-    renderMissingNewsPage();
-  } else {
-    renderNewsListPage(items);
-  }
-
-  bindNewsPageLinks();
+  newsPageView.render({ items: getSortedNewsFeed(newsFeedData), slug: getRequestedNewsSlug() });
 }
 
 function closeNewsNotificationsPopover() {
