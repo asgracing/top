@@ -51,6 +51,13 @@ if (!js.includes('readPageContext(document)')) failures.push("Legacy application
 if (!js.includes("await loadPageFeatures(PAGE_CONTEXT.page)") || /from "\.\/src\/pages\/(?:bans|cars|community|driver|races)\//.test(js)) failures.push("Child page features must be loaded only for the active route");
 if (!pageFeatureIsLoaded("../pages/fun-stats/aggregation-model.js") || !js.includes("aggregateFunStatsFallback({") || js.includes("const driverMap = new Map()")) failures.push("Fun Stats fallback aggregation must use only its route-loaded model");
 if (!pageFeatureIsLoaded("../pages/fun-stats/index.js") || !js.includes("const funStatsPage = IS_FUN_STATS_PAGE ? createFunStatsPage({")) failures.push("Fun Stats lifecycle must use its route-loaded page module");
+for (const [path, factory] of [
+  ["../pages/cars/index.js", "createCarsPage"], ["../pages/races/index.js", "createRacesPage"],
+  ["../pages/driver/index.js", "createDriverPage"], ["../pages/news/index.js", "createNewsPage"],
+  ["../pages/community/index.js", "createCommunityPage"], ["../pages/bans/index.js", "createBansPage"],
+]) {
+  if (!pageFeatureIsLoaded(path) || !js.includes(`${factory}({`)) failures.push(`${factory} must compose a route-loaded page lifecycle`);
+}
 if (js.slice(0, 1000).includes("window.location.pathname")) failures.push("Application bootstrap must not infer its page from pathname");
 if (!js.includes("runWhenDocumentReady(document")) failures.push("Application must use the tested async document bootstrap");
 if (!js.includes('from "./src/shared/modal-controller.js"') || js.includes("function createModalController({")) failures.push("Modal focus and inert behavior must live outside app.js");

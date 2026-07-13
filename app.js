@@ -18,11 +18,12 @@ const PAGE_FEATURES = await loadPageFeatures(PAGE_CONTEXT.page);
 const {
   buildDriverRaceTableState, buildDriverTrackTableState, DRIVER_RACE_COLUMNS, DRIVER_TRACK_COLUMNS,
   getDriverProfileKey, normalizeDriverAveragePace, normalizeDriverBestLaps, selectDriverAveragePace, selectDriverBestLap,
-  renderDriverTrackSelect, renderDriverPenaltyList, createBansPageView,
-  CARS_COLUMNS, processCars, createCarsTableView, createCarsSummaryView,
-  getCommunityLikesText, getCommunityPostKey, sortCommunityPosts, renderCommunityPostCard, createCommunityPageController,
-  createNewsPageView,
-  buildRacesPageState, buildRacesSummary, processRaces, createRacesTableView, createRacesSummaryView,
+  renderDriverTrackSelect, renderDriverPenaltyList, createBansPageView, createBansPage,
+  createDriverPage,
+  CARS_COLUMNS, processCars, createCarsTableView, createCarsSummaryView, createCarsPage,
+  getCommunityLikesText, getCommunityPostKey, sortCommunityPosts, renderCommunityPostCard, createCommunityPageController, createCommunityPage,
+  createNewsPageView, createNewsPage,
+  buildRacesPageState, buildRacesSummary, processRaces, createRacesTableView, createRacesSummaryView, createRacesPage,
   getFunStatsPeriodWindow: buildFunStatsPeriodWindow, selectFunStatsPeriodRaces,
   renderFunStatsAwardCard: renderFunStatsAwardCardView,
   renderFunStatsSummaryCard: renderFunStatsSummaryCardView,
@@ -10850,14 +10851,44 @@ const funStatsPage = IS_FUN_STATS_PAGE ? createFunStatsPage({
   handleError: handleFunStatsPageInitializationError,
 }) : null;
 
+const carsPage = IS_CARS_PAGE ? createCarsPage({
+  initializeData: initializeCarsPageData,
+  handleError: () => handleTablePageInitializationError("cars-table"),
+}) : null;
+
+const racesFeaturePage = IS_RACES_PAGE ? createRacesPage({
+  initializeData: initializeRacesPageData,
+  handleError: () => handleTablePageInitializationError("races-table"),
+}) : null;
+
+const driverPage = IS_DRIVER_PAGE ? createDriverPage({
+  initializeData: initializeDriverPageData,
+  handleError: handleDriverPageInitializationError,
+}) : null;
+
+const newsPage = IS_NEWS_PAGE ? createNewsPage({
+  initializeData: initializeNewsPageData,
+  handleError: () => {},
+}) : null;
+
+const communityPage = IS_COMMUNITY_PAGE ? createCommunityPage({
+  initializeData: initializeCommunityPageData,
+  handleError: () => {},
+}) : null;
+
+const bansPage = IS_BANS_PAGE ? createBansPage({
+  initializeData: initializeBansPageData,
+  handleError: () => handleTablePageInitializationError("bans-table"),
+}) : null;
+
 const pageDataInitializers = Object.freeze({
-  driver: initializeDriverPageData,
-  cars: initializeCarsPageData,
+  driver: driverPage?.initialize,
+  cars: carsPage?.initialize,
   "fun-stats": funStatsPage?.initialize,
-  community: initializeCommunityPageData,
-  news: initializeNewsPageData,
-  bans: initializeBansPageData,
-  races: initializeRacesPageData,
+  community: communityPage?.initialize,
+  news: newsPage?.initialize,
+  bans: bansPage?.initialize,
+  races: racesFeaturePage?.initialize,
   home: homePage.initialize
 });
 
@@ -10893,13 +10924,13 @@ function handleHomePageInitializationError() {
 }
 
 const pageInitializationErrorHandlers = Object.freeze({
-  driver: handleDriverPageInitializationError,
-  races: () => handleTablePageInitializationError("races-table"),
-  cars: () => handleTablePageInitializationError("cars-table"),
-  bans: () => handleTablePageInitializationError("bans-table"),
+  driver: driverPage?.handleError,
+  races: racesFeaturePage?.handleError,
+  cars: carsPage?.handleError,
+  bans: bansPage?.handleError,
   "fun-stats": funStatsPage?.handleError,
-  community: () => {},
-  news: () => {},
+  community: communityPage?.handleError,
+  news: newsPage?.handleError,
   home: homePage.handleError
 });
 

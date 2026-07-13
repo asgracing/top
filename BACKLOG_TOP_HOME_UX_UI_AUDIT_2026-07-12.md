@@ -115,6 +115,7 @@
 - 13.07.2026 — R10: вычисление Fun Stats summary, awards и шести leaderboard списков делегировано route-loaded `src/pages/fun-stats/aggregation-model.js`; active-result predicate, public id и lap formatter стали явными зависимостями. Добавлены три unit-теста, baseline расширен до 155 тестов.
 - 13.07.2026 — R10: после подтверждения parity удалены 117 строк недостижимой legacy-агрегации и локальный record factory из `app.js`; quality gate запрещает возврат дублирующего `driverMap` в монолит.
 - 13.07.2026 — R10: Fun Stats data/error lifecycle объединён в route-loaded `src/pages/fun-stats/index.js`; page initializer и error registries используют единый feature object. Добавлены два unit-теста, baseline расширен до 157 тестов.
+- 13.07.2026 — R10: Cars, Races, Driver, News, Community и Bans получили route-loaded page lifecycle factories; initializer/error registries больше не подключают их разрозненные функции напрямую. Добавлено 11 unit-тестов, baseline расширен до 168 тестов; quality gate проверяет каждый route factory.
 
 ### Условия завершения R01
 

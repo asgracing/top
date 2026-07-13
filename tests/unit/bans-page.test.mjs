@@ -1,6 +1,6 @@
 import test from "node:test";
 import assert from "node:assert/strict";
-import { createBansPageView } from "../../src/pages/bans/index.js";
+import { createBansPage, createBansPageView } from "../../src/pages/bans/index.js";
 
 function setup() {
   const elements = new Map([
@@ -40,4 +40,12 @@ test("delegates loading and empty states", () => {
 
 test("rejects incomplete rendering dependencies", () => {
   assert.throws(() => createBansPageView({}), /complete rendering dependencies/);
+});
+
+test("composes and validates the Bans page lifecycle", async () => {
+  const calls = [];
+  const page = createBansPage({ initializeData: async () => calls.push("data"), handleError: () => calls.push("error") });
+  await page.initialize(); page.handleError(new Error("failed"));
+  assert.deepEqual(calls, ["data", "error"]);
+  assert.throws(() => createBansPage({}), /requires data/);
 });
