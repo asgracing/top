@@ -2,7 +2,7 @@ import { readFile } from "node:fs/promises";
 import { resolve } from "node:path";
 
 const root = resolve(import.meta.dirname, "../..");
-const [html, tokensCss, baseCss, siteBackgroundCss, topNavigationCss, languageSwitchCss, buttonsCss, legacyCss, heroLayoutCss, heroServerSummaryCss, js, pageFeatureLoader] = await Promise.all([
+const [html, tokensCss, baseCss, siteBackgroundCss, topNavigationCss, languageSwitchCss, buttonsCss, heroFoundationCss, legacyCss, heroLayoutCss, heroServerSummaryCss, js, pageFeatureLoader] = await Promise.all([
   readFile(resolve(root, "index.html"), "utf8"),
   readFile(resolve(root, "styles/tokens.css"), "utf8"),
   readFile(resolve(root, "styles/base.css"), "utf8"),
@@ -10,13 +10,14 @@ const [html, tokensCss, baseCss, siteBackgroundCss, topNavigationCss, languageSw
   readFile(resolve(root, "styles/components/top-navigation.css"), "utf8"),
   readFile(resolve(root, "styles/components/language-switch.css"), "utf8"),
   readFile(resolve(root, "styles/components/buttons.css"), "utf8"),
+  readFile(resolve(root, "styles/components/hero-foundation.css"), "utf8"),
   readFile(resolve(root, "styles.css"), "utf8"),
   readFile(resolve(root, "styles/components/hero-layout.css"), "utf8"),
   readFile(resolve(root, "styles/components/hero-server-summary.css"), "utf8"),
   readFile(resolve(root, "app.js"), "utf8"),
   readFile(resolve(root, "src/runtime/page-feature-loader.js"), "utf8")
 ]);
-const css = `${tokensCss}\n${baseCss}\n${siteBackgroundCss}\n${topNavigationCss}\n${languageSwitchCss}\n${buttonsCss}\n${legacyCss}\n${heroLayoutCss}\n${heroServerSummaryCss}`;
+const css = `${tokensCss}\n${baseCss}\n${siteBackgroundCss}\n${topNavigationCss}\n${languageSwitchCss}\n${buttonsCss}\n${heroFoundationCss}\n${legacyCss}\n${heroLayoutCss}\n${heroServerSummaryCss}`;
 const failures = [];
 const pageFeatureIsLoaded = path => pageFeatureLoader.includes(`"${path}"`);
 const pageEntrypoints = {
@@ -49,6 +50,8 @@ for (const [page, [htmlPath, entrySrc]] of Object.entries(pageEntrypoints)) {
   if (!pageHtml.includes(languageHref)) failures.push(`${page} page is missing the shared language switch stylesheet`);
   const buttonsHref = page === "home" ? "./styles/components/buttons.css?v=20260713r11buttons1" : "../styles/components/buttons.css?v=20260713r11buttons1";
   if (!pageHtml.includes(buttonsHref)) failures.push(`${page} page is missing the shared button stylesheet`);
+  const heroHref = page === "home" ? "./styles/components/hero-foundation.css?v=20260713r11hero1" : "../styles/components/hero-foundation.css?v=20260713r11hero1";
+  if (!pageHtml.includes(heroHref)) failures.push(`${page} page is missing the shared hero foundation stylesheet`);
 }
 const ids = [...html.matchAll(/\bid="([^"]+)"/g)].map(match => match[1]);
 const duplicates = [...new Set(ids.filter((id, index) => ids.indexOf(id) !== index))];
@@ -133,6 +136,7 @@ if (!siteBackgroundCss.includes("@layer components {") || !siteBackgroundCss.inc
 if (!topNavigationCss.includes("@layer components {") || !topNavigationCss.includes(".top-nav") || legacyCss.includes("/* ===== TOP NAVIGATION ===== */")) failures.push("Top navigation foundation must have one physical component source");
 if (!languageSwitchCss.includes("@layer components {") || !languageSwitchCss.includes(".lang-switch") || legacyCss.includes("/* ===== LANGUAGE SWITCH ===== */")) failures.push("Language switch and shared focus foundation must have one physical component source");
 if (!buttonsCss.includes("@layer components {") || !buttonsCss.includes(".btn-primary") || legacyCss.includes("/* ===== BUTTONS ===== */")) failures.push("Shared buttons and CTA states must have one physical component source");
+if (!heroFoundationCss.includes("@layer components {") || !heroFoundationCss.includes(".hero-card") || legacyCss.includes("/* ===== HERO ===== */")) failures.push("Shared hero foundation must have one physical component source");
 const budgets = {
   important: [(css.match(/!important/g) || []).length, 12],
   mediaQuery: [(css.match(/@media\b/g) || []).length, 56],

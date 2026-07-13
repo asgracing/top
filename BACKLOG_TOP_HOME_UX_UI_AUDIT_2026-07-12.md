@@ -143,6 +143,7 @@
 - 13.07.2026 — R11: общий top navigation foundation (brand, меню, dropdowns и social controls) вынесен в `styles/components/top-navigation.css` и подключён на всех восьми маршрутах до legacy. Quality gate агрегирует модуль в CSS budgets и проверяет route coverage/единственного физического владельца.
 - 13.07.2026 — R11: language switch, flag controls и общий keyboard focus contract вынесены в `styles/components/language-switch.css`. Все маршруты подключают компонент до legacy; quality gate защищает route coverage и не допускает возврат блока в монолит.
 - 13.07.2026 — R11: shared button system, primary/secondary CTA variants и attention animation вынесены в `styles/components/buttons.css`. Компонент подключён на всех маршрутах до legacy, включён в совокупные budgets и защищён проверкой единственного физического источника.
+- 13.07.2026 — R11: hero card foundation, brand/content primitives и intro CTA layout вынесены в `styles/components/hero-foundation.css`. Все маршруты подключают foundation до legacy, а responsive/server-summary modules продолжают применять финальные правила после монолита; quality gate защищает порядок и единственного владельца.
 
 ### Условия завершения R01
 
