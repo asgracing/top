@@ -139,6 +139,7 @@
 - 13.07.2026 — R11: responsive hero layout, championship skin и sound control физически перенесены в `styles/components/hero-layout.css`; порядок подключений `legacy → hero-layout → hero-server-summary` сохраняет cascade parity. Quality gate агрегирует оба component stylesheet и фиксирует владение финальными hero rules.
 - 13.07.2026 — R11: colors, spacing, radii, motion и semantic z-index tiers вынесены в единый `styles/tokens.css` (`@layer tokens`). Все восемь route pages подключают tokens перед shared legacy stylesheet; quality gate проверяет route coverage и запрещает дублирование token declarations в монолите.
 - 13.07.2026 — R11: reset, document foundation, background modes, reveal state и общий container физически вынесены в `styles/base.css` по слоям `reset/base/layout`. Все восемь route pages подключают foundation между tokens и legacy; относительный asset URL и quality gate обновлены для нового владельца правил.
+- 13.07.2026 — R11: video background, audio-focus state и базовый sound control вынесены в `styles/components/site-background.css`. Модуль подключён на всех маршрутах перед legacy; финальные responsive sound-control overrides остаются в `hero-layout.css`, а quality gate контролирует единственного владельца foundation.
 
 ### Условия завершения R01
 
