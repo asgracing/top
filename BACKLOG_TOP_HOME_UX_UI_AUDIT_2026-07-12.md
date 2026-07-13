@@ -117,6 +117,7 @@
 - 13.07.2026 — R10: Fun Stats data/error lifecycle объединён в route-loaded `src/pages/fun-stats/index.js`; page initializer и error registries используют единый feature object. Добавлены два unit-теста, baseline расширен до 157 тестов.
 - 13.07.2026 — R10: Cars, Races, Driver, News, Community и Bans получили route-loaded page lifecycle factories; initializer/error registries больше не подключают их разрозненные функции напрямую. Добавлено 11 unit-тестов, baseline расширен до 168 тестов; quality gate проверяет каждый route factory.
 - 13.07.2026 — R10: Community paragraph/list renderer перенесён в `post-view.js`, а пустые Cars/Races filter wrappers удалены из `app.js`. Добавлен regression-тест escaped paragraphs/lists, baseline расширен до 169 тестов.
+- 13.07.2026 — R10: Driver highlights markup вынесен в `highlights-view.js`, а live/summary rank и favorite-car selection — в `profile-model.js`. Добавлены четыре unit-теста, baseline расширен до 173 тестов; монолит больше не содержит соответствующую разметку и Map-агрегацию.
 
 ### Условия завершения R01
 

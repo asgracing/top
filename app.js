@@ -20,6 +20,8 @@ const {
   getDriverProfileKey, normalizeDriverAveragePace, normalizeDriverBestLaps, selectDriverAveragePace, selectDriverBestLap,
   renderDriverTrackSelect, renderDriverPenaltyList, createBansPageView, createBansPage,
   createDriverPage,
+  renderDriverHighlights,
+  buildDriverRankInfo, getDriverFavoriteCar,
   CARS_COLUMNS, processCars, createCarsTableView, createCarsSummaryView, createCarsPage,
   getCommunityLikesText, getCommunityPostKey, sortCommunityPosts, renderCommunityPostCard, renderCommunityTextBlocks: renderCommunityTextBlocksView, createCommunityPageController, createCommunityPage,
   createNewsPageView, createNewsPage,
@@ -9205,24 +9207,7 @@ function renderCommunityTextBlocks(text) {
 }
 
 function buildDriverHighlightsMarkup(profile) {
-  if (!profile) return "";
-  const summary = profile.summary || {};
-  const safetySource = getSafetyInfo(profile) ? profile : findSafetySource(profile.public_id, profile.player_id);
-
-  return `
-    <div class="driver-highlight-card">
-      <div class="driver-highlight-label">${escapeHtml(t("driverRecentForm"))}</div>
-      <div class="driver-highlight-value">${renderRecentForm(profile.recent_form)}</div>
-    </div>
-    <div class="driver-highlight-card">
-      <div class="driver-highlight-label">${escapeHtml(t("driverSummaryFastestLaps"))}</div>
-      <div class="driver-highlight-value">${escapeHtml(summary.fastest_lap_awards ?? 0)}</div>
-    </div>
-    <div class="driver-highlight-card">
-      <div class="driver-highlight-label">${escapeHtml(t("safetyRatingTitle"))}</div>
-      <div class="driver-highlight-value">${renderSafetyBadge(safetySource) || `<span class="empty-inline">-</span>`}</div>
-    </div>
-  `;
+  return renderDriverHighlights(profile, { getSafetyInfo, findSafetySource, renderRecentForm, renderSafetyBadge, translate: t, escapeHtml });
 }
 
 function renderDriverRaceHistory() {
@@ -9367,54 +9352,16 @@ function renderPenaltyList(containerId, entries, labelKey) {
 }
 
 function getDriverRankInfo(profile) {
-  const publicId = profile?.public_id;
-  const summaryRank = profile?.summary?.championship_rank;
   const rankingSource = Array.isArray(leaderboardData) && leaderboardData.length
     ? leaderboardData
     : Array.isArray(driverIndexData) && driverIndexData.length
       ? driverIndexData
       : [];
-  const index = publicId && rankingSource.length
-    ? rankingSource.findIndex(row => row?.public_id === publicId)
-    : -1;
-  const liveRow = index >= 0 ? rankingSource[index] : null;
-  const liveRank = liveRow?.rank || (index >= 0 ? index + 1 : null);
-  const liveChange = liveRow?.rank_change || liveRow?.latest_changes?.championship_rank || null;
-
-  if (liveRank) {
-    return {
-      rank: liveRank,
-      rankClass: liveRank === 1 ? "rank-1" : liveRank === 2 ? "rank-2" : liveRank === 3 ? "rank-3" : "rank-default",
-      change: liveChange,
-    };
-  }
-  if (!summaryRank) return null;
-  return {
-    rank: summaryRank,
-    rankClass: summaryRank === 1 ? "rank-1" : summaryRank === 2 ? "rank-2" : summaryRank === 3 ? "rank-3" : "rank-default",
-    change: profile?.summary?.latest_changes?.championship_rank || null,
-  };
+  return buildDriverRankInfo(profile, rankingSource);
 }
 
 function getFavoriteCarName(profile) {
-  const history = Array.isArray(profile?.race_history) ? profile.race_history : [];
-  if (!history.length) return null;
-
-  const counts = new Map();
-  history.forEach(row => {
-    const name = String(row?.car_name || "").trim();
-    if (!name) return;
-    counts.set(name, (counts.get(name) || 0) + 1);
-  });
-
-  if (!counts.size) return null;
-
-  return [...counts.entries()]
-    .sort((a, b) => {
-      const countDiff = b[1] - a[1];
-      if (countDiff !== 0) return countDiff;
-      return a[0].localeCompare(b[0]);
-    })[0][0];
+  return getDriverFavoriteCar(profile);
 }
 
 function renderDriverPage() {

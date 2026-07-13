@@ -76,6 +76,8 @@ if (!pageFeatureIsLoaded("../pages/races/model.js") || js.includes("const racesC
 if (!pageFeatureIsLoaded("../pages/races/table-view.js") || js.includes('table class="races-table"') || js.includes("const racesTableView = createRacesTableView")) failures.push("Races table rendering must use a lazy external view");
 if (!pageFeatureIsLoaded("../pages/races/summary-view.js") || js.includes('document.getElementById("races-total-count")') || js.includes("const racesSummaryView = createRacesSummaryView")) failures.push("Races summary rendering must use a lazy external view");
 if (!pageFeatureIsLoaded("../pages/driver/best-laps-model.js") || js.includes("item?.best_lap_track ||")) failures.push("Driver best-lap selection model must live outside app.js");
+if (!pageFeatureIsLoaded("../pages/driver/profile-model.js") || js.includes("const counts = new Map()")) failures.push("Driver rank and favorite-car models must live outside app.js");
+if (!pageFeatureIsLoaded("../pages/driver/highlights-view.js") || js.includes('class="driver-highlight-card"')) failures.push("Driver highlights markup must live outside app.js");
 if (js.includes("Array.isArray(profile?.average_pace_by_track)")) failures.push("Driver average-pace selection model must live outside app.js");
 if (!js.includes("function initializeSharedControls()") || !js.includes("function initializeHomeControllers()") || !js.includes("function initializePageControllers()")) failures.push("Application init must keep shared and page controller initialization separated");
 if (!js.includes("async function initializeHomeData()") || !js.includes("function applyHomeSiteData(data)")) failures.push("Home data loading and application must stay outside the shared init body");
