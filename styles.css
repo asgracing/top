@@ -42,9 +42,16 @@
   --layer-content: 2;
   --layer-sticky: 20;
   --layer-dropdown: 100;
-  --layer-overlay: 1000;
-  --layer-modal: 1100;
+  --layer-nav: 1000;
+  --layer-floating: 1100;
+  --layer-guide-scrim: 1180;
+  --layer-guide-highlight: 1190;
+  --layer-widget: 1200;
+  --layer-guide-launcher: 1240;
+  --layer-guide: 1250;
   --layer-toast: 2600;
+  --layer-modal: 9999;
+  --layer-modal-priority: 100000;
 
   /* ===== MOTION / LAYOUT TOKENS ===== */
   --duration-fast: 160ms;
@@ -224,7 +231,7 @@ body.background-audio-focus .site-bg-video {
   position: fixed;
   top: 58%;
   right: clamp(10px, 1.8vw, 28px);
-  z-index: 1105;
+  z-index: var(--layer-floating);
   display: flex;
   align-items: center;
   gap: 14px;
@@ -520,7 +527,7 @@ body.background-audio-focus .bg-video-sound-toggle {
   position: sticky;
   top: 0;
   width: 100%;
-  z-index: 1000;
+  z-index: var(--layer-nav);
   background: transparent;
   border-bottom: 0;
   box-shadow: none;
@@ -2999,7 +3006,7 @@ tr.is-interactive-row:focus-visible {
   position: fixed;
   top: 106px;
   right: 22px;
-  z-index: 1100;
+  z-index: var(--layer-floating);
   width: min(190px, calc(100vw - 44px));
   display: grid;
   gap: 7px;
@@ -3394,7 +3401,7 @@ body.experiment-combined-stats .combined-stats-panel .table-wrap {
   position: fixed;
   top: 106px;
   left: 22px;
-  z-index: 1100;
+  z-index: var(--layer-floating);
   width: min(232px, calc(100vw - 44px));
   display: grid;
   gap: 7px;
@@ -4382,7 +4389,7 @@ tbody tr:last-child td {
   --modal-offset-bottom: 20px;
   position: fixed;
   inset: 0;
-  z-index: 9999;
+  z-index: var(--layer-modal);
   display: flex;
   align-items: center;
   justify-content: center;
@@ -5090,7 +5097,7 @@ body.modal-open {
 }
 
 #hourly-details-modal {
-  z-index: 100000;
+  z-index: var(--layer-modal-priority);
 }
 
 #hourly-details-modal .modal-card-slot.is-event-details-v2 {
@@ -5784,7 +5791,7 @@ body.modal-open {
 
 .sr-breakdown-popover {
   position: fixed;
-  z-index: 2600;
+  z-index: var(--layer-toast);
   width: min(236px, calc(100vw - 24px));
   max-width: min(236px, calc(100vw - 24px));
 }
@@ -6581,7 +6588,7 @@ th.sort-desc .table-sort-button .sort-icon { color: var(--accent); }
   position: fixed;
   right: 22px;
   bottom: 22px;
-  z-index: 1200;
+  z-index: var(--layer-widget);
   display: flex;
   justify-content: flex-end;
   width: min(320px, calc(100vw - 22px));
@@ -6823,7 +6830,7 @@ th.sort-desc .table-sort-button .sort-icon { color: var(--accent); }
 .top-guide-scrim {
   position: fixed;
   inset: 0;
-  z-index: 1180;
+  z-index: var(--layer-guide-scrim);
   background: rgba(7, 11, 17, 0.38);
   pointer-events: none;
 }
@@ -6832,7 +6839,7 @@ th.sort-desc .table-sort-button .sort-icon { color: var(--accent); }
   position: fixed;
   top: 120px;
   left: 22px;
-  z-index: 1250;
+  z-index: var(--layer-guide);
   width: min(320px, calc(100vw - 44px));
   padding: 18px;
   border-radius: 24px;
@@ -6922,7 +6929,7 @@ th.sort-desc .table-sort-button .sort-icon { color: var(--accent); }
   position: fixed;
   left: 22px;
   bottom: 22px;
-  z-index: 1240;
+  z-index: var(--layer-guide-launcher);
   min-height: 48px;
   padding: 0 18px;
   border-radius: 999px;
@@ -6949,7 +6956,7 @@ th.sort-desc .table-sort-button .sort-icon { color: var(--accent); }
 
 .top-guide-highlight {
   position: relative;
-  z-index: 1190;
+  z-index: var(--layer-guide-highlight);
   border-radius: 24px;
   box-shadow:
     0 0 0 3px rgba(255, 91, 46, 0.78),
