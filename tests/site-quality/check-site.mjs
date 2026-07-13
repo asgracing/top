@@ -49,7 +49,7 @@ if (!css.includes(".table-sort-button:focus-visible")) failures.push("Sortable t
 if (!css.includes("@media (pointer: coarse)")) failures.push("Coarse-pointer touch targets are missing");
 if (!js.includes('readPageContext(document)')) failures.push("Legacy application is missing the explicit page context");
 if (!js.includes("await loadPageFeatures(PAGE_CONTEXT.page)") || /from "\.\/src\/pages\/(?:bans|cars|community|driver|races)\//.test(js)) failures.push("Child page features must be loaded only for the active route");
-if (!pageFeatureIsLoaded("../pages/fun-stats/aggregation-model.js") || !js.includes("aggregateFunStatsFallback({")) failures.push("Fun Stats fallback aggregation must use its route-loaded model");
+if (!pageFeatureIsLoaded("../pages/fun-stats/aggregation-model.js") || !js.includes("aggregateFunStatsFallback({") || js.includes("const driverMap = new Map()")) failures.push("Fun Stats fallback aggregation must use only its route-loaded model");
 if (js.slice(0, 1000).includes("window.location.pathname")) failures.push("Application bootstrap must not infer its page from pathname");
 if (!js.includes("runWhenDocumentReady(document")) failures.push("Application must use the tested async document bootstrap");
 if (!js.includes('from "./src/shared/modal-controller.js"') || js.includes("function createModalController({")) failures.push("Modal focus and inert behavior must live outside app.js");

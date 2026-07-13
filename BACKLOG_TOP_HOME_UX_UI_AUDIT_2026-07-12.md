@@ -113,6 +113,7 @@
 - 13.07.2026 — R10: Fun Stats period window, latest-race anchor и immutable выбор гонок вынесены в route-loaded `src/pages/fun-stats/period-model.js`. Добавлены три unit-теста, baseline расширен до 149 тестов.
 - 13.07.2026 — R10: Fun Stats award/summary/list card markup вынесен в route-loaded `src/pages/fun-stats/cards-view.js`; escaping, translation и value formatting передаются явными зависимостями. Добавлены три unit-теста, baseline расширен до 152 тестов.
 - 13.07.2026 — R10: вычисление Fun Stats summary, awards и шести leaderboard списков делегировано route-loaded `src/pages/fun-stats/aggregation-model.js`; active-result predicate, public id и lap formatter стали явными зависимостями. Добавлены три unit-теста, baseline расширен до 155 тестов.
+- 13.07.2026 — R10: после подтверждения parity удалены 117 строк недостижимой legacy-агрегации и локальный record factory из `app.js`; quality gate запрещает возврат дублирующего `driverMap` в монолит.
 
 ### Условия завершения R01
 
