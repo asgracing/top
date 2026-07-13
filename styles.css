@@ -10614,22 +10614,6 @@ th.sort-desc .table-sort-button .sort-icon { color: var(--accent); }
   font-size: 0.7rem;
 }
 
-.bg-video-sound-toggle {
-  top: auto !important;
-  right: clamp(10px, 1.8vw, 22px);
-  bottom: 84px;
-  gap: 9px;
-  width: min(224px, calc(100vw - 24px));
-  padding: 8px 12px 8px 10px;
-  border-radius: 18px 0 0 18px;
-  transform: none !important;
-}
-
-.bg-video-sound-toggle:hover,
-.bg-video-sound-toggle:focus-visible {
-  transform: translateX(-4px) !important;
-}
-
 .bg-video-sound-toggle-icon {
   flex-basis: 38px;
   width: 38px;
@@ -10671,16 +10655,6 @@ th.sort-desc .table-sort-button .sort-icon { color: var(--accent); }
 
 .bg-video-sound-toggle::after {
   inset: auto 16px 7px 56px;
-}
-
-body.background-audio-focus .bg-video-sound-toggle {
-  transform: translateX(-4px) scale(1.01) !important;
-}
-
-@media (max-width: 768px) {
-  .bg-video-sound-toggle {
-    display: none !important;
-  }
 }
 
 /* ===== HERO THREE COLUMN LAYOUT 1105 V3 ===== */
@@ -11990,25 +11964,6 @@ body.background-audio-focus .bg-video-sound-toggle {
   outline-offset: 3px;
 }
 
-.bg-video-sound-toggle {
-  top: auto !important;
-  left: clamp(10px, 1.8vw, 22px);
-  right: auto !important;
-  bottom: 84px;
-  width: min(224px, calc(100vw - 24px));
-  padding: 8px 12px 8px 10px;
-  border-right: 1px solid rgba(255, 198, 122, 0.42);
-  border-left: 0;
-  border-radius: 0 18px 18px 0;
-  transform: none !important;
-}
-
-.bg-video-sound-toggle:hover,
-.bg-video-sound-toggle:focus-visible,
-body.background-audio-focus .bg-video-sound-toggle {
-  transform: translateX(4px) !important;
-}
-
 .driver-stat-label-button.bestlap-track-cta {
   width: 100%;
   min-height: 44px;
@@ -13114,6 +13069,26 @@ body *::after {
 } /* end legacy */
 
 @layer overrides {
+  .bg-video-sound-toggle {
+    top: auto;
+    left: clamp(10px, 1.8vw, 22px);
+    right: auto;
+    bottom: 84px;
+    gap: 9px;
+    width: min(224px, calc(100vw - 24px));
+    padding: 8px 12px 8px 10px;
+    border-right: 1px solid rgba(255, 198, 122, 0.42);
+    border-left: 0;
+    border-radius: 0 18px 18px 0;
+    transform: none;
+  }
+
+  .bg-video-sound-toggle:hover,
+  .bg-video-sound-toggle:focus-visible,
+  body.background-audio-focus .bg-video-sound-toggle {
+    transform: translateX(4px);
+  }
+
   /* Consolidated hero server summary; replaces the 0605 legacy override pair. */
   .hero-side-compact {
     display: grid;
