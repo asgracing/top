@@ -25,6 +25,7 @@ const {
   renderDriverHeroTitle: renderDriverHeroTitleView, renderDriverStatsCards,
   createDriverStatsController,
   createDriverPageView,
+  createDriverPreviewView,
   buildDriverRankInfo, getDriverFavoriteCar,
   CARS_COLUMNS, processCars, createCarsTableView, createCarsSummaryView, createCarsPage,
   getCommunityLikesText, getCommunityPostKey, sortCommunityPosts, renderCommunityPostCard, renderCommunityTextBlocks: renderCommunityTextBlocksView, createCommunityPageController, createCommunityPage,
@@ -9315,48 +9316,22 @@ function renderDriverPage() {
   getDriverPageView().render({ loading: topLoadState.driver, profile: driverProfileData });
 }
 
+let driverPreviewView = null;
+function getDriverPreviewView() {
+  driverPreviewView ||= createDriverPreviewView({
+    documentRef: document,
+    translate: t,
+    replaceWithTextState,
+    buildHeroTitle: buildDriverHeroTitle,
+    buildStatsMarkup: buildDriverStatsMarkup,
+    buildHighlightsMarkup: buildDriverHighlightsMarkup,
+    bindStats: (root, profile) => getDriverStatsController().bind(root, profile),
+  });
+  return driverPreviewView;
+}
+
 function renderDriverPreviewModal() {
-  const titleEl = document.getElementById("driver-preview-title");
-  const subtitleEl = document.getElementById("driver-preview-subtitle");
-  const statsEl = document.getElementById("driver-preview-stats");
-  const highlightsEl = document.getElementById("driver-preview-highlights");
-  const actionEl = document.getElementById("driver-preview-link");
-  if (!titleEl || !subtitleEl || !statsEl || !highlightsEl || !actionEl) return;
-
-  if (!driverPreviewState) {
-    titleEl.textContent = "-";
-    subtitleEl.textContent = t("driverPreviewSubtitle");
-    replaceWithTextState(statsEl, "loading", t("driverLoading"));
-    highlightsEl.replaceChildren();
-    actionEl.hidden = true;
-    return;
-  }
-
-  const profile = driverPreviewState.profile;
-  if (driverPreviewState.loading) {
-    titleEl.textContent = driverPreviewState.driver || "-";
-    subtitleEl.textContent = t("driverPreviewSubtitle");
-    replaceWithTextState(statsEl, "loading", t("driverLoading"));
-    highlightsEl.replaceChildren();
-  } else if (!profile || driverPreviewState.error) {
-    titleEl.textContent = driverPreviewState.driver || "-";
-    subtitleEl.textContent = t("driverPreviewSubtitle");
-    replaceWithTextState(statsEl, "empty", t("driverNoData"));
-    highlightsEl.innerHTML = "";
-  } else {
-    titleEl.innerHTML = buildDriverHeroTitle(profile);
-    subtitleEl.textContent = t("driverPreviewSubtitle");
-    statsEl.innerHTML = buildDriverStatsMarkup(profile);
-    highlightsEl.innerHTML = buildDriverHighlightsMarkup(profile);
-    getDriverStatsController().bind(statsEl, profile);
-  }
-
-  if (driverPreviewState.href) {
-    actionEl.href = driverPreviewState.href;
-    actionEl.hidden = false;
-  } else {
-    actionEl.hidden = true;
-  }
+  getDriverPreviewView().render(driverPreviewState);
 }
 
 function renderTodayStatsModal() {

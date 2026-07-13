@@ -122,6 +122,7 @@
 - 13.07.2026 — R10: Driver hero и двенадцать summary cards вынесены в route-loaded `summary-view.js`; подготовка выбранных трасс и интерактивные select handlers остались в page controller. Добавлены три unit-теста, baseline расширен до 178 тестов.
 - 13.07.2026 — R10: обработчики Driver best-laps modal, best-lap track и average-pace track вынесены в lazy `stats-controller.js`; повторный render автоматически восстанавливает все три binding без дублирования listeners. Добавлены три unit-теста, baseline расширен до 181 теста.
 - 13.07.2026 — R10: loading/empty/ready DOM lifecycle основной Driver page вынесен в lazy `page-view.js`; title, hero, summary, highlights, tables, penalties и stats binding теперь координируются единым route-loaded view. Добавлены три unit-теста, baseline расширен до 184 тестов.
+- 13.07.2026 — R10: loading/error/ready DOM lifecycle Driver preview modal вынесен в lazy `preview-view.js`; action visibility и повторное подключение внутренних stats controls сохранены. Добавлены три unit-теста, baseline расширен до 187 тестов.
 
 ### Условия завершения R01
 
