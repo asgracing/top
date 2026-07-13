@@ -100,8 +100,9 @@ if (!js.includes('from "./src/pages/home/index.js"') || !js.includes("const home
 if (!js.includes('from "./src/pages/home/view-state-config.js"') || js.includes('["leaderboard-table", "leaderboard-pagination-wrap", "errorLeaderboard"]')) failures.push("Home loading and error table states must live outside app.js");
 if (!css.includes("@layer reset, base, layout, components, pages, utilities, legacy, overrides;")) failures.push("CSS must declare the controlled R11 cascade order");
 if (!css.includes("@layer legacy {") || !css.includes("} /* end legacy */")) failures.push("Unmigrated CSS must remain inside the explicit legacy layer");
+if (css.indexOf("@layer legacy {") >= css.indexOf("} /* end legacy */") || css.indexOf("@layer overrides {") <= css.indexOf("} /* end legacy */")) failures.push("Consolidated CSS must follow the complete legacy migration boundary");
 const budgets = {
-  important: [(css.match(/!important/g) || []).length, 106],
+  important: [(css.match(/!important/g) || []).length, 69],
   mediaQuery: [(css.match(/@media\b/g) || []).length, 57],
   zIndex: [(css.match(/\bz-index\s*:/g) || []).length, 48],
   hexColor: [(css.match(/#[0-9a-f]{3,8}\b/gi) || []).length, 253],
