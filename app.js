@@ -24,6 +24,7 @@ const {
   renderDriverHighlights,
   renderDriverHeroTitle: renderDriverHeroTitleView, renderDriverStatsCards,
   createDriverStatsController,
+  createDriverPageView,
   buildDriverRankInfo, getDriverFavoriteCar,
   CARS_COLUMNS, processCars, createCarsTableView, createCarsSummaryView, createCarsPage,
   getCommunityLikesText, getCommunityPostKey, sortCommunityPosts, renderCommunityPostCard, renderCommunityTextBlocks: renderCommunityTextBlocksView, createCommunityPageController, createCommunityPage,
@@ -9290,48 +9291,28 @@ function getFavoriteCarName(profile) {
   return getDriverFavoriteCar(profile);
 }
 
+let driverPageView = null;
+function getDriverPageView() {
+  driverPageView ||= createDriverPageView({
+    documentRef: document,
+    translate: t,
+    renderLoadingMarkup,
+    setLoadingMarkup,
+    replaceWithTextState,
+    buildHeroTitle: buildDriverHeroTitle,
+    buildStatsMarkup: buildDriverStatsMarkup,
+    buildHighlightsMarkup: buildDriverHighlightsMarkup,
+    renderRaceHistory: renderDriverRaceHistory,
+    renderTrackStats: renderDriverTrackStats,
+    renderPenaltyList,
+    bindStats: (root, profile) => getDriverStatsController().bind(root, profile),
+    setDocumentTitle: title => { document.title = title; },
+  });
+  return driverPageView;
+}
+
 function renderDriverPage() {
-  const nameEl = document.getElementById("driver-page-name");
-  const subtitleEl = document.getElementById("driver-page-subtitle");
-  const statsEl = document.getElementById("driver-stat-cards");
-  const highlightsEl = document.getElementById("driver-highlights");
-  if (!nameEl || !subtitleEl || !statsEl || !highlightsEl) return;
-
-  if (topLoadState.driver) {
-    nameEl.textContent = "-";
-    subtitleEl.textContent = t("driverPreviewSubtitle");
-    statsEl.innerHTML = renderLoadingMarkup(t("driverLoading"));
-    highlightsEl.replaceChildren();
-    setLoadingMarkup("driver-races-table", "driverLoading");
-    setLoadingMarkup("driver-tracks-table", "driverLoading");
-    renderPenaltyList("driver-penalty-reasons", {}, "driverPenaltyReason");
-    renderPenaltyList("driver-penalty-types", {}, "driverPenaltyType");
-    return;
-  }
-
-  if (!driverProfileData) {
-    nameEl.textContent = "-";
-    subtitleEl.textContent = t("driverNoData");
-    replaceWithTextState(statsEl, "empty", t("driverNoData"));
-    highlightsEl.replaceChildren();
-    renderDriverRaceHistory();
-    renderDriverTrackStats();
-    renderPenaltyList("driver-penalty-reasons", {}, "driverPenaltyReason");
-    renderPenaltyList("driver-penalty-types", {}, "driverPenaltyType");
-    return;
-  }
-
-  document.title = `${driverProfileData.driver} | ${t("pageTitleDriver")}`;
-  nameEl.innerHTML = buildDriverHeroTitle(driverProfileData);
-  subtitleEl.textContent = t("driverPageSubtitle");
-  statsEl.innerHTML = buildDriverStatsMarkup(driverProfileData);
-  highlightsEl.innerHTML = buildDriverHighlightsMarkup(driverProfileData);
-
-  renderDriverRaceHistory();
-  renderDriverTrackStats();
-  renderPenaltyList("driver-penalty-reasons", driverProfileData.penalties?.reasons, "driverPenaltyReason");
-  renderPenaltyList("driver-penalty-types", driverProfileData.penalties?.types, "driverPenaltyType");
-  getDriverStatsController().bind(statsEl, driverProfileData);
+  getDriverPageView().render({ loading: topLoadState.driver, profile: driverProfileData });
 }
 
 function renderDriverPreviewModal() {
