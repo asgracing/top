@@ -890,26 +890,44 @@
   .server-sticky-card-main,
   .server-sticky-card-monza {
     --server-card-bg: url("../../assets/main.jpg");
+    background-image:
+      linear-gradient(180deg, rgba(8, 12, 19, 0.1), rgba(8, 12, 19, 0.42)),
+      url("../../assets/main.jpg");
   }
 
   .server-sticky-card-sunset {
     --server-card-bg: url("../../assets/sunset.jpg");
+    background-image:
+      linear-gradient(180deg, rgba(8, 12, 19, 0.1), rgba(8, 12, 19, 0.42)),
+      url("../../assets/sunset.jpg");
   }
 
   .server-sticky-card-spa {
     --server-card-bg: url("../../assets/spa.jpg");
+    background-image:
+      linear-gradient(180deg, rgba(8, 12, 19, 0.1), rgba(8, 12, 19, 0.42)),
+      url("../../assets/spa.jpg");
   }
 
   .server-sticky-card-nurburgring {
     --server-card-bg: url("../../assets/nurburgring.jpg");
+    background-image:
+      linear-gradient(180deg, rgba(8, 12, 19, 0.1), rgba(8, 12, 19, 0.42)),
+      url("../../assets/nurburgring.jpg");
   }
 
   .server-sticky-card-nurburgring24h {
     --server-card-bg: url("../../assets/Nurburgring24h.jpg");
+    background-image:
+      linear-gradient(180deg, rgba(8, 12, 19, 0.1), rgba(8, 12, 19, 0.42)),
+      url("../../assets/Nurburgring24h.jpg");
   }
 
   .server-sticky-card-silverstone {
     --server-card-bg: url("../../assets/silverstone.jpg");
+    background-image:
+      linear-gradient(180deg, rgba(8, 12, 19, 0.1), rgba(8, 12, 19, 0.42)),
+      url("../../assets/silverstone.jpg");
   }
   
   .server-sticky-card-clickable {
@@ -938,7 +956,7 @@
     inset: 0;
     background:
       linear-gradient(135deg, rgba(255, 255, 255, 0.06), transparent 42%),
-      linear-gradient(180deg, rgba(8, 12, 19, 0.12), rgba(8, 12, 19, 0.525));
+      linear-gradient(180deg, rgba(8, 12, 19, 0.06), rgba(8, 12, 19, 0.3));
   }
   
   .server-sticky-card-content {
