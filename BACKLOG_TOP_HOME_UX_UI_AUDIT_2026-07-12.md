@@ -100,6 +100,7 @@
 - 13.07.2026 — R10: Cars table renderer вынесен в lazy `src/pages/cars/table-view.js`; loading/empty/table states, row markup, fastest-lap highlight и sort binding отделены от `app.js`. Добавлены три unit-теста, baseline расширен до 112 тестов.
 - 13.07.2026 — R10: Cars summary/spotlight вынесен в lazy `src/pages/cars/summary-view.js`; лидер текущей сортировки, most-used car и empty spotlight state больше не рендерятся в `app.js`. Добавлены три unit-теста, baseline расширен до 115 тестов.
 - 13.07.2026 — R10: Races columns и выбор server-paged/fallback ordering вынесены в `src/pages/races/model.js`; paged archive сохраняет серверный порядок, fallback использует общий sorter newest-first, фиктивный `filterRaces` удалён. Добавлены четыре unit-теста, baseline расширен до 119 тестов.
+- 13.07.2026 — R10: нормализация Races pagination state добавлена в `src/pages/races/model.js`; server-paged metadata и локальный paginator теперь дают единый immutable contract с явным `serverPaged`. Добавлены два unit-теста, baseline расширен до 121 теста.
 
 ### Условия завершения R01
 

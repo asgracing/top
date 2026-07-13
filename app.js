@@ -19,7 +19,7 @@ import { createCommunityPageController } from "./src/pages/community/page-contro
 import { CARS_COLUMNS, processCars } from "./src/pages/cars/model.js";
 import { createCarsTableView } from "./src/pages/cars/table-view.js";
 import { createCarsSummaryView } from "./src/pages/cars/summary-view.js";
-import { processRaces, RACES_COLUMNS } from "./src/pages/races/model.js";
+import { buildRacesPageState, processRaces } from "./src/pages/races/model.js";
 
 const PAGE_CONTEXT = readPageContext(document);
 const IS_RACES_PAGE = PAGE_CONTEXT.page === "races";
@@ -8969,17 +8969,13 @@ function renderRacesTablePage() {
   const wrapEl = document.getElementById("races-pagination-wrap");
   if (!tableEl || !wrapEl) return;
 
-  const isV2PagedArchive = Boolean(racesArchiveMeta);
-  const result = isV2PagedArchive
-    ? {
-        items: getProcessedRaces(),
-        page: racesArchiveMeta.page || racesPage,
-        totalPages: racesArchiveMeta.total_pages || 1,
-        totalItems: racesArchiveMeta.total_items || 0,
-        startIndex: racesArchiveMeta.start_index || 0,
-        endIndex: racesArchiveMeta.end_index || 0,
-      }
-    : paginate(getProcessedRaces(), racesPage, PAGE_SIZE);
+  const result = buildRacesPageState({
+    rows: getProcessedRaces(),
+    archiveMeta: racesArchiveMeta,
+    page: racesPage,
+    pageSize: PAGE_SIZE,
+    paginateRows: paginate
+  });
   racesPage = result.page;
 
   if (!result.totalItems) {
@@ -9039,7 +9035,7 @@ function renderRacesTablePage() {
     result.endIndex,
     (page) => {
       racesPage = page;
-      if (isV2PagedArchive) {
+      if (result.serverPaged) {
         replaceWithTextState(tableEl, "loading", t("loading"));
         loadRacesPageData(page)
           .then((items) => {
