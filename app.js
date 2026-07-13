@@ -21,6 +21,7 @@ import { createCarsTableView } from "./src/pages/cars/table-view.js";
 import { createCarsSummaryView } from "./src/pages/cars/summary-view.js";
 import { buildRacesPageState, buildRacesSummary, processRaces } from "./src/pages/races/model.js";
 import { createRacesTableView } from "./src/pages/races/table-view.js";
+import { createRacesSummaryView } from "./src/pages/races/summary-view.js";
 
 const PAGE_CONTEXT = readPageContext(document);
 const IS_RACES_PAGE = PAGE_CONTEXT.page === "races";
@@ -8897,28 +8898,16 @@ function renderCarsFilters() {
 }
 
 function renderRacesSummary() {
-  const totalEl = document.getElementById("races-total-count");
-  const avgActiveEl = document.getElementById("races-avg-active");
-  const avgOvertakesEl = document.getElementById("races-avg-overtakes");
-  const topWinnerEl = document.getElementById("races-top-winner");
-  const winnerEl = document.getElementById("races-latest-winner");
-  const lastWinnerBestLapEl = document.getElementById("races-last-winner-best-lap");
-  const lastWinnerBestLapNoteEl = document.getElementById("races-last-winner-best-lap-note");
-  if (!totalEl || !avgActiveEl || !avgOvertakesEl || !topWinnerEl || !winnerEl || !lastWinnerBestLapEl || !lastWinnerBestLapNoteEl) return;
-
   const processedRaces = getProcessedRaces();
   const summary = buildRacesSummary({ rows: processedRaces, archiveSummary: racesArchiveSummary, isActiveResult: isActiveRaceResult, getCarName: getResultCarName });
-  totalEl.textContent = summary.total;
-  avgActiveEl.textContent = summary.averageActive;
-  avgOvertakesEl.textContent = summary.averageOvertakes;
-  topWinnerEl.innerHTML = summary.topWinner
-    ? renderDriverLink(summary.topWinner.name || t("noWinner"), summary.topWinner.public_id, "driver-link")
-    : t("noWinner");
-  winnerEl.innerHTML = summary.latestRace
-    ? renderDriverLink(summary.latestRace.winner || t("noWinner"), summary.latestRace.winner_public_id, "driver-link")
-    : t("noWinner");
-  lastWinnerBestLapEl.textContent = summary.latestBestLap;
-  lastWinnerBestLapNoteEl.textContent = summary.latestBestLapCar;
+  getRacesSummaryView().render(summary);
+}
+
+let racesSummaryView = null;
+
+function getRacesSummaryView() {
+  racesSummaryView ||= createRacesSummaryView({ documentRef: document, translate: t, renderDriverLink });
+  return racesSummaryView;
 }
 
 function renderRacesTablePage() {

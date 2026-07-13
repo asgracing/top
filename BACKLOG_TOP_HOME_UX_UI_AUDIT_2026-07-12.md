@@ -103,6 +103,7 @@
 - 13.07.2026 — R10: нормализация Races pagination state добавлена в `src/pages/races/model.js`; server-paged metadata и локальный paginator теперь дают единый immutable contract с явным `serverPaged`. Добавлены два unit-теста, baseline расширен до 121 теста.
 - 13.07.2026 — R10: Races table DOM, interactive rows и pagination rendering вынесены в lazy `src/pages/races/table-view.js`; API page loading остаётся orchestration callback в `app.js`. Добавлены три unit-теста, baseline расширен до 124 тестов.
 - 13.07.2026 — R10: Races aggregate summary вынесен в `src/pages/races/model.js`; archive summary normalization и fallback расчёт active drivers/overtakes/top winner/latest winner lap отделены от DOM. Добавлены два unit-теста, baseline расширен до 126 тестов.
+- 13.07.2026 — R10: Races summary DOM вынесен в lazy `src/pages/races/summary-view.js`; aggregate model теперь передаётся простому view без page-specific DOM в `app.js`. Добавлены три unit-теста, baseline расширен до 129 тестов.
 
 ### Условия завершения R01
 
