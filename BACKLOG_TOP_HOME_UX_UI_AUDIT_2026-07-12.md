@@ -137,6 +137,7 @@
 - 13.07.2026 — R11 hotfix: ручная проверка выявила скрытую карточку общего количества игроков в hero. `.hero-server-total-stat` удалён из legacy visibility-группы с `display: none !important`; единый override `display: grid` снова управляет карточкой, support sticky/mobile CTA остаются скрыты.
 - 13.07.2026 — R11: первый компонент физически извлечён из `styles.css` в `styles/components/hero-server-summary.css`. Главная подключает его после legacy stylesheet с отдельным cache token; quality gate считает совокупные CSS budgets и запрещает возврат консолидированного server summary в монолит.
 - 13.07.2026 — R11: responsive hero layout, championship skin и sound control физически перенесены в `styles/components/hero-layout.css`; порядок подключений `legacy → hero-layout → hero-server-summary` сохраняет cascade parity. Quality gate агрегирует оба component stylesheet и фиксирует владение финальными hero rules.
+- 13.07.2026 — R11: colors, spacing, radii, motion и semantic z-index tiers вынесены в единый `styles/tokens.css` (`@layer tokens`). Все восемь route pages подключают tokens перед shared legacy stylesheet; quality gate проверяет route coverage и запрещает дублирование token declarations в монолите.
 
 ### Условия завершения R01
 
