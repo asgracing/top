@@ -3,6 +3,7 @@ const PAGE_FEATURE_PATHS = Object.freeze({
   cars: ["../pages/cars/model.js", "../pages/cars/table-view.js", "../pages/cars/summary-view.js"],
   community: ["../pages/community/feed-model.js", "../pages/community/post-view.js", "../pages/community/page-controller.js"],
   driver: ["../pages/driver/best-laps-model.js", "../pages/driver/track-select-view.js", "../pages/driver/penalty-list-view.js", "../pages/driver/tables-model.js"],
+  "fun-stats": ["../pages/fun-stats/period-model.js"],
   news: ["../pages/news/page-view.js"],
   races: ["../pages/races/model.js", "../pages/races/table-view.js", "../pages/races/summary-view.js"],
 });

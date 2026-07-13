@@ -23,6 +23,7 @@ const {
   getCommunityLikesText, getCommunityPostKey, sortCommunityPosts, renderCommunityPostCard, createCommunityPageController,
   createNewsPageView,
   buildRacesPageState, buildRacesSummary, processRaces, createRacesTableView, createRacesSummaryView,
+  getFunStatsPeriodWindow: buildFunStatsPeriodWindow, selectFunStatsPeriodRaces,
 } = PAGE_FEATURES;
 const IS_RACES_PAGE = PAGE_CONTEXT.page === "races";
 const IS_DRIVER_PAGE = PAGE_CONTEXT.page === "driver";
@@ -4788,34 +4789,12 @@ function getProcessedCars() {
   return processCars({ rows: carsData, sortState: carsSort, sortRows: sortData });
 }
 
-function getLatestRaceDate(data = racesData) {
-  const timestamps = (Array.isArray(data) ? data : [])
-    .map(race => new Date(race?.finished_at || race?.date || "").getTime())
-    .filter(Number.isFinite);
-  return timestamps.length ? new Date(Math.max(...timestamps)) : null;
-}
-
 function getFunStatsPeriodWindow(period) {
-  const days = period === "month" ? 30 : 7;
-  const anchor = getLatestRaceDate() || new Date();
-  const end = new Date(anchor);
-  const start = new Date(anchor);
-  start.setHours(0, 0, 0, 0);
-  start.setDate(start.getDate() - (days - 1));
-  return { start, end };
+  return buildFunStatsPeriodWindow(period, racesData);
 }
 
 function getFunStatsPeriodRaces(period) {
-  const { start, end } = getFunStatsPeriodWindow(period);
-  const startTime = start.getTime();
-  const endTime = end.getTime();
-
-  return (Array.isArray(racesData) ? racesData : [])
-    .filter(race => {
-      const time = new Date(race?.finished_at || race?.date || "").getTime();
-      return Number.isFinite(time) && time >= startTime && time <= endTime;
-    })
-    .sort((a, b) => new Date(b?.finished_at || 0).getTime() - new Date(a?.finished_at || 0).getTime());
+  return selectFunStatsPeriodRaces(period, racesData);
 }
 
 function createFunDriverRecord(row) {
