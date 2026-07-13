@@ -145,6 +145,7 @@ if (!buttonsCss.includes("@layer components {") || !buttonsCss.includes(".btn-pr
 if (!heroFoundationCss.includes("@layer components {") || !heroFoundationCss.includes(".hero-card") || legacyCss.includes("/* ===== HERO ===== */")) failures.push("Shared hero foundation must have one physical component source");
 if (!heroActionsCss.includes("@layer components {") || !heroActionsCss.includes(".hero-actions") || legacyCss.includes("/* ===== HERO ACTIONS + ONLINE WIDGET ===== */")) failures.push("Hero actions and online widget foundation must have one physical component source");
 if (!heroStatsCss.includes("@layer components {") || !heroStatsCss.includes(".hero-side-compact") || !heroStatsCss.includes(".mini-stat") || legacyCss.includes("/* ===== HERO MINI STATS ===== */")) failures.push("Hero mini stats and related widgets must have one physical component source");
+if (!heroStatsCss.includes('--server-card-bg: url("../../assets/main.jpg")') || !heroStatsCss.includes('--server-card-bg: url("../../assets/sunset.jpg")')) failures.push("Initial server cards must keep CSS image fallbacks before runtime data is ready");
 const budgets = {
   important: [(css.match(/!important/g) || []).length, 12],
   mediaQuery: [(css.match(/@media\b/g) || []).length, 56],

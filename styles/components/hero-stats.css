@@ -886,6 +886,14 @@
       0 8px 24px rgba(0, 0, 0, 0.16);
     backdrop-filter: blur(8px);
   }
+
+  .server-sticky-card-main {
+    --server-card-bg: url("../../assets/main.jpg");
+  }
+
+  .server-sticky-card-sunset {
+    --server-card-bg: url("../../assets/sunset.jpg");
+  }
   
   .server-sticky-card-clickable {
     cursor: pointer;

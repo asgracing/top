@@ -146,6 +146,7 @@
 - 13.07.2026 — R11: hero card foundation, brand/content primitives и intro CTA layout вынесены в `styles/components/hero-foundation.css`. Все маршруты подключают foundation до legacy, а responsive/server-summary modules продолжают применять финальные правила после монолита; quality gate защищает порядок и единственного владельца.
 - 13.07.2026 — R11: hero actions, online widget, server summary foundation и связанный CTA contract вынесены в `styles/components/hero-actions.css`. Модуль подключён на всех маршрутах до legacy; финальный `hero-server-summary.css` остаётся поздним override, route coverage и физическое владение контролируются quality gate.
 - 13.07.2026 — R11: hero mini stats и связанные online/event/support widgets вынесены единым source-order-preserving блоком в `styles/components/hero-stats.css`. Все маршруты подключают модуль до legacy, финальные hero overrides сохраняют приоритет; совокупные budgets и единственный физический источник проверяются автоматически.
+- 13.07.2026 — R11 hotfix: для стартовых Main/Hourly server cards добавлены CSS image fallbacks с путями относительно component stylesheet. Карточки больше не показывают один тёмный overlay до runtime-записи `--server-card-bg`; динамический track background по-прежнему имеет приоритет через inline custom property.
 
 ### Условия завершения R01
 
