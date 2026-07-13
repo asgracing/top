@@ -141,6 +141,7 @@
 - 13.07.2026 — R11: reset, document foundation, background modes, reveal state и общий container физически вынесены в `styles/base.css` по слоям `reset/base/layout`. Все восемь route pages подключают foundation между tokens и legacy; относительный asset URL и quality gate обновлены для нового владельца правил.
 - 13.07.2026 — R11: video background, audio-focus state и базовый sound control вынесены в `styles/components/site-background.css`. Модуль подключён на всех маршрутах перед legacy; финальные responsive sound-control overrides остаются в `hero-layout.css`, а quality gate контролирует единственного владельца foundation.
 - 13.07.2026 — R11: общий top navigation foundation (brand, меню, dropdowns и social controls) вынесен в `styles/components/top-navigation.css` и подключён на всех восьми маршрутах до legacy. Quality gate агрегирует модуль в CSS budgets и проверяет route coverage/единственного физического владельца.
+- 13.07.2026 — R11: language switch, flag controls и общий keyboard focus contract вынесены в `styles/components/language-switch.css`. Все маршруты подключают компонент до legacy; quality gate защищает route coverage и не допускает возврат блока в монолит.
 
 ### Условия завершения R01
 

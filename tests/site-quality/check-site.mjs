@@ -2,19 +2,20 @@ import { readFile } from "node:fs/promises";
 import { resolve } from "node:path";
 
 const root = resolve(import.meta.dirname, "../..");
-const [html, tokensCss, baseCss, siteBackgroundCss, topNavigationCss, legacyCss, heroLayoutCss, heroServerSummaryCss, js, pageFeatureLoader] = await Promise.all([
+const [html, tokensCss, baseCss, siteBackgroundCss, topNavigationCss, languageSwitchCss, legacyCss, heroLayoutCss, heroServerSummaryCss, js, pageFeatureLoader] = await Promise.all([
   readFile(resolve(root, "index.html"), "utf8"),
   readFile(resolve(root, "styles/tokens.css"), "utf8"),
   readFile(resolve(root, "styles/base.css"), "utf8"),
   readFile(resolve(root, "styles/components/site-background.css"), "utf8"),
   readFile(resolve(root, "styles/components/top-navigation.css"), "utf8"),
+  readFile(resolve(root, "styles/components/language-switch.css"), "utf8"),
   readFile(resolve(root, "styles.css"), "utf8"),
   readFile(resolve(root, "styles/components/hero-layout.css"), "utf8"),
   readFile(resolve(root, "styles/components/hero-server-summary.css"), "utf8"),
   readFile(resolve(root, "app.js"), "utf8"),
   readFile(resolve(root, "src/runtime/page-feature-loader.js"), "utf8")
 ]);
-const css = `${tokensCss}\n${baseCss}\n${siteBackgroundCss}\n${topNavigationCss}\n${legacyCss}\n${heroLayoutCss}\n${heroServerSummaryCss}`;
+const css = `${tokensCss}\n${baseCss}\n${siteBackgroundCss}\n${topNavigationCss}\n${languageSwitchCss}\n${legacyCss}\n${heroLayoutCss}\n${heroServerSummaryCss}`;
 const failures = [];
 const pageFeatureIsLoaded = path => pageFeatureLoader.includes(`"${path}"`);
 const pageEntrypoints = {
@@ -43,6 +44,8 @@ for (const [page, [htmlPath, entrySrc]] of Object.entries(pageEntrypoints)) {
   if (!pageHtml.includes(backgroundHref)) failures.push(`${page} page is missing the shared site background stylesheet`);
   const navigationHref = page === "home" ? "./styles/components/top-navigation.css?v=20260713r11nav1" : "../styles/components/top-navigation.css?v=20260713r11nav1";
   if (!pageHtml.includes(navigationHref)) failures.push(`${page} page is missing the shared top navigation stylesheet`);
+  const languageHref = page === "home" ? "./styles/components/language-switch.css?v=20260713r11lang1" : "../styles/components/language-switch.css?v=20260713r11lang1";
+  if (!pageHtml.includes(languageHref)) failures.push(`${page} page is missing the shared language switch stylesheet`);
 }
 const ids = [...html.matchAll(/\bid="([^"]+)"/g)].map(match => match[1]);
 const duplicates = [...new Set(ids.filter((id, index) => ids.indexOf(id) !== index))];
@@ -125,6 +128,7 @@ if (!tokensCss.includes("@layer tokens {") || !tokensCss.includes("--layer-modal
 if (!baseCss.includes("@layer reset {") || !baseCss.includes("@layer base {") || !baseCss.includes("@layer layout {") || legacyCss.includes("/* ===== RESET / BASE ===== */")) failures.push("Reset and shared document foundations must have one physical source in styles/base.css");
 if (!siteBackgroundCss.includes("@layer components {") || !siteBackgroundCss.includes(".site-video-bg") || legacyCss.includes("/* ===== VIDEO BACKGROUND ===== */")) failures.push("Video background and sound-control foundations must have one physical component source");
 if (!topNavigationCss.includes("@layer components {") || !topNavigationCss.includes(".top-nav") || legacyCss.includes("/* ===== TOP NAVIGATION ===== */")) failures.push("Top navigation foundation must have one physical component source");
+if (!languageSwitchCss.includes("@layer components {") || !languageSwitchCss.includes(".lang-switch") || legacyCss.includes("/* ===== LANGUAGE SWITCH ===== */")) failures.push("Language switch and shared focus foundation must have one physical component source");
 const budgets = {
   important: [(css.match(/!important/g) || []).length, 12],
   mediaQuery: [(css.match(/@media\b/g) || []).length, 56],
