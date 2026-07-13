@@ -9424,17 +9424,22 @@ function renderCarsTable() {
   });
 }
 
-const bansPageView = createBansPageView({
-  documentRef: document,
-  translate: t,
-  escapeHtml,
-  formatDateTime: formatDateTimeLocal,
-  replaceWithTextState,
-  setLoadingMarkup
-});
+let bansPageView = null;
+
+function getBansPageView() {
+  bansPageView ||= createBansPageView({
+    documentRef: document,
+    translate: t,
+    escapeHtml,
+    formatDateTime: formatDateTimeLocal,
+    replaceWithTextState,
+    setLoadingMarkup
+  });
+  return bansPageView;
+}
 
 function renderBansPage() {
-  bansPageView.render({ data: bansData, locale: currentLang, loading: topLoadState.bans });
+  getBansPageView().render({ data: bansData, locale: currentLang, loading: topLoadState.bans });
 }
 
 function renderRecentForm(items = []) {
