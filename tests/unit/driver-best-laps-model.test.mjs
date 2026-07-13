@@ -1,6 +1,6 @@
 import test from "node:test";
 import assert from "node:assert/strict";
-import { getDriverProfileKey, normalizeDriverBestLaps, selectDriverBestLap } from "../../src/pages/driver/best-laps-model.js";
+import { getDriverProfileKey, normalizeDriverAveragePace, normalizeDriverBestLaps, selectDriverAveragePace, selectDriverBestLap } from "../../src/pages/driver/best-laps-model.js";
 
 test("uses stable driver profile key fallbacks", () => {
   assert.equal(getDriverProfileKey({ public_id: 10, player_id: 20 }), "10");
@@ -17,4 +17,11 @@ test("drops incomplete laps and selects stored track", () => {
   const items = normalizeDriverBestLaps({ best_laps_by_track: [{ track_code: "empty" }, { track_code: "spa", best_lap: "2:18" }] }, { formatLapTime: String });
   assert.equal(items.length, 1);
   assert.equal(selectDriverBestLap({ public_id: 1 }, items, new Map([["1", "spa"]])).track_code, "spa");
+});
+
+test("normalizes and selects average pace tracks", () => {
+  const items = normalizeDriverAveragePace({ average_pace_tracks: [{ track: "spa", average_pace_ms: 140000, sample_races: "3" }] }, { formatLapTime: value => `pace:${value}` });
+  assert.equal(items[0].average_pace, "pace:140000");
+  assert.equal(items[0].sample_races, 3);
+  assert.equal(selectDriverAveragePace({ player_id: 2 }, items, new Map([["2", "spa"]])).track_code, "spa");
 });

@@ -29,3 +29,25 @@ export function selectDriverBestLap(profile, items, selections) {
   const selected = selections?.get?.(getDriverProfileKey(profile));
   return normalizedItems.find(item => item.track_code === selected) || normalizedItems[0];
 }
+
+export function normalizeDriverAveragePace(profile, { formatLapTime }) {
+  if (typeof formatLapTime !== "function") throw new TypeError("Driver average pace requires a time formatter");
+  const source = Array.isArray(profile?.average_pace_by_track)
+    ? profile.average_pace_by_track
+    : Array.isArray(profile?.average_pace_tracks) ? profile.average_pace_tracks : [];
+  return source.map(item => {
+    const trackCode = String(item?.track_code || item?.track || "").trim();
+    if (!trackCode) return null;
+    const paceMs = Number(item?.average_pace_ms || 0);
+    const paceLabel = item?.average_pace || (paceMs > 0 ? formatLapTime(paceMs) : "");
+    if (!paceLabel) return null;
+    return { ...item, track_code: trackCode, average_pace: paceLabel, average_pace_ms: paceMs > 0 ? paceMs : null, sample_races: Number(item?.sample_races || 0) };
+  }).filter(Boolean);
+}
+
+export function selectDriverAveragePace(profile, items, selections) {
+  const normalizedItems = Array.isArray(items) ? items : [];
+  if (!normalizedItems.length) return null;
+  const selected = selections?.get?.(getDriverProfileKey(profile));
+  return normalizedItems.find(item => item.track_code === selected) || normalizedItems[0];
+}

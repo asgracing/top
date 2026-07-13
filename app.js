@@ -22,7 +22,7 @@ import { createCarsSummaryView } from "./src/pages/cars/summary-view.js";
 import { buildRacesPageState, buildRacesSummary, processRaces } from "./src/pages/races/model.js";
 import { createRacesTableView } from "./src/pages/races/table-view.js";
 import { createRacesSummaryView } from "./src/pages/races/summary-view.js";
-import { getDriverProfileKey, normalizeDriverBestLaps, selectDriverBestLap } from "./src/pages/driver/best-laps-model.js";
+import { getDriverProfileKey, normalizeDriverAveragePace, normalizeDriverBestLaps, selectDriverAveragePace, selectDriverBestLap } from "./src/pages/driver/best-laps-model.js";
 
 const PAGE_CONTEXT = readPageContext(document);
 const IS_RACES_PAGE = PAGE_CONTEXT.page === "races";
@@ -9263,27 +9263,7 @@ function renderBestLapTrackSelect(profile, items, selectedTrackCode) {
 }
 
 function getAveragePaceTrackItems(profile) {
-  const items = Array.isArray(profile?.average_pace_by_track)
-    ? profile.average_pace_by_track
-    : Array.isArray(profile?.average_pace_tracks)
-      ? profile.average_pace_tracks
-      : [];
-  return items
-    .map(item => {
-      const trackCode = String(item?.track_code || item?.track || "").trim();
-      if (!trackCode) return null;
-      const paceMs = Number(item?.average_pace_ms || 0);
-      const paceLabel = item?.average_pace || (paceMs > 0 ? formatLapTimeFromMs(paceMs) : "");
-      if (!paceLabel) return null;
-      return {
-        ...item,
-        track_code: trackCode,
-        average_pace: paceLabel,
-        average_pace_ms: paceMs > 0 ? paceMs : null,
-        sample_races: Number(item?.sample_races || 0)
-      };
-    })
-    .filter(Boolean);
+  return normalizeDriverAveragePace(profile, { formatLapTime: formatLapTimeFromMs });
 }
 
 function getAveragePaceSelectionKey(profile) {
@@ -9291,10 +9271,7 @@ function getAveragePaceSelectionKey(profile) {
 }
 
 function getSelectedAveragePaceTrack(profile, items) {
-  if (!items.length) return null;
-  const key = getAveragePaceSelectionKey(profile);
-  const selected = averagePaceTrackSelection.get(key);
-  return items.find(item => item.track_code === selected) || items[0];
+  return selectDriverAveragePace(profile, items, averagePaceTrackSelection);
 }
 
 function renderAveragePaceTrackSelect(profile, items, selectedTrackCode) {
