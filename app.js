@@ -17,6 +17,7 @@ import { getCommunityLikesText, getCommunityPostKey, sortCommunityPosts } from "
 import { renderCommunityPostCard } from "./src/pages/community/post-view.js";
 import { createCommunityPageController } from "./src/pages/community/page-controller.js";
 import { CARS_COLUMNS, processCars } from "./src/pages/cars/model.js";
+import { createCarsTableView } from "./src/pages/cars/table-view.js";
 
 const PAGE_CONTEXT = readPageContext(document);
 const IS_RACES_PAGE = PAGE_CONTEXT.page === "races";
@@ -9304,54 +9305,46 @@ function renderCarsSummary() {
 
 function renderCarsPage() {
   if (topLoadState.cars) {
-    setLoadingMarkup("cars-table", "loading");
+    getCarsTableView().render({ loading: true });
     return;
   }
   renderCarsSummary();
   renderCarsTable();
 }
 
-function renderCarsTable() {
-  const tableEl = document.getElementById("cars-table");
-  if (!tableEl) return;
+let carsTableView = null;
 
+function getCarsTableView() {
+  carsTableView ||= createCarsTableView({
+    documentRef: document,
+    columns: CARS_COLUMNS,
+    translate: t,
+    escapeHtml,
+    renderHeaders: renderSortableHeaders,
+    bindHeaders: bindSortableHeaders,
+    renderCarImage,
+    renderCarLink,
+    renderDriverLink,
+    formatPercent,
+    formatAverageFinish,
+    getBestLapClass,
+    replaceWithTextState,
+    setLoadingMarkup
+  });
+  return carsTableView;
+}
+
+function renderCarsTable() {
   const rowsData = getProcessedCars();
   const fastestLapMs = getFastestLapMs(rowsData);
-
-  if (!rowsData.length) {
-    replaceWithTextState(tableEl, "empty", t("emptyRaces"));
-    return;
-  }
-
-  const headers = renderSortableHeaders(CARS_COLUMNS, t("carsCols"), carsSort);
-
-  const rows = rowsData.map(row => `
-    <tr>
-      <td><span class="car-label-inline">${renderCarImage(row, { className: "car-thumb car-thumb-inline", alt: row.car_name || "" })}${renderCarLink(row.car_name || "—", "driver-link")}</span></td>
-      <td>${escapeHtml(row.races ?? 0)}</td>
-      <td>${escapeHtml(row.wins ?? 0)}</td>
-      <td>${escapeHtml(formatPercent(row.win_rate))}</td>
-      <td>${escapeHtml(row.podiums ?? 0)}</td>
-      <td>${escapeHtml(row.unique_drivers ?? 0)}</td>
-      <td>${escapeHtml(formatAverageFinish(row.average_finish))}</td>
-      <td>${escapeHtml(row.fastest_lap_awards ?? 0)}</td>
-      <td>
-        <div class="${getBestLapClass(row.best_lap_ms === fastestLapMs)}">${escapeHtml(row.best_lap || "—")}</div>
-        <div class="race-note">${renderDriverLink(row.best_lap_driver || "—", row.best_lap_public_id, "driver-link driver-link-subtle")}</div>
-      </td>
-    </tr>
-  `).join("");
-
-  tableEl.innerHTML = `
-    <table>
-      <thead><tr>${headers}</tr></thead>
-      <tbody>${rows}</tbody>
-    </table>
-  `;
-
-  bindSortableHeaders("#cars-table th.sortable", carsSort, (key) => {
-    carsSort = cycleSort(carsSort, key);
-    renderCarsTable();
+  getCarsTableView().render({
+    rows: rowsData,
+    sortState: carsSort,
+    fastestLapMs,
+    onSort: key => {
+      carsSort = cycleSort(carsSort, key);
+      renderCarsTable();
+    }
   });
 }
 

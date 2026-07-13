@@ -97,6 +97,7 @@
 - 13.07.2026 — R10: Community post card renderer вынесен в `src/pages/community/post-view.js`; локализация, форматирование, escaping, text blocks и gallery normalization передаются на вызове без eager initialization. Actions, gallery и dependency contract покрыты тремя тестами; baseline расширен до 102 тестов.
 - 13.07.2026 — R10: Community list lifecycle и delegated like binding вынесены в lazy `src/pages/community/page-controller.js`; loading/empty/posts render, lightbox availability и likes refresh объединены явным контрактом. Добавлены четыре unit-теста, baseline расширен до 106 тестов.
 - 13.07.2026 — R10: Cars columns и обработка строк вынесены в `src/pages/cars/model.js`; фиктивный `filterCars` удалён, а page model использует общий sorter через явную зависимость. Добавлены три unit-теста, baseline расширен до 109 тестов.
+- 13.07.2026 — R10: Cars table renderer вынесен в lazy `src/pages/cars/table-view.js`; loading/empty/table states, row markup, fastest-lap highlight и sort binding отделены от `app.js`. Добавлены три unit-теста, baseline расширен до 112 тестов.
 
 ### Условия завершения R01
 
