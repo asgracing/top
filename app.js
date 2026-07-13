@@ -23,6 +23,7 @@ import { buildRacesPageState, buildRacesSummary, processRaces } from "./src/page
 import { createRacesTableView } from "./src/pages/races/table-view.js";
 import { createRacesSummaryView } from "./src/pages/races/summary-view.js";
 import { getDriverProfileKey, normalizeDriverAveragePace, normalizeDriverBestLaps, selectDriverAveragePace, selectDriverBestLap } from "./src/pages/driver/best-laps-model.js";
+import { renderDriverTrackSelect } from "./src/pages/driver/track-select-view.js";
 
 const PAGE_CONTEXT = readPageContext(document);
 const IS_RACES_PAGE = PAGE_CONTEXT.page === "races";
@@ -9250,16 +9251,16 @@ function getSelectedBestLapTrack(profile, items) {
 }
 
 function renderBestLapTrackSelect(profile, items, selectedTrackCode) {
-  if (items.length <= 1) return "";
-  const key = getDriverSelectionKey(profile);
-  const options = items.map(item => `
-    <option value="${escapeAttribute(item.track_code)}" ${item.track_code === selectedTrackCode ? "selected" : ""}>${escapeHtml(humanizeTrackName(item.track_code))}</option>
-  `).join("");
-  return `
-    <select class="driver-stat-track-select" data-bestlap-track="${escapeAttribute(key)}" title="${escapeAttribute(t("driverSummaryBestLapTrack"))}" aria-label="${escapeAttribute(t("driverSummaryBestLapTrack"))}">
-      ${options}
-    </select>
-  `;
+  return renderDriverTrackSelect({
+    items,
+    selectedTrackCode,
+    selectionKey: getDriverSelectionKey(profile),
+    dataAttribute: "data-bestlap-track",
+    label: t("driverSummaryBestLapTrack"),
+    escapeHtml,
+    escapeAttribute,
+    formatTrackName: humanizeTrackName,
+  });
 }
 
 function getAveragePaceTrackItems(profile) {
@@ -9275,16 +9276,16 @@ function getSelectedAveragePaceTrack(profile, items) {
 }
 
 function renderAveragePaceTrackSelect(profile, items, selectedTrackCode) {
-  if (items.length <= 1) return "";
-  const key = getAveragePaceSelectionKey(profile);
-  const options = items.map(item => `
-    <option value="${escapeAttribute(item.track_code)}" ${item.track_code === selectedTrackCode ? "selected" : ""}>${escapeHtml(humanizeTrackName(item.track_code))}</option>
-  `).join("");
-  return `
-    <select class="driver-stat-track-select" data-average-pace-track="${escapeAttribute(key)}" title="${escapeAttribute(t("driverSummaryAvgPaceTrack"))}" aria-label="${escapeAttribute(t("driverSummaryAvgPaceTrack"))}">
-      ${options}
-    </select>
-  `;
+  return renderDriverTrackSelect({
+    items,
+    selectedTrackCode,
+    selectionKey: getAveragePaceSelectionKey(profile),
+    dataAttribute: "data-average-pace-track",
+    label: t("driverSummaryAvgPaceTrack"),
+    escapeHtml,
+    escapeAttribute,
+    formatTrackName: humanizeTrackName,
+  });
 }
 
 function buildDriverStatsMarkup(profile) {

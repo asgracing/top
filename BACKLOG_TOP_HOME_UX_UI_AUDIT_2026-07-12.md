@@ -106,6 +106,7 @@
 - 13.07.2026 — R10: Races summary DOM вынесен в lazy `src/pages/races/summary-view.js`; aggregate model теперь передаётся простому view без page-specific DOM в `app.js`. Добавлены три unit-теста, baseline расширен до 129 тестов.
 - 13.07.2026 — R10: Driver best-laps-by-track normalization и selection вынесены в `src/pages/driver/best-laps-model.js`; alternate API fields, time fallback, stable profile key и stored-track selection отделены от DOM. Добавлены три unit-теста, baseline расширен до 132 тестов.
 - 13.07.2026 — R10: Driver average-pace-by-track normalization и selection добавлены в `src/pages/driver/best-laps-model.js`; alternate fields, formatted fallback, sample count и stored-track selection используют общий profile key. Добавлен unit-тест, baseline расширен до 133 тестов.
+- 13.07.2026 — R10: Driver track select markup вынесен в `src/pages/driver/track-select-view.js`; best-lap и average-pace используют единый безопасный view contract без дублирования HTML. Добавлены три unit-теста, baseline расширен до 136 тестов.
 
 ### Условия завершения R01
 
