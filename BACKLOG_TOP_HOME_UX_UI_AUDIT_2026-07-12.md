@@ -119,6 +119,7 @@
 - 13.07.2026 — R10: Community paragraph/list renderer перенесён в `post-view.js`, а пустые Cars/Races filter wrappers удалены из `app.js`. Добавлен regression-тест escaped paragraphs/lists, baseline расширен до 169 тестов.
 - 13.07.2026 — R10: Driver highlights markup вынесен в `highlights-view.js`, а live/summary rank и favorite-car selection — в `profile-model.js`. Добавлены четыре unit-теста, baseline расширен до 173 тестов; монолит больше не содержит соответствующую разметку и Map-агрегацию.
 - 13.07.2026 — R10: разметка строк Driver race history и track stats вынесена в route-loaded `tables-view.js`; DOM lifecycle, сортировка, пагинация и открытие race modal сохранены в контроллере. Добавлены два unit-теста, baseline расширен до 175 тестов.
+- 13.07.2026 — R10: Driver hero и двенадцать summary cards вынесены в route-loaded `summary-view.js`; подготовка выбранных трасс и интерактивные select handlers остались в page controller. Добавлены три unit-теста, baseline расширен до 178 тестов.
 
 ### Условия завершения R01
 

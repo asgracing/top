@@ -22,6 +22,7 @@ const {
   renderDriverTrackSelect, renderDriverPenaltyList, createBansPageView, createBansPage,
   createDriverPage,
   renderDriverHighlights,
+  renderDriverHeroTitle: renderDriverHeroTitleView, renderDriverStatsCards,
   buildDriverRankInfo, getDriverFavoriteCar,
   CARS_COLUMNS, processCars, createCarsTableView, createCarsSummaryView, createCarsPage,
   getCommunityLikesText, getCommunityPostKey, sortCommunityPosts, renderCommunityPostCard, renderCommunityTextBlocks: renderCommunityTextBlocksView, createCommunityPageController, createCommunityPage,
@@ -9064,11 +9065,7 @@ function buildDriverHeroTitle(profile) {
   if (!profile) return "-";
   const rankInfo = getDriverRankInfo(profile);
   const eloSource = getEloInfo(profile) ? profile : findEloSource(profile.public_id, profile.player_id);
-  return `
-    <span class="driver-title-name">${escapeHtml(profile.driver || "-")}</span>
-    ${renderEloBadge(eloSource, { showCategoryName: true })}
-    ${rankInfo ? `<span class="driver-rank-pill ${escapeHtml(rankInfo.rankClass)}" title="${escapeAttribute(t("driverRankingPosition"))}"><span class="driver-rank-label">${escapeHtml(t("driverRankingPosition"))}:</span><span class="driver-rank-value">#${escapeHtml(rankInfo.rank)}</span>${renderTrendBadge(rankInfo.change, "championship_rank", { compact: true })}</span>` : ""}
-  `;
+  return renderDriverHeroTitleView(profile, rankInfo, eloSource, { escapeHtml, escapeAttribute, translate: t, renderEloBadge, renderTrendBadge });
 }
 
 function getDriverSelectionKey(profile) {
@@ -9122,10 +9119,7 @@ function renderAveragePaceTrackSelect(profile, items, selectedTrackCode) {
 }
 
 function buildDriverStatsMarkup(profile) {
-  if (!profile) {
-    return `<div class="empty-box">${escapeHtml(t("driverNoData"))}</div>`;
-  }
-
+  if (!profile) return renderDriverStatsCards(null, { escapeHtml, escapeAttribute, translate: t, renderStatValueWithTrend, renderPositionsDelta });
   const summary = profile.summary || {};
   const favoriteCarName = getFavoriteCarName(profile);
   const favoriteCarMarkup = isDriverBanned(profile)
@@ -9142,65 +9136,9 @@ function buildDriverStatsMarkup(profile) {
   const averagePace = averagePaceTrack?.average_pace || summary.average_pace || "-";
   const averagePaceTrackCode = averagePaceTrack?.track_code || "";
   const averagePaceTrackSelect = renderAveragePaceTrackSelect(profile, averagePaceTracks, averagePaceTrackCode);
-  return `
-    <div class="driver-stat-card">
-      <div class="driver-stat-label">${escapeHtml(t("driverSummaryPoints"))}</div>
-      <div class="driver-stat-value">${renderStatValueWithTrend(escapeHtml(summary.points ?? 0), summary.latest_changes?.points, "points")}</div>
-    </div>
-    <div class="driver-stat-card">
-      <div class="driver-stat-label">${escapeHtml(t("driverSummaryAvgFinish"))}</div>
-      <div class="driver-stat-value">${renderStatValueWithTrend(escapeHtml(summary.average_finish ?? "-"), summary.latest_changes?.average_finish, "average_finish")}</div>
-    </div>
-    <div class="driver-stat-card">
-      <div class="driver-stat-label">${escapeHtml(t("driverSummaryAvgPoints"))}</div>
-      <div class="driver-stat-value">${escapeHtml(summary.average_points_per_race ?? 0)}</div>
-    </div>
-    <div class="driver-stat-card">
-      <div class="driver-stat-label">${escapeHtml(t("driverSummaryRaces"))}</div>
-      <div class="driver-stat-value">${renderStatValueWithTrend(escapeHtml(summary.races ?? 0), summary.latest_changes?.races, "races")}</div>
-    </div>
-    <div class="driver-stat-card">
-      <div class="driver-stat-label">${escapeHtml(t("driverSummaryWins"))}</div>
-      <div class="driver-stat-value">${escapeHtml(summary.wins ?? 0)}</div>
-    </div>
-    <div class="driver-stat-card">
-      <div class="driver-stat-label">${escapeHtml(t("driverWinRate"))}</div>
-      <div class="driver-stat-value">${escapeHtml(summary.win_rate ?? 0)}%</div>
-    </div>
-    <div class="driver-stat-card">
-      <div class="driver-stat-label">${escapeHtml(t("driverSummaryAvgGain"))}</div>
-      <div class="driver-stat-value">${renderStatValueWithTrend(renderPositionsDelta(summary.average_positions_delta), summary.latest_changes?.average_positions_delta, "average_positions_delta")}</div>
-    </div>
-    <div class="driver-stat-card">
-      <div class="driver-stat-label">${escapeHtml(t("driverSummaryPodiums"))}</div>
-      <div class="driver-stat-value">${renderStatValueWithTrend(escapeHtml(summary.podiums ?? 0), summary.latest_changes?.podiums, "podiums")}</div>
-    </div>
-    <div class="driver-stat-card">
-      <div class="driver-stat-label">${escapeHtml(t("driverPodiumRate"))}</div>
-      <div class="driver-stat-value">${escapeHtml(summary.podium_rate ?? 0)}%</div>
-    </div>
-    <div class="driver-stat-card">
-      <div class="driver-stat-label driver-stat-label-with-control" title="${escapeAttribute(t("driverSummaryBestLapTooltip"))}">
-        <span>${escapeHtml(t("driverSummaryBestLap"))}</span>
-        ${bestLapTrackSelect}
-      </div>
-      <div class="driver-stat-mainline driver-stat-bestlap-mainline">
-        <div class="driver-stat-value driver-stat-value-bestlap">${renderStatValueWithTrend(escapeHtml(bestLap), bestLapTrack ? null : summary.latest_changes?.best_lap_ms, "best_lap_ms")}</div>
-        ${bestLapCar ? `<div class="driver-stat-side driver-stat-bestlap-car">${escapeHtml(bestLapCar)}</div>` : ""}
-      </div>
-    </div>
-    <div class="driver-stat-card">
-      <div class="driver-stat-label driver-stat-label-with-control" title="${escapeAttribute(t("driverSummaryAvgPaceTooltip"))}">
-        <span>${escapeHtml(t("driverSummaryAvgPace"))}</span>
-        ${averagePaceTrackSelect}
-      </div>
-      <div class="driver-stat-value">${renderStatValueWithTrend(escapeHtml(averagePace), averagePaceTrack ? null : summary.latest_changes?.average_pace_ms, "average_pace_ms")}</div>
-    </div>
-    <div class="driver-stat-card">
-      <div class="driver-stat-label">${escapeHtml(t("driverFavoriteCar"))}</div>
-      <div class="driver-stat-value">${favoriteCarMarkup}</div>
-    </div>
-  `;
+  return renderDriverStatsCards({ summary, favoriteCarMarkup, bestLap, bestLapTrack, bestLapTrackSelect, bestLapCar, averagePace, averagePaceTrack, averagePaceTrackSelect }, {
+    escapeHtml, escapeAttribute, translate: t, renderStatValueWithTrend, renderPositionsDelta,
+  });
 }
 
 function renderCommunityTextBlocks(text) {
