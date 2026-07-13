@@ -24,6 +24,9 @@ const {
   createNewsPageView,
   buildRacesPageState, buildRacesSummary, processRaces, createRacesTableView, createRacesSummaryView,
   getFunStatsPeriodWindow: buildFunStatsPeriodWindow, selectFunStatsPeriodRaces,
+  renderFunStatsAwardCard: renderFunStatsAwardCardView,
+  renderFunStatsSummaryCard: renderFunStatsSummaryCardView,
+  renderFunStatsListCard: renderFunStatsListCardView,
 } = PAGE_FEATURES;
 const IS_RACES_PAGE = PAGE_CONTEXT.page === "races";
 const IS_DRIVER_PAGE = PAGE_CONTEXT.page === "driver";
@@ -4927,42 +4930,15 @@ function aggregateFunStats(period) {
 }
 
 function renderFunStatsAwardCard(labelKey, titleMarkup, note, accent = "default") {
-  return `
-    <article class="fun-award-card fun-award-card-${escapeHtml(accent)}">
-      <div class="fun-award-label">${escapeHtml(t(labelKey))}</div>
-      <div class="fun-award-title">${titleMarkup}</div>
-      <div class="fun-award-note">${escapeHtml(note)}</div>
-    </article>
-  `;
+  return renderFunStatsAwardCardView({ labelKey, titleMarkup, note, accent }, { escapeHtml, translate: t });
 }
 
 function renderFunStatsSummaryCard(labelMarkup, valueMarkup, note = "", extraClass = "") {
-  return `
-    <article class="fun-summary-card ${escapeHtml(extraClass)}">
-      <div class="fun-summary-label">${labelMarkup}</div>
-      <div class="fun-summary-value">${valueMarkup}</div>
-      ${note ? `<div class="fun-summary-note">${escapeHtml(note)}</div>` : ""}
-    </article>
-  `;
+  return renderFunStatsSummaryCardView({ labelMarkup, valueMarkup, note, extraClass }, { escapeHtml, translate: t });
 }
 
 function renderFunStatsListCard(titleKey, items, valueFormatter) {
-  const listMarkup = items.length
-    ? items.map((item, index) => `
-        <li class="fun-list-item">
-          <span class="fun-list-rank">#${index + 1}</span>
-          <span class="fun-list-main">${item.label}</span>
-          <span class="fun-list-side">${escapeHtml(valueFormatter(item))}</span>
-        </li>
-      `).join("")
-    : `<li class="fun-list-item fun-list-item-empty">${escapeHtml(t("funStatsEmpty"))}</li>`;
-
-  return `
-    <article class="fun-list-card">
-      <div class="fun-list-title">${escapeHtml(t(titleKey))}</div>
-      <ul class="fun-list">${listMarkup}</ul>
-    </article>
-  `;
+  return renderFunStatsListCardView({ titleKey, items, valueFormatter }, { escapeHtml, translate: t });
 }
 
 function renderFunStatsPage() {
