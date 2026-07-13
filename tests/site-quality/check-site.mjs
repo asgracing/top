@@ -2,12 +2,14 @@ import { readFile } from "node:fs/promises";
 import { resolve } from "node:path";
 
 const root = resolve(import.meta.dirname, "../..");
-const [html, css, js, pageFeatureLoader] = await Promise.all([
+const [html, legacyCss, heroServerSummaryCss, js, pageFeatureLoader] = await Promise.all([
   readFile(resolve(root, "index.html"), "utf8"),
   readFile(resolve(root, "styles.css"), "utf8"),
+  readFile(resolve(root, "styles/components/hero-server-summary.css"), "utf8"),
   readFile(resolve(root, "app.js"), "utf8"),
   readFile(resolve(root, "src/runtime/page-feature-loader.js"), "utf8")
 ]);
+const css = `${legacyCss}\n${heroServerSummaryCss}`;
 const failures = [];
 const pageFeatureIsLoaded = path => pageFeatureLoader.includes(`"${path}"`);
 const pageEntrypoints = {
@@ -102,6 +104,8 @@ if (!css.includes("@layer reset, base, layout, components, pages, utilities, leg
 if (!css.includes("@layer legacy {") || !css.includes("} /* end legacy */")) failures.push("Unmigrated CSS must remain inside the explicit legacy layer");
 if (css.indexOf("@layer legacy {") >= css.indexOf("} /* end legacy */") || css.indexOf("@layer overrides {") <= css.indexOf("} /* end legacy */")) failures.push("Consolidated CSS must follow the complete legacy migration boundary");
 if (/\.hero-server-total-stat\s*,\s*\.support-sticky-widget/.test(css)) failures.push("Hero total players card must not be part of the hidden legacy support group");
+if (!html.includes('./styles/components/hero-server-summary.css?v=20260713r11css1')) failures.push("Home must load the extracted hero server summary component after styles.css");
+if (legacyCss.includes("Consolidated hero server summary") || !heroServerSummaryCss.includes(".hero-server-total-stat")) failures.push("Hero server summary must have one physical component source");
 const budgets = {
   important: [(css.match(/!important/g) || []).length, 12],
   mediaQuery: [(css.match(/@media\b/g) || []).length, 56],

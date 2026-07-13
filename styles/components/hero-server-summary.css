@@ -1,0 +1,123 @@
+@layer overrides {
+  .hero-server-total-stat {
+    display: grid;
+  }
+
+  .hero-side-compact {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    grid-template-rows: repeat(2, minmax(50px, auto));
+    gap: 8px;
+    padding-top: 10px;
+  }
+
+  .hero-side-compact .hero-stats-row {
+    display: contents;
+  }
+
+  .hero-side-compact .mini-stat,
+  .hero-side-compact .mini-stat:first-child,
+  .hero-side-compact .mini-stat + .mini-stat,
+  .hero-side-compact .hero-stats-row .mini-stat {
+    display: grid;
+    min-width: 0;
+    min-height: 50px;
+    padding: 8px 10px;
+    border: 1px solid rgba(255, 255, 255, 0.085);
+    border-radius: 14px;
+    background:
+      radial-gradient(circle at top left, rgba(255, 255, 255, 0.08), transparent 46%),
+      rgba(255, 255, 255, 0.045);
+    box-shadow: none;
+  }
+
+  .hero-side-compact .mini-stat::before,
+  .hero-side-compact .mini-stat::after {
+    display: none;
+  }
+
+  .hero-server-online-stat {
+    appearance: none;
+    border: 1px solid rgba(57, 217, 138, 0.26);
+    color: inherit;
+    font: inherit;
+    text-align: left;
+    cursor: pointer;
+  }
+
+  .hero-server-online-stat:hover,
+  .hero-server-online-stat:focus-visible {
+    transform: translateY(-1px);
+    border-color: rgba(57, 217, 138, 0.48);
+    background:
+      radial-gradient(circle at top left, rgba(57, 217, 138, 0.16), transparent 48%),
+      rgba(255, 255, 255, 0.06);
+  }
+
+  .hero-server-online-stat:focus-visible {
+    outline: 2px solid rgba(57, 217, 138, 0.58);
+    outline-offset: 3px;
+  }
+
+  .hero-side-compact .mini-label {
+    display: block;
+    margin: 0 0 4px;
+    color: rgba(218, 229, 245, 0.58);
+    font-size: 0.58rem;
+    font-weight: 850;
+    letter-spacing: 0.07em;
+    line-height: 1.05;
+    text-transform: uppercase;
+  }
+
+  .hero-side-compact .mini-value,
+  .hero-side-compact #drivers-count,
+  .hero-side-compact #servers-online-count,
+  .hero-side-compact #serverPlayersValue {
+    grid-column: auto;
+    grid-row: auto;
+    align-self: end;
+    margin: 0;
+    color: rgba(248, 251, 255, 0.96);
+    font-size: clamp(0.98rem, 1.12vw, 1.18rem);
+    font-weight: 950;
+    line-height: 0.95;
+    text-align: left;
+    white-space: nowrap;
+  }
+
+  .hero-side-compact .server-status-wrap,
+  .hero-side-compact .server-status-wrap-total {
+    display: block;
+  }
+
+  .hero-side-compact .mini-stat-bestlap {
+    padding: 6px 8px;
+  }
+
+  .hero-side-compact .mini-stat-bestlap .mini-label,
+  .hero-side-compact .mini-stat-bestlap .mini-note,
+  .hero-side-compact .hero-stats-row::before {
+    display: none;
+  }
+
+  .hero-side-compact .hero-stats-row::before {
+    content: none;
+  }
+
+  .hero-side-compact .mini-stat-bestlap .bestlap-track-cta {
+    align-self: center;
+    width: 100%;
+    min-height: 32px;
+    padding: 6px 10px;
+    font-size: 0.68rem;
+    line-height: 1.05;
+  }
+
+  @media (max-width: 560px) {
+    .hero-side-compact {
+      grid-template-columns: 1fr;
+      grid-template-rows: auto;
+    }
+  }
+}
