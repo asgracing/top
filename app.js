@@ -16,6 +16,7 @@ import { createNewsPageView } from "./src/pages/news/page-view.js";
 import { getCommunityLikesText, getCommunityPostKey, sortCommunityPosts } from "./src/pages/community/feed-model.js";
 import { renderCommunityPostCard } from "./src/pages/community/post-view.js";
 import { createCommunityPageController } from "./src/pages/community/page-controller.js";
+import { CARS_COLUMNS, processCars } from "./src/pages/cars/model.js";
 
 const PAGE_CONTEXT = readPageContext(document);
 const IS_RACES_PAGE = PAGE_CONTEXT.page === "races";
@@ -2063,18 +2064,6 @@ const racesColumns = [
   { key: "winner", type: "string" },
   { key: "participants_count", type: "number" },
   { key: "average_elo", type: "number" },
-  { key: "best_lap", type: "time" }
-];
-
-const carsColumns = [
-  { key: "car_name", type: "string" },
-  { key: "races", type: "number" },
-  { key: "wins", type: "number" },
-  { key: "win_rate", type: "number" },
-  { key: "podiums", type: "number" },
-  { key: "unique_drivers", type: "number" },
-  { key: "average_finish", type: "number" },
-  { key: "fastest_lap_awards", type: "number" },
   { key: "best_lap", type: "time" }
 ];
 
@@ -4821,11 +4810,7 @@ function getProcessedSafety() {
 }
 
 function getProcessedCars() {
-  return sortData(
-    filterCars(carsData),
-    carsSort,
-    carsColumns
-  );
+  return processCars({ rows: carsData, sortState: carsSort, sortRows: sortData });
 }
 
 function getLatestRaceDate(data = racesData) {
@@ -8915,10 +8900,6 @@ function getProcessedRaces() {
   return sortData(filterRaces(racesData), { key: "finished_at", direction: "desc" }, racesColumns);
 }
 
-function filterCars(data) {
-  return [...data];
-}
-
 function renderRacesFilters() {
   return;
 }
@@ -9342,7 +9323,7 @@ function renderCarsTable() {
     return;
   }
 
-  const headers = renderSortableHeaders(carsColumns, t("carsCols"), carsSort);
+  const headers = renderSortableHeaders(CARS_COLUMNS, t("carsCols"), carsSort);
 
   const rows = rowsData.map(row => `
     <tr>
