@@ -2854,7 +2854,6 @@ tr.is-interactive-row:focus-visible {
 }
 
 .driver-stat-value-bestlap {
-  color: #b84dff !important;
   text-shadow: 0 0 18px rgba(168, 85, 247, 0.24);
 }
 
@@ -10069,7 +10068,7 @@ th.sort-desc .table-sort-button .sort-icon { color: var(--accent); }
 }
 
 .hero-server-total-stat {
-  display: grid !important;
+  display: grid;
 }
 
 .hero-side-compact .mini-stat,
@@ -10562,14 +10561,14 @@ th.sort-desc .table-sort-button .sort-icon { color: var(--accent); }
   box-shadow:
     0 12px 28px rgba(126, 34, 206, 0.34),
     inset 0 1px 0 rgba(255, 255, 255, 0.18);
-  color: #ffffff !important;
+  color: #ffffff;
   font-size: 0.76rem;
   font-weight: 900;
   line-height: 1.12;
   letter-spacing: 0;
   text-align: center;
   text-decoration: none;
-  text-shadow: 0 1px 12px rgba(40, 12, 72, 0.45) !important;
+  text-shadow: 0 1px 12px rgba(40, 12, 72, 0.45);
   cursor: pointer;
   transition:
     transform 0.18s ease,
@@ -10776,7 +10775,7 @@ th.sort-desc .table-sort-button .sort-icon { color: var(--accent); }
 }
 
 .hero-server-total-stat {
-  display: grid !important;
+  display: grid;
 }
 
 .mini-label {
@@ -11021,7 +11020,6 @@ th.sort-desc .table-sort-button .sort-icon { color: var(--accent); }
 
 .mini-stat-bestlap .mini-value,
 .best-lap-value {
-  color: #b84dff;
   text-shadow: 0 0 22px rgba(184, 77, 255, 0.34);
 }
 
@@ -11067,7 +11065,7 @@ th.sort-desc .table-sort-button .sort-icon { color: var(--accent); }
   gap: 12px 16px;
   padding: 0 0 16px;
   border-bottom-color: rgba(255, 255, 255, 0.08);
-  background: transparent !important;
+  background: transparent;
 }
 
 .support-inline-widget.support-center-widget .support-widget-title {
@@ -11098,22 +11096,6 @@ th.sort-desc .table-sort-button .sort-icon { color: var(--accent); }
 
 .cards-top3.cards-top3-hero {
   gap: 12px;
-}
-
-.cards-top3-hero .pilot-card,
-.cards-top3-hero .pilot-card.top1,
-.cards-top3-hero .pilot-card.top2,
-.cards-top3-hero .pilot-card.top3 {
-  padding: 0 !important;
-  border: 0 !important;
-  border-radius: 0 !important;
-  background: transparent !important;
-  box-shadow: none !important;
-}
-
-.cards-top3-hero .pilot-card + .pilot-card {
-  padding-top: 12px !important;
-  border-top: 1px solid rgba(255, 255, 255, 0.08) !important;
 }
 
 .cards-top3-hero .pilot-topline {
@@ -11242,7 +11224,7 @@ th.sort-desc .table-sort-button .sort-icon { color: var(--accent); }
 
 .mini-stat-bestlap .mini-value,
 .best-lap-value {
-  color: #b84dff !important;
+  color: #b84dff;
   text-shadow: 0 0 22px rgba(184, 77, 255, 0.34);
 }
 
@@ -11306,7 +11288,7 @@ th.sort-desc .table-sort-button .sort-icon { color: var(--accent); }
   padding: 14px 14px 16px;
   border: 1px solid rgba(255, 255, 255, 0.11);
   border-radius: 18px;
-  background: rgba(255, 255, 255, 0.025) !important;
+  background: rgba(255, 255, 255, 0.025);
 }
 
 .support-inline-widget.support-center-widget .support-widget-btn {
@@ -11516,7 +11498,7 @@ th.sort-desc .table-sort-button .sort-icon { color: var(--accent); }
 }
 
 .hero-hourly-card {
-  margin-top: 0 !important;
+  margin-top: 0;
   padding: 14px 16px;
   border-radius: 18px;
 }
@@ -11909,36 +11891,6 @@ th.sort-desc .table-sort-button .sort-icon { color: var(--accent); }
   .hero-hourly-card {
     height: auto;
   }
-}
-
-/* ===== FINAL BEST LAP CTA + VIDEO SOUND OVERRIDE 0605 ===== */
-
-.bestlap-track-cta,
-.bestlap-tracks-open.bestlap-track-cta,
-.driver-stat-label-button.bestlap-track-cta,
-.mini-stat-bestlap .mini-value.bestlap-track-cta,
-.hero-side-compact .mini-stat-bestlap .mini-value.bestlap-track-cta {
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-  max-width: 100%;
-  min-height: 36px;
-  padding: 8px 14px;
-  border: 1px solid rgba(216, 180, 254, 0.52);
-  border-radius: 999px;
-  background:
-    radial-gradient(circle at 20% 0%, rgba(216, 180, 254, 0.32), transparent 48%),
-    linear-gradient(135deg, rgba(147, 51, 234, 0.96), rgba(109, 40, 217, 0.94));
-  box-shadow:
-    0 12px 28px rgba(126, 34, 206, 0.34),
-    inset 0 1px 0 rgba(255, 255, 255, 0.18);
-  color: #ffffff !important;
-  font-size: 0.76rem !important;
-  font-weight: 900;
-  line-height: 1.12;
-  letter-spacing: 0;
-  text-align: center;
-  text-shadow: 0 1px 12px rgba(40, 12, 72, 0.45) !important;
 }
 
 .mini-stat-bestlap .bestlap-track-cta {
@@ -12880,6 +12832,68 @@ th.sort-desc .table-sort-button .sort-icon { color: var(--accent); }
 } /* end legacy */
 
 @layer overrides {
+  .hero-server-total-stat {
+    display: grid;
+  }
+
+  .support-inline-widget.support-center-widget .support-widget-card {
+    background: rgba(255, 255, 255, 0.025);
+  }
+
+  .hero-hourly-card {
+    margin-top: 0;
+  }
+
+  .cards-top3-hero .pilot-card,
+  .cards-top3-hero .pilot-card.top1,
+  .cards-top3-hero .pilot-card.top2,
+  .cards-top3-hero .pilot-card.top3 {
+    padding: 0;
+    border: 0;
+    border-radius: 0;
+    background: transparent;
+    box-shadow: none;
+  }
+
+  .cards-top3-hero .pilot-card + .pilot-card {
+    padding-top: 12px;
+    border-top: 1px solid rgba(255, 255, 255, 0.08);
+  }
+
+  .driver-stat-value-bestlap,
+  .mini-stat-bestlap .mini-value,
+  .best-lap-value {
+    color: #b84dff;
+  }
+
+  .bestlap-track-cta,
+  .bestlap-tracks-open.bestlap-track-cta,
+  .driver-stat-label-button.bestlap-track-cta,
+  .mini-stat-bestlap .mini-value.bestlap-track-cta,
+  .hero-side-compact .mini-stat-bestlap .mini-value.bestlap-track-cta {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    max-width: 100%;
+    min-height: 36px;
+    padding: 8px 14px;
+    border: 1px solid rgba(216, 180, 254, 0.52);
+    border-radius: var(--radius-pill);
+    background:
+      radial-gradient(circle at 20% 0%, rgba(216, 180, 254, 0.32), transparent 48%),
+      linear-gradient(135deg, rgba(147, 51, 234, 0.96), rgba(109, 40, 217, 0.94));
+    box-shadow:
+      0 12px 28px rgba(126, 34, 206, 0.34),
+      inset 0 1px 0 rgba(255, 255, 255, 0.18);
+    color: #ffffff;
+    font-size: 0.76rem;
+    font-weight: 900;
+    line-height: 1.12;
+    letter-spacing: 0;
+    text-align: center;
+    text-shadow: 0 1px 12px rgba(40, 12, 72, 0.45);
+  }
+
   body *,
   body *::before,
   body *::after {

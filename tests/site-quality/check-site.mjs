@@ -102,10 +102,10 @@ if (!css.includes("@layer reset, base, layout, components, pages, utilities, leg
 if (!css.includes("@layer legacy {") || !css.includes("} /* end legacy */")) failures.push("Unmigrated CSS must remain inside the explicit legacy layer");
 if (css.indexOf("@layer legacy {") >= css.indexOf("} /* end legacy */") || css.indexOf("@layer overrides {") <= css.indexOf("} /* end legacy */")) failures.push("Consolidated CSS must follow the complete legacy migration boundary");
 const budgets = {
-  important: [(css.match(/!important/g) || []).length, 31],
+  important: [(css.match(/!important/g) || []).length, 12],
   mediaQuery: [(css.match(/@media\b/g) || []).length, 56],
   zIndex: [(css.match(/\bz-index\s*:/g) || []).length, 48],
-  hexColor: [(css.match(/#[0-9a-f]{3,8}\b/gi) || []).length, 253],
+  hexColor: [(css.match(/#[0-9a-f]{3,8}\b/gi) || []).length, 252],
   silentCatch: [(js.match(/\.catch\(\(\)\s*=>\s*null\)/g) || []).length, 28],
   inlineStyle: [(html.match(/\bstyle=/g) || []).length, 10],
   directFetch: [(js.match(/\bfetch\s*\(/g) || []).length, 0],
