@@ -37,6 +37,7 @@ const {
   renderFunStatsListCard: renderFunStatsListCardView,
   aggregateFunStatsFallback,
   createFunStatsPage,
+  createFunStatsPeriodController,
 } = PAGE_FEATURES;
 const IS_RACES_PAGE = PAGE_CONTEXT.page === "races";
 const IS_DRIVER_PAGE = PAGE_CONTEXT.page === "driver";
@@ -5012,16 +5013,16 @@ function renderFunStatsPage() {
   ].join("");
 }
 
+let funStatsPeriodController = null;
 function bindFunStatsControls() {
-  document.querySelectorAll("[data-fun-period]").forEach(button => {
-    button.addEventListener("click", () => {
-      const nextPeriod = button.dataset.funPeriod;
-      if (!nextPeriod || nextPeriod === funStatsPeriod) return;
-      funStatsPeriod = nextPeriod;
-      renderFunStatsPage();
-      applyRevealAnimations();
-    });
+  funStatsPeriodController ||= createFunStatsPeriodController({
+    documentRef: document,
+    getPeriod: () => funStatsPeriod,
+    setPeriod: value => { funStatsPeriod = value; },
+    renderPage: renderFunStatsPage,
+    applyReveal: applyRevealAnimations,
   });
+  funStatsPeriodController.bind(appLifecycle);
 }
 
 function getLocalizedCommunityValue(value, fallback = "") {
