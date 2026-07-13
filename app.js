@@ -10,6 +10,7 @@ import { createHomePage } from "./src/pages/home/index.js";
 import { HOME_LOADING_TEXT_IDS, applyHomeTableViewState } from "./src/pages/home/view-state-config.js";
 import { createModalControllerFactory } from "./src/shared/modal-controller.js";
 import { parseTableNumber, sortTableRows } from "./src/shared/table-model.js";
+import { createBansPageView } from "./src/pages/bans/index.js";
 
 const PAGE_CONTEXT = readPageContext(document);
 const IS_RACES_PAGE = PAGE_CONTEXT.page === "races";
@@ -9536,54 +9537,17 @@ function renderCarsTable() {
   });
 }
 
-function renderBansSummary() {
-  const totalEl = document.getElementById("bans-total-count");
-  const latestEl = document.getElementById("bans-latest-date");
-
-  if (totalEl) {
-    totalEl.textContent = String(bansData.length || 0);
-  }
-
-  if (latestEl) {
-    latestEl.textContent = bansData[0]?.banned_at
-      ? formatDateTimeLocal(bansData[0].banned_at, currentLang)
-      : "—";
-  }
-}
-
-function renderBansTable() {
-  const tableEl = document.getElementById("bans-table");
-  if (!tableEl) return;
-
-  if (!bansData.length) {
-    replaceWithTextState(tableEl, "empty", t("bansEmpty"));
-    return;
-  }
-
-  const headers = t("bansCols").map(label => `<th>${escapeHtml(label)}</th>`).join("");
-  const rows = bansData.map(item => `
-    <tr>
-      <td>${escapeHtml(item.name || "—")}</td>
-      <td>${escapeHtml(item.banned_at ? formatDateTimeLocal(item.banned_at, currentLang) : "—")}</td>
-    </tr>
-  `).join("");
-
-  tableEl.innerHTML = `
-    <table>
-      <thead><tr>${headers}</tr></thead>
-      <tbody>${rows}</tbody>
-    </table>
-  `;
-}
+const bansPageView = createBansPageView({
+  documentRef: document,
+  translate: t,
+  escapeHtml,
+  formatDateTime: formatDateTimeLocal,
+  replaceWithTextState,
+  setLoadingMarkup
+});
 
 function renderBansPage() {
-  if (topLoadState.bans) {
-    setLoadingMarkup("bans-table", "loading");
-    return;
-  }
-
-  renderBansSummary();
-  renderBansTable();
+  bansPageView.render({ data: bansData, locale: currentLang, loading: topLoadState.bans });
 }
 
 function renderRecentForm(items = []) {
