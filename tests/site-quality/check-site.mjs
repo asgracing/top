@@ -2,16 +2,17 @@ import { readFile } from "node:fs/promises";
 import { resolve } from "node:path";
 
 const root = resolve(import.meta.dirname, "../..");
-const [html, tokensCss, legacyCss, heroLayoutCss, heroServerSummaryCss, js, pageFeatureLoader] = await Promise.all([
+const [html, tokensCss, baseCss, legacyCss, heroLayoutCss, heroServerSummaryCss, js, pageFeatureLoader] = await Promise.all([
   readFile(resolve(root, "index.html"), "utf8"),
   readFile(resolve(root, "styles/tokens.css"), "utf8"),
+  readFile(resolve(root, "styles/base.css"), "utf8"),
   readFile(resolve(root, "styles.css"), "utf8"),
   readFile(resolve(root, "styles/components/hero-layout.css"), "utf8"),
   readFile(resolve(root, "styles/components/hero-server-summary.css"), "utf8"),
   readFile(resolve(root, "app.js"), "utf8"),
   readFile(resolve(root, "src/runtime/page-feature-loader.js"), "utf8")
 ]);
-const css = `${tokensCss}\n${legacyCss}\n${heroLayoutCss}\n${heroServerSummaryCss}`;
+const css = `${tokensCss}\n${baseCss}\n${legacyCss}\n${heroLayoutCss}\n${heroServerSummaryCss}`;
 const failures = [];
 const pageFeatureIsLoaded = path => pageFeatureLoader.includes(`"${path}"`);
 const pageEntrypoints = {
@@ -34,6 +35,8 @@ for (const [page, [htmlPath, entrySrc]] of Object.entries(pageEntrypoints)) {
   if (!entrySource.includes(`bootstrapLegacyPage("${page}")`)) failures.push(`${page} entrypoint has the wrong page identity`);
   const tokenHref = page === "home" ? "./styles/tokens.css?v=20260713r11tokens1" : "../styles/tokens.css?v=20260713r11tokens1";
   if (!pageHtml.includes(tokenHref)) failures.push(`${page} page is missing the shared token stylesheet`);
+  const baseHref = page === "home" ? "./styles/base.css?v=20260713r11base1" : "../styles/base.css?v=20260713r11base1";
+  if (!pageHtml.includes(baseHref)) failures.push(`${page} page is missing the shared base stylesheet`);
 }
 const ids = [...html.matchAll(/\bid="([^"]+)"/g)].map(match => match[1]);
 const duplicates = [...new Set(ids.filter((id, index) => ids.indexOf(id) !== index))];
@@ -113,6 +116,7 @@ if (legacyCss.includes("Consolidated hero server summary") || !heroServerSummary
 if (!html.includes('./styles/components/hero-layout.css?v=20260713r11css2') || !heroLayoutCss.includes("@media (min-width: 1181px)")) failures.push("Home must load the extracted responsive hero layout component");
 if (legacyCss.includes(".hero-hourly-card.is-championship-event {") && legacyCss.slice(legacyCss.indexOf("@layer overrides {")).includes(".hero-hourly-card.is-championship-event {")) failures.push("Final championship hero skin must live outside the legacy stylesheet");
 if (!tokensCss.includes("@layer tokens {") || !tokensCss.includes("--layer-modal-priority: 100000;") || legacyCss.includes("--bg: #0b0f14")) failures.push("Design tokens must have one physical source in styles/tokens.css");
+if (!baseCss.includes("@layer reset {") || !baseCss.includes("@layer base {") || !baseCss.includes("@layer layout {") || legacyCss.includes("/* ===== RESET / BASE ===== */")) failures.push("Reset and shared document foundations must have one physical source in styles/base.css");
 const budgets = {
   important: [(css.match(/!important/g) || []).length, 12],
   mediaQuery: [(css.match(/@media\b/g) || []).length, 56],
