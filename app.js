@@ -19,6 +19,7 @@ import { createCommunityPageController } from "./src/pages/community/page-contro
 import { CARS_COLUMNS, processCars } from "./src/pages/cars/model.js";
 import { createCarsTableView } from "./src/pages/cars/table-view.js";
 import { createCarsSummaryView } from "./src/pages/cars/summary-view.js";
+import { processRaces, RACES_COLUMNS } from "./src/pages/races/model.js";
 
 const PAGE_CONTEXT = readPageContext(document);
 const IS_RACES_PAGE = PAGE_CONTEXT.page === "races";
@@ -2059,15 +2060,6 @@ Object.assign(translations.ru, {
 });
 
 currentLang = resolveInitialLanguage();
-
-const racesColumns = [
-  { key: "finished_at", type: "string" },
-  { key: "track", type: "string" },
-  { key: "winner", type: "string" },
-  { key: "participants_count", type: "number" },
-  { key: "average_elo", type: "number" },
-  { key: "best_lap", type: "time" }
-];
 
 const carModelNames = {
   0: "Porsche 991 GT3 R",
@@ -8891,15 +8883,8 @@ function renderFilterMeta(containerId, { items = [], count = 0, onClearId = "" }
   });
 }
 
-function filterRaces(data) {
-  return [...data];
-}
-
 function getProcessedRaces() {
-  if (racesArchiveMeta) {
-    return Array.isArray(racesData) ? racesData : [];
-  }
-  return sortData(filterRaces(racesData), { key: "finished_at", direction: "desc" }, racesColumns);
+  return processRaces({ rows: racesData, archiveMeta: racesArchiveMeta, sortRows: sortData });
 }
 
 function renderRacesFilters() {

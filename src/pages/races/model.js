@@ -1,0 +1,15 @@
+export const RACES_COLUMNS = Object.freeze([
+  { key: "finished_at", type: "string" },
+  { key: "track", type: "string" },
+  { key: "winner", type: "string" },
+  { key: "participants_count", type: "number" },
+  { key: "average_elo", type: "number" },
+  { key: "best_lap", type: "time" }
+].map(column => Object.freeze(column)));
+
+export function processRaces({ rows = [], archiveMeta = null, sortRows }) {
+  const normalizedRows = Array.isArray(rows) ? rows : [];
+  if (archiveMeta) return [...normalizedRows];
+  if (typeof sortRows !== "function") throw new TypeError("Races processing requires a row sorter");
+  return sortRows(normalizedRows, { key: "finished_at", direction: "desc" }, RACES_COLUMNS);
+}
