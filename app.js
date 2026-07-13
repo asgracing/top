@@ -20,6 +20,7 @@ import { CARS_COLUMNS, processCars } from "./src/pages/cars/model.js";
 import { createCarsTableView } from "./src/pages/cars/table-view.js";
 import { createCarsSummaryView } from "./src/pages/cars/summary-view.js";
 import { buildRacesPageState, processRaces } from "./src/pages/races/model.js";
+import { createRacesTableView } from "./src/pages/races/table-view.js";
 
 const PAGE_CONTEXT = readPageContext(document);
 const IS_RACES_PAGE = PAGE_CONTEXT.page === "races";
@@ -8965,10 +8966,6 @@ function renderRacesSummary() {
 }
 
 function renderRacesTablePage() {
-  const tableEl = document.getElementById("races-table");
-  const wrapEl = document.getElementById("races-pagination-wrap");
-  if (!tableEl || !wrapEl) return;
-
   const result = buildRacesPageState({
     rows: getProcessedRaces(),
     archiveMeta: racesArchiveMeta,
@@ -8977,63 +8974,10 @@ function renderRacesTablePage() {
     paginateRows: paginate
   });
   racesPage = result.page;
-
-  if (!result.totalItems) {
-    replaceWithTextState(tableEl, "empty", t("emptyRaces"));
-    wrapEl.style.display = "none";
-    return;
-  }
-
-  const headers = t("racesCols").map(label => `<th>${escapeHtml(label)}</th>`).join("");
-  const rows = result.items.map((race, index) => `
-    <tr
-      class="is-interactive-row"
-      data-race-index="${escapeHtml(index)}"
-      tabindex="0"
-      role="button"
-      aria-label="${escapeHtml(`${t("openRaceDetailsLabel")}: ${humanizeTrackName(race.track)}`)}"
-    >
-      <td>${escapeHtml(formatDateTimeLocal(race.finished_at, currentLang))}</td>
-      <td>
-        <div class="race-track-cell">
-          <span class="race-track-name">${escapeHtml(humanizeTrackName(race.track))}</span>
-          
-        </div>
-      </td>
-      <td><span class="race-winner">${renderDriverLink(race.winner || t("noWinner"), race.winner_public_id, "driver-link")}</span></td>
-      <td>${escapeHtml(race.participants_count ?? "-")}</td>
-      <td>${escapeHtml(race.average_elo ?? "-")}</td>
-      <td>
-        <div>${escapeHtml(race.best_lap || "-")}</div>
-        <div class="race-note">${renderDriverLink(race.best_lap_driver || "-", race.best_lap_public_id, "driver-link driver-link-subtle")}</div>
-      </td>
-    </tr>
-  `).join("");
-
-  tableEl.innerHTML = `
-    <table class="races-table">
-      <thead>
-        <tr>${headers}</tr>
-      </thead>
-      <tbody>${rows}</tbody>
-    </table>
-  `;
-
-  bindInteractiveRows(tableEl, "tbody tr[data-race-index]", (row) => {
-    const index = Number(row.dataset.raceIndex);
-    openRaceResultsModal(result.items[index] || null, row);
-  });
-
-  renderPagination(
-    "races-pagination",
-    "races-pagination-info",
-    "races-pagination-wrap",
-    result.page,
-    result.totalPages,
-    result.totalItems,
-    result.startIndex,
-    result.endIndex,
-    (page) => {
+  getRacesTableView().render(result, {
+    locale: currentLang,
+    onOpen: openRaceResultsModal,
+    onPage: (page, tableEl) => {
       racesPage = page;
       if (result.serverPaged) {
         replaceWithTextState(tableEl, "loading", t("loading"));
@@ -9052,7 +8996,24 @@ function renderRacesTablePage() {
       renderRacesTablePage();
       document.getElementById("races-table")?.scrollIntoView({ behavior: "smooth", block: "center" });
     }
-  );
+  });
+}
+
+let racesTableView = null;
+
+function getRacesTableView() {
+  racesTableView ||= createRacesTableView({
+    documentRef: document,
+    translate: t,
+    escapeHtml,
+    formatDateTime: formatDateTimeLocal,
+    humanizeTrack: humanizeTrackName,
+    renderDriverLink,
+    bindInteractiveRows,
+    renderPagination,
+    replaceWithTextState
+  });
+  return racesTableView;
 }
 
 function renderRaceDriverIdentity(row) {
