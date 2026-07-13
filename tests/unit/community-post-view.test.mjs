@@ -1,6 +1,6 @@
 import test from "node:test";
 import assert from "node:assert/strict";
-import { renderCommunityPostCard } from "../../src/pages/community/post-view.js";
+import { renderCommunityPostCard, renderCommunityTextBlocks } from "../../src/pages/community/post-view.js";
 
 const deps = {
   getLocalizedValue: (value, fallback) => value || fallback,
@@ -24,4 +24,10 @@ test("renders escaped community gallery", () => {
 
 test("rejects incomplete dependencies", () => {
   assert.throws(() => renderCommunityPostCard({}, {}), /complete rendering dependencies/);
+});
+
+test("renders escaped community paragraphs and lists", () => {
+  const escapeHtml = value => String(value).replaceAll("<", "&lt;");
+  assert.equal(renderCommunityTextBlocks("one\n\n<two>", { escapeHtml }), "<p>one</p><p>&lt;two></p>");
+  assert.equal(renderCommunityTextBlocks([{ type: "list", items: ["A", "<B>"] }], { escapeHtml }), "<ul><li>A</li><li>&lt;B></li></ul>");
 });

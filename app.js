@@ -21,7 +21,7 @@ const {
   renderDriverTrackSelect, renderDriverPenaltyList, createBansPageView, createBansPage,
   createDriverPage,
   CARS_COLUMNS, processCars, createCarsTableView, createCarsSummaryView, createCarsPage,
-  getCommunityLikesText, getCommunityPostKey, sortCommunityPosts, renderCommunityPostCard, createCommunityPageController, createCommunityPage,
+  getCommunityLikesText, getCommunityPostKey, sortCommunityPosts, renderCommunityPostCard, renderCommunityTextBlocks: renderCommunityTextBlocksView, createCommunityPageController, createCommunityPage,
   createNewsPageView, createNewsPage,
   buildRacesPageState, buildRacesSummary, processRaces, createRacesTableView, createRacesSummaryView, createRacesPage,
   getFunStatsPeriodWindow: buildFunStatsPeriodWindow, selectFunStatsPeriodRaces,
@@ -8729,14 +8729,6 @@ function getProcessedRaces() {
   return processRaces({ rows: racesData, archiveMeta: racesArchiveMeta, sortRows: sortData });
 }
 
-function renderRacesFilters() {
-  return;
-}
-
-function renderCarsFilters() {
-  return;
-}
-
 function renderRacesSummary() {
   const processedRaces = getProcessedRaces();
   const summary = buildRacesSummary({ rows: processedRaces, archiveSummary: racesArchiveSummary, isActiveResult: isActiveRaceResult, getCarName: getResultCarName });
@@ -9209,32 +9201,7 @@ function buildDriverStatsMarkup(profile) {
 }
 
 function renderCommunityTextBlocks(text) {
-  const blocks = Array.isArray(text)
-    ? text
-    : String(text || "").split(/\n{2,}/);
-
-  return blocks
-    .map(block => {
-      if (typeof block === "string") {
-        const paragraph = block.trim();
-        return paragraph ? `<p>${escapeHtml(paragraph)}</p>` : "";
-      }
-
-      if (!block || typeof block !== "object") return "";
-
-      if (block.type === "list" && Array.isArray(block.items)) {
-        const items = block.items
-          .map(item => String(item || "").trim())
-          .filter(Boolean)
-          .map(item => `<li>${escapeHtml(item)}</li>`)
-          .join("");
-        return items ? `<ul>${items}</ul>` : "";
-      }
-
-      const paragraph = String(block.text || "").trim();
-      return paragraph ? `<p>${escapeHtml(paragraph)}</p>` : "";
-    })
-    .join("");
+  return renderCommunityTextBlocksView(text, { escapeHtml });
 }
 
 function buildDriverHighlightsMarkup(profile) {

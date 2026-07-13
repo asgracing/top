@@ -67,6 +67,7 @@ if (!js.includes('from "./src/pages/news/feed-model.js"') || js.includes("return
 if (!pageFeatureIsLoaded("../pages/news/page-view.js") || js.includes("function renderNewsListPage(") || js.includes("function renderNewsDetailPage(")) failures.push("News page rendering must live outside app.js");
 if (!pageFeatureIsLoaded("../pages/community/feed-model.js") || js.includes("const sortedPosts = [...posts].sort")) failures.push("Community feed model must live outside app.js");
 if (!pageFeatureIsLoaded("../pages/community/post-view.js") || js.includes('class="community-feed-card reveal"')) failures.push("Community post rendering must live outside app.js");
+if (js.includes("const blocks = Array.isArray(text)")) failures.push("Community text block rendering must live outside app.js");
 if (!pageFeatureIsLoaded("../pages/community/page-controller.js") || js.includes("function bindCommunityLikeControls()") || js.includes("const communityPageController = createCommunityPageController")) failures.push("Community page lifecycle must use a lazy external controller");
 if (!pageFeatureIsLoaded("../pages/cars/model.js") || js.includes("const carsColumns = [") || js.includes("function filterCars(")) failures.push("Cars table model must live outside app.js");
 if (!pageFeatureIsLoaded("../pages/cars/table-view.js") || js.includes('bindSortableHeaders("#cars-table') || js.includes("const carsTableView = createCarsTableView")) failures.push("Cars table rendering must use a lazy external view");

@@ -1,3 +1,21 @@
+export function renderCommunityTextBlocks(text, { escapeHtml }) {
+  if (typeof escapeHtml !== "function") throw new TypeError("Community text blocks require escaping");
+  const blocks = Array.isArray(text) ? text : String(text || "").split(/\n{2,}/);
+  return blocks.map(block => {
+    if (typeof block === "string") {
+      const paragraph = block.trim();
+      return paragraph ? `<p>${escapeHtml(paragraph)}</p>` : "";
+    }
+    if (!block || typeof block !== "object") return "";
+    if (block.type === "list" && Array.isArray(block.items)) {
+      const items = block.items.map(item => String(item || "").trim()).filter(Boolean).map(item => `<li>${escapeHtml(item)}</li>`).join("");
+      return items ? `<ul>${items}</ul>` : "";
+    }
+    const paragraph = String(block.text || "").trim();
+    return paragraph ? `<p>${escapeHtml(paragraph)}</p>` : "";
+  }).join("");
+}
+
 export function renderCommunityPostCard(post, {
   getLocalizedValue, getPostKey, normalizeImages, formatDate,
   renderText, translate, escapeHtml, escapeAttribute, locale
