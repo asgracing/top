@@ -20,5 +20,7 @@ test("requires an explicit trusted HTML token", () => {
 });
 test("creates normalized table state elements", () => {
   const node = tableStateElement(fakeDocument(), { kind: "error", message: "Failed" });
-  assert.equal(node.className, "empty-box"); assert.equal(node.attrs["data-table-state"], "error"); assert.equal(node.textContent, "Failed");
+  assert.equal(node.className, "empty-box"); assert.equal(node.attrs["data-table-state"], "error"); assert.equal(node.attrs.role, "alert"); assert.equal(node.textContent, "Failed");
+  const loading = tableStateElement(fakeDocument(), { kind: "loading", message: "Wait" });
+  assert.equal(loading.attrs.role, "status"); assert.equal(loading.attrs["aria-live"], "polite");
 });

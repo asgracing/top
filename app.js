@@ -426,7 +426,7 @@ const homeStatsTabsController = createHomeStatsTabsController({
 });
 
 function renderLoadingMarkup(label = "") {
-  return `<div class="loading">${escapeHtml(label || t("loading"))}</div>`;
+  return `<div class="loading" role="status" aria-live="polite">${escapeHtml(label || t("loading"))}</div>`;
 }
 
 function setLoadingMarkup(containerId, labelKey = "loading") {

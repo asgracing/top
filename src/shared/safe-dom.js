@@ -34,5 +34,8 @@ export function element(documentRef, tagName, { className = "", text = null, att
 
 export function tableStateElement(documentRef, { kind, message }) {
   const normalized = ["loading", "empty", "error"].includes(kind) ? kind : "empty";
-  return element(documentRef, "div", { className: normalized === "loading" ? "loading" : "empty-box", text: message, attrs: { "data-table-state": normalized } });
+  const attrs = { "data-table-state": normalized };
+  if (normalized === "loading") { attrs.role = "status"; attrs["aria-live"] = "polite"; }
+  if (normalized === "error") attrs.role = "alert";
+  return element(documentRef, "div", { className: normalized === "loading" ? "loading" : "empty-box", text: message, attrs });
 }

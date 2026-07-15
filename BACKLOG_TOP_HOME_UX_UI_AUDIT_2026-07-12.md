@@ -22,7 +22,7 @@
 | R09 | Готово | Доступные sortable headers, modals, focus и touch interactions | R07, R08 |
 | R10 | Готово | Декомпозиция `app.js`, route-loaded page features и отдельные page entrypoints | R02–R09 |
 | R11 | Готово | CSS tokens/layers/components, z-index и breakpoint cleanup | R01 |
-| R12 | В работе | Hero/support/sticky/loading UI cleanup | R09, R11 |
+| R12 | Готово | Hero/support/sticky/loading UI cleanup завершён: flow, CTA hierarchy, floating widgets и state/CLS cleanup | R09, R11 |
 | R13 | Ожидает | Responsive, reduced-motion, localization и full accessibility QA | R09, R12 |
 | R14 | Ожидает | Code splitting, media optimization и performance budgets | R10–R13 |
 | R15 | Ожидает | Проверяемый `dist`, CI quality gate и deployment smoke | R01–R14 |
@@ -789,12 +789,12 @@
 ## Точка продолжения после перезапуска — 15.07.2026
 
 - Активная ветка: `refactor/top-home-backlog-2026-07-12`.
-- Текущий этап: **R12 — Hero/support/sticky/loading UI cleanup**, статус «В работе».
+- Этап **R12 — Hero/support/sticky/loading UI cleanup** завершён 15.07.2026.
 - Завершённый шаг R12.1: удалены скрытый legacy sticky support и неиспользуемый mobile support CTA; коммит `27994081`.
 - Завершённый hotfix R12.1.1: исправлена сетка парных hero mini stats, обновлён cache token; коммит `0f102f16`.
 - Автоматическая проверка на этой точке: 194/194 unit-тестов проходят, quality gate зелёный, рабочее дерево чистое.
-- R12.2 в работе: добавлен единый компонент координации floating widgets. Server sticky скрыт ниже 1280 px, DonationAlerts ниже 761 px; в диапазоне 1280–1360 px виджеты разведены по разным сторонам. При открытой модалке оба немодальных виджета скрываются и перестают принимать события. Дублирующие legacy visibility rules удалены, quality gate запрещает их возврат. Осталась визуальная верификация desktop/mobile и модальных состояний.
-- После R12.2: упростить визуальную иерархию hero/CTA, затем унифицировать loading/skeleton состояния и резервирование высоты для снижения CLS.
+- R12.2 завершён: единый компонент координации floating widgets разводит Server sticky и DonationAlerts по breakpoint-сценариям, а при открытой модалке оба немодальных виджета скрываются и перестают принимать события. Дублирующие legacy visibility rules удалены, quality gate запрещает их возврат.
+- R12 loading/CLS завершён: loading/error/empty states унифицированы, получили семантические live regions, общий индикатор и зарезервированные высоты; inline loading spacing удалён со всех страниц, повреждённое закрытие `styles/utilities.css` исправлено.
 - 15.07.2026 — R12 hero/CTA hierarchy: у кнопки поддержки отключены две конкурирующие бесконечные pulse-анимации из component и legacy override. Поддержка сохраняет hover/focus feedback, но больше не конкурирует за постоянное внимание с основным hero CTA и часовой гонкой.
 - Визуальная проверка hero mini stats в текущем диалоге не выполнена: Browser-плагин установлен и `browser-client.mjs` присутствует, но запуск блокируется ошибкой метаданных сессии `codex/sandbox-state-meta: missing field sandboxPolicy`.
 - Для продолжения открыть в Codex отдельным проектом именно `C:\Python\asgracing\top`, создать новый диалог и проверить `http://127.0.0.1:5500/top/` через `@Browser` до следующего UI-изменения. Посторонний `Gradle: build error` относится к Gradle-проектам в родительском `C:\Python\asgracing`, а не к статическому проекту `/top`.

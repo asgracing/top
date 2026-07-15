@@ -57,6 +57,7 @@ for (const [page, [htmlPath, entrySrc]] of Object.entries(pageEntrypoints)) {
   ]);
   if (!pageHtml.includes(`type="module" src="${entrySrc}`)) failures.push(`${page} page is missing its module entrypoint`);
   if (/src=["'][^"']*app\.js/.test(pageHtml)) failures.push(`${page} page still loads app.js directly`);
+  if (/class="loading"(?![^>]*role="status")/.test(pageHtml) || /class="loading"[^>]*style=/.test(pageHtml)) failures.push(`${page} page has a non-semantic or inline-styled loading state`);
   if (!entrySource.includes(`bootstrapLegacyPage("${page}")`)) failures.push(`${page} entrypoint has the wrong page identity`);
   const tokenHref = page === "home" ? "./styles/tokens.css?v=20260713r11tokens1" : "../styles/tokens.css?v=20260713r11tokens1";
   if (!pageHtml.includes(tokenHref)) failures.push(`${page} page is missing the shared token stylesheet`);
@@ -105,7 +106,7 @@ for (const [page, [htmlPath, entrySrc]] of Object.entries(pageEntrypoints)) {
   for (const href of [
     `${page === "home" ? "./" : "../"}styles/components/driver-day-modal.css?v=20260715r11driverday1`,
     `${page === "home" ? "./" : "../"}styles/components/footer.css?v=20260715r11footer1`,
-    `${page === "home" ? "./" : "../"}styles/utilities.css?v=20260715r11utilities1`,
+    `${page === "home" ? "./" : "../"}styles/utilities.css?v=20260715r12states1`,
     `${page === "home" ? "./" : "../"}styles/responsive.css?v=20260715r11responsive1`
   ]) if (!pageHtml.includes(href)) failures.push(`${page} page is missing R11 stylesheet ${href}`);
 }
@@ -186,6 +187,8 @@ if (!html.includes('./styles/components/hero-server-summary.css?v=20260715r12car
 if (!html.includes('./styles/components/floating-widgets.css?v=20260715r12floating2')) failures.push("Home must load the floating widget coordination component");
 if (!floatingWidgetsCss.includes("body.modal-open .server-sticky-widget") || !floatingWidgetsCss.includes("body.modal-open .donation-alerts-widget") || !floatingWidgetsCss.includes("pointer-events: none;")) failures.push("Floating widgets must not remain visible or interactive above modal overlays");
 if (!floatingWidgetsCss.includes(".support-widget-btn") || !floatingWidgetsCss.includes("animation: none;") || /\.support-widget-btn\s*,\s*\.support-widget-btn/.test(legacyCss)) failures.push("Support CTA must not compete with the primary hero action through a legacy infinite animation");
+if (utilitiesCss.includes("+}") || !utilitiesCss.includes("@keyframes loadingStateSpin") || !utilitiesCss.includes('.table-wrap > [data-table-state]')) failures.push("Shared loading states must reserve layout space and use valid utility CSS");
+if (/class="loading"\s+style=/.test(html) || !js.includes('class="loading" role="status" aria-live="polite"')) failures.push("Loading states must use shared semantic markup without inline spacing");
 if (/@media\s*\(max-width:\s*760px\)\s*\{\s*\.donation-alerts-widget/s.test(legacyCss) || /@media\s*\(max-width:\s*1279px\)\s*\{\s*\.server-sticky-widget/s.test(legacyCss)) failures.push("Floating widget visibility rules must not be duplicated in legacy CSS");
 if (legacyCss.includes("Consolidated hero server summary") || !heroServerSummaryCss.includes(".hero-server-total-stat")) failures.push("Hero server summary must have one physical component source");
 if (!heroServerSummaryCss.includes("grid-template-columns: minmax(0, 1fr) auto;") || !heroServerSummaryCss.includes("font-variant-numeric: tabular-nums;")) failures.push("Hero paired mini stats must reserve independent label and numeric columns");
@@ -236,11 +239,11 @@ for (const [className, imageName] of [["monza", "main.jpg"], ["sunset", "sunset.
 }
 const budgets = {
   important: [(css.match(/!important/g) || []).length, 12],
-  mediaQuery: [(css.match(/@media\b/g) || []).length, 62],
+  mediaQuery: [(css.match(/@media\b/g) || []).length, 63],
   zIndex: [(css.match(/\bz-index\s*:/g) || []).length, 48],
   hexColor: [(css.match(/#[0-9a-f]{3,8}\b/gi) || []).length, 252],
   silentCatch: [(js.match(/\.catch\(\(\)\s*=>\s*null\)/g) || []).length, 28],
-  inlineStyle: [(html.match(/\bstyle=/g) || []).length, 10],
+  inlineStyle: [(html.match(/\bstyle=/g) || []).length, 7],
   directFetch: [(js.match(/\bfetch\s*\(/g) || []).length, 0],
   innerHtmlWrite: [(js.match(/\.innerHTML\s*=/g) || []).length, 91],
 };

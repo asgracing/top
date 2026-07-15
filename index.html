@@ -76,7 +76,7 @@
   <link rel="stylesheet" href="./styles/components/hourly-event-modal.css?v=20260715r11hourlymodal1" />
   <link rel="stylesheet" href="./styles/components/driver-day-modal.css?v=20260715r11driverday1" />
   <link rel="stylesheet" href="./styles/components/footer.css?v=20260715r11footer1" />
-  <link rel="stylesheet" href="./styles/utilities.css?v=20260715r11utilities1" />
+  <link rel="stylesheet" href="./styles/utilities.css?v=20260715r12states1" />
   <link rel="stylesheet" href="./styles/responsive.css?v=20260715r11responsive1" />
   <link rel="stylesheet" href="./styles.css?v=20260715r12legacy2" />
   <link rel="stylesheet" href="./styles/components/hero-layout.css?v=20260715r12mobile6" />
@@ -417,7 +417,7 @@
 
     <div class="hero-top3-panel">
       <div id="top3-content" class="cards-top3 cards-top3-hero">
-        <div class="loading" data-i18n="loading">Loading...</div>
+        <div class="loading" role="status" aria-live="polite" data-i18n="loading">Loading...</div>
       </div>
     </div>
   </div>
@@ -549,7 +549,7 @@
 
           <div class="table-card">
             <div class="table-wrap" id="leaderboard-table">
-              <div class="loading" style="padding:20px;" data-i18n="loadingLeaderboard">Loading leaderboard...</div>
+              <div class="loading" role="status" aria-live="polite" data-i18n="loadingLeaderboard">Loading leaderboard...</div>
             </div>
             <div class="pagination-wrap" id="leaderboard-pagination-wrap" style="display:none;">
               <div class="pagination-info" id="leaderboard-pagination-info"></div>
@@ -575,7 +575,7 @@
               <select id="bestlaps-track-filter" class="track-filter-select"></select>
             </div>
             <div class="table-wrap" id="bestlaps-table">
-              <div class="loading" style="padding:20px;" data-i18n="loadingBestLaps">Loading best laps...</div>
+              <div class="loading" role="status" aria-live="polite" data-i18n="loadingBestLaps">Loading best laps...</div>
             </div>
             <div class="pagination-wrap" id="bestlaps-pagination-wrap" style="display:none;">
               <div class="pagination-info" id="bestlaps-pagination-info"></div>
@@ -597,7 +597,7 @@
 
           <div class="table-card">
             <div class="table-wrap" id="safety-table">
-              <div class="loading" style="padding:20px;" data-i18n="loadingSafety">Loading safety...</div>
+              <div class="loading" role="status" aria-live="polite" data-i18n="loadingSafety">Loading safety...</div>
             </div>
             <div class="pagination-wrap" id="safety-pagination-wrap" style="display:none;">
               <div class="pagination-info" id="safety-pagination-info"></div>
@@ -900,7 +900,7 @@
 
     <div class="driver-preview-scroll">
       <div class="driver-stats-grid driver-preview-stats-grid" id="driver-preview-stats">
-        <div class="loading" data-i18n="driverLoading">Loading driver profile...</div>
+        <div class="loading" role="status" aria-live="polite" data-i18n="driverLoading">Loading driver profile...</div>
       </div>
 
       <div class="driver-highlights-grid" id="driver-preview-highlights"></div>
