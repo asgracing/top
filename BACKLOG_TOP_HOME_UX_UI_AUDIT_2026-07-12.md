@@ -775,3 +775,4 @@
 - R11: общая пагинация, active/disabled page states и page info вынесены в `styles/components/pagination.css`; цепочка Tables → Pagination → Modals защищена quality gate.
 - R11: modal overlay/open-state, card variants, header и close control вынесены в `styles/components/modals.css`; pointer-events contract и граница с dialog content проверяются автоматически.
 - R11: список игроков серверной модалки (позиция, имя, метаданные и машина) вынесен в `styles/components/server-players-modal.css`; граница со статистикой активности закреплена quality gate.
+- R11: summary/detail карточки модалки «Статистика за сегодня» вынесены в `styles/components/today-stats-modal.css`; граница с activity controls защищена quality gate.
