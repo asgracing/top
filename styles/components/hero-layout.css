@@ -294,3 +294,94 @@
     transform: translateX(4px);
   }
 }
+
+/* Mobile hero must remain unlayered until the legacy display:contents rules are removed. */
+@media (max-width: 640px) {
+  .hero-card .hero-grid {
+    display: flex;
+    flex-direction: column;
+    height: auto;
+    min-height: 0;
+    align-items: stretch;
+  }
+
+  .hero-card .hero-main-column {
+    position: static;
+    display: flex;
+    flex-direction: column;
+    gap: 14px;
+    width: 100%;
+    min-width: 0;
+    height: auto;
+    min-height: 0;
+    grid-column: auto;
+    grid-row: auto;
+  }
+
+  .hero-card .hero-main-column > .hero-copy,
+  .hero-card .hero-main-column > .hero-actions-row,
+  .hero-card .hero-main-column > .support-inline-widget.support-center-widget,
+  .hero-card .hero-main-column > .hero-top3-panel {
+    position: static;
+    width: 100%;
+    min-width: 0;
+    height: auto;
+    min-height: 0;
+    margin: 0;
+    grid-column: auto;
+    grid-row: auto;
+    transform: none;
+  }
+
+  .hero-card .hero-main-column > .hero-copy { order: 1; }
+  .hero-card .hero-main-column > .hero-actions-row { order: 2; }
+  .hero-card .hero-main-column > .support-inline-widget.support-center-widget { order: 3; }
+  .hero-card .hero-main-column > .hero-top3-panel { order: 4; }
+
+  .hero-card .hero-actions.hero-actions-stacked-mobile {
+    position: static;
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    width: 100%;
+    height: auto;
+    min-height: 0;
+    overflow: visible;
+  }
+
+  .hero-card .hero-actions.hero-actions-stacked-mobile > .btn-driver-day { order: 1; }
+  .hero-card .hero-actions.hero-actions-stacked-mobile > .hero-primary-actions { order: 2; }
+  .hero-card .hero-actions.hero-actions-stacked-mobile > .hero-side { order: 3; }
+  .hero-card .hero-actions.hero-actions-stacked-mobile > .hero-online-card { order: 4; }
+
+  .hero-card .hero-actions.hero-actions-stacked-mobile > * {
+    position: static;
+    width: 100%;
+    max-width: none;
+    height: auto;
+    min-width: 0;
+    margin: 0;
+    grid-area: auto;
+    transform: none;
+    flex: 0 0 auto;
+  }
+
+  .hero-card .hero-actions.hero-actions-stacked-mobile > .hero-primary-actions {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+  }
+
+  .hero-card .support-inline-widget.support-center-widget,
+  .hero-card .support-inline-widget.support-center-widget .support-widget-card,
+  .hero-card .hero-hourly-stack {
+    position: static;
+    width: 100%;
+    height: auto;
+    min-height: 0;
+    margin: 0;
+    grid-column: auto;
+    grid-row: auto;
+    transform: none;
+  }
+}

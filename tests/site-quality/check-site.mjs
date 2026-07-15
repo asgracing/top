@@ -186,7 +186,7 @@ if (legacyCss.includes("Consolidated hero server summary") || !heroServerSummary
 if (!heroServerSummaryCss.includes("grid-template-columns: minmax(0, 1fr) auto;") || !heroServerSummaryCss.includes("font-variant-numeric: tabular-nums;")) failures.push("Hero paired mini stats must reserve independent label and numeric columns");
 if (!heroServerSummaryCss.includes("grid-template-rows: repeat(2, minmax(62px, auto));") || !heroServerSummaryCss.includes(".hero-side-compact > .hero-server-total-stat") || !heroServerSummaryCss.includes(".hero-side-compact > .mini-stat-drivers-count") || !heroServerSummaryCss.includes("grid-template-columns: repeat(2, minmax(0, 1fr));")) failures.push("Hero mini stats must preserve the explicit desktop 2x2 grid");
 if (html.includes('<div class="hero-stats-row">') || heroServerSummaryCss.includes("overflow-wrap: anywhere")) failures.push("Hero mini stats must not use the conflicting nested grid or letter-by-letter label wrapping");
-if (!html.includes('./styles/components/hero-layout.css?v=20260715r12mobile5') || !heroLayoutCss.includes("@media (min-width: 1181px)")) failures.push("Home must load the extracted responsive hero layout component");
+if (!html.includes('./styles/components/hero-layout.css?v=20260715r12mobile6') || !heroLayoutCss.includes("@media (min-width: 1181px)")) failures.push("Home must load the extracted responsive hero layout component");
 if (!heroLayoutCss.includes(".hero-actions.hero-actions-stacked-mobile > .hero-side") || !heroLayoutCss.includes("flex-direction: column;") || !heroLayoutCss.includes("order: 4;")) failures.push("Mobile hero actions must use an explicit non-overlapping vertical flow");
 if (!/\.hero-grid\s*\{\s*display:\s*flex;\s*flex-direction:\s*column;/s.test(heroLayoutCss) || !heroLayoutCss.includes("grid-area: auto;") || !heroLayoutCss.includes(".support-inline-widget.support-center-widget { order: 3; }")) failures.push("Mobile hero sections must use normal vertical flow without overlapping grid areas");
 if (legacyCss.includes(".hero-hourly-card.is-championship-event {") && legacyCss.slice(legacyCss.indexOf("@layer overrides {")).includes(".hero-hourly-card.is-championship-event {")) failures.push("Final championship hero skin must live outside the legacy stylesheet");
@@ -231,7 +231,7 @@ for (const [className, imageName] of [["monza", "main.jpg"], ["sunset", "sunset.
 }
 const budgets = {
   important: [(css.match(/!important/g) || []).length, 12],
-  mediaQuery: [(css.match(/@media\b/g) || []).length, 56],
+  mediaQuery: [(css.match(/@media\b/g) || []).length, 57],
   zIndex: [(css.match(/\bz-index\s*:/g) || []).length, 48],
   hexColor: [(css.match(/#[0-9a-f]{3,8}\b/gi) || []).length, 252],
   silentCatch: [(js.match(/\.catch\(\(\)\s*=>\s*null\)/g) || []).length, 28],
