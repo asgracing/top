@@ -138,19 +138,40 @@
     .hero-main-column > .hero-top3-panel { order: 4; }
 
     .hero-actions.hero-actions-stacked-mobile {
-      display: grid;
-      grid-template-columns: minmax(0, 1fr);
-      grid-template-rows: auto;
-      grid-template-areas:
-        "driver"
-        "today"
-        "races"
-        "stats"
-        "online";
-      grid-auto-rows: auto;
+      display: flex;
+      flex-direction: column;
       gap: 10px;
       height: auto;
       min-height: 0;
+      overflow: visible;
+    }
+
+    .hero-actions.hero-actions-stacked-mobile > .btn-driver-day { order: 1; }
+
+    .hero-actions.hero-actions-stacked-mobile > .hero-primary-actions {
+      display: flex;
+      flex-direction: column;
+      order: 2;
+      gap: 10px;
+      width: 100%;
+      min-width: 0;
+    }
+
+    .hero-actions.hero-actions-stacked-mobile > .hero-side {
+      position: static;
+      order: 3;
+      width: 100%;
+      min-width: 0;
+      height: auto;
+      min-height: 0;
+      margin: 0;
+      transform: none;
+      flex: 0 0 auto;
+    }
+
+    .hero-actions.hero-actions-stacked-mobile > .hero-online-card {
+      order: 4;
+      flex: 0 0 auto;
     }
 
     .hero-actions.hero-actions-stacked-mobile .btn,
@@ -181,6 +202,7 @@
       grid-template-rows: auto;
       margin: 0;
       transform: none;
+      overflow: hidden;
     }
 
     .support-inline-widget.support-center-widget .support-widget-btn {
