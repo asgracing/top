@@ -231,6 +231,10 @@
   padding: 0;
 }
 
+.hero-card .hero-actions.hero-actions-stacked-mobile > .hero-side.hero-side-compact {
+  transform: translateY(5px);
+}
+
 .hero-card .hero-side.hero-side-compact > .mini-stat {
   position: relative;
   display: grid;
