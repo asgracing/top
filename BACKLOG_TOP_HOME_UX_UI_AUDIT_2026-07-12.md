@@ -777,3 +777,4 @@
 - R11: список игроков серверной модалки (позиция, имя, метаданные и машина) вынесен в `styles/components/server-players-modal.css`; граница со статистикой активности закреплена quality gate.
 - R11: summary/detail карточки модалки «Статистика за сегодня» вынесены в `styles/components/today-stats-modal.css`; граница с activity controls защищена quality gate.
 - R11: activity month/day controls и calendar overview вынесены в `styles/components/activity-controls.css`; граница с activity summary закреплена quality gate.
+- R11: activity summary cards и 24-часовой график вынесены в `styles/components/activity-summary.css`; компонент подключён на всех маршрутах и защищён от повторного появления в legacy CSS.

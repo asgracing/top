@@ -2,7 +2,7 @@ import { readFile } from "node:fs/promises";
 import { resolve } from "node:path";
 
 const root = resolve(import.meta.dirname, "../..");
-const [html, tokensCss, baseCss, siteBackgroundCss, topNavigationCss, languageSwitchCss, buttonsCss, heroFoundationCss, heroActionsCss, heroStatsCss, serverStickyLayoutCss, sectionsCss, supportWidgetCss, tableControlsCss, topThreeCss, tablesCss, paginationCss, modalsCss, serverPlayersModalCss, todayStatsModalCss, activityControlsCss, legacyCss, heroLayoutCss, heroServerSummaryCss, js, pageFeatureLoader] = await Promise.all([
+const [html, tokensCss, baseCss, siteBackgroundCss, topNavigationCss, languageSwitchCss, buttonsCss, heroFoundationCss, heroActionsCss, heroStatsCss, serverStickyLayoutCss, sectionsCss, supportWidgetCss, tableControlsCss, topThreeCss, tablesCss, paginationCss, modalsCss, serverPlayersModalCss, todayStatsModalCss, activityControlsCss, activitySummaryCss, legacyCss, heroLayoutCss, heroServerSummaryCss, js, pageFeatureLoader] = await Promise.all([
   readFile(resolve(root, "index.html"), "utf8"),
   readFile(resolve(root, "styles/tokens.css"), "utf8"),
   readFile(resolve(root, "styles/base.css"), "utf8"),
@@ -24,13 +24,14 @@ const [html, tokensCss, baseCss, siteBackgroundCss, topNavigationCss, languageSw
   readFile(resolve(root, "styles/components/server-players-modal.css"), "utf8"),
   readFile(resolve(root, "styles/components/today-stats-modal.css"), "utf8"),
   readFile(resolve(root, "styles/components/activity-controls.css"), "utf8"),
+  readFile(resolve(root, "styles/components/activity-summary.css"), "utf8"),
   readFile(resolve(root, "styles.css"), "utf8"),
   readFile(resolve(root, "styles/components/hero-layout.css"), "utf8"),
   readFile(resolve(root, "styles/components/hero-server-summary.css"), "utf8"),
   readFile(resolve(root, "app.js"), "utf8"),
   readFile(resolve(root, "src/runtime/page-feature-loader.js"), "utf8")
 ]);
-const css = `${tokensCss}\n${baseCss}\n${siteBackgroundCss}\n${topNavigationCss}\n${languageSwitchCss}\n${buttonsCss}\n${heroFoundationCss}\n${heroActionsCss}\n${heroStatsCss}\n${serverStickyLayoutCss}\n${sectionsCss}\n${supportWidgetCss}\n${tableControlsCss}\n${topThreeCss}\n${tablesCss}\n${paginationCss}\n${modalsCss}\n${serverPlayersModalCss}\n${todayStatsModalCss}\n${activityControlsCss}\n${legacyCss}\n${heroLayoutCss}\n${heroServerSummaryCss}`;
+const css = `${tokensCss}\n${baseCss}\n${siteBackgroundCss}\n${topNavigationCss}\n${languageSwitchCss}\n${buttonsCss}\n${heroFoundationCss}\n${heroActionsCss}\n${heroStatsCss}\n${serverStickyLayoutCss}\n${sectionsCss}\n${supportWidgetCss}\n${tableControlsCss}\n${topThreeCss}\n${tablesCss}\n${paginationCss}\n${modalsCss}\n${serverPlayersModalCss}\n${todayStatsModalCss}\n${activityControlsCss}\n${activitySummaryCss}\n${legacyCss}\n${heroLayoutCss}\n${heroServerSummaryCss}`;
 const failures = [];
 const pageFeatureIsLoaded = path => pageFeatureLoader.includes(`"${path}"`);
 const pageEntrypoints = {
@@ -91,6 +92,8 @@ for (const [page, [htmlPath, entrySrc]] of Object.entries(pageEntrypoints)) {
   if (!pageHtml.includes(todayStatsModalHref)) failures.push(`${page} page is missing the today stats modal stylesheet`);
   const activityControlsHref = page === "home" ? "./styles/components/activity-controls.css?v=20260715r11activitycontrols1" : "../styles/components/activity-controls.css?v=20260715r11activitycontrols1";
   if (!pageHtml.includes(activityControlsHref)) failures.push(`${page} page is missing the activity controls stylesheet`);
+  const activitySummaryHref = page === "home" ? "./styles/components/activity-summary.css?v=20260715r11activitysummary1" : "../styles/components/activity-summary.css?v=20260715r11activitysummary1";
+  if (!pageHtml.includes(activitySummaryHref)) failures.push(`${page} page is missing the activity summary stylesheet`);
 }
 const ids = [...html.matchAll(/\bid="([^"]+)"/g)].map(match => match[1]);
 const duplicates = [...new Set(ids.filter((id, index) => ids.indexOf(id) !== index))];
@@ -197,7 +200,9 @@ if (!/\.server-players-list\s*\{\s*display:\s*grid;/.test(serverPlayersModalCss)
 if (!todayStatsModalCss.includes("@layer components {") || !todayStatsModalCss.includes(".today-stat-card") || !todayStatsModalCss.includes(".today-stats-details") || !todayStatsModalCss.includes(".today-detail-sub") || /\.today-stats-grid\s*\{\s*display:\s*grid;/.test(legacyCss)) failures.push("Today stats modal content must have one physical component source");
 if (!/\.today-stats-grid\s*\{\s*display:\s*grid;/.test(todayStatsModalCss) || !activityControlsCss.includes(".activity-controls {")) failures.push("Today stats modal migration boundaries are invalid");
 if (!activityControlsCss.includes("@layer components {") || !activityControlsCss.includes(".activity-month-picker") || !activityControlsCss.includes(".activity-month-card") || !activityControlsCss.includes(".activity-day-pill") || /\.activity-controls\s*\{\s*display:\s*grid;/.test(legacyCss)) failures.push("Activity controls must have one physical component source");
-if (!legacyCss.includes(".activity-summary-grid {")) failures.push("Activity controls migration boundary is invalid");
+if (!activitySummaryCss.includes(".activity-summary-grid {")) failures.push("Activity controls migration boundary is invalid");
+if (!activitySummaryCss.includes("@layer components {") || !activitySummaryCss.includes(".activity-hours-list") || !activitySummaryCss.includes(".activity-hour-bar-stage") || /\.activity-summary-grid\s*\{\s*display:\s*grid;/.test(legacyCss)) failures.push("Activity summary must have one physical component source");
+if (!legacyCss.includes("body.modal-open {")) failures.push("Activity summary migration boundary is invalid");
 for (const [className, imageName] of [["monza", "main.jpg"], ["sunset", "sunset.jpg"], ["spa", "spa.jpg"], ["nurburgring", "nurburgring.jpg"], ["nurburgring24h", "Nurburgring24h.jpg"], ["silverstone", "silverstone.jpg"]]) {
   if (!heroStatsCss.includes(`.server-sticky-card-${className}`) || !heroStatsCss.includes(`url("../../assets/${imageName}")`)) failures.push(`Server card ${className} is missing its explicit class-based background image`);
 }
