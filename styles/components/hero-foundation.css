@@ -177,7 +177,7 @@
     right: -34px;
     width: 210px;
     height: 210px;
-    background: url("./assets/crown.png") center / contain no-repeat;
+    background: url("../../assets/crown.png") center / contain no-repeat;
     opacity: 0.2;
     transform: rotate(12deg);
     pointer-events: none;
