@@ -2,7 +2,7 @@ import { readFile } from "node:fs/promises";
 import { resolve } from "node:path";
 
 const root = resolve(import.meta.dirname, "../..");
-const [html, tokensCss, baseCss, siteBackgroundCss, topNavigationCss, languageSwitchCss, buttonsCss, heroFoundationCss, heroActionsCss, heroStatsCss, serverStickyLayoutCss, sectionsCss, supportWidgetCss, tableControlsCss, topThreeCss, tablesCss, legacyCss, heroLayoutCss, heroServerSummaryCss, js, pageFeatureLoader] = await Promise.all([
+const [html, tokensCss, baseCss, siteBackgroundCss, topNavigationCss, languageSwitchCss, buttonsCss, heroFoundationCss, heroActionsCss, heroStatsCss, serverStickyLayoutCss, sectionsCss, supportWidgetCss, tableControlsCss, topThreeCss, tablesCss, paginationCss, legacyCss, heroLayoutCss, heroServerSummaryCss, js, pageFeatureLoader] = await Promise.all([
   readFile(resolve(root, "index.html"), "utf8"),
   readFile(resolve(root, "styles/tokens.css"), "utf8"),
   readFile(resolve(root, "styles/base.css"), "utf8"),
@@ -19,13 +19,14 @@ const [html, tokensCss, baseCss, siteBackgroundCss, topNavigationCss, languageSw
   readFile(resolve(root, "styles/components/table-controls.css"), "utf8"),
   readFile(resolve(root, "styles/components/top-three.css"), "utf8"),
   readFile(resolve(root, "styles/components/tables.css"), "utf8"),
+  readFile(resolve(root, "styles/components/pagination.css"), "utf8"),
   readFile(resolve(root, "styles.css"), "utf8"),
   readFile(resolve(root, "styles/components/hero-layout.css"), "utf8"),
   readFile(resolve(root, "styles/components/hero-server-summary.css"), "utf8"),
   readFile(resolve(root, "app.js"), "utf8"),
   readFile(resolve(root, "src/runtime/page-feature-loader.js"), "utf8")
 ]);
-const css = `${tokensCss}\n${baseCss}\n${siteBackgroundCss}\n${topNavigationCss}\n${languageSwitchCss}\n${buttonsCss}\n${heroFoundationCss}\n${heroActionsCss}\n${heroStatsCss}\n${serverStickyLayoutCss}\n${sectionsCss}\n${supportWidgetCss}\n${tableControlsCss}\n${topThreeCss}\n${tablesCss}\n${legacyCss}\n${heroLayoutCss}\n${heroServerSummaryCss}`;
+const css = `${tokensCss}\n${baseCss}\n${siteBackgroundCss}\n${topNavigationCss}\n${languageSwitchCss}\n${buttonsCss}\n${heroFoundationCss}\n${heroActionsCss}\n${heroStatsCss}\n${serverStickyLayoutCss}\n${sectionsCss}\n${supportWidgetCss}\n${tableControlsCss}\n${topThreeCss}\n${tablesCss}\n${paginationCss}\n${legacyCss}\n${heroLayoutCss}\n${heroServerSummaryCss}`;
 const failures = [];
 const pageFeatureIsLoaded = path => pageFeatureLoader.includes(`"${path}"`);
 const pageEntrypoints = {
@@ -76,6 +77,8 @@ for (const [page, [htmlPath, entrySrc]] of Object.entries(pageEntrypoints)) {
   if (!pageHtml.includes(topThreeHref)) failures.push(`${page} page is missing the Top-3 stylesheet`);
   const tablesHref = page === "home" ? "./styles/components/tables.css?v=20260715r11tables1" : "../styles/components/tables.css?v=20260715r11tables1";
   if (!pageHtml.includes(tablesHref)) failures.push(`${page} page is missing the shared tables stylesheet`);
+  const paginationHref = page === "home" ? "./styles/components/pagination.css?v=20260715r11pagination1" : "../styles/components/pagination.css?v=20260715r11pagination1";
+  if (!pageHtml.includes(paginationHref)) failures.push(`${page} page is missing the shared pagination stylesheet`);
 }
 const ids = [...html.matchAll(/\bid="([^"]+)"/g)].map(match => match[1]);
 const duplicates = [...new Set(ids.filter((id, index) => ids.indexOf(id) !== index))];
@@ -172,7 +175,9 @@ if (!/\.car-thumb\s*\{\s*display:\s*block;/.test(tableControlsCss) || !topThreeC
 if (!topThreeCss.includes("@layer components {") || !topThreeCss.includes("/* ===== TOP 3 ===== */") || !topThreeCss.includes(".cards-top3") || !topThreeCss.includes(".pilot-card") || legacyCss.includes("/* ===== TOP 3 ===== */")) failures.push("Top-3 cards must have one physical component source");
 if (!/\.cards-top3\s*\{\s*display:\s*grid;/.test(topThreeCss) || !tablesCss.includes("/* ===== TABLES ===== */")) failures.push("Top-3 migration boundaries are invalid");
 if (!tablesCss.includes("@layer components {") || !tablesCss.includes("/* ===== TABLES ===== */") || !tablesCss.includes(".table-card") || !tablesCss.includes("th.sortable") || legacyCss.includes("/* ===== TABLES ===== */")) failures.push("Shared table system must have one physical component source");
-if (!/\.table-card\s*\{\s*overflow:\s*hidden;/.test(tablesCss) || !legacyCss.includes("/* ===== PAGINATION ===== */")) failures.push("Table system migration boundaries are invalid");
+if (!/\.table-card\s*\{\s*overflow:\s*hidden;/.test(tablesCss) || !paginationCss.includes("/* ===== PAGINATION ===== */")) failures.push("Table system migration boundaries are invalid");
+if (!paginationCss.includes("@layer components {") || !paginationCss.includes(".pagination-wrap") || !paginationCss.includes(".page-btn.active") || !paginationCss.includes(".page-btn:disabled") || legacyCss.includes("/* ===== PAGINATION ===== */")) failures.push("Shared pagination must have one physical component source");
+if (!/\.pagination-wrap\s*\{\s*display:\s*flex;/.test(paginationCss) || !legacyCss.includes("/* ===== MODALS ===== */")) failures.push("Pagination migration boundaries are invalid");
 for (const [className, imageName] of [["monza", "main.jpg"], ["sunset", "sunset.jpg"], ["spa", "spa.jpg"], ["nurburgring", "nurburgring.jpg"], ["nurburgring24h", "Nurburgring24h.jpg"], ["silverstone", "silverstone.jpg"]]) {
   if (!heroStatsCss.includes(`.server-sticky-card-${className}`) || !heroStatsCss.includes(`url("../../assets/${imageName}")`)) failures.push(`Server card ${className} is missing its explicit class-based background image`);
 }
