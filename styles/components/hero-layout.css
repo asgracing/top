@@ -79,12 +79,39 @@
     .hero-grid { gap: 14px; }
 
     .hero-actions.hero-actions-stacked-mobile {
-      grid-template-columns: 1fr;
+      display: grid;
+      grid-template-columns: minmax(0, 1fr);
+      grid-template-rows: auto;
       grid-template-areas:
         "driver"
         "today"
+        "races"
         "stats"
         "online";
+      grid-auto-rows: auto;
+      gap: 10px;
+      height: auto;
+      min-height: 0;
+    }
+
+    .hero-actions.hero-actions-stacked-mobile .btn,
+    .hero-actions.hero-actions-stacked-mobile .btn-driver-day,
+    .hero-actions.hero-actions-stacked-mobile .btn-today-stats,
+    .hero-actions.hero-actions-stacked-mobile .btn-last-races {
+      position: static;
+      width: 100%;
+      min-width: 0;
+      max-width: none;
+      min-height: 48px;
+      margin: 0;
+      transform: none;
+    }
+
+    .hero-actions.hero-actions-stacked-mobile .hero-online-card {
+      position: static;
+      width: 100%;
+      min-width: 0;
+      margin: 0;
     }
 
     .support-inline-widget.support-center-widget .support-widget-card {

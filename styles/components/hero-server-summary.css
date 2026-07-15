@@ -6,17 +6,9 @@
   .hero-side.hero-side-compact {
     display: grid;
     grid-template-columns: repeat(2, minmax(0, 1fr));
-    grid-template-rows: repeat(2, 58px);
+    grid-template-rows: repeat(2, minmax(62px, auto));
     gap: 8px;
     padding-top: 10px;
-  }
-
-  .hero-side-compact .hero-stats-row {
-    display: grid;
-    grid-column: 1 / -1;
-    grid-template-columns: repeat(2, minmax(0, 1fr));
-    gap: 8px;
-    min-width: 0;
   }
 
   .hero-side-compact > .mini-stat-server-online {
@@ -29,7 +21,13 @@
     grid-row: 1;
   }
 
-  .hero-side-compact > .hero-stats-row {
+  .hero-side-compact > .hero-server-total-stat {
+    grid-column: 1;
+    grid-row: 2;
+  }
+
+  .hero-side-compact > .mini-stat-drivers-count {
+    grid-column: 2;
     grid-row: 2;
   }
 
@@ -45,7 +43,8 @@
   .hero-side-compact .mini-stat-drivers-count .mini-label {
     min-width: 0;
     margin: 0;
-    overflow-wrap: anywhere;
+    overflow-wrap: normal;
+    word-break: normal;
   }
 
   .hero-side-compact .hero-server-total-stat .mini-value,
@@ -61,11 +60,15 @@
   .hero-side-compact .mini-stat,
   .hero-side-compact .mini-stat:first-child,
   .hero-side-compact .mini-stat + .mini-stat,
-  .hero-side-compact .hero-stats-row .mini-stat {
+  .hero-side-compact > .mini-stat {
     display: grid;
+    grid-template-columns: minmax(0, 1fr) auto;
+    grid-template-rows: auto;
+    align-items: center;
+    column-gap: 8px;
     min-width: 0;
-    min-height: 58px;
-    height: 58px;
+    min-height: 62px;
+    height: auto;
     padding: 8px 10px;
     border: 1px solid rgba(255, 255, 255, 0.085);
     border-radius: 14px;
@@ -137,16 +140,18 @@
 
   .hero-side-compact .mini-stat-bestlap {
     padding: 6px 8px;
+    grid-template-columns: minmax(0, 1fr);
   }
 
   .hero-side-compact .mini-stat-bestlap .mini-label,
-  .hero-side-compact .mini-stat-bestlap .mini-note,
-  .hero-side-compact .hero-stats-row::before {
+  .hero-side-compact .mini-stat-bestlap .mini-note {
     display: none;
   }
 
-  .hero-side-compact .hero-stats-row::before {
-    content: none;
+  .hero-side-compact .mini-stat-bestlap .mini-value {
+    grid-column: 1;
+    justify-self: stretch;
+    min-width: 0;
   }
 
   .hero-side-compact .mini-stat-bestlap .bestlap-track-cta {
@@ -166,17 +171,15 @@
 
     .hero-side-compact > .mini-stat-server-online,
     .hero-side-compact > .mini-stat-bestlap,
-    .hero-side-compact > .hero-stats-row {
+    .hero-side-compact > .hero-server-total-stat,
+    .hero-side-compact > .mini-stat-drivers-count {
       grid-column: 1;
       grid-row: auto;
     }
 
-    .hero-side-compact .hero-stats-row {
-      grid-template-columns: 1fr;
-    }
-
-    .hero-side-compact .mini-stat {
-      height: auto;
+    .hero-side-compact > .mini-stat {
+      width: 100%;
+      min-height: 58px;
     }
   }
 }
