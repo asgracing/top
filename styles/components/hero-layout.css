@@ -105,6 +105,38 @@
     .support-inline-widget.support-center-widget { order: 3; }
     .hero-hourly-stack { order: 4; }
 
+    .hero-main-column {
+      display: flex;
+      flex-direction: column;
+      gap: 14px;
+      width: 100%;
+      min-width: 0;
+      height: auto;
+      min-height: 0;
+      align-self: stretch;
+    }
+
+    .hero-main-column > .hero-copy,
+    .hero-main-column > .hero-actions-row,
+    .hero-main-column > .support-inline-widget.support-center-widget,
+    .hero-main-column > .hero-top3-panel {
+      position: static;
+      grid-column: auto;
+      grid-row: auto;
+      width: 100%;
+      min-width: 0;
+      height: auto;
+      min-height: 0;
+      margin: 0;
+      transform: none;
+      flex: 0 0 auto;
+    }
+
+    .hero-main-column > .hero-copy { order: 1; }
+    .hero-main-column > .hero-actions-row { order: 2; }
+    .hero-main-column > .support-inline-widget.support-center-widget { order: 3; }
+    .hero-main-column > .hero-top3-panel { order: 4; }
+
     .hero-actions.hero-actions-stacked-mobile {
       display: grid;
       grid-template-columns: minmax(0, 1fr);

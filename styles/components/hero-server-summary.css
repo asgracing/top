@@ -167,6 +167,8 @@
     .hero-side.hero-side-compact {
       grid-template-columns: 1fr;
       grid-template-rows: auto;
+      gap: 6px;
+      padding-top: 0;
     }
 
     .hero-side-compact > .mini-stat-server-online,
@@ -179,7 +181,8 @@
 
     .hero-side-compact > .mini-stat {
       width: 100%;
-      min-height: 58px;
+      min-height: 44px;
+      padding: 7px 10px;
     }
   }
 }
