@@ -1,0 +1,26 @@
+name: Top quality and deployment artifact
+
+on:
+  pull_request:
+  push:
+    branches: [master, main]
+
+permissions:
+  contents: read
+
+jobs:
+  verify-and-build:
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 20
+      - run: npm run ci
+      - uses: actions/upload-artifact@v4
+        with:
+          name: top-dist-${{ github.sha }}
+          path: dist/
+          if-no-files-found: error
+          retention-days: 14
