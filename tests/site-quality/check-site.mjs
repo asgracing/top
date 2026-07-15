@@ -181,8 +181,9 @@ if (!css.includes("@layer tokens, reset, base, layout, components, pages, utilit
 if (!css.includes("@layer legacy {") || !css.includes("} /* end legacy */")) failures.push("Unmigrated CSS must remain inside the explicit legacy layer");
 if (css.indexOf("@layer legacy {") >= css.indexOf("} /* end legacy */") || css.indexOf("@layer overrides {") <= css.indexOf("} /* end legacy */")) failures.push("Consolidated CSS must follow the complete legacy migration boundary");
 if (/\.hero-server-total-stat\s*,\s*\.support-sticky-widget/.test(css)) failures.push("Hero total players card must not be part of the hidden legacy support group");
-if (!html.includes('./styles/components/hero-server-summary.css?v=20260713r11css1')) failures.push("Home must load the extracted hero server summary component after styles.css");
+if (!html.includes('./styles/components/hero-server-summary.css?v=20260715r12mini1')) failures.push("Home must load the extracted hero server summary component after styles.css");
 if (legacyCss.includes("Consolidated hero server summary") || !heroServerSummaryCss.includes(".hero-server-total-stat")) failures.push("Hero server summary must have one physical component source");
+if (!heroServerSummaryCss.includes("grid-template-columns: minmax(0, 1fr) auto;") || !heroServerSummaryCss.includes("font-variant-numeric: tabular-nums;")) failures.push("Hero paired mini stats must reserve independent label and numeric columns");
 if (!html.includes('./styles/components/hero-layout.css?v=20260713r11css2') || !heroLayoutCss.includes("@media (min-width: 1181px)")) failures.push("Home must load the extracted responsive hero layout component");
 if (legacyCss.includes(".hero-hourly-card.is-championship-event {") && legacyCss.slice(legacyCss.indexOf("@layer overrides {")).includes(".hero-hourly-card.is-championship-event {")) failures.push("Final championship hero skin must live outside the legacy stylesheet");
 if (!tokensCss.includes("@layer tokens {") || !tokensCss.includes("--layer-modal-priority: 100000;") || legacyCss.includes("--bg: #0b0f14")) failures.push("Design tokens must have one physical source in styles/tokens.css");

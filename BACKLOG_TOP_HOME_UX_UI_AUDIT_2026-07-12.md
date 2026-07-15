@@ -784,3 +784,4 @@
 - R11 завершён: монолит `styles.css` сокращён с 13 221 до 4 673 строк; shared foundation, компоненты, utility и базовый responsive имеют явных владельцев и route coverage. Quality budgets: 12 `!important` (−88,7% от baseline 106), 56 media queries, 48 `z-index`, 252 hex colors.
 - Оставшиеся в legacy правила — page-specific Fun Stats и исторические hero visual overrides. Их визуальная консолидация относится к R12, чтобы не смешивать завершённую архитектурную миграцию с изменением hero UI.
 - 15.07.2026 — R12 начат: удалены скрытая legacy-разметка sticky support, неиспользуемый mobile CTA и их CSS. На главной остался один inline support-компонент; quality gate запрещает возврат дублирующих вариантов.
+- 15.07.2026 — R12 hotfix: парные hero mini stats получили независимые колонки для подписи и числового значения, перенос длинных локализованных подписей и tabular numerals; значения больше не налезают на соседнюю карточку.
