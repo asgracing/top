@@ -137,13 +137,35 @@
     .hero-main-column > .support-inline-widget.support-center-widget { order: 3; }
     .hero-main-column > .hero-top3-panel { order: 4; }
 
+    .hero-main-column > .hero-actions-row {
+      display: block;
+      overflow: visible;
+      contain: layout;
+    }
+
     .hero-actions.hero-actions-stacked-mobile {
+      position: static;
       display: flex;
       flex-direction: column;
       gap: 10px;
+      width: 100%;
       height: auto;
       min-height: 0;
       overflow: visible;
+      float: none;
+    }
+
+    .hero-actions.hero-actions-stacked-mobile > * {
+      position: static;
+      inset: auto;
+      float: none;
+      width: 100%;
+      max-width: none;
+      height: auto;
+      min-width: 0;
+      margin: 0;
+      transform: none;
+      flex: 0 0 auto;
     }
 
     .hero-actions.hero-actions-stacked-mobile > .btn-driver-day { order: 1; }
@@ -203,6 +225,14 @@
       margin: 0;
       transform: none;
       overflow: hidden;
+    }
+
+    .hero-main-column > .support-inline-widget.support-center-widget {
+      position: static;
+      display: block;
+      clear: both;
+      float: none;
+      overflow: visible;
     }
 
     .support-inline-widget.support-center-widget .support-widget-btn {
