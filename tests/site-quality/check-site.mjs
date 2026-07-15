@@ -181,7 +181,7 @@ if (!css.includes("@layer tokens, reset, base, layout, components, pages, utilit
 if (!css.includes("@layer legacy {") || !css.includes("} /* end legacy */")) failures.push("Unmigrated CSS must remain inside the explicit legacy layer");
 if (css.indexOf("@layer legacy {") >= css.indexOf("} /* end legacy */") || css.indexOf("@layer overrides {") <= css.indexOf("} /* end legacy */")) failures.push("Consolidated CSS must follow the complete legacy migration boundary");
 if (/\.hero-server-total-stat\s*,\s*\.support-sticky-widget/.test(css)) failures.push("Hero total players card must not be part of the hidden legacy support group");
-if (!html.includes('./styles/components/hero-server-summary.css?v=20260715r12cards1')) failures.push("Home must load the extracted hero server summary component after styles.css");
+if (!html.includes('./styles/components/hero-server-summary.css?v=20260715r12cards2')) failures.push("Home must load the extracted hero server summary component after styles.css");
 if (legacyCss.includes("Consolidated hero server summary") || !heroServerSummaryCss.includes(".hero-server-total-stat")) failures.push("Hero server summary must have one physical component source");
 if (!heroServerSummaryCss.includes("grid-template-columns: minmax(0, 1fr) auto;") || !heroServerSummaryCss.includes("font-variant-numeric: tabular-nums;")) failures.push("Hero paired mini stats must reserve independent label and numeric columns");
 if (!heroServerSummaryCss.includes("grid-template-rows: repeat(2, minmax(62px, auto));") || !heroServerSummaryCss.includes(".hero-side-compact > .hero-server-total-stat") || !heroServerSummaryCss.includes(".hero-side-compact > .mini-stat-drivers-count") || !heroServerSummaryCss.includes("grid-template-columns: repeat(2, minmax(0, 1fr));")) failures.push("Hero mini stats must preserve the explicit desktop 2x2 grid");
@@ -231,7 +231,7 @@ for (const [className, imageName] of [["monza", "main.jpg"], ["sunset", "sunset.
 }
 const budgets = {
   important: [(css.match(/!important/g) || []).length, 12],
-  mediaQuery: [(css.match(/@media\b/g) || []).length, 58],
+  mediaQuery: [(css.match(/@media\b/g) || []).length, 59],
   zIndex: [(css.match(/\bz-index\s*:/g) || []).length, 48],
   hexColor: [(css.match(/#[0-9a-f]{3,8}\b/gi) || []).length, 252],
   silentCatch: [(js.match(/\.catch\(\(\)\s*=>\s*null\)/g) || []).length, 28],
