@@ -8,13 +8,18 @@ async function fileBytes(path) {
   return (await stat(resolve(root, path))).size;
 }
 
+async function textBytes(path) {
+  const source = await readFile(resolve(root, path), "utf8");
+  return Buffer.byteLength(source.replace(/\r\n/g, "\n"));
+}
+
 async function treeBytes(path, extensions) {
   const directory = resolve(root, path);
   let total = 0;
   for (const entry of await readdir(directory, { withFileTypes: true })) {
     const child = `${path}/${entry.name}`;
     if (entry.isDirectory()) total += await treeBytes(child, extensions);
-    else if (extensions.has(extname(entry.name))) total += await fileBytes(child);
+    else if (extensions.has(extname(entry.name))) total += await textBytes(child);
   }
   return total;
 }
@@ -26,10 +31,10 @@ const [html, appSource, featureLoaderSource] = await Promise.all([
 ]);
 const videos = ["media/background.mp4", "media/background_nurb24h.mp4"];
 const metrics = {
-  appJavaScriptBytes: await fileBytes("app.js"),
+  appJavaScriptBytes: await textBytes("app.js"),
   sourceModulesBytes: await treeBytes("src", new Set([".js", ".mjs"])),
-  stylesheetsBytes: await treeBytes("styles", new Set([".css"])) + await fileBytes("styles.css") + await fileBytes("legal.css"),
-  homeHtmlBytes: Buffer.byteLength(html),
+  stylesheetsBytes: await treeBytes("styles", new Set([".css"])) + await textBytes("styles.css") + await textBytes("legal.css"),
+  homeHtmlBytes: Buffer.byteLength(html.replace(/\r\n/g, "\n")),
   backgroundVideoBytes: Math.max(...await Promise.all(videos.map(fileBytes))),
   backgroundPlaylistBytes: (await Promise.all(videos.map(fileBytes))).reduce((sum, bytes) => sum + bytes, 0),
   homeStylesheetRequests: [...html.matchAll(/<link\s+[^>]*rel="stylesheet"/g)].length,
