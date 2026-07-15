@@ -4632,9 +4632,7 @@
   .bg-video-sound-toggle-orbit,
   .bg-video-sound-toggle-bar,
   .pulse-attention,
-  .hero-hourly-promo-title.pulse-attention,
-  .support-widget-btn,
-  .support-widget-btn {
+  .hero-hourly-promo-title.pulse-attention {
     animation: supportWidgetPulseLite 5.6s ease-in-out infinite;
   }
 

@@ -11,6 +11,10 @@
     pointer-events: none;
   }
 
+  .support-widget-btn {
+    animation: none;
+  }
+
   @media (min-width: 1280px) and (max-width: 1360px) {
     .donation-alerts-widget {
       right: auto;
