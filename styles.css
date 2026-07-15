@@ -1072,7 +1072,6 @@
 }
 
 @media (max-width: 1279px) {
-  .server-sticky-widget,
   .top-guide,
   .top-guide-launcher,
   .top-guide-scrim {
@@ -4069,12 +4068,6 @@
     gap: 7px;
     max-height: 204px;
     padding-bottom: 12px;
-  }
-}
-
-@media (max-width: 760px) {
-  .donation-alerts-widget {
-    display: none;
   }
 }
 
