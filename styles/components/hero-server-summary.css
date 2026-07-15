@@ -3,16 +3,34 @@
     display: grid;
   }
 
-  .hero-side-compact {
+  .hero-side.hero-side-compact {
     display: grid;
     grid-template-columns: repeat(2, minmax(0, 1fr));
-    grid-template-rows: repeat(2, minmax(50px, auto));
+    grid-template-rows: repeat(2, 58px);
     gap: 8px;
     padding-top: 10px;
   }
 
   .hero-side-compact .hero-stats-row {
-    display: contents;
+    display: grid;
+    grid-column: 1 / -1;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 8px;
+    min-width: 0;
+  }
+
+  .hero-side-compact > .mini-stat-server-online {
+    grid-column: 1;
+    grid-row: 1;
+  }
+
+  .hero-side-compact > .mini-stat-bestlap {
+    grid-column: 2;
+    grid-row: 1;
+  }
+
+  .hero-side-compact > .hero-stats-row {
+    grid-row: 2;
   }
 
   .hero-side-compact .hero-server-total-stat,
@@ -46,7 +64,8 @@
   .hero-side-compact .hero-stats-row .mini-stat {
     display: grid;
     min-width: 0;
-    min-height: 50px;
+    min-height: 58px;
+    height: 58px;
     padding: 8px 10px;
     border: 1px solid rgba(255, 255, 255, 0.085);
     border-radius: 14px;
@@ -140,9 +159,24 @@
   }
 
   @media (max-width: 560px) {
-    .hero-side-compact {
+    .hero-side.hero-side-compact {
       grid-template-columns: 1fr;
       grid-template-rows: auto;
+    }
+
+    .hero-side-compact > .mini-stat-server-online,
+    .hero-side-compact > .mini-stat-bestlap,
+    .hero-side-compact > .hero-stats-row {
+      grid-column: 1;
+      grid-row: auto;
+    }
+
+    .hero-side-compact .hero-stats-row {
+      grid-template-columns: 1fr;
+    }
+
+    .hero-side-compact .mini-stat {
+      height: auto;
     }
   }
 }
