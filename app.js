@@ -150,6 +150,9 @@ const ACC_CONNECT_SERVER_FALLBACKS = {
   }
 };
 const SERVER_STATUS_LABELS_BY_ID = {
+  main: "ASG Racing Main",
+  hourly: "ASG Racing 1H Race",
+  sunset: "ASG Racing Monza - SA Gainer",
   "assetto-corsa-competizione-dedic": "ASG Racing Monza - SA Gainer 2",
   "assetto-corsa-competizione-dedic-2": "ASG Racing Nordschleife Practice",
   "assetto-corsa-competizione-dedic-3": "ASG Racing Nurburgring - Live Leaderboard",
@@ -8704,7 +8707,16 @@ function renderRaceResultsModal() {
     : selectedRace.counted_for_stats === true
       ? t("countedBadge")
       : "-";
-  titleEl.textContent = humanizeTrackName(selectedRace.track);
+  const trackName = humanizeTrackName(selectedRace.track);
+  const serverId = String(selectedRace.server_id || selectedRace.source || "").trim();
+  const serverName = getServerDisplayLabel(
+    serverId,
+    { server_name: selectedRace.server_name },
+    serverId
+  );
+  titleEl.textContent = serverName && serverName !== "-"
+    ? `${trackName} [${serverName}]`
+    : trackName;
   subtitleEl.textContent = `${formatDateTimeLocal(selectedRace.finished_at, currentLang)} / ${raceCountedLabel}`;
 
   summaryEl.innerHTML = `
