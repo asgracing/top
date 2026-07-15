@@ -228,11 +228,11 @@
   height: auto;
   min-height: 0;
   margin: 0;
-  padding: 0;
+  padding: 4px 0 0;
 }
 
 .hero-card .hero-actions.hero-actions-stacked-mobile > .hero-side.hero-side-compact {
-  transform: translateY(5px);
+  transform: none;
 }
 
 .hero-card .hero-side.hero-side-compact > .mini-stat {
@@ -273,6 +273,7 @@
     grid-template-columns: minmax(0, 1fr);
     grid-auto-rows: 48px;
     gap: 6px;
+    padding-top: 0;
   }
 
   .hero-card .hero-side.hero-side-compact > .mini-stat {

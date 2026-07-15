@@ -1,6 +1,22 @@
 @layer overrides {
   @media (min-width: 1181px) {
-    .hero-grid { align-items: stretch; }
+    .hero-grid {
+      row-gap: 6px;
+      align-items: stretch;
+    }
+
+    .hero-actions.hero-actions-stacked-mobile {
+      row-gap: 6px;
+    }
+
+    .hero-actions-stacked-mobile .btn-driver-day {
+      margin-bottom: 0;
+    }
+
+    .hero-card .hero-actions.hero-actions-stacked-mobile > .hero-side.hero-side-compact {
+      column-gap: 14px;
+      row-gap: 8px;
+    }
 
     .hero-hourly-stack {
       display: flex;
@@ -17,7 +33,13 @@
       flex: 0 0 auto;
       height: auto;
       min-height: 0;
-      padding-bottom: 4px;
+      padding-bottom: 0;
+      gap: 3px;
+    }
+
+    .hero-hourly-winner-card {
+      margin-top: 3px;
+      padding-top: 6px;
     }
 
     .hero-hourly-card {
