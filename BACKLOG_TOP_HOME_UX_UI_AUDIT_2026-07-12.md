@@ -770,3 +770,4 @@
 - R11: общий каркас секций и combined-stats tabs вынесен в `styles/components/sections.css`, подключён на восьми маршрутах и защищён quality gate от дублирования в legacy CSS.
 - R11: foundation левого support sticky/mobile CTA вынесен в `styles/components/support-widget.css`; добавлена структурная проверка, что positioning declarations не могут остаться без селектора при дальнейшей миграции.
 - R11: общие car thumbnails, search/filter controls и table tools вынесены в `styles/components/table-controls.css`; начало компонента и соседний Top-3 marker защищены quality gate.
+- R11: карточки Top-3 вынесены в `styles/components/top-three.css`; исходный marker, первый grid selector и следующий Tables marker закреплены quality gate.

@@ -2,7 +2,7 @@ import { readFile } from "node:fs/promises";
 import { resolve } from "node:path";
 
 const root = resolve(import.meta.dirname, "../..");
-const [html, tokensCss, baseCss, siteBackgroundCss, topNavigationCss, languageSwitchCss, buttonsCss, heroFoundationCss, heroActionsCss, heroStatsCss, serverStickyLayoutCss, sectionsCss, supportWidgetCss, tableControlsCss, legacyCss, heroLayoutCss, heroServerSummaryCss, js, pageFeatureLoader] = await Promise.all([
+const [html, tokensCss, baseCss, siteBackgroundCss, topNavigationCss, languageSwitchCss, buttonsCss, heroFoundationCss, heroActionsCss, heroStatsCss, serverStickyLayoutCss, sectionsCss, supportWidgetCss, tableControlsCss, topThreeCss, legacyCss, heroLayoutCss, heroServerSummaryCss, js, pageFeatureLoader] = await Promise.all([
   readFile(resolve(root, "index.html"), "utf8"),
   readFile(resolve(root, "styles/tokens.css"), "utf8"),
   readFile(resolve(root, "styles/base.css"), "utf8"),
@@ -17,13 +17,14 @@ const [html, tokensCss, baseCss, siteBackgroundCss, topNavigationCss, languageSw
   readFile(resolve(root, "styles/components/sections.css"), "utf8"),
   readFile(resolve(root, "styles/components/support-widget.css"), "utf8"),
   readFile(resolve(root, "styles/components/table-controls.css"), "utf8"),
+  readFile(resolve(root, "styles/components/top-three.css"), "utf8"),
   readFile(resolve(root, "styles.css"), "utf8"),
   readFile(resolve(root, "styles/components/hero-layout.css"), "utf8"),
   readFile(resolve(root, "styles/components/hero-server-summary.css"), "utf8"),
   readFile(resolve(root, "app.js"), "utf8"),
   readFile(resolve(root, "src/runtime/page-feature-loader.js"), "utf8")
 ]);
-const css = `${tokensCss}\n${baseCss}\n${siteBackgroundCss}\n${topNavigationCss}\n${languageSwitchCss}\n${buttonsCss}\n${heroFoundationCss}\n${heroActionsCss}\n${heroStatsCss}\n${serverStickyLayoutCss}\n${sectionsCss}\n${supportWidgetCss}\n${tableControlsCss}\n${legacyCss}\n${heroLayoutCss}\n${heroServerSummaryCss}`;
+const css = `${tokensCss}\n${baseCss}\n${siteBackgroundCss}\n${topNavigationCss}\n${languageSwitchCss}\n${buttonsCss}\n${heroFoundationCss}\n${heroActionsCss}\n${heroStatsCss}\n${serverStickyLayoutCss}\n${sectionsCss}\n${supportWidgetCss}\n${tableControlsCss}\n${topThreeCss}\n${legacyCss}\n${heroLayoutCss}\n${heroServerSummaryCss}`;
 const failures = [];
 const pageFeatureIsLoaded = path => pageFeatureLoader.includes(`"${path}"`);
 const pageEntrypoints = {
@@ -70,6 +71,8 @@ for (const [page, [htmlPath, entrySrc]] of Object.entries(pageEntrypoints)) {
   if (!pageHtml.includes(supportWidgetHref)) failures.push(`${page} page is missing the support widget stylesheet`);
   const tableControlsHref = page === "home" ? "./styles/components/table-controls.css?v=20260715r11tablecontrols1" : "../styles/components/table-controls.css?v=20260715r11tablecontrols1";
   if (!pageHtml.includes(tableControlsHref)) failures.push(`${page} page is missing the table controls stylesheet`);
+  const topThreeHref = page === "home" ? "./styles/components/top-three.css?v=20260715r11topthree1" : "../styles/components/top-three.css?v=20260715r11topthree1";
+  if (!pageHtml.includes(topThreeHref)) failures.push(`${page} page is missing the Top-3 stylesheet`);
 }
 const ids = [...html.matchAll(/\bid="([^"]+)"/g)].map(match => match[1]);
 const duplicates = [...new Set(ids.filter((id, index) => ids.indexOf(id) !== index))];
@@ -162,7 +165,9 @@ if (!sectionsCss.includes("@layer components {") || !sectionsCss.includes(".sect
 if (!supportWidgetCss.includes("@layer components {") || !supportWidgetCss.includes(".support-sticky-widget {") || !supportWidgetCss.includes(".support-widget-card") || !supportWidgetCss.includes("@keyframes supportWidgetPulse") || legacyCss.includes(".support-sticky-widget {")) failures.push("Support widget foundation must have one physical component source");
 if (!/\.support-sticky-widget\s*\{\s*position:\s*fixed;/.test(supportWidgetCss)) failures.push("Support sticky declarations must remain scoped by their selector");
 if (!tableControlsCss.includes("@layer components {") || !tableControlsCss.includes(".table-tools") || !tableControlsCss.includes(".search-input") || !tableControlsCss.includes(".filter-select") || legacyCss.includes(".car-thumb {")) failures.push("Shared table controls must have one physical component source");
-if (!/\.car-thumb\s*\{\s*display:\s*block;/.test(tableControlsCss) || !legacyCss.includes("/* ===== TOP 3 ===== */")) failures.push("Table control migration boundaries are invalid");
+if (!/\.car-thumb\s*\{\s*display:\s*block;/.test(tableControlsCss) || !topThreeCss.includes("/* ===== TOP 3 ===== */")) failures.push("Table control migration boundaries are invalid");
+if (!topThreeCss.includes("@layer components {") || !topThreeCss.includes("/* ===== TOP 3 ===== */") || !topThreeCss.includes(".cards-top3") || !topThreeCss.includes(".pilot-card") || legacyCss.includes("/* ===== TOP 3 ===== */")) failures.push("Top-3 cards must have one physical component source");
+if (!/\.cards-top3\s*\{\s*display:\s*grid;/.test(topThreeCss) || !legacyCss.includes("/* ===== TABLES ===== */")) failures.push("Top-3 migration boundaries are invalid");
 for (const [className, imageName] of [["monza", "main.jpg"], ["sunset", "sunset.jpg"], ["spa", "spa.jpg"], ["nurburgring", "nurburgring.jpg"], ["nurburgring24h", "Nurburgring24h.jpg"], ["silverstone", "silverstone.jpg"]]) {
   if (!heroStatsCss.includes(`.server-sticky-card-${className}`) || !heroStatsCss.includes(`url("../../assets/${imageName}")`)) failures.push(`Server card ${className} is missing its explicit class-based background image`);
 }
