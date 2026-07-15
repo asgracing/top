@@ -2,7 +2,7 @@ import { readFile } from "node:fs/promises";
 import { resolve } from "node:path";
 
 const root = resolve(import.meta.dirname, "../..");
-const [html, tokensCss, baseCss, siteBackgroundCss, topNavigationCss, languageSwitchCss, buttonsCss, heroFoundationCss, heroActionsCss, heroStatsCss, serverStickyLayoutCss, legacyCss, heroLayoutCss, heroServerSummaryCss, js, pageFeatureLoader] = await Promise.all([
+const [html, tokensCss, baseCss, siteBackgroundCss, topNavigationCss, languageSwitchCss, buttonsCss, heroFoundationCss, heroActionsCss, heroStatsCss, serverStickyLayoutCss, sectionsCss, legacyCss, heroLayoutCss, heroServerSummaryCss, js, pageFeatureLoader] = await Promise.all([
   readFile(resolve(root, "index.html"), "utf8"),
   readFile(resolve(root, "styles/tokens.css"), "utf8"),
   readFile(resolve(root, "styles/base.css"), "utf8"),
@@ -14,13 +14,14 @@ const [html, tokensCss, baseCss, siteBackgroundCss, topNavigationCss, languageSw
   readFile(resolve(root, "styles/components/hero-actions.css"), "utf8"),
   readFile(resolve(root, "styles/components/hero-stats.css"), "utf8"),
   readFile(resolve(root, "styles/components/server-sticky-layout.css"), "utf8"),
+  readFile(resolve(root, "styles/components/sections.css"), "utf8"),
   readFile(resolve(root, "styles.css"), "utf8"),
   readFile(resolve(root, "styles/components/hero-layout.css"), "utf8"),
   readFile(resolve(root, "styles/components/hero-server-summary.css"), "utf8"),
   readFile(resolve(root, "app.js"), "utf8"),
   readFile(resolve(root, "src/runtime/page-feature-loader.js"), "utf8")
 ]);
-const css = `${tokensCss}\n${baseCss}\n${siteBackgroundCss}\n${topNavigationCss}\n${languageSwitchCss}\n${buttonsCss}\n${heroFoundationCss}\n${heroActionsCss}\n${heroStatsCss}\n${serverStickyLayoutCss}\n${legacyCss}\n${heroLayoutCss}\n${heroServerSummaryCss}`;
+const css = `${tokensCss}\n${baseCss}\n${siteBackgroundCss}\n${topNavigationCss}\n${languageSwitchCss}\n${buttonsCss}\n${heroFoundationCss}\n${heroActionsCss}\n${heroStatsCss}\n${serverStickyLayoutCss}\n${sectionsCss}\n${legacyCss}\n${heroLayoutCss}\n${heroServerSummaryCss}`;
 const failures = [];
 const pageFeatureIsLoaded = path => pageFeatureLoader.includes(`"${path}"`);
 const pageEntrypoints = {
@@ -61,6 +62,8 @@ for (const [page, [htmlPath, entrySrc]] of Object.entries(pageEntrypoints)) {
   if (!pageHtml.includes(heroStatsHref)) failures.push(`${page} page is missing the shared hero stats stylesheet`);
   const serverStickyLayoutHref = page === "home" ? "./styles/components/server-sticky-layout.css?v=20260715r11serversticky1" : "../styles/components/server-sticky-layout.css?v=20260715r11serversticky1";
   if (!pageHtml.includes(serverStickyLayoutHref)) failures.push(`${page} page is missing the server sticky layout stylesheet`);
+  const sectionsHref = page === "home" ? "./styles/components/sections.css?v=20260715r11sections1" : "../styles/components/sections.css?v=20260715r11sections1";
+  if (!pageHtml.includes(sectionsHref)) failures.push(`${page} page is missing the shared sections stylesheet`);
 }
 const ids = [...html.matchAll(/\bid="([^"]+)"/g)].map(match => match[1]);
 const duplicates = [...new Set(ids.filter((id, index) => ids.indexOf(id) !== index))];
@@ -149,6 +152,7 @@ if (!heroFoundationCss.includes("@layer components {") || !heroFoundationCss.inc
 if (!heroActionsCss.includes("@layer components {") || !heroActionsCss.includes(".hero-actions") || legacyCss.includes("/* ===== HERO ACTIONS + ONLINE WIDGET ===== */")) failures.push("Hero actions and online widget foundation must have one physical component source");
 if (!heroStatsCss.includes("@layer components {") || !heroStatsCss.includes(".hero-side-compact") || !heroStatsCss.includes(".mini-stat") || legacyCss.includes("/* ===== HERO MINI STATS ===== */")) failures.push("Hero mini stats and related widgets must have one physical component source");
 if (!serverStickyLayoutCss.includes("@layer components {") || !serverStickyLayoutCss.includes(".server-sticky-widget") || !serverStickyLayoutCss.includes(".server-sticky-card") || legacyCss.includes("/* ===== FINAL SERVER STICKY GRID 0605 ===== */")) failures.push("Compact server sticky layout must have one physical component source");
+if (!sectionsCss.includes("@layer components {") || !sectionsCss.includes(".section-header") || !sectionsCss.includes(".combined-stats-shell") || legacyCss.includes("/* ===== SECTIONS ===== */")) failures.push("Shared section and combined stats shells must have one physical component source");
 for (const [className, imageName] of [["monza", "main.jpg"], ["sunset", "sunset.jpg"], ["spa", "spa.jpg"], ["nurburgring", "nurburgring.jpg"], ["nurburgring24h", "Nurburgring24h.jpg"], ["silverstone", "silverstone.jpg"]]) {
   if (!heroStatsCss.includes(`.server-sticky-card-${className}`) || !heroStatsCss.includes(`url("../../assets/${imageName}")`)) failures.push(`Server card ${className} is missing its explicit class-based background image`);
 }
