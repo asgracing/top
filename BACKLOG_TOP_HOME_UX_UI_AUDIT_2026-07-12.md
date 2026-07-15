@@ -768,3 +768,4 @@
 - Фоновые изображения трасс остаются в `hero-stats.css`: разделение не меняет визуальный слой карточек.
 - Quality gate контролирует единственный физический источник правил сетки и подключение модуля на каждом маршруте.
 - R11: общий каркас секций и combined-stats tabs вынесен в `styles/components/sections.css`, подключён на восьми маршрутах и защищён quality gate от дублирования в legacy CSS.
+- R11: foundation левого support sticky/mobile CTA вынесен в `styles/components/support-widget.css`; добавлена структурная проверка, что positioning declarations не могут остаться без селектора при дальнейшей миграции.
