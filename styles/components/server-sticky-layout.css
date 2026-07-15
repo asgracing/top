@@ -1,0 +1,77 @@
+@layer components {
+  .server-sticky-widget {
+    top: 92px;
+    right: 18px;
+    width: min(196px, calc(100vw - 36px));
+    max-height: calc(100vh - 170px);
+    overflow: auto;
+    scrollbar-width: thin;
+  }
+  
+  .server-sticky-cards {
+    grid-template-columns: 1fr;
+    gap: 5px;
+  }
+  
+  .server-sticky-card {
+    min-height: 48px;
+    border-radius: 12px;
+  }
+  
+  .server-sticky-card-content {
+    gap: 3px;
+    padding: 5px 7px;
+  }
+  
+  .server-sticky-card-name {
+    min-height: 2em;
+    font-size: 0.58rem;
+    line-height: 1.1;
+    text-align: left;
+  }
+  
+  .server-sticky-card-status {
+    justify-content: center;
+    gap: 9px;
+    min-width: 0;
+  }
+  
+  .server-sticky-card-status .server-status {
+    font-size: 0.58rem;
+    line-height: 1;
+    min-width: 62px;
+    text-align: right;
+  }
+  
+  .server-sticky-card-status .server-players {
+    min-width: 24px;
+    font-size: 0.76rem;
+    line-height: 1;
+    text-align: left;
+  }
+  
+  .server-sticky-card-status .server-session-mini {
+    font-size: 0.7em;
+  }
+  
+  .server-sticky-actions {
+    grid-template-columns: 1fr 1fr;
+    gap: 4px;
+  }
+  
+  .server-connect-btn,
+  .server-connect-help {
+    min-height: 18px;
+    padding: 0 6px;
+    border-radius: 8px;
+    font-size: 0.52rem;
+    line-height: 1;
+  }
+  
+  @media (max-width: 1180px) {
+    .server-sticky-widget {
+      width: min(210px, calc(100vw - 24px));
+      right: 12px;
+    }
+  }
+}
