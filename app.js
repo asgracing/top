@@ -10022,30 +10022,6 @@ function optimizeBackgroundMedia() {
     saveBackgroundVideoPlaylistState(playlist, safeIndex);
   };
 
-  const preloadNextBackgroundVideo = () => {
-    const playlist = getBackgroundVideoPlaylist();
-    if (playlist.length < 2) return;
-
-    const currentIndex = getBackgroundVideoIndex();
-    const nextIndex = (currentIndex + 1) % playlist.length;
-    const nextSrc = playlist[nextIndex];
-    if (!nextSrc) return;
-
-    if (!window.__asgBgVideoPreloader) {
-      const preloader = document.createElement("video");
-      preloader.preload = "auto";
-      preloader.muted = true;
-      preloader.playsInline = true;
-      window.__asgBgVideoPreloader = preloader;
-    }
-
-    const preloader = window.__asgBgVideoPreloader;
-    if (preloader.dataset.src === nextSrc) return;
-    preloader.dataset.src = nextSrc;
-    preloader.src = nextSrc;
-    preloader.load?.();
-  };
-
   const playManagedBackgroundVideo = () => {
     if (!shouldAutoplayBackground) {
       video.removeAttribute("autoplay");
@@ -10075,7 +10051,6 @@ function optimizeBackgroundMedia() {
     loadBackgroundVideo();
     syncBackgroundVideoSoundState(video);
     playManagedBackgroundVideo();
-    preloadNextBackgroundVideo();
   };
 
   const unloadBackgroundVideo = () => {
@@ -10102,7 +10077,6 @@ function optimizeBackgroundMedia() {
     video.appendChild(source);
     video.dataset.loaded = "true";
     video.load?.();
-    preloadNextBackgroundVideo();
   };
 
   const scheduleBackgroundVideoLoad = () => {

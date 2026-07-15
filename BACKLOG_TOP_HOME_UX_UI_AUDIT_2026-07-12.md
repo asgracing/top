@@ -24,7 +24,7 @@
 | R11 | Готово | CSS tokens/layers/components, z-index и breakpoint cleanup | R01 |
 | R12 | Готово | Hero/support/sticky/loading UI cleanup завершён: flow, CTA hierarchy, floating widgets и state/CLS cleanup | R09, R11 |
 | R13 | Готово | Responsive safeguards, reduced-motion, EN/RU parity и accessibility QA | R09, R12 |
-| R14 | Ожидает | Code splitting, media optimization и performance budgets | R10–R13 |
+| R14 | Готово | Route splitting защищён performance gate; фоновые видео оптимизированы и больше не загружают следующий ролик заранее; введены бюджеты JS/CSS/HTML/media/requests | R10–R13 |
 | R15 | Ожидает | Проверяемый `dist`, CI quality gate и deployment smoke | R01–R14 |
 | R16 | Ожидает | Полный regression, документация, PR и план безопасного rollout | R15 |
 
@@ -803,3 +803,4 @@
 - 15.07.2026 — R12 mobile hero actions hotfix: mobile grid теперь содержит отдельные строки для driver-day, today stats, last races, mini stats и online chart. Ранее область `races` отсутствовала в mobile `grid-template-areas`, из-за чего кнопка попадала в неявную сетку; positioning, размеры и отступы элементов теперь явно нормализованы до 640 px.
 - 15.07.2026 — R12 mobile hero flow hotfix: до 640 px внешний `.hero-grid` переведён из конфликтующей именованной grid-разметки в обычный вертикальный flex flow. Hero copy, actions, support и hourly получают последовательные позиции 1–4, сбрасывают `grid-area`, фиксированные высоты, inset и transform; support card больше не может занимать одну область с mini stats.
 - 15.07.2026 — R13 завершён: добавлен общий responsive/accessibility safeguard для всех страниц `/top` с полным `prefers-reduced-motion`, видимым `focus-visible`, touch targets 44 px для coarse pointer и forced-colors fallback. Статические aria-label локализованы, server cards объявляют dialog semantics, вкладки связаны с tabpanel и поддерживают Left/Right/Home/End. Quality gate проверяет паритет 608/608 ключей EN/RU, все используемые i18n-ключи и accessibility-контракты; 195 unit-тестов проходят.
+- 15.07.2026 — R14 завершён: route-level split R10 закреплён новым performance gate, который входит в `npm run verify` и контролирует размеры `app.js`, `src`, CSS, HTML, число stylesheet/blocking-script запросов и фоновые media. Фоновое видео остаётся source-free с `preload="none"` в initial HTML; удалён eager preload следующего ролика. Основной ролик перекодирован из 1080p/14,3 МБ в 720p/10,0 МБ, общий playlist сокращён примерно с 38,3 до 33,7 МБ; cache tokens обновлены на всех восьми маршрутах. Итог: performance budgets зелёные, 195/195 unit-тестов, Live Server HTTP 200 и video range HTTP 206.
