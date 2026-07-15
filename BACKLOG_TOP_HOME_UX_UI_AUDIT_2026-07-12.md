@@ -774,3 +774,4 @@
 - R11: общий table system (shell, rows, sortable headers, badges и states) вынесен в `styles/components/tables.css`; цепочка Top-3 → Tables → Pagination проверяется автоматически.
 - R11: общая пагинация, active/disabled page states и page info вынесены в `styles/components/pagination.css`; цепочка Tables → Pagination → Modals защищена quality gate.
 - R11: modal overlay/open-state, card variants, header и close control вынесены в `styles/components/modals.css`; pointer-events contract и граница с dialog content проверяются автоматически.
+- R11: список игроков серверной модалки (позиция, имя, метаданные и машина) вынесен в `styles/components/server-players-modal.css`; граница со статистикой активности закреплена quality gate.

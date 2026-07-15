@@ -2,7 +2,7 @@ import { readFile } from "node:fs/promises";
 import { resolve } from "node:path";
 
 const root = resolve(import.meta.dirname, "../..");
-const [html, tokensCss, baseCss, siteBackgroundCss, topNavigationCss, languageSwitchCss, buttonsCss, heroFoundationCss, heroActionsCss, heroStatsCss, serverStickyLayoutCss, sectionsCss, supportWidgetCss, tableControlsCss, topThreeCss, tablesCss, paginationCss, modalsCss, legacyCss, heroLayoutCss, heroServerSummaryCss, js, pageFeatureLoader] = await Promise.all([
+const [html, tokensCss, baseCss, siteBackgroundCss, topNavigationCss, languageSwitchCss, buttonsCss, heroFoundationCss, heroActionsCss, heroStatsCss, serverStickyLayoutCss, sectionsCss, supportWidgetCss, tableControlsCss, topThreeCss, tablesCss, paginationCss, modalsCss, serverPlayersModalCss, legacyCss, heroLayoutCss, heroServerSummaryCss, js, pageFeatureLoader] = await Promise.all([
   readFile(resolve(root, "index.html"), "utf8"),
   readFile(resolve(root, "styles/tokens.css"), "utf8"),
   readFile(resolve(root, "styles/base.css"), "utf8"),
@@ -21,13 +21,14 @@ const [html, tokensCss, baseCss, siteBackgroundCss, topNavigationCss, languageSw
   readFile(resolve(root, "styles/components/tables.css"), "utf8"),
   readFile(resolve(root, "styles/components/pagination.css"), "utf8"),
   readFile(resolve(root, "styles/components/modals.css"), "utf8"),
+  readFile(resolve(root, "styles/components/server-players-modal.css"), "utf8"),
   readFile(resolve(root, "styles.css"), "utf8"),
   readFile(resolve(root, "styles/components/hero-layout.css"), "utf8"),
   readFile(resolve(root, "styles/components/hero-server-summary.css"), "utf8"),
   readFile(resolve(root, "app.js"), "utf8"),
   readFile(resolve(root, "src/runtime/page-feature-loader.js"), "utf8")
 ]);
-const css = `${tokensCss}\n${baseCss}\n${siteBackgroundCss}\n${topNavigationCss}\n${languageSwitchCss}\n${buttonsCss}\n${heroFoundationCss}\n${heroActionsCss}\n${heroStatsCss}\n${serverStickyLayoutCss}\n${sectionsCss}\n${supportWidgetCss}\n${tableControlsCss}\n${topThreeCss}\n${tablesCss}\n${paginationCss}\n${modalsCss}\n${legacyCss}\n${heroLayoutCss}\n${heroServerSummaryCss}`;
+const css = `${tokensCss}\n${baseCss}\n${siteBackgroundCss}\n${topNavigationCss}\n${languageSwitchCss}\n${buttonsCss}\n${heroFoundationCss}\n${heroActionsCss}\n${heroStatsCss}\n${serverStickyLayoutCss}\n${sectionsCss}\n${supportWidgetCss}\n${tableControlsCss}\n${topThreeCss}\n${tablesCss}\n${paginationCss}\n${modalsCss}\n${serverPlayersModalCss}\n${legacyCss}\n${heroLayoutCss}\n${heroServerSummaryCss}`;
 const failures = [];
 const pageFeatureIsLoaded = path => pageFeatureLoader.includes(`"${path}"`);
 const pageEntrypoints = {
@@ -82,6 +83,8 @@ for (const [page, [htmlPath, entrySrc]] of Object.entries(pageEntrypoints)) {
   if (!pageHtml.includes(paginationHref)) failures.push(`${page} page is missing the shared pagination stylesheet`);
   const modalsHref = page === "home" ? "./styles/components/modals.css?v=20260715r11modals1" : "../styles/components/modals.css?v=20260715r11modals1";
   if (!pageHtml.includes(modalsHref)) failures.push(`${page} page is missing the modal foundation stylesheet`);
+  const serverPlayersModalHref = page === "home" ? "./styles/components/server-players-modal.css?v=20260715r11serverplayers1" : "../styles/components/server-players-modal.css?v=20260715r11serverplayers1";
+  if (!pageHtml.includes(serverPlayersModalHref)) failures.push(`${page} page is missing the server players modal stylesheet`);
 }
 const ids = [...html.matchAll(/\bid="([^"]+)"/g)].map(match => match[1]);
 const duplicates = [...new Set(ids.filter((id, index) => ids.indexOf(id) !== index))];
@@ -182,7 +185,9 @@ if (!/\.table-card\s*\{\s*overflow:\s*hidden;/.test(tablesCss) || !paginationCss
 if (!paginationCss.includes("@layer components {") || !paginationCss.includes(".pagination-wrap") || !paginationCss.includes(".page-btn.active") || !paginationCss.includes(".page-btn:disabled") || legacyCss.includes("/* ===== PAGINATION ===== */")) failures.push("Shared pagination must have one physical component source");
 if (!/\.pagination-wrap\s*\{\s*display:\s*flex;/.test(paginationCss) || !modalsCss.includes("/* ===== MODALS ===== */")) failures.push("Pagination migration boundaries are invalid");
 if (!modalsCss.includes("@layer components {") || !modalsCss.includes(".modal-overlay") || !modalsCss.includes(".modal-overlay.is-open") || !modalsCss.includes(".modal-close") || legacyCss.includes("/* ===== MODALS ===== */")) failures.push("Modal foundation must have one physical component source");
-if (!/\.modal-overlay\s*\{[^}]*pointer-events:\s*none;/s.test(modalsCss) || !/\.modal-overlay\.is-open\s*\{[^}]*pointer-events:\s*auto;/s.test(modalsCss) || !legacyCss.includes(".server-players-list {")) failures.push("Modal interaction and migration boundaries are invalid");
+if (!/\.modal-overlay\s*\{[^}]*pointer-events:\s*none;/s.test(modalsCss) || !/\.modal-overlay\.is-open\s*\{[^}]*pointer-events:\s*auto;/s.test(modalsCss) || !serverPlayersModalCss.includes(".server-players-list {")) failures.push("Modal interaction and migration boundaries are invalid");
+if (!serverPlayersModalCss.includes("@layer components {") || !serverPlayersModalCss.includes(".server-player-row") || !serverPlayersModalCss.includes(".server-player-name") || !serverPlayersModalCss.includes(".server-player-car") || legacyCss.includes(".server-players-list {")) failures.push("Server players modal content must have one physical component source");
+if (!/\.server-players-list\s*\{\s*display:\s*grid;/.test(serverPlayersModalCss) || !legacyCss.includes(".today-stats-grid {")) failures.push("Server players modal migration boundaries are invalid");
 for (const [className, imageName] of [["monza", "main.jpg"], ["sunset", "sunset.jpg"], ["spa", "spa.jpg"], ["nurburgring", "nurburgring.jpg"], ["nurburgring24h", "Nurburgring24h.jpg"], ["silverstone", "silverstone.jpg"]]) {
   if (!heroStatsCss.includes(`.server-sticky-card-${className}`) || !heroStatsCss.includes(`url("../../assets/${imageName}")`)) failures.push(`Server card ${className} is missing its explicit class-based background image`);
 }
