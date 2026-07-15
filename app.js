@@ -961,6 +961,7 @@ const translations = {
     championshipSubtitle: "Row click opens quick view. Name opens full profile.",
     combinedStatsSubtitleLeaderboard: "Row: quick view. Name: full profile.",
     statsHubTitle: "Driver Stats",
+    statsHubTabsLabel: "Driver statistics tables",
     supportWidgetTitle: "Support ASG Racing",
     supportWidgetText: "If you enjoy the server, streams and stats site, you can help the project keep rolling with a quick support drop.",
     supportWidgetButton: "Support the project",
@@ -1591,6 +1592,7 @@ const translations = {
     championshipSubtitle: "Строка открывает быстрый просмотр, имя пилота ведёт в полный профиль.",
     combinedStatsSubtitleLeaderboard: "Строка: быстро. Имя: профиль.",
     statsHubTitle: "Статистика пилотов",
+    statsHubTabsLabel: "Таблицы статистики пилотов",
     supportWidgetTitle: "Поддержать ASG Racing",
     supportWidgetText: "Если тебе нравится сервер, стримы и сайт со статистикой, можно быстро поддержать проект донатом и помочь ему двигаться дальше.",
     supportWidgetButton: "Поддержать проект",
@@ -8302,6 +8304,7 @@ function renderServerStickyWidget(serverStatus = serverStatusData) {
         data-server-key="${escapeHtml(key)}"
         role="button"
         tabindex="0"
+        aria-haspopup="dialog"
         aria-controls="server-players-modal"
         style="--server-card-bg: url('${escapeHtml(bgUrl)}')"
       >

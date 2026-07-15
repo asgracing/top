@@ -2,7 +2,7 @@ import { readFile } from "node:fs/promises";
 import { resolve } from "node:path";
 
 const root = resolve(import.meta.dirname, "../..");
-const [html, tokensCss, baseCss, siteBackgroundCss, topNavigationCss, languageSwitchCss, buttonsCss, heroFoundationCss, heroActionsCss, heroStatsCss, serverStickyLayoutCss, sectionsCss, supportWidgetCss, tableControlsCss, topThreeCss, tablesCss, paginationCss, modalsCss, serverPlayersModalCss, todayStatsModalCss, activityControlsCss, activitySummaryCss, hourlyEventModalCss, driverDayModalCss, footerCss, utilitiesCss, responsiveCss, legacyCss, heroLayoutCss, heroServerSummaryCss, floatingWidgetsCss, js, pageFeatureLoader] = await Promise.all([
+const [html, tokensCss, baseCss, siteBackgroundCss, topNavigationCss, languageSwitchCss, buttonsCss, heroFoundationCss, heroActionsCss, heroStatsCss, serverStickyLayoutCss, sectionsCss, supportWidgetCss, tableControlsCss, topThreeCss, tablesCss, paginationCss, modalsCss, serverPlayersModalCss, todayStatsModalCss, activityControlsCss, activitySummaryCss, hourlyEventModalCss, driverDayModalCss, footerCss, utilitiesCss, responsiveCss, legacyCss, heroLayoutCss, heroServerSummaryCss, floatingWidgetsCss, responsiveAccessibilityCss, js, pageFeatureLoader] = await Promise.all([
   readFile(resolve(root, "index.html"), "utf8"),
   readFile(resolve(root, "styles/tokens.css"), "utf8"),
   readFile(resolve(root, "styles/base.css"), "utf8"),
@@ -34,11 +34,31 @@ const [html, tokensCss, baseCss, siteBackgroundCss, topNavigationCss, languageSw
   readFile(resolve(root, "styles/components/hero-layout.css"), "utf8"),
   readFile(resolve(root, "styles/components/hero-server-summary.css"), "utf8"),
   readFile(resolve(root, "styles/components/floating-widgets.css"), "utf8"),
+  readFile(resolve(root, "styles/components/responsive-accessibility.css"), "utf8"),
   readFile(resolve(root, "app.js"), "utf8"),
   readFile(resolve(root, "src/runtime/page-feature-loader.js"), "utf8")
 ]);
-const css = `${tokensCss}\n${baseCss}\n${siteBackgroundCss}\n${topNavigationCss}\n${languageSwitchCss}\n${buttonsCss}\n${heroFoundationCss}\n${heroActionsCss}\n${heroStatsCss}\n${serverStickyLayoutCss}\n${sectionsCss}\n${supportWidgetCss}\n${tableControlsCss}\n${topThreeCss}\n${tablesCss}\n${paginationCss}\n${modalsCss}\n${serverPlayersModalCss}\n${todayStatsModalCss}\n${activityControlsCss}\n${activitySummaryCss}\n${hourlyEventModalCss}\n${driverDayModalCss}\n${footerCss}\n${utilitiesCss}\n${legacyCss}\n${responsiveCss}\n${heroLayoutCss}\n${heroServerSummaryCss}\n${floatingWidgetsCss}`;
+const statsTabsControllerJs = await readFile(resolve(root, "src/pages/home/stats-tabs-controller.js"), "utf8");
+const css = `${tokensCss}\n${baseCss}\n${siteBackgroundCss}\n${topNavigationCss}\n${languageSwitchCss}\n${buttonsCss}\n${heroFoundationCss}\n${heroActionsCss}\n${heroStatsCss}\n${serverStickyLayoutCss}\n${sectionsCss}\n${supportWidgetCss}\n${tableControlsCss}\n${topThreeCss}\n${tablesCss}\n${paginationCss}\n${modalsCss}\n${serverPlayersModalCss}\n${todayStatsModalCss}\n${activityControlsCss}\n${activitySummaryCss}\n${hourlyEventModalCss}\n${driverDayModalCss}\n${footerCss}\n${utilitiesCss}\n${legacyCss}\n${responsiveCss}\n${heroLayoutCss}\n${heroServerSummaryCss}\n${floatingWidgetsCss}\n${responsiveAccessibilityCss}`;
 const failures = [];
+const translationSourceFor = lang => {
+  const rootStart = js.indexOf("const translations = {");
+  const initialStart = js.indexOf(`  ${lang}: {`, rootStart);
+  const initialEnd = lang === "en" ? js.indexOf("  ru: {", initialStart) : js.indexOf("\n};", initialStart);
+  const blocks = [js.slice(initialStart, initialEnd)];
+  const assignmentPattern = new RegExp(`Object\\.assign\\(translations\\.${lang}, \\{([\\s\\S]*?)\\n\\}\\);`, "g");
+  for (const match of js.matchAll(assignmentPattern)) blocks.push(match[1]);
+  return blocks.join("\n");
+};
+const translationKeysFor = lang => new Set(
+  [...translationSourceFor(lang).matchAll(/^\s{2,4}([A-Za-z0-9_]+):/gm)]
+    .map(match => match[1])
+    .filter(key => key !== "en" && key !== "ru")
+);
+const enTranslationKeys = translationKeysFor("en");
+const ruTranslationKeys = translationKeysFor("ru");
+for (const key of enTranslationKeys) if (!ruTranslationKeys.has(key)) failures.push(`Russian translations are missing ${key}`);
+for (const key of ruTranslationKeys) if (!enTranslationKeys.has(key)) failures.push(`English translations are missing ${key}`);
 const pageFeatureIsLoaded = path => pageFeatureLoader.includes(`"${path}"`);
 const pageEntrypoints = {
   home: ["index.html", "./src/entrypoints/home.js"],
@@ -58,6 +78,9 @@ for (const [page, [htmlPath, entrySrc]] of Object.entries(pageEntrypoints)) {
   if (!pageHtml.includes(`type="module" src="${entrySrc}`)) failures.push(`${page} page is missing its module entrypoint`);
   if (/src=["'][^"']*app\.js/.test(pageHtml)) failures.push(`${page} page still loads app.js directly`);
   if (/class="loading"(?![^>]*role="status")/.test(pageHtml) || /class="loading"[^>]*style=/.test(pageHtml)) failures.push(`${page} page has a non-semantic or inline-styled loading state`);
+  for (const match of pageHtml.matchAll(/data-i18n(?:-aria-label)?="([^"]+)"/g)) {
+    if (!enTranslationKeys.has(match[1]) || !ruTranslationKeys.has(match[1])) failures.push(`${page} page uses missing translation key ${match[1]}`);
+  }
   if (!entrySource.includes(`bootstrapLegacyPage("${page}")`)) failures.push(`${page} entrypoint has the wrong page identity`);
   const tokenHref = page === "home" ? "./styles/tokens.css?v=20260713r11tokens1" : "../styles/tokens.css?v=20260713r11tokens1";
   if (!pageHtml.includes(tokenHref)) failures.push(`${page} page is missing the shared token stylesheet`);
@@ -107,7 +130,8 @@ for (const [page, [htmlPath, entrySrc]] of Object.entries(pageEntrypoints)) {
     `${page === "home" ? "./" : "../"}styles/components/driver-day-modal.css?v=20260715r11driverday1`,
     `${page === "home" ? "./" : "../"}styles/components/footer.css?v=20260715r11footer1`,
     `${page === "home" ? "./" : "../"}styles/utilities.css?v=20260715r12states1`,
-    `${page === "home" ? "./" : "../"}styles/responsive.css?v=20260715r11responsive1`
+    `${page === "home" ? "./" : "../"}styles/responsive.css?v=20260715r11responsive1`,
+    `${page === "home" ? "./" : "../"}styles/components/responsive-accessibility.css?v=20260715r13a11y1`
   ]) if (!pageHtml.includes(href)) failures.push(`${page} page is missing R11 stylesheet ${href}`);
 }
 const ids = [...html.matchAll(/\bid="([^"]+)"/g)].map(match => match[1]);
@@ -189,6 +213,11 @@ if (!floatingWidgetsCss.includes("body.modal-open .server-sticky-widget") || !fl
 if (!floatingWidgetsCss.includes(".support-widget-btn") || !floatingWidgetsCss.includes("animation: none;") || /\.support-widget-btn\s*,\s*\.support-widget-btn/.test(legacyCss)) failures.push("Support CTA must not compete with the primary hero action through a legacy infinite animation");
 if (utilitiesCss.includes("+}") || !utilitiesCss.includes("@keyframes loadingStateSpin") || !utilitiesCss.includes('.table-wrap > [data-table-state]')) failures.push("Shared loading states must reserve layout space and use valid utility CSS");
 if (/class="loading"\s+style=/.test(html) || !js.includes('class="loading" role="status" aria-live="polite"')) failures.push("Loading states must use shared semantic markup without inline spacing");
+if (!responsiveAccessibilityCss.includes("@media (prefers-reduced-motion: reduce)") || !responsiveAccessibilityCss.includes("*::before") || !responsiveAccessibilityCss.includes("animation: none;") || !responsiveAccessibilityCss.includes("scroll-behavior: auto;")) failures.push("R13 must provide a complete reduced-motion fallback");
+if (!responsiveAccessibilityCss.includes("@media (pointer: coarse)") || !responsiveAccessibilityCss.includes("min-height: 44px;") || !responsiveAccessibilityCss.includes(":focus-visible")) failures.push("R13 must preserve touch target size and visible keyboard focus");
+for (const tag of html.matchAll(/<[^>]+role="button"[^>]*>/g)) if (!/tabindex="0"/.test(tag[0])) failures.push(`Role button is missing tabindex: ${tag[0].slice(0, 90)}`);
+if (!html.includes('data-i18n-aria-label="statsHubTabsLabel"') || !html.includes('aria-haspopup="dialog" aria-controls="server-players-modal"')) failures.push("Home interactive regions must expose localized names and dialog semantics");
+if ((html.match(/role="tabpanel"\s+aria-labelledby="combined-tab-/g) || []).length !== 3 || !statsTabsControllerJs.includes("resolveNextHomeStatsTab")) failures.push("Home statistics tabs must expose tabpanel relationships and keyboard navigation");
 if (/@media\s*\(max-width:\s*760px\)\s*\{\s*\.donation-alerts-widget/s.test(legacyCss) || /@media\s*\(max-width:\s*1279px\)\s*\{\s*\.server-sticky-widget/s.test(legacyCss)) failures.push("Floating widget visibility rules must not be duplicated in legacy CSS");
 if (legacyCss.includes("Consolidated hero server summary") || !heroServerSummaryCss.includes(".hero-server-total-stat")) failures.push("Hero server summary must have one physical component source");
 if (!heroServerSummaryCss.includes("grid-template-columns: minmax(0, 1fr) auto;") || !heroServerSummaryCss.includes("font-variant-numeric: tabular-nums;")) failures.push("Hero paired mini stats must reserve independent label and numeric columns");
@@ -239,7 +268,7 @@ for (const [className, imageName] of [["monza", "main.jpg"], ["sunset", "sunset.
 }
 const budgets = {
   important: [(css.match(/!important/g) || []).length, 12],
-  mediaQuery: [(css.match(/@media\b/g) || []).length, 63],
+  mediaQuery: [(css.match(/@media\b/g) || []).length, 66],
   zIndex: [(css.match(/\bz-index\s*:/g) || []).length, 48],
   hexColor: [(css.match(/#[0-9a-f]{3,8}\b/gi) || []).length, 252],
   silentCatch: [(js.match(/\.catch\(\(\)\s*=>\s*null\)/g) || []).length, 28],

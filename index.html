@@ -83,6 +83,7 @@
   <link rel="stylesheet" href="./styles/components/hero-server-summary.css?v=20260715r12cards3" />
   <link rel="stylesheet" href="./styles/components/floating-widgets.css?v=20260715r12floating2" />
   <link rel="stylesheet" href="./legal.css" />
+  <link rel="stylesheet" href="./styles/components/responsive-accessibility.css?v=20260715r13a11y1" />
 </head>
 <body id="top">
   <div class="site-video-bg" aria-hidden="true">
@@ -123,6 +124,7 @@
         step="1"
         value="50"
         aria-label="Background video volume"
+        data-i18n-aria-label="bgVideoVolumeAria"
       />
       <span class="bg-video-volume-value" data-bg-video-volume-value>50%</span>
     </span>
@@ -489,13 +491,13 @@
       </div>
     </section>
 
-    <aside class="server-sticky-widget" id="server-sticky-widget" aria-label="Server status">
+    <aside class="server-sticky-widget" id="server-sticky-widget" aria-label="Server status" data-i18n-aria-label="serversWidgetTitle">
       <div class="server-sticky-head">
         <div class="server-sticky-title" data-i18n="serversWidgetTitle">Server status</div>
       </div>
 
       <div class="server-sticky-cards">
-        <div class="server-sticky-card server-sticky-card-main server-sticky-card-clickable" id="server-card-main" role="button" tabindex="0" aria-controls="server-players-modal">
+        <div class="server-sticky-card server-sticky-card-main server-sticky-card-clickable" id="server-card-main" role="button" tabindex="0" aria-haspopup="dialog" aria-controls="server-players-modal">
           <div class="server-sticky-card-overlay"></div>
           <div class="server-sticky-card-content">
             <div class="server-sticky-card-name" data-i18n="serverMainLabel">Main</div>
@@ -526,7 +528,7 @@
           <p class="section-subtitle section-subtitle-hint" id="combined-stats-subtitle">Points, wins, podiums, average finish and best lap.</p>
         </div>
         <div class="combined-stats-shell-controls">
-          <div class="combined-stats-tabs" role="tablist" aria-label="Driver stats tables">
+          <div class="combined-stats-tabs" role="tablist" aria-label="Driver stats tables" data-i18n-aria-label="statsHubTabsLabel">
             <button class="combined-stats-tab is-active" id="combined-tab-leaderboard" type="button" role="tab" aria-selected="true" aria-controls="championship" data-stats-tab="leaderboard" data-i18n="championshipTitle">Rating</button>
             <button class="combined-stats-tab" id="combined-tab-bestlaps" type="button" role="tab" aria-selected="false" aria-controls="bestlaps" data-stats-tab="bestlaps" data-i18n="bestLapsTitle">Best Laps</button>
             <button class="combined-stats-tab" id="combined-tab-safety" type="button" role="tab" aria-selected="false" aria-controls="worst-safety" data-stats-tab="safety" data-i18n="worstSafetyTitle">Safety Rating</button>
@@ -536,7 +538,7 @@
       </div>
 
       <div class="combined-stats-panels">
-        <section class="section combined-stats-panel" id="championship" data-stats-panel="leaderboard">
+        <section class="section combined-stats-panel" id="championship" data-stats-panel="leaderboard" role="tabpanel" aria-labelledby="combined-tab-leaderboard">
           <div class="section-header">
             <div>
               <h2 class="section-title" data-i18n="championshipTitle">Rating</h2>
@@ -558,7 +560,7 @@
           </div>
         </section>
 
-        <section class="section combined-stats-panel" id="bestlaps" data-stats-panel="bestlaps">
+        <section class="section combined-stats-panel" id="bestlaps" data-stats-panel="bestlaps" role="tabpanel" aria-labelledby="combined-tab-bestlaps">
           <div class="section-header">
             <div>
               <h2 class="section-title" data-i18n="bestLapsTitle">Best Laps</h2>
@@ -584,7 +586,7 @@
           </div>
         </section>
 
-        <section class="section combined-stats-panel" id="worst-safety" data-stats-panel="safety">
+        <section class="section combined-stats-panel" id="worst-safety" data-stats-panel="safety" role="tabpanel" aria-labelledby="combined-tab-safety">
           <div class="section-header">
             <div>
               <h2 class="section-title" data-i18n="worstSafetyTitle">Safety Rating</h2>

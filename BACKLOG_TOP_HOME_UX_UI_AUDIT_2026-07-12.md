@@ -23,7 +23,7 @@
 | R10 | Готово | Декомпозиция `app.js`, route-loaded page features и отдельные page entrypoints | R02–R09 |
 | R11 | Готово | CSS tokens/layers/components, z-index и breakpoint cleanup | R01 |
 | R12 | Готово | Hero/support/sticky/loading UI cleanup завершён: flow, CTA hierarchy, floating widgets и state/CLS cleanup | R09, R11 |
-| R13 | Ожидает | Responsive, reduced-motion, localization и full accessibility QA | R09, R12 |
+| R13 | Готово | Responsive safeguards, reduced-motion, EN/RU parity и accessibility QA | R09, R12 |
 | R14 | Ожидает | Code splitting, media optimization и performance budgets | R10–R13 |
 | R15 | Ожидает | Проверяемый `dist`, CI quality gate и deployment smoke | R01–R14 |
 | R16 | Ожидает | Полный regression, документация, PR и план безопасного rollout | R15 |
@@ -802,3 +802,4 @@
 - 15.07.2026 — R12 mini stats structural fix: конфликтующая обёртка `.hero-stats-row` удалена из HTML; все четыре карточки стали прямыми grid items с явными позициями 2×2. Запрещён перенос подписей по отдельным буквам, высота desktop-строк теперь не менее 62 px, а при ширине до 560 px карточки переходят в одну колонку с полной шириной.
 - 15.07.2026 — R12 mobile hero actions hotfix: mobile grid теперь содержит отдельные строки для driver-day, today stats, last races, mini stats и online chart. Ранее область `races` отсутствовала в mobile `grid-template-areas`, из-за чего кнопка попадала в неявную сетку; positioning, размеры и отступы элементов теперь явно нормализованы до 640 px.
 - 15.07.2026 — R12 mobile hero flow hotfix: до 640 px внешний `.hero-grid` переведён из конфликтующей именованной grid-разметки в обычный вертикальный flex flow. Hero copy, actions, support и hourly получают последовательные позиции 1–4, сбрасывают `grid-area`, фиксированные высоты, inset и transform; support card больше не может занимать одну область с mini stats.
+- 15.07.2026 — R13 завершён: добавлен общий responsive/accessibility safeguard для всех страниц `/top` с полным `prefers-reduced-motion`, видимым `focus-visible`, touch targets 44 px для coarse pointer и forced-colors fallback. Статические aria-label локализованы, server cards объявляют dialog semantics, вкладки связаны с tabpanel и поддерживают Left/Right/Home/End. Quality gate проверяет паритет 608/608 ключей EN/RU, все используемые i18n-ключи и accessibility-контракты; 195 unit-тестов проходят.

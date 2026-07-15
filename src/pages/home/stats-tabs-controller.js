@@ -4,6 +4,17 @@ export function resolveHomeStatsTabFromHref(href) {
   return "leaderboard";
 }
 
+export function resolveNextHomeStatsTab(keys, currentKey, keyboardKey) {
+  const orderedKeys = Array.isArray(keys) ? keys.filter(Boolean) : [];
+  if (!orderedKeys.length) return null;
+  const currentIndex = Math.max(0, orderedKeys.indexOf(currentKey));
+  if (keyboardKey === "Home") return orderedKeys[0];
+  if (keyboardKey === "End") return orderedKeys.at(-1);
+  if (keyboardKey === "ArrowRight") return orderedKeys[(currentIndex + 1) % orderedKeys.length];
+  if (keyboardKey === "ArrowLeft") return orderedKeys[(currentIndex - 1 + orderedKeys.length) % orderedKeys.length];
+  return null;
+}
+
 export function createHomeStatsTabsController({ documentRef, tabs, initialTab = "leaderboard", isEnabled, translate, scrollToTabs }) {
   let activeTab = tabs[initialTab] ? initialTab : "leaderboard";
   let hostedTab = null;
@@ -56,6 +67,13 @@ export function createHomeStatsTabsController({ documentRef, tabs, initialTab = 
     bound = true;
     documentRef.querySelectorAll("[data-stats-tab]").forEach(button => {
       lifecycle.listen(button, "click", () => setActive(button.dataset.statsTab || "leaderboard"));
+      lifecycle.listen(button, "keydown", event => {
+        const nextKey = resolveNextHomeStatsTab(Object.keys(tabs), button.dataset.statsTab || activeTab, event.key);
+        if (!nextKey) return;
+        event.preventDefault();
+        setActive(nextKey);
+        documentRef.querySelector(`[data-stats-tab="${nextKey}"]`)?.focus();
+      });
     });
     Object.values(tabs).forEach(({ panelId }) => {
       const tools = documentRef.getElementById(panelId)?.querySelector(".table-tools");
