@@ -2,7 +2,7 @@ import { readFile } from "node:fs/promises";
 import { resolve } from "node:path";
 
 const root = resolve(import.meta.dirname, "../..");
-const [html, tokensCss, baseCss, siteBackgroundCss, topNavigationCss, languageSwitchCss, buttonsCss, heroFoundationCss, heroActionsCss, heroStatsCss, serverStickyLayoutCss, sectionsCss, supportWidgetCss, tableControlsCss, topThreeCss, tablesCss, paginationCss, modalsCss, serverPlayersModalCss, todayStatsModalCss, activityControlsCss, activitySummaryCss, hourlyEventModalCss, driverDayModalCss, footerCss, utilitiesCss, responsiveCss, legacyCss, heroLayoutCss, heroServerSummaryCss, js, pageFeatureLoader] = await Promise.all([
+const [html, tokensCss, baseCss, siteBackgroundCss, topNavigationCss, languageSwitchCss, buttonsCss, heroFoundationCss, heroActionsCss, heroStatsCss, serverStickyLayoutCss, sectionsCss, supportWidgetCss, tableControlsCss, topThreeCss, tablesCss, paginationCss, modalsCss, serverPlayersModalCss, todayStatsModalCss, activityControlsCss, activitySummaryCss, hourlyEventModalCss, driverDayModalCss, footerCss, utilitiesCss, responsiveCss, legacyCss, heroLayoutCss, heroServerSummaryCss, floatingWidgetsCss, js, pageFeatureLoader] = await Promise.all([
   readFile(resolve(root, "index.html"), "utf8"),
   readFile(resolve(root, "styles/tokens.css"), "utf8"),
   readFile(resolve(root, "styles/base.css"), "utf8"),
@@ -33,10 +33,11 @@ const [html, tokensCss, baseCss, siteBackgroundCss, topNavigationCss, languageSw
   readFile(resolve(root, "styles.css"), "utf8"),
   readFile(resolve(root, "styles/components/hero-layout.css"), "utf8"),
   readFile(resolve(root, "styles/components/hero-server-summary.css"), "utf8"),
+  readFile(resolve(root, "styles/components/floating-widgets.css"), "utf8"),
   readFile(resolve(root, "app.js"), "utf8"),
   readFile(resolve(root, "src/runtime/page-feature-loader.js"), "utf8")
 ]);
-const css = `${tokensCss}\n${baseCss}\n${siteBackgroundCss}\n${topNavigationCss}\n${languageSwitchCss}\n${buttonsCss}\n${heroFoundationCss}\n${heroActionsCss}\n${heroStatsCss}\n${serverStickyLayoutCss}\n${sectionsCss}\n${supportWidgetCss}\n${tableControlsCss}\n${topThreeCss}\n${tablesCss}\n${paginationCss}\n${modalsCss}\n${serverPlayersModalCss}\n${todayStatsModalCss}\n${activityControlsCss}\n${activitySummaryCss}\n${hourlyEventModalCss}\n${driverDayModalCss}\n${footerCss}\n${utilitiesCss}\n${legacyCss}\n${responsiveCss}\n${heroLayoutCss}\n${heroServerSummaryCss}`;
+const css = `${tokensCss}\n${baseCss}\n${siteBackgroundCss}\n${topNavigationCss}\n${languageSwitchCss}\n${buttonsCss}\n${heroFoundationCss}\n${heroActionsCss}\n${heroStatsCss}\n${serverStickyLayoutCss}\n${sectionsCss}\n${supportWidgetCss}\n${tableControlsCss}\n${topThreeCss}\n${tablesCss}\n${paginationCss}\n${modalsCss}\n${serverPlayersModalCss}\n${todayStatsModalCss}\n${activityControlsCss}\n${activitySummaryCss}\n${hourlyEventModalCss}\n${driverDayModalCss}\n${footerCss}\n${utilitiesCss}\n${legacyCss}\n${responsiveCss}\n${heroLayoutCss}\n${heroServerSummaryCss}\n${floatingWidgetsCss}`;
 const failures = [];
 const pageFeatureIsLoaded = path => pageFeatureLoader.includes(`"${path}"`);
 const pageEntrypoints = {
@@ -182,6 +183,8 @@ if (!css.includes("@layer legacy {") || !css.includes("} /* end legacy */")) fai
 if (css.indexOf("@layer legacy {") >= css.indexOf("} /* end legacy */") || css.indexOf("@layer overrides {") <= css.indexOf("} /* end legacy */")) failures.push("Consolidated CSS must follow the complete legacy migration boundary");
 if (/\.hero-server-total-stat\s*,\s*\.support-sticky-widget/.test(css)) failures.push("Hero total players card must not be part of the hidden legacy support group");
 if (!html.includes('./styles/components/hero-server-summary.css?v=20260715r12cards3')) failures.push("Home must load the extracted hero server summary component after styles.css");
+if (!html.includes('./styles/components/floating-widgets.css?v=20260715r12floating1')) failures.push("Home must load the floating widget coordination component");
+if (!floatingWidgetsCss.includes("body.modal-open .server-sticky-widget") || !floatingWidgetsCss.includes("body.modal-open .donation-alerts-widget") || !floatingWidgetsCss.includes("pointer-events: none;")) failures.push("Floating widgets must not remain visible or interactive above modal overlays");
 if (legacyCss.includes("Consolidated hero server summary") || !heroServerSummaryCss.includes(".hero-server-total-stat")) failures.push("Hero server summary must have one physical component source");
 if (!heroServerSummaryCss.includes("grid-template-columns: minmax(0, 1fr) auto;") || !heroServerSummaryCss.includes("font-variant-numeric: tabular-nums;")) failures.push("Hero paired mini stats must reserve independent label and numeric columns");
 if (!heroServerSummaryCss.includes("grid-template-rows: repeat(2, minmax(62px, auto));") || !heroServerSummaryCss.includes(".hero-side-compact > .hero-server-total-stat") || !heroServerSummaryCss.includes(".hero-side-compact > .mini-stat-drivers-count") || !heroServerSummaryCss.includes("grid-template-columns: repeat(2, minmax(0, 1fr));")) failures.push("Hero mini stats must preserve the explicit desktop 2x2 grid");
@@ -231,7 +234,7 @@ for (const [className, imageName] of [["monza", "main.jpg"], ["sunset", "sunset.
 }
 const budgets = {
   important: [(css.match(/!important/g) || []).length, 12],
-  mediaQuery: [(css.match(/@media\b/g) || []).length, 59],
+  mediaQuery: [(css.match(/@media\b/g) || []).length, 63],
   zIndex: [(css.match(/\bz-index\s*:/g) || []).length, 48],
   hexColor: [(css.match(/#[0-9a-f]{3,8}\b/gi) || []).length, 252],
   silentCatch: [(js.match(/\.catch\(\(\)\s*=>\s*null\)/g) || []).length, 28],

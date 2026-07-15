@@ -1,0 +1,40 @@
+@layer overrides {
+  .server-sticky-widget,
+  .donation-alerts-widget {
+    transition: opacity 0.18s ease, visibility 0.18s ease, transform 0.18s ease;
+  }
+
+  body.modal-open .server-sticky-widget,
+  body.modal-open .donation-alerts-widget {
+    opacity: 0;
+    visibility: hidden;
+    pointer-events: none;
+  }
+
+  @media (min-width: 1280px) and (max-width: 1360px) {
+    .donation-alerts-widget {
+      right: auto;
+      bottom: 24px;
+      left: 12px;
+    }
+  }
+
+  @media (max-width: 1279px) {
+    .server-sticky-widget {
+      display: none;
+    }
+  }
+
+  @media (max-width: 760px) {
+    .donation-alerts-widget {
+      display: none;
+    }
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .server-sticky-widget,
+    .donation-alerts-widget {
+      transition: none;
+    }
+  }
+}
