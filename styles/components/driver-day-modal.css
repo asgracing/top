@@ -1,0 +1,971 @@
+@layer components {
+/* ===== DRIVER OF THE DAY MODAL ===== */
+
+.driver-day-grid {
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+}
+
+.driver-day-card-wide {
+  grid-column: span 3;
+}
+
+.driver-day-card-wide .today-stat-value {
+  font-size: clamp(1.55rem, 2.4vw, 2.2rem);
+}
+
+.modal-card-driver-preview {
+  width: min(980px, 100%);
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+}
+
+.modal-header-driver-preview {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 16px;
+}
+
+.btn-driver-preview-link {
+  flex: 0 0 auto;
+  min-height: 46px;
+  padding: 0 18px;
+  border: 1px solid rgba(255, 143, 82, 0.92);
+  border-radius: 16px;
+  background: linear-gradient(180deg, #ff7a3d, #f05a22);
+  color: #ffffff;
+  font-weight: 800;
+  text-decoration: none;
+  box-shadow: 0 18px 34px rgba(240, 90, 34, 0.28);
+}
+
+.btn-driver-preview-link:hover,
+.btn-driver-preview-link:focus-visible {
+  background: linear-gradient(180deg, #ff8b57, #f56a37);
+  color: #ffffff;
+  transform: translateY(-1px);
+  box-shadow: 0 22px 40px rgba(240, 90, 34, 0.34);
+}
+
+.driver-preview-stats-grid {
+  margin-top: 0;
+}
+
+.driver-preview-scroll {
+  flex: 1 1 auto;
+  min-height: 0;
+  overflow: auto;
+  overscroll-behavior: contain;
+  -webkit-overflow-scrolling: touch;
+  padding-bottom: 8px;
+}
+
+.modal-card-elo {
+  width: min(960px, 100%);
+}
+
+.elo-modal-summary {
+  display: grid;
+  grid-template-columns: minmax(160px, 0.45fr) minmax(0, 1fr);
+  gap: 10px;
+  margin-bottom: 12px;
+}
+
+.elo-modal-rating,
+.elo-modal-category {
+  min-height: 66px;
+  padding: 11px 13px;
+  border: 1px solid var(--line);
+  border-radius: 18px;
+  background: rgba(255, 255, 255, 0.045);
+}
+
+.elo-modal-rating {
+  color: var(--elo-fg);
+  background: var(--elo-bg);
+  border-color: var(--elo-border);
+}
+
+.elo-modal-rating.sr-cat-A,
+.elo-modal-rating.sr-cat-B,
+.elo-modal-rating.sr-cat-C {
+  color: var(--sr-fg);
+  background: var(--sr-bg);
+  border-color: var(--sr-border);
+}
+
+.elo-modal-label {
+  display: block;
+  margin-bottom: 6px;
+  color: inherit;
+  opacity: 0.72;
+  font-size: 0.72rem;
+  font-weight: 800;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+}
+
+.elo-modal-value {
+  display: block;
+  font-size: clamp(1.5rem, 3.8vw, 2.45rem);
+  font-weight: 950;
+  line-height: 0.95;
+}
+
+.elo-modal-category-name {
+  color: var(--text);
+  font-size: clamp(0.96rem, 1.8vw, 1.32rem);
+  font-weight: 900;
+  line-height: 1.1;
+}
+
+.elo-modal-controls {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  flex-wrap: wrap;
+  margin-bottom: 12px;
+  font-size: 0.84rem;
+}
+
+.segmented-control {
+  display: inline-flex;
+  gap: 4px;
+  padding: 3px;
+  border: 1px solid var(--line);
+  border-radius: 999px;
+  background: rgba(255, 255, 255, 0.04);
+}
+
+.segmented-control button {
+  min-height: 29px;
+  padding: 0 10px;
+  border: 0;
+  border-radius: 999px;
+  background: transparent;
+  color: var(--muted);
+  font: inherit;
+  font-size: 0.69rem;
+  font-weight: 800;
+  cursor: pointer;
+}
+
+.segmented-control button.active,
+.segmented-control button:hover,
+.segmented-control button:focus-visible {
+  background: rgba(255, 255, 255, 0.12);
+  color: var(--text);
+}
+
+.elo-chart-wrap {
+  min-height: 186px;
+  padding: 10px;
+  border: 1px solid var(--line);
+  border-radius: 18px;
+  background: rgba(9, 13, 18, 0.42);
+  overflow: hidden;
+}
+
+.elo-chart {
+  display: block;
+  width: 100%;
+  height: auto;
+}
+
+.elo-chart-grid-line {
+  stroke: rgba(255, 255, 255, 0.09);
+  stroke-width: 1;
+}
+
+.elo-chart-axis {
+  fill: rgba(232, 238, 248, 0.64);
+  font-size: 12px;
+  font-weight: 700;
+}
+
+.elo-chart-area {
+  fill: rgba(255, 122, 61, 0.14);
+}
+
+.elo-chart-line {
+  fill: none;
+  stroke: #ffd166;
+  stroke-width: 3;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+}
+
+.elo-chart-dot {
+  fill: #ffd166;
+  stroke: #111820;
+  stroke-width: 2;
+}
+
+.elo-chart-dot-button {
+  cursor: pointer;
+}
+
+.elo-chart-dot-button:focus-visible .elo-chart-dot-hit,
+.elo-chart-dot-button:hover .elo-chart-dot-hit {
+  fill: rgba(255, 209, 102, 0.16);
+}
+
+.elo-chart-dot-button:focus-visible {
+  outline: none;
+}
+
+.elo-chart-dot-hit {
+  fill: transparent;
+  stroke: transparent;
+}
+
+.elo-chart-empty {
+  display: grid;
+  min-height: 240px;
+  place-items: center;
+  color: var(--muted);
+  font-weight: 800;
+}
+
+.elo-about-block {
+  display: grid;
+  grid-template-columns: minmax(0, 0.95fr) minmax(320px, 1.25fr);
+  gap: 18px;
+  margin: 26px 0;
+  padding: 20px;
+  border: 1px solid var(--line);
+  border-radius: 18px;
+  background: linear-gradient(180deg, rgba(255, 255, 255, 0.055), rgba(255, 255, 255, 0.03));
+}
+
+.sr-breakdown-popover {
+  position: fixed;
+  z-index: var(--layer-toast);
+  width: min(236px, calc(100vw - 24px));
+  max-width: min(236px, calc(100vw - 24px));
+}
+
+.elo-history-popover {
+  width: min(248px, calc(100vw - 24px));
+  max-width: min(248px, calc(100vw - 24px));
+}
+
+.sr-breakdown-popover-card {
+  display: grid;
+  gap: 8px;
+  padding: 10px 11px;
+  border: 1px solid rgba(255, 255, 255, 0.14);
+  border-radius: 14px;
+  background:
+    linear-gradient(180deg, rgba(18, 24, 34, 0.98), rgba(12, 17, 25, 0.98));
+  box-shadow:
+    0 22px 44px rgba(0, 0, 0, 0.34),
+    inset 0 1px 0 rgba(255, 255, 255, 0.05);
+  backdrop-filter: blur(10px);
+}
+
+.sr-breakdown-loading,
+.sr-breakdown-empty {
+  color: var(--muted);
+  font-size: 0.65rem;
+  font-weight: 700;
+  line-height: 1.35;
+}
+
+.sr-breakdown-summary {
+  color: rgba(232, 238, 248, 0.78);
+  font-size: 0.58rem;
+  font-weight: 700;
+  line-height: 1.3;
+}
+
+.sr-breakdown-table {
+  width: 100%;
+  margin: 0;
+  display: grid;
+  gap: 0;
+}
+
+.sr-breakdown-row {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) auto;
+  align-items: center;
+  column-gap: 8px;
+  padding: 6px 0;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+}
+
+.sr-breakdown-row:last-child {
+  border-bottom: none;
+}
+
+.sr-breakdown-table dt,
+.sr-breakdown-table dd {
+  margin: 0;
+  font-size: 0.63rem;
+  line-height: 1.2;
+}
+
+.sr-breakdown-table dt {
+  color: var(--muted);
+  font-weight: 700;
+  text-align: left;
+  white-space: normal;
+  overflow-wrap: anywhere;
+  min-width: 0;
+}
+
+.sr-breakdown-table dd {
+  color: var(--text);
+  font-weight: 900;
+  text-align: right;
+  white-space: nowrap;
+  justify-self: end;
+}
+
+.sr-breakdown-open-race {
+  width: 100%;
+  justify-content: center;
+  min-width: 0;
+  min-height: 30px;
+  padding: 0 8px;
+  font-size: 0.62rem;
+}
+
+.elo-about-copy h3 {
+  margin: 0 0 10px;
+  color: var(--text);
+}
+
+.elo-about-copy p:last-child {
+  margin-bottom: 0;
+}
+
+.elo-category-grid {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 10px;
+}
+
+.elo-category-card {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  min-height: 58px;
+  padding: 10px 12px;
+  border: 1px solid var(--elo-border);
+  border-radius: 16px;
+  background: var(--elo-bg);
+  color: var(--elo-fg);
+}
+
+.elo-category-card span {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 38px;
+  height: 32px;
+  border-radius: 999px;
+  background: rgba(255, 255, 255, 0.16);
+  color: var(--elo-accent);
+  font-weight: 950;
+}
+
+.elo-category-card strong {
+  font-size: 0.86rem;
+  line-height: 1.15;
+}
+
+.elo-category-card small {
+  margin-left: auto;
+  color: inherit;
+  font-size: 0.78rem;
+  font-weight: 900;
+  opacity: 0.78;
+  white-space: nowrap;
+}
+
+.safety-about-block {
+  margin-top: 18px;
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 14px;
+}
+
+.safety-category-grid {
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 12px;
+}
+
+.safety-category-grid .elo-category-card {
+  min-height: 48px;
+  padding: 9px 12px;
+  border-color: var(--sr-border);
+  background: var(--sr-bg);
+  color: var(--sr-fg);
+}
+
+.safety-category-grid .elo-category-card span {
+  width: 34px;
+  height: 28px;
+  background: rgba(255, 255, 255, 0.14);
+  color: var(--sr-accent);
+}
+
+.safety-category-grid .elo-category-card strong {
+  font-size: 0.8rem;
+}
+
+.safety-category-grid .elo-category-card small {
+  font-size: 0.72rem;
+}
+
+.safety-reason-card {
+  margin-top: 14px;
+  padding: 14px;
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  border-radius: 16px;
+  background: rgba(255, 255, 255, 0.045);
+}
+
+.safety-reason-title {
+  font-size: 0.9rem;
+  font-weight: 900;
+  color: var(--text);
+}
+
+.safety-reason-card p {
+  margin: 8px 0 0;
+  color: var(--muted);
+}
+
+.safety-reason-card dl {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 8px 12px;
+  margin: 12px 0 0;
+}
+
+.safety-reason-card dl > div {
+  display: flex;
+  flex-direction: row;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: 10px;
+  padding-top: 8px;
+  border-top: 1px solid rgba(255, 255, 255, 0.08);
+}
+
+.safety-reason-card dt {
+  color: var(--muted);
+  font-size: 0.72rem;
+  line-height: 1.2;
+}
+
+.safety-reason-card dd {
+  margin: 0;
+  color: var(--text);
+  font-weight: 900;
+  text-align: right;
+  white-space: nowrap;
+  font-size: 0.92rem;
+}
+
+.elo-period-pager {
+  font-size: 0.76rem;
+}
+
+.elo-period-pager button {
+  min-width: 28px;
+  min-height: 28px;
+}
+
+#driver-of-day-content.is-empty {
+  opacity: 0.45;
+}
+
+.modal-card-race {
+  width: min(1280px, 100%);
+}
+
+.race-modal-summary {
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  gap: 12px;
+  margin-bottom: 18px;
+}
+
+.race-summary-card {
+  padding: 16px;
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  border-radius: 18px;
+  background: rgba(255, 255, 255, 0.045);
+}
+
+#race-results-table tr.race-result-row-highlight {
+  background: rgba(255, 122, 61, 0.11);
+  box-shadow: inset 0 0 0 1px rgba(255, 154, 98, 0.28);
+}
+
+#race-results-table tr.race-result-row-highlight:hover,
+#race-results-table tr.race-result-row-highlight:focus-visible {
+  background: rgba(255, 122, 61, 0.16);
+}
+
+#race-results-table tr.race-result-row-highlight .driver-name,
+#race-results-table tr.race-result-row-highlight .positions-delta,
+#race-results-table tr.race-result-row-highlight td {
+  color: inherit;
+}
+
+.race-driver-title {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  flex-wrap: wrap;
+  min-width: 0;
+}
+
+.race-driver-meta-line {
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 6px;
+  margin-top: 4px;
+}
+
+.race-driver-title .driver-name {
+  min-width: 0;
+}
+
+.race-driver-elo .elo-badge {
+  min-height: 26px;
+  padding: 0 8px;
+  font-size: 0.72rem;
+}
+
+.race-driver-elo .elo-badge-rank {
+  min-width: 24px;
+  min-height: 18px;
+  padding: 0 5px;
+}
+
+.race-result-car-cell {
+  width: 118px;
+  max-width: 130px;
+}
+
+.race-result-car-cell .car-label-inline {
+  max-width: 100%;
+}
+
+.race-result-car-cell .car-label-inline > span,
+.race-result-car-cell .car-label-inline > a {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+#bestlaps-table th {
+  padding-top: 12px;
+  padding-bottom: 12px;
+}
+
+.table-filter-row {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 12px 16px 0;
+}
+
+.table-filter-label {
+  color: var(--muted);
+  font-size: 13px;
+}
+
+.track-filter-select {
+  min-width: 180px;
+  height: 40px;
+  border: 1px solid rgba(255, 255, 255, 0.18);
+  border-radius: 12px;
+  background:
+    linear-gradient(180deg, rgba(20, 28, 38, 0.96), rgba(17, 24, 33, 0.92));
+  color: var(--text);
+  color-scheme: dark;
+  padding: 0 34px 0 12px;
+  font-size: 14px;
+  font-weight: 800;
+  outline: none;
+  box-shadow:
+    inset 0 1px 0 rgba(255, 255, 255, 0.04),
+    0 10px 24px rgba(0, 0, 0, 0.16);
+}
+
+.track-filter-select:focus {
+  border-color: rgba(255, 91, 46, 0.72);
+  background:
+    linear-gradient(180deg, rgba(23, 31, 42, 0.98), rgba(20, 28, 38, 0.94));
+  box-shadow:
+    0 0 0 4px rgba(255, 91, 46, 0.16),
+    0 14px 30px rgba(0, 0, 0, 0.22);
+}
+
+.track-filter-select option {
+  background: #111821;
+  color: var(--text);
+  font-weight: 700;
+}
+
+.bestlap-tracks-open,
+.driver-stat-label-button {
+  border: 0;
+  background: transparent;
+  color: inherit;
+  cursor: pointer;
+  padding: 0;
+  font: inherit;
+  text-align: inherit;
+}
+
+.driver-stat-label-button {
+  color: var(--muted);
+}
+
+.bestlap-track-list {
+  display: grid;
+  gap: 10px;
+}
+
+.bestlap-track-row {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) auto;
+  gap: 14px;
+  align-items: center;
+  border: 1px solid var(--line);
+  border-radius: 8px;
+  padding: 12px;
+  background: rgba(255, 255, 255, 0.035);
+}
+
+.bestlap-track-main,
+.bestlap-track-side {
+  display: grid;
+  gap: 3px;
+}
+
+.bestlap-track-side {
+  text-align: right;
+}
+
+.bestlap-track-name {
+  font-weight: 800;
+}
+
+.bestlap-track-driver,
+.bestlap-track-side span:last-child {
+  color: var(--muted);
+  font-size: 13px;
+}
+
+#bestlaps-table td {
+  padding-top: 6px;
+  padding-bottom: 6px;
+}
+
+#bestlaps-table .rank-badge {
+  height: 30px;
+  min-width: 30px;
+}
+
+#bestlaps-table .elo-badge-compact {
+  min-height: 28px;
+}
+
+#bestlaps-table .sr-badge-compact {
+  min-height: 28px;
+}
+
+#leaderboard-table th {
+  padding-top: 10px;
+  padding-bottom: 10px;
+  font-size: 0.74rem;
+  line-height: 1.1;
+}
+
+#leaderboard-table { overflow-x: auto; }
+
+#leaderboard-table .leaderboard-stats-table {
+  width: 100%;
+  min-width: 1180px;
+  table-layout: fixed;
+}
+
+#leaderboard-table .rank-column { width: 62px; }
+#leaderboard-table .driver-column { width: 18%; }
+#leaderboard-table .elo-column { width: 106px; }
+#leaderboard-table .sr-column { width: 88px; }
+#leaderboard-table .points-column { width: 76px; }
+#leaderboard-table .wins-column { width: 82px; }
+#leaderboard-table .podiums-column { width: 88px; }
+#leaderboard-table .races-column { width: 76px; }
+#leaderboard-table .avg-finish-column { width: 112px; }
+#leaderboard-table .best-lap-column { width: 128px; }
+#leaderboard-table .car-column { width: 16%; }
+
+#leaderboard-table th,
+#leaderboard-table td {
+  height: 52px;
+  box-sizing: border-box;
+}
+
+#leaderboard-table th {
+  padding-left: 7px;
+  padding-right: 7px;
+  white-space: nowrap;
+}
+
+#leaderboard-table td.numeric-cell {
+  padding-left: 7px;
+  padding-right: 7px;
+  text-align: center;
+  white-space: nowrap;
+  font-variant-numeric: tabular-nums;
+}
+
+#leaderboard-table td.rank-column {
+  padding-left: 5px;
+  padding-right: 5px;
+}
+
+#leaderboard-table td.rank-column .rank-badge-wrap {
+  width: 100%;
+  min-width: 0;
+  gap: 3px;
+  justify-content: center;
+}
+
+#leaderboard-table td.rank-column .rank-badge {
+  width: 100%;
+  min-width: 0;
+  height: 30px;
+  padding: 0 4px;
+  font-size: 0.76rem;
+  line-height: 1;
+  font-variant-numeric: tabular-nums;
+}
+
+#leaderboard-table .driver-cell-wrapper,
+#leaderboard-table .car-cell-wrapper {
+  padding-left: 12px;
+  padding-right: 12px;
+}
+
+#leaderboard-table .driver-cell,
+#leaderboard-table .driver-name-wrap { min-width: 0; }
+
+#leaderboard-table .driver-name-wrap { gap: 2px; }
+
+#leaderboard-table .driver-name,
+#leaderboard-table .car-cell {
+  min-width: 0;
+  line-height: 1.15;
+  display: -webkit-box;
+  overflow: hidden;
+  -webkit-box-orient: vertical;
+  -webkit-line-clamp: 2;
+  word-break: normal;
+  overflow-wrap: normal;
+}
+
+#leaderboard-table .driver-team {
+  color: var(--muted);
+  font-size: 12px;
+  line-height: 1;
+  white-space: nowrap;
+}
+
+#leaderboard-table .elo-badge,
+#leaderboard-table .sr-badge {
+  width: fit-content;
+  max-width: 100%;
+  white-space: nowrap;
+}
+
+#leaderboard-table td.elo-column .elo-badge,
+#leaderboard-table td.sr-column .sr-badge { margin-inline: auto; }
+
+.table-sort-button {
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  min-height: 32px;
+  padding: 0;
+  border: 0;
+  background: transparent;
+  color: inherit;
+  font: inherit;
+  font-weight: inherit;
+  letter-spacing: inherit;
+  text-transform: inherit;
+  white-space: nowrap;
+  cursor: pointer;
+}
+
+.table-sort-button:focus-visible {
+  outline: 2px solid var(--accent-2);
+  outline-offset: 3px;
+  border-radius: 4px;
+}
+
+th.sortable::after { content: none; }
+
+.table-sort-button .sort-icon {
+  color: var(--muted);
+  font-size: 12px;
+  line-height: 1;
+}
+
+th.sort-asc .table-sort-button .sort-icon { color: var(--accent-2); }
+th.sort-desc .table-sort-button .sort-icon { color: var(--accent); }
+
+@media (pointer: coarse) {
+  .table-sort-button,
+  .elo-badge,
+  .sr-badge,
+  .driver-link {
+    position: relative;
+    touch-action: manipulation;
+  }
+
+  .table-sort-button::before,
+  .elo-badge::before,
+  .sr-badge::before,
+  .driver-link::before {
+    content: "";
+    position: absolute;
+    inset: -9px -6px;
+    min-width: 44px;
+    min-height: 44px;
+  }
+
+  .modal-close,
+  .page-btn {
+    min-width: 44px;
+    min-height: 44px;
+    touch-action: manipulation;
+  }
+
+  tbody tr.is-driver-preview-row:hover {
+    transform: none;
+  }
+}
+
+#bestlaps-table .car-thumb-inline {
+  width: 42px;
+  height: 28px;
+}
+
+#bestlaps-table .driver-cell {
+  gap: 8px;
+}
+
+.status-badge {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  margin-top: 4px;
+  padding: 4px 8px;
+  border-radius: 999px;
+  font-size: 11px;
+  font-weight: 800;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+  color: #ffd166;
+  background: rgba(255, 209, 102, 0.12);
+  border: 1px solid rgba(255, 209, 102, 0.24);
+}
+
+.banned-badge {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: max-content;
+  max-width: 100%;
+  padding: 6px 10px;
+  border-radius: 999px;
+  border: 1px solid rgba(255, 93, 93, 0.44);
+  color: #ffe8e8;
+  background: linear-gradient(135deg, rgba(239, 68, 68, 0.92), rgba(128, 22, 31, 0.84));
+  box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.14), 0 10px 22px rgba(239, 68, 68, 0.16);
+  font-size: 0.78rem;
+  font-weight: 950;
+  letter-spacing: 0.04em;
+  line-height: 1;
+  text-transform: uppercase;
+  white-space: nowrap;
+}
+
+.banned-badge-compact {
+  padding: 5px 8px;
+  font-size: 0.72rem;
+}
+
+.safety-row.is-banned td {
+  background: rgba(239, 68, 68, 0.045);
+}
+
+.race-summary-label {
+  margin-bottom: 8px;
+  font-size: 0.85rem;
+  color: var(--muted);
+}
+
+.race-summary-value {
+  font-size: 1.1rem;
+  font-weight: 800;
+  line-height: 1.25;
+}
+
+.table-card-modal {
+  border-radius: 18px;
+}
+
+@media (max-width: 760px) {
+  .elo-modal-summary,
+  .elo-about-block,
+  .elo-category-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .elo-modal-controls {
+    align-items: stretch;
+  }
+
+  .segmented-control {
+    width: 100%;
+    justify-content: space-between;
+  }
+
+  .segmented-control button {
+    flex: 1 1 auto;
+    padding: 0 8px;
+  }
+
+  .safety-reason-card dl {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+
+  .safety-category-grid {
+    grid-template-columns: 1fr;
+  }
+}
+
+@media (max-width: 560px) {
+  .safety-reason-card dl {
+    grid-template-columns: 1fr;
+  }
+}
+
++}

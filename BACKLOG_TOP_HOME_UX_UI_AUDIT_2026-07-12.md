@@ -779,3 +779,5 @@
 - R11: activity month/day controls и calendar overview вынесены в `styles/components/activity-controls.css`; граница с activity summary закреплена quality gate.
 - R11: activity summary cards и 24-часовой график вынесены в `styles/components/activity-summary.css`; компонент подключён на всех маршрутах и защищён от повторного появления в legacy CSS.
 - R11: полное содержимое модалки часового события, включая responsive-варианты, вынесено в `styles/components/hourly-event-modal.css`; блокировка прокрутки и приоритетный modal layer сохранены.
+- R11: модалка «Пилот дня» вынесена в `styles/components/driver-day-modal.css`, footer — в `styles/components/footer.css`.
+- R11: utility/state helpers и базовый responsive-слой получили отдельные файлы `styles/utilities.css` и `styles/responsive.css`; все четыре модуля подключены на восьми маршрутах и входят в CSS quality budgets.

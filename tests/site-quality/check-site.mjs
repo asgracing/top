@@ -2,7 +2,7 @@ import { readFile } from "node:fs/promises";
 import { resolve } from "node:path";
 
 const root = resolve(import.meta.dirname, "../..");
-const [html, tokensCss, baseCss, siteBackgroundCss, topNavigationCss, languageSwitchCss, buttonsCss, heroFoundationCss, heroActionsCss, heroStatsCss, serverStickyLayoutCss, sectionsCss, supportWidgetCss, tableControlsCss, topThreeCss, tablesCss, paginationCss, modalsCss, serverPlayersModalCss, todayStatsModalCss, activityControlsCss, activitySummaryCss, hourlyEventModalCss, legacyCss, heroLayoutCss, heroServerSummaryCss, js, pageFeatureLoader] = await Promise.all([
+const [html, tokensCss, baseCss, siteBackgroundCss, topNavigationCss, languageSwitchCss, buttonsCss, heroFoundationCss, heroActionsCss, heroStatsCss, serverStickyLayoutCss, sectionsCss, supportWidgetCss, tableControlsCss, topThreeCss, tablesCss, paginationCss, modalsCss, serverPlayersModalCss, todayStatsModalCss, activityControlsCss, activitySummaryCss, hourlyEventModalCss, driverDayModalCss, footerCss, utilitiesCss, responsiveCss, legacyCss, heroLayoutCss, heroServerSummaryCss, js, pageFeatureLoader] = await Promise.all([
   readFile(resolve(root, "index.html"), "utf8"),
   readFile(resolve(root, "styles/tokens.css"), "utf8"),
   readFile(resolve(root, "styles/base.css"), "utf8"),
@@ -26,13 +26,17 @@ const [html, tokensCss, baseCss, siteBackgroundCss, topNavigationCss, languageSw
   readFile(resolve(root, "styles/components/activity-controls.css"), "utf8"),
   readFile(resolve(root, "styles/components/activity-summary.css"), "utf8"),
   readFile(resolve(root, "styles/components/hourly-event-modal.css"), "utf8"),
+  readFile(resolve(root, "styles/components/driver-day-modal.css"), "utf8"),
+  readFile(resolve(root, "styles/components/footer.css"), "utf8"),
+  readFile(resolve(root, "styles/utilities.css"), "utf8"),
+  readFile(resolve(root, "styles/responsive.css"), "utf8"),
   readFile(resolve(root, "styles.css"), "utf8"),
   readFile(resolve(root, "styles/components/hero-layout.css"), "utf8"),
   readFile(resolve(root, "styles/components/hero-server-summary.css"), "utf8"),
   readFile(resolve(root, "app.js"), "utf8"),
   readFile(resolve(root, "src/runtime/page-feature-loader.js"), "utf8")
 ]);
-const css = `${tokensCss}\n${baseCss}\n${siteBackgroundCss}\n${topNavigationCss}\n${languageSwitchCss}\n${buttonsCss}\n${heroFoundationCss}\n${heroActionsCss}\n${heroStatsCss}\n${serverStickyLayoutCss}\n${sectionsCss}\n${supportWidgetCss}\n${tableControlsCss}\n${topThreeCss}\n${tablesCss}\n${paginationCss}\n${modalsCss}\n${serverPlayersModalCss}\n${todayStatsModalCss}\n${activityControlsCss}\n${activitySummaryCss}\n${hourlyEventModalCss}\n${legacyCss}\n${heroLayoutCss}\n${heroServerSummaryCss}`;
+const css = `${tokensCss}\n${baseCss}\n${siteBackgroundCss}\n${topNavigationCss}\n${languageSwitchCss}\n${buttonsCss}\n${heroFoundationCss}\n${heroActionsCss}\n${heroStatsCss}\n${serverStickyLayoutCss}\n${sectionsCss}\n${supportWidgetCss}\n${tableControlsCss}\n${topThreeCss}\n${tablesCss}\n${paginationCss}\n${modalsCss}\n${serverPlayersModalCss}\n${todayStatsModalCss}\n${activityControlsCss}\n${activitySummaryCss}\n${hourlyEventModalCss}\n${driverDayModalCss}\n${footerCss}\n${utilitiesCss}\n${legacyCss}\n${responsiveCss}\n${heroLayoutCss}\n${heroServerSummaryCss}`;
 const failures = [];
 const pageFeatureIsLoaded = path => pageFeatureLoader.includes(`"${path}"`);
 const pageEntrypoints = {
@@ -97,6 +101,12 @@ for (const [page, [htmlPath, entrySrc]] of Object.entries(pageEntrypoints)) {
   if (!pageHtml.includes(activitySummaryHref)) failures.push(`${page} page is missing the activity summary stylesheet`);
   const hourlyEventModalHref = page === "home" ? "./styles/components/hourly-event-modal.css?v=20260715r11hourlymodal1" : "../styles/components/hourly-event-modal.css?v=20260715r11hourlymodal1";
   if (!pageHtml.includes(hourlyEventModalHref)) failures.push(`${page} page is missing the hourly event modal stylesheet`);
+  for (const href of [
+    `${page === "home" ? "./" : "../"}styles/components/driver-day-modal.css?v=20260715r11driverday1`,
+    `${page === "home" ? "./" : "../"}styles/components/footer.css?v=20260715r11footer1`,
+    `${page === "home" ? "./" : "../"}styles/utilities.css?v=20260715r11utilities1`,
+    `${page === "home" ? "./" : "../"}styles/responsive.css?v=20260715r11responsive1`
+  ]) if (!pageHtml.includes(href)) failures.push(`${page} page is missing R11 stylesheet ${href}`);
 }
 const ids = [...html.matchAll(/\bid="([^"]+)"/g)].map(match => match[1]);
 const duplicates = [...new Set(ids.filter((id, index) => ids.indexOf(id) !== index))];
@@ -206,7 +216,10 @@ if (!activityControlsCss.includes("@layer components {") || !activityControlsCss
 if (!activitySummaryCss.includes(".activity-summary-grid {")) failures.push("Activity controls migration boundary is invalid");
 if (!activitySummaryCss.includes("@layer components {") || !activitySummaryCss.includes(".activity-hours-list") || !activitySummaryCss.includes(".activity-hour-bar-stage") || /\.activity-summary-grid\s*\{\s*display:\s*grid;/.test(legacyCss)) failures.push("Activity summary must have one physical component source");
 if (!hourlyEventModalCss.includes("body.modal-open {") || !hourlyEventModalCss.includes("#hourly-details-modal") || !hourlyEventModalCss.includes(".event-details-v2")) failures.push("Hourly event modal must have one physical component source");
-if (!legacyCss.includes("/* ===== DRIVER OF THE DAY MODAL ===== */")) failures.push("Hourly event modal migration boundary is invalid");
+if (!driverDayModalCss.includes("/* ===== DRIVER OF THE DAY MODAL ===== */") || !driverDayModalCss.includes(".driver-day-grid")) failures.push("Driver of the day modal must have one physical component source");
+if (!footerCss.includes("/* ===== FOOTER ===== */") || !footerCss.includes(".footer {") || !footerCss.includes(".footer-inner")) failures.push("Footer must have one physical component source");
+if (!utilitiesCss.includes("/* ===== UTILITY / STATE ===== */") || !responsiveCss.includes("/* ===== RESPONSIVE ===== */")) failures.push("Utility and responsive layers must have explicit physical sources");
+if (!legacyCss.includes("/* ===== FUN STATS PAGE ===== */")) failures.push("Responsive migration boundary is invalid");
 for (const [className, imageName] of [["monza", "main.jpg"], ["sunset", "sunset.jpg"], ["spa", "spa.jpg"], ["nurburgring", "nurburgring.jpg"], ["nurburgring24h", "Nurburgring24h.jpg"], ["silverstone", "silverstone.jpg"]]) {
   if (!heroStatsCss.includes(`.server-sticky-card-${className}`) || !heroStatsCss.includes(`url("../../assets/${imageName}")`)) failures.push(`Server card ${className} is missing its explicit class-based background image`);
 }
