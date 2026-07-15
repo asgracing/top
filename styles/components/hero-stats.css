@@ -149,11 +149,6 @@
     display: contents;
   }
   
-  .support-sticky-widget,
-  .support-mobile-cta {
-    display: none !important;
-  }
-  
   .hero-top3-panel {
     min-width: 0;
     align-self: end;

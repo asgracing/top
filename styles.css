@@ -1072,7 +1072,6 @@
 }
 
 @media (max-width: 1279px) {
-  .support-sticky-widget,
   .server-sticky-widget,
   .top-guide,
   .top-guide-launcher,
@@ -1084,11 +1083,6 @@
 @media (max-width: 768px) {
   .site-video-bg {
     display: none;
-  }
-
-  .support-mobile-cta {
-    display: block;
-    margin: 12px 0 4px;
   }
 }
 
@@ -1120,10 +1114,6 @@
   }
 
   .support-widget-btn {
-    animation: none;
-  }
-
-  .support-mobile-btn {
     animation: none;
   }
 
@@ -4651,12 +4641,7 @@
   .pulse-attention,
   .hero-hourly-promo-title.pulse-attention,
   .support-widget-btn,
-  .support-mobile-btn {
-    animation: none;
-  }
-
-  .support-widget-btn,
-  .support-mobile-btn {
+  .support-widget-btn {
     animation: supportWidgetPulseLite 5.6s ease-in-out infinite;
   }
 

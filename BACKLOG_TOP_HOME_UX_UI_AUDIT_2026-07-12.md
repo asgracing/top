@@ -22,7 +22,7 @@
 | R09 | Готово | Доступные sortable headers, modals, focus и touch interactions | R07, R08 |
 | R10 | Готово | Декомпозиция `app.js`, route-loaded page features и отдельные page entrypoints | R02–R09 |
 | R11 | Готово | CSS tokens/layers/components, z-index и breakpoint cleanup | R01 |
-| R12 | Ожидает | Hero/support/sticky/loading UI cleanup | R09, R11 |
+| R12 | В работе | Hero/support/sticky/loading UI cleanup | R09, R11 |
 | R13 | Ожидает | Responsive, reduced-motion, localization и full accessibility QA | R09, R12 |
 | R14 | Ожидает | Code splitting, media optimization и performance budgets | R10–R13 |
 | R15 | Ожидает | Проверяемый `dist`, CI quality gate и deployment smoke | R01–R14 |
@@ -783,3 +783,4 @@
 - R11: utility/state helpers и базовый responsive-слой получили отдельные файлы `styles/utilities.css` и `styles/responsive.css`; все четыре модуля подключены на восьми маршрутах и входят в CSS quality budgets.
 - R11 завершён: монолит `styles.css` сокращён с 13 221 до 4 673 строк; shared foundation, компоненты, utility и базовый responsive имеют явных владельцев и route coverage. Quality budgets: 12 `!important` (−88,7% от baseline 106), 56 media queries, 48 `z-index`, 252 hex colors.
 - Оставшиеся в legacy правила — page-specific Fun Stats и исторические hero visual overrides. Их визуальная консолидация относится к R12, чтобы не смешивать завершённую архитектурную миграцию с изменением hero UI.
+- 15.07.2026 — R12 начат: удалены скрытая legacy-разметка sticky support, неиспользуемый mobile CTA и их CSS. На главной остался один inline support-компонент; quality gate запрещает возврат дублирующих вариантов.
