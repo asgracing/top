@@ -1505,6 +1505,21 @@ body.championship-body .top-nav-menu {
   letter-spacing: -0.03em;
 }
 
+/* Endurance track-title accent: match the bright-green event badge. */
+.hourly-slot-card-v2.is-endurance-event .hourly-slot-card-v2-track {
+  width: fit-content;
+  max-width: 100%;
+  padding: 4px 9px 5px;
+  border: 1px solid rgba(143, 255, 117, 0.82);
+  border-radius: 9px;
+  background: linear-gradient(135deg, rgba(22, 163, 74, 0.9), rgba(57, 255, 20, 0.88));
+  color: #041408;
+  text-shadow: 0 1px 0 rgba(255, 255, 255, 0.22);
+  box-shadow:
+    0 8px 22px rgba(57, 255, 20, 0.26),
+    inset 0 1px 0 rgba(255, 255, 255, 0.18);
+}
+
 .hourly-slot-card-v2-weather {
   display: inline-flex;
   align-items: center;
