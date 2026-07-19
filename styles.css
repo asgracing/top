@@ -4726,11 +4726,11 @@
 .hero-hourly-card.is-endurance-event::before {
   border-radius: 22px;
   background:
-    linear-gradient(118deg, rgba(5, 14, 9, 0.92) 0%, rgba(7, 24, 12, 0.68) 52%, rgba(21, 92, 24, 0.3) 100%),
+    linear-gradient(118deg, rgba(5, 14, 9, 0.7) 0%, rgba(7, 24, 12, 0.52) 52%, rgba(21, 92, 24, 0.22) 100%),
     radial-gradient(circle at 88% 8%, rgba(57, 255, 20, 0.34), transparent 42%),
     var(--hero-hourly-track-photo);
-  background-position: center, 88% 8%, right center;
-  background-size: cover, cover, contain;
+  background-position: center, 88% 8%, center center;
+  background-size: cover, cover, cover;
   background-repeat: no-repeat;
   opacity: 0.96;
 }
