@@ -2837,7 +2837,11 @@ function renderHourlyHeroModal() {
   }
 
   const server = data?.server || {};
-  const session = data?.session || {};
+  const session = { ...(data?.session || {}) };
+  const eventRaceDuration = Number(data?.race_duration_minutes);
+  if (Number.isFinite(eventRaceDuration) && eventRaceDuration > 0) {
+    session.race_duration_minutes = eventRaceDuration;
+  }
   const rules = data?.rules || {};
   const weather = data?.weather || {};
   const startTime = getHourlyLocalizedField(data, "start_time_local", "—");

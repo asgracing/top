@@ -1281,6 +1281,12 @@ function buildRaceFormatTokenGroups(session) {
   }
   return [primary];
 }
+function getEventSession(data, fallback = {}) {
+  const session = { ...(fallback || {}), ...(data?.session || {}) };
+  const raceDuration = Number(data?.race_duration_minutes);
+  if (Number.isFinite(raceDuration) && raceDuration > 0) session.race_duration_minutes = raceDuration;
+  return session;
+}
 function buildPitstopTokenGroups(rules) {
   if (!rules || typeof rules !== "object") return [];
   const primary = [createHeroToken(formatMandatoryPitstopCount(rules.mandatory_pitstop_count), rules.mandatory_pitstop_count > 0 ? "primary" : "muted")];
@@ -1726,9 +1732,9 @@ function getModalParticipantCountLabel(value) {
 }
 
 function getScheduleModalViewModel(item) {
-  const server = announcementData?.server || {};
-  const session = announcementData?.session || {};
-  const rules = announcementData?.rules || {};
+  const server = item?.server || announcementData?.server || {};
+  const session = getEventSession(item, announcementData?.session || {});
+  const rules = item?.rules || announcementData?.rules || {};
   const weather = item?.weather || announcementData?.weather || {};
   const voteState = getVoteState(item);
   const startTime = getLocalizedField(item, "start_time_local", item?.start_time_local || "--");
@@ -2564,7 +2570,7 @@ function renderAnnouncement(data) {
 }
 function renderHeroDetails(data) {
   const server = data?.server || {};
-  const session = data?.session || {};
+  const session = getEventSession(data);
   const rules = data?.rules || {};
   const weather = data?.weather || {};
   setText("hero-server-name", server.name || server.full_name || t("unknownValue"));
