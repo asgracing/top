@@ -779,6 +779,8 @@ const translations = {
     hourlyVotesOne: "{value} registered driver",
     hourlyVotesMany: "{value} registered drivers",
     hourlyPromoTitle: "x5 points for the race!!!",
+    hourlyPromoMultiplier: "x{value} points for the race!!!",
+    hourlyPromoStandard: "Standard championship scoring x1",
     hourlyPromoNote: "The hourly event hits the championship harder.",
     hourlyLastWinnerLabel: "Last hourly winner",
     hourlyLastWinnerEmpty: "No completed hourly race yet",
@@ -1337,6 +1339,8 @@ const translations = {
     hourlyVotesOne: "{value} участник",
     hourlyVotesMany: "{value} участников",
     hourlyPromoTitle: "x5 очков за гонку!!!",
+    hourlyPromoMultiplier: "x{value} очков за гонку!!!",
+    hourlyPromoStandard: "Стандартная сетка чемпионата x1",
     hourlyPromoNote: "Часовой заезд сильнее влияет на чемпионат.",
     hourlyLastWinnerLabel: "Последний победитель",
     hourlyLastWinnerEmpty: "Пока нет завершенной часовой гонки",
@@ -2978,12 +2982,21 @@ function renderHourlyHeroCard() {
 
   const data = hourlyAnnouncementData;
   const isChampionship = isHourlyChampionshipEvent(data);
+  const isEndurance = String(data?.race_format || data?.event_type || "").trim().toLowerCase() === "endurance";
   trackEl.textContent = data?.track_name || t("hourlyNoEvent");
   startsEl.textContent = formatHeroHourlyDateTime(data?.date, data?.start_time_local, data?.timezone);
   const trackCode = String(data?.track_code || "").trim().toLowerCase();
   const backgroundUrl = HOURLY_TRACK_BACKGROUNDS[trackCode];
   cardEl.style.setProperty("--hero-hourly-track-photo", backgroundUrl ? `url("${backgroundUrl}")` : "none");
   cardEl.classList.toggle("is-championship-event", isChampionship);
+  cardEl.classList.toggle("is-endurance-event", isEndurance);
+  const promoTitleEl = document.querySelector(".hero-hourly-promo-title");
+  if (promoTitleEl) {
+    const multiplier = Number(data?.points_multiplier);
+    promoTitleEl.textContent = isChampionship
+      ? t("hourlyPromoStandard")
+      : String(t("hourlyPromoMultiplier")).replace("{value}", String(Number.isFinite(multiplier) ? multiplier : 5));
+  }
   const eyebrowEl = document.getElementById("hourly-eyebrow");
   if (eyebrowEl) {
     eyebrowEl.textContent = isChampionship ? getActiveChampionshipTitle(data) : t("hourlyEyebrow");
@@ -5970,7 +5983,7 @@ async function loadRacesData() {
 }
 
 function isHourlyChampionshipEvent(data = hourlyAnnouncementData) {
-  return String(data?.event_type || data?.type || "").trim().toLowerCase() === "championship";
+  return String(data?.competition_mode || data?.event_type || data?.type || "").trim().toLowerCase() === "championship";
 }
 
 function getActiveChampionshipTitle(data = hourlyAnnouncementData) {

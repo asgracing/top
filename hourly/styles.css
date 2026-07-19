@@ -1442,11 +1442,53 @@ body.championship-body .top-nav-menu {
   font-size: 0.58rem;
 }
 
+.hourly-slot-card-v2.is-endurance-event {
+  border-color: rgba(57, 255, 20, 0.62);
+  box-shadow: inset 0 0 0 1px rgba(57, 255, 20, 0.16), 0 18px 38px rgba(13, 255, 91, 0.12);
+}
+
+.event-badges {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 6px;
+}
+
 .hourly-slot-card-v2.is-championship-event .event-type-badge {
   border-color: rgba(193, 132, 252, 0.78);
   background: linear-gradient(135deg, #7e22ce, #a855f7);
   color: #fbf5ff;
   box-shadow: 0 8px 20px rgba(126, 34, 206, 0.38);
+}
+
+.hourly-slot-card-v2.is-endurance-event .event-type-badge:first-child,
+.schedule-event-card.is-endurance-event .event-type-badge:first-child,
+.calendar-event.is-endurance-event .event-type-badge:first-child {
+  border-color: rgba(143, 255, 117, 0.9);
+  background: linear-gradient(135deg, #16a34a, #39ff14);
+  color: #041408;
+  box-shadow: 0 8px 22px rgba(57, 255, 20, 0.34);
+}
+
+.is-championship-event.is-endurance-event .event-type-badge:nth-child(2) {
+  border-color: rgba(193, 132, 252, 0.78);
+  background: linear-gradient(135deg, #7e22ce, #a855f7);
+  color: #fbf5ff;
+}
+
+.points-multiplier-badge {
+  display: inline-flex;
+  align-items: center;
+  min-height: 20px;
+  padding: 3px 8px;
+  border: 1px solid rgba(255, 209, 102, 0.5);
+  border-radius: 999px;
+  background: rgba(8, 12, 18, 0.72);
+  color: #ffe3a3;
+  font-size: 0.6rem;
+  font-weight: 900;
+  line-height: 1;
+  white-space: nowrap;
 }
 
 .hourly-slot-card-v2-time {
@@ -3201,6 +3243,12 @@ tbody tr:not(.is-interactive-row):hover {
 .calendar-event.is-championship-event {
   border-color: rgba(255, 209, 102, 0.42);
   box-shadow: 0 18px 44px rgba(255, 157, 77, 0.12), 0 18px 40px rgba(0, 0, 0, 0.24);
+}
+
+.schedule-event-card.is-endurance-event,
+.calendar-event.is-endurance-event {
+  border-color: rgba(57, 255, 20, 0.58);
+  box-shadow: 0 18px 44px rgba(57, 255, 20, 0.12), 0 18px 40px rgba(0, 0, 0, 0.24);
 }
 
 .schedule-event-card-inner {

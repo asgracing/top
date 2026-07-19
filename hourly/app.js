@@ -258,6 +258,9 @@ const translations = {
     calendarEmpty: "No calendar events yet.",
     championshipBadge: "Championship Event",
     hourlyBadge: "Hourly Race",
+    enduranceBadge: "Endurance",
+    pointsMultiplierBadge: "×{value} points",
+    standardScoringBadge: "Standard scoring ×1",
     championshipEyebrow: "Championship",
     navCurrentChampionship: "Current championship",
     navPastChampionships: "Past championships",
@@ -492,6 +495,9 @@ Object.assign(translations.ru, {
   calendarEmpty: "Пока нет событий в календаре.",
   championshipBadge: "Событие чемпионата",
   hourlyBadge: "Часовая гонка",
+  enduranceBadge: "Эндюранс",
+  pointsMultiplierBadge: "×{value} очков",
+  standardScoringBadge: "Стандартная сетка ×1",
   championshipEyebrow: "Чемпионат",
   championshipOpenButton: "Открыть чемпионат",
   championshipNoDescription: "Следи за прогрессом активного чемпионата, ближайшими гонками и таблицей.",
@@ -614,20 +620,51 @@ function buildScheduleItems(schedule, announcement) {
       track_name: announcement.track_name,
       slot_label: announcement.session_label,
       status: announcement.status,
+      event_type: announcement.event_type,
+      race_format: announcement.race_format,
+      competition_mode: announcement.competition_mode,
+      points_multiplier: announcement.points_multiplier,
+      scoring_mode: announcement.scoring_mode,
+      server_window_minutes: announcement.server_window_minutes,
+      launch_at: announcement.launch_at,
       weather: announcement.weather,
       rain_level: announcement.weather?.rain_level
     }
   ];
 }
 function isChampionshipEvent(item) {
-  return String(item?.event_type || item?.type || "").trim().toLowerCase() === "championship";
+  return String(item?.competition_mode || item?.event_type || item?.type || "").trim().toLowerCase() === "championship";
+}
+function isEnduranceEvent(item) {
+  return String(item?.race_format || item?.event_type || item?.type || "").trim().toLowerCase() === "endurance";
 }
 function isVotingDisabledForItem(item) {
   return Boolean(item?.voting_disabled) && !isChampionshipEvent(item);
 }
 function eventBadgeLabel(item) {
   if (item?.badge_label) return getLocalizedField(item, "badge_label", item.badge_label);
+  if (isEnduranceEvent(item)) return t("enduranceBadge");
   return isChampionshipEvent(item) ? t("championshipBadge") : t("hourlyBadge");
+}
+function eventBadgeLabels(item) {
+  const labels = [];
+  if (item?.badge_label) labels.push(getLocalizedField(item, "badge_label", item.badge_label));
+  else if (isEnduranceEvent(item)) labels.push(t("enduranceBadge"));
+  else labels.push(t("hourlyBadge"));
+  if (isChampionshipEvent(item)) labels.push(t("championshipBadge"));
+  return [...new Set(labels.filter(Boolean))];
+}
+function scoringBadgeLabel(item) {
+  if (isChampionshipEvent(item)) return t("standardScoringBadge");
+  const numeric = Number(item?.points_multiplier);
+  const value = Number.isFinite(numeric) ? numeric : (isEnduranceEvent(item) ? 1 : 5);
+  return String(t("pointsMultiplierBadge")).replace("{value}", String(value));
+}
+function renderEventBadges(item) {
+  const types = eventBadgeLabels(item)
+    .map(label => `<span class="event-type-badge">${escapeHtml(label)}</span>`)
+    .join("");
+  return `<div class="event-badges">${types}<span class="points-multiplier-badge">${escapeHtml(scoringBadgeLabel(item))}</span></div>`;
 }
 let recentRacesPage = 1;
 let recentRacesPageSize = 10;
@@ -2448,8 +2485,8 @@ function buildScheduleCardV2(row, index) {
   const backgroundUrl = getTrackBackgroundUrl(row?.track_code);
   return `
     <article
-      class="hourly-slot-card-v2 is-interactive-row${isChampionshipEvent(row) ? " is-championship-event" : ""}"
-      data-event-type="${escapeHtml(isChampionshipEvent(row) ? "championship" : "hourly")}"
+      class="hourly-slot-card-v2 is-interactive-row${isChampionshipEvent(row) ? " is-championship-event" : ""}${isEnduranceEvent(row) ? " is-endurance-event" : ""}"
+      data-event-type="${escapeHtml(isEnduranceEvent(row) ? "endurance" : "hourly")}"
       data-schedule-index="${index}"
       tabindex="0"
       role="button"
@@ -2457,7 +2494,7 @@ function buildScheduleCardV2(row, index) {
       style="--hourly-slot-track-photo: ${backgroundUrl ? `url('${escapeHtml(backgroundUrl)}')` : "none"};"
     >
       <div class="hourly-slot-card-v2-inner">
-        <div class="event-type-badge">${escapeHtml(eventBadgeLabel(row))}</div>
+        ${renderEventBadges(row)}
         <div class="hourly-slot-card-v2-time">${escapeHtml(formatScheduleCardDateTime(row))}</div>
         <div class="hourly-slot-card-v2-track">${escapeHtml(getLocalizedField(row, "track_name", row.track_name || "--"))}</div>
         <div class="hourly-slot-card-v2-weather">${renderScheduleConditions(row)}</div>
@@ -2697,14 +2734,14 @@ function renderCalendar(rows) {
       const backgroundUrl = HERO_TRACK_BACKGROUNDS[trackCode];
       return `
         <button
-          class="calendar-event${isChampionshipEvent(row) ? " is-championship-event" : ""}"
+          class="calendar-event${isChampionshipEvent(row) ? " is-championship-event" : ""}${isEnduranceEvent(row) ? " is-endurance-event" : ""}"
           type="button"
           data-calendar-index="${index}"
           style="--calendar-track-photo: ${backgroundUrl ? `url('${escapeHtml(backgroundUrl)}')` : "none"};"
         >
           <span class="calendar-event-time">${escapeHtml(row?.start_time_local || "--")}</span>
           <span class="calendar-event-track">${escapeHtml(getLocalizedField(row, "track_name", row?.track_name || row?.track_code || "--"))}</span>
-          <span class="event-type-badge">${escapeHtml(eventBadgeLabel(row))}</span>
+          ${renderEventBadges(row)}
         </button>
       `;
     }).join("");
