@@ -780,7 +780,12 @@ const translations = {
     hourlyVotesMany: "{value} registered drivers",
     hourlyPromoTitle: "x5 points for the race!!!",
     hourlyPromoMultiplier: "x{value} points for the race!!!",
+    enduranceEyebrow: "Next event — Endurance ({duration} min)",
+    endurancePromoMultiplier: "x{value} points for Endurance!!!",
+    endurancePromoNote: "Endurance awards increased points in the overall rating.",
+    enduranceOpenDetailsLabel: "Open Endurance event details",
     hourlyPromoStandard: "Standard championship scoring x1",
+    hourlyPromoChampionshipNote: "This championship stage uses the standard scoring table.",
     hourlyPromoNote: "The hourly event hits the championship harder.",
     hourlyLastWinnerLabel: "Last hourly winner",
     hourlyLastWinnerEmpty: "No completed hourly race yet",
@@ -1062,8 +1067,8 @@ const translations = {
     topGuideStepProfileText: "Click your name inside the championship table to open a full driver profile with race history, pace and detailed statistics.",
     topGuideStepRacesTitle: "Open the latest races",
     topGuideStepRacesText: "This button takes you to the recent race archive, where every session has a full result sheet and finishing order.",
-    topGuideStepHourlyTitle: "Hourly events live here",
-    topGuideStepHourlyText: "This card shows the next hourly event: track, start time, registrations and more detailed slot info.",
+    topGuideStepHourlyTitle: "Special events live here",
+    topGuideStepHourlyText: "This card shows the next event — a 1-hour race, Endurance or a championship stage — with the track, duration, start time and registrations.",
     communityTiktokTitle: "TikTok",
     communityTiktokText: "Short, punchy moments: overtakes, chaos, emotions and the most addictive ASG Racing clips.",
     communityTiktokCta: "Catch the best moments",
@@ -1340,7 +1345,12 @@ const translations = {
     hourlyVotesMany: "{value} участников",
     hourlyPromoTitle: "x5 очков за гонку!!!",
     hourlyPromoMultiplier: "x{value} очков за гонку!!!",
+    enduranceEyebrow: "Ближайший ивент — Endurance ({duration} мин)",
+    endurancePromoMultiplier: "x{value} очков за Endurance!!!",
+    endurancePromoNote: "Endurance начисляет повышенные очки в общий рейтинг.",
+    enduranceOpenDetailsLabel: "Открыть детали Endurance-события",
     hourlyPromoStandard: "Стандартная сетка чемпионата x1",
+    hourlyPromoChampionshipNote: "Для этапа чемпионата действует стандартная сетка очков.",
     hourlyPromoNote: "Часовой заезд сильнее влияет на чемпионат.",
     hourlyLastWinnerLabel: "Последний победитель",
     hourlyLastWinnerEmpty: "Пока нет завершенной часовой гонки",
@@ -1695,8 +1705,8 @@ const translations = {
     topGuideStepProfileText: "Кликните по своему имени в таблице чемпионата, чтобы открыть полный профиль пилота с историей гонок, темпом и детальной статистикой.",
     topGuideStepRacesTitle: "Здесь последние гонки",
     topGuideStepRacesText: "Эта кнопка ведет в архив недавних гонок, где у каждого заезда есть полный протокол и порядок финиша.",
-    topGuideStepHourlyTitle: "А здесь часовые гонки",
-    topGuideStepHourlyText: "В этой карточке показана ближайшая часовая гонка: трасса, время старта, регистрации и подробности слота.",
+    topGuideStepHourlyTitle: "А здесь специальные события",
+    topGuideStepHourlyText: "В этой карточке показан ближайший ивент — часовая гонка, Endurance или этап чемпионата: трасса, длительность, время старта и регистрации.",
     communityTiktokTitle: "TikTok",
     communityTiktokText: "Короткие яркие моменты: обгоны, хаос, эмоции и самые цепляющие эпизоды ASG Racing.",
     communityTiktokCta: "Поймать лучшие моменты",
@@ -1832,7 +1842,7 @@ Object.assign(translations.en, {
   heroFunnelNote: "<a class=\"hero-funnel-link hero-funnel-link-telegram\" href=\"https://t.me/+JUymrENgddcyMTdi\" target=\"_blank\" rel=\"noopener noreferrer\">Telegram</a> and <a class=\"hero-funnel-link hero-funnel-link-discord\" href=\"https://discord.gg/cEPFHXXtTC\" target=\"_blank\" rel=\"noopener noreferrer\">Discord</a> are the most convenient ways to stay in touch with the community. Here you will find reminders, results, voting, and live sim racing conversations.",
   joinTelegramBtn: "Join Telegram",
   joinDiscordBtn: "Join Discord",
-  heroOpenHourlyBtn: "Next hourly event",
+  heroOpenHourlyBtn: "Next special event",
   hourlyModalEyebrow: "Slot details",
   hourlyOpenDetailsLabel: "Open hourly event details",
   hourlyServerLabel: "Server",
@@ -1875,7 +1885,7 @@ Object.assign(translations.ru, {
   heroFunnelNote: "<a class=\"hero-funnel-link hero-funnel-link-telegram\" href=\"https://t.me/+JUymrENgddcyMTdi\" target=\"_blank\" rel=\"noopener noreferrer\">Telegram</a> и <a class=\"hero-funnel-link hero-funnel-link-discord\" href=\"https://discord.gg/cEPFHXXtTC\" target=\"_blank\" rel=\"noopener noreferrer\">Discord</a> - самые удобные способы общения в комьюнити. Здесь ты найдёшь напоминания, результаты, голосования и живое общение на симрейсинговые темы.",
   joinTelegramBtn: "Вступить в Telegram",
   joinDiscordBtn: "Вступить в Discord",
-  heroOpenHourlyBtn: "Ближайшая часовая гонка",
+  heroOpenHourlyBtn: "Ближайший специальный ивент",
   hourlyModalEyebrow: "Детали слота",
   hourlyOpenDetailsLabel: "Открыть детали часовой гонки",
   hourlyServerLabel: "Сервер",
@@ -2987,6 +2997,13 @@ function renderHourlyHeroCard() {
   const data = hourlyAnnouncementData;
   const isChampionship = isHourlyChampionshipEvent(data);
   const isEndurance = String(data?.race_format || data?.event_type || "").trim().toLowerCase() === "endurance";
+  const rootRaceDuration = Number(data?.race_duration_minutes);
+  const sessionRaceDuration = Number(data?.session?.race_duration_minutes);
+  const raceDuration = Number.isFinite(rootRaceDuration) && rootRaceDuration > 0
+    ? rootRaceDuration
+    : Number.isFinite(sessionRaceDuration) && sessionRaceDuration > 0
+      ? sessionRaceDuration
+      : (isEndurance ? 120 : 60);
   trackEl.textContent = data?.track_name || t("hourlyNoEvent");
   startsEl.textContent = formatHeroHourlyDateTime(data?.date, data?.start_time_local, data?.timezone);
   const trackCode = String(data?.track_code || "").trim().toLowerCase();
@@ -2999,11 +3016,26 @@ function renderHourlyHeroCard() {
     const multiplier = Number(data?.points_multiplier);
     promoTitleEl.textContent = isChampionship
       ? t("hourlyPromoStandard")
-      : String(t("hourlyPromoMultiplier")).replace("{value}", String(Number.isFinite(multiplier) ? multiplier : 5));
+      : String(t(isEndurance ? "endurancePromoMultiplier" : "hourlyPromoMultiplier"))
+          .replace("{value}", String(Number.isFinite(multiplier) ? multiplier : 5));
+  }
+  const promoNoteEl = document.querySelector(".hero-hourly-promo-note");
+  if (promoNoteEl) {
+    const noteKey = isChampionship
+      ? "hourlyPromoChampionshipNote"
+      : isEndurance
+        ? "endurancePromoNote"
+        : "hourlyPromoNote";
+    promoNoteEl.dataset.i18n = noteKey;
+    promoNoteEl.textContent = t(noteKey);
   }
   const eyebrowEl = document.getElementById("hourly-eyebrow");
   if (eyebrowEl) {
-    eyebrowEl.textContent = isChampionship ? getActiveChampionshipTitle(data) : t("hourlyEyebrow");
+    eyebrowEl.textContent = isEndurance
+      ? String(t("enduranceEyebrow")).replace("{duration}", String(raceDuration))
+      : isChampionship
+        ? getActiveChampionshipTitle(data)
+        : t("hourlyEyebrow");
   }
 
   votesEl.textContent = getHourlyVotesLabel();
@@ -3033,7 +3065,7 @@ function renderHourlyHeroCard() {
   unvoteBtn.setAttribute("aria-label", t("hourlyUnvoteBtn"));
   cardEl.setAttribute(
     "aria-label",
-    `${t("hourlyOpenDetailsLabel")}: ${data?.track_name || t("hourlyNoEvent")}`
+    `${t(isEndurance ? "enduranceOpenDetailsLabel" : "hourlyOpenDetailsLabel")}: ${data?.track_name || t("hourlyNoEvent")}`
   );
   cardEl.setAttribute("aria-disabled", (!data?.event_id && !data?.track_name) ? "true" : "false");
   updateTopChampionshipLink();
