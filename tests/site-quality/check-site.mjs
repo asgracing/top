@@ -128,7 +128,7 @@ for (const [page, [htmlPath, entrySrc]] of Object.entries(pageEntrypoints)) {
   if (!pageHtml.includes(hourlyEventModalHref)) failures.push(`${page} page is missing the hourly event modal stylesheet`);
   for (const href of [
     `${page === "home" ? "./" : "../"}styles/components/driver-day-modal.css?v=20260715r11driverday1`,
-    `${page === "home" ? "./" : "../"}styles/components/footer.css?v=20260715r11footer1`,
+    `${page === "home" ? "./" : "../"}styles/components/footer.css?v=20260720topguide1`,
     `${page === "home" ? "./" : "../"}styles/utilities.css?v=20260715r12states1`,
     `${page === "home" ? "./" : "../"}styles/responsive.css?v=20260715r11responsive1`,
     `${page === "home" ? "./" : "../"}styles/components/responsive-accessibility.css?v=20260715r13a11y1`

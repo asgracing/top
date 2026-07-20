@@ -309,14 +309,6 @@
   border-color: rgba(255, 63, 58, 0.48);
 }
 
-.top-guide-scrim {
-  position: fixed;
-  inset: 0;
-  z-index: var(--layer-guide-scrim);
-  background: rgba(7, 11, 17, 0.38);
-  pointer-events: none;
-}
-
 .top-guide {
   position: fixed;
   top: 120px;
@@ -437,17 +429,16 @@
 }
 
 .top-guide-highlight {
-  position: relative;
+  position: fixed;
   z-index: var(--layer-guide-highlight);
+  pointer-events: none;
+  border: 3px solid rgba(255, 91, 46, 0.82);
   border-radius: 24px;
   box-shadow:
-    0 0 0 3px rgba(255, 91, 46, 0.78),
-    0 0 0 10px rgba(255, 91, 46, 0.12),
+    0 0 0 8px rgba(255, 91, 46, 0.13),
+    0 0 0 9999px rgba(7, 11, 17, 0.52),
     0 24px 54px rgba(0, 0, 0, 0.28);
-}
-
-.top-guide-highlight.btn-last-races {
-  border-radius: 999px;
+  transition: top 0.18s ease, left 0.18s ease, width 0.18s ease, height 0.18s ease, border-radius 0.18s ease;
 }
 
 .community-grid {

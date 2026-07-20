@@ -8,6 +8,7 @@ import { processBestlaps, processLeaderboard, processSafety } from "./src/pages/
 import { createHomeDeferredSectionsController } from "./src/pages/home/deferred-sections.js";
 import { createHomeStatsTabsController } from "./src/pages/home/stats-tabs-controller.js";
 import { createHomePage } from "./src/pages/home/index.js";
+import { createTopGuideController } from "./src/pages/home/top-guide.js";
 import { HOME_LOADING_TEXT_IDS, applyHomeTableViewState } from "./src/pages/home/view-state-config.js";
 import { createModalControllerFactory } from "./src/shared/modal-controller.js";
 import { parseTableNumber, sortTableRows } from "./src/shared/table-model.js";
@@ -121,7 +122,6 @@ const YOUTUBE_LIVE_URL = `${YOUTUBE_CHANNEL_URL}/live`;
 const YOUTUBE_LIVE_AUTO_DETECT = false;
 const TWITCH_WIDGET_CHECK_INTERVAL_MS = 120000;
 const TOP_GUIDE_STORAGE_KEY = "asgTopGuideSeen";
-const TOP_GUIDE_MEDIA_QUERY = "(min-width: 1280px)";
 const BG_VIDEO_VOLUME_STORAGE_KEY = "asgBgVideoVolume";
 const BG_VIDEO_PLAYBACK_STORAGE_KEY = "asgBgVideoPlaybackEnabled";
 const BG_VIDEO_PLAYLIST_STORAGE_KEY = "asgBgVideoPlaylist";
@@ -615,13 +615,7 @@ let twitchWidgetState = {
   embedUrl: "",
   openUrl: TWITCH_CHANNEL_URL
 };
-let topGuideState = {
-  initialized: false,
-  active: false,
-  stepIndex: 0,
-  highlightedElement: null,
-  mediaQuery: null
-};
+let topGuideController = null;
 let backgroundVideoSoundState = {
   supported: false,
   available: false,
@@ -3834,16 +3828,6 @@ function initTwitchWidget() {
   }
 }
 
-function shouldEnableTopGuide() {
-  return !IS_RACES_PAGE && !IS_DRIVER_PAGE && !IS_CARS_PAGE && !IS_FUN_STATS_PAGE && !IS_COMMUNITY_PAGE && !IS_BANS_PAGE;
-}
-
-function isTopGuideDesktop() {
-  return typeof window !== "undefined"
-    && typeof window.matchMedia === "function"
-    && window.matchMedia(TOP_GUIDE_MEDIA_QUERY).matches;
-}
-
 function getTopGuideSteps() {
   return [
     {
@@ -3885,199 +3869,30 @@ function getTopGuideSteps() {
   ];
 }
 
-function clearTopGuideHighlight() {
-  if (topGuideState.highlightedElement) {
-    topGuideState.highlightedElement.classList.remove("top-guide-highlight");
-    topGuideState.highlightedElement = null;
-  }
-}
-
-function setTopGuideSeen() {
-  if (appStorage) {
-    appStorage.set("topGuideSeen", true);
-    return;
-  }
-  try {
-    localStorage.setItem(TOP_GUIDE_STORAGE_KEY, "1");
-  } catch {
-    // Ignore storage issues.
-  }
-}
-
-function hasSeenTopGuide() {
-  if (appStorage) return Boolean(appStorage.get("topGuideSeen", false));
-  try {
-    return localStorage.getItem(TOP_GUIDE_STORAGE_KEY) === "1";
-  } catch {
-    return false;
-  }
-}
-
-function scrollTopGuideTargetIntoView(target, block = "center") {
-  if (!target || typeof target.getBoundingClientRect !== "function") return;
-
-  const rect = target.getBoundingClientRect();
-  const targetTop = rect.top + window.scrollY;
-  const viewportHeight = window.innerHeight || document.documentElement.clientHeight || 0;
-  const navOffset = 96;
-  let nextScrollTop = targetTop - navOffset;
-
-  if (block === "center") {
-    nextScrollTop = targetTop - Math.max(120, (viewportHeight - rect.height) / 2);
-  }
-
-  window.scrollTo({
-    top: Math.max(0, nextScrollTop),
-    behavior: "smooth"
-  });
-}
-
-function closeTopGuide(markSeen = true) {
-  topGuideState.active = false;
-  clearTopGuideHighlight();
-  if (markSeen) setTopGuideSeen();
-  renderTopGuide();
-}
-
-function openTopGuide(stepIndex = 0, force = false) {
-  if (!topGuideState.initialized || !shouldEnableTopGuide() || !isTopGuideDesktop()) return;
-  if (!force && hasSeenTopGuide()) return;
-
-  const steps = getTopGuideSteps();
-  topGuideState.stepIndex = Math.max(0, Math.min(stepIndex, steps.length - 1));
-  topGuideState.active = true;
-  renderTopGuide();
-}
-
-function setTopGuideStep(nextStepIndex) {
-  const steps = getTopGuideSteps();
-  if (!steps.length) return;
-
-  if (nextStepIndex >= steps.length) {
-    closeTopGuide(true);
-    return;
-  }
-
-  topGuideState.stepIndex = Math.max(0, Math.min(nextStepIndex, steps.length - 1));
-  renderTopGuide();
-}
-
 function renderTopGuide() {
-  if (!topGuideState.initialized) return;
-
-  const root = document.getElementById("top-guide");
-  const launcher = document.getElementById("top-guide-launcher");
-  const scrim = document.getElementById("top-guide-scrim");
-  const titleEl = document.getElementById("top-guide-title");
-  const bodyEl = document.getElementById("top-guide-body");
-  const progressEl = document.getElementById("top-guide-progress");
-  const backBtn = document.getElementById("top-guide-back");
-  const nextBtn = document.getElementById("top-guide-next");
-  const skipBtn = document.getElementById("top-guide-skip");
-
-  if (!root || !launcher || !scrim || !titleEl || !bodyEl || !progressEl || !backBtn || !nextBtn || !skipBtn) return;
-
-  launcher.textContent = t("topGuideLauncher");
-  launcher.setAttribute("aria-label", t("topGuideLauncher"));
-  skipBtn.textContent = t("topGuideDismiss");
-  backBtn.textContent = t("topGuideBack");
-
-  if (!shouldEnableTopGuide() || !isTopGuideDesktop()) {
-    topGuideState.active = false;
-    clearTopGuideHighlight();
-    root.hidden = true;
-    scrim.hidden = true;
-    launcher.hidden = true;
-    return;
-  }
-
-  const steps = getTopGuideSteps();
-  const step = steps[topGuideState.stepIndex];
-  const total = steps.length;
-
-  launcher.hidden = topGuideState.active;
-  root.hidden = !topGuideState.active;
-  scrim.hidden = !topGuideState.active;
-
-  if (!topGuideState.active || !step) {
-    clearTopGuideHighlight();
-    return;
-  }
-
-  titleEl.textContent = t(step.titleKey);
-  bodyEl.textContent = t(step.textKey);
-  progressEl.textContent = replaceTokens(t("topGuideProgress"), {
-    current: topGuideState.stepIndex + 1,
-    total
-  });
-  backBtn.disabled = topGuideState.stepIndex === 0;
-  nextBtn.textContent = topGuideState.stepIndex === total - 1 ? t("topGuideDone") : t("topGuideNext");
-
-  clearTopGuideHighlight();
-  const target = document.querySelector(step.targetSelector);
-  if (target) {
-    target.classList.add("top-guide-highlight");
-    topGuideState.highlightedElement = target;
-    scrollTopGuideTargetIntoView(target, step.scrollBlock);
-  }
+  topGuideController?.render();
 }
 
 function ensureTopGuide() {
-  if (topGuideState.initialized || !shouldEnableTopGuide()) return;
-
-  const scrim = document.createElement("div");
-  scrim.className = "top-guide-scrim";
-  scrim.id = "top-guide-scrim";
-  scrim.hidden = true;
-
-  const root = document.createElement("aside");
-  root.className = "top-guide";
-  root.id = "top-guide";
-  root.hidden = true;
-  root.innerHTML = `
-    <div class="top-guide-progress" id="top-guide-progress"></div>
-    <h3 class="top-guide-title" id="top-guide-title"></h3>
-    <p class="top-guide-body" id="top-guide-body"></p>
-    <div class="top-guide-actions">
-      <button class="top-guide-btn top-guide-btn-ghost" id="top-guide-skip" type="button"></button>
-      <button class="top-guide-btn top-guide-btn-secondary" id="top-guide-back" type="button"></button>
-      <button class="top-guide-btn top-guide-btn-primary" id="top-guide-next" type="button"></button>
-    </div>
-  `;
-
-  const launcher = document.createElement("button");
-  launcher.className = "top-guide-launcher";
-  launcher.id = "top-guide-launcher";
-  launcher.type = "button";
-
-  document.body.appendChild(scrim);
-  document.body.appendChild(root);
-  document.body.appendChild(launcher);
-
-  root.querySelector("#top-guide-skip")?.addEventListener("click", () => closeTopGuide(true));
-  root.querySelector("#top-guide-back")?.addEventListener("click", () => setTopGuideStep(topGuideState.stepIndex - 1));
-  root.querySelector("#top-guide-next")?.addEventListener("click", () => setTopGuideStep(topGuideState.stepIndex + 1));
-  launcher.addEventListener("click", () => openTopGuide(0, true));
-
-  topGuideState.mediaQuery = window.matchMedia?.(TOP_GUIDE_MEDIA_QUERY) || null;
-  topGuideState.mediaQuery?.addEventListener?.("change", () => {
-    if (!isTopGuideDesktop()) {
-      topGuideState.active = false;
-      clearTopGuideHighlight();
+  if (topGuideController || !PAGE_CONTEXT.isHome) return;
+  const guideStorage = appStorage || {
+    get(_key, fallback = false) {
+      try { return localStorage.getItem(TOP_GUIDE_STORAGE_KEY) === "1"; } catch { return fallback; }
+    },
+    set() {
+      try { localStorage.setItem(TOP_GUIDE_STORAGE_KEY, "1"); return true; } catch { return false; }
     }
-    renderTopGuide();
+  };
+  topGuideController = createTopGuideController({
+    documentRef: document,
+    windowRef: window,
+    lifecycle: appLifecycle,
+    storage: guideStorage,
+    translate: t,
+    replaceTokens,
+    steps: getTopGuideSteps()
   });
-
-  appLifecycle.listen(window, "resize", () => {
-    if (topGuideState.active) renderTopGuide();
-  });
-
-  topGuideState.initialized = true;
-  renderTopGuide();
-
-  if (!hasSeenTopGuide()) {
-    window.setTimeout(() => openTopGuide(0, true), 500);
-  }
+  topGuideController.mount();
 }
 
 function sha1(input) {
