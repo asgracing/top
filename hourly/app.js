@@ -687,15 +687,29 @@ let newsFeedSourceUrl = newsFeedUrl;
 let newsModalController = null;
 const raceDetailsCache = new Map();
 const HERO_TRACK_BACKGROUNDS = {
-  monza: "./assets/tracks/monza.jpg",
-  silverstone: "./assets/tracks/silverstone.jpg",
-  spa: "./assets/tracks/spa.jpg",
-  nurburgring: "./assets/tracks/nurburgring.jpg",
-  nurburgring_24h: "./assets/tracks/nurburgring_24h.jpg",
-  nurburgring24h: "./assets/tracks/nurburgring_24h.jpg",
-  "nurburgring-24h": "./assets/tracks/nurburgring_24h.jpg",
-  nordschl: "./assets/tracks/nurburgring_24h.jpg",
-  nordschleife: "./assets/tracks/nurburgring_24h.jpg"
+  barcelona: `${topSiteBaseUrl}/assets/barcelona.jpg`,
+  hungaroring: `${topSiteBaseUrl}/assets/hungaroring.jpg`,
+  imola: `${topSiteBaseUrl}/assets/imola.jpg`,
+  kyalami: `${topSiteBaseUrl}/assets/kyalami.jpg`,
+  laguna_seca: `${topSiteBaseUrl}/assets/laguna_seca.jpg`,
+  lagunaseca: `${topSiteBaseUrl}/assets/laguna_seca.jpg`,
+  misano: `${topSiteBaseUrl}/assets/misano.jpg`,
+  monza: `${topSiteBaseUrl}/assets/monza.jpg`,
+  monzatg: `${topSiteBaseUrl}/assets/monzaTG.jpg`,
+  mount_panorama: `${topSiteBaseUrl}/assets/mount_panorama.jpg`,
+  mountpanorama: `${topSiteBaseUrl}/assets/mount_panorama.jpg`,
+  nurburgring: `${topSiteBaseUrl}/assets/nurburgring.jpg`,
+  nurburgring_24h: `${topSiteBaseUrl}/assets/nurburgring_24h.jpg`,
+  nurburgring24h: `${topSiteBaseUrl}/assets/nurburgring_24h.jpg`,
+  nordschl: `${topSiteBaseUrl}/assets/nurburgring_24h.jpg`,
+  nordschleife: `${topSiteBaseUrl}/assets/nurburgring_24h.jpg`,
+  paul_ricard: `${topSiteBaseUrl}/assets/paul_ricard.jpg`,
+  paulricard: `${topSiteBaseUrl}/assets/paul_ricard.jpg`,
+  silverstone: `${topSiteBaseUrl}/assets/silverstone.jpg`,
+  spa: `${topSiteBaseUrl}/assets/spa.jpg`,
+  suzuka: `${topSiteBaseUrl}/assets/suzuka.jpg`,
+  zandvoort: `${topSiteBaseUrl}/assets/zandvoort.jpg`,
+  zolder: `${topSiteBaseUrl}/assets/zolder.jpg`
 };
 const WEATHER_ICON_PATHS = {
   clouds: "./assets/weather/cloudness.png",
@@ -2279,30 +2293,37 @@ function renderHeroVote() {
 function applyHeroTrackBackground(trackCode) {
   const heroCard = document.querySelector(".hero-card");
   if (!heroCard) return;
-  const backgroundUrl = HERO_TRACK_BACKGROUNDS[String(trackCode || "").trim().toLowerCase()];
+  const backgroundUrl = getTrackBackgroundUrl(trackCode);
   heroCard.style.setProperty("--hero-track-photo", backgroundUrl ? `url("${backgroundUrl}")` : "none");
 }
 function applyHeroChampionshipCardBackground(trackCode) {
   const card = document.querySelector(".hero-announcement-card");
   if (!card) return;
-  const backgroundUrl = HERO_TRACK_BACKGROUNDS[String(trackCode || "").trim().toLowerCase()];
+  const backgroundUrl = getTrackBackgroundUrl(trackCode);
   card.style.setProperty("--hero-announcement-photo", backgroundUrl ? `url("${backgroundUrl}")` : "none");
 }
 function applyScheduleModalTrackBackground(trackCode) {
   const modalCard = document.querySelector("#schedule-modal .modal-card-slot");
   if (!modalCard) return;
-  const backgroundUrl = HERO_TRACK_BACKGROUNDS[String(trackCode || "").trim().toLowerCase()];
+  const backgroundUrl = getTrackBackgroundUrl(trackCode);
   modalCard.style.setProperty("--modal-track-photo", backgroundUrl ? `url("${backgroundUrl}")` : "none");
 }
 function applyRaceModalTrackBackground(trackCode) {
   const modalCard = document.querySelector("#race-results-modal .modal-card-race");
   if (!modalCard) return;
-  const backgroundUrl = HERO_TRACK_BACKGROUNDS[String(trackCode || "").trim().toLowerCase()];
+  const backgroundUrl = getTrackBackgroundUrl(trackCode);
   modalCard.style.setProperty("--modal-track-photo", backgroundUrl ? `url("${backgroundUrl}")` : "none");
 }
 
 function getTrackBackgroundUrl(trackCode) {
-  return HERO_TRACK_BACKGROUNDS[String(trackCode || "").trim().toLowerCase()] || "";
+  const normalized = String(trackCode || "")
+    .trim()
+    .toLowerCase()
+    .replace(/[^a-z0-9]+/g, "_")
+    .replace(/^_+|_+$/g, "");
+  return HERO_TRACK_BACKGROUNDS[normalized]
+    || HERO_TRACK_BACKGROUNDS[normalized.replaceAll("_", "")]
+    || "";
 }
 
 function getHourlyConnectHref(server = {}) {
@@ -2737,7 +2758,7 @@ function renderCalendar(rows) {
     const dayEvents = itemsByDay.get(day) || [];
     const eventsHtml = dayEvents.map(({ row, index }) => {
       const trackCode = String(row?.track_code || "").trim().toLowerCase();
-      const backgroundUrl = HERO_TRACK_BACKGROUNDS[trackCode];
+      const backgroundUrl = getTrackBackgroundUrl(trackCode);
       return `
         <button
           class="calendar-event${isChampionshipEvent(row) ? " is-championship-event" : ""}${isEnduranceEvent(row) ? " is-endurance-event" : ""}"

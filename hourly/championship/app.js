@@ -263,17 +263,29 @@ Object.assign(translations.ru, {
 });
 
 const TRACK_BACKGROUNDS = {
-  monza: `${hourlyAssetBase}/tracks/monza.jpg`,
-  monzatg: `${hourlyAssetBase}/tracks/monzaTG.jpg`,
-  "monza-tg": `${hourlyAssetBase}/tracks/monzaTG.jpg`,
-  silverstone: `${hourlyAssetBase}/tracks/silverstone.jpg`,
-  spa: `${hourlyAssetBase}/tracks/spa.jpg`,
-  nurburgring: `${hourlyAssetBase}/tracks/nurburgring.jpg`,
-  nurburgring_24h: `${hourlyAssetBase}/tracks/nurburgring_24h.jpg`,
-  nurburgring24h: `${hourlyAssetBase}/tracks/nurburgring_24h.jpg`,
-  "nurburgring-24h": `${hourlyAssetBase}/tracks/nurburgring_24h.jpg`,
-  nordschl: `${hourlyAssetBase}/tracks/nurburgring_24h.jpg`,
-  nordschleife: `${hourlyAssetBase}/tracks/nurburgring_24h.jpg`
+  barcelona: `${topSiteBaseUrl}/assets/barcelona.jpg`,
+  hungaroring: `${topSiteBaseUrl}/assets/hungaroring.jpg`,
+  imola: `${topSiteBaseUrl}/assets/imola.jpg`,
+  kyalami: `${topSiteBaseUrl}/assets/kyalami.jpg`,
+  laguna_seca: `${topSiteBaseUrl}/assets/laguna_seca.jpg`,
+  lagunaseca: `${topSiteBaseUrl}/assets/laguna_seca.jpg`,
+  misano: `${topSiteBaseUrl}/assets/misano.jpg`,
+  monza: `${topSiteBaseUrl}/assets/monza.jpg`,
+  monzatg: `${topSiteBaseUrl}/assets/monzaTG.jpg`,
+  mount_panorama: `${topSiteBaseUrl}/assets/mount_panorama.jpg`,
+  mountpanorama: `${topSiteBaseUrl}/assets/mount_panorama.jpg`,
+  nurburgring: `${topSiteBaseUrl}/assets/nurburgring.jpg`,
+  nurburgring_24h: `${topSiteBaseUrl}/assets/nurburgring_24h.jpg`,
+  nurburgring24h: `${topSiteBaseUrl}/assets/nurburgring_24h.jpg`,
+  nordschl: `${topSiteBaseUrl}/assets/nurburgring_24h.jpg`,
+  nordschleife: `${topSiteBaseUrl}/assets/nurburgring_24h.jpg`,
+  paul_ricard: `${topSiteBaseUrl}/assets/paul_ricard.jpg`,
+  paulricard: `${topSiteBaseUrl}/assets/paul_ricard.jpg`,
+  silverstone: `${topSiteBaseUrl}/assets/silverstone.jpg`,
+  spa: `${topSiteBaseUrl}/assets/spa.jpg`,
+  suzuka: `${topSiteBaseUrl}/assets/suzuka.jpg`,
+  zandvoort: `${topSiteBaseUrl}/assets/zandvoort.jpg`,
+  zolder: `${topSiteBaseUrl}/assets/zolder.jpg`
 };
 const WEATHER_ICON_PATHS = {
   clouds: `${hourlyAssetBase}/weather/cloudness.png`,

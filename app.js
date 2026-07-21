@@ -628,16 +628,41 @@ let serverStatusData = null;
 const driverProfileCache = new Map();
 const raceDetailsCache = new Map();
 const HOURLY_TRACK_BACKGROUNDS = {
-  monza: `${HOURLY_SITE_BASE_URL}/assets/tracks/monza.jpg`,
-  silverstone: `${HOURLY_SITE_BASE_URL}/assets/tracks/silverstone.jpg`,
-  spa: `${HOURLY_SITE_BASE_URL}/assets/tracks/spa.jpg`,
-  nurburgring: `${HOURLY_SITE_BASE_URL}/assets/tracks/nurburgring.jpg`,
-  nurburgring_24h: `${HOURLY_SITE_BASE_URL}/assets/tracks/nurburgring_24h.jpg`,
-  nurburgring24h: `${HOURLY_SITE_BASE_URL}/assets/tracks/nurburgring_24h.jpg`,
-  "nurburgring-24h": `${HOURLY_SITE_BASE_URL}/assets/tracks/nurburgring_24h.jpg`,
-  nordschl: `${HOURLY_SITE_BASE_URL}/assets/tracks/nurburgring_24h.jpg`,
-  nordschleife: `${HOURLY_SITE_BASE_URL}/assets/tracks/nurburgring_24h.jpg`
+  barcelona: `${SITE_BASE_PATH}assets/barcelona.jpg`,
+  hungaroring: `${SITE_BASE_PATH}assets/hungaroring.jpg`,
+  imola: `${SITE_BASE_PATH}assets/imola.jpg`,
+  kyalami: `${SITE_BASE_PATH}assets/kyalami.jpg`,
+  laguna_seca: `${SITE_BASE_PATH}assets/laguna_seca.jpg`,
+  lagunaseca: `${SITE_BASE_PATH}assets/laguna_seca.jpg`,
+  misano: `${SITE_BASE_PATH}assets/misano.jpg`,
+  monza: `${SITE_BASE_PATH}assets/monza.jpg`,
+  monzatg: `${SITE_BASE_PATH}assets/monzaTG.jpg`,
+  mount_panorama: `${SITE_BASE_PATH}assets/mount_panorama.jpg`,
+  mountpanorama: `${SITE_BASE_PATH}assets/mount_panorama.jpg`,
+  nurburgring: `${SITE_BASE_PATH}assets/nurburgring.jpg`,
+  nurburgring_24h: `${SITE_BASE_PATH}assets/nurburgring_24h.jpg`,
+  nurburgring24h: `${SITE_BASE_PATH}assets/nurburgring_24h.jpg`,
+  nordschl: `${SITE_BASE_PATH}assets/nurburgring_24h.jpg`,
+  nordschleife: `${SITE_BASE_PATH}assets/nurburgring_24h.jpg`,
+  paul_ricard: `${SITE_BASE_PATH}assets/paul_ricard.jpg`,
+  paulricard: `${SITE_BASE_PATH}assets/paul_ricard.jpg`,
+  silverstone: `${SITE_BASE_PATH}assets/silverstone.jpg`,
+  spa: `${SITE_BASE_PATH}assets/spa.jpg`,
+  suzuka: `${SITE_BASE_PATH}assets/suzuka.jpg`,
+  zandvoort: `${SITE_BASE_PATH}assets/zandvoort.jpg`,
+  zolder: `${SITE_BASE_PATH}assets/zolder.jpg`
 };
+
+function getHourlyTrackBackgroundUrl(trackCode) {
+  const normalized = String(trackCode || "")
+    .trim()
+    .toLowerCase()
+    .replace(/[^a-z0-9]+/g, "_")
+    .replace(/^_+|_+$/g, "");
+  return HOURLY_TRACK_BACKGROUNDS[normalized]
+    || HOURLY_TRACK_BACKGROUNDS[normalized.replaceAll("_", "")]
+    || "";
+}
 const HOURLY_WEATHER_ICON_PATHS = {
   clouds: `${HOURLY_SITE_BASE_URL}/assets/weather/cloudness.png`,
   rain: `${HOURLY_SITE_BASE_URL}/assets/weather/rain.png`,
@@ -2817,7 +2842,7 @@ function applyHourlyModalTrackBackground(trackCode) {
   const modalCard = document.querySelector("#hourly-details-modal .modal-card-slot");
   if (!modalCard) return;
 
-  const backgroundUrl = HOURLY_TRACK_BACKGROUNDS[String(trackCode || "").trim().toLowerCase()];
+  const backgroundUrl = getHourlyTrackBackgroundUrl(trackCode);
   modalCard.style.setProperty("--modal-track-photo", backgroundUrl ? `url("${backgroundUrl}")` : "none");
 }
 
@@ -3001,7 +3026,7 @@ function renderHourlyHeroCard() {
   trackEl.textContent = data?.track_name || t("hourlyNoEvent");
   startsEl.textContent = formatHeroHourlyDateTime(data?.date, data?.start_time_local, data?.timezone);
   const trackCode = String(data?.track_code || "").trim().toLowerCase();
-  const backgroundUrl = HOURLY_TRACK_BACKGROUNDS[trackCode];
+  const backgroundUrl = getHourlyTrackBackgroundUrl(trackCode);
   cardEl.style.setProperty("--hero-hourly-track-photo", backgroundUrl ? `url("${backgroundUrl}")` : "none");
   cardEl.classList.toggle("is-championship-event", isChampionship);
   cardEl.classList.toggle("is-endurance-event", isEndurance);
