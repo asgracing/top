@@ -13,6 +13,7 @@ import { HOME_LOADING_TEXT_IDS, applyHomeTableViewState } from "./src/pages/home
 import { createModalControllerFactory } from "./src/shared/modal-controller.js";
 import { parseTableNumber, sortTableRows } from "./src/shared/table-model.js";
 import { countUnreadNews, sortPublishedNews } from "./src/shared/news-feed-model.js";
+import { createAuthHeaderController } from "./src/features/auth/header-auth.js";
 
 const PAGE_CONTEXT = readPageContext(document);
 const PAGE_FEATURES = await loadPageFeatures(PAGE_CONTEXT.page);
@@ -10444,6 +10445,8 @@ async function init() {
   applyInitialTopLoadingState();
   homePage.setupDeferred();
   ensureNewsNotificationsUi();
+  const authHeaderController = createAuthHeaderController();
+  if (authHeaderController) appLifecycle.add(() => authHeaderController.destroy());
   rerenderUI();
 
   backgroundVideoSoundState.volume = loadBackgroundVideoVolume();
