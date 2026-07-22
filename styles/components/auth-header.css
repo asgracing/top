@@ -152,15 +152,16 @@
 
   .auth-header-sr-metric {
     align-items: center;
+    gap: 3px;
   }
 
   .auth-header-sr-badge {
     display: inline-flex;
     align-items: center;
     justify-content: center;
-    min-width: 17px;
+    min-width: 34px;
     height: 17px;
-    padding: 0 4px;
+    padding: 0 6px;
     border: 1px solid var(--auth-sr-border);
     border-radius: 999px;
     background: var(--auth-sr-bg);

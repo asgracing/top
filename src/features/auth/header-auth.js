@@ -155,7 +155,7 @@ function ensureStylesheet(documentRef) {
   if (documentRef.querySelector("link[data-asg-auth-header-style]")) return;
   const link = documentRef.createElement("link");
   link.rel = "stylesheet";
-  link.href = new URL("../../../styles/components/auth-header.css?v=20260722auth3", import.meta.url).href;
+  link.href = new URL("../../../styles/components/auth-header.css?v=20260722auth4", import.meta.url).href;
   link.dataset.asgAuthHeaderStyle = "true";
   documentRef.head.appendChild(link);
 }
@@ -235,14 +235,19 @@ export function createAuthHeaderController({
       `${categoryId ? `C${categoryId} · ` : ""}${translate("elo")} ${metricLabel(auth.driver?.elo ?? null)}`
     );
     const safetyMetric = makeElement(documentRef, "span", "auth-header-metric auth-header-sr-metric");
+    safetyMetric.appendChild(makeElement(documentRef, "span", "auth-header-sr-label", `${translate("sr")}:`));
     if (safetyCategory) {
       safetyMetric.appendChild(
-        makeElement(documentRef, "span", `auth-header-sr-badge auth-header-sr-cat-${safetyCategory}`, safetyCategory)
+        makeElement(
+          documentRef,
+          "span",
+          `auth-header-sr-badge auth-header-sr-cat-${safetyCategory}`,
+          `${safetyCategory} ${metricLabel(auth.driver?.sr ?? null, 2)}`
+        )
       );
+    } else {
+      safetyMetric.appendChild(makeElement(documentRef, "span", "auth-header-sr-value", metricLabel(null)));
     }
-    safetyMetric.appendChild(
-      makeElement(documentRef, "span", "auth-header-sr-value", `${translate("sr")} ${metricLabel(auth.driver?.sr ?? null, 2)}`)
-    );
     metrics.append(eloMetric, safetyMetric);
     copy.appendChild(metrics);
     toggle.append(renderAvatar(auth, name), copy, makeElement(documentRef, "span", "auth-header-caret", "▾"));
