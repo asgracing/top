@@ -225,6 +225,62 @@
     text-decoration: none;
   }
 
+  .auth-header-discord {
+    margin: 4px 0;
+    padding: 7px 0 5px;
+    border-top: 1px solid rgba(255, 255, 255, 0.08);
+    border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+  }
+
+  .auth-header-discord-heading,
+  .auth-header-discord-status {
+    padding: 3px 11px;
+  }
+
+  .auth-header-discord-heading {
+    color: #b9a7ff;
+    font-size: 0.68rem;
+    font-weight: 850;
+    letter-spacing: 0.04em;
+    text-transform: uppercase;
+  }
+
+  .auth-header-discord-status {
+    color: var(--muted, #9ca8b7);
+    font-size: 0.7rem;
+    font-weight: 650;
+    line-height: 1.35;
+  }
+
+  .auth-header-discord-status--synced {
+    color: #72e6a5;
+  }
+
+  .auth-header-discord-status--error {
+    color: #ffd166;
+  }
+
+  .auth-header-discord-status--unlink_pending {
+    color: #ffcfbf;
+  }
+
+  .auth-header-discord-link {
+    color: #c9beff;
+  }
+
+  .auth-header-discord-sync {
+    color: #72e6a5;
+  }
+
+  .auth-header-discord-unlink {
+    color: #ffcfbf;
+  }
+
+  .auth-header-menu-item:disabled {
+    cursor: wait;
+    opacity: 0.55;
+  }
+
   .auth-header-menu-item {
     cursor: pointer;
   }

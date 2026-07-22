@@ -12,6 +12,17 @@ const COPY = Object.freeze({
     elo: "ELO",
     sr: "SR",
     profile: "Driver profile",
+    discord: "Discord",
+    discordLink: "Link Discord",
+    discordLinked: "Discord linked",
+    discordPending: "Role update pending",
+    discordSynced: "Roles are up to date",
+    discordError: "Role update needs attention",
+    discordUnlinkPending: "Removing rating roles",
+    discordSync: "Update roles",
+    discordUnlink: "Unlink Discord",
+    discordLinkFailed: "Could not start Discord linking. Try again.",
+    discordUnlinkFailed: "Could not unlink Discord. Try again.",
     logout: "Sign out",
     unlinked: "Driver profile not found yet",
     account: "ASG Racing account",
@@ -29,6 +40,17 @@ const COPY = Object.freeze({
     elo: "ELO",
     sr: "SR",
     profile: "Профиль пилота",
+    discord: "Discord",
+    discordLink: "Привязать Discord",
+    discordLinked: "Discord привязан",
+    discordPending: "Обновление ролей ожидается",
+    discordSynced: "Роли актуальны",
+    discordError: "Нужно обновить роли",
+    discordUnlinkPending: "Удаляем рейтинговые роли",
+    discordSync: "Обновить роли",
+    discordUnlink: "Отвязать Discord",
+    discordLinkFailed: "Не удалось начать привязку Discord. Попробуйте ещё раз.",
+    discordUnlinkFailed: "Не удалось отвязать Discord. Попробуйте ещё раз.",
     logout: "Выйти",
     unlinked: "Профиль пилота пока не найден",
     account: "Кабинет ASG Racing",
@@ -93,6 +115,23 @@ export function safeDriverProfileUrl(value) {
   }
 }
 
+export function safeDiscordAuthorizationUrl(value) {
+  try {
+    const url = new URL(String(value || ""));
+    if (
+      url.protocol !== "https:"
+      || url.hostname !== "discord.com"
+      || url.port
+      || url.username
+      || url.password
+      || url.pathname !== "/oauth2/authorize"
+    ) return null;
+    return url.href;
+  } catch {
+    return null;
+  }
+}
+
 export function normalizeAuthPayload(payload) {
   if (!payload || payload.authenticated !== true) return { authenticated: false };
   const rawDriver = payload.linked === true && payload.driver && typeof payload.driver === "object"
@@ -113,11 +152,22 @@ export function normalizeAuthPayload(payload) {
         avatarUrl: safeAvatarUrl(payload.steam.avatar_url)
       }
     : { personaName: "", avatarUrl: null };
+  const rawDiscord = payload.discord && typeof payload.discord === "object"
+    ? payload.discord
+    : null;
+  const syncStatus = ["pending", "synced", "error", "unlink_pending"].includes(rawDiscord?.sync_status)
+    ? rawDiscord.sync_status
+    : null;
+  const discord = {
+    linked: rawDiscord?.linked === true,
+    syncStatus
+  };
   return {
     authenticated: true,
     linked: Boolean(driver),
     driver,
     steam,
+    discord,
     csrfToken: safeText(payload.csrf_token, 256)
   };
 }
@@ -158,7 +208,7 @@ function ensureStylesheet(documentRef) {
   if (documentRef.querySelector("link[data-asg-auth-header-style]")) return;
   const link = documentRef.createElement("link");
   link.rel = "stylesheet";
-  link.href = new URL("../../../styles/components/auth-header.css?v=20260722auth6", import.meta.url).href;
+  link.href = new URL("../../../styles/components/auth-header.css?v=20260722discord2", import.meta.url).href;
   link.dataset.asgAuthHeaderStyle = "true";
   documentRef.head.appendChild(link);
 }
@@ -269,6 +319,63 @@ export function createAuthHeaderController({
       const note = makeElement(documentRef, "div", "auth-header-unlinked", translate("unlinked"));
       menu.appendChild(note);
     }
+    if (auth.linked) {
+      const discordSection = makeElement(documentRef, "div", "auth-header-discord");
+      const discordHeading = makeElement(
+        documentRef,
+        "div",
+        "auth-header-discord-heading",
+        translate("discord")
+      );
+      discordSection.appendChild(discordHeading);
+      if (auth.discord?.linked) {
+        const statusKey = {
+          synced: "discordSynced",
+          error: "discordError",
+          unlink_pending: "discordUnlinkPending"
+        }[auth.discord.syncStatus] || "discordPending";
+        const status = makeElement(
+          documentRef,
+          "div",
+          `auth-header-discord-status auth-header-discord-status--${auth.discord.syncStatus || "pending"}`,
+          translate(statusKey)
+        );
+        discordSection.appendChild(status);
+        if (auth.discord.syncStatus !== "unlink_pending") {
+          const sync = makeElement(
+            documentRef,
+            "button",
+            "auth-header-menu-item auth-header-discord-sync",
+            translate("discordSync")
+          );
+          sync.type = "button";
+          sync.setAttribute("role", "menuitem");
+          sync.addEventListener("click", () => void syncDiscord(auth.csrfToken, sync));
+          const unlink = makeElement(
+            documentRef,
+            "button",
+            "auth-header-menu-item auth-header-discord-unlink",
+            translate("discordUnlink")
+          );
+          unlink.type = "button";
+          unlink.setAttribute("role", "menuitem");
+          unlink.addEventListener("click", () => void unlinkDiscord(auth.csrfToken, unlink));
+          discordSection.append(sync, unlink);
+        }
+      } else {
+        const link = makeElement(
+          documentRef,
+          "button",
+          "auth-header-menu-item auth-header-discord-link",
+          translate("discordLink")
+        );
+        link.type = "button";
+        link.setAttribute("role", "menuitem");
+        link.addEventListener("click", () => void linkDiscord(auth.csrfToken, link));
+        discordSection.appendChild(link);
+      }
+      menu.appendChild(discordSection);
+    }
     const logout = makeElement(documentRef, "button", "auth-header-menu-item auth-header-logout", translate("logout"));
     logout.type = "button";
     logout.setAttribute("role", "menuitem");
@@ -353,6 +460,68 @@ export function createAuthHeaderController({
     } catch {
       button.disabled = false;
       button.title = translate("logoutFailed");
+    }
+  }
+
+  async function linkDiscord(csrfToken, button) {
+    if (!csrfToken || button.disabled) return;
+    button.disabled = true;
+    try {
+      const returnPath = buildAuthReturnPath(windowRef.location);
+      const response = await fetchImpl(
+        `${baseUrl}/v1/auth/discord/start?return_path=${encodeURIComponent(returnPath)}`,
+        {
+          method: "POST",
+          credentials: "include",
+          cache: "no-store",
+          headers: { Accept: "application/json", "X-CSRF-Token": csrfToken }
+        }
+      );
+      if (!response.ok) throw new Error(`auth_discord_start_http_${response.status}`);
+      const authorizationUrl = safeDiscordAuthorizationUrl(
+        (await response.json())?.authorization_url
+      );
+      if (!authorizationUrl) throw new Error("auth_discord_authorization_url_invalid");
+      windowRef.location.assign(authorizationUrl);
+    } catch {
+      button.disabled = false;
+      button.title = translate("discordLinkFailed");
+    }
+  }
+
+  async function unlinkDiscord(csrfToken, button) {
+    if (!csrfToken || button.disabled) return;
+    button.disabled = true;
+    try {
+      const response = await fetchImpl(`${baseUrl}/v1/auth/discord/unlink`, {
+        method: "POST",
+        credentials: "include",
+        cache: "no-store",
+        headers: { Accept: "application/json", "X-CSRF-Token": csrfToken }
+      });
+      if (!response.ok) throw new Error(`auth_discord_unlink_http_${response.status}`);
+      await refresh();
+    } catch {
+      button.disabled = false;
+      button.title = translate("discordUnlinkFailed");
+    }
+  }
+
+  async function syncDiscord(csrfToken, button) {
+    if (!csrfToken || button.disabled) return;
+    button.disabled = true;
+    try {
+      const response = await fetchImpl(`${baseUrl}/v1/auth/discord/sync`, {
+        method: "POST",
+        credentials: "include",
+        cache: "no-store",
+        headers: { Accept: "application/json", "X-CSRF-Token": csrfToken }
+      });
+      if (!response.ok) throw new Error(`auth_discord_sync_http_${response.status}`);
+      await refresh();
+    } catch {
+      button.disabled = false;
+      button.title = translate("discordLinkFailed");
     }
   }
 

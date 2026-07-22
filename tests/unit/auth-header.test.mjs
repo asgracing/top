@@ -6,6 +6,7 @@ import {
   eloCategoryId,
   normalizeAuthPayload,
   safeAvatarUrl,
+  safeDiscordAuthorizationUrl,
   safeDriverProfileUrl,
   srCategory
 } from "../../src/features/auth/header-auth.js";
@@ -46,7 +47,13 @@ test("normalizes linked auth data without exposing unexpected identity fields", 
       persona_name: "Steam Driver",
       avatar_url: "https://avatars.cloudflare.steamstatic.com/avatar.jpg"
     },
-    csrf_token: "csrf-token"
+    csrf_token: "csrf-token",
+    discord: {
+      linked: true,
+      sync_status: "synced",
+      discord_id: "482924387893379082",
+      access_token: "must not survive"
+    }
   });
 
   assert.equal(normalized.authenticated, true);
@@ -62,6 +69,33 @@ test("normalizes linked auth data without exposing unexpected identity fields", 
   });
   assert.equal("steam_id" in normalized, false);
   assert.equal("private_value" in normalized.driver, false);
+  assert.deepEqual(normalized.discord, { linked: true, syncStatus: "synced" });
+  assert.equal("discord_id" in normalized.discord, false);
+  assert.equal("access_token" in normalized.discord, false);
+});
+
+test("accepts only the fixed Discord OAuth authorization endpoint", () => {
+  assert.equal(
+    safeDiscordAuthorizationUrl("https://discord.com/oauth2/authorize?client_id=123&state=abc"),
+    "https://discord.com/oauth2/authorize?client_id=123&state=abc"
+  );
+  assert.equal(safeDiscordAuthorizationUrl("https://evil.example/oauth2/authorize"), null);
+  assert.equal(safeDiscordAuthorizationUrl("https://discord.com.evil.example/oauth2/authorize"), null);
+  assert.equal(safeDiscordAuthorizationUrl("https://discord.com/api/oauth2/token"), null);
+});
+
+test("normalizes only known Discord role synchronization states", () => {
+  const payload = {
+    authenticated: true,
+    linked: false,
+    discord: { linked: true, sync_status: "unlink_pending", error_code: "private" }
+  };
+  assert.deepEqual(normalizeAuthPayload(payload).discord, {
+    linked: true,
+    syncStatus: "unlink_pending"
+  });
+  payload.discord.sync_status = "unexpected_server_value";
+  assert.equal(normalizeAuthPayload(payload).discord.syncStatus, null);
 });
 
 test("rejects external profile and avatar URLs", () => {
