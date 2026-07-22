@@ -6,7 +6,8 @@ import {
   eloCategoryId,
   normalizeAuthPayload,
   safeAvatarUrl,
-  safeDriverProfileUrl
+  safeDriverProfileUrl,
+  srCategory
 } from "../../src/features/auth/header-auth.js";
 
 test("maps ELO thresholds to the shared C1-C6 categories", () => {
@@ -17,6 +18,14 @@ test("maps ELO thresholds to the shared C1-C6 categories", () => {
   assert.equal(eloCategoryId(950), 5);
   assert.equal(eloCategoryId(949), 6);
   assert.equal(eloCategoryId(null), null);
+});
+
+test("maps SR thresholds to A, B and C badges", () => {
+  assert.equal(srCategory(5), "A");
+  assert.equal(srCategory(4.93), "B");
+  assert.equal(srCategory(2.49), "C");
+  assert.equal(srCategory(1, "A"), "A");
+  assert.equal(srCategory(null), null);
 });
 
 test("normalizes linked auth data without exposing unexpected identity fields", () => {
@@ -46,7 +55,8 @@ test("normalizes linked auth data without exposing unexpected identity fields", 
     displayName: "Driver One",
     profileUrl: "/driver/?id=drv_abc",
     elo: 1512,
-    sr: 4.2
+    sr: 4.2,
+    srCategory: "B"
   });
   assert.equal("steam_id" in normalized, false);
   assert.equal("private_value" in normalized.driver, false);

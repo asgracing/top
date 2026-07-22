@@ -57,6 +57,16 @@ export function eloCategoryId(value) {
   return 6;
 }
 
+export function srCategory(value, explicit = "") {
+  const normalized = safeText(explicit, 1).toUpperCase();
+  if (["A", "B", "C"].includes(normalized)) return normalized;
+  const rating = safeMetric(value);
+  if (rating === null) return null;
+  if (rating >= 5) return "A";
+  if (rating >= 2.5) return "B";
+  return "C";
+}
+
 export function safeAvatarUrl(value) {
   try {
     const url = new URL(String(value || ""));
@@ -89,7 +99,8 @@ export function normalizeAuthPayload(payload) {
         displayName: safeText(payload.driver.display_name, 160),
         profileUrl: safeDriverProfileUrl(payload.driver.profile_url),
         elo: safeMetric(payload.driver.elo),
-        sr: safeMetric(payload.driver.sr)
+        sr: safeMetric(payload.driver.sr),
+        srCategory: srCategory(payload.driver.sr, payload.driver.sr_category)
       }
     : null;
   const driver = rawDriver?.publicId && rawDriver.displayName && rawDriver.profileUrl ? rawDriver : null;
@@ -144,7 +155,7 @@ function ensureStylesheet(documentRef) {
   if (documentRef.querySelector("link[data-asg-auth-header-style]")) return;
   const link = documentRef.createElement("link");
   link.rel = "stylesheet";
-  link.href = new URL("../../../styles/components/auth-header.css?v=20260722auth2", import.meta.url).href;
+  link.href = new URL("../../../styles/components/auth-header.css?v=20260722auth3", import.meta.url).href;
   link.dataset.asgAuthHeaderStyle = "true";
   documentRef.head.appendChild(link);
 }
@@ -208,6 +219,7 @@ export function createAuthHeaderController({
     const name = auth.driver?.displayName || auth.steam?.personaName || translate("account");
     const toggle = makeElement(documentRef, "button", "auth-header-account");
     const categoryId = eloCategoryId(auth.driver?.elo);
+    const safetyCategory = auth.driver?.srCategory || null;
     if (categoryId) toggle.classList.add(`auth-header-elo-cat-${categoryId}`);
     toggle.type = "button";
     toggle.setAttribute("aria-haspopup", "menu");
@@ -216,15 +228,22 @@ export function createAuthHeaderController({
     const copy = makeElement(documentRef, "span", "auth-header-account-copy");
     copy.appendChild(makeElement(documentRef, "span", "auth-header-name", name));
     const metrics = makeElement(documentRef, "span", "auth-header-metrics");
-    metrics.append(
-      makeElement(
-        documentRef,
-        "span",
-        "auth-header-metric",
-        `${categoryId ? `C${categoryId} · ` : ""}${translate("elo")} ${metricLabel(auth.driver?.elo ?? null)}`
-      ),
-      makeElement(documentRef, "span", "auth-header-metric", `${translate("sr")} ${metricLabel(auth.driver?.sr ?? null, 2)}`)
+    const eloMetric = makeElement(
+      documentRef,
+      "span",
+      "auth-header-metric",
+      `${categoryId ? `C${categoryId} · ` : ""}${translate("elo")} ${metricLabel(auth.driver?.elo ?? null)}`
     );
+    const safetyMetric = makeElement(documentRef, "span", "auth-header-metric auth-header-sr-metric");
+    if (safetyCategory) {
+      safetyMetric.appendChild(
+        makeElement(documentRef, "span", `auth-header-sr-badge auth-header-sr-cat-${safetyCategory}`, safetyCategory)
+      );
+    }
+    safetyMetric.appendChild(
+      makeElement(documentRef, "span", "auth-header-sr-value", `${translate("sr")} ${metricLabel(auth.driver?.sr ?? null, 2)}`)
+    );
+    metrics.append(eloMetric, safetyMetric);
     copy.appendChild(metrics);
     toggle.append(renderAvatar(auth, name), copy, makeElement(documentRef, "span", "auth-header-caret", "▾"));
 

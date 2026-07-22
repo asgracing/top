@@ -13,7 +13,7 @@ import { HOME_LOADING_TEXT_IDS, applyHomeTableViewState } from "./src/pages/home
 import { createModalControllerFactory } from "./src/shared/modal-controller.js";
 import { parseTableNumber, sortTableRows } from "./src/shared/table-model.js";
 import { countUnreadNews, sortPublishedNews } from "./src/shared/news-feed-model.js";
-import { createAuthHeaderController } from "./src/features/auth/header-auth.js?v=20260722auth2";
+import { createAuthHeaderController } from "./src/features/auth/header-auth.js?v=20260722auth3";
 
 const PAGE_CONTEXT = readPageContext(document);
 const PAGE_FEATURES = await loadPageFeatures(PAGE_CONTEXT.page);
