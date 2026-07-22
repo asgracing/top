@@ -19,7 +19,7 @@ const COPY = Object.freeze({
     discordSynced: "Roles are up to date",
     discordError: "Role update needs attention",
     discordUnlinkPending: "Removing rating roles",
-    discordSync: "Update roles",
+    discordSync: "Retry role update",
     discordUnlink: "Unlink Discord",
     discordLinkFailed: "Could not start Discord linking. Try again.",
     discordUnlinkFailed: "Could not unlink Discord. Try again.",
@@ -47,7 +47,7 @@ const COPY = Object.freeze({
     discordSynced: "Роли актуальны",
     discordError: "Нужно обновить роли",
     discordUnlinkPending: "Удаляем рейтинговые роли",
-    discordSync: "Обновить роли",
+    discordSync: "Повторить обновление ролей",
     discordUnlink: "Отвязать Discord",
     discordLinkFailed: "Не удалось начать привязку Discord. Попробуйте ещё раз.",
     discordUnlinkFailed: "Не удалось отвязать Discord. Попробуйте ещё раз.",
@@ -208,7 +208,7 @@ function ensureStylesheet(documentRef) {
   if (documentRef.querySelector("link[data-asg-auth-header-style]")) return;
   const link = documentRef.createElement("link");
   link.rel = "stylesheet";
-  link.href = new URL("../../../styles/components/auth-header.css?v=20260722discord2", import.meta.url).href;
+  link.href = new URL("../../../styles/components/auth-header.css?v=20260722discord3", import.meta.url).href;
   link.dataset.asgAuthHeaderStyle = "true";
   documentRef.head.appendChild(link);
 }
@@ -342,15 +342,18 @@ export function createAuthHeaderController({
         );
         discordSection.appendChild(status);
         if (auth.discord.syncStatus !== "unlink_pending") {
-          const sync = makeElement(
-            documentRef,
-            "button",
-            "auth-header-menu-item auth-header-discord-sync",
-            translate("discordSync")
-          );
-          sync.type = "button";
-          sync.setAttribute("role", "menuitem");
-          sync.addEventListener("click", () => void syncDiscord(auth.csrfToken, sync));
+          if (auth.discord.syncStatus === "error") {
+            const sync = makeElement(
+              documentRef,
+              "button",
+              "auth-header-menu-item auth-header-discord-sync",
+              translate("discordSync")
+            );
+            sync.type = "button";
+            sync.setAttribute("role", "menuitem");
+            sync.addEventListener("click", () => void syncDiscord(auth.csrfToken, sync));
+            discordSection.appendChild(sync);
+          }
           const unlink = makeElement(
             documentRef,
             "button",
@@ -360,7 +363,7 @@ export function createAuthHeaderController({
           unlink.type = "button";
           unlink.setAttribute("role", "menuitem");
           unlink.addEventListener("click", () => void unlinkDiscord(auth.csrfToken, unlink));
-          discordSection.append(sync, unlink);
+          discordSection.appendChild(unlink);
         }
       } else {
         const link = makeElement(
