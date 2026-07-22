@@ -130,7 +130,7 @@
   .auth-header-metrics {
     display: flex;
     align-items: center;
-    gap: 5px;
+    gap: 3px;
     min-width: 0;
   }
 
@@ -140,13 +140,23 @@
     justify-content: center;
     height: 18px;
     box-sizing: border-box;
-    padding: 0 7px;
+    padding: 0 4px;
     border: 0;
     border-radius: 7px;
-    font-size: 9px;
+    font-size: 8.5px;
     font-weight: 700;
     line-height: 1;
     white-space: nowrap;
+  }
+
+  .pilot-rating-badge-text {
+    display: block;
+    transform: translateY(1px);
+  }
+
+  .pilot-rating-badge--rank {
+    background: #566274;
+    color: #fff;
   }
 
   .pilot-rating-badge--elo {

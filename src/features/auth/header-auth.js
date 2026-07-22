@@ -8,6 +8,7 @@ const COPY = Object.freeze({
     loading: "Checking sign-in",
     unavailable: "Sign-in unavailable",
     retry: "Retry",
+    rank: "Rank",
     elo: "ELO",
     sr: "SR",
     profile: "Driver profile",
@@ -19,6 +20,7 @@ const COPY = Object.freeze({
     logoutFailed: "Could not sign out. Try again."
   },
   ru: {
+    rank: "Rank",
     login: "Войти через Steam",
     loginShort: "Steam",
     loading: "Проверяем вход",
@@ -98,6 +100,7 @@ export function normalizeAuthPayload(payload) {
         publicId: safeText(payload.driver.public_id, 160),
         displayName: safeText(payload.driver.display_name, 160),
         profileUrl: safeDriverProfileUrl(payload.driver.profile_url),
+        rank: safeMetric(payload.driver.rank),
         elo: safeMetric(payload.driver.elo),
         sr: safeMetric(payload.driver.sr),
         srCategory: srCategory(payload.driver.sr, payload.driver.sr_category)
@@ -155,7 +158,7 @@ function ensureStylesheet(documentRef) {
   if (documentRef.querySelector("link[data-asg-auth-header-style]")) return;
   const link = documentRef.createElement("link");
   link.rel = "stylesheet";
-  link.href = new URL("../../../styles/components/auth-header.css?v=20260722auth5", import.meta.url).href;
+  link.href = new URL("../../../styles/components/auth-header.css?v=20260722auth6", import.meta.url).href;
   link.dataset.asgAuthHeaderStyle = "true";
   documentRef.head.appendChild(link);
 }
@@ -230,19 +233,23 @@ export function createAuthHeaderController({
     const copy = makeElement(documentRef, "span", "auth-header-account-copy pilot-profile-content");
     copy.appendChild(makeElement(documentRef, "span", "auth-header-name pilot-profile-name", name));
     const metrics = makeElement(documentRef, "span", "auth-header-metrics pilot-profile-ratings");
-    const eloMetric = makeElement(
-      documentRef,
-      "span",
-      "auth-header-metric pilot-rating-badge pilot-rating-badge--elo",
-      `${translate("elo")} ${metricLabel(auth.driver?.elo ?? null)}`
+    const makeMetricBadge = (modifier, label) => {
+      const badge = makeElement(
+        documentRef,
+        "span",
+        `auth-header-metric pilot-rating-badge pilot-rating-badge--${modifier}`
+      );
+      badge.appendChild(makeElement(documentRef, "span", "pilot-rating-badge-text", label));
+      return badge;
+    };
+    const rank = auth.driver?.rank;
+    const rankMetric = makeMetricBadge(
+      "rank",
+      `${translate("rank")} ${rank === null ? "—" : `#${metricLabel(rank)}`}`
     );
-    const safetyMetric = makeElement(
-      documentRef,
-      "span",
-      "auth-header-metric pilot-rating-badge pilot-rating-badge--sr",
-      `${translate("sr")} ${metricLabel(auth.driver?.sr ?? null, 2)}`
-    );
-    metrics.append(eloMetric, safetyMetric);
+    const eloMetric = makeMetricBadge("elo", `${translate("elo")} ${metricLabel(auth.driver?.elo ?? null)}`);
+    const safetyMetric = makeMetricBadge("sr", `${translate("sr")} ${metricLabel(auth.driver?.sr ?? null, 2)}`);
+    metrics.append(rankMetric, eloMetric, safetyMetric);
     copy.appendChild(metrics);
     toggle.append(
       renderAvatar(auth, name),
