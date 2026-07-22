@@ -1,3 +1,5 @@
+@import url("./rating-palette.css?v=20260722ratings1");
+
 @layer components {
   .top-nav-actions {
     align-items: center;
@@ -8,23 +10,21 @@
     position: relative;
     display: flex;
     align-items: center;
-    min-height: 42px;
+    min-height: 52px;
     z-index: 8;
   }
 
   .auth-header-login,
-  .auth-header-account,
   .auth-header-loading {
     min-height: 42px;
     border: 1px solid rgba(255, 255, 255, 0.12);
     border-radius: 14px;
-    background: linear-gradient(135deg, rgba(25, 36, 50, 0.96), rgba(14, 21, 31, 0.96));
+    background: rgba(19, 25, 34, 0.94);
     color: var(--text, #fff);
     box-shadow: 0 10px 28px rgba(0, 0, 0, 0.24);
   }
 
-  .auth-header-login,
-  .auth-header-account {
+  .auth-header-login {
     display: inline-flex;
     align-items: center;
     gap: 9px;
@@ -32,72 +32,50 @@
     font: inherit;
     text-decoration: none;
     cursor: pointer;
-    transition: transform 0.2s ease, border-color 0.2s ease, background 0.2s ease;
+    transition: border-color 0.2s ease, background 0.2s ease;
   }
 
-  .auth-header-account[class*="auth-header-elo-cat-"] {
-    border-color: var(--auth-elo-border);
-    background: var(--auth-elo-bg);
-    color: var(--auth-elo-fg);
-  }
-
-  .auth-header-account[class*="auth-header-elo-cat-"] .auth-header-metrics,
-  .auth-header-account[class*="auth-header-elo-cat-"] .auth-header-caret {
-    color: var(--auth-elo-accent);
-  }
-
-  .auth-header-account.auth-header-elo-cat-1 {
-    --auth-elo-bg: linear-gradient(135deg, rgba(196, 169, 255, 0.94), rgba(137, 104, 218, 0.82));
-    --auth-elo-border: rgba(213, 194, 255, 0.66);
-    --auth-elo-fg: #171124;
-    --auth-elo-accent: #4b2c8a;
-  }
-
-  .auth-header-account.auth-header-elo-cat-2 {
-    --auth-elo-bg: linear-gradient(135deg, rgba(213, 238, 255, 0.95), rgba(132, 182, 218, 0.86));
-    --auth-elo-border: rgba(216, 244, 255, 0.72);
-    --auth-elo-fg: #102232;
-    --auth-elo-accent: #0b536e;
-  }
-
-  .auth-header-account.auth-header-elo-cat-3 {
-    --auth-elo-bg: linear-gradient(135deg, rgba(255, 214, 128, 0.86), rgba(196, 137, 45, 0.72));
-    --auth-elo-border: rgba(255, 215, 126, 0.56);
-    --auth-elo-fg: #20160a;
-    --auth-elo-accent: #6a3d00;
-  }
-
-  .auth-header-account.auth-header-elo-cat-4 {
-    --auth-elo-bg: linear-gradient(135deg, rgba(184, 205, 230, 0.8), rgba(88, 121, 158, 0.62));
-    --auth-elo-border: rgba(202, 223, 244, 0.42);
-    --auth-elo-fg: #f6fbff;
-    --auth-elo-accent: #dcecff;
-  }
-
-  .auth-header-account.auth-header-elo-cat-5 {
-    --auth-elo-bg: linear-gradient(135deg, rgba(205, 127, 50, 0.86), rgba(124, 73, 34, 0.72));
-    --auth-elo-border: rgba(226, 153, 79, 0.48);
-    --auth-elo-fg: #fff8ee;
-    --auth-elo-accent: #ffe0b6;
-  }
-
-  .auth-header-account.auth-header-elo-cat-6 {
-    --auth-elo-bg: linear-gradient(135deg, rgba(239, 97, 97, 0.68), rgba(113, 52, 73, 0.62));
-    --auth-elo-border: rgba(255, 139, 139, 0.34);
-    --auth-elo-fg: #fff5f5;
-    --auth-elo-accent: #ffd6d6;
-  }
-
-  .auth-header-login:hover,
-  .auth-header-account:hover {
-    transform: translateY(-1px);
+  .auth-header-login:hover {
     border-color: rgba(102, 192, 244, 0.55);
-    background: linear-gradient(135deg, rgba(35, 55, 76, 0.98), rgba(18, 29, 43, 0.98));
+    background: rgba(25, 32, 43, 0.98);
   }
 
-  .auth-header-account[class*="auth-header-elo-cat-"]:hover {
-    border-color: var(--auth-elo-accent);
-    background: var(--auth-elo-bg);
+  .auth-header-account {
+    width: clamp(220px, 16vw, 260px);
+    min-width: 220px;
+    max-width: 260px;
+    height: 52px;
+    box-sizing: border-box;
+    display: grid;
+    grid-template-columns: 38px minmax(0, 1fr) 16px;
+    align-items: center;
+    gap: 9px;
+    padding: 7px 12px 7px 8px;
+    border: 1px solid rgba(var(--elo-color-rgb, 255, 255, 255), 0.6);
+    border-radius: 14px;
+    background: rgba(19, 25, 34, 0.94);
+    color: var(--text, #fff);
+    box-shadow:
+      0 0 0 1px rgba(var(--elo-color-rgb, 255, 255, 255), 0.18),
+      0 0 10px rgba(var(--elo-color-rgb, 255, 255, 255), 0.28);
+    backdrop-filter: blur(10px);
+    font: inherit;
+    text-decoration: none;
+    cursor: pointer;
+    transition: border-color 0.2s ease, background 0.2s ease, box-shadow 0.2s ease;
+  }
+
+  .auth-header-account:hover {
+    border-color: rgba(var(--elo-color-rgb, 255, 255, 255), 0.85);
+    background: rgba(25, 32, 43, 0.98);
+    box-shadow:
+      0 0 0 1px rgba(var(--elo-color-rgb, 255, 255, 255), 0.24),
+      0 0 12px rgba(var(--elo-color-rgb, 255, 255, 255), 0.34);
+  }
+
+  .auth-header-account:focus-visible {
+    outline: 2px solid var(--elo-color, #9ca8b7);
+    outline-offset: 2px;
   }
 
   .auth-header-steam-icon,
@@ -106,11 +84,11 @@
     flex: 0 0 auto;
     align-items: center;
     justify-content: center;
-    width: 32px;
-    height: 32px;
+    width: 36px;
+    height: 36px;
     border-radius: 50%;
     color: #fff;
-    background: linear-gradient(135deg, #1b8bc3, #153a62);
+    background: #1b8bc3;
     font-size: 0.78rem;
     font-weight: 900;
     overflow: hidden;
@@ -122,76 +100,75 @@
     object-fit: cover;
   }
 
-  .auth-header-login-label,
-  .auth-header-name {
+  .auth-header-login-label {
     font-size: 0.78rem;
     font-weight: 800;
     white-space: nowrap;
   }
 
   .auth-header-account-copy {
-    display: grid;
-    gap: 2px;
     min-width: 0;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    gap: 4px;
     text-align: left;
   }
 
   .auth-header-name {
-    max-width: 150px;
+    display: block;
+    min-width: 0;
     overflow: hidden;
+    color: var(--text, #fff);
+    font-size: 12px;
+    font-weight: 700;
+    line-height: 1.15;
     text-overflow: ellipsis;
+    white-space: nowrap;
   }
 
   .auth-header-metrics {
     display: flex;
-    gap: 7px;
-    color: var(--muted, #9ca8b7);
-    font-size: 0.65rem;
-    font-weight: 800;
-  }
-
-  .auth-header-sr-metric {
     align-items: center;
-    gap: 3px;
+    gap: 5px;
+    min-width: 0;
   }
 
-  .auth-header-sr-badge {
+  .pilot-rating-badge {
     display: inline-flex;
     align-items: center;
     justify-content: center;
-    min-width: 34px;
-    height: 17px;
-    padding: 0 6px;
-    border: 1px solid var(--auth-sr-border);
-    border-radius: 999px;
-    background: var(--auth-sr-bg);
-    color: var(--auth-sr-fg);
-    font-size: 0.58rem;
-    font-weight: 950;
+    height: 18px;
+    box-sizing: border-box;
+    padding: 0 7px;
+    border: 0;
+    border-radius: 7px;
+    font-size: 9px;
+    font-weight: 700;
     line-height: 1;
+    white-space: nowrap;
   }
 
-  .auth-header-sr-cat-A {
-    --auth-sr-bg: linear-gradient(135deg, rgba(89, 218, 154, 0.96), rgba(29, 134, 96, 0.9));
-    --auth-sr-border: rgba(127, 246, 183, 0.72);
-    --auth-sr-fg: #071c13;
+  .pilot-rating-badge--elo {
+    background: var(--elo-color, #687486);
+    color: var(--elo-text-color, #fff);
   }
 
-  .auth-header-sr-cat-B {
-    --auth-sr-bg: linear-gradient(135deg, rgba(255, 213, 112, 0.96), rgba(188, 129, 43, 0.9));
-    --auth-sr-border: rgba(255, 220, 126, 0.68);
-    --auth-sr-fg: #241707;
-  }
-
-  .auth-header-sr-cat-C {
-    --auth-sr-bg: linear-gradient(135deg, rgba(255, 118, 104, 0.94), rgba(153, 54, 62, 0.88));
-    --auth-sr-border: rgba(255, 150, 139, 0.66);
-    --auth-sr-fg: #fff6f5;
+  .pilot-rating-badge--sr {
+    background: var(--sr-color, #687486);
+    color: var(--sr-text-color, #fff);
   }
 
   .auth-header-caret {
-    color: var(--muted, #9ca8b7);
+    justify-self: end;
+    width: 14px;
+    color: rgba(255, 255, 255, 0.78);
     font-size: 0.72rem;
+    transition: transform 160ms ease;
+  }
+
+  .auth-header-account[aria-expanded="true"] .auth-header-caret {
+    transform: rotate(180deg);
   }
 
   .auth-header-loading {
@@ -204,15 +181,17 @@
 
   .auth-header-menu {
     position: absolute;
-    top: calc(100% + 8px);
+    top: calc(100% + 7px);
     right: 0;
-    width: min(240px, calc(100vw - 20px));
+    width: 100%;
+    min-width: 220px;
+    box-sizing: border-box;
     padding: 7px;
-    border: 1px solid rgba(255, 255, 255, 0.12);
-    border-radius: 16px;
+    border: 1px solid rgba(var(--elo-color-rgb, 255, 255, 255), 0.28);
+    border-radius: 14px;
     background: rgba(10, 16, 24, 0.98);
-    box-shadow: 0 22px 50px rgba(0, 0, 0, 0.42);
-    backdrop-filter: blur(18px);
+    box-shadow: 0 16px 34px rgba(0, 0, 0, 0.38);
+    backdrop-filter: blur(14px);
   }
 
   .auth-header-menu[hidden] {
@@ -226,7 +205,7 @@
     box-sizing: border-box;
     padding: 10px 11px;
     border: 0;
-    border-radius: 10px;
+    border-radius: 9px;
     color: var(--text, #fff);
     background: transparent;
     font: inherit;
@@ -258,14 +237,43 @@
     color: #ffd166;
   }
 
-  @media (max-width: 900px) {
+  @media (max-width: 1100px) {
+    .auth-header-account {
+      width: clamp(190px, 19vw, 210px);
+      min-width: 190px;
+      max-width: 210px;
+    }
+
+    .auth-header-name {
+      font-size: 11px;
+    }
+
+    .auth-header-menu {
+      min-width: 190px;
+    }
+  }
+
+  @media (max-width: 720px) {
+    .auth-header-account {
+      width: auto;
+      min-width: 68px;
+      grid-template-columns: 34px 14px;
+      gap: 5px;
+      padding: 6px 8px;
+    }
+
     .auth-header-account-copy {
       display: none;
     }
 
-    .auth-header-account {
-      gap: 4px;
-      padding: 4px 7px;
+    .auth-header-avatar {
+      width: 32px;
+      height: 32px;
+    }
+
+    .auth-header-menu {
+      width: min(220px, calc(100vw - 20px));
+      min-width: 0;
     }
   }
 
@@ -283,15 +291,16 @@
       display: none;
     }
 
-    .auth-header-steam-icon,
-    .auth-header-avatar {
+    .auth-header-steam-icon {
       width: 28px;
       height: 28px;
     }
 
     .auth-header-account {
-      min-height: 34px;
-      padding: 2px 5px;
+      min-width: 44px;
+      height: 44px;
+      grid-template-columns: 32px;
+      padding: 5px;
     }
 
     .auth-header-caret {

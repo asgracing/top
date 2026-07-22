@@ -1,3 +1,5 @@
+@import url("./rating-palette.css?v=20260722ratings1");
+
 @layer components {
   .hero-side {
     display: grid;
@@ -528,27 +530,6 @@
     color: #ff4f5e;
   }
   
-  .sr-cat-A {
-    --sr-bg: linear-gradient(135deg, rgba(89, 218, 154, 0.9), rgba(29, 134, 96, 0.74));
-    --sr-border: rgba(127, 246, 183, 0.58);
-    --sr-fg: #071c13;
-    --sr-accent: #06442b;
-  }
-  
-  .sr-cat-B {
-    --sr-bg: linear-gradient(135deg, rgba(255, 213, 112, 0.9), rgba(188, 129, 43, 0.76));
-    --sr-border: rgba(255, 220, 126, 0.54);
-    --sr-fg: #241707;
-    --sr-accent: #7a4300;
-  }
-  
-  .sr-cat-C {
-    --sr-bg: linear-gradient(135deg, rgba(255, 118, 104, 0.86), rgba(153, 54, 62, 0.72));
-    --sr-border: rgba(255, 150, 139, 0.5);
-    --sr-fg: #fff6f5;
-    --sr-accent: #ffe3df;
-  }
-  
   .safety-row.sr-cat-A td {
     background: rgba(89, 218, 154, 0.035);
   }
@@ -559,48 +540,6 @@
   
   .safety-row.sr-cat-C td {
     background: rgba(255, 118, 104, 0.04);
-  }
-  
-  .elo-cat-1 {
-    --elo-bg: linear-gradient(135deg, rgba(196, 169, 255, 0.94), rgba(137, 104, 218, 0.82));
-    --elo-border: rgba(213, 194, 255, 0.66);
-    --elo-fg: #171124;
-    --elo-accent: #4b2c8a;
-  }
-  
-  .elo-cat-2 {
-    --elo-bg: linear-gradient(135deg, rgba(213, 238, 255, 0.95), rgba(132, 182, 218, 0.86));
-    --elo-border: rgba(216, 244, 255, 0.72);
-    --elo-fg: #102232;
-    --elo-accent: #0b536e;
-  }
-  
-  .elo-cat-3 {
-    --elo-bg: linear-gradient(135deg, rgba(255, 214, 128, 0.86), rgba(196, 137, 45, 0.72));
-    --elo-border: rgba(255, 215, 126, 0.56);
-    --elo-fg: #20160a;
-    --elo-accent: #6a3d00;
-  }
-  
-  .elo-cat-4 {
-    --elo-bg: linear-gradient(135deg, rgba(184, 205, 230, 0.8), rgba(88, 121, 158, 0.62));
-    --elo-border: rgba(202, 223, 244, 0.42);
-    --elo-fg: #f6fbff;
-    --elo-accent: #dcecff;
-  }
-  
-  .elo-cat-5 {
-    --elo-bg: linear-gradient(135deg, rgba(205, 127, 50, 0.86), rgba(124, 73, 34, 0.72));
-    --elo-border: rgba(226, 153, 79, 0.48);
-    --elo-fg: #fff8ee;
-    --elo-accent: #ffe0b6;
-  }
-  
-  .elo-cat-6 {
-    --elo-bg: linear-gradient(135deg, rgba(239, 97, 97, 0.68), rgba(113, 52, 73, 0.62));
-    --elo-border: rgba(255, 139, 139, 0.34);
-    --elo-fg: #fff5f5;
-    --elo-accent: #ffd6d6;
   }
   
   .driver-stats-grid {

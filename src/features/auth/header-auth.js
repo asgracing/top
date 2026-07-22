@@ -155,7 +155,7 @@ function ensureStylesheet(documentRef) {
   if (documentRef.querySelector("link[data-asg-auth-header-style]")) return;
   const link = documentRef.createElement("link");
   link.rel = "stylesheet";
-  link.href = new URL("../../../styles/components/auth-header.css?v=20260722auth4", import.meta.url).href;
+  link.href = new URL("../../../styles/components/auth-header.css?v=20260722auth5", import.meta.url).href;
   link.dataset.asgAuthHeaderStyle = "true";
   documentRef.head.appendChild(link);
 }
@@ -189,7 +189,7 @@ export function createAuthHeaderController({
   const translate = key => COPY[currentLanguage(documentRef, windowRef)]?.[key] || COPY.en[key] || key;
 
   function renderAvatar(auth, name) {
-    const shell = makeElement(documentRef, "span", "auth-header-avatar");
+    const shell = makeElement(documentRef, "span", "auth-header-avatar pilot-profile-avatar");
     if (auth.steam?.avatarUrl) {
       const image = makeElement(documentRef, "img", "auth-header-avatar-image");
       image.src = auth.steam.avatarUrl;
@@ -217,40 +217,38 @@ export function createAuthHeaderController({
 
   function renderAccount(auth) {
     const name = auth.driver?.displayName || auth.steam?.personaName || translate("account");
-    const toggle = makeElement(documentRef, "button", "auth-header-account");
+    const toggle = makeElement(documentRef, "button", "auth-header-account pilot-profile-trigger");
     const categoryId = eloCategoryId(auth.driver?.elo);
     const safetyCategory = auth.driver?.srCategory || null;
-    if (categoryId) toggle.classList.add(`auth-header-elo-cat-${categoryId}`);
+    if (categoryId) root.classList.add(`elo-cat-${categoryId}`);
+    if (safetyCategory) root.classList.add(`sr-cat-${safetyCategory}`);
     toggle.type = "button";
     toggle.setAttribute("aria-haspopup", "menu");
     toggle.setAttribute("aria-expanded", "false");
     toggle.setAttribute("aria-label", translate("menu"));
-    const copy = makeElement(documentRef, "span", "auth-header-account-copy");
-    copy.appendChild(makeElement(documentRef, "span", "auth-header-name", name));
-    const metrics = makeElement(documentRef, "span", "auth-header-metrics");
+    toggle.title = name;
+    const copy = makeElement(documentRef, "span", "auth-header-account-copy pilot-profile-content");
+    copy.appendChild(makeElement(documentRef, "span", "auth-header-name pilot-profile-name", name));
+    const metrics = makeElement(documentRef, "span", "auth-header-metrics pilot-profile-ratings");
     const eloMetric = makeElement(
       documentRef,
       "span",
-      "auth-header-metric",
-      `${categoryId ? `C${categoryId} · ` : ""}${translate("elo")} ${metricLabel(auth.driver?.elo ?? null)}`
+      "auth-header-metric pilot-rating-badge pilot-rating-badge--elo",
+      `${translate("elo")} ${metricLabel(auth.driver?.elo ?? null)}`
     );
-    const safetyMetric = makeElement(documentRef, "span", "auth-header-metric auth-header-sr-metric");
-    safetyMetric.appendChild(makeElement(documentRef, "span", "auth-header-sr-label", `${translate("sr")}:`));
-    if (safetyCategory) {
-      safetyMetric.appendChild(
-        makeElement(
-          documentRef,
-          "span",
-          `auth-header-sr-badge auth-header-sr-cat-${safetyCategory}`,
-          `${safetyCategory} ${metricLabel(auth.driver?.sr ?? null, 2)}`
-        )
-      );
-    } else {
-      safetyMetric.appendChild(makeElement(documentRef, "span", "auth-header-sr-value", metricLabel(null)));
-    }
+    const safetyMetric = makeElement(
+      documentRef,
+      "span",
+      "auth-header-metric pilot-rating-badge pilot-rating-badge--sr",
+      `${translate("sr")} ${metricLabel(auth.driver?.sr ?? null, 2)}`
+    );
     metrics.append(eloMetric, safetyMetric);
     copy.appendChild(metrics);
-    toggle.append(renderAvatar(auth, name), copy, makeElement(documentRef, "span", "auth-header-caret", "▾"));
+    toggle.append(
+      renderAvatar(auth, name),
+      copy,
+      makeElement(documentRef, "span", "auth-header-caret pilot-profile-chevron", "▾")
+    );
 
     const menu = makeElement(documentRef, "div", "auth-header-menu");
     menu.hidden = true;
@@ -282,6 +280,10 @@ export function createAuthHeaderController({
   function render() {
     closeMenu();
     root.replaceChildren();
+    root.classList.remove(
+      "elo-cat-1", "elo-cat-2", "elo-cat-3", "elo-cat-4", "elo-cat-5", "elo-cat-6",
+      "sr-cat-A", "sr-cat-B", "sr-cat-C"
+    );
     root.dataset.authState = state.status;
     if (state.status === "loading") {
       const loading = makeElement(documentRef, "span", "auth-header-loading", translate("loading"));
