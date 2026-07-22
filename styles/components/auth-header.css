@@ -35,11 +35,69 @@
     transition: transform 0.2s ease, border-color 0.2s ease, background 0.2s ease;
   }
 
+  .auth-header-account[class*="auth-header-elo-cat-"] {
+    border-color: var(--auth-elo-border);
+    background: var(--auth-elo-bg);
+    color: var(--auth-elo-fg);
+  }
+
+  .auth-header-account[class*="auth-header-elo-cat-"] .auth-header-metrics,
+  .auth-header-account[class*="auth-header-elo-cat-"] .auth-header-caret {
+    color: var(--auth-elo-accent);
+  }
+
+  .auth-header-account.auth-header-elo-cat-1 {
+    --auth-elo-bg: linear-gradient(135deg, rgba(196, 169, 255, 0.94), rgba(137, 104, 218, 0.82));
+    --auth-elo-border: rgba(213, 194, 255, 0.66);
+    --auth-elo-fg: #171124;
+    --auth-elo-accent: #4b2c8a;
+  }
+
+  .auth-header-account.auth-header-elo-cat-2 {
+    --auth-elo-bg: linear-gradient(135deg, rgba(213, 238, 255, 0.95), rgba(132, 182, 218, 0.86));
+    --auth-elo-border: rgba(216, 244, 255, 0.72);
+    --auth-elo-fg: #102232;
+    --auth-elo-accent: #0b536e;
+  }
+
+  .auth-header-account.auth-header-elo-cat-3 {
+    --auth-elo-bg: linear-gradient(135deg, rgba(255, 214, 128, 0.86), rgba(196, 137, 45, 0.72));
+    --auth-elo-border: rgba(255, 215, 126, 0.56);
+    --auth-elo-fg: #20160a;
+    --auth-elo-accent: #6a3d00;
+  }
+
+  .auth-header-account.auth-header-elo-cat-4 {
+    --auth-elo-bg: linear-gradient(135deg, rgba(184, 205, 230, 0.8), rgba(88, 121, 158, 0.62));
+    --auth-elo-border: rgba(202, 223, 244, 0.42);
+    --auth-elo-fg: #f6fbff;
+    --auth-elo-accent: #dcecff;
+  }
+
+  .auth-header-account.auth-header-elo-cat-5 {
+    --auth-elo-bg: linear-gradient(135deg, rgba(205, 127, 50, 0.86), rgba(124, 73, 34, 0.72));
+    --auth-elo-border: rgba(226, 153, 79, 0.48);
+    --auth-elo-fg: #fff8ee;
+    --auth-elo-accent: #ffe0b6;
+  }
+
+  .auth-header-account.auth-header-elo-cat-6 {
+    --auth-elo-bg: linear-gradient(135deg, rgba(239, 97, 97, 0.68), rgba(113, 52, 73, 0.62));
+    --auth-elo-border: rgba(255, 139, 139, 0.34);
+    --auth-elo-fg: #fff5f5;
+    --auth-elo-accent: #ffd6d6;
+  }
+
   .auth-header-login:hover,
   .auth-header-account:hover {
     transform: translateY(-1px);
     border-color: rgba(102, 192, 244, 0.55);
     background: linear-gradient(135deg, rgba(35, 55, 76, 0.98), rgba(18, 29, 43, 0.98));
+  }
+
+  .auth-header-account[class*="auth-header-elo-cat-"]:hover {
+    border-color: var(--auth-elo-accent);
+    background: var(--auth-elo-bg);
   }
 
   .auth-header-steam-icon,

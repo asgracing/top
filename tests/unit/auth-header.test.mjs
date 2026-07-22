@@ -3,10 +3,21 @@ import assert from "node:assert/strict";
 
 import {
   buildAuthReturnPath,
+  eloCategoryId,
   normalizeAuthPayload,
   safeAvatarUrl,
   safeDriverProfileUrl
 } from "../../src/features/auth/header-auth.js";
+
+test("maps ELO thresholds to the shared C1-C6 categories", () => {
+  assert.equal(eloCategoryId(1350), 1);
+  assert.equal(eloCategoryId(1250), 2);
+  assert.equal(eloCategoryId(1150), 3);
+  assert.equal(eloCategoryId(1050), 4);
+  assert.equal(eloCategoryId(950), 5);
+  assert.equal(eloCategoryId(949), 6);
+  assert.equal(eloCategoryId(null), null);
+});
 
 test("normalizes linked auth data without exposing unexpected identity fields", () => {
   const normalized = normalizeAuthPayload({

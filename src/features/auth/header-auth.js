@@ -46,6 +46,17 @@ function safeMetric(value) {
   return Number.isFinite(number) ? number : null;
 }
 
+export function eloCategoryId(value) {
+  const rating = safeMetric(value);
+  if (rating === null) return null;
+  if (rating >= 1350) return 1;
+  if (rating >= 1250) return 2;
+  if (rating >= 1150) return 3;
+  if (rating >= 1050) return 4;
+  if (rating >= 950) return 5;
+  return 6;
+}
+
 export function safeAvatarUrl(value) {
   try {
     const url = new URL(String(value || ""));
@@ -133,7 +144,7 @@ function ensureStylesheet(documentRef) {
   if (documentRef.querySelector("link[data-asg-auth-header-style]")) return;
   const link = documentRef.createElement("link");
   link.rel = "stylesheet";
-  link.href = new URL("../../../styles/components/auth-header.css", import.meta.url).href;
+  link.href = new URL("../../../styles/components/auth-header.css?v=20260722auth2", import.meta.url).href;
   link.dataset.asgAuthHeaderStyle = "true";
   documentRef.head.appendChild(link);
 }
@@ -196,6 +207,8 @@ export function createAuthHeaderController({
   function renderAccount(auth) {
     const name = auth.driver?.displayName || auth.steam?.personaName || translate("account");
     const toggle = makeElement(documentRef, "button", "auth-header-account");
+    const categoryId = eloCategoryId(auth.driver?.elo);
+    if (categoryId) toggle.classList.add(`auth-header-elo-cat-${categoryId}`);
     toggle.type = "button";
     toggle.setAttribute("aria-haspopup", "menu");
     toggle.setAttribute("aria-expanded", "false");
@@ -204,7 +217,12 @@ export function createAuthHeaderController({
     copy.appendChild(makeElement(documentRef, "span", "auth-header-name", name));
     const metrics = makeElement(documentRef, "span", "auth-header-metrics");
     metrics.append(
-      makeElement(documentRef, "span", "auth-header-metric", `${translate("elo")} ${metricLabel(auth.driver?.elo ?? null)}`),
+      makeElement(
+        documentRef,
+        "span",
+        "auth-header-metric",
+        `${categoryId ? `C${categoryId} · ` : ""}${translate("elo")} ${metricLabel(auth.driver?.elo ?? null)}`
+      ),
       makeElement(documentRef, "span", "auth-header-metric", `${translate("sr")} ${metricLabel(auth.driver?.sr ?? null, 2)}`)
     );
     copy.appendChild(metrics);
