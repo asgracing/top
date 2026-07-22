@@ -263,7 +263,7 @@ if (!driverDayModalCss.includes("/* ===== DRIVER OF THE DAY MODAL ===== */") || 
 if (!footerCss.includes("/* ===== FOOTER ===== */") || !footerCss.includes(".footer {") || !footerCss.includes(".footer-inner")) failures.push("Footer must have one physical component source");
 if (!utilitiesCss.includes("/* ===== UTILITY / STATE ===== */") || !responsiveCss.includes("/* ===== RESPONSIVE ===== */")) failures.push("Utility and responsive layers must have explicit physical sources");
 if (!legacyCss.includes("/* ===== FUN STATS PAGE ===== */")) failures.push("Responsive migration boundary is invalid");
-for (const [className, imageName] of [["monza", "main.jpg"], ["sunset", "sunset.jpg"], ["spa", "spa.jpg"], ["nurburgring", "nurburgring.jpg"], ["nurburgring24h", "Nurburgring24h.jpg"], ["silverstone", "silverstone.jpg"]]) {
+for (const [className, imageName] of [["monza", "monza.jpg"], ["sunset", "sunset.jpg"], ["spa", "spa.jpg"], ["nurburgring", "nurburgring.jpg"], ["nurburgring24h", "nurburgring_24h.jpg"], ["silverstone", "silverstone.jpg"]]) {
   if (!heroStatsCss.includes(`.server-sticky-card-${className}`) || !heroStatsCss.includes(`url("../../assets/${imageName}")`)) failures.push(`Server card ${className} is missing its explicit class-based background image`);
 }
 const budgets = {

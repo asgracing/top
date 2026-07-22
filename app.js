@@ -14,6 +14,7 @@ import { createModalControllerFactory } from "./src/shared/modal-controller.js";
 import { parseTableNumber, sortTableRows } from "./src/shared/table-model.js";
 import { countUnreadNews, sortPublishedNews } from "./src/shared/news-feed-model.js";
 import { createAuthHeaderController } from "./src/features/auth/header-auth.js?v=20260722auth6";
+import { normalizeTrackBackgroundCode, resolveTrackBackgroundFile } from "./src/features/server-status/track-background.js";
 
 const PAGE_CONTEXT = readPageContext(document);
 const PAGE_FEATURES = await loadPageFeatures(PAGE_CONTEXT.page);
@@ -130,10 +131,10 @@ const BG_VIDEO_INDEX_STORAGE_KEY = "asgBgVideoIndex";
 const SERVER_CARD_BACKGROUNDS = {
   main: `${SITE_BASE_PATH}assets/main.jpg`,
   sunset: `${SITE_BASE_PATH}assets/sunset.jpg`,
-  monza: `${SITE_BASE_PATH}assets/main.jpg`,
+  monza: `${SITE_BASE_PATH}assets/monza.jpg`,
   spa: `${SITE_BASE_PATH}assets/spa.jpg`,
   nurburgring: `${SITE_BASE_PATH}assets/nurburgring.jpg`,
-  nurburgring24h: `${SITE_BASE_PATH}assets/Nurburgring24h.jpg`,
+  nurburgring24h: `${SITE_BASE_PATH}assets/nurburgring_24h.jpg`,
   silverstone: `${SITE_BASE_PATH}assets/silverstone.jpg`
 };
 const ACC_CONNECT_SERVER_FALLBACKS = {
@@ -628,41 +629,9 @@ let funStatsPeriod = "week";
 let serverStatusData = null;
 const driverProfileCache = new Map();
 const raceDetailsCache = new Map();
-const HOURLY_TRACK_BACKGROUNDS = {
-  barcelona: `${SITE_BASE_PATH}assets/barcelona.jpg`,
-  hungaroring: `${SITE_BASE_PATH}assets/hungaroring.jpg`,
-  imola: `${SITE_BASE_PATH}assets/imola.jpg`,
-  kyalami: `${SITE_BASE_PATH}assets/kyalami.jpg`,
-  laguna_seca: `${SITE_BASE_PATH}assets/laguna_seca.jpg`,
-  lagunaseca: `${SITE_BASE_PATH}assets/laguna_seca.jpg`,
-  misano: `${SITE_BASE_PATH}assets/misano.jpg`,
-  monza: `${SITE_BASE_PATH}assets/monza.jpg`,
-  monzatg: `${SITE_BASE_PATH}assets/monzaTG.jpg`,
-  mount_panorama: `${SITE_BASE_PATH}assets/mount_panorama.jpg`,
-  mountpanorama: `${SITE_BASE_PATH}assets/mount_panorama.jpg`,
-  nurburgring: `${SITE_BASE_PATH}assets/nurburgring.jpg`,
-  nurburgring_24h: `${SITE_BASE_PATH}assets/nurburgring_24h.jpg`,
-  nurburgring24h: `${SITE_BASE_PATH}assets/nurburgring_24h.jpg`,
-  nordschl: `${SITE_BASE_PATH}assets/nurburgring_24h.jpg`,
-  nordschleife: `${SITE_BASE_PATH}assets/nurburgring_24h.jpg`,
-  paul_ricard: `${SITE_BASE_PATH}assets/paul_ricard.jpg`,
-  paulricard: `${SITE_BASE_PATH}assets/paul_ricard.jpg`,
-  silverstone: `${SITE_BASE_PATH}assets/silverstone.jpg`,
-  spa: `${SITE_BASE_PATH}assets/spa.jpg`,
-  suzuka: `${SITE_BASE_PATH}assets/suzuka.jpg`,
-  zandvoort: `${SITE_BASE_PATH}assets/zandvoort.jpg`,
-  zolder: `${SITE_BASE_PATH}assets/zolder.jpg`
-};
-
-function getHourlyTrackBackgroundUrl(trackCode) {
-  const normalized = String(trackCode || "")
-    .trim()
-    .toLowerCase()
-    .replace(/[^a-z0-9]+/g, "_")
-    .replace(/^_+|_+$/g, "");
-  return HOURLY_TRACK_BACKGROUNDS[normalized]
-    || HOURLY_TRACK_BACKGROUNDS[normalized.replaceAll("_", "")]
-    || "";
+function getTrackBackgroundUrl(trackCode) {
+  const fileName = resolveTrackBackgroundFile(trackCode);
+  return fileName ? `${SITE_BASE_PATH}assets/${fileName}` : "";
 }
 const HOURLY_WEATHER_ICON_PATHS = {
   clouds: `${HOURLY_SITE_BASE_URL}/assets/weather/cloudness.png`,
@@ -2843,7 +2812,7 @@ function applyHourlyModalTrackBackground(trackCode) {
   const modalCard = document.querySelector("#hourly-details-modal .modal-card-slot");
   if (!modalCard) return;
 
-  const backgroundUrl = getHourlyTrackBackgroundUrl(trackCode);
+  const backgroundUrl = getTrackBackgroundUrl(trackCode);
   modalCard.style.setProperty("--modal-track-photo", backgroundUrl ? `url("${backgroundUrl}")` : "none");
 }
 
@@ -3027,7 +2996,7 @@ function renderHourlyHeroCard() {
   trackEl.textContent = data?.track_name || t("hourlyNoEvent");
   startsEl.textContent = formatHeroHourlyDateTime(data?.date, data?.start_time_local, data?.timezone);
   const trackCode = String(data?.track_code || "").trim().toLowerCase();
-  const backgroundUrl = getHourlyTrackBackgroundUrl(trackCode);
+  const backgroundUrl = getTrackBackgroundUrl(trackCode);
   cardEl.style.setProperty("--hero-hourly-track-photo", backgroundUrl ? `url("${backgroundUrl}")` : "none");
   cardEl.classList.toggle("is-championship-event", isChampionship);
   cardEl.classList.toggle("is-endurance-event", isEndurance);
@@ -8156,13 +8125,9 @@ function getServerCardBackgroundKey(key, index = 0) {
   return index % 2 === 0 ? "main" : "sunset";
 }
 
-function getServerTrackBackgroundKey(key, label, server, index = 0) {
-  const haystack = `${key || ""} ${label || ""} ${server?.track_code || ""} ${server?.track || ""}`.toLowerCase();
-  if (haystack.includes("spa")) return "spa";
-  if (haystack.includes("nurburgring_24") || haystack.includes("nord")) return "nurburgring24h";
-  if (haystack.includes("nord") || haystack.includes("nurburgring_24h") || haystack.includes("nurb")) return "nurburgring";
-  if (haystack.includes("silverstone")) return "silverstone";
-  if (haystack.includes("monza")) return "monza";
+function getServerTrackBackgroundKey(key, _label, server, index = 0) {
+  const trackCode = server?.track_code || server?.track || "";
+  if (resolveTrackBackgroundFile(trackCode)) return normalizeTrackBackgroundCode(trackCode);
   return getServerCardBackgroundKey(key, index);
 }
 
@@ -8190,7 +8155,9 @@ function renderServerStickyWidget(serverStatus = serverStatusData) {
     const players = serverPlayersOnline(server);
     const sessionLabel = getServerSessionShortLabel(server);
     const bgKey = getServerTrackBackgroundKey(key, label, server, index);
-    const bgUrl = SERVER_CARD_BACKGROUNDS[bgKey] || SERVER_CARD_BACKGROUNDS.main;
+    const bgUrl = getTrackBackgroundUrl(server?.track_code || server?.track)
+      || SERVER_CARD_BACKGROUNDS[bgKey]
+      || SERVER_CARD_BACKGROUNDS.main;
     return `
       <div
         class="server-sticky-card server-sticky-card-${escapeHtml(bgKey)} server-sticky-card-clickable"
