@@ -128,14 +128,15 @@ const BG_VIDEO_VOLUME_STORAGE_KEY = "asgBgVideoVolume";
 const BG_VIDEO_PLAYBACK_STORAGE_KEY = "asgBgVideoPlaybackEnabled";
 const BG_VIDEO_PLAYLIST_STORAGE_KEY = "asgBgVideoPlaylist";
 const BG_VIDEO_INDEX_STORAGE_KEY = "asgBgVideoIndex";
+const getSiteAssetUrl = fileName => new URL(`./assets/${fileName}`, import.meta.url).href;
 const SERVER_CARD_BACKGROUNDS = {
-  main: `${SITE_BASE_PATH}assets/main.jpg`,
-  sunset: `${SITE_BASE_PATH}assets/sunset.jpg`,
-  monza: `${SITE_BASE_PATH}assets/monza.jpg`,
-  spa: `${SITE_BASE_PATH}assets/spa.jpg`,
-  nurburgring: `${SITE_BASE_PATH}assets/nurburgring.jpg`,
-  nurburgring24h: `${SITE_BASE_PATH}assets/nurburgring_24h.jpg`,
-  silverstone: `${SITE_BASE_PATH}assets/silverstone.jpg`
+  main: getSiteAssetUrl("main.jpg"),
+  sunset: getSiteAssetUrl("sunset.jpg"),
+  monza: getSiteAssetUrl("monza.jpg"),
+  spa: getSiteAssetUrl("spa.jpg"),
+  nurburgring: getSiteAssetUrl("nurburgring.jpg"),
+  nurburgring24h: getSiteAssetUrl("nurburgring_24h.jpg"),
+  silverstone: getSiteAssetUrl("silverstone.jpg")
 };
 const ACC_CONNECT_SERVER_FALLBACKS = {
   main: {
@@ -631,7 +632,7 @@ const driverProfileCache = new Map();
 const raceDetailsCache = new Map();
 function getTrackBackgroundUrl(trackCode) {
   const fileName = resolveTrackBackgroundFile(trackCode);
-  return fileName ? `${SITE_BASE_PATH}assets/${fileName}` : "";
+  return fileName ? getSiteAssetUrl(fileName) : "";
 }
 const HOURLY_WEATHER_ICON_PATHS = {
   clouds: `${HOURLY_SITE_BASE_URL}/assets/weather/cloudness.png`,
