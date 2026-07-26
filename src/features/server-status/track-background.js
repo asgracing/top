@@ -43,6 +43,8 @@ export const TRACK_BACKGROUND_CAROUSEL_FILES = Object.freeze([
   "zolder.jpg"
 ]);
 
+const LAST_TRACK_BACKGROUND_STORAGE_KEY = "asgLastTrackBackground";
+
 export function normalizeTrackBackgroundCode(value) {
   return String(value || "")
     .trim()
@@ -59,11 +61,39 @@ export function resolveTrackBackgroundFile(value) {
     || null;
 }
 
-export function selectRandomTrackBackgroundFile(random = Math.random) {
+export function selectRandomTrackBackgroundFile(random = Math.random, previousFile = "") {
+  const candidates = TRACK_BACKGROUND_CAROUSEL_FILES.length > 1 && TRACK_BACKGROUND_CAROUSEL_FILES.includes(previousFile)
+    ? TRACK_BACKGROUND_CAROUSEL_FILES.filter(fileName => fileName !== previousFile)
+    : TRACK_BACKGROUND_CAROUSEL_FILES;
   const randomValue = Number(random());
   const normalizedValue = Number.isFinite(randomValue)
     ? Math.min(Math.max(randomValue, 0), 1 - Number.EPSILON)
     : 0;
-  const index = Math.floor(normalizedValue * TRACK_BACKGROUND_CAROUSEL_FILES.length);
-  return TRACK_BACKGROUND_CAROUSEL_FILES[index];
+  const index = Math.floor(normalizedValue * candidates.length);
+  return candidates[index];
+}
+
+export function applyRandomTrackBackground(documentRef, storage = globalThis.sessionStorage, random = Math.random) {
+  const body = documentRef?.body;
+  if (!body) return null;
+
+  let previousFile = "";
+  try {
+    previousFile = storage?.getItem(LAST_TRACK_BACKGROUND_STORAGE_KEY) || "";
+  } catch (error) {
+    // A random background should still work when session storage is unavailable.
+  }
+
+  const selectedFile = selectRandomTrackBackgroundFile(random, previousFile);
+  const selectedUrl = new URL(`../../../assets/${selectedFile}`, import.meta.url).href;
+  body.style.setProperty("--page-track-background", `url("${selectedUrl}")`);
+  body.dataset.pageTrackBackground = selectedFile;
+
+  try {
+    storage?.setItem(LAST_TRACK_BACKGROUND_STORAGE_KEY, selectedFile);
+  } catch (error) {
+    // Keep the selected runtime background even if persistence is unavailable.
+  }
+
+  return selectedFile;
 }

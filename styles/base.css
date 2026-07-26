@@ -38,7 +38,8 @@
       radial-gradient(circle at top right, rgba(255, 209, 102, 0.12), transparent 24%);
   }
 
-  body.monza-bg-page::after {
+  body.monza-bg-page::after,
+  body.track-bg-page::after {
     content: "";
     position: fixed;
     inset: 0;
@@ -50,11 +51,13 @@
   }
 
   body.monza-bg-page .site-video-bg,
+  body.track-bg-page .site-video-bg,
   body.lite-background .site-video-bg {
     display: none;
   }
 
-  body.monza-bg-page .site-video-overlay {
+  body.monza-bg-page .site-video-overlay,
+  body.track-bg-page .site-video-overlay {
     background: linear-gradient(180deg, rgba(8, 12, 18, 0.03) 0%, rgba(8, 12, 18, 0.06) 36%, rgba(8, 12, 18, 0.1) 100%);
   }
 

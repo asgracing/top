@@ -14,7 +14,7 @@ import { createModalControllerFactory } from "./src/shared/modal-controller.js";
 import { parseTableNumber, sortTableRows } from "./src/shared/table-model.js";
 import { countUnreadNews, sortPublishedNews } from "./src/shared/news-feed-model.js";
 import { createAuthHeaderController, safeAvatarUrl } from "./src/features/auth/header-auth.js?v=20260726authpersist1";
-import { normalizeTrackBackgroundCode, resolveTrackBackgroundFile } from "./src/features/server-status/track-background.js";
+import { applyRandomTrackBackground, normalizeTrackBackgroundCode, resolveTrackBackgroundFile } from "./src/features/server-status/track-background.js?v=20260726staticfallback1";
 
 const PAGE_CONTEXT = readPageContext(document);
 const PAGE_FEATURES = await loadPageFeatures(PAGE_CONTEXT.page);
@@ -9816,6 +9816,23 @@ function configureBackgroundVideoSource(video) {
   video.dataset.bgConfigured = "true";
 }
 
+function showRandomStaticTrackBackground() {
+  const body = document.body;
+  if (!body || body.classList.contains("monza-bg-page")) return;
+  if (!body.dataset.pageTrackBackground) {
+    applyRandomTrackBackground(document);
+  }
+  body.classList.add("track-bg-page");
+}
+
+function hideRandomStaticTrackBackground() {
+  const body = document.body;
+  if (!body || body.classList.contains("monza-bg-page")) return;
+  body.classList.remove("track-bg-page");
+  body.style.removeProperty("--page-track-background");
+  delete body.dataset.pageTrackBackground;
+}
+
 function bindBackgroundVideoSoundToggle() {
   const toggle = document.getElementById("bg-video-sound-toggle");
   const video = document.querySelector(".site-bg-video");
@@ -10025,6 +10042,7 @@ function optimizeBackgroundMedia() {
       document.body.dataset.bgVideoStatus = "video-error";
       setBackgroundVideoSoundAvailability(false);
       unloadBackgroundVideo();
+      showRandomStaticTrackBackground();
       document.body.classList.add("lite-background");
     });
     video.addEventListener("ended", () => {
@@ -10035,9 +10053,14 @@ function optimizeBackgroundMedia() {
   }
 
   const reduceMotion = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+  const saveData = Boolean(navigator.connection?.saveData);
   const supportsMp4Video = typeof video.canPlayType !== "function" || video.canPlayType("video/mp4") !== "";
   const bgVideoBlockReason = !supportsMp4Video
     ? "unsupported-mp4"
+    : reduceMotion
+      ? "reduced-motion"
+    : saveData
+      ? "save-data"
     : IS_DRIVER_PAGE
       ? "driver-page"
     : IS_RACES_PAGE
@@ -10051,9 +10074,11 @@ function optimizeBackgroundMedia() {
             : window.innerWidth <= 768
               ? "mobile-width"
               : "";
-  const shouldAutoplayBackground = !reduceMotion && !navigator.connection?.saveData;
+  const shouldAutoplayBackground = !reduceMotion && !saveData;
   const runtimeBlocksBackgroundVideo =
     !supportsMp4Video ||
+    reduceMotion ||
+    saveData ||
     IS_DRIVER_PAGE ||
     IS_RACES_PAGE ||
     IS_CARS_PAGE ||
@@ -10067,6 +10092,7 @@ function optimizeBackgroundMedia() {
     document.body.dataset.bgVideoStatus = runtimeBlocksBackgroundVideo
       ? (bgVideoBlockReason || "static-background")
       : "user-disabled";
+    showRandomStaticTrackBackground();
     document.body.classList.add("lite-background");
     setBackgroundVideoSoundAvailability(!runtimeBlocksBackgroundVideo);
     unloadBackgroundVideo();
@@ -10074,6 +10100,7 @@ function optimizeBackgroundMedia() {
   }
 
   document.body.dataset.bgVideoStatus = shouldAutoplayBackground ? "available" : "available-no-autoplay";
+  hideRandomStaticTrackBackground();
   document.body.classList.remove("lite-background");
   setBackgroundVideoSoundAvailability(true);
   scheduleBackgroundVideoLoad();

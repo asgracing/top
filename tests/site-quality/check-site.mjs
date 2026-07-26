@@ -84,7 +84,7 @@ for (const [page, [htmlPath, entrySrc]] of Object.entries(pageEntrypoints)) {
   if (!entrySource.includes(`bootstrapLegacyPage("${page}")`)) failures.push(`${page} entrypoint has the wrong page identity`);
   const tokenHref = page === "home" ? "./styles/tokens.css?v=20260713r11tokens1" : "../styles/tokens.css?v=20260713r11tokens1";
   if (!pageHtml.includes(tokenHref)) failures.push(`${page} page is missing the shared token stylesheet`);
-  const baseHref = page === "home" ? "./styles/base.css?v=20260726trackcarousel1" : "../styles/base.css?v=20260726trackcarousel1";
+  const baseHref = page === "home" ? "./styles/base.css?v=20260726staticfallback1" : "../styles/base.css?v=20260726staticfallback1";
   if (!pageHtml.includes(baseHref)) failures.push(`${page} page is missing the shared base stylesheet`);
   const backgroundHref = page === "home" ? "./styles/components/site-background.css?v=20260713r11background1" : "../styles/components/site-background.css?v=20260713r11background1";
   if (!pageHtml.includes(backgroundHref)) failures.push(`${page} page is missing the shared site background stylesheet`);

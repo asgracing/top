@@ -1,3 +1,3 @@
-import { bootstrapLegacyPage } from "./legacy-bootstrap.js?v=20260722tracks2";
+import { bootstrapLegacyPage } from "./legacy-bootstrap.js?v=20260726staticfallback1";
 
 await bootstrapLegacyPage("home");

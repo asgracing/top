@@ -2,6 +2,7 @@ import test from "node:test";
 import assert from "node:assert/strict";
 
 import {
+  applyRandomTrackBackground,
   normalizeTrackBackgroundCode,
   resolveTrackBackgroundFile,
   selectRandomTrackBackgroundFile,
@@ -49,4 +50,34 @@ test("selects deterministic carousel boundaries from an injected random source",
   assert.equal(selectRandomTrackBackgroundFile(() => 0.5), "nurburgring.jpg");
   assert.equal(selectRandomTrackBackgroundFile(() => 1), "zolder.jpg");
   assert.equal(selectRandomTrackBackgroundFile(() => Number.NaN), "barcelona.jpg");
+  assert.equal(selectRandomTrackBackgroundFile(() => 0, "barcelona.jpg"), "hungaroring.jpg");
+  assert.notEqual(selectRandomTrackBackgroundFile(() => 0.5, "nurburgring.jpg"), "nurburgring.jpg");
+});
+
+test("applies a random background and persists it to prevent an immediate repeat", () => {
+  const properties = new Map();
+  const values = new Map([["asgLastTrackBackground", "barcelona.jpg"]]);
+  const documentRef = {
+    body: {
+      dataset: {},
+      style: {
+        setProperty(name, value) {
+          properties.set(name, value);
+        }
+      }
+    }
+  };
+  const storage = {
+    getItem(key) {
+      return values.get(key) ?? null;
+    },
+    setItem(key, value) {
+      values.set(key, value);
+    }
+  };
+
+  assert.equal(applyRandomTrackBackground(documentRef, storage, () => 0), "hungaroring.jpg");
+  assert.equal(documentRef.body.dataset.pageTrackBackground, "hungaroring.jpg");
+  assert.match(properties.get("--page-track-background"), /assets\/hungaroring\.jpg/);
+  assert.equal(values.get("asgLastTrackBackground"), "hungaroring.jpg");
 });
