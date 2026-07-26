@@ -58,7 +58,7 @@
   <link rel="stylesheet" href="../styles/components/buttons.css?v=20260713r11buttons1" />
   <link rel="stylesheet" href="../styles/components/hero-foundation.css?v=20260713r11hero1" />
   <link rel="stylesheet" href="../styles/components/hero-actions.css?v=20260713r11heroactions1" />
-  <link rel="stylesheet" href="../styles/components/hero-stats.css?v=20260722ratings1" />
+  <link rel="stylesheet" href="../styles/components/hero-stats.css?v=20260726driveravatar1" />
   <link rel="stylesheet" href="../styles/components/server-sticky-layout.css?v=20260715r11serversticky1" />
   <link rel="stylesheet" href="../styles/components/sections.css?v=20260715r11sections1" />
   <link rel="stylesheet" href="../styles/components/support-widget.css?v=20260715r11support1" />
@@ -191,9 +191,16 @@
   <div class="container">
     <section class="hero">
       <div class="hero-card driver-hero-card">
-        <div class="eyebrow" data-i18n="driverEyebrow">Driver profile</div>
+        <div class="driver-hero-heading">
+          <div class="driver-hero-copy">
+            <div class="eyebrow" data-i18n="driverEyebrow">Driver profile</div>
         <h1 id="driver-page-name">—</h1>
-        <p class="hero-subtitle" id="driver-page-subtitle" data-i18n="driverLoading">Loading driver profile...</p>
+            <p class="hero-subtitle" id="driver-page-subtitle" data-i18n="driverLoading">Loading driver profile...</p>
+          </div>
+          <div class="driver-steam-portrait" id="driver-steam-portrait" hidden>
+            <img class="driver-steam-portrait-image" id="driver-steam-portrait-image" alt="" />
+          </div>
+        </div>
 
         <div class="driver-stats-grid" id="driver-stat-cards">
           <div class="loading" role="status" aria-live="polite" data-i18n="driverLoading">Loading driver profile...</div>
@@ -357,7 +364,7 @@
   </div>
 
   <script src="../legal.js" defer></script>
-  <script type="module" src="../src/entrypoints/driver.js?v=20260715raceserver1"></script>
+  <script type="module" src="../src/entrypoints/driver.js?v=20260726driveravatar1"></script>
 </body>
 </html>
 

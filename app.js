@@ -13,7 +13,7 @@ import { HOME_LOADING_TEXT_IDS, applyHomeTableViewState } from "./src/pages/home
 import { createModalControllerFactory } from "./src/shared/modal-controller.js";
 import { parseTableNumber, sortTableRows } from "./src/shared/table-model.js";
 import { countUnreadNews, sortPublishedNews } from "./src/shared/news-feed-model.js";
-import { createAuthHeaderController } from "./src/features/auth/header-auth.js?v=20260722discord3";
+import { createAuthHeaderController, safeAvatarUrl } from "./src/features/auth/header-auth.js?v=20260726authpersist1";
 import { normalizeTrackBackgroundCode, resolveTrackBackgroundFile } from "./src/features/server-status/track-background.js";
 
 const PAGE_CONTEXT = readPageContext(document);
@@ -104,6 +104,7 @@ const TOP_DATA_V2_BASE_URL = TOP_API_BASE_URL || `${TOP_DATA_BASE_URL}/v2`;
 const TOP_API_ROOT_URL = TOP_API_BASE_URL.replace(/\/top-data\/v2$/i, "");
 const HOURLY_DATA_BASE_URL = normalizeBaseUrl(getDevRuntimeParam("hourlyApiBase")) || DEFAULT_HOURLY_DATA_BASE_URL;
 const TOP_BANS_DATA_URL = `${TOP_DATA_BASE_URL}/bans.json`;
+const AUTH_BASE_URL = "https://auth.asgracing.ru";
 const LOCAL_NEWS_DATA_URL = `${SITE_BASE_PATH}news-content/news.json`;
 const topDataV2ManifestUrl = `${TOP_DATA_V2_BASE_URL}/manifest.json`;
 const serverStatusUrl = getDevRuntimeParam("serverStatusUrl") || (TOP_API_ROOT_URL ? `${TOP_API_ROOT_URL}/server-status` : `${TOP_DATA_BASE_URL}/server_status.json`);
@@ -576,6 +577,7 @@ let raceActivityInsights = null;
 let selectedRace = null;
 let driverIndexData = [];
 let driverProfileData = null;
+let driverSteamAvatarUrl = null;
 let driverPreviewState = null;
 const bestLapTrackSelection = new Map();
 const averagePaceTrackSelection = new Map();
@@ -5972,6 +5974,15 @@ async function loadDriverProfile(publicId) {
   return normalizeDriverProfile(data);
 }
 
+async function loadDriverSteamAvatar(publicId) {
+  if (!publicId) return null;
+  const payload = await requestJson(
+    `${AUTH_BASE_URL}/v1/drivers/${encodeURIComponent(publicId)}/steam-profile`,
+    { cache: "no-store", retries: 1 }
+  );
+  return safeAvatarUrl(payload?.avatar_url);
+}
+
 async function loadDriverProfileCached(publicId) {
   if (!publicId) return null;
   if (!driverProfileCache.has(publicId)) {
@@ -9047,6 +9058,19 @@ function getDriverPageView() {
 
 function renderDriverPage() {
   getDriverPageView().render({ loading: topLoadState.driver, profile: driverProfileData });
+  const portrait = document.getElementById("driver-steam-portrait");
+  const image = document.getElementById("driver-steam-portrait-image");
+  const avatarUrl = safeAvatarUrl(driverSteamAvatarUrl);
+  if (!portrait || !image) return;
+  if (!driverProfileData || !avatarUrl) {
+    portrait.hidden = true;
+    image.removeAttribute("src");
+    image.alt = "";
+    return;
+  }
+  image.src = avatarUrl;
+  image.alt = `${driverProfileData.driver || t("driverEyebrow")} — Steam`;
+  portrait.hidden = false;
 }
 
 let driverPreviewView = null;
@@ -10042,6 +10066,7 @@ function updateTopNavModalOffset() {
   const topNav = document.getElementById("top-nav");
   const navHeight = topNav?.getBoundingClientRect?.().height || 0;
   const offset = Math.max(16, Math.ceil(navHeight) + 8);
+  document.documentElement.style.setProperty("--top-nav-height", `${Math.ceil(navHeight)}px`);
   document.documentElement.style.setProperty("--top-nav-modal-offset", `${offset}px`);
 }
 
@@ -10234,7 +10259,14 @@ async function initializeHomeData() {
 }
 
 async function initializeDriverPageData() {
-  driverProfileData = await loadDriverProfile(getRequestedDriverId());
+  const publicId = getRequestedDriverId();
+  [driverProfileData, driverSteamAvatarUrl] = await Promise.all([
+    loadDriverProfile(publicId),
+    loadDriverSteamAvatar(publicId).catch((error) => {
+      console.warn("Failed to load the public Steam avatar.", error);
+      return null;
+    }),
+  ]);
   driverIndexData = [];
   racesData = [];
   topLoadState.driver = false;

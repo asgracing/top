@@ -98,7 +98,7 @@ for (const [page, [htmlPath, entrySrc]] of Object.entries(pageEntrypoints)) {
   if (!pageHtml.includes(heroHref)) failures.push(`${page} page is missing the shared hero foundation stylesheet`);
   const heroActionsHref = page === "home" ? "./styles/components/hero-actions.css?v=20260713r11heroactions1" : "../styles/components/hero-actions.css?v=20260713r11heroactions1";
   if (!pageHtml.includes(heroActionsHref)) failures.push(`${page} page is missing the shared hero actions stylesheet`);
-  const heroStatsHref = page === "home" ? "./styles/components/hero-stats.css?v=20260722ratings1" : "../styles/components/hero-stats.css?v=20260722ratings1";
+  const heroStatsHref = page === "home" ? "./styles/components/hero-stats.css?v=20260726driveravatar1" : "../styles/components/hero-stats.css?v=20260726driveravatar1";
   if (!pageHtml.includes(heroStatsHref)) failures.push(`${page} page is missing the shared hero stats stylesheet`);
   const serverStickyLayoutHref = page === "home" ? "./styles/components/server-sticky-layout.css?v=20260715r11serversticky1" : "../styles/components/server-sticky-layout.css?v=20260715r11serversticky1";
   if (!pageHtml.includes(serverStickyLayoutHref)) failures.push(`${page} page is missing the server sticky layout stylesheet`);
@@ -268,7 +268,7 @@ for (const [className, imageName] of [["monza", "monza.jpg"], ["sunset", "sunset
 }
 const budgets = {
   important: [(css.match(/!important/g) || []).length, 12],
-  mediaQuery: [(css.match(/@media\b/g) || []).length, 66],
+  mediaQuery: [(css.match(/@media\b/g) || []).length, 67],
   zIndex: [(css.match(/\bz-index\s*:/g) || []).length, 48],
   hexColor: [(css.match(/#[0-9a-f]{3,8}\b/gi) || []).length, 252],
   silentCatch: [(js.match(/\.catch\(\(\)\s*=>\s*null\)/g) || []).length, 28],

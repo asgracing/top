@@ -420,11 +420,14 @@ export function createAuthHeaderController({
     else renderAnonymous();
   }
 
-  async function refresh() {
+  async function refresh({ showLoading = true } = {}) {
+    const preserveReadyStateOnFailure = !showLoading && state.status === "ready";
     requestController?.abort();
     requestController = new AbortController();
-    state = { status: "loading", auth: { authenticated: false }, message: "" };
-    render();
+    if (showLoading) {
+      state = { status: "loading", auth: { authenticated: false }, message: "" };
+      render();
+    }
     try {
       const response = await fetchImpl(`${baseUrl}/v1/me`, {
         method: "GET",
@@ -440,7 +443,7 @@ export function createAuthHeaderController({
         render();
       }
     } catch (error) {
-      if (!destroyed && error?.name !== "AbortError") {
+      if (!destroyed && error?.name !== "AbortError" && !preserveReadyStateOnFailure) {
         state = { status: "error", auth: { authenticated: false }, message: String(error) };
         render();
       }
@@ -537,9 +540,15 @@ export function createAuthHeaderController({
   const onLanguageClick = event => {
     if (event.target.closest?.(".lang-btn[data-lang]")) windowRef.setTimeout(render, 0);
   };
+  const onVisibilityChange = () => {
+    if (documentRef.visibilityState === "visible") {
+      void refresh({ showLoading: false });
+    }
+  };
   documentRef.addEventListener("click", onDocumentClick);
   documentRef.addEventListener("keydown", onKeydown);
   documentRef.addEventListener("click", onLanguageClick);
+  documentRef.addEventListener("visibilitychange", onVisibilityChange);
   void refresh();
 
   return {
@@ -550,6 +559,7 @@ export function createAuthHeaderController({
       documentRef.removeEventListener("click", onDocumentClick);
       documentRef.removeEventListener("keydown", onKeydown);
       documentRef.removeEventListener("click", onLanguageClick);
+      documentRef.removeEventListener("visibilitychange", onVisibilityChange);
       root.remove();
     }
   };
