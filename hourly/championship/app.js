@@ -110,6 +110,7 @@ const translations = {
     winner: "Winner",
     bestLap: "Best lap",
     participants: "Drivers",
+    fieldStrength: "Field strength",
     weatherClear: "Clear",
     weatherMixed: "Mixed clouds",
     weatherCloudy: "Cloudy",
@@ -200,6 +201,7 @@ const translations = {
     winner: "Победитель",
     bestLap: "Лучший круг",
     participants: "Пилоты",
+    fieldStrength: "Сила поля",
     weatherClear: "Ясно",
     weatherMixed: "Переменная облачность",
     weatherCloudy: "Облачно",
@@ -1025,6 +1027,12 @@ function resolveDriverName(row) {
   return row?.driver || row?.display_name || row?.name || row?.public_id || "-";
 }
 
+function formatEloDelta(value) {
+  const numeric = Number(value);
+  if (!Number.isFinite(numeric) || numeric === 0) return "-";
+  return `${numeric > 0 ? "+" : ""}${Math.round(numeric)}`;
+}
+
 function resolveDriverPublicId(row) {
   return row?.public_id || row?.driver_public_id || row?.winner_public_id || null;
 }
@@ -1656,6 +1664,7 @@ function renderRaceResults(races) {
             <span>${esc(t("winner"))}: ${renderDriverLink(race.winner || "-", race.winner_public_id, "driver-link")}</span>
             <span>${esc(t("bestLap"))}: ${esc(race.best_lap || "-")}</span>
             <span>${esc(t("participants"))}: ${esc(race.participants_count || results.length || "-")}</span>
+            <span>${esc(t("fieldStrength"))}: ${esc(race.average_elo ?? "-")}</span>
           </div>
         </div>
         ${
@@ -1663,12 +1672,14 @@ function renderRaceResults(races) {
             ? `<div class="table-card table-card-compact">
                 <div class="table-wrap">
                   <table class="championship-race-table">
-                    <thead><tr><th>#</th><th>${esc(t("driver"))}</th><th>${esc(t("points"))}</th><th>${esc(t("bestLap"))}</th></tr></thead>
+                    <thead><tr><th>#</th><th>${esc(t("driver"))}</th><th>ELO</th><th>ΔELO</th><th>${esc(t("points"))}</th><th>${esc(t("bestLap"))}</th></tr></thead>
                     <tbody>
                       ${results.map(result => `
                         <tr>
                           <td>${esc(result.position || "-")}</td>
                           <td>${renderDriverLink(resolveDriverName(result), resolveDriverPublicId(result), "driver-link")}</td>
+                          <td>${esc(result.elo ?? "-")}</td>
+                          <td>${esc(formatEloDelta(result.elo_rating_delta))}</td>
                           <td>${esc(result.points ?? "-")}</td>
                           <td>${esc(result.best_lap || "-")}</td>
                         </tr>
@@ -1686,11 +1697,51 @@ function renderRaceResults(races) {
 
 async function loadRaceDetails(data, slug, assetBase = dataBase) {
   const races = normalizeRaces(data);
+  const publishedRaceIndex = await loadJsonOrNull(`${assetBase}/races/races.json`);
+  const publishedRaces = Array.isArray(publishedRaceIndex?.items) ? publishedRaceIndex.items : [];
   const detailed = await Promise.all(races.map(async race => {
-    if (Array.isArray(race.results)) return race;
     const detailsPath = race.details_path || `races/${race.event_id}.json`;
-    const detail = await loadJsonOrNull(`${assetBase}/events/${encodeURIComponent(slug)}/${detailsPath}`);
-    return detail ? { ...race, ...detail } : race;
+    const legacyDetail = Array.isArray(race.results)
+      ? race
+      : await loadJsonOrNull(`${assetBase}/events/${encodeURIComponent(slug)}/${detailsPath}`);
+    const mergedLegacy = legacyDetail ? { ...race, ...legacyDetail } : race;
+    const resultFile = String(
+      mergedLegacy.results_repo_path
+      || mergedLegacy.source_file
+      || race.results_repo_path
+      || ""
+    ).split(/[\\/]/).pop();
+    const publishedRace = publishedRaces.find(item => {
+      const publishedFile = String(item?.source_file || "").split(/[\\/]/).pop();
+      return Boolean(
+        (resultFile && publishedFile === resultFile)
+        || (mergedLegacy.race_id && item?.race_id === mergedLegacy.race_id)
+      );
+    });
+    if (!publishedRace?.details_path) return mergedLegacy;
+    const eloDetail = await loadJsonOrNull(`${assetBase}/${publishedRace.details_path}`);
+    if (!eloDetail) return mergedLegacy;
+    const eloByPublicId = new Map(
+      (Array.isArray(eloDetail.results) ? eloDetail.results : [])
+        .filter(item => item?.public_id)
+        .map(item => [item.public_id, item])
+    );
+    return {
+      ...mergedLegacy,
+      average_elo: eloDetail.average_elo,
+      results: (Array.isArray(mergedLegacy.results) ? mergedLegacy.results : []).map(result => {
+        const eloResult = eloByPublicId.get(resolveDriverPublicId(result));
+        if (!eloResult) return result;
+        return {
+          ...result,
+          elo: eloResult.elo,
+          elo_internal_rating: eloResult.elo_internal_rating,
+          elo_rating_delta: eloResult.elo_rating_delta,
+          elo_category_id: eloResult.elo_category_id,
+          elo_category_name: eloResult.elo_category_name
+        };
+      })
+    };
   }));
   return detailed;
 }

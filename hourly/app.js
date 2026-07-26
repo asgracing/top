@@ -342,14 +342,15 @@ const translations = {
     unknownValue: "--",
     racesTableTitle: "Race Results",
     racesTableSubtitle: "Click any row to open the finishing order.",
-    racesCols: ["Date", "Track", "Winner", "Drivers", "Best Lap"],
+    racesCols: ["Date", "Track", "Winner", "Drivers", "Avg ELO", "Best Lap"],
     openRaceDetailsLabel: "Open race details",
     raceModalEyebrow: "Race details",
-    raceModalCols: ["Pos", "Start", "Delta", "Driver", "Best Lap", "Car", "Gap", "Pts", "Pen pts"],
+    raceModalCols: ["Pos", "Start", "Delta", "Driver", "Best Lap", "Car", "Gap", "ELO", "ΔELO", "Pts", "Pen pts"],
     raceSummaryTrack: "Track",
     raceSummaryWinner: "Winner",
     raceSummaryDrivers: "Drivers",
     raceSummaryBestLap: "Best lap",
+    raceSummaryFieldStrength: "Field strength",
     raceBestLapBadge: "Fastest lap",
     notCountedBadge: "Not counted",
     noWinner: "No winner",
@@ -444,14 +445,15 @@ const translations = {
     unknownValue: "--",
     racesTableTitle: "Результаты заездов",
     racesTableSubtitle: "Нажми на строку, чтобы открыть финишный протокол.",
-    racesCols: ["Дата", "Трасса", "Победитель", "Пилоты", "Лучший круг"],
+    racesCols: ["Дата", "Трасса", "Победитель", "Пилоты", "Ср. ELO", "Лучший круг"],
     openRaceDetailsLabel: "Открыть детали гонки",
     raceModalEyebrow: "Детали гонки",
-    raceModalCols: ["Поз", "Старт", "Дельта", "Пилот", "Лучший круг", "Машина", "Отставание", "Очки", "Штр."],
+    raceModalCols: ["Поз", "Старт", "Дельта", "Пилот", "Лучший круг", "Машина", "Отставание", "ELO", "ΔELO", "Очки", "Штр."],
     raceSummaryTrack: "Трасса",
     raceSummaryWinner: "Победитель",
     raceSummaryDrivers: "Пилоты",
     raceSummaryBestLap: "Лучший круг",
+    raceSummaryFieldStrength: "Сила поля",
     raceBestLapBadge: "Быстрейший круг",
     notCountedBadge: "Не в зачете",
     noWinner: "Нет победителя",
@@ -2044,6 +2046,12 @@ function renderPositionsDelta(value) {
   if (typeof value === "number" && value < 0) cls = "delta-negative";
   return `<span class="positions-delta ${cls}">${escapeHtml(formatPositionsDelta(value))}</span>`;
 }
+function renderEloDelta(value) {
+  const numeric = Number(value);
+  if (!Number.isFinite(numeric) || numeric === 0) return `<span class="delta-neutral">-</span>`;
+  const cls = numeric > 0 ? "delta-positive" : "delta-negative";
+  return `<span class="positions-delta ${cls}">${escapeHtml(`${numeric > 0 ? "+" : ""}${Math.round(numeric)}`)}</span>`;
+}
 function formatStartPosition(row) { return typeof row?.start_position === "number" ? String(row.start_position) : "-"; }
 function initials(name) {
   const parts = String(name || "").trim().split(/\s+/).filter(Boolean);
@@ -2799,7 +2807,8 @@ function renderRecentRaces(rows) {
       <td data-label="${escapeHtml(labels[1] || "")}"><div class="race-track-cell"><span class="race-track-name">${escapeHtml(race.track_name || humanizeTrackName(race.track))}</span></div></td>
       <td data-label="${escapeHtml(labels[2] || "")}"><span class="race-winner">${escapeHtml(race.winner || t("noWinner"))}</span></td>
       <td data-label="${escapeHtml(labels[3] || "")}">${escapeHtml(race.participants_count ?? "-")}</td>
-      <td data-label="${escapeHtml(labels[4] || "")}"><div>${escapeHtml(race.best_lap || "-")}</div><div class="race-note">${escapeHtml(race.best_lap_driver || "-")}</div></td>
+      <td data-label="${escapeHtml(labels[4] || "")}">${escapeHtml(race.average_elo ?? "-")}</td>
+      <td data-label="${escapeHtml(labels[5] || "")}"><div>${escapeHtml(race.best_lap || "-")}</div><div class="race-note">${escapeHtml(race.best_lap_driver || "-")}</div></td>
     </tr>
   `).join("");
   container.innerHTML = `<table class="races-table"><thead><tr>${headers}</tr></thead><tbody>${rowsHtml}</tbody></table>`;
@@ -2891,6 +2900,7 @@ function renderRaceResultsModal() {
     <div class="race-summary-card"><div class="race-summary-label">${escapeHtml(t("raceSummaryWinner"))}</div><div class="race-summary-value">${escapeHtml(selectedRace.winner || t("noWinner"))}</div></div>
     <div class="race-summary-card"><div class="race-summary-label">${escapeHtml(t("raceSummaryDrivers"))}</div><div class="race-summary-value">${escapeHtml(selectedRace.participants_count ?? "-")}</div></div>
     <div class="race-summary-card"><div class="race-summary-label">${escapeHtml(t("raceSummaryBestLap"))}</div><div class="race-summary-value">${escapeHtml(selectedRace.best_lap || "-")}</div></div>
+    <div class="race-summary-card"><div class="race-summary-label">${escapeHtml(t("raceSummaryFieldStrength"))}</div><div class="race-summary-value">${escapeHtml(selectedRace.average_elo ?? "-")}</div></div>
   `;
   const headers = t("raceModalCols").map(label => `<th>${escapeHtml(label)}</th>`).join("");
   const rows = (selectedRace.results || []).map(row => `
@@ -2902,6 +2912,8 @@ function renderRaceResultsModal() {
       <td><div>${escapeHtml(row.best_lap || "-")}</div><div class="race-note">${row.had_best_lap ? escapeHtml(t("raceBestLapBadge")) : ""}</div></td>
       <td><div>${escapeHtml(row.car_name || "-")}</div><div class="race-note">${row.counted_for_stats === false ? escapeHtml(t("notCountedBadge")) : ""}</div></td>
       <td>${escapeHtml(row.gap || (row.position === 1 ? "-" : "-"))}</td>
+      <td>${escapeHtml(row.elo ?? "-")}</td>
+      <td>${renderEloDelta(row.elo_rating_delta)}</td>
       <td>${escapeHtml(row.points ?? 0)}</td>
       <td>${escapeHtml(row.penalty_points ?? 0)}</td>
     </tr>
