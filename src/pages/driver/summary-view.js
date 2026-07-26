@@ -10,8 +10,10 @@ export function renderDriverHeroTitle(profile, rankInfo, eloSource, dependencies
   const { escapeHtml, escapeAttribute, translate, renderEloBadge, renderTrendBadge } = dependencies;
   return `
     <span class="driver-title-name">${escapeHtml(profile.driver || "-")}</span>
-    ${renderEloBadge(eloSource, { showCategoryName: true })}
-    ${rankInfo ? `<span class="driver-rank-pill ${escapeHtml(rankInfo.rankClass)}" title="${escapeAttribute(translate("driverRankingPosition"))}"><span class="driver-rank-label">${escapeHtml(translate("driverRankingPosition"))}:</span><span class="driver-rank-value">#${escapeHtml(rankInfo.rank)}</span>${renderTrendBadge(rankInfo.change, "championship_rank", { compact: true })}</span>` : ""}
+    <span class="driver-hero-ratings">
+      ${renderEloBadge(eloSource, { showCategoryName: true })}
+      ${rankInfo ? `<span class="driver-rank-pill ${escapeHtml(rankInfo.rankClass)}" title="${escapeAttribute(translate("driverRankingPosition"))}"><span class="driver-rank-label">${escapeHtml(translate("driverRankingPosition"))}:</span><span class="driver-rank-value">#${escapeHtml(rankInfo.rank)}</span>${renderTrendBadge(rankInfo.change, "championship_rank", { compact: true })}</span>` : ""}
+    </span>
   `;
 }
 

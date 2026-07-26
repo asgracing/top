@@ -9062,15 +9062,32 @@ function renderDriverPage() {
   const image = document.getElementById("driver-steam-portrait-image");
   const avatarUrl = safeAvatarUrl(driverSteamAvatarUrl);
   if (!portrait || !image) return;
-  if (!driverProfileData || !avatarUrl) {
+  if (!driverProfileData) {
     portrait.hidden = true;
+    image.hidden = true;
     image.removeAttribute("src");
     image.alt = "";
     return;
   }
+
+  portrait.hidden = false;
+  image.hidden = true;
+  if (!avatarUrl) {
+    image.removeAttribute("src");
+    image.alt = "";
+    return;
+  }
+
+  image.onload = () => {
+    image.hidden = false;
+  };
+  image.onerror = () => {
+    image.hidden = true;
+    image.removeAttribute("src");
+  };
   image.src = avatarUrl;
   image.alt = `${driverProfileData.driver || t("driverEyebrow")} — Steam`;
-  portrait.hidden = false;
+  if (image.complete && image.naturalWidth > 0) image.hidden = false;
 }
 
 let driverPreviewView = null;

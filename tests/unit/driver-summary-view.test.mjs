@@ -15,6 +15,7 @@ const dependencies = {
 test("renders Driver hero identity, ELO and rank", () => {
   const markup = renderDriverHeroTitle({ driver: "Alex" }, { rank: 4, rankClass: "up", change: 2 }, {}, dependencies);
   assert.match(markup, /e:Alex/);
+  assert.match(markup, /class="driver-hero-ratings"/);
   assert.match(markup, /ELO/);
   assert.match(markup, /#e:4/);
   assert.match(markup, /TREND/);

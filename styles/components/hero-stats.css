@@ -344,25 +344,29 @@
   }
 
   .driver-hero-heading {
-    display: flex;
-    align-items: flex-start;
-    justify-content: space-between;
-    gap: clamp(12px, 1.25vw, 18px);
+    min-width: 0;
   }
 
-  .driver-hero-copy {
+  .driver-hero-mainline {
+    display: grid;
+    grid-template-columns: auto minmax(0, 1fr);
+    align-items: start;
+    gap: clamp(12px, 1.25vw, 18px);
     min-width: 0;
-    flex: 1 1 auto;
   }
 
   .driver-steam-portrait {
-    flex: 0 0 auto;
-    width: clamp(60px, 5.3vw, 76px);
+    position: relative;
+    display: grid;
+    place-items: center;
+    width: clamp(72px, 6vw, 88px);
     aspect-ratio: 1;
     overflow: hidden;
     border: 1px solid rgba(255, 255, 255, 0.18);
     border-radius: clamp(18px, 1.5vw, 22px);
-    background: rgba(11, 15, 20, 0.86);
+    background:
+      radial-gradient(circle at 26% 24%, rgba(96, 174, 255, 0.2), transparent 42%),
+      linear-gradient(145deg, rgba(24, 42, 62, 0.96), rgba(8, 13, 20, 0.98));
     box-shadow:
       0 18px 42px rgba(0, 0, 0, 0.34),
       inset 0 1px 0 rgba(255, 255, 255, 0.1);
@@ -373,36 +377,76 @@
   }
 
   .driver-steam-portrait-image {
+    position: absolute;
+    inset: 0;
     display: block;
     width: 100%;
     height: 100%;
     object-fit: cover;
   }
 
-  @media (min-width: 1440px) {
-    .driver-hero-heading {
-      display: block;
-    }
+  .driver-steam-portrait-image[hidden] {
+    display: none;
+  }
 
-    .driver-steam-portrait {
-      position: fixed;
-      top: calc(var(--top-nav-height, 88px) + 10px);
-      left: calc((100vw - 1200px) / 2 - 104px);
-      width: 88px;
-      z-index: var(--layer-content);
-    }
+  .driver-steam-portrait-fallback {
+    color: rgba(224, 239, 255, 0.84);
+    font-size: clamp(0.62rem, 0.8vw, 0.76rem);
+    font-weight: 900;
+    letter-spacing: 0.1em;
+    line-height: 1;
+    text-indent: 0.1em;
+    text-shadow: 0 2px 12px rgba(86, 164, 230, 0.42);
   }
 
   .driver-title-name {
-    display: inline;
+    min-width: 0;
   }
   
   #driver-page-name {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) auto;
+    align-items: start;
+    gap: 16px;
+    width: 100%;
+  }
+
+  .driver-steam-portrait + #driver-page-name {
+    grid-column: 2;
+  }
+
+  .driver-steam-portrait[hidden] + #driver-page-name {
+    grid-column: 1 / -1;
+  }
+
+  .driver-hero-ratings {
     display: flex;
-    align-items: center;
-    gap: 14px;
-    flex-wrap: wrap;
-    justify-content: space-between;
+    flex-direction: column;
+    align-items: flex-end;
+    gap: 8px;
+    margin-left: auto;
+  }
+
+  .driver-hero-ratings .elo-badge,
+  .driver-hero-ratings .driver-rank-pill {
+    margin-left: 0;
+  }
+
+  @media (max-width: 760px) {
+    .driver-steam-portrait {
+      width: clamp(60px, 16vw, 72px);
+      border-radius: 18px;
+    }
+
+    #driver-page-name {
+      grid-template-columns: minmax(0, 1fr);
+      gap: 12px;
+    }
+
+    .driver-hero-ratings {
+      align-items: flex-start;
+      margin-left: 0;
+    }
   }
   
   .driver-rank-pill {
