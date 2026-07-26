@@ -29,7 +29,11 @@ const [html, appSource, featureLoaderSource] = await Promise.all([
   readFile(resolve(root, "app.js"), "utf8"),
   readFile(resolve(root, "src/runtime/page-feature-loader.js"), "utf8"),
 ]);
-const videos = ["media/background.mp4", "media/background_nurb24h.mp4"];
+const videos = [
+  "media/background.mp4",
+  "media/background_nurb24h.mp4",
+  "media/background2607.mp4",
+];
 const metrics = {
   appJavaScriptBytes: await textBytes("app.js"),
   sourceModulesBytes: await treeBytes("src", new Set([".js", ".mjs"])),
