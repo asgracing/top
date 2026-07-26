@@ -24,6 +24,25 @@ const TRACK_BACKGROUND_FILES = Object.freeze({
   zolder: "zolder.jpg"
 });
 
+export const TRACK_BACKGROUND_CAROUSEL_FILES = Object.freeze([
+  "barcelona.jpg",
+  "hungaroring.jpg",
+  "imola.jpg",
+  "kyalami.jpg",
+  "laguna_seca.jpg",
+  "misano.jpg",
+  "monza.jpg",
+  "mount_panorama.jpg",
+  "nurburgring.jpg",
+  "nurburgring_24h.jpg",
+  "paul_ricard.jpg",
+  "silverstone.jpg",
+  "spa.jpg",
+  "suzuka.jpg",
+  "zandvoort.jpg",
+  "zolder.jpg"
+]);
+
 export function normalizeTrackBackgroundCode(value) {
   return String(value || "")
     .trim()
@@ -38,4 +57,13 @@ export function resolveTrackBackgroundFile(value) {
   return TRACK_BACKGROUND_FILES[normalized]
     || TRACK_BACKGROUND_FILES[normalized.replaceAll("_", "")]
     || null;
+}
+
+export function selectRandomTrackBackgroundFile(random = Math.random) {
+  const randomValue = Number(random());
+  const normalizedValue = Number.isFinite(randomValue)
+    ? Math.min(Math.max(randomValue, 0), 1 - Number.EPSILON)
+    : 0;
+  const index = Math.floor(normalizedValue * TRACK_BACKGROUND_CAROUSEL_FILES.length);
+  return TRACK_BACKGROUND_CAROUSEL_FILES[index];
 }

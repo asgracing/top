@@ -46,7 +46,7 @@
     pointer-events: none;
     background:
       linear-gradient(180deg, rgba(8, 12, 18, 0.08) 0%, rgba(8, 12, 18, 0.12) 38%, rgba(8, 12, 18, 0.18) 100%),
-      url("../fun-stats/monza.jpg") center center / cover no-repeat;
+      var(--page-track-background, url("../assets/monza.jpg")) center center / cover no-repeat;
   }
 
   body.monza-bg-page .site-video-bg,
