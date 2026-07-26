@@ -67,7 +67,15 @@ class FakeWindow extends EventTarget {
   clearTimeout() {}
 }
 
-function createHarness({ seen = true, desktop = true, targets } = {}) {
+function createHarness({
+  seen = true,
+  desktop = true,
+  targets,
+  steps = [
+    { targetSelector: ".hero", titleKey: "title1", textKey: "text1", scrollBlock: "nearest" },
+    { targetSelector: ".missing", titleKey: "title2", textKey: "text2", scrollBlock: "center" }
+  ]
+} = {}) {
   const documentRef = new FakeDocument(targets);
   const windowRef = new FakeWindow(desktop);
   const lifecycle = createLifecycle();
@@ -83,10 +91,7 @@ function createHarness({ seen = true, desktop = true, targets } = {}) {
     storage,
     translate: key => key,
     replaceTokens: (text, replacements) => `${text}:${replacements.current}/${replacements.total}`,
-    steps: [
-      { targetSelector: ".hero", titleKey: "title1", textKey: "text1", scrollBlock: "nearest" },
-      { targetSelector: ".missing", titleKey: "title2", textKey: "text2", scrollBlock: "center" }
-    ]
+    steps
   });
   return { controller, documentRef, windowRef, lifecycle, values };
 }
@@ -132,6 +137,27 @@ test("Escape closes without marking the guide as completed", () => {
   harness.documentRef.dispatchEvent(escape);
   assert.equal(harness.controller.active, false);
   assert.equal(harness.values.get("topGuideSeen"), false);
+  harness.lifecycle.destroy();
+});
+
+test("runs step display hooks when entering and leaving a step", () => {
+  const targetDocument = new FakeDocument();
+  const target = new FakeElement("a", targetDocument);
+  const calls = [];
+  const harness = createHarness({
+    targets: { ".menu-link": target },
+    steps: [{
+      targetSelector: ".menu-link",
+      titleKey: "title",
+      textKey: "text",
+      onShow: stepTarget => calls.push(["show", stepTarget]),
+      onHide: () => calls.push(["hide"])
+    }]
+  });
+  harness.controller.mount();
+  harness.controller.open(0, { force: true });
+  harness.controller.close();
+  assert.deepEqual(calls, [["show", target], ["hide"]]);
   harness.lifecycle.destroy();
 });
 

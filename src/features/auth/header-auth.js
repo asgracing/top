@@ -217,7 +217,8 @@ export function createAuthHeaderController({
   documentRef = document,
   windowRef = window,
   fetchImpl = globalThis.fetch,
-  authBaseUrl = DEFAULT_AUTH_BASE_URL
+  authBaseUrl = DEFAULT_AUTH_BASE_URL,
+  onAuthChange = null
 } = {}) {
   const actions = documentRef.querySelector(".top-nav-actions");
   if (!actions || typeof fetchImpl !== "function") return null;
@@ -441,11 +442,13 @@ export function createAuthHeaderController({
       if (!destroyed) {
         state = { status: "ready", auth, message: "" };
         render();
+        onAuthChange?.(auth);
       }
     } catch (error) {
       if (!destroyed && error?.name !== "AbortError" && !preserveReadyStateOnFailure) {
         state = { status: "error", auth: { authenticated: false }, message: String(error) };
         render();
+        onAuthChange?.(state.auth);
       }
     }
   }
@@ -463,6 +466,7 @@ export function createAuthHeaderController({
       if (!response.ok) throw new Error(`auth_logout_http_${response.status}`);
       state = { status: "ready", auth: { authenticated: false }, message: "" };
       render();
+      onAuthChange?.(state.auth);
     } catch {
       button.disabled = false;
       button.title = translate("logoutFailed");

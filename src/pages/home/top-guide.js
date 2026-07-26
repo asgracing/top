@@ -138,6 +138,7 @@ export function createTopGuideController({
     }
 
     const step = activeSteps[state.stepIndex];
+    step.onShow?.(step.target);
     elements.title.textContent = translate(step.titleKey);
     elements.body.textContent = translate(step.textKey);
     elements.progress.textContent = replaceTokens(translate("topGuideProgress"), {
@@ -153,6 +154,7 @@ export function createTopGuideController({
 
   function close({ seen = false, restoreFocus = true } = {}) {
     if (seen) markSeen();
+    availableSteps()[state.stepIndex]?.onHide?.();
     state.active = false;
     render();
     if (restoreFocus) state.elements?.launcher.focus?.();
@@ -177,6 +179,7 @@ export function createTopGuideController({
     const activeSteps = availableSteps();
     if (!activeSteps.length) return close();
     if (nextIndex >= activeSteps.length) return close({ seen: true });
+    activeSteps[state.stepIndex]?.onHide?.();
     state.stepIndex = Math.max(0, nextIndex);
     render();
     const step = activeSteps[state.stepIndex];
@@ -190,8 +193,8 @@ export function createTopGuideController({
     state.mounted = true;
 
     lifecycle.listen(state.elements.skip, "click", () => close({ seen: true }));
-    lifecycle.listen(state.elements.back, "click", () => setStep(state.stepIndex - 1));
-    lifecycle.listen(state.elements.next, "click", () => setStep(state.stepIndex + 1));
+    lifecycle.listen(state.elements.back, "click", event => { event.stopPropagation(); setStep(state.stepIndex - 1); });
+    lifecycle.listen(state.elements.next, "click", event => { event.stopPropagation(); setStep(state.stepIndex + 1); });
     lifecycle.listen(state.elements.launcher, "click", () => open(0, { force: true }));
     lifecycle.listen(documentRef, "keydown", event => {
       if (state.active && event.key === "Escape") close();

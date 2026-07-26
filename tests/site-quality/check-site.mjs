@@ -110,7 +110,7 @@ for (const [page, [htmlPath, entrySrc]] of Object.entries(pageEntrypoints)) {
   if (!pageHtml.includes(tableControlsHref)) failures.push(`${page} page is missing the table controls stylesheet`);
   const topThreeHref = page === "home" ? "./styles/components/top-three.css?v=20260715r11topthree1" : "../styles/components/top-three.css?v=20260715r11topthree1";
   if (!pageHtml.includes(topThreeHref)) failures.push(`${page} page is missing the Top-3 stylesheet`);
-  const tablesHref = page === "home" ? "./styles/components/tables.css?v=20260715r11tables1" : "../styles/components/tables.css?v=20260715r11tables1";
+  const tablesHref = page === "home" ? "./styles/components/tables.css?v=20260726authrow1" : "../styles/components/tables.css?v=20260726authrow1";
   if (!pageHtml.includes(tablesHref)) failures.push(`${page} page is missing the shared tables stylesheet`);
   const paginationHref = page === "home" ? "./styles/components/pagination.css?v=20260715r11pagination1" : "../styles/components/pagination.css?v=20260715r11pagination1";
   if (!pageHtml.includes(paginationHref)) failures.push(`${page} page is missing the shared pagination stylesheet`);
@@ -223,7 +223,7 @@ if (legacyCss.includes("Consolidated hero server summary") || !heroServerSummary
 if (!heroServerSummaryCss.includes("grid-template-columns: minmax(0, 1fr) auto;") || !heroServerSummaryCss.includes("font-variant-numeric: tabular-nums;")) failures.push("Hero paired mini stats must reserve independent label and numeric columns");
 if (!heroServerSummaryCss.includes("grid-template-rows: repeat(2, minmax(62px, auto));") || !heroServerSummaryCss.includes(".hero-side-compact > .hero-server-total-stat") || !heroServerSummaryCss.includes(".hero-side-compact > .mini-stat-drivers-count") || !heroServerSummaryCss.includes("grid-template-columns: repeat(2, minmax(0, 1fr));")) failures.push("Hero mini stats must preserve the explicit desktop 2x2 grid");
 if (html.includes('<div class="hero-stats-row">') || heroServerSummaryCss.includes("overflow-wrap: anywhere")) failures.push("Hero mini stats must not use the conflicting nested grid or letter-by-letter label wrapping");
-if (!html.includes('./styles/components/hero-layout.css?v=20260715hero-spacing3') || !heroLayoutCss.includes("@media (min-width: 1181px)")) failures.push("Home must load the extracted responsive hero layout component");
+if (!html.includes('./styles/components/hero-layout.css?v=20260726hourlyfit1') || !heroLayoutCss.includes("@media (min-width: 1181px)")) failures.push("Home must load the extracted responsive hero layout component");
 if (!heroLayoutCss.includes(".hero-actions.hero-actions-stacked-mobile > .hero-side") || !heroLayoutCss.includes("flex-direction: column;") || !heroLayoutCss.includes("order: 4;")) failures.push("Mobile hero actions must use an explicit non-overlapping vertical flow");
 if (!/\.hero-grid\s*\{\s*display:\s*flex;\s*flex-direction:\s*column;/s.test(heroLayoutCss) || !heroLayoutCss.includes("grid-area: auto;") || !heroLayoutCss.includes(".support-inline-widget.support-center-widget { order: 3; }")) failures.push("Mobile hero sections must use normal vertical flow without overlapping grid areas");
 if (legacyCss.includes(".hero-hourly-card.is-championship-event {") && legacyCss.slice(legacyCss.indexOf("@layer overrides {")).includes(".hero-hourly-card.is-championship-event {")) failures.push("Final championship hero skin must live outside the legacy stylesheet");

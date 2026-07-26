@@ -2036,12 +2036,12 @@
 }
 
 .hero-hourly-promo-title {
-  max-width: 9ch;
+  max-width: 12ch;
   padding: 0;
   border: 0;
   background: transparent;
   color: #ffd166;
-  font-size: clamp(2.4rem, 4.1vw, 4.25rem);
+  font-size: clamp(2rem, 2.65vw, 3rem);
   line-height: 0.9;
   letter-spacing: 0;
   box-shadow: none;
@@ -2091,7 +2091,8 @@
 .hero-hourly-winner-car {
   right: 0;
   bottom: 0;
-  width: min(210px, 52%);
+  width: min(164px, 40%);
+  max-height: 78px;
   opacity: 0.42;
 }
 
@@ -4100,6 +4101,37 @@
     background: rgba(255, 255, 255, 0.12);
     transform: translateX(-0.5px);
     pointer-events: none;
+  }
+
+  .hero-hourly-stack {
+    transform: translateX(-16px);
+  }
+
+  .hero-hourly-winner-copy {
+    max-width: 62%;
+  }
+
+  .hero-hourly-winner-name,
+  .hero-hourly-winner-meta {
+    white-space: nowrap;
+  }
+
+  .hero-hourly-meta-line {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) auto;
+    gap: 8px;
+  }
+
+  .hero-hourly-meta-value {
+    min-width: 0;
+    overflow: hidden;
+    font-size: clamp(1.12rem, 1.45vw, 1.42rem);
+    text-overflow: ellipsis;
+    white-space: nowrap;
+  }
+
+  .hero-hourly-meta-time {
+    font-size: clamp(0.72rem, 0.82vw, 0.88rem);
   }
 }
 

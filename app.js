@@ -8,12 +8,12 @@ import { processBestlaps, processLeaderboard, processSafety } from "./src/pages/
 import { createHomeDeferredSectionsController } from "./src/pages/home/deferred-sections.js";
 import { createHomeStatsTabsController } from "./src/pages/home/stats-tabs-controller.js";
 import { createHomePage } from "./src/pages/home/index.js";
-import { createTopGuideController } from "./src/pages/home/top-guide.js";
+import { createTopGuideController } from "./src/pages/home/top-guide.js?v=20260726topguideauth2";
 import { HOME_LOADING_TEXT_IDS, applyHomeTableViewState } from "./src/pages/home/view-state-config.js";
 import { createModalControllerFactory } from "./src/shared/modal-controller.js";
 import { parseTableNumber, sortTableRows } from "./src/shared/table-model.js";
 import { countUnreadNews, sortPublishedNews } from "./src/shared/news-feed-model.js";
-import { createAuthHeaderController, safeAvatarUrl } from "./src/features/auth/header-auth.js?v=20260726authpersist1";
+import { createAuthHeaderController, safeAvatarUrl } from "./src/features/auth/header-auth.js?v=20260726authrow1";
 import { applyRandomTrackBackground, normalizeTrackBackgroundCode, resolveTrackBackgroundFile } from "./src/features/server-status/track-background.js?v=20260726staticfallback1";
 
 const PAGE_CONTEXT = readPageContext(document);
@@ -579,6 +579,7 @@ let driverIndexData = [];
 let driverProfileData = null;
 let driverSteamAvatarUrl = null;
 let driverPreviewState = null;
+let authenticatedDriverPublicId = "";
 const bestLapTrackSelection = new Map();
 const averagePaceTrackSelection = new Map();
 let eloModalState = null;
@@ -925,6 +926,7 @@ const translations = {
     btnBestLaps: "Best Laps",
     btnWorstSafety: "Worst Safety",
     btnAboutServer: "About Server",
+    ratingBadgeAboutTooltip: 'Learn more about ELO and SR in the "About Server" section',
     serversLabel: "Servers",
     serversOnlineLabel: "Servers online",
     serversOnlineTooltip: "Show server status",
@@ -1058,9 +1060,11 @@ const translations = {
     topGuideStepProfileTitle: "Open your full driver stats",
     topGuideStepProfileText: "Click your name inside the championship table to open a full driver profile with race history, pace and detailed statistics.",
     topGuideStepRacesTitle: "Open the latest races",
-    topGuideStepRacesText: "This button takes you to the recent race archive, where every session has a full result sheet and finishing order.",
+    topGuideStepRacesText: 'Open the "Racing" menu and select "Last Races" to view the archive, full result sheets and finishing order.',
     topGuideStepHourlyTitle: "Special events live here",
     topGuideStepHourlyText: "This card shows the next event — a 1-hour race, Endurance or a championship stage — with the track, duration, start time and registrations.",
+    topGuideStepAuthTitle: "Steam sign-in and Discord linking",
+    topGuideStepAuthText: "Sign in with Steam for quick access to your driver profile from the site header. Then link Discord to automatically synchronize your server roles based on ELO and SR.",
     communityTiktokTitle: "TikTok",
     communityTiktokText: "Short, punchy moments: overtakes, chaos, emotions and the most addictive ASG Racing clips.",
     communityTiktokCta: "Catch the best moments",
@@ -1563,6 +1567,7 @@ const translations = {
     btnBestLaps: "Лучшие круги",
     btnWorstSafety: "Штрафы",
     btnAboutServer: "О сервере",
+    ratingBadgeAboutTooltip: "Подробнее об ELO и SR в разделе «О сервере»",
     serversLabel: "Серверы",
     serversOnlineLabel: "Серверы онлайн",
     serversOnlineTooltip: "Показать статус серверов",
@@ -1696,9 +1701,11 @@ const translations = {
     topGuideStepProfileTitle: "Открой детальную статистику пилота",
     topGuideStepProfileText: "Кликните по своему имени в таблице чемпионата, чтобы открыть полный профиль пилота с историей гонок, темпом и детальной статистикой.",
     topGuideStepRacesTitle: "Здесь последние гонки",
-    topGuideStepRacesText: "Эта кнопка ведет в архив недавних гонок, где у каждого заезда есть полный протокол и порядок финиша.",
+    topGuideStepRacesText: "Откройте меню «Гонки» и выберите «Последние гонки», чтобы посмотреть архив, полные протоколы и порядок финиша.",
     topGuideStepHourlyTitle: "А здесь специальные события",
     topGuideStepHourlyText: "В этой карточке показан ближайший ивент — часовая гонка, Endurance или этап чемпионата: трасса, длительность, время старта и регистрации.",
+    topGuideStepAuthTitle: "Авторизация через Steam и привязка Discord",
+    topGuideStepAuthText: "Войдите через Steam, чтобы быстро открывать свой профиль пилота из шапки сайта. Затем привяжите Discord — роли на сервере будут автоматически синхронизироваться с вашими ELO и SR.",
     communityTiktokTitle: "TikTok",
     communityTiktokText: "Короткие яркие моменты: обгоны, хаос, эмоции и самые цепляющие эпизоды ASG Racing.",
     communityTiktokCta: "Поймать лучшие моменты",
@@ -3826,6 +3833,16 @@ function initTwitchWidget() {
   }
 }
 
+function toggleTopGuideRacesMenu(open) {
+  const group = document.getElementById("top-nav-racing-group");
+  const toggle = group?.querySelector(".top-nav-group-toggle");
+  const menu = group?.querySelector(".top-nav-group-menu");
+  if (!group || !toggle || !menu) return;
+  toggle.setAttribute("aria-expanded", open ? "true" : "false");
+  menu.hidden = !open;
+  group.classList.toggle("is-open", open);
+}
+
 function getTopGuideSteps() {
   return [
     {
@@ -3853,16 +3870,24 @@ function getTopGuideSteps() {
       scrollBlock: "center"
     },
     {
-      targetSelector: ".btn-last-races",
+      targetSelector: "#top-nav-racing-group",
       titleKey: "topGuideStepRacesTitle",
       textKey: "topGuideStepRacesText",
-      scrollBlock: "center"
+      scrollBlock: "nearest",
+      onShow: () => toggleTopGuideRacesMenu(true),
+      onHide: () => toggleTopGuideRacesMenu(false)
     },
     {
       targetSelector: "#hero-hourly-card",
       titleKey: "topGuideStepHourlyTitle",
       textKey: "topGuideStepHourlyText",
       scrollBlock: "center"
+    },
+    {
+      targetSelector: ".auth-header",
+      titleKey: "topGuideStepAuthTitle",
+      textKey: "topGuideStepAuthText",
+      scrollBlock: "nearest"
     }
   ];
 }
@@ -4145,7 +4170,8 @@ function renderEloBadge(source, { compact = false, showCategoryName = false } = 
       type="button"
       data-elo-public-id="${escapeAttribute(info.publicId || "")}"
       data-elo-player-id="${escapeAttribute(info.playerId || "")}"
-      title="${escapeAttribute(`${t("eloTitle")}: ${info.rating} · ${info.categoryName}`)}"
+      title="${escapeHtml(t("ratingBadgeAboutTooltip"))}"
+      aria-label="${escapeHtml(`${t("eloTitle")}: ${info.rating} · ${info.categoryName}. ${t("ratingBadgeAboutTooltip")}`)}"
     >
       <span class="elo-badge-rank">${escapeHtml(info.categoryShort)}</span>
       <span class="elo-badge-value">${escapeHtml(valueText)}</span>
@@ -4506,7 +4532,8 @@ function renderSafetyBadge(source, { compact = false, showDelta = false, breakdo
       data-sr-player-id="${escapeAttribute(info.playerId || "")}"
       data-sr-race-id="${escapeAttribute(source?.race_id || "")}"
       data-sr-breakdown-mode="${escapeAttribute(breakdownMode)}"
-      title="${escapeAttribute(`${t("safetyRatingTitle")}: ${info.category} ${info.rating}`)}"
+      title="${escapeHtml(t("ratingBadgeAboutTooltip"))}"
+      aria-label="${escapeHtml(`${t("safetyRatingTitle")}: ${info.category} ${info.rating}. ${t("ratingBadgeAboutTooltip")}`)}"
     >
       <span class="sr-badge-value"><strong>${escapeHtml(info.category)}</strong> ${escapeHtml(info.rating)}</span>${deltaText}
     </button>
@@ -4547,7 +4574,19 @@ function parseEloHistoryDate(value) {
 }
 
 function buildDriverPreviewRowClass(row) {
-  return ["is-interactive-row", "is-driver-preview-row", getEloRowClass(row)].filter(Boolean).join(" ");
+  return [
+    "is-interactive-row",
+    "is-driver-preview-row",
+    getEloRowClass(row),
+    isAuthenticatedDriverRow(row) ? "is-authenticated-driver" : ""
+  ].filter(Boolean).join(" ");
+}
+
+function isAuthenticatedDriverRow(row) {
+  return Boolean(
+    authenticatedDriverPublicId
+    && String(row?.public_id || "") === authenticatedDriverPublicId
+  );
 }
 
 function buildDriverPreviewRowAttributes(row) {
@@ -4555,7 +4594,7 @@ function buildDriverPreviewRowAttributes(row) {
   if (!preview) return "";
 
   return [
-    `class="${escapeAttribute(buildDriverPreviewRowClass(row))}"`,
+    `class="${escapeHtml(buildDriverPreviewRowClass(row))}"`,
     'tabindex="0"',
     'role="button"',
     `aria-label="${escapeAttribute(`${t("openDriverPreviewLabel")}: ${preview.driver}`)}"`,
@@ -7536,7 +7575,7 @@ function renderSafetyTablePage() {
   }
 
   const rows = result.items.map(row => `
-    <tr class="safety-row sr-row ${isDriverBanned(row) ? "is-banned" : `sr-cat-${escapeHtml(normalizeSafetyCategory(row) || "C")}`}">
+    <tr class="safety-row sr-row ${isDriverBanned(row) ? "is-banned" : `sr-cat-${escapeHtml(normalizeSafetyCategory(row) || "C")}`}${isAuthenticatedDriverRow(row) ? " is-authenticated-driver" : ""}">
       <td><span class="rank-badge rank-${escapeHtml(row.rank)}">#${escapeHtml(row.rank)}</span></td>
       <td>
         <div class="driver-cell">
@@ -10481,6 +10520,18 @@ function initializeWindowLifecycle() {
   appLifecycle.add(() => handleResize.cancel());
 }
 
+function updateAuthenticatedDriver(auth) {
+  const nextPublicId = auth?.authenticated && auth?.linked
+    ? String(auth.driver?.publicId || "")
+    : "";
+  if (nextPublicId === authenticatedDriverPublicId) return;
+  authenticatedDriverPublicId = nextPublicId;
+  if (!PAGE_CONTEXT.isHome) return;
+  renderLeaderboardTablePage();
+  renderBestLapsTablePage();
+  renderSafetyTablePage();
+}
+
 async function init() {
   await initializeAppStorage().catch(error => console.warn("Preference storage is unavailable.", error));
   await initializeFeatureRuntime();
@@ -10489,7 +10540,7 @@ async function init() {
   applyInitialTopLoadingState();
   homePage.setupDeferred();
   ensureNewsNotificationsUi();
-  const authHeaderController = createAuthHeaderController();
+  const authHeaderController = createAuthHeaderController({ onAuthChange: updateAuthenticatedDriver });
   if (authHeaderController) appLifecycle.add(() => authHeaderController.destroy());
   rerenderUI();
 
