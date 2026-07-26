@@ -1460,7 +1460,7 @@
 
 .hero-hourly-meta-time {
   color: rgba(236, 243, 255, 0.9);
-  font-size: 0.9rem;
+  font-size: 0.78rem;
 }
 
 .hero-hourly-votes {
@@ -2907,7 +2907,7 @@
 }
 
 .hero-hourly-meta-value {
-  font-size: clamp(1.08rem, 1.3vw, 1.34rem);
+  font-size: clamp(0.98rem, 1.12vw, 1.12rem);
 }
 
 .hero-hourly-votes {
@@ -4117,21 +4117,21 @@
   }
 
   .hero-hourly-meta-line {
-    display: grid;
-    grid-template-columns: minmax(0, 1fr) auto;
-    gap: 8px;
+    display: flex;
+    justify-content: space-between;
+    gap: 6px;
   }
 
   .hero-hourly-meta-value {
     min-width: 0;
     overflow: hidden;
-    font-size: clamp(1.12rem, 1.45vw, 1.42rem);
+    font-size: clamp(0.98rem, 1.12vw, 1.12rem);
     text-overflow: ellipsis;
     white-space: nowrap;
   }
 
   .hero-hourly-meta-time {
-    font-size: clamp(0.72rem, 0.82vw, 0.88rem);
+    font-size: clamp(0.7rem, 0.76vw, 0.8rem);
   }
 }
 
