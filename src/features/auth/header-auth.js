@@ -240,7 +240,7 @@ function ensureStylesheet(documentRef) {
   if (documentRef.querySelector("link[data-asg-auth-header-style]")) return;
   const link = documentRef.createElement("link");
   link.rel = "stylesheet";
-  link.href = new URL("../../../styles/components/auth-header.css?v=20260722discord3", import.meta.url).href;
+  link.href = new URL("../../../styles/components/auth-header.css?v=20260728tabletgrid1", import.meta.url).href;
   link.dataset.asgAuthHeaderStyle = "true";
   documentRef.head.appendChild(link);
 }
