@@ -1,5 +1,7 @@
 @layer components {
   .account-shell {
+    position: relative;
+    z-index: var(--layer-content);
     width: min(980px, calc(100% - 32px));
     margin: 42px auto 80px;
   }
