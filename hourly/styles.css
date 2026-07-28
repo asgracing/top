@@ -3455,6 +3455,14 @@ tbody tr:not(.is-interactive-row):hover {
   cursor: pointer;
 }
 
+.calendar-event.is-finished {
+  background:
+    linear-gradient(180deg, rgba(8, 12, 18, 0.58), rgba(8, 12, 18, 0.92)),
+    var(--calendar-track-photo);
+  background-size: cover;
+  background-position: center;
+}
+
 .calendar-event-time,
 .calendar-event-track,
 .calendar-event .event-type-badge {
@@ -3625,6 +3633,23 @@ tbody tr:not(.is-interactive-row):hover {
 .modal-header {
   margin-bottom: 20px;
   padding-right: 42px;
+}
+
+.race-results-status {
+  display: inline-flex;
+  margin-top: 10px;
+  padding: 6px 12px;
+  border: 1px solid rgba(118, 184, 255, 0.7);
+  border-radius: 999px;
+  background: rgba(20, 89, 158, 0.82);
+  color: #ffffff;
+  font-size: 0.78rem;
+  font-weight: 950;
+  letter-spacing: 0.12em;
+}
+
+.race-results-status[hidden] {
+  display: none;
 }
 
 .modal-title {

@@ -256,6 +256,7 @@ const translations = {
     scheduleModalRain: "Rain forecast",
     calendarSummary: "Full event calendar",
     calendarEmpty: "No calendar events yet.",
+    finishedLabel: "FINISHED",
     championshipBadge: "Championship Event",
     hourlyBadge: "Hourly Race",
     enduranceBadge: "Endurance",
@@ -495,6 +496,7 @@ Object.assign(translations.ru, {
   scheduleModalRain: "Прогноз дождя",
   calendarSummary: "Полный календарь событий",
   calendarEmpty: "Пока нет событий в календаре.",
+  finishedLabel: "FINISHED",
   championshipBadge: "Событие чемпионата",
   hourlyBadge: "Часовая гонка",
   enduranceBadge: "Эндюранс",
@@ -603,6 +605,7 @@ let serverStatusData = null;
 let scheduleItems = [];
 let championshipItems = [];
 let recentRaceItems = [];
+let calendarRaceItems = [];
 let eventModalVersion = EVENT_MODAL_VERSION;
 let lastScheduleModalTrigger = null;
 
@@ -2734,20 +2737,41 @@ function renderScheduleTable(rows) {
   });
   bindVoteControls(container);
 }
-function renderCalendar(rows) {
+function buildCalendarItems(scheduleRows, raceRows) {
+  const upcomingItems = (Array.isArray(scheduleRows) ? scheduleRows : []).map(row => ({
+    kind: "scheduled",
+    row
+  }));
+  const finishedItems = (Array.isArray(raceRows) ? raceRows : [])
+    .filter(race => String(race?.status || "finished").toLowerCase() === "finished")
+    .map(race => ({
+      kind: "finished",
+      race,
+      row: {
+        ...race,
+        date: race.date || String(race.finished_at || race.finished_at_local || "").slice(0, 10),
+        track_code: race.track_code || race.track,
+        track_name: race.track_name || humanizeTrackName(race.track_code || race.track),
+        race_format: race.race_format || "hourly",
+        status: "finished"
+      }
+    }));
+  return [...finishedItems, ...upcomingItems];
+}
+function renderCalendar(scheduleRows, raceRows = calendarRaceItems) {
   const grid = document.getElementById("calendar-v2-grid") || document.getElementById("calendar-grid");
   const count = document.getElementById("calendar-v2-count") || document.getElementById("calendar-count");
   if (!grid) return;
-  const items = Array.isArray(rows) ? rows : [];
+  const items = buildCalendarItems(scheduleRows, raceRows);
   const today = getMoscowDateParts();
   const currentMonthItems = items
-    .map((row, index) => ({ row, index, dateParts: parseIsoDateParts(row?.date) }))
+    .map(item => ({ ...item, dateParts: parseIsoDateParts(item.row?.date) }))
     .filter(item =>
       item.dateParts &&
       item.dateParts.year === today.year &&
-      item.dateParts.month === today.month &&
-      item.dateParts.day >= today.day
-    );
+      item.dateParts.month === today.month
+    )
+    .map((item, index) => ({ ...item, index }));
   const itemsByDay = new Map();
   currentMonthItems.forEach(item => {
     if (!itemsByDay.has(item.dateParts.day)) itemsByDay.set(item.dateParts.day, []);
@@ -2764,17 +2788,18 @@ function renderCalendar(rows) {
   const dayCells = Array.from({ length: daysInMonth }, (_, dayIndex) => {
     const day = dayIndex + 1;
     const dayEvents = itemsByDay.get(day) || [];
-    const eventsHtml = dayEvents.map(({ row, index }) => {
+    const eventsHtml = dayEvents.map(({ kind, row, index }) => {
+      const isFinished = kind === "finished";
       const trackCode = String(row?.track_code || "").trim().toLowerCase();
       const backgroundUrl = getTrackBackgroundUrl(trackCode);
       return `
         <button
-          class="calendar-event${isChampionshipEvent(row) ? " is-championship-event" : ""}${isEnduranceEvent(row) ? " is-endurance-event" : ""}"
+          class="calendar-event${isFinished ? " is-finished" : ""}${isChampionshipEvent(row) ? " is-championship-event" : ""}${isEnduranceEvent(row) ? " is-endurance-event" : ""}"
           type="button"
           data-calendar-index="${index}"
           style="--calendar-track-photo: ${backgroundUrl ? `url('${escapeHtml(backgroundUrl)}')` : "none"};"
         >
-          <span class="calendar-event-time">${escapeHtml(row?.start_time_local || "--")}</span>
+          <span class="calendar-event-time">${escapeHtml(isFinished ? t("finishedLabel") : (row?.start_time_local || "--"))}</span>
           <span class="calendar-event-track">${escapeHtml(getLocalizedField(row, "track_name", row?.track_name || row?.track_code || "--"))}</span>
           ${renderEventBadges(row)}
         </button>
@@ -2789,7 +2814,14 @@ function renderCalendar(rows) {
   });
   grid.innerHTML = `${weekdayHeaders}${leadingBlanks.join("")}${dayCells.join("")}`;
   grid.querySelectorAll("[data-calendar-index]").forEach(button => {
-    button.addEventListener("click", () => openScheduleModal(scheduleItems[Number(button.dataset.calendarIndex)] || null, button));
+    button.addEventListener("click", () => {
+      const item = currentMonthItems[Number(button.dataset.calendarIndex)] || null;
+      if (item?.kind === "finished") {
+        void openRaceResultsModal(item.race);
+        return;
+      }
+      openScheduleModal(item?.row || null, button);
+    });
   });
 }
 function renderRecentRaces(rows) {
@@ -2841,6 +2873,11 @@ async function loadRecentRacesPage(page = 1) {
   }
   return recentRaceItems;
 }
+async function loadCalendarRaces() {
+  const payload = await loadJson(recentRacesUrl);
+  calendarRaceItems = Array.isArray(payload?.items) ? payload.items : [];
+  return calendarRaceItems;
+}
 async function loadRecentRacesPageAndRender(page) {
   const container = document.getElementById("recent-races-table");
   if (container) container.innerHTML = `<div class="empty">${escapeHtml(t("loadingShort"))}</div>`;
@@ -2881,6 +2918,7 @@ function renderRecentRacesPagination(container) {
 function renderRaceResultsModal() {
   const titleEl = document.getElementById("race-results-title");
   const subtitleEl = document.getElementById("race-results-subtitle");
+  const statusEl = document.getElementById("race-results-status");
   const summaryEl = document.getElementById("race-modal-summary");
   const tableEl = document.getElementById("race-results-table");
   if (!titleEl || !subtitleEl || !summaryEl || !tableEl) return;
@@ -2888,6 +2926,7 @@ function renderRaceResultsModal() {
     applyRaceModalTrackBackground("");
     titleEl.textContent = "-";
     subtitleEl.textContent = "-";
+    if (statusEl) statusEl.hidden = true;
     summaryEl.innerHTML = "";
     tableEl.innerHTML = `<div class="empty">${escapeHtml(t("recentEmpty"))}</div>`;
     return;
@@ -2895,6 +2934,7 @@ function renderRaceResultsModal() {
   applyRaceModalTrackBackground(selectedRace.track);
   titleEl.textContent = selectedRace.track_name || humanizeTrackName(selectedRace.track);
   subtitleEl.textContent = formatDateTimeLocal(selectedRace.finished_at || selectedRace.finished_at_local);
+  if (statusEl) statusEl.hidden = false;
   summaryEl.innerHTML = `
     <div class="race-summary-card"><div class="race-summary-label">${escapeHtml(t("raceSummaryTrack"))}</div><div class="race-summary-value">${escapeHtml(selectedRace.track_name || humanizeTrackName(selectedRace.track))}</div></div>
     <div class="race-summary-card"><div class="race-summary-label">${escapeHtml(t("raceSummaryWinner"))}</div><div class="race-summary-value">${escapeHtml(selectedRace.winner || t("noWinner"))}</div></div>
@@ -3232,7 +3272,7 @@ function renderUI() {
   renderChampionshipHistory(championshipItems);
   renderHeroVote();
   renderScheduleTable(scheduleItems);
-  renderCalendar(scheduleItems);
+  renderCalendar(scheduleItems, calendarRaceItems);
   if (hourlyLoadState.recent) renderRecentRacesLoadingState();
   else renderRecentRaces(recentRaceItems);
   renderScheduleModal();
@@ -3439,16 +3479,21 @@ async function init() {
     renderNewsNotificationsModal();
   });
   try {
-    const [announcement, schedule, championships, serverStatus] = await Promise.all([
+    const [announcement, schedule, championships, serverStatus, calendarRaces] = await Promise.all([
       loadJson(announcementUrl),
       loadJson(scheduleUrl),
       loadJson(championshipsUrl).catch(() => ({ items: [] })),
-      loadJson(serverStatusUrl).catch(() => null)
+      loadJson(serverStatusUrl).catch(() => null),
+      loadCalendarRaces().catch(error => {
+        console.error(error);
+        return [];
+      })
     ]);
     announcementData = announcement || {};
     serverStatusData = serverStatus && typeof serverStatus === "object" ? serverStatus : null;
     scheduleItems = buildScheduleItems(schedule, announcementData);
     championshipItems = normalizeChampionshipItems(championships);
+    calendarRaceItems = calendarRaces;
     hasLoadError = false;
     hourlyLoadState.core = false;
     renderUI();
