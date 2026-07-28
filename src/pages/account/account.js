@@ -32,7 +32,13 @@ const COPY = {
     blocked: "Race-number management is unavailable while the driver is banned.",
     cooldown: value => `You can change the number after ${value}.`,
     taken: "This number is already assigned or reserved.",
-    failed: "The operation could not be completed. Try again."
+    failed: "The operation could not be completed. Try again.",
+    navSpecial: "Special Event", navChampionship: "Championship", navRules: "Rules",
+    navNews: "News", navRacing: "Racing", navLastRaces: "Last Races",
+    navStats: "Stats", navCars: "Cars", navFunStats: "Fun Stats",
+    navRating: "Rating", navBestLaps: "Best Laps", navSafety: "Safety Rating",
+    navBans: "Ban List", navCommunity: "Community", navAbout: "About Server",
+    footerText: "Statistics are generated from ACC Dedicated Server result files and published via GitHub Pages."
   },
   ru: {
     eyebrow: "Личный кабинет гонщика",
@@ -63,7 +69,13 @@ const COPY = {
     blocked: "Управление номером недоступно во время бана.",
     cooldown: value => `Изменить номер можно после ${value}.`,
     taken: "Этот номер уже назначен или зарезервирован.",
-    failed: "Не удалось выполнить операцию. Попробуйте ещё раз."
+    failed: "Не удалось выполнить операцию. Попробуйте ещё раз.",
+    navSpecial: "Спецсобытие", navChampionship: "Чемпионат", navRules: "Правила",
+    navNews: "Новости", navRacing: "Гонки", navLastRaces: "Последние гонки",
+    navStats: "Статистика", navCars: "Машины", navFunStats: "Забавная статистика",
+    navRating: "Рейтинг", navBestLaps: "Лучшие круги", navSafety: "Рейтинг безопасности",
+    navBans: "Список банов", navCommunity: "Сообщество", navAbout: "О сервере",
+    footerText: "Статистика формируется из файлов результатов ACC Dedicated Server и публикуется через GitHub Pages."
   }
 };
 
@@ -279,6 +291,38 @@ function render(auth) {
     setMessage(flashMessage.text, flashMessage.kind);
   }
 }
+
+document.querySelectorAll("[data-account-copy]").forEach(element => {
+  element.textContent = t(element.dataset.accountCopy);
+});
+
+function closeNavigationGroups() {
+  document.querySelectorAll(".top-nav-group.is-open").forEach(group => {
+    group.classList.remove("is-open");
+    group.querySelector(".top-nav-group-toggle")?.setAttribute("aria-expanded", "false");
+    const menu = group.querySelector(".top-nav-group-menu");
+    if (menu) menu.hidden = true;
+  });
+}
+
+document.querySelectorAll(".top-nav-group").forEach(group => {
+  const toggle = group.querySelector(".top-nav-group-toggle");
+  const menu = group.querySelector(".top-nav-group-menu");
+  toggle?.addEventListener("click", event => {
+    event.stopPropagation();
+    const open = !group.classList.contains("is-open");
+    closeNavigationGroups();
+    group.classList.toggle("is-open", open);
+    toggle.setAttribute("aria-expanded", String(open));
+    if (menu) menu.hidden = !open;
+  });
+});
+document.addEventListener("click", event => {
+  if (!event.target.closest(".top-nav-group")) closeNavigationGroups();
+});
+document.addEventListener("keydown", event => {
+  if (event.key === "Escape") closeNavigationGroups();
+});
 
 document.querySelectorAll(".lang-btn[data-lang]").forEach(button => {
   button.addEventListener("click", () => {

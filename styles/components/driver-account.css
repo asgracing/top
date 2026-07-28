@@ -1,9 +1,22 @@
 @layer components {
+  .account-page {
+    display: flex;
+    min-height: 100vh;
+    flex-direction: column;
+  }
+
+  #account-site-header,
+  #account-site-footer {
+    position: relative;
+    z-index: var(--layer-content);
+  }
+
   .account-shell {
     position: relative;
     z-index: var(--layer-content);
     width: min(980px, calc(100% - 32px));
     margin: 42px auto 80px;
+    flex: 1 0 auto;
   }
 
   .account-card {
@@ -178,6 +191,11 @@
 
   .account-message[data-kind="error"] {
     color: #ff9e87;
+  }
+
+  .account-footer {
+    width: min(1200px, calc(100% - 32px));
+    margin: 0 auto;
   }
 
   @media (max-width: 720px) {
