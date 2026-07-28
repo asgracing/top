@@ -306,6 +306,160 @@
   text-shadow: 0 0 18px rgba(192, 132, 252, 0.78);
 }
 
+/* Tablet hero: restore normal flow between desktop and mobile layouts. */
+@media (min-width: 641px) and (max-width: 1180px) {
+  .hero-card .hero-grid {
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
+    height: auto;
+    min-height: 0;
+    align-items: stretch;
+  }
+
+  .hero-card .hero-main-column {
+    position: static;
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
+    width: 100%;
+    min-width: 0;
+    height: auto;
+    min-height: 0;
+  }
+
+  .hero-card .hero-main-column > .hero-copy,
+  .hero-card .hero-main-column > .hero-actions-row,
+  .hero-card .hero-main-column > .support-inline-widget.support-center-widget {
+    position: static;
+    width: 100%;
+    min-width: 0;
+    height: auto;
+    min-height: 0;
+    margin: 0;
+    grid-column: auto;
+    grid-row: auto;
+    transform: none;
+  }
+
+  .hero-card .hero-main-column > .hero-copy { order: 1; }
+  .hero-card .hero-main-column > .hero-actions-row { order: 2; }
+  .hero-card .hero-main-column > .support-inline-widget.support-center-widget { order: 3; }
+
+  .hero-card .hero-actions.hero-actions-stacked-mobile {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    grid-template-rows: auto auto;
+    grid-template-areas:
+      "driver today"
+      "stats online";
+    gap: 12px 16px;
+    width: 100%;
+    height: auto;
+    min-height: 0;
+    align-items: stretch;
+  }
+
+  .hero-card .hero-actions.hero-actions-stacked-mobile > .hero-primary-actions {
+    display: contents;
+  }
+
+  .hero-card .hero-actions.hero-actions-stacked-mobile > .btn-driver-day,
+  .hero-card .hero-actions.hero-actions-stacked-mobile > .hero-side,
+  .hero-card .hero-actions.hero-actions-stacked-mobile > .hero-online-card {
+    position: static;
+    width: 100%;
+    min-width: 0;
+    height: auto;
+    min-height: 0;
+    margin: 0;
+    transform: none;
+  }
+
+  .hero-card .hero-actions-stacked-mobile .btn-driver-day { grid-area: driver; }
+  .hero-card .hero-actions-stacked-mobile .btn-today-stats { grid-area: today; }
+  .hero-card .hero-actions-stacked-mobile > .hero-side { grid-area: stats; }
+  .hero-card .hero-actions-stacked-mobile > .hero-online-card { grid-area: online; }
+
+  .hero-card .hero-side-compact {
+    align-content: start;
+    padding-top: 12px;
+  }
+
+  .hero-card .support-inline-widget.support-center-widget {
+    justify-self: stretch;
+    max-width: none;
+  }
+
+  .hero-card .support-inline-widget.support-center-widget .support-widget-card {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) minmax(160px, auto) 96px;
+    grid-template-rows: auto;
+    gap: 16px;
+    align-items: center;
+    width: 100%;
+    height: auto;
+    min-height: 0;
+    padding: 16px;
+    overflow: hidden;
+  }
+
+  .hero-card .support-inline-widget.support-center-widget .support-widget-copy-block {
+    grid-column: 1;
+    grid-row: 1;
+    min-width: 0;
+  }
+
+  .hero-card .support-inline-widget.support-center-widget .support-widget-btn {
+    grid-column: 2;
+    grid-row: 1;
+    justify-self: stretch;
+    width: auto;
+    min-width: 160px;
+    margin: 0;
+  }
+
+  .hero-card .support-inline-widget.support-center-widget .support-widget-qr-shell {
+    display: block;
+    grid-column: 3;
+    grid-row: 1;
+    justify-self: end;
+    align-self: center;
+    width: 96px;
+    margin: 0;
+  }
+
+  .hero-card .hero-hourly-stack {
+    position: static;
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    grid-template-rows: 1fr;
+    gap: 16px;
+    width: 100%;
+    min-width: 0;
+    height: auto;
+    min-height: 0;
+    margin: 0;
+    grid-column: auto;
+    grid-row: auto;
+    transform: none;
+  }
+
+  .hero-card .hero-hourly-promo,
+  .hero-card .hero-hourly-card {
+    position: relative;
+    width: 100%;
+    min-width: 0;
+    height: 100%;
+    min-height: 210px;
+    margin: 0;
+    grid-column: auto;
+    grid-row: 1;
+    align-self: stretch;
+    transform: none;
+  }
+}
+
 
 /* Mobile hero must remain unlayered until the legacy display:contents rules are removed. */
 @media (max-width: 640px) {
