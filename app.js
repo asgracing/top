@@ -584,6 +584,7 @@ const bestLapTrackSelection = new Map();
 const averagePaceTrackSelection = new Map();
 let eloModalState = null;
 let safetyModalState = null;
+let eloModalRequestId = 0;
 let safetyModalRequestId = 0;
 let srBreakdownPopoverState = null;
 let srBreakdownPopoverRequestId = 0;
@@ -632,6 +633,7 @@ let backgroundVideoSoundState = {
 let funStatsPeriod = "week";
 let serverStatusData = null;
 const driverProfileCache = new Map();
+const driverSteamAvatarCache = new Map();
 const raceDetailsCache = new Map();
 function getTrackBackgroundUrl(trackCode) {
   const fileName = resolveTrackBackgroundFile(trackCode);
@@ -6015,11 +6017,21 @@ async function loadDriverProfile(publicId) {
 
 async function loadDriverSteamAvatar(publicId) {
   if (!publicId) return null;
-  const payload = await requestJson(
-    `${AUTH_BASE_URL}/v1/drivers/${encodeURIComponent(publicId)}/steam-profile`,
-    { cache: "no-store", retries: 1 }
-  );
-  return safeAvatarUrl(payload?.avatar_url);
+  if (!driverSteamAvatarCache.has(publicId)) {
+    driverSteamAvatarCache.set(
+      publicId,
+      requestJson(
+        `${AUTH_BASE_URL}/v1/drivers/${encodeURIComponent(publicId)}/steam-profile`,
+        { cache: "no-store", retries: 1 }
+      )
+        .then(payload => safeAvatarUrl(payload?.avatar_url))
+        .catch((error) => {
+          driverSteamAvatarCache.delete(publicId);
+          throw error;
+        })
+    );
+  }
+  return driverSteamAvatarCache.get(publicId);
 }
 
 async function loadDriverProfileCached(publicId) {
@@ -6233,6 +6245,8 @@ function openDriverPreviewFromRowElement(rowEl, trigger) {
     driver,
     href: getDriverProfileHref(publicId, playerId),
     loading: true,
+    avatarLoading: true,
+    avatarUrl: null,
     error: false,
     profile: null
   };
@@ -6258,6 +6272,26 @@ function openDriverPreviewFromRowElement(rowEl, trigger) {
         loading: false,
         error: true,
         profile: null,
+      };
+      renderDriverPreviewModal();
+    });
+
+  loadDriverSteamAvatar(publicId)
+    .then((avatarUrl) => {
+      if (!driverPreviewState || driverPreviewState.publicId !== publicId) return;
+      driverPreviewState = {
+        ...driverPreviewState,
+        avatarLoading: false,
+        avatarUrl: avatarUrl || null,
+      };
+      renderDriverPreviewModal();
+    })
+    .catch(() => {
+      if (!driverPreviewState || driverPreviewState.publicId !== publicId) return;
+      driverPreviewState = {
+        ...driverPreviewState,
+        avatarLoading: false,
+        avatarUrl: null,
       };
       renderDriverPreviewModal();
     });
@@ -6763,8 +6797,9 @@ function renderEloModal() {
   `;
 }
 
-function openEloModalForSource(source, trigger = null) {
+async function openEloModalForSource(source, trigger = null) {
   if (!source) return;
+  const requestId = ++eloModalRequestId;
   eloModalState = {
     source,
     period: eloModalState?.period || "all",
@@ -6772,6 +6807,22 @@ function openEloModalForSource(source, trigger = null) {
     periodOffset: eloModalState?.periodOffset || 0
   };
   eloModalController?.open(trigger);
+
+  const publicId = source?.public_id || source?.summary?.public_id || null;
+  if (normalizeEloHistory(source).length > 0 || !publicId) return;
+
+  try {
+    const profile = await loadDriverProfileCached(publicId);
+    if (!profile || requestId !== eloModalRequestId) return;
+    if (normalizeEloHistory(profile).length === 0) return;
+    eloModalState = {
+      ...(eloModalState || {}),
+      source: profile
+    };
+    renderEloModal();
+  } catch (error) {
+    console.warn("Failed to enrich ELO modal source.", error);
+  }
 }
 
 function initEloModal() {
@@ -9095,15 +9146,15 @@ function getDriverPageView() {
   return driverPageView;
 }
 
-function renderDriverPage() {
-  getDriverPageView().render({ loading: topLoadState.driver, profile: driverProfileData });
-  const portrait = document.getElementById("driver-steam-portrait");
-  const image = document.getElementById("driver-steam-portrait-image");
-  const avatarUrl = safeAvatarUrl(driverSteamAvatarUrl);
+function renderSteamPortrait(portraitId, imageId, profile, rawAvatarUrl, fallbackKey) {
+  const portrait = document.getElementById(portraitId);
+  const image = document.getElementById(imageId);
   if (!portrait || !image) return;
-  if (!driverProfileData) {
+  if (!profile) {
     portrait.hidden = true;
     image.hidden = true;
+    image.onload = null;
+    image.onerror = null;
     image.removeAttribute("src");
     image.alt = "";
     return;
@@ -9111,6 +9162,7 @@ function renderDriverPage() {
 
   portrait.hidden = false;
   image.hidden = true;
+  const avatarUrl = safeAvatarUrl(rawAvatarUrl);
   if (!avatarUrl) {
     image.removeAttribute("src");
     image.alt = "";
@@ -9125,8 +9177,19 @@ function renderDriverPage() {
     image.removeAttribute("src");
   };
   image.src = avatarUrl;
-  image.alt = `${driverProfileData.driver || t("driverEyebrow")} — Steam`;
+  image.alt = `${profile.driver || t(fallbackKey)} - Steam`;
   if (image.complete && image.naturalWidth > 0) image.hidden = false;
+}
+
+function renderDriverPage() {
+  getDriverPageView().render({ loading: topLoadState.driver, profile: driverProfileData });
+  renderSteamPortrait(
+    "driver-steam-portrait",
+    "driver-steam-portrait-image",
+    driverProfileData,
+    driverSteamAvatarUrl,
+    "driverEyebrow"
+  );
 }
 
 let driverPreviewView = null;
@@ -9139,6 +9202,13 @@ function getDriverPreviewView() {
     buildStatsMarkup: buildDriverStatsMarkup,
     buildHighlightsMarkup: buildDriverHighlightsMarkup,
     bindStats: (root, profile) => getDriverStatsController().bind(root, profile),
+    renderPortrait: (profile, avatarUrl) => renderSteamPortrait(
+      "driver-preview-steam-portrait",
+      "driver-preview-steam-portrait-image",
+      profile,
+      avatarUrl,
+      "driverPreviewEyebrow"
+    ),
   });
   return driverPreviewView;
 }

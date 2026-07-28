@@ -127,16 +127,19 @@ for (const [page, [htmlPath, entrySrc]] of Object.entries(pageEntrypoints)) {
   const hourlyEventModalHref = page === "home" ? "./styles/components/hourly-event-modal.css?v=20260715r11hourlymodal1" : "../styles/components/hourly-event-modal.css?v=20260715r11hourlymodal1";
   if (!pageHtml.includes(hourlyEventModalHref)) failures.push(`${page} page is missing the hourly event modal stylesheet`);
   for (const href of [
-    `${page === "home" ? "./" : "../"}styles/components/driver-day-modal.css?v=20260715r11driverday1`,
+    `${page === "home" ? "./" : "../"}styles/components/driver-day-modal.css?v=20260728driverpreviewhero1`,
     `${page === "home" ? "./" : "../"}styles/components/footer.css?v=20260720topguide1`,
     `${page === "home" ? "./" : "../"}styles/utilities.css?v=20260715r12states1`,
-    `${page === "home" ? "./" : "../"}styles/responsive.css?v=20260715r11responsive1`,
+    `${page === "home" ? "./" : "../"}styles/responsive.css?v=20260728driverpreviewhero1`,
     `${page === "home" ? "./" : "../"}styles/components/responsive-accessibility.css?v=20260715r13a11y1`
   ]) if (!pageHtml.includes(href)) failures.push(`${page} page is missing R11 stylesheet ${href}`);
 }
 const ids = [...html.matchAll(/\bid="([^"]+)"/g)].map(match => match[1]);
 const duplicates = [...new Set(ids.filter((id, index) => ids.indexOf(id) !== index))];
 if (duplicates.length) failures.push(`Duplicate HTML ids: ${duplicates.join(", ")}`);
+for (const id of ["driver-preview-steam-portrait", "driver-preview-steam-portrait-image"]) {
+  if (!ids.includes(id)) failures.push(`Driver preview hero is missing ${id}`);
+}
 
 const dialogTags = [...html.matchAll(/<[^>]+\brole="dialog"[^>]*>/g)].map(match => match[0]);
 for (const [index, tag] of dialogTags.entries()) {
@@ -166,6 +169,7 @@ for (const [path, factory] of [
 if (js.slice(0, 1000).includes("window.location.pathname")) failures.push("Application bootstrap must not infer its page from pathname");
 if (!js.includes("runWhenDocumentReady(document")) failures.push("Application must use the tested async document bootstrap");
 if (!js.includes('from "./src/shared/modal-controller.js"') || js.includes("function createModalController({")) failures.push("Modal focus and inert behavior must live outside app.js");
+if (!js.includes("async function openEloModalForSource(") || !js.includes("normalizeEloHistory(source).length > 0 || !publicId") || !js.includes("Failed to enrich ELO modal source.")) failures.push("ELO badges backed by compact table rows must lazy-load full driver history before rendering the shared modal");
 if (!js.includes('from "./src/shared/table-model.js"') || js.includes("function parseNumeric(") || js.includes("function parseLapTime(")) failures.push("Shared table sorting model must live outside app.js");
 if (!pageFeatureIsLoaded("../pages/bans/index.js") || js.includes("function renderBansTable()") || js.includes("function renderBansSummary()") || js.includes("const bansPageView = createBansPageView")) failures.push("Bans page rendering must live outside app.js and initialize after shared DOM modules");
 if (!js.includes('from "./src/shared/news-feed-model.js"') || js.includes("return [...items]")) failures.push("Shared news feed sorting model must live outside app.js");

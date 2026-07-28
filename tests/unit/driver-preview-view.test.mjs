@@ -16,6 +16,7 @@ function fixture() {
       buildStatsMarkup: () => "STATS",
       buildHighlightsMarkup: () => "HIGHLIGHTS",
       bindStats: (...args) => calls.push(["bind", ...args]),
+      renderPortrait: (...args) => calls.push(["portrait", ...args]),
     },
   };
 }
@@ -24,16 +25,18 @@ test("renders an idle Driver preview as loading and hides its action", () => {
   const { elements, calls, dependencies } = fixture();
   createDriverPreviewView(dependencies).render(null);
   assert.equal(elements["driver-preview-link"].hidden, true);
-  assert.equal(calls[0][1], "loading");
+  assert.deepEqual(calls[0], ["portrait", null, null]);
+  assert.ok(calls.some(call => call[1] === "loading"));
 });
 
 test("renders a ready Driver preview and binds its controls", () => {
   const { elements, calls, dependencies } = fixture();
   const profile = { driver: "Alex" };
-  createDriverPreviewView(dependencies).render({ profile, href: "/driver/alex" });
+  createDriverPreviewView(dependencies).render({ profile, href: "/driver/alex", avatarUrl: "https://avatars.steamstatic.com/avatar.jpg" });
   assert.equal(elements["driver-preview-title"].innerHTML, "HERO");
   assert.equal(elements["driver-preview-stats"].innerHTML, "STATS");
   assert.equal(elements["driver-preview-link"].hidden, false);
+  assert.ok(calls.some(call => call[0] === "portrait" && call[1] === profile && call[2] === "https://avatars.steamstatic.com/avatar.jpg"));
   assert.ok(calls.some(call => call[0] === "bind" && call[2] === profile));
 });
 

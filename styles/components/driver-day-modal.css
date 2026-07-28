@@ -21,20 +21,64 @@
 }
 
 .modal-header-driver-preview {
-  display: flex;
-  align-items: flex-start;
-  justify-content: space-between;
-  gap: 16px;
+  display: block;
+  margin-bottom: 16px;
+  padding-right: 48px;
+}
+
+.modal-header-driver-preview > .eyebrow {
+  margin-bottom: 8px;
+}
+
+.driver-preview-hero-mainline {
+  gap: clamp(12px, 1.5vw, 18px);
+}
+
+.driver-preview-steam-portrait {
+  width: clamp(64px, 6vw, 72px);
+  border-radius: 18px;
+}
+
+.driver-preview-hero-copy {
+  min-width: 0;
+}
+
+#driver-preview-title {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) auto;
+  align-items: start;
+  gap: 14px;
+  width: 100%;
+  margin: 0;
+  font-size: clamp(1.75rem, 3vw, 2.55rem);
+  line-height: 1.02;
+}
+
+#driver-preview-title .driver-title-name {
+  overflow-wrap: anywhere;
+}
+
+.modal-card-driver-preview .driver-hero-ratings {
+  gap: 7px;
+}
+
+.modal-card-driver-preview .driver-rank-pill {
+  min-height: 38px;
+  padding: 0 12px;
+  font-size: 0.86rem;
 }
 
 .btn-driver-preview-link {
-  flex: 0 0 auto;
-  min-height: 46px;
-  padding: 0 18px;
+  display: flex;
+  width: max-content;
+  min-height: 30px;
+  margin: 7px 0 0 auto;
+  padding: 0 10px;
   border: 1px solid rgba(255, 143, 82, 0.92);
-  border-radius: 16px;
+  border-radius: 10px;
   background: linear-gradient(180deg, #ff7a3d, #f05a22);
   color: #ffffff;
+  font-size: 0.76rem;
   font-weight: 800;
   text-decoration: none;
   box-shadow: 0 18px 34px rgba(240, 90, 34, 0.28);

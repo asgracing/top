@@ -447,16 +447,6 @@
     width: 100%;
   }
 
-  .modal-header-driver-preview {
-    flex-direction: column;
-    align-items: stretch;
-  }
-
-  .btn-driver-preview-link {
-    width: 100%;
-    justify-content: center;
-  }
-
   .today-stat-card,
   .today-detail-card,
   .driver-day-card {
@@ -889,6 +879,26 @@
 }
 
 @media (max-width: 420px) {
+  .modal-header-driver-preview {
+    padding-right: 34px;
+  }
+
+  .driver-preview-steam-portrait {
+    width: 56px;
+    border-radius: 14px;
+  }
+
+  #driver-preview-title {
+    grid-template-columns: minmax(0, 1fr);
+    gap: 10px;
+    font-size: clamp(1.35rem, 7vw, 1.8rem);
+  }
+
+  .modal-card-driver-preview .driver-hero-ratings {
+    align-items: flex-start;
+    margin-left: 0;
+  }
+
   .top-nav-inner {
     padding: 7px 8px 9px;
     gap: 6px 5px;
