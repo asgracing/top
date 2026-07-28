@@ -13,12 +13,18 @@ const dependencies = {
 };
 
 test("renders Driver hero identity, ELO and rank", () => {
-  const markup = renderDriverHeroTitle({ driver: "Alex" }, { rank: 4, rankClass: "up", change: 2 }, {}, dependencies);
+  const markup = renderDriverHeroTitle({ driver: "Alex", race_number: 77 }, { rank: 4, rankClass: "up", change: 2 }, {}, dependencies);
   assert.match(markup, /e:Alex/);
   assert.match(markup, /class="driver-hero-ratings"/);
+  assert.match(markup, /driver-race-number-pill[^>]*>#e:77/);
   assert.match(markup, /ELO/);
   assert.match(markup, /#e:4/);
   assert.match(markup, /TREND/);
+});
+
+test("does not render an invalid race number", () => {
+  const markup = renderDriverHeroTitle({ driver: "Alex", race_number: 1000 }, null, {}, dependencies);
+  assert.doesNotMatch(markup, /driver-race-number-pill/);
 });
 
 test("renders Driver statistic cards from a prepared model", () => {

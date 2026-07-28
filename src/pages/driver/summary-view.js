@@ -8,9 +8,15 @@ export function renderDriverHeroTitle(profile, rankInfo, eloSource, dependencies
   if (!profile) return "-";
   requireFunctions(dependencies, ["escapeHtml", "escapeAttribute", "translate", "renderEloBadge", "renderTrendBadge"]);
   const { escapeHtml, escapeAttribute, translate, renderEloBadge, renderTrendBadge } = dependencies;
+  const raceNumber = Number.isInteger(profile.race_number)
+    && profile.race_number >= 1
+    && profile.race_number <= 999
+    ? profile.race_number
+    : null;
   return `
     <span class="driver-title-name">${escapeHtml(profile.driver || "-")}</span>
     <span class="driver-hero-ratings">
+      ${raceNumber ? `<span class="driver-race-number-pill" title="Race number">#${escapeHtml(raceNumber)}</span>` : ""}
       ${renderEloBadge(eloSource, { showCategoryName: true })}
       ${rankInfo ? `<span class="driver-rank-pill ${escapeHtml(rankInfo.rankClass)}" title="${escapeAttribute(translate("driverRankingPosition"))}"><span class="driver-rank-label">${escapeHtml(translate("driverRankingPosition"))}:</span><span class="driver-rank-value">#${escapeHtml(rankInfo.rank)}</span>${renderTrendBadge(rankInfo.change, "championship_rank", { compact: true })}</span>` : ""}
     </span>

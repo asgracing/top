@@ -428,8 +428,26 @@
   }
 
   .driver-hero-ratings .elo-badge,
-  .driver-hero-ratings .driver-rank-pill {
+  .driver-hero-ratings .driver-rank-pill,
+  .driver-hero-ratings .driver-race-number-pill {
     margin-left: 0;
+  }
+
+  .driver-race-number-pill {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    min-width: 68px;
+    min-height: 42px;
+    box-sizing: border-box;
+    padding: 0 16px;
+    border: 1px solid rgba(244, 183, 64, 0.55);
+    border-radius: 999px;
+    background: #f4b740;
+    color: #191205;
+    font-size: 1rem;
+    font-weight: 950;
+    line-height: 1;
   }
 
   @media (max-width: 760px) {

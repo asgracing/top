@@ -3,7 +3,7 @@ const AVATAR_HOSTS = new Set(["steamcdn-a.akamaihd.net"]);
 
 const COPY = Object.freeze({
   en: {
-    login: "Sign in with Steam",
+    login: "Sign in to driver account",
     loginShort: "Steam",
     loading: "Checking sign-in",
     unavailable: "Sign-in unavailable",
@@ -12,6 +12,8 @@ const COPY = Object.freeze({
     elo: "ELO",
     sr: "SR",
     profile: "Driver profile",
+    cabinet: "Driver account",
+    settings: "Profile settings",
     discord: "Discord",
     discordLink: "Link Discord",
     discordLinked: "Discord linked",
@@ -32,7 +34,7 @@ const COPY = Object.freeze({
   },
   ru: {
     rank: "Rank",
-    login: "Войти через Steam",
+    login: "Войти в личный кабинет",
     loginShort: "Steam",
     loading: "Проверяем вход",
     unavailable: "Авторизация недоступна",
@@ -40,6 +42,8 @@ const COPY = Object.freeze({
     elo: "ELO",
     sr: "SR",
     profile: "Профиль пилота",
+    cabinet: "Личный кабинет",
+    settings: "Настройки профиля",
     discord: "Discord",
     discordLink: "Привязать Discord",
     discordLinked: "Discord привязан",
@@ -162,12 +166,40 @@ export function normalizeAuthPayload(payload) {
     linked: rawDiscord?.linked === true,
     syncStatus
   };
+  const rawPreferences = payload.preferences && typeof payload.preferences === "object"
+    ? payload.preferences
+    : {};
+  const rawRaceNumber = safeMetric(rawPreferences.race_number);
+  const raceNumber = Number.isInteger(rawRaceNumber) && rawRaceNumber >= 1 && rawRaceNumber <= 999
+    ? rawRaceNumber
+    : null;
+  const rawPending = rawPreferences.pending_request && typeof rawPreferences.pending_request === "object"
+    ? rawPreferences.pending_request
+    : null;
+  const pendingNumber = safeMetric(rawPending?.race_number);
+  const preferences = {
+    raceNumber,
+    pendingRequest: rawPending && Number.isInteger(pendingNumber) && pendingNumber >= 1 && pendingNumber <= 999
+      ? {
+          requestId: safeText(rawPending.request_id, 160),
+          raceNumber: pendingNumber,
+          status: rawPending.status === "pending" ? "pending" : null,
+          requestedAt: safeText(rawPending.requested_at, 64)
+        }
+      : null,
+    canChange: rawPreferences.can_change === true,
+    nextChangeAt: safeText(rawPreferences.next_change_at, 64) || null,
+    blockedReason: ["driver_banned", "driver_profile_required"].includes(rawPreferences.blocked_reason)
+      ? rawPreferences.blocked_reason
+      : null
+  };
   return {
     authenticated: true,
     linked: Boolean(driver),
     driver,
     steam,
     discord,
+    preferences,
     csrfToken: safeText(payload.csrf_token, 256)
   };
 }
@@ -301,6 +333,11 @@ export function createAuthHeaderController({
     const eloMetric = makeMetricBadge("elo", `${translate("elo")} ${metricLabel(auth.driver?.elo ?? null)}`);
     const safetyMetric = makeMetricBadge("sr", `${translate("sr")} ${metricLabel(auth.driver?.sr ?? null, 2)}`);
     metrics.append(rankMetric, eloMetric, safetyMetric);
+    if (auth.preferences?.raceNumber) {
+      metrics.appendChild(
+        makeMetricBadge("number", `#${auth.preferences.raceNumber}`)
+      );
+    }
     copy.appendChild(metrics);
     toggle.append(
       renderAvatar(auth, name),
@@ -311,6 +348,14 @@ export function createAuthHeaderController({
     const menu = makeElement(documentRef, "div", "auth-header-menu");
     menu.hidden = true;
     menu.setAttribute("role", "menu");
+    const cabinet = makeElement(documentRef, "a", "auth-header-menu-item", translate("cabinet"));
+    cabinet.href = "/account/";
+    cabinet.setAttribute("role", "menuitem");
+    menu.appendChild(cabinet);
+    const settings = makeElement(documentRef, "a", "auth-header-menu-item", translate("settings"));
+    settings.href = "/account/settings/";
+    settings.setAttribute("role", "menuitem");
+    menu.appendChild(settings);
     if (auth.driver?.profileUrl) {
       const profile = makeElement(documentRef, "a", "auth-header-menu-item", translate("profile"));
       profile.href = auth.driver.profileUrl;

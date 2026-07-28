@@ -12,7 +12,7 @@ const allowedRootFiles = new Set([
   "styles.css", "yandex_c76adf2164af15e6.html",
 ]);
 const allowedDirectories = [
-  "assets", "bans", "cars", "community", "cookies", "driver", "events", "fun-stats",
+  "account", "assets", "bans", "cars", "community", "cookies", "driver", "events", "fun-stats",
   "hourly", "media", "news", "news-content", "overlay", "privacy", "races", "social", "src", "styles",
 ];
 const allowedExtensions = new Set([

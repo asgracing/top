@@ -53,6 +53,13 @@ test("normalizes linked auth data without exposing unexpected identity fields", 
       sync_status: "synced",
       discord_id: "482924387893379082",
       access_token: "must not survive"
+    },
+    preferences: {
+      race_number: 77,
+      pending_request: null,
+      can_change: true,
+      next_change_at: null,
+      private_value: "must not survive"
     }
   });
 
@@ -70,6 +77,13 @@ test("normalizes linked auth data without exposing unexpected identity fields", 
   assert.equal("steam_id" in normalized, false);
   assert.equal("private_value" in normalized.driver, false);
   assert.deepEqual(normalized.discord, { linked: true, syncStatus: "synced" });
+  assert.deepEqual(normalized.preferences, {
+    raceNumber: 77,
+    pendingRequest: null,
+    canChange: true,
+    nextChangeAt: null,
+    blockedReason: null
+  });
   assert.equal("discord_id" in normalized.discord, false);
   assert.equal("access_token" in normalized.discord, false);
 });

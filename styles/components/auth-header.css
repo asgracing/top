@@ -169,6 +169,11 @@
     color: var(--sr-text-color, #fff);
   }
 
+  .pilot-rating-badge--number {
+    background: #f4b740;
+    color: #1b1405;
+  }
+
   .auth-header-caret {
     justify-self: end;
     width: 14px;
