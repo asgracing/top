@@ -24,7 +24,7 @@ const checksumMap = new Map(checksumText.trim().split("\n").map(line => [line.sl
 const files = await collect(dist);
 const failures = [];
 
-for (const required of ["index.html", "account/index.html", "account/settings/index.html", "app.js", "build-meta.json", "asset-manifest.json", "checksums.sha256", "src/entrypoints/home.js"]) {
+for (const required of ["index.html", "account/index.html", "account/settings/index.html", "teams/index.html", "teams/app.js", "app.js", "build-meta.json", "asset-manifest.json", "checksums.sha256", "src/entrypoints/home.js"]) {
   if (!files.includes(required)) failures.push(`Missing required dist file: ${required}`);
 }
 for (const path of files) {

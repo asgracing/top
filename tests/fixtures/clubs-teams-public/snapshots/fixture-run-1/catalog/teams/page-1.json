@@ -1,0 +1,77 @@
+{
+  "schema_version": 1,
+  "kind": "clubs_teams_catalog_page",
+  "context": "general",
+  "entity_type": "team",
+  "rating_run_id": "fixture-run-1",
+  "completed_at": "2026-07-29T12:00:00Z",
+  "page": 1,
+  "total_pages": 1,
+  "total": 4,
+  "entries": [
+    {
+      "position": 1,
+      "public_id": "team-public-1",
+      "slug": "asg-factory",
+      "display_name": "ASG Factory Racing",
+      "total_points": 121.5,
+      "race_count": 10,
+      "average_elo": 1320.8,
+      "average_sr": 5.62,
+      "members_count": 4,
+      "club": {
+        "public_id": "club-public-1",
+        "slug": "asg-racing",
+        "display_name": "ASG Racing"
+      },
+      "asset": null
+    },
+    {
+      "position": 2,
+      "public_id": "team-public-2",
+      "slug": "night-owl-blue",
+      "display_name": "Night Owl Blue",
+      "total_points": 98.25,
+      "race_count": 8,
+      "average_elo": 1195.3,
+      "average_sr": 4.88,
+      "members_count": 4,
+      "club": {
+        "public_id": "club-public-2",
+        "slug": "night-owl-racing",
+        "display_name": "Night Owl Racing Community"
+      },
+      "asset": null
+    },
+    {
+      "position": 3,
+      "public_id": "team-public-3",
+      "slug": "sunset-pro",
+      "display_name": "Sunset Pro",
+      "total_points": 82,
+      "race_count": 7,
+      "average_elo": 1140,
+      "average_sr": 4.22,
+      "members_count": 3,
+      "club": {
+        "public_id": "club-public-3",
+        "slug": "sunset-motorsport",
+        "display_name": "Sunset Motorsport"
+      },
+      "asset": null
+    },
+    {
+      "position": 4,
+      "public_id": "team-public-4",
+      "slug": "independent-endurance",
+      "display_name": "Independent Endurance Crew",
+      "total_points": 45.5,
+      "race_count": 4,
+      "average_elo": null,
+      "average_sr": null,
+      "members_count": 4,
+      "club": null,
+      "asset": null
+    }
+  ]
+}

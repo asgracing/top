@@ -1,0 +1,8 @@
+{
+  "schema_version": 1,
+  "kind": "clubs_teams_public_current",
+  "rating_run_id": "fixture-run-1",
+  "completed_at": "2026-07-29T12:00:00Z",
+  "manifest": "snapshots/fixture-run-1/manifest.json",
+  "content_sha256": "bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb"
+}

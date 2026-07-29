@@ -1,0 +1,49 @@
+{
+  "schema_version": 1,
+  "kind": "clubs_teams_catalog_page",
+  "context": "general",
+  "entity_type": "club",
+  "rating_run_id": "fixture-run-1",
+  "completed_at": "2026-07-29T12:00:00Z",
+  "page": 1,
+  "total_pages": 1,
+  "total": 3,
+  "entries": [
+    {
+      "position": 1,
+      "public_id": "club-public-1",
+      "slug": "asg-racing",
+      "display_name": "ASG Racing",
+      "total_points": 234.75,
+      "race_count": 18,
+      "average_elo": 1288.2,
+      "average_sr": 5.48,
+      "members_count": 12,
+      "asset": null
+    },
+    {
+      "position": 2,
+      "public_id": "club-public-2",
+      "slug": "night-owl-racing",
+      "display_name": "Night Owl Racing Community",
+      "total_points": 188.5,
+      "race_count": 14,
+      "average_elo": 1172.4,
+      "average_sr": 4.93,
+      "members_count": 8,
+      "asset": null
+    },
+    {
+      "position": 3,
+      "public_id": "club-public-3",
+      "slug": "sunset-motorsport",
+      "display_name": "Sunset Motorsport",
+      "total_points": 95,
+      "race_count": 9,
+      "average_elo": null,
+      "average_sr": null,
+      "members_count": 5,
+      "asset": null
+    }
+  ]
+}

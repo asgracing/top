@@ -1,0 +1,328 @@
+import { createAuthHeaderController } from "../../features/auth/header-auth.js";
+import { createHttpClient } from "../../shared/http-client.js";
+import { element } from "../../shared/safe-dom.js";
+import { resolveRuntimeOverride } from "../../shared/runtime-config.js";
+import {
+  catalogEntityTypeFromTab,
+  catalogTabFromEntityType,
+  filterCatalogEntries,
+  mergeCatalogPages,
+  resolveCatalogAssetUrl,
+  validateCatalogPage,
+  validateCurrentPointer
+} from "./catalog-model.js";
+
+const COPY = {
+  en: {
+    title: "ASG Racing Clubs & Teams",
+    subtitle: "Approved communities competing on ASG Racing servers.",
+    clubs: "Clubs",
+    teams: "Teams",
+    search: "Search by name",
+    loading: "Loading clubs and teams…",
+    unavailable: "The clubs and teams catalog is not published yet.",
+    retry: "Try again",
+    empty: "Nothing has been published in this section yet.",
+    noMatches: "No clubs or teams match this search.",
+    points: "points",
+    races: "races",
+    members: "members",
+    independent: "Independent team",
+    updated: value => `Rating updated ${value}`,
+    navSpecial: "Special Event",
+    navChampionship: "Championship",
+    navRules: "Rules",
+    navNews: "News",
+    navRacing: "Racing",
+    navLastRaces: "Last Races",
+    navStats: "Stats",
+    navRating: "Rating",
+    navCommunity: "Community",
+    navAbout: "About Server",
+    navClubs: "Clubs & Teams",
+    footer: "Public club and team data is published from an isolated, moderated ASG Racing snapshot."
+  },
+  ru: {
+    title: "Клубы и команды ASG Racing",
+    subtitle: "Подтверждённые сообщества, выступающие на серверах ASG Racing.",
+    clubs: "Клубы",
+    teams: "Команды",
+    search: "Поиск по названию",
+    loading: "Загружаем клубы и команды…",
+    unavailable: "Каталог клубов и команд пока не опубликован.",
+    retry: "Повторить",
+    empty: "В этом разделе пока ничего не опубликовано.",
+    noMatches: "По вашему запросу ничего не найдено.",
+    points: "очков",
+    races: "гонок",
+    members: "участников",
+    independent: "Независимая команда",
+    updated: value => `Рейтинг обновлён ${value}`,
+    navSpecial: "Спецсобытие",
+    navChampionship: "Чемпионат",
+    navRules: "Правила",
+    navNews: "Новости",
+    navRacing: "Гонки",
+    navLastRaces: "Последние гонки",
+    navStats: "Статистика",
+    navRating: "Рейтинг",
+    navCommunity: "Сообщество",
+    navAbout: "О сервере",
+    navClubs: "Клубы и команды",
+    footer: "Публичные сведения о клубах и командах публикуются из изолированного модерируемого snapshot ASG Racing."
+  }
+};
+
+function language(windowRef) {
+  try {
+    return windowRef.localStorage.getItem("asgLang") === "ru" ? "ru" : "en";
+  } catch {
+    return "en";
+  }
+}
+
+function copy(lang, key, value) {
+  const selected = COPY[lang][key] ?? COPY.en[key] ?? key;
+  return typeof selected === "function" ? selected(value) : selected;
+}
+
+function number(value, digits = 0) {
+  return new Intl.NumberFormat(undefined, { maximumFractionDigits: digits }).format(value);
+}
+
+function formatDate(value, lang) {
+  const date = new Date(value);
+  if (Number.isNaN(date.getTime())) return value;
+  return new Intl.DateTimeFormat(lang === "ru" ? "ru-RU" : "en-GB", {
+    day: "2-digit",
+    month: "short",
+    year: "numeric"
+  }).format(date);
+}
+
+async function loadEntityPages(client, snapshotRoot, entityType, ratingRunId) {
+  const fetchPage = async page => validateCatalogPage(
+    await client.requestJson(new URL(`catalog/${entityType}s/page-${page}.json`, snapshotRoot), {
+      retries: 1,
+      cache: "no-store"
+    }),
+    { entityType, page, ratingRunId }
+  );
+  const first = await fetchPage(1);
+  const remaining = await Promise.all(
+    Array.from({ length: first.total_pages - 1 }, (_, index) => fetchPage(index + 2))
+  );
+  return mergeCatalogPages([first, ...remaining], entityType);
+}
+
+export async function loadPublicCatalog({ client, dataBaseUrl }) {
+  const pointer = validateCurrentPointer(await client.requestJson(
+    new URL("current.json", `${dataBaseUrl}/`),
+    { retries: 1, cache: "no-store" }
+  ));
+  const snapshotRoot = new URL(`snapshots/${pointer.rating_run_id}/`, `${dataBaseUrl}/`);
+  const [clubs, teams] = await Promise.all([
+    loadEntityPages(client, snapshotRoot, "club", pointer.rating_run_id),
+    loadEntityPages(client, snapshotRoot, "team", pointer.rating_run_id)
+  ]);
+  return Object.freeze({ pointer, clubs, teams });
+}
+
+function setupNavigation(documentRef) {
+  const close = () => documentRef.querySelectorAll(".top-nav-group.is-open").forEach(group => {
+    group.classList.remove("is-open");
+    group.querySelector(".top-nav-group-toggle")?.setAttribute("aria-expanded", "false");
+    const menu = group.querySelector(".top-nav-group-menu");
+    if (menu) menu.hidden = true;
+  });
+  documentRef.querySelectorAll(".top-nav-group").forEach(group => {
+    const toggle = group.querySelector(".top-nav-group-toggle");
+    const menu = group.querySelector(".top-nav-group-menu");
+    toggle?.addEventListener("click", event => {
+      event.stopPropagation();
+      const open = !group.classList.contains("is-open");
+      close();
+      group.classList.toggle("is-open", open);
+      toggle.setAttribute("aria-expanded", String(open));
+      if (menu) menu.hidden = !open;
+    });
+  });
+  documentRef.addEventListener("click", event => {
+    if (!event.target.closest(".top-nav-group")) close();
+  });
+  documentRef.addEventListener("keydown", event => {
+    if (event.key === "Escape") close();
+  });
+}
+
+export function createCatalogPage({
+  windowRef = window,
+  documentRef = document,
+  fetchImpl = windowRef.fetch.bind(windowRef)
+} = {}) {
+  const lang = language(windowRef);
+  const initialTab = new URLSearchParams(windowRef.location.search).get("tab");
+  const state = {
+    activeType: catalogEntityTypeFromTab(initialTab),
+    query: "",
+    catalog: null,
+    loading: true,
+    error: false
+  };
+  const baseMeta = documentRef.querySelector('meta[name="clubs-teams-data-base"]')?.content;
+  const dataBaseUrl = resolveRuntimeOverride({
+    hostname: windowRef.location.hostname,
+    searchParams: new URLSearchParams(windowRef.location.search),
+    key: "clubsTeamsDataBase",
+    fallback: baseMeta
+  });
+  const client = createHttpClient({ fetchImpl, defaultTimeoutMs: 8000 });
+  const grid = documentRef.getElementById("clubs-teams-grid");
+  const status = documentRef.getElementById("clubs-teams-status");
+  const search = documentRef.getElementById("clubs-teams-search");
+
+  const render = () => {
+    documentRef.documentElement.lang = lang;
+    documentRef.querySelectorAll("[data-clubs-copy]").forEach(node => {
+      node.textContent = copy(lang, node.dataset.clubsCopy);
+    });
+    documentRef.querySelectorAll(".lang-btn[data-lang]").forEach(button => {
+      button.classList.toggle("active", button.dataset.lang === lang);
+    });
+    documentRef.querySelectorAll("[data-catalog-type]").forEach(button => {
+      const active = button.dataset.catalogType === state.activeType;
+      button.classList.toggle("is-active", active);
+      button.setAttribute("aria-selected", String(active));
+    });
+    search.placeholder = copy(lang, "search");
+    grid.replaceChildren();
+    status.replaceChildren();
+    if (state.loading) {
+      status.appendChild(element(documentRef, "div", {
+        className: "clubs-teams-state",
+        text: copy(lang, "loading"),
+        attrs: { role: "status", "aria-live": "polite" }
+      }));
+      return;
+    }
+    if (state.error || !state.catalog) {
+      const message = element(documentRef, "p", { text: copy(lang, "unavailable") });
+      const retry = element(documentRef, "button", {
+        className: "btn clubs-teams-retry",
+        text: copy(lang, "retry"),
+        attrs: { type: "button" }
+      });
+      retry.addEventListener("click", load);
+      status.append(element(documentRef, "div", {
+        className: "clubs-teams-state is-error",
+        attrs: { role: "alert" }
+      }, [message, retry]));
+      return;
+    }
+    const source = state.activeType === "club" ? state.catalog.clubs : state.catalog.teams;
+    const entries = filterCatalogEntries(source, state.query);
+    const update = copy(lang, "updated", formatDate(state.catalog.pointer.completed_at, lang));
+    status.appendChild(element(documentRef, "div", {
+      className: "clubs-teams-updated",
+      text: update
+    }));
+    if (!entries.length) {
+      grid.appendChild(element(documentRef, "div", {
+        className: "clubs-teams-state",
+        text: state.query ? copy(lang, "noMatches") : copy(lang, "empty")
+      }));
+      return;
+    }
+    for (const entry of entries) {
+      const logoUrl = resolveCatalogAssetUrl(
+        dataBaseUrl,
+        state.catalog.pointer.rating_run_id,
+        entry.asset
+      );
+      const logo = logoUrl
+        ? element(documentRef, "img", {
+          className: "clubs-teams-logo",
+          attrs: { src: logoUrl, alt: "", width: 72, height: 72, loading: "lazy", decoding: "async" }
+        })
+        : element(documentRef, "div", {
+          className: "clubs-teams-logo clubs-teams-logo-fallback",
+          text: entry.display_name.slice(0, 2).toLocaleUpperCase()
+        });
+      const affiliation = entry.entity_type === "team"
+        ? (entry.club?.display_name || copy(lang, "independent"))
+        : `${number(entry.members_count)} ${copy(lang, "members")}`;
+      const metrics = element(documentRef, "dl", { className: "clubs-teams-metrics" }, [
+        element(documentRef, "div", {}, [
+          element(documentRef, "dt", { text: "ELO" }),
+          element(documentRef, "dd", { text: entry.average_elo === null ? "—" : number(entry.average_elo, 1) })
+        ]),
+        element(documentRef, "div", {}, [
+          element(documentRef, "dt", { text: "SR" }),
+          element(documentRef, "dd", { text: entry.average_sr === null ? "—" : number(entry.average_sr, 2) })
+        ])
+      ]);
+      grid.appendChild(element(documentRef, "article", {
+        className: "clubs-teams-card"
+      }, [
+        element(documentRef, "div", { className: "clubs-teams-card-head" }, [
+          logo,
+          element(documentRef, "div", { className: "clubs-teams-card-title" }, [
+            element(documentRef, "span", { className: "clubs-teams-position", text: `#${entry.position}` }),
+            element(documentRef, "h2", { text: entry.display_name }),
+            element(documentRef, "p", { text: affiliation })
+          ])
+        ]),
+        element(documentRef, "div", { className: "clubs-teams-score" }, [
+          element(documentRef, "strong", { text: number(entry.total_points, 2) }),
+          element(documentRef, "span", { text: copy(lang, "points") }),
+          element(documentRef, "small", { text: `${number(entry.race_count)} ${copy(lang, "races")}` })
+        ]),
+        metrics
+      ]));
+    }
+  };
+
+  const load = async () => {
+    state.loading = true;
+    state.error = false;
+    render();
+    try {
+      state.catalog = await loadPublicCatalog({ client, dataBaseUrl });
+    } catch {
+      state.catalog = null;
+      state.error = true;
+    } finally {
+      state.loading = false;
+      render();
+    }
+  };
+
+  documentRef.querySelectorAll("[data-catalog-type]").forEach(button => {
+    button.addEventListener("click", () => {
+      state.activeType = button.dataset.catalogType;
+      const url = new URL(windowRef.location.href);
+      url.searchParams.set("tab", catalogTabFromEntityType(state.activeType));
+      windowRef.history.replaceState(null, "", url);
+      render();
+    });
+  });
+  search.addEventListener("input", () => {
+    state.query = search.value;
+    render();
+  });
+  documentRef.querySelectorAll(".lang-btn[data-lang]").forEach(button => {
+    button.addEventListener("click", () => {
+      try {
+        windowRef.localStorage.setItem("asgLang", button.dataset.lang);
+      } catch {
+        // Reload still applies the current page default.
+      }
+      windowRef.location.reload();
+    });
+  });
+  setupNavigation(documentRef);
+  createAuthHeaderController();
+  render();
+  load();
+  return { render, load, state };
+}
