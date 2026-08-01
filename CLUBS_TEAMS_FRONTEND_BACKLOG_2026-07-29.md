@@ -1,6 +1,6 @@
 # Clubs & Teams frontend backlog
 
-Дата актуализации: 29.07.2026
+Дата актуализации: 01.08.2026
 
 Ветка: `feature/clubs-teams-v1`
 
@@ -39,15 +39,36 @@ Production: без изменений.
 - `CLUB-WEB-018`: строгий public snapshot contract, безопасные URL и DOM готовы
   для catalog slice; CSP проверяется при staging integration.
 
-## Следующий срез F2
+## Завершённая реализация F2 — публичные профили
 
-1. `/clubs/{slug}` — публичная карточка клуба.
-2. `/teams/{slug}` — публичная карточка команды.
-3. Roster, описание RU/EN, website, recent races и rating из detail snapshot.
-4. Переходы из catalog cards только после готовности обоих detail routes.
-5. Затем добавить ссылку на каталог в существующую общую навигацию.
+- [x] статически совместимый маршрут клуба `/clubs/?slug={slug}`;
+- [x] статически совместимый маршрут команды `/teams/detail/?slug={slug}`;
+- [x] поддержка будущих rewrite-маршрутов `/clubs/{slug}` и `/teams/{slug}` в
+  клиентском resolver;
+- [x] переходы из всех catalog cards и между связанными клубом/командами;
+- [x] roster со ссылками на публичные профили пилотов;
+- [x] описание RU/EN, short name и безопасная внешняя ссылка website;
+- [x] общий рейтинг: место, очки, гонки, ELO, SR и участники;
+- [x] последние зачётные гонки: дата, трасса, формат, режим и очки;
+- [x] loading/error/retry/empty states;
+- [x] строгая проверка detail identity, active `rating_run_id`, roster roles,
+  дубликатов, URL и immutable asset path;
+- [x] responsive layouts для desktop/tablet/mobile на уровне CSS;
+- [x] dist allowlist, required artifacts и smoke routes;
+- [x] полный `npm run ci`: 224/224 unit tests, build, dist, references и smoke.
 
-## После F2
+### Ограничения F2, оставленные открытыми
+
+- [ ] фактическая visual matrix desktop/tablet/mobile: встроенный браузер в
+  сессии не предоставил ни одного backend;
+- [ ] красивые URL без query (`/clubs/{slug}`, `/teams/{slug}`): GitHub Pages
+  не поддерживает wildcard rewrite, поэтому потребуется внешний reverse proxy
+  или build-time генерация каталогов;
+- [ ] ссылка в общей production-навигации и sitemap: добавлять только после
+  визуального checkpoint и отдельного решения о публикации;
+- [ ] CSP проверяется при staging/production integration.
+
+## Следующий срез F3
 
 1. General / Hourly / Championship rating representations.
 2. Личный кабинет через `auth.asgracing.ru`.

@@ -11,6 +11,7 @@ import {
   validateCatalogPage,
   validateCurrentPointer
 } from "./catalog-model.js";
+import { entityDetailHref } from "./detail-model.js";
 
 const COPY = {
   en: {
@@ -261,8 +262,9 @@ export function createCatalogPage({
           element(documentRef, "dd", { text: entry.average_sr === null ? "—" : number(entry.average_sr, 2) })
         ])
       ]);
-      grid.appendChild(element(documentRef, "article", {
-        className: "clubs-teams-card"
+      grid.appendChild(element(documentRef, "a", {
+        className: "clubs-teams-card",
+        attrs: { href: entityDetailHref(entry.entity_type, entry.slug, { siteBase: "../" }) }
       }, [
         element(documentRef, "div", { className: "clubs-teams-card-head" }, [
           logo,

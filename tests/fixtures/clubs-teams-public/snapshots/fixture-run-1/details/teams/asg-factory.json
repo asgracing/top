@@ -1,0 +1,41 @@
+{
+  "schema_version": 1,
+  "kind": "clubs_teams_team_detail",
+  "entity_type": "team",
+  "public_id": "team-public-1",
+  "slug": "asg-factory",
+  "display_name": "ASG Factory Racing",
+  "short_name": "ASG Factory",
+  "description_ru": "Основная команда клуба ASG Racing.",
+  "description_en": "The main ASG Racing club team.",
+  "website_url": null,
+  "status": "approved",
+  "asset": null,
+  "rating": {
+    "rating_run_id": "fixture-run-1",
+    "position": 1,
+    "total_points": 121.5,
+    "race_count": 10,
+    "average_elo": 1320.8,
+    "average_sr": 5.62,
+    "members_count": 4
+  },
+  "roster": [
+    { "public_id": "driver-public-2", "display_name": "Kirill Bulgakov", "role": "captain" },
+    { "public_id": "driver-public-3", "display_name": "Artem Dilakov", "role": "member" },
+    { "public_id": "driver-public-4", "display_name": "Javier Breogan.VR", "role": "member" },
+    { "public_id": "driver-public-5", "display_name": "Islam Alkaev", "role": "member" }
+  ],
+  "club": { "public_id": "club-public-1", "slug": "asg-racing", "display_name": "ASG Racing" },
+  "teams": null,
+  "recent_races": [
+    {
+      "race_uid": "race-fixture-2",
+      "race_started_at": "2026-07-27T18:00:00Z",
+      "points": 31.5,
+      "track_code": "silverstone",
+      "race_format": "hourly",
+      "competition_mode": "general"
+    }
+  ]
+}

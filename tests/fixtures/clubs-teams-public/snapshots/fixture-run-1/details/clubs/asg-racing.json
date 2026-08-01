@@ -1,0 +1,50 @@
+{
+  "schema_version": 1,
+  "kind": "clubs_teams_club_detail",
+  "entity_type": "club",
+  "public_id": "club-public-1",
+  "slug": "asg-racing",
+  "display_name": "ASG Racing",
+  "short_name": "ASG",
+  "description_ru": "Гоночное сообщество ASG Racing.",
+  "description_en": "ASG Racing community.",
+  "website_url": "https://asgracing.ru/",
+  "status": "approved",
+  "asset": null,
+  "rating": {
+    "rating_run_id": "fixture-run-1",
+    "position": 1,
+    "total_points": 234.75,
+    "race_count": 18,
+    "average_elo": 1288.2,
+    "average_sr": 5.48,
+    "members_count": 12
+  },
+  "roster": [
+    { "public_id": "driver-public-1", "display_name": "Aleksandr Milhin", "role": "head" },
+    { "public_id": "driver-public-2", "display_name": "Kirill Bulgakov", "role": "member" },
+    { "public_id": "driver-public-3", "display_name": "Artem Dilakov", "role": "member" }
+  ],
+  "club": null,
+  "teams": [
+    { "public_id": "team-public-1", "slug": "asg-factory", "display_name": "ASG Factory Racing" }
+  ],
+  "recent_races": [
+    {
+      "race_uid": "race-fixture-2",
+      "race_started_at": "2026-07-27T18:00:00Z",
+      "points": 52.5,
+      "track_code": "silverstone",
+      "race_format": "hourly",
+      "competition_mode": "general"
+    },
+    {
+      "race_uid": "race-fixture-1",
+      "race_started_at": "2026-07-25T18:00:00Z",
+      "points": 41.25,
+      "track_code": "monza",
+      "race_format": "endurance",
+      "competition_mode": "general"
+    }
+  ]
+}

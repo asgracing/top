@@ -25,7 +25,7 @@ const server = createServer(async (request, response) => {
 
 await new Promise(resolveListen => server.listen(0, "127.0.0.1", resolveListen));
 const { port } = server.address();
-const checks = ["/", "/account/", "/account/settings/", "/teams/", "/teams/app.js", "/races/", "/driver/", "/cars/", "/fun-stats/", "/community/", "/news/", "/bans/", "/app.js", "/src/entrypoints/home.js", "/asset-manifest.json", "/build-meta.json"];
+const checks = ["/", "/account/", "/account/settings/", "/clubs/", "/clubs/app.js", "/teams/", "/teams/app.js", "/teams/detail/", "/teams/detail/app.js", "/races/", "/driver/", "/cars/", "/fun-stats/", "/community/", "/news/", "/bans/", "/app.js", "/src/entrypoints/home.js", "/asset-manifest.json", "/build-meta.json"];
 const failures = [];
 try {
   for (const path of checks) {
