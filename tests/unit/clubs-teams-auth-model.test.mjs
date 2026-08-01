@@ -1,7 +1,7 @@
 import test from "node:test";
 import assert from "node:assert/strict";
 
-import { membershipActionId, normalizeClubsTeamsAuthState } from "../../src/features/auth/clubs-teams-auth-model.js";
+import { membershipActionId, normalizeClubsTeamsAuthState, teamClubActionId } from "../../src/features/auth/clubs-teams-auth-model.js";
 
 test("normalizes the bounded public cabinet state", () => {
   const normalized = normalizeClubsTeamsAuthState({
@@ -135,4 +135,35 @@ test("accepts old actor state and strictly normalizes pending membership actions
   });
   assert.equal(invalid.integrityValid, false);
   assert.deepEqual(invalid.membershipActions, []);
+});
+
+test("strictly normalizes pending team-club actions without internal ids", () => {
+  const normalized = normalizeClubsTeamsAuthState({
+    enabled: true,
+    applied_state: {
+      public_id: "club-head", club: null, team: null, membership_actions: [],
+      team_club_actions: [{
+        id: "teamclub-internal", action_type: "request",
+        team_public_id: "team-public", team_slug: "factory", team_display_name: "Factory Team",
+        club_public_id: "club-public", club_slug: "asg-racing", club_display_name: "ASG Racing",
+        initiated_by_public_id: "captain", created_at: "2026-08-01T10:00:00Z",
+        expires_at: "2026-08-08T10:00:00Z", resolution_role: "manager"
+      }]
+    }
+  });
+  assert.equal(normalized.integrityValid, true);
+  assert.equal(normalized.teamClubActions[0].teamDisplayName, "Factory Team");
+  assert.equal(teamClubActionId(normalized.teamClubActions[0]), "teamclub-internal");
+  assert.equal(JSON.stringify(normalized).includes("teamclub-internal"), false);
+  assert.equal("id" in normalized.teamClubActions[0], false);
+
+  const invalid = normalizeClubsTeamsAuthState({
+    enabled: true,
+    applied_state: {
+      public_id: "club-head", club: null, team: null,
+      team_club_actions: [{ id: "bad", action_type: "request" }]
+    }
+  });
+  assert.equal(invalid.integrityValid, false);
+  assert.deepEqual(invalid.teamClubActions, []);
 });

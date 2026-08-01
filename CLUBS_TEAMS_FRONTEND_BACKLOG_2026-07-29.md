@@ -204,3 +204,14 @@ Visual matrix F4a не выполнена: 01.08.2026 встроенная ср�
 - [ ] visual matrix: browser runtime снова вернул пустой список backend'ов;
 - [ ] F4b3: team-club affiliation actions;
 - [ ] staging auth/backend round-trip и production deploy.
+
+## Завершённый контракт F4b3a — team-club pending state
+
+- [x] backend snapshot сообщает public team/club metadata и resolution role;
+- [x] internal action ID хранится frontend только в `WeakMap`;
+- [x] старые actor-state snapshots остаются допустимыми;
+- [x] malformed/oversized/duplicate actions fail closed и отключают mutations;
+- [x] auth exact allowlist готов для request/invite/resolve/detach;
+- [x] frontend CI: 242/242 unit, 261 dist files, 728 references, 25 smoke;
+- [ ] F4b3b: публичные CTA и кабинетные действия;
+- [ ] staging round-trip и ручная visual matrix.
