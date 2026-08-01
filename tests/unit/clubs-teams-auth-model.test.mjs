@@ -66,9 +66,16 @@ test("fails closed for disabled or malformed state", () => {
   });
   assert.equal(malformed.club, null);
   assert.equal(malformed.team, null);
+  assert.equal(malformed.integrityValid, false);
   assert.equal(malformed.pendingCommands, 0);
   assert.deepEqual(malformed.notifications, []);
   assert.equal(malformed.snapshot.stale, true);
+
+  const unexpected = normalizeClubsTeamsAuthState({
+    enabled: true,
+    applied_state: { public_id: "pilot-1", club: null, team: null, is_admin: true }
+  });
+  assert.equal(unexpected.integrityValid, false);
 });
 
 test("bounds notifications and ignores receipt-controlled content", () => {

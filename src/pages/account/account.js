@@ -1,4 +1,13 @@
 import { createAuthHeaderController } from "../../features/auth/header-auth.js";
+import { createHttpClient } from "../../shared/http-client.js";
+import { resolveRuntimeOverride } from "../../shared/runtime-config.js";
+import { loadEntityDetail } from "../clubs-teams/detail-model.js";
+import {
+  ClubsTeamsCommandError,
+  buildCreateEntityCommand,
+  buildReviseEntityCommand,
+  normalizeCommandResponse
+} from "./clubs-teams-command-model.js";
 
 const AUTH_BASE_URL = "https://auth.asgracing.ru";
 
@@ -41,6 +50,32 @@ const COPY = {
     ctStatus_approved: "Approved",
     ctStatus_suspended: "Suspended",
     ctStatus_archived: "Archived",
+    createClub: "Create club",
+    createTeam: "Create team",
+    editClub: "Edit club",
+    editTeam: "Edit team",
+    managementBlocked: "Finish the pending operation before starting another one.",
+    discordRequired: "Link Discord before creating or managing a club or team.",
+    formCreate: value => `Create ${value}`,
+    formEdit: value => `Edit ${value}`,
+    displayName: "Name",
+    shortName: "Short name",
+    descriptionRu: "Description in Russian",
+    descriptionEn: "Description in English",
+    websiteUrl: "Website (HTTP or HTTPS)",
+    teamAffiliation: "The team will be affiliated with your current club.",
+    saveEntity: "Send for moderation",
+    cancelEntity: "Cancel",
+    loadingEntity: "Loading the approved profile…",
+    invalidFields: "Check the name, field lengths and website address.",
+    commandQueued: "The operation is queued. Its status will update in the account.",
+    commandApplied: "The operation was accepted and sent for moderation.",
+    commandRejected: "The operation was rejected.",
+    reauthRequired: "For security, sign in with Steam again and repeat the operation.",
+    reauth: "Sign in again",
+    nameTaken: "This club or team name is already reserved.",
+    versionConflict: "The profile changed. Refresh the account before editing it again.",
+    detailUnavailable: "The approved profile could not be loaded safely. Editing remains disabled.",
     numberSettings: "Race number settings",
     numberHelp: "Choose a globally unique number from 1 to 999. A new assignment must be approved.",
     numberLabel: "New number (1–999)",
@@ -63,6 +98,32 @@ const COPY = {
     footerText: "Statistics are generated from ACC Dedicated Server result files and published via GitHub Pages."
   },
   ru: {
+    createClub: "Создать клуб",
+    createTeam: "Создать команду",
+    editClub: "Редактировать клуб",
+    editTeam: "Редактировать команду",
+    managementBlocked: "Завершите текущую операцию перед отправкой следующей.",
+    discordRequired: "Привяжите Discord перед созданием или управлением клубом и командой.",
+    formCreate: value => `Создать: ${value}`,
+    formEdit: value => `Редактировать: ${value}`,
+    displayName: "Название",
+    shortName: "Короткое название",
+    descriptionRu: "Описание на русском",
+    descriptionEn: "Описание на английском",
+    websiteUrl: "Сайт (HTTP или HTTPS)",
+    teamAffiliation: "Команда будет привязана к вашему текущему клубу.",
+    saveEntity: "Отправить на модерацию",
+    cancelEntity: "Отмена",
+    loadingEntity: "Загружаем подтверждённый профиль…",
+    invalidFields: "Проверьте название, длину полей и адрес сайта.",
+    commandQueued: "Операция поставлена в очередь. Статус обновится в кабинете.",
+    commandApplied: "Операция принята и отправлена на модерацию.",
+    commandRejected: "Операция отклонена.",
+    reauthRequired: "Для безопасности снова войдите через Steam и повторите операцию.",
+    reauth: "Войти снова",
+    nameTaken: "Название клуба или команды уже зарезервировано.",
+    versionConflict: "Профиль изменился. Обновите кабинет перед повторным редактированием.",
+    detailUnavailable: "Не удалось безопасно загрузить подтверждённый профиль. Редактирование отключено.",
     clubsTeams: "Клубы и команды",
     clubsTeamsUnavailable: "Управление клубами и командами временно недоступно.",
     clubsTeamsStale: "Снимок состава недоступен или устарел. Изменения заблокированы до его обновления.",
@@ -153,6 +214,7 @@ function accountLoginUrl() {
 }
 
 let flashMessage = { text: "", kind: "" };
+let clubsTeamsFlash = { text: "", kind: "" };
 
 function setMessage(text = "", kind = "") {
   flashMessage = { text, kind };
@@ -176,18 +238,21 @@ function formatAccountDate(value) {
   }).format(date);
 }
 
-function renderMembershipEntity(entity) {
+function renderMembershipEntity(entity, canEdit = false) {
   if (!entity) return "";
   const href = entity.type === "club"
     ? `/clubs/?slug=${encodeURIComponent(entity.slug)}`
     : `/teams/detail/?slug=${encodeURIComponent(entity.slug)}`;
   return `
-    <a class="account-membership" href="${href}">
-      <span class="account-membership-kind">${t(entity.type)}</span>
-      <strong>${escapeHtml(entity.displayName)}</strong>
-      <span>${t(`ctRole_${entity.role}`)} · ${t(`ctStatus_${entity.status}`)}</span>
-      ${entity.pendingRevision ? `<em>${t("pendingRevision")}</em>` : ""}
-    </a>`;
+    <div class="account-membership">
+      <a class="account-membership-link" href="${href}">
+        <span class="account-membership-kind">${t(entity.type)}</span>
+        <strong>${escapeHtml(entity.displayName)}</strong>
+        <span>${t(`ctRole_${entity.role}`)} · ${t(`ctStatus_${entity.status}`)}</span>
+        ${entity.pendingRevision ? `<em>${t("pendingRevision")}</em>` : ""}
+      </a>
+      ${canEdit ? `<button class="account-entity-action" type="button" data-ct-mode="revise" data-ct-type="${entity.type}">${t(entity.type === "club" ? "editClub" : "editTeam")}</button>` : ""}
+    </div>`;
 }
 
 function renderClubsTeams(auth) {
@@ -200,23 +265,185 @@ function renderClubsTeams(auth) {
     .sort((left, right) => String(right.createdAt || "").localeCompare(String(left.createdAt || "")))
     .slice(0, 5);
   const pending = state.pendingCommands + state.pendingAssets;
+  const mutationReady = !stale && state.integrityValid && auth.discord?.linked && pending === 0 && Boolean(auth.csrfToken);
+  const canEditClub = mutationReady && state.club?.role === "head" && state.club.status === "approved" && !state.club.pendingRevision;
+  const canEditTeam = mutationReady && state.team?.role === "captain" && state.team.status === "approved" && !state.team.pendingRevision;
   return `
     <section class="account-clubs-teams">
       <div class="account-section-heading">
         <h2>${t("clubsTeams")}</h2>
         ${pending ? `<span class="account-operation-count">${t("pendingOperations")}: ${pending}</span>` : ""}
       </div>
+      ${clubsTeamsFlash.text ? `<p class="account-command-summary" data-kind="${escapeHtml(clubsTeamsFlash.kind)}" role="status">${escapeHtml(clubsTeamsFlash.text)}</p>` : ""}
       ${stale ? `<p class="account-snapshot-warning" role="status">${t("clubsTeamsStale")}</p>` : ""}
       ${state.club || state.team
-        ? `<div class="account-memberships">${renderMembershipEntity(state.club)}${renderMembershipEntity(state.team)}</div>`
+        ? `<div class="account-memberships">${renderMembershipEntity(state.club, canEditClub)}${renderMembershipEntity(state.team, canEditTeam)}</div>`
         : `<p class="account-muted">${t("clubsTeamsEmpty")}</p>`}
       ${operations.length ? `
         <div class="account-operation-list">
           <h3>${t("recentOperations")}</h3>
           ${operations.map(operation => `<div class="account-operation"><span>${t(`ctStatus_${operation.status}`)}</span><time>${escapeHtml(formatAccountDate(operation.createdAt))}</time></div>`).join("")}
         </div>` : ""}
-      <div class="account-actions"><a class="account-action" href="/teams/">${t("clubsTeamsCatalog")}</a></div>
+      ${!auth.discord?.linked ? `<p class="account-muted">${t("discordRequired")}</p>` : ""}
+      ${pending ? `<p class="account-muted">${t("managementBlocked")}</p>` : ""}
+      <div class="account-actions">
+        ${mutationReady && !state.club ? `<button class="account-action account-action--primary" type="button" data-ct-mode="create" data-ct-type="club">${t("createClub")}</button>` : ""}
+        ${mutationReady && !state.team ? `<button class="account-action account-action--primary" type="button" data-ct-mode="create" data-ct-type="team">${t("createTeam")}</button>` : ""}
+        <a class="account-action" href="/teams/">${t("clubsTeamsCatalog")}</a>
+      </div>
     </section>`;
+}
+
+function clubsTeamsDataBaseUrl() {
+  const fallback = document.querySelector('meta[name="clubs-teams-data-base"]')?.content
+    || "https://data.asgracing.ru/public-cache-clubs-teams";
+  return resolveRuntimeOverride({
+    hostname: location.hostname,
+    searchParams: new URLSearchParams(location.search),
+    key: "clubsTeamsDataBase",
+    fallback
+  });
+}
+
+async function loadApprovedEntityFields(entity) {
+  const client = createHttpClient({ fetchImpl: globalThis.fetch, defaultTimeoutMs: 8000 });
+  const result = await loadEntityDetail({
+    client,
+    dataBaseUrl: clubsTeamsDataBaseUrl(),
+    entityType: entity.type,
+    slug: entity.slug
+  });
+  if (result.detail.public_id !== entity.publicId) throw new ClubsTeamsCommandError("detail_identity_mismatch");
+  return {
+    displayName: result.detail.display_name,
+    shortName: result.detail.short_name || "",
+    descriptionRu: result.detail.description_ru || "",
+    descriptionEn: result.detail.description_en || "",
+    websiteUrl: result.detail.website_url || ""
+  };
+}
+
+function entityFormMarkup({ mode, entityType, fields, hasClub }) {
+  const entityLabel = t(entityType);
+  const title = t(mode === "create" ? "formCreate" : "formEdit", entityLabel);
+  return `
+    <div class="account-entity-form-shell">
+      <h2>${escapeHtml(title)}</h2>
+      ${mode === "create" && entityType === "team" && hasClub ? `<p class="account-muted">${t("teamAffiliation")}</p>` : ""}
+      <form class="account-entity-form" id="account-entity-form" novalidate>
+        <label>${t("displayName")}<input name="displayName" required minlength="2" maxlength="80" value="${escapeHtml(fields.displayName || "")}"></label>
+        <label>${t("shortName")}<input name="shortName" maxlength="24" value="${escapeHtml(fields.shortName || "")}"></label>
+        <label>${t("descriptionRu")}<textarea name="descriptionRu" maxlength="4000" rows="5">${escapeHtml(fields.descriptionRu || "")}</textarea></label>
+        <label>${t("descriptionEn")}<textarea name="descriptionEn" maxlength="4000" rows="5">${escapeHtml(fields.descriptionEn || "")}</textarea></label>
+        <label>${t("websiteUrl")}<input name="websiteUrl" type="url" maxlength="300" value="${escapeHtml(fields.websiteUrl || "")}"></label>
+        <div class="account-form-actions">
+          <button class="account-action account-action--primary" type="submit">${t("saveEntity")}</button>
+          <button class="account-action" type="button" data-ct-cancel>${t("cancelEntity")}</button>
+        </div>
+        <p class="account-command-message" role="status" aria-live="polite"></p>
+        <a class="account-action account-command-reauth" href="${accountLoginUrl()}" hidden>${t("reauth")}</a>
+      </form>
+    </div>`;
+}
+
+function commandErrorText(code) {
+  if (code === "recent_auth_required") return t("reauthRequired");
+  if (code === "name_taken") return t("nameTaken");
+  if (code === "version_conflict") return t("versionConflict");
+  if (["invalid_fields", "invalid_website", "invalid_field", "invalid_name"].includes(code)) return t("invalidFields");
+  return t("commandRejected");
+}
+
+async function pollClubsTeamsCommand(commandId) {
+  let latest = { id: commandId, status: "pending", final: false, errorCode: null };
+  for (let attempt = 0; attempt < 4 && !latest.final; attempt += 1) {
+    await new Promise(resolve => setTimeout(resolve, 1000));
+    const response = await fetch(`${AUTH_BASE_URL}/v1/clubs-teams/commands/${encodeURIComponent(commandId)}`, {
+      method: "GET", credentials: "include", cache: "no-store", headers: { Accept: "application/json" }
+    });
+    if (!response.ok) break;
+    latest = normalizeCommandResponse(await response.json());
+  }
+  return latest;
+}
+
+async function submitEntityForm({ auth, mode, entityType, fieldsSource, form }) {
+  const submit = form.querySelector('button[type="submit"]');
+  const message = form.querySelector(".account-command-message");
+  const reauth = form.querySelector(".account-command-reauth");
+  submit.disabled = true;
+  message.textContent = "";
+  message.dataset.kind = "";
+  reauth.hidden = true;
+  let accepted = false;
+  try {
+    const fields = Object.fromEntries(new FormData(form).entries());
+    const state = auth.clubsTeams;
+    const command = mode === "create"
+      ? buildCreateEntityCommand({ entityType, currentEntity: state[entityType], clubEntity: state.club, fields })
+      : buildReviseEntityCommand({ entityType, entity: state[entityType], fields: fieldsSource ? { ...fieldsSource, ...fields } : fields });
+    const queuedPayload = await mutation("/v1/clubs-teams/commands", auth.csrfToken, {
+      command_type: command.commandType,
+      payload: command.payload,
+      ...(command.expectedEntityVersion ? { expected_entity_version: command.expectedEntityVersion } : {})
+    });
+    accepted = true;
+    const queued = normalizeCommandResponse(queuedPayload);
+    const completed = await pollClubsTeamsCommand(queued.id);
+    if (completed.status === "applied") {
+      clubsTeamsFlash = { text: t("commandApplied"), kind: "success" };
+      await controller?.refresh({ showLoading: false });
+      return;
+    }
+    if (completed.final) {
+      accepted = false;
+      throw new ClubsTeamsCommandError(completed.errorCode || completed.status);
+    }
+    clubsTeamsFlash = { text: t("commandQueued"), kind: "success" };
+    await controller?.refresh({ showLoading: false });
+  } catch (error) {
+    if (accepted) {
+      message.textContent = t("commandQueued");
+      message.dataset.kind = "success";
+      clubsTeamsFlash = { text: t("commandQueued"), kind: "success" };
+      await controller?.refresh({ showLoading: false });
+      return;
+    }
+    const code = error?.code || "command_rejected";
+    message.textContent = commandErrorText(code);
+    message.dataset.kind = "error";
+    reauth.hidden = code !== "recent_auth_required";
+    submit.disabled = false;
+  }
+}
+
+async function openEntityForm(auth, mode, entityType) {
+  const section = document.querySelector(".account-clubs-teams");
+  if (!section || !["club", "team"].includes(entityType) || !["create", "revise"].includes(mode)) return;
+  let fields = { displayName: "", shortName: "", descriptionRu: "", descriptionEn: "", websiteUrl: "" };
+  if (mode === "revise") {
+    section.innerHTML = `<p class="account-muted" role="status">${t("loadingEntity")}</p>`;
+    try {
+      fields = await loadApprovedEntityFields(auth.clubsTeams[entityType]);
+    } catch {
+      section.innerHTML = `<p class="account-snapshot-warning" role="alert">${t("detailUnavailable")}</p>`;
+      return;
+    }
+  }
+  section.innerHTML = entityFormMarkup({ mode, entityType, fields, hasClub: Boolean(auth.clubsTeams.club) });
+  const form = section.querySelector("#account-entity-form");
+  form.addEventListener("submit", event => {
+    event.preventDefault();
+    void submitEntityForm({ auth, mode, entityType, fieldsSource: fields, form });
+  });
+  section.querySelector("[data-ct-cancel]")?.addEventListener("click", () => render(auth));
+  form.querySelector("input")?.focus();
+}
+
+function bindClubsTeamsActions(auth) {
+  document.querySelectorAll("[data-ct-mode][data-ct-type]").forEach(button => {
+    button.addEventListener("click", () => void openEntityForm(auth, button.dataset.ctMode, button.dataset.ctType));
+  });
 }
 
 function renderSignedOut(root) {
@@ -267,6 +494,7 @@ function renderOverview(root, auth) {
         ${renderClubsTeams(auth)}
       ` : `<p class="account-muted">${t("noProfile")}</p>`}
     </div>`;
+  if (auth.linked) bindClubsTeamsActions(auth);
 }
 
 function renderSettings(root, auth) {
@@ -323,6 +551,7 @@ async function mutation(path, csrfToken, body) {
     error.code = payload?.detail;
     throw error;
   }
+  return payload;
 }
 
 async function runAction(button, action, successText) {

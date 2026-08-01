@@ -128,3 +128,29 @@ Production: без изменений.
 - [ ] production navigation/sitemap/CSP gate и deploy — только отдельным решением.
 
 Visual matrix F4a не выполнена: 01.08.2026 встроенная среда вернула пустой список browser backends.
+
+## Завершённый срез F4b1 — create/revise
+
+- [x] формы создания клуба и команды в существующем `/account/`;
+- [x] команда пользователя с активным клубом автоматически получает канонический внутренний `club_id`;
+- [x] редактирование доступно только `head` клуба и `captain` команды;
+- [x] edit prefill загружается из immutable public detail и сверяется по `public_id`;
+- [x] полный allowlist полей: display name, short name, RU/EN descriptions и HTTP(S) website;
+- [x] `entity.revise` всегда отправляется с текущим `expected_entity_version`;
+- [x] management ID хранится в `WeakMap`: не сериализуется, не выводится в DOM/URL/receipt;
+- [x] mutations отключены при stale/unavailable/malformed snapshot, pending command/asset, отсутствии Discord/CSRF;
+- [x] POST использует browser Origin, credentials и `X-CSRF-Token`; recent-auth rejection даёт re-login flow;
+- [x] bounded polling только созданного command ID;
+- [x] raw receipt/result/error/message не отображаются; разрешены только канонические status/error codes;
+- [x] после принятого POST ошибка polling не разрешает повторную отправку потенциального дубля;
+- [x] RU/EN и responsive форма;
+- [x] полный `npm run ci`: 234/234 unit, 260 dist files, 727 references, 25 smoke.
+
+### Остаток после F4b1
+
+- [ ] F4b2: membership request/invite/resolve/leave/remove;
+- [ ] F4b3: team-club request/invite/resolve/detach;
+- [ ] F4c: безопасная загрузка и moderation receipt логотипа;
+- [ ] staging integration: recent-auth, CSRF/Origin, queue/receipt/state round-trip и version conflict;
+- [ ] visual matrix desktop/tablet/mobile, RU/EN и keyboard — browser backend 01.08.2026 отсутствовал;
+- [ ] production navigation/sitemap/CSP и deploy — отдельное решение.

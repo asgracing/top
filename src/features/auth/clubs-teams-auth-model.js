@@ -1,6 +1,9 @@
 const ENTITY_STATUSES = new Set(["pending", "approved", "rejected", "suspended", "archived"]);
 const QUEUE_STATUSES = new Set(["pending", "leased", "applied", "rejected", "expired", "dead_letter"]);
 const ROLES = Object.freeze({ club: new Set(["head", "member"]), team: new Set(["captain", "member"]) });
+const MANAGEMENT_IDS = new WeakMap();
+const ACTOR_STATE_KEYS = new Set(["public_id", "club", "team"]);
+const ENTITY_KEYS = new Set(["id", "public_id", "slug", "status", "row_version", "role", "display_name", "pending_revision"]);
 
 function plainObject(value) {
   return value && typeof value === "object" && !Array.isArray(value) ? value : null;
@@ -30,9 +33,14 @@ function safeDate(value) {
   return text && Number.isFinite(Date.parse(text)) ? text : null;
 }
 
+function hasExactKeys(value, expected) {
+  const keys = Object.keys(value);
+  return keys.length === expected.size && keys.every(key => expected.has(key));
+}
+
 function normalizeEntity(value, type) {
   const source = plainObject(value);
-  if (!source) return null;
+  if (!source || !hasExactKeys(source, ENTITY_KEYS)) return null;
   const publicId = safeIdentifier(source.public_id);
   const slug = safeSlug(source.slug);
   const displayName = boundedText(source.display_name, 160);
@@ -40,7 +48,14 @@ function normalizeEntity(value, type) {
   const role = ROLES[type].has(source.role) ? source.role : null;
   const rowVersion = safeInteger(source.row_version, 1);
   if (!publicId || !slug || !displayName || !status || !role || rowVersion === null) return null;
-  return { type, publicId, slug, displayName, status, role, rowVersion, pendingRevision: source.pending_revision === true };
+  const entity = { type, publicId, slug, displayName, status, role, rowVersion, pendingRevision: source.pending_revision === true };
+  const managementId = safeIdentifier(source.id);
+  if (managementId) MANAGEMENT_IDS.set(entity, managementId);
+  return entity;
+}
+
+export function managementEntityId(entity) {
+  return entity && typeof entity === "object" ? MANAGEMENT_IDS.get(entity) || null : null;
 }
 
 function normalizeNotification(value, idKey) {
@@ -78,18 +93,30 @@ export function normalizeClubsTeamsAuthState(value) {
     pendingAssets: 0,
     notifications: [],
     assetNotifications: [],
+    integrityValid: true,
     snapshot: { available: false, revision: null, generatedAt: null, receivedAt: null, stale: true }
   };
   if (!source || source.enabled !== true) return empty;
-  const state = plainObject(source.applied_state) || {};
+  const rawState = source.applied_state;
+  const state = plainObject(rawState) || {};
+  const club = normalizeEntity(state.club, "club");
+  const team = normalizeEntity(state.team, "team");
+  const integrityValid = rawState === null || rawState === undefined || (
+    plainObject(rawState) !== null
+    && hasExactKeys(rawState, ACTOR_STATE_KEYS)
+    && Boolean(safeIdentifier(state.public_id))
+    && (state.club === null || state.club === undefined || club !== null)
+    && (state.team === null || state.team === undefined || team !== null)
+  );
   return {
     enabled: true,
-    club: normalizeEntity(state.club, "club"),
-    team: normalizeEntity(state.team, "team"),
+    club,
+    team,
     pendingCommands: safeInteger(source.pending_commands, 0, 10_000) ?? 0,
     pendingAssets: safeInteger(source.pending_assets, 0, 10_000) ?? 0,
     notifications: normalizeNotifications(source.notifications, "command_id"),
     assetNotifications: normalizeNotifications(source.asset_notifications, "asset_id"),
+    integrityValid,
     snapshot: normalizeSnapshot(source.snapshot)
   };
 }

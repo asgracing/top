@@ -161,6 +161,12 @@
     border-radius: 14px;
     background: rgba(102, 192, 244, 0.055);
     color: #aeb8c7;
+  }
+
+  .account-membership-link {
+    display: grid;
+    gap: 5px;
+    color: inherit;
     text-decoration: none;
   }
 
@@ -181,6 +187,84 @@
     color: #ffd166;
     font-size: 0.76rem;
     font-style: normal;
+  }
+
+  .account-entity-action {
+    justify-self: start;
+    margin-top: 7px;
+    padding: 0;
+    border: 0;
+    background: transparent;
+    color: #66c0f4;
+    font: inherit;
+    font-size: 0.78rem;
+    font-weight: 800;
+    cursor: pointer;
+  }
+
+  .account-command-summary,
+  .account-command-message {
+    padding: 10px 12px;
+    border-radius: 10px;
+    background: rgba(255, 255, 255, 0.045);
+    color: #ffd166;
+  }
+
+  .account-command-summary[data-kind="success"] {
+    color: #72e6a5;
+  }
+
+  .account-entity-form-shell h2 {
+    margin-top: 0;
+  }
+
+  .account-entity-form {
+    display: grid;
+    gap: 14px;
+    margin-top: 18px;
+  }
+
+  .account-entity-form label {
+    display: grid;
+    gap: 7px;
+    color: #c5cedb;
+    font-size: 0.78rem;
+    font-weight: 750;
+  }
+
+  .account-entity-form input,
+  .account-entity-form textarea {
+    box-sizing: border-box;
+    width: 100%;
+    padding: 12px 14px;
+    border: 1px solid rgba(255, 255, 255, 0.16);
+    border-radius: 12px;
+    background: rgba(0, 0, 0, 0.24);
+    color: #fff;
+    font: inherit;
+    line-height: 1.45;
+  }
+
+  .account-entity-form textarea {
+    min-height: 112px;
+    resize: vertical;
+  }
+
+  .account-command-message:empty {
+    display: none;
+  }
+
+  .account-command-message[data-kind="error"] {
+    color: #ff9e87;
+  }
+
+  .account-command-reauth {
+    justify-self: start;
+    margin-top: -6px;
+  }
+
+  .account-command-reauth[hidden] {
+    display: none;
   }
 
   .account-operation-list {
