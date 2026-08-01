@@ -195,6 +195,10 @@
     flex: 1 1 220px;
   }
 
+  .combined-stats-directory-link {
+    flex: 0 0 auto;
+  }
+
   body.experiment-combined-stats .combined-stats-panel .table-card {
     min-height: 0;
   }

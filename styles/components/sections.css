@@ -60,7 +60,7 @@
 
   .combined-stats-shell-title {
     min-width: 0;
-    flex: 0 1 460px;
+    flex: 0 1 300px;
   }
 
   .combined-stats-shell-controls {
@@ -76,7 +76,7 @@
   .combined-stats-active-tools {
     display: flex;
     justify-content: flex-end;
-    flex: 1 1 260px;
+    flex: 0 1 450px;
     min-width: 0;
   }
 
@@ -120,6 +120,11 @@
     background: linear-gradient(135deg, var(--accent), #ff7d57);
     color: #fff;
     box-shadow: 0 10px 22px rgba(255, 91, 46, 0.22);
+  }
+
+  .combined-stats-directory-link {
+    flex: 0 0 auto;
+    text-decoration: none;
   }
 
   body.experiment-combined-stats .combined-stats-panels {
