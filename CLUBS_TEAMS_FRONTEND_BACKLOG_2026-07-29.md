@@ -104,3 +104,27 @@ Production: без изменений.
 2. Pending receipts, создание/редактирование, приглашения и membership.
 3. Безопасная загрузка изображения через уже готовый auth/backend pipeline.
 4. Visual/accessibility checkpoint, затем отдельное решение о production.
+
+## Завершённый безопасный срез F4a — read-only кабинет
+
+- [x] существующий `/account/` читает `clubs_teams` из того же `GET https://auth.asgracing.ru/v1/me`;
+- [x] строгая fail-closed модель: разрешены только публичные ID/slug, название, роль, статус и версия;
+- [x] внутренние entity ID, receipt signature, произвольные `result/error` и неизвестные поля отбрасываются;
+- [x] состояния feature disabled, snapshot stale/unavailable, empty и active membership;
+- [x] карточки текущего клуба и команды со ссылками на публичные профили;
+- [x] pending command/asset counters и до пяти безопасно нормализованных статусов операций;
+- [x] RU/EN и адаптивная раскладка 2/1;
+- [x] существующие race-number и Discord-функции не изменены;
+- [x] mutations отсутствуют: этап можно публиковать или откатывать независимо от backend queue;
+- [x] полный `npm run ci`: 230/230 unit, build, dist, references и smoke.
+
+### Остаток F4b–F4d
+
+- [ ] F4b: формы create/revise и membership/team-club actions с отдельными allowlisted payload models;
+- [ ] обязательные guards F4b: Origin, CSRF, recent auth, Discord link, entity role/version и fresh snapshot;
+- [ ] polling конкретной команды и локализованные безопасные ошибки без вывода raw receipt;
+- [ ] F4c: asset upload с клиентскими ограничениями, preview и backend moderation receipt;
+- [ ] F4d: visual/accessibility matrix и ручная интеграционная проверка на staging auth/backend;
+- [ ] production navigation/sitemap/CSP gate и deploy — только отдельным решением.
+
+Visual matrix F4a не выполнена: 01.08.2026 встроенная среда вернула пустой список browser backends.

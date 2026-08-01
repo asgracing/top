@@ -1,3 +1,5 @@
+import { normalizeClubsTeamsAuthState } from "./clubs-teams-auth-model.js";
+
 const DEFAULT_AUTH_BASE_URL = "https://auth.asgracing.ru";
 const AVATAR_HOSTS = new Set(["steamcdn-a.akamaihd.net"]);
 
@@ -200,6 +202,7 @@ export function normalizeAuthPayload(payload) {
     steam,
     discord,
     preferences,
+    clubsTeams: normalizeClubsTeamsAuthState(payload.clubs_teams),
     csrfToken: safeText(payload.csrf_token, 256)
   };
 }

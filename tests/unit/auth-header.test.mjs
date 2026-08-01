@@ -60,6 +60,13 @@ test("normalizes linked auth data without exposing unexpected identity fields", 
       can_change: true,
       next_change_at: null,
       private_value: "must not survive"
+    },
+    clubs_teams: {
+      enabled: true,
+      applied_state: null,
+      pending_commands: 0,
+      pending_assets: 0,
+      snapshot: { available: true, revision: 1, stale: false }
     }
   });
 
@@ -86,6 +93,8 @@ test("normalizes linked auth data without exposing unexpected identity fields", 
   });
   assert.equal("discord_id" in normalized.discord, false);
   assert.equal("access_token" in normalized.discord, false);
+  assert.equal(normalized.clubsTeams.enabled, true);
+  assert.equal(normalized.clubsTeams.snapshot.revision, 1);
 });
 
 test("accepts only the fixed Discord OAuth authorization endpoint", () => {

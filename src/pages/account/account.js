@@ -19,6 +19,28 @@ const COPY = {
     discord: "Discord",
     linked: "Linked",
     notLinked: "Not linked",
+    clubsTeams: "Clubs & teams",
+    clubsTeamsUnavailable: "Club and team management is temporarily unavailable.",
+    clubsTeamsStale: "The membership snapshot is unavailable or out of date. Changes remain disabled until it is refreshed.",
+    clubsTeamsEmpty: "You are not currently listed in a club or team.",
+    clubsTeamsCatalog: "Open clubs and teams catalog",
+    club: "Club",
+    team: "Team",
+    pendingOperations: "Pending operations",
+    recentOperations: "Recent operations",
+    pendingRevision: "Changes awaiting review",
+    ctRole_head: "Head",
+    ctRole_captain: "Captain",
+    ctRole_member: "Member",
+    ctStatus_pending: "Pending",
+    ctStatus_leased: "Processing",
+    ctStatus_applied: "Applied",
+    ctStatus_rejected: "Rejected",
+    ctStatus_expired: "Expired",
+    ctStatus_dead_letter: "Needs attention",
+    ctStatus_approved: "Approved",
+    ctStatus_suspended: "Suspended",
+    ctStatus_archived: "Archived",
     numberSettings: "Race number settings",
     numberHelp: "Choose a globally unique number from 1 to 999. A new assignment must be approved.",
     numberLabel: "New number (1–999)",
@@ -41,6 +63,28 @@ const COPY = {
     footerText: "Statistics are generated from ACC Dedicated Server result files and published via GitHub Pages."
   },
   ru: {
+    clubsTeams: "Клубы и команды",
+    clubsTeamsUnavailable: "Управление клубами и командами временно недоступно.",
+    clubsTeamsStale: "Снимок состава недоступен или устарел. Изменения заблокированы до его обновления.",
+    clubsTeamsEmpty: "Сейчас вы не состоите в клубе или команде.",
+    clubsTeamsCatalog: "Открыть каталог клубов и команд",
+    club: "Клуб",
+    team: "Команда",
+    pendingOperations: "Операций в ожидании",
+    recentOperations: "Последние операции",
+    pendingRevision: "Изменения ожидают проверки",
+    ctRole_head: "Руководитель",
+    ctRole_captain: "Капитан",
+    ctRole_member: "Участник",
+    ctStatus_pending: "Ожидает",
+    ctStatus_leased: "Обрабатывается",
+    ctStatus_applied: "Выполнено",
+    ctStatus_rejected: "Отклонено",
+    ctStatus_expired: "Истекло",
+    ctStatus_dead_letter: "Требует внимания",
+    ctStatus_approved: "Подтверждено",
+    ctStatus_suspended: "Приостановлено",
+    ctStatus_archived: "В архиве",
     eyebrow: "Личный кабинет гонщика",
     title: "Ваш профиль ASG Racing",
     loading: "Загружаем кабинет…",
@@ -123,6 +167,58 @@ function numberBadge(preferences) {
   return `<span class="account-number${number ? "" : " account-number--empty"}">${number ? `#${number}` : t("noNumber")}</span>`;
 }
 
+function formatAccountDate(value) {
+  if (!value) return "";
+  const date = new Date(value);
+  if (!Number.isFinite(date.getTime())) return "";
+  return new Intl.DateTimeFormat(language() === "ru" ? "ru-RU" : "en-GB", {
+    day: "2-digit", month: "short", hour: "2-digit", minute: "2-digit"
+  }).format(date);
+}
+
+function renderMembershipEntity(entity) {
+  if (!entity) return "";
+  const href = entity.type === "club"
+    ? `/clubs/?slug=${encodeURIComponent(entity.slug)}`
+    : `/teams/detail/?slug=${encodeURIComponent(entity.slug)}`;
+  return `
+    <a class="account-membership" href="${href}">
+      <span class="account-membership-kind">${t(entity.type)}</span>
+      <strong>${escapeHtml(entity.displayName)}</strong>
+      <span>${t(`ctRole_${entity.role}`)} · ${t(`ctStatus_${entity.status}`)}</span>
+      ${entity.pendingRevision ? `<em>${t("pendingRevision")}</em>` : ""}
+    </a>`;
+}
+
+function renderClubsTeams(auth) {
+  const state = auth.clubsTeams;
+  if (!state?.enabled) {
+    return `<section class="account-clubs-teams"><h2>${t("clubsTeams")}</h2><p class="account-muted">${t("clubsTeamsUnavailable")}</p></section>`;
+  }
+  const stale = !state.snapshot.available || state.snapshot.stale;
+  const operations = [...state.notifications, ...state.assetNotifications]
+    .sort((left, right) => String(right.createdAt || "").localeCompare(String(left.createdAt || "")))
+    .slice(0, 5);
+  const pending = state.pendingCommands + state.pendingAssets;
+  return `
+    <section class="account-clubs-teams">
+      <div class="account-section-heading">
+        <h2>${t("clubsTeams")}</h2>
+        ${pending ? `<span class="account-operation-count">${t("pendingOperations")}: ${pending}</span>` : ""}
+      </div>
+      ${stale ? `<p class="account-snapshot-warning" role="status">${t("clubsTeamsStale")}</p>` : ""}
+      ${state.club || state.team
+        ? `<div class="account-memberships">${renderMembershipEntity(state.club)}${renderMembershipEntity(state.team)}</div>`
+        : `<p class="account-muted">${t("clubsTeamsEmpty")}</p>`}
+      ${operations.length ? `
+        <div class="account-operation-list">
+          <h3>${t("recentOperations")}</h3>
+          ${operations.map(operation => `<div class="account-operation"><span>${t(`ctStatus_${operation.status}`)}</span><time>${escapeHtml(formatAccountDate(operation.createdAt))}</time></div>`).join("")}
+        </div>` : ""}
+      <div class="account-actions"><a class="account-action" href="/teams/">${t("clubsTeamsCatalog")}</a></div>
+    </section>`;
+}
+
 function renderSignedOut(root) {
   root.innerHTML = `
     <div class="account-card-body">
@@ -168,6 +264,7 @@ function renderOverview(root, auth) {
           <a class="account-action account-action--primary" href="/account/settings/">${t("settings")}</a>
           <a class="account-action" href="${escapeHtml(auth.driver.profileUrl)}">${t("profile")}</a>
         </div>
+        ${renderClubsTeams(auth)}
       ` : `<p class="account-muted">${t("noProfile")}</p>`}
     </div>`;
 }
