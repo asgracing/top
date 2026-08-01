@@ -1,7 +1,7 @@
 import test from "node:test";
 import assert from "node:assert/strict";
 
-import { normalizeClubsTeamsAuthState } from "../../src/features/auth/clubs-teams-auth-model.js";
+import { membershipActionId, normalizeClubsTeamsAuthState } from "../../src/features/auth/clubs-teams-auth-model.js";
 
 test("normalizes the bounded public cabinet state", () => {
   const normalized = normalizeClubsTeamsAuthState({
@@ -89,4 +89,50 @@ test("bounds notifications and ignores receipt-controlled content", () => {
   assert.equal(normalized.notifications.length, 20);
   assert.equal(normalized.notifications[0].createdAt, null);
   assert.equal(JSON.stringify(normalized).includes("onerror"), false);
+});
+
+test("accepts old actor state and strictly normalizes pending membership actions", () => {
+  const oldState = normalizeClubsTeamsAuthState({
+    enabled: true,
+    applied_state: { public_id: "pilot-1", club: null, team: null }
+  });
+  assert.equal(oldState.integrityValid, true);
+  assert.deepEqual(oldState.membershipActions, []);
+
+  const current = normalizeClubsTeamsAuthState({
+    enabled: true,
+    applied_state: {
+      public_id: "pilot-1",
+      club: null,
+      team: null,
+      membership_actions: [{
+        id: "action-internal",
+        action_type: "invitation",
+        target_type: "club",
+        target_public_id: "club-public",
+        target_slug: "asg-racing",
+        target_display_name: "ASG Racing",
+        subject_public_id: "pilot-1",
+        initiated_by_public_id: "manager-1",
+        created_at: "2026-08-01T10:00:00Z",
+        expires_at: "2026-08-08T10:00:00Z",
+        resolution_role: "subject"
+      }]
+    }
+  });
+  assert.equal(current.integrityValid, true);
+  assert.equal(current.membershipActions[0].targetDisplayName, "ASG Racing");
+  assert.equal(membershipActionId(current.membershipActions[0]), "action-internal");
+  assert.equal(JSON.stringify(current).includes("action-internal"), false);
+  assert.equal("id" in current.membershipActions[0], false);
+
+  const invalid = normalizeClubsTeamsAuthState({
+    enabled: true,
+    applied_state: {
+      public_id: "pilot-1", club: null, team: null,
+      membership_actions: [{ id: "bad", action_type: "root" }]
+    }
+  });
+  assert.equal(invalid.integrityValid, false);
+  assert.deepEqual(invalid.membershipActions, []);
 });

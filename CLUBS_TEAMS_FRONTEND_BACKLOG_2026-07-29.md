@@ -154,3 +154,23 @@ Visual matrix F4a не выполнена: 01.08.2026 встроенная ср�
 - [ ] staging integration: recent-auth, CSRF/Origin, queue/receipt/state round-trip и version conflict;
 - [ ] visual matrix desktop/tablet/mobile, RU/EN и keyboard — browser backend 01.08.2026 отсутствовал;
 - [ ] production navigation/sitemap/CSP и deploy — отдельное решение.
+
+## Завершённый контракт F4b2a — pending membership actions
+
+- [x] backend actor-state добавляет только актуальные pending membership actions;
+- [x] приглашение видит приглашённый пилот, запрос видит manager целевой сущности;
+- [x] initiator видит собственную исходящую операцию как observer;
+- [x] action snapshot не содержит внутренний target entity ID;
+- [x] action ID на frontend хранится только в `WeakMap` и не сериализуется;
+- [x] auth принимает старый actor-state из трёх полей и новый с `membership_actions`;
+- [x] frontend также принимает оба формата и отключает mutations при malformed action;
+- [x] массив ограничен 100 действиями на пилота, exact keys и allowlisted enums/dates;
+- [x] database migration не требуется;
+- [x] frontend CI: 235/235 unit, 260 dist files, 727 references, 25 smoke.
+
+### Следующий срез F4b2b
+
+- [ ] invitation/request cards и accept/reject UI;
+- [ ] manager invite/remove и member leave UI;
+- [ ] запрос вступления по public entity ID без раскрытия internal target ID;
+- [ ] staging round-trip и visual matrix.

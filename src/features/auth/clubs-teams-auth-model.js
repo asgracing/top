@@ -3,7 +3,13 @@ const QUEUE_STATUSES = new Set(["pending", "leased", "applied", "rejected", "exp
 const ROLES = Object.freeze({ club: new Set(["head", "member"]), team: new Set(["captain", "member"]) });
 const MANAGEMENT_IDS = new WeakMap();
 const ACTOR_STATE_KEYS = new Set(["public_id", "club", "team"]);
+const ACTOR_STATE_ACTION_KEYS = new Set(["public_id", "club", "team", "membership_actions"]);
 const ENTITY_KEYS = new Set(["id", "public_id", "slug", "status", "row_version", "role", "display_name", "pending_revision"]);
+const ACTION_KEYS = new Set([
+  "id", "action_type", "target_type", "target_public_id", "target_slug", "target_display_name",
+  "subject_public_id", "initiated_by_public_id", "created_at", "expires_at", "resolution_role"
+]);
+const MEMBERSHIP_ACTION_IDS = new WeakMap();
 
 function plainObject(value) {
   return value && typeof value === "object" && !Array.isArray(value) ? value : null;
@@ -58,6 +64,53 @@ export function managementEntityId(entity) {
   return entity && typeof entity === "object" ? MANAGEMENT_IDS.get(entity) || null : null;
 }
 
+export function membershipActionId(action) {
+  return action && typeof action === "object" ? MEMBERSHIP_ACTION_IDS.get(action) || null : null;
+}
+
+function normalizeMembershipActions(value) {
+  if (value === undefined) return { actions: [], valid: true };
+  if (!Array.isArray(value) || value.length > 100) return { actions: [], valid: false };
+  const actions = [];
+  const ids = new Set();
+  for (const raw of value) {
+    const source = plainObject(raw);
+    if (!source || !hasExactKeys(source, ACTION_KEYS)) return { actions: [], valid: false };
+    const id = safeIdentifier(source.id);
+    const targetPublicId = safeIdentifier(source.target_public_id);
+    const targetSlug = safeSlug(source.target_slug);
+    const targetDisplayName = boundedText(source.target_display_name, 200);
+    const subjectPublicId = safeIdentifier(source.subject_public_id);
+    const initiatedByPublicId = safeIdentifier(source.initiated_by_public_id);
+    const createdAt = safeDate(source.created_at);
+    const expiresAt = safeDate(source.expires_at);
+    if (
+      !id || ids.has(id) || !targetPublicId || !targetSlug || !targetDisplayName
+      || !subjectPublicId || !initiatedByPublicId || !createdAt || !expiresAt
+      || Date.parse(expiresAt) <= Date.parse(createdAt)
+      || !["request", "invitation"].includes(source.action_type)
+      || !["club", "team"].includes(source.target_type)
+      || !["subject", "manager", "observer"].includes(source.resolution_role)
+    ) return { actions: [], valid: false };
+    const action = {
+      actionType: source.action_type,
+      targetType: source.target_type,
+      targetPublicId,
+      targetSlug,
+      targetDisplayName,
+      subjectPublicId,
+      initiatedByPublicId,
+      createdAt,
+      expiresAt,
+      resolutionRole: source.resolution_role
+    };
+    MEMBERSHIP_ACTION_IDS.set(action, id);
+    ids.add(id);
+    actions.push(action);
+  }
+  return { actions, valid: true };
+}
+
 function normalizeNotification(value, idKey) {
   const source = plainObject(value);
   if (!source) return null;
@@ -93,6 +146,7 @@ export function normalizeClubsTeamsAuthState(value) {
     pendingAssets: 0,
     notifications: [],
     assetNotifications: [],
+    membershipActions: [],
     integrityValid: true,
     snapshot: { available: false, revision: null, generatedAt: null, receivedAt: null, stale: true }
   };
@@ -101,12 +155,14 @@ export function normalizeClubsTeamsAuthState(value) {
   const state = plainObject(rawState) || {};
   const club = normalizeEntity(state.club, "club");
   const team = normalizeEntity(state.team, "team");
+  const membership = normalizeMembershipActions(state.membership_actions);
   const integrityValid = rawState === null || rawState === undefined || (
     plainObject(rawState) !== null
-    && hasExactKeys(rawState, ACTOR_STATE_KEYS)
+    && (hasExactKeys(rawState, ACTOR_STATE_KEYS) || hasExactKeys(rawState, ACTOR_STATE_ACTION_KEYS))
     && Boolean(safeIdentifier(state.public_id))
     && (state.club === null || state.club === undefined || club !== null)
     && (state.team === null || state.team === undefined || team !== null)
+    && membership.valid
   );
   return {
     enabled: true,
@@ -116,6 +172,7 @@ export function normalizeClubsTeamsAuthState(value) {
     pendingAssets: safeInteger(source.pending_assets, 0, 10_000) ?? 0,
     notifications: normalizeNotifications(source.notifications, "command_id"),
     assetNotifications: normalizeNotifications(source.asset_notifications, "asset_id"),
+    membershipActions: membership.actions,
     integrityValid,
     snapshot: normalizeSnapshot(source.snapshot)
   };
