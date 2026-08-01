@@ -10,6 +10,10 @@ import {
   buildMembershipRemoveCommand,
   buildMembershipRequestCommand,
   buildMembershipResolveCommand,
+  buildTeamClubDetachCommand,
+  buildTeamClubInviteCommand,
+  buildTeamClubRequestCommand,
+  buildTeamClubResolveCommand,
   buildReviseEntityCommand,
   normalizeCommandResponse,
   normalizeRevisionFields
@@ -120,4 +124,30 @@ test("builds manager invite and remove commands from protected entity ids", () =
   state.team.role = "member";
   assert.throws(() => buildMembershipInviteCommand({ entity: state.team, subjectPublicId: "pilot-2" }), /manager_required/);
   assert.throws(() => buildMembershipRemoveCommand({ entity: state.club, subjectPublicId: "<bad>" }), /invalid_subject/);
+});
+
+test("builds public-target team-club commands and protects resolution ids", () => {
+  const state = stateWithEntities();
+  assert.deepEqual(buildTeamClubRequestCommand({ teamEntity: state.team, clubPublicId: "club-target" }).payload,
+    { team_id: "team-internal", club_public_id: "club-target" });
+  assert.deepEqual(buildTeamClubInviteCommand({ clubEntity: state.club, teamPublicId: "team-target" }).payload,
+    { team_public_id: "team-target", club_id: "club-internal" });
+  assert.deepEqual(buildTeamClubDetachCommand({ teamEntity: state.team }).payload,
+    { team_id: "team-internal", reason: "detached" });
+  assert.deepEqual(buildTeamClubDetachCommand({ clubEntity: state.club, teamPublicId: "team-target" }).payload,
+    { team_public_id: "team-target", reason: "detached" });
+
+  const actionState = normalizeClubsTeamsAuthState({ enabled: true, applied_state: {
+    public_id: "pilot-1", club: null, team: null, team_club_actions: [{
+      id: "teamclub-1", action_type: "request",
+      team_public_id: "team-target", team_slug: "target-team", team_display_name: "Target Team",
+      club_public_id: "club-target", club_slug: "target-club", club_display_name: "Target Club",
+      initiated_by_public_id: "captain", created_at: "2026-08-01T10:00:00Z",
+      expires_at: "2026-08-08T10:00:00Z", resolution_role: "manager"
+    }]
+  }});
+  assert.deepEqual(buildTeamClubResolveCommand({ action: actionState.teamClubActions[0], decision: "accepted" }).payload,
+    { action_id: "teamclub-1", decision: "accepted" });
+  actionState.teamClubActions[0].resolutionRole = "observer";
+  assert.throws(() => buildTeamClubResolveCommand({ action: actionState.teamClubActions[0], decision: "accepted" }), /action_not_resolvable/);
 });

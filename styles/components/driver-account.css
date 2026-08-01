@@ -321,6 +321,15 @@
     font-weight: 800;
   }
 
+  .account-affiliation-request > div {
+    display: grid;
+    gap: 8px;
+  }
+
+  .account-affiliation-request .account-snapshot-warning {
+    margin: 0;
+  }
+
   .account-command-summary,
   .account-command-message {
     padding: 10px 12px;

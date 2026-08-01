@@ -149,7 +149,7 @@ Visual matrix F4a не выполнена: 01.08.2026 встроенная ср�
 ### Остаток после F4b1
 
 - [ ] F4b2: membership request/invite/resolve/leave/remove;
-- [ ] F4b3: team-club request/invite/resolve/detach;
+- [x] F4b3: team-club request/invite/resolve/detach;
 - [ ] F4c: безопасная загрузка и moderation receipt логотипа;
 - [ ] staging integration: recent-auth, CSRF/Origin, queue/receipt/state round-trip и version conflict;
 - [ ] visual matrix desktop/tablet/mobile, RU/EN и keyboard — browser backend 01.08.2026 отсутствовал;
@@ -202,7 +202,7 @@ Visual matrix F4a не выполнена: 01.08.2026 встроенная ср�
 - [x] RU/EN, keyboard input и mobile vertical layout;
 - [x] frontend CI: 241/241 unit, 261 dist files, 728 references, 25 smoke;
 - [ ] visual matrix: browser runtime снова вернул пустой список backend'ов;
-- [ ] F4b3: team-club affiliation actions;
+- [x] F4b3: team-club affiliation actions;
 - [ ] staging auth/backend round-trip и production deploy.
 
 ## Завершённый контракт F4b3a — team-club pending state
@@ -213,5 +213,21 @@ Visual matrix F4a не выполнена: 01.08.2026 встроенная ср�
 - [x] malformed/oversized/duplicate actions fail closed и отключают mutations;
 - [x] auth exact allowlist готов для request/invite/resolve/detach;
 - [x] frontend CI: 242/242 unit, 261 dist files, 728 references, 25 smoke;
-- [ ] F4b3b: публичные CTA и кабинетные действия;
+- [x] F4b3b: публичные CTA и кабинетные действия;
 - [ ] staging round-trip и ручная visual matrix.
+
+## Завершённый срез F4b3b — team-club affiliation UI
+
+- [x] публичная страница клуба предлагает пригласить команду, а страница команды — запросить вступление или управлять связью;
+- [x] кабинет допускает request только капитану команды и invite только главе клуба;
+- [x] pending request/invite показывают обе стороны, срок действия и accept/reject только допустимому manager;
+- [x] resolve использует защищённый action ID из `WeakMap`, без помещения внутреннего ID в DOM/URL;
+- [x] detach доступен только главе клуба или капитану своей команды и требует отдельного подтверждения;
+- [x] предупреждение явно сообщает, что detach архивирует команду и прекращает её операции;
+- [x] payload собирается только через allowlisted command builders с public target ID;
+- [x] RU/EN и mobile stacking добавлены;
+- [x] frontend CI: 243/243 unit, 261 dist files, 728 references, 25 smoke;
+- [ ] визуальная матрица не выполнена: browser runtime 01.08.2026 снова вернул пустой список backend'ов;
+- [ ] Stage 6V: staging auth queue → backend apply → actor-state round-trip;
+- [ ] F4c: безопасная загрузка и moderation receipt логотипа;
+- [ ] production navigation/sitemap/CSP и deploy — отдельное решение после staging gate.

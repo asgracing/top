@@ -13,6 +13,9 @@ const COPY = {
     club: "Club", team: "Team", back: "Back to clubs & teams", loading: "Loading profile…",
     unavailable: "This public profile is unavailable.", retry: "Try again", website: "Open website",
     requestMembership: "Request membership",
+    requestTeamAffiliation: "Request team affiliation",
+    inviteTeamAffiliation: "Invite team to my club",
+    manageTeamAffiliation: "Manage club affiliation",
     rating: "General rating", position: "Position", points: "Points", races: "Races",
     members: "Members", roster: "Roster", relatedTeams: "Club teams", affiliatedClub: "Club",
     recent: "Recent counted races", noDescription: "No public description yet.", noRoster: "No active members.",
@@ -25,6 +28,9 @@ const COPY = {
     club: "Клуб", team: "Команда", back: "Назад к клубам и командам", loading: "Загружаем профиль…",
     unavailable: "Этот публичный профиль недоступен.", retry: "Повторить", website: "Открыть сайт",
     requestMembership: "Подать заявку",
+    requestTeamAffiliation: "Подать заявку от команды",
+    inviteTeamAffiliation: "Пригласить команду в мой клуб",
+    manageTeamAffiliation: "Управлять связью с клубом",
     rating: "Общий рейтинг", position: "Место", points: "Очки", races: "Гонки",
     members: "Участники", roster: "Состав", relatedTeams: "Команды клуба", affiliatedClub: "Клуб",
     recent: "Последние зачётные гонки", noDescription: "Публичное описание пока не добавлено.", noRoster: "Активных участников нет.",
@@ -121,6 +127,17 @@ function renderProfile({ documentRef, lang, siteBase, entityType, result }) {
   actions.push(element(documentRef, "a", {
     className: "btn btn-primary", text: copy(lang, "requestMembership"),
     attrs: { href: `${requestUrl.pathname}${requestUrl.search}` }
+  }));
+  const affiliationUrl = new URL(`${siteBase}account/`, window.location.origin);
+  const affiliationAction = entityType === "club" ? "request" : detail.club ? "detach" : "invite";
+  affiliationUrl.searchParams.set("affiliation_action", affiliationAction);
+  affiliationUrl.searchParams.set("affiliation_target", detail.public_id);
+  affiliationUrl.searchParams.set("affiliation_name", detail.display_name);
+  actions.push(element(documentRef, "a", {
+    className: "btn", text: copy(lang, entityType === "club"
+      ? "requestTeamAffiliation"
+      : detail.club ? "manageTeamAffiliation" : "inviteTeamAffiliation"),
+    attrs: { href: `${affiliationUrl.pathname}${affiliationUrl.search}` }
   }));
   const hero = element(documentRef, "section", { className: "clubs-teams-detail-hero" }, [
     logo,

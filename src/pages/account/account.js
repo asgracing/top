@@ -10,6 +10,10 @@ import {
   buildMembershipRemoveCommand,
   buildMembershipRequestCommand,
   buildMembershipResolveCommand,
+  buildTeamClubDetachCommand,
+  buildTeamClubInviteCommand,
+  buildTeamClubRequestCommand,
+  buildTeamClubResolveCommand,
   buildReviseEntityCommand,
   normalizeCommandResponse
 } from "./clubs-teams-command-model.js";
@@ -97,6 +101,17 @@ const COPY = {
     confirmRemove: value => `Remove ${value} from this roster?`,
     confirmInvite: value => `Invite ${value}?`,
     rosterUnavailable: "The current roster or pilot index is unavailable.",
+    teamClubActions: "Team and club affiliation",
+    teamClubRequest: "Affiliation request",
+    teamClubInvitation: "Club invitation",
+    affiliationExpires: value => `Expires ${value}`,
+    requestAffiliation: value => `Request affiliation with ${value}`,
+    inviteAffiliation: value => `Invite ${value} to your club`,
+    detachAffiliation: value => `Detach ${value} from its club`,
+    sendAffiliation: "Send affiliation action",
+    detachTeam: "Detach and archive team",
+    detachWarning: "Detaching archives the team. Its current public team profile and active team operation will stop.",
+    confirmDetach: "Detach this team from the club and archive it?",
     commandRejected: "The operation was rejected.",
     reauthRequired: "For security, sign in with Steam again and repeat the operation.",
     reauth: "Sign in again",
@@ -166,6 +181,17 @@ const COPY = {
     confirmRemove: value => `Исключить ${value} из состава?`,
     confirmInvite: value => `Пригласить ${value}?`,
     rosterUnavailable: "Не удалось загрузить актуальный состав или список пилотов.",
+    teamClubActions: "Связь команды и клуба",
+    teamClubRequest: "Заявка на присоединение",
+    teamClubInvitation: "Приглашение от клуба",
+    affiliationExpires: value => `Действует до ${value}`,
+    requestAffiliation: value => `Подать заявку в клуб ${value}`,
+    inviteAffiliation: value => `Пригласить команду ${value} в ваш клуб`,
+    detachAffiliation: value => `Отсоединить команду ${value} от клуба`,
+    sendAffiliation: "Отправить действие",
+    detachTeam: "Отсоединить и архивировать команду",
+    detachWarning: "Отсоединение архивирует команду. Её публичный профиль и активная работа команды будут остановлены.",
+    confirmDetach: "Отсоединить команду от клуба и архивировать её?",
     commandRejected: "Операция отклонена.",
     reauthRequired: "Для безопасности снова войдите через Steam и повторите операцию.",
     reauth: "Войти снова",
@@ -298,6 +324,18 @@ function membershipRequestFromLocation() {
   return { targetType, targetPublicId, targetName };
 }
 
+function affiliationTargetFromLocation() {
+  const params = new URLSearchParams(location.search);
+  const action = params.get("affiliation_action");
+  const targetPublicId = String(params.get("affiliation_target") || "").trim();
+  const targetName = String(params.get("affiliation_name") || "").normalize("NFKC").trim();
+  if (!["request", "invite", "detach"].includes(action)
+    || targetPublicId.length > 160
+    || !/^[A-Za-z0-9][A-Za-z0-9._:-]*$/.test(targetPublicId)
+    || !targetName || targetName.length > 200) return null;
+  return { action, targetPublicId, targetName };
+}
+
 function renderMembershipEntity(entity, canEdit = false, canLeave = false) {
   if (!entity) return "";
   const href = entity.type === "club"
@@ -339,6 +377,23 @@ function renderMembershipActions(actions, mutationReady) {
   </div>`;
 }
 
+function renderTeamClubActions(actions, mutationReady) {
+  if (!actions.length) return "";
+  return `<div class="account-membership-actions account-team-club-actions">
+    <h3>${t("teamClubActions")}</h3>
+    ${actions.map((action, index) => `<article class="account-membership-action">
+      <div><span>${t(action.actionType === "request" ? "teamClubRequest" : "teamClubInvitation")}</span>
+        <strong><a href="/teams/detail/?slug=${encodeURIComponent(action.teamSlug)}">${escapeHtml(action.teamDisplayName)}</a>
+          ↔ <a href="/clubs/?slug=${encodeURIComponent(action.clubSlug)}">${escapeHtml(action.clubDisplayName)}</a></strong>
+        <time>${escapeHtml(t("affiliationExpires", formatAccountDate(action.expiresAt)))}</time></div>
+      ${mutationReady && action.resolutionRole === "manager" ? `<div class="account-membership-action-buttons">
+        <button class="account-action account-action--primary" type="button" data-ct-team-club-resolve="accepted" data-ct-team-club-index="${index}">${t("acceptMembership")}</button>
+        <button class="account-action" type="button" data-ct-team-club-resolve="rejected" data-ct-team-club-index="${index}">${t("rejectMembership")}</button>
+      </div>` : ""}
+    </article>`).join("")}
+  </div>`;
+}
+
 function renderClubsTeams(auth) {
   const state = auth.clubsTeams;
   if (!state?.enabled) {
@@ -351,6 +406,20 @@ function renderClubsTeams(auth) {
   const pending = state.pendingCommands + state.pendingAssets;
   const mutationReady = !stale && state.integrityValid && auth.discord?.linked && pending === 0 && Boolean(auth.csrfToken);
   const requestedMembership = membershipRequestFromLocation();
+  const affiliationTarget = affiliationTargetFromLocation();
+  const affiliationPending = affiliationTarget && state.teamClubActions.some(action => (
+    action.teamPublicId === affiliationTarget.targetPublicId
+    || action.clubPublicId === affiliationTarget.targetPublicId
+  ));
+  const affiliationEligible = affiliationTarget && !affiliationPending && (
+    (affiliationTarget.action === "request" && state.team?.role === "captain")
+    || (affiliationTarget.action === "invite" && state.club?.role === "head")
+    || (affiliationTarget.action === "detach" && (
+      state.club?.role === "head"
+      || (state.team?.role === "captain" && state.team.publicId === affiliationTarget.targetPublicId)
+    ))
+  );
+  const affiliationReady = mutationReady && affiliationEligible;
   const canEditClub = mutationReady && state.club?.role === "head" && state.club.status === "approved" && !state.club.pendingRevision;
   const canEditTeam = mutationReady && state.team?.role === "captain" && state.team.status === "approved" && !state.team.pendingRevision;
   return `
@@ -365,11 +434,20 @@ function renderClubsTeams(auth) {
         ? `<div class="account-memberships">${renderMembershipEntity(state.club, canEditClub, mutationReady && state.club?.role === "member")}${renderMembershipEntity(state.team, canEditTeam, mutationReady && state.team?.role === "member")}</div>`
         : `<p class="account-muted">${t("clubsTeamsEmpty")}</p>`}
       ${renderMembershipActions(state.membershipActions, mutationReady)}
+      ${renderTeamClubActions(state.teamClubActions, mutationReady)}
       ${requestedMembership ? `<div class="account-membership-request">
         <strong>${escapeHtml(t("requestedMembership", requestedMembership.targetName))}</strong>
         ${mutationReady && !state[requestedMembership.targetType]
           ? `<button class="account-action account-action--primary" type="button" data-ct-request-membership>${t("sendMembershipRequest")}</button>`
           : ""}
+      </div>` : ""}
+      ${affiliationTarget ? `<div class="account-membership-request account-affiliation-request">
+        <div><strong>${escapeHtml(t(
+          affiliationTarget.action === "request" ? "requestAffiliation" : affiliationTarget.action === "invite" ? "inviteAffiliation" : "detachAffiliation",
+          affiliationTarget.targetName
+        ))}</strong>
+        ${affiliationTarget.action === "detach" ? `<p class="account-snapshot-warning">${t("detachWarning")}</p>` : ""}</div>
+        ${affiliationReady ? `<button class="account-action ${affiliationTarget.action === "detach" ? "account-action--danger" : "account-action--primary"}" type="button" data-ct-affiliation-action>${t(affiliationTarget.action === "detach" ? "detachTeam" : "sendAffiliation")}</button>` : ""}
       </div>` : ""}
       ${operations.length ? `
         <div class="account-operation-list">
@@ -679,6 +757,45 @@ function bindClubsTeamsActions(auth) {
     if (!target) return;
     try {
       const command = buildMembershipRequestCommand(target);
+      history.replaceState({}, "", location.pathname);
+      void submitMembershipCommand(auth, command, event.currentTarget);
+    } catch (error) {
+      clubsTeamsFlash = { text: commandErrorText(error?.code), kind: "error" };
+      render(auth);
+    }
+  });
+  document.querySelectorAll("[data-ct-team-club-resolve]").forEach(button => {
+    button.addEventListener("click", () => {
+      const action = auth.clubsTeams.teamClubActions[Number(button.dataset.ctTeamClubIndex)];
+      const decision = button.dataset.ctTeamClubResolve;
+      const prompt = decision === "accepted" ? t("confirmAccept") : t("confirmReject");
+      if (!action || !confirm(prompt)) return;
+      try {
+        void submitMembershipCommand(auth, buildTeamClubResolveCommand({ action, decision }), button);
+      } catch (error) {
+        clubsTeamsFlash = { text: commandErrorText(error?.code), kind: "error" };
+        render(auth);
+      }
+    });
+  });
+  document.querySelector("[data-ct-affiliation-action]")?.addEventListener("click", event => {
+    const target = affiliationTargetFromLocation();
+    if (!target || (target.action === "detach" && !confirm(t("confirmDetach")))) return;
+    try {
+      let command;
+      if (target.action === "request") {
+        command = buildTeamClubRequestCommand({ teamEntity: auth.clubsTeams.team, clubPublicId: target.targetPublicId });
+      } else if (target.action === "invite") {
+        command = buildTeamClubInviteCommand({ clubEntity: auth.clubsTeams.club, teamPublicId: target.targetPublicId });
+      } else {
+        const ownTeam = auth.clubsTeams.team?.role === "captain" && auth.clubsTeams.team.publicId === target.targetPublicId
+          ? auth.clubsTeams.team : null;
+        command = buildTeamClubDetachCommand({
+          teamEntity: ownTeam,
+          clubEntity: ownTeam ? null : auth.clubsTeams.club,
+          teamPublicId: ownTeam ? null : target.targetPublicId
+        });
+      }
       history.replaceState({}, "", location.pathname);
       void submitMembershipCommand(auth, command, event.currentTarget);
     } catch (error) {

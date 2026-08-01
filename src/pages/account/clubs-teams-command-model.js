@@ -1,4 +1,4 @@
-import { managementEntityId, membershipActionId } from "../../features/auth/clubs-teams-auth-model.js";
+import { managementEntityId, membershipActionId, teamClubActionId } from "../../features/auth/clubs-teams-auth-model.js";
 
 const ENTITY_TYPES = new Set(["club", "team"]);
 const FINAL_STATUSES = new Set(["applied", "rejected", "expired", "dead_letter"]);
@@ -9,7 +9,8 @@ const SAFE_ERROR_CODES = new Set([
   "already_in_club", "already_in_team", "club_membership_required", "independent_team_requires_no_club",
   "version_conflict", "forbidden", "invalid_state", "identity_links_required", "asset_not_ready",
   "unexpected_field", "command_expired", "entity_not_found", "entity_not_approved", "already_member",
-  "action_pending", "action_not_pending", "invalid_decision", "leadership_transfer_required"
+  "action_pending", "action_not_pending", "invalid_decision", "leadership_transfer_required",
+  "team_already_affiliated", "incompatible_membership", "not_affiliated"
 ]);
 
 export class ClubsTeamsCommandError extends Error {
@@ -156,6 +157,51 @@ export function buildMembershipRemoveCommand({ entity, subjectPublicId }) {
     payload: { entity_type: type, entity_id: entityId, subject_public_id: subject, reason: "removed" },
     expectedEntityVersion: null
   };
+}
+
+export function buildTeamClubRequestCommand({ teamEntity, clubPublicId }) {
+  const { type, entityId } = requireManagerEntity(teamEntity);
+  const club = safeIdentifier(clubPublicId);
+  if (type !== "team" || !club) throw new ClubsTeamsCommandError("invalid_affiliation_target");
+  return {
+    commandType: "team_club.request",
+    payload: { team_id: entityId, club_public_id: club },
+    expectedEntityVersion: null
+  };
+}
+
+export function buildTeamClubInviteCommand({ clubEntity, teamPublicId }) {
+  const { type, entityId } = requireManagerEntity(clubEntity);
+  const team = safeIdentifier(teamPublicId);
+  if (type !== "club" || !team) throw new ClubsTeamsCommandError("invalid_affiliation_target");
+  return {
+    commandType: "team_club.invite",
+    payload: { team_public_id: team, club_id: entityId },
+    expectedEntityVersion: null
+  };
+}
+
+export function buildTeamClubResolveCommand({ action, decision }) {
+  const actionId = teamClubActionId(action);
+  if (!actionId || action?.resolutionRole !== "manager") throw new ClubsTeamsCommandError("action_not_resolvable");
+  if (!["accepted", "rejected"].includes(decision)) throw new ClubsTeamsCommandError("invalid_decision");
+  return {
+    commandType: "team_club.resolve",
+    payload: { action_id: actionId, decision },
+    expectedEntityVersion: null
+  };
+}
+
+export function buildTeamClubDetachCommand({ teamEntity = null, clubEntity = null, teamPublicId = null }) {
+  if (teamEntity) {
+    const { type, entityId } = requireManagerEntity(teamEntity);
+    if (type !== "team") throw new ClubsTeamsCommandError("manager_required");
+    return { commandType: "team_club.detach", payload: { team_id: entityId, reason: "detached" }, expectedEntityVersion: null };
+  }
+  const { type } = requireManagerEntity(clubEntity);
+  const team = safeIdentifier(teamPublicId);
+  if (type !== "club" || !team) throw new ClubsTeamsCommandError("invalid_affiliation_target");
+  return { commandType: "team_club.detach", payload: { team_public_id: team, reason: "detached" }, expectedEntityVersion: null };
 }
 
 function safeIdentifier(value) {
