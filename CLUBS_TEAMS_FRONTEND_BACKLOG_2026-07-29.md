@@ -174,3 +174,17 @@ Visual matrix F4a не выполнена: 01.08.2026 встроенная ср�
 - [ ] manager invite/remove и member leave UI;
 - [ ] запрос вступления по public entity ID без раскрытия internal target ID;
 - [ ] staging round-trip и visual matrix.
+
+## Завершённый срез F4b2b1 — membership self-service
+
+- [x] публичная карточка клуба/команды ведёт в кабинет с allowlisted public target ID;
+- [x] auth принимает request только с exact payload `target_type + target_public_id`;
+- [x] кабинет показывает pending invitation/request с названием и сроком действия;
+- [x] subject invitation и manager request получают accept/reject;
+- [x] обычный member может покинуть клуб/команду; leader/captain защищены transfer guard;
+- [x] mutation guards, bounded polling и safe receipt остаются общими с F4b1;
+- [x] RU/EN и mobile stacking добавлены;
+- [x] frontend CI: 237/237 unit, 260 dist files, 727 references, 25 smoke;
+- [ ] visual matrix не выполнена: browser runtime вернул пустой список backend'ов;
+- [ ] F4b2b2: manager invite/remove с безопасным поиском пилота;
+- [ ] staging auth/backend round-trip и production deploy.

@@ -5,6 +5,9 @@ import { normalizeClubsTeamsAuthState, managementEntityId } from "../../src/feat
 import {
   ClubsTeamsCommandError,
   buildCreateEntityCommand,
+  buildMembershipLeaveCommand,
+  buildMembershipRequestCommand,
+  buildMembershipResolveCommand,
   buildReviseEntityCommand,
   normalizeCommandResponse,
   normalizeRevisionFields
@@ -68,4 +71,38 @@ test("normalizes polling responses without retaining arbitrary receipts", () => 
   assert.deepEqual(normalized, { id: "ctc_123", status: "rejected", final: true, errorCode: "name_taken" });
   assert.equal(JSON.stringify(normalized).includes("raw backend"), false);
   assert.throws(() => normalizeCommandResponse({ command: { command_id: "<bad>", status: "applied" } }), /invalid_command_response/);
+});
+
+test("builds public-id membership requests without internal target ids", () => {
+  const command = buildMembershipRequestCommand({ targetType: "club", targetPublicId: "club-public" });
+  assert.deepEqual(command, {
+    commandType: "membership.request",
+    payload: { target_type: "club", target_public_id: "club-public" },
+    expectedEntityVersion: null
+  });
+  assert.equal("target_id" in command.payload, false);
+  assert.throws(() => buildMembershipRequestCommand({ targetType: "club", targetPublicId: "<bad>" }), /invalid_target/);
+});
+
+test("builds membership resolution and member leave commands from protected ids", () => {
+  const state = normalizeClubsTeamsAuthState({
+    enabled: true,
+    applied_state: {
+      public_id: "pilot-1",
+      club: { id: "club-internal", public_id: "club-public", slug: "asg", display_name: "ASG", status: "approved", role: "member", row_version: 4, pending_revision: false },
+      team: null,
+      membership_actions: [{
+        id: "membership-1", action_type: "invitation", target_type: "team",
+        target_public_id: "team-public", target_slug: "factory", target_display_name: "Factory",
+        subject_public_id: "pilot-1", initiated_by_public_id: "pilot-2",
+        created_at: "2026-08-01T10:00:00Z", expires_at: "2026-08-08T10:00:00Z", resolution_role: "subject"
+      }]
+    }
+  });
+  assert.deepEqual(buildMembershipResolveCommand({ action: state.membershipActions[0], decision: "accepted" }).payload,
+    { action_id: "membership-1", decision: "accepted" });
+  assert.deepEqual(buildMembershipLeaveCommand(state.club).payload,
+    { entity_type: "club", entity_id: "club-internal", reason: "leave" });
+  state.club.role = "head";
+  assert.throws(() => buildMembershipLeaveCommand(state.club), /leave_not_allowed/);
 });

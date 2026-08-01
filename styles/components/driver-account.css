@@ -202,6 +202,60 @@
     cursor: pointer;
   }
 
+  .account-entity-action--danger {
+    color: #ff9e87;
+  }
+
+  .account-membership-actions {
+    display: grid;
+    gap: 10px;
+    margin-top: 18px;
+  }
+
+  .account-membership-actions h3 {
+    margin: 0;
+    font-size: 0.9rem;
+  }
+
+  .account-membership-action,
+  .account-membership-request {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 14px;
+    padding: 14px;
+    border: 1px solid rgba(244, 183, 64, 0.22);
+    border-radius: 12px;
+    background: rgba(244, 183, 64, 0.06);
+  }
+
+  .account-membership-action > div:first-child {
+    display: grid;
+    gap: 4px;
+  }
+
+  .account-membership-action a {
+    color: #fff;
+    font-weight: 800;
+  }
+
+  .account-membership-action span,
+  .account-membership-action time {
+    color: #aeb8c7;
+    font-size: 0.76rem;
+  }
+
+  .account-membership-action-buttons {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+  }
+
+  .account-membership-action-buttons .account-action,
+  .account-membership-request .account-action {
+    margin-top: 0;
+  }
+
   .account-command-summary,
   .account-command-message {
     padding: 10px 12px;
@@ -390,6 +444,12 @@
 
     .account-memberships {
       grid-template-columns: 1fr;
+    }
+
+    .account-membership-action,
+    .account-membership-request {
+      align-items: stretch;
+      flex-direction: column;
     }
   }
 }

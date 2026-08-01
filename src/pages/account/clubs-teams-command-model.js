@@ -1,4 +1,4 @@
-import { managementEntityId } from "../../features/auth/clubs-teams-auth-model.js";
+import { managementEntityId, membershipActionId } from "../../features/auth/clubs-teams-auth-model.js";
 
 const ENTITY_TYPES = new Set(["club", "team"]);
 const FINAL_STATUSES = new Set(["applied", "rejected", "expired", "dead_letter"]);
@@ -8,7 +8,8 @@ const SAFE_ERROR_CODES = new Set([
   "discord_link_required", "command_type_not_allowed", "name_taken", "invalid_field", "invalid_name",
   "already_in_club", "already_in_team", "club_membership_required", "independent_team_requires_no_club",
   "version_conflict", "forbidden", "invalid_state", "identity_links_required", "asset_not_ready",
-  "unexpected_field", "command_expired"
+  "unexpected_field", "command_expired", "entity_not_found", "entity_not_approved", "already_member",
+  "action_pending", "action_not_pending", "invalid_decision", "leadership_transfer_required"
 ]);
 
 export class ClubsTeamsCommandError extends Error {
@@ -87,6 +88,41 @@ export function buildReviseEntityCommand({ entityType, entity, fields }) {
     commandType: "entity.revise",
     payload: { entity_type: type, entity_id: entityId, fields: normalizeRevisionFields(fields) },
     expectedEntityVersion: entity.rowVersion
+  };
+}
+
+export function buildMembershipRequestCommand({ targetType, targetPublicId }) {
+  const type = requireEntityType(targetType);
+  const publicId = safeIdentifier(targetPublicId);
+  if (!publicId) throw new ClubsTeamsCommandError("invalid_target");
+  return {
+    commandType: "membership.request",
+    payload: { target_type: type, target_public_id: publicId },
+    expectedEntityVersion: null
+  };
+}
+
+export function buildMembershipResolveCommand({ action, decision }) {
+  const actionId = membershipActionId(action);
+  if (!actionId || !["subject", "manager"].includes(action?.resolutionRole)) {
+    throw new ClubsTeamsCommandError("action_not_resolvable");
+  }
+  if (!["accepted", "rejected"].includes(decision)) throw new ClubsTeamsCommandError("invalid_decision");
+  return {
+    commandType: "membership.resolve",
+    payload: { action_id: actionId, decision },
+    expectedEntityVersion: null
+  };
+}
+
+export function buildMembershipLeaveCommand(entity) {
+  const type = requireEntityType(entity?.type);
+  const entityId = managementEntityId(entity);
+  if (!entityId || !["member"].includes(entity.role)) throw new ClubsTeamsCommandError("leave_not_allowed");
+  return {
+    commandType: "membership.leave",
+    payload: { entity_type: type, entity_id: entityId, reason: "leave" },
+    expectedEntityVersion: null
   };
 }
 

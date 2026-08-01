@@ -12,6 +12,7 @@ const COPY = {
   en: {
     club: "Club", team: "Team", back: "Back to clubs & teams", loading: "Loading profile…",
     unavailable: "This public profile is unavailable.", retry: "Try again", website: "Open website",
+    requestMembership: "Request membership",
     rating: "General rating", position: "Position", points: "Points", races: "Races",
     members: "Members", roster: "Roster", relatedTeams: "Club teams", affiliatedClub: "Club",
     recent: "Recent counted races", noDescription: "No public description yet.", noRoster: "No active members.",
@@ -23,6 +24,7 @@ const COPY = {
   ru: {
     club: "Клуб", team: "Команда", back: "Назад к клубам и командам", loading: "Загружаем профиль…",
     unavailable: "Этот публичный профиль недоступен.", retry: "Повторить", website: "Открыть сайт",
+    requestMembership: "Подать заявку",
     rating: "Общий рейтинг", position: "Место", points: "Очки", races: "Гонки",
     members: "Участники", roster: "Состав", relatedTeams: "Команды клуба", affiliatedClub: "Клуб",
     recent: "Последние зачётные гонки", noDescription: "Публичное описание пока не добавлено.", noRoster: "Активных участников нет.",
@@ -111,6 +113,14 @@ function renderProfile({ documentRef, lang, siteBase, entityType, result }) {
   if (detail.website_url) actions.push(element(documentRef, "a", {
     className: "btn btn-primary", text: copy(lang, "website"),
     attrs: { href: detail.website_url, target: "_blank", rel: "noopener noreferrer" }
+  }));
+  const requestUrl = new URL(`${siteBase}account/`, window.location.origin);
+  requestUrl.searchParams.set("membership_type", entityType);
+  requestUrl.searchParams.set("membership_target", detail.public_id);
+  requestUrl.searchParams.set("membership_name", detail.display_name);
+  actions.push(element(documentRef, "a", {
+    className: "btn btn-primary", text: copy(lang, "requestMembership"),
+    attrs: { href: `${requestUrl.pathname}${requestUrl.search}` }
   }));
   const hero = element(documentRef, "section", { className: "clubs-teams-detail-hero" }, [
     logo,

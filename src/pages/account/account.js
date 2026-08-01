@@ -5,6 +5,9 @@ import { loadEntityDetail } from "../clubs-teams/detail-model.js";
 import {
   ClubsTeamsCommandError,
   buildCreateEntityCommand,
+  buildMembershipLeaveCommand,
+  buildMembershipRequestCommand,
+  buildMembershipResolveCommand,
   buildReviseEntityCommand,
   normalizeCommandResponse
 } from "./clubs-teams-command-model.js";
@@ -70,6 +73,18 @@ const COPY = {
     invalidFields: "Check the name, field lengths and website address.",
     commandQueued: "The operation is queued. Its status will update in the account.",
     commandApplied: "The operation was accepted and sent for moderation.",
+    membershipActions: "Membership requests and invitations",
+    membershipRequest: "Membership request",
+    membershipInvitation: "Invitation",
+    acceptMembership: "Accept",
+    rejectMembership: "Reject",
+    leaveMembership: "Leave",
+    membershipExpires: value => `Expires ${value}`,
+    confirmLeave: "Leave this membership?",
+    confirmAccept: "Accept this membership action?",
+    confirmReject: "Reject this membership action?",
+    requestedMembership: value => `Request membership in ${value}`,
+    sendMembershipRequest: "Send request",
     commandRejected: "The operation was rejected.",
     reauthRequired: "For security, sign in with Steam again and repeat the operation.",
     reauth: "Sign in again",
@@ -118,6 +133,18 @@ const COPY = {
     invalidFields: "Проверьте название, длину полей и адрес сайта.",
     commandQueued: "Операция поставлена в очередь. Статус обновится в кабинете.",
     commandApplied: "Операция принята и отправлена на модерацию.",
+    membershipActions: "Заявки и приглашения",
+    membershipRequest: "Заявка на вступление",
+    membershipInvitation: "Приглашение",
+    acceptMembership: "Принять",
+    rejectMembership: "Отклонить",
+    leaveMembership: "Покинуть",
+    membershipExpires: value => `Действует до ${value}`,
+    confirmLeave: "Покинуть это объединение?",
+    confirmAccept: "Принять это приглашение или заявку?",
+    confirmReject: "Отклонить это приглашение или заявку?",
+    requestedMembership: value => `Заявка на вступление: ${value}`,
+    sendMembershipRequest: "Отправить заявку",
     commandRejected: "Операция отклонена.",
     reauthRequired: "Для безопасности снова войдите через Steam и повторите операцию.",
     reauth: "Войти снова",
@@ -238,7 +265,19 @@ function formatAccountDate(value) {
   }).format(date);
 }
 
-function renderMembershipEntity(entity, canEdit = false) {
+function membershipRequestFromLocation() {
+  const params = new URLSearchParams(location.search);
+  const targetType = params.get("membership_type");
+  const targetPublicId = String(params.get("membership_target") || "").trim();
+  const targetName = String(params.get("membership_name") || "").normalize("NFKC").trim();
+  if (!["club", "team"].includes(targetType)
+    || targetPublicId.length > 160
+    || !/^[A-Za-z0-9][A-Za-z0-9._:-]*$/.test(targetPublicId)
+    || !targetName || targetName.length > 200) return null;
+  return { targetType, targetPublicId, targetName };
+}
+
+function renderMembershipEntity(entity, canEdit = false, canLeave = false) {
   if (!entity) return "";
   const href = entity.type === "club"
     ? `/clubs/?slug=${encodeURIComponent(entity.slug)}`
@@ -252,7 +291,30 @@ function renderMembershipEntity(entity, canEdit = false) {
         ${entity.pendingRevision ? `<em>${t("pendingRevision")}</em>` : ""}
       </a>
       ${canEdit ? `<button class="account-entity-action" type="button" data-ct-mode="revise" data-ct-type="${entity.type}">${t(entity.type === "club" ? "editClub" : "editTeam")}</button>` : ""}
+      ${canLeave ? `<button class="account-entity-action account-entity-action--danger" type="button" data-ct-leave="${entity.type}">${t("leaveMembership")}</button>` : ""}
     </div>`;
+}
+
+function renderMembershipActions(actions, mutationReady) {
+  if (!actions.length) return "";
+  return `<div class="account-membership-actions">
+    <h3>${t("membershipActions")}</h3>
+    ${actions.map((action, index) => {
+      const resolvable = mutationReady && ["subject", "manager"].includes(action.resolutionRole);
+      const href = action.targetType === "club"
+        ? `/clubs/?slug=${encodeURIComponent(action.targetSlug)}`
+        : `/teams/detail/?slug=${encodeURIComponent(action.targetSlug)}`;
+      return `<article class="account-membership-action">
+        <div><span>${t(action.actionType === "request" ? "membershipRequest" : "membershipInvitation")}</span>
+          <a href="${href}">${escapeHtml(action.targetDisplayName)}</a>
+          <time>${escapeHtml(t("membershipExpires", formatAccountDate(action.expiresAt)))}</time></div>
+        ${resolvable ? `<div class="account-membership-action-buttons">
+          <button class="account-action account-action--primary" type="button" data-ct-resolve="accepted" data-ct-action-index="${index}">${t("acceptMembership")}</button>
+          <button class="account-action" type="button" data-ct-resolve="rejected" data-ct-action-index="${index}">${t("rejectMembership")}</button>
+        </div>` : ""}
+      </article>`;
+    }).join("")}
+  </div>`;
 }
 
 function renderClubsTeams(auth) {
@@ -266,6 +328,7 @@ function renderClubsTeams(auth) {
     .slice(0, 5);
   const pending = state.pendingCommands + state.pendingAssets;
   const mutationReady = !stale && state.integrityValid && auth.discord?.linked && pending === 0 && Boolean(auth.csrfToken);
+  const requestedMembership = membershipRequestFromLocation();
   const canEditClub = mutationReady && state.club?.role === "head" && state.club.status === "approved" && !state.club.pendingRevision;
   const canEditTeam = mutationReady && state.team?.role === "captain" && state.team.status === "approved" && !state.team.pendingRevision;
   return `
@@ -277,8 +340,15 @@ function renderClubsTeams(auth) {
       ${clubsTeamsFlash.text ? `<p class="account-command-summary" data-kind="${escapeHtml(clubsTeamsFlash.kind)}" role="status">${escapeHtml(clubsTeamsFlash.text)}</p>` : ""}
       ${stale ? `<p class="account-snapshot-warning" role="status">${t("clubsTeamsStale")}</p>` : ""}
       ${state.club || state.team
-        ? `<div class="account-memberships">${renderMembershipEntity(state.club, canEditClub)}${renderMembershipEntity(state.team, canEditTeam)}</div>`
+        ? `<div class="account-memberships">${renderMembershipEntity(state.club, canEditClub, mutationReady && state.club?.role === "member")}${renderMembershipEntity(state.team, canEditTeam, mutationReady && state.team?.role === "member")}</div>`
         : `<p class="account-muted">${t("clubsTeamsEmpty")}</p>`}
+      ${renderMembershipActions(state.membershipActions, mutationReady)}
+      ${requestedMembership ? `<div class="account-membership-request">
+        <strong>${escapeHtml(t("requestedMembership", requestedMembership.targetName))}</strong>
+        ${mutationReady && !state[requestedMembership.targetType]
+          ? `<button class="account-action account-action--primary" type="button" data-ct-request-membership>${t("sendMembershipRequest")}</button>`
+          : ""}
+      </div>` : ""}
       ${operations.length ? `
         <div class="account-operation-list">
           <h3>${t("recentOperations")}</h3>
@@ -440,9 +510,66 @@ async function openEntityForm(auth, mode, entityType) {
   form.querySelector("input")?.focus();
 }
 
+async function submitMembershipCommand(auth, command, button) {
+  button.disabled = true;
+  try {
+    const payload = await mutation("/v1/clubs-teams/commands", auth.csrfToken, {
+      command_type: command.commandType,
+      payload: command.payload
+    });
+    const queued = normalizeCommandResponse(payload);
+    const completed = await pollClubsTeamsCommand(queued.id);
+    if (completed.final && completed.status !== "applied") {
+      throw new ClubsTeamsCommandError(completed.errorCode || completed.status);
+    }
+    clubsTeamsFlash = { text: t(completed.status === "applied" ? "commandApplied" : "commandQueued"), kind: "success" };
+  } catch (error) {
+    clubsTeamsFlash = { text: commandErrorText(error?.code), kind: "error" };
+  }
+  await controller?.refresh({ showLoading: false });
+}
+
 function bindClubsTeamsActions(auth) {
   document.querySelectorAll("[data-ct-mode][data-ct-type]").forEach(button => {
-    button.addEventListener("click", () => void openEntityForm(auth, button.dataset.ctMode, button.dataset.ctType));
+      button.addEventListener("click", () => void openEntityForm(auth, button.dataset.ctMode, button.dataset.ctType));
+  });
+  document.querySelectorAll("[data-ct-resolve]").forEach(button => {
+    button.addEventListener("click", () => {
+      const action = auth.clubsTeams.membershipActions[Number(button.dataset.ctActionIndex)];
+      const decision = button.dataset.ctResolve;
+      const prompt = decision === "accepted" ? t("confirmAccept") : t("confirmReject");
+      if (!action || !confirm(prompt)) return;
+      try {
+        void submitMembershipCommand(auth, buildMembershipResolveCommand({ action, decision }), button);
+      } catch (error) {
+        clubsTeamsFlash = { text: commandErrorText(error?.code), kind: "error" };
+        render(auth);
+      }
+    });
+  });
+  document.querySelectorAll("[data-ct-leave]").forEach(button => {
+    button.addEventListener("click", () => {
+      const entity = auth.clubsTeams[button.dataset.ctLeave];
+      if (!entity || !confirm(t("confirmLeave"))) return;
+      try {
+        void submitMembershipCommand(auth, buildMembershipLeaveCommand(entity), button);
+      } catch (error) {
+        clubsTeamsFlash = { text: commandErrorText(error?.code), kind: "error" };
+        render(auth);
+      }
+    });
+  });
+  document.querySelector("[data-ct-request-membership]")?.addEventListener("click", event => {
+    const target = membershipRequestFromLocation();
+    if (!target) return;
+    try {
+      const command = buildMembershipRequestCommand(target);
+      history.replaceState({}, "", location.pathname);
+      void submitMembershipCommand(auth, command, event.currentTarget);
+    } catch (error) {
+      clubsTeamsFlash = { text: commandErrorText(error?.code), kind: "error" };
+      render(auth);
+    }
   });
 }
 
