@@ -1,0 +1,11 @@
+{
+  "schema_version": 1, "kind": "clubs_teams_rating_page", "context": "general", "season_id": null,
+  "entity_type": "club", "limit": 10, "offset": 0, "rating_run_id": "fixture-run-1",
+  "completed_at": "2026-07-29T12:00:00Z", "context_version": 1, "page": 1, "total_pages": 1,
+  "total": 1, "entries_sha256": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+  "entries": [{
+    "position": 1, "public_id": "club-public-1", "slug": "asg-racing", "display_name": "ASG Racing",
+    "total_points": 234.75, "race_count": 18, "average_elo": 1288.2, "average_sr": 5.48,
+    "members_count": 12, "asset": null
+  }]
+}

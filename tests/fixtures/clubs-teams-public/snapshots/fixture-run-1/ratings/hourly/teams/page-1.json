@@ -1,0 +1,11 @@
+{
+  "schema_version": 1, "kind": "clubs_teams_rating_page", "context": "hourly", "season_id": null,
+  "entity_type": "team", "limit": 10, "offset": 0, "rating_run_id": "fixture-run-1",
+  "completed_at": "2026-07-29T12:00:00Z", "context_version": 1, "page": 1, "total_pages": 1,
+  "total": 1, "entries_sha256": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+  "entries": [{
+    "position": 1, "public_id": "team-public-1", "slug": "asg-factory", "display_name": "ASG Factory Racing",
+    "total_points": 54.5, "race_count": 5, "average_elo": 1320.8, "average_sr": 5.62,
+    "members_count": 4, "club": { "public_id": "club-public-1", "slug": "asg-racing", "display_name": "ASG Racing" }, "asset": null
+  }]
+}

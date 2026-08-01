@@ -21,8 +21,10 @@
   <meta name="robots" content="index, follow" />
   <meta name="author" content="ASG Racing" />
   <meta name="theme-color" content="#0b0f14" />
+  <meta name="clubs-teams-data-base" content="https://data.asgracing.ru/public-cache-clubs-teams" />
 
   <link rel="canonical" href="https://asgracing.github.io/hourly/" />
+  <link rel="stylesheet" href="../styles/components/clubs-teams-rating.css?v=20260801clubs3" />
   <link rel="icon" href="https://asgracing.github.io/top/favicon.ico" sizes="any" />
   <link rel="icon" type="image/png" sizes="32x32" href="https://asgracing.github.io/top/favicon-32x32.png" />
   <link rel="icon" type="image/png" sizes="16x16" href="https://asgracing.github.io/top/favicon-16x16.png" />
@@ -198,6 +200,7 @@
           <div class="calendar-grid hourly-calendar-v2-grid" id="calendar-v2-grid"></div>
         </details>
       </section>
+      <section id="clubs-teams-hourly-rating" class="clubs-rating-embed" aria-label="Hourly clubs and teams standings"></section>
       <section class="card" id="recent-races">
         <div class="section-head">
           <div>
@@ -432,6 +435,7 @@
 
   <script src="./legal.js" defer></script>
   <script src="./app.js?v=20260728finishedcalendar1" defer></script>
+  <script type="module" src="./clubs-teams-rating.js?v=20260801clubs3"></script>
   <script type="module" src="../src/features/auth/header-auth-bootstrap.js?v=20260726authpersist1"></script>
 </body>
 </html>

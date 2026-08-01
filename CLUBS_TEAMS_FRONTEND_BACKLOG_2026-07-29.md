@@ -68,10 +68,39 @@ Production: без изменений.
   визуального checkpoint и отдельного решения о публикации;
 - [ ] CSP проверяется при staging/production integration.
 
-## Следующий срез F3
+## Завершённая реализация F3 — контексты рейтинга
 
-1. General / Hourly / Championship rating representations.
-2. Личный кабинет через `auth.asgracing.ru`.
-3. Pending receipts, создание/редактирование, приглашения и membership.
-4. Безопасная загрузка изображения через уже готовый auth/backend pipeline.
-5. Visual/accessibility checkpoint, затем отдельное решение о production.
+- [x] строгий loader `ratings/{general|hourly|championship}/{clubs|teams}`;
+- [x] все страницы одного представления привязаны к единому active
+  `rating_run_id`;
+- [x] проверка kind/context/entity/season/page/offset/limit/context version и
+  digest-формата;
+- [x] `/teams/?context=general|hourly|championship&tab=clubs|teams`;
+- [x] RU/EN context controls и сохранение состояния в URL;
+- [x] защита от гонки запросов при быстром переключении контекста;
+- [x] компактный Hourly-зачёт клубов/команд внутри `/hourly/`;
+- [x] компактный Championship-зачёт внутри `/hourly/championship/`;
+- [x] переход к общему рейтингу клубов/команд из секции рейтинга главной;
+- [x] reusable safe-DOM embed без изменений существующих Hourly и Championship
+  `app.js`;
+- [x] loading/error/empty states и responsive layout;
+- [x] полный `npm run ci`: 227/227 unit tests, build, dist, references и smoke.
+
+### Ограничения F3, оставленные открытыми
+
+- [ ] фактическая visual matrix: browser backend снова недоступен;
+- [ ] если обязательна именно встроенная вкладка Teams в монолитной таблице
+  пилотов на главной, она остаётся отдельной задачей; сейчас добавлен безопасный
+  переход в полный General-зачёт;
+- [ ] season-specific championship snapshots (`ratings/seasons/{season_id}`)
+  пока не выведены — F3 использует канонический cumulative `championship`;
+- [ ] detail-профили показывают канонический General rating, выбранный context
+  пока не переносится в detail;
+- [ ] production navigation/sitemap и CSP staging gate не изменялись.
+
+## Следующий срез F4
+
+1. Личный кабинет через `auth.asgracing.ru`.
+2. Pending receipts, создание/редактирование, приглашения и membership.
+3. Безопасная загрузка изображения через уже готовый auth/backend pipeline.
+4. Visual/accessibility checkpoint, затем отдельное решение о production.

@@ -19,6 +19,7 @@
   <link rel="stylesheet" href="../styles/responsive.css">
   <link rel="stylesheet" href="../styles/components/responsive-accessibility.css">
   <link rel="stylesheet" href="../styles/components/clubs-teams-catalog.css?v=20260729clubs1">
+  <link rel="stylesheet" href="../styles/components/clubs-teams-rating.css?v=20260801clubs3">
 </head>
 <body class="monza-bg-page clubs-teams-page">
   <div class="site-video-overlay" aria-hidden="true"></div>
@@ -74,6 +75,11 @@
       <p data-clubs-copy="subtitle">Approved communities competing on ASG Racing servers.</p>
     </section>
     <section class="clubs-teams-panel" aria-label="Clubs and teams catalog">
+      <div class="clubs-teams-contexts" aria-label="Rating context">
+        <button class="clubs-teams-context is-active" type="button" data-rating-context="general" data-clubs-copy="general">General</button>
+        <button class="clubs-teams-context" type="button" data-rating-context="hourly" data-clubs-copy="hourly">Hourly</button>
+        <button class="clubs-teams-context" type="button" data-rating-context="championship" data-clubs-copy="championship">Championship</button>
+      </div>
       <div class="clubs-teams-controls">
         <div class="clubs-teams-tabs" role="tablist" aria-label="Catalog type">
           <button class="clubs-teams-tab is-active" type="button" role="tab" aria-selected="true" data-catalog-type="club" data-clubs-copy="clubs">Clubs</button>

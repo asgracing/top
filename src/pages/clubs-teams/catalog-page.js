@@ -6,12 +6,10 @@ import {
   catalogEntityTypeFromTab,
   catalogTabFromEntityType,
   filterCatalogEntries,
-  mergeCatalogPages,
-  resolveCatalogAssetUrl,
-  validateCatalogPage,
-  validateCurrentPointer
+  resolveCatalogAssetUrl
 } from "./catalog-model.js";
 import { entityDetailHref } from "./detail-model.js";
+import { loadPublicRatingSnapshot, normalizeRatingContext } from "./rating-model.js";
 
 const COPY = {
   en: {
@@ -19,6 +17,9 @@ const COPY = {
     subtitle: "Approved communities competing on ASG Racing servers.",
     clubs: "Clubs",
     teams: "Teams",
+    general: "General",
+    hourly: "Hourly",
+    championship: "Championship",
     search: "Search by name",
     loading: "Loading clubs and teams…",
     unavailable: "The clubs and teams catalog is not published yet.",
@@ -48,6 +49,9 @@ const COPY = {
     subtitle: "Подтверждённые сообщества, выступающие на серверах ASG Racing.",
     clubs: "Клубы",
     teams: "Команды",
+    general: "Общий",
+    hourly: "Часовые",
+    championship: "Чемпионат",
     search: "Поиск по названию",
     loading: "Загружаем клубы и команды…",
     unavailable: "Каталог клубов и команд пока не опубликован.",
@@ -101,34 +105,6 @@ function formatDate(value, lang) {
   }).format(date);
 }
 
-async function loadEntityPages(client, snapshotRoot, entityType, ratingRunId) {
-  const fetchPage = async page => validateCatalogPage(
-    await client.requestJson(new URL(`catalog/${entityType}s/page-${page}.json`, snapshotRoot), {
-      retries: 1,
-      cache: "no-store"
-    }),
-    { entityType, page, ratingRunId }
-  );
-  const first = await fetchPage(1);
-  const remaining = await Promise.all(
-    Array.from({ length: first.total_pages - 1 }, (_, index) => fetchPage(index + 2))
-  );
-  return mergeCatalogPages([first, ...remaining], entityType);
-}
-
-export async function loadPublicCatalog({ client, dataBaseUrl }) {
-  const pointer = validateCurrentPointer(await client.requestJson(
-    new URL("current.json", `${dataBaseUrl}/`),
-    { retries: 1, cache: "no-store" }
-  ));
-  const snapshotRoot = new URL(`snapshots/${pointer.rating_run_id}/`, `${dataBaseUrl}/`);
-  const [clubs, teams] = await Promise.all([
-    loadEntityPages(client, snapshotRoot, "club", pointer.rating_run_id),
-    loadEntityPages(client, snapshotRoot, "team", pointer.rating_run_id)
-  ]);
-  return Object.freeze({ pointer, clubs, teams });
-}
-
 function setupNavigation(documentRef) {
   const close = () => documentRef.querySelectorAll(".top-nav-group.is-open").forEach(group => {
     group.classList.remove("is-open");
@@ -162,9 +138,11 @@ export function createCatalogPage({
   fetchImpl = windowRef.fetch.bind(windowRef)
 } = {}) {
   const lang = language(windowRef);
-  const initialTab = new URLSearchParams(windowRef.location.search).get("tab");
+  const initialParams = new URLSearchParams(windowRef.location.search);
+  const initialTab = initialParams.get("tab");
   const state = {
     activeType: catalogEntityTypeFromTab(initialTab),
+    activeContext: normalizeRatingContext(initialParams.get("context")),
     query: "",
     catalog: null,
     loading: true,
@@ -181,6 +159,7 @@ export function createCatalogPage({
   const grid = documentRef.getElementById("clubs-teams-grid");
   const status = documentRef.getElementById("clubs-teams-status");
   const search = documentRef.getElementById("clubs-teams-search");
+  let loadSequence = 0;
 
   const render = () => {
     documentRef.documentElement.lang = lang;
@@ -194,6 +173,11 @@ export function createCatalogPage({
       const active = button.dataset.catalogType === state.activeType;
       button.classList.toggle("is-active", active);
       button.setAttribute("aria-selected", String(active));
+    });
+    documentRef.querySelectorAll("[data-rating-context]").forEach(button => {
+      const active = button.dataset.ratingContext === state.activeContext;
+      button.classList.toggle("is-active", active);
+      button.setAttribute("aria-pressed", String(active));
     });
     search.placeholder = copy(lang, "search");
     grid.replaceChildren();
@@ -285,15 +269,21 @@ export function createCatalogPage({
   };
 
   const load = async () => {
+    const sequence = ++loadSequence;
+    const requestedContext = state.activeContext;
     state.loading = true;
     state.error = false;
     render();
     try {
-      state.catalog = await loadPublicCatalog({ client, dataBaseUrl });
+      const catalog = await loadPublicRatingSnapshot({ client, dataBaseUrl, context: requestedContext });
+      if (sequence !== loadSequence) return;
+      state.catalog = catalog;
     } catch {
+      if (sequence !== loadSequence) return;
       state.catalog = null;
       state.error = true;
     } finally {
+      if (sequence !== loadSequence) return;
       state.loading = false;
       render();
     }
@@ -306,6 +296,18 @@ export function createCatalogPage({
       url.searchParams.set("tab", catalogTabFromEntityType(state.activeType));
       windowRef.history.replaceState(null, "", url);
       render();
+    });
+  });
+  documentRef.querySelectorAll("[data-rating-context]").forEach(button => {
+    button.addEventListener("click", () => {
+      const next = normalizeRatingContext(button.dataset.ratingContext);
+      if (next === state.activeContext) return;
+      state.activeContext = next;
+      const url = new URL(windowRef.location.href);
+      if (next === "general") url.searchParams.delete("context");
+      else url.searchParams.set("context", next);
+      windowRef.history.replaceState(null, "", url);
+      load();
     });
   });
   search.addEventListener("input", () => {

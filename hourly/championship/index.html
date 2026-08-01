@@ -8,9 +8,11 @@
   <meta name="robots" content="index, follow" />
   <meta name="theme-color" content="#0b0f14" />
   <meta name="legal-base-path" content="../" />
+  <meta name="clubs-teams-data-base" content="https://data.asgracing.ru/public-cache-clubs-teams" />
   <link rel="canonical" href="https://asgracing.ru/hourly/championship/" />
   <link rel="stylesheet" href="../styles.css?v=20260710weathericons1" />
   <link rel="stylesheet" href="./styles.css?v=20260710weathericons1" />
+  <link rel="stylesheet" href="../../styles/components/clubs-teams-rating.css?v=20260801clubs3" />
 </head>
 <body id="top" class="championship-body">
   <nav class="top-nav" id="top-nav">
@@ -126,6 +128,8 @@
       </div>
     </section>
 
+    <section id="clubs-teams-championship-rating" class="clubs-rating-embed championship-section" aria-label="Championship clubs and teams standings"></section>
+
     <section class="card championship-section" id="championship-race-results-section">
       <div class="section-head">
         <div>
@@ -158,6 +162,7 @@
 
   <script src="../legal.js" defer></script>
   <script src="./app.js?v=20260711champvotes1" defer></script>
+  <script type="module" src="./clubs-teams-rating.js?v=20260801clubs3"></script>
   <script type="module" src="../../src/features/auth/header-auth-bootstrap.js?v=20260726authpersist1"></script>
 </body>
 </html>
