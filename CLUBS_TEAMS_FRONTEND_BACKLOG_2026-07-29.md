@@ -186,5 +186,21 @@ Visual matrix F4a не выполнена: 01.08.2026 встроенная ср�
 - [x] RU/EN и mobile stacking добавлены;
 - [x] frontend CI: 237/237 unit, 260 dist files, 727 references, 25 smoke;
 - [ ] visual matrix не выполнена: browser runtime вернул пустой список backend'ов;
-- [ ] F4b2b2: manager invite/remove с безопасным поиском пилота;
+- [x] F4b2b2: manager invite/remove с безопасным поиском пилота;
+- [ ] staging auth/backend round-trip и production deploy.
+
+## Завершённый срез F4b2b2 — manager roster controls
+
+- [x] manager открывает отдельное управление составом клуба/команды;
+- [x] roster загружается только из immutable detail активного snapshot;
+- [x] поиск использует существующий публичный `top-data/v2/drivers/drivers.json`;
+- [x] индекс нормализуется до `publicId + displayName`, private/unknown fields отбрасываются;
+- [x] минимум 2 символа, максимум 12 результатов, текущий roster исключён;
+- [x] invite/remove payload собирается из protected manager entity ID и выбранного public pilot ID;
+- [x] удалить можно только роль `member`; head/captain не получают кнопку;
+- [x] auth exact allowlist проверяет все membership command payloads;
+- [x] RU/EN, keyboard input и mobile vertical layout;
+- [x] frontend CI: 241/241 unit, 261 dist files, 728 references, 25 smoke;
+- [ ] visual matrix: browser runtime снова вернул пустой список backend'ов;
+- [ ] F4b3: team-club affiliation actions;
 - [ ] staging auth/backend round-trip и production deploy.

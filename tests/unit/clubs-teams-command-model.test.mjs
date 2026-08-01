@@ -6,6 +6,8 @@ import {
   ClubsTeamsCommandError,
   buildCreateEntityCommand,
   buildMembershipLeaveCommand,
+  buildMembershipInviteCommand,
+  buildMembershipRemoveCommand,
   buildMembershipRequestCommand,
   buildMembershipResolveCommand,
   buildReviseEntityCommand,
@@ -105,4 +107,17 @@ test("builds membership resolution and member leave commands from protected ids"
     { entity_type: "club", entity_id: "club-internal", reason: "leave" });
   state.club.role = "head";
   assert.throws(() => buildMembershipLeaveCommand(state.club), /leave_not_allowed/);
+});
+
+test("builds manager invite and remove commands from protected entity ids", () => {
+  const state = stateWithEntities();
+  assert.deepEqual(buildMembershipInviteCommand({ entity: state.team, subjectPublicId: "pilot-2" }).payload, {
+    target_type: "team", target_id: "team-internal", subject_public_id: "pilot-2"
+  });
+  assert.deepEqual(buildMembershipRemoveCommand({ entity: state.club, subjectPublicId: "pilot-2" }).payload, {
+    entity_type: "club", entity_id: "club-internal", subject_public_id: "pilot-2", reason: "removed"
+  });
+  state.team.role = "member";
+  assert.throws(() => buildMembershipInviteCommand({ entity: state.team, subjectPublicId: "pilot-2" }), /manager_required/);
+  assert.throws(() => buildMembershipRemoveCommand({ entity: state.club, subjectPublicId: "<bad>" }), /invalid_subject/);
 });

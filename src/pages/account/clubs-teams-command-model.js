@@ -126,6 +126,38 @@ export function buildMembershipLeaveCommand(entity) {
   };
 }
 
+function requireManagerEntity(entity) {
+  const type = requireEntityType(entity?.type);
+  const expectedRole = type === "club" ? "head" : "captain";
+  const entityId = managementEntityId(entity);
+  if (!entityId || entity.role !== expectedRole || entity.status !== "approved") {
+    throw new ClubsTeamsCommandError("manager_required");
+  }
+  return { type, entityId };
+}
+
+export function buildMembershipInviteCommand({ entity, subjectPublicId }) {
+  const { type, entityId } = requireManagerEntity(entity);
+  const subject = safeIdentifier(subjectPublicId);
+  if (!subject) throw new ClubsTeamsCommandError("invalid_subject");
+  return {
+    commandType: "membership.invite",
+    payload: { target_type: type, target_id: entityId, subject_public_id: subject },
+    expectedEntityVersion: null
+  };
+}
+
+export function buildMembershipRemoveCommand({ entity, subjectPublicId }) {
+  const { type, entityId } = requireManagerEntity(entity);
+  const subject = safeIdentifier(subjectPublicId);
+  if (!subject) throw new ClubsTeamsCommandError("invalid_subject");
+  return {
+    commandType: "membership.remove",
+    payload: { entity_type: type, entity_id: entityId, subject_public_id: subject, reason: "removed" },
+    expectedEntityVersion: null
+  };
+}
+
 function safeIdentifier(value) {
   const text = typeof value === "string" ? value.trim() : "";
   return text.length <= 160 && /^[A-Za-z0-9][A-Za-z0-9._:-]*$/.test(text) ? text : null;

@@ -6,11 +6,14 @@ import {
   ClubsTeamsCommandError,
   buildCreateEntityCommand,
   buildMembershipLeaveCommand,
+  buildMembershipInviteCommand,
+  buildMembershipRemoveCommand,
   buildMembershipRequestCommand,
   buildMembershipResolveCommand,
   buildReviseEntityCommand,
   normalizeCommandResponse
 } from "./clubs-teams-command-model.js";
+import { filterPilots, loadPilotIndex } from "./pilot-search-model.js";
 
 const AUTH_BASE_URL = "https://auth.asgracing.ru";
 
@@ -85,6 +88,15 @@ const COPY = {
     confirmReject: "Reject this membership action?",
     requestedMembership: value => `Request membership in ${value}`,
     sendMembershipRequest: "Send request",
+    manageMembers: "Manage members",
+    manageRoster: value => `Manage ${value} roster`,
+    invitePilot: "Invite pilot",
+    pilotSearch: "Search by pilot name",
+    noPilotResults: "No matching available pilots.",
+    removeMember: "Remove",
+    confirmRemove: value => `Remove ${value} from this roster?`,
+    confirmInvite: value => `Invite ${value}?`,
+    rosterUnavailable: "The current roster or pilot index is unavailable.",
     commandRejected: "The operation was rejected.",
     reauthRequired: "For security, sign in with Steam again and repeat the operation.",
     reauth: "Sign in again",
@@ -145,6 +157,15 @@ const COPY = {
     confirmReject: "Отклонить это приглашение или заявку?",
     requestedMembership: value => `Заявка на вступление: ${value}`,
     sendMembershipRequest: "Отправить заявку",
+    manageMembers: "Управлять составом",
+    manageRoster: value => `Управление составом: ${value}`,
+    invitePilot: "Пригласить пилота",
+    pilotSearch: "Поиск по имени пилота",
+    noPilotResults: "Подходящие пилоты не найдены.",
+    removeMember: "Исключить",
+    confirmRemove: value => `Исключить ${value} из состава?`,
+    confirmInvite: value => `Пригласить ${value}?`,
+    rosterUnavailable: "Не удалось загрузить актуальный состав или список пилотов.",
     commandRejected: "Операция отклонена.",
     reauthRequired: "Для безопасности снова войдите через Steam и повторите операцию.",
     reauth: "Войти снова",
@@ -291,6 +312,7 @@ function renderMembershipEntity(entity, canEdit = false, canLeave = false) {
         ${entity.pendingRevision ? `<em>${t("pendingRevision")}</em>` : ""}
       </a>
       ${canEdit ? `<button class="account-entity-action" type="button" data-ct-mode="revise" data-ct-type="${entity.type}">${t(entity.type === "club" ? "editClub" : "editTeam")}</button>` : ""}
+      ${canEdit ? `<button class="account-entity-action" type="button" data-ct-manage-members="${entity.type}">${t("manageMembers")}</button>` : ""}
       ${canLeave ? `<button class="account-entity-action account-entity-action--danger" type="button" data-ct-leave="${entity.type}">${t("leaveMembership")}</button>` : ""}
     </div>`;
 }
@@ -375,7 +397,16 @@ function clubsTeamsDataBaseUrl() {
   });
 }
 
-async function loadApprovedEntityFields(entity) {
+function topDataBaseUrl() {
+  return resolveRuntimeOverride({
+    hostname: location.hostname,
+    searchParams: new URLSearchParams(location.search),
+    key: "topDataBase",
+    fallback: "https://data.asgracing.ru/top-data"
+  });
+}
+
+async function loadApprovedEntityDetail(entity) {
   const client = createHttpClient({ fetchImpl: globalThis.fetch, defaultTimeoutMs: 8000 });
   const result = await loadEntityDetail({
     client,
@@ -384,12 +415,17 @@ async function loadApprovedEntityFields(entity) {
     slug: entity.slug
   });
   if (result.detail.public_id !== entity.publicId) throw new ClubsTeamsCommandError("detail_identity_mismatch");
+  return result.detail;
+}
+
+async function loadApprovedEntityFields(entity) {
+  const detail = await loadApprovedEntityDetail(entity);
   return {
-    displayName: result.detail.display_name,
-    shortName: result.detail.short_name || "",
-    descriptionRu: result.detail.description_ru || "",
-    descriptionEn: result.detail.description_en || "",
-    websiteUrl: result.detail.website_url || ""
+    displayName: detail.display_name,
+    shortName: detail.short_name || "",
+    descriptionRu: detail.description_ru || "",
+    descriptionEn: detail.description_en || "",
+    websiteUrl: detail.website_url || ""
   };
 }
 
@@ -510,6 +546,82 @@ async function openEntityForm(auth, mode, entityType) {
   form.querySelector("input")?.focus();
 }
 
+function memberManagerMarkup(entity, roster) {
+  const removable = roster.filter(member => member.role === "member");
+  return `<div class="account-member-manager">
+    <div class="account-section-heading"><h2>${escapeHtml(t("manageRoster", entity.displayName))}</h2>
+      <button class="account-action" type="button" data-ct-cancel>${t("cancelEntity")}</button></div>
+    <div class="account-manager-roster">
+      ${roster.map(member => `<div class="account-manager-member">
+        <a href="/driver/?id=${encodeURIComponent(member.public_id)}"><strong>${escapeHtml(member.display_name)}</strong><span>${t(`ctRole_${member.role}`)}</span></a>
+        ${removable.includes(member) ? `<button class="account-action account-action--danger" type="button" data-ct-remove-member="${member.public_id}" data-ct-member-name="${escapeHtml(member.display_name)}">${t("removeMember")}</button>` : ""}
+      </div>`).join("")}
+    </div>
+    <div class="account-pilot-search">
+      <h3>${t("invitePilot")}</h3>
+      <label>${t("pilotSearch")}<input type="search" maxlength="80" autocomplete="off" data-ct-pilot-search></label>
+      <div class="account-pilot-results" role="list" aria-live="polite"></div>
+    </div>
+  </div>`;
+}
+
+async function openMemberManager(auth, entityType) {
+  const section = document.querySelector(".account-clubs-teams");
+  const entity = auth.clubsTeams[entityType];
+  const expectedRole = entityType === "club" ? "head" : "captain";
+  if (!section || !entity || entity.role !== expectedRole) return;
+  section.innerHTML = `<p class="account-muted" role="status">${t("loadingEntity")}</p>`;
+  try {
+    const client = createHttpClient({ fetchImpl: globalThis.fetch, defaultTimeoutMs: 8000 });
+    const [detail, pilots] = await Promise.all([
+      loadApprovedEntityDetail(entity),
+      loadPilotIndex({ client, dataBaseUrl: topDataBaseUrl() })
+    ]);
+    const rosterIds = detail.roster.map(member => member.public_id);
+    section.innerHTML = memberManagerMarkup(entity, detail.roster);
+    section.querySelector("[data-ct-cancel]")?.addEventListener("click", () => render(auth));
+    section.querySelectorAll("[data-ct-remove-member]").forEach(button => {
+      button.addEventListener("click", () => {
+        const name = button.dataset.ctMemberName || "";
+        if (!confirm(t("confirmRemove", name))) return;
+        try {
+          void submitMembershipCommand(auth, buildMembershipRemoveCommand({ entity, subjectPublicId: button.dataset.ctRemoveMember }), button);
+        } catch (error) {
+          clubsTeamsFlash = { text: commandErrorText(error?.code), kind: "error" };
+          render(auth);
+        }
+      });
+    });
+    const input = section.querySelector("[data-ct-pilot-search]");
+    const results = section.querySelector(".account-pilot-results");
+    const renderResults = () => {
+      const matches = filterPilots(pilots, input.value, { excludedPublicIds: rosterIds });
+      results.innerHTML = matches.length ? matches.map(pilot => `<div class="account-pilot-result" role="listitem">
+        <a href="/driver/?id=${encodeURIComponent(pilot.publicId)}">${escapeHtml(pilot.displayName)}</a>
+        <button class="account-action account-action--primary" type="button" data-ct-invite-pilot="${pilot.publicId}" data-ct-pilot-name="${escapeHtml(pilot.displayName)}">${t("invitePilot")}</button>
+      </div>`).join("") : (input.value.trim().length >= 2 ? `<p class="account-muted">${t("noPilotResults")}</p>` : "");
+      results.querySelectorAll("[data-ct-invite-pilot]").forEach(button => {
+        button.addEventListener("click", () => {
+          const name = button.dataset.ctPilotName || "";
+          if (!confirm(t("confirmInvite", name))) return;
+          try {
+            void submitMembershipCommand(auth, buildMembershipInviteCommand({ entity, subjectPublicId: button.dataset.ctInvitePilot }), button);
+          } catch (error) {
+            clubsTeamsFlash = { text: commandErrorText(error?.code), kind: "error" };
+            render(auth);
+          }
+        });
+      });
+    };
+    input.addEventListener("input", renderResults);
+    input.focus();
+  } catch {
+    section.innerHTML = `<p class="account-snapshot-warning" role="alert">${t("rosterUnavailable")}</p>
+      <button class="account-action" type="button" data-ct-cancel>${t("cancelEntity")}</button>`;
+    section.querySelector("[data-ct-cancel]")?.addEventListener("click", () => render(auth));
+  }
+}
+
 async function submitMembershipCommand(auth, command, button) {
   button.disabled = true;
   try {
@@ -558,6 +670,9 @@ function bindClubsTeamsActions(auth) {
         render(auth);
       }
     });
+  });
+  document.querySelectorAll("[data-ct-manage-members]").forEach(button => {
+    button.addEventListener("click", () => void openMemberManager(auth, button.dataset.ctManageMembers));
   });
   document.querySelector("[data-ct-request-membership]")?.addEventListener("click", event => {
     const target = membershipRequestFromLocation();

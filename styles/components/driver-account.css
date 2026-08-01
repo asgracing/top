@@ -256,6 +256,71 @@
     margin-top: 0;
   }
 
+  .account-member-manager,
+  .account-manager-roster,
+  .account-pilot-search,
+  .account-pilot-results {
+    display: grid;
+    gap: 12px;
+  }
+
+  .account-manager-roster,
+  .account-pilot-search {
+    margin-top: 18px;
+  }
+
+  .account-manager-member,
+  .account-pilot-result {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 12px;
+    padding: 12px 14px;
+    border: 1px solid rgba(102, 192, 244, 0.18);
+    border-radius: 12px;
+    background: rgba(102, 192, 244, 0.045);
+  }
+
+  .account-manager-member a {
+    display: grid;
+    gap: 3px;
+    color: #fff;
+    text-decoration: none;
+  }
+
+  .account-manager-member span {
+    color: #8995a6;
+    font-size: 0.76rem;
+  }
+
+  .account-pilot-search h3 {
+    margin: 0;
+  }
+
+  .account-pilot-search label {
+    display: grid;
+    gap: 7px;
+    color: #c5cedb;
+    font-size: 0.78rem;
+    font-weight: 750;
+  }
+
+  .account-pilot-search input {
+    box-sizing: border-box;
+    width: 100%;
+    padding: 12px 14px;
+    border: 1px solid rgba(255, 255, 255, 0.16);
+    border-radius: 12px;
+    background: rgba(0, 0, 0, 0.24);
+    color: #fff;
+    font: inherit;
+  }
+
+  .account-pilot-result a {
+    color: #fff;
+    font-weight: 800;
+  }
+
   .account-command-summary,
   .account-command-message {
     padding: 10px 12px;
@@ -447,7 +512,9 @@
     }
 
     .account-membership-action,
-    .account-membership-request {
+    .account-membership-request,
+    .account-manager-member,
+    .account-pilot-result {
       align-items: stretch;
       flex-direction: column;
     }
