@@ -47,8 +47,9 @@
     display: flex;
     align-items: flex-start;
     justify-content: space-between;
-    gap: 18px;
+    gap: 14px;
     margin-bottom: 12px;
+    flex-wrap: nowrap;
   }
 
   body.experiment-combined-stats .combined-stats-tabs {
@@ -58,16 +59,24 @@
     min-width: 0;
   }
 
+  .combined-stats-navigation {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    flex: 0 0 auto;
+    min-width: 0;
+  }
+
   .combined-stats-shell-title {
     min-width: 0;
-    flex: 0 1 300px;
+    flex: 0 1 220px;
   }
 
   .combined-stats-shell-controls {
     display: flex;
     align-items: center;
     justify-content: flex-end;
-    gap: 14px;
+    gap: 12px;
     flex: 1 1 auto;
     min-width: 0;
     flex-wrap: nowrap;
@@ -76,18 +85,19 @@
   .combined-stats-active-tools {
     display: flex;
     justify-content: flex-end;
-    flex: 0 1 450px;
+    flex: 0 1 210px;
     min-width: 0;
   }
 
   .combined-stats-active-tools .table-tools {
     width: 100%;
     justify-content: flex-end;
+    flex-wrap: nowrap;
   }
 
   .combined-stats-active-tools .search-input {
     margin-left: auto;
-    width: min(280px, 100%);
+    width: min(210px, 100%);
   }
 
   .combined-stats-tab {

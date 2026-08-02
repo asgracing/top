@@ -170,6 +170,7 @@
     justify-content: flex-start;
     gap: 10px;
     margin-bottom: 10px;
+    flex-wrap: wrap;
   }
 
   body.experiment-combined-stats .combined-stats-shell-title {
@@ -189,6 +190,7 @@
 
   .combined-stats-active-tools .table-tools {
     justify-content: stretch;
+    flex-wrap: wrap;
   }
 
   .combined-stats-tab {

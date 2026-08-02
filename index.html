@@ -62,7 +62,7 @@
   <link rel="stylesheet" href="./styles/components/hero-actions.css?v=20260713r11heroactions1" />
   <link rel="stylesheet" href="./styles/components/hero-stats.css?v=20260726driveravatar3" />
   <link rel="stylesheet" href="./styles/components/server-sticky-layout.css?v=20260715r11serversticky1" />
-  <link rel="stylesheet" href="./styles/components/sections.css?v=20260802statsnav1" />
+  <link rel="stylesheet" href="./styles/components/sections.css?v=20260802statsnav2" />
   <link rel="stylesheet" href="./styles/components/support-widget.css?v=20260715r11support1" />
   <link rel="stylesheet" href="./styles/components/table-controls.css?v=20260715r11tablecontrols1" />
   <link rel="stylesheet" href="./styles/components/top-three.css?v=20260715r11topthree1" />
@@ -77,7 +77,7 @@
   <link rel="stylesheet" href="./styles/components/driver-day-modal.css?v=20260728driverpreviewhero1" />
   <link rel="stylesheet" href="./styles/components/footer.css?v=20260720topguide1" />
   <link rel="stylesheet" href="./styles/utilities.css?v=20260715r12states1" />
-  <link rel="stylesheet" href="./styles/responsive.css?v=20260802statsnav1" />
+  <link rel="stylesheet" href="./styles/responsive.css?v=20260802statsnav2" />
   <link rel="stylesheet" href="./styles.css?v=20260726hourlyfit2" />
   <link rel="stylesheet" href="./styles/components/hero-layout.css?v=20260728tabletflow1" />
   <link rel="stylesheet" href="./styles/components/hero-server-summary.css?v=20260715hero-spacing2" />
@@ -528,10 +528,13 @@
           <p class="section-subtitle section-subtitle-hint" id="combined-stats-subtitle">Points, wins, podiums, average finish and best lap.</p>
         </div>
         <div class="combined-stats-shell-controls">
-          <div class="combined-stats-tabs" role="tablist" aria-label="Driver stats tables" data-i18n-aria-label="statsHubTabsLabel">
-            <button class="combined-stats-tab is-active" id="combined-tab-leaderboard" type="button" role="tab" aria-selected="true" aria-controls="championship" data-stats-tab="leaderboard" data-i18n="championshipTitle">Rating</button>
-            <button class="combined-stats-tab" id="combined-tab-bestlaps" type="button" role="tab" aria-selected="false" aria-controls="bestlaps" data-stats-tab="bestlaps" data-i18n="bestLapsTitle">Best Laps</button>
-            <button class="combined-stats-tab" id="combined-tab-safety" type="button" role="tab" aria-selected="false" aria-controls="worst-safety" data-stats-tab="safety" data-i18n="worstSafetyTitle">Safety Rating</button>
+          <div class="combined-stats-navigation">
+            <div class="combined-stats-tabs" role="tablist" aria-label="Driver stats tables" data-i18n-aria-label="statsHubTabsLabel">
+              <button class="combined-stats-tab is-active" id="combined-tab-leaderboard" type="button" role="tab" aria-selected="true" aria-controls="championship" data-stats-tab="leaderboard" data-i18n="championshipTitle">Rating</button>
+              <button class="combined-stats-tab" id="combined-tab-bestlaps" type="button" role="tab" aria-selected="false" aria-controls="bestlaps" data-stats-tab="bestlaps" data-i18n="bestLapsTitle">Best Laps</button>
+              <button class="combined-stats-tab" id="combined-tab-safety" type="button" role="tab" aria-selected="false" aria-controls="worst-safety" data-stats-tab="safety" data-i18n="worstSafetyTitle">Safety Rating</button>
+            </div>
+            <a class="combined-stats-tab combined-stats-directory-link" href="./teams/?tab=teams" data-i18n="teamsRatingLink">Clubs &amp; Teams</a>
           </div>
           <div class="combined-stats-active-tools" id="combined-stats-active-tools"></div>
         </div>
@@ -545,7 +548,6 @@
               <p class="section-subtitle section-subtitle-hint" data-i18n="championshipSubtitle">Points, wins, podiums, average finish and best lap.</p>
             </div>
             <div class="table-tools">
-              <a class="combined-stats-tab combined-stats-directory-link" href="./teams/?tab=teams" data-i18n="teamsRatingLink">Clubs &amp; Teams</a>
               <input id="leaderboard-search" class="search-input" type="text" autocomplete="off" />
             </div>
           </div>

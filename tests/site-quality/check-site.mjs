@@ -103,7 +103,7 @@ for (const [page, [htmlPath, entrySrc]] of Object.entries(pageEntrypoints)) {
   if (!pageHtml.includes(heroStatsHref)) failures.push(`${page} page is missing the shared hero stats stylesheet`);
   const serverStickyLayoutHref = page === "home" ? "./styles/components/server-sticky-layout.css?v=20260715r11serversticky1" : "../styles/components/server-sticky-layout.css?v=20260715r11serversticky1";
   if (!pageHtml.includes(serverStickyLayoutHref)) failures.push(`${page} page is missing the server sticky layout stylesheet`);
-  const sectionsHref = page === "home" ? "./styles/components/sections.css?v=20260802statsnav1" : "../styles/components/sections.css?v=20260715r11sections1";
+  const sectionsHref = page === "home" ? "./styles/components/sections.css?v=20260802statsnav2" : "../styles/components/sections.css?v=20260715r11sections1";
   if (!pageHtml.includes(sectionsHref)) failures.push(`${page} page is missing the shared sections stylesheet`);
   const supportWidgetHref = page === "home" ? "./styles/components/support-widget.css?v=20260715r11support1" : "../styles/components/support-widget.css?v=20260715r11support1";
   if (!pageHtml.includes(supportWidgetHref)) failures.push(`${page} page is missing the support widget stylesheet`);
@@ -132,7 +132,7 @@ for (const [page, [htmlPath, entrySrc]] of Object.entries(pageEntrypoints)) {
     `${page === "home" ? "./" : "../"}styles/components/footer.css?v=20260720topguide1`,
     `${page === "home" ? "./" : "../"}styles/utilities.css?v=20260715r12states1`,
     page === "home"
-      ? "./styles/responsive.css?v=20260802statsnav1"
+      ? "./styles/responsive.css?v=20260802statsnav2"
       : "../styles/responsive.css?v=20260728driverpreviewhero1",
     `${page === "home" ? "./" : "../"}styles/components/responsive-accessibility.css?v=20260715r13a11y1`
   ]) if (!pageHtml.includes(href)) failures.push(`${page} page is missing R11 stylesheet ${href}`);
