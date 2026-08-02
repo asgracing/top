@@ -72,6 +72,10 @@
     flex: 0 1 220px;
   }
 
+  .combined-stats-shell-title .section-title {
+    white-space: nowrap;
+  }
+
   .combined-stats-shell-controls {
     display: flex;
     align-items: center;
