@@ -17,7 +17,7 @@ import {
   buildReviseEntityCommand,
   normalizeCommandResponse
 } from "./clubs-teams-command-model.js";
-import { filterPilots, loadPilotIndex } from "./pilot-search-model.js";
+import { filterPilots, loadPilotIndex } from "./pilot-search-model.js?v=20260802pilotlimit1";
 
 const AUTH_BASE_URL = "https://auth.asgracing.ru";
 

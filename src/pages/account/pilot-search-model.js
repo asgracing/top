@@ -1,4 +1,5 @@
 const ID_PATTERN = /^[A-Za-z0-9][A-Za-z0-9._:-]*$/;
+const MAX_PILOT_INDEX_SIZE = 50_000;
 
 function text(value, maximum) {
   const result = typeof value === "string" ? value.normalize("NFKC").trim() : "";
@@ -6,7 +7,7 @@ function text(value, maximum) {
 }
 
 export function normalizePilotIndex(value) {
-  if (!Array.isArray(value) || value.length > 20_000) throw new TypeError("invalid_pilot_index");
+  if (!Array.isArray(value) || value.length > MAX_PILOT_INDEX_SIZE) throw new TypeError("invalid_pilot_index");
   const seen = new Set();
   const pilots = [];
   for (const row of value) {

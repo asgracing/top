@@ -13,6 +13,18 @@ test("normalizes only bounded public pilot identity fields", () => {
   assert.equal(JSON.stringify(pilots).includes("private"), false);
 });
 
+test("accepts the current production-sized pilot index and keeps a hard upper bound", () => {
+  const productionSized = Array.from({ length: 23_478 }, (_, index) => ({
+    public_id: `pilot-${index}`,
+    driver: `Driver ${index}`
+  }));
+  assert.equal(normalizePilotIndex(productionSized).length, 23_478);
+  assert.throws(
+    () => normalizePilotIndex(Array.from({ length: 50_001 }, () => null)),
+    /invalid_pilot_index/
+  );
+});
+
 test("filters pilots by name or public id and excludes current roster", () => {
   const pilots = normalizePilotIndex([
     { public_id: "pilot-1", driver: "Alice Driver" },
