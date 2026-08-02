@@ -39,10 +39,12 @@ test("filters pilots by name or public id and excludes current roster", () => {
 
 test("loads the canonical public driver index path", async () => {
   let requested = "";
+  let requestedOptions = null;
   const pilots = await loadPilotIndex({
     dataBaseUrl: "https://data.asgracing.ru/top-data",
-    client: { async requestJson(url) { requested = String(url); return [{ public_id: "pilot-1", driver: "Driver" }]; } }
+    client: { async requestJson(url, options) { requested = String(url); requestedOptions = options; return [{ public_id: "pilot-1", driver: "Driver" }]; } }
   });
   assert.equal(requested, "https://data.asgracing.ru/top-data/v2/drivers/drivers.json");
+  assert.equal(requestedOptions.timeoutMs, 60_000);
   assert.equal(pilots[0].publicId, "pilot-1");
 });

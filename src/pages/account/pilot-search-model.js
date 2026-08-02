@@ -35,7 +35,8 @@ export async function loadPilotIndex({ client, dataBaseUrl }) {
   const base = `${String(dataBaseUrl || "").replace(/\/+$/, "")}/`;
   const value = await client.requestJson(new URL("v2/drivers/drivers.json", base), {
     retries: 1,
-    cache: "no-store"
+    cache: "no-store",
+    timeoutMs: 60_000
   });
   return normalizePilotIndex(value);
 }
