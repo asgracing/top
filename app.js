@@ -570,6 +570,8 @@ let carsSort = { key: "wins", direction: "desc" };
 let onlineData = [];
 let hourlyAnnouncementData = null;
 let hourlyScheduleData = null;
+let hourlyCountdownTimerId = null;
+let hourlyCountdownTargetMs = null;
 let hourlyVotesCount = null;
 let hourlyVoteAlreadyVoted = false;
 let hourlyVotePending = false;
@@ -2981,6 +2983,7 @@ function renderHourlyHeroModal() {
 }
 function renderHourlyHeroCard() {
   const startsEl = document.getElementById("hourly-starts-value");
+  const countdownEl = document.getElementById("hourly-countdown-value");
   const trackEl = document.getElementById("hourly-track-value");
   const votesEl = document.getElementById("hourly-votes-summary");
   const cardEl = document.getElementById("hero-hourly-card");
@@ -2992,6 +2995,7 @@ function renderHourlyHeroCard() {
   if (topLoadState.hourly && !hourlyAnnouncementData) {
     trackEl.textContent = t("loading");
     startsEl.textContent = t("loading");
+    if (countdownEl) countdownEl.hidden = true;
     votesEl.textContent = t("loading");
     voteBtn.textContent = t("loading");
     voteBtn.disabled = true;
@@ -3012,6 +3016,7 @@ function renderHourlyHeroCard() {
       : (isEndurance ? 120 : 60);
   trackEl.textContent = data?.track_name || t("hourlyNoEvent");
   startsEl.textContent = formatHeroHourlyDateTime(data?.date, data?.start_time_local, data?.timezone);
+  startHourlyCountdown(data?.date, data?.start_time_local, data?.timezone);
   const trackCode = String(data?.track_code || "").trim().toLowerCase();
   const backgroundUrl = getTrackBackgroundUrl(trackCode);
   cardEl.style.setProperty("--hero-hourly-track-photo", backgroundUrl ? `url("${backgroundUrl}")` : "none");
@@ -3499,6 +3504,59 @@ function formatHeroHourlyDateTime(dateString, timeString, timezoneString) {
 
   const fallback = [dateString, safeTime, safeTimezone].filter(Boolean).join(" ");
   return fallback || "—";
+}
+
+function getHourlyEventStartMs(dateString, timeString, timezoneString) {
+  const dateMatch = String(dateString || "").match(/^(\d{4})-(\d{2})-(\d{2})$/);
+  const timeMatch = String(timeString || "").trim().match(/^(\d{1,2}):(\d{2})(?::(\d{2}))?/);
+  if (!dateMatch || !timeMatch) return null;
+
+  const timezoneMatch = String(timezoneString || "").match(/UTC\s*([+-])\s*(\d{1,2})(?::?(\d{2}))?/i);
+  const timezoneDirection = timezoneMatch?.[1] === "-" ? -1 : 1;
+  const timezoneHours = timezoneMatch ? Number(timezoneMatch[2]) : 3;
+  const timezoneMinutes = timezoneMatch ? Number(timezoneMatch[3] || 0) : 0;
+  const offsetMinutes = timezoneDirection * ((timezoneHours * 60) + timezoneMinutes);
+  const targetMs = Date.UTC(
+    Number(dateMatch[1]),
+    Number(dateMatch[2]) - 1,
+    Number(dateMatch[3]),
+    Number(timeMatch[1]),
+    Number(timeMatch[2]) - offsetMinutes,
+    Number(timeMatch[3] || 0)
+  );
+  return Number.isFinite(targetMs) ? targetMs : null;
+}
+
+function updateHourlyCountdown() {
+  const countdownEl = document.getElementById("hourly-countdown-value");
+  if (!countdownEl || !Number.isFinite(hourlyCountdownTargetMs)) {
+    if (countdownEl) countdownEl.hidden = true;
+    return;
+  }
+
+  const secondsLeft = Math.max(0, Math.ceil((hourlyCountdownTargetMs - Date.now()) / 1000));
+  const hours = Math.floor(secondsLeft / 3600);
+  const minutes = Math.floor((secondsLeft % 3600) / 60);
+  const seconds = secondsLeft % 60;
+  countdownEl.textContent = `${String(hours).padStart(2, "0")}:${String(minutes).padStart(2, "0")}:${String(seconds).padStart(2, "0")}`;
+  countdownEl.hidden = false;
+
+  if (secondsLeft === 0 && hourlyCountdownTimerId !== null) {
+    window.clearInterval(hourlyCountdownTimerId);
+    hourlyCountdownTimerId = null;
+  }
+}
+
+function startHourlyCountdown(dateString, timeString, timezoneString) {
+  hourlyCountdownTargetMs = getHourlyEventStartMs(dateString, timeString, timezoneString);
+  updateHourlyCountdown();
+  if (!Number.isFinite(hourlyCountdownTargetMs)) {
+    if (hourlyCountdownTimerId !== null) window.clearInterval(hourlyCountdownTimerId);
+    hourlyCountdownTimerId = null;
+    return;
+  }
+  if (hourlyCountdownTargetMs <= Date.now() || hourlyCountdownTimerId !== null) return;
+  hourlyCountdownTimerId = window.setInterval(updateHourlyCountdown, 1000);
 }
 
 function getTwitchEmbedParents() {

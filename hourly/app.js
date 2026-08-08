@@ -347,7 +347,7 @@ const translations = {
     racesCols: ["Date", "Track", "Winner", "Drivers", "Avg ELO", "Best Lap"],
     openRaceDetailsLabel: "Open race details",
     raceModalEyebrow: "Race details",
-    raceModalCols: ["Pos", "Start", "Delta", "Driver", "Best Lap", "Car", "Gap", "ELO", "ΔELO", "Pts", "Pen pts"],
+    raceModalCols: ["Pos", "Start", "Delta", "Driver", "Best Lap", "Car", "Gap", "ΔELO", "SR", "Pts"],
     raceSummaryTrack: "Track",
     raceSummaryWinner: "Winner",
     raceSummaryDrivers: "Drivers",
@@ -450,7 +450,7 @@ const translations = {
     racesCols: ["Дата", "Трасса", "Победитель", "Пилоты", "Ср. ELO", "Лучший круг"],
     openRaceDetailsLabel: "Открыть детали гонки",
     raceModalEyebrow: "Детали гонки",
-    raceModalCols: ["Поз", "Старт", "Дельта", "Пилот", "Лучший круг", "Машина", "Отставание", "ELO", "ΔELO", "Очки", "Штр."],
+    raceModalCols: ["Поз", "Старт", "Дельта", "Пилот", "Лучший круг", "Машина", "Отставание", "ΔELO", "SR", "Очки"],
     raceSummaryTrack: "Трасса",
     raceSummaryWinner: "Победитель",
     raceSummaryDrivers: "Пилоты",
@@ -604,6 +604,8 @@ Object.assign(translations.ru, {
 let announcementData = {};
 let serverStatusData = null;
 let scheduleItems = [];
+let upcomingCountdownTimerId = null;
+let upcomingCountdownTargetMs = null;
 let championshipItems = [];
 let recentRaceItems = [];
 let calendarRaceItems = [];
@@ -2070,13 +2072,55 @@ function renderEloDelta(value) {
   const cls = numeric > 0 ? "delta-positive" : "delta-negative";
   return `<span class="positions-delta ${cls}">${escapeHtml(`${numeric > 0 ? "+" : ""}${Math.round(numeric)}`)}</span>`;
 }
-function formatStartPosition(row) { return typeof row?.start_position === "number" ? String(row.start_position) : "-"; }
-function initials(name) {
-  const parts = String(name || "").trim().split(/\s+/).filter(Boolean);
-  if (!parts.length) return "?";
-  if (parts.length === 1) return parts[0].slice(0, 2).toUpperCase();
-  return (parts[0][0] + parts[1][0]).toUpperCase();
+function getRaceEloCategory(row) {
+  const explicit = Number(row?.elo_category_id);
+  if (Number.isFinite(explicit) && explicit >= 1 && explicit <= 6) return explicit;
+  const rating = Number(row?.elo ?? row?.elo_rating_after ?? row?.elo_after);
+  if (!Number.isFinite(rating)) return null;
+  if (rating >= 1350) return 1;
+  if (rating >= 1250) return 2;
+  if (rating >= 1150) return 3;
+  if (rating >= 1050) return 4;
+  if (rating >= 950) return 5;
+  return 6;
 }
+function renderRaceEloBadge(row) {
+  const rating = Number(row?.elo ?? row?.elo_rating_after ?? row?.elo_after);
+  const category = getRaceEloCategory(row);
+  if (!Number.isFinite(rating) || !category) return "";
+  return `
+    <span class="elo-badge elo-badge-compact elo-cat-${category}" title="ELO ${escapeHtml(Math.round(rating))}">
+      <span class="elo-badge-rank">C${category}</span>
+      <span class="elo-badge-value">${escapeHtml(Math.round(rating))}</span>
+    </span>
+  `;
+}
+function getRaceSafetyCategory(row) {
+  const explicit = String(row?.safety_category || "").trim().toUpperCase();
+  if (["A", "B", "C"].includes(explicit)) return explicit;
+  const rating = Number(row?.safety_rating_after ?? row?.safety_rating);
+  if (!Number.isFinite(rating)) return null;
+  if (rating >= 5) return "A";
+  if (rating >= 2.5) return "B";
+  return "C";
+}
+function renderRaceSafetyBadge(row) {
+  const rating = Number(row?.safety_rating_after ?? row?.safety_rating);
+  const category = getRaceSafetyCategory(row);
+  if (!Number.isFinite(rating) || !category) return `<span class="delta-neutral">-</span>`;
+  const delta = Number(row?.safety_delta);
+  const deltaHtml = Number.isFinite(delta) && delta !== 0
+    ? `<span class="sr-badge-delta ${delta > 0 ? "positive" : "negative"}">${escapeHtml(`${delta > 0 ? "+" : ""}${delta.toFixed(2)}`)}</span>`
+    : "";
+  return `
+    <span class="sr-badge sr-badge-compact sr-cat-${category}">
+      <span class="sr-badge-rank">${category}</span>
+      <span class="sr-badge-value">${escapeHtml(rating.toFixed(2))}</span>
+      ${deltaHtml}
+    </span>
+  `;
+}
+function formatStartPosition(row) { return typeof row?.start_position === "number" ? String(row.start_position) : "-"; }
 function humanizeTrackName(track) {
   if (!track) return "-";
   return String(track).replace(/[_-]+/g, " ").replace(/\b\w/g, char => char.toUpperCase());
@@ -2476,8 +2520,10 @@ function renderUpcomingHeroV2(data) {
       <span>${escapeHtml(formatDate(data?.date))}</span>
       <span class="hourly-upcoming-v2-date-separator" aria-hidden="true">•</span>
       <span>${escapeHtml(`${startTime} ${timezone}`.trim())}</span>
+      <span class="event-countdown hourly-upcoming-v2-countdown" id="hourly-upcoming-v2-countdown" aria-hidden="true" hidden>00:00:00</span>
     `;
   }
+  startUpcomingCountdown(data?.date, startTime, timezone);
   if (infoGridEl) infoGridEl.innerHTML = buildUpcomingEventInfoGrid(data);
   if (footerEl) {
     footerEl.innerHTML = `
@@ -2491,6 +2537,59 @@ function renderUpcomingHeroV2(data) {
   root.style.setProperty("--hourly-upcoming-track-photo", getTrackBackgroundUrl(data?.track_code) ? `url("${getTrackBackgroundUrl(data?.track_code)}")` : "none");
   bindHeroCopyButtons(root);
   bindVoteControls(root);
+}
+
+function getUpcomingEventStartMs(dateString, timeString, timezoneString) {
+  const dateMatch = String(dateString || "").match(/^(\d{4})-(\d{2})-(\d{2})$/);
+  const timeMatch = String(timeString || "").trim().match(/^(\d{1,2}):(\d{2})(?::(\d{2}))?/);
+  if (!dateMatch || !timeMatch) return null;
+
+  const timezoneMatch = String(timezoneString || "").match(/UTC\s*([+-])\s*(\d{1,2})(?::?(\d{2}))?/i);
+  const timezoneDirection = timezoneMatch?.[1] === "-" ? -1 : 1;
+  const timezoneHours = timezoneMatch ? Number(timezoneMatch[2]) : 3;
+  const timezoneMinutes = timezoneMatch ? Number(timezoneMatch[3] || 0) : 0;
+  const offsetMinutes = timezoneDirection * ((timezoneHours * 60) + timezoneMinutes);
+  const targetMs = Date.UTC(
+    Number(dateMatch[1]),
+    Number(dateMatch[2]) - 1,
+    Number(dateMatch[3]),
+    Number(timeMatch[1]),
+    Number(timeMatch[2]) - offsetMinutes,
+    Number(timeMatch[3] || 0)
+  );
+  return Number.isFinite(targetMs) ? targetMs : null;
+}
+
+function updateUpcomingCountdown() {
+  const countdownEl = document.getElementById("hourly-upcoming-v2-countdown");
+  if (!countdownEl || !Number.isFinite(upcomingCountdownTargetMs)) {
+    if (countdownEl) countdownEl.hidden = true;
+    return;
+  }
+
+  const secondsLeft = Math.max(0, Math.ceil((upcomingCountdownTargetMs - Date.now()) / 1000));
+  const hours = Math.floor(secondsLeft / 3600);
+  const minutes = Math.floor((secondsLeft % 3600) / 60);
+  const seconds = secondsLeft % 60;
+  countdownEl.textContent = `${String(hours).padStart(2, "0")}:${String(minutes).padStart(2, "0")}:${String(seconds).padStart(2, "0")}`;
+  countdownEl.hidden = false;
+
+  if (secondsLeft === 0 && upcomingCountdownTimerId !== null) {
+    window.clearInterval(upcomingCountdownTimerId);
+    upcomingCountdownTimerId = null;
+  }
+}
+
+function startUpcomingCountdown(dateString, timeString, timezoneString) {
+  upcomingCountdownTargetMs = getUpcomingEventStartMs(dateString, timeString, timezoneString);
+  updateUpcomingCountdown();
+  if (!Number.isFinite(upcomingCountdownTargetMs)) {
+    if (upcomingCountdownTimerId !== null) window.clearInterval(upcomingCountdownTimerId);
+    upcomingCountdownTimerId = null;
+    return;
+  }
+  if (upcomingCountdownTargetMs <= Date.now() || upcomingCountdownTimerId !== null) return;
+  upcomingCountdownTimerId = window.setInterval(updateUpcomingCountdown, 1000);
 }
 
 function renderChampionshipHeroV2(data) {
@@ -2963,17 +3062,16 @@ function renderRaceResultsModal() {
       <td><span class="rank-badge rank-${escapeHtml(row.position)}">#${escapeHtml(row.position)}</span></td>
       <td>${escapeHtml(formatStartPosition(row))}</td>
       <td>${renderPositionsDelta(row.positions_delta)}</td>
-      <td><div class="driver-cell"><div class="driver-avatar">${escapeHtml(initials(row.driver))}</div><div class="driver-name-wrap"><div class="driver-name">${escapeHtml(row.driver || "-")}</div><div class="race-note">${escapeHtml(row.race_number != null ? `#${row.race_number}` : "")}</div></div></div></td>
-      <td><div>${escapeHtml(row.best_lap || "-")}</div><div class="race-note">${row.had_best_lap ? escapeHtml(t("raceBestLapBadge")) : ""}</div></td>
+      <td><div class="driver-cell race-result-driver-cell"><div class="driver-name-wrap"><div class="driver-name">${escapeHtml(row.driver || "-")}</div><div class="race-driver-meta-line">${row.race_number != null ? `<span class="race-note">${escapeHtml(`#${row.race_number}`)}</span>` : ""}${renderRaceEloBadge(row)}</div></div></div></td>
+      <td><div class="${row.had_best_lap ? "best-lap-value" : ""}">${escapeHtml(row.best_lap || "-")}</div><div class="race-note">${row.had_best_lap ? escapeHtml(t("raceBestLapBadge")) : ""}</div></td>
       <td><div>${escapeHtml(row.car_name || "-")}</div><div class="race-note">${row.counted_for_stats === false ? escapeHtml(t("notCountedBadge")) : ""}</div></td>
       <td>${escapeHtml(row.gap || (row.position === 1 ? "-" : "-"))}</td>
-      <td>${escapeHtml(row.elo ?? "-")}</td>
       <td>${renderEloDelta(row.elo_rating_delta)}</td>
+      <td>${renderRaceSafetyBadge(row)}</td>
       <td>${escapeHtml(row.points ?? 0)}</td>
-      <td>${escapeHtml(row.penalty_points ?? 0)}</td>
     </tr>
   `).join("");
-  tableEl.innerHTML = `<table><thead><tr>${headers}</tr></thead><tbody>${rows}</tbody></table>`;
+  tableEl.innerHTML = `<table class="race-results-grid"><thead><tr>${headers}</tr></thead><tbody>${rows}</tbody></table>`;
 }
 const renderRaceResultsModalBase = renderRaceResultsModal;
 renderRaceResultsModal = function() {

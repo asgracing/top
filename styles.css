@@ -1463,6 +1463,31 @@
   font-size: 0.78rem;
 }
 
+.hero-hourly-meta-schedule {
+  display: inline-flex;
+  align-items: center;
+  justify-content: flex-end;
+  gap: 8px;
+  white-space: nowrap;
+}
+
+.event-countdown {
+  color: #ffd166;
+  font-variant-numeric: tabular-nums;
+  font-weight: 900;
+  letter-spacing: 0.04em;
+}
+
+.hero-hourly-countdown {
+  padding-left: 8px;
+  border-left: 1px solid rgba(255, 209, 102, 0.4);
+  font-size: 0.78rem;
+}
+
+.event-countdown[hidden] {
+  display: none;
+}
+
 .hero-hourly-votes {
   min-height: 38px;
   padding: 10px 12px;

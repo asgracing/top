@@ -78,7 +78,7 @@
   <link rel="stylesheet" href="./styles/components/footer.css?v=20260720topguide1" />
   <link rel="stylesheet" href="./styles/utilities.css?v=20260715r12states1" />
   <link rel="stylesheet" href="./styles/responsive.css?v=20260802statsnav2" />
-  <link rel="stylesheet" href="./styles.css?v=20260726hourlyfit2" />
+  <link rel="stylesheet" href="./styles.css?v=20260808countdown1" />
   <link rel="stylesheet" href="./styles/components/hero-layout.css?v=20260728tabletflow1" />
   <link rel="stylesheet" href="./styles/components/hero-server-summary.css?v=20260715hero-spacing2" />
   <link rel="stylesheet" href="./styles/components/floating-widgets.css?v=20260715server-widget1" />
@@ -460,7 +460,10 @@
       <div class="hero-hourly-meta-row">
         <span class="hero-hourly-meta-line">
           <span class="hero-hourly-meta-value" id="hourly-track-value">—</span>
-          <span class="hero-hourly-meta-time" id="hourly-starts-value">—</span>
+          <span class="hero-hourly-meta-schedule">
+            <span class="hero-hourly-meta-time" id="hourly-starts-value">—</span>
+            <span class="event-countdown hero-hourly-countdown" id="hourly-countdown-value" aria-hidden="true" hidden>00:00:00</span>
+          </span>
         </span>
       </div>
     </div>
@@ -1182,7 +1185,7 @@
   </div>
 
   <script src="./legal.js" defer></script>
-  <script type="module" src="./src/entrypoints/home.js?v=20260728hero1"></script>
+  <script type="module" src="./src/entrypoints/home.js?v=20260808countdown1"></script>
 </body>
 </html>
 
