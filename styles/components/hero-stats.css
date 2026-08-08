@@ -694,6 +694,37 @@
     flex-wrap: wrap;
     gap: 8px;
   }
+
+  .driver-safety-strikes-row {
+    justify-content: space-between;
+    flex-wrap: nowrap;
+  }
+
+  .driver-safety-badge-slot,
+  .driver-strikes {
+    display: inline-flex;
+    align-items: center;
+  }
+
+  .driver-strikes {
+    gap: 5px;
+    flex: 0 0 auto;
+  }
+
+  .driver-strike-dot {
+    width: 10px;
+    height: 10px;
+    border: 1px solid rgba(255, 255, 255, 0.48);
+    border-radius: 50%;
+    background: transparent;
+    box-shadow: inset 0 0 0 2px rgba(0, 0, 0, 0.16);
+  }
+
+  .driver-strike-dot.is-active {
+    border-color: #ff6977;
+    background: #ff4f5e;
+    box-shadow: 0 0 8px rgba(255, 79, 94, 0.4);
+  }
   
   .stat-with-trend {
     display: inline-flex;

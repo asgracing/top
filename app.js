@@ -1992,6 +1992,7 @@ Object.assign(translations.ru, {
 Object.assign(translations.en, {
   btnWorstSafety: "Safety Rating",
   safetyRatingTitle: "Safety Rating",
+  driverStrikes: "Strikes",
   safetyModalEyebrow: "Racecraft",
   safetyModalSubtitle: "Safety Rating history across counted races.",
   safetyCurrentRating: "Current SR",
@@ -2003,7 +2004,7 @@ Object.assign(translations.en, {
   safetyCategoryC: "Category C",
   safetyAboutTitle: "Safety Rating",
   safetyAboutP1: "SR v2 starts from 3.00 and is recalculated only from counted race finishes. A race changes SR only if the driver covers at least 50% of the leader's distance. The scale is capped to 1.00-9.99: A is 5.00+, B is 2.50-4.99, C is below 2.50.",
-  safetyAboutP2: "Clean-lap score: 0 invalid laps = +0.10 SR, 1-3 = +0.05, 4-5 = 0.00, 6+ = -0.025 per lap above 5. Automatic race penalties for Cutting, PitSpeeding, and Trolling are counted with x0.5 weight. Incidents use a separate scale and matter more: 0 points = +0.10, 1-2 = +0.05, 3 = 0.00, 4 = -0.02, 5-6 = -0.05, 7-9 = -0.10, 10-13 = -0.18, 14+ = -0.30. Manual/admin penalties are ignored.",
+  safetyAboutP2: "Clean-lap score: 0 invalid laps = +0.10 SR, 1-3 = +0.05, 4-5 = 0.00, 6+ = -0.025 per lap above 5. Automatic race penalties use x0.5 weight. Incidents use a separate scale and matter more. In Hourly races after the activation cutoff, invalid laps and incident points are normalized to an 11-lap distance using the leader's lap count; positive final SR is doubled, while negative SR is unchanged. Manual/admin penalties are ignored.",
   safetyCategoryRangeA: "A - clean",
   safetyCategoryRangeB: "B - stable",
   safetyCategoryRangeC: "C - risky",
@@ -2047,6 +2048,7 @@ Object.assign(translations.en, {
 Object.assign(translations.ru, {
   btnWorstSafety: "Safety Rating",
   safetyRatingTitle: "Рейтинг безопасности",
+  driverStrikes: "Страйки",
   safetyModalEyebrow: "Безопасность пилота",
   safetyModalSubtitle: "История изменения Safety Rating по зачтенным гонкам.",
   safetyCurrentRating: "Текущий SR",
@@ -2058,7 +2060,7 @@ Object.assign(translations.ru, {
   safetyCategoryC: "Категория C",
   safetyAboutTitle: "Safety Rating",
   safetyAboutP1: "SR v2 стартует с 3.00 и считается только по зачтенным финишам гонок. Гонка влияет на SR, только если пилот проехал не меньше 50% дистанции лидера. Диапазон рейтинга ограничен 1.00-9.99: A - 5.00+, B - 2.50-4.99, C - ниже 2.50.",
-  safetyAboutP2: "Шкала за чистоту кругов: 0 грязных кругов = +0.10 SR, 1-3 = +0.05, 4-5 = 0.00, 6+ = -0.025 за каждый круг сверх 5. Автоштрафы за Cutting, PitSpeeding и Trolling учитываются с весом x0.5. Инциденты считаются отдельно и влияют сильнее: 0 очков = +0.10, 1-2 = +0.05, 3 = 0.00, 4 = -0.02, 5-6 = -0.05, 7-9 = -0.10, 10-13 = -0.18, 14+ = -0.30. Ручные штрафы админов не учитываются.",
+  safetyAboutP2: "Шкала за чистоту кругов: 0 грязных кругов = +0.10 SR, 1-3 = +0.05, 4-5 = 0.00, 6+ = -0.025 за каждый круг сверх 5. Автоштрафы учитываются с весом x0.5, инциденты — по отдельной шкале. В Hourly-гонках после даты активации грязные круги и очки инцидентов нормализуются к дистанции 11 кругов по числу кругов лидера; положительный итоговый SR удваивается, отрицательный не меняется. Ручные штрафы админов не учитываются.",
   safetyCategoryRangeA: "A - чисто",
   safetyCategoryRangeB: "B - стабильно",
   safetyCategoryRangeC: "C - риск",
@@ -8985,7 +8987,14 @@ function renderCommunityTextBlocks(text) {
 }
 
 function buildDriverHighlightsMarkup(profile) {
-  return renderDriverHighlights(profile, { getSafetyInfo, findSafetySource, renderRecentForm, renderSafetyBadge, translate: t, escapeHtml });
+  return renderDriverHighlights(profile, { getSafetyInfo, findSafetySource, renderRecentForm, renderSafetyBadge, renderStrikes: renderDriverStrikes, translate: t, escapeHtml });
+}
+
+function renderDriverStrikes(profile) {
+  const active = Math.max(0, Math.min(3, Number(profile?.strikes?.active ?? profile?.summary?.strikes?.active ?? 0) || 0));
+  const label = `${t("driverStrikes")}: ${active}/3`;
+  const dots = [0, 1, 2].map(index => `<span class="driver-strike-dot${index < active ? " is-active" : ""}" aria-hidden="true"></span>`).join("");
+  return `<span class="driver-strikes" role="img" aria-label="${escapeAttribute(label)}" title="${escapeAttribute(label)}">${dots}</span>`;
 }
 
 function renderDriverRaceHistory() {
