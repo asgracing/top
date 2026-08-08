@@ -111,7 +111,7 @@ for (const [page, [htmlPath, entrySrc]] of Object.entries(pageEntrypoints)) {
   if (!pageHtml.includes(tableControlsHref)) failures.push(`${page} page is missing the table controls stylesheet`);
   const topThreeHref = page === "home" ? "./styles/components/top-three.css?v=20260715r11topthree1" : "../styles/components/top-three.css?v=20260715r11topthree1";
   if (!pageHtml.includes(topThreeHref)) failures.push(`${page} page is missing the Top-3 stylesheet`);
-  const tablesHref = page === "home" ? "./styles/components/tables.css?v=20260726authrow1" : "../styles/components/tables.css?v=20260726authrow1";
+  const tablesHref = page === "home" ? "./styles/components/tables.css" : "../styles/components/tables.css";
   if (!pageHtml.includes(tablesHref)) failures.push(`${page} page is missing the shared tables stylesheet`);
   const paginationHref = page === "home" ? "./styles/components/pagination.css?v=20260715r11pagination1" : "../styles/components/pagination.css?v=20260715r11pagination1";
   if (!pageHtml.includes(paginationHref)) failures.push(`${page} page is missing the shared pagination stylesheet`);

@@ -1,6 +1,6 @@
 import test from "node:test";
 import assert from "node:assert/strict";
-import { createRacesTableView } from "../../src/pages/races/table-view.js";
+import { createRacesTableView, getRaceTypeCode } from "../../src/pages/races/table-view.js";
 
 function setup() {
   const table = { innerHTML: "" };
@@ -19,7 +19,15 @@ test("renders race rows and pagination", () => {
   const { view, table, calls } = setup();
   view.render({ items: [{ track: "monza", winner: "Driver" }], page: 1, totalPages: 2, totalItems: 1, startIndex: 1, endIndex: 1 }, { onOpen() {}, onPage() {} });
   assert.match(table.innerHTML, /track:monza/);
+  assert.match(table.innerHTML, /race-type-pub[^>]*>PUB</);
   assert.deepEqual(calls.map(call => call[0]), ["rows", "pagination"]);
+});
+
+test("classifies public, hourly, endurance and championship races", () => {
+  assert.equal(getRaceTypeCode({ source: "main" }), "PUB");
+  assert.equal(getRaceTypeCode({ source: "hourly", race_format: "hourly" }), "H");
+  assert.equal(getRaceTypeCode({ source: "hourly", race_format: "endurance" }), "E");
+  assert.equal(getRaceTypeCode({ source: "hourly", race_format: "endurance", competition_mode: "championship" }), "CH");
 });
 
 test("renders empty state and hides pagination", () => {
