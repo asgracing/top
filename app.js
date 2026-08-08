@@ -13,7 +13,7 @@ import { HOME_LOADING_TEXT_IDS, applyHomeTableViewState } from "./src/pages/home
 import { createModalControllerFactory } from "./src/shared/modal-controller.js";
 import { parseTableNumber, sortTableRows } from "./src/shared/table-model.js";
 import { countUnreadNews, sortPublishedNews } from "./src/shared/news-feed-model.js";
-import { createAuthHeaderController, safeAvatarUrl } from "./src/features/auth/header-auth.js?v=20260726authrow1";
+import { createAuthHeaderController, safeAvatarUrl } from "./src/features/auth/header-auth.js?v=20260808authreliability1";
 import { applyRandomTrackBackground, normalizeTrackBackgroundCode, resolveTrackBackgroundFile } from "./src/features/server-status/track-background.js?v=20260726staticfallback1";
 
 const PAGE_CONTEXT = readPageContext(document);
@@ -111,7 +111,8 @@ const serverStatusUrl = getDevRuntimeParam("serverStatusUrl") || (TOP_API_ROOT_U
 const donationsApiUrl = "https://donations.asgracing.workers.dev/recent";
 const hourlyAnnouncementUrl = `${HOURLY_DATA_BASE_URL}/announcement.json`;
 const hourlyScheduleUrl = `${HOURLY_DATA_BASE_URL}/schedule.json`;
-const hourlyVotesApiUrl = "https://hourly-votes.asgracing.workers.dev";
+const hourlyVotesApiUrl = "https://data.asgracing.ru/hourly-votes-api";
+const hourlyVotesApiEndpoint = path => `${hourlyVotesApiUrl}/${String(path || "").replace(/^\/+/, "")}`;
 const communityLikesApiUrl =
   document.querySelector('meta[name="community-likes-api"]')?.getAttribute("content")?.trim() || "";
 const HOURLY_SITE_BASE_URL = "/hourly";
@@ -3209,7 +3210,7 @@ async function loadHourlyVotes(announcement) {
   }
   applyHourlyAnnouncementVoteStateFromCache(announcement);
   try {
-    const url = new URL("/votes", hourlyVotesApiUrl);
+    const url = new URL(hourlyVotesApiEndpoint("votes"));
     url.searchParams.set("event_ids", eventId);
     url.searchParams.set("voter_id", getHourlyBrowserVoterId());
     const payload = await requestJson(url, { cache: "no-store", retries: 1 });
@@ -3234,7 +3235,7 @@ async function submitHourlyHeroVote() {
   renderHourlyHeroModal();
 
   try {
-    const payload = await requestJson(new URL("/vote", hourlyVotesApiUrl), {
+    const payload = await requestJson(new URL(hourlyVotesApiEndpoint("vote")), {
       method: "POST",
       headers: { "content-type": "application/json; charset=utf-8" },
       body: JSON.stringify({
@@ -3273,7 +3274,7 @@ async function submitHourlyHeroUnvote() {
   renderHourlyHeroModal();
 
   try {
-    const payload = await requestJson(new URL("/unvote", hourlyVotesApiUrl), {
+    const payload = await requestJson(new URL(hourlyVotesApiEndpoint("unvote")), {
       method: "POST",
       headers: { "content-type": "application/json; charset=utf-8" },
       body: JSON.stringify({

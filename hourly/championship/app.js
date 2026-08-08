@@ -16,7 +16,8 @@ const defaultDataBase = isAsgPublicSite
 const dataBase = normalizeBaseUrl(params.get("hourlyApiBase")) || defaultDataBase;
 const githubDataBase = "https://asgracing.github.io/hourly-data";
 const hourlyAssetBase = "../assets";
-const votesApiBase = "https://hourly-votes.asgracing.workers.dev";
+const votesApiBase = "https://data.asgracing.ru/hourly-votes-api";
+const votesApiEndpoint = path => `${votesApiBase.replace(/\/+$/, "")}/${String(path || "").replace(/^\/+/, "")}`;
 const VOTE_STATE_STORAGE_KEY = "hourlyVoteStateByEventId";
 const VOTE_STATE_STORAGE_TTL_MS = 30 * 24 * 60 * 60 * 1000;
 const NEWS_READ_STORAGE_KEY = "asgReadNewsIds.v2";
@@ -759,14 +760,33 @@ async function loadJsonOrNull(url) {
   }
 }
 
+async function fetchVotesWithTimeout(url, options = {}, retries = 0, timeoutMs = 12000) {
+  let lastError = null;
+  for (let attempt = 0; attempt <= retries; attempt += 1) {
+    const controller = new AbortController();
+    const timeoutId = window.setTimeout(() => controller.abort("timeout"), timeoutMs);
+    try {
+      const response = await fetch(url, { ...options, signal: controller.signal });
+      if (response.ok || response.status < 500 || attempt === retries) return response;
+      lastError = new Error(`HTTP ${response.status}`);
+    } catch (error) {
+      lastError = error;
+      if (attempt === retries) throw error;
+    } finally {
+      window.clearTimeout(timeoutId);
+    }
+  }
+  throw lastError || new Error("championship votes request failed");
+}
+
 async function loadVotesForSchedule(items) {
   const eventIds = items.map(buildSlotEventId).filter(Boolean);
   if (!eventIds.length) return;
   try {
-    const url = new URL("/votes", votesApiBase);
+    const url = new URL(votesApiEndpoint("votes"));
     url.searchParams.set("event_ids", [...new Set(eventIds)].join(","));
     url.searchParams.set("voter_id", getBrowserVoterId());
-    const response = await fetch(url, { cache: "no-store" });
+    const response = await fetchVotesWithTimeout(url, { cache: "no-store" }, 1);
     if (!response.ok) throw new Error(`HTTP ${response.status}`);
     const payload = await response.json();
     if (payload?.items && typeof payload.items === "object") {
@@ -798,7 +818,7 @@ async function submitVote(item) {
           time: item?.start_time_local || "",
           voter_id: getBrowserVoterId()
         };
-    const response = await fetch(new URL(endpoint, votesApiBase), {
+    const response = await fetchVotesWithTimeout(new URL(votesApiEndpoint(endpoint)), {
       method: "POST",
       headers: { "content-type": "application/json; charset=utf-8" },
       body: JSON.stringify(body)

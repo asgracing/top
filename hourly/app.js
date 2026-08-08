@@ -31,6 +31,7 @@ const recentRaceDetailsBaseUrl = `${hourlyDataBaseUrl}/`;
 const serverStatusUrl = pageParams.get("serverStatusUrl") || (topApiRoot || hourlyApiRoot ? `${topApiRoot || hourlyApiRoot}/server-status` : `${defaultTopDataBaseUrl}/server_status.json`);
 const votesApiBase =
   document.querySelector('meta[name="hourly-votes-api"]')?.getAttribute("content")?.trim() || "";
+const votesApiEndpoint = path => `${votesApiBase.replace(/\/+$/, "")}/${String(path || "").replace(/^\/+/, "")}`;
 const VOTER_ID_STORAGE_TTL_MS = 365 * 24 * 60 * 60 * 1000;
 const VOTE_STATE_STORAGE_KEY = "hourlyVoteStateByEventId";
 const VOTE_STATE_STORAGE_TTL_MS = 30 * 24 * 60 * 60 * 1000;
@@ -1990,6 +1991,20 @@ async function fetchWithTimeout(url, options = {}, timeoutMs = 8000) {
     window.clearTimeout(timeoutId);
   }
 }
+async function fetchVotesWithRetry(url, options = {}, retries = 1, timeoutMs = 12000) {
+  let lastError = null;
+  for (let attempt = 0; attempt <= retries; attempt += 1) {
+    try {
+      const response = await fetchWithTimeout(url, options, timeoutMs);
+      if (response.ok || response.status < 500 || attempt === retries) return response;
+      lastError = new Error(`HTTP ${response.status}`);
+    } catch (error) {
+      lastError = error;
+      if (attempt === retries) throw error;
+    }
+  }
+  throw lastError || new Error("hourly votes request failed");
+}
 function formatDate(isoDate) {
   if (!isoDate) return "--";
   const date = new Date(`${isoDate}T00:00:00+03:00`);
@@ -2113,10 +2128,10 @@ async function loadVotesForSchedule(items) {
   const eventIds = items.filter(item => !isVotingDisabledForItem(item)).map(buildSlotEventId).filter(Boolean);
   if (!eventIds.length) return;
   try {
-    const url = new URL("/votes", votesApiBase);
+    const url = new URL(votesApiEndpoint("votes"));
     url.searchParams.set("event_ids", eventIds.join(","));
     url.searchParams.set("voter_id", getBrowserVoterId());
-    const response = await fetchWithTimeout(url, { cache: "no-store" });
+    const response = await fetchVotesWithRetry(url, { cache: "no-store" });
     if (!response.ok) {
       throw new Error(`HTTP ${response.status}`);
     }
@@ -2149,11 +2164,11 @@ async function submitVote(item) {
       time: item?.start_time_local || "",
       voter_id: voterId
     };
-    const response = await fetch(new URL("/vote", votesApiBase), {
+    const response = await fetchVotesWithRetry(new URL(votesApiEndpoint("vote")), {
       method: "POST",
       headers: { "content-type": "application/json; charset=utf-8" },
       body: JSON.stringify(body)
-    });
+    }, 0);
     if (!response.ok) {
       throw new Error(`HTTP ${response.status}`);
     }
@@ -2187,7 +2202,7 @@ async function submitUnvote(item) {
   renderHeroVote();
   renderUpcomingHeroV2(announcementData || {});
   try {
-    const response = await fetch(new URL("/unvote", votesApiBase), {
+    const response = await fetchVotesWithRetry(new URL(votesApiEndpoint("unvote")), {
       method: "POST",
       headers: { "content-type": "application/json; charset=utf-8" },
       body: JSON.stringify({
@@ -2196,7 +2211,7 @@ async function submitUnvote(item) {
         time: item?.start_time_local || "",
         voter_id: getBrowserVoterId()
       })
-    });
+    }, 0);
     if (!response.ok) throw new Error(`HTTP ${response.status}`);
     const payload = await response.json();
     voteStateByEventId[eventId] = {

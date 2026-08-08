@@ -1,4 +1,5 @@
 import { normalizeClubsTeamsAuthState } from "./clubs-teams-auth-model.js";
+import { createHttpClient } from "../../shared/http-client.js";
 
 const DEFAULT_AUTH_BASE_URL = "https://auth.asgracing.ru";
 const AVATAR_HOSTS = new Set(["steamcdn-a.akamaihd.net"]);
@@ -262,6 +263,7 @@ export function createAuthHeaderController({
   let state = { status: "loading", auth: { authenticated: false }, message: "" };
   let destroyed = false;
   let requestController = null;
+  const authHttpClient = createHttpClient({ fetchImpl, defaultTimeoutMs: 8000 });
 
   ensureStylesheet(documentRef);
   const root = makeElement(documentRef, "div", "auth-header");
@@ -478,15 +480,15 @@ export function createAuthHeaderController({
       render();
     }
     try {
-      const response = await fetchImpl(`${baseUrl}/v1/me`, {
+      const payload = await authHttpClient.requestJson(`${baseUrl}/v1/me`, {
         method: "GET",
         credentials: "include",
         cache: "no-store",
         headers: { Accept: "application/json" },
-        signal: requestController.signal
+        signal: requestController.signal,
+        retries: 1
       });
-      if (!response.ok) throw new Error(`auth_me_http_${response.status}`);
-      const auth = normalizeAuthPayload(await response.json());
+      const auth = normalizeAuthPayload(payload);
       if (!destroyed) {
         state = { status: "ready", auth, message: "" };
         render();
