@@ -12,22 +12,22 @@ window.ASG_COMMUNITY_POSTS = [
       en: [
         "The ASG Racing July 2026 Championship has officially concluded.",
         "Thank you to every driver who took part in the two-round series at Nordschleife and kept the competition intense throughout the championship.",
-        "Alexey Mihin has been crowned the winner of the July series.",
-        "Congratulations to Alexey on a well-earned title, and thank you to everyone who made this championship a memorable part of the ASG Racing season."
+        "Aleksey Mihin has been crowned the winner of the July series.",
+        "Congratulations to Aleksey on a well-earned title, and thank you to everyone who made this championship a memorable part of the ASG Racing season."
       ],
       ru: [
         "Чемпионат ASG Racing July 2026 официально завершен.",
         "Спасибо всем пилотам, которые приняли участие в двухэтапной серии на Nordschleife и поддерживали высокий уровень борьбы на протяжении всего чемпионата.",
-        "Победителем июльской серии стал Alexey Mihin.",
-        "Поздравляем Алексея с заслуженным титулом и благодарим всех, кто сделал этот чемпионат яркой частью сезона ASG Racing."
+        "Победителем июльской серии стал Aleksey Mihin.",
+        "Поздравляем Aleksey Mihin с заслуженным титулом и благодарим всех, кто сделал этот чемпионат яркой частью сезона ASG Racing."
       ]
     },
     images: [
       {
-        src: "../news-content/images/ASGRacing_July2026/ASGRacing_July2026_Finished.png",
+        src: "../news-content/images/ASGRacing_July2026/ASGRacing_July2026_Finishedv2.png",
         alt: {
-          en: "Alexey Mihin wins the ASG Racing July 2026 Championship",
-          ru: "Alexey Mihin — победитель чемпионата ASG Racing July 2026"
+          en: "Aleksey Mihin wins the ASG Racing July 2026 Championship",
+          ru: "Aleksey Mihin — победитель чемпионата ASG Racing July 2026"
         }
       }
     ]
