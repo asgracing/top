@@ -877,50 +877,68 @@ const translations = {
     btnChampionshipEvent: "Championship",
     btnRules: "Rules",
     rulesBadge: "Internal Racing Rules",
-    rulesTitle: "Mandatory for all closed ASG Racing events",
-    rulesLead:
-      "Below are the internal rules for closed races dated June 2026. Every participant is required to follow them in full.",
-    rulesSectionTitle: "Internal rules for closed races, June 2026",
-    rulesPenaltyTitle: "Penalties",
-    rulesItem1:
-      "It is strictly forbidden to cross the pit entry or pit exit line with any part of the car.",
+    rulesTitle: "Internal Rules for Closed ASG Racing Events",
+    rulesLead: "Edition: August 2026",
+    rulesPenaltyTitle: "ASG Racing Penalty Schedule",
+    rulesItem0: "The racing surface is the area of the track between the white boundary lines.",
+    rulesItem1: "Crossing the pit-entry and pit-exit lines is prohibited.",
     rulesItem2:
-      "A fight for position is considered started if the overtaking car gets its front bumper alongside the leading car before the corner. The overlap zone begins at the rear wheel of the car ahead.",
-    rulesItem3:
-      "The start of the corner is the moment steering input begins to change the car from straight-line motion toward the turn.",
-    rulesItem4: "Entering the overlap zone under braking is allowed.",
+      "A battle begins if the attacking car gets its front bumper into the opponent's overlap zone before the corner. The overlap zone begins at the rear wheel.",
+    rulesItem3: "The start of a corner is a sustained steering input toward the corner.",
+    rulesItem4:
+      "A driver may enter the overlap zone under braking while retaining control and remaining within the track limits.",
     rulesItem5:
-      "If the cars enter a corner as described in rule No. 2, both drivers must leave enough room in the turn, at least one car width to the white line.",
-    rulesItem6: "Only one change of line is allowed while defending a position.",
-    rulesItem7: "Blocking another car by any means is prohibited.",
-    rulesItem8:
-      "Blue flags must be obeyed. If shown a blue flag, you are strongly advised to let the faster car through before the next corner and must do so within one sector.",
-    rulesItem9:
-      "If a car gains an advantage in attack or defense by leaving the track during a fight, that car must give the position back to the rival.",
-    rulesItem10:
-      "A car is considered to have left the racing surface if none of its wheels remain in contact with the track, including the boundary lines.",
-    rulesItem11:
-      "Drivers must take all necessary actions to avoid contact with rival cars.",
+      "Once overlap is established, both drivers must leave at least one car width to the white line.",
+    rulesItem6: "Space must be maintained at corner entry, apex and exit while overlap exists.",
+    rulesItem7: "Without overlap, the car ahead has priority over the racing line.",
+    rulesItem8: "Late overlap does not grant the right to space. Uncontrolled attacks are prohibited.",
+    rulesItem9: "One change of line is permitted while battling.",
+    rulesItem10: "Weaving, repeated moves, reactive blocking and brake testing are prohibited.",
+    rulesItem11: "Sudden changes of line under braking and forcing an opponent off track are prohibited.",
     rulesItem12:
-      "An overtake is considered completed when there is no overlap and both cars can follow the optimal line for the situation without contact.",
-    rulesPenalty1: "15 seconds for contact.",
-    rulesPenalty2: "Drive-through (DT) for a collision that causes car damage.",
-    rulesPenalty3: "SG30 for actions that lead to a mass crash.",
-    rulesPenalty4: "15 seconds for ignoring blue flags.",
-    rulesPenalty5:
-      "DT for repeated ignoring of blue flags / DSQ for blatant and intentional ignoring.",
-    rulesPenalty6:
-      "15 seconds for not giving the position back after gaining advantage off track in a fight (see rule 9).",
-    rulesPenalty7:
-      "DT for crossing the pit entry or pit exit line (see rule 1).",
-    rulesPenalty8: "15 seconds for blocking another car.",
-    rulesPenalty9:
-      "DT for an unsafe rejoin to the racing surface that causes a collision.",
-    rulesPenalty10: "15 seconds for repeated line changes while battling.",
-    rulesPenalty11:
-      "DT for the third contact after two previous 15-second penalties under item 1.",
-    rulesPenalty12: "Disqualification for unsafe driving and repeated mistakes.",
-    rulesPenalty13: "DT for intentional blocking.",
+      "Drivers must avoid contact. The driver behind is responsible for maintaining a safe distance.",
+    rulesItem13: "Using an opponent to brake, turn or keep the car under control is prohibited.",
+    rulesItem14:
+      "An overtake is complete when there is no overlap, the overtaking car is ahead and returning to the line is safe.",
+    rulesItem15: "A position gained off track must be returned within one lap.",
+    rulesItem16:
+      "A car is considered to have left the track if none of its wheels are touching the track or its boundary lines.",
+    rulesItem17:
+      "A car rejoining after leaving the track or spinning must yield to traffic. An unsafe rejoin is prohibited.",
+    rulesItem18:
+      "Under blue flags, a lapped driver must not defend and must let the faster car through within the current sector. A lapped driver has the right to unlap themselves.",
+    rulesItem19:
+      "Reports must identify the participants, lap, time and evidence. The administration may impose sanctions or a ban; the decision may be appealed.",
+    rulesItem20: "Insulting participants, stewards or administrators is prohibited.",
+    rulesItem21:
+      "The administration reserves the right to ban a participant for dangerous driving or repeated serious violations.",
+    rulesPenalty1: "Minor contact without consequences — warning or racing incident.",
+    rulesPenalty2: "Contact causing loss of time or position — 15 seconds.",
+    rulesPenalty3: "Contact causing a spin or damage — Drive Through.",
+    rulesPenalty4: "Contact causing a mass crash — Stop&Go 30 seconds.",
+    rulesPenalty5: "Intentional contact, ramming or retaliation — disqualification and ban.",
+    rulesPenalty6: "Uncontrolled late attack — 15 seconds or Drive Through.",
+    rulesPenalty7: "Failure to leave space when overlap exists — 15 seconds.",
+    rulesPenalty8: "Forcing an opponent off track with contact — Drive Through.",
+    rulesPenalty9: "Repeated change of line — 15 seconds.",
+    rulesPenalty10: "Intentional or reactive blocking — Drive Through.",
+    rulesPenalty11: "Brake test — Drive Through or Stop&Go 30 seconds.",
+    rulesPenalty12: "Off-track advantage without returning the position — 15 seconds.",
+    rulesPenalty13: "Repeated corner cutting or bypassing the track — Drive Through or disqualification.",
+    rulesPenalty14: "Unsafe rejoin without contact — 15 seconds.",
+    rulesPenalty15: "Unsafe rejoin with contact — Drive Through.",
+    rulesPenalty16: "Unsafe rejoin causing a mass crash — disqualification.",
+    rulesPenalty17: "First blue-flag violation — 15 seconds.",
+    rulesPenalty18: "Repeated blue-flag violation — Drive Through.",
+    rulesPenalty19: "Intentional blocking of the leaders — disqualification.",
+    rulesPenalty20: "Crossing the pit-entry or pit-exit line — Drive Through.",
+    rulesPenalty21: "Unsafe pit exit — 15 seconds or Drive Through.",
+    rulesPenalty22: "Impeding a car on a fast lap — warning or grid-position penalty.",
+    rulesPenalty23: "Dangerous driving or repeated violations — disqualification or suspension.",
+    rulesPenalty24: "Insults, threats and harassment — mute, suspension or ban.",
+    rulesPenalty25: "Cheating, driver substitution, sabotage or evading a penalty — disqualification and ban.",
+    rulesPenaltyNote:
+      "A penalty may be adjusted based on the consequences, intent, repeated behavior and voluntary return of the position.",
     btnLastRaces: "Race Archive",
     btnSpecialEvent: "Special Event",
     btnCars: "Cars",
@@ -1523,49 +1541,71 @@ const translations = {
     btnChampionshipEvent: "Чемпионат",
     btnRules: "Правила",
     rulesBadge: "Внутренние гоночные правила",
-    rulesTitle: "Обязательны к соблюдению на закрытых гонках ASG Racing",
-    rulesLead:
-      "Ниже опубликованы внутренние правила для закрытых гонок от июня 2026. Все участники обязаны соблюдать их в полном объеме.",
-    rulesSectionTitle: "Внутренние правила для закрытых гонок от июня 2026",
-    rulesPenaltyTitle: "Штрафы",
-    rulesItem1:
-      "Строго запрещено пересекать любой частью автомобиля линию разметки на въезде и выезде из питлейна.",
+    rulesTitle: "Внутренние правила закрытых гонок ASG Racing",
+    rulesLead: "Редакция: август 2026",
+    rulesPenaltyTitle: "Штрафная сетка ASG Racing",
+    rulesItem0: "Гоночная дорожка - расстояние гоночного полотна между белыми линиями разметки.",
+    rulesItem1: "Запрещено пересекать линии въезда и выезда из питлейна.",
     rulesItem2:
-      "Борьба за позицию считается начавшейся, если обгоняющий автомобиль до поворота \"вошел в базу\" впередиидущего автомобиля своим габаритом (передним бампером). База начинается от заднего колеса автомобиля.",
-    rulesItem3:
-      "Началом поворота считается момент, когда происходит движение рулем для изменения прямолинейного движения в сторону поворота.",
-    rulesItem4: "На торможении можно \"входить в базу\".",
+      "Борьба начинается, если атакующий до поворота вошёл передним бампером в базу соперника. База начинается от заднего колеса.",
+    rulesItem3: "Начало поворота — устойчивое движение рулём в сторону поворота.",
+    rulesItem4:
+      "На торможении можно входить в базу, сохраняя контроль и оставаясь в пределах трассы.",
     rulesItem5:
-      "Если автомобили входят в поворот так, как это описано в пункте №2 (обгоняющий успел \"войти в базу\"), то оба пилота обязаны оставлять достаточное место в повороте (как минимум одну ширину автомобиля до белой ленточки).",
-    rulesItem6: "В борьбе за позицию разрешено только одно изменение траектории.",
-    rulesItem7: "Блокирование автомобиля любыми способами - запрещено.",
-    rulesItem8:
-      "Соблюдение синих флагов обязательно. В случае, если вам показали синий флаг, настоятельно рекомендуется пропустить догоняющую машину до поворота, обязательно пропустить в течение 1 сектора.",
-    rulesItem9:
-      "В случае, если во время борьбы один из автомобилей получил преимущество в обороне или нападении за счет выезда за пределы трассы - этот автомобиль должен уступить позицию сопернику.",
-    rulesItem10:
-      "Автомобиль будет считаться покинувшим Гоночную дорожку, если ни одно его колесо не будет соприкасаться с Гоночной дорожкой, включая линии, обозначающие её границу.",
+      "При входе в базу оба пилота оставляют минимум одну ширину автомобиля до белой линии.",
+    rulesItem6: "Место сохраняется на входе, в апексе и на выходе, пока есть перекрытие.",
+    rulesItem7: "Без входа в базу приоритет траектории имеет впередиидущий автомобиль.",
+    rulesItem8: "Позднее перекрытие не даёт права на место. Неконтролируемая атака запрещена.",
+    rulesItem9: "В борьбе разрешено одно изменение траектории.",
+    rulesItem10: "Зигзаги, повторные смещения, реактивное блокирование и brake test запрещены.",
     rulesItem11:
-      "Гонщики обязаны предпринимать все необходимые действия для избегания контактов с автомобилями соперников.",
+      "Запрещено резко менять траекторию на торможении и выдавливать соперника с трассы.",
     rulesItem12:
-      "Обгон считается завершенным, если отсутствует перекрытие, и движение автомобилей по оптимальной в данной ситуации траектории не приведет к контакту.",
-    rulesPenalty1: "15 секунд за контакт",
-    rulesPenalty2: "Проезд по питлейну (DT), за столкновение повреждением авто",
-    rulesPenalty3: "SG30 за действия, которые привели к массовой аварии",
-    rulesPenalty4: "15 секунд за игнорирование синих флагов",
-    rulesPenalty5:
-      "DT за повторное игнорирование синих флагов / DSQ за злостное и намеренное игнорирование",
-    rulesPenalty6:
-      "15 секунд за непредоставление позиции в случае выезда за пределы трассы в борьбе (см пункт 9)",
-    rulesPenalty7:
-      "DT за пересечение линии разметки на въезде или выезде из питов (см пункт 1)",
-    rulesPenalty8: "15 секунд за блокирование автомобиля",
-    rulesPenalty9:
-      "DT за небезопасное возвращение на гоночную дорожку, повлекшее за собой столкновение",
-    rulesPenalty10: "15 секунд за неоднократную смену траектории в борьбе",
-    rulesPenalty11: "DT за 3-ий контакт после 2-ух по п.1 15 сек",
-    rulesPenalty12: "Дисквалификация = за небезопасную езду и повторение ошибок",
-    rulesPenalty13: "DT за намеренное блокирование автомобиля",
+      "Пилоты обязаны избегать контактов. Пилот, находящийся позади отвечает за безопасную дистанцию.",
+    rulesItem13: "Запрещено использовать соперника для торможения, поворота или удержания машины.",
+    rulesItem14:
+      "Обгон завершён, когда перекрытия нет, обгоняющий впереди, а возврат безопасен.",
+    rulesItem15: "Позиция, полученная вне трассы возвращается в течение круга.",
+    rulesItem16:
+      "Болид считается покинувшем трассу, если колёса не касаются трассы или линий разметки.",
+    rulesItem17:
+      "Болид, возвращающийся после выезда или разворота уступает места потоку. Опасный возврат запрещен.",
+    rulesItem18:
+      "При синем флаге круговой не защищается и пропускает в текущем секторе. Круговой имеет право вернуться в \"круг\".",
+    rulesItem19:
+      "Репорты подаются с указанием участников, круга, времени и доказательств. Администрация вправе назначить санкции или бан; решение можно оспорить.",
+    rulesItem20: "Оскорбления участников, судей или администрации запрещены.",
+    rulesItem21:
+      "Администрация оставляет за собой право заблокировать участника за опасную езду, повторные грубые нарушения.",
+    rulesPenalty1: "Незначительный контакт без последствий — предупреждение или гоночный инцидент.",
+    rulesPenalty2: "Контакт с потерей времени или позиции — 15 секунд.",
+    rulesPenalty3: "Контакт с разворотом или повреждением — Drive Through.",
+    rulesPenalty4: "Контакт, приведший к массовой аварии — Stop&Go 30 секунд.",
+    rulesPenalty5: "Намеренный контакт, таран или месть — дисквалификация и бан.",
+    rulesPenalty6: "Неконтролируемая поздняя атака — 15 секунд или Drive Through.",
+    rulesPenalty7: "Непредоставление места при перекрытии — 15 секунд.",
+    rulesPenalty8: "Выдавливание соперника с контактом — Drive Through.",
+    rulesPenalty9: "Повторная смена траектории — 15 секунд.",
+    rulesPenalty10: "Намеренное или реактивное блокирование — Drive Through.",
+    rulesPenalty11: "Brake test — Drive Through или Stop&Go 30 секунд.",
+    rulesPenalty12: "Преимущество вне трассы без возврата позиции — 15 секунд.",
+    rulesPenalty13: "Систематические срезки или объезд трассы — Drive Through или дисквалификация.",
+    rulesPenalty14: "Небезопасное возвращение без контакта — 15 секунд.",
+    rulesPenalty15: "Небезопасное возвращение с контактом — Drive Through.",
+    rulesPenalty16: "Небезопасное возвращение с массовой аварией — дисквалификация.",
+    rulesPenalty17: "Первое игнорирование синего флага — 15 секунд.",
+    rulesPenalty18: "Повторное игнорирование синего флага — Drive Through.",
+    rulesPenalty19: "Намеренное блокирование лидеров — дисквалификация.",
+    rulesPenalty20: "Пересечение линии въезда или выезда из питлейна — Drive Through.",
+    rulesPenalty21: "Опасный выезд из питлейна — 15 секунд или Drive Through.",
+    rulesPenalty22:
+      "Помеха автомобилю на быстром круге — предупреждение или штраф стартовых позиций.",
+    rulesPenalty23: "Опасная езда или повторные нарушения — дисквалификация или отстранение.",
+    rulesPenalty24: "Оскорбления, угрозы и травля — мут, отстранение или бан.",
+    rulesPenalty25:
+      "Читы, подмена пилота, саботаж или обход наказания — дисквалификация и бан.",
+    rulesPenaltyNote:
+      "Наказание может изменяться с учётом последствий, умысла, повторяемости и добровольного возврата позиции.",
     btnLastRaces: "Архив гонок",
     btnSpecialEvent: "Спец. ивент",
     lastRacesBtn: "Последние гонки",
