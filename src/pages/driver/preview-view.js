@@ -35,6 +35,10 @@ export function createDriverPreviewView(dependencies) {
     } else {
       renderPortrait(profile, state.avatarUrl);
       titleEl.innerHTML = buildHeroTitle(profile);
+      const metaRow = typeof titleEl.querySelector === "function"
+        ? titleEl.querySelector(".driver-hero-meta-row")
+        : null;
+      if (metaRow && actionEl) metaRow.append(actionEl);
       statsEl.innerHTML = buildStatsMarkup(profile);
       highlightsEl.innerHTML = buildHighlightsMarkup(profile);
       bindStats(statsEl, profile);

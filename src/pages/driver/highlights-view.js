@@ -13,7 +13,15 @@ export function renderDriverHighlights(profile, { getSafetyInfo, findSafetySourc
       <div class="driver-highlight-label">${escapeHtml(translate("driverSummaryFastestLaps"))}</div>
       <div class="driver-highlight-value">${escapeHtml(summary.fastest_lap_awards ?? 0)}</div>
     </div>
-    <div class="driver-highlight-card"><div class="driver-highlight-label">${escapeHtml(translate("safetyRatingTitle"))}</div>
-      <div class="driver-highlight-value driver-safety-strikes-row"><span class="driver-safety-badge-slot">${renderSafetyBadge(safetySource) || `<span class="empty-inline">-</span>`}</span>${renderStrikes(profile)}</div></div>
+    <div class="driver-highlight-card driver-safety-card">
+      <div class="driver-safety-column">
+        <div class="driver-highlight-label">${escapeHtml(translate("safetyRatingTitle"))}</div>
+        <div class="driver-highlight-value"><span class="driver-safety-badge-slot">${renderSafetyBadge(safetySource) || `<span class="empty-inline">-</span>`}</span></div>
+      </div>
+      <div class="driver-safety-column driver-safety-warnings">
+        <div class="driver-highlight-label">${escapeHtml(translate("driverStrikes"))}</div>
+        <div class="driver-highlight-value">${renderStrikes(profile)}</div>
+      </div>
+    </div>
   `;
 }

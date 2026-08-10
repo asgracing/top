@@ -13,6 +13,12 @@ function setup() {
     documentRef: { getElementById: id => elements.get(id) || null },
     translate: key => key === "bansCols" ? ["Driver", "Date"] : "No bans",
     escapeHtml: value => String(value).replaceAll("<", "&lt;"),
+    renderDriverLink: (name, publicId) => {
+      const safeName = String(name).replaceAll("<", "&lt;");
+      return publicId
+        ? `<a href="/top/driver/?id=${publicId}">${safeName}</a>`
+        : `<span>${safeName}</span>`;
+    },
     formatDateTime: (value, locale) => `${locale}:${value}`,
     replaceWithTextState: (...args) => calls.push(["state", ...args]),
     setLoadingMarkup: (...args) => calls.push(["loading", ...args])
@@ -26,6 +32,13 @@ test("renders bans summary and escaped table rows", () => {
   assert.equal(elements.get("bans-total-count").textContent, "1");
   assert.equal(elements.get("bans-latest-date").textContent, "ru:2026-07-13");
   assert.match(elements.get("bans-table").innerHTML, /&lt;Driver>/);
+});
+
+test("renders a pilot nickname as a profile link when an id is available", () => {
+  const { view, elements } = setup();
+  view.render({ data: [{ name: "Driver One", public_id: "drv-1", banned_at: "2026-07-13" }] });
+  assert.match(elements.get("bans-table").innerHTML, /href="\/top\/driver\/\?id=drv-1"/);
+  assert.match(elements.get("bans-table").innerHTML, />Driver One<\/a>/);
 });
 
 test("delegates loading and empty states", () => {

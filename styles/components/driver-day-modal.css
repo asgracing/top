@@ -22,16 +22,19 @@
 
 .modal-header-driver-preview {
   display: block;
-  margin-bottom: 16px;
+  margin-bottom: 12px;
   padding-right: 48px;
 }
 
-.modal-header-driver-preview > .eyebrow {
-  margin-bottom: 8px;
+.driver-preview-hero-copy > .eyebrow {
+  margin-bottom: 4px;
+  font-size: 0.68rem;
+  letter-spacing: 0.08em;
 }
 
 .driver-preview-hero-mainline {
   gap: clamp(12px, 1.5vw, 18px);
+  align-items: end;
 }
 
 .driver-preview-steam-portrait {
@@ -44,13 +47,10 @@
 }
 
 #driver-preview-title {
-  display: grid;
-  grid-template-columns: minmax(0, 1fr) auto;
-  align-items: start;
-  gap: 14px;
+  display: block;
   width: 100%;
   margin: 0;
-  font-size: clamp(1.75rem, 3vw, 2.55rem);
+  font-size: clamp(1.65rem, 2.7vw, 2.35rem);
   line-height: 1.02;
 }
 
@@ -59,20 +59,21 @@
 }
 
 .modal-card-driver-preview .driver-hero-ratings {
-  gap: 7px;
+  gap: 6px;
 }
 
 .modal-card-driver-preview .driver-rank-pill {
-  min-height: 38px;
-  padding: 0 12px;
-  font-size: 0.86rem;
+  min-height: 32px;
+  padding: 0 10px;
+  font-size: 0.8rem;
 }
 
 .btn-driver-preview-link {
-  display: flex;
+  display: inline-flex;
   width: max-content;
   min-height: 30px;
-  margin: 7px 0 0 auto;
+  margin: 0;
+  align-self: center;
   padding: 0 10px;
   border: 1px solid rgba(255, 143, 82, 0.92);
   border-radius: 10px;

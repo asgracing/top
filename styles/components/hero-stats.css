@@ -350,8 +350,12 @@
   .driver-hero-mainline {
     display: grid;
     grid-template-columns: auto minmax(0, 1fr);
-    align-items: start;
+    align-items: end;
     gap: clamp(12px, 1.25vw, 18px);
+    min-width: 0;
+  }
+
+  .driver-hero-copy {
     min-width: 0;
   }
 
@@ -401,30 +405,46 @@
 
   .driver-title-name {
     min-width: 0;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+  }
+
+  .driver-title-primary {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    min-width: 0;
   }
   
   #driver-page-name {
-    display: grid;
-    grid-template-columns: minmax(0, 1fr) auto;
-    align-items: start;
-    gap: 16px;
+    display: block;
     width: 100%;
+    margin: 0;
+    font-size: clamp(2rem, 4vw, 3.1rem);
+    line-height: 1;
   }
 
-  .driver-steam-portrait + #driver-page-name {
+  .driver-steam-portrait + .driver-hero-copy {
     grid-column: 2;
   }
 
-  .driver-steam-portrait[hidden] + #driver-page-name {
+  .driver-steam-portrait[hidden] + .driver-hero-copy {
     grid-column: 1 / -1;
+  }
+
+  .driver-hero-heading > .hero-subtitle {
+    margin: 8px 0 0 calc(clamp(72px, 6vw, 88px) + clamp(12px, 1.25vw, 18px));
+    font-size: 0.9rem;
+    line-height: 1.35;
   }
 
   .driver-hero-ratings {
     display: flex;
-    flex-direction: column;
-    align-items: flex-end;
-    gap: 8px;
-    margin-left: auto;
+    align-items: center;
+    flex-wrap: wrap;
+    gap: 6px;
+    margin-top: 8px;
   }
 
   .driver-hero-ratings .elo-badge,
@@ -437,15 +457,15 @@
     display: inline-flex;
     align-items: center;
     justify-content: center;
-    min-width: 68px;
-    min-height: 42px;
+    min-width: 0;
+    min-height: 40px;
     box-sizing: border-box;
-    padding: 0 16px;
+    padding: 0 14px;
     border: 1px solid rgba(244, 183, 64, 0.55);
     border-radius: 999px;
     background: #f4b740;
     color: #191205;
-    font-size: 1rem;
+    font-size: 0.95rem;
     font-weight: 950;
     line-height: 1;
   }
@@ -456,14 +476,8 @@
       border-radius: 18px;
     }
 
-    #driver-page-name {
-      grid-template-columns: minmax(0, 1fr);
-      gap: 12px;
-    }
-
     .driver-hero-ratings {
       align-items: flex-start;
-      margin-left: 0;
     }
   }
   
@@ -471,27 +485,33 @@
     display: inline-flex;
     align-items: center;
     justify-content: center;
-    gap: 10px;
-    min-height: 42px;
-    padding: 0 14px;
+    gap: 7px;
+    min-height: 32px;
+    padding: 0 10px;
     border-radius: 999px;
     border: 1px solid var(--line);
     background: rgba(255, 255, 255, 0.04);
-    font-size: 0.92rem;
+    font-size: 0.8rem;
     font-weight: 900;
     letter-spacing: 0.02em;
     line-height: 1;
     white-space: nowrap;
-    margin-left: auto;
+    margin-left: 0;
     color: var(--text);
   }
   
   .driver-rank-label {
     color: var(--muted);
-    font-size: 0.76rem;
+    font-size: 0.68rem;
     font-weight: 800;
     letter-spacing: 0.05em;
     text-transform: uppercase;
+  }
+
+  .driver-hero-ratings .elo-badge {
+    min-height: 32px;
+    padding: 0 10px;
+    font-size: 0.8rem;
   }
   
   .driver-rank-value {
@@ -695,9 +715,20 @@
     gap: 8px;
   }
 
-  .driver-safety-strikes-row {
-    justify-content: space-between;
-    flex-wrap: nowrap;
+  .driver-safety-card {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    padding: 0;
+    overflow: hidden;
+  }
+
+  .driver-safety-column {
+    min-width: 0;
+    padding: 12px 16px;
+  }
+
+  .driver-safety-column + .driver-safety-column {
+    border-inline-start: 1px solid var(--line);
   }
 
   .driver-safety-badge-slot,
@@ -709,6 +740,10 @@
   .driver-strikes {
     gap: 5px;
     flex: 0 0 auto;
+  }
+
+  .driver-safety-warnings .driver-highlight-value {
+    flex-wrap: nowrap;
   }
 
   .driver-strike-dot {

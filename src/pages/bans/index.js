@@ -2,11 +2,13 @@ export function createBansPageView({
   documentRef,
   translate,
   escapeHtml,
+  renderDriverLink,
   formatDateTime,
   replaceWithTextState,
   setLoadingMarkup
 }) {
   if (!documentRef || typeof translate !== "function" || typeof escapeHtml !== "function"
+    || typeof renderDriverLink !== "function"
     || typeof formatDateTime !== "function" || typeof replaceWithTextState !== "function"
     || typeof setLoadingMarkup !== "function") {
     throw new TypeError("Bans page view requires complete rendering dependencies");
@@ -31,7 +33,7 @@ export function createBansPageView({
     const headers = translate("bansCols").map(label => `<th>${escapeHtml(label)}</th>`).join("");
     const rows = data.map(item => `
       <tr>
-        <td>${escapeHtml(item.name || "—")}</td>
+        <td>${renderDriverLink(item.name || "—", item.public_id, "driver-link", item.player_id)}</td>
         <td>${escapeHtml(item.banned_at ? formatDateTime(item.banned_at, locale) : "—")}</td>
       </tr>
     `).join("");

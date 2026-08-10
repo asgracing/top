@@ -18,6 +18,9 @@ test("renders Driver highlights with fallback safety source", () => {
   assert.match(markup, /e:3/);
   assert.match(markup, /SAFE/);
   assert.match(markup, /STRIKES:2/);
+  assert.match(markup, /driver-safety-card/);
+  assert.match(markup, /e:t:driverStrikes/);
+  assert.doesNotMatch(markup, /driver-safety-strikes-row/);
 });
 
 test("clamps public strike count to three", () => {

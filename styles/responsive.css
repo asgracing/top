@@ -895,15 +895,13 @@
   }
 
   #driver-preview-title {
-    grid-template-columns: minmax(0, 1fr);
-    gap: 10px;
     font-size: clamp(1.35rem, 7vw, 1.8rem);
   }
 
   .modal-card-driver-preview .driver-hero-ratings {
     align-items: flex-start;
-    margin-left: 0;
   }
+
 
   .top-nav-inner {
     padding: 7px 8px 9px;

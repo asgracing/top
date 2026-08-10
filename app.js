@@ -1250,6 +1250,8 @@ const translations = {
     bannedLabel: "BANNED",
     driverWinRate: "Win rate",
     driverPodiumRate: "Podium rate",
+    driverRaceNumber: "Race number",
+    driverRankingShort: "Rank",
     driverRankingPosition: "Ranking position",
     driverNoData: "Driver profile not found.",
     driverLoading: "Loading driver profile...",
@@ -1840,6 +1842,8 @@ const translations = {
     bannedLabel: "ЗАБАНЕН",
     driverWinRate: "Процент побед",
     driverPodiumRate: "Процент подиумов",
+    driverRaceNumber: "Номер пилота",
+    driverRankingShort: "Позиция",
     driverRankingPosition: "Позиция в рейтинге",
     driverNoData: "Профиль пилота не найден.",
     driverLoading: "Загрузка профиля пилота...",
@@ -2035,7 +2039,8 @@ Object.assign(translations.ru, {
 Object.assign(translations.en, {
   btnWorstSafety: "Safety Rating",
   safetyRatingTitle: "Safety Rating",
-  driverStrikes: "Strikes",
+  driverStrikes: "Warnings",
+  driverWarningsTooltip: "Receiving 3 warnings results in an automatic ban from ASG Racing servers.",
   safetyModalEyebrow: "Racecraft",
   safetyModalSubtitle: "Safety Rating history across counted races.",
   safetyCurrentRating: "Current SR",
@@ -2091,7 +2096,8 @@ Object.assign(translations.en, {
 Object.assign(translations.ru, {
   btnWorstSafety: "Safety Rating",
   safetyRatingTitle: "Рейтинг безопасности",
-  driverStrikes: "Страйки",
+  driverStrikes: "Предупреждения",
+  driverWarningsTooltip: "При получении 3 предупреждений выдается автоматический бан на серверах ASG Racing.",
   safetyModalEyebrow: "Безопасность пилота",
   safetyModalSubtitle: "История изменения Safety Rating по зачтенным гонкам.",
   safetyCurrentRating: "Текущий SR",
@@ -6162,7 +6168,9 @@ async function loadBansData() {
   return items
     .map((item) => ({
       name: String(item?.name || "").trim(),
-      banned_at: String(item?.banned_at || "").trim()
+      banned_at: String(item?.banned_at || "").trim(),
+      public_id: String(item?.public_id || item?.publicId || "").trim(),
+      player_id: String(item?.player_id || item?.playerId || "").trim()
     }))
     .filter((item) => item.name)
     .sort((a, b) => {
@@ -8985,6 +8993,7 @@ function getBansPageView() {
     documentRef: document,
     translate: t,
     escapeHtml,
+    renderDriverLink,
     formatDateTime: formatDateTimeLocal,
     replaceWithTextState,
     setLoadingMarkup
@@ -9092,8 +9101,9 @@ function buildDriverHighlightsMarkup(profile) {
 function renderDriverStrikes(profile) {
   const active = Math.max(0, Math.min(3, Number(profile?.strikes?.active ?? profile?.summary?.strikes?.active ?? 0) || 0));
   const label = `${t("driverStrikes")}: ${active}/3`;
+  const tooltip = t("driverWarningsTooltip");
   const dots = [0, 1, 2].map(index => `<span class="driver-strike-dot${index < active ? " is-active" : ""}" aria-hidden="true"></span>`).join("");
-  return `<span class="driver-strikes" role="img" aria-label="${escapeAttribute(label)}" title="${escapeAttribute(label)}">${dots}</span>`;
+  return `<span class="driver-strikes" role="img" aria-label="${escapeHtml(`${label}. ${tooltip}`)}" title="${escapeHtml(tooltip)}">${dots}</span>`;
 }
 
 function renderDriverRaceHistory() {
@@ -10568,7 +10578,22 @@ async function initializeNewsPageData() {
 }
 
 async function initializeBansPageData() {
-  bansData = await loadBansData();
+  const [items, drivers] = await Promise.all([
+    loadBansData(),
+    loadDriverIndex().catch(() => [])
+  ]);
+  const driversByName = new Map(
+    (Array.isArray(drivers) ? drivers : [])
+      .map(driver => [String(driver?.driver || driver?.name || driver?.display_name || "").trim().toLocaleLowerCase(), driver])
+      .filter(([name]) => name)
+  );
+  bansData = items.map(item => {
+    if (item.public_id || item.player_id) return item;
+    const match = driversByName.get(item.name.toLocaleLowerCase());
+    return match
+      ? { ...item, public_id: match.public_id || "", player_id: match.player_id || "" }
+      : item;
+  });
   topLoadState.bans = false;
   rerenderUI();
 }
