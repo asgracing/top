@@ -1,4 +1,4 @@
-import { createAuthHeaderController } from "../../features/auth/header-auth.js";
+import { createAuthHeaderController, safeAvatarUrl } from "../../features/auth/header-auth.js";
 import { createHttpClient } from "../../shared/http-client.js";
 import { element } from "../../shared/safe-dom.js";
 import { resolveRuntimeOverride } from "../../shared/runtime-config.js";
@@ -7,6 +7,11 @@ import {
   entitySlugFromLocation,
   loadEntityDetail
 } from "./detail-model.js";
+
+const AUTH_BASE_URL = "https://auth.asgracing.ru";
+const ROSTER_AVATAR_LIMIT = 100;
+const ROSTER_AVATAR_CONCURRENCY = 6;
+const rosterAvatarCache = new Map();
 
 const COPY = {
   en: {
@@ -109,7 +114,43 @@ function metric(documentRef, label, value, extraClass = "") {
   ]);
 }
 
-function renderProfile({ documentRef, lang, siteBase, entityType, result }) {
+export async function loadRosterAvatarUrl({ client, publicId, authBaseUrl = AUTH_BASE_URL }) {
+  const normalizedId = String(publicId || "").trim();
+  if (!normalizedId) return null;
+  if (!rosterAvatarCache.has(normalizedId)) {
+    rosterAvatarCache.set(normalizedId, client.requestJson(
+      `${String(authBaseUrl).replace(/\/+$/, "")}/v1/drivers/${encodeURIComponent(normalizedId)}/steam-profile`,
+      { cache: "force-cache", retries: 0, timeoutMs: 5000 }
+    ).then(payload => safeAvatarUrl(payload?.avatar_url)).catch(() => null));
+  }
+  return rosterAvatarCache.get(normalizedId);
+}
+
+async function hydrateRosterAvatars({ documentRef, client, targets }) {
+  const queue = targets.slice(0, ROSTER_AVATAR_LIMIT);
+  let nextIndex = 0;
+  const worker = async () => {
+    while (nextIndex < queue.length) {
+      const target = queue[nextIndex++];
+      const avatarUrl = await loadRosterAvatarUrl({ client, publicId: target.publicId });
+      if (!avatarUrl || !target.node.isConnected) continue;
+      const image = element(documentRef, "img", {
+        className: "clubs-teams-roster-avatar-image",
+        attrs: { alt: "", loading: "lazy", decoding: "async", referrerpolicy: "no-referrer" }
+      });
+      image.addEventListener("load", () => target.node.classList.add("has-image"), { once: true });
+      image.addEventListener("error", () => image.remove(), { once: true });
+      target.node.append(image);
+      image.src = avatarUrl;
+    }
+  };
+  await Promise.all(Array.from(
+    { length: Math.min(ROSTER_AVATAR_CONCURRENCY, queue.length) },
+    () => worker()
+  ));
+}
+
+function renderProfile({ documentRef, lang, siteBase, entityType, result, client }) {
   const { detail, pointer, assetUrl } = result;
   const root = documentRef.getElementById("clubs-teams-detail-root");
   root.replaceChildren();
@@ -175,14 +216,22 @@ function renderProfile({ documentRef, lang, siteBase, entityType, result }) {
     ])
   ]);
 
-  const rosterChildren = detail.roster.length ? detail.roster.map(member => element(documentRef, "a", {
-    className: "clubs-teams-roster-card",
-    attrs: { href: `${siteBase}driver/?id=${encodeURIComponent(member.public_id)}` }
-  }, [
-    element(documentRef, "span", { className: "clubs-teams-roster-avatar", text: member.display_name.slice(0, 2).toLocaleUpperCase() }),
-    element(documentRef, "span", { className: "clubs-teams-roster-name", text: member.display_name }),
-    element(documentRef, "span", { className: "clubs-teams-roster-role", text: member.role === "member" ? copy(lang, "member") : copy(lang, "leader") })
-  ])) : [element(documentRef, "p", { className: "clubs-teams-detail-empty", text: copy(lang, "noRoster") })];
+  const avatarTargets = [];
+  const rosterChildren = detail.roster.length ? detail.roster.map(member => {
+    const avatar = element(documentRef, "span", {
+      className: "clubs-teams-roster-avatar",
+      text: member.display_name.slice(0, 2).toLocaleUpperCase()
+    });
+    avatarTargets.push({ node: avatar, publicId: member.public_id });
+    return element(documentRef, "a", {
+      className: "clubs-teams-roster-card",
+      attrs: { href: `${siteBase}driver/?id=${encodeURIComponent(member.public_id)}` }
+    }, [
+      avatar,
+      element(documentRef, "span", { className: "clubs-teams-roster-name", text: member.display_name }),
+      element(documentRef, "span", { className: "clubs-teams-roster-role", text: member.role === "member" ? copy(lang, "member") : copy(lang, "leader") })
+    ]);
+  }) : [element(documentRef, "p", { className: "clubs-teams-detail-empty", text: copy(lang, "noRoster") })];
   const rosterPanel = element(documentRef, "section", { className: "clubs-teams-detail-panel", attrs: { "aria-labelledby": "detail-roster-title" } }, [
     element(documentRef, "h2", { text: copy(lang, "roster"), attrs: { id: "detail-roster-title" } }),
     element(documentRef, "div", { className: "clubs-teams-roster-grid" }, rosterChildren)
@@ -218,6 +267,7 @@ function renderProfile({ documentRef, lang, siteBase, entityType, result }) {
     element(documentRef, "div", { className: "clubs-teams-race-grid" }, raceChildren)
   ]);
   root.append(hero, ratingPanel, element(documentRef, "div", { className: "clubs-teams-detail-columns" }, [rosterPanel, relationPanel]), racePanel);
+  void hydrateRosterAvatars({ documentRef, client, targets: avatarTargets });
 }
 
 export function createEntityDetailPage({
@@ -253,7 +303,7 @@ export function createEntityDetailPage({
     root.replaceChildren(stateNode(documentRef, lang, "loading"));
     if (!slug) { root.replaceChildren(stateNode(documentRef, lang, "unavailable")); return; }
     try {
-      renderProfile({ documentRef, lang, siteBase, entityType, result: await loadEntityDetail({ client, dataBaseUrl, entityType, slug }) });
+      renderProfile({ documentRef, lang, siteBase, entityType, result: await loadEntityDetail({ client, dataBaseUrl, entityType, slug }), client });
     } catch {
       root.replaceChildren(stateNode(documentRef, lang, "unavailable", load));
     }

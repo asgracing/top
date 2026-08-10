@@ -33,7 +33,9 @@
   .clubs-teams-roster-card { display: grid; grid-template-columns: 44px minmax(0,1fr); grid-template-rows: auto auto; gap: 2px 11px; align-items: center; padding: 10px; border: 1px solid rgba(255,255,255,.08); border-radius: 14px; color: var(--text); text-decoration: none; background: rgba(255,255,255,.035); }
   .clubs-teams-roster-card:hover,
   .clubs-teams-related-card:hover { border-color: rgba(255,112,45,.6); transform: translateY(-1px); }
-  .clubs-teams-roster-avatar { grid-row: 1 / 3; display: grid; width: 44px; height: 44px; place-items: center; border-radius: 12px; background: rgba(255,112,45,.15); color: var(--accent); font-weight: 950; }
+  .clubs-teams-roster-avatar { position: relative; grid-row: 1 / 3; display: grid; overflow: hidden; width: 44px; height: 44px; place-items: center; border-radius: 12px; background: rgba(255,112,45,.15); color: var(--accent); font-weight: 950; }
+  .clubs-teams-roster-avatar-image { position: absolute; inset: 0; width: 100%; height: 100%; border-radius: inherit; object-fit: cover; opacity: 0; transition: opacity var(--duration-fast) var(--ease-standard); }
+  .clubs-teams-roster-avatar.has-image .clubs-teams-roster-avatar-image { opacity: 1; }
   .clubs-teams-roster-name { overflow: hidden; font-weight: 850; text-overflow: ellipsis; white-space: nowrap; }
   .clubs-teams-roster-role { color: var(--muted); font-size: .75rem; }
   .clubs-teams-related-grid { display: grid; gap: 10px; }
