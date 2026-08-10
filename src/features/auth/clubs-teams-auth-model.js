@@ -7,9 +7,13 @@ const ACTOR_STATE_ACTION_KEYS = new Set(["public_id", "club", "team", "membershi
 const ACTOR_STATE_TEAM_CLUB_KEYS = new Set(["public_id", "club", "team", "team_club_actions"]);
 const ACTOR_STATE_ALL_ACTION_KEYS = new Set(["public_id", "club", "team", "membership_actions", "team_club_actions"]);
 const ENTITY_KEYS = new Set(["id", "public_id", "slug", "status", "row_version", "role", "display_name", "pending_revision"]);
-const ACTION_KEYS = new Set([
+const LEGACY_ACTION_KEYS = new Set([
   "id", "action_type", "target_type", "target_public_id", "target_slug", "target_display_name",
   "subject_public_id", "initiated_by_public_id", "created_at", "expires_at", "resolution_role"
+]);
+const ACTION_KEYS = new Set([
+  ...LEGACY_ACTION_KEYS,
+  "subject_display_name"
 ]);
 const MEMBERSHIP_ACTION_IDS = new WeakMap();
 const TEAM_CLUB_ACTION_KEYS = new Set([
@@ -87,18 +91,25 @@ function normalizeMembershipActions(value) {
   const ids = new Set();
   for (const raw of value) {
     const source = plainObject(raw);
-    if (!source || !hasExactKeys(source, ACTION_KEYS)) return { actions: [], valid: false };
+    const hasDisplayNames = source && hasExactKeys(source, ACTION_KEYS);
+    if (!source || (!hasDisplayNames && !hasExactKeys(source, LEGACY_ACTION_KEYS))) {
+      return { actions: [], valid: false };
+    }
     const id = safeIdentifier(source.id);
     const targetPublicId = safeIdentifier(source.target_public_id);
     const targetSlug = safeSlug(source.target_slug);
     const targetDisplayName = boundedText(source.target_display_name, 200);
     const subjectPublicId = safeIdentifier(source.subject_public_id);
     const initiatedByPublicId = safeIdentifier(source.initiated_by_public_id);
+    const subjectDisplayName = hasDisplayNames
+      ? boundedText(source.subject_display_name, 200)
+      : subjectPublicId;
     const createdAt = safeDate(source.created_at);
     const expiresAt = safeDate(source.expires_at);
     if (
       !id || ids.has(id) || !targetPublicId || !targetSlug || !targetDisplayName
-      || !subjectPublicId || !initiatedByPublicId || !createdAt || !expiresAt
+      || !subjectPublicId || !initiatedByPublicId
+      || !subjectDisplayName || !createdAt || !expiresAt
       || Date.parse(expiresAt) <= Date.parse(createdAt)
       || !["request", "invitation"].includes(source.action_type)
       || !["club", "team"].includes(source.target_type)
@@ -111,6 +122,7 @@ function normalizeMembershipActions(value) {
       targetSlug,
       targetDisplayName,
       subjectPublicId,
+      subjectDisplayName,
       initiatedByPublicId,
       createdAt,
       expiresAt,

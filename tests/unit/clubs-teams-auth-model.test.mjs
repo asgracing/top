@@ -113,6 +113,7 @@ test("accepts old actor state and strictly normalizes pending membership actions
         target_slug: "asg-racing",
         target_display_name: "ASG Racing",
         subject_public_id: "pilot-1",
+        subject_display_name: "Pilot One",
         initiated_by_public_id: "manager-1",
         created_at: "2026-08-01T10:00:00Z",
         expires_at: "2026-08-08T10:00:00Z",
@@ -122,6 +123,7 @@ test("accepts old actor state and strictly normalizes pending membership actions
   });
   assert.equal(current.integrityValid, true);
   assert.equal(current.membershipActions[0].targetDisplayName, "ASG Racing");
+  assert.equal(current.membershipActions[0].subjectDisplayName, "Pilot One");
   assert.equal(membershipActionId(current.membershipActions[0]), "action-internal");
   assert.equal(JSON.stringify(current).includes("action-internal"), false);
   assert.equal("id" in current.membershipActions[0], false);

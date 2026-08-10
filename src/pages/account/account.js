@@ -83,6 +83,8 @@ const COPY = {
     membershipActions: "Membership requests and invitations",
     membershipRequest: "Membership request",
     membershipInvitation: "Invitation",
+    membershipApplicant: "Applicant",
+    membershipInvitee: "Invited driver",
     acceptMembership: "Accept",
     rejectMembership: "Reject",
     leaveMembership: "Leave",
@@ -163,6 +165,8 @@ const COPY = {
     membershipActions: "Заявки и приглашения",
     membershipRequest: "Заявка на вступление",
     membershipInvitation: "Приглашение",
+    membershipApplicant: "Заявитель",
+    membershipInvitee: "Приглашённый пилот",
     acceptMembership: "Принять",
     rejectMembership: "Отклонить",
     leaveMembership: "Покинуть",
@@ -364,9 +368,12 @@ function renderMembershipActions(actions, mutationReady) {
       const href = action.targetType === "club"
         ? `/clubs/?slug=${encodeURIComponent(action.targetSlug)}`
         : `/teams/detail/?slug=${encodeURIComponent(action.targetSlug)}`;
+      const subjectHref = `/driver/?id=${encodeURIComponent(action.subjectPublicId)}`;
       return `<article class="account-membership-action">
         <div><span>${t(action.actionType === "request" ? "membershipRequest" : "membershipInvitation")}</span>
           <a href="${href}">${escapeHtml(action.targetDisplayName)}</a>
+          <span>${t(action.actionType === "request" ? "membershipApplicant" : "membershipInvitee")}:
+            <a href="${subjectHref}">${escapeHtml(action.subjectDisplayName)}</a></span>
           <time>${escapeHtml(t("membershipExpires", formatAccountDate(action.expiresAt)))}</time></div>
         ${resolvable ? `<div class="account-membership-action-buttons">
           <button class="account-action account-action--primary" type="button" data-ct-resolve="accepted" data-ct-action-index="${index}">${t("acceptMembership")}</button>
