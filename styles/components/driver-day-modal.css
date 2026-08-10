@@ -27,19 +27,17 @@
 }
 
 .driver-preview-hero-copy > .eyebrow {
-  margin-bottom: 4px;
-  font-size: 0.68rem;
-  letter-spacing: 0.08em;
+  display: none;
 }
 
 .driver-preview-hero-mainline {
-  gap: clamp(12px, 1.5vw, 18px);
+  gap: clamp(12px, 1.25vw, 18px);
   align-items: end;
 }
 
 .driver-preview-steam-portrait {
-  width: clamp(64px, 6vw, 72px);
-  border-radius: 18px;
+  width: clamp(72px, 6vw, 88px);
+  border-radius: clamp(18px, 1.5vw, 22px);
 }
 
 .driver-preview-hero-copy {
@@ -50,8 +48,8 @@
   display: block;
   width: 100%;
   margin: 0;
-  font-size: clamp(1.65rem, 2.7vw, 2.35rem);
-  line-height: 1.02;
+  font-size: clamp(2rem, 4vw, 3.1rem);
+  line-height: 1;
 }
 
 #driver-preview-title .driver-title-name {
@@ -60,6 +58,14 @@
 
 .modal-card-driver-preview .driver-hero-ratings {
   gap: 6px;
+}
+
+.driver-preview-action-row {
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 6px;
+  margin-top: 8px;
 }
 
 .modal-card-driver-preview .driver-rank-pill {

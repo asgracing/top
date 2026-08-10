@@ -3,7 +3,7 @@ import assert from "node:assert/strict";
 import { createDriverPreviewView } from "../../src/pages/driver/preview-view.js";
 
 function fixture() {
-  const elements = Object.fromEntries(["driver-preview-title", "driver-preview-subtitle", "driver-preview-stats", "driver-preview-highlights", "driver-preview-link"].map(id => [id, { textContent: "", innerHTML: "", hidden: false, href: "", replaceChildren() { this.innerHTML = ""; } }]));
+  const elements = Object.fromEntries(["driver-preview-title", "driver-preview-subtitle", "driver-preview-stats", "driver-preview-highlights", "driver-preview-link", "driver-preview-action-row"].map(id => [id, { textContent: "", innerHTML: "", hidden: false, href: "", replaceChildren() { this.innerHTML = ""; }, append() {} }]));
   const calls = [];
   return {
     elements,

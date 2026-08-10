@@ -10,7 +10,8 @@ export function createDriverPreviewView(dependencies) {
     const statsEl = documentRef.getElementById("driver-preview-stats");
     const highlightsEl = documentRef.getElementById("driver-preview-highlights");
     const actionEl = documentRef.getElementById("driver-preview-link");
-    if (!titleEl || !statsEl || !highlightsEl || !actionEl) return false;
+    const actionRowEl = documentRef.getElementById("driver-preview-action-row");
+    if (!titleEl || !statsEl || !highlightsEl || !actionEl || !actionRowEl) return false;
 
     if (!state) {
       renderPortrait(null, null);
@@ -35,10 +36,12 @@ export function createDriverPreviewView(dependencies) {
     } else {
       renderPortrait(profile, state.avatarUrl);
       titleEl.innerHTML = buildHeroTitle(profile);
-      const metaRow = typeof titleEl.querySelector === "function"
-        ? titleEl.querySelector(".driver-hero-meta-row")
+      actionRowEl.replaceChildren?.();
+      const raceNumberEl = typeof titleEl.querySelector === "function"
+        ? titleEl.querySelector(".driver-race-number-pill")
         : null;
-      if (metaRow && actionEl) metaRow.append(actionEl);
+      if (raceNumberEl) actionRowEl.append?.(raceNumberEl);
+      actionRowEl.append?.(actionEl);
       statsEl.innerHTML = buildStatsMarkup(profile);
       highlightsEl.innerHTML = buildHighlightsMarkup(profile);
       bindStats(statsEl, profile);

@@ -8906,7 +8906,15 @@ function initDriverPreviewModal() {
   driverPreviewModalController = createModalController({
     modalId: "driver-preview-modal",
     closeButtonId: "driver-preview-close",
-    onOpen: renderDriverPreviewModal,
+    onOpen: () => {
+      const modal = document.getElementById("driver-preview-modal");
+      const navRect = document.getElementById("top-nav")?.getBoundingClientRect?.();
+      const visibleNavBottom = navRect && navRect.bottom > 0 && navRect.top < window.innerHeight
+        ? Math.min(window.innerHeight, Math.max(0, navRect.bottom))
+        : 0;
+      modal?.style.setProperty("--driver-preview-top", `${Math.ceil(visibleNavBottom) + 8}px`);
+      renderDriverPreviewModal();
+    },
     onClose: () => {
       driverPreviewState = null;
       renderDriverPreviewModal();

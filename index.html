@@ -60,7 +60,7 @@
   <link rel="stylesheet" href="./styles/components/buttons.css?v=20260713r11buttons1" />
   <link rel="stylesheet" href="./styles/components/hero-foundation.css?v=20260713r11hero1" />
   <link rel="stylesheet" href="./styles/components/hero-actions.css?v=20260713r11heroactions1" />
-  <link rel="stylesheet" href="./styles/components/hero-stats.css?v=20260810driverban1" />
+  <link rel="stylesheet" href="./styles/components/hero-stats.css?v=20260810driverpreview2" />
   <link rel="stylesheet" href="./styles/components/server-sticky-layout.css?v=20260715r11serversticky1" />
   <link rel="stylesheet" href="./styles/components/sections.css?v=20260802statsnav3" />
   <link rel="stylesheet" href="./styles/components/support-widget.css?v=20260715r11support1" />
@@ -74,10 +74,10 @@
   <link rel="stylesheet" href="./styles/components/activity-controls.css?v=20260715r11activitycontrols1" />
   <link rel="stylesheet" href="./styles/components/activity-summary.css?v=20260715r11activitysummary1" />
   <link rel="stylesheet" href="./styles/components/hourly-event-modal.css?v=20260715r11hourlymodal1" />
-  <link rel="stylesheet" href="./styles/components/driver-day-modal.css?v=20260810driverban1" />
+  <link rel="stylesheet" href="./styles/components/driver-day-modal.css?v=20260810driverpreview2" />
   <link rel="stylesheet" href="./styles/components/footer.css?v=20260720topguide1" />
   <link rel="stylesheet" href="./styles/utilities.css?v=20260715r12states1" />
-  <link rel="stylesheet" href="./styles/responsive.css?v=20260810driverban1" />
+  <link rel="stylesheet" href="./styles/responsive.css?v=20260810driverpreview2" />
   <link rel="stylesheet" href="./styles.css?v=20260808countdown1" />
   <link rel="stylesheet" href="./styles/components/hero-layout.css?v=20260728tabletflow1" />
   <link rel="stylesheet" href="./styles/components/hero-server-summary.css?v=20260715hero-spacing2" />
@@ -921,9 +921,11 @@
         <div class="driver-preview-hero-copy">
           <div class="eyebrow" data-i18n="driverPreviewEyebrow">Driver quick view</div>
           <h3 id="driver-preview-title" class="modal-title">-</h3>
-          <a class="btn btn-driver-preview-link" id="driver-preview-link" href="#" data-i18n="driverPreviewOpenPage" hidden>
-            Go to driver page
-          </a>
+          <div class="driver-preview-action-row" id="driver-preview-action-row">
+            <a class="btn btn-driver-preview-link" id="driver-preview-link" href="#" data-i18n="driverPreviewOpenPage" hidden>
+              Go to driver page
+            </a>
+          </div>
         </div>
       </div>
     </div>
@@ -1205,7 +1207,7 @@
   </div>
 
   <script src="./legal.js" defer></script>
-  <script type="module" src="./src/entrypoints/home.js?v=20260810driverban1"></script>
+  <script type="module" src="./src/entrypoints/home.js?v=20260810driverpreview2"></script>
 </body>
 </html>
 

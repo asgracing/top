@@ -156,9 +156,8 @@
     align-items: stretch;
   }
 
-  body.experiment-combined-stats .combined-stats-tabs {
-    gap: 8px;
-  }
+  body.experiment-combined-stats .combined-stats-tabs{display:contents}
+  .combined-stats-navigation{display:grid;grid-template-columns:1fr 1fr}
 
   body.experiment-combined-stats .combined-stats-shell-header,
   body.experiment-combined-stats .combined-stats-shell-controls {
@@ -193,13 +192,7 @@
     flex-wrap: wrap;
   }
 
-  .combined-stats-tab {
-    flex: 1 1 220px;
-  }
-
-  .combined-stats-directory-link {
-    flex: 0 0 auto;
-  }
+  .combined-stats-tab,.combined-stats-directory-link{white-space:normal}
 
   body.experiment-combined-stats .combined-stats-panel .table-card {
     min-height: 0;
@@ -756,10 +749,9 @@
     max-height: calc(100dvh - var(--top-nav-modal-offset, 84px) - var(--modal-offset-bottom, 8px));
   }
 
-  .modal-card-driver-preview {
-    height: calc(100dvh - var(--top-nav-modal-offset, 84px) - 8px);
-    padding-bottom: 12px;
-  }
+  #driver-preview-modal{top:var(--driver-preview-top,8px);z-index:999}
+  #driver-preview-modal.is-open{padding-top:8px}
+  .modal-card-driver-preview{height:100%;max-height:100%;min-width:0;padding-bottom:12px}
 
   .driver-preview-scroll {
     padding-bottom: calc(28px + env(safe-area-inset-bottom, 0px));
@@ -812,8 +804,23 @@
     grid-template-columns: 1fr;
   }
 
+  :is(.driver-hero-mainline,.driver-preview-hero-mainline){display:block;position:relative}
+  :is(.driver-hero-mainline,.driver-preview-hero-mainline) .driver-steam-portrait{position:absolute;inset:0 auto auto 0;width:56px}
+  :is(.driver-hero-mainline .driver-hero-copy,.driver-preview-hero-mainline .driver-preview-hero-copy){padding-top:64px}
+  :is(.driver-hero-mainline,.driver-preview-hero-mainline) .driver-steam-portrait[hidden]+*{padding-top:0}
+
+  .driver-title-primary{display:block}
+  .driver-title-name{display:block;white-space:normal}
+
+  .driver-preview-hero-mainline{display:grid;grid-template-columns:56px minmax(0,1fr);gap:10px;align-items:start}
+  .driver-preview-hero-mainline .driver-preview-steam-portrait{position:static}
+  .driver-preview-hero-mainline .driver-preview-hero-copy,#driver-preview-title{display:contents}
+  #driver-preview-title .driver-title-primary{grid-column:2;grid-row:1;align-self:center}
+  #driver-preview-title .driver-hero-meta-row{grid-column:1/-1;grid-row:2;margin-top:8px}
+  .driver-preview-action-row{grid-column:1/-1;grid-row:3}
+
   .modal-card-driver-preview .driver-preview-stats-grid {
-    grid-template-columns: repeat(2, minmax(0, 1fr));
+    grid-template-columns: repeat(2,minmax(0,1fr));
   }
 
   .filter-meta-left,
@@ -887,15 +894,6 @@
 @media (max-width: 420px) {
   .modal-header-driver-preview {
     padding-right: 34px;
-  }
-
-  .driver-preview-steam-portrait {
-    width: 56px;
-    border-radius: 14px;
-  }
-
-  #driver-preview-title {
-    font-size: clamp(1.35rem, 7vw, 1.8rem);
   }
 
   .modal-card-driver-preview .driver-hero-ratings {
