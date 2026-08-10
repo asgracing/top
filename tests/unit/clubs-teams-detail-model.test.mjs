@@ -10,6 +10,7 @@ import {
 } from "../../src/pages/clubs-teams/detail-model.js";
 
 const runId = "rating-run-1";
+const snapshotId = `${runId}-profile-digest`;
 
 function detail(overrides = {}) {
   return {
@@ -61,8 +62,9 @@ function pointer() {
     schema_version: 1,
     kind: "clubs_teams_public_current",
     rating_run_id: runId,
+    snapshot_id: snapshotId,
     completed_at: "2026-07-29T12:00:00Z",
-    manifest: `snapshots/${runId}/manifest.json`,
+    manifest: `snapshots/${snapshotId}/manifest.json`,
     content_sha256: "b".repeat(64)
   };
 }
@@ -112,6 +114,6 @@ test("loads detail only from the immutable active snapshot path", async () => {
   assert.equal(result.detail.display_name, "ASG Racing");
   assert.deepEqual(requested, [
     "https://data.asgracing.ru/public-cache-clubs-teams/current.json",
-    `https://data.asgracing.ru/public-cache-clubs-teams/snapshots/${runId}/details/clubs/asg-racing.json`
+    `https://data.asgracing.ru/public-cache-clubs-teams/snapshots/${snapshotId}/details/clubs/asg-racing.json`
   ]);
 });

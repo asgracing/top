@@ -9,6 +9,7 @@ import {
 } from "../../src/pages/clubs-teams/rating-model.js";
 
 const runId = "rating-run-1";
+const snapshotId = `${runId}-profile-digest`;
 
 function entry(entityType) {
   return {
@@ -52,8 +53,9 @@ function pointer() {
     schema_version: 1,
     kind: "clubs_teams_public_current",
     rating_run_id: runId,
+    snapshot_id: snapshotId,
     completed_at: "2026-07-29T12:00:00Z",
-    manifest: `snapshots/${runId}/manifest.json`,
+    manifest: `snapshots/${snapshotId}/manifest.json`,
     content_sha256: "b".repeat(64)
   };
 }
@@ -101,7 +103,7 @@ test("loads clubs and teams from one active context snapshot", async () => {
   assert.equal(result.teams.length, 1);
   assert.deepEqual(requested, [
     "https://data.asgracing.ru/public-cache-clubs-teams/current.json",
-    `https://data.asgracing.ru/public-cache-clubs-teams/snapshots/${runId}/ratings/hourly/clubs/page-1.json`,
-    `https://data.asgracing.ru/public-cache-clubs-teams/snapshots/${runId}/ratings/hourly/teams/page-1.json`
+    `https://data.asgracing.ru/public-cache-clubs-teams/snapshots/${snapshotId}/ratings/hourly/clubs/page-1.json`,
+    `https://data.asgracing.ru/public-cache-clubs-teams/snapshots/${snapshotId}/ratings/hourly/teams/page-1.json`
   ]);
 });

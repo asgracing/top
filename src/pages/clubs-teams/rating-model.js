@@ -21,7 +21,7 @@ function integer(value, label, { min = 0, max = Number.MAX_SAFE_INTEGER } = {}) 
   return value;
 }
 
-export function validateRatingPage(value, { entityType, context, page, ratingRunId }) {
+export function validateRatingPage(value, { entityType, context, page, ratingRunId, snapshotId = ratingRunId }) {
   const requestedContext = String(context || "").trim().toLowerCase();
   if (!CONTEXTS.has(requestedContext)) {
     throw new CatalogContractError("rating context is invalid");
@@ -50,7 +50,7 @@ export function validateRatingPage(value, { entityType, context, page, ratingRun
     ...value,
     kind: "clubs_teams_catalog_page",
     context: "general"
-  }, { entityType, page, ratingRunId });
+  }, { entityType, page, ratingRunId, snapshotId });
   return Object.freeze({
     ...normalized,
     context: normalizedContext,
@@ -61,13 +61,13 @@ export function validateRatingPage(value, { entityType, context, page, ratingRun
   });
 }
 
-async function loadPages({ client, snapshotRoot, entityType, context, ratingRunId }) {
+async function loadPages({ client, snapshotRoot, entityType, context, ratingRunId, snapshotId }) {
   const fetchPage = async page => validateRatingPage(
     await client.requestJson(new URL(`ratings/${context}/${entityType}s/page-${page}.json`, snapshotRoot), {
       retries: 1,
       cache: "no-store"
     }),
-    { entityType, context, page, ratingRunId }
+    { entityType, context, page, ratingRunId, snapshotId }
   );
   const first = await fetchPage(1);
   const remaining = await Promise.all(
@@ -83,10 +83,10 @@ export async function loadPublicRatingSnapshot({ client, dataBaseUrl, context = 
     new URL("current.json", base),
     { retries: 1, cache: "no-store" }
   ));
-  const snapshotRoot = new URL(`snapshots/${pointer.rating_run_id}/`, base);
+  const snapshotRoot = new URL(`snapshots/${pointer.snapshot_id}/`, base);
   const [clubs, teams] = await Promise.all([
-    loadPages({ client, snapshotRoot, entityType: "club", context: normalizedContext, ratingRunId: pointer.rating_run_id }),
-    loadPages({ client, snapshotRoot, entityType: "team", context: normalizedContext, ratingRunId: pointer.rating_run_id })
+    loadPages({ client, snapshotRoot, entityType: "club", context: normalizedContext, ratingRunId: pointer.rating_run_id, snapshotId: pointer.snapshot_id }),
+    loadPages({ client, snapshotRoot, entityType: "team", context: normalizedContext, ratingRunId: pointer.rating_run_id, snapshotId: pointer.snapshot_id })
   ]);
   return Object.freeze({ context: normalizedContext, pointer, clubs, teams });
 }

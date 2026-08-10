@@ -221,7 +221,7 @@ export function createCatalogPage({
     for (const entry of entries) {
       const logoUrl = resolveCatalogAssetUrl(
         dataBaseUrl,
-        state.catalog.pointer.rating_run_id,
+        state.catalog.pointer.snapshot_id,
         entry.asset
       );
       const logo = logoUrl

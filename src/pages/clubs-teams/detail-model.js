@@ -213,12 +213,12 @@ export async function loadEntityDetail({ client, dataBaseUrl, entityType, slug }
     new URL("current.json", `${String(dataBaseUrl).replace(/\/+$/, "")}/`),
     { retries: 1, cache: "no-store" }
   ));
-  const snapshotRoot = new URL(`snapshots/${pointer.rating_run_id}/`, `${String(dataBaseUrl).replace(/\/+$/, "")}/`);
+  const snapshotRoot = new URL(`snapshots/${pointer.snapshot_id}/`, `${String(dataBaseUrl).replace(/\/+$/, "")}/`);
   const detail = validateEntityDetail(await client.requestJson(
     new URL(`details/${entityType}s/${encodeURIComponent(normalizedSlug)}.json`, snapshotRoot),
     { retries: 1, cache: "no-store" }
   ), { entityType, slug: normalizedSlug, ratingRunId: pointer.rating_run_id });
-  const assetUrl = resolveCatalogAssetUrl(dataBaseUrl, pointer.rating_run_id, detail.asset);
+  const assetUrl = resolveCatalogAssetUrl(dataBaseUrl, pointer.snapshot_id, detail.asset);
   if (detail.asset && !assetUrl) throw new CatalogContractError("detail asset is outside the active snapshot");
   return Object.freeze({ pointer, detail, assetUrl });
 }

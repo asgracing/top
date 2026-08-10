@@ -13,6 +13,7 @@ import {
 } from "../../src/pages/clubs-teams/catalog-model.js";
 
 const runId = "rating-run-1";
+const snapshotId = `${runId}-profile-digest`;
 const digest = "a".repeat(64);
 
 test("maps the canonical /teams tab query to entity types", () => {
@@ -83,6 +84,19 @@ test("validates immutable pointer and rejects traversal-like run ids", () => {
     })),
     CatalogContractError
   );
+});
+
+test("accepts a content-derived snapshot id distinct from the rating run", () => {
+  const validated = validateCurrentPointer(pointer({
+    snapshot_id: snapshotId,
+    manifest: `snapshots/${snapshotId}/manifest.json`
+  }));
+  assert.equal(validated.rating_run_id, runId);
+  assert.equal(validated.snapshot_id, snapshotId);
+  assert.throws(() => validateCurrentPointer(pointer({
+    snapshot_id: snapshotId,
+    manifest: `snapshots/${runId}/manifest.json`
+  })), /manifest path/);
 });
 
 test("normalizes an allowlisted catalog page and asset", () => {

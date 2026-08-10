@@ -92,13 +92,15 @@ export function validateCurrentPointer(value) {
     throw new CatalogContractError("unsupported current pointer");
   }
   const runId = text(pointer.rating_run_id, "rating_run_id", SNAPSHOT_ID_PATTERN);
-  if (pointer.manifest !== `snapshots/${runId}/manifest.json`) {
-    throw new CatalogContractError("current manifest path is invalid");
+  const snapshotId = text(pointer.snapshot_id ?? runId, "snapshot_id", SNAPSHOT_ID_PATTERN);
+  if (pointer.manifest !== `snapshots/${snapshotId}/manifest.json`) {
+    throw new CatalogContractError("invalid manifest path");
   }
   return Object.freeze({
     schema_version: 1,
     kind: pointer.kind,
     rating_run_id: runId,
+    snapshot_id: snapshotId,
     completed_at: text(pointer.completed_at, "completed_at"),
     manifest: pointer.manifest,
     content_sha256: text(pointer.content_sha256, "content_sha256", SHA256_PATTERN)
@@ -108,7 +110,8 @@ export function validateCurrentPointer(value) {
 export function validateCatalogPage(value, {
   entityType,
   page,
-  ratingRunId
+  ratingRunId,
+  snapshotId = ratingRunId
 }) {
   const payload = object(value, "catalog page");
   const normalizedType = text(entityType, "entityType");
@@ -143,7 +146,7 @@ export function validateCatalogPage(value, {
       average_elo: nullableNumber(entry.average_elo, "entry.average_elo"),
       average_sr: nullableNumber(entry.average_sr, "entry.average_sr"),
       members_count: integer(entry.members_count, "entry.members_count", { min: 0 }),
-      asset: optionalAsset(entry.asset, ratingRunId)
+      asset: optionalAsset(entry.asset, snapshotId)
     };
     if (normalizedType === "team") normalized.club = optionalClub(entry.club);
     return Object.freeze(normalized);
@@ -197,13 +200,13 @@ export function filterCatalogEntries(entries, query) {
   ));
 }
 
-export function resolveCatalogAssetUrl(dataBaseUrl, ratingRunId, asset) {
+export function resolveCatalogAssetUrl(dataBaseUrl, snapshotId, asset) {
   if (!asset) return null;
   try {
     const base = new URL(`${String(dataBaseUrl).replace(/\/+$/, "")}/`);
     const resolved = new URL(asset.url, base);
     const expected = new URL(
-      `snapshots/${ratingRunId}/assets/${asset.content_sha256}.${asset.media_type === "image/png" ? "png" : "jpg"}`,
+      `snapshots/${snapshotId}/assets/${asset.content_sha256}.${asset.media_type === "image/png" ? "png" : "jpg"}`,
       base
     );
     return resolved.href === expected.href && resolved.origin === base.origin
