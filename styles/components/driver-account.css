@@ -157,10 +157,10 @@
     display: grid;
     gap: 5px;
     padding: 16px;
-    border: 1px solid rgba(102, 192, 244, 0.2);
+    border: 1px solid rgba(255, 91, 46, 0.22);
     border-radius: 14px;
-    background: rgba(102, 192, 244, 0.055);
-    color: #aeb8c7;
+    background: rgba(255, 91, 46, 0.055);
+    color: var(--muted);
   }
 
   .account-membership-link {
@@ -176,7 +176,7 @@
   }
 
   .account-membership-kind {
-    color: #66c0f4;
+    color: var(--accent);
     font-size: 0.72rem;
     font-weight: 850;
     letter-spacing: 0.07em;
@@ -195,11 +195,18 @@
     padding: 0;
     border: 0;
     background: transparent;
-    color: #66c0f4;
+    color: var(--accent);
     font: inherit;
     font-size: 0.78rem;
     font-weight: 800;
     cursor: pointer;
+  }
+
+  .account-membership-link:focus-visible,
+  .account-entity-action:focus-visible,
+  .account-action:focus-visible {
+    outline: 3px solid rgba(255, 209, 102, 0.32);
+    outline-offset: 3px;
   }
 
   .account-entity-action--danger {
@@ -276,9 +283,9 @@
     justify-content: space-between;
     gap: 12px;
     padding: 12px 14px;
-    border: 1px solid rgba(102, 192, 244, 0.18);
+    border: 1px solid var(--line);
     border-radius: 12px;
-    background: rgba(102, 192, 244, 0.045);
+    background: rgba(255, 255, 255, 0.035);
   }
 
   .account-manager-member a {
@@ -447,12 +454,21 @@
     font-weight: 800;
     text-decoration: none;
     cursor: pointer;
+    transition: border-color var(--duration-fast) var(--ease-standard), background var(--duration-fast) var(--ease-standard), transform var(--duration-fast) var(--ease-standard);
+  }
+
+  .account-action:hover:not(:disabled) {
+    border-color: rgba(255, 91, 46, 0.5);
+    background: rgba(255, 91, 46, 0.12);
+    transform: translateY(-1px);
   }
 
   .account-action--primary {
-    border-color: #ff7043;
-    background: #ff7043;
+    border-color: var(--accent);
+    background: var(--accent);
   }
+
+  .account-action--primary:hover:not(:disabled) { background: #ff7043; }
 
   .account-action--danger {
     color: #ffb09d;

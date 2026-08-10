@@ -1,36 +1,30 @@
 @layer components {
   .clubs-teams-page {
     min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+    background-color: var(--bg);
   }
 
   .clubs-teams-shell {
     position: relative;
     z-index: var(--layer-content);
     width: min(1180px, calc(100% - 32px));
-    min-height: calc(100vh - 190px);
+    flex: 1 0 auto;
     margin: 0 auto;
-    padding: calc(var(--nav-scroll-offset) + 28px) 0 56px;
+    padding: 10px 0 48px;
   }
 
   .clubs-teams-hero {
-    max-width: 760px;
-    margin-bottom: 24px;
-  }
-
-  .clubs-teams-eyebrow {
-    margin: 0 0 8px;
-    color: var(--accent);
-    font-size: 0.78rem;
-    font-weight: 900;
-    letter-spacing: 0.13em;
-    text-transform: uppercase;
+    width: 100%;
+    margin-bottom: 20px;
   }
 
   .clubs-teams-hero h1 {
     margin: 0;
-    font-size: clamp(2rem, 5vw, 4rem);
-    line-height: 0.98;
-    text-wrap: balance;
+    font-size: clamp(1.55rem, 4.6vw, 3.6rem);
+    line-height: 1;
+    white-space: nowrap;
   }
 
   .clubs-teams-hero > p:last-child {
@@ -41,7 +35,7 @@
   }
 
   .clubs-teams-panel {
-    padding: 20px;
+    padding: clamp(16px, 2.2vw, 24px);
     border: 1px solid var(--line);
     border-radius: 24px;
     background: rgba(11, 15, 20, 0.9);
@@ -54,7 +48,7 @@
     align-items: center;
     justify-content: space-between;
     gap: 16px;
-    margin-bottom: 18px;
+    margin-bottom: 16px;
   }
 
   .clubs-teams-tabs {
@@ -76,11 +70,19 @@
     font: inherit;
     font-weight: 850;
     cursor: pointer;
+    transition: color var(--duration-fast), background var(--duration-fast), box-shadow var(--duration-fast);
   }
 
   .clubs-teams-tab.is-active {
-    background: linear-gradient(135deg, var(--orange), #ff8a34);
+    background: linear-gradient(135deg, var(--accent), #ff8a34);
     color: #111318;
+    box-shadow: 0 8px 20px rgba(255, 91, 46, 0.22);
+  }
+
+  .clubs-teams-tab:focus-visible,
+  .clubs-teams-context:focus-visible {
+    outline: 3px solid rgba(255, 209, 102, 0.38);
+    outline-offset: 3px;
   }
 
   .clubs-teams-search {
@@ -177,6 +179,10 @@
     font-weight: 900;
   }
 
+  .clubs-teams-position.is-unranked {
+    color: var(--muted);
+  }
+
   .clubs-teams-card h2 {
     overflow: hidden;
     margin: 3px 0 5px;
@@ -211,6 +217,16 @@
   .clubs-teams-score span,
   .clubs-teams-score small {
     color: var(--muted);
+  }
+
+  .clubs-teams-score--empty {
+    display: flex;
+    min-height: 46px;
+    align-items: center;
+    grid-template-columns: 1fr;
+    color: var(--muted);
+    font-size: 0.86rem;
+    font-weight: 800;
   }
 
   .clubs-teams-metrics {
@@ -266,6 +282,13 @@
   .clubs-teams-footer {
     position: relative;
     z-index: var(--layer-content);
+    flex: 0 0 auto;
+    background: linear-gradient(180deg, rgba(11, 15, 20, 0.8), var(--bg));
+  }
+
+  .clubs-teams-footer .footer-inner {
+    width: min(1180px, calc(100% - 32px));
+    margin: 0 auto;
   }
 
   @media (max-width: 920px) {
@@ -277,7 +300,8 @@
   @media (max-width: 620px) {
     .clubs-teams-shell {
       width: min(100% - 20px, 1180px);
-      padding-top: calc(var(--nav-scroll-offset) + 18px);
+      padding-top: 18px;
+      padding-bottom: 36px;
     }
 
     .clubs-teams-panel {
@@ -301,6 +325,28 @@
 
     .clubs-teams-grid {
       grid-template-columns: 1fr;
+    }
+
+    .clubs-teams-hero {
+      margin-bottom: 16px;
+    }
+
+    .clubs-teams-hero > p:last-child {
+      margin-top: 12px;
+      line-height: 1.45;
+    }
+
+    .clubs-teams-footer .footer-inner {
+      width: min(100% - 24px, 1180px);
+    }
+  }
+}
+
+@layer overrides {
+  @media (max-width: 620px) {
+    .clubs-teams-hero h1 {
+      font-size: min(4.2vw, 1.55rem);
+      letter-spacing: -0.03em;
     }
   }
 }

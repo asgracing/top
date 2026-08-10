@@ -22,7 +22,11 @@ const COPY = {
     noTeams: "No active teams.", noClub: "Independent team", noRaces: "No counted races yet.",
     leader: "Leader", member: "Member", date: "Date", track: "Track", format: "Format",
     mode: "Mode", updated: value => `Rating updated ${value}`,
-    footer: "Public club and team data is published from an isolated, moderated ASG Racing snapshot."
+    noRatingYet: "The ranking starts after the first counted race.",
+    navSpecial: "Special Event", navChampionship: "Championship", navRules: "Rules", navNews: "News",
+    navRacing: "Racing", navLastRaces: "Last Races", navStats: "Stats", navRating: "Rating",
+    navCommunity: "Community", navAbout: "About Server", navClubs: "Clubs & Teams",
+    footer: "Official ASG Racing clubs, teams and current standings."
   },
   ru: {
     club: "Клуб", team: "Команда", back: "Назад к клубам и командам", loading: "Загружаем профиль…",
@@ -37,7 +41,11 @@ const COPY = {
     noTeams: "Активных команд нет.", noClub: "Независимая команда", noRaces: "Зачётных гонок пока нет.",
     leader: "Руководитель", member: "Участник", date: "Дата", track: "Трасса", format: "Формат",
     mode: "Режим", updated: value => `Рейтинг обновлён ${value}`,
-    footer: "Публичные сведения о клубах и командах публикуются из изолированного модерируемого snapshot ASG Racing."
+    noRatingYet: "Место появится после первой зачётной гонки.",
+    navSpecial: "Спецсобытие", navChampionship: "Чемпионат", navRules: "Правила", navNews: "Новости",
+    navRacing: "Гонки", navLastRaces: "Последние гонки", navStats: "Статистика", navRating: "Рейтинг",
+    navCommunity: "Сообщество", navAbout: "О сервере", navClubs: "Клубы и команды",
+    footer: "Официальные клубы, команды и актуальный зачёт ASG Racing."
   }
 };
 
@@ -134,7 +142,7 @@ function renderProfile({ documentRef, lang, siteBase, entityType, result }) {
   affiliationUrl.searchParams.set("affiliation_target", detail.public_id);
   affiliationUrl.searchParams.set("affiliation_name", detail.display_name);
   actions.push(element(documentRef, "a", {
-    className: "btn", text: copy(lang, entityType === "club"
+    className: "btn btn-secondary", text: copy(lang, entityType === "club"
       ? "requestTeamAffiliation"
       : detail.club ? "manageTeamAffiliation" : "inviteTeamAffiliation"),
     attrs: { href: `${affiliationUrl.pathname}${affiliationUrl.search}` }
@@ -142,7 +150,6 @@ function renderProfile({ documentRef, lang, siteBase, entityType, result }) {
   const hero = element(documentRef, "section", { className: "clubs-teams-detail-hero" }, [
     logo,
     element(documentRef, "div", { className: "clubs-teams-detail-copy" }, [
-      element(documentRef, "p", { className: "clubs-teams-eyebrow", text: copy(lang, entityType) }),
       element(documentRef, "h1", { text: detail.display_name }),
       detail.short_name ? element(documentRef, "p", { className: "clubs-teams-detail-short", text: detail.short_name }) : null,
       element(documentRef, "p", { className: "clubs-teams-detail-description", text: description }),
@@ -151,14 +158,16 @@ function renderProfile({ documentRef, lang, siteBase, entityType, result }) {
   ]);
 
   const rating = detail.rating;
+  const hasCountedRaces = Boolean(rating && Number(rating.race_count) > 0);
   const ratingPanel = element(documentRef, "section", { className: "clubs-teams-detail-panel", attrs: { "aria-labelledby": "detail-rating-title" } }, [
     element(documentRef, "div", { className: "clubs-teams-detail-section-head" }, [
       element(documentRef, "h2", { text: copy(lang, "rating"), attrs: { id: "detail-rating-title" } }),
       element(documentRef, "span", { className: "clubs-teams-updated", text: copy(lang, "updated", formattedDate(pointer.completed_at, lang)) })
     ]),
-    element(documentRef, "div", { className: "clubs-teams-detail-metrics" }, [
-      metric(documentRef, copy(lang, "position"), rating ? `#${rating.position}` : "—", "is-accent"),
-      metric(documentRef, copy(lang, "points"), rating ? formattedNumber(rating.total_points, 2) : "—"),
+    !hasCountedRaces ? element(documentRef, "p", { className: "clubs-teams-rating-empty", text: copy(lang, "noRatingYet") }) : null,
+    element(documentRef, "div", { className: `clubs-teams-detail-metrics${hasCountedRaces ? "" : " is-unranked"}` }, [
+      metric(documentRef, copy(lang, "position"), hasCountedRaces ? `#${rating.position}` : "—", "is-accent"),
+      metric(documentRef, copy(lang, "points"), hasCountedRaces ? formattedNumber(rating.total_points, 2) : "—"),
       metric(documentRef, copy(lang, "races"), rating ? formattedNumber(rating.race_count) : "—"),
       metric(documentRef, "ELO", rating ? formattedNumber(rating.average_elo, 1) : "—"),
       metric(documentRef, "SR", rating ? formattedNumber(rating.average_sr, 2) : "—"),

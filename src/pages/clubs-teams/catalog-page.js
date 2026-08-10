@@ -26,6 +26,8 @@ const COPY = {
     retry: "Try again",
     empty: "Nothing has been published in this section yet.",
     noMatches: "No clubs or teams match this search.",
+    unranked: "Not ranked yet",
+    noCountedRaces: "No counted races yet",
     points: "points",
     races: "races",
     members: "members",
@@ -42,7 +44,7 @@ const COPY = {
     navCommunity: "Community",
     navAbout: "About Server",
     navClubs: "Clubs & Teams",
-    footer: "Public club and team data is published from an isolated, moderated ASG Racing snapshot."
+    footer: "Official ASG Racing clubs, teams and current standings."
   },
   ru: {
     title: "Клубы и команды ASG Racing",
@@ -58,6 +60,8 @@ const COPY = {
     retry: "Повторить",
     empty: "В этом разделе пока ничего не опубликовано.",
     noMatches: "По вашему запросу ничего не найдено.",
+    unranked: "Пока без места",
+    noCountedRaces: "Зачётных гонок пока нет",
     points: "очков",
     races: "гонок",
     members: "участников",
@@ -74,7 +78,7 @@ const COPY = {
     navCommunity: "Сообщество",
     navAbout: "О сервере",
     navClubs: "Клубы и команды",
-    footer: "Публичные сведения о клубах и командах публикуются из изолированного модерируемого snapshot ASG Racing."
+    footer: "Официальные клубы, команды и актуальный зачёт ASG Racing."
   }
 };
 
@@ -93,6 +97,23 @@ function copy(lang, key, value) {
 
 function number(value, digits = 0) {
   return new Intl.NumberFormat(undefined, { maximumFractionDigits: digits }).format(value);
+}
+
+export function countLabel(lang, type, value) {
+  const count = Number.isFinite(Number(value)) ? Math.max(0, Math.trunc(Number(value))) : 0;
+  if (lang !== "ru") {
+    const singular = type === "members" ? "member" : "race";
+    return `${number(count)} ${count === 1 ? singular : `${singular}s`}`;
+  }
+  const forms = type === "members"
+    ? ["участник", "участника", "участников"]
+    : ["гонка", "гонки", "гонок"];
+  const mod100 = count % 100;
+  const mod10 = count % 10;
+  const form = mod100 >= 11 && mod100 <= 14 ? forms[2]
+    : mod10 === 1 ? forms[0]
+      : mod10 >= 2 && mod10 <= 4 ? forms[1] : forms[2];
+  return `${number(count)} ${form}`;
 }
 
 function formatDate(value, lang) {
@@ -235,7 +256,8 @@ export function createCatalogPage({
         });
       const affiliation = entry.entity_type === "team"
         ? (entry.club?.display_name || copy(lang, "independent"))
-        : `${number(entry.members_count)} ${copy(lang, "members")}`;
+        : countLabel(lang, "members", entry.members_count);
+      const hasCountedRaces = Number(entry.race_count) > 0;
       const metrics = element(documentRef, "dl", { className: "clubs-teams-metrics" }, [
         element(documentRef, "div", {}, [
           element(documentRef, "dt", { text: "ELO" }),
@@ -253,16 +275,21 @@ export function createCatalogPage({
         element(documentRef, "div", { className: "clubs-teams-card-head" }, [
           logo,
           element(documentRef, "div", { className: "clubs-teams-card-title" }, [
-            element(documentRef, "span", { className: "clubs-teams-position", text: `#${entry.position}` }),
+            element(documentRef, "span", {
+              className: `clubs-teams-position${hasCountedRaces ? "" : " is-unranked"}`,
+              text: hasCountedRaces ? `#${entry.position}` : copy(lang, "unranked")
+            }),
             element(documentRef, "h2", { text: entry.display_name }),
             element(documentRef, "p", { text: affiliation })
           ])
         ]),
-        element(documentRef, "div", { className: "clubs-teams-score" }, [
-          element(documentRef, "strong", { text: number(entry.total_points, 2) }),
-          element(documentRef, "span", { text: copy(lang, "points") }),
-          element(documentRef, "small", { text: `${number(entry.race_count)} ${copy(lang, "races")}` })
-        ]),
+        hasCountedRaces
+          ? element(documentRef, "div", { className: "clubs-teams-score" }, [
+            element(documentRef, "strong", { text: number(entry.total_points, 2) }),
+            element(documentRef, "span", { text: copy(lang, "points") }),
+            element(documentRef, "small", { text: countLabel(lang, "races", entry.race_count) })
+          ])
+          : element(documentRef, "div", { className: "clubs-teams-score clubs-teams-score--empty", text: copy(lang, "noCountedRaces") }),
         metrics
       ]));
     }
