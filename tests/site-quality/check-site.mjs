@@ -99,7 +99,7 @@ for (const [page, [htmlPath, entrySrc]] of Object.entries(pageEntrypoints)) {
   if (!pageHtml.includes(heroHref)) failures.push(`${page} page is missing the shared hero foundation stylesheet`);
   const heroActionsHref = page === "home" ? "./styles/components/hero-actions.css?v=20260713r11heroactions1" : "../styles/components/hero-actions.css?v=20260713r11heroactions1";
   if (!pageHtml.includes(heroActionsHref)) failures.push(`${page} page is missing the shared hero actions stylesheet`);
-  const heroStatsHref = page === "home" ? "./styles/components/hero-stats.css?v=20260726driveravatar3" : "../styles/components/hero-stats.css?v=20260726driveravatar3";
+  const heroStatsHref = page === "home" ? "./styles/components/hero-stats.css?v=20260810driverban1" : "../styles/components/hero-stats.css?v=20260810driverban1";
   if (!pageHtml.includes(heroStatsHref)) failures.push(`${page} page is missing the shared hero stats stylesheet`);
   const serverStickyLayoutHref = page === "home" ? "./styles/components/server-sticky-layout.css?v=20260715r11serversticky1" : "../styles/components/server-sticky-layout.css?v=20260715r11serversticky1";
   if (!pageHtml.includes(serverStickyLayoutHref)) failures.push(`${page} page is missing the server sticky layout stylesheet`);
@@ -128,12 +128,12 @@ for (const [page, [htmlPath, entrySrc]] of Object.entries(pageEntrypoints)) {
   const hourlyEventModalHref = page === "home" ? "./styles/components/hourly-event-modal.css?v=20260715r11hourlymodal1" : "../styles/components/hourly-event-modal.css?v=20260715r11hourlymodal1";
   if (!pageHtml.includes(hourlyEventModalHref)) failures.push(`${page} page is missing the hourly event modal stylesheet`);
   for (const href of [
-    `${page === "home" ? "./" : "../"}styles/components/driver-day-modal.css?v=20260728driverpreviewhero1`,
+    `${page === "home" ? "./" : "../"}styles/components/driver-day-modal.css?v=20260810driverban1`,
     `${page === "home" ? "./" : "../"}styles/components/footer.css?v=20260720topguide1`,
     `${page === "home" ? "./" : "../"}styles/utilities.css?v=20260715r12states1`,
     page === "home"
-      ? "./styles/responsive.css?v=20260802statsnav2"
-      : "../styles/responsive.css?v=20260728driverpreviewhero1",
+      ? "./styles/responsive.css?v=20260810driverban1"
+      : "../styles/responsive.css?v=20260810driverban1",
     `${page === "home" ? "./" : "../"}styles/components/responsive-accessibility.css?v=20260715r13a11y1`
   ]) if (!pageHtml.includes(href)) failures.push(`${page} page is missing R11 stylesheet ${href}`);
 }
