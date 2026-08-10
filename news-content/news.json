@@ -1,6 +1,50 @@
 {
   "items": [
     {
+      "id": "safety-rating-server-access",
+      "slug": "safety-rating-server-access",
+      "title": "Допуск на серверы ASG Racing по Safety Rating / ASG Racing Server Access by Safety Rating",
+      "summary": "На серверах ASG Racing включены требования к внутреннему Safety Rating: SR 2.00+ для главного сервера и SR 2.50+ для часового. / ASG Racing server access requirements are now active: SR 2.00+ for the Main server and SR 2.50+ for the Hourly server.",
+      "body": [
+        "РУССКИЙ",
+        "────────",
+        "На серверах ASG Racing включен допуск по внутреннему Safety Rating (SR). Это рейтинг ASG Racing, который отображается на нашем сайте, а не игровой рейтинг ACC SA.",
+        "Требования для подключения:",
+        {
+          "type": "list",
+          "items": [
+            "Главный сервер (Main) — SR 2.00 и выше",
+            "Часовой сервер (Hourly) — SR 2.50 и выше"
+          ]
+        },
+        "При SR от 2.00 до 2.49 доступен только главный сервер. При SR 2.50 и выше доступны оба сервера.",
+        "Если ваш SR ниже необходимого уровня, повысить его можно в зачтенных гонках на остальных серверах ASG Racing. После обработки результатов рейтинг и допуск обновятся автоматически.",
+        "Следить за своим SR можно на сайте ASG Racing. Участвуйте в гонках чисто и сохраняйте доступ ко всем серверам!",
+        "ENGLISH",
+        "────────",
+        "ASG Racing server access requirements based on the internal Safety Rating (SR) are now active. This is the ASG Racing rating shown on our website, not the in-game ACC SA rating.",
+        "Connection requirements:",
+        {
+          "type": "list",
+          "items": [
+            "Main server — SR 2.00 or higher",
+            "Hourly server — SR 2.50 or higher"
+          ]
+        },
+        "Drivers rated from 2.00 to 2.49 can access only the Main server. Drivers with SR 2.50 or higher can access both servers.",
+        "If your SR is below the required level, you can raise it in counted races on other ASG Racing servers. Your rating and access will update automatically after the results are processed.",
+        "Check your SR on the ASG Racing website, race cleanly, and keep access to every server!"
+      ],
+      "thumbnail_url": "/news-content/images/sr2/sr2.png",
+      "cover_image_url": "/news-content/images/sr2/sr2.png",
+      "image_alt": "ASG Racing server access requirements by Safety Rating",
+      "published_at": "2026-08-10T09:05:00Z",
+      "expires_at": "",
+      "kind": "announcement",
+      "priority": 700,
+      "is_pinned": true
+    },
+    {
       "id": "asg-racing-july-2026-championship-finished",
       "slug": "asg-racing-july-2026-championship-finished",
       "title": "Завершился чемпионат ASG Racing July 2026 / ASG Racing July 2026 Championship Has Concluded",
