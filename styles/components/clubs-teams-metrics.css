@@ -1,0 +1,33 @@
+@import url("./rating-palette.css?v=20260722ratings1");
+
+@layer components {
+  .clubs-teams-rating-value {
+    display: inline-flex;
+    min-width: 48px;
+    min-height: 26px;
+    align-items: center;
+    justify-content: center;
+    padding: 0 8px;
+    border: 1px solid rgba(255, 255, 255, 0.16);
+    border-radius: 999px;
+    background: rgba(255, 255, 255, 0.06);
+    color: var(--text, #fff);
+    font-size: 0.72rem;
+    font-weight: 900;
+    line-height: 1;
+    white-space: nowrap;
+    box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.08);
+  }
+
+  .clubs-teams-rating-value[class*="elo-cat-"] {
+    border-color: var(--elo-border);
+    background: var(--elo-bg);
+    color: var(--elo-fg);
+  }
+
+  .clubs-teams-rating-value[class*="sr-cat-"] {
+    border-color: var(--sr-border);
+    background: var(--sr-bg);
+    color: var(--sr-fg);
+  }
+}

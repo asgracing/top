@@ -1,4 +1,9 @@
-import { createAuthHeaderController, safeAvatarUrl } from "../../features/auth/header-auth.js";
+import {
+  createAuthHeaderController,
+  eloCategoryId,
+  safeAvatarUrl,
+  srCategory
+} from "../../features/auth/header-auth.js";
 import { createHttpClient } from "../../shared/http-client.js";
 import { element } from "../../shared/safe-dom.js";
 import { resolveRuntimeOverride } from "../../shared/runtime-config.js";
@@ -9,8 +14,10 @@ import {
 } from "./detail-model.js";
 
 const AUTH_BASE_URL = "https://auth.asgracing.ru";
+const RACE_DETAILS_BASE_URL = "https://data.asgracing.ru/top-data/v2/races/details";
 const ROSTER_AVATAR_LIMIT = 100;
 const ROSTER_AVATAR_CONCURRENCY = 6;
+const RACES_PER_PAGE = 10;
 const rosterAvatarCache = new Map();
 
 const COPY = {
@@ -26,7 +33,13 @@ const COPY = {
     recent: "Recent counted races", noDescription: "No public description yet.", noRoster: "No active members.",
     noTeams: "No active teams.", noClub: "Independent team", noRaces: "No counted races yet.",
     leader: "Leader", member: "Member", date: "Date", track: "Track", format: "Format",
-    mode: "Mode", updated: value => `Rating updated ${value}`,
+    mode: "Mode", openRace: "Open race", previous: "Previous", next: "Next", close: "Close",
+    pageStatus: (page, total) => `Page ${page} of ${total}`,
+    raceDetails: "Race details", winner: "Winner", drivers: "Drivers", bestLap: "Best lap",
+    loadingRace: "Loading race details…", raceUnavailable: "Race details are unavailable.",
+    counted: "Counted", notCounted: "Not counted",
+    raceColumns: ["Pos.", "Start", "Δ Pos.", "Driver", "Best lap", "Car", "Gap", "Δ ELO", "SR", "Points"],
+    updated: value => `Rating updated ${value}`,
     noRatingYet: "The ranking starts after the first counted race.",
     navSpecial: "Special Event", navChampionship: "Championship", navRules: "Rules", navNews: "News",
     navRacing: "Racing", navLastRaces: "Last Races", navStats: "Stats", navRating: "Rating",
@@ -45,7 +58,13 @@ const COPY = {
     recent: "Последние зачётные гонки", noDescription: "Публичное описание пока не добавлено.", noRoster: "Активных участников нет.",
     noTeams: "Активных команд нет.", noClub: "Независимая команда", noRaces: "Зачётных гонок пока нет.",
     leader: "Руководитель", member: "Участник", date: "Дата", track: "Трасса", format: "Формат",
-    mode: "Режим", updated: value => `Рейтинг обновлён ${value}`,
+    mode: "Режим", openRace: "Открыть гонку", previous: "Назад", next: "Вперёд", close: "Закрыть",
+    pageStatus: (page, total) => `Страница ${page} из ${total}`,
+    raceDetails: "Детали гонки", winner: "Победитель", drivers: "Пилоты", bestLap: "Лучший круг",
+    loadingRace: "Загружаем детали гонки…", raceUnavailable: "Детали гонки недоступны.",
+    counted: "Зачётная", notCounted: "Не в зачёте",
+    raceColumns: ["Поз.", "Старт", "Δ поз.", "Пилот", "Лучший круг", "Автомобиль", "Отрыв", "Δ ELO", "SR", "Очки"],
+    updated: value => `Рейтинг обновлён ${value}`,
     noRatingYet: "Место появится после первой зачётной гонки.",
     navSpecial: "Спецсобытие", navChampionship: "Чемпионат", navRules: "Правила", navNews: "Новости",
     navRacing: "Гонки", navLastRaces: "Последние гонки", navStats: "Статистика", navRating: "Рейтинг",
@@ -54,9 +73,9 @@ const COPY = {
   }
 };
 
-const copy = (lang, key, value) => {
+const copy = (lang, key, ...values) => {
   const selected = COPY[lang][key] ?? COPY.en[key] ?? key;
-  return typeof selected === "function" ? selected(value) : selected;
+  return typeof selected === "function" ? selected(...values) : selected;
 };
 const language = windowRef => {
   try { return windowRef.localStorage.getItem("asgLang") === "ru" ? "ru" : "en"; }
@@ -74,6 +93,8 @@ const formattedDate = (value, lang) => {
   }).format(date);
 };
 const displayToken = value => String(value || "—").replaceAll("_", " ");
+const displayTrack = value => displayToken(value).replace(/\b[a-zа-яё]/giu, letter => letter.toLocaleUpperCase());
+const displayServer = value => raceValue(value).replace(/\s+-\s+(?:www\.|zahodi\b).*$/i, "");
 
 function navigation(documentRef) {
   const close = () => documentRef.querySelectorAll(".top-nav-group.is-open").forEach(group => {
@@ -108,10 +129,172 @@ function stateNode(documentRef, lang, key, retry = null) {
   return element(documentRef, "div", { className: "clubs-teams-state", attrs: { role: key === "loading" ? "status" : "alert", "aria-live": "polite" } }, children);
 }
 
-function metric(documentRef, label, value, extraClass = "") {
+function metric(documentRef, label, value, extraClass = "", valueClass = "") {
   return element(documentRef, "div", { className: `clubs-teams-detail-metric ${extraClass}`.trim() }, [
-    element(documentRef, "span", { text: label }), element(documentRef, "strong", { text: value })
+    element(documentRef, "span", { text: label }), element(documentRef, "strong", { className: valueClass, text: value })
   ]);
+}
+
+function ratingValueClass(type, value) {
+  const category = type === "elo" ? eloCategoryId(value) : srCategory(value);
+  return `clubs-teams-rating-value${category ? ` ${type}-cat-${category}` : ""}`;
+}
+
+function createRaceTable({ documentRef, lang, races, onOpen }) {
+  let activePage = 1;
+  const tableWrap = element(documentRef, "div", { className: "clubs-teams-races-table-wrap" });
+  const pagination = element(documentRef, "nav", { className: "clubs-teams-races-pagination", attrs: { "aria-label": copy(lang, "recent") } });
+  const root = element(documentRef, "div", { className: "clubs-teams-races-list" }, [tableWrap, pagination]);
+  const totalPages = Math.max(1, Math.ceil(races.length / RACES_PER_PAGE));
+  const render = () => {
+    const start = (activePage - 1) * RACES_PER_PAGE;
+    const rows = races.slice(start, start + RACES_PER_PAGE).map(race => {
+      const values = [
+        ["date", formattedDate(race.race_started_at, lang)], ["track", displayToken(race.track_code)],
+        ["format", displayToken(race.race_format)], ["mode", displayToken(race.competition_mode)],
+        ["points", formattedNumber(race.points, 2)]
+      ];
+      const cells = values.map(([key, value], index) => element(documentRef, "td", { className: index === 4 ? "clubs-teams-race-points" : "", text: value, attrs: { "data-label": copy(lang, key) } }));
+      const openButton = element(documentRef, "button", { className: "clubs-teams-race-open", text: "→", attrs: { type: "button", "aria-label": copy(lang, "openRace") } });
+      cells.push(element(documentRef, "td", { className: "clubs-teams-race-action", attrs: { "data-label": copy(lang, "openRace") } }, [openButton]));
+      const row = element(documentRef, "tr", { className: "clubs-teams-race-row", attrs: { tabindex: "0", role: "button" } }, cells);
+      const open = () => onOpen(race, row);
+      row.addEventListener("click", open);
+      row.addEventListener("keydown", event => { if (event.key === "Enter") open(); });
+      return row;
+    });
+    const headers = ["date", "track", "format", "mode", "points"].map(key => element(documentRef, "th", { text: copy(lang, key), attrs: { scope: "col" } }));
+    headers.push(element(documentRef, "th", { text: "", attrs: { scope: "col", "aria-label": copy(lang, "openRace") } }));
+    tableWrap.replaceChildren(element(documentRef, "table", { className: "clubs-teams-races-table" }, [
+      element(documentRef, "thead", {}, [element(documentRef, "tr", {}, headers)]),
+      element(documentRef, "tbody", {}, rows)
+    ]));
+    pagination.replaceChildren();
+    if (totalPages <= 1) return;
+    const pageButton = (label, page, disabled = false) => {
+      const button = element(documentRef, "button", { className: "clubs-teams-races-page", text: label, attrs: { type: "button" } });
+      button.disabled = disabled;
+      button.addEventListener("click", () => { activePage = page; render(); });
+      return button;
+    };
+    pagination.append(pageButton(copy(lang, "previous"), Math.max(1, activePage - 1), activePage === 1));
+    pagination.append(element(documentRef, "span", { className: "clubs-teams-races-page-status", text: copy(lang, "pageStatus", activePage, totalPages) }));
+    pagination.append(pageButton(copy(lang, "next"), Math.min(totalPages, activePage + 1), activePage === totalPages));
+  };
+  render();
+  return root;
+}
+
+function raceDetailPath(raceUid) {
+  const id = String(raceUid || "").trim().toLowerCase().replace(/\.json$/i, "").replace(/[^a-z0-9._-]+/g, "_").replace(/^[._-]+|[._-]+$/g, "");
+  return id ? `${RACE_DETAILS_BASE_URL}/${encodeURIComponent(id)}.json` : null;
+}
+
+const raceValue = (value, fallback = "—") => value === null || value === undefined || value === "" ? fallback : String(value);
+const raceNumber = value => value === null || value === undefined || value === "" ? NaN : Number(value);
+const firstRaceNumber = (...values) => {
+  for (const value of values) {
+    const numeric = raceNumber(value);
+    if (Number.isFinite(numeric)) return numeric;
+  }
+  return NaN;
+};
+
+function raceDriverIdentity(documentRef, result, siteBase) {
+  const driver = result.public_id
+    ? element(documentRef, "a", { className: "driver-link", text: raceValue(result.driver), attrs: { href: `${siteBase}driver/?id=${encodeURIComponent(result.public_id)}` } })
+    : element(documentRef, "span", { text: raceValue(result.driver) });
+  const driverNumber = firstRaceNumber(result.race_number, result.car_number, result.driver_number, result.number);
+  const elo = firstRaceNumber(result.elo_rating_after, result.elo_after, result.new_rating, result.elo, result.elo_internal_rating);
+  const meta = [];
+  if (Number.isFinite(driverNumber)) meta.push(element(documentRef, "span", { className: "clubs-race-driver-number", text: `#${Math.trunc(driverNumber)}` }));
+  if (Number.isFinite(elo)) meta.push(element(documentRef, "span", { className: ratingValueClass("elo", elo), text: String(Math.round(elo)) }));
+  return element(documentRef, "div", { className: "clubs-race-driver-identity" }, [
+    element(documentRef, "div", { className: "clubs-race-driver-name" }, [driver]),
+    meta.length ? element(documentRef, "div", { className: "clubs-race-driver-meta" }, meta) : null
+  ]);
+}
+
+function raceSafetyBadge(documentRef, result) {
+  const rating = firstRaceNumber(result.safety_rating_after, result.safety_rating, result.new_sr);
+  const delta = firstRaceNumber(result.safety_delta, result.safety_final_delta, result.delta_sr, result.safety_rating_delta, result.sr_delta);
+  if (!Number.isFinite(rating)) return element(documentRef, "span", { text: "—" });
+  const children = [element(documentRef, "span", { className: "clubs-race-sr-value", text: rating.toFixed(2) })];
+  if (Number.isFinite(delta)) {
+    children.push(element(documentRef, "span", {
+      className: `clubs-race-sr-delta ${delta > 0 ? "delta-positive" : delta < 0 ? "delta-negative" : "delta-neutral"}`,
+      text: `(${delta > 0 ? "+" : ""}${delta.toFixed(2)})`
+    }));
+  }
+  return element(documentRef, "span", { className: `${ratingValueClass("sr", rating)} clubs-race-sr-badge` }, children);
+}
+
+function createRaceModal({ documentRef, client, lang, siteBase }) {
+  const cache = new Map();
+  let trigger = null;
+  const title = element(documentRef, "h3", { className: "modal-title", text: "—", attrs: { id: "clubs-race-modal-title" } });
+  const subtitle = element(documentRef, "p", { className: "modal-subtitle", text: "—" });
+  const summary = element(documentRef, "div", { className: "race-modal-summary" });
+  const table = element(documentRef, "div", { className: "table-wrap clubs-race-results-table" });
+  const closeButton = element(documentRef, "button", { className: "modal-close", text: "✕", attrs: { type: "button", "aria-label": copy(lang, "close") } });
+  const card = element(documentRef, "div", { className: "modal-card modal-card-race", attrs: { role: "dialog", "aria-modal": "true", "aria-labelledby": "clubs-race-modal-title" } }, [
+    closeButton,
+    element(documentRef, "div", { className: "modal-header" }, [element(documentRef, "div", {}, [element(documentRef, "div", { className: "eyebrow", text: copy(lang, "raceDetails") }), title, subtitle])]),
+    summary,
+    element(documentRef, "div", { className: "table-card table-card-modal" }, [table])
+  ]);
+  const overlay = element(documentRef, "div", { className: "modal-overlay clubs-race-modal", attrs: { "aria-hidden": "true" } }, [card]);
+  documentRef.body.append(overlay);
+  const close = () => {
+    overlay.classList.remove("is-open"); overlay.setAttribute("aria-hidden", "true");
+    documentRef.body.classList.remove("modal-open"); trigger?.focus?.();
+  };
+  closeButton.addEventListener("click", close);
+  overlay.addEventListener("click", event => { if (event.target === overlay) close(); });
+  documentRef.addEventListener("keydown", event => { if (event.key === "Escape" && overlay.classList.contains("is-open")) close(); });
+
+  const render = details => {
+    const track = displayTrack(details.track || details.track_code || details.track_name);
+    title.textContent = details.server_name ? `${track} [${displayServer(details.server_name)}]` : track;
+    subtitle.textContent = `${formattedDate(details.finished_at || details.race_started_at, lang)} · ${copy(lang, details.counted_for_stats === false ? "notCounted" : "counted")}`;
+    const summaryItems = [[copy(lang, "track"), track], [copy(lang, "winner"), raceValue(details.winner)], [copy(lang, "drivers"), raceValue(details.participants_count)], [copy(lang, "bestLap"), raceValue(details.best_lap)]];
+    summary.replaceChildren(...summaryItems.map(([label, value]) => element(documentRef, "div", { className: "race-summary-card" }, [element(documentRef, "div", { className: "race-summary-label", text: label }), element(documentRef, "div", { className: "race-summary-value", text: value })])));
+    const headers = copy(lang, "raceColumns").map(label => element(documentRef, "th", { text: label, attrs: { scope: "col" } }));
+    const results = Array.isArray(details.results) ? details.results.slice(0, 200) : [];
+    const rows = results.map(result => {
+      const delta = raceNumber(result.positions_delta);
+      const eloDelta = firstRaceNumber(result.elo_rating_delta, result.elo_delta, result.rating_delta, result.ratingDelta, result.elo_change, result.elo?.rating_delta, result.elo?.delta);
+      return element(documentRef, "tr", {}, [
+        element(documentRef, "td", { text: raceValue(result.position) }),
+        element(documentRef, "td", { text: raceValue(result.start_position ?? result.starting_position) }),
+        element(documentRef, "td", { className: Number.isFinite(delta) ? `positions-delta ${delta > 0 ? "delta-positive" : delta < 0 ? "delta-negative" : "delta-neutral"}` : "", text: Number.isFinite(delta) ? `${delta > 0 ? "+" : ""}${delta}` : "—" }),
+        element(documentRef, "td", { className: "clubs-race-driver" }, [raceDriverIdentity(documentRef, result, siteBase)]),
+        element(documentRef, "td", { className: result.had_best_lap ? "best-lap-value" : "", text: raceValue(result.best_lap) }),
+        element(documentRef, "td", { text: raceValue(result.car_name) }),
+        element(documentRef, "td", { text: raceValue(result.gap) }),
+        element(documentRef, "td", { className: Number.isFinite(eloDelta) ? `positions-delta ${eloDelta > 0 ? "delta-positive" : eloDelta < 0 ? "delta-negative" : "delta-neutral"}` : "", text: Number.isFinite(eloDelta) ? `${eloDelta > 0 ? "+" : ""}${Math.round(eloDelta)}` : "—" }),
+        element(documentRef, "td", {}, [raceSafetyBadge(documentRef, result)]),
+        element(documentRef, "td", { text: raceValue(result.points, "0") })
+      ]);
+    });
+    table.replaceChildren(results.length ? element(documentRef, "table", {}, [element(documentRef, "thead", {}, [element(documentRef, "tr", {}, headers)]), element(documentRef, "tbody", {}, rows)]) : element(documentRef, "div", { className: "clubs-teams-modal-state", text: copy(lang, "raceUnavailable") }));
+  };
+  const open = async (race, source) => {
+    trigger = source; overlay.classList.add("is-open"); overlay.setAttribute("aria-hidden", "false"); documentRef.body.classList.add("modal-open");
+    title.textContent = displayTrack(race.track_code); subtitle.textContent = formattedDate(race.race_started_at, lang); summary.replaceChildren();
+    table.replaceChildren(element(documentRef, "div", { className: "clubs-teams-modal-state", text: copy(lang, "loadingRace"), attrs: { role: "status" } }));
+    closeButton.focus();
+    const path = raceDetailPath(race.race_uid);
+    if (!path) return table.replaceChildren(element(documentRef, "div", { className: "clubs-teams-modal-state", text: copy(lang, "raceUnavailable") }));
+    try {
+      if (!cache.has(path)) cache.set(path, client.requestJson(path, { cache: "force-cache", retries: 1 }));
+      render(await cache.get(path));
+    } catch {
+      cache.delete(path);
+      table.replaceChildren(element(documentRef, "div", { className: "clubs-teams-modal-state", text: copy(lang, "raceUnavailable"), attrs: { role: "alert" } }));
+    }
+  };
+  return { open, close };
 }
 
 export async function loadRosterAvatarUrl({ client, publicId, authBaseUrl = AUTH_BASE_URL }) {
@@ -193,9 +376,9 @@ function renderProfile({ documentRef, lang, siteBase, entityType, result, client
     element(documentRef, "div", { className: "clubs-teams-detail-copy" }, [
       element(documentRef, "h1", { text: detail.display_name }),
       detail.short_name ? element(documentRef, "p", { className: "clubs-teams-detail-short", text: detail.short_name }) : null,
-      element(documentRef, "p", { className: "clubs-teams-detail-description", text: description }),
-      actions.length ? element(documentRef, "div", { className: "clubs-teams-detail-actions" }, actions) : null
-    ])
+      element(documentRef, "p", { className: "clubs-teams-detail-description", text: description })
+    ]),
+    actions.length ? element(documentRef, "aside", { className: "clubs-teams-detail-actions" }, actions) : null
   ]);
 
   const rating = detail.rating;
@@ -210,8 +393,20 @@ function renderProfile({ documentRef, lang, siteBase, entityType, result, client
       metric(documentRef, copy(lang, "position"), hasCountedRaces ? `#${rating.position}` : "—", "is-accent"),
       metric(documentRef, copy(lang, "points"), hasCountedRaces ? formattedNumber(rating.total_points, 2) : "—"),
       metric(documentRef, copy(lang, "races"), rating ? formattedNumber(rating.race_count) : "—"),
-      metric(documentRef, "ELO", rating ? formattedNumber(rating.average_elo, 1) : "—"),
-      metric(documentRef, "SR", rating ? formattedNumber(rating.average_sr, 2) : "—"),
+      metric(
+        documentRef,
+        "ELO",
+        rating ? formattedNumber(rating.average_elo, 1) : "—",
+        "",
+        ratingValueClass("elo", rating?.average_elo)
+      ),
+      metric(
+        documentRef,
+        "SR",
+        rating ? formattedNumber(rating.average_sr, 2) : "—",
+        "",
+        ratingValueClass("sr", rating?.average_sr)
+      ),
       metric(documentRef, copy(lang, "members"), rating ? formattedNumber(rating.members_count) : formattedNumber(detail.roster.length))
     ])
   ]);
@@ -251,20 +446,13 @@ function renderProfile({ documentRef, lang, siteBase, entityType, result, client
     element(documentRef, "div", { className: "clubs-teams-related-grid" }, relationChildren)
   ]);
 
-  const raceChildren = detail.recent_races.length ? detail.recent_races.map(race => element(documentRef, "article", { className: "clubs-teams-race-card" }, [
-    element(documentRef, "div", { className: "clubs-teams-race-main" }, [
-      element(documentRef, "strong", { text: displayToken(race.track_code) }),
-      element(documentRef, "span", { text: formattedDate(race.race_started_at, lang) })
-    ]),
-    element(documentRef, "dl", {}, [
-      element(documentRef, "div", {}, [element(documentRef, "dt", { text: copy(lang, "format") }), element(documentRef, "dd", { text: displayToken(race.race_format) })]),
-      element(documentRef, "div", {}, [element(documentRef, "dt", { text: copy(lang, "mode") }), element(documentRef, "dd", { text: displayToken(race.competition_mode) })]),
-      element(documentRef, "div", {}, [element(documentRef, "dt", { text: copy(lang, "points") }), element(documentRef, "dd", { text: formattedNumber(race.points, 2) })])
-    ])
-  ])) : [element(documentRef, "p", { className: "clubs-teams-detail-empty", text: copy(lang, "noRaces") })];
+  const raceModal = detail.recent_races.length ? createRaceModal({ documentRef, client, lang, siteBase }) : null;
+  const raceContent = detail.recent_races.length
+    ? createRaceTable({ documentRef, lang, races: detail.recent_races, onOpen: raceModal.open })
+    : element(documentRef, "p", { className: "clubs-teams-detail-empty", text: copy(lang, "noRaces") });
   const racePanel = element(documentRef, "section", { className: "clubs-teams-detail-panel clubs-teams-detail-races", attrs: { "aria-labelledby": "detail-races-title" } }, [
     element(documentRef, "h2", { text: copy(lang, "recent"), attrs: { id: "detail-races-title" } }),
-    element(documentRef, "div", { className: "clubs-teams-race-grid" }, raceChildren)
+    raceContent
   ]);
   root.append(hero, ratingPanel, element(documentRef, "div", { className: "clubs-teams-detail-columns" }, [rosterPanel, relationPanel]), racePanel);
   void hydrateRosterAvatars({ documentRef, client, targets: avatarTargets });

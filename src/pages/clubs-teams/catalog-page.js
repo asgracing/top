@@ -1,4 +1,8 @@
-import { createAuthHeaderController } from "../../features/auth/header-auth.js";
+import {
+  createAuthHeaderController,
+  eloCategoryId,
+  srCategory
+} from "../../features/auth/header-auth.js";
 import { createHttpClient } from "../../shared/http-client.js";
 import { element } from "../../shared/safe-dom.js";
 import { resolveRuntimeOverride } from "../../shared/runtime-config.js";
@@ -97,6 +101,15 @@ function copy(lang, key, value) {
 
 function number(value, digits = 0) {
   return new Intl.NumberFormat(undefined, { maximumFractionDigits: digits }).format(value);
+}
+
+function ratingValue(documentRef, type, value, digits) {
+  const numeric = value === null || value === undefined || value === "" ? NaN : Number(value);
+  const category = type === "elo" ? eloCategoryId(numeric) : srCategory(numeric);
+  return element(documentRef, "dd", {
+    className: category ? `clubs-teams-rating-value ${type}-cat-${category}` : "clubs-teams-rating-value",
+    text: Number.isFinite(numeric) ? number(numeric, digits) : "—"
+  });
 }
 
 export function countLabel(lang, type, value) {
@@ -261,11 +274,11 @@ export function createCatalogPage({
       const metrics = element(documentRef, "dl", { className: "clubs-teams-metrics" }, [
         element(documentRef, "div", {}, [
           element(documentRef, "dt", { text: "ELO" }),
-          element(documentRef, "dd", { text: entry.average_elo === null ? "—" : number(entry.average_elo, 1) })
+          ratingValue(documentRef, "elo", entry.average_elo, 1)
         ]),
         element(documentRef, "div", {}, [
           element(documentRef, "dt", { text: "SR" }),
-          element(documentRef, "dd", { text: entry.average_sr === null ? "—" : number(entry.average_sr, 2) })
+          ratingValue(documentRef, "sr", entry.average_sr, 2)
         ])
       ]);
       grid.appendChild(element(documentRef, "a", {

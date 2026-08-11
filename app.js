@@ -7656,6 +7656,16 @@ function formatClubsTeamsMetric(value, maximumFractionDigits = 0) {
   }).format(numeric);
 }
 
+function renderClubsTeamsRatingMetric(type, value, maximumFractionDigits) {
+  const numeric = value === null || value === undefined || value === "" ? NaN : Number(value);
+  if (!Number.isFinite(numeric)) return `<span class="empty-inline">—</span>`;
+  const category = type === "elo"
+    ? getEloCategoryId({ elo: numeric })
+    : normalizeSafetyCategory({ safety_rating: numeric });
+  const className = category ? ` ${type}-cat-${category}` : "";
+  return `<span class="clubs-teams-rating-value${escapeHtml(className)}">${escapeHtml(formatClubsTeamsMetric(numeric, maximumFractionDigits))}</span>`;
+}
+
 function renderClubsTeamsHomeHeaders() {
   const labels = t("clubsTeamsCols");
   return `<tr>${clubsTeamsColumns.map((column, index) => (
@@ -7714,8 +7724,8 @@ function renderClubsTeamsHomeTable() {
       <td><a class="clubs-teams-home-name" href="${href}">${escapeHtml(row.display_name)}</a></td>
       <td><span class="clubs-teams-home-tag">${escapeHtml(detail?.short_name || "—")}</span></td>
       <td class="points-column numeric-cell">${escapeHtml(formatClubsTeamsMetric(row.total_points, 2))}</td>
-      <td class="elo-column numeric-cell">${escapeHtml(formatClubsTeamsMetric(row.average_elo, 1))}</td>
-      <td class="sr-column numeric-cell">${escapeHtml(formatClubsTeamsMetric(row.average_sr, 2))}</td>
+      <td class="elo-column numeric-cell">${renderClubsTeamsRatingMetric("elo", row.average_elo, 1)}</td>
+      <td class="sr-column numeric-cell">${renderClubsTeamsRatingMetric("sr", row.average_sr, 2)}</td>
       <td class="races-column numeric-cell">${escapeHtml(formatClubsTeamsMetric(row.race_count))}</td>
     </tr>`;
   }).join("");
