@@ -103,7 +103,7 @@ for (const [page, [htmlPath, entrySrc]] of Object.entries(pageEntrypoints)) {
   if (!pageHtml.includes(heroStatsHref)) failures.push(`${page} page is missing the shared hero stats stylesheet`);
   const serverStickyLayoutHref = page === "home" ? "./styles/components/server-sticky-layout.css?v=20260715r11serversticky1" : "../styles/components/server-sticky-layout.css?v=20260715r11serversticky1";
   if (!pageHtml.includes(serverStickyLayoutHref)) failures.push(`${page} page is missing the server sticky layout stylesheet`);
-  const sectionsHref = page === "home" ? "./styles/components/sections.css?v=20260811hometable1" : "../styles/components/sections.css?v=20260715r11sections1";
+  const sectionsHref = page === "home" ? "./styles/components/sections.css?v=20260811hometable2" : "../styles/components/sections.css?v=20260715r11sections1";
   if (!pageHtml.includes(sectionsHref)) failures.push(`${page} page is missing the shared sections stylesheet`);
   const supportWidgetHref = page === "home" ? "./styles/components/support-widget.css?v=20260715r11support1" : "../styles/components/support-widget.css?v=20260715r11support1";
   if (!pageHtml.includes(supportWidgetHref)) failures.push(`${page} page is missing the support widget stylesheet`);
@@ -207,7 +207,7 @@ if (!js.includes("const pageDataInitializers = Object.freeze({") || !js.includes
 if (!js.includes("const pageInitializationErrorHandlers = Object.freeze({")) failures.push("Page initialization errors must use the explicit handler registry");
 if (!js.includes("function initializeWindowLifecycle()") || /window\.addEventListener\("(?:storage|resize|pagehide)"/.test(js)) failures.push("Global window listeners must be owned by the application lifecycle");
 if (!/from "\.\/src\/pages\/home\/stats-config\.js(?:\?[^\"]+)?"/.test(js) || /const (?:leaderboardColumns|bestlapsColumns|HOME_STATS_TABS)\s*=/.test(js)) failures.push("Home statistics configuration must live outside app.js");
-if (!js.includes('from "./src/pages/home/stats-model.js"') || js.includes("const trackFiltered = bestlapsTrackFilter")) failures.push("Home statistics filtering must live outside app.js");
+if (!/from "\.\/src\/pages\/home\/stats-model\.js(?:\?[^\"]+)?"/.test(js) || js.includes("const trackFiltered = bestlapsTrackFilter")) failures.push("Home statistics filtering must live outside app.js");
 if (!js.includes('from "./src/pages/home/deferred-sections.js"') || js.includes("topHomeDeferredObserver")) failures.push("Home deferred-section observation must live outside app.js");
 if (!js.includes('from "./src/pages/home/stats-tabs-controller.js"') || js.includes("combinedStatsTabsBound") || js.includes("hostedCombinedStatsTab")) failures.push("Home statistics tab behavior must live outside app.js");
 if (!js.includes('from "./src/pages/home/index.js"') || !js.includes("const homePage = createHomePage({")) failures.push("Home lifecycle must be composed through the home page module");

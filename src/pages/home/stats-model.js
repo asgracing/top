@@ -9,6 +9,14 @@ export function filterHomeRowsByDriver(rows, search, { locale = "en" } = {}) {
   return source.filter(row => normalize(row?.driver, locale).includes(query));
 }
 
+export function filterClubsTeamsRows(rows, search, { getTag = () => "", locale = "en" } = {}) {
+  const source = Array.isArray(rows) ? rows : [];
+  const query = normalize(search, locale);
+  if (!query) return [...source];
+  return source.filter(row => [row?.display_name, row?.slug, getTag(row)]
+    .some(value => normalize(value, locale).includes(query)));
+}
+
 export function filterBestlapsByTrack(rows, trackFilter) {
   const source = Array.isArray(rows) ? rows : [];
   const track = normalize(trackFilter);

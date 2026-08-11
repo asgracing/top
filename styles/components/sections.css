@@ -76,6 +76,10 @@
     white-space: nowrap;
   }
 
+  .combined-stats-shell-title .section-subtitle {
+    white-space: nowrap;
+  }
+
   .combined-stats-shell-controls {
     display: flex;
     align-items: center;

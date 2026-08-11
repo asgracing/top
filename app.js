@@ -3,8 +3,8 @@
 import { runWhenDocumentReady } from "./src/runtime/application-bootstrap.js";
 import { loadPageFeatures } from "./src/runtime/page-feature-loader.js";
 import { createPageOrchestrator } from "./src/runtime/page-orchestrator.js";
-import { HOME_STATS_TABS, bestlapsColumns, clubsTeamsColumns, createHomeStatsState, leaderboardColumns } from "./src/pages/home/stats-config.js?v=20260811hometable1";
-import { processBestlaps, processLeaderboard, processSafety } from "./src/pages/home/stats-model.js";
+import { HOME_STATS_TABS, bestlapsColumns, clubsTeamsColumns, createHomeStatsState, leaderboardColumns } from "./src/pages/home/stats-config.js?v=20260811hometable2";
+import { filterClubsTeamsRows, processBestlaps, processLeaderboard, processSafety } from "./src/pages/home/stats-model.js?v=20260811hometable2";
 import { createHomeDeferredSectionsController } from "./src/pages/home/deferred-sections.js";
 import { createHomeStatsTabsController } from "./src/pages/home/stats-tabs-controller.js";
 import { createHomePage } from "./src/pages/home/index.js";
@@ -569,6 +569,7 @@ let leaderboardSearch = initialHomeStatsState.searches.leaderboard;
 let bestlapsSearch = initialHomeStatsState.searches.bestlaps;
 let bestlapsTrackFilter = initialHomeStatsState.bestlapsTrackFilter;
 let safetySearch = initialHomeStatsState.searches.safety;
+let homeClubsTeamsSearch = initialHomeStatsState.searches.clubsTeams;
 let racesSearch = "";
 let racesTrackFilter = "";
 let carsSearch = "";
@@ -1010,6 +1011,7 @@ const translations = {
     clubsTeamsClubs: "Clubs",
     clubsTeamsTeams: "Teams",
     clubsTeamsOpenDirectory: "Open clubs & teams",
+    clubsTeamsSearchPlaceholder: "Search by name or tag",
     clubsTeamsLoading: "Loading clubs and teams...",
     clubsTeamsUnavailable: "Club and team standings are temporarily unavailable.",
     clubsTeamsEmpty: "No clubs or teams are currently ranked.",
@@ -1687,7 +1689,8 @@ const translations = {
     clubsTeamsSwitchLabel: "Выбор клубов или команд",
     clubsTeamsClubs: "Клубы",
     clubsTeamsTeams: "Команды",
-    clubsTeamsOpenDirectory: "Перейти в клубы и команды",
+    clubsTeamsOpenDirectory: "Перейти в раздел клубы и команды",
+    clubsTeamsSearchPlaceholder: "Поиск по названию или тегу",
     clubsTeamsLoading: "Загружаем клубы и команды...",
     clubsTeamsUnavailable: "Рейтинг клубов и команд временно недоступен.",
     clubsTeamsEmpty: "В рейтинге пока нет клубов или команд.",
@@ -6375,12 +6378,14 @@ function applyStaticTranslations() {
   const leaderboardInput = document.getElementById("leaderboard-search");
   const bestlapsInput = document.getElementById("bestlaps-search");
   const safetyInput = document.getElementById("safety-search");
+  const clubsTeamsInput = document.getElementById("clubs-teams-home-search");
   const racesInput = document.getElementById("races-search");
   const carsInput = document.getElementById("cars-search");
 
   if (leaderboardInput) leaderboardInput.placeholder = t("leaderboardSearchPlaceholder");
   if (bestlapsInput) bestlapsInput.placeholder = t("bestlapsSearchPlaceholder");
   if (safetyInput) safetyInput.placeholder = t("safetySearchPlaceholder");
+  if (clubsTeamsInput) clubsTeamsInput.placeholder = t("clubsTeamsSearchPlaceholder");
   if (racesInput) racesInput.placeholder = t("racesSearchPlaceholder");
   if (carsInput) carsInput.placeholder = t("carsSearchPlaceholder");
 
@@ -7684,9 +7689,13 @@ function renderClubsTeamsHomeTable() {
     return;
   }
 
-  const source = homeClubsTeamsEntityType === "team"
+  const unfilteredSource = homeClubsTeamsEntityType === "team"
     ? homeClubsTeamsSnapshot.teams
     : homeClubsTeamsSnapshot.clubs;
+  const source = filterClubsTeamsRows(unfilteredSource, homeClubsTeamsSearch, {
+    locale: currentLang,
+    getTag: row => clubsTeamsEntityDetails.get(row.public_id)?.short_name || ""
+  });
   const result = paginate(source, homeClubsTeamsPage, PAGE_SIZE);
   homeClubsTeamsPage = result.page;
   if (!result.totalItems) {
@@ -8242,6 +8251,7 @@ function bindSearchInputs() {
   const leaderboardInput = document.getElementById("leaderboard-search");
   const bestlapsInput = document.getElementById("bestlaps-search");
   const safetyInput = document.getElementById("safety-search");
+  const clubsTeamsInput = document.getElementById("clubs-teams-home-search");
   const handleLeaderboardInput = debounce(async (value) => {
     statsStore?.dispatch({ type: "table/search", table: "leaderboard", value });
     if (isServerPagedTopDataV2Table("leaderboard")) {
@@ -8281,6 +8291,13 @@ function bindSearchInputs() {
   if (safetyInput) {
     appLifecycle.listen(safetyInput, "input", (e) => {
       handleSafetyInput(e.target.value);
+    });
+  }
+  if (clubsTeamsInput) {
+    appLifecycle.listen(clubsTeamsInput, "input", event => {
+      homeClubsTeamsSearch = event.target.value;
+      homeClubsTeamsPage = 1;
+      renderClubsTeamsHomeTable();
     });
   }
   appLifecycle.add(() => {

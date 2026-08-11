@@ -40,7 +40,7 @@ export function createHomeStatsState({ isHome = false } = {}) {
   return {
     activeTab: "leaderboard",
     pages: { leaderboard: 1, bestlaps: 1, safety: 1 },
-    searches: { leaderboard: "", bestlaps: "", safety: "" },
+    searches: { leaderboard: "", bestlaps: "", safety: "", clubsTeams: "" },
     sorts: {
       leaderboard: { key: null, direction: null },
       bestlaps: { key: null, direction: null },
