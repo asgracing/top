@@ -482,6 +482,20 @@
 }
 
 @media (max-width: 640px) {
+  .clubs-teams-home-toolbar {
+    align-items: stretch;
+    flex-direction: column;
+  }
+
+  .clubs-teams-home-tabs,
+  .clubs-teams-home-directory {
+    width: 100%;
+  }
+
+  .clubs-teams-home-tab {
+    flex: 1 1 50%;
+  }
+
   html {
     scroll-padding-top: 140px;
   }

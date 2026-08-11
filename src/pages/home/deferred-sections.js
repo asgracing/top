@@ -1,4 +1,4 @@
-export const HOME_DEFERRED_SECTION_MAP = Object.freeze({ championship: "leaderboard", bestlaps: "bestlaps", "worst-safety": "safety" });
+export const HOME_DEFERRED_SECTION_MAP = Object.freeze({ championship: "leaderboard", bestlaps: "bestlaps", "worst-safety": "safety", "clubs-teams-stats": "clubsTeams" });
 
 export function createHomeDeferredSectionsController({ initialState, onReveal = () => {} }) {
   const state = initialState;

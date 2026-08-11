@@ -5,6 +5,7 @@ import { createHomeStatsTabsController, resolveHomeStatsTabFromHref, resolveNext
 test("resolves section hashes to home statistics tabs", () => {
   assert.equal(resolveHomeStatsTabFromHref("#bestlaps"), "bestlaps");
   assert.equal(resolveHomeStatsTabFromHref("#worst-safety"), "safety");
+  assert.equal(resolveHomeStatsTabFromHref("#clubs-teams-stats"), "clubsTeams");
   assert.equal(resolveHomeStatsTabFromHref("#championship"), "leaderboard");
 });
 

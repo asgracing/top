@@ -1,7 +1,8 @@
 export const HOME_TABLE_VIEW_STATES = Object.freeze([
   { tableId: "leaderboard-table", paginationId: "leaderboard-pagination-wrap", loadingKey: "loadingLeaderboard", errorKey: "errorLeaderboard" },
   { tableId: "bestlaps-table", paginationId: "bestlaps-pagination-wrap", loadingKey: "loadingBestLaps", errorKey: "errorBestlaps" },
-  { tableId: "safety-table", paginationId: "safety-pagination-wrap", loadingKey: "loadingSafety", errorKey: "errorLoading" }
+  { tableId: "safety-table", paginationId: "safety-pagination-wrap", loadingKey: "loadingSafety", errorKey: "errorLoading" },
+  { tableId: "clubs-teams-home-table", paginationId: "clubs-teams-home-pagination-wrap", loadingKey: "clubsTeamsLoading", errorKey: "clubsTeamsUnavailable" }
 ]);
 
 export const HOME_LOADING_TEXT_IDS = Object.freeze([

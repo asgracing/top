@@ -1,6 +1,7 @@
 export function resolveHomeStatsTabFromHref(href) {
   if (href === "#bestlaps") return "bestlaps";
   if (href === "#worst-safety") return "safety";
+  if (href === "#clubs-teams-stats") return "clubsTeams";
   return "leaderboard";
 }
 
@@ -81,7 +82,7 @@ export function createHomeStatsTabsController({ documentRef, tabs, initialTab = 
     });
     lifecycle.listen(documentRef, "click", event => {
       if (!isEnabled()) return;
-      const link = event.target?.closest?.('a[href="#championship"], a[href="#bestlaps"], a[href="#worst-safety"]');
+      const link = event.target?.closest?.('a[href="#championship"], a[href="#bestlaps"], a[href="#worst-safety"], a[href="#clubs-teams-stats"]');
       if (!link) return;
       event.preventDefault();
       setActive(resolveHomeStatsTabFromHref(String(link.getAttribute("href") || "")));

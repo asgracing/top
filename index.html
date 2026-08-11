@@ -62,7 +62,7 @@
   <link rel="stylesheet" href="./styles/components/hero-actions.css?v=20260713r11heroactions1" />
   <link rel="stylesheet" href="./styles/components/hero-stats.css?v=20260810driverpreview2" />
   <link rel="stylesheet" href="./styles/components/server-sticky-layout.css?v=20260715r11serversticky1" />
-  <link rel="stylesheet" href="./styles/components/sections.css?v=20260802statsnav3" />
+  <link rel="stylesheet" href="./styles/components/sections.css?v=20260811hometable1" />
   <link rel="stylesheet" href="./styles/components/support-widget.css?v=20260715r11support1" />
   <link rel="stylesheet" href="./styles/components/table-controls.css?v=20260715r11tablecontrols1" />
   <link rel="stylesheet" href="./styles/components/top-three.css?v=20260715r11topthree1" />
@@ -191,6 +191,7 @@
             <a class="top-nav-group-link" href="#championship" data-i18n="btnChampionship">Rating</a>
             <a class="top-nav-group-link" href="#bestlaps" data-i18n="btnBestLaps">Best Laps</a>
             <a class="top-nav-group-link" href="#worst-safety" data-i18n="btnWorstSafety">Safety Rating</a>
+            <a class="top-nav-group-link" href="./teams/?tab=teams" data-i18n="teamsRatingLink">Clubs &amp; Teams</a>
             <a class="top-nav-group-link" href="./bans/" data-i18n="btnBans">Ban List</a>
           </div>
         </div>
@@ -536,8 +537,8 @@
               <button class="combined-stats-tab is-active" id="combined-tab-leaderboard" type="button" role="tab" aria-selected="true" aria-controls="championship" data-stats-tab="leaderboard" data-i18n="championshipTitle">Rating</button>
               <button class="combined-stats-tab" id="combined-tab-bestlaps" type="button" role="tab" aria-selected="false" aria-controls="bestlaps" data-stats-tab="bestlaps" data-i18n="bestLapsTitle">Best Laps</button>
               <button class="combined-stats-tab" id="combined-tab-safety" type="button" role="tab" aria-selected="false" aria-controls="worst-safety" data-stats-tab="safety" data-i18n="worstSafetyTitle">Safety Rating</button>
+              <button class="combined-stats-tab" id="combined-tab-clubs-teams" type="button" role="tab" aria-selected="false" aria-controls="clubs-teams-stats" data-stats-tab="clubsTeams" data-i18n="teamsRatingLink">Clubs &amp; Teams</button>
             </div>
-            <a class="combined-stats-tab combined-stats-directory-link" href="./teams/?tab=teams" data-i18n="teamsRatingLink">Clubs &amp; Teams</a>
           </div>
           <div class="combined-stats-active-tools" id="combined-stats-active-tools"></div>
         </div>
@@ -610,6 +611,32 @@
             <div class="pagination-wrap" id="safety-pagination-wrap" style="display:none;">
               <div class="pagination-info" id="safety-pagination-info"></div>
               <div class="pagination" id="safety-pagination"></div>
+            </div>
+          </div>
+        </section>
+
+        <section class="section combined-stats-panel" id="clubs-teams-stats" data-stats-panel="clubsTeams" role="tabpanel" aria-labelledby="combined-tab-clubs-teams">
+          <div class="section-header">
+            <div>
+              <h2 class="section-title" data-i18n="teamsRatingLink">Clubs &amp; Teams</h2>
+              <p class="section-subtitle" data-i18n="combinedStatsSubtitleClubsTeams">Club and team standings by points.</p>
+            </div>
+          </div>
+
+          <div class="table-card">
+            <div class="clubs-teams-home-toolbar">
+              <div class="clubs-teams-home-tabs" role="tablist" aria-label="Clubs and teams" data-i18n-aria-label="clubsTeamsSwitchLabel">
+                <button class="clubs-teams-home-tab" type="button" role="tab" aria-selected="false" data-clubs-teams-type="club" data-i18n="clubsTeamsClubs">Clubs</button>
+                <button class="clubs-teams-home-tab is-active" type="button" role="tab" aria-selected="true" data-clubs-teams-type="team" data-i18n="clubsTeamsTeams">Teams</button>
+              </div>
+              <a class="btn btn-last-races clubs-teams-home-directory" href="./teams/?tab=teams" data-i18n="clubsTeamsOpenDirectory">Open clubs &amp; teams</a>
+            </div>
+            <div class="table-wrap" id="clubs-teams-home-table">
+              <div class="loading" role="status" aria-live="polite" data-i18n="clubsTeamsLoading">Loading clubs and teams...</div>
+            </div>
+            <div class="pagination-wrap" id="clubs-teams-home-pagination-wrap">
+              <div class="pagination-info" id="clubs-teams-home-pagination-info"></div>
+              <div class="pagination" id="clubs-teams-home-pagination"></div>
             </div>
           </div>
         </section>
@@ -1207,7 +1234,7 @@
   </div>
 
   <script src="./legal.js" defer></script>
-  <script type="module" src="./src/entrypoints/home.js?v=20260811invites1"></script>
+  <script type="module" src="./src/entrypoints/home.js?v=20260811hometable1"></script>
 </body>
 </html>
 

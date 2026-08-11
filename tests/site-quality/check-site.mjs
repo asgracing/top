@@ -103,7 +103,7 @@ for (const [page, [htmlPath, entrySrc]] of Object.entries(pageEntrypoints)) {
   if (!pageHtml.includes(heroStatsHref)) failures.push(`${page} page is missing the shared hero stats stylesheet`);
   const serverStickyLayoutHref = page === "home" ? "./styles/components/server-sticky-layout.css?v=20260715r11serversticky1" : "../styles/components/server-sticky-layout.css?v=20260715r11serversticky1";
   if (!pageHtml.includes(serverStickyLayoutHref)) failures.push(`${page} page is missing the server sticky layout stylesheet`);
-  const sectionsHref = page === "home" ? "./styles/components/sections.css?v=20260802statsnav3" : "../styles/components/sections.css?v=20260715r11sections1";
+  const sectionsHref = page === "home" ? "./styles/components/sections.css?v=20260811hometable1" : "../styles/components/sections.css?v=20260715r11sections1";
   if (!pageHtml.includes(sectionsHref)) failures.push(`${page} page is missing the shared sections stylesheet`);
   const supportWidgetHref = page === "home" ? "./styles/components/support-widget.css?v=20260715r11support1" : "../styles/components/support-widget.css?v=20260715r11support1";
   if (!pageHtml.includes(supportWidgetHref)) failures.push(`${page} page is missing the support widget stylesheet`);
@@ -226,7 +226,7 @@ if (!responsiveAccessibilityCss.includes("@media (prefers-reduced-motion: reduce
 if (!responsiveAccessibilityCss.includes("@media (pointer: coarse)") || !responsiveAccessibilityCss.includes("min-height: 44px;") || !responsiveAccessibilityCss.includes(":focus-visible")) failures.push("R13 must preserve touch target size and visible keyboard focus");
 for (const tag of html.matchAll(/<[^>]+role="button"[^>]*>/g)) if (!/tabindex="0"/.test(tag[0])) failures.push(`Role button is missing tabindex: ${tag[0].slice(0, 90)}`);
 if (!html.includes('data-i18n-aria-label="statsHubTabsLabel"') || !html.includes('aria-haspopup="dialog" aria-controls="server-players-modal"')) failures.push("Home interactive regions must expose localized names and dialog semantics");
-if ((html.match(/role="tabpanel"\s+aria-labelledby="combined-tab-/g) || []).length !== 3 || !statsTabsControllerJs.includes("resolveNextHomeStatsTab")) failures.push("Home statistics tabs must expose tabpanel relationships and keyboard navigation");
+if ((html.match(/role="tabpanel"\s+aria-labelledby="combined-tab-/g) || []).length !== 4 || !statsTabsControllerJs.includes("resolveNextHomeStatsTab")) failures.push("Home statistics tabs must expose tabpanel relationships and keyboard navigation");
 if (/@media\s*\(max-width:\s*760px\)\s*\{\s*\.donation-alerts-widget/s.test(legacyCss) || /@media\s*\(max-width:\s*1279px\)\s*\{\s*\.server-sticky-widget/s.test(legacyCss)) failures.push("Floating widget visibility rules must not be duplicated in legacy CSS");
 if (legacyCss.includes("Consolidated hero server summary") || !heroServerSummaryCss.includes(".hero-server-total-stat")) failures.push("Hero server summary must have one physical component source");
 if (!heroServerSummaryCss.includes("grid-template-columns: minmax(0, 1fr) auto;") || !heroServerSummaryCss.includes("font-variant-numeric: tabular-nums;")) failures.push("Hero paired mini stats must reserve independent label and numeric columns");

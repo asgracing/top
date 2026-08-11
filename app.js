@@ -3,7 +3,7 @@
 import { runWhenDocumentReady } from "./src/runtime/application-bootstrap.js";
 import { loadPageFeatures } from "./src/runtime/page-feature-loader.js";
 import { createPageOrchestrator } from "./src/runtime/page-orchestrator.js";
-import { HOME_STATS_TABS, bestlapsColumns, createHomeStatsState, leaderboardColumns } from "./src/pages/home/stats-config.js?v=20260811affiliations1";
+import { HOME_STATS_TABS, bestlapsColumns, clubsTeamsColumns, createHomeStatsState, leaderboardColumns } from "./src/pages/home/stats-config.js?v=20260811hometable1";
 import { processBestlaps, processLeaderboard, processSafety } from "./src/pages/home/stats-model.js";
 import { createHomeDeferredSectionsController } from "./src/pages/home/deferred-sections.js";
 import { createHomeStatsTabsController } from "./src/pages/home/stats-tabs-controller.js";
@@ -63,6 +63,7 @@ const clubsTeamsModelsPromise = Promise.all([
   import("./src/pages/clubs-teams/catalog-model.js"),
   import("./src/pages/clubs-teams/detail-model.js")
 ]);
+const clubsTeamsRatingModelPromise = import("./src/pages/clubs-teams/rating-model.js?v=20260811hometable1");
 let appStorage = null;
 let jsonQueryCache = null;
 let tableRequestGuard = null;
@@ -392,6 +393,12 @@ function resolveInitialLanguage() {
 let leaderboardData = [];
 let bestlapsData = [];
 let driverAffiliations = new Map();
+let clubsTeamsEntityDetails = new Map();
+let homeClubsTeamsSnapshot = null;
+let homeClubsTeamsEntityType = "team";
+let homeClubsTeamsPage = 1;
+let homeClubsTeamsLoading = true;
+let homeClubsTeamsError = false;
 let bestlapTracksData = [];
 let bestlapTrackLeadersData = [];
 let todayStatsData = null;
@@ -998,6 +1005,15 @@ const translations = {
     championshipTitle: "Rating",
     championshipSubtitle: "Row click opens quick view. Name opens full profile.",
     teamsRatingLink: "Clubs & Teams",
+    combinedStatsSubtitleClubsTeams: "Club and team standings by points, ELO and Safety Rating.",
+    clubsTeamsSwitchLabel: "Choose clubs or teams",
+    clubsTeamsClubs: "Clubs",
+    clubsTeamsTeams: "Teams",
+    clubsTeamsOpenDirectory: "Open clubs & teams",
+    clubsTeamsLoading: "Loading clubs and teams...",
+    clubsTeamsUnavailable: "Club and team standings are temporarily unavailable.",
+    clubsTeamsEmpty: "No clubs or teams are currently ranked.",
+    clubsTeamsCols: ["#", "Name", "Tag", "Points", "ELO", "SR", "Races"],
     combinedStatsSubtitleLeaderboard: "Row: quick view. Name: full profile.",
     statsHubTitle: "Driver Stats",
     statsHubTabsLabel: "Driver statistics tables",
@@ -1667,6 +1683,15 @@ const translations = {
     championshipTitle: "Рейтинг",
     championshipSubtitle: "Строка открывает быстрый просмотр, имя пилота ведёт в полный профиль.",
     teamsRatingLink: "Клубы и команды",
+    combinedStatsSubtitleClubsTeams: "Рейтинг клубов и команд по очкам, ELO и Safety Rating.",
+    clubsTeamsSwitchLabel: "Выбор клубов или команд",
+    clubsTeamsClubs: "Клубы",
+    clubsTeamsTeams: "Команды",
+    clubsTeamsOpenDirectory: "Перейти в клубы и команды",
+    clubsTeamsLoading: "Загружаем клубы и команды...",
+    clubsTeamsUnavailable: "Рейтинг клубов и команд временно недоступен.",
+    clubsTeamsEmpty: "В рейтинге пока нет клубов или команд.",
+    clubsTeamsCols: ["№", "Название", "ТЭГ", "Очки", "ELO", "SR", "Гонки"],
     combinedStatsSubtitleLeaderboard: "Строка: быстро. Имя: профиль.",
     statsHubTitle: "Статистика пилотов",
     statsHubTabsLabel: "Таблицы статистики пилотов",
@@ -7602,7 +7627,11 @@ async function loadDriverAffiliations() {
       ratingRunId: pointer.rating_run_id
     });
   }));
-  return buildDriverAffiliationIndex(loaded.filter(result => result.status === "fulfilled").map(result => result.value));
+  const details = loaded.filter(result => result.status === "fulfilled").map(result => result.value);
+  return {
+    affiliations: buildDriverAffiliationIndex(details),
+    entities: new Map(details.map(detail => [detail.public_id, detail]))
+  };
 }
 
 function renderDriverAffiliation(row, entityType) {
@@ -7612,6 +7641,141 @@ function renderDriverAffiliation(row, entityType) {
     ? `/clubs/?slug=${encodeURIComponent(affiliation.slug)}`
     : `/teams/detail/?slug=${encodeURIComponent(affiliation.slug)}`;
   return `<a class="driver-link driver-link-subtle" href="${href}">${escapeHtml(affiliation.display_name)}</a>`;
+}
+
+function formatClubsTeamsMetric(value, maximumFractionDigits = 0) {
+  const numeric = Number(value);
+  if (!Number.isFinite(numeric)) return "—";
+  return new Intl.NumberFormat(currentLang === "ru" ? "ru-RU" : "en-US", {
+    maximumFractionDigits
+  }).format(numeric);
+}
+
+function renderClubsTeamsHomeHeaders() {
+  const labels = t("clubsTeamsCols");
+  return `<tr>${clubsTeamsColumns.map((column, index) => (
+    `<th scope="col" class="${escapeHtml(column.className || "")}">${escapeHtml(labels[index] || column.key)}</th>`
+  )).join("")}</tr>`;
+}
+
+function syncClubsTeamsHomeTabs() {
+  document.querySelectorAll("[data-clubs-teams-type]").forEach(button => {
+    const selected = button.dataset.clubsTeamsType === homeClubsTeamsEntityType;
+    button.classList.toggle("is-active", selected);
+    button.setAttribute("aria-selected", selected ? "true" : "false");
+    button.tabIndex = selected ? 0 : -1;
+  });
+}
+
+function renderClubsTeamsHomeTable() {
+  const tableEl = document.getElementById("clubs-teams-home-table");
+  const paginationWrap = document.getElementById("clubs-teams-home-pagination-wrap");
+  if (!tableEl || !paginationWrap || !createStatsTableStateElement) return;
+  syncClubsTeamsHomeTabs();
+
+  if (homeClubsTeamsLoading) {
+    tableEl.replaceChildren(createStatsTableStateElement({ kind: "loading", message: t("clubsTeamsLoading") }));
+    paginationWrap.style.display = "none";
+    return;
+  }
+  if (homeClubsTeamsError || !homeClubsTeamsSnapshot) {
+    tableEl.replaceChildren(createStatsTableStateElement({ kind: "error", message: t("clubsTeamsUnavailable") }));
+    paginationWrap.style.display = "none";
+    return;
+  }
+
+  const source = homeClubsTeamsEntityType === "team"
+    ? homeClubsTeamsSnapshot.teams
+    : homeClubsTeamsSnapshot.clubs;
+  const result = paginate(source, homeClubsTeamsPage, PAGE_SIZE);
+  homeClubsTeamsPage = result.page;
+  if (!result.totalItems) {
+    tableEl.replaceChildren(createStatsTableStateElement({ kind: "empty", message: t("clubsTeamsEmpty") }));
+    paginationWrap.style.display = "none";
+    return;
+  }
+
+  const rows = result.items.map(row => {
+    const detail = clubsTeamsEntityDetails.get(row.public_id);
+    const href = row.entity_type === "club"
+      ? `/clubs/?slug=${encodeURIComponent(row.slug)}`
+      : `/teams/detail/?slug=${encodeURIComponent(row.slug)}`;
+    return `<tr>
+      <td class="rank-column numeric-cell"><span class="rank-badge rank-${escapeHtml(row.position)}">#${escapeHtml(row.position)}</span></td>
+      <td><a class="clubs-teams-home-name" href="${href}">${escapeHtml(row.display_name)}</a></td>
+      <td><span class="clubs-teams-home-tag">${escapeHtml(detail?.short_name || "—")}</span></td>
+      <td class="points-column numeric-cell">${escapeHtml(formatClubsTeamsMetric(row.total_points, 2))}</td>
+      <td class="elo-column numeric-cell">${escapeHtml(formatClubsTeamsMetric(row.average_elo, 1))}</td>
+      <td class="sr-column numeric-cell">${escapeHtml(formatClubsTeamsMetric(row.average_sr, 2))}</td>
+      <td class="races-column numeric-cell">${escapeHtml(formatClubsTeamsMetric(row.race_count))}</td>
+    </tr>`;
+  }).join("");
+  mountTrustedMarkup(tableEl, renderStatsTableShell({
+    className: "clubs-teams-home-table",
+    columns: clubsTeamsColumns,
+    headerHtml: renderClubsTeamsHomeHeaders(),
+    rowsHtml: rows
+  }));
+  renderPagination(
+    "clubs-teams-home-pagination",
+    "clubs-teams-home-pagination-info",
+    "clubs-teams-home-pagination-wrap",
+    result.page,
+    result.totalPages,
+    result.totalItems,
+    result.startIndex,
+    result.endIndex,
+    page => {
+      homeClubsTeamsPage = page;
+      renderClubsTeamsHomeTable();
+      scrollTopTargetBelowHeader("combined-stats-shell");
+    }
+  );
+}
+
+async function loadClubsTeamsHomeRating() {
+  homeClubsTeamsLoading = true;
+  homeClubsTeamsError = false;
+  renderClubsTeamsHomeTable();
+  try {
+    const { loadPublicRatingSnapshot } = await clubsTeamsRatingModelPromise;
+    homeClubsTeamsSnapshot = await loadPublicRatingSnapshot({
+      client: { requestJson },
+      dataBaseUrl: CLUBS_TEAMS_DATA_BASE_URL,
+      context: "general"
+    });
+  } catch (error) {
+    console.warn("Failed to load club/team standings.", error);
+    homeClubsTeamsSnapshot = null;
+    homeClubsTeamsError = true;
+  } finally {
+    homeClubsTeamsLoading = false;
+    renderClubsTeamsHomeTable();
+  }
+}
+
+function bindClubsTeamsHomeControls() {
+  const buttons = [...document.querySelectorAll("[data-clubs-teams-type]")];
+  const select = entityType => {
+    if (!["club", "team"].includes(entityType) || entityType === homeClubsTeamsEntityType) return;
+    homeClubsTeamsEntityType = entityType;
+    homeClubsTeamsPage = 1;
+    renderClubsTeamsHomeTable();
+  };
+  buttons.forEach((button, index) => {
+    appLifecycle.listen(button, "click", () => select(button.dataset.clubsTeamsType));
+    appLifecycle.listen(button, "keydown", event => {
+      if (!["ArrowLeft", "ArrowRight", "Home", "End"].includes(event.key)) return;
+      event.preventDefault();
+      const nextIndex = event.key === "Home" ? 0
+        : event.key === "End" ? buttons.length - 1
+        : event.key === "ArrowLeft" ? (index - 1 + buttons.length) % buttons.length
+        : (index + 1) % buttons.length;
+      const next = buttons[nextIndex];
+      select(next?.dataset.clubsTeamsType);
+      next?.focus();
+    });
+  });
 }
 
 function renderBestlapsHeaders() {
@@ -10535,6 +10699,9 @@ function rerenderUI() {
   if (topHomeDeferredSections.safety) renderSafetyTablePage();
   else renderDeferredHomeTableLoading("safety-table", "safety-pagination-wrap", "loadingSafety");
 
+  if (topHomeDeferredSections.clubsTeams) renderClubsTeamsHomeTable();
+  else renderDeferredHomeTableLoading("clubs-teams-home-table", "clubs-teams-home-pagination-wrap", "clubsTeamsLoading");
+
   renderTodayStatsModal();
   renderOnlineActivityModal();
   renderDriverOfDayModal();
@@ -10589,6 +10756,7 @@ function initializeHomeControllers() {
   runInitStep("initDriverPreviewModal", () => initDriverPreviewModal());
   runInitStep("initHourlyHeroModal", () => initHourlyHeroModal());
   runInitStep("initServerPlayersModal", () => initServerPlayersModal());
+  runInitStep("bindClubsTeamsHomeControls", () => bindClubsTeamsHomeControls());
 }
 
 function initializePageControllers() {
@@ -10639,16 +10807,19 @@ async function initializeHomeData() {
   const hourlyDataPromise = Promise.allSettled([loadHourlyAnnouncementData(), loadHourlyScheduleData()]);
   const affiliationsPromise = loadDriverAffiliations().catch((error) => {
     console.warn("Failed to load driver club/team affiliations.", error);
-    return new Map();
+    return { affiliations: new Map(), entities: new Map() };
   });
+  void loadClubsTeamsHomeRating();
   void loadNewsFeed().catch(() => []).then(() => {
     renderNewsBell();
     renderNewsNotificationsModal();
   });
   applyHomeSiteData(await loadSiteData());
-  void affiliationsPromise.then((affiliations) => {
+  void affiliationsPromise.then(({ affiliations, entities }) => {
     driverAffiliations = affiliations;
+    clubsTeamsEntityDetails = entities;
     renderLeaderboardTablePage();
+    renderClubsTeamsHomeTable();
   });
 
   const [hourlyAnnouncementResult, hourlyScheduleResult] = await hourlyDataPromise;

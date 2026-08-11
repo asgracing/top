@@ -166,5 +166,77 @@
     flex: 1 1 auto;
   }
 
+  .clubs-teams-home-toolbar {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 12px;
+    padding: 14px 16px;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+  }
+
+  .clubs-teams-home-tabs {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    padding: 4px;
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    border-radius: 12px;
+    background: rgba(0, 0, 0, 0.18);
+  }
+
+  .clubs-teams-home-tab {
+    min-height: 34px;
+    padding: 0 13px;
+    border: 0;
+    border-radius: 9px;
+    background: transparent;
+    color: var(--muted);
+    font: inherit;
+    font-size: 13px;
+    font-weight: 800;
+    cursor: pointer;
+  }
+
+  .clubs-teams-home-tab:hover,
+  .clubs-teams-home-tab:focus-visible {
+    color: var(--text);
+    background: rgba(255, 255, 255, 0.07);
+  }
+
+  .clubs-teams-home-tab.is-active {
+    background: linear-gradient(135deg, var(--accent), #ff7d57);
+    color: #fff;
+    box-shadow: 0 7px 16px rgba(255, 91, 46, 0.2);
+  }
+
+  .clubs-teams-home-directory {
+    flex: 0 0 auto;
+    text-decoration: none;
+  }
+
+  .clubs-teams-home-name {
+    color: var(--text);
+    font-weight: 800;
+    text-decoration: none;
+  }
+
+  .clubs-teams-home-name:hover,
+  .clubs-teams-home-name:focus-visible {
+    color: var(--accent);
+  }
+
+  .clubs-teams-home-tag {
+    display: inline-flex;
+    min-height: 24px;
+    align-items: center;
+    padding: 0 8px;
+    border-radius: 8px;
+    background: rgba(255, 255, 255, 0.07);
+    color: #d9e1ec;
+    font-size: 12px;
+    font-weight: 800;
+  }
+
 }
 
