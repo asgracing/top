@@ -13,7 +13,7 @@
   .clubs-teams-detail-hero { display: grid; grid-template-columns: 120px minmax(0, 1fr) minmax(170px, 220px); align-items: center; gap: 24px; padding: clamp(22px, 3vw, 30px); }
   .clubs-teams-detail-logo { width: 120px; height: 120px; border: 1px solid rgba(255,255,255,.12); border-radius: 26px; object-fit: cover; background: rgba(255,255,255,.06); }
   .clubs-teams-detail-copy { min-width: 0; }
-  .clubs-teams-detail-copy h1 { overflow: hidden; margin: 0; font-size: clamp(1.35rem, 4.5vw, 3.45rem); line-height: 1; text-overflow: ellipsis; white-space: nowrap; }
+  .clubs-teams-detail-copy h1 { overflow: hidden; margin: 0; font-size: clamp(1.35rem, calc(4.5vw - 12px), calc(3.45rem - 12px)); line-height: 1; text-overflow: ellipsis; white-space: nowrap; }
   .clubs-teams-detail-short { margin: 9px 0 0; color: var(--accent); font-weight: 900; }
   .clubs-teams-detail-description { max-width: 850px; margin: 16px 0 0; color: var(--muted); line-height: 1.65; white-space: pre-line; }
   .clubs-teams-detail-actions { display: grid; align-content: center; gap: 8px; margin-left: auto; }
