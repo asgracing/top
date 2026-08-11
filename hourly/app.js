@@ -3029,6 +3029,12 @@ function renderRecentRacesPagination(container) {
     });
   });
 }
+function renderRaceDriverProfileLink(name, publicId, className = "driver-name") {
+  const safeName = escapeHtml(name || "-");
+  const resolvedPublicId = String(publicId || "").trim();
+  if (!resolvedPublicId) return `<span class="${className}">${safeName}</span>`;
+  return `<a class="${className} race-driver-profile-link" href="/driver/?id=${encodeURIComponent(resolvedPublicId)}">${safeName}</a>`;
+}
 function renderRaceResultsModal() {
   const titleEl = document.getElementById("race-results-title");
   const subtitleEl = document.getElementById("race-results-subtitle");
@@ -3051,7 +3057,7 @@ function renderRaceResultsModal() {
   if (statusEl) statusEl.hidden = false;
   summaryEl.innerHTML = `
     <div class="race-summary-card"><div class="race-summary-label">${escapeHtml(t("raceSummaryTrack"))}</div><div class="race-summary-value">${escapeHtml(selectedRace.track_name || humanizeTrackName(selectedRace.track))}</div></div>
-    <div class="race-summary-card"><div class="race-summary-label">${escapeHtml(t("raceSummaryWinner"))}</div><div class="race-summary-value">${escapeHtml(selectedRace.winner || t("noWinner"))}</div></div>
+    <div class="race-summary-card"><div class="race-summary-label">${escapeHtml(t("raceSummaryWinner"))}</div><div class="race-summary-value">${renderRaceDriverProfileLink(selectedRace.winner || t("noWinner"), selectedRace.winner_public_id, "race-summary-driver-link")}</div></div>
     <div class="race-summary-card"><div class="race-summary-label">${escapeHtml(t("raceSummaryDrivers"))}</div><div class="race-summary-value">${escapeHtml(selectedRace.participants_count ?? "-")}</div></div>
     <div class="race-summary-card"><div class="race-summary-label">${escapeHtml(t("raceSummaryBestLap"))}</div><div class="race-summary-value">${escapeHtml(selectedRace.best_lap || "-")}</div></div>
     <div class="race-summary-card"><div class="race-summary-label">${escapeHtml(t("raceSummaryFieldStrength"))}</div><div class="race-summary-value">${escapeHtml(selectedRace.average_elo ?? "-")}</div></div>
@@ -3062,7 +3068,7 @@ function renderRaceResultsModal() {
       <td><span class="rank-badge rank-${escapeHtml(row.position)}">#${escapeHtml(row.position)}</span></td>
       <td>${escapeHtml(formatStartPosition(row))}</td>
       <td>${renderPositionsDelta(row.positions_delta)}</td>
-      <td><div class="driver-cell race-result-driver-cell"><div class="driver-name-wrap"><div class="driver-name">${escapeHtml(row.driver || "-")}</div><div class="race-driver-meta-line">${row.race_number != null ? `<span class="race-note">${escapeHtml(`#${row.race_number}`)}</span>` : ""}${renderRaceEloBadge(row)}</div></div></div></td>
+      <td><div class="driver-cell race-result-driver-cell"><div class="driver-name-wrap">${renderRaceDriverProfileLink(row.driver, row.public_id)}<div class="race-driver-meta-line">${row.race_number != null ? `<span class="race-note">${escapeHtml(`#${row.race_number}`)}</span>` : ""}${renderRaceEloBadge(row)}</div></div></div></td>
       <td><div class="${row.had_best_lap ? "best-lap-value" : ""}">${escapeHtml(row.best_lap || "-")}</div><div class="race-note">${row.had_best_lap ? escapeHtml(t("raceBestLapBadge")) : ""}</div></td>
       <td><div>${escapeHtml(row.car_name || "-")}</div><div class="race-note">${row.counted_for_stats === false ? escapeHtml(t("notCountedBadge")) : ""}</div></td>
       <td>${escapeHtml(row.gap || (row.position === 1 ? "-" : "-"))}</td>
