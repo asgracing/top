@@ -28,6 +28,7 @@ WATCHER_LOG_FILE_NAME = "ban_watcher.log"
 DEFAULT_FORBIDDEN_CAR_MODEL = 50
 DEFAULT_POLL_SECONDS = 1.0
 DEFAULT_CONFIRM_WINDOW_MS = 10000
+MAX_ERROR_BACKOFF_SECONDS = 30.0
 MAX_READ_BYTES = 1024 * 1024
 MAX_BUFFER_CHARS = 65536
 MAX_CONNECTION_CACHE = 512
@@ -645,40 +646,63 @@ class AccBanWatcher:
         buffer = ""
         position = 0
         if self.log_file.exists() and not from_start:
-            position = self.log_file.stat().st_size
+            try:
+                position = self.log_file.stat().st_size
+            except Exception:
+                logging.exception(
+                    "Could not determine initial log position; retrying from the beginning"
+                )
 
         logging.info("Watching %s from %s", self.log_file, "start" if from_start else "end")
+        consecutive_errors = 0
         while True:
-            if not self.log_file.exists():
-                logging.warning("Log file not found: %s", self.log_file)
-                if replay_once:
+            try:
+                if not self.log_file.exists():
+                    logging.warning("Log file not found: %s", self.log_file)
+                    if replay_once:
+                        return
+                    time.sleep(poll_seconds)
+                    continue
+
+                size = self.log_file.stat().st_size
+                if size < position:
+                    logging.info("Log file was truncated, restarting from beginning")
+                    position = 0
+                    buffer = ""
+
+                with self.log_file.open("r", encoding="utf-8", errors="replace") as handle:
+                    handle.seek(position)
+                    chunk = handle.read(MAX_READ_BYTES)
+                    position = handle.tell()
+
+                if chunk:
+                    buffer = self.process_text(buffer + chunk)
+                elif replay_once:
+                    if buffer.strip():
+                        self.process_text(buffer)
+                    self.write_live_state(force=True)
+                    logging.info("Replay finished at byte %s", position)
                     return
+                else:
+                    self.write_live_state()
+                consecutive_errors = 0
                 time.sleep(poll_seconds)
-                continue
-
-            size = self.log_file.stat().st_size
-            if size < position:
-                logging.info("Log file was truncated, restarting from beginning")
-                position = 0
-                buffer = ""
-
-            with self.log_file.open("r", encoding="utf-8", errors="replace") as handle:
-                handle.seek(position)
-                chunk = handle.read(MAX_READ_BYTES)
-                position = handle.tell()
-
-            if chunk:
-                buffer = self.process_text(buffer + chunk)
-            elif replay_once:
-                if buffer.strip():
-                    self.process_text(buffer)
-                self.write_live_state(force=True)
-                logging.info("Replay finished at byte %s", position)
-                return
-            else:
-                self.write_live_state()
-
-            time.sleep(poll_seconds)
+            except (KeyboardInterrupt, SystemExit):
+                raise
+            except Exception:
+                if replay_once:
+                    raise
+                consecutive_errors += 1
+                backoff = min(
+                    MAX_ERROR_BACKOFF_SECONDS,
+                    max(1.0, poll_seconds) * (2 ** min(consecutive_errors - 1, 5)),
+                )
+                logging.exception(
+                    "Ban watcher loop failed; retrying in %.1f seconds (consecutive_errors=%s)",
+                    backoff,
+                    consecutive_errors,
+                )
+                time.sleep(backoff)
 
 
 def resolve_server_dir(value: str | None) -> Path:
