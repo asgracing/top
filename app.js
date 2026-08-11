@@ -3,7 +3,7 @@
 import { runWhenDocumentReady } from "./src/runtime/application-bootstrap.js";
 import { loadPageFeatures } from "./src/runtime/page-feature-loader.js";
 import { createPageOrchestrator } from "./src/runtime/page-orchestrator.js";
-import { HOME_STATS_TABS, bestlapsColumns, createHomeStatsState, leaderboardColumns } from "./src/pages/home/stats-config.js";
+import { HOME_STATS_TABS, bestlapsColumns, createHomeStatsState, leaderboardColumns } from "./src/pages/home/stats-config.js?v=20260811affiliations1";
 import { processBestlaps, processLeaderboard, processSafety } from "./src/pages/home/stats-model.js";
 import { createHomeDeferredSectionsController } from "./src/pages/home/deferred-sections.js";
 import { createHomeStatsTabsController } from "./src/pages/home/stats-tabs-controller.js";
@@ -59,6 +59,10 @@ const featureStoreModulePromise = import("./src/shared/feature-store.js");
 const lifecycleModulePromise = import("./src/shared/lifecycle.js");
 const tableEngineModulePromise = import("./src/features/stats/table-engine.js");
 const safeDomModulePromise = import("./src/shared/safe-dom.js");
+const clubsTeamsModelsPromise = Promise.all([
+  import("./src/pages/clubs-teams/catalog-model.js"),
+  import("./src/pages/clubs-teams/detail-model.js")
+]);
 let appStorage = null;
 let jsonQueryCache = null;
 let tableRequestGuard = null;
@@ -104,6 +108,8 @@ const TOP_DATA_V2_BASE_URL = TOP_API_BASE_URL || `${TOP_DATA_BASE_URL}/v2`;
 const TOP_API_ROOT_URL = TOP_API_BASE_URL.replace(/\/top-data\/v2$/i, "");
 const HOURLY_DATA_BASE_URL = normalizeBaseUrl(getDevRuntimeParam("hourlyApiBase")) || DEFAULT_HOURLY_DATA_BASE_URL;
 const TOP_BANS_DATA_URL = `${TOP_DATA_BASE_URL}/bans.json`;
+const CLUBS_TEAMS_DATA_BASE_URL = getDevRuntimeParam("clubsTeamsDataBase") || "https://data.asgracing.ru/public-cache-clubs-teams";
+const CLUBS_TEAMS_DETAIL_PATH_PATTERN = /^details\/(clubs|teams)\/([a-z0-9][a-z0-9-]{0,127})\.json$/;
 const AUTH_BASE_URL = "https://auth.asgracing.ru";
 const LOCAL_NEWS_DATA_URL = `${SITE_BASE_PATH}news-content/news.json`;
 const topDataV2ManifestUrl = `${TOP_DATA_V2_BASE_URL}/manifest.json`;
@@ -385,6 +391,7 @@ function resolveInitialLanguage() {
 
 let leaderboardData = [];
 let bestlapsData = [];
+let driverAffiliations = new Map();
 let bestlapTracksData = [];
 let bestlapTrackLeadersData = [];
 let todayStatsData = null;
@@ -1269,8 +1276,8 @@ const translations = {
       "Podiums",
       "Races",
       "Avg Finish",
-      "Best Lap",
-      "Car"
+      "Club",
+      "Team"
     ],
     bestlapsCols: ["#", "Driver", "ELO", "SR", "Best Lap", "Car", "Session", "Updated"],
     safetyBaseCols: ["#", "Driver", "SR", "Category", "Races", "\u0394 SR", "Invalid Laps", "Auto Penalties", "Incidents"],
@@ -1861,8 +1868,8 @@ const translations = {
       "Подиумы",
       "Гонки",
       "Ср. финиш",
-      "Лучший круг",
-      "Машина"
+      "Клуб",
+      "Команда"
     ],
     bestlapsCols: ["№", "Пилот", "ELO", "SR", "Лучший круг", "Машина", "Сессия", "Обновлено"],
     safetyBaseCols: ["№", "Пилот", "SR", "Категория", "Гонки", "\u0394 SR", "Грязные круги", "Автоштрафы", "Инциденты"],
@@ -7497,6 +7504,54 @@ function renderLeaderboardHeaders() {
   return renderSortableHeaders(leaderboardColumns, t("leaderboardCols"), leaderboardSort);
 }
 
+function buildDriverAffiliationIndex(details) {
+  const index = new Map();
+  for (const detail of details) {
+    if (!detail || !["club", "team"].includes(detail.entity_type)) continue;
+    const entity = Object.freeze({ display_name: detail.display_name, slug: detail.slug });
+    for (const member of detail.roster || []) {
+      const publicId = String(member?.public_id || "").trim();
+      if (!publicId) continue;
+      index.set(publicId, Object.freeze({
+        ...(index.get(publicId) || {}),
+        [detail.entity_type]: entity
+      }));
+    }
+  }
+  return index;
+}
+
+async function loadDriverAffiliations() {
+  const [{ validateCurrentPointer }, { validateEntityDetail }] = await clubsTeamsModelsPromise;
+  const base = `${CLUBS_TEAMS_DATA_BASE_URL.replace(/\/+$/, "")}/`;
+  const pointer = validateCurrentPointer(await requestJson(new URL("current.json", base), { retries: 1, cache: "no-store" }));
+  const snapshotRoot = new URL(`snapshots/${pointer.snapshot_id}/`, base);
+  const manifest = await requestJson(new URL("manifest.json", snapshotRoot), { retries: 1, cache: "no-store" });
+  const files = Array.isArray(manifest?.files)
+    ? manifest.files.map(file => String(file?.path || "").trim()).filter(path => CLUBS_TEAMS_DETAIL_PATH_PATTERN.test(path))
+    : [];
+  const loaded = await Promise.allSettled(files.map(async path => {
+    const match = path.match(CLUBS_TEAMS_DETAIL_PATH_PATTERN);
+    const entityType = match[1] === "clubs" ? "club" : "team";
+    const slug = match[2];
+    return validateEntityDetail(await requestJson(new URL(path, snapshotRoot), { retries: 1 }), {
+      entityType,
+      slug,
+      ratingRunId: pointer.rating_run_id
+    });
+  }));
+  return buildDriverAffiliationIndex(loaded.filter(result => result.status === "fulfilled").map(result => result.value));
+}
+
+function renderDriverAffiliation(row, entityType) {
+  const affiliation = driverAffiliations.get(String(row?.public_id || ""))?.[entityType];
+  if (!affiliation?.display_name) return "—";
+  const href = entityType === "club"
+    ? `/clubs/?slug=${encodeURIComponent(affiliation.slug)}`
+    : `/teams/detail/?slug=${encodeURIComponent(affiliation.slug)}`;
+  return `<a class="driver-link driver-link-subtle" href="${href}">${escapeHtml(affiliation.display_name)}</a>`;
+}
+
 function renderBestlapsHeaders() {
   return renderSortableHeaders(bestlapsColumns, t("bestlapsCols"), bestlapsSort);
 }
@@ -7585,8 +7640,8 @@ function renderLeaderboardTablePage() {
       <td class="podiums-column numeric-cell">${escapeHtml(row.podiums ?? 0)}</td>
       <td class="races-column numeric-cell">${escapeHtml(row.races ?? 0)}</td>
       <td class="avg-finish-column numeric-cell">${escapeHtml(row.average_finish ?? "-")}</td>
-      <td class="best-lap-column numeric-cell">${escapeHtml(row.best_lap ?? "-")}</td>
-      <td class="car-column car-cell-wrapper"><div class="car-cell">${renderCarOrBanned(row)}</div></td>
+      <td class="club-column affiliation-cell">${renderDriverAffiliation(row, "club")}</td>
+      <td class="team-column affiliation-cell">${renderDriverAffiliation(row, "team")}</td>
     </tr>
   `).join("");
 
@@ -10520,11 +10575,19 @@ function applyHomeSiteData(data) {
 
 async function initializeHomeData() {
   const hourlyDataPromise = Promise.allSettled([loadHourlyAnnouncementData(), loadHourlyScheduleData()]);
+  const affiliationsPromise = loadDriverAffiliations().catch((error) => {
+    console.warn("Failed to load driver club/team affiliations.", error);
+    return new Map();
+  });
   void loadNewsFeed().catch(() => []).then(() => {
     renderNewsBell();
     renderNewsNotificationsModal();
   });
   applyHomeSiteData(await loadSiteData());
+  void affiliationsPromise.then((affiliations) => {
+    driverAffiliations = affiliations;
+    renderLeaderboardTablePage();
+  });
 
   const [hourlyAnnouncementResult, hourlyScheduleResult] = await hourlyDataPromise;
   const hourlyAnnouncement = hourlyAnnouncementResult.status === "fulfilled" ? hourlyAnnouncementResult.value : null;

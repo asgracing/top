@@ -3,7 +3,9 @@ import assert from "node:assert/strict";
 import { HOME_STATS_TABS, bestlapsColumns, createHomeStatsState, leaderboardColumns } from "../../src/pages/home/stats-config.js";
 
 test("declares stable home statistics table columns", () => {
-  assert.deepEqual(leaderboardColumns.map(column => column.key), ["rank", "driver", "elo", "safety_rating", "points", "wins", "podiums", "races", "average_finish", "best_lap", "best_lap_car_name"]);
+  assert.deepEqual(leaderboardColumns.map(column => column.key), ["rank", "driver", "elo", "safety_rating", "points", "wins", "podiums", "races", "average_finish", "club", "team"]);
+  assert.equal(leaderboardColumns.at(-2).sortable, false);
+  assert.equal(leaderboardColumns.at(-1).sortable, false);
   assert.deepEqual(bestlapsColumns.map(column => column.key), ["rank", "driver", "elo", "safety_rating", "best_lap", "car_name", "session_type", "updated_at"]);
 });
 

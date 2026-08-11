@@ -8,8 +8,8 @@ export const leaderboardColumns = Object.freeze([
   { key: "podiums", type: "number", className: "podiums-column" },
   { key: "races", type: "number", className: "races-column" },
   { key: "average_finish", type: "number", className: "avg-finish-column" },
-  { key: "best_lap", type: "time", className: "best-lap-column" },
-  { key: "best_lap_car_name", type: "string", className: "car-column" }
+  { key: "club", type: "string", className: "club-column", sortable: false },
+  { key: "team", type: "string", className: "team-column", sortable: false }
 ]);
 
 export const bestlapsColumns = Object.freeze([

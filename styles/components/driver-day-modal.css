@@ -762,8 +762,8 @@
 #leaderboard-table .podiums-column { width: 88px; }
 #leaderboard-table .races-column { width: 76px; }
 #leaderboard-table .avg-finish-column { width: 112px; }
-#leaderboard-table .best-lap-column { width: 128px; }
-#leaderboard-table .car-column { width: 16%; }
+#leaderboard-table .club-column { width: 14%; }
+#leaderboard-table .team-column { width: 16%; }
 
 #leaderboard-table th,
 #leaderboard-table td {
@@ -808,7 +808,7 @@
 }
 
 #leaderboard-table .driver-cell-wrapper,
-#leaderboard-table .car-cell-wrapper {
+#leaderboard-table .affiliation-cell {
   padding-left: 12px;
   padding-right: 12px;
 }
@@ -819,7 +819,7 @@
 #leaderboard-table .driver-name-wrap { gap: 2px; }
 
 #leaderboard-table .driver-name,
-#leaderboard-table .car-cell {
+#leaderboard-table .affiliation-cell .driver-link {
   min-width: 0;
   line-height: 1.15;
   display: -webkit-box;

@@ -128,7 +128,9 @@ for (const [page, [htmlPath, entrySrc]] of Object.entries(pageEntrypoints)) {
   const hourlyEventModalHref = page === "home" ? "./styles/components/hourly-event-modal.css?v=20260715r11hourlymodal1" : "../styles/components/hourly-event-modal.css?v=20260715r11hourlymodal1";
   if (!pageHtml.includes(hourlyEventModalHref)) failures.push(`${page} page is missing the hourly event modal stylesheet`);
   for (const href of [
-    `${page === "home" ? "./" : "../"}styles/components/driver-day-modal.css?v=20260810driverpreview2`,
+    page === "home"
+      ? "./styles/components/driver-day-modal.css?v=20260811affiliations1"
+      : "../styles/components/driver-day-modal.css?v=20260810driverpreview2",
     `${page === "home" ? "./" : "../"}styles/components/footer.css?v=20260720topguide1`,
     `${page === "home" ? "./" : "../"}styles/utilities.css?v=20260715r12states1`,
     page === "home"
@@ -204,7 +206,7 @@ if (!js.includes("async function initializeHomeData()") || !js.includes("functio
 if (!js.includes("const pageDataInitializers = Object.freeze({") || !js.includes("const pageOrchestrator = createPageOrchestrator({")) failures.push("Page data initialization must use the explicit runtime orchestrator");
 if (!js.includes("const pageInitializationErrorHandlers = Object.freeze({")) failures.push("Page initialization errors must use the explicit handler registry");
 if (!js.includes("function initializeWindowLifecycle()") || /window\.addEventListener\("(?:storage|resize|pagehide)"/.test(js)) failures.push("Global window listeners must be owned by the application lifecycle");
-if (!js.includes('from "./src/pages/home/stats-config.js"') || /const (?:leaderboardColumns|bestlapsColumns|HOME_STATS_TABS)\s*=/.test(js)) failures.push("Home statistics configuration must live outside app.js");
+if (!/from "\.\/src\/pages\/home\/stats-config\.js(?:\?[^\"]+)?"/.test(js) || /const (?:leaderboardColumns|bestlapsColumns|HOME_STATS_TABS)\s*=/.test(js)) failures.push("Home statistics configuration must live outside app.js");
 if (!js.includes('from "./src/pages/home/stats-model.js"') || js.includes("const trackFiltered = bestlapsTrackFilter")) failures.push("Home statistics filtering must live outside app.js");
 if (!js.includes('from "./src/pages/home/deferred-sections.js"') || js.includes("topHomeDeferredObserver")) failures.push("Home deferred-section observation must live outside app.js");
 if (!js.includes('from "./src/pages/home/stats-tabs-controller.js"') || js.includes("combinedStatsTabsBound") || js.includes("hostedCombinedStatsTab")) failures.push("Home statistics tab behavior must live outside app.js");
