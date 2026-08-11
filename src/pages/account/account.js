@@ -17,7 +17,7 @@ import {
   buildReviseEntityCommand,
   normalizeCommandResponse
 } from "./clubs-teams-command-model.js";
-import { filterPilots, loadPilotIndex } from "./pilot-search-model.js?v=20260802pilotlimit2";
+import { loadPilotIndex, searchPilots } from "./pilot-search-model.js?v=20260811pilotsearch1";
 
 const AUTH_BASE_URL = "https://auth.asgracing.ru";
 
@@ -100,6 +100,8 @@ const COPY = {
     inviteSent: "Invitation sent",
     teamInviteFull: "All four team places are occupied or reserved by pending invitations.",
     pilotSearch: "Search by pilot name",
+    pilotSearchCount: count => `${count} pilots found`,
+    showMorePilots: count => `Show ${count} more`,
     noPilotResults: "No matching available pilots.",
     removeMember: "Remove",
     confirmRemove: value => `Remove ${value} from this roster?`,
@@ -184,6 +186,8 @@ const COPY = {
     manageRoster: value => `Управление составом: ${value}`,
     invitePilot: "Пригласить пилота",
     pilotSearch: "Поиск по имени пилота",
+    pilotSearchCount: count => `Найдено пилотов: ${count}`,
+    showMorePilots: count => `Показать ещё: ${count}`,
     noPilotResults: "Подходящие пилоты не найдены.",
     removeMember: "Исключить",
     confirmRemove: value => `Исключить ${value} из состава?`,
@@ -653,7 +657,9 @@ function memberManagerMarkup(entity, roster) {
       <h3>${t("invitePilot")}</h3>
       <label>${t("pilotSearch")}<input type="search" maxlength="80" autocomplete="off" data-ct-pilot-search></label>
       <p class="account-command-message" data-ct-invite-status role="status" aria-live="polite"></p>
+      <p class="account-muted" data-ct-pilot-count aria-live="polite" hidden></p>
       <div class="account-pilot-results" role="list" aria-live="polite"></div>
+      <button class="account-action" type="button" data-ct-show-more hidden></button>
     </div>
   </div>`;
 }
@@ -698,13 +704,27 @@ async function openMemberManager(auth, entityType) {
     const input = section.querySelector("[data-ct-pilot-search]");
     const results = section.querySelector(".account-pilot-results");
     const inviteStatus = section.querySelector("[data-ct-invite-status]");
+    const resultCount = section.querySelector("[data-ct-pilot-count]");
+    const showMore = section.querySelector("[data-ct-show-more]");
+    const pageSize = 50;
+    let visibleLimit = pageSize;
     const renderResults = () => {
-      const matches = filterPilots(pilots, input.value, { excludedPublicIds: rosterIds });
+      const queryReady = input.value.normalize("NFKC").trim().length >= 2;
+      const matches = searchPilots(pilots, input.value, {
+        excludedPublicIds: rosterIds,
+        deferredPublicIds: pendingInviteIds
+      });
+      const visibleMatches = matches.slice(0, visibleLimit);
       const teamCapacityReached = entityType === "team" && detail.roster.length + pendingInviteIds.size >= 4;
-      results.innerHTML = matches.length ? matches.map(pilot => `<div class="account-pilot-result" role="listitem">
+      results.innerHTML = visibleMatches.length ? visibleMatches.map(pilot => `<div class="account-pilot-result" role="listitem">
         <a href="/driver/?id=${encodeURIComponent(pilot.publicId)}">${escapeHtml(pilot.displayName)}</a>
         <button class="account-action account-action--primary" type="button" data-ct-invite-pilot="${pilot.publicId}" data-ct-pilot-name="${escapeHtml(pilot.displayName)}" ${pendingInviteIds.has(pilot.publicId) || teamCapacityReached ? "disabled" : ""}>${pendingInviteIds.has(pilot.publicId) ? t("inviteSent") : t("invitePilot")}</button>
-      </div>`).join("") : (input.value.trim().length >= 2 ? `<p class="account-muted">${t("noPilotResults")}</p>` : "");
+      </div>`).join("") : (queryReady ? `<p class="account-muted">${t("noPilotResults")}</p>` : "");
+      resultCount.hidden = !queryReady;
+      resultCount.textContent = queryReady ? t("pilotSearchCount", matches.length) : "";
+      const remaining = Math.max(0, matches.length - visibleMatches.length);
+      showMore.hidden = remaining === 0;
+      showMore.textContent = remaining ? t("showMorePilots", Math.min(pageSize, remaining)) : "";
       if (inviteStatus && teamCapacityReached) inviteStatus.textContent = t("teamInviteFull");
       results.querySelectorAll("[data-ct-invite-pilot]").forEach(button => {
         button.addEventListener("click", async () => {
@@ -728,7 +748,14 @@ async function openMemberManager(auth, entityType) {
         });
       });
     };
-    input.addEventListener("input", renderResults);
+    input.addEventListener("input", () => {
+      visibleLimit = pageSize;
+      renderResults();
+    });
+    showMore.addEventListener("click", () => {
+      visibleLimit += pageSize;
+      renderResults();
+    });
     input.focus();
   } catch {
     section.innerHTML = `<p class="account-snapshot-warning" role="alert">${t("rosterUnavailable")}</p>

@@ -1,7 +1,7 @@
 import test from "node:test";
 import assert from "node:assert/strict";
 
-import { filterPilots, loadPilotIndex, normalizePilotIndex } from "../../src/pages/account/pilot-search-model.js";
+import { filterPilots, loadPilotIndex, normalizePilotIndex, searchPilots } from "../../src/pages/account/pilot-search-model.js";
 
 test("normalizes only bounded public pilot identity fields", () => {
   const pilots = normalizePilotIndex([
@@ -35,6 +35,22 @@ test("filters pilots by name or public id and excludes current roster", () => {
   ]);
   assert.deepEqual(filterPilots(pilots, "pilo", { excludedPublicIds: [] }).length, 2);
   assert.deepEqual(filterPilots(pilots, "a"), []);
+});
+
+test("returns all matches and moves already invited pilots below available pilots", () => {
+  const pilots = normalizePilotIndex(Array.from({ length: 75 }, (_, index) => ({
+    public_id: `pilot-${index}`,
+    driver: `ASG Driver ${index}`
+  })));
+  const matches = searchPilots(pilots, "asg", {
+    excludedPublicIds: ["pilot-0"],
+    deferredPublicIds: ["pilot-1", "pilot-2"]
+  });
+  assert.equal(matches.length, 74);
+  assert.equal(matches[0].publicId, "pilot-3");
+  assert.deepEqual(matches.slice(-2).map(pilot => pilot.publicId), ["pilot-1", "pilot-2"]);
+  assert.equal(filterPilots(pilots, "asg").length, 50);
+  assert.equal(filterPilots(pilots, "asg", { limit: 70 }).length, 70);
 });
 
 test("loads the canonical public driver index path", async () => {

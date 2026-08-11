@@ -21,14 +21,25 @@ export function normalizePilotIndex(value) {
   return Object.freeze(pilots);
 }
 
-export function filterPilots(pilots, query, { excludedPublicIds = [], limit = 12 } = {}) {
+export function searchPilots(pilots, query, { excludedPublicIds = [], deferredPublicIds = [] } = {}) {
   const needle = text(query, 80).toLocaleLowerCase();
   if (needle.length < 2) return [];
   const excluded = new Set(excludedPublicIds);
-  return pilots.filter(pilot => !excluded.has(pilot.publicId) && (
+  const deferred = new Set(deferredPublicIds);
+  const matches = pilots.filter(pilot => !excluded.has(pilot.publicId) && (
     pilot.displayName.toLocaleLowerCase().includes(needle)
     || pilot.publicId.toLocaleLowerCase().includes(needle)
-  )).slice(0, Math.max(1, Math.min(20, limit)));
+  ));
+  if (!deferred.size) return matches;
+  return [
+    ...matches.filter(pilot => !deferred.has(pilot.publicId)),
+    ...matches.filter(pilot => deferred.has(pilot.publicId))
+  ];
+}
+
+export function filterPilots(pilots, query, options = {}) {
+  const limit = Math.max(1, Math.min(200, Number(options.limit) || 50));
+  return searchPilots(pilots, query, options).slice(0, limit);
 }
 
 export async function loadPilotIndex({ client, dataBaseUrl }) {
