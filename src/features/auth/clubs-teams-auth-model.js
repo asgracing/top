@@ -22,6 +22,9 @@ const TEAM_CLUB_ACTION_KEYS = new Set([
   "created_at", "expires_at", "resolution_role"
 ]);
 const TEAM_CLUB_ACTION_IDS = new WeakMap();
+const PENDING_INVITE_KEYS = new Set([
+  "command_id", "target_type", "subject_public_id", "status", "created_at"
+]);
 
 function plainObject(value) {
   return value && typeof value === "object" && !Array.isArray(value) ? value : null;
@@ -187,6 +190,29 @@ function normalizeNotifications(value, idKey) {
   return value.slice(0, 20).map(item => normalizeNotification(item, idKey)).filter(Boolean);
 }
 
+function normalizePendingInvites(value) {
+  if (!Array.isArray(value)) return [];
+  const seen = new Set();
+  return value.slice(0, 100).map(raw => {
+    const source = plainObject(raw);
+    if (!source || !hasExactKeys(source, PENDING_INVITE_KEYS)) return null;
+    const commandId = safeIdentifier(source.command_id);
+    const subjectPublicId = safeIdentifier(source.subject_public_id);
+    const targetType = ["club", "team"].includes(source.target_type) ? source.target_type : null;
+    const status = ["pending", "leased"].includes(source.status) ? source.status : null;
+    const key = `${targetType}:${subjectPublicId}`;
+    if (!commandId || !subjectPublicId || !targetType || !status || seen.has(key)) return null;
+    seen.add(key);
+    return {
+      commandId,
+      targetType,
+      subjectPublicId,
+      status,
+      createdAt: safeDate(source.created_at)
+    };
+  }).filter(Boolean);
+}
+
 function normalizeSnapshot(value) {
   const source = plainObject(value);
   if (!source) return { available: false, revision: null, generatedAt: null, receivedAt: null, stale: true };
@@ -207,6 +233,7 @@ export function normalizeClubsTeamsAuthState(value) {
     team: null,
     pendingCommands: 0,
     pendingAssets: 0,
+    pendingInvites: [],
     notifications: [],
     assetNotifications: [],
     membershipActions: [],
@@ -241,6 +268,7 @@ export function normalizeClubsTeamsAuthState(value) {
     team,
     pendingCommands: safeInteger(source.pending_commands, 0, 10_000) ?? 0,
     pendingAssets: safeInteger(source.pending_assets, 0, 10_000) ?? 0,
+    pendingInvites: normalizePendingInvites(source.pending_invites),
     notifications: normalizeNotifications(source.notifications, "command_id"),
     assetNotifications: normalizeNotifications(source.asset_notifications, "asset_id"),
     membershipActions: membership.actions,

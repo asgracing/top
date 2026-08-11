@@ -13,7 +13,7 @@ import { HOME_LOADING_TEXT_IDS, applyHomeTableViewState } from "./src/pages/home
 import { createModalControllerFactory } from "./src/shared/modal-controller.js";
 import { parseTableNumber, sortTableRows } from "./src/shared/table-model.js";
 import { countUnreadNews, sortPublishedNews } from "./src/shared/news-feed-model.js";
-import { createAuthHeaderController, safeAvatarUrl } from "./src/features/auth/header-auth.js?v=20260808authreliability1";
+import { createAuthHeaderController, safeAvatarUrl } from "./src/features/auth/header-auth.js?v=20260811invites1";
 import { applyRandomTrackBackground, normalizeTrackBackgroundCode, resolveTrackBackgroundFile } from "./src/features/server-status/track-background.js?v=20260726staticfallback1";
 
 const PAGE_CONTEXT = readPageContext(document);
@@ -603,6 +603,7 @@ let communityLikeStateByPostId = {};
 const pendingCommunityLikePostIds = new Set();
 let newsFeedData = [];
 let newsFeedSourceUrl = LOCAL_NEWS_DATA_URL;
+let membershipInvitationNotifications = [];
 let newsModalController = null;
 let donationAlertsData = null;
 let donationAlertsLoading = false;
@@ -719,6 +720,9 @@ const translations = {
     newsModalTitle: "Notifications",
     newsModalSubtitle: "Latest updates, maintenance notes and community news.",
     newsModalOpenAll: "Open all news",
+    membershipInviteClubNotification: "You are invited to the club “{name}”",
+    membershipInviteTeamNotification: "You are invited to the team “{name}”",
+    membershipInviteNotificationMeta: "Club and team invitation",
     newsPageEyebrow: "Newsroom",
     newsPageTitle: "News",
     newsPageSubtitle: "Updates, maintenance notes and fresh announcements from ASG Racing.",
@@ -1308,6 +1312,9 @@ const translations = {
     newsModalTitle: "Уведомления",
     newsModalSubtitle: "Последние обновления, техработы и новости сообщества.",
     newsModalOpenAll: "Открыть все новости",
+    membershipInviteClubNotification: "Вы приглашены в клуб «{name}»",
+    membershipInviteTeamNotification: "Вы приглашены в команду «{name}»",
+    membershipInviteNotificationMeta: "Приглашение в клуб или команду",
     newsPageEyebrow: "Лента новостей",
     newsPageTitle: "Новости",
     newsPageSubtitle: "Обновления, технические заметки и свежие объявления ASG Racing.",
@@ -5232,6 +5239,30 @@ function markNewsItemRead(item) {
   saveNewsReadState(state);
 }
 
+function membershipInvitationKey(action) {
+  const parts = [
+    action?.targetType,
+    action?.targetPublicId,
+    action?.subjectPublicId,
+    action?.createdAt
+  ].map(value => String(value || "").trim());
+  return parts.every(Boolean) ? `membership:${parts.join(":")}` : "";
+}
+
+function isMembershipInvitationRead(action) {
+  const key = membershipInvitationKey(action);
+  return Boolean(key && loadNewsReadState()[key]);
+}
+
+function markMembershipInvitationRead(action) {
+  const key = membershipInvitationKey(action);
+  if (!key) return;
+  const state = loadNewsReadState();
+  if (state[key]) return;
+  state[key] = Date.now();
+  saveNewsReadState(state);
+}
+
 function isNewsRecordPublished(item) {
   const publishedAt = Date.parse(String(item?.published_at || ""));
   return !Number.isFinite(publishedAt) || publishedAt <= Date.now();
@@ -5377,12 +5408,31 @@ function renderNewsNotificationItem(item) {
   `;
 }
 
+function renderMembershipInvitationNotification(action) {
+  const key = membershipInvitationKey(action);
+  const unread = !isMembershipInvitationRead(action);
+  const titleKey = action.targetType === "team"
+    ? "membershipInviteTeamNotification"
+    : "membershipInviteClubNotification";
+  const title = replaceTokens(t(titleKey), { name: action.targetDisplayName });
+  return `
+    <a class="news-notification-card news-notification-card--membership${unread ? " is-unread" : ""}" href="/account/" data-membership-invitation-key="${escapeHtml(key)}">
+      <span class="news-notification-copy">
+        <span class="news-notification-meta">${escapeHtml(t("membershipInviteNotificationMeta"))}</span>
+        <span class="news-notification-title">${escapeHtml(title)}</span>
+      </span>
+    </a>
+  `;
+}
+
 function renderNewsNotificationsModal() {
   const listEl = document.getElementById("news-notifications-list");
   if (!listEl) return;
-  const items = getSortedNewsFeed(newsFeedData).slice(0, 6);
+  const invitations = membershipInvitationNotifications.map(renderMembershipInvitationNotification);
+  const newsItems = getSortedNewsFeed(newsFeedData).slice(0, 6).map(renderNewsNotificationItem);
+  const items = [...invitations, ...newsItems];
   listEl.innerHTML = items.length
-    ? items.map(renderNewsNotificationItem).join("")
+    ? items.join("")
     : `<div class="empty-box">${escapeHtml(t("newsBellEmpty"))}</div>`;
 }
 
@@ -5392,7 +5442,9 @@ function renderNewsBell() {
   const panel = document.getElementById("news-notifications-panel");
   if (!button || !badge) return;
 
-  const unreadCount = getUnreadNewsCount(newsFeedData);
+  const unreadInvitationCount = membershipInvitationNotifications
+    .filter(action => !isMembershipInvitationRead(action)).length;
+  const unreadCount = getUnreadNewsCount(newsFeedData) + unreadInvitationCount;
   button.classList.toggle("has-unread", unreadCount > 0);
   badge.hidden = unreadCount <= 0;
   badge.textContent = unreadCount > 99 ? "99+" : String(unreadCount);
@@ -5412,6 +5464,16 @@ function bindNewsNotificationsModalLinks() {
   if (!listEl || listEl.dataset.bound === "true") return;
 
   listEl.addEventListener("click", (event) => {
+    const invitationLink = event.target?.closest?.("[data-membership-invitation-key]");
+    if (invitationLink) {
+      const key = String(invitationLink.dataset.membershipInvitationKey || "").trim();
+      const action = membershipInvitationNotifications.find(item => membershipInvitationKey(item) === key);
+      if (action) markMembershipInvitationRead(action);
+      closeNewsNotificationsPopover();
+      renderNewsBell();
+      renderNewsNotificationsModal();
+      return;
+    }
     const link = event.target?.closest?.("[data-news-open-slug]");
     if (!link) return;
     const slug = String(link.dataset.newsOpenSlug || "").trim();
@@ -10797,6 +10859,13 @@ function initializeWindowLifecycle() {
 }
 
 function updateAuthenticatedDriver(auth) {
+  membershipInvitationNotifications = auth?.authenticated
+    ? (auth.clubsTeams?.membershipActions || []).filter(action => (
+        action.actionType === "invitation" && action.resolutionRole === "subject"
+      ))
+    : [];
+  renderNewsBell();
+  renderNewsNotificationsModal();
   const nextPublicId = auth?.authenticated && auth?.linked
     ? String(auth.driver?.publicId || "")
     : "";

@@ -8,6 +8,10 @@ test("normalizes the bounded public cabinet state", () => {
     enabled: true,
     pending_commands: 2,
     pending_assets: 1,
+    pending_invites: [{
+      command_id: "cmd-invite-1", target_type: "team", subject_public_id: "pilot-2",
+      status: "pending", created_at: "2026-08-01T10:00:30Z"
+    }],
     applied_state: {
       public_id: "driver-public",
       club: {
@@ -46,6 +50,10 @@ test("normalizes the bounded public cabinet state", () => {
   assert.equal("receipt" in normalized.notifications[0], false);
   assert.equal(JSON.stringify(normalized).includes("internal-club-id"), false);
   assert.equal(normalized.snapshot.stale, false);
+  assert.deepEqual(normalized.pendingInvites, [{
+    commandId: "cmd-invite-1", targetType: "team", subjectPublicId: "pilot-2",
+    status: "pending", createdAt: "2026-08-01T10:00:30Z"
+  }]);
 });
 
 test("fails closed for disabled or malformed state", () => {

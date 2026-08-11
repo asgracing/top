@@ -97,6 +97,8 @@ const COPY = {
     manageMembers: "Manage members",
     manageRoster: value => `Manage ${value} roster`,
     invitePilot: "Invite pilot",
+    inviteSent: "Invitation sent",
+    teamInviteFull: "All four team places are occupied or reserved by pending invitations.",
     pilotSearch: "Search by pilot name",
     noPilotResults: "No matching available pilots.",
     removeMember: "Remove",
@@ -142,6 +144,8 @@ const COPY = {
     footerText: "Statistics are generated from ACC Dedicated Server result files and published via GitHub Pages."
   },
   ru: {
+    inviteSent: "\u041f\u0440\u0438\u0433\u043b\u0430\u0448\u0435\u043d\u0438\u0435 \u043e\u0442\u043f\u0440\u0430\u0432\u043b\u0435\u043d\u043e",
+    teamInviteFull: "\u0412\u0441\u0435 \u0447\u0435\u0442\u044b\u0440\u0435 \u043c\u0435\u0441\u0442\u0430 \u0432 \u043a\u043e\u043c\u0430\u043d\u0434\u0435 \u0437\u0430\u043d\u044f\u0442\u044b \u0438\u043b\u0438 \u0437\u0430\u0440\u0435\u0437\u0435\u0440\u0432\u0438\u0440\u043e\u0432\u0430\u043d\u044b \u043e\u0436\u0438\u0434\u0430\u044e\u0449\u0438\u043c\u0438 \u043f\u0440\u0438\u0433\u043b\u0430\u0448\u0435\u043d\u0438\u044f\u043c\u0438.",
     createClub: "Создать клуб",
     createTeam: "Создать команду",
     editClub: "Редактировать клуб",
@@ -340,7 +344,7 @@ function affiliationTargetFromLocation() {
   return { action, targetPublicId, targetName };
 }
 
-function renderMembershipEntity(entity, canEdit = false, canLeave = false) {
+function renderMembershipEntity(entity, canEdit = false, canManage = false, canLeave = false) {
   if (!entity) return "";
   const href = entity.type === "club"
     ? `/clubs/?slug=${encodeURIComponent(entity.slug)}`
@@ -354,7 +358,7 @@ function renderMembershipEntity(entity, canEdit = false, canLeave = false) {
         ${entity.pendingRevision ? `<em>${t("pendingRevision")}</em>` : ""}
       </a>
       ${canEdit ? `<button class="account-entity-action" type="button" data-ct-mode="revise" data-ct-type="${entity.type}">${t(entity.type === "club" ? "editClub" : "editTeam")}</button>` : ""}
-      ${canEdit ? `<button class="account-entity-action" type="button" data-ct-manage-members="${entity.type}">${t("manageMembers")}</button>` : ""}
+      ${canManage ? `<button class="account-entity-action" type="button" data-ct-manage-members="${entity.type}">${t("manageMembers")}</button>` : ""}
       ${canLeave ? `<button class="account-entity-action account-entity-action--danger" type="button" data-ct-leave="${entity.type}">${t("leaveMembership")}</button>` : ""}
     </div>`;
 }
@@ -412,6 +416,7 @@ function renderClubsTeams(auth) {
     .slice(0, 5);
   const pending = state.pendingCommands + state.pendingAssets;
   const mutationReady = !stale && state.integrityValid && auth.discord?.linked && pending === 0 && Boolean(auth.csrfToken);
+  const managementReady = !stale && state.integrityValid && auth.discord?.linked && Boolean(auth.csrfToken);
   const requestedMembership = membershipRequestFromLocation();
   const affiliationTarget = affiliationTargetFromLocation();
   const affiliationPending = affiliationTarget && state.teamClubActions.some(action => (
@@ -429,6 +434,8 @@ function renderClubsTeams(auth) {
   const affiliationReady = mutationReady && affiliationEligible;
   const canEditClub = mutationReady && state.club?.role === "head" && state.club.status === "approved" && !state.club.pendingRevision;
   const canEditTeam = mutationReady && state.team?.role === "captain" && state.team.status === "approved" && !state.team.pendingRevision;
+  const canManageClub = managementReady && state.club?.role === "head" && state.club.status === "approved";
+  const canManageTeam = managementReady && state.team?.role === "captain" && state.team.status === "approved";
   return `
     <section class="account-clubs-teams">
       <div class="account-section-heading">
@@ -438,7 +445,7 @@ function renderClubsTeams(auth) {
       ${clubsTeamsFlash.text ? `<p class="account-command-summary" data-kind="${escapeHtml(clubsTeamsFlash.kind)}" role="status">${escapeHtml(clubsTeamsFlash.text)}</p>` : ""}
       ${stale ? `<p class="account-snapshot-warning" role="status">${t("clubsTeamsStale")}</p>` : ""}
       ${state.club || state.team
-        ? `<div class="account-memberships">${renderMembershipEntity(state.club, canEditClub, mutationReady && state.club?.role === "member")}${renderMembershipEntity(state.team, canEditTeam, mutationReady && state.team?.role === "member")}</div>`
+        ? `<div class="account-memberships">${renderMembershipEntity(state.club, canEditClub, canManageClub, mutationReady && state.club?.role === "member")}${renderMembershipEntity(state.team, canEditTeam, canManageTeam, mutationReady && state.team?.role === "member")}</div>`
         : `<p class="account-muted">${t("clubsTeamsEmpty")}</p>`}
       ${renderMembershipActions(state.membershipActions, mutationReady)}
       ${renderTeamClubActions(state.teamClubActions, mutationReady)}
@@ -645,6 +652,7 @@ function memberManagerMarkup(entity, roster) {
     <div class="account-pilot-search">
       <h3>${t("invitePilot")}</h3>
       <label>${t("pilotSearch")}<input type="search" maxlength="80" autocomplete="off" data-ct-pilot-search></label>
+      <p class="account-command-message" data-ct-invite-status role="status" aria-live="polite"></p>
       <div class="account-pilot-results" role="list" aria-live="polite"></div>
     </div>
   </div>`;
@@ -663,6 +671,16 @@ async function openMemberManager(auth, entityType) {
       loadPilotIndex({ client, dataBaseUrl: topDataBaseUrl() })
     ]);
     const rosterIds = detail.roster.map(member => member.public_id);
+    const pendingInviteIds = new Set([
+      ...auth.clubsTeams.pendingInvites
+        .filter(invite => invite.targetType === entityType)
+        .map(invite => invite.subjectPublicId),
+      ...auth.clubsTeams.membershipActions
+        .filter(action => action.actionType === "invitation"
+          && action.targetType === entityType
+          && action.targetPublicId === entity.publicId)
+        .map(action => action.subjectPublicId)
+    ]);
     section.innerHTML = memberManagerMarkup(entity, detail.roster);
     section.querySelector("[data-ct-cancel]")?.addEventListener("click", () => render(auth));
     section.querySelectorAll("[data-ct-remove-member]").forEach(button => {
@@ -679,21 +697,33 @@ async function openMemberManager(auth, entityType) {
     });
     const input = section.querySelector("[data-ct-pilot-search]");
     const results = section.querySelector(".account-pilot-results");
+    const inviteStatus = section.querySelector("[data-ct-invite-status]");
     const renderResults = () => {
       const matches = filterPilots(pilots, input.value, { excludedPublicIds: rosterIds });
+      const teamCapacityReached = entityType === "team" && detail.roster.length + pendingInviteIds.size >= 4;
       results.innerHTML = matches.length ? matches.map(pilot => `<div class="account-pilot-result" role="listitem">
         <a href="/driver/?id=${encodeURIComponent(pilot.publicId)}">${escapeHtml(pilot.displayName)}</a>
-        <button class="account-action account-action--primary" type="button" data-ct-invite-pilot="${pilot.publicId}" data-ct-pilot-name="${escapeHtml(pilot.displayName)}">${t("invitePilot")}</button>
+        <button class="account-action account-action--primary" type="button" data-ct-invite-pilot="${pilot.publicId}" data-ct-pilot-name="${escapeHtml(pilot.displayName)}" ${pendingInviteIds.has(pilot.publicId) || teamCapacityReached ? "disabled" : ""}>${pendingInviteIds.has(pilot.publicId) ? t("inviteSent") : t("invitePilot")}</button>
       </div>`).join("") : (input.value.trim().length >= 2 ? `<p class="account-muted">${t("noPilotResults")}</p>` : "");
+      if (inviteStatus && teamCapacityReached) inviteStatus.textContent = t("teamInviteFull");
       results.querySelectorAll("[data-ct-invite-pilot]").forEach(button => {
-        button.addEventListener("click", () => {
+        button.addEventListener("click", async () => {
           const name = button.dataset.ctPilotName || "";
           if (!confirm(t("confirmInvite", name))) return;
+          button.disabled = true;
           try {
-            void submitMembershipCommand(auth, buildMembershipInviteCommand({ entity, subjectPublicId: button.dataset.ctInvitePilot }), button);
+            const command = buildMembershipInviteCommand({ entity, subjectPublicId: button.dataset.ctInvitePilot });
+            const payload = await mutation("/v1/clubs-teams/commands", auth.csrfToken, {
+              command_type: command.commandType,
+              payload: command.payload
+            });
+            normalizeCommandResponse(payload);
+            pendingInviteIds.add(button.dataset.ctInvitePilot);
+            if (inviteStatus) inviteStatus.textContent = t("commandQueued");
+            renderResults();
           } catch (error) {
-            clubsTeamsFlash = { text: commandErrorText(error?.code), kind: "error" };
-            render(auth);
+            button.disabled = false;
+            if (inviteStatus) inviteStatus.textContent = commandErrorText(error?.code);
           }
         });
       });

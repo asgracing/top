@@ -41,6 +41,7 @@
   }
 
   .auth-header-account {
+    position: relative;
     width: clamp(220px, 16vw, 260px);
     min-width: 220px;
     max-width: 260px;
@@ -184,6 +185,39 @@
 
   .auth-header-account[aria-expanded="true"] .auth-header-caret {
     transform: rotate(180deg);
+  }
+
+  .auth-header-invitation-indicator {
+    position: absolute;
+    top: -8px;
+    right: -8px;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    min-width: 23px;
+    height: 23px;
+    box-sizing: border-box;
+    padding: 0 5px;
+    gap: 2px;
+    border: 2px solid #131922;
+    border-radius: 999px;
+    background: #ff5b2e;
+    color: #fff;
+    box-shadow: 0 3px 12px rgba(255, 91, 46, 0.5);
+    font-size: 9px;
+    font-weight: 900;
+    line-height: 1;
+    pointer-events: none;
+  }
+
+  .auth-header-invitation-icon {
+    font-size: 11px;
+    line-height: 1;
+  }
+
+  .auth-header-invitation-count {
+    min-width: 6px;
+    text-align: center;
   }
 
   .auth-header-loading {

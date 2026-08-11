@@ -33,7 +33,9 @@ const COPY = Object.freeze({
     account: "ASG Racing account",
     menu: "Open account menu",
     avatar: "Steam avatar",
-    logoutFailed: "Could not sign out. Try again."
+    logoutFailed: "Could not sign out. Try again.",
+    invitationAlert: "You have a club or team invitation",
+    invitationAlertCount: "You have {count} club or team invitations"
   },
   ru: {
     rank: "Rank",
@@ -63,7 +65,9 @@ const COPY = Object.freeze({
     account: "Кабинет ASG Racing",
     menu: "Открыть меню кабинета",
     avatar: "Аватар Steam",
-    logoutFailed: "Не удалось выйти. Попробуйте ещё раз."
+    logoutFailed: "Не удалось выйти. Попробуйте ещё раз.",
+    invitationAlert: "У вас есть приглашение в клуб или команду",
+    invitationAlertCount: "У вас {count} приглашений в клубы или команды"
   }
 });
 
@@ -244,7 +248,7 @@ function ensureStylesheet(documentRef) {
   if (documentRef.querySelector("link[data-asg-auth-header-style]")) return;
   const link = documentRef.createElement("link");
   link.rel = "stylesheet";
-  link.href = new URL("../../../styles/components/auth-header.css?v=20260728tabletgrid1", import.meta.url).href;
+  link.href = new URL("../../../styles/components/auth-header.css?v=20260811invites1", import.meta.url).href;
   link.dataset.asgAuthHeaderStyle = "true";
   documentRef.head.appendChild(link);
 }
@@ -311,6 +315,9 @@ export function createAuthHeaderController({
     const toggle = makeElement(documentRef, "button", "auth-header-account pilot-profile-trigger");
     const categoryId = eloCategoryId(auth.driver?.elo);
     const safetyCategory = auth.driver?.srCategory || null;
+    const invitationCount = auth.clubsTeams?.membershipActions?.filter(action => (
+      action.actionType === "invitation" && action.resolutionRole === "subject"
+    )).length || 0;
     if (categoryId) root.classList.add(`elo-cat-${categoryId}`);
     if (safetyCategory) root.classList.add(`sr-cat-${safetyCategory}`);
     toggle.type = "button";
@@ -349,6 +356,18 @@ export function createAuthHeaderController({
       copy,
       makeElement(documentRef, "span", "auth-header-caret pilot-profile-chevron", "▾")
     );
+    if (invitationCount > 0) {
+      const indicator = makeElement(documentRef, "span", "auth-header-invitation-indicator");
+      indicator.setAttribute("aria-hidden", "true");
+      indicator.append(
+        makeElement(documentRef, "span", "auth-header-invitation-icon", "✉"),
+        makeElement(documentRef, "span", "auth-header-invitation-count", String(invitationCount))
+      );
+      toggle.appendChild(indicator);
+      const alertText = translate(invitationCount === 1 ? "invitationAlert" : "invitationAlertCount")
+        .replace("{count}", String(invitationCount));
+      toggle.title = `${name} · ${alertText}`;
+    }
 
     const menu = makeElement(documentRef, "div", "auth-header-menu");
     menu.hidden = true;
@@ -603,6 +622,11 @@ export function createAuthHeaderController({
   documentRef.addEventListener("keydown", onKeydown);
   documentRef.addEventListener("click", onLanguageClick);
   documentRef.addEventListener("visibilitychange", onVisibilityChange);
+  const refreshTimer = typeof windowRef.setInterval === "function"
+    ? windowRef.setInterval(() => {
+        if (documentRef.visibilityState !== "hidden") void refresh({ showLoading: false });
+      }, 30000)
+    : null;
   void refresh();
 
   return {
@@ -614,6 +638,9 @@ export function createAuthHeaderController({
       documentRef.removeEventListener("keydown", onKeydown);
       documentRef.removeEventListener("click", onLanguageClick);
       documentRef.removeEventListener("visibilitychange", onVisibilityChange);
+      if (refreshTimer !== null && typeof windowRef.clearInterval === "function") {
+        windowRef.clearInterval(refreshTimer);
+      }
       root.remove();
     }
   };
