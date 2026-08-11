@@ -740,7 +740,7 @@ function logoUploadMarkup(entity, currentAssetUrl) {
 }
 
 function logoErrorText(code) {
-  if (code === "image_too_large" || code === "image_encoded_too_large") return t("logoTooLarge");
+  if (["image_too_large", "image_encoded_too_large", "http_413"].includes(code)) return t("logoTooLarge");
   if (code === "image_not_square") return t("logoNotSquare");
   if (code === "image_dimensions_too_large") return t("logoDimensionsTooLarge");
   if (["recent_auth_required", "version_conflict"].includes(code)) return commandErrorText(code);
