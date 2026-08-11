@@ -7,6 +7,7 @@ import {
   buildCreateEntityCommand,
   buildMembershipLeaveCommand,
   buildMembershipInviteCommand,
+  buildMembershipInviteBatchCommands,
   buildMembershipRemoveCommand,
   buildMembershipRequestCommand,
   buildMembershipResolveCommand,
@@ -124,6 +125,23 @@ test("builds manager invite and remove commands from protected entity ids", () =
   state.team.role = "member";
   assert.throws(() => buildMembershipInviteCommand({ entity: state.team, subjectPublicId: "pilot-2" }), /manager_required/);
   assert.throws(() => buildMembershipRemoveCommand({ entity: state.club, subjectPublicId: "<bad>" }), /invalid_subject/);
+});
+
+test("builds an independent command for each unique batch invite recipient", () => {
+  const state = stateWithEntities();
+  const commands = buildMembershipInviteBatchCommands({
+    entity: state.club,
+    subjectPublicIds: ["pilot-2", "pilot-3"]
+  });
+  assert.deepEqual(commands.map(command => command.payload.subject_public_id), ["pilot-2", "pilot-3"]);
+  assert.equal(commands.every(command => command.commandType === "membership.invite"), true);
+  assert.throws(() => buildMembershipInviteBatchCommands({ entity: state.club, subjectPublicIds: [] }), /invalid_invite_batch/);
+  assert.throws(() => buildMembershipInviteBatchCommands({ entity: state.club, subjectPublicIds: ["pilot-2", "pilot-2"] }), /invalid_invite_batch/);
+  assert.throws(() => buildMembershipInviteBatchCommands({ entity: state.club, subjectPublicIds: ["pilot-2", " pilot-2 "] }), /invalid_invite_batch/);
+  assert.throws(() => buildMembershipInviteBatchCommands({
+    entity: state.club,
+    subjectPublicIds: Array.from({ length: 21 }, (_, index) => `pilot-${index}`)
+  }), /invalid_invite_batch/);
 });
 
 test("builds public-target team-club commands and protects resolution ids", () => {

@@ -6,7 +6,7 @@ import {
   ClubsTeamsCommandError,
   buildCreateEntityCommand,
   buildMembershipLeaveCommand,
-  buildMembershipInviteCommand,
+  buildMembershipInviteBatchCommands,
   buildMembershipRemoveCommand,
   buildMembershipRequestCommand,
   buildMembershipResolveCommand,
@@ -16,10 +16,13 @@ import {
   buildTeamClubResolveCommand,
   buildReviseEntityCommand,
   normalizeCommandResponse
-} from "./clubs-teams-command-model.js";
+} from "./clubs-teams-command-model.js?v=20260811batchinvite1";
 import { loadPilotIndex, searchPilots } from "./pilot-search-model.js?v=20260811pilotsearch1";
+import { inspectLogoFile, LogoUploadError, normalizeAssetResponse } from "./logo-upload-model.js?v=20260811logo1";
 
 const AUTH_BASE_URL = "https://auth.asgracing.ru";
+const IMAGE_CANARY_ACTOR_PUBLIC_IDS = new Set(["drv_b466bb6eedd8"]);
+const IMAGE_CANARY_ENTITY_SLUGS = new Set(["asg-racing", "asg-racing-ford-power"]);
 
 const COPY = {
   en: {
@@ -75,6 +78,25 @@ const COPY = {
     websiteUrl: "Website (HTTP or HTTPS)",
     teamAffiliation: "The team will be affiliated with your current club.",
     saveEntity: "Send for moderation",
+    uploadLogo: "Upload logo",
+    logoTitle: value => `Logo for ${value}`,
+    logoRequirements: "PNG or JPEG, square, up to 1024×1024 and 200 KiB.",
+    logoCurrent: "Current approved logo",
+    logoNone: "No approved logo yet.",
+    logoSelected: (width, height, size) => `${width}×${height} · ${size} KiB`,
+    logoSubmit: "Send logo for moderation",
+    logoQueued: "The logo is queued for secure processing.",
+    logoModerationPending: "The logo was processed and is awaiting administrator approval.",
+    logoStatus_pending: "Logo awaiting moderation",
+    logoStatus_approved: "Logo approved",
+    logoStatus_rejected: "Logo rejected",
+    logoStatus_superseded: "Logo replaced by a newer revision",
+    logoRejectedReason: value => `Moderator comment: ${value}`,
+    logoInvalid: "Choose a valid square PNG or JPEG within 1024×1024 and 200 KiB.",
+    logoTooLarge: "The image exceeds the 200 KiB limit.",
+    logoNotSquare: "The logo must be square.",
+    logoDimensionsTooLarge: "The logo must not exceed 1024×1024.",
+    logoUploadFailed: "The logo could not be uploaded safely.",
     cancelEntity: "Cancel",
     loadingEntity: "Loading the approved profile…",
     invalidFields: "Check the name, field lengths and website address.",
@@ -98,6 +120,12 @@ const COPY = {
     manageRoster: value => `Manage ${value} roster`,
     invitePilot: "Invite pilot",
     inviteSent: "Invitation sent",
+    selectedPilots: (count, limit) => `${count} of ${limit} selected`,
+    sendBatchInvites: count => `Send ${count} invitation${count === 1 ? "" : "s"}`,
+    confirmBatchInvites: count => `Send ${count} independent invitation${count === 1 ? "" : "s"}?`,
+    batchInvitesQueued: (queued, total) => `${queued} of ${total} invitations were queued.`,
+    batchInvitesRejected: names => `Not queued: ${names}.`,
+    batchInviteLimit: limit => `You can select up to ${limit} pilots in this batch.`,
     teamInviteFull: "All four team places are occupied or reserved by pending invitations.",
     pilotSearch: "Search by pilot name",
     pilotSearchCount: count => `${count} pilots found`,
@@ -119,6 +147,8 @@ const COPY = {
     detachWarning: "Detaching archives the team. Its current public team profile and active team operation will stop.",
     confirmDetach: "Detach this team from the club and archive it?",
     commandRejected: "The operation was rejected.",
+    actionAlreadyProcessed: "This invitation or request has already been processed.",
+    membershipIncompatible: "This membership conflicts with your current club or team.",
     reauthRequired: "For security, sign in with Steam again and repeat the operation.",
     reauth: "Sign in again",
     nameTaken: "This club or team name is already reserved.",
@@ -163,6 +193,25 @@ const COPY = {
     websiteUrl: "Сайт (HTTP или HTTPS)",
     teamAffiliation: "Команда будет привязана к вашему текущему клубу.",
     saveEntity: "Отправить на модерацию",
+    uploadLogo: "Загрузить логотип",
+    logoTitle: value => `Логотип: ${value}`,
+    logoRequirements: "PNG или JPEG, квадрат, до 1024×1024 и 200 КиБ.",
+    logoCurrent: "Текущий утверждённый логотип",
+    logoNone: "Утверждённого логотипа пока нет.",
+    logoSelected: (width, height, size) => `${width}×${height} · ${size} КиБ`,
+    logoSubmit: "Отправить логотип на модерацию",
+    logoQueued: "Логотип поставлен в очередь безопасной обработки.",
+    logoModerationPending: "Логотип обработан и ожидает утверждения администратором.",
+    logoStatus_pending: "Логотип ожидает модерации",
+    logoStatus_approved: "Логотип утверждён",
+    logoStatus_rejected: "Логотип отклонён",
+    logoStatus_superseded: "Логотип заменён более новой версией",
+    logoRejectedReason: value => `Комментарий модератора: ${value}`,
+    logoInvalid: "Выберите корректный квадратный PNG или JPEG до 1024×1024 и 200 КиБ.",
+    logoTooLarge: "Размер изображения превышает 200 КиБ.",
+    logoNotSquare: "Логотип должен быть квадратным.",
+    logoDimensionsTooLarge: "Размер логотипа не должен превышать 1024×1024.",
+    logoUploadFailed: "Не удалось безопасно загрузить логотип.",
     cancelEntity: "Отмена",
     loadingEntity: "Загружаем подтверждённый профиль…",
     invalidFields: "Проверьте название, длину полей и адрес сайта.",
@@ -185,6 +234,12 @@ const COPY = {
     manageMembers: "Управлять составом",
     manageRoster: value => `Управление составом: ${value}`,
     invitePilot: "Пригласить пилота",
+    selectedPilots: (count, limit) => `Выбрано: ${count} из ${limit}`,
+    sendBatchInvites: count => `Отправить приглашения (${count})`,
+    confirmBatchInvites: count => `Отправить отдельные приглашения выбранным пилотам (${count})?`,
+    batchInvitesQueued: (queued, total) => `Поставлено в очередь: ${queued} из ${total}.`,
+    batchInvitesRejected: names => `Не поставлены в очередь: ${names}.`,
+    batchInviteLimit: limit => `В эту пачку можно выбрать не более ${limit} пилотов.`,
     pilotSearch: "Поиск по имени пилота",
     pilotSearchCount: count => `Найдено пилотов: ${count}`,
     showMorePilots: count => `Показать ещё: ${count}`,
@@ -205,6 +260,8 @@ const COPY = {
     detachWarning: "Отсоединение архивирует команду. Её публичный профиль и активная работа команды будут остановлены.",
     confirmDetach: "Отсоединить команду от клуба и архивировать её?",
     commandRejected: "Операция отклонена.",
+    actionAlreadyProcessed: "Это приглашение или заявка уже обработаны.",
+    membershipIncompatible: "Вступление конфликтует с текущим клубом или командой.",
     reauthRequired: "Для безопасности снова войдите через Steam и повторите операцию.",
     reauth: "Войти снова",
     nameTaken: "Название клуба или команды уже зарезервировано.",
@@ -280,9 +337,9 @@ function language() {
   return stored === "ru" ? "ru" : "en";
 }
 
-function t(key, value) {
+function t(key, ...values) {
   const entry = COPY[language()][key] ?? COPY.en[key] ?? key;
-  return typeof entry === "function" ? entry(value) : entry;
+  return typeof entry === "function" ? entry(...values) : entry;
 }
 
 function escapeHtml(value) {
@@ -301,6 +358,7 @@ function accountLoginUrl() {
 
 let flashMessage = { text: "", kind: "" };
 let clubsTeamsFlash = { text: "", kind: "" };
+const pendingMembershipResolutionIds = new Set();
 
 function setMessage(text = "", kind = "") {
   flashMessage = { text, kind };
@@ -348,7 +406,7 @@ function affiliationTargetFromLocation() {
   return { action, targetPublicId, targetName };
 }
 
-function renderMembershipEntity(entity, canEdit = false, canManage = false, canLeave = false) {
+function renderMembershipEntity(entity, canEdit = false, canManage = false, canLeave = false, canUploadLogo = false) {
   if (!entity) return "";
   const href = entity.type === "club"
     ? `/clubs/?slug=${encodeURIComponent(entity.slug)}`
@@ -360,19 +418,26 @@ function renderMembershipEntity(entity, canEdit = false, canManage = false, canL
         <strong>${escapeHtml(entity.displayName)}</strong>
         <span>${t(`ctRole_${entity.role}`)} · ${t(`ctStatus_${entity.status}`)}</span>
         ${entity.pendingRevision ? `<em>${t("pendingRevision")}</em>` : ""}
+        ${entity.logoModeration ? `<em class="account-logo-status" data-status="${entity.logoModeration.status}">${escapeHtml(t(`logoStatus_${entity.logoModeration.status}`))}${entity.logoModeration.reason ? `<small>${escapeHtml(t("logoRejectedReason", entity.logoModeration.reason))}</small>` : ""}</em>` : ""}
       </a>
       ${canEdit ? `<button class="account-entity-action" type="button" data-ct-mode="revise" data-ct-type="${entity.type}">${t(entity.type === "club" ? "editClub" : "editTeam")}</button>` : ""}
+      ${canUploadLogo ? `<button class="account-entity-action" type="button" data-ct-upload-logo="${entity.type}">${t("uploadLogo")}</button>` : ""}
       ${canManage ? `<button class="account-entity-action" type="button" data-ct-manage-members="${entity.type}">${t("manageMembers")}</button>` : ""}
       ${canLeave ? `<button class="account-entity-action account-entity-action--danger" type="button" data-ct-leave="${entity.type}">${t("leaveMembership")}</button>` : ""}
     </div>`;
 }
 
 function renderMembershipActions(actions, mutationReady) {
+  const visibleActionIds = new Set(actions.map(action => action.id));
+  for (const actionId of pendingMembershipResolutionIds) {
+    if (!visibleActionIds.has(actionId)) pendingMembershipResolutionIds.delete(actionId);
+  }
   if (!actions.length) return "";
   return `<div class="account-membership-actions">
     <h3>${t("membershipActions")}</h3>
     ${actions.map((action, index) => {
       const resolvable = mutationReady && ["subject", "manager"].includes(action.resolutionRole);
+      const resolutionPending = pendingMembershipResolutionIds.has(action.id);
       const href = action.targetType === "club"
         ? `/clubs/?slug=${encodeURIComponent(action.targetSlug)}`
         : `/teams/detail/?slug=${encodeURIComponent(action.targetSlug)}`;
@@ -384,8 +449,8 @@ function renderMembershipActions(actions, mutationReady) {
             <a href="${subjectHref}">${escapeHtml(action.subjectDisplayName)}</a></span>
           <time>${escapeHtml(t("membershipExpires", formatAccountDate(action.expiresAt)))}</time></div>
         ${resolvable ? `<div class="account-membership-action-buttons">
-          <button class="account-action account-action--primary" type="button" data-ct-resolve="accepted" data-ct-action-index="${index}">${t("acceptMembership")}</button>
-          <button class="account-action" type="button" data-ct-resolve="rejected" data-ct-action-index="${index}">${t("rejectMembership")}</button>
+          <button class="account-action account-action--primary" type="button" data-ct-resolve="accepted" data-ct-action-index="${index}"${resolutionPending ? " disabled" : ""}>${t("acceptMembership")}</button>
+          <button class="account-action" type="button" data-ct-resolve="rejected" data-ct-action-index="${index}"${resolutionPending ? " disabled" : ""}>${t("rejectMembership")}</button>
         </div>` : ""}
       </article>`;
     }).join("")}
@@ -440,6 +505,9 @@ function renderClubsTeams(auth) {
   const canEditTeam = mutationReady && state.team?.role === "captain" && state.team.status === "approved" && !state.team.pendingRevision;
   const canManageClub = managementReady && state.club?.role === "head" && state.club.status === "approved";
   const canManageTeam = managementReady && state.team?.role === "captain" && state.team.status === "approved";
+  const imageCanaryActor = IMAGE_CANARY_ACTOR_PUBLIC_IDS.has(auth.driver?.publicId);
+  const canUploadClubLogo = canEditClub && imageCanaryActor && IMAGE_CANARY_ENTITY_SLUGS.has(state.club?.slug);
+  const canUploadTeamLogo = canEditTeam && imageCanaryActor && IMAGE_CANARY_ENTITY_SLUGS.has(state.team?.slug);
   return `
     <section class="account-clubs-teams">
       <div class="account-section-heading">
@@ -449,7 +517,7 @@ function renderClubsTeams(auth) {
       ${clubsTeamsFlash.text ? `<p class="account-command-summary" data-kind="${escapeHtml(clubsTeamsFlash.kind)}" role="status">${escapeHtml(clubsTeamsFlash.text)}</p>` : ""}
       ${stale ? `<p class="account-snapshot-warning" role="status">${t("clubsTeamsStale")}</p>` : ""}
       ${state.club || state.team
-        ? `<div class="account-memberships">${renderMembershipEntity(state.club, canEditClub, canManageClub, mutationReady && state.club?.role === "member")}${renderMembershipEntity(state.team, canEditTeam, canManageTeam, mutationReady && state.team?.role === "member")}</div>`
+        ? `<div class="account-memberships">${renderMembershipEntity(state.club, canEditClub, canManageClub, mutationReady && state.club?.role === "member", canUploadClubLogo)}${renderMembershipEntity(state.team, canEditTeam, canManageTeam, mutationReady && state.team?.role === "member", canUploadTeamLogo)}</div>`
         : `<p class="account-muted">${t("clubsTeamsEmpty")}</p>`}
       ${renderMembershipActions(state.membershipActions, mutationReady)}
       ${renderTeamClubActions(state.teamClubActions, mutationReady)}
@@ -503,6 +571,10 @@ function topDataBaseUrl() {
 }
 
 async function loadApprovedEntityDetail(entity) {
+  return (await loadApprovedEntityProfile(entity)).detail;
+}
+
+async function loadApprovedEntityProfile(entity) {
   const client = createHttpClient({ fetchImpl: globalThis.fetch, defaultTimeoutMs: 8000 });
   const result = await loadEntityDetail({
     client,
@@ -511,7 +583,7 @@ async function loadApprovedEntityDetail(entity) {
     slug: entity.slug
   });
   if (result.detail.public_id !== entity.publicId) throw new ClubsTeamsCommandError("detail_identity_mismatch");
-  return result.detail;
+  return result;
 }
 
 async function loadApprovedEntityFields(entity) {
@@ -552,6 +624,8 @@ function commandErrorText(code) {
   if (code === "recent_auth_required") return t("reauthRequired");
   if (code === "name_taken") return t("nameTaken");
   if (code === "version_conflict") return t("versionConflict");
+  if (code === "action_not_pending") return t("actionAlreadyProcessed");
+  if (code === "incompatible_membership") return t("membershipIncompatible");
   if (["invalid_fields", "invalid_website", "invalid_field", "invalid_name"].includes(code)) return t("invalidFields");
   return t("commandRejected");
 }
@@ -642,6 +716,141 @@ async function openEntityForm(auth, mode, entityType) {
   form.querySelector("input")?.focus();
 }
 
+function logoUploadMarkup(entity, currentAssetUrl) {
+  return `<div class="account-logo-upload">
+    <div class="account-section-heading"><h2>${escapeHtml(t("logoTitle", entity.displayName))}</h2>
+      <button class="account-action" type="button" data-ct-cancel>${t("cancelEntity")}</button></div>
+    <p class="account-muted">${t("logoRequirements")}</p>
+    <div class="account-logo-previews">
+      <figure><figcaption>${t("logoCurrent")}</figcaption>
+        ${currentAssetUrl ? `<img src="${escapeHtml(currentAssetUrl)}" alt="" width="180" height="180">` : `<div class="account-logo-empty">${t("logoNone")}</div>`}</figure>
+      <figure><figcaption>${t("uploadLogo")}</figcaption>
+        <img data-ct-logo-preview alt="" width="180" height="180" hidden>
+        <div class="account-logo-empty" data-ct-logo-placeholder>—</div></figure>
+    </div>
+    <label class="account-logo-picker">${t("uploadLogo")}
+      <input type="file" accept="image/png,image/jpeg" data-ct-logo-file>
+    </label>
+    <p class="account-muted" data-ct-logo-details></p>
+    <div class="account-form-actions">
+      <button class="account-action account-action--primary" type="button" data-ct-logo-submit disabled>${t("logoSubmit")}</button>
+    </div>
+    <p class="account-command-message" data-ct-logo-status role="status" aria-live="polite"></p>
+  </div>`;
+}
+
+function logoErrorText(code) {
+  if (code === "image_too_large" || code === "image_encoded_too_large") return t("logoTooLarge");
+  if (code === "image_not_square") return t("logoNotSquare");
+  if (code === "image_dimensions_too_large") return t("logoDimensionsTooLarge");
+  if (["recent_auth_required", "version_conflict"].includes(code)) return commandErrorText(code);
+  if (["image_required", "image_empty", "image_media_type_not_allowed", "image_decode_failed", "image_preview_unavailable"].includes(code)) return t("logoInvalid");
+  return t("logoUploadFailed");
+}
+
+async function pollClubsTeamsAsset(assetId) {
+  let latest = { id: assetId, status: "pending", final: false, errorCode: null };
+  for (let attempt = 0; attempt < 4 && !latest.final; attempt += 1) {
+    await new Promise(resolve => setTimeout(resolve, 1000));
+    const response = await fetch(`${AUTH_BASE_URL}/v1/clubs-teams/assets/${encodeURIComponent(assetId)}`, {
+      method: "GET", credentials: "include", cache: "no-store", headers: { Accept: "application/json" }
+    });
+    if (!response.ok) break;
+    latest = normalizeAssetResponse(await response.json());
+  }
+  return latest;
+}
+
+async function openLogoUpload(auth, entityType) {
+  const section = document.querySelector(".account-clubs-teams");
+  const entity = auth.clubsTeams[entityType];
+  const expectedRole = entityType === "club" ? "head" : "captain";
+  if (!section || !entity || entity.role !== expectedRole || entity.pendingRevision) return;
+  section.innerHTML = `<p class="account-muted" role="status">${t("loadingEntity")}</p>`;
+  let profile;
+  try {
+    profile = await loadApprovedEntityProfile(entity);
+  } catch {
+    section.innerHTML = `<p class="account-snapshot-warning" role="alert">${t("detailUnavailable")}</p>`;
+    return;
+  }
+  section.innerHTML = logoUploadMarkup(entity, profile.assetUrl);
+  const input = section.querySelector("[data-ct-logo-file]");
+  const preview = section.querySelector("[data-ct-logo-preview]");
+  const placeholder = section.querySelector("[data-ct-logo-placeholder]");
+  const details = section.querySelector("[data-ct-logo-details]");
+  const status = section.querySelector("[data-ct-logo-status]");
+  const submit = section.querySelector("[data-ct-logo-submit]");
+  let selectedFile = null;
+  let previewUrl = null;
+  const clearPreviewUrl = () => {
+    if (previewUrl) URL.revokeObjectURL(previewUrl);
+    previewUrl = null;
+  };
+  section.querySelector("[data-ct-cancel]")?.addEventListener("click", () => {
+    clearPreviewUrl();
+    render(auth);
+  });
+  input.addEventListener("change", async () => {
+    clearPreviewUrl();
+    selectedFile = null;
+    preview.hidden = true;
+    placeholder.hidden = false;
+    details.textContent = "";
+    status.textContent = "";
+    submit.disabled = true;
+    const file = input.files?.[0];
+    if (!file) return;
+    try {
+      const inspected = await inspectLogoFile(file);
+      previewUrl = URL.createObjectURL(file);
+      preview.src = previewUrl;
+      preview.hidden = false;
+      placeholder.hidden = true;
+      details.textContent = t("logoSelected", inspected.width, inspected.height, Math.ceil(inspected.byteSize / 1024));
+      selectedFile = file;
+      submit.disabled = false;
+    } catch (error) {
+      input.value = "";
+      status.textContent = logoErrorText(error?.code);
+      status.dataset.kind = "error";
+    }
+  });
+  submit.addEventListener("click", async () => {
+    if (!selectedFile || submit.disabled) return;
+    submit.disabled = true;
+    input.disabled = true;
+    status.textContent = t("logoQueued");
+    status.dataset.kind = "";
+    try {
+      const response = await fetch(`${AUTH_BASE_URL}/v1/clubs-teams/assets/${entity.type}/${encodeURIComponent(entity.publicId)}?expected_entity_version=${entity.rowVersion}`, {
+        method: "POST",
+        credentials: "include",
+        cache: "no-store",
+        headers: { Accept: "application/json", "Content-Type": selectedFile.type, "X-CSRF-Token": auth.csrfToken },
+        body: selectedFile
+      });
+      const payload = await response.json().catch(() => ({}));
+      if (!response.ok) {
+        const failure = new LogoUploadError(typeof payload?.detail === "string" ? payload.detail : `http_${response.status}`);
+        throw failure;
+      }
+      const queued = normalizeAssetResponse(payload);
+      const completed = await pollClubsTeamsAsset(queued.id);
+      if (completed.final && completed.status !== "applied") throw new LogoUploadError(completed.errorCode || completed.status);
+      clubsTeamsFlash = { text: t(completed.status === "applied" ? "logoModerationPending" : "logoQueued"), kind: "success" };
+      clearPreviewUrl();
+      await controller?.refresh({ showLoading: false });
+    } catch (error) {
+      status.textContent = logoErrorText(error?.code);
+      status.dataset.kind = "error";
+      submit.disabled = false;
+      input.disabled = false;
+    }
+  });
+  input.focus();
+}
+
 function memberManagerMarkup(entity, roster) {
   const removable = roster.filter(member => member.role === "member");
   return `<div class="account-member-manager">
@@ -660,6 +869,10 @@ function memberManagerMarkup(entity, roster) {
       <p class="account-muted" data-ct-pilot-count aria-live="polite" hidden></p>
       <div class="account-pilot-results" role="list" aria-live="polite"></div>
       <button class="account-action" type="button" data-ct-show-more hidden></button>
+      <div class="account-invite-batch" data-ct-invite-batch>
+        <span data-ct-selected-count></span>
+        <button class="account-action account-action--primary" type="button" data-ct-send-invites disabled></button>
+      </div>
     </div>
   </div>`;
 }
@@ -687,6 +900,7 @@ async function openMemberManager(auth, entityType) {
           && action.targetPublicId === entity.publicId)
         .map(action => action.subjectPublicId)
     ]);
+    const selectedPilots = new Map();
     section.innerHTML = memberManagerMarkup(entity, detail.roster);
     section.querySelector("[data-ct-cancel]")?.addEventListener("click", () => render(auth));
     section.querySelectorAll("[data-ct-remove-member]").forEach(button => {
@@ -706,19 +920,32 @@ async function openMemberManager(auth, entityType) {
     const inviteStatus = section.querySelector("[data-ct-invite-status]");
     const resultCount = section.querySelector("[data-ct-pilot-count]");
     const showMore = section.querySelector("[data-ct-show-more]");
+    const selectedCount = section.querySelector("[data-ct-selected-count]");
+    const sendInvites = section.querySelector("[data-ct-send-invites]");
     const pageSize = 50;
+    const availableTeamPlaces = entityType === "team"
+      ? Math.max(0, 4 - detail.roster.length - pendingInviteIds.size)
+      : 20;
+    const batchLimit = Math.min(20, availableTeamPlaces);
     let visibleLimit = pageSize;
+    const renderBatch = () => {
+      selectedCount.textContent = t("selectedPilots", selectedPilots.size, batchLimit);
+      sendInvites.textContent = t("sendBatchInvites", selectedPilots.size);
+      sendInvites.disabled = selectedPilots.size === 0;
+    };
     const renderResults = () => {
       const queryReady = input.value.normalize("NFKC").trim().length >= 2;
       const matches = searchPilots(pilots, input.value, {
-        excludedPublicIds: rosterIds,
-        deferredPublicIds: pendingInviteIds
+        excludedPublicIds: [...rosterIds, ...pendingInviteIds]
       });
       const visibleMatches = matches.slice(0, visibleLimit);
-      const teamCapacityReached = entityType === "team" && detail.roster.length + pendingInviteIds.size >= 4;
+      const teamCapacityReached = batchLimit === 0;
       results.innerHTML = visibleMatches.length ? visibleMatches.map(pilot => `<div class="account-pilot-result" role="listitem">
-        <a href="/driver/?id=${encodeURIComponent(pilot.publicId)}">${escapeHtml(pilot.displayName)}</a>
-        <button class="account-action account-action--primary" type="button" data-ct-invite-pilot="${pilot.publicId}" data-ct-pilot-name="${escapeHtml(pilot.displayName)}" ${pendingInviteIds.has(pilot.publicId) || teamCapacityReached ? "disabled" : ""}>${pendingInviteIds.has(pilot.publicId) ? t("inviteSent") : t("invitePilot")}</button>
+        <label><input type="checkbox" data-ct-select-pilot="${pilot.publicId}" data-ct-pilot-name="${escapeHtml(pilot.displayName)}"
+          ${selectedPilots.has(pilot.publicId) ? "checked" : ""}
+          ${!selectedPilots.has(pilot.publicId) && selectedPilots.size >= batchLimit ? "disabled" : ""}>
+          <span>${escapeHtml(pilot.displayName)}</span></label>
+        <a href="/driver/?id=${encodeURIComponent(pilot.publicId)}">${t("profile")}</a>
       </div>`).join("") : (queryReady ? `<p class="account-muted">${t("noPilotResults")}</p>` : "");
       resultCount.hidden = !queryReady;
       resultCount.textContent = queryReady ? t("pilotSearchCount", matches.length) : "";
@@ -726,25 +953,22 @@ async function openMemberManager(auth, entityType) {
       showMore.hidden = remaining === 0;
       showMore.textContent = remaining ? t("showMorePilots", Math.min(pageSize, remaining)) : "";
       if (inviteStatus && teamCapacityReached) inviteStatus.textContent = t("teamInviteFull");
-      results.querySelectorAll("[data-ct-invite-pilot]").forEach(button => {
-        button.addEventListener("click", async () => {
-          const name = button.dataset.ctPilotName || "";
-          if (!confirm(t("confirmInvite", name))) return;
-          button.disabled = true;
-          try {
-            const command = buildMembershipInviteCommand({ entity, subjectPublicId: button.dataset.ctInvitePilot });
-            const payload = await mutation("/v1/clubs-teams/commands", auth.csrfToken, {
-              command_type: command.commandType,
-              payload: command.payload
-            });
-            normalizeCommandResponse(payload);
-            pendingInviteIds.add(button.dataset.ctInvitePilot);
-            if (inviteStatus) inviteStatus.textContent = t("commandQueued");
-            renderResults();
-          } catch (error) {
-            button.disabled = false;
-            if (inviteStatus) inviteStatus.textContent = commandErrorText(error?.code);
+      results.querySelectorAll("[data-ct-select-pilot]").forEach(checkbox => {
+        checkbox.addEventListener("change", () => {
+          const publicId = checkbox.dataset.ctSelectPilot;
+          if (checkbox.checked) {
+            if (selectedPilots.size >= batchLimit) {
+              checkbox.checked = false;
+              inviteStatus.textContent = t("batchInviteLimit", batchLimit);
+              return;
+            }
+            selectedPilots.set(publicId, checkbox.dataset.ctPilotName || publicId);
+          } else {
+            selectedPilots.delete(publicId);
           }
+          inviteStatus.textContent = "";
+          renderBatch();
+          renderResults();
         });
       });
     };
@@ -756,6 +980,38 @@ async function openMemberManager(auth, entityType) {
       visibleLimit += pageSize;
       renderResults();
     });
+    sendInvites.addEventListener("click", async () => {
+      const recipients = [...selectedPilots.entries()].map(([publicId, displayName]) => ({ publicId, displayName }));
+      if (!recipients.length || !confirm(t("confirmBatchInvites", recipients.length))) return;
+      sendInvites.disabled = true;
+      input.disabled = true;
+      inviteStatus.textContent = t("commandQueued");
+      const commands = buildMembershipInviteBatchCommands({
+        entity,
+        subjectPublicIds: recipients.map(recipient => recipient.publicId)
+      });
+      const outcomes = await Promise.allSettled(commands.map(command => mutation("/v1/clubs-teams/commands", auth.csrfToken, {
+        command_type: command.commandType,
+        payload: command.payload
+      }).then(payload => {
+        const normalized = normalizeCommandResponse(payload);
+        if (normalized.final && normalized.status !== "applied") {
+          throw new ClubsTeamsCommandError(normalized.errorCode || normalized.status);
+        }
+        return normalized;
+      })));
+      const rejectedNames = [];
+      outcomes.forEach((outcome, index) => {
+        if (outcome.status === "fulfilled") pendingInviteIds.add(recipients[index].publicId);
+        else rejectedNames.push(recipients[index].displayName);
+      });
+      const queued = recipients.length - rejectedNames.length;
+      const summary = `${t("batchInvitesQueued", queued, recipients.length)}${rejectedNames.length ? ` ${t("batchInvitesRejected", rejectedNames.join(", "))}` : ""}`;
+      clubsTeamsFlash = { text: summary, kind: rejectedNames.length ? "warning" : "success" };
+      await controller?.refresh({ showLoading: false });
+    });
+    renderBatch();
+    renderResults();
     input.focus();
   } catch {
     section.innerHTML = `<p class="account-snapshot-warning" role="alert">${t("rosterUnavailable")}</p>
@@ -765,19 +1021,31 @@ async function openMemberManager(auth, entityType) {
 }
 
 async function submitMembershipCommand(auth, command, button) {
+  const actionId = command.commandType === "membership.resolve"
+    ? String(command.payload?.action_id || "")
+    : "";
+  if (actionId && pendingMembershipResolutionIds.has(actionId)) return;
+  if (actionId) pendingMembershipResolutionIds.add(actionId);
+  button.closest(".account-membership-action-buttons")
+    ?.querySelectorAll("button")
+    .forEach(actionButton => { actionButton.disabled = true; });
   button.disabled = true;
+  let retainPendingResolution = false;
   try {
     const payload = await mutation("/v1/clubs-teams/commands", auth.csrfToken, {
       command_type: command.commandType,
       payload: command.payload
     });
     const queued = normalizeCommandResponse(payload);
+    retainPendingResolution = Boolean(actionId);
     const completed = await pollClubsTeamsCommand(queued.id);
     if (completed.final && completed.status !== "applied") {
+      retainPendingResolution = completed.errorCode === "action_not_pending";
       throw new ClubsTeamsCommandError(completed.errorCode || completed.status);
     }
     clubsTeamsFlash = { text: t(completed.status === "applied" ? "commandApplied" : "commandQueued"), kind: "success" };
   } catch (error) {
+    if (actionId && !retainPendingResolution) pendingMembershipResolutionIds.delete(actionId);
     clubsTeamsFlash = { text: commandErrorText(error?.code), kind: "error" };
   }
   await controller?.refresh({ showLoading: false });
@@ -815,6 +1083,9 @@ function bindClubsTeamsActions(auth) {
   });
   document.querySelectorAll("[data-ct-manage-members]").forEach(button => {
     button.addEventListener("click", () => void openMemberManager(auth, button.dataset.ctManageMembers));
+  });
+  document.querySelectorAll("[data-ct-upload-logo]").forEach(button => {
+    button.addEventListener("click", () => void openLogoUpload(auth, button.dataset.ctUploadLogo));
   });
   document.querySelector("[data-ct-request-membership]")?.addEventListener("click", event => {
     const target = membershipRequestFromLocation();

@@ -22,7 +22,8 @@ test("normalizes the bounded public cabinet state", () => {
         row_version: 7,
         role: "head",
         display_name: "ASG Racing",
-        pending_revision: true
+        pending_revision: true,
+        logo_moderation: { status: "pending", reason: null, decided_at: null }
       },
       team: null
     },
@@ -45,6 +46,7 @@ test("normalizes the bounded public cabinet state", () => {
   assert.equal(normalized.club.displayName, "ASG Racing");
   assert.equal(normalized.club.publicId, "club-public");
   assert.equal(normalized.club.pendingRevision, true);
+  assert.deepEqual(normalized.club.logoModeration, { status: "pending", reason: null, decidedAt: null });
   assert.equal("id" in normalized.club, false);
   assert.deepEqual(normalized.notifications, [{ id: "cmd-1", status: "applied", createdAt: "2026-08-01T10:00:00Z" }]);
   assert.equal("receipt" in normalized.notifications[0], false);

@@ -148,6 +148,18 @@ export function buildMembershipInviteCommand({ entity, subjectPublicId }) {
   };
 }
 
+export function buildMembershipInviteBatchCommands({ entity, subjectPublicIds }) {
+  if (!Array.isArray(subjectPublicIds) || subjectPublicIds.length < 1 || subjectPublicIds.length > 20) {
+    throw new ClubsTeamsCommandError("invalid_invite_batch");
+  }
+  const commands = subjectPublicIds.map(subjectPublicId => buildMembershipInviteCommand({ entity, subjectPublicId }));
+  const uniqueSubjects = new Set(commands.map(command => command.payload.subject_public_id));
+  if (uniqueSubjects.size !== commands.length) {
+    throw new ClubsTeamsCommandError("invalid_invite_batch");
+  }
+  return commands;
+}
+
 export function buildMembershipRemoveCommand({ entity, subjectPublicId }) {
   const { type, entityId } = requireManagerEntity(entity);
   const subject = safeIdentifier(subjectPublicId);

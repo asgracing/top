@@ -6,7 +6,8 @@ const ACTOR_STATE_KEYS = new Set(["public_id", "club", "team"]);
 const ACTOR_STATE_ACTION_KEYS = new Set(["public_id", "club", "team", "membership_actions"]);
 const ACTOR_STATE_TEAM_CLUB_KEYS = new Set(["public_id", "club", "team", "team_club_actions"]);
 const ACTOR_STATE_ALL_ACTION_KEYS = new Set(["public_id", "club", "team", "membership_actions", "team_club_actions"]);
-const ENTITY_KEYS = new Set(["id", "public_id", "slug", "status", "row_version", "role", "display_name", "pending_revision"]);
+const LEGACY_ENTITY_KEYS = new Set(["id", "public_id", "slug", "status", "row_version", "role", "display_name", "pending_revision"]);
+const ENTITY_KEYS = new Set([...LEGACY_ENTITY_KEYS, "logo_moderation"]);
 const LEGACY_ACTION_KEYS = new Set([
   "id", "action_type", "target_type", "target_public_id", "target_slug", "target_display_name",
   "subject_public_id", "initiated_by_public_id", "created_at", "expires_at", "resolution_role"
@@ -59,17 +60,30 @@ function hasExactKeys(value, expected) {
   return keys.length === expected.size && keys.every(key => expected.has(key));
 }
 
+function normalizeLogoModeration(value) {
+  if (value === undefined || value === null) return null;
+  const source = plainObject(value);
+  const keys = new Set(["status", "reason", "decided_at"]);
+  if (!source || !hasExactKeys(source, keys)) return false;
+  const status = ["pending", "approved", "rejected", "superseded"].includes(source.status) ? source.status : null;
+  const reason = source.reason === null ? null : boundedText(source.reason, 1000);
+  const decidedAt = source.decided_at === null ? null : safeDate(source.decided_at);
+  if (!status || (source.reason !== null && !reason) || (source.decided_at !== null && !decidedAt)) return false;
+  return { status, reason, decidedAt };
+}
+
 function normalizeEntity(value, type) {
   const source = plainObject(value);
-  if (!source || !hasExactKeys(source, ENTITY_KEYS)) return null;
+  if (!source || (!hasExactKeys(source, ENTITY_KEYS) && !hasExactKeys(source, LEGACY_ENTITY_KEYS))) return null;
   const publicId = safeIdentifier(source.public_id);
   const slug = safeSlug(source.slug);
   const displayName = boundedText(source.display_name, 160);
   const status = ENTITY_STATUSES.has(source.status) ? source.status : null;
   const role = ROLES[type].has(source.role) ? source.role : null;
   const rowVersion = safeInteger(source.row_version, 1);
-  if (!publicId || !slug || !displayName || !status || !role || rowVersion === null) return null;
-  const entity = { type, publicId, slug, displayName, status, role, rowVersion, pendingRevision: source.pending_revision === true };
+  const logoModeration = normalizeLogoModeration(source.logo_moderation);
+  if (!publicId || !slug || !displayName || !status || !role || rowVersion === null || logoModeration === false) return null;
+  const entity = { type, publicId, slug, displayName, status, role, rowVersion, pendingRevision: source.pending_revision === true, logoModeration };
   const managementId = safeIdentifier(source.id);
   if (managementId) MANAGEMENT_IDS.set(entity, managementId);
   return entity;
