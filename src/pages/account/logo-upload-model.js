@@ -11,6 +11,11 @@ export class LogoUploadError extends Error {
   }
 }
 
+export function canUploadEntityLogo(entity, mutationReady) {
+  if (!mutationReady || !entity || entity.status !== "approved" || entity.pendingRevision) return false;
+  return entity.role === (entity.type === "club" ? "head" : entity.type === "team" ? "captain" : "");
+}
+
 export function validateLogoFile(file) {
   if (!file || typeof file !== "object") throw new LogoUploadError("image_required");
   if (!MEDIA_TYPES.has(file.type)) throw new LogoUploadError("image_media_type_not_allowed");

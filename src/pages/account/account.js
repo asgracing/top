@@ -18,12 +18,9 @@ import {
   normalizeCommandResponse
 } from "./clubs-teams-command-model.js?v=20260811batchinvite1";
 import { loadPilotIndex, searchPilots } from "./pilot-search-model.js?v=20260811pilotsearch1";
-import { inspectLogoFile, LogoUploadError, normalizeAssetResponse } from "./logo-upload-model.js?v=20260811logo1";
+import { canUploadEntityLogo, inspectLogoFile, LogoUploadError, normalizeAssetResponse } from "./logo-upload-model.js?v=20260813logo2";
 
 const AUTH_BASE_URL = "https://auth.asgracing.ru";
-const IMAGE_CANARY_ACTOR_PUBLIC_IDS = new Set(["drv_b466bb6eedd8"]);
-const IMAGE_CANARY_ENTITY_SLUGS = new Set(["asg-racing", "asg-racing-ford-power"]);
-
 const COPY = {
   en: {
     eyebrow: "Driver account",
@@ -505,9 +502,8 @@ function renderClubsTeams(auth) {
   const canEditTeam = mutationReady && state.team?.role === "captain" && state.team.status === "approved" && !state.team.pendingRevision;
   const canManageClub = managementReady && state.club?.role === "head" && state.club.status === "approved";
   const canManageTeam = managementReady && state.team?.role === "captain" && state.team.status === "approved";
-  const imageCanaryActor = IMAGE_CANARY_ACTOR_PUBLIC_IDS.has(auth.driver?.publicId);
-  const canUploadClubLogo = canEditClub && imageCanaryActor && IMAGE_CANARY_ENTITY_SLUGS.has(state.club?.slug);
-  const canUploadTeamLogo = canEditTeam && imageCanaryActor && IMAGE_CANARY_ENTITY_SLUGS.has(state.team?.slug);
+  const canUploadClubLogo = canUploadEntityLogo(state.club, mutationReady);
+  const canUploadTeamLogo = canUploadEntityLogo(state.team, mutationReady);
   return `
     <section class="account-clubs-teams">
       <div class="account-section-heading">

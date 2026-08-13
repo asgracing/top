@@ -2,6 +2,7 @@ import test from "node:test";
 import assert from "node:assert/strict";
 
 import {
+  canUploadEntityLogo,
   LogoUploadError,
   inspectLogoFile,
   normalizeAssetResponse,
@@ -9,6 +10,16 @@ import {
 } from "../../src/pages/account/logo-upload-model.js";
 
 const file = (overrides = {}) => ({ type: "image/png", size: 1024, ...overrides });
+
+test("allows logo upload only to approved heads and captains", () => {
+  assert.equal(canUploadEntityLogo({ type: "club", role: "head", status: "approved", pendingRevision: false }, true), true);
+  assert.equal(canUploadEntityLogo({ type: "team", role: "captain", status: "approved", pendingRevision: false }, true), true);
+  assert.equal(canUploadEntityLogo({ type: "club", role: "member", status: "approved", pendingRevision: false }, true), false);
+  assert.equal(canUploadEntityLogo({ type: "team", role: "member", status: "approved", pendingRevision: false }, true), false);
+  assert.equal(canUploadEntityLogo({ type: "team", role: "captain", status: "pending", pendingRevision: false }, true), false);
+  assert.equal(canUploadEntityLogo({ type: "club", role: "head", status: "approved", pendingRevision: true }, true), false);
+  assert.equal(canUploadEntityLogo({ type: "club", role: "head", status: "approved", pendingRevision: false }, false), false);
+});
 
 test("accepts only bounded PNG and JPEG files", () => {
   assert.deepEqual(validateLogoFile(file()), { mediaType: "image/png", byteSize: 1024 });
