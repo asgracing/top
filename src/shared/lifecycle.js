@@ -17,3 +17,9 @@ export function createLifecycle() {
     get destroyed() { return destroyed; }
   };
 }
+
+export function bindPageHideCleanup(lifecycle, windowRef) {
+  lifecycle.listen(windowRef, "pagehide", event => {
+    if (!event.persisted) lifecycle.destroy();
+  });
+}

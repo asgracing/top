@@ -1,3 +1,11 @@
+import {
+  NEWS_READ_LEGACY_STORAGE_KEY,
+  NEWS_READ_STORAGE_KEY,
+  loadNewsReadState as loadSharedNewsReadState,
+  markNewsRead,
+  saveNewsReadState as saveSharedNewsReadState
+} from "../../news-read-state.js?v=20260813newsread1";
+
 const params = new URLSearchParams(window.location.search);
 
 function normalizeBaseUrl(value) {
@@ -20,7 +28,6 @@ const votesApiBase = "https://data.asgracing.ru/hourly-votes-api";
 const votesApiEndpoint = path => `${votesApiBase.replace(/\/+$/, "")}/${String(path || "").replace(/^\/+/, "")}`;
 const VOTE_STATE_STORAGE_KEY = "hourlyVoteStateByEventId";
 const VOTE_STATE_STORAGE_TTL_MS = 30 * 24 * 60 * 60 * 1000;
-const NEWS_READ_STORAGE_KEY = "asgReadNewsIds.v2";
 
 function getLegalUrls() {
   const fallbackBase =
@@ -373,22 +380,11 @@ function getNewsArticleHref(slug) {
 }
 
 function loadNewsReadState() {
-  try {
-    const rawValue = localStorage.getItem(NEWS_READ_STORAGE_KEY);
-    if (!rawValue) return {};
-    const parsed = JSON.parse(rawValue);
-    return parsed && typeof parsed === "object" ? parsed : {};
-  } catch {
-    return {};
-  }
+  return loadSharedNewsReadState(localStorage);
 }
 
 function saveNewsReadState(items) {
-  try {
-    localStorage.setItem(NEWS_READ_STORAGE_KEY, JSON.stringify(items || {}));
-  } catch {
-    // News read state is a local convenience feature.
-  }
+  saveSharedNewsReadState(localStorage, items);
 }
 
 function isNewsItemRead(item) {
@@ -398,12 +394,7 @@ function isNewsItemRead(item) {
 }
 
 function markNewsItemRead(item) {
-  const key = String(item?.id || item?.slug || "").trim();
-  if (!key) return;
-  const state = loadNewsReadState();
-  if (state[key]) return;
-  state[key] = Date.now();
-  saveNewsReadState(state);
+  markNewsRead(localStorage, item);
 }
 
 function normalizeNewsImageUrl(value) {
@@ -1991,7 +1982,7 @@ async function init() {
     if (event.key === VOTE_STATE_STORAGE_KEY) {
       syncVoteStateFromStorage();
     }
-    if (event.key === NEWS_READ_STORAGE_KEY) {
+    if (event.key === NEWS_READ_LEGACY_STORAGE_KEY || event.key === NEWS_READ_STORAGE_KEY) {
       renderNewsBell();
       renderNewsNotificationsModal();
     }

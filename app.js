@@ -13,6 +13,13 @@ import { HOME_LOADING_TEXT_IDS, applyHomeTableViewState } from "./src/pages/home
 import { createModalControllerFactory } from "./src/shared/modal-controller.js";
 import { parseTableNumber, sortTableRows } from "./src/shared/table-model.js";
 import { countUnreadNews, sortPublishedNews } from "./src/shared/news-feed-model.js";
+import {
+  NEWS_READ_LEGACY_STORAGE_KEY,
+  NEWS_READ_STORAGE_KEY,
+  loadNewsReadState as loadSharedNewsReadState,
+  markNewsRead,
+  saveNewsReadState as saveSharedNewsReadState
+} from "./news-read-state.js?v=20260813newsread1";
 import { createAuthHeaderController, safeAvatarUrl } from "./src/features/auth/header-auth.js?v=20260811invites1";
 import { applyRandomTrackBackground, normalizeTrackBackgroundCode, resolveTrackBackgroundFile } from "./src/features/server-status/track-background.js?v=20260726staticfallback1";
 
@@ -69,6 +76,7 @@ let jsonQueryCache = null;
 let tableRequestGuard = null;
 let statsStore = null;
 let appLifecycle = null;
+let bindPageHideCleanup = null;
 let renderStatsTableShell = null;
 let renderStatsTableHeaders = null;
 let renderStatsTableState = null;
@@ -179,7 +187,6 @@ const PAGE_SIZE = 10;
 const VOTER_ID_STORAGE_TTL_MS = 365 * 24 * 60 * 60 * 1000;
 const HOURLY_VOTE_STATE_STORAGE_KEY = "hourlyVoteStateByEventId";
 const HOURLY_VOTE_STATE_STORAGE_TTL_MS = 30 * 24 * 60 * 60 * 1000;
-const NEWS_READ_STORAGE_KEY = "asgReadNewsIds.v2";
 
 async function initializeAppStorage() {
   const { createStorage } = await storageModulePromise;
@@ -188,9 +195,6 @@ async function initializeAppStorage() {
   appStorage.migrateLegacy("backgroundVideoVolume", BG_VIDEO_VOLUME_STORAGE_KEY, value => clampBackgroundVideoVolume(Number(value) / 100));
   appStorage.migrateLegacy("backgroundVideoPlayback", BG_VIDEO_PLAYBACK_STORAGE_KEY, value => !["0", "false", "off", "no"].includes(String(value).trim().toLowerCase()));
   appStorage.migrateLegacy("topGuideSeen", TOP_GUIDE_STORAGE_KEY, value => value === "1");
-  appStorage.migrateLegacy("newsReadState", NEWS_READ_STORAGE_KEY, value => {
-    try { const parsed = JSON.parse(value); return parsed && typeof parsed === "object" ? parsed : undefined; } catch { return undefined; }
-  });
   appStorage.migrateLegacy("hourlyVoteState", HOURLY_VOTE_STATE_STORAGE_KEY, value => {
     try { const parsed = JSON.parse(value); return parsed?.items && typeof parsed.items === "object" ? normalizeHourlyVoteStateItems(parsed.items) : undefined; } catch { return undefined; }
   });
@@ -204,7 +208,7 @@ async function initializeQueryRuntime() {
 }
 
 async function initializeFeatureRuntime() {
-  const [{ createFeatureStore, createTableState, tablesReducer }, { createLifecycle }, { renderTableShell, renderSortableHeaders: renderHeaders, renderTableState }, { tableStateElement, trustedHtml, setTrustedHtml }] = await Promise.all([featureStoreModulePromise, lifecycleModulePromise, tableEngineModulePromise, safeDomModulePromise]);
+  const [{ createFeatureStore, createTableState, tablesReducer }, { createLifecycle, bindPageHideCleanup: bindCleanup }, { renderTableShell, renderSortableHeaders: renderHeaders, renderTableState }, { tableStateElement, trustedHtml, setTrustedHtml }] = await Promise.all([featureStoreModulePromise, lifecycleModulePromise, tableEngineModulePromise, safeDomModulePromise]);
   renderStatsTableShell = renderTableShell;
   renderStatsTableHeaders = renderHeaders;
   renderStatsTableState = renderTableState;
@@ -212,6 +216,7 @@ async function initializeFeatureRuntime() {
   replaceWithTextState = (target, kind, message) => target?.replaceChildren(createStatsTableStateElement({ kind, message }));
   mountTrustedMarkup = (target, markup) => setTrustedHtml(target, trustedHtml(markup));
   appLifecycle ||= createLifecycle();
+  bindPageHideCleanup ||= bindCleanup;
   if (statsStore) return;
   statsStore = createFeatureStore(createTableState(["leaderboard", "bestlaps", "safety"], PAGE_SIZE), tablesReducer);
   appLifecycle.add(statsStore.subscribe(state => {
@@ -5243,27 +5248,11 @@ function getRequestedNewsSlug() {
 }
 
 function loadNewsReadState() {
-  if (appStorage) return appStorage.get("newsReadState", {});
-  try {
-    const rawValue = localStorage.getItem(NEWS_READ_STORAGE_KEY);
-    if (!rawValue) return {};
-    const parsed = JSON.parse(rawValue);
-    return parsed && typeof parsed === "object" ? parsed : {};
-  } catch (error) {
-    return {};
-  }
+  return loadSharedNewsReadState(localStorage);
 }
 
 function saveNewsReadState(items) {
-  if (appStorage) {
-    appStorage.set("newsReadState", items || {});
-    return;
-  }
-  try {
-    localStorage.setItem(NEWS_READ_STORAGE_KEY, JSON.stringify(items || {}));
-  } catch (error) {
-    // News read state is a local convenience feature.
-  }
+  saveSharedNewsReadState(localStorage, items);
 }
 
 function isNewsItemRead(item) {
@@ -5273,12 +5262,7 @@ function isNewsItemRead(item) {
 }
 
 function markNewsItemRead(item) {
-  const key = String(item?.id || item?.slug || "").trim();
-  if (!key) return;
-  const state = loadNewsReadState();
-  if (state[key]) return;
-  state[key] = Date.now();
-  saveNewsReadState(state);
+  markNewsRead(localStorage, item);
 }
 
 function membershipInvitationKey(action) {
@@ -11132,12 +11116,12 @@ const pageOrchestrator = createPageOrchestrator({
 });
 
 function initializeWindowLifecycle() {
-  appLifecycle.listen(window, "pagehide", () => appLifecycle.destroy(), { once: true });
+  bindPageHideCleanup(appLifecycle, window);
   appLifecycle.listen(window, "storage", event => {
     if (event.key === HOURLY_VOTE_STATE_STORAGE_KEY || event.key === "asg.top.v1:hourlyVoteState") {
       syncHourlyVoteStateFromStorage();
     }
-    if (event.key === NEWS_READ_STORAGE_KEY || event.key === "asg.top.v1:newsReadState") {
+    if (event.key === NEWS_READ_LEGACY_STORAGE_KEY || event.key === NEWS_READ_STORAGE_KEY) {
       renderNewsBell();
       renderNewsNotificationsModal();
       if (PAGE_CONTEXT.page === "news") renderNewsPage();
