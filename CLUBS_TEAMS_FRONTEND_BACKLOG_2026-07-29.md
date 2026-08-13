@@ -22,7 +22,8 @@
 - [x] повторный клик не создаёт вторую `membership.resolve` в очереди;
 - [x] `action_not_pending` и `incompatible_membership` имеют понятные RU/EN сообщения;
 - [x] полный frontend verify: 258 тестов;
-- [ ] production canary с реальным приглашённым пилотом после доставки backend/auth.
+- [x] production canary с реальными пакетными приглашениями и принятием приглашения
+  после исправления backend/auth sync выполнен 11.08.2026.
 
 ## Срез F4c — логотипы (реализовано локально 11.08.2026)
 
@@ -35,10 +36,29 @@
 - [x] RU/EN и одноколоночная mobile-раскладка;
 - [x] unit/quality/performance verify: 258 тестов;
 - [ ] browser visual/accessibility pass в авторизованной сессии;
-- [ ] staging/production canary на ASG Racing после доставки auth/backend и включения asset flags.
+- [x] production canary на клубе ASG Racing и команде ASG Racing FORD POWER:
+  upload → quarantine/re-encode → Admin GUI moderation → approved publication.
 
 Публикация по-прежнему берёт только asset из approved revision. Проверка quarantine/re-encode,
 удаление метаданных и очистка неиспользуемых файлов остаются серверными обязанностями.
+Bounded terminal/orphan/stale-quarantine cleanup доставлен в production auth-контур;
+первый production dry-run завершён без кандидатов на удаление.
+
+## Production canary Discord-ролей — выполнен 11.08.2026
+
+- [x] первый canary ограничен профилем `drv_b466bb6eedd8`, затем расширен на
+  approved-состав ASG Racing и ASG Racing FORD POWER;
+- [x] существующая permissionless-роль ASG Racing привязана без создания дубликата;
+- [x] для команды создана одна permissionless-роль и назначена linked Discord-аккаунту;
+- [x] повторный reconcile сохранил тот же role ID и не создал дубликат;
+- [x] роль URL зарегистрирована как существующее исключение, но не назначена участнику
+  вне подтверждённого состава United Racing League;
+- [x] canary allowlist не позволяет worker снимать клубные/командные роли у остальных
+  пользователей во время обычной рейтинговой синхронизации;
+- [x] expanded canary: ASG Racing 11/11, Ford Power 2/2, роли существуют в одном
+  экземпляре, URL не назначена ASG-участникам, retry/backoff восстановился после rate limit;
+- [ ] глобальное включение для всех approved клубов и команд после периода наблюдения
+  и drift/retry-тестов; diagnostics/manual reconcile в Admin GUI уже работают.
 
 ## P0 / визуальный и UX backlog
 
@@ -303,3 +323,27 @@ Visual matrix F4a не выполнена: 01.08.2026 встроенная ср�
 - [ ] Stage 6V: staging auth queue → backend apply → actor-state round-trip;
 - [ ] F4c: безопасная загрузка и moderation receipt логотипа;
 - [ ] production navigation/sitemap/CSP и deploy — отдельное решение после staging gate.
+## Production Discord canary update — 11.08.2026
+
+- [x] Existing URL role enabled only for approved UNITED RACING LEAGUE membership.
+- [x] Independent Discord API verification: ASG Racing 11/11, Ford Power 2/2,
+  UNITED RACING LEAGUE 1/1.
+- [x] All three role mappings resolve to exactly one permissionless role; no
+  duplicate role names were created.
+- [x] Retry/backoff recovered from transient Discord network errors and the
+  production queue drained to zero.
+- [x] Manual drift test: removing the Ford Power role followed by an
+  entity-scoped reconcile restored the role to 2/2 approved linked members.
+- [x] Second team canary: Furry Femboys role created once with zero permissions,
+  assigned 3/3, and retained the same role ID after repeated reconcile.
+- [ ] Global enablement for every other approved club/team remains gated by a
+  separate rollout decision.
+## Global manager logo upload — production 13.08.2026
+
+- [x] Removed the frontend driver-ID and entity-slug image canary.
+- [x] Upload controls are available to every approved club head and team captain
+  when the existing mutation guards are satisfied.
+- [x] Members, pending entities, pending revisions, stale state and signed-out
+  users remain fail-closed.
+- [x] Production CDN serves the global-manager UI; full frontend verify passed
+  with 259/259 unit tests.
