@@ -169,7 +169,7 @@ const COPY = {
     navNews: "News", navRacing: "Racing", navLastRaces: "Last Races",
     navStats: "Stats", navCars: "Cars", navFunStats: "Fun Stats",
     navRating: "Rating", navBestLaps: "Best Laps", navSafety: "Safety Rating",
-    navBans: "Ban List", navCommunity: "Community", navAbout: "About Server",
+    navBans: "Ban List", navCommunity: "Community", navAbout: "About Server", navClubsTeams: "Clubs & Teams",
     footerText: "Statistics are generated from ACC Dedicated Server result files and published via GitHub Pages."
   },
   ru: {
@@ -319,7 +319,7 @@ const COPY = {
     navNews: "Новости", navRacing: "Гонки", navLastRaces: "Последние гонки",
     navStats: "Статистика", navCars: "Машины", navFunStats: "Забавная статистика",
     navRating: "Рейтинг", navBestLaps: "Лучшие круги", navSafety: "Рейтинг безопасности",
-    navBans: "Список банов", navCommunity: "Сообщество", navAbout: "О сервере",
+    navBans: "Список банов", navCommunity: "Сообщество", navAbout: "О сервере", navClubsTeams: "Клубы и команды",
     footerText: "Статистика формируется из файлов результатов ACC Dedicated Server и публикуется через GitHub Pages."
   }
 };

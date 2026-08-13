@@ -1,16 +1,10 @@
 export function createDriverPreviewView(dependencies) {
   const required = ["translate", "replaceWithTextState", "buildHeroTitle", "buildStatsMarkup", "buildHighlightsMarkup", "bindStats", "renderPortrait"];
-  if (!dependencies?.documentRef || required.some(name => typeof dependencies[name] !== "function")) {
-    throw new TypeError("Driver preview view requires complete dependencies");
-  }
+  if (!dependencies?.documentRef || required.some(name => typeof dependencies[name] !== "function")) throw new TypeError("Driver preview view requires complete dependencies");
   const { documentRef, translate, replaceWithTextState, buildHeroTitle, buildStatsMarkup, buildHighlightsMarkup, bindStats, renderPortrait } = dependencies;
 
   function render(state) {
-    const titleEl = documentRef.getElementById("driver-preview-title");
-    const statsEl = documentRef.getElementById("driver-preview-stats");
-    const highlightsEl = documentRef.getElementById("driver-preview-highlights");
-    const actionEl = documentRef.getElementById("driver-preview-link");
-    const actionRowEl = documentRef.getElementById("driver-preview-action-row");
+    const titleEl = documentRef.getElementById("driver-preview-title"), statsEl = documentRef.getElementById("driver-preview-stats"), highlightsEl = documentRef.getElementById("driver-preview-highlights"), actionEl = documentRef.getElementById("driver-preview-link"), actionRowEl = documentRef.getElementById("driver-preview-action-row");
     if (!titleEl || !statsEl || !highlightsEl || !actionEl || !actionRowEl) return false;
 
     if (!state) {
@@ -37,22 +31,15 @@ export function createDriverPreviewView(dependencies) {
       renderPortrait(profile, state.avatarUrl);
       titleEl.innerHTML = buildHeroTitle(profile);
       actionRowEl.replaceChildren?.();
-      const raceNumberEl = typeof titleEl.querySelector === "function"
-        ? titleEl.querySelector(".driver-race-number-pill")
-        : null;
-      if (raceNumberEl) actionRowEl.append?.(raceNumberEl);
-      actionRowEl.append?.(actionEl);
+      const findTitlePart = selector => typeof titleEl.querySelector === "function" ? titleEl.querySelector(selector) : null;
+      [findTitlePart(".driver-hero-meta-row"), findTitlePart(".driver-race-number-pill"), actionEl, findTitlePart(".driver-title-affiliations")].forEach(element => element && actionRowEl.append?.(element));
       statsEl.innerHTML = buildStatsMarkup(profile);
       highlightsEl.innerHTML = buildHighlightsMarkup(profile);
       bindStats(statsEl, profile);
     }
 
-    if (state.href) {
-      actionEl.href = state.href;
-      actionEl.hidden = false;
-    } else {
-      actionEl.hidden = true;
-    }
+    if (state.href) { actionEl.href = state.href; actionEl.hidden = false; }
+    else actionEl.hidden = true;
     return true;
   }
 

@@ -1,8 +1,4 @@
-function requireFunctions(dependencies, names) {
-  if (!dependencies || names.some(name => typeof dependencies[name] !== "function")) {
-    throw new TypeError("Driver summary view requires complete rendering dependencies");
-  }
-}
+function requireFunctions(dependencies,names){if(!dependencies||names.some(name=>typeof dependencies[name]!=="function"))throw new TypeError("Driver summary view requires complete rendering dependencies")}
 
 export function renderDriverHeroTitle(profile, rankInfo, eloSource, dependencies) {
   if (!profile) return "-";
@@ -16,11 +12,11 @@ export function renderDriverHeroTitle(profile, rankInfo, eloSource, dependencies
   return `
     <span class="driver-title-primary">
       <span class="driver-title-name">${escapeHtml(profile.driver || "-")}</span>
-      ${raceNumber ? `<span class="driver-race-number-pill" title="${escapeHtml(translate("driverRaceNumber"))}">#${escapeHtml(raceNumber)}</span>` : ""}
     </span>
     <span class="driver-hero-meta-row driver-hero-ratings">
       ${rankInfo ? `<span class="driver-rank-pill ${escapeHtml(rankInfo.rankClass)}" title="${escapeHtml(translate("driverRankingPosition"))}"><span class="driver-rank-label">${escapeHtml(translate("driverRankingShort"))}</span><span class="driver-rank-value">#${escapeHtml(rankInfo.rank)}</span>${renderTrendBadge(rankInfo.change, "championship_rank", { compact: true })}</span>` : ""}
       ${renderEloBadge(eloSource, { showCategoryName: true })}
+      ${raceNumber ? `<span class="driver-race-number-pill" title="${escapeHtml(translate("driverRaceNumber"))}">#${escapeHtml(raceNumber)}</span>` : ""}
     </span>
   `;
 }

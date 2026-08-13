@@ -18,6 +18,7 @@ test("renders Driver hero identity, ELO and rank", () => {
   assert.match(markup, /class="driver-title-primary"/);
   assert.match(markup, /class="[^"]*driver-hero-ratings/);
   assert.match(markup, /driver-race-number-pill[^>]*>#e:77/);
+  assert.match(markup, /ELO[\s\S]*driver-race-number-pill/);
   assert.match(markup, /ELO/);
   assert.match(markup, /e:t:driverRankingShort/);
   assert.match(markup, /#e:4/);

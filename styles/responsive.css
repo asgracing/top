@@ -825,13 +825,15 @@
 
   .driver-title-primary{display:block}
   .driver-title-name{display:block;white-space:normal}
+  #driver-page-name{grid-template-columns:minmax(0,1fr)}
+  #driver-page-name .driver-title-affiliations{grid-column:1;grid-row:3;margin-top:10px}
 
   .driver-preview-hero-mainline{display:grid;grid-template-columns:56px minmax(0,1fr);gap:10px;align-items:start}
   .driver-preview-hero-mainline .driver-preview-steam-portrait{position:static}
   .driver-preview-hero-mainline .driver-preview-hero-copy,#driver-preview-title{display:contents}
   #driver-preview-title .driver-title-primary{grid-column:2;grid-row:1;align-self:center}
-  #driver-preview-title .driver-hero-meta-row{grid-column:1/-1;grid-row:2;margin-top:8px}
-  .driver-preview-action-row{grid-column:1/-1;grid-row:3}
+  .driver-preview-action-row{grid-column:1/-1;grid-row:2;flex-wrap:wrap}
+  .driver-preview-action-row .driver-title-affiliations{flex:1 0 100%;width:auto;min-width:0;margin-left:0}
 
   .modal-card-driver-preview .driver-preview-stats-grid {
     grid-template-columns: repeat(2,minmax(0,1fr));

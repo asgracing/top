@@ -1,0 +1,24 @@
+<!doctype html>
+<html lang="ru">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <meta name="robots" content="noindex, follow" />
+  <title>Страница не найдена | ASG Racing</title>
+  <link rel="stylesheet" href="/styles/tokens.css" />
+  <link rel="stylesheet" href="/styles/base.css" />
+  <script>
+    if (/^\/top(?:\/|$)/.test(window.location.pathname)) {
+      const path = window.location.pathname.replace(/^\/top(?=\/|$)/, "") || "/";
+      window.location.replace(`${path}${window.location.search}${window.location.hash}`);
+    }
+  </script>
+</head>
+<body>
+  <main class="container" style="padding-block:4rem">
+    <h1>Страница не найдена</h1>
+    <p>Возможно, ссылка устарела. Перейдите на главную страницу ASG Racing.</p>
+    <p><a class="btn btn-primary" href="/">На главную</a></p>
+  </main>
+</body>
+</html>

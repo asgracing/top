@@ -20,20 +20,12 @@ export const bestlapsColumns = Object.freeze([
 ]);
 
 export const clubsTeamsColumns = Object.freeze([
-  { key: "position", type: "number", className: "rank-column" },
-  { key: "display_name", type: "string" },
-  { key: "short_name", type: "string" },
-  { key: "total_points", type: "number", className: "points-column" },
-  { key: "average_elo", type: "number", className: "elo-column" },
-  { key: "average_sr", type: "number", className: "sr-column" },
-  { key: "race_count", type: "number", className: "races-column" }
+  { key: "position", type: "number", className: "rank-column" }, { key: "logo", type: "string", className: "logo-column" }, { key: "display_name", type: "string" }, { key: "short_name", type: "string" },
+  { key: "total_points", type: "number", className: "points-column" }, { key: "average_elo", type: "number", className: "elo-column" }, { key: "average_sr", type: "number", className: "sr-column" }, { key: "race_count", type: "number", className: "races-column" }
 ]);
 
 export const HOME_STATS_TABS = Object.freeze({
-  leaderboard: { panelId: "championship", subtitleKey: "combinedStatsSubtitleLeaderboard" },
-  bestlaps: { panelId: "bestlaps", subtitleKey: "combinedStatsSubtitleBestlaps" },
-  safety: { panelId: "worst-safety", subtitleKey: "combinedStatsSubtitleSafety" },
-  clubsTeams: { panelId: "clubs-teams-stats", subtitleKey: "combinedStatsSubtitleClubsTeams" }
+  leaderboard:{panelId:"championship",subtitleKey:"combinedStatsSubtitleLeaderboard"},bestlaps:{panelId:"bestlaps",subtitleKey:"combinedStatsSubtitleBestlaps"},safety:{panelId:"worst-safety",subtitleKey:"combinedStatsSubtitleSafety"},clubsTeams:{panelId:"clubs-teams-stats",subtitleKey:"combinedStatsSubtitleClubsTeams"}
 });
 
 export function createHomeStatsState({ isHome = false } = {}) {

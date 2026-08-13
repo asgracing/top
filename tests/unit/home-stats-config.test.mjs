@@ -7,7 +7,7 @@ test("declares stable home statistics table columns", () => {
   assert.equal(leaderboardColumns.at(-2).sortable, false);
   assert.equal(leaderboardColumns.at(-1).sortable, false);
   assert.deepEqual(bestlapsColumns.map(column => column.key), ["rank", "driver", "elo", "safety_rating", "best_lap", "car_name", "session_type", "updated_at"]);
-  assert.deepEqual(clubsTeamsColumns.map(column => column.key), ["position", "display_name", "short_name", "total_points", "average_elo", "average_sr", "race_count"]);
+  assert.deepEqual(clubsTeamsColumns.map(column => column.key), ["position", "logo", "display_name", "short_name", "total_points", "average_elo", "average_sr", "race_count"]);
 });
 
 test("creates isolated home statistics state", () => {

@@ -7,7 +7,7 @@ const root = resolve(import.meta.dirname, "..");
 const dist = resolve(root, "dist");
 const previous = resolve(root, "dist.previous");
 const allowedRootFiles = new Set([
-  "CNAME", "app.js", "apple-touch-icon.png", "favicon-16x16.png", "favicon-32x32.png",
+  "404.html", "CNAME", "app.js", "apple-touch-icon.png", "favicon-16x16.png", "favicon-32x32.png",
   "favicon.ico", "index.html", "legal.css", "legal.js", "robots.txt", "sitemap.xml",
   "styles.css", "yandex_c76adf2164af15e6.html",
 ]);

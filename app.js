@@ -1015,7 +1015,9 @@ const translations = {
     clubsTeamsLoading: "Loading clubs and teams...",
     clubsTeamsUnavailable: "Club and team standings are temporarily unavailable.",
     clubsTeamsEmpty: "No clubs or teams are currently ranked.",
-    clubsTeamsCols: ["#", "Name", "Tag", "Points", "ELO", "SR", "Races"],
+    clubsTeamsCols: ["#", "Logo", "Name", "Tag", "Points", "ELO", "SR", "Races"],
+    driverClub: "Club",
+    driverTeam: "Team",
     combinedStatsSubtitleLeaderboard: "Row: quick view. Name: full profile.",
     statsHubTitle: "Driver Stats",
     statsHubTabsLabel: "Driver statistics tables",
@@ -1694,7 +1696,9 @@ const translations = {
     clubsTeamsLoading: "Загружаем клубы и команды...",
     clubsTeamsUnavailable: "Рейтинг клубов и команд временно недоступен.",
     clubsTeamsEmpty: "В рейтинге пока нет клубов или команд.",
-    clubsTeamsCols: ["№", "Название", "ТЭГ", "Очки", "ELO", "SR", "Гонки"],
+    clubsTeamsCols: ["№", "Лого", "Название", "ТЭГ", "Очки", "ELO", "SR", "Гонки"],
+    driverClub: "Клуб",
+    driverTeam: "Команда",
     combinedStatsSubtitleLeaderboard: "Строка: быстро. Имя: профиль.",
     statsHubTitle: "Статистика пилотов",
     statsHubTabsLabel: "Таблицы статистики пилотов",
@@ -7648,6 +7652,17 @@ function renderDriverAffiliation(row, entityType) {
   return `<a class="driver-link driver-link-subtle" href="${href}">${escapeHtml(affiliation.display_name)}</a>`;
 }
 
+function renderDriverHeroAffiliations(profile) {
+  const item = (type, label) => `<span class="driver-title-affiliation"><span class="driver-title-affiliation-label">${escapeHtml(t(label))}</span><span class="driver-title-affiliation-value">${renderDriverAffiliation(profile, type)}</span></span>`;
+  return `<span class="driver-title-affiliations">${item("club", "driverClub")}${item("team", "driverTeam")}</span>`;
+}
+
+function getClubsTeamsLogoUrl(row) {
+  if (!row?.asset) return "";
+  try { return new URL(row.asset.url, `${CLUBS_TEAMS_DATA_BASE_URL.replace(/\/+$/, "")}/`).href; }
+  catch { return ""; }
+}
+
 function formatClubsTeamsMetric(value, maximumFractionDigits = 0) {
   const numeric = Number(value);
   if (!Number.isFinite(numeric)) return "—";
@@ -7716,11 +7731,13 @@ function renderClubsTeamsHomeTable() {
 
   const rows = result.items.map(row => {
     const detail = clubsTeamsEntityDetails.get(row.public_id);
+    const logoUrl = getClubsTeamsLogoUrl(row);
     const href = row.entity_type === "club"
       ? `/clubs/?slug=${encodeURIComponent(row.slug)}`
       : `/teams/detail/?slug=${encodeURIComponent(row.slug)}`;
     return `<tr>
       <td class="rank-column numeric-cell"><span class="rank-badge rank-${escapeHtml(row.position)}">#${escapeHtml(row.position)}</span></td>
+      <td class="logo-column"><a class="clubs-teams-home-logo" href="${href}" aria-label="${escapeAttribute(row.display_name)}">${logoUrl ? `<img src="${escapeAttribute(logoUrl)}" alt="" loading="lazy" decoding="async">` : `<span aria-hidden="true">${escapeHtml(row.display_name.slice(0, 1).toUpperCase())}</span>`}</a></td>
       <td><a class="clubs-teams-home-name" href="${href}">${escapeHtml(row.display_name)}</a></td>
       <td><span class="clubs-teams-home-tag">${escapeHtml(detail?.short_name || "—")}</span></td>
       <td class="points-column numeric-cell">${escapeHtml(formatClubsTeamsMetric(row.total_points, 2))}</td>
@@ -9330,7 +9347,7 @@ function buildDriverHeroTitle(profile) {
   if (!profile) return "-";
   const rankInfo = getDriverRankInfo(profile);
   const eloSource = getEloInfo(profile) ? profile : findEloSource(profile.public_id, profile.player_id);
-  return renderDriverHeroTitleView(profile, rankInfo, eloSource, { escapeHtml, escapeAttribute, translate: t, renderEloBadge, renderTrendBadge });
+  return `${renderDriverHeroTitleView(profile, rankInfo, eloSource, { escapeHtml, escapeAttribute, translate: t, renderEloBadge, renderTrendBadge })}${renderDriverHeroAffiliations(profile)}`;
 }
 
 function getDriverSelectionKey(profile) {
@@ -10847,6 +10864,7 @@ async function initializeHomeData() {
     clubsTeamsEntityDetails = entities;
     renderLeaderboardTablePage();
     renderClubsTeamsHomeTable();
+    if (driverPreviewState) renderDriverPreviewModal();
   });
 
   const [hourlyAnnouncementResult, hourlyScheduleResult] = await hourlyDataPromise;
@@ -10864,17 +10882,26 @@ async function initializeHomeData() {
 
 async function initializeDriverPageData() {
   const publicId = getRequestedDriverId();
+  const affiliationsPromise = loadDriverAffiliations().catch((error) => {
+    console.warn("Failed to load driver club/team affiliations.", error);
+    return { affiliations: new Map(), entities: new Map() };
+  });
   [driverProfileData, driverSteamAvatarUrl] = await Promise.all([
     loadDriverProfile(publicId),
     loadDriverSteamAvatar(publicId).catch((error) => {
       console.warn("Failed to load the public Steam avatar.", error);
       return null;
-    }),
+    })
   ]);
   driverIndexData = [];
   racesData = [];
   topLoadState.driver = false;
   rerenderUI();
+  void affiliationsPromise.then(({ affiliations, entities }) => {
+    driverAffiliations = affiliations;
+    clubsTeamsEntityDetails = entities;
+    renderDriverPage();
+  });
 }
 
 async function initializeCarsPageData() {

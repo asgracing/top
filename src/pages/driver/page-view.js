@@ -1,19 +1,15 @@
 export function createDriverPageView(dependencies) {
   const required = ["translate", "renderLoadingMarkup", "setLoadingMarkup", "replaceWithTextState", "buildHeroTitle", "buildStatsMarkup", "buildHighlightsMarkup", "renderRaceHistory", "renderTrackStats", "renderPenaltyList", "bindStats", "setDocumentTitle"];
-  if (!dependencies?.documentRef || required.some(name => typeof dependencies[name] !== "function")) {
-    throw new TypeError("Driver page view requires complete dependencies");
-  }
+  if (!dependencies?.documentRef || required.some(name => typeof dependencies[name] !== "function")) throw new TypeError("Driver page view requires complete dependencies");
   const { documentRef, translate, renderLoadingMarkup, setLoadingMarkup, replaceWithTextState, buildHeroTitle, buildStatsMarkup, buildHighlightsMarkup, renderRaceHistory, renderTrackStats, renderPenaltyList, bindStats, setDocumentTitle } = dependencies;
 
   function render({ loading = false, profile = null } = {}) {
-    const nameEl = documentRef.getElementById("driver-page-name");
-    const subtitleEl = documentRef.getElementById("driver-page-subtitle");
-    const statsEl = documentRef.getElementById("driver-stat-cards");
-    const highlightsEl = documentRef.getElementById("driver-highlights");
+    const nameEl = documentRef.getElementById("driver-page-name"), subtitleEl = documentRef.getElementById("driver-page-subtitle"), statsEl = documentRef.getElementById("driver-stat-cards"), highlightsEl = documentRef.getElementById("driver-highlights");
     if (!nameEl || !subtitleEl || !statsEl || !highlightsEl) return false;
 
     if (loading) {
       nameEl.textContent = "-";
+      subtitleEl.hidden = false;
       subtitleEl.textContent = translate("driverPreviewSubtitle");
       statsEl.innerHTML = renderLoadingMarkup(translate("driverLoading"));
       highlightsEl.replaceChildren();
@@ -26,6 +22,7 @@ export function createDriverPageView(dependencies) {
 
     if (!profile) {
       nameEl.textContent = "-";
+      subtitleEl.hidden = false;
       subtitleEl.textContent = translate("driverNoData");
       replaceWithTextState(statsEl, "empty", translate("driverNoData"));
       highlightsEl.replaceChildren();
@@ -38,7 +35,8 @@ export function createDriverPageView(dependencies) {
 
     setDocumentTitle(`${profile.driver} | ${translate("pageTitleDriver")}`);
     nameEl.innerHTML = buildHeroTitle(profile);
-    subtitleEl.textContent = translate("driverPageSubtitle");
+    subtitleEl.textContent = "";
+    subtitleEl.hidden = true;
     statsEl.innerHTML = buildStatsMarkup(profile);
     highlightsEl.innerHTML = buildHighlightsMarkup(profile);
     renderRaceHistory();

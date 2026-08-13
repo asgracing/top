@@ -3,11 +3,14 @@ import assert from "node:assert/strict";
 import { createDriverPreviewView } from "../../src/pages/driver/preview-view.js";
 
 function fixture() {
-  const elements = Object.fromEntries(["driver-preview-title", "driver-preview-subtitle", "driver-preview-stats", "driver-preview-highlights", "driver-preview-link", "driver-preview-action-row"].map(id => [id, { textContent: "", innerHTML: "", hidden: false, href: "", replaceChildren() { this.innerHTML = ""; }, append() {} }]));
+  const moved = { meta: {}, raceNumber: {}, affiliations: {} };
+  const appended = [];
+  const elements = Object.fromEntries(["driver-preview-title", "driver-preview-subtitle", "driver-preview-stats", "driver-preview-highlights", "driver-preview-link", "driver-preview-action-row"].map(id => [id, { textContent: "", innerHTML: "", hidden: false, href: "", replaceChildren() { this.innerHTML = ""; }, append(value) { appended.push(value); } }]));
+  elements["driver-preview-title"].querySelector = selector => ({ ".driver-hero-meta-row": moved.meta, ".driver-race-number-pill": moved.raceNumber, ".driver-title-affiliations": moved.affiliations })[selector] || null;
   const calls = [];
   return {
     elements,
-    calls,
+    calls, moved, appended,
     dependencies: {
       documentRef: { getElementById: id => elements[id] },
       translate: key => `t:${key}`,
@@ -30,12 +33,13 @@ test("renders an idle Driver preview as loading and hides its action", () => {
 });
 
 test("renders a ready Driver preview and binds its controls", () => {
-  const { elements, calls, dependencies } = fixture();
+  const { elements, calls, moved, appended, dependencies } = fixture();
   const profile = { driver: "Alex" };
   createDriverPreviewView(dependencies).render({ profile, href: "/driver/alex", avatarUrl: "https://avatars.steamstatic.com/avatar.jpg" });
   assert.equal(elements["driver-preview-title"].innerHTML, "HERO");
   assert.equal(elements["driver-preview-stats"].innerHTML, "STATS");
   assert.equal(elements["driver-preview-link"].hidden, false);
+  assert.deepEqual(appended, [moved.meta, moved.raceNumber, elements["driver-preview-link"], moved.affiliations]);
   assert.ok(calls.some(call => call[0] === "portrait" && call[1] === profile && call[2] === "https://avatars.steamstatic.com/avatar.jpg"));
   assert.ok(calls.some(call => call[0] === "bind" && call[2] === profile));
 });

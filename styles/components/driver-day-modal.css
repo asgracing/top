@@ -44,13 +44,7 @@
   min-width: 0;
 }
 
-#driver-preview-title {
-  display: block;
-  width: 100%;
-  margin: 0;
-  font-size: clamp(2rem, 4vw, 3.1rem);
-  line-height: 1;
-}
+#driver-preview-title{display:block;width:100%;margin:0;font-size:clamp(2rem,4vw,3.1rem);line-height:1}
 
 #driver-preview-title .driver-title-name {
   overflow-wrap: anywhere;
@@ -63,10 +57,12 @@
 .driver-preview-action-row {
   display: flex;
   align-items: center;
-  flex-wrap: wrap;
+  flex-wrap: nowrap;
   gap: 6px;
   margin-top: 8px;
 }
+
+.driver-preview-action-row .driver-hero-meta-row{display:contents}.driver-preview-action-row .driver-title-affiliations{flex:1 0 280px;width:auto;min-width:280px;margin-left:auto}
 
 .modal-card-driver-preview .driver-rank-pill {
   min-height: 32px;

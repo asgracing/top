@@ -3,7 +3,7 @@ import assert from "node:assert/strict";
 import { createDriverPageView } from "../../src/pages/driver/page-view.js";
 
 function fixture() {
-  const elements = Object.fromEntries(["driver-page-name", "driver-page-subtitle", "driver-stat-cards", "driver-highlights"].map(id => [id, { textContent: "", innerHTML: "", replaceChildren() { this.innerHTML = ""; } }]));
+  const elements = Object.fromEntries(["driver-page-name", "driver-page-subtitle", "driver-stat-cards", "driver-highlights"].map(id => [id, { textContent: "", innerHTML: "", hidden: false, replaceChildren() { this.innerHTML = ""; } }]));
   const calls = [];
   const dependencies = {
     documentRef: { getElementById: id => elements[id] },
@@ -35,6 +35,7 @@ test("renders and binds a ready Driver profile", () => {
   const profile = { driver: "Alex", penalties: { reasons: { contact: 1 } } };
   createDriverPageView(dependencies).render({ profile });
   assert.equal(elements["driver-page-name"].innerHTML, "HERO");
+  assert.equal(elements["driver-page-subtitle"].hidden, true);
   assert.equal(elements["driver-stat-cards"].innerHTML, "STATS");
   assert.ok(calls.some(call => call[0] === "bind" && call[2] === profile));
   assert.ok(calls.some(call => call[0] === "title" && call[1] === "Alex | t:pageTitleDriver"));

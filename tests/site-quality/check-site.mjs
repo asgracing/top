@@ -99,11 +99,11 @@ for (const [page, [htmlPath, entrySrc]] of Object.entries(pageEntrypoints)) {
   if (!pageHtml.includes(heroHref)) failures.push(`${page} page is missing the shared hero foundation stylesheet`);
   const heroActionsHref = page === "home" ? "./styles/components/hero-actions.css?v=20260713r11heroactions1" : "../styles/components/hero-actions.css?v=20260713r11heroactions1";
   if (!pageHtml.includes(heroActionsHref)) failures.push(`${page} page is missing the shared hero actions stylesheet`);
-  const heroStatsHref = page === "home" ? "./styles/components/hero-stats.css?v=20260810driverpreview2" : "../styles/components/hero-stats.css?v=20260810driverpreview2";
+  const heroStatsHref = page === "home" ? "./styles/components/hero-stats.css?v=20260813driveraffiliations1" : "../styles/components/hero-stats.css?v=20260813driveraffiliations1";
   if (!pageHtml.includes(heroStatsHref)) failures.push(`${page} page is missing the shared hero stats stylesheet`);
   const serverStickyLayoutHref = page === "home" ? "./styles/components/server-sticky-layout.css?v=20260715r11serversticky1" : "../styles/components/server-sticky-layout.css?v=20260715r11serversticky1";
   if (!pageHtml.includes(serverStickyLayoutHref)) failures.push(`${page} page is missing the server sticky layout stylesheet`);
-  const sectionsHref = page === "home" ? "./styles/components/sections.css?v=20260811hometable2" : "../styles/components/sections.css?v=20260715r11sections1";
+  const sectionsHref = page === "home" ? "./styles/components/sections.css?v=20260813clublogos1" : "../styles/components/sections.css?v=20260813clublogos1";
   if (!pageHtml.includes(sectionsHref)) failures.push(`${page} page is missing the shared sections stylesheet`);
   const supportWidgetHref = page === "home" ? "./styles/components/support-widget.css?v=20260715r11support1" : "../styles/components/support-widget.css?v=20260715r11support1";
   if (!pageHtml.includes(supportWidgetHref)) failures.push(`${page} page is missing the support widget stylesheet`);
@@ -129,13 +129,13 @@ for (const [page, [htmlPath, entrySrc]] of Object.entries(pageEntrypoints)) {
   if (!pageHtml.includes(hourlyEventModalHref)) failures.push(`${page} page is missing the hourly event modal stylesheet`);
   for (const href of [
     page === "home"
-      ? "./styles/components/driver-day-modal.css?v=20260811affiliations1"
-      : "../styles/components/driver-day-modal.css?v=20260810driverpreview2",
+      ? "./styles/components/driver-day-modal.css?v=20260813driveraffiliations1"
+      : "../styles/components/driver-day-modal.css?v=20260813driveraffiliations1",
     `${page === "home" ? "./" : "../"}styles/components/footer.css?v=20260720topguide1`,
     `${page === "home" ? "./" : "../"}styles/utilities.css?v=20260715r12states1`,
     page === "home"
-      ? "./styles/responsive.css?v=20260810driverpreview2"
-      : "../styles/responsive.css?v=20260810driverpreview2",
+      ? "./styles/responsive.css?v=20260813driveraffiliations1"
+      : "../styles/responsive.css?v=20260813driveraffiliations1",
     `${page === "home" ? "./" : "../"}styles/components/responsive-accessibility.css?v=20260715r13a11y1`
   ]) if (!pageHtml.includes(href)) failures.push(`${page} page is missing R11 stylesheet ${href}`);
 }
