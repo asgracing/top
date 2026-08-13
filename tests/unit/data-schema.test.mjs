@@ -11,6 +11,10 @@ test("normalizes home table values", () => {
 });
 test("rejects an incompatible home array", () => assert.throws(() => normalizeHomePayload({ leaderboard: "broken" }), error => error instanceof SchemaError && error.schema === "home payload"));
 test("drops non-object table rows", () => assert.deepEqual(normalizeHomePayload({ leaderboard: [null, "bad"], bestlaps: [], safety: [] }).leaderboard, []));
+test("preserves warning strikes in safety rows", () => {
+  const data = normalizeHomePayload({ leaderboard: [], bestlaps: [], safety: [{ driver: "A", strikes: { active: 2, maximum: 3 } }] });
+  assert.deepEqual(data.safety[0].strikes, { active: 2, maximum: 3 });
+});
 test("normalizes manifest defaults", () => assert.deepEqual(normalizeManifest({ generated_at: "v1" }), { generated_at: "v1", version: "v1", home: "home.json", tables: {} }));
 test("normalizes paged metadata", () => {
   const page = normalizePagedTablePayload({ items: [{ driver: "A", rank: 1 }], page: "2", page_size: "10", total_items: "21" }, "leaderboard");

@@ -169,6 +169,11 @@
     font-weight: 800;
   }
 
+  .safety-warning-cell .driver-strikes {
+    justify-content: center;
+    cursor: help;
+  }
+
   .race-type-cell {
     width: 64px;
     text-align: center;

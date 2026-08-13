@@ -1309,7 +1309,7 @@ const translations = {
       "Team"
     ],
     bestlapsCols: ["#", "Driver", "ELO", "SR", "Best Lap", "Car", "Session", "Updated"],
-    safetyBaseCols: ["#", "Driver", "SR", "Category", "Races", "\u0394 SR", "Invalid Laps", "Auto Penalties", "Incidents"],
+    safetyBaseCols: ["#", "Driver", "SR", "Warnings", "Races", "\u0394 SR", "Invalid Laps", "Auto Penalties", "Incidents"],
     leaderboardSearchPlaceholder: "Search driver...",
     bestlapsSearchPlaceholder: "Search driver...",
     safetySearchPlaceholder: "Search driver...",
@@ -1921,7 +1921,7 @@ const translations = {
       "Команда"
     ],
     bestlapsCols: ["№", "Пилот", "ELO", "SR", "Лучший круг", "Машина", "Сессия", "Обновлено"],
-    safetyBaseCols: ["№", "Пилот", "SR", "Категория", "Гонки", "\u0394 SR", "Грязные круги", "Автоштрафы", "Инциденты"],
+    safetyBaseCols: ["№", "Пилот", "SR", "Предупреждения", "Гонки", "\u0394 SR", "Грязные круги", "Автоштрафы", "Инциденты"],
     leaderboardSearchPlaceholder: "Поиск пилота...",
     bestlapsSearchPlaceholder: "Поиск пилота...",
     safetySearchPlaceholder: "Поиск пилота...",
@@ -3412,7 +3412,7 @@ function getSafetyColumns() {
     { key: "rank", type: "number", label: t("safetyBaseCols")[0] },
     { key: "driver", type: "string", label: t("safetyBaseCols")[1] },
     { key: "safety_rating", type: "number", label: t("safetyBaseCols")[2] },
-    { key: "safety_category", type: "string", label: t("safetyBaseCols")[3] },
+    { key: "strikes.active", type: "number", label: t("safetyBaseCols")[3] },
     { key: "races_count", type: "number", label: t("safetyBaseCols")[4] },
     { key: "total_delta", type: "number", label: t("safetyBaseCols")[5] },
     { key: "total_invalid_laps", type: "number", label: t("safetyBaseCols")[6] },
@@ -8083,7 +8083,7 @@ function renderSafetyTablePage() {
         </div>
       </td>
       <td>${renderSafetyCell(row)}</td>
-      <td>${isDriverBanned(row) ? renderBannedBadge({ compact: true }) : escapeHtml(getSafetyCategoryName(normalizeSafetyCategory(row) || "C"))}</td>
+      <td class="safety-warning-cell">${renderDriverStrikes(row)}</td>
         <td>${escapeHtml(row.races_count ?? 0)}</td>
         <td>${escapeHtml(Number(row.total_delta ?? 0).toFixed(2))}</td>
         <td>${escapeHtml(row.total_invalid_laps ?? 0)}</td>
