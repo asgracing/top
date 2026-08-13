@@ -3785,7 +3785,6 @@ function ensureTwitchWidget() {
           <iframe
             id="twitch-widget-frame"
             title="ASG Racing Twitch stream"
-            allowfullscreen
           scrolling="no"
           allow="autoplay; fullscreen"
           src="about:blank"
@@ -4930,6 +4929,7 @@ function renderFunStatsListCard(titleKey, items, valueFormatter) {
 }
 
 let funStatsPageView = null;
+let funStatsPeriodController = null;
 function getFunStatsPageView() {
   funStatsPageView ||= createFunStatsPageView({
     documentRef: document,
@@ -10833,7 +10833,6 @@ function initializeSharedControls() {
   runInitStep("bindTopNavGroups", () => bindTopNavGroups());
   runInitStep("bindTopNavMoreMenu", () => bindTopNavMoreMenu());
   runInitStep("initNewsNotificationsModal", () => initNewsNotificationsModal());
-  runInitStep("bindFunStatsControls", () => bindFunStatsControls());
   runInitStep("bindSearchInputs", () => bindSearchInputs());
   runInitStep("bindStatsSortHandlers", () => bindStatsSortHandlers());
   runInitStep("bindCombinedStatsTabs", () => bindCombinedStatsTabs());
@@ -10860,6 +10859,8 @@ function initializePageControllers() {
     runInitStep("initRaceResultsModal", () => initRaceResultsModal());
   } else if (PAGE_CONTEXT.page === "community") {
     runInitStep("initCommunityLightbox", () => initCommunityLightbox());
+  } else if (PAGE_CONTEXT.page === "fun-stats") {
+    runInitStep("bindFunStatsControls", () => bindFunStatsControls());
   } else if (PAGE_CONTEXT.isHome) {
     homePage.mountControllers();
   }

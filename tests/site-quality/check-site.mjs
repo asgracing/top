@@ -42,6 +42,8 @@ const statsTabsControllerJs = await readFile(resolve(root, "src/pages/home/stats
 const authHeaderCss = await readFile(resolve(root, "styles/components/auth-header.css"), "utf8");
 const css = `${tokensCss}\n${baseCss}\n${siteBackgroundCss}\n${topNavigationCss}\n${languageSwitchCss}\n${buttonsCss}\n${heroFoundationCss}\n${heroActionsCss}\n${heroStatsCss}\n${serverStickyLayoutCss}\n${sectionsCss}\n${supportWidgetCss}\n${tableControlsCss}\n${topThreeCss}\n${tablesCss}\n${paginationCss}\n${modalsCss}\n${serverPlayersModalCss}\n${todayStatsModalCss}\n${activityControlsCss}\n${activitySummaryCss}\n${hourlyEventModalCss}\n${driverDayModalCss}\n${footerCss}\n${utilitiesCss}\n${legacyCss}\n${responsiveCss}\n${heroLayoutCss}\n${heroServerSummaryCss}\n${floatingWidgetsCss}\n${responsiveAccessibilityCss}`;
 const failures = [];
+const sharedControlsSource = js.slice(js.indexOf("function initializeSharedControls()"), js.indexOf("function initializeHomeControllers()"));
+const pageControllersSource = js.slice(js.indexOf("function initializePageControllers()"), js.indexOf("function applyHomeSiteData("));
 const translationSourceFor = lang => {
   const rootStart = js.indexOf("const translations = {");
   const initialStart = js.indexOf(`  ${lang}: {`, rootStart);
@@ -200,6 +202,7 @@ if (!pageFeatureIsLoaded("../pages/driver/stats-controller.js") || js.includes("
 if (!pageFeatureIsLoaded("../pages/driver/page-view.js") || js.includes("if (topLoadState.driver) {")) failures.push("Driver page DOM states must use the external view");
 if (!pageFeatureIsLoaded("../pages/driver/preview-view.js") || js.includes('document.getElementById("driver-preview-title")')) failures.push("Driver preview DOM states must use the external view");
 if (!pageFeatureIsLoaded("../pages/fun-stats/period-controller.js") || js.includes('button.addEventListener("click", () => {\n      const nextPeriod = button.dataset.funPeriod')) failures.push("Fun Stats period controls must use the external lifecycle controller");
+if (!js.includes("let funStatsPeriodController = null;") || sharedControlsSource.includes("bindFunStatsControls") || !pageControllersSource.includes('PAGE_CONTEXT.page === "fun-stats"') || !pageControllersSource.includes('runInitStep("bindFunStatsControls"')) failures.push("Fun Stats period controls must be declared and initialized only on the Fun Stats route");
 if (!pageFeatureIsLoaded("../pages/fun-stats/page-view.js") || js.includes("pointsBoss && renderFunStatsAwardCard")) failures.push("Fun Stats DOM rendering must use the external page view");
 if (js.includes("Array.isArray(profile?.average_pace_by_track)")) failures.push("Driver average-pace selection model must live outside app.js");
 if (!js.includes("function initializeSharedControls()") || !js.includes("function initializeHomeControllers()") || !js.includes("function initializePageControllers()")) failures.push("Application init must keep shared and page controller initialization separated");
@@ -292,5 +295,6 @@ const budgets = {
   innerHtmlWrite: [(js.match(/\.innerHTML\s*=/g) || []).length, 91],
 };
 for (const [name, [actual, maximum]] of Object.entries(budgets)) if (actual > maximum) failures.push(`${name} budget exceeded: ${actual} > ${maximum}`);
+if (/\ballowfullscreen\b/i.test(js) && /allow="[^"]*\bfullscreen\b[^"]*"/i.test(js)) failures.push("Embedded players must not declare redundant fullscreen permissions");
 if (failures.length) { console.error(failures.join("\n")); process.exitCode = 1; }
 else console.log(JSON.stringify({ ids: ids.length, dialogs: dialogTags.length, ...Object.fromEntries(Object.entries(budgets).map(([key, [value]]) => [key, value])) }, null, 2));
