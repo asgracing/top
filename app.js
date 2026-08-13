@@ -980,6 +980,11 @@ const translations = {
     serverTotalPlayersLabel: "Total players",
     serverTotalPlayersNote: "Servers",
     serversWidgetTitle: "Server status",
+    serverGroupHourly: "Special event server",
+    serverMetricTrack: "Track",
+    serverMetricAccess: "Access",
+    serverMetricPlayers: "Drivers",
+    serverMetricSession: "Session",
     serverMainLabel: "Main",
     serverSunsetLabel: "Sunset",
     serverHourlyLabel: "Hourly",
@@ -1661,6 +1666,11 @@ const translations = {
     serverTotalPlayersLabel: "Всего игроков",
     serverTotalPlayersNote: "Серверы",
     serversWidgetTitle: "Статус серверов",
+    serverGroupHourly: "Сервер спец. ивента",
+    serverMetricTrack: "Трасса",
+    serverMetricAccess: "Допуски",
+    serverMetricPlayers: "Пилоты",
+    serverMetricSession: "Сессия",
     serverMainLabel: "Главный",
     serverSunsetLabel: "Sunset",
     serverHourlyLabel: "Часовая",
@@ -8616,6 +8626,7 @@ function serverPlayersOnline(server) {
 
 function getServerSessionShortLabel(server) {
   if (!server || typeof server !== "object") return "";
+  if (!serverIsOnline(server)) return "";
   const explicit = server.session_label || server.session_status_label || server.session_short_label;
   if (explicit) return String(explicit).trim();
   const rawType = String(server.session_type || server.current_session || server.session || "").trim().toLowerCase();
@@ -8630,6 +8641,31 @@ function getServerSessionShortLabel(server) {
   const minutes = Number(rawMinutes);
   if (!short || !Number.isFinite(minutes)) return "";
   return `${short} ${Math.max(0, Math.round(minutes))}`;
+}
+
+function getServerSaRequirement(server) {
+  const rawValue = server?.sa_requirement ?? server?.safety_rating_requirement;
+  const value = Number(rawValue);
+  return Number.isFinite(value) && value >= 0 ? Math.round(value) : null;
+}
+
+function getServerSrRequirement(key, server) {
+  const value = Number(server?.sr_requirement ?? server?.internal_sr_requirement);
+  if (Number.isFinite(value) && value >= 0) return value;
+  if (key === "hourly") return 2.5;
+  if (key === "main") return 2.0;
+  return null;
+}
+
+function getServerStatusGroups(items) {
+  const hourly = items.filter(item => item.key === "hourly");
+  const primary = items.filter(item => item.key === "main" || item.key === "sunset");
+  const secondary = items.filter(item => !hourly.includes(item) && !primary.includes(item));
+  return [
+    { key: "hourly", label: t("serverGroupHourly"), items: hourly },
+    { key: "primary", label: "", items: primary },
+    { key: "secondary", label: "", items: secondary }
+  ].filter(group => group.items.length);
 }
 
 function appendServerSessionLabel(label, server) {
@@ -8697,35 +8733,58 @@ function renderServerStickyWidget(serverStatus = serverStatusData) {
     return;
   }
 
-  cardsEl.innerHTML = items.map(({ key, label, server }, index) => {
-    const status = String(server?.status || "offline").toLowerCase();
-    const players = serverPlayersOnline(server);
-    const sessionLabel = getServerSessionShortLabel(server);
-    const bgKey = getServerTrackBackgroundKey(key, label, server, index);
-    const bgUrl = getTrackBackgroundUrl(server?.track_code || server?.track)
-      || SERVER_CARD_BACKGROUNDS[bgKey]
-      || SERVER_CARD_BACKGROUNDS.main;
-    return `
-      <div
-        class="server-sticky-card server-sticky-card-${escapeHtml(bgKey)} server-sticky-card-clickable"
-        data-server-key="${escapeHtml(key)}"
-        role="button"
-        tabindex="0"
-        aria-haspopup="dialog"
-        aria-controls="server-players-modal"
-        style="--server-card-bg: url('${escapeHtml(bgUrl)}')"
-      >
-        <div class="server-sticky-card-overlay"></div>
-        <div class="server-sticky-card-content">
-          <div class="server-sticky-card-name">${escapeHtml(label)}</div>
-          <div class="server-sticky-card-status">
-            <span class="server-status ${escapeHtml(status === "online" ? "online" : status === "online_process_only" ? "degraded" : "offline")}">${escapeHtml(getLocalizedServerStatus(status, currentLang))}</span>
-            <span class="server-players">${escapeHtml(players)}${sessionLabel ? ` <span class="server-session-mini">(${escapeHtml(sessionLabel)})</span>` : ""}</span>
-          </div>
-        </div>
+  cardsEl.innerHTML = getServerStatusGroups(items).map(group => `
+    <section class="server-status-group server-status-group-${escapeHtml(group.key)}">
+      ${group.label ? `<div class="server-status-group-head">${escapeHtml(group.label)}</div>` : ""}
+      <div class="server-status-group-cards">
+        ${group.items.map(({ key, label, server }) => {
+          const rawStatus = String(server?.status || "offline").toLowerCase();
+          const online = serverIsOnline(server);
+          const players = serverPlayersOnline(server);
+          const sessionLabel = getServerSessionShortLabel(server);
+          const track = humanizeTrackName(server?.track_code || server?.track || "") || "—";
+          const saRequirement = getServerSaRequirement(server);
+          const srRequirement = getServerSrRequirement(key, server);
+          const statusClass = online ? (rawStatus === "online_process_only" ? "degraded" : "online") : "offline";
+          return `
+            <div
+              class="server-sticky-card server-sticky-card-clickable is-${escapeHtml(statusClass)}"
+              data-server-key="${escapeHtml(key)}"
+              role="button"
+              tabindex="0"
+              aria-haspopup="dialog"
+              aria-controls="server-players-modal"
+            >
+              <div class="server-sticky-card-content">
+                <div class="server-sticky-card-name">${escapeHtml(label)}</div>
+                <div class="server-sticky-card-metrics">
+                  <div class="server-sticky-metric server-sticky-metric-track">
+                    <span>${escapeHtml(t("serverMetricTrack"))}</span>
+                    <strong title="${escapeHtml(track)}">${escapeHtml(track)}</strong>
+                  </div>
+                  <div class="server-sticky-metric server-sticky-metric-access">
+                    <span>${escapeHtml(t("serverMetricAccess"))}</span>
+                    <strong>
+                      <b>SA ${saRequirement === null ? "—" : escapeHtml(String(saRequirement))}</b>
+                      <i aria-hidden="true">·</i><b class="server-sticky-sr">SR ${srRequirement === null ? "-" : escapeHtml(srRequirement.toFixed(1))}</b>
+                    </strong>
+                  </div>
+                  <div class="server-sticky-metric">
+                    <span>${escapeHtml(t("serverMetricPlayers"))}</span>
+                    <strong>${escapeHtml(String(players))}</strong>
+                  </div>
+                  <div class="server-sticky-metric server-sticky-metric-session">
+                    <span>${escapeHtml(t("serverMetricSession"))}</span>
+                    <strong>${sessionLabel ? escapeHtml(sessionLabel) : "—"}</strong>
+                  </div>
+                </div>
+              </div>
+            </div>
+          `;
+        }).join("")}
       </div>
-    `;
-  }).join("");
+    </section>
+  `).join("");
 }
 
 function renderServerStatusSummaryModal(titleEl, subtitleEl, listEl) {

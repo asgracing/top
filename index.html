@@ -62,7 +62,7 @@
   <link rel="stylesheet" href="./styles/components/hero-actions.css?v=20260713r11heroactions1" />
   <link rel="stylesheet" href="./styles/components/hero-stats.css?v=20260813driveraffiliations1" />
   <link rel="stylesheet" href="./styles/components/clubs-teams-metrics.css?v=20260811clubsmetrics2" />
-  <link rel="stylesheet" href="./styles/components/server-sticky-layout.css?v=20260715r11serversticky1" />
+  <link rel="stylesheet" href="./styles/components/server-sticky-layout.css?v=20260813serverstatus1" />
   <link rel="stylesheet" href="./styles/components/sections.css?v=20260813clublogos1" />
   <link rel="stylesheet" href="./styles/components/support-widget.css?v=20260715r11support1" />
   <link rel="stylesheet" href="./styles/components/table-controls.css?v=20260715r11tablecontrols1" />
@@ -503,27 +503,7 @@
       </div>
 
       <div class="server-sticky-cards">
-        <div class="server-sticky-card server-sticky-card-main server-sticky-card-clickable" id="server-card-main" role="button" tabindex="0" aria-haspopup="dialog" aria-controls="server-players-modal">
-          <div class="server-sticky-card-overlay"></div>
-          <div class="server-sticky-card-content">
-            <div class="server-sticky-card-name" data-i18n="serverMainLabel">Main</div>
-            <div class="server-sticky-card-status">
-              <span class="server-status" id="serverMainStatusValue">—</span>
-              <span class="server-players" id="serverMainPlayersValue">—</span>
-            </div>
-          </div>
-        </div>
-
-        <div class="server-sticky-card server-sticky-card-sunset" id="server-card-sunset">
-          <div class="server-sticky-card-overlay"></div>
-          <div class="server-sticky-card-content">
-            <div class="server-sticky-card-name" data-i18n="serverHourlyLabel">Hourly</div>
-            <div class="server-sticky-card-status">
-              <span class="server-status" id="serverSunsetStatusValue">—</span>
-              <span class="server-players" id="serverSunsetPlayersValue">—</span>
-            </div>
-          </div>
-        </div>
+        <div class="loading" role="status" aria-live="polite" data-i18n="loading">Loading...</div>
       </div>
     </aside>
 
@@ -1239,7 +1219,7 @@
   </div>
 
   <script src="./legal.js" defer></script>
-  <script type="module" src="./src/entrypoints/home.js?v=20260811clubraces1"></script>
+  <script type="module" src="./src/entrypoints/home.js?v=20260813serverstatus2"></script>
 </body>
 </html>
 

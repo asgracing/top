@@ -4,7 +4,6 @@
     transition: opacity 0.18s ease, visibility 0.18s ease, transform 0.18s ease;
   }
 
-  .server-sticky-widget,
   .server-sticky-cards {
     border: 0;
     background: transparent;
