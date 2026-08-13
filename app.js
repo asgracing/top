@@ -7737,7 +7737,7 @@ function renderClubsTeamsHomeTable() {
       : `/teams/detail/?slug=${encodeURIComponent(row.slug)}`;
     return `<tr>
       <td class="rank-column numeric-cell"><span class="rank-badge rank-${escapeHtml(row.position)}">#${escapeHtml(row.position)}</span></td>
-      <td class="logo-column"><a class="clubs-teams-home-logo" href="${href}" aria-label="${escapeAttribute(row.display_name)}">${logoUrl ? `<img src="${escapeAttribute(logoUrl)}" alt="" loading="lazy" decoding="async">` : `<span aria-hidden="true">${escapeHtml(row.display_name.slice(0, 1).toUpperCase())}</span>`}</a></td>
+      <td class="logo-column"><a class="clubs-teams-home-logo" href="${href}" aria-label="${escapeAttribute(row.display_name)}">${logoUrl ? `<img src="${escapeHtml(logoUrl)}" alt="" loading="lazy" decoding="async"><span class="clubs-teams-home-logo-fallback" aria-hidden="true" hidden>${escapeHtml(row.display_name.slice(0, 1).toUpperCase())}</span>` : `<span class="clubs-teams-home-logo-fallback" aria-hidden="true">${escapeHtml(row.display_name.slice(0, 1).toUpperCase())}</span>`}</a></td>
       <td><a class="clubs-teams-home-name" href="${href}">${escapeHtml(row.display_name)}</a></td>
       <td><span class="clubs-teams-home-tag">${escapeHtml(detail?.short_name || "—")}</span></td>
       <td class="points-column numeric-cell">${escapeHtml(formatClubsTeamsMetric(row.total_points, 2))}</td>
@@ -7752,6 +7752,15 @@ function renderClubsTeamsHomeTable() {
     headerHtml: renderClubsTeamsHomeHeaders(),
     rowsHtml: rows
   }));
+  tableEl.querySelectorAll(".clubs-teams-home-logo img").forEach(image => {
+    const showFallback = () => {
+      image.hidden = true;
+      const fallback = image.nextElementSibling;
+      if (fallback?.classList.contains("clubs-teams-home-logo-fallback")) fallback.hidden = false;
+    };
+    image.addEventListener("error", showFallback, { once: true });
+    if (image.complete && image.naturalWidth === 0) showFallback();
+  });
   renderPagination(
     "clubs-teams-home-pagination",
     "clubs-teams-home-pagination-info",

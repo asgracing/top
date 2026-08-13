@@ -161,6 +161,7 @@ if (/<th[^>]*\brole="button"/i.test(html) || /<th[^>]*\brole=["']button["']/i.te
 if (!css.includes(".table-sort-button:focus-visible")) failures.push("Sortable table buttons are missing a visible focus style");
 if (!css.includes("@media (pointer: coarse)")) failures.push("Coarse-pointer touch targets are missing");
 if (!js.includes('readPageContext(document)')) failures.push("Legacy application is missing the explicit page context");
+if (js.includes('src="${escapeAttribute(logoUrl)}"') || !js.includes("clubs-teams-home-logo-fallback")) failures.push("Home club/team logos must preserve absolute URLs and expose an image-error fallback");
 if (!js.includes("await loadPageFeatures(PAGE_CONTEXT.page)") || /from "\.\/src\/pages\/(?:bans|cars|community|driver|races)\//.test(js)) failures.push("Child page features must be loaded only for the active route");
 if (!pageFeatureIsLoaded("../pages/fun-stats/aggregation-model.js") || !js.includes("aggregateFunStatsFallback({") || js.includes("const driverMap = new Map()")) failures.push("Fun Stats fallback aggregation must use only its route-loaded model");
 if (!pageFeatureIsLoaded("../pages/fun-stats/index.js") || !js.includes("const funStatsPage = IS_FUN_STATS_PAGE ? createFunStatsPage({")) failures.push("Fun Stats lifecycle must use its route-loaded page module");
