@@ -40,8 +40,17 @@ const [html, tokensCss, baseCss, siteBackgroundCss, topNavigationCss, languageSw
 ]);
 const statsTabsControllerJs = await readFile(resolve(root, "src/pages/home/stats-tabs-controller.js"), "utf8");
 const authHeaderCss = await readFile(resolve(root, "styles/components/auth-header.css"), "utf8");
+const [driverAccountCss, accountHtml, accountSettingsHtml] = await Promise.all([
+  readFile(resolve(root, "styles/components/driver-account.css"), "utf8"),
+  readFile(resolve(root, "account/index.html"), "utf8"),
+  readFile(resolve(root, "account/settings/index.html"), "utf8")
+]);
 const css = `${tokensCss}\n${baseCss}\n${siteBackgroundCss}\n${topNavigationCss}\n${languageSwitchCss}\n${buttonsCss}\n${heroFoundationCss}\n${heroActionsCss}\n${heroStatsCss}\n${serverStickyLayoutCss}\n${sectionsCss}\n${supportWidgetCss}\n${tableControlsCss}\n${topThreeCss}\n${tablesCss}\n${paginationCss}\n${modalsCss}\n${serverPlayersModalCss}\n${todayStatsModalCss}\n${activityControlsCss}\n${activitySummaryCss}\n${hourlyEventModalCss}\n${driverDayModalCss}\n${footerCss}\n${utilitiesCss}\n${legacyCss}\n${responsiveCss}\n${heroLayoutCss}\n${heroServerSummaryCss}\n${floatingWidgetsCss}\n${responsiveAccessibilityCss}`;
 const failures = [];
+if (!/#account-site-header\s*\{[^}]*z-index:\s*var\(--layer-nav\)/s.test(driverAccountCss)) failures.push("Account header must stay above account content so its dropdowns remain visible");
+for (const [page, source] of [["account", accountHtml], ["account settings", accountSettingsHtml]]) {
+  if (!source.includes("driver-account.css?v=20260813accountdropdown1")) failures.push(`${page} page is missing the account dropdown stacking fix`);
+}
 const sharedControlsSource = js.slice(js.indexOf("function initializeSharedControls()"), js.indexOf("function initializeHomeControllers()"));
 const pageControllersSource = js.slice(js.indexOf("function initializePageControllers()"), js.indexOf("function applyHomeSiteData("));
 const translationSourceFor = lang => {

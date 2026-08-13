@@ -5,7 +5,11 @@
     flex-direction: column;
   }
 
-  #account-site-header,
+  #account-site-header {
+    position: relative;
+    z-index: var(--layer-nav);
+  }
+
   #account-site-footer {
     position: relative;
     z-index: var(--layer-content);
