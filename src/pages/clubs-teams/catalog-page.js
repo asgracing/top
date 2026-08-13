@@ -129,6 +129,17 @@ export function countLabel(lang, type, value) {
   return `${number(count)} ${form}`;
 }
 
+function setupTabKeyboard(buttons) {
+  buttons.forEach((button, index) => button.addEventListener("keydown", event => {
+      const step = { ArrowLeft: -1, ArrowRight: 1 }[event.key];
+      if (!step) return;
+      event.preventDefault();
+      const target = buttons[(index + step + buttons.length) % buttons.length];
+      target.focus();
+      target.click();
+  }));
+}
+
 function formatDate(value, lang) {
   const date = new Date(value);
   if (Number.isNaN(date.getTime())) return value;
@@ -192,6 +203,7 @@ export function createCatalogPage({
   const client = createHttpClient({ fetchImpl, defaultTimeoutMs: 8000 });
   const grid = documentRef.getElementById("clubs-teams-grid");
   const status = documentRef.getElementById("clubs-teams-status");
+  const results = documentRef.getElementById("clubs-teams-results");
   const search = documentRef.getElementById("clubs-teams-search");
   let loadSequence = 0;
 
@@ -207,6 +219,8 @@ export function createCatalogPage({
       const active = button.dataset.catalogType === state.activeType;
       button.classList.toggle("is-active", active);
       button.setAttribute("aria-selected", String(active));
+      button.tabIndex = active ? 0 : -1;
+      if (active && results) results.setAttribute("aria-labelledby", button.id);
     });
     documentRef.querySelectorAll("[data-rating-context]").forEach(button => {
       const active = button.dataset.ratingContext === state.activeContext;
@@ -329,7 +343,8 @@ export function createCatalogPage({
     }
   };
 
-  documentRef.querySelectorAll("[data-catalog-type]").forEach(button => {
+  const catalogButtons = [...documentRef.querySelectorAll("[data-catalog-type]")];
+  catalogButtons.forEach(button => {
     button.addEventListener("click", () => {
       state.activeType = button.dataset.catalogType;
       const url = new URL(windowRef.location.href);
@@ -350,6 +365,7 @@ export function createCatalogPage({
       load();
     });
   });
+  setupTabKeyboard(catalogButtons);
   search.addEventListener("input", () => {
     state.query = search.value;
     render();
@@ -359,7 +375,6 @@ export function createCatalogPage({
       try {
         windowRef.localStorage.setItem("asgLang", button.dataset.lang);
       } catch {
-        // Reload still applies the current page default.
       }
       windowRef.location.reload();
     });

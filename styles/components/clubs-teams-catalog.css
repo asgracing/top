@@ -349,4 +349,18 @@
       letter-spacing: -0.03em;
     }
   }
+
+  @media (prefers-reduced-motion: reduce) {
+    .clubs-teams-tab,
+    .clubs-teams-context,
+    .clubs-teams-card {
+      scroll-behavior: auto;
+      transition: none;
+    }
+
+    .clubs-teams-card:hover,
+    .clubs-teams-card:focus-visible {
+      transform: none;
+    }
+  }
 }

@@ -18,7 +18,7 @@
   <link rel="stylesheet" href="../styles/components/footer.css">
   <link rel="stylesheet" href="../styles/responsive.css">
   <link rel="stylesheet" href="../styles/components/responsive-accessibility.css">
-  <link rel="stylesheet" href="../styles/components/clubs-teams-catalog.css?v=20260811clubsui3">
+  <link rel="stylesheet" href="../styles/components/clubs-teams-catalog.css?v=20260813clubsa11y1">
   <link rel="stylesheet" href="../styles/components/clubs-teams-rating.css?v=20260810clubsui1">
   <link rel="stylesheet" href="../styles/components/clubs-teams-metrics.css?v=20260811clubsmetrics2">
 </head>
@@ -85,16 +85,18 @@
       </div>
       <div class="clubs-teams-controls">
         <div class="clubs-teams-tabs" role="tablist" aria-label="Catalog type">
-          <button class="clubs-teams-tab is-active" type="button" role="tab" aria-selected="true" data-catalog-type="club" data-clubs-copy="clubs">Clubs</button>
-          <button class="clubs-teams-tab" type="button" role="tab" aria-selected="false" data-catalog-type="team" data-clubs-copy="teams">Teams</button>
+          <button id="clubs-teams-tab-clubs" class="clubs-teams-tab is-active" type="button" role="tab" aria-selected="true" aria-controls="clubs-teams-results" tabindex="0" data-catalog-type="club" data-clubs-copy="clubs">Clubs</button>
+          <button id="clubs-teams-tab-teams" class="clubs-teams-tab" type="button" role="tab" aria-selected="false" aria-controls="clubs-teams-results" tabindex="-1" data-catalog-type="team" data-clubs-copy="teams">Teams</button>
         </div>
         <label class="clubs-teams-search">
           <span class="sr-only" data-clubs-copy="search">Search by name</span>
           <input id="clubs-teams-search" type="search" autocomplete="off" maxlength="100" placeholder="Search by name">
         </label>
       </div>
-      <div id="clubs-teams-status"></div>
-      <div class="clubs-teams-grid" id="clubs-teams-grid"></div>
+      <div id="clubs-teams-results" role="tabpanel" aria-labelledby="clubs-teams-tab-clubs" tabindex="0">
+        <div id="clubs-teams-status"></div>
+        <div class="clubs-teams-grid" id="clubs-teams-grid"></div>
+      </div>
     </section>
   </main>
 
@@ -113,6 +115,6 @@
       </div>
     </div>
   </footer>
-  <script type="module" src="./app.js?v=20260811clubsmetrics1"></script>
+  <script type="module" src="./app.js?v=20260813clubsa11y1"></script>
 </body>
 </html>
