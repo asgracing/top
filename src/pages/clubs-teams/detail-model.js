@@ -111,7 +111,9 @@ function roster(value) {
     return Object.freeze({
       public_id: publicId,
       display_name: text(row.display_name, `detail.roster[${index}].display_name`, { max: 200 }),
-      role
+      role,
+      elo: nullableNumber(row.elo ?? null, `detail.roster[${index}].elo`),
+      safety_rating: nullableNumber(row.safety_rating ?? null, `detail.roster[${index}].safety_rating`)
     });
   }));
 }

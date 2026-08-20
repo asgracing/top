@@ -38,7 +38,16 @@
   .clubs-teams-roster-avatar-image { position: absolute; inset: 0; width: 100%; height: 100%; border-radius: inherit; object-fit: cover; opacity: 0; transition: opacity var(--duration-fast) var(--ease-standard); }
   .clubs-teams-roster-avatar.has-image .clubs-teams-roster-avatar-image { opacity: 1; }
   .clubs-teams-roster-name { overflow: hidden; font-weight: 850; text-overflow: ellipsis; white-space: nowrap; }
+  .clubs-teams-roster-meta { display: flex; min-width: 0; align-items: center; justify-content: space-between; gap: 8px; }
   .clubs-teams-roster-role { color: var(--muted); font-size: .75rem; }
+  .clubs-teams-roster-ratings { display: inline-flex; min-height: 22px; align-items: center; justify-content: flex-end; gap: 6px; }
+  .clubs-teams-roster-rating { display: inline-flex; overflow: hidden; min-height: 22px; align-items: stretch; border: 1px solid rgba(255,255,255,.16); border-radius: 999px; background: rgba(255,255,255,.06); color: var(--text); font-size: .68rem; font-weight: 950; line-height: 1; white-space: nowrap; box-shadow: inset 0 1px 0 rgba(255,255,255,.08); }
+  .clubs-teams-roster-rating[class*="elo-cat-"] { border-color: var(--elo-border); background: var(--elo-bg); color: var(--elo-fg); }
+  .clubs-teams-roster-rating[class*="sr-cat-"] { border-color: var(--sr-border); background: var(--sr-bg); color: var(--sr-fg); }
+  .clubs-teams-roster-rating-rank,
+  .clubs-teams-roster-rating-value { display: inline-flex; align-items: center; justify-content: center; padding: 0 7px; }
+  .clubs-teams-roster-rating-rank { border-right: 1px solid rgba(0,0,0,.14); background: rgba(255,255,255,.18); }
+  .clubs-teams-roster-rating-value { padding-left: 6px; }
   .clubs-teams-related-grid { display: grid; gap: 10px; }
   .clubs-teams-related-card { display: flex; align-items: center; justify-content: space-between; gap: 12px; padding: 14px; border: 1px solid rgba(255,255,255,.08); border-radius: 14px; color: var(--text); text-decoration: none; background: rgba(255,255,255,.035); transition: border-color .15s ease, transform .15s ease; }
   .clubs-teams-related-card span { color: var(--muted); font-size: .75rem; }
@@ -99,6 +108,7 @@
     .clubs-teams-detail-section-head { align-items: flex-start; flex-direction: column; }
     .clubs-teams-detail-metrics { grid-template-columns: repeat(2, minmax(0,1fr)); }
     .clubs-teams-roster-grid { grid-template-columns: 1fr; }
+    .clubs-teams-roster-meta { flex-wrap: wrap; }
     .clubs-teams-detail-actions { display: grid; grid-template-columns: 1fr; }
     .clubs-teams-detail-actions .btn { width: 100%; }
     .clubs-teams-races-table-wrap { overflow: visible; border: 0; background: transparent; }

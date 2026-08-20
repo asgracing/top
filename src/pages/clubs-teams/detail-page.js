@@ -309,6 +309,19 @@ export async function loadRosterAvatarUrl({ client, publicId, authBaseUrl = AUTH
   return rosterAvatarCache.get(normalizedId);
 }
 
+function rosterBadge(documentRef, type, value) {
+  if (!Number.isFinite(value)) return null;
+  const category = type === "elo" ? eloCategoryId(value) : srCategory(value);
+  const formatted = type === "elo" ? String(Math.round(value)) : value.toFixed(2);
+  return element(documentRef, "span", {
+    className: `clubs-teams-roster-rating ${type}-cat-${category}`,
+    attrs: { "aria-label": `${type.toUpperCase()}: ${formatted}` }
+  }, [
+    element(documentRef, "span", { className: "clubs-teams-roster-rating-rank", text: type === "elo" ? `C${category}` : category }),
+    element(documentRef, "span", { className: "clubs-teams-roster-rating-value", text: formatted })
+  ]);
+}
+
 async function hydrateRosterAvatars({ documentRef, client, targets }) {
   const queue = targets.slice(0, ROSTER_AVATAR_LIMIT);
   let nextIndex = 0;
@@ -418,13 +431,17 @@ function renderProfile({ documentRef, lang, siteBase, entityType, result, client
       text: member.display_name.slice(0, 2).toLocaleUpperCase()
     });
     avatarTargets.push({ node: avatar, publicId: member.public_id });
+    const badges = [rosterBadge(documentRef, "elo", member.elo), rosterBadge(documentRef, "sr", member.safety_rating)].filter(Boolean);
     return element(documentRef, "a", {
       className: "clubs-teams-roster-card",
       attrs: { href: `${siteBase}driver/?id=${encodeURIComponent(member.public_id)}` }
     }, [
       avatar,
       element(documentRef, "span", { className: "clubs-teams-roster-name", text: member.display_name }),
-      element(documentRef, "span", { className: "clubs-teams-roster-role", text: member.role === "member" ? copy(lang, "member") : copy(lang, "leader") })
+      element(documentRef, "span", { className: "clubs-teams-roster-meta" }, [
+        element(documentRef, "span", { className: "clubs-teams-roster-role", text: member.role === "member" ? copy(lang, "member") : copy(lang, "leader") }),
+        badges.length ? element(documentRef, "span", { className: "clubs-teams-roster-ratings" }, badges) : null
+      ])
     ]);
   }) : [element(documentRef, "p", { className: "clubs-teams-detail-empty", text: copy(lang, "noRoster") })];
   const rosterPanel = element(documentRef, "section", { className: "clubs-teams-detail-panel", attrs: { "aria-labelledby": "detail-roster-title" } }, [

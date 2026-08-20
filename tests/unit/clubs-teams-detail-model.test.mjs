@@ -36,7 +36,7 @@ function detail(overrides = {}) {
       members_count: 2
     },
     roster: [
-      { public_id: "driver-public-1", display_name: "Driver One", role: "head" },
+      { public_id: "driver-public-1", display_name: "Driver One", role: "head", elo: 1101, safety_rating: 9.99 },
       { public_id: "driver-public-2", display_name: "Driver Two", role: "member" }
     ],
     club: null,
@@ -81,6 +81,9 @@ test("validates a complete approved detail bound to the active rating run", () =
   const result = validateEntityDetail(detail(), { entityType: "club", slug: "asg-racing", ratingRunId: runId });
   assert.equal(result.rating.position, 1);
   assert.equal(result.roster[0].role, "head");
+  assert.equal(result.roster[0].elo, 1101);
+  assert.equal(result.roster[0].safety_rating, 9.99);
+  assert.equal(result.roster[1].elo, null);
   assert.equal(result.teams[0].slug, "asg-factory");
   assert.equal(result.recent_races[0].track_code, "monza");
 });
