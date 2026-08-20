@@ -4,6 +4,142 @@
     transition: opacity 0.18s ease, visibility 0.18s ease, transform 0.18s ease;
   }
 
+  .widget-collapse-toggle {
+    position: absolute;
+    top: 8px;
+    right: 8px;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 28px;
+    height: 28px;
+    padding: 0;
+    border: 1px solid rgba(255, 180, 104, 0.42);
+    border-radius: 10px;
+    background: rgba(8, 12, 18, 0.72);
+    color: rgb(255 212 166);
+    box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.08), 0 8px 18px rgba(0, 0, 0, 0.22);
+    cursor: pointer;
+    font: inherit;
+    transition: border-color 0.18s ease, background 0.18s ease, color 0.18s ease, transform 0.18s ease;
+  }
+
+  .widget-collapse-toggle:hover,
+  .widget-collapse-toggle:focus-visible {
+    border-color: rgba(255, 180, 104, 0.82);
+    background: rgba(255, 123, 46, 0.2);
+    color: rgb(255 246 236);
+  }
+
+  .widget-collapse-icon {
+    font-size: 1.15rem;
+    font-weight: 800;
+    line-height: 1;
+  }
+
+  .widget-collapse-label {
+    display: none;
+  }
+
+  .server-sticky-widget > .widget-collapsible-content {
+    display: grid;
+    min-height: 0;
+    gap: 7px;
+  }
+
+  .widget-collapsible-content[hidden] {
+    display: none;
+  }
+
+  .server-sticky-widget:not(.is-collapsed) .server-sticky-head {
+    padding-right: 34px;
+  }
+
+  .donation-alerts-widget:not(.is-collapsed) .donation-alerts-head {
+    padding-right: 34px;
+  }
+
+  .collapsible-widget.is-collapsed .widget-collapse-toggle {
+    position: static;
+    width: 100%;
+    height: 100%;
+    min-height: 116px;
+    flex-direction: column;
+    gap: 8px;
+    padding: 10px 7px;
+    border-radius: 14px;
+    background:
+      linear-gradient(180deg, rgba(255, 137, 55, 0.24), rgba(17, 21, 29, 0.94)),
+      rgba(10, 14, 20, 0.92);
+    box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.1), 0 14px 30px rgba(0, 0, 0, 0.28);
+  }
+
+  .collapsible-widget.is-collapsed .widget-collapse-icon {
+    transform: rotate(90deg);
+  }
+
+  .collapsible-widget.is-collapsed .widget-collapse-label {
+    display: block;
+    color: rgb(255 244 232);
+    font-size: 0.7rem;
+    font-weight: 850;
+    letter-spacing: 0.08em;
+    line-height: 1;
+    text-transform: uppercase;
+    writing-mode: vertical-rl;
+    transform: rotate(180deg);
+  }
+
+  .server-sticky-widget.is-collapsed,
+  .donation-alerts-widget.is-collapsed {
+    width: 42px;
+    min-width: 42px;
+    height: 116px;
+    min-height: 116px;
+    padding: 0;
+    overflow: visible;
+    border: 0;
+    border-radius: 14px;
+    background: transparent;
+    box-shadow: none;
+  }
+
+  .donation-alerts-widget.is-collapsed::after {
+    display: none;
+  }
+
+  #donation-collapsible-widget.collapsible-widget.is-collapsed {
+    box-sizing: border-box;
+    width: 42px !important;
+    min-width: 42px !important;
+    max-width: 42px !important;
+    height: 190px;
+    min-height: 190px;
+    max-height: 190px;
+    padding: 0;
+    overflow: hidden;
+    border: 0;
+    border-radius: 14px;
+    background: transparent;
+    box-shadow: none;
+  }
+
+  #donation-collapsible-widget.is-collapsed > .widget-collapse-toggle {
+    width: 42px;
+    min-width: 42px;
+    max-width: 42px;
+    min-height: 190px;
+    font-size: 0.66rem;
+  }
+
+  #donation-collapsible-widget.is-collapsed > :not(.widget-collapse-toggle) {
+    display: none;
+  }
+
+  #donation-collapsible-widget.is-collapsed .widget-collapse-label {
+    font-size: 0.66rem;
+  }
+
   .server-sticky-cards {
     border: 0;
     background: transparent;
@@ -31,19 +167,26 @@
 
   @media (max-width: 1279px) {
     .server-sticky-widget {
-      display: none;
+      display: grid;
+      top: max(72px, calc(env(safe-area-inset-top) + 64px));
+      right: 10px;
+      width: min(310px, calc(100vw - 20px));
+      max-height: calc(100dvh - 88px);
     }
   }
 
   @media (max-width: 760px) {
-    .donation-alerts-widget {
-      display: none;
+    .server-sticky-widget:not(.is-collapsed) {
+      right: 8px;
+      width: min(310px, calc(100vw - 16px));
+      max-height: calc(100dvh - 82px);
     }
   }
 
   @media (prefers-reduced-motion: reduce) {
     .server-sticky-widget,
-    .donation-alerts-widget {
+    .donation-alerts-widget,
+    .widget-collapse-toggle {
       transition: none;
     }
   }

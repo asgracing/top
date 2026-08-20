@@ -3767,24 +3767,6 @@
   letter-spacing: 0;
 }
 
-.donation-alerts-support-link {
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-  flex: 0 0 30px;
-  width: 30px;
-  height: 30px;
-  border: 1px solid rgba(255, 209, 102, 0.38);
-  border-radius: 10px;
-  background: linear-gradient(135deg, rgba(255, 91, 46, 0.95), rgba(255, 170, 82, 0.88));
-  color: #fff;
-  font-size: 1.1rem;
-  font-weight: 900;
-  line-height: 1;
-  text-decoration: none;
-  box-shadow: 0 10px 22px rgba(255, 91, 46, 0.28);
-}
-
 @keyframes supportWidgetPulseLite {
   0%,
   100% {

@@ -356,6 +356,32 @@ function accountLoginUrl() {
 let flashMessage = { text: "", kind: "" };
 let clubsTeamsFlash = { text: "", kind: "" };
 const pendingMembershipResolutionIds = new Set();
+let latestAccountAuth = null;
+let forceAccountRender = false;
+
+function hasActiveAccountWorkspace() {
+  if (document.querySelector("[data-account-workspace]")) return true;
+  const raceNumberInput = document.getElementById("race-number-input");
+  return Boolean(raceNumberInput
+    && (document.activeElement === raceNumberInput || raceNumberInput.value.trim() !== ""));
+}
+
+function handleAccountAuthChange(auth) {
+  latestAccountAuth = auth;
+  if (auth?.authenticated && !forceAccountRender && hasActiveAccountWorkspace()) return;
+  forceAccountRender = false;
+  render(auth);
+}
+
+function refreshAccountState() {
+  forceAccountRender = true;
+  return controller?.refresh({ showLoading: false });
+}
+
+function closeAccountWorkspace(fallbackAuth) {
+  forceAccountRender = false;
+  render(latestAccountAuth || fallbackAuth);
+}
 
 function setMessage(text = "", kind = "") {
   flashMessage = { text, kind };
@@ -664,7 +690,7 @@ async function submitEntityForm({ auth, mode, entityType, fieldsSource, form }) 
     const completed = await pollClubsTeamsCommand(queued.id);
     if (completed.status === "applied") {
       clubsTeamsFlash = { text: t("commandApplied"), kind: "success" };
-      await controller?.refresh({ showLoading: false });
+      await refreshAccountState();
       return;
     }
     if (completed.final) {
@@ -672,13 +698,13 @@ async function submitEntityForm({ auth, mode, entityType, fieldsSource, form }) 
       throw new ClubsTeamsCommandError(completed.errorCode || completed.status);
     }
     clubsTeamsFlash = { text: t("commandQueued"), kind: "success" };
-    await controller?.refresh({ showLoading: false });
+    await refreshAccountState();
   } catch (error) {
     if (accepted) {
       message.textContent = t("commandQueued");
       message.dataset.kind = "success";
       clubsTeamsFlash = { text: t("commandQueued"), kind: "success" };
-      await controller?.refresh({ showLoading: false });
+      await refreshAccountState();
       return;
     }
     const code = error?.code || "command_rejected";
@@ -692,12 +718,14 @@ async function submitEntityForm({ auth, mode, entityType, fieldsSource, form }) 
 async function openEntityForm(auth, mode, entityType) {
   const section = document.querySelector(".account-clubs-teams");
   if (!section || !["club", "team"].includes(entityType) || !["create", "revise"].includes(mode)) return;
+  section.dataset.accountWorkspace = "entity";
   let fields = { displayName: "", shortName: "", descriptionRu: "", descriptionEn: "", websiteUrl: "" };
   if (mode === "revise") {
     section.innerHTML = `<p class="account-muted" role="status">${t("loadingEntity")}</p>`;
     try {
       fields = await loadApprovedEntityFields(auth.clubsTeams[entityType]);
     } catch {
+      delete section.dataset.accountWorkspace;
       section.innerHTML = `<p class="account-snapshot-warning" role="alert">${t("detailUnavailable")}</p>`;
       return;
     }
@@ -708,7 +736,7 @@ async function openEntityForm(auth, mode, entityType) {
     event.preventDefault();
     void submitEntityForm({ auth, mode, entityType, fieldsSource: fields, form });
   });
-  section.querySelector("[data-ct-cancel]")?.addEventListener("click", () => render(auth));
+  section.querySelector("[data-ct-cancel]")?.addEventListener("click", () => closeAccountWorkspace(auth));
   form.querySelector("input")?.focus();
 }
 
@@ -762,11 +790,13 @@ async function openLogoUpload(auth, entityType) {
   const entity = auth.clubsTeams[entityType];
   const expectedRole = entityType === "club" ? "head" : "captain";
   if (!section || !entity || entity.role !== expectedRole || entity.pendingRevision) return;
+  section.dataset.accountWorkspace = "logo";
   section.innerHTML = `<p class="account-muted" role="status">${t("loadingEntity")}</p>`;
   let profile;
   try {
     profile = await loadApprovedEntityProfile(entity);
   } catch {
+    delete section.dataset.accountWorkspace;
     section.innerHTML = `<p class="account-snapshot-warning" role="alert">${t("detailUnavailable")}</p>`;
     return;
   }
@@ -785,7 +815,7 @@ async function openLogoUpload(auth, entityType) {
   };
   section.querySelector("[data-ct-cancel]")?.addEventListener("click", () => {
     clearPreviewUrl();
-    render(auth);
+    closeAccountWorkspace(auth);
   });
   input.addEventListener("change", async () => {
     clearPreviewUrl();
@@ -836,7 +866,7 @@ async function openLogoUpload(auth, entityType) {
       if (completed.final && completed.status !== "applied") throw new LogoUploadError(completed.errorCode || completed.status);
       clubsTeamsFlash = { text: t(completed.status === "applied" ? "logoModerationPending" : "logoQueued"), kind: "success" };
       clearPreviewUrl();
-      await controller?.refresh({ showLoading: false });
+      await refreshAccountState();
     } catch (error) {
       status.textContent = logoErrorText(error?.code);
       status.dataset.kind = "error";
@@ -878,6 +908,7 @@ async function openMemberManager(auth, entityType) {
   const entity = auth.clubsTeams[entityType];
   const expectedRole = entityType === "club" ? "head" : "captain";
   if (!section || !entity || entity.role !== expectedRole) return;
+  section.dataset.accountWorkspace = "members";
   section.innerHTML = `<p class="account-muted" role="status">${t("loadingEntity")}</p>`;
   try {
     const client = createHttpClient({ fetchImpl: globalThis.fetch, defaultTimeoutMs: 8000 });
@@ -898,7 +929,7 @@ async function openMemberManager(auth, entityType) {
     ]);
     const selectedPilots = new Map();
     section.innerHTML = memberManagerMarkup(entity, detail.roster);
-    section.querySelector("[data-ct-cancel]")?.addEventListener("click", () => render(auth));
+    section.querySelector("[data-ct-cancel]")?.addEventListener("click", () => closeAccountWorkspace(auth));
     section.querySelectorAll("[data-ct-remove-member]").forEach(button => {
       button.addEventListener("click", () => {
         const name = button.dataset.ctMemberName || "";
@@ -907,7 +938,7 @@ async function openMemberManager(auth, entityType) {
           void submitMembershipCommand(auth, buildMembershipRemoveCommand({ entity, subjectPublicId: button.dataset.ctRemoveMember }), button);
         } catch (error) {
           clubsTeamsFlash = { text: commandErrorText(error?.code), kind: "error" };
-          render(auth);
+          closeAccountWorkspace(auth);
         }
       });
     });
@@ -1004,7 +1035,7 @@ async function openMemberManager(auth, entityType) {
       const queued = recipients.length - rejectedNames.length;
       const summary = `${t("batchInvitesQueued", queued, recipients.length)}${rejectedNames.length ? ` ${t("batchInvitesRejected", rejectedNames.join(", "))}` : ""}`;
       clubsTeamsFlash = { text: summary, kind: rejectedNames.length ? "warning" : "success" };
-      await controller?.refresh({ showLoading: false });
+      await refreshAccountState();
     });
     renderBatch();
     renderResults();
@@ -1012,7 +1043,7 @@ async function openMemberManager(auth, entityType) {
   } catch {
     section.innerHTML = `<p class="account-snapshot-warning" role="alert">${t("rosterUnavailable")}</p>
       <button class="account-action" type="button" data-ct-cancel>${t("cancelEntity")}</button>`;
-    section.querySelector("[data-ct-cancel]")?.addEventListener("click", () => render(auth));
+    section.querySelector("[data-ct-cancel]")?.addEventListener("click", () => closeAccountWorkspace(auth));
   }
 }
 
@@ -1044,7 +1075,7 @@ async function submitMembershipCommand(auth, command, button) {
     if (actionId && !retainPendingResolution) pendingMembershipResolutionIds.delete(actionId);
     clubsTeamsFlash = { text: commandErrorText(error?.code), kind: "error" };
   }
-  await controller?.refresh({ showLoading: false });
+  await refreshAccountState();
 }
 
 function bindClubsTeamsActions(auth) {
@@ -1251,7 +1282,7 @@ async function runAction(button, action, successText) {
   try {
     await action();
     setMessage(successText, "success");
-    await controller?.refresh({ showLoading: false });
+    await refreshAccountState();
   } catch (error) {
     setMessage(error?.code === "race_number_taken" ? t("taken") : t("failed"), "error");
     button.disabled = false;
@@ -1352,4 +1383,4 @@ document.querySelectorAll(".lang-btn[data-lang]").forEach(button => {
   button.classList.toggle("active", button.dataset.lang === language());
 });
 
-const controller = createAuthHeaderController({ onAuthChange: render });
+const controller = createAuthHeaderController({ onAuthChange: handleAccountAuthChange });

@@ -8,6 +8,8 @@ import { filterClubsTeamsRows, processBestlaps, processLeaderboard, processSafet
 import { createHomeDeferredSectionsController } from "./src/pages/home/deferred-sections.js";
 import { createHomeStatsTabsController } from "./src/pages/home/stats-tabs-controller.js";
 import { createHomePage } from "./src/pages/home/index.js";
+import { formatRatingMetric } from "./src/shared/rating-format.js?v=20260820ratingsdot1";
+import { createCollapsibleWidget } from "./src/shared/collapsible-widget.js?v=20260820widgetcollapse1";
 import { createTopGuideController } from "./src/pages/home/top-guide.js?v=20260726topguideauth2";
 import { HOME_LOADING_TEXT_IDS, applyHomeTableViewState } from "./src/pages/home/view-state-config.js";
 import { createModalControllerFactory } from "./src/shared/modal-controller.js";
@@ -83,6 +85,7 @@ let renderStatsTableState = null;
 let createStatsTableStateElement = null;
 let mountTrustedMarkup = null;
 let replaceWithTextState = null;
+let collapsibleWidgetControllers = [];
 const tableRequestControllers = new Map();
 const requestJson = async (url, options = {}) => {
   const { createHttpClient } = await httpClientModulePromise;
@@ -123,7 +126,7 @@ const AUTH_BASE_URL = "https://auth.asgracing.ru";
 const LOCAL_NEWS_DATA_URL = `${SITE_BASE_PATH}news-content/news.json`;
 const topDataV2ManifestUrl = `${TOP_DATA_V2_BASE_URL}/manifest.json`;
 const serverStatusUrl = getDevRuntimeParam("serverStatusUrl") || (TOP_API_ROOT_URL ? `${TOP_API_ROOT_URL}/server-status` : `${TOP_DATA_BASE_URL}/server_status.json`);
-const donationsApiUrl = "https://donations.asgracing.workers.dev/recent";
+const donationsApiUrl = "https://data.asgracing.ru/donations-api/recent";
 const hourlyAnnouncementUrl = `${HOURLY_DATA_BASE_URL}/announcement.json`;
 const hourlyScheduleUrl = `${HOURLY_DATA_BASE_URL}/schedule.json`;
 const hourlyVotesApiUrl = "https://data.asgracing.ru/hourly-votes-api";
@@ -781,9 +784,9 @@ const translations = {
     onlineActivityHourRaces: "{value} races",
     onlineActivityHourUnique: "{value} unique",
     donationsWidgetTitle: "Project supporters:",
+    donationsWidgetCollapsedLabel: "Support",
     donationsWidgetGoalEyebrow: "Fundraising goal",
     donationsWidgetSpecialThanks: "Special thanks",
-    donationsWidgetSupportAria: "Support ASG Racing on DonationAlerts",
     donationsWidgetLoading: "Loading supporters...",
     donationsWidgetEmpty: "No supporters yet.",
     donationsWidgetError: "Supporters are unavailable.",
@@ -985,6 +988,7 @@ const translations = {
     serverTotalPlayersLabel: "Total players",
     serverTotalPlayersNote: "Servers",
     serversWidgetTitle: "Server status",
+    serversWidgetCollapsedLabel: "Servers",
     serverGroupHourly: "Special event server",
     serverMetricTrack: "Track",
     serverMetricAccess: "Access",
@@ -1032,6 +1036,8 @@ const translations = {
     statsHubTitle: "Driver Stats",
     statsHubTabsLabel: "Driver statistics tables",
     supportWidgetTitle: "Support ASG Racing",
+    collapseWidget: "Collapse",
+    expandWidget: "Expand",
     supportWidgetText: "If you enjoy the server, streams and stats site, you can help the project keep rolling with a quick support drop.",
     supportWidgetButton: "Support the project",
     supportWidgetButtonAria: "Open DonationAlerts support page for ASG Racing",
@@ -1390,9 +1396,9 @@ const translations = {
     onlineActivityHourRaces: "{value} гонок",
     onlineActivityHourUnique: "{value} уникальных",
     donationsWidgetTitle: "Поддержали проект:",
+    donationsWidgetCollapsedLabel: "Поддержка",
     donationsWidgetGoalEyebrow: "Цель сбора",
     donationsWidgetSpecialThanks: "Особая благодарность",
-    donationsWidgetSupportAria: "Поддержать ASG Racing через DonationAlerts",
     donationsWidgetLoading: "Загружаем донаты...",
     donationsWidgetEmpty: "Донатов пока нет.",
     donationsWidgetError: "Донаты сейчас недоступны.",
@@ -1671,6 +1677,7 @@ const translations = {
     serverTotalPlayersLabel: "Всего игроков",
     serverTotalPlayersNote: "Серверы",
     serversWidgetTitle: "Статус серверов",
+    serversWidgetCollapsedLabel: "Серверы",
     serverGroupHourly: "Сервер спец. ивента",
     serverMetricTrack: "Трасса",
     serverMetricAccess: "Допуски",
@@ -1718,6 +1725,8 @@ const translations = {
     statsHubTitle: "Статистика пилотов",
     statsHubTabsLabel: "Таблицы статистики пилотов",
     supportWidgetTitle: "Поддержать ASG Racing",
+    collapseWidget: "Свернуть",
+    expandWidget: "Развернуть",
     supportWidgetText: "Если тебе нравится сервер, стримы и сайт со статистикой, можно быстро поддержать проект донатом и помочь ему двигаться дальше.",
     supportWidgetButton: "Поддержать проект",
     supportWidgetButtonAria: "Открыть страницу поддержки ASG Racing в DonationAlerts",
@@ -6367,6 +6376,7 @@ function applyStaticTranslations() {
     const value = t(key);
     if (value !== undefined) el.setAttribute("aria-label", value);
   });
+  syncCollapsibleWidgetsCopy();
 
   document.querySelectorAll(".lang-btn").forEach(btn => {
     btn.classList.toggle("active", btn.dataset.lang === currentLang);
@@ -7672,7 +7682,7 @@ function renderClubsTeamsRatingMetric(type, value, maximumFractionDigits) {
     ? getEloCategoryId({ elo: numeric })
     : normalizeSafetyCategory({ safety_rating: numeric });
   const className = category ? ` ${type}-cat-${category}` : "";
-  return `<span class="clubs-teams-rating-value${escapeHtml(className)}">${escapeHtml(formatClubsTeamsMetric(numeric, maximumFractionDigits))}</span>`;
+  return `<span class="clubs-teams-rating-value${escapeHtml(className)}">${escapeHtml(formatRatingMetric(numeric, maximumFractionDigits))}</span>`;
 }
 
 function renderClubsTeamsHomeHeaders() {
@@ -10827,6 +10837,47 @@ function runInitStep(stepName, action) {
   }
 }
 
+function syncCollapsibleWidgetsCopy() {
+  collapsibleWidgetControllers.forEach(controller => controller.syncCopy());
+}
+
+function initCollapsibleWidgets() {
+  collapsibleWidgetControllers.forEach(controller => controller.destroy());
+  collapsibleWidgetControllers = [
+    {
+      rootId: "donation-collapsible-widget",
+      toggleSelector: ".widget-collapse-toggle",
+      contentId: "donation-alerts-content",
+      storageKey: "donationAlertsWidgetCollapsed",
+      nameKey: "donationsWidgetCollapsedLabel",
+      initialCollapsed: window.matchMedia?.("(max-width: 760px)").matches ?? false
+    },
+    {
+      rootId: "server-sticky-widget",
+      toggleSelector: ".widget-collapse-toggle",
+      contentId: "server-sticky-content",
+      storageKey: "serversWidgetCollapsed",
+      nameKey: "serversWidgetCollapsedLabel",
+      initialCollapsed: window.matchMedia?.("(max-width: 1279px)").matches ?? false
+    }
+  ].map(definition => {
+    const root = document.getElementById(definition.rootId);
+    const toggle = root?.querySelector(definition.toggleSelector);
+    const content = document.getElementById(definition.contentId);
+    if (!root || !toggle || !content) return null;
+    return createCollapsibleWidget({
+      root,
+      toggle,
+      content,
+      storage: appStorage,
+      storageKey: definition.storageKey,
+      initialCollapsed: definition.initialCollapsed,
+      getLabels: () => ({ name: t(definition.nameKey), collapse: t("collapseWidget"), expand: t("expandWidget") })
+    });
+  }).filter(Boolean);
+  collapsibleWidgetControllers.forEach(controller => appLifecycle.add(() => controller.destroy()));
+}
+
 function initializeSharedControls() {
   runInitStep("updateServerCardBackgrounds", () => updateServerCardBackgrounds());
   runInitStep("bindLanguageButtons", () => bindLanguageButtons());
@@ -10845,6 +10896,7 @@ function initializeSharedControls() {
 }
 
 function initializeHomeControllers() {
+  runInitStep("initCollapsibleWidgets", () => initCollapsibleWidgets());
   runInitStep("initTodayStatsModal", () => initTodayStatsModal());
   runInitStep("initOnlineActivityModal", () => initOnlineActivityModal());
   runInitStep("initDriverOfDayModal", () => initDriverOfDayModal());

@@ -114,10 +114,10 @@
     justify-content: center;
     min-height: 40px;
     padding: 0 14px;
-    border: 1px solid rgba(255, 255, 255, 0.12);
+    border: 1px solid rgba(255, 91, 46, 0.82);
     border-radius: 14px;
-    background: rgba(255, 255, 255, 0.04);
-    color: var(--muted);
+    background: rgba(255, 255, 255, 0.3);
+    color: var(--accent);
     font-size: 13px;
     font-weight: 800;
     cursor: pointer;
@@ -128,9 +128,9 @@
   .combined-stats-tab:hover,
   .combined-stats-tab:focus-visible {
     transform: translateY(-1px);
-    color: var(--text);
-    border-color: rgba(255, 255, 255, 0.2);
-    background: rgba(255, 255, 255, 0.08);
+    color: var(--accent);
+    border-color: var(--accent);
+    background: rgba(255, 91, 46, 0.3);
   }
 
   .combined-stats-tab.is-active {

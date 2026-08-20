@@ -63,7 +63,7 @@
   <link rel="stylesheet" href="./styles/components/hero-stats.css?v=20260813driveraffiliations1" />
   <link rel="stylesheet" href="./styles/components/clubs-teams-metrics.css?v=20260811clubsmetrics2" />
   <link rel="stylesheet" href="./styles/components/server-sticky-layout.css?v=20260813serverstatus1" />
-  <link rel="stylesheet" href="./styles/components/sections.css?v=20260813clublogos1" />
+  <link rel="stylesheet" href="./styles/components/sections.css?v=20260820statstabs1" />
   <link rel="stylesheet" href="./styles/components/support-widget.css?v=20260715r11support1" />
   <link rel="stylesheet" href="./styles/components/table-controls.css?v=20260715r11tablecontrols1" />
   <link rel="stylesheet" href="./styles/components/top-three.css?v=20260715r11topthree1" />
@@ -82,7 +82,7 @@
   <link rel="stylesheet" href="./styles.css?v=20260808countdown1" />
   <link rel="stylesheet" href="./styles/components/hero-layout.css?v=20260728tabletflow1" />
   <link rel="stylesheet" href="./styles/components/hero-server-summary.css?v=20260715hero-spacing2" />
-  <link rel="stylesheet" href="./styles/components/floating-widgets.css?v=20260715server-widget1" />
+  <link rel="stylesheet" href="./styles/components/floating-widgets.css?v=20260820widgetcollapse6" />
   <link rel="stylesheet" href="./legal.css" />
   <link rel="stylesheet" href="./styles/components/responsive-accessibility.css?v=20260715r13a11y1" />
 </head>
@@ -238,22 +238,17 @@
   </div>
 </nav>
 
-  <aside class="donation-alerts-widget" aria-labelledby="donation-alerts-title">
-    <div class="donation-alerts-head">
-      <div>
-        <h2 class="donation-alerts-title" id="donation-alerts-title" data-i18n="donationsWidgetTitle">Поддержали проект:</h2>
+  <aside class="donation-alerts-widget collapsible-widget" id="donation-collapsible-widget" aria-labelledby="donation-alerts-title">
+    <button class="widget-collapse-toggle donation-alerts-collapse-toggle" type="button" aria-expanded="true" aria-controls="donation-alerts-content">
+      <span class="widget-collapse-icon" aria-hidden="true">−</span>
+      <span class="widget-collapse-label" data-i18n="donationsWidgetCollapsedLabel">Support</span>
+    </button>
+    <div class="widget-collapsible-content" id="donation-alerts-content">
+      <div class="donation-alerts-head">
+        <div>
+          <h2 class="donation-alerts-title" id="donation-alerts-title" data-i18n="donationsWidgetTitle">Поддержали проект:</h2>
+        </div>
       </div>
-      <a
-        class="donation-alerts-support-link"
-        href="https://www.donationalerts.com/r/asgracing"
-        target="_blank"
-        rel="noopener noreferrer"
-        aria-label="Support ASG Racing on DonationAlerts"
-        data-i18n-aria-label="donationsWidgetSupportAria"
-      >
-        +
-      </a>
-    </div>
 
     <div class="donation-alerts-goal" id="donation-alerts-goal" hidden></div>
     <div class="donation-alerts-goal-embed" id="donation-alerts-goal-fallback" hidden>
@@ -273,8 +268,9 @@
       <div class="donation-alerts-special-name">Роман Дынин</div>
     </div>
 
-    <div class="donation-alerts-list" id="donation-alerts-list">
-      <div class="donation-alerts-state" data-i18n="donationsWidgetLoading">Loading supporters...</div>
+      <div class="donation-alerts-list" id="donation-alerts-list">
+        <div class="donation-alerts-state" data-i18n="donationsWidgetLoading">Loading supporters...</div>
+      </div>
     </div>
   </aside>
 
@@ -497,13 +493,19 @@
       </div>
     </section>
 
-    <aside class="server-sticky-widget" id="server-sticky-widget" aria-label="Server status" data-i18n-aria-label="serversWidgetTitle">
-      <div class="server-sticky-head">
-        <div class="server-sticky-title" data-i18n="serversWidgetTitle">Server status</div>
-      </div>
+    <aside class="server-sticky-widget collapsible-widget" id="server-sticky-widget" aria-label="Server status" data-i18n-aria-label="serversWidgetTitle">
+      <button class="widget-collapse-toggle" type="button" aria-expanded="true" aria-controls="server-sticky-content">
+        <span class="widget-collapse-icon" aria-hidden="true">−</span>
+        <span class="widget-collapse-label" data-i18n="serversWidgetCollapsedLabel">Servers</span>
+      </button>
+      <div class="widget-collapsible-content" id="server-sticky-content">
+        <div class="server-sticky-head">
+          <div class="server-sticky-title" data-i18n="serversWidgetTitle">Server status</div>
+        </div>
 
-      <div class="server-sticky-cards">
-        <div class="loading" role="status" aria-live="polite" data-i18n="loading">Loading...</div>
+        <div class="server-sticky-cards">
+          <div class="loading" role="status" aria-live="polite" data-i18n="loading">Loading...</div>
+        </div>
       </div>
     </aside>
 
@@ -1219,7 +1221,7 @@
   </div>
 
   <script src="./legal.js" defer></script>
-  <script type="module" src="./src/entrypoints/home.js?v=20260813bfcache1"></script>
+  <script type="module" src="./src/entrypoints/home.js?v=20260820widgetcollapse6"></script>
 </body>
 </html>
 

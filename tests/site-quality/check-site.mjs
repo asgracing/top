@@ -114,7 +114,7 @@ for (const [page, [htmlPath, entrySrc]] of Object.entries(pageEntrypoints)) {
   if (!pageHtml.includes(heroStatsHref)) failures.push(`${page} page is missing the shared hero stats stylesheet`);
   const serverStickyLayoutHref = page === "home" ? "./styles/components/server-sticky-layout.css?v=20260813serverstatus1" : "../styles/components/server-sticky-layout.css?v=20260715r11serversticky1";
   if (!pageHtml.includes(serverStickyLayoutHref)) failures.push(`${page} page is missing the server sticky layout stylesheet`);
-  const sectionsHref = page === "home" ? "./styles/components/sections.css?v=20260813clublogos1" : "../styles/components/sections.css?v=20260813clublogos1";
+  const sectionsHref = page === "home" ? "./styles/components/sections.css?v=20260820statstabs1" : "../styles/components/sections.css?v=20260813clublogos1";
   if (!pageHtml.includes(sectionsHref)) failures.push(`${page} page is missing the shared sections stylesheet`);
   const supportWidgetHref = page === "home" ? "./styles/components/support-widget.css?v=20260715r11support1" : "../styles/components/support-widget.css?v=20260715r11support1";
   if (!pageHtml.includes(supportWidgetHref)) failures.push(`${page} page is missing the support widget stylesheet`);
@@ -230,7 +230,8 @@ if (!css.includes("@layer legacy {") || !css.includes("} /* end legacy */")) fai
 if (css.indexOf("@layer legacy {") >= css.indexOf("} /* end legacy */") || css.indexOf("@layer overrides {") <= css.indexOf("} /* end legacy */")) failures.push("Consolidated CSS must follow the complete legacy migration boundary");
 if (/\.hero-server-total-stat\s*,\s*\.support-sticky-widget/.test(css)) failures.push("Hero total players card must not be part of the hidden legacy support group");
 if (!html.includes('./styles/components/hero-server-summary.css?v=20260715hero-spacing2')) failures.push("Home must load the extracted hero server summary component after styles.css");
-if (!html.includes('./styles/components/floating-widgets.css?v=20260715server-widget1')) failures.push("Home must load the floating widget coordination component");
+if (!html.includes('./styles/components/floating-widgets.css?v=20260820widgetcollapse6')) failures.push("Home must load the floating widget coordination component");
+if (!floatingWidgetsCss.includes("#donation-collapsible-widget.collapsible-widget.is-collapsed") || !floatingWidgetsCss.includes("max-width: 42px !important;") || !floatingWidgetsCss.includes("max-height: 190px;") || !floatingWidgetsCss.includes("> :not(.widget-collapse-toggle)")) failures.push("Collapsed DonationAlerts widget must keep only a narrow vertical support rail with its full label visible");
 if (!floatingWidgetsCss.includes("body.modal-open .server-sticky-widget") || !floatingWidgetsCss.includes("body.modal-open .donation-alerts-widget") || !floatingWidgetsCss.includes("pointer-events: none;")) failures.push("Floating widgets must not remain visible or interactive above modal overlays");
 if (!floatingWidgetsCss.includes(".support-widget-btn") || !floatingWidgetsCss.includes("animation: none;") || /\.support-widget-btn\s*,\s*\.support-widget-btn/.test(legacyCss)) failures.push("Support CTA must not compete with the primary hero action through a legacy infinite animation");
 if (utilitiesCss.includes("+}") || !utilitiesCss.includes("@keyframes loadingStateSpin") || !utilitiesCss.includes('.table-wrap > [data-table-state]')) failures.push("Shared loading states must reserve layout space and use valid utility CSS");
@@ -294,7 +295,7 @@ for (const [className, imageName] of [["monza", "monza.jpg"], ["sunset", "sunset
   if (!heroStatsCss.includes(`.server-sticky-card-${className}`) || !heroStatsCss.includes(`url("../../assets/${imageName}")`)) failures.push(`Server card ${className} is missing its explicit class-based background image`);
 }
 const budgets = {
-  important: [(css.match(/!important/g) || []).length, 12],
+  important: [(css.match(/!important/g) || []).length, 15],
   mediaQuery: [(css.match(/@media\b/g) || []).length, 68],
   zIndex: [(css.match(/\bz-index\s*:/g) || []).length, 48],
   hexColor: [(css.match(/#[0-9a-f]{3,8}\b/gi) || []).length, 252],

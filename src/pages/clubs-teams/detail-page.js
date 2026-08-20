@@ -7,6 +7,7 @@ import {
 import { createHttpClient } from "../../shared/http-client.js";
 import { element } from "../../shared/safe-dom.js";
 import { resolveRuntimeOverride } from "../../shared/runtime-config.js";
+import { formatRatingMetric } from "../../shared/rating-format.js?v=20260820ratingsdot1";
 import {
   entityDetailHref,
   entitySlugFromLocation,
@@ -409,14 +410,14 @@ function renderProfile({ documentRef, lang, siteBase, entityType, result, client
       metric(
         documentRef,
         "ELO",
-        rating ? formattedNumber(rating.average_elo, 1) : "—",
+        rating ? formatRatingMetric(rating.average_elo, 1) : "—",
         "",
         ratingValueClass("elo", rating?.average_elo)
       ),
       metric(
         documentRef,
         "SR",
-        rating ? formattedNumber(rating.average_sr, 2) : "—",
+        rating ? formatRatingMetric(rating.average_sr, 2) : "—",
         "",
         ratingValueClass("sr", rating?.average_sr)
       ),

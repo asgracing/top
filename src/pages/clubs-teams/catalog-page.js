@@ -6,6 +6,7 @@ import {
 import { createHttpClient } from "../../shared/http-client.js";
 import { element } from "../../shared/safe-dom.js";
 import { resolveRuntimeOverride } from "../../shared/runtime-config.js";
+import { formatRatingMetric } from "../../shared/rating-format.js?v=20260820ratingsdot1";
 import {
   catalogEntityTypeFromTab,
   catalogTabFromEntityType,
@@ -108,7 +109,7 @@ function ratingValue(documentRef, type, value, digits) {
   const category = type === "elo" ? eloCategoryId(numeric) : srCategory(numeric);
   return element(documentRef, "dd", {
     className: category ? `clubs-teams-rating-value ${type}-cat-${category}` : "clubs-teams-rating-value",
-    text: Number.isFinite(numeric) ? number(numeric, digits) : "—"
+    text: formatRatingMetric(numeric, digits)
   });
 }
 
