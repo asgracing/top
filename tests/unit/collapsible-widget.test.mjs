@@ -42,3 +42,16 @@ test("restores a saved donation widget state instead of the responsive default",
   assert.equal(controller.collapsed, false);
   assert.equal(item.content.hidden, false);
 });
+
+test("can force a mobile widget closed even when an expanded state was saved", () => {
+  const item = fixture(false);
+  const controller = createCollapsibleWidget({
+    ...item,
+    storageKey: "donationAlertsCollapsed",
+    initialCollapsed: true,
+    forceInitialCollapsed: true
+  });
+  assert.equal(controller.collapsed, true);
+  assert.equal(item.content.hidden, true);
+  assert.deepEqual(item.writes, []);
+});

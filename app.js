@@ -10843,6 +10843,7 @@ function syncCollapsibleWidgetsCopy() {
 
 function initCollapsibleWidgets() {
   collapsibleWidgetControllers.forEach(controller => controller.destroy());
+  const isMobileViewport = window.matchMedia?.("(max-width: 760px)").matches ?? false;
   collapsibleWidgetControllers = [
     {
       rootId: "donation-collapsible-widget",
@@ -10850,7 +10851,8 @@ function initCollapsibleWidgets() {
       contentId: "donation-alerts-content",
       storageKey: "donationAlertsWidgetCollapsed",
       nameKey: "donationsWidgetCollapsedLabel",
-      initialCollapsed: window.matchMedia?.("(max-width: 760px)").matches ?? false
+      initialCollapsed: isMobileViewport,
+      forceInitialCollapsed: isMobileViewport
     },
     {
       rootId: "server-sticky-widget",
@@ -10858,7 +10860,8 @@ function initCollapsibleWidgets() {
       contentId: "server-sticky-content",
       storageKey: "serversWidgetCollapsed",
       nameKey: "serversWidgetCollapsedLabel",
-      initialCollapsed: window.matchMedia?.("(max-width: 1279px)").matches ?? false
+      initialCollapsed: window.matchMedia?.("(max-width: 1279px)").matches ?? false,
+      forceInitialCollapsed: isMobileViewport
     }
   ].map(definition => {
     const root = document.getElementById(definition.rootId);
@@ -10872,6 +10875,7 @@ function initCollapsibleWidgets() {
       storage: appStorage,
       storageKey: definition.storageKey,
       initialCollapsed: definition.initialCollapsed,
+      forceInitialCollapsed: definition.forceInitialCollapsed,
       getLabels: () => ({ name: t(definition.nameKey), collapse: t("collapseWidget"), expand: t("expandWidget") })
     });
   }).filter(Boolean);
@@ -11186,6 +11190,12 @@ function initializeWindowLifecycle() {
   }, 120);
   appLifecycle.listen(window, "resize", handleResize);
   appLifecycle.add(() => handleResize.cancel());
+  const topNav = document.getElementById("top-nav");
+  if (topNav && typeof ResizeObserver === "function") {
+    const topNavResizeObserver = new ResizeObserver(() => updateTopNavModalOffset());
+    topNavResizeObserver.observe(topNav);
+    appLifecycle.add(() => topNavResizeObserver.disconnect());
+  }
 }
 
 function updateAuthenticatedDriver(auth) {

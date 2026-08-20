@@ -5,13 +5,16 @@ export function createCollapsibleWidget({
   storage = null,
   storageKey,
   initialCollapsed = false,
+  forceInitialCollapsed = false,
   getLabels = () => ({ name: "Widget", collapse: "Collapse", expand: "Expand" })
 }) {
   if (!root?.classList || !toggle?.addEventListener || !content || !storageKey) {
     throw new TypeError("A collapsible widget requires root, toggle, content and storageKey");
   }
   const saved = storage?.get?.(storageKey, null);
-  let collapsed = typeof saved === "boolean" ? saved : Boolean(initialCollapsed);
+  let collapsed = forceInitialCollapsed
+    ? true
+    : (typeof saved === "boolean" ? saved : Boolean(initialCollapsed));
 
   const render = () => {
     const labels = getLabels();
