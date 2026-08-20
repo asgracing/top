@@ -57,8 +57,8 @@ Bounded terminal/orphan/stale-quarantine cleanup доставлен в productio
   пользователей во время обычной рейтинговой синхронизации;
 - [x] expanded canary: ASG Racing 11/11, Ford Power 2/2, роли существуют в одном
   экземпляре, URL не назначена ASG-участникам, retry/backoff восстановился после rate limit;
-- [ ] глобальное включение для всех approved клубов и команд после периода наблюдения
-  и drift/retry-тестов; diagnostics/manual reconcile в Admin GUI уже работают.
+- [x] глобальное включение для всех approved клубов и команд выполнено 13.08.2026;
+  diagnostics/manual reconcile и безопасный global dry-run доступны в Admin GUI.
 
 ## P0 / визуальный и UX backlog
 
@@ -336,8 +336,8 @@ Visual matrix F4a не выполнена: 01.08.2026 встроенная ср�
   entity-scoped reconcile restored the role to 2/2 approved linked members.
 - [x] Second team canary: Furry Femboys role created once with zero permissions,
   assigned 3/3, and retained the same role ID after repeated reconcile.
-- [ ] Global enablement for every other approved club/team remains gated by a
-  separate rollout decision.
+- [x] Global enablement completed on 13.08.2026 after a conflict-free dry-run;
+  five new permissionless roles were created and the queue returned to zero.
 ## Global manager logo upload — production 13.08.2026
 
 - [x] Removed the frontend driver-ID and entity-slug image canary.
@@ -347,3 +347,56 @@ Visual matrix F4a не выполнена: 01.08.2026 встроенная ср�
   users remain fail-closed.
 - [x] Production CDN serves the global-manager UI; full frontend verify passed
   with 259/259 unit tests.
+
+## Global Discord roles — production 13.08.2026
+
+- [x] Global dry-run covered 9 approved entities and 36 linked memberships with
+  no mapping, display-name or Discord role-name conflicts.
+- [x] Existing custom ASG Racing and URL roles were preserved; Ford Power and
+  Furry roles remained unchanged.
+- [x] New permissionless roles were created for Lexus, DiveBomb RedBull, Lady,
+  Red Zone and Wall-E(njoyers), with assignments verified as 3/3, 4/4, 1/1,
+  1/1 and 1/1 through the Discord API.
+- [x] Retry/backoff recovered transient network errors and drained the queue.
+- [x] A post-rollout dry-run reports only `preserve_custom=2` and `unchanged=7`;
+  global scope remains active for future approved clubs and teams.
+
+## Отложенный backlog кабинета и Discord — аудит 13.08.2026
+
+Текущий функциональный контур принят как рабочий: глобальная загрузка логотипов
+доступна всем approved `head`/`captain`, а Discord-роли назначены 36/36
+подтверждённым связанным участникам девяти approved сущностей. Следующие задачи
+отложены до отдельного цикла разработки.
+
+### Функциональные доработки
+
+- [ ] добавить безопасную передачу роли главы клуба другому участнику;
+- [ ] добавить безопасную передачу капитанства команды другому участнику;
+- [ ] после передачи лидерства разрешить бывшему главе/капитану обычный выход;
+- [ ] отдельно решить, нужны ли дополнительные управляющие роли/заместители;
+- [ ] отдельно решить, разрешать ли self-service архивирование клуба/команды;
+- [ ] отдельно решить, нужна ли возможность удалить логотип без загрузки нового.
+
+### UI/UX личного кабинета
+
+- [ ] показывать утверждённый логотип непосредственно в карточке клуба/команды;
+- [ ] визуально разделить опубликованные данные, ожидающую редакцию и результат
+  последней операции;
+- [ ] сгруппировать действия по разделам: профиль, логотип, состав, заявки и
+  связь команды с клубом;
+- [ ] сделать причины недоступности действий явными вместо простого скрытия;
+- [ ] показывать в истории безопасный тип операции, целевую сущность и
+  локализованный результат, не раскрывая внутренние ID и raw receipt;
+- [ ] сделать связь команды с клубом заметной в основной карточке кабинета;
+- [ ] привести карточки, кнопки, статусы и опасные действия к общим компонентам
+  каталога и detail-страниц.
+
+### Проверка качества и эксплуатация
+
+- [ ] выполнить visual/keyboard matrix кабинета на 1440/768/390 px в RU и EN;
+- [ ] проверить отсутствие overflow/layout shift во всех ролевых состояниях:
+  head, captain, member и пользователь без клуба/команды;
+- [ ] добавить live Discord membership verification перед любой будущей
+  очисткой ролей; текущий production dry-run нашёл `candidate_count=0`;
+- [ ] реальное удаление Discord-ролей оставить выключенным до отдельного
+  подтверждённого плана и повторного dry-run.
