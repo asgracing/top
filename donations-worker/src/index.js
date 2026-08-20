@@ -425,11 +425,8 @@ export default {
       if (url.pathname === "/health" && request.method === "GET") {
         return jsonResponse({ ok: true }, 200, origin);
       }
-      if (url.pathname === "/oauth/start" && request.method === "GET") {
-        return await handleOauthStart(env);
-      }
-      if (url.pathname === "/oauth/callback" && request.method === "GET") {
-        return await handleOauthCallback(request, env);
+      if ((url.pathname === "/oauth/start" || url.pathname === "/oauth/callback") && request.method === "GET") {
+        return jsonResponse({ ok: false, error: "Not found" }, 404, origin);
       }
       if (url.pathname === "/recent" && request.method === "GET") {
         return await handleRecent(env, origin);

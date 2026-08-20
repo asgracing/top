@@ -1,0 +1,40 @@
+[Unit]
+Description=ASG Racing DonationAlerts API bridge
+After=network-online.target
+Wants=network-online.target
+
+[Service]
+Type=simple
+User=asg-donations
+Group=asg-donations
+WorkingDirectory=/opt/asg-donations/current
+EnvironmentFile=/etc/asg-donations.env
+Environment=PYTHONDONTWRITEBYTECODE=1
+ExecStart=/usr/bin/python3 /opt/asg-donations/current/asg_donations_service.py
+Restart=on-failure
+RestartSec=5s
+TimeoutStopSec=10s
+UMask=0077
+
+NoNewPrivileges=true
+PrivateTmp=true
+PrivateDevices=true
+ProtectSystem=strict
+ProtectHome=true
+ProtectKernelTunables=true
+ProtectKernelModules=true
+ProtectKernelLogs=true
+ProtectControlGroups=true
+RestrictSUIDSGID=true
+LockPersonality=true
+RestrictRealtime=true
+RestrictAddressFamilies=AF_UNIX AF_INET AF_INET6
+CapabilityBoundingSet=
+StateDirectory=asg-donations
+ReadWritePaths=/var/lib/asg-donations
+MemoryMax=96M
+TasksMax=24
+LimitNOFILE=256
+
+[Install]
+WantedBy=multi-user.target
