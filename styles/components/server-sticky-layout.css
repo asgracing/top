@@ -1,9 +1,9 @@
 @layer components {
   .server-sticky-widget {
-    top: 82px;
+    top: calc(var(--top-nav-height, 64px) + 18px);
     right: 18px;
     width: min(310px, calc(100vw - 36px));
-    max-height: calc(100vh - 106px);
+    max-height: calc(100vh - var(--top-nav-height, 64px) - 42px);
     padding: 12px;
     overflow: auto;
     border: 1px solid rgba(255, 255, 255, 0.1);
@@ -193,7 +193,7 @@
 
   @media (max-height: 820px) {
     .server-sticky-widget {
-      max-height: calc(100vh - 98px);
+      max-height: calc(100vh - var(--top-nav-height, 64px) - 34px);
     }
 
     .server-sticky-card {

@@ -112,7 +112,7 @@ for (const [page, [htmlPath, entrySrc]] of Object.entries(pageEntrypoints)) {
   if (!pageHtml.includes(heroActionsHref)) failures.push(`${page} page is missing the shared hero actions stylesheet`);
   const heroStatsHref = page === "home" ? "./styles/components/hero-stats.css?v=20260813driveraffiliations1" : "../styles/components/hero-stats.css?v=20260813driveraffiliations1";
   if (!pageHtml.includes(heroStatsHref)) failures.push(`${page} page is missing the shared hero stats stylesheet`);
-  const serverStickyLayoutHref = page === "home" ? "./styles/components/server-sticky-layout.css?v=20260813serverstatus1" : "../styles/components/server-sticky-layout.css?v=20260715r11serversticky1";
+  const serverStickyLayoutHref = page === "home" ? "./styles/components/server-sticky-layout.css?v=20260820widgetheader1" : "../styles/components/server-sticky-layout.css?v=20260715r11serversticky1";
   if (!pageHtml.includes(serverStickyLayoutHref)) failures.push(`${page} page is missing the server sticky layout stylesheet`);
   const sectionsHref = page === "home" ? "./styles/components/sections.css?v=20260820statstabs1" : "../styles/components/sections.css?v=20260813clublogos1";
   if (!pageHtml.includes(sectionsHref)) failures.push(`${page} page is missing the shared sections stylesheet`);
@@ -230,8 +230,9 @@ if (!css.includes("@layer legacy {") || !css.includes("} /* end legacy */")) fai
 if (css.indexOf("@layer legacy {") >= css.indexOf("} /* end legacy */") || css.indexOf("@layer overrides {") <= css.indexOf("} /* end legacy */")) failures.push("Consolidated CSS must follow the complete legacy migration boundary");
 if (/\.hero-server-total-stat\s*,\s*\.support-sticky-widget/.test(css)) failures.push("Hero total players card must not be part of the hidden legacy support group");
 if (!html.includes('./styles/components/hero-server-summary.css?v=20260715hero-spacing2')) failures.push("Home must load the extracted hero server summary component after styles.css");
-if (!html.includes('./styles/components/floating-widgets.css?v=20260820widgetcollapse6')) failures.push("Home must load the floating widget coordination component");
+if (!html.includes('./styles/components/floating-widgets.css?v=20260820widgetcollapse7')) failures.push("Home must load the floating widget coordination component");
 if (!floatingWidgetsCss.includes("#donation-collapsible-widget.collapsible-widget.is-collapsed") || !floatingWidgetsCss.includes("max-width: 42px !important;") || !floatingWidgetsCss.includes("max-height: 190px;") || !floatingWidgetsCss.includes("> :not(.widget-collapse-toggle)")) failures.push("Collapsed DonationAlerts widget must keep only a narrow vertical support rail with its full label visible");
+if (!floatingWidgetsCss.includes("top: calc(var(--top-nav-height, 64px) + 18px);") || !css.includes("top: calc(var(--top-nav-height, 62px) + 18px);") || !serverStickyLayoutCss.includes("top: calc(var(--top-nav-height, 64px) + 18px);")) failures.push("Floating widgets must keep their desktop gap below the measured multi-row header");
 if (!floatingWidgetsCss.includes("body.modal-open .server-sticky-widget") || !floatingWidgetsCss.includes("body.modal-open .donation-alerts-widget") || !floatingWidgetsCss.includes("pointer-events: none;")) failures.push("Floating widgets must not remain visible or interactive above modal overlays");
 if (!floatingWidgetsCss.includes(".support-widget-btn") || !floatingWidgetsCss.includes("animation: none;") || /\.support-widget-btn\s*,\s*\.support-widget-btn/.test(legacyCss)) failures.push("Support CTA must not compete with the primary hero action through a legacy infinite animation");
 if (utilitiesCss.includes("+}") || !utilitiesCss.includes("@keyframes loadingStateSpin") || !utilitiesCss.includes('.table-wrap > [data-table-state]')) failures.push("Shared loading states must reserve layout space and use valid utility CSS");

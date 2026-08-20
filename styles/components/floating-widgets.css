@@ -168,10 +168,10 @@
   @media (max-width: 1279px) {
     .server-sticky-widget {
       display: grid;
-      top: max(72px, calc(env(safe-area-inset-top) + 64px));
+      top: calc(var(--top-nav-height, 64px) + 18px);
       right: 10px;
       width: min(310px, calc(100vw - 20px));
-      max-height: calc(100dvh - 88px);
+      max-height: calc(100dvh - var(--top-nav-height, 64px) - 42px);
     }
   }
 

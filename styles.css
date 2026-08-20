@@ -3720,7 +3720,7 @@
 
 .donation-alerts-widget {
   position: fixed;
-  top: 80px;
+  top: calc(var(--top-nav-height, 62px) + 18px);
   left: 12px;
   z-index: 950;
   width: 260px;
