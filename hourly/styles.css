@@ -1694,6 +1694,45 @@ body.championship-body .top-nav-menu {
   font-size: 0.74rem;
 }
 
+.calendar-month-nav {
+  display: grid;
+  grid-template-columns: 38px minmax(0, 1fr) 38px;
+  align-items: center;
+  gap: 10px;
+  padding: 10px 14px 6px;
+}
+
+.calendar-month-nav-label {
+  color: #f4f8ff;
+  font-size: 0.84rem;
+  font-weight: 900;
+  text-align: center;
+  text-transform: capitalize;
+}
+
+.calendar-month-nav-button {
+  width: 38px;
+  height: 32px;
+  border: 1px solid rgba(255, 255, 255, 0.12);
+  border-radius: 9px;
+  background: rgba(255, 255, 255, 0.06);
+  color: #f4f8ff;
+  font-size: 1rem;
+  font-weight: 900;
+  cursor: pointer;
+}
+
+.calendar-month-nav-button:hover:not(:disabled),
+.calendar-month-nav-button:focus-visible {
+  border-color: rgba(245, 162, 26, 0.62);
+  background: rgba(245, 162, 26, 0.14);
+}
+
+.calendar-month-nav-button:disabled {
+  cursor: default;
+  opacity: 0.32;
+}
+
 @media (max-width: 1199px) {
   .page {
     width: 100%;
@@ -3456,9 +3495,9 @@ tbody tr:not(.is-interactive-row):hover {
   --calendar-track-photo: none;
   position: relative;
   display: grid;
-  gap: 5px;
-  min-height: 86px;
-  padding: 9px;
+  gap: 4px;
+  min-height: 72px;
+  padding: 7px;
   border: 1px solid rgba(255, 255, 255, 0.08);
   border-radius: 10px;
   overflow: hidden;
@@ -3489,21 +3528,21 @@ tbody tr:not(.is-interactive-row):hover {
 
 .calendar-event-time {
   color: #ffffff;
-  font-size: 0.88rem;
+  font-size: 0.78rem;
   font-weight: 950;
 }
 
 .calendar-event-track {
   color: #dce8f7;
-  font-size: 0.78rem;
+  font-size: 0.7rem;
   font-weight: 800;
   line-height: 1.2;
 }
 
 .calendar-event .event-type-badge {
   max-width: 100%;
-  padding: 4px 7px;
-  font-size: 0.56rem;
+  padding: 3px 6px;
+  font-size: 0.5rem;
   line-height: 1.15;
   white-space: normal;
 }
@@ -5522,21 +5561,22 @@ body.modal-open {
   }
 
   .calendar-event {
-    min-height: 62px;
-    padding: 6px;
+    gap: 3px;
+    min-height: 50px;
+    padding: 4px;
   }
 
   .calendar-event-time {
-    font-size: 0.72rem;
+    font-size: 0.62rem;
   }
 
   .calendar-event-track {
-    font-size: 0.64rem;
+    font-size: 0.56rem;
   }
 
   .calendar-event .event-type-badge {
-    padding: 3px 5px;
-    font-size: 0.48rem;
+    padding: 2px 4px;
+    font-size: 0.42rem;
   }
 
   .grid.two {

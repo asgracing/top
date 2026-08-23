@@ -266,6 +266,8 @@ const translations = {
     scheduleModalRain: "Rain forecast",
     calendarSummary: "Full event calendar",
     calendarEmpty: "No calendar events yet.",
+    calendarPreviousMonth: "Previous month",
+    calendarNextMonth: "Next month",
     finishedLabel: "FINISHED",
     championshipBadge: "Championship Event",
     hourlyBadge: "Hourly Race",
@@ -599,6 +601,11 @@ Object.assign(translations.ru, {
   modalParticipantMany: "{value} \u0443\u0447\u0430\u0441\u0442\u043d\u0438\u043a\u043e\u0432"
 });
 
+Object.assign(translations.ru, {
+  calendarPreviousMonth: "\u041f\u0440\u0435\u0434\u044b\u0434\u0443\u0449\u0438\u0439 \u043c\u0435\u0441\u044f\u0446",
+  calendarNextMonth: "\u0421\u043b\u0435\u0434\u0443\u044e\u0449\u0438\u0439 \u043c\u0435\u0441\u044f\u0446"
+});
+
 let currentLang = "en";
 Object.assign(translations.ru, {
   championshipHistoryTitle: "РСЃС‚РѕСЂРёСЏ С‡РµРјРїРёРѕРЅР°С‚РѕРІ",
@@ -620,6 +627,7 @@ let upcomingCountdownTargetMs = null;
 let championshipItems = [];
 let recentRaceItems = [];
 let calendarRaceItems = [];
+let calendarMonthOffset = 0;
 let eventModalVersion = EVENT_MODAL_VERSION;
 let lastScheduleModalTrigger = null;
 
@@ -2870,15 +2878,21 @@ function buildCalendarItems(scheduleRows, raceRows) {
 function renderCalendar(scheduleRows, raceRows = calendarRaceItems) {
   const grid = document.getElementById("calendar-v2-grid") || document.getElementById("calendar-grid");
   const count = document.getElementById("calendar-v2-count") || document.getElementById("calendar-count");
+  const monthLabelEl = document.getElementById("calendar-month-label");
+  const previousButton = document.getElementById("calendar-month-prev");
+  const nextButton = document.getElementById("calendar-month-next");
   if (!grid) return;
   const items = buildCalendarItems(scheduleRows, raceRows);
   const today = getMoscowDateParts();
+  const selectedMonthDate = new Date(Date.UTC(today.year, today.month - 1 + calendarMonthOffset, 1, 12));
+  const selectedYear = selectedMonthDate.getUTCFullYear();
+  const selectedMonth = selectedMonthDate.getUTCMonth() + 1;
   const currentMonthItems = items
     .map(item => ({ ...item, dateParts: parseIsoDateParts(item.row?.date) }))
     .filter(item =>
       item.dateParts &&
-      item.dateParts.year === today.year &&
-      item.dateParts.month === today.month
+      item.dateParts.year === selectedYear &&
+      item.dateParts.month === selectedMonth
     )
     .map((item, index) => ({ ...item, index }));
   const itemsByDay = new Map();
@@ -2886,10 +2900,19 @@ function renderCalendar(scheduleRows, raceRows = calendarRaceItems) {
     if (!itemsByDay.has(item.dateParts.day)) itemsByDay.set(item.dateParts.day, []);
     itemsByDay.get(item.dateParts.day).push(item);
   });
-  const monthLabel = formatCalendarMonthLabel(today.year, today.month);
+  const monthLabel = formatCalendarMonthLabel(selectedYear, selectedMonth);
   if (count) count.textContent = currentMonthItems.length ? `${monthLabel} · ${currentMonthItems.length}` : monthLabel;
-  const daysInMonth = new Date(Date.UTC(today.year, today.month, 0, 12)).getUTCDate();
-  const firstDayIndex = (new Date(Date.UTC(today.year, today.month - 1, 1, 12)).getUTCDay() + 6) % 7;
+  if (monthLabelEl) monthLabelEl.textContent = monthLabel;
+  if (previousButton) {
+    previousButton.disabled = calendarMonthOffset <= -1;
+    previousButton.setAttribute("aria-label", t("calendarPreviousMonth"));
+  }
+  if (nextButton) {
+    nextButton.disabled = calendarMonthOffset >= 1;
+    nextButton.setAttribute("aria-label", t("calendarNextMonth"));
+  }
+  const daysInMonth = new Date(Date.UTC(selectedYear, selectedMonth, 0, 12)).getUTCDate();
+  const firstDayIndex = (new Date(Date.UTC(selectedYear, selectedMonth - 1, 1, 12)).getUTCDay() + 6) % 7;
   const weekdayHeaders = getCalendarWeekdayNames()
     .map(dayName => `<div class="calendar-weekday">${escapeHtml(dayName)}</div>`)
     .join("");
@@ -2915,7 +2938,7 @@ function renderCalendar(scheduleRows, raceRows = calendarRaceItems) {
       `;
     }).join("");
     return `
-      <div class="calendar-day${day < today.day ? " is-past" : ""}">
+      <div class="calendar-day${calendarMonthOffset < 0 || (calendarMonthOffset === 0 && day < today.day) ? " is-past" : ""}">
         <div class="calendar-day-number">${escapeHtml(day)}</div>
         <div class="calendar-day-events">${eventsHtml}</div>
       </div>
@@ -2932,6 +2955,16 @@ function renderCalendar(scheduleRows, raceRows = calendarRaceItems) {
       openScheduleModal(item?.row || null, button);
     });
   });
+  if (previousButton) previousButton.onclick = () => {
+    if (calendarMonthOffset <= -1) return;
+    calendarMonthOffset -= 1;
+    renderCalendar(scheduleRows, raceRows);
+  };
+  if (nextButton) nextButton.onclick = () => {
+    if (calendarMonthOffset >= 1) return;
+    calendarMonthOffset += 1;
+    renderCalendar(scheduleRows, raceRows);
+  };
 }
 function renderRecentRaces(rows) {
   const container = document.getElementById("recent-races-table");
