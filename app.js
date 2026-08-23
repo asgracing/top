@@ -610,6 +610,7 @@ const bestLapTrackSelection = new Map();
 const averagePaceTrackSelection = new Map();
 let eloModalState = null;
 let safetyModalState = null;
+let safetyAboutCopyPromise = null;
 let eloModalRequestId = 0;
 let safetyModalRequestId = 0;
 let srBreakdownPopoverState = null;
@@ -2121,8 +2122,8 @@ Object.assign(translations.en, {
   safetyCategoryB: "Category B",
   safetyCategoryC: "Category C",
   safetyAboutTitle: "Safety Rating",
-  safetyAboutP1: "SR v3 starts from 3.00 and is recalculated only from counted race finishes. A race changes SR only if the driver covers at least 50% of the leader's distance. The scale is capped to 1.00-9.99: A is 5.00+, B is 2.50-4.99, C is below 2.50.",
-  safetyAboutP2: "Invalid laps are measured as a percentage of the leader's distance: 0% = +0.10 SR, up to 30% = +0.05, over 30% through 60% = 0.00, over 60% through 80% = -0.02, and over 80% = -0.04. Incidents are normalized to a base distance of 10 leader laps. Automatic Cutting, PitSpeeding and Trolling penalties use x0.5 weight; manual/admin penalties are ignored. In Hourly, Endurance and Championship races, a positive result is multiplied by K = max(1, leader laps / 10), while a neutral or negative result is not multiplied; the gain cap is +0.20 × K and the loss cap is -0.80 per race. On Nurburgring 24h, one physical lap counts as 4.125 standard laps for loss exposure, incident normalization and the distance bonus, including Public races; a positive clean-lap bonus still requires no more than 30% invalid physical laps. Final SR values are rounded to two decimal places.",
+  safetyAboutP1: "SR is recalculated from counted race finishes.",
+  safetyAboutP2: "Clean races increase SR; invalid laps, incidents and automatic penalties can reduce it.",
   safetyCategoryRangeA: "A - clean",
   safetyCategoryRangeB: "B - stable",
   safetyCategoryRangeC: "C - risky",
@@ -2178,8 +2179,8 @@ Object.assign(translations.ru, {
   safetyCategoryB: "Категория B",
   safetyCategoryC: "Категория C",
   safetyAboutTitle: "Safety Rating",
-  safetyAboutP1: "SR v3 стартует с 3.00 и считается только по зачтённым финишам гонок. Гонка влияет на SR, только если пилот проехал не меньше 50% дистанции лидера. Диапазон рейтинга ограничен 1.00-9.99: A — 5.00+, B — 2.50-4.99, C — ниже 2.50.",
-  safetyAboutP2: "Невалидные круги считаются как доля дистанции лидера: 0% = +0.10 SR, до 30% = +0.05, свыше 30% до 60% = 0.00, свыше 60% до 80% = -0.02, свыше 80% = -0.04. Инциденты нормализуются к базовой дистанции 10 кругов лидера. Автоштрафы за Cutting, PitSpeeding и Trolling учитываются с весом x0.5; ручные штрафы админов не учитываются. В гонках Hourly, Endurance и Championship положительный результат умножается на K = max(1, круги лидера / 10), а нулевой или отрицательный результат не умножается; максимум начисления за гонку равен +0.20 × K, максимум списания — -0.80. На Nurburgring 24h один физический круг считается как 4.125 стандартного круга для расчёта штрафной доли, нормализации инцидентов и дистанционного бонуса, в том числе в Public; при этом положительный бонус за чистоту возможен, только если невалидны не более 30% физических кругов. Итоговые значения SR округляются до двух знаков.",
+  safetyAboutP1: "SR пересчитывается по зачтённым финишам гонок.",
+  safetyAboutP2: "Чистые гонки повышают SR; невалидные круги, инциденты и автоштрафы могут его снизить.",
   safetyCategoryRangeA: "A - чисто",
   safetyCategoryRangeB: "B - стабильно",
   safetyCategoryRangeC: "C - риск",
@@ -5707,6 +5708,21 @@ async function loadJson(url, { signal = null, force = false } = {}) {
   return jsonQueryCache.query(key, () => requestJson(url, { cache: "default", retries: 1, signal }), { ttlMs: 15000, force });
 }
 
+function hydrateSafetyAboutCopy() {
+  safetyAboutCopyPromise ||= loadJson(`${SITE_BASE_PATH}assets/content/safety-rating-v3.json?v=20260823sr3copy1`)
+    .then(copy => {
+      for (const lang of ["en", "ru"]) {
+        for (const key of ["safetyAboutP1", "safetyAboutP2"]) {
+          if (typeof copy?.[lang]?.[key] === "string") translations[lang][key] = copy[lang][key];
+        }
+      }
+      applyStaticTranslations();
+      if (safetyModalState) renderSafetyModal();
+    })
+    .catch(error => console.warn("Failed to load Safety Rating copy.", error));
+  return safetyAboutCopyPromise;
+}
+
 function topDataV2Path(path) {
   return `${TOP_DATA_V2_BASE_URL}/${String(path || "").replace(/^\/+/, "")}`;
 }
@@ -7170,6 +7186,7 @@ function renderSafetyModal() {
 
 async function openSafetyModalForSource(source, trigger = null) {
   if (!source) return;
+  void hydrateSafetyAboutCopy();
   const requestId = ++safetyModalRequestId;
   safetyModalState = {
     source,
@@ -11234,6 +11251,7 @@ async function init() {
   initializeSharedControls();
   initializePageControllers();
   runInitStep("applyStaticTranslations", () => applyStaticTranslations());
+  if (PAGE_CONTEXT.isHome) void hydrateSafetyAboutCopy();
 
   await pageOrchestrator.initialize();
 }
