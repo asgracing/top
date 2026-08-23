@@ -1,7 +1,7 @@
 ﻿import { readPageContext } from "./src/runtime/page-context.js";
 
 import { runWhenDocumentReady } from "./src/runtime/application-bootstrap.js";
-import { loadPageFeatures } from "./src/runtime/page-feature-loader.js";
+import { loadPageFeatures } from "./src/runtime/page-feature-loader.js?v=20260823winnercar1";
 import { createPageOrchestrator } from "./src/runtime/page-orchestrator.js";
 import { HOME_STATS_TABS, bestlapsColumns, clubsTeamsColumns, createHomeStatsState, leaderboardColumns } from "./src/pages/home/stats-config.js?v=20260811hometable2";
 import { filterClubsTeamsRows, processBestlaps, processLeaderboard, processSafety } from "./src/pages/home/stats-model.js?v=20260811hometable2";
@@ -1251,7 +1251,7 @@ const translations = {
     racesTableTitle: "Race Results",
     racesTableSubtitle: "Row click opens quick view. Name opens full profile.",
     raceModalEyebrow: "Race details",
-    racesCols: ["Date", "Track", "Type", "Winner", "Drivers", "Avg ELO", "Best Lap"],
+    racesCols: ["Date", "Track", "Type", "Winner", "Car", "Drivers", "Avg ELO", "Best Lap"],
     raceModalCols: ["Pos", "Start", "\u0394 Pos", "Driver", "Best Lap", "Car", "Gap", "\u0394ELO", "SR", "Pts"],
     notCountedBadge: "Not counted",
     countedBadge: "Counted",
@@ -1866,7 +1866,7 @@ const translations = {
     racesTableTitle: "Результаты гонок",
     racesTableSubtitle: "Клик по строке открывает окно деталей. Имя открывает полный профиль.",
     raceModalEyebrow: "Детали гонки",
-    racesCols: ["Дата", "Трасса", "Тип", "Победитель", "Пилоты", "Ср. ELO", "Лучший круг"],
+    racesCols: ["Дата", "Трасса", "Тип", "Победитель", "Машина", "Пилоты", "Ср. ELO", "Лучший круг"],
     raceModalCols: ["Поз.", "Старт", "\u0394 Поз.", "Пилот", "Лучший круг", "Машина", "Отставание", "\u0394ELO", "SR", "Очки"],
     notCountedBadge: "Не засчитано",
     countedBadge: "Засчитано",

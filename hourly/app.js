@@ -353,7 +353,7 @@ const translations = {
     unknownValue: "--",
     racesTableTitle: "Race Results",
     racesTableSubtitle: "Click any row to open the finishing order.",
-    racesCols: ["Date", "Track", "Winner", "Drivers", "Avg ELO", "Best Lap"],
+    racesCols: ["Date", "Track", "Winner", "Car", "Drivers", "Avg ELO", "Best Lap"],
     openRaceDetailsLabel: "Open race details",
     raceModalEyebrow: "Race details",
     raceModalCols: ["Pos", "Start", "Delta", "Driver", "Best Lap", "Car", "Gap", "ΔELO", "SR", "Pts"],
@@ -456,7 +456,7 @@ const translations = {
     unknownValue: "--",
     racesTableTitle: "Результаты заездов",
     racesTableSubtitle: "Нажми на строку, чтобы открыть финишный протокол.",
-    racesCols: ["Дата", "Трасса", "Победитель", "Пилоты", "Ср. ELO", "Лучший круг"],
+    racesCols: ["Дата", "Трасса", "Победитель", "Машина", "Пилоты", "Ср. ELO", "Лучший круг"],
     openRaceDetailsLabel: "Открыть детали гонки",
     raceModalEyebrow: "Детали гонки",
     raceModalCols: ["Поз", "Старт", "Дельта", "Пилот", "Лучший круг", "Машина", "Отставание", "ΔELO", "SR", "Очки"],
@@ -2947,9 +2947,10 @@ function renderRecentRaces(rows) {
       <td data-label="${escapeHtml(labels[0] || "")}">${escapeHtml(formatDateTimeLocal(race.finished_at || race.finished_at_local))}</td>
       <td data-label="${escapeHtml(labels[1] || "")}"><div class="race-track-cell"><span class="race-track-name">${escapeHtml(race.track_name || humanizeTrackName(race.track))}</span></div></td>
       <td data-label="${escapeHtml(labels[2] || "")}"><span class="race-winner">${escapeHtml(race.winner || t("noWinner"))}</span></td>
-      <td data-label="${escapeHtml(labels[3] || "")}">${escapeHtml(race.participants_count ?? "-")}</td>
-      <td data-label="${escapeHtml(labels[4] || "")}">${escapeHtml(race.average_elo ?? "-")}</td>
-      <td data-label="${escapeHtml(labels[5] || "")}"><div>${escapeHtml(race.best_lap || "-")}</div><div class="race-note">${escapeHtml(race.best_lap_driver || "-")}</div></td>
+      <td data-label="${escapeHtml(labels[3] || "")}">${escapeHtml(race.winner_car_name || race.winner_car_name_raw || "-")}</td>
+      <td data-label="${escapeHtml(labels[4] || "")}">${escapeHtml(race.participants_count ?? "-")}</td>
+      <td data-label="${escapeHtml(labels[5] || "")}">${escapeHtml(race.average_elo ?? "-")}</td>
+      <td data-label="${escapeHtml(labels[6] || "")}"><div>${escapeHtml(race.best_lap || "-")}</div><div class="race-note">${escapeHtml(race.best_lap_driver || "-")}</div></td>
     </tr>
   `).join("");
   container.innerHTML = `<table class="races-table"><thead><tr>${headers}</tr></thead><tbody>${rowsHtml}</tbody></table>`;

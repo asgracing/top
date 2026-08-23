@@ -38,6 +38,7 @@ export function createRacesTableView({
         <td><div class="race-track-cell"><span class="race-track-name">${escapeHtml(humanizeTrack(race.track))}</span></div></td>
         <td class="race-type-cell">${renderRaceTypeBadge(race)}</td>
         <td><span class="race-winner">${renderDriverLink(race.winner || translate("noWinner"), race.winner_public_id, "driver-link")}</span></td>
+        <td>${escapeHtml(race.winner_car_name || race.winner_car_name_raw || "-")}</td>
         <td>${escapeHtml(race.participants_count ?? "-")}</td><td>${escapeHtml(race.average_elo ?? "-")}</td>
         <td><div>${escapeHtml(race.best_lap || "-")}</div><div class="race-note">${renderDriverLink(race.best_lap_driver || "-", race.best_lap_public_id, "driver-link driver-link-subtle")}</div></td>
       </tr>`).join("");
