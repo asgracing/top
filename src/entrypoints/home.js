@@ -1,3 +1,3 @@
-import { bootstrapLegacyPage } from "./legacy-bootstrap.js?v=20260821srv31";
+import { bootstrapLegacyPage } from "./legacy-bootstrap.js?v=20260823bannedfinish1";
 
 await bootstrapLegacyPage("home");

@@ -7914,7 +7914,7 @@ function renderLeaderboardTablePage() {
       <td class="wins-column numeric-cell">${escapeHtml(row.wins ?? 0)}</td>
       <td class="podiums-column numeric-cell">${escapeHtml(row.podiums ?? 0)}</td>
       <td class="races-column numeric-cell">${escapeHtml(row.races ?? 0)}</td>
-      <td class="avg-finish-column numeric-cell">${escapeHtml(row.average_finish ?? "-")}</td>
+      <td class="avg-finish-column numeric-cell">${isDriverBanned(row) ? renderBannedBadge({ compact: true }) : escapeHtml(row.average_finish ?? "-")}</td>
       <td class="club-column affiliation-cell">${renderDriverAffiliation(row, "club")}</td>
       <td class="team-column affiliation-cell">${renderDriverAffiliation(row, "team")}</td>
     </tr>
