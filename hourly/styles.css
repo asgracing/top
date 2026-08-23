@@ -1651,6 +1651,10 @@ body.championship-body .top-nav-menu {
   gap: 8px;
 }
 
+.hourly-calendar-v2-summary-main > [data-i18n="calendarSummary"] {
+  color: #f5a21a;
+}
+
 .hourly-calendar-v2-summary-icon,
 .hourly-calendar-v2-summary-caret {
   display: inline-flex;
@@ -1690,7 +1694,7 @@ body.championship-body .top-nav-menu {
   padding: 0 10px;
   border-radius: 999px;
   background: rgba(255, 255, 255, 0.08);
-  color: #dde5f0;
+  color: #f5a21a;
   font-size: 0.74rem;
 }
 
@@ -1703,7 +1707,7 @@ body.championship-body .top-nav-menu {
 }
 
 .calendar-month-nav-label {
-  color: #f4f8ff;
+  color: #f5a21a;
   font-size: 0.84rem;
   font-weight: 900;
   text-align: center;
