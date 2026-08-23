@@ -20,6 +20,13 @@ test("loads and merges only the selected page modules", async () => {
   assert.ok(Object.isFrozen(features));
 });
 
+test("cache-busts the races table view without changing the route manifest", async () => {
+  const calls = [];
+  await loadPageFeatures("races", async path => { calls.push(path); return {}; });
+  assert.ok(getPageFeaturePaths("races").includes("../pages/races/table-view.js"));
+  assert.ok(calls.includes("../pages/races/table-view.js?v=20260823winnercar2"));
+});
+
 test("rejects an invalid importer", async () => {
   await assert.rejects(loadPageFeatures("cars", null), /requires an importer/);
 });

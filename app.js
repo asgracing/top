@@ -1,7 +1,7 @@
 ﻿import { readPageContext } from "./src/runtime/page-context.js";
 
 import { runWhenDocumentReady } from "./src/runtime/application-bootstrap.js";
-import { loadPageFeatures } from "./src/runtime/page-feature-loader.js?v=20260823winnercar1";
+import { loadPageFeatures } from "./src/runtime/page-feature-loader.js?v=20260823winnercar2";
 import { createPageOrchestrator } from "./src/runtime/page-orchestrator.js";
 import { HOME_STATS_TABS, bestlapsColumns, clubsTeamsColumns, createHomeStatsState, leaderboardColumns } from "./src/pages/home/stats-config.js?v=20260811hometable2";
 import { filterClubsTeamsRows, processBestlaps, processLeaderboard, processSafety } from "./src/pages/home/stats-model.js?v=20260811hometable2";
