@@ -102,6 +102,7 @@ export function createDriverAchievementsController({
 } = {}) {
   const root = documentRef.getElementById("driver-achievements-widget");
   if (!root || typeof fetchImpl !== "function") return null;
+  const content = documentRef.getElementById("driver-achievements-content") || root;
   const publicId = safePublicId(new URLSearchParams(windowRef.location.search).get("id"));
   const client = createHttpClient({ fetchImpl, defaultTimeoutMs: 9000 });
   const state = {
@@ -258,36 +259,36 @@ export function createDriverAchievementsController({
 
   function render() {
     if (destroyed) return;
-    root.replaceChildren();
+    content.replaceChildren();
     root.dataset.state = state.status;
     if (state.status === "loading") {
       const loading = element(documentRef, "div", "driver-achievements-loading", copy("loading"));
       loading.setAttribute("role", "status");
-      root.appendChild(loading);
+      content.appendChild(loading);
       return;
     }
     if (state.fullData) {
-      root.appendChild(renderFull(state.fullData));
+      content.appendChild(renderFull(state.fullData));
       return;
     }
     if (state.publicData) {
-      root.appendChild(renderPublic(state.publicData));
+      content.appendChild(renderPublic(state.publicData));
       if (state.authenticated && state.fullStatus === "loading") {
         const loading = element(documentRef, "div", "driver-achievements-full-state", copy("fullLoading"));
         loading.setAttribute("role", "status");
-        root.appendChild(loading);
+        content.appendChild(loading);
       } else if (state.authenticated && state.fullStatus === "error") {
-        root.appendChild(element(documentRef, "div", "driver-achievements-full-state is-error", copy("fullUnavailable")));
+        content.appendChild(element(documentRef, "div", "driver-achievements-full-state is-error", copy("fullUnavailable")));
       }
       return;
     }
     const message = element(documentRef, "div", "driver-achievements-empty", state.status === "empty" ? copy("empty") : copy("unavailable"));
-    root.appendChild(message);
+    content.appendChild(message);
     if (state.status === "error" && publicId) {
       const retry = element(documentRef, "button", "driver-achievements-retry", copy("retry"));
       retry.type = "button";
       retry.addEventListener("click", () => void load());
-      root.appendChild(retry);
+      content.appendChild(retry);
     }
   }
 

@@ -1,12 +1,6 @@
 @layer components {
   .driver-page-layout {
-    display: grid;
-    grid-template-columns: minmax(0, 1fr) minmax(330px, 370px);
-    grid-template-areas:
-      "hero achievements"
-      "sections achievements";
-    column-gap: 14px;
-    align-items: start;
+    display: block;
   }
 
   .driver-page-hero {
@@ -20,13 +14,15 @@
   }
 
   .driver-achievements-widget {
-    --achievements-sticky-top: calc(var(--top-nav-height, 82px) + 10px);
-    grid-area: achievements;
-    position: sticky;
+    --achievements-sticky-top: calc(var(--top-nav-height, 64px) + 18px);
+    position: fixed;
     top: var(--achievements-sticky-top);
-    max-height: calc(100dvh - var(--achievements-sticky-top) - 10px);
+    right: 18px;
+    z-index: var(--layer-floating);
+    width: min(310px, calc(100vw - 36px));
+    max-height: calc(100dvh - var(--achievements-sticky-top) - 24px);
     min-height: 190px;
-    margin-top: 10px;
+    margin: 0;
     overflow-x: hidden;
     overflow-y: auto;
     overscroll-behavior: contain;
@@ -41,6 +37,15 @@
       0 22px 56px rgba(0, 0, 0, 0.42),
       inset 0 1px 0 rgba(255, 255, 255, 0.08);
     padding: 16px;
+  }
+
+  .driver-achievements-widget > .widget-collapsible-content {
+    display: block;
+    min-height: 0;
+  }
+
+  .driver-achievements-widget:not(.is-collapsed) .driver-achievements-header {
+    padding-right: 30px;
   }
 
   .driver-achievements-widget::-webkit-scrollbar {
@@ -331,27 +336,21 @@
   }
 }
 
-@media (max-width: 1060px) {
-  .driver-page-layout {
-    grid-template-columns: minmax(0, 1fr);
-    grid-template-areas:
-      "hero"
-      "achievements"
-      "sections";
-  }
-
+@media (max-width: 1279px) {
   .driver-achievements-widget {
-    position: relative;
-    top: auto;
-    width: 100%;
-    max-height: min(72dvh, 680px);
-    margin-top: 14px;
+    top: calc(var(--top-nav-height, 64px) + 18px);
+    right: 10px;
+    width: min(310px, calc(100vw - 20px));
+    max-height: calc(100dvh - var(--top-nav-height, 64px) - 42px);
   }
 }
 
 @media (max-width: 600px) {
-  .driver-achievements-widget {
-    max-height: min(68dvh, 580px);
+  .driver-achievements-widget:not(.is-collapsed) {
+    top: calc(var(--top-nav-height, 64px) + 8px);
+    right: 8px;
+    width: min(310px, calc(100vw - 16px));
+    max-height: calc(100dvh - var(--top-nav-height, 64px) - 16px);
     padding: 13px;
     border-radius: 20px;
   }
@@ -369,6 +368,14 @@
     width: 32px;
     height: 32px;
   }
+}
+
+.driver-achievements-widget.is-collapsed {
+  width: 42px;
+  min-width: 42px;
+  height: 116px;
+  min-height: 116px;
+  padding: 0;
 }
 
 @media (prefers-reduced-motion: reduce) {

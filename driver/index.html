@@ -79,7 +79,8 @@
   <link rel="stylesheet" href="../styles.css?v=20260713r11css1" />
   <link rel="stylesheet" href="../legal.css" />
   <link rel="stylesheet" href="../styles/components/responsive-accessibility.css?v=20260715r13a11y1" />
-  <link rel="stylesheet" href="../styles/components/driver-achievements.css?v=20260824achievements1" />
+  <link rel="stylesheet" href="../styles/components/floating-widgets.css?v=20260824achievements2" />
+  <link rel="stylesheet" href="../styles/components/driver-achievements.css?v=20260824achievements2" />
 </head>
 <body id="top" class="monza-bg-page">
   <div class="site-video-bg" aria-hidden="true">
@@ -216,10 +217,16 @@
       </div>
     </section>
 
-    <aside class="driver-achievements-widget" id="driver-achievements-widget" aria-label="Achievements">
-      <div class="driver-achievements-loading" role="status" aria-live="polite">
-        <span class="driver-achievements-loading-icon" aria-hidden="true">🏆</span>
-        <span>Loading achievements...</span>
+    <aside class="driver-achievements-widget collapsible-widget" id="driver-achievements-widget" aria-label="Achievements">
+      <button class="widget-collapse-toggle" type="button" aria-expanded="true" aria-controls="driver-achievements-content">
+        <span class="widget-collapse-icon" aria-hidden="true">−</span>
+        <span class="widget-collapse-label">Achievements</span>
+      </button>
+      <div class="widget-collapsible-content" id="driver-achievements-content">
+        <div class="driver-achievements-loading" role="status" aria-live="polite">
+          <span class="driver-achievements-loading-icon" aria-hidden="true">🏆</span>
+          <span>Loading achievements...</span>
+        </div>
       </div>
     </aside>
 
@@ -380,7 +387,7 @@
   </div>
 
   <script src="../legal.js" defer></script>
-  <script type="module" src="../src/entrypoints/driver.js?v=20260824achievements1"></script>
+  <script type="module" src="../src/entrypoints/driver.js?v=20260824achievements2"></script>
 </body>
 </html>
 

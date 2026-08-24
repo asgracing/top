@@ -1,5 +1,6 @@
 @layer overrides {
   .server-sticky-widget,
+  .driver-achievements-widget,
   .donation-alerts-widget {
     transition: opacity 0.18s ease, visibility 0.18s ease, transform 0.18s ease;
   }
@@ -91,6 +92,7 @@
   }
 
   .server-sticky-widget.is-collapsed,
+  .driver-achievements-widget.is-collapsed,
   .donation-alerts-widget.is-collapsed {
     width: 42px;
     min-width: 42px;
@@ -147,6 +149,7 @@
   }
 
   body.modal-open .server-sticky-widget,
+  body.modal-open .driver-achievements-widget,
   body.modal-open .donation-alerts-widget {
     opacity: 0;
     visibility: hidden;
@@ -194,6 +197,7 @@
 
   @media (prefers-reduced-motion: reduce) {
     .server-sticky-widget,
+    .driver-achievements-widget,
     .donation-alerts-widget,
     .widget-collapse-toggle {
       transition: none;
