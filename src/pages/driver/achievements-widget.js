@@ -4,7 +4,7 @@ import {
   normalizeFullAchievements,
   normalizePublicAchievements,
   selectAchievementCards
-} from "./achievements-model.js";
+} from "./achievements-model.js?v=20260824achievements3";
 import { buildAuthReturnPath, normalizeAuthPayload } from "../../features/auth/header-auth.js";
 import { createHttpClient } from "../../shared/http-client.js";
 
@@ -29,6 +29,12 @@ const COPY = Object.freeze({
     completed: "Completed",
     locked: "In progress",
     times: "Completed {count} times",
+    levels: "Levels {earned}/{total}",
+    allLevels: "All levels completed: {earned}/{total}",
+    showTiers: "Show milestone history",
+    hideTiers: "Hide milestone history",
+    info: "Achievement details",
+    received: "earned",
     secretName: "Secret achievement",
     secretDescription: "Unlock it to reveal its condition.",
     progress: "{current} of {target}",
@@ -55,6 +61,12 @@ const COPY = Object.freeze({
     completed: "Получено",
     locked: "В процессе",
     times: "Выполнено {count} раз",
+    levels: "Уровни {earned}/{total}",
+    allLevels: "Все уровни получены: {earned}/{total}",
+    showTiers: "Показать историю уровней",
+    hideTiers: "Скрыть историю уровней",
+    info: "Подробнее о достижении",
+    received: "получено",
     secretName: "Секретное достижение",
     secretDescription: "Получите его, чтобы раскрыть условие.",
     progress: "{current} из {target}",
@@ -64,6 +76,34 @@ const COPY = Object.freeze({
       endurance: "Endurance", exploration: "Исследование", events: "Events", secret: "Secret"
     }
   }
+});
+
+const ACHIEVEMENT_DESCRIPTIONS = Object.freeze({
+  early_winner: { ru: "Победить в одной из первых пяти официально засчитанных гонок карьеры.", en: "Win one of the first five officially counted races of the career." },
+  win_streak_3: { ru: "Одержать 3 победы подряд.", en: "Win 3 officially counted races in a row." },
+  win_streak_5: { ru: "Одержать 5 побед подряд.", en: "Win 5 officially counted races in a row." },
+  podium_streak_5: { ru: "Финишировать на подиуме в 5 гонках подряд.", en: "Finish on the podium in 5 consecutive races." },
+  win_margin_30s: { ru: "Победить с преимуществом строго больше 30 секунд над P2 на том же круге.", en: "Win by strictly more than 30 seconds over P2 on the same lap." },
+  photo_finish: { ru: "Победить с преимуществом строго меньше 0,5 секунды над P2 на том же круге.", en: "Win by strictly less than 0.5 seconds over P2 on the same lap." },
+  stole_victory: { ru: "Победить с преимуществом строго меньше 0,1 секунды над P2 на том же круге.", en: "Win by strictly less than 0.1 seconds over P2 on the same lap." },
+  domination_lap: { ru: "Победить с преимуществом строго больше одного полного круга над P2.", en: "Win by strictly more than one full lap over P2." },
+  big_grid_30: { ru: "Победить в гонке с 30 или более участниками.", en: "Win a race with at least 30 participants." },
+  big_grid_40: { ru: "Победить в гонке с 40 или более участниками.", en: "Win a race with at least 40 participants." },
+  david_goliath: { ru: "Победить соперника, чей ELO перед гонкой был минимум на 200 выше вашего.", en: "Beat an opponent whose pre-race ELO was at least 200 points higher." },
+  grand_slam: { ru: "В одной гонке стартовать с Pole, показать fastest lap и победить.", en: "Take pole, set the fastest lap and win in the same race." },
+  positions_5: { ru: "Финишировать минимум на 5 позиций выше подтверждённой стартовой позиции.", en: "Finish at least 5 places above a verified starting position." },
+  positions_10: { ru: "Финишировать минимум на 10 позиций выше подтверждённой стартовой позиции.", en: "Finish at least 10 places above a verified starting position." },
+  positions_15: { ru: "Финишировать минимум на 15 позиций выше подтверждённой стартовой позиции.", en: "Finish at least 15 places above a verified starting position." },
+  rags_to_riches: { ru: "Стартовать ниже Top-15 и финишировать на подиуме.", en: "Start outside the Top 15 and finish on the podium." },
+  last_to_first: { ru: "Стартовать последним и победить при полностью подтверждённой решётке.", en: "Start last and win with a fully verified starting grid." },
+  top5_defender: { ru: "После старта из Top-5 финишировать, потеряв не более одной позиции.", en: "Start in the Top 5 and finish after losing no more than one position." },
+  endurance_2h: { ru: "Завершить гонку длительностью не менее 2 часов.", en: "Finish a race lasting at least 2 hours." },
+  endurance_3h: { ru: "Завершить гонку длительностью не менее 3 часов.", en: "Finish a race lasting at least 3 hours." },
+  endurance_6h: { ru: "Завершить гонку длительностью не менее 6 часов.", en: "Finish a race lasting at least 6 hours." },
+  endurance_12h: { ru: "Завершить гонку длительностью не менее 12 часов.", en: "Finish a race lasting at least 12 hours." },
+  close_second: { ru: "Финишировать P2 строго менее чем в 0,2 секунды от победителя на том же круге.", en: "Finish P2 strictly less than 0.2 seconds behind the winner on the same lap." },
+  century_combo: { ru: "Завершить 100 гонок, проехать 1 000 км и одержать 10 побед.", en: "Complete 100 races, cover 1,000 km and earn 10 victories." },
+  monza_born: { ru: "Иметь не менее 100 засчитанных гонок, и ни одной гонки вне Monza.", en: "Have at least 100 counted races and no race outside Monza." }
 });
 
 function element(documentRef, tag, className, value = "") {
@@ -88,9 +128,33 @@ function safePublicId(value) {
   return /^drv_[a-z0-9]+$/i.test(id) ? id : "";
 }
 
-function formatValue(value) {
+function formatValue(value, language = "ru", maximumFractionDigits = 1) {
   const number = Number(value) || 0;
-  return Number.isInteger(number) ? String(number) : number.toLocaleString(undefined, { maximumFractionDigits: 1 });
+  return number.toLocaleString(language === "ru" ? "ru-RU" : "en-US", { maximumFractionDigits });
+}
+
+function pluralRu(value, one, few, many) {
+  const integer = Math.abs(Math.trunc(Number(value) || 0));
+  if (integer % 10 === 1 && integer % 100 !== 11) return one;
+  if (integer % 10 >= 2 && integer % 10 <= 4 && (integer % 100 < 12 || integer % 100 > 14)) return few;
+  return many;
+}
+
+function unitLabel(unit, value, language) {
+  if (unit === "km") return language === "ru" ? "км" : "km";
+  if (unit === "sr") return "SR";
+  const labels = {
+    race: ["гонка", "гонки", "гонок", "race", "races"],
+    win: ["победа", "победы", "побед", "victory", "victories"],
+    podium: ["подиум", "подиума", "подиумов", "podium", "podiums"],
+    fastest_lap: ["лучший круг", "лучших круга", "лучших кругов", "fastest lap", "fastest laps"],
+    track: ["трасса", "трассы", "трасс", "track", "tracks"],
+    race_day: ["гоночный день", "гоночных дня", "гоночных дней", "race day", "race days"],
+    hourly_race: ["гонка Hourly", "гонки Hourly", "гонок Hourly", "Hourly race", "Hourly races"],
+    hourly_win: ["победа Hourly", "победы Hourly", "побед Hourly", "Hourly victory", "Hourly victories"]
+  }[unit];
+  if (!labels) return "";
+  return language === "ru" ? pluralRu(value, labels[0], labels[1], labels[2]) : (Number(value) === 1 ? labels[3] : labels[4]);
 }
 
 export function createDriverAchievementsController({
@@ -115,11 +179,57 @@ export function createDriverAchievementsController({
   };
   let destroyed = false;
   let requestController = null;
+  let tooltipSequence = 0;
 
   const copy = key => {
     const language = currentLanguage(documentRef, windowRef);
     return COPY[language]?.[key] ?? COPY.en[key] ?? key;
   };
+
+  const language = () => currentLanguage(documentRef, windowRef);
+
+  function localizedSeriesName(card) {
+    return card.seriesNames?.[language()] || card.seriesName || card.name;
+  }
+
+  function achievementDescription(card, lockedSecret = false) {
+    if (lockedSecret) return copy("secretDescription");
+    const lang = language();
+    const focus = card.nextTier || card.highestEarned || card;
+    const fallback = ACHIEVEMENT_DESCRIPTIONS[focus.id]?.[lang];
+    if (fallback) return fallback;
+    const target = formatValue(focus.target, lang, focus.unit === "sr" ? 2 : 1);
+    const unit = unitLabel(focus.unit, focus.target, lang);
+    const generated = {
+      career_races: lang === "ru" ? `Завершить ${target} официально засчитанных ${unit}.` : `Complete ${target} officially counted ${unit}.`,
+      career_distance: lang === "ru" ? `Проехать ${target} км в засчитанных гонках; учитываются valid и invalid круги.` : `Cover ${target} km in counted races; both valid and invalid laps count.`,
+      wins: lang === "ru" ? `Одержать ${target} ${unit} в официально засчитанных гонках.` : `Earn ${target} ${unit} in officially counted races.`,
+      podiums: lang === "ru" ? `Финишировать на подиуме в ${target} засчитанных гонках.` : `Finish on the podium in ${target} counted races.`,
+      fastest_laps: lang === "ru" ? `Показать лучший круг в ${target} засчитанных гонках.` : `Set the fastest lap in ${target} counted races.`,
+      sr: lang === "ru" ? `Хотя бы один раз достичь Safety Rating ${target}.` : `Reach Safety Rating ${target} at least once.`,
+      hourly_races: lang === "ru" ? `Завершить ${target} ${unit}.` : `Complete ${target} ${unit}.`,
+      hourly_wins: lang === "ru" ? `Одержать ${target} ${unit}.` : `Earn ${target} ${unit}.`,
+      tracks: lang === "ru" ? `Завершить гонки на ${target} разных трассах.` : `Complete races on ${target} different tracks.`,
+      race_days: lang === "ru" ? `Участвовать в гонках в ${target} разных календарных дней по московскому времени.` : `Race on ${target} different calendar days in Moscow time.`
+    }[card.seriesId];
+    return generated || focus.description || card.description || (lang === "ru" ? "Условие достижения будет уточнено." : "Achievement condition will be clarified.");
+  }
+
+  function progressText(card) {
+    const lang = language();
+    if (card.isSeries) {
+      const levelText = (card.complete ? copy("allLevels") : copy("levels"))
+        .replace("{earned}", formatValue(card.tiersEarned, lang))
+        .replace("{total}", formatValue(card.tiersTotal, lang));
+      if (card.complete) return levelText;
+      const unit = unitLabel(card.unit, card.target, lang);
+      return `${formatValue(card.progress, lang, card.unit === "sr" ? 2 : 1)} / ${formatValue(card.target, lang, card.unit === "sr" ? 2 : 1)}${unit ? ` ${unit}` : ""} · ${levelText}`;
+    }
+    if (card.kind === "counter") return copy("times").replace("{count}", formatValue(card.counter, lang));
+    const unit = unitLabel(card.unit, card.target, lang);
+    if (card.earned) return `${formatValue(card.target, lang, card.unit === "sr" ? 2 : 1)}${unit ? ` ${unit}` : ""} — ${copy("received")}`;
+    return `${formatValue(card.progress, lang, card.unit === "sr" ? 2 : 1)} / ${formatValue(card.target, lang, card.unit === "sr" ? 2 : 1)}${unit ? ` ${unit}` : ""}`;
+  }
 
   function renderProgress(value, label, className = "") {
     const progress = element(documentRef, "div", `driver-achievements-progress ${className}`.trim());
@@ -157,35 +267,83 @@ export function createDriverAchievementsController({
 
   function renderCard(card, { compact = false } = {}) {
     const lockedSecret = card.secret && !card.earned;
+    const description = achievementDescription(card, lockedSecret);
     const item = element(
       documentRef,
       "article",
       `driver-achievement-card ${card.earned ? "is-earned" : "is-locked"}${compact ? " is-compact" : ""}`
     );
+    item.tabIndex = 0;
+    item.classList.toggle("is-series", card.isSeries === true);
+    const tooltipId = `driver-achievement-tooltip-${++tooltipSequence}`;
+    item.setAttribute("aria-describedby", tooltipId);
     const icon = element(documentRef, "span", "driver-achievement-icon", lockedSecret ? "◆" : card.icon);
     icon.setAttribute("aria-hidden", "true");
     const body = element(documentRef, "div", "driver-achievement-body");
     const top = element(documentRef, "div", "driver-achievement-topline");
     top.append(
-      element(documentRef, "strong", "driver-achievement-name", lockedSecret ? copy("secretName") : card.name || copy("title")),
+      element(documentRef, "strong", "driver-achievement-name", lockedSecret ? copy("secretName") : card.isSeries ? localizedSeriesName(card) : card.name || copy("title")),
       element(documentRef, "span", `driver-achievement-state ${card.earned ? "is-earned" : ""}`, card.earned ? copy("completed") : copy("locked"))
     );
     body.appendChild(top);
-    if (!compact && (card.description || lockedSecret)) {
-      body.appendChild(element(documentRef, "p", "driver-achievement-description", lockedSecret ? copy("secretDescription") : card.description));
-    }
-    if (!lockedSecret && card.kind === "counter") {
-      body.appendChild(element(documentRef, "div", "driver-achievement-counter", copy("times").replace("{count}", formatValue(card.counter))));
+    if (!lockedSecret && (card.kind === "counter" || card.isSeries)) {
+      body.appendChild(element(documentRef, "div", "driver-achievement-counter", progressText(card)));
+      if (card.isSeries && !card.complete && card.target > 0) body.appendChild(renderProgress(card.ratio * 100, progressText(card), "driver-achievement-progress"));
     } else if (!lockedSecret && card.target > 0) {
       const value = element(
         documentRef,
         "div",
         "driver-achievement-progress-value",
-        copy("progress").replace("{current}", formatValue(card.progress)).replace("{target}", formatValue(card.target))
+        progressText(card)
       );
       body.append(value, renderProgress(card.ratio * 100, value.textContent, "driver-achievement-progress"));
     }
+    const info = element(documentRef, "button", "driver-achievement-info", "i");
+    info.type = "button";
+    info.setAttribute("aria-label", copy("info"));
+    info.setAttribute("aria-expanded", "false");
+    info.addEventListener("click", event => {
+      event.stopPropagation();
+      const open = !item.classList.contains("is-tooltip-open");
+      item.classList.toggle("is-tooltip-open", open);
+      info.setAttribute("aria-expanded", String(open));
+    });
+    top.appendChild(info);
+    const tooltip = element(documentRef, "div", "driver-achievement-tooltip", description);
+    tooltip.id = tooltipId;
+    tooltip.setAttribute("role", "tooltip");
+    item.addEventListener("keydown", event => {
+      if (event.key === "Escape") {
+        item.classList.remove("is-tooltip-open");
+        info.setAttribute("aria-expanded", "false");
+        item.focus();
+      }
+    });
+    if (card.isSeries && !compact) {
+      const toggle = element(documentRef, "button", "driver-achievement-series-toggle", copy("showTiers"));
+      toggle.type = "button";
+      toggle.setAttribute("aria-expanded", "false");
+      const tierList = element(documentRef, "div", "driver-achievement-tier-list");
+      tierList.hidden = true;
+      for (const tier of card.tiers) {
+        const tierRow = element(documentRef, "div", `driver-achievement-tier ${tier.earned ? "is-earned" : ""}`);
+        tierRow.append(
+          element(documentRef, "span", "driver-achievement-tier-icon", tier.earned ? "✓" : "○"),
+          element(documentRef, "span", "driver-achievement-tier-name", tier.name),
+          element(documentRef, "span", "driver-achievement-tier-target", `${formatValue(tier.target, language(), tier.unit === "sr" ? 2 : 1)}${unitLabel(tier.unit, tier.target, language()) ? ` ${unitLabel(tier.unit, tier.target, language())}` : ""}`)
+        );
+        tierList.appendChild(tierRow);
+      }
+      toggle.addEventListener("click", event => {
+        event.stopPropagation();
+        tierList.hidden = !tierList.hidden;
+        toggle.setAttribute("aria-expanded", String(!tierList.hidden));
+        toggle.textContent = tierList.hidden ? copy("showTiers") : copy("hideTiers");
+      });
+      body.append(toggle, tierList);
+    }
     item.append(icon, body);
+    item.appendChild(tooltip);
     return item;
   }
 

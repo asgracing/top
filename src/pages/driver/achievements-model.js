@@ -11,6 +11,29 @@ export const ACHIEVEMENT_CATEGORY_ORDER = Object.freeze([
 
 const CATEGORY_SET = new Set(ACHIEVEMENT_CATEGORY_ORDER);
 
+const SERIES_DEFINITIONS = Object.freeze([
+  { id: "career_races", names: { ru: "Гонки", en: "Races" }, unit: "race", tiers: ["career_first_start", "career_10", "career_50", "career_100", "career_250", "career_500"] },
+  { id: "career_distance", names: { ru: "Километраж", en: "Distance" }, unit: "km", tiers: ["distance_1000", "distance_5000", "distance_10000", "distance_around_world"] },
+  { id: "wins", names: { ru: "Победы", en: "Victories" }, unit: "win", tiers: ["wins_1", "wins_5", "wins_10", "wins_25", "wins_50", "wins_100"] },
+  { id: "podiums", names: { ru: "Подиумы", en: "Podiums" }, unit: "podium", tiers: ["podiums_1", "podiums_10", "podiums_25", "podiums_50", "podiums_100"] },
+  { id: "win_streak", names: { ru: "Серия побед", en: "Winning streak" }, unit: "streak", tiers: ["win_streak_3", "win_streak_5"] },
+  { id: "close_win", names: { ru: "Плотный финиш", en: "Close finish" }, unit: "occurrence", tiers: ["photo_finish", "stole_victory"] },
+  { id: "big_grid_win", names: { ru: "Победы в большом пелотоне", en: "Big-grid victories" }, unit: "occurrence", tiers: ["big_grid_30", "big_grid_40"] },
+  { id: "fastest_laps", names: { ru: "Лучшие круги", en: "Fastest laps" }, unit: "fastest_lap", tiers: ["fastest_1", "fastest_10", "fastest_50"] },
+  { id: "comebacks", names: { ru: "Камбэки", en: "Comebacks" }, unit: "occurrence", tiers: ["positions_5", "positions_10", "positions_15"] },
+  { id: "sr", names: { ru: "Safety Rating", en: "Safety Rating" }, unit: "sr", tiers: ["sr_5", "sr_6", "sr_7"] },
+  { id: "hourly_races", names: { ru: "Гонки Hourly", en: "Hourly races" }, unit: "hourly_race", tiers: ["hourly_1", "hourly_5", "hourly_25", "hourly_50", "hourly_100"] },
+  { id: "hourly_wins", names: { ru: "Победы в Hourly", en: "Hourly victories" }, unit: "hourly_win", tiers: ["hourly_win_1", "hourly_win_10"] },
+  { id: "endurance_duration", names: { ru: "Длительные гонки", en: "Endurance races" }, unit: "occurrence", tiers: ["endurance_2h", "endurance_3h", "endurance_6h", "endurance_12h"] },
+  { id: "tracks", names: { ru: "Трассы", en: "Tracks" }, unit: "track", tiers: ["tracks_5", "tracks_10"] },
+  { id: "race_days", names: { ru: "Гоночные дни", en: "Race days" }, unit: "race_day", tiers: ["race_days_10", "race_days_30", "race_days_100"] }
+]);
+
+const SERIES_BY_ACHIEVEMENT = new Map();
+for (const series of SERIES_DEFINITIONS) {
+  series.tiers.forEach((id, index) => SERIES_BY_ACHIEVEMENT.set(id, { ...series, tierOrder: index + 1 }));
+}
+
 function text(value, maxLength = 180) {
   return String(value ?? "").trim().slice(0, maxLength);
 }
@@ -34,6 +57,7 @@ export function normalizeAchievementCard(raw, { publicPreview = false } = {}) {
   const target = Math.max(0, number(raw.target));
   const progress = Math.max(0, number(raw.progress ?? raw.current));
   const ratio = clamp(number(raw.ratio, target > 0 ? progress / target : earned ? 1 : 0), 0, 1);
+  const fallbackSeries = SERIES_BY_ACHIEVEMENT.get(id);
   return {
     id,
     category,
@@ -50,6 +74,13 @@ export function normalizeAchievementCard(raw, { publicPreview = false } = {}) {
     counter: Math.max(0, number(raw.counter ?? raw.times_earned ?? progress)),
     secret,
     evidenceStatus: text(raw.evidence_status, 64),
+    unit: text(raw.unit, 32) || fallbackSeries?.unit || (raw.kind === "counter" ? "occurrence" : "count"),
+    seriesId: text(raw.series_id, 128) || fallbackSeries?.id || null,
+    seriesName: text(raw.series_name, 180) || fallbackSeries?.names?.ru || null,
+    seriesNames: fallbackSeries?.names || null,
+    tierOrder: Math.max(0, number(raw.tier_order, fallbackSeries?.tierOrder || 0)),
+    repeatable: raw.repeatable === true || raw.kind === "counter",
+    availability: text(raw.availability, 32) || "active",
     publicPreview
   };
 }
@@ -129,14 +160,53 @@ export function categoryCounts(cards) {
   return counts;
 }
 
+export function groupAchievementCards(cards) {
+  const source = Array.isArray(cards) ? cards.filter(card => card?.enabled) : [];
+  const grouped = new Map();
+  const output = [];
+  for (const card of source) {
+    if (!card.seriesId) {
+      output.push(card);
+      continue;
+    }
+    if (!grouped.has(card.seriesId)) grouped.set(card.seriesId, []);
+    grouped.get(card.seriesId).push(card);
+  }
+  for (const [seriesId, tiers] of grouped) {
+    tiers.sort((left, right) => left.tierOrder - right.tierOrder || left.target - right.target || left.id.localeCompare(right.id));
+    const earnedTiers = tiers.filter(card => card.earned);
+    const remaining = tiers.filter(card => !card.earned);
+    const highestEarned = earnedTiers.at(-1) || null;
+    const nextTier = remaining[0] || null;
+    const focus = nextTier || highestEarned || tiers[0];
+    output.push({
+      ...focus,
+      id: `series:${seriesId}`,
+      name: focus.seriesName || focus.seriesNames?.ru || focus.name,
+      seriesId,
+      seriesNames: focus.seriesNames,
+      isSeries: true,
+      earned: nextTier === null,
+      complete: nextTier === null,
+      tiers,
+      tiersEarned: earnedTiers.length,
+      tiersTotal: tiers.length,
+      highestEarned,
+      nextTier
+    });
+  }
+  return output;
+}
+
 export function selectAchievementCards(cards, filter = "career") {
   const source = Array.isArray(cards) ? cards.filter(card => card?.enabled) : [];
+  const grouped = groupAchievementCards(source);
   if (filter === "nearest") {
-    return source
+    return grouped
       .filter(card => !card.earned && !card.secret)
       .sort((left, right) => right.ratio - left.ratio || left.name.localeCompare(right.name, "ru"));
   }
-  return source
+  return grouped
     .filter(card => card.category === filter)
-    .sort((left, right) => Number(right.earned) - Number(left.earned) || right.ratio - left.ratio || left.name.localeCompare(right.name, "ru"));
+    .sort((left, right) => Number(left.earned) - Number(right.earned) || right.ratio - left.ratio || left.name.localeCompare(right.name, "ru"));
 }
