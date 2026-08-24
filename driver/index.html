@@ -79,6 +79,7 @@
   <link rel="stylesheet" href="../styles.css?v=20260713r11css1" />
   <link rel="stylesheet" href="../legal.css" />
   <link rel="stylesheet" href="../styles/components/responsive-accessibility.css?v=20260715r13a11y1" />
+  <link rel="stylesheet" href="../styles/components/driver-achievements.css?v=20260824achievements1" />
 </head>
 <body id="top" class="monza-bg-page">
   <div class="site-video-bg" aria-hidden="true">
@@ -190,7 +191,8 @@
   </nav>
 
   <div class="container">
-    <section class="hero">
+    <div class="driver-page-layout">
+    <section class="hero driver-page-hero">
       <div class="hero-card driver-hero-card">
         <div class="driver-hero-heading">
           <div class="driver-hero-mainline">
@@ -214,6 +216,14 @@
       </div>
     </section>
 
+    <aside class="driver-achievements-widget" id="driver-achievements-widget" aria-label="Achievements">
+      <div class="driver-achievements-loading" role="status" aria-live="polite">
+        <span class="driver-achievements-loading-icon" aria-hidden="true">🏆</span>
+        <span>Loading achievements...</span>
+      </div>
+    </aside>
+
+    <div class="driver-page-sections">
     <section class="section">
       <div class="section-header">
         <div>
@@ -272,6 +282,8 @@
         </div>
       </div>
     </section>
+    </div>
+    </div>
 
     <div class="modal-overlay" id="race-results-modal" aria-hidden="true">
       <div class="modal-card modal-card-race" role="dialog" aria-modal="true" aria-labelledby="race-results-title">
@@ -368,7 +380,7 @@
   </div>
 
   <script src="../legal.js" defer></script>
-  <script type="module" src="../src/entrypoints/driver.js?v=20260813bfcache1"></script>
+  <script type="module" src="../src/entrypoints/driver.js?v=20260824achievements1"></script>
 </body>
 </html>
 

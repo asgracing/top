@@ -1,0 +1,379 @@
+@layer components {
+  .driver-page-layout {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) minmax(330px, 370px);
+    grid-template-areas:
+      "hero achievements"
+      "sections achievements";
+    column-gap: 14px;
+    align-items: start;
+  }
+
+  .driver-page-hero {
+    grid-area: hero;
+    min-width: 0;
+  }
+
+  .driver-page-sections {
+    grid-area: sections;
+    min-width: 0;
+  }
+
+  .driver-achievements-widget {
+    --achievements-sticky-top: calc(var(--top-nav-height, 82px) + 10px);
+    grid-area: achievements;
+    position: sticky;
+    top: var(--achievements-sticky-top);
+    max-height: calc(100dvh - var(--achievements-sticky-top) - 10px);
+    min-height: 190px;
+    margin-top: 10px;
+    overflow-x: hidden;
+    overflow-y: auto;
+    overscroll-behavior: contain;
+    scrollbar-width: thin;
+    scrollbar-color: rgba(255, 117, 74, 0.7) rgba(255, 255, 255, 0.06);
+    border: 1px solid rgba(255, 132, 82, 0.34);
+    border-radius: 24px;
+    background:
+      radial-gradient(circle at 90% 0%, rgba(255, 91, 46, 0.2), transparent 38%),
+      linear-gradient(180deg, rgba(22, 29, 40, 0.97), rgba(12, 17, 25, 0.98));
+    box-shadow:
+      0 22px 56px rgba(0, 0, 0, 0.42),
+      inset 0 1px 0 rgba(255, 255, 255, 0.08);
+    padding: 16px;
+  }
+
+  .driver-achievements-widget::-webkit-scrollbar {
+    width: 8px;
+  }
+
+  .driver-achievements-widget::-webkit-scrollbar-track {
+    background: rgba(255, 255, 255, 0.04);
+    border-radius: 999px;
+  }
+
+  .driver-achievements-widget::-webkit-scrollbar-thumb {
+    background: rgba(255, 117, 74, 0.62);
+    border-radius: 999px;
+  }
+
+  .driver-achievements-header {
+    display: flex;
+    align-items: flex-start;
+    justify-content: space-between;
+    gap: 12px;
+  }
+
+  .driver-achievements-heading {
+    min-width: 0;
+  }
+
+  .driver-achievements-title {
+    margin: 0;
+    font-size: 1.23rem;
+    line-height: 1.15;
+    letter-spacing: -0.02em;
+  }
+
+  .driver-achievements-percent {
+    flex: 0 0 auto;
+    color: #ffb28e;
+    font-size: 0.92rem;
+  }
+
+  .driver-achievements-driver-title {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 4px 7px;
+    margin-top: 6px;
+    color: #ffd4bc;
+    font-size: 0.76rem;
+  }
+
+  .driver-achievements-driver-title-label {
+    color: var(--muted);
+  }
+
+  .driver-achievements-summary-progress {
+    margin-top: 12px;
+  }
+
+  .driver-achievements-progress {
+    width: 100%;
+    height: 7px;
+    overflow: hidden;
+    border-radius: 999px;
+    background: rgba(255, 255, 255, 0.08);
+    box-shadow: inset 0 1px 2px rgba(0, 0, 0, 0.35);
+  }
+
+  .driver-achievements-progress-bar {
+    height: 100%;
+    border-radius: inherit;
+    background: linear-gradient(90deg, #ff5b2e, #ffb057 58%, #ffe07b);
+    box-shadow: 0 0 12px rgba(255, 120, 61, 0.44);
+  }
+
+  .driver-achievements-stale,
+  .driver-achievements-full-state {
+    margin-top: 10px;
+    padding: 8px 10px;
+    border-radius: 10px;
+    background: rgba(255, 190, 92, 0.1);
+    color: #ffd18c;
+    font-size: 0.74rem;
+    line-height: 1.35;
+  }
+
+  .driver-achievements-full-state.is-error {
+    background: rgba(255, 95, 95, 0.1);
+    color: #ffb3b3;
+  }
+
+  .driver-achievements-cards {
+    display: grid;
+    gap: 9px;
+    margin-top: 12px;
+  }
+
+  .driver-achievement-card {
+    display: grid;
+    grid-template-columns: 36px minmax(0, 1fr);
+    gap: 10px;
+    padding: 11px;
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    border-radius: 14px;
+    background: rgba(255, 255, 255, 0.04);
+  }
+
+  .driver-achievement-card.is-earned {
+    border-color: rgba(255, 181, 91, 0.34);
+    background: linear-gradient(135deg, rgba(255, 150, 72, 0.14), rgba(255, 255, 255, 0.035));
+  }
+
+  .driver-achievement-card.is-locked {
+    background: rgba(255, 255, 255, 0.025);
+  }
+
+  .driver-achievement-icon {
+    display: grid;
+    place-items: center;
+    width: 36px;
+    height: 36px;
+    border-radius: 11px;
+    background: rgba(255, 255, 255, 0.07);
+    font-size: 1.2rem;
+  }
+
+  .driver-achievement-card.is-earned .driver-achievement-icon {
+    background: rgba(255, 147, 66, 0.15);
+    box-shadow: inset 0 0 0 1px rgba(255, 188, 105, 0.14);
+  }
+
+  .driver-achievement-body {
+    min-width: 0;
+  }
+
+  .driver-achievement-topline {
+    display: flex;
+    align-items: flex-start;
+    justify-content: space-between;
+    gap: 7px;
+  }
+
+  .driver-achievement-name {
+    overflow-wrap: anywhere;
+    font-size: 0.84rem;
+    line-height: 1.25;
+  }
+
+  .driver-achievement-state {
+    flex: 0 0 auto;
+    padding: 3px 6px;
+    border-radius: 999px;
+    background: rgba(255, 255, 255, 0.07);
+    color: var(--muted);
+    font-size: 0.62rem;
+    font-weight: 800;
+    line-height: 1.1;
+    text-transform: uppercase;
+  }
+
+  .driver-achievement-state.is-earned {
+    background: rgba(66, 220, 135, 0.12);
+    color: #81efad;
+  }
+
+  .driver-achievement-description,
+  .driver-achievements-auth-hint {
+    margin: 7px 0 0;
+    color: var(--muted);
+    font-size: 0.74rem;
+    line-height: 1.42;
+  }
+
+  .driver-achievement-progress-value,
+  .driver-achievement-counter {
+    margin-top: 8px;
+    color: rgba(237, 244, 255, 0.82);
+    font-size: 0.72rem;
+    font-weight: 700;
+  }
+
+  .driver-achievement-progress {
+    height: 5px;
+    margin-top: 5px;
+  }
+
+  .driver-achievements-auth-hint {
+    margin-top: 13px;
+  }
+
+  .driver-achievements-steam-cta,
+  .driver-achievements-retry {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 9px;
+    width: 100%;
+    min-height: 42px;
+    margin-top: 12px;
+    border: 1px solid rgba(123, 195, 255, 0.42);
+    border-radius: 12px;
+    background: linear-gradient(135deg, rgba(32, 112, 174, 0.9), rgba(23, 68, 107, 0.94));
+    color: #f5fbff;
+    font: inherit;
+    font-size: 0.8rem;
+    font-weight: 850;
+    text-align: center;
+    text-decoration: none;
+    cursor: pointer;
+  }
+
+  .driver-achievements-steam-cta:hover,
+  .driver-achievements-steam-cta:focus-visible,
+  .driver-achievements-retry:hover,
+  .driver-achievements-retry:focus-visible {
+    border-color: rgba(170, 222, 255, 0.86);
+    transform: translateY(-1px);
+    box-shadow: 0 10px 22px rgba(11, 71, 116, 0.3);
+    outline: none;
+  }
+
+  .driver-achievements-steam-mark {
+    display: grid;
+    place-items: center;
+    width: 25px;
+    height: 25px;
+    border: 1px solid rgba(255, 255, 255, 0.56);
+    border-radius: 50%;
+    font-size: 0.72rem;
+  }
+
+  .driver-achievements-tabs {
+    display: flex;
+    gap: 6px;
+    margin: 13px -2px 0;
+    padding: 2px 2px 5px;
+    overflow-x: auto;
+    scrollbar-width: thin;
+  }
+
+  .driver-achievements-category-summary {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 5px;
+    margin-top: 11px;
+  }
+
+  .driver-achievements-category-chip {
+    padding: 4px 7px;
+    border: 1px solid rgba(255, 255, 255, 0.08);
+    border-radius: 999px;
+    background: rgba(255, 255, 255, 0.035);
+    color: var(--muted);
+    font-size: 0.64rem;
+    font-weight: 750;
+  }
+
+  .driver-achievements-tab {
+    flex: 0 0 auto;
+    padding: 7px 9px;
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    border-radius: 999px;
+    background: rgba(255, 255, 255, 0.04);
+    color: var(--muted);
+    font: inherit;
+    font-size: 0.7rem;
+    font-weight: 800;
+    cursor: pointer;
+  }
+
+  .driver-achievements-tab:hover,
+  .driver-achievements-tab:focus-visible,
+  .driver-achievements-tab.is-active {
+    border-color: rgba(255, 143, 85, 0.48);
+    background: rgba(255, 107, 52, 0.14);
+    color: #ffd5c0;
+    outline: none;
+  }
+
+  .driver-achievements-loading,
+  .driver-achievements-empty {
+    display: grid;
+    place-items: center;
+    min-height: 150px;
+    padding: 16px;
+    color: var(--muted);
+    font-size: 0.82rem;
+    line-height: 1.45;
+    text-align: center;
+  }
+}
+
+@media (max-width: 1060px) {
+  .driver-page-layout {
+    grid-template-columns: minmax(0, 1fr);
+    grid-template-areas:
+      "hero"
+      "achievements"
+      "sections";
+  }
+
+  .driver-achievements-widget {
+    position: relative;
+    top: auto;
+    width: 100%;
+    max-height: min(72dvh, 680px);
+    margin-top: 14px;
+  }
+}
+
+@media (max-width: 600px) {
+  .driver-achievements-widget {
+    max-height: min(68dvh, 580px);
+    padding: 13px;
+    border-radius: 20px;
+  }
+
+  .driver-achievements-title {
+    font-size: 1.08rem;
+  }
+
+  .driver-achievement-card {
+    grid-template-columns: 32px minmax(0, 1fr);
+    padding: 10px;
+  }
+
+  .driver-achievement-icon {
+    width: 32px;
+    height: 32px;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .driver-achievements-steam-cta,
+  .driver-achievements-retry {
+    transition: none;
+  }
+}

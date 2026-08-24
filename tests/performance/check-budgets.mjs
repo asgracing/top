@@ -38,6 +38,10 @@ const metrics = {
   appJavaScriptBytes: await textBytes("app.js"),
   sourceModulesBytes: await treeBytes("src", new Set([".js", ".mjs"])),
   stylesheetsBytes: await treeBytes("styles", new Set([".css"])) + await textBytes("styles.css") + await textBytes("legal.css"),
+  driverAchievementsJavaScriptBytes:
+    await textBytes("src/pages/driver/achievements-model.js")
+    + await textBytes("src/pages/driver/achievements-widget.js"),
+  driverAchievementsStylesheetBytes: await textBytes("styles/components/driver-achievements.css"),
   homeHtmlBytes: Buffer.byteLength(html.replace(/\r\n/g, "\n")),
   backgroundVideoBytes: Math.max(...await Promise.all(videos.map(fileBytes))),
   backgroundPlaylistBytes: (await Promise.all(videos.map(fileBytes))).reduce((sum, bytes) => sum + bytes, 0),

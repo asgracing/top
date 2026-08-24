@@ -1,7 +1,9 @@
 {
   "appJavaScriptBytes": 483000,
-  "sourceModulesBytes": 329000,
-  "stylesheetsBytes": 363500,
+  "sourceModulesBytes": 352000,
+  "stylesheetsBytes": 372500,
+  "driverAchievementsJavaScriptBytes": 22000,
+  "driverAchievementsStylesheetBytes": 8700,
   "homeHtmlBytes": 67000,
   "backgroundVideoBytes": 25000000,
   "backgroundPlaylistBytes": 55000000,
