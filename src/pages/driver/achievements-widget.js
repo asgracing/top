@@ -4,7 +4,7 @@ import {
   normalizeFullAchievements,
   normalizePublicAchievements,
   selectAchievementCards
-} from "./achievements-model.js?v=20260824achievements3";
+} from "./achievements-model.js?v=20260824achievements4";
 import { buildAuthReturnPath, normalizeAuthPayload } from "../../features/auth/header-auth.js";
 import { createHttpClient } from "../../shared/http-client.js";
 
@@ -21,6 +21,7 @@ const COPY = Object.freeze({
     earned: "earned",
     stale: "Last available snapshot",
     titleLabel: "Driver title",
+    titleInfo: "Driver title details",
     publicHint: "A public preview is shown. Sign in with Steam to see every achievement and exact progress.",
     steamCta: "Sign in with Steam and view all",
     fullLoading: "Loading the full achievement collection...",
@@ -53,6 +54,7 @@ const COPY = Object.freeze({
     earned: "получено",
     stale: "Показан последний доступный снимок",
     titleLabel: "Звание пилота",
+    titleInfo: "Подробнее о звании пилота",
     publicHint: "Сейчас показан публичный минимум. Войдите через Steam, чтобы увидеть все достижения и точный прогресс.",
     steamCta: "Войти через Steam и посмотреть все",
     fullLoading: "Загружаем полную коллекцию достижений...",
@@ -103,7 +105,14 @@ const ACHIEVEMENT_DESCRIPTIONS = Object.freeze({
   endurance_12h: { ru: "Завершить гонку длительностью не менее 12 часов.", en: "Finish a race lasting at least 12 hours." },
   close_second: { ru: "Финишировать P2 строго менее чем в 0,2 секунды от победителя на том же круге.", en: "Finish P2 strictly less than 0.2 seconds behind the winner on the same lap." },
   century_combo: { ru: "Завершить 100 гонок, проехать 1 000 км и одержать 10 побед.", en: "Complete 100 races, cover 1,000 km and earn 10 victories." },
-  monza_born: { ru: "Иметь не менее 100 засчитанных гонок, и ни одной гонки вне Monza.", en: "Have at least 100 counted races and no race outside Monza." }
+  monza_born: { ru: "Иметь не менее 100 засчитанных гонок, и ни одной гонки вне Monza.", en: "Have at least 100 counted races and no race outside Monza." },
+  monza_addicted: { ru: "Завершить не менее 100 гонок на Monza и хотя бы одну гонку на другой трассе.", en: "Complete at least 100 races at Monza and at least one race at another track." },
+  qualifying_is_for_the_weak: { ru: "Победить после старта с подтверждённой позиции P10 или ниже.", en: "Win after starting from a verified P10 position or lower." },
+  quietly_did_it: { ru: "Победить без Pole и без лучшего круга при подтверждённой стартовой позиции.", en: "Win without pole or the fastest lap, with a verified starting position." },
+  late_first_win: { ru: "Одержать первую победу в карьере только после своей 50-й засчитанной гонки.", en: "Earn the first career victory only after the 50th counted race." },
+  fast_but_wrong_way: { ru: "Показать лучший круг гонки и финишировать вне Top-3.", en: "Set the race's fastest lap and finish outside the Top 3." },
+  groundhog_day: { ru: "В трёх засчитанных гонках подряд финишировать на одной и той же позиции.", en: "Finish in the same position in three consecutive counted races." },
+  race_bingo: { ru: "Хотя бы раз финишировать на каждой позиции от P1 до P10.", en: "Finish at least once in every position from P1 through P10." }
 });
 
 function element(documentRef, tag, className, value = "") {
@@ -151,7 +160,12 @@ function unitLabel(unit, value, language) {
     track: ["трасса", "трассы", "трасс", "track", "tracks"],
     race_day: ["гоночный день", "гоночных дня", "гоночных дней", "race day", "race days"],
     hourly_race: ["гонка Hourly", "гонки Hourly", "гонок Hourly", "Hourly race", "Hourly races"],
-    hourly_win: ["победа Hourly", "победы Hourly", "побед Hourly", "Hourly victory", "Hourly victories"]
+    hourly_win: ["победа Hourly", "победы Hourly", "побед Hourly", "Hourly victory", "Hourly victories"],
+    lap: ["круг", "круга", "кругов", "lap", "laps"],
+    p4_finish: ["финиш P4", "финиша P4", "финишей P4", "P4 finish", "P4 finishes"],
+    same_position_finish: ["финиш без изменения позиции", "финиша без изменения позиции", "финишей без изменения позиции", "unchanged-position finish", "unchanged-position finishes"],
+    monza_race: ["гонка на Monza", "гонки на Monza", "гонок на Monza", "Monza race", "Monza races"],
+    finish_position: ["позиция", "позиции", "позиций", "position", "positions"]
   }[unit];
   if (!labels) return "";
   return language === "ru" ? pluralRu(value, labels[0], labels[1], labels[2]) : (Number(value) === 1 ? labels[3] : labels[4]);
@@ -203,14 +217,18 @@ export function createDriverAchievementsController({
     const generated = {
       career_races: lang === "ru" ? `Завершить ${target} официально засчитанных ${unit}.` : `Complete ${target} officially counted ${unit}.`,
       career_distance: lang === "ru" ? `Проехать ${target} км в засчитанных гонках; учитываются valid и invalid круги.` : `Cover ${target} km in counted races; both valid and invalid laps count.`,
+      career_laps: lang === "ru" ? `Проехать ${target} ${unit} в засчитанных гонках; учитываются valid и invalid круги.` : `Complete ${target} ${unit} in counted races; both valid and invalid laps count.`,
       wins: lang === "ru" ? `Одержать ${target} ${unit} в официально засчитанных гонках.` : `Earn ${target} ${unit} in officially counted races.`,
       podiums: lang === "ru" ? `Финишировать на подиуме в ${target} засчитанных гонках.` : `Finish on the podium in ${target} counted races.`,
+      p4_finishes: lang === "ru" ? `Финишировать ровно на P4 в ${target} засчитанных гонках.` : `Finish exactly P4 in ${target} counted races.`,
       fastest_laps: lang === "ru" ? `Показать лучший круг в ${target} засчитанных гонках.` : `Set the fastest lap in ${target} counted races.`,
       sr: lang === "ru" ? `Хотя бы один раз достичь Safety Rating ${target}.` : `Reach Safety Rating ${target} at least once.`,
+      same_start_finish: lang === "ru" ? `В ${target} гонках финишировать на той же подтверждённой позиции, с которой началась гонка.` : `Finish in the verified starting position in ${target} races.`,
       hourly_races: lang === "ru" ? `Завершить ${target} ${unit}.` : `Complete ${target} ${unit}.`,
       hourly_wins: lang === "ru" ? `Одержать ${target} ${unit}.` : `Earn ${target} ${unit}.`,
       tracks: lang === "ru" ? `Завершить гонки на ${target} разных трассах.` : `Complete races on ${target} different tracks.`,
-      race_days: lang === "ru" ? `Участвовать в гонках в ${target} разных календарных дней по московскому времени.` : `Race on ${target} different calendar days in Moscow time.`
+      race_days: lang === "ru" ? `Участвовать в гонках в ${target} разных календарных дней по московскому времени.` : `Race on ${target} different calendar days in Moscow time.`,
+      monza_regular: lang === "ru" ? `Завершить ${target} ${unit}; гонки на других трассах не мешают прогрессу.` : `Complete ${target} ${unit}; races at other tracks do not reset progress.`
     }[card.seriesId];
     return generated || focus.description || card.description || (lang === "ru" ? "Условие достижения будет уточнено." : "Achievement condition will be clarified.");
   }
@@ -252,10 +270,36 @@ export function createDriverAchievementsController({
     heading.appendChild(title);
     if (data.summary.title) {
       const driverTitle = element(documentRef, "div", "driver-achievements-driver-title");
+      driverTitle.tabIndex = 0;
+      const titleTooltipId = `driver-achievement-title-tooltip-${++tooltipSequence}`;
       driverTitle.append(
         element(documentRef, "span", "driver-achievements-driver-title-label", copy("titleLabel")),
         element(documentRef, "strong", "", data.summary.title)
       );
+      if (data.summary.titleDescription) {
+        driverTitle.setAttribute("aria-describedby", titleTooltipId);
+        const info = element(documentRef, "button", "driver-achievements-title-info", "i");
+        info.type = "button";
+        info.setAttribute("aria-label", copy("titleInfo"));
+        info.setAttribute("aria-expanded", "false");
+        info.addEventListener("click", event => {
+          event.stopPropagation();
+          const open = !driverTitle.classList.contains("is-tooltip-open");
+          driverTitle.classList.toggle("is-tooltip-open", open);
+          info.setAttribute("aria-expanded", String(open));
+        });
+        const tooltip = element(documentRef, "div", "driver-achievements-title-tooltip", data.summary.titleDescription);
+        tooltip.id = titleTooltipId;
+        tooltip.setAttribute("role", "tooltip");
+        driverTitle.addEventListener("keydown", event => {
+          if (event.key === "Escape") {
+            driverTitle.classList.remove("is-tooltip-open");
+            info.setAttribute("aria-expanded", "false");
+            driverTitle.focus();
+          }
+        });
+        driverTitle.append(info, tooltip);
+      }
       heading.appendChild(driverTitle);
     }
     const percent = element(documentRef, "strong", "driver-achievements-percent", `${Math.round(data.summary.completionPercent)}%`);
@@ -327,10 +371,36 @@ export function createDriverAchievementsController({
       tierList.hidden = true;
       for (const tier of card.tiers) {
         const tierRow = element(documentRef, "div", `driver-achievement-tier ${tier.earned ? "is-earned" : ""}`);
+        const tierTooltipId = `driver-achievement-tier-tooltip-${++tooltipSequence}`;
+        const tierDescription = achievementDescription(tier, tier.secret && !tier.earned);
+        tierRow.tabIndex = 0;
+        tierRow.setAttribute("aria-describedby", tierTooltipId);
+        const tierInfo = element(documentRef, "button", "driver-achievement-tier-info", "i");
+        tierInfo.type = "button";
+        tierInfo.setAttribute("aria-label", copy("info"));
+        tierInfo.setAttribute("aria-expanded", "false");
+        tierInfo.addEventListener("click", event => {
+          event.stopPropagation();
+          const open = !tierRow.classList.contains("is-tooltip-open");
+          tierRow.classList.toggle("is-tooltip-open", open);
+          tierInfo.setAttribute("aria-expanded", String(open));
+        });
+        const tierTooltip = element(documentRef, "div", "driver-achievement-tier-tooltip", tierDescription);
+        tierTooltip.id = tierTooltipId;
+        tierTooltip.setAttribute("role", "tooltip");
+        tierRow.addEventListener("keydown", event => {
+          if (event.key === "Escape") {
+            tierRow.classList.remove("is-tooltip-open");
+            tierInfo.setAttribute("aria-expanded", "false");
+            tierRow.focus();
+          }
+        });
         tierRow.append(
           element(documentRef, "span", "driver-achievement-tier-icon", tier.earned ? "✓" : "○"),
           element(documentRef, "span", "driver-achievement-tier-name", tier.name),
-          element(documentRef, "span", "driver-achievement-tier-target", `${formatValue(tier.target, language(), tier.unit === "sr" ? 2 : 1)}${unitLabel(tier.unit, tier.target, language()) ? ` ${unitLabel(tier.unit, tier.target, language())}` : ""}`)
+          element(documentRef, "span", "driver-achievement-tier-target", `${formatValue(tier.target, language(), tier.unit === "sr" ? 2 : 1)}${unitLabel(tier.unit, tier.target, language()) ? ` ${unitLabel(tier.unit, tier.target, language())}` : ""}`),
+          tierInfo,
+          tierTooltip
         );
         tierList.appendChild(tierRow);
       }

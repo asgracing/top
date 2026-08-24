@@ -12,21 +12,25 @@ export const ACHIEVEMENT_CATEGORY_ORDER = Object.freeze([
 const CATEGORY_SET = new Set(ACHIEVEMENT_CATEGORY_ORDER);
 
 const SERIES_DEFINITIONS = Object.freeze([
-  { id: "career_races", names: { ru: "Гонки", en: "Races" }, unit: "race", tiers: ["career_first_start", "career_10", "career_50", "career_100", "career_250", "career_500"] },
-  { id: "career_distance", names: { ru: "Километраж", en: "Distance" }, unit: "km", tiers: ["distance_1000", "distance_5000", "distance_10000", "distance_around_world"] },
-  { id: "wins", names: { ru: "Победы", en: "Victories" }, unit: "win", tiers: ["wins_1", "wins_5", "wins_10", "wins_25", "wins_50", "wins_100"] },
-  { id: "podiums", names: { ru: "Подиумы", en: "Podiums" }, unit: "podium", tiers: ["podiums_1", "podiums_10", "podiums_25", "podiums_50", "podiums_100"] },
+  { id: "career_races", names: { ru: "Гонки", en: "Races" }, unit: "race", tiers: ["career_first_start", "career_10", "career_50", "career_100", "career_250", "career_500", "career_750", "career_1000"] },
+  { id: "career_distance", names: { ru: "Километраж", en: "Distance" }, unit: "km", tiers: ["distance_1000", "distance_5000", "distance_10000", "distance_around_world", "distance_twice_around_world", "distance_three_times_around_world"] },
+  { id: "career_laps", names: { ru: "Круговорот", en: "Lap cycle" }, unit: "lap", tiers: ["laps_1000", "laps_5000", "laps_10000"] },
+  { id: "wins", names: { ru: "Победы", en: "Victories" }, unit: "win", tiers: ["wins_1", "wins_5", "wins_10", "wins_25", "wins_50", "wins_100", "wins_150"] },
+  { id: "podiums", names: { ru: "Подиумы", en: "Podiums" }, unit: "podium", tiers: ["podiums_1", "podiums_10", "podiums_25", "podiums_50", "podiums_100", "podiums_200", "podiums_300", "podiums_500"] },
+  { id: "p4_finishes", names: { ru: "Почти получилось", en: "Almost made it" }, unit: "p4_finish", tiers: ["p4_first", "p4_10", "p4_25"] },
   { id: "win_streak", names: { ru: "Серия побед", en: "Winning streak" }, unit: "streak", tiers: ["win_streak_3", "win_streak_5"] },
   { id: "close_win", names: { ru: "Плотный финиш", en: "Close finish" }, unit: "occurrence", tiers: ["photo_finish", "stole_victory"] },
   { id: "big_grid_win", names: { ru: "Победы в большом пелотоне", en: "Big-grid victories" }, unit: "occurrence", tiers: ["big_grid_30", "big_grid_40"] },
-  { id: "fastest_laps", names: { ru: "Лучшие круги", en: "Fastest laps" }, unit: "fastest_lap", tiers: ["fastest_1", "fastest_10", "fastest_50"] },
+  { id: "fastest_laps", names: { ru: "Лучшие круги", en: "Fastest laps" }, unit: "fastest_lap", tiers: ["fastest_1", "fastest_10", "fastest_50", "fastest_100", "fastest_200"] },
   { id: "comebacks", names: { ru: "Камбэки", en: "Comebacks" }, unit: "occurrence", tiers: ["positions_5", "positions_10", "positions_15"] },
-  { id: "sr", names: { ru: "Safety Rating", en: "Safety Rating" }, unit: "sr", tiers: ["sr_5", "sr_6", "sr_7"] },
+  { id: "same_start_finish", names: { ru: "Всё по плану", en: "All according to plan" }, unit: "same_position_finish", tiers: ["same_position_first", "same_position_10", "same_position_50"] },
+  { id: "sr", names: { ru: "Safety Rating", en: "Safety Rating" }, unit: "sr", tiers: ["sr_5", "sr_6", "sr_7", "sr_8", "sr_9"] },
   { id: "hourly_races", names: { ru: "Гонки Hourly", en: "Hourly races" }, unit: "hourly_race", tiers: ["hourly_1", "hourly_5", "hourly_25", "hourly_50", "hourly_100"] },
   { id: "hourly_wins", names: { ru: "Победы в Hourly", en: "Hourly victories" }, unit: "hourly_win", tiers: ["hourly_win_1", "hourly_win_10"] },
   { id: "endurance_duration", names: { ru: "Длительные гонки", en: "Endurance races" }, unit: "occurrence", tiers: ["endurance_2h", "endurance_3h", "endurance_6h", "endurance_12h"] },
   { id: "tracks", names: { ru: "Трассы", en: "Tracks" }, unit: "track", tiers: ["tracks_5", "tracks_10"] },
-  { id: "race_days", names: { ru: "Гоночные дни", en: "Race days" }, unit: "race_day", tiers: ["race_days_10", "race_days_30", "race_days_100"] }
+  { id: "race_days", names: { ru: "Гоночные дни", en: "Race days" }, unit: "race_day", tiers: ["race_days_10", "race_days_30", "race_days_100", "race_days_150", "race_days_250"] },
+  { id: "monza_regular", names: { ru: "Монца зовёт", en: "Monza is calling" }, unit: "monza_race", tiers: ["monza_25", "monza_50", "monza_100"] }
 ]);
 
 const SERIES_BY_ACHIEVEMENT = new Map();
@@ -100,7 +104,8 @@ function normalizeSummary(raw, cards) {
     earned,
     total,
     completionPercent,
-    title: text(summary.title, 180)
+    title: text(summary.title, 180),
+    titleDescription: text(summary.title_description, 360)
   };
 }
 
@@ -112,6 +117,7 @@ export function normalizePublicAchievements(payload) {
     .slice(0, 3);
   const summary = normalizeSummary(payload.summary, cards);
   if (!summary.title) summary.title = text(payload.title, 180);
+  if (!summary.titleDescription) summary.titleDescription = text(payload.title_description, 360);
   const rawCategories = Array.isArray(payload.categories)
     ? payload.categories
     : Array.isArray(payload.summary?.categories) ? payload.summary.categories : [];
@@ -140,6 +146,7 @@ export function normalizeFullAchievements(payload) {
   const cards = source.map(raw => normalizeAchievementCard(raw)).filter(card => card?.enabled);
   const summary = normalizeSummary(payload.summary, cards);
   if (!summary.title) summary.title = text(payload.title, 180);
+  if (!summary.titleDescription) summary.titleDescription = text(payload.title_description, 360);
   return {
     publicId: text(payload.public_id, 160),
     generatedAt: text(payload.generated_at, 64),

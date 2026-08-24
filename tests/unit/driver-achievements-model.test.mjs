@@ -62,6 +62,26 @@ test("full achievements exclude disabled definitions and count categories", () =
   assert.deepEqual(categoryCounts(payload.cards).get("career"), { earned: 1, total: 2 });
 });
 
+test("humorous tiers group even when an older auth response omits series metadata", () => {
+  const payload = normalizeFullAchievements({
+    title: "Почётный четвёртый",
+    title_description: "Финишировать ровно на четвёртом месте 25 раз.",
+    achievements: [
+      { id: "p4_first", category: "victories", name: "Деревянная медаль", earned: true, progress: 17, target: 1 },
+      { id: "p4_10", category: "victories", name: "Опять четвёртый", earned: true, progress: 17, target: 10 },
+      { id: "p4_25", category: "victories", name: "Почётный четвёртый", progress: 17, target: 25 }
+    ]
+  });
+
+  const grouped = groupAchievementCards(payload.cards);
+  assert.equal(grouped.length, 1);
+  assert.equal(grouped[0].seriesId, "p4_finishes");
+  assert.equal(grouped[0].tiersEarned, 2);
+  assert.equal(grouped[0].nextTier.id, "p4_25");
+  assert.equal(grouped[0].unit, "p4_finish");
+  assert.equal(payload.summary.titleDescription, "Финишировать ровно на четвёртом месте 25 раз.");
+});
+
 test("closest filter hides locked secret details and sorts by ratio", () => {
   const payload = normalizeFullAchievements({
     achievements: [

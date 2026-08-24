@@ -87,7 +87,9 @@
   }
 
   .driver-achievements-driver-title {
+    position: relative;
     display: flex;
+    align-items: center;
     flex-wrap: wrap;
     gap: 4px 7px;
     margin-top: 6px;
@@ -97,6 +99,53 @@
 
   .driver-achievements-driver-title-label {
     color: var(--muted);
+  }
+
+  .driver-achievements-title-info {
+    width: 18px;
+    height: 18px;
+    padding: 0;
+    border: 1px solid rgba(255, 174, 113, 0.35);
+    border-radius: 50%;
+    background: rgba(255, 127, 62, 0.08);
+    color: #ffc7a6;
+    font: 700 0.65rem/1 system-ui, sans-serif;
+    cursor: pointer;
+  }
+
+  .driver-achievements-title-info:hover,
+  .driver-achievements-title-info:focus-visible {
+    border-color: rgba(255, 174, 113, 0.72);
+    outline: none;
+  }
+
+  .driver-achievements-title-tooltip {
+    position: absolute;
+    top: calc(100% + 6px);
+    left: 0;
+    z-index: 12;
+    width: min(290px, calc(100vw - 48px));
+    padding: 9px 10px;
+    visibility: hidden;
+    opacity: 0;
+    transform: translateY(-4px);
+    border: 1px solid rgba(255, 157, 92, 0.42);
+    border-radius: 10px;
+    background: rgba(13, 18, 28, 0.98);
+    box-shadow: 0 12px 28px rgba(0, 0, 0, 0.48);
+    color: #e8eef8;
+    font-size: 0.72rem;
+    line-height: 1.42;
+    pointer-events: none;
+    transition: opacity 140ms ease, transform 140ms ease, visibility 140ms ease;
+  }
+
+  .driver-achievements-driver-title:hover .driver-achievements-title-tooltip,
+  .driver-achievements-driver-title:focus-within .driver-achievements-title-tooltip,
+  .driver-achievements-driver-title.is-tooltip-open .driver-achievements-title-tooltip {
+    visibility: visible;
+    opacity: 1;
+    transform: translateY(0);
   }
 
   .driver-achievements-summary-progress {
@@ -304,8 +353,9 @@
   }
 
   .driver-achievement-tier {
+    position: relative;
     display: grid;
-    grid-template-columns: 14px minmax(0, 1fr) auto;
+    grid-template-columns: 14px minmax(0, 1fr) auto 18px;
     gap: 5px;
     align-items: center;
     color: var(--muted);
@@ -315,6 +365,54 @@
 
   .driver-achievement-tier.is-earned {
     color: #9ee7ba;
+  }
+
+  .driver-achievement-tier-info {
+    width: 18px;
+    height: 18px;
+    padding: 0;
+    border: 1px solid rgba(255, 255, 255, 0.16);
+    border-radius: 50%;
+    background: transparent;
+    color: #aeb9ca;
+    font: 700 0.62rem/1 system-ui, sans-serif;
+    cursor: pointer;
+  }
+
+  .driver-achievement-tier-info:hover,
+  .driver-achievement-tier-info:focus-visible {
+    border-color: rgba(255, 174, 113, 0.72);
+    color: #ffe0ca;
+    outline: none;
+  }
+
+  .driver-achievement-tier-tooltip {
+    position: absolute;
+    right: 0;
+    bottom: calc(100% + 5px);
+    left: 0;
+    z-index: 14;
+    padding: 8px 9px;
+    visibility: hidden;
+    opacity: 0;
+    transform: translateY(4px);
+    border: 1px solid rgba(255, 157, 92, 0.42);
+    border-radius: 9px;
+    background: rgba(13, 18, 28, 0.99);
+    box-shadow: 0 10px 24px rgba(0, 0, 0, 0.48);
+    color: #e8eef8;
+    font-size: 0.69rem;
+    line-height: 1.4;
+    pointer-events: none;
+    transition: opacity 140ms ease, transform 140ms ease, visibility 140ms ease;
+  }
+
+  .driver-achievement-tier:hover .driver-achievement-tier-tooltip,
+  .driver-achievement-tier:focus-within .driver-achievement-tier-tooltip,
+  .driver-achievement-tier.is-tooltip-open .driver-achievement-tier-tooltip {
+    visibility: visible;
+    opacity: 1;
+    transform: translateY(0);
   }
 
   .driver-achievement-tier-target {
@@ -498,6 +596,14 @@
   }
 
   .driver-achievement-tooltip {
+    transition: none;
+  }
+
+  .driver-achievements-title-tooltip {
+    transition: none;
+  }
+
+  .driver-achievement-tier-tooltip {
     transition: none;
   }
 }
