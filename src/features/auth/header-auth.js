@@ -81,6 +81,20 @@ function safeMetric(value) {
   return Number.isFinite(number) ? number : null;
 }
 
+function normalizeDriverTitle(raw) {
+  if (!raw || typeof raw !== "object") return null;
+  const achievementId = safeText(raw.achievement_id, 128);
+  const title = safeText(raw.title, 180);
+  if (!achievementId || !/^[a-z0-9_]+$/.test(achievementId) || !title) return null;
+  return {
+    achievementId,
+    title,
+    description: safeText(raw.description, 360),
+    icon: safeText(raw.icon, 16),
+    earnedAt: safeText(raw.earned_at, 64) || null
+  };
+}
+
 export function eloCategoryId(value) {
   const rating = safeMetric(value);
   if (rating === null) return null;
@@ -200,6 +214,20 @@ export function normalizeAuthPayload(payload) {
       ? rawPreferences.blocked_reason
       : null
   };
+  const rawTitles = payload.titles && typeof payload.titles === "object" ? payload.titles : {};
+  const availableTitles = (Array.isArray(rawTitles.available) ? rawTitles.available : [])
+    .map(normalizeDriverTitle)
+    .filter(Boolean)
+    .slice(0, 100);
+  const selectedAchievementId = safeText(rawTitles.selected_achievement_id, 128);
+  const titles = {
+    enabled: rawTitles.enabled === true,
+    selectedAchievementId: availableTitles.some(item => item.achievementId === selectedAchievementId)
+      ? selectedAchievementId
+      : null,
+    active: normalizeDriverTitle(rawTitles.active),
+    available: availableTitles
+  };
   return {
     authenticated: true,
     linked: Boolean(driver),
@@ -207,6 +235,7 @@ export function normalizeAuthPayload(payload) {
     steam,
     discord,
     preferences,
+    titles,
     clubsTeams: normalizeClubsTeamsAuthState(payload.clubs_teams),
     csrfToken: safeText(payload.csrf_token, 256)
   };

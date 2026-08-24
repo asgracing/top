@@ -614,7 +614,8 @@
     font-weight: 750;
   }
 
-  .account-field input {
+  .account-field input,
+  .account-field select {
     min-height: 48px;
     box-sizing: border-box;
     padding: 0 14px;
@@ -624,6 +625,69 @@
     color: #fff;
     font: inherit;
     font-size: 1rem;
+  }
+
+  .account-field select {
+    appearance: none;
+    padding-right: 42px;
+    background-image:
+      linear-gradient(45deg, transparent 50%, #ffb46f 50%),
+      linear-gradient(135deg, #ffb46f 50%, transparent 50%);
+    background-position:
+      calc(100% - 19px) 21px,
+      calc(100% - 13px) 21px;
+    background-repeat: no-repeat;
+    background-size: 6px 6px, 6px 6px;
+  }
+
+  .account-title-settings {
+    margin-bottom: 28px;
+    padding: 18px;
+    border: 1px solid rgba(255, 164, 82, 0.34);
+    border-radius: 18px;
+    background:
+      radial-gradient(circle at 100% 0%, rgba(255, 177, 65, 0.18), transparent 44%),
+      rgba(255, 120, 45, 0.055);
+  }
+
+  .account-title-settings-heading {
+    display: flex;
+    align-items: flex-start;
+    justify-content: space-between;
+    gap: 18px;
+  }
+
+  .account-title-settings h2,
+  .account-number-settings h2 {
+    margin: 0 0 6px;
+  }
+
+  .account-title-settings .account-muted {
+    max-width: 620px;
+    margin: 0;
+  }
+
+  .account-active-title {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    flex: 0 0 auto;
+    padding: 9px 13px;
+    border: 1px solid rgba(255, 210, 107, 0.55);
+    border-radius: 999px;
+    background: linear-gradient(135deg, rgba(255, 85, 38, 0.32), rgba(255, 191, 69, 0.18));
+    box-shadow: 0 0 22px rgba(255, 128, 45, 0.18);
+    color: #ffe49a;
+    font-size: 0.82rem;
+    text-shadow: 0 0 12px rgba(255, 190, 76, 0.42);
+  }
+
+  .account-title-field {
+    max-width: 680px;
+  }
+
+  .account-number-settings {
+    padding-top: 4px;
   }
 
   .account-message {
@@ -669,6 +733,15 @@
 
     .account-logo-previews {
       grid-template-columns: 1fr;
+    }
+
+    .account-title-settings-heading {
+      align-items: stretch;
+      flex-direction: column;
+    }
+
+    .account-active-title {
+      align-self: flex-start;
     }
   }
 }

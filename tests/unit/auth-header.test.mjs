@@ -61,6 +61,23 @@ test("normalizes linked auth data without exposing unexpected identity fields", 
       next_change_at: null,
       private_value: "must not survive"
     },
+    titles: {
+      enabled: true,
+      selected_achievement_id: "career_100",
+      active: {
+        achievement_id: "career_100",
+        title: "Veteran",
+        description: "Complete 100 races.",
+        icon: "star"
+      },
+      available: [{
+        achievement_id: "career_100",
+        title: "Veteran",
+        description: "Complete 100 races.",
+        icon: "star",
+        private_value: "must not survive"
+      }]
+    },
     clubs_teams: {
       enabled: true,
       applied_state: null,
@@ -95,6 +112,15 @@ test("normalizes linked auth data without exposing unexpected identity fields", 
   assert.equal("access_token" in normalized.discord, false);
   assert.equal(normalized.clubsTeams.enabled, true);
   assert.equal(normalized.clubsTeams.snapshot.revision, 1);
+  assert.equal(normalized.titles.selectedAchievementId, "career_100");
+  assert.deepEqual(normalized.titles.active, {
+    achievementId: "career_100",
+    title: "Veteran",
+    description: "Complete 100 races.",
+    icon: "star",
+    earnedAt: null
+  });
+  assert.equal("private_value" in normalized.titles.available[0], false);
 });
 
 test("accepts only the fixed Discord OAuth authorization endpoint", () => {

@@ -4,8 +4,8 @@ import {
   normalizeFullAchievements,
   normalizePublicAchievements,
   selectAchievementCards
-} from "./achievements-model.js?v=20260824achievements4";
-import { buildAuthReturnPath, normalizeAuthPayload } from "../../features/auth/header-auth.js";
+} from "./achievements-model.js?v=20260824titles1";
+import { buildAuthReturnPath, normalizeAuthPayload } from "../../features/auth/header-auth.js?v=20260824titles1";
 import { createHttpClient } from "../../shared/http-client.js";
 
 const DEFAULT_DATA_BASE_URL = "https://data.asgracing.ru/achievements/v1";
@@ -27,6 +27,7 @@ const COPY = Object.freeze({
     fullLoading: "Loading the full achievement collection...",
     fullUnavailable: "The full collection is temporarily unavailable. The public preview remains available.",
     nearest: "Closest",
+    titlesTab: "Titles",
     completed: "Completed",
     locked: "In progress",
     times: "Completed {count} times",
@@ -60,6 +61,7 @@ const COPY = Object.freeze({
     fullLoading: "Загружаем полную коллекцию достижений...",
     fullUnavailable: "Полная коллекция временно недоступна. Публичный минимум продолжает работать.",
     nearest: "Ближе всего",
+    titlesTab: "Звания",
     completed: "Получено",
     locked: "В процессе",
     times: "Выполнено {count} раз",
@@ -449,6 +451,18 @@ export function createDriverAchievementsController({
     const counts = categoryCounts(data.cards);
     const tabs = element(documentRef, "div", "driver-achievements-tabs");
     tabs.setAttribute("role", "tablist");
+    const titleCards = data.cards.filter(card => card.title);
+    if (titleCards.length) {
+      const earnedTitles = titleCards.filter(card => card.earned).length;
+      const titles = element(documentRef, "button", "driver-achievements-tab driver-achievements-tab--titles", `${copy("titlesTab")} ${earnedTitles}/${titleCards.length}`);
+      titles.type = "button";
+      titles.dataset.filter = "titles";
+      titles.setAttribute("role", "tab");
+      titles.setAttribute("aria-selected", String(state.filter === "titles"));
+      if (state.filter === "titles") titles.classList.add("is-active");
+      titles.addEventListener("click", () => { state.filter = "titles"; render(); });
+      tabs.appendChild(titles);
+    }
     for (const category of ACHIEVEMENT_CATEGORY_ORDER) {
       const count = counts.get(category);
       if (!count?.total) continue;

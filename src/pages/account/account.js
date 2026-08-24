@@ -1,4 +1,4 @@
-import { createAuthHeaderController } from "../../features/auth/header-auth.js";
+import { createAuthHeaderController } from "../../features/auth/header-auth.js?v=20260824titles1";
 import { createHttpClient } from "../../shared/http-client.js";
 import { resolveRuntimeOverride } from "../../shared/runtime-config.js";
 import { loadEntityDetail } from "../clubs-teams/detail-model.js";
@@ -152,6 +152,13 @@ const COPY = {
     versionConflict: "The profile changed. Refresh the account before editing it again.",
     detailUnavailable: "The approved profile could not be loaded safely. Editing remains disabled.",
     numberSettings: "Race number settings",
+    titleSettings: "Driver title",
+    titleHelp: "Choose one of your earned titles. It will replace “Driver profile” in your public profile hero.",
+    titleAutomatic: "Automatic — highest-priority earned title",
+    titleNone: "Earn achievements with titles to unlock this setting.",
+    titleSave: "Display selected title",
+    titleSaved: "Driver title updated.",
+    titleFailed: "The selected title is no longer available. Refresh achievements and try again.",
     numberHelp: "Choose a globally unique number from 1 to 999. A new assignment must be approved.",
     numberLabel: "New number (1–999)",
     submit: "Submit request",
@@ -302,6 +309,13 @@ const COPY = {
     linked: "Привязан",
     notLinked: "Не привязан",
     numberSettings: "Настройки гоночного номера",
+    titleSettings: "Звание пилота",
+    titleHelp: "Выберите одно из полученных званий. Оно ярко отобразится в публичном профиле вместо надписи «Профиль пилота».",
+    titleAutomatic: "Автоматически — самое приоритетное полученное звание",
+    titleNone: "Получайте достижения со званиями, чтобы открыть этот выбор.",
+    titleSave: "Показывать выбранное звание",
+    titleSaved: "Звание пилота обновлено.",
+    titleFailed: "Выбранное звание больше недоступно. Обновите достижения и попробуйте снова.",
     numberHelp: "Выберите глобально уникальный номер от 1 до 999. Новое назначение подтверждается вручную.",
     numberLabel: "Новый номер (1–999)",
     submit: "Отправить заявку",
@@ -362,8 +376,12 @@ let forceAccountRender = false;
 function hasActiveAccountWorkspace() {
   if (document.querySelector("[data-account-workspace]")) return true;
   const raceNumberInput = document.getElementById("race-number-input");
-  return Boolean(raceNumberInput
-    && (document.activeElement === raceNumberInput || raceNumberInput.value.trim() !== ""));
+  const titleSelect = document.getElementById("driver-title-select");
+  return Boolean(
+    (raceNumberInput
+      && (document.activeElement === raceNumberInput || raceNumberInput.value.trim() !== ""))
+    || (titleSelect && document.activeElement === titleSelect)
+  );
 }
 
 function handleAccountAuthChange(auth) {
@@ -1218,6 +1236,34 @@ function renderOverview(root, auth) {
   if (auth.linked) bindClubsTeamsActions(auth);
 }
 
+function renderTitleSettings(auth) {
+  const titles = auth.titles || { enabled: false, selectedAchievementId: null, available: [] };
+  const options = titles.available.map(item => `
+    <option value="${escapeHtml(item.achievementId)}"${item.achievementId === titles.selectedAchievementId ? " selected" : ""}>
+      ${escapeHtml(`${item.icon ? `${item.icon} ` : ""}${item.title}`)}
+    </option>`).join("");
+  return `
+    <section class="account-title-settings" aria-labelledby="driver-title-settings-heading">
+      <div class="account-title-settings-heading">
+        <div>
+          <h2 id="driver-title-settings-heading">${t("titleSettings")}</h2>
+          <p class="account-muted">${t("titleHelp")}</p>
+        </div>
+        ${titles.active ? `<strong class="account-active-title"><span>${escapeHtml(titles.active.icon || "✦")}</span>${escapeHtml(titles.active.title)}</strong>` : ""}
+      </div>
+      ${titles.enabled && titles.available.length ? `
+        <div class="account-field account-title-field">
+          <label for="driver-title-select">${t("titleSettings")}</label>
+          <select id="driver-title-select">
+            <option value=""${titles.selectedAchievementId ? "" : " selected"}>${t("titleAutomatic")}</option>
+            ${options}
+          </select>
+        </div>
+        <button class="account-action account-action--primary" id="driver-title-save" type="button">${t("titleSave")}</button>
+      ` : `<p class="account-muted">${t("titleNone")}</p>`}
+    </section>`;
+}
+
 function renderSettings(root, auth) {
   const preferences = auth.preferences || {};
   const pending = preferences.pendingRequest;
@@ -1231,6 +1277,9 @@ function renderSettings(root, auth) {
       ${numberBadge(preferences)}
     </div>
     <div class="account-card-body">
+      ${renderTitleSettings(auth)}
+      <section class="account-number-settings" aria-labelledby="race-number-settings-heading">
+      <h2 id="race-number-settings-heading">${t("numberSettings")}</h2>
       <p class="account-muted">${t("numberHelp")}</p>
       ${pending ? `<p class="account-status">${t("pending", pending.raceNumber)}</p>` : ""}
       ${blocked ? `<p class="account-message" data-kind="error">${t("blocked")}</p>` : ""}
@@ -1247,8 +1296,10 @@ function renderSettings(root, auth) {
         ${preferences.raceNumber ? `<button class="account-action account-action--danger" id="race-number-release" ${blocked || preferences.nextChangeAt ? "disabled" : ""}>${t("release")}</button>` : ""}
         <a class="account-action" href="/account/">${t("overview")}</a>
       </div>
+      </section>
       <div class="account-message" id="account-message" role="status" aria-live="polite"></div>
     </div>`;
+  document.getElementById("driver-title-save")?.addEventListener("click", () => saveTitle(auth));
   document.getElementById("race-number-submit")?.addEventListener("click", () => submitNumber(auth));
   document.getElementById("race-number-cancel")?.addEventListener("click", () => cancelRequest(auth));
   document.getElementById("race-number-release")?.addEventListener("click", () => releaseNumber(auth));
@@ -1321,6 +1372,24 @@ function releaseNumber(auth) {
     () => mutation("/v1/me/race-number", auth.csrfToken, { race_number: null }),
     t("released")
   );
+}
+
+async function saveTitle(auth) {
+  const select = document.getElementById("driver-title-select");
+  const button = document.getElementById("driver-title-save");
+  if (!select || !button || button.disabled) return;
+  button.disabled = true;
+  setMessage("");
+  try {
+    await mutation("/v1/me/title", auth.csrfToken, {
+      achievement_id: select.value || null
+    });
+    flashMessage = { text: t("titleSaved"), kind: "success" };
+    await refreshAccountState();
+  } catch {
+    setMessage(t("titleFailed"), "error");
+    button.disabled = false;
+  }
 }
 
 function render(auth) {

@@ -1,11 +1,45 @@
 import { bootstrapLegacyPage } from "./legacy-bootstrap.js?v=20260813bfcache1";
 import { applyRandomTrackBackground } from "../features/server-status/track-background.js?v=20260726staticfallback1";
-import { createDriverAchievementsController } from "../pages/driver/achievements-widget.js?v=20260824achievements4";
+import { createDriverAchievementsController } from "../pages/driver/achievements-widget.js?v=20260824titles1";
 import { createCollapsibleWidget } from "../shared/collapsible-widget.js?v=20260820widgetcollapse1";
 
 applyRandomTrackBackground(document);
 
 await bootstrapLegacyPage("driver");
+
+async function applyDriverTitle() {
+  const publicId = new URLSearchParams(window.location.search).get("id") || "";
+  if (!/^drv_[a-z0-9]+$/i.test(publicId)) return;
+  try {
+    const response = await fetch(`https://auth.asgracing.ru/v1/drivers/${encodeURIComponent(publicId)}/title`, {
+      credentials: "omit",
+      cache: "no-store",
+      headers: { Accept: "application/json" }
+    });
+    if (!response.ok) return;
+    const payload = await response.json();
+    const title = String(payload?.title || "").trim().slice(0, 180);
+    const description = String(payload?.description || "").trim().slice(0, 360);
+    const icon = String(payload?.icon || "✦").trim().slice(0, 16) || "✦";
+    if (!title) return;
+    const eyebrow = document.querySelector(".driver-page-hero .eyebrow[data-i18n='driverEyebrow']");
+    if (!eyebrow) return;
+    eyebrow.removeAttribute("data-i18n");
+    eyebrow.classList.add("driver-profile-title-eyebrow");
+    eyebrow.replaceChildren();
+    const iconElement = document.createElement("span");
+    iconElement.className = "driver-profile-title-icon";
+    iconElement.textContent = icon;
+    const textElement = document.createElement("span");
+    textElement.textContent = title;
+    eyebrow.append(iconElement, textElement);
+    if (description) eyebrow.title = description;
+  } catch {
+    // The ordinary localized eyebrow remains when the optional title API is unavailable.
+  }
+}
+
+void applyDriverTitle();
 
 const achievementsRoot = document.getElementById("driver-achievements-widget");
 const achievementsCollapseController = achievementsRoot ? createCollapsibleWidget({

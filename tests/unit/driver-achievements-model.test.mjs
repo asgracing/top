@@ -93,3 +93,18 @@ test("closest filter hides locked secret details and sorts by ratio", () => {
 
   assert.deepEqual(selectAchievementCards(payload.cards, "nearest").map(card => card.id), ["near", "far"]);
 });
+
+test("titles filter is separate and lists earned titles before locked titles", () => {
+  const payload = normalizeFullAchievements({
+    achievements: [
+      { id: "plain", category: "career", name: "Plain", earned: true, progress: 1, target: 1 },
+      { id: "locked_title", category: "speed", name: "Fast", title: "Time Lord", title_priority: 80, progress: 9, target: 10 },
+      { id: "earned_title", category: "career", name: "Old", title: "Veteran", title_priority: 20, earned: true, progress: 100, target: 100 }
+    ]
+  });
+
+  const titles = selectAchievementCards(payload.cards, "titles");
+  assert.deepEqual(titles.map(card => card.id), ["earned_title", "locked_title"]);
+  assert.deepEqual(titles.map(card => card.name), ["Veteran", "Time Lord"]);
+  assert.ok(titles.every(card => card.isTitle));
+});

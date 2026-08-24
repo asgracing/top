@@ -1,4 +1,31 @@
 @layer components {
+  .driver-profile-title-eyebrow {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    width: fit-content;
+    padding: 7px 12px;
+    border: 1px solid rgba(255, 220, 112, 0.62);
+    border-radius: 999px;
+    background:
+      linear-gradient(115deg, rgba(255, 76, 34, 0.9), rgba(255, 151, 36, 0.82) 56%, rgba(255, 209, 91, 0.78));
+    box-shadow:
+      0 0 24px rgba(255, 113, 42, 0.34),
+      inset 0 1px 0 rgba(255, 255, 255, 0.34);
+    color: #fffbea;
+    font-size: 0.78rem;
+    font-weight: 900;
+    letter-spacing: 0.075em;
+    line-height: 1;
+    text-shadow: 0 1px 5px rgba(91, 25, 0, 0.55);
+    text-transform: uppercase;
+  }
+
+  .driver-profile-title-icon {
+    font-size: 1rem;
+    filter: drop-shadow(0 1px 4px rgba(63, 18, 0, 0.45));
+  }
+
   .driver-page-layout {
     display: block;
   }
@@ -532,6 +559,19 @@
     background: rgba(255, 107, 52, 0.14);
     color: #ffd5c0;
     outline: none;
+  }
+
+  .driver-achievements-tab--titles {
+    border-color: rgba(255, 207, 92, 0.42);
+    background: linear-gradient(135deg, rgba(255, 96, 38, 0.18), rgba(255, 196, 67, 0.12));
+    color: #ffe29a;
+  }
+
+  .driver-achievements-tab--titles.is-active {
+    border-color: rgba(255, 221, 119, 0.78);
+    background: linear-gradient(135deg, rgba(255, 91, 46, 0.36), rgba(255, 190, 54, 0.25));
+    box-shadow: 0 0 16px rgba(255, 164, 58, 0.18);
+    color: #fff4c9;
   }
 
   .driver-achievements-loading,

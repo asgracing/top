@@ -85,6 +85,8 @@ export function normalizeAchievementCard(raw, { publicPreview = false } = {}) {
     tierOrder: Math.max(0, number(raw.tier_order, fallbackSeries?.tierOrder || 0)),
     repeatable: raw.repeatable === true || raw.kind === "counter",
     availability: text(raw.availability, 32) || "active",
+    title: text(raw.title, 180),
+    titlePriority: Math.max(0, number(raw.title_priority)),
     publicPreview
   };
 }
@@ -207,6 +209,14 @@ export function groupAchievementCards(cards) {
 
 export function selectAchievementCards(cards, filter = "career") {
   const source = Array.isArray(cards) ? cards.filter(card => card?.enabled) : [];
+  if (filter === "titles") {
+    return source
+      .filter(card => card.title)
+      .map(card => ({ ...card, name: card.title, isTitle: true, seriesId: null }))
+      .sort((left, right) => Number(right.earned) - Number(left.earned)
+        || right.titlePriority - left.titlePriority
+        || left.name.localeCompare(right.name, "ru"));
+  }
   const grouped = groupAchievementCards(source);
   if (filter === "nearest") {
     return grouped
