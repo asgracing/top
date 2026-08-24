@@ -30,6 +30,8 @@ const COPY = Object.freeze({
     titlesTab: "Titles",
     completed: "Completed",
     locked: "In progress",
+    titleLocked: "Locked",
+    titleRequirement: "How to unlock",
     times: "Completed {count} times",
     levels: "Levels {earned}/{total}",
     allLevels: "All levels completed: {earned}/{total}",
@@ -64,6 +66,8 @@ const COPY = Object.freeze({
     titlesTab: "Звания",
     completed: "Получено",
     locked: "В процессе",
+    titleLocked: "Закрыто",
+    titleRequirement: "Как получить",
     times: "Выполнено {count} раз",
     levels: "Уровни {earned}/{total}",
     allLevels: "Все уровни получены: {earned}/{total}",
@@ -329,9 +333,22 @@ export function createDriverAchievementsController({
     const top = element(documentRef, "div", "driver-achievement-topline");
     top.append(
       element(documentRef, "strong", "driver-achievement-name", lockedSecret ? copy("secretName") : card.isSeries ? localizedSeriesName(card) : card.name || copy("title")),
-      element(documentRef, "span", `driver-achievement-state ${card.earned ? "is-earned" : ""}`, card.earned ? copy("completed") : copy("locked"))
+      element(
+        documentRef,
+        "span",
+        `driver-achievement-state ${card.earned ? "is-earned" : ""}`,
+        card.earned ? copy("completed") : card.isTitle ? copy("titleLocked") : copy("locked")
+      )
     );
     body.appendChild(top);
+    if (card.isTitle && !lockedSecret) {
+      const requirement = element(documentRef, "p", "driver-achievement-title-requirement");
+      requirement.append(
+        element(documentRef, "strong", "", `${copy("titleRequirement")}: `),
+        documentRef.createTextNode(description)
+      );
+      body.appendChild(requirement);
+    }
     if (!lockedSecret && (card.kind === "counter" || card.isSeries)) {
       body.appendChild(element(documentRef, "div", "driver-achievement-counter", progressText(card)));
       if (card.isSeries && !card.complete && card.target > 0) body.appendChild(renderProgress(card.ratio * 100, progressText(card), "driver-achievement-progress"));

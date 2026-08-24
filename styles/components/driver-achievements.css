@@ -455,6 +455,17 @@
     line-height: 1.42;
   }
 
+  .driver-achievement-title-requirement {
+    margin: 7px 0 0;
+    color: rgba(224, 232, 246, 0.78);
+    font-size: 0.72rem;
+    line-height: 1.42;
+  }
+
+  .driver-achievement-title-requirement strong {
+    color: #ffd27a;
+  }
+
   .driver-achievement-progress-value,
   .driver-achievement-counter {
     margin-top: 8px;
