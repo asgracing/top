@@ -5,7 +5,7 @@ import {
   normalizePublicAchievements,
   selectAchievementCards
 } from "./achievements-model.js?v=20260824titles1";
-import { buildAuthReturnPath, normalizeAuthPayload } from "../../features/auth/header-auth.js?v=20260824titles1";
+import { buildAuthReturnPath, normalizeAuthPayload } from "../../features/auth/header-auth.js?v=20260826titles1";
 import { createHttpClient } from "../../shared/http-client.js";
 
 const DEFAULT_DATA_BASE_URL = "https://data.asgracing.ru/achievements/v1";

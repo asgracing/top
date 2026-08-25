@@ -2,6 +2,7 @@ import { normalizeClubsTeamsAuthState } from "./clubs-teams-auth-model.js";
 import { createHttpClient } from "../../shared/http-client.js";
 
 const DEFAULT_AUTH_BASE_URL = "https://auth.asgracing.ru";
+const MIN_TITLE_DEFINITIONS_VERSION = 6;
 const AVATAR_HOSTS = new Set(["steamcdn-a.akamaihd.net"]);
 
 const COPY = Object.freeze({
@@ -215,17 +216,22 @@ export function normalizeAuthPayload(payload) {
       : null
   };
   const rawTitles = payload.titles && typeof payload.titles === "object" ? payload.titles : {};
-  const availableTitles = (Array.isArray(rawTitles.available) ? rawTitles.available : [])
+  const definitionsVersion = safeMetric(rawTitles.definitions_version);
+  const currentTitleCatalog = definitionsVersion !== null
+    && definitionsVersion >= MIN_TITLE_DEFINITIONS_VERSION;
+  const availableTitles = (currentTitleCatalog && Array.isArray(rawTitles.available) ? rawTitles.available : [])
     .map(normalizeDriverTitle)
     .filter(Boolean)
     .slice(0, 100);
   const selectedAchievementId = safeText(rawTitles.selected_achievement_id, 128);
   const titles = {
-    enabled: rawTitles.enabled === true,
+    enabled: rawTitles.enabled === true && currentTitleCatalog,
+    definitionsVersion,
+    revision: safeText(rawTitles.revision, 160) || null,
     selectedAchievementId: availableTitles.some(item => item.achievementId === selectedAchievementId)
       ? selectedAchievementId
       : null,
-    active: normalizeDriverTitle(rawTitles.active),
+    active: currentTitleCatalog ? normalizeDriverTitle(rawTitles.active) : null,
     available: availableTitles
   };
   return {

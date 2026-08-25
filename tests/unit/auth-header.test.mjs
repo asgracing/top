@@ -63,6 +63,8 @@ test("normalizes linked auth data without exposing unexpected identity fields", 
     },
     titles: {
       enabled: true,
+      definitions_version: 6,
+      revision: "revision-6",
       selected_achievement_id: "career_100",
       active: {
         achievement_id: "career_100",
@@ -113,6 +115,8 @@ test("normalizes linked auth data without exposing unexpected identity fields", 
   assert.equal(normalized.clubsTeams.enabled, true);
   assert.equal(normalized.clubsTeams.snapshot.revision, 1);
   assert.equal(normalized.titles.selectedAchievementId, "career_100");
+  assert.equal(normalized.titles.definitionsVersion, 6);
+  assert.equal(normalized.titles.revision, "revision-6");
   assert.deepEqual(normalized.titles.active, {
     achievementId: "career_100",
     title: "Veteran",
@@ -121,6 +125,24 @@ test("normalizes linked auth data without exposing unexpected identity fields", 
     earnedAt: null
   });
   assert.equal("private_value" in normalized.titles.available[0], false);
+});
+
+test("hides selectable titles from an obsolete achievements catalog", () => {
+  const normalized = normalizeAuthPayload({
+    authenticated: true,
+    linked: false,
+    titles: {
+      enabled: true,
+      definitions_version: 5,
+      selected_achievement_id: "wins_50",
+      active: { achievement_id: "wins_50", title: "Victory Machine" },
+      available: [{ achievement_id: "wins_50", title: "Victory Machine" }]
+    }
+  });
+  assert.equal(normalized.titles.enabled, false);
+  assert.equal(normalized.titles.selectedAchievementId, null);
+  assert.equal(normalized.titles.active, null);
+  assert.deepEqual(normalized.titles.available, []);
 });
 
 test("accepts only the fixed Discord OAuth authorization endpoint", () => {

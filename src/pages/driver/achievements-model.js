@@ -10,6 +10,7 @@ export const ACHIEVEMENT_CATEGORY_ORDER = Object.freeze([
 ]);
 
 const CATEGORY_SET = new Set(ACHIEVEMENT_CATEGORY_ORDER);
+const MIN_TITLE_DEFINITIONS_VERSION = 6;
 
 const SERIES_DEFINITIONS = Object.freeze([
   { id: "career_races", names: { ru: "Гонки", en: "Races" }, unit: "race", tiers: ["career_first_start", "career_10", "career_50", "career_100", "career_250", "career_500", "career_750", "career_1000"] },
@@ -49,6 +50,26 @@ function number(value, fallback = 0) {
 
 function clamp(value, min, max) {
   return Math.min(max, Math.max(min, value));
+}
+
+export function normalizePublicDriverTitle(raw) {
+  if (!raw || typeof raw !== "object") return null;
+  const definitionsVersion = number(raw.definitions_version, 0);
+  const achievementId = text(raw.achievement_id, 128);
+  const title = text(raw.title, 180);
+  if (
+    definitionsVersion < MIN_TITLE_DEFINITIONS_VERSION
+    || !/^[a-z0-9_]+$/.test(achievementId)
+    || !title
+  ) return null;
+  return {
+    achievementId,
+    title,
+    description: text(raw.description, 360),
+    icon: text(raw.icon, 16) || "✦",
+    revision: text(raw.revision, 160) || null,
+    selected: raw.selected === true
+  };
 }
 
 export function normalizeAchievementCard(raw, { publicPreview = false } = {}) {

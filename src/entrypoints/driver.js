@@ -1,6 +1,7 @@
 import { bootstrapLegacyPage } from "./legacy-bootstrap.js?v=20260813bfcache1";
 import { applyRandomTrackBackground } from "../features/server-status/track-background.js?v=20260726staticfallback1";
-import { createDriverAchievementsController } from "../pages/driver/achievements-widget.js?v=20260824titles2";
+import { createDriverAchievementsController } from "../pages/driver/achievements-widget.js?v=20260826titles1";
+import { normalizePublicDriverTitle } from "../pages/driver/achievements-model.js?v=20260826titles1";
 import { createCollapsibleWidget } from "../shared/collapsible-widget.js?v=20260820widgetcollapse1";
 
 applyRandomTrackBackground(document);
@@ -17,11 +18,9 @@ async function applyDriverTitle() {
       headers: { Accept: "application/json" }
     });
     if (!response.ok) return;
-    const payload = await response.json();
-    const title = String(payload?.title || "").trim().slice(0, 180);
-    const description = String(payload?.description || "").trim().slice(0, 360);
-    const icon = String(payload?.icon || "✦").trim().slice(0, 16) || "✦";
-    if (!title) return;
+    const payload = normalizePublicDriverTitle(await response.json());
+    if (!payload) return;
+    const { title, description, icon } = payload;
     const eyebrow = document.querySelector(".driver-page-hero .eyebrow[data-i18n='driverEyebrow']");
     if (!eyebrow) return;
     eyebrow.removeAttribute("data-i18n");

@@ -6,7 +6,8 @@ import {
   groupAchievementCards,
   normalizeFullAchievements,
   normalizePublicAchievements,
-  selectAchievementCards
+  selectAchievementCards,
+  normalizePublicDriverTitle
 } from "../../src/pages/driver/achievements-model.js";
 
 test("public achievements expose at most three preview cards and derive completion", () => {
@@ -107,4 +108,33 @@ test("titles filter is separate and lists earned titles before locked titles", (
   assert.deepEqual(titles.map(card => card.id), ["earned_title", "locked_title"]);
   assert.deepEqual(titles.map(card => card.name), ["Veteran", "Time Lord"]);
   assert.ok(titles.every(card => card.isTitle));
+});
+
+test("public driver title requires the current catalog and a valid achievement id", () => {
+  assert.equal(normalizePublicDriverTitle({
+    definitions_version: 5,
+    achievement_id: "wins_50",
+    title: "Victory Machine"
+  }), null);
+  assert.equal(normalizePublicDriverTitle({
+    definitions_version: 6,
+    achievement_id: "invalid-id",
+    title: "Invalid"
+  }), null);
+  assert.deepEqual(normalizePublicDriverTitle({
+    definitions_version: 6,
+    revision: "revision-6",
+    achievement_id: "wins_150",
+    title: "Victory Machine",
+    description: "Win 150 counted races.",
+    icon: "medal",
+    selected: true
+  }), {
+    achievementId: "wins_150",
+    title: "Victory Machine",
+    description: "Win 150 counted races.",
+    icon: "medal",
+    revision: "revision-6",
+    selected: true
+  });
 });

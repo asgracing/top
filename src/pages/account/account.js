@@ -1,4 +1,4 @@
-import { createAuthHeaderController } from "../../features/auth/header-auth.js?v=20260824titles1";
+import { createAuthHeaderController } from "../../features/auth/header-auth.js?v=20260826titles1";
 import { createHttpClient } from "../../shared/http-client.js";
 import { resolveRuntimeOverride } from "../../shared/runtime-config.js";
 import { loadEntityDetail } from "../clubs-teams/detail-model.js";
