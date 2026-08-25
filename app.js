@@ -24,6 +24,7 @@ import {
 } from "./news-read-state.js?v=20260813newsread1";
 import { createAuthHeaderController, safeAvatarUrl } from "./src/features/auth/header-auth.js?v=20260811invites1";
 import { applyRandomTrackBackground, normalizeTrackBackgroundCode, resolveTrackBackgroundFile } from "./src/features/server-status/track-background.js?v=20260726staticfallback1";
+import { bindServerStatusFreshness, isServerStatusStale } from "./src/features/server-status/freshness.js?v=20260825statusfreshness1";
 
 const PAGE_CONTEXT = readPageContext(document);
 const PAGE_FEATURES = await loadPageFeatures(PAGE_CONTEXT.page);
@@ -986,6 +987,7 @@ const translations = {
     serverStatusOnline: "ONLINE",
     serverStatusOffline: "OFFLINE",
     serverStatusDegraded: "DEGRADED",
+    serverStatusStale: "No current data for more than 10 minutes",
     serverTotalPlayersLabel: "Total players",
     serverTotalPlayersNote: "Servers",
     serversWidgetTitle: "Server status",
@@ -1675,6 +1677,7 @@ const translations = {
     serverStatusOnline: "ОНЛАЙН",
     serverStatusOffline: "ОФФЛАЙН",
     serverStatusDegraded: "ЧАСТИЧНО",
+    serverStatusStale: "Нет актуальных данных более 10 минут",
     serverTotalPlayersLabel: "Всего игроков",
     serverTotalPlayersNote: "Серверы",
     serversWidgetTitle: "Статус серверов",
@@ -8369,6 +8372,7 @@ function formatDateTimeLocal(isoString, lang = "en") {
 
   const locale = lang === "ru" ? "ru-RU" : "en-GB";
   const date = new Date(isoString);
+  if (Number.isNaN(date.getTime())) return "-";
 
   return new Intl.DateTimeFormat(locale, {
     year: "numeric",
@@ -8588,7 +8592,12 @@ function applyServerStatusClass(element, status) {
   );
 }
 
+function serverStatusIsStale(serverStatus = serverStatusData) {
+  return isServerStatusStale(serverStatus);
+}
+
 function getServerDrivers(server) {
+  if (serverStatusIsStale()) return [];
   if (!server || typeof server !== "object") return [];
   const drivers = Array.isArray(server.drivers)
     ? server.drivers
@@ -8630,6 +8639,7 @@ function getServerStatusItems(serverStatus = serverStatusData) {
 }
 
 function serverPlayersOnline(server) {
+  if (serverStatusIsStale()) return 0;
   if (!server || typeof server !== "object") return 0;
   if (Number.isFinite(server.players_online)) return server.players_online;
   return getServerDrivers(server).length;
@@ -8685,8 +8695,16 @@ function appendServerSessionLabel(label, server) {
 }
 
 function serverIsOnline(server) {
+  if (serverStatusIsStale()) return false;
   const status = String(server?.status || "").toLowerCase();
   return status === "online" || status === "online_process_only" || serverPlayersOnline(server) > 0;
+}
+
+function refreshServerStatusFreshness() {
+  if (!PAGE_CONTEXT.isHome || !serverStatusData) return;
+  updateHeroServerSummary(serverStatusData);
+  renderServerStickyWidget(serverStatusData);
+  renderServerPlayersModal();
 }
 
 function updateHeroServerSummary(serverStatus = serverStatusData) {
@@ -8694,8 +8712,11 @@ function updateHeroServerSummary(serverStatus = serverStatusData) {
   const onlineButtonEl = document.getElementById("hero-server-online-stat");
   const totalPlayersEl = document.getElementById("serverPlayersValue");
   const items = getServerStatusItems(serverStatus);
+  const stale = serverStatusIsStale(serverStatus);
   const onlineCount = items.filter(item => serverIsOnline(item.server)).length;
-  const totalPlayers = Number.isFinite(serverStatus?.players_online)
+  const totalPlayers = stale
+    ? 0
+    : Number.isFinite(serverStatus?.players_online)
     ? serverStatus.players_online
     : items.reduce((sum, item) => sum + serverPlayersOnline(item.server), 0);
 
@@ -8798,12 +8819,17 @@ function renderServerStickyWidget(serverStatus = serverStatusData) {
   `).join("");
 }
 
+function formatServerStatusUpdatedSubtitle(updatedAt) {
+  const updatedLabel = replaceTokens(t("playersOnlineUpdated"), {
+    time: formatDateTimeLocal(updatedAt, currentLang) || "-"
+  });
+  return serverStatusIsStale() ? `${t("serverStatusStale")}. ${updatedLabel}` : updatedLabel;
+}
+
 function renderServerStatusSummaryModal(titleEl, subtitleEl, listEl) {
   const items = getServerStatusItems(serverStatusData);
   titleEl.textContent = t("serversWidgetTitle");
-  subtitleEl.textContent = replaceTokens(t("playersOnlineUpdated"), {
-    time: formatDateTimeLocal(serverStatusData?.updated_at, currentLang) || "-"
-  });
+  subtitleEl.textContent = formatServerStatusUpdatedSubtitle(serverStatusData?.updated_at);
 
   if (!items.length) {
     replaceWithTextState(listEl, "empty", t("playersOnlineEmpty"));
@@ -8812,7 +8838,9 @@ function renderServerStatusSummaryModal(titleEl, subtitleEl, listEl) {
 
   listEl.innerHTML = items.map(({ label, server }) => {
     const players = serverPlayersOnline(server);
-    const status = String(server?.status || "offline").toLowerCase();
+    const status = serverIsOnline(server)
+      ? String(server?.status || "online").toLowerCase()
+      : "offline";
     const serverLabel = appendServerSessionLabel(label, server);
     return `
       <article class="server-player-row server-status-row">
@@ -8837,9 +8865,7 @@ function renderSelectedServerPlayersModal(titleEl, subtitleEl, listEl) {
   const server = selected?.server || null;
   const drivers = getServerDrivers(server);
   titleEl.textContent = appendServerSessionLabel(selected?.label || t("playersOnlineTitle"), server);
-  subtitleEl.textContent = replaceTokens(t("playersOnlineUpdated"), {
-    time: formatDateTimeLocal(server?.updated_at || serverStatusData?.updated_at, currentLang) || "-"
-  });
+  subtitleEl.textContent = formatServerStatusUpdatedSubtitle(server?.updated_at || serverStatusData?.updated_at);
 
   if (!drivers.length) {
     replaceWithTextState(listEl, "empty", t("playersOnlineEmpty"));
@@ -11238,6 +11264,7 @@ async function init() {
   await initializeAppStorage().catch(error => console.warn("Preference storage is unavailable.", error));
   await initializeFeatureRuntime();
   initializeWindowLifecycle();
+  if (PAGE_CONTEXT.isHome) bindServerStatusFreshness({ windowRef: window, documentRef: document, lifecycle: appLifecycle, refresh: refreshServerStatusFreshness });
   document.body.classList.remove("background-audio-focus");
   applyInitialTopLoadingState();
   homePage.setupDeferred();
