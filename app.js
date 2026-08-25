@@ -661,6 +661,7 @@ let backgroundVideoSoundState = {
 };
 let funStatsPeriod = "week";
 let serverStatusData = null;
+let serverStatusRefreshPromise = null;
 const driverProfileCache = new Map();
 const driverSteamAvatarCache = new Map();
 const raceDetailsCache = new Map();
@@ -5789,7 +5790,8 @@ async function loadSiteDataV2() {
 function getTopDataV2TableMeta(tableName) {
   const homeMeta = topDataV2TableMeta?.[tableName];
   const manifestMeta = topDataV2Manifest?.tables?.[tableName];
-  return homeMeta || manifestMeta || null;
+  if (!homeMeta && !manifestMeta) return null;
+  return { ...(homeMeta || {}), ...(manifestMeta || {}) };
 }
 
 function getTopDataV2TableData(tableName) {
@@ -5913,11 +5915,18 @@ async function loadServerPagedTopDataV2Table(tableName, page) {
   const meta = getTopDataV2TableMeta(tableName);
   const useTrackFile = tableName === "bestlaps" && bestlapsTrackFilter && !TOP_API_BASE_URL;
   const trackSafe = String(bestlapsTrackFilter || "").replace(/[^a-z0-9_-]+/g, "");
+  const storagePageSize = !TOP_API_BASE_URL ? Number(meta?.storage_page_size) || 0 : 0;
+  const useChunks = storagePageSize >= PAGE_SIZE && Boolean(meta?.chunk_path);
+  const chunk = useChunks ? Math.floor(((page - 1) * PAGE_SIZE) / storagePageSize) + 1 : null;
   const pagePath = useTrackFile
-    ? `tables/bestlaps-${trackSafe}/page-${page}.json`
-    : meta?.page_path
-      ? String(meta.page_path).replace("{page}", String(page))
-      : null;
+    ? useChunks && meta?.track_chunk_path
+      ? String(meta.track_chunk_path).replace("{track}", trackSafe).replace("{chunk}", String(chunk))
+      : `tables/bestlaps-${trackSafe}/page-${page}.json`
+    : useChunks
+      ? String(meta.chunk_path).replace("{chunk}", String(chunk))
+      : meta?.page_path
+        ? String(meta.page_path).replace("{page}", String(page))
+        : null;
   const url = new URL(topDataV2Path(pagePath || meta?.full || `tables/${tableName}.json`), window.location.href);
   const sortState = getServerPagedTableSort(tableName);
   const search = getServerPagedTableSearch(tableName);
@@ -5949,6 +5958,19 @@ async function loadServerPagedTopDataV2Table(tableName, page) {
     if (tableRequestControllers.get(tableName) === requestController) tableRequestControllers.delete(tableName);
   }
   if (!tableRequestGuard.isCurrent(requestToken)) return getServerPagedTableResult(tableName, page);
+  if (useChunks && rawPayload && typeof rawPayload === "object") {
+    const chunkItems = Array.isArray(rawPayload.items) ? rawPayload.items : [];
+    const offset = ((page - 1) * PAGE_SIZE) % storagePageSize;
+    const totalItems = Number(rawPayload.total_items) || chunkItems.length;
+    rawPayload = {
+      ...rawPayload,
+      items: chunkItems.slice(offset, offset + PAGE_SIZE),
+      page,
+      page_size: PAGE_SIZE,
+      total_items: totalItems,
+      total_pages: Math.max(1, Math.ceil(totalItems / PAGE_SIZE))
+    };
+  }
   const { normalizePagedTablePayload } = await dataSchemaModulePromise;
   const payload = normalizePagedTablePayload(rawPayload, tableName, page, PAGE_SIZE);
   if (tableName === "bestlaps") {
@@ -6040,9 +6062,11 @@ function normalizeSnapshotPayload(snapshot) {
   };
 }
 
-async function loadStandaloneServerStatus() {
+async function loadStandaloneServerStatus({ bypassCache = false } = {}) {
   try {
-    const data = await loadJson(serverStatusUrl);
+    const data = bypassCache
+      ? await requestJson(serverStatusUrl, { cache: "no-store", retries: 1 })
+      : await loadJson(serverStatusUrl);
     const { normalizeServerStatus } = await dataSchemaModulePromise;
     return normalizeServerStatus(data);
   } catch (_error) {
@@ -6133,13 +6157,33 @@ async function loadFunStatsData() {
 
 async function loadRacesPageData(page = 1) {
   const manifest = await loadTopDataV2Manifest();
-  const pagePathTemplate = manifest?.races?.page_path || "races/page-{page}.json";
-  const pagePath = pagePathTemplate.replace("{page}", String(page));
+  const racesMeta = manifest?.races || {};
+  const uiPageSize = Number(racesMeta.page_size) || PAGE_SIZE;
+  const storagePageSize = Number(racesMeta.storage_page_size) || 0;
+  const useChunks = storagePageSize >= uiPageSize && Boolean(racesMeta.chunk_path);
+  const chunk = useChunks ? Math.floor(((page - 1) * uiPageSize) / storagePageSize) + 1 : null;
+  const pagePath = useChunks
+    ? String(racesMeta.chunk_path).replace("{chunk}", String(chunk))
+    : String(racesMeta.page_path || "races/page-{page}.json").replace("{page}", String(page));
   const summaryPath = manifest?.races?.summary || "races/summary.json";
-  const [payload, summaryPayload] = await Promise.all([
+  let [payload, summaryPayload] = await Promise.all([
     loadTopDataV2Json(pagePath),
     loadTopDataV2Json(summaryPath).catch(() => null)
   ]);
+
+  if (useChunks && payload && typeof payload === "object") {
+    const chunkItems = Array.isArray(payload.items) ? payload.items : [];
+    const offset = ((page - 1) * uiPageSize) % storagePageSize;
+    const totalItems = Number(payload.total_items) || chunkItems.length;
+    payload = {
+      ...payload,
+      items: chunkItems.slice(offset, offset + uiPageSize),
+      page,
+      page_size: uiPageSize,
+      total_items: totalItems,
+      total_pages: Math.max(1, Math.ceil(totalItems / uiPageSize))
+    };
+  }
 
   racesArchiveMeta = payload && typeof payload === "object" ? payload : null;
   racesArchiveSummary =
@@ -8701,10 +8745,21 @@ function serverIsOnline(server) {
 }
 
 function refreshServerStatusFreshness() {
-  if (!PAGE_CONTEXT.isHome || !serverStatusData) return;
-  updateHeroServerSummary(serverStatusData);
-  renderServerStickyWidget(serverStatusData);
-  renderServerPlayersModal();
+  if (!PAGE_CONTEXT.isHome || !serverStatusData) return Promise.resolve();
+  if (serverStatusRefreshPromise) return serverStatusRefreshPromise;
+
+  serverStatusRefreshPromise = loadStandaloneServerStatus({ bypassCache: true })
+    .then(freshStatus => {
+      if (freshStatus) serverStatusData = freshStatus;
+      updateHeroServerSummary(serverStatusData);
+      renderServerStickyWidget(serverStatusData);
+      renderServerPlayersModal();
+    })
+    .finally(() => {
+      serverStatusRefreshPromise = null;
+    });
+
+  return serverStatusRefreshPromise;
 }
 
 function updateHeroServerSummary(serverStatus = serverStatusData) {
