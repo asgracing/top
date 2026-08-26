@@ -140,12 +140,12 @@ for (const [page, [htmlPath, entrySrc]] of Object.entries(pageEntrypoints)) {
   if (!pageHtml.includes(hourlyEventModalHref)) failures.push(`${page} page is missing the hourly event modal stylesheet`);
   for (const href of [
     page === "home"
-      ? "./styles/components/driver-day-modal.css?v=20260813driveraffiliations1"
+      ? "./styles/components/driver-day-modal.css?v=20260826previewtitle1"
       : "../styles/components/driver-day-modal.css?v=20260813driveraffiliations1",
     `${page === "home" ? "./" : "../"}styles/components/footer.css?v=20260720topguide1`,
     `${page === "home" ? "./" : "../"}styles/utilities.css?v=20260715r12states1`,
     page === "home"
-      ? "./styles/responsive.css?v=20260823serverplayerrows1"
+      ? "./styles/responsive.css?v=20260826previewtitle1"
       : "../styles/responsive.css?v=20260813driveraffiliations1",
     `${page === "home" ? "./" : "../"}styles/components/responsive-accessibility.css?v=20260715r13a11y1`
   ]) if (!pageHtml.includes(href)) failures.push(`${page} page is missing R11 stylesheet ${href}`);

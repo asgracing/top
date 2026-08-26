@@ -39,6 +39,7 @@ const {
   createDriverStatsController,
   createDriverPageView,
   createDriverPreviewView,
+  normalizePublicDriverTitle,
   buildDriverRankInfo, getDriverFavoriteCar,
   CARS_COLUMNS, processCars, createCarsTableView, createCarsSummaryView, createCarsPage,
   getCommunityLikesText, getCommunityPostKey, sortCommunityPosts, renderCommunityPostCard, renderCommunityTextBlocks: renderCommunityTextBlocksView, createCommunityPageController, createCommunityPage,
@@ -664,6 +665,7 @@ let serverStatusData = null;
 let serverStatusRefreshPromise = null;
 const driverProfileCache = new Map();
 const driverSteamAvatarCache = new Map();
+const driverTitleCache = new Map();
 const raceDetailsCache = new Map();
 function getTrackBackgroundUrl(trackCode) {
   const fileName = resolveTrackBackgroundFile(trackCode);
@@ -4758,12 +4760,13 @@ function parseEloHistoryDate(value) {
   return new Date(year, Number(match[2]) - 1, Number(match[3]), Number(match[4]), Number(match[5]), Number(match[6]));
 }
 
-function buildDriverPreviewRowClass(row) {
+function buildDriverPreviewRowClass(row, extraClasses = "") {
   return [
     "is-interactive-row",
     "is-driver-preview-row",
     getEloRowClass(row),
-    isAuthenticatedDriverRow(row) ? "is-authenticated-driver" : ""
+    isAuthenticatedDriverRow(row) ? "is-authenticated-driver" : "",
+    extraClasses
   ].filter(Boolean).join(" ");
 }
 
@@ -4774,12 +4777,12 @@ function isAuthenticatedDriverRow(row) {
   );
 }
 
-function buildDriverPreviewRowAttributes(row) {
+function buildDriverPreviewRowAttributes(row, extraClasses = "") {
   const preview = getDriverPreviewRowData(row);
-  if (!preview) return "";
+  if (!preview) return extraClasses ? `class="${escapeHtml(extraClasses)}"` : "";
 
   return [
-    `class="${escapeHtml(buildDriverPreviewRowClass(row))}"`,
+    `class="${escapeHtml(buildDriverPreviewRowClass(row, extraClasses))}"`,
     'tabindex="0"',
     'role="button"',
     `aria-label="${escapeAttribute(`${t("openDriverPreviewLabel")}: ${preview.driver}`)}"`,
@@ -6310,6 +6313,25 @@ async function loadDriverSteamAvatar(publicId) {
   return driverSteamAvatarCache.get(publicId);
 }
 
+async function loadDriverTitle(publicId) {
+  if (!publicId) return null;
+  if (!driverTitleCache.has(publicId)) {
+    driverTitleCache.set(
+      publicId,
+      requestJson(
+        `${AUTH_BASE_URL}/v1/drivers/${encodeURIComponent(publicId)}/title`,
+        { cache: "no-store", retries: 1 }
+      )
+        .then(normalizePublicDriverTitle)
+        .catch((error) => {
+          driverTitleCache.delete(publicId);
+          throw error;
+        })
+    );
+  }
+  return driverTitleCache.get(publicId);
+}
+
 async function loadDriverProfileCached(publicId) {
   if (!publicId) return null;
   if (!driverProfileCache.has(publicId)) {
@@ -6528,6 +6550,8 @@ function openDriverPreviewFromRowElement(rowEl, trigger) {
     loading: true,
     avatarLoading: true,
     avatarUrl: null,
+    titleLoading: true,
+    title: null,
     error: false,
     profile: null
   };
@@ -6573,6 +6597,26 @@ function openDriverPreviewFromRowElement(rowEl, trigger) {
         ...driverPreviewState,
         avatarLoading: false,
         avatarUrl: null,
+      };
+      renderDriverPreviewModal();
+    });
+
+  loadDriverTitle(publicId)
+    .then((title) => {
+      if (!driverPreviewState || driverPreviewState.publicId !== publicId) return;
+      driverPreviewState = {
+        ...driverPreviewState,
+        titleLoading: false,
+        title: title || null,
+      };
+      renderDriverPreviewModal();
+    })
+    .catch(() => {
+      if (!driverPreviewState || driverPreviewState.publicId !== publicId) return;
+      driverPreviewState = {
+        ...driverPreviewState,
+        titleLoading: false,
+        title: null,
       };
       renderDriverPreviewModal();
     });
@@ -8131,7 +8175,7 @@ function renderSafetyTablePage() {
   }
 
   const rows = result.items.map(row => `
-    <tr class="safety-row sr-row ${isDriverBanned(row) ? "is-banned" : `sr-cat-${escapeHtml(normalizeSafetyCategory(row) || "C")}`}${isAuthenticatedDriverRow(row) ? " is-authenticated-driver" : ""}">
+    <tr ${buildDriverPreviewRowAttributes(row, `safety-row sr-row ${isDriverBanned(row) ? "is-banned" : `sr-cat-${normalizeSafetyCategory(row) || "C"}`}`)}>
       <td><span class="rank-badge rank-${escapeHtml(row.rank)}">#${escapeHtml(row.rank)}</span></td>
       <td>
         <div class="driver-cell">
@@ -8151,6 +8195,8 @@ function renderSafetyTablePage() {
     `).join("");
 
   mountTrustedMarkup(tableEl, renderStatsTableShell({ className: "safety-table-dynamic", columns: getSafetyColumns(), headerHtml: renderSafetyHeaders(), rowsHtml: rows }));
+
+  bindDriverPreviewTableInteractions(tableEl);
 
   renderPagination(
     "safety-pagination",

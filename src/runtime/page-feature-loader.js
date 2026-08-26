@@ -6,6 +6,7 @@ const DRIVER_PREVIEW_FEATURE_PATHS = Object.freeze([
   "../pages/driver/stats-controller.js",
   "../pages/driver/preview-view.js",
   "../pages/driver/profile-model.js",
+  "../pages/driver/achievements-model.js",
 ]);
 
 const PAGE_FEATURE_PATHS = Object.freeze({

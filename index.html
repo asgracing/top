@@ -75,10 +75,10 @@
   <link rel="stylesheet" href="./styles/components/activity-controls.css?v=20260715r11activitycontrols1" />
   <link rel="stylesheet" href="./styles/components/activity-summary.css?v=20260715r11activitysummary1" />
   <link rel="stylesheet" href="./styles/components/hourly-event-modal.css?v=20260715r11hourlymodal1" />
-  <link rel="stylesheet" href="./styles/components/driver-day-modal.css?v=20260813driveraffiliations1" />
+  <link rel="stylesheet" href="./styles/components/driver-day-modal.css?v=20260826previewtitle1" />
   <link rel="stylesheet" href="./styles/components/footer.css?v=20260720topguide1" />
   <link rel="stylesheet" href="./styles/utilities.css?v=20260715r12states1" />
-  <link rel="stylesheet" href="./styles/responsive.css?v=20260823serverplayerrows1" />
+  <link rel="stylesheet" href="./styles/responsive.css?v=20260826previewtitle1" />
   <link rel="stylesheet" href="./styles.css?v=20260820widgetheader1" />
   <link rel="stylesheet" href="./styles/components/hero-layout.css?v=20260728tabletflow1" />
   <link rel="stylesheet" href="./styles/components/hero-server-summary.css?v=20260715hero-spacing2" />
@@ -934,6 +934,10 @@
         </div>
         <div class="driver-preview-hero-copy">
           <div class="eyebrow" data-i18n="driverPreviewEyebrow">Driver quick view</div>
+          <div class="driver-profile-title-eyebrow driver-preview-profile-title" id="driver-preview-profile-title" hidden>
+            <span class="driver-profile-title-icon" id="driver-preview-profile-title-icon" aria-hidden="true">✦</span>
+            <span id="driver-preview-profile-title-text"></span>
+          </div>
           <h3 id="driver-preview-title" class="modal-title">-</h3>
           <div class="driver-preview-action-row" id="driver-preview-action-row">
             <a class="btn btn-driver-preview-link" id="driver-preview-link" href="#" data-i18n="driverPreviewOpenPage" hidden>
@@ -1221,7 +1225,7 @@
   </div>
 
   <script src="./legal.js" defer></script>
-  <script type="module" src="./src/entrypoints/home.js?v=20260825statusrefresh2"></script>
+  <script type="module" src="./src/entrypoints/home.js?v=20260826previewtitle1"></script>
 </body>
 </html>
 

@@ -41,8 +41,34 @@
 }
 
 .driver-preview-hero-copy {
+  display: grid;
+  gap: 7px;
   min-width: 0;
 }
+
+.driver-preview-profile-title {
+  display: inline-flex;
+  align-items: center;
+  gap: 7px;
+  width: fit-content;
+  max-width: 100%;
+  padding: 6px 10px;
+  overflow: hidden;
+  border: 1px solid rgba(255, 220, 112, 0.62);
+  border-radius: 999px;
+  background: linear-gradient(115deg, rgba(255, 76, 34, 0.9), rgba(255, 151, 36, 0.82) 56%, rgba(255, 209, 91, 0.78));
+  box-shadow: 0 0 20px rgba(255, 113, 42, 0.28), inset 0 1px 0 rgba(255, 255, 255, 0.3);
+  color: #fffbea;
+  font-size: 0.72rem;
+  font-weight: 900;
+  letter-spacing: 0.06em;
+  line-height: 1;
+  text-transform: uppercase;
+}
+
+.driver-preview-profile-title[hidden] { display: none; }
+.driver-preview-profile-title .driver-profile-title-icon { flex: 0 0 auto; font-size: 0.95rem; }
+.driver-preview-profile-title #driver-preview-profile-title-text { min-width: 0; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
 
 #driver-preview-title{display:block;width:100%;margin:0;font-size:clamp(2rem,4vw,3.1rem);line-height:1}
 
