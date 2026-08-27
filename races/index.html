@@ -64,7 +64,7 @@
   <link rel="stylesheet" href="../styles/components/support-widget.css?v=20260715r11support1" />
   <link rel="stylesheet" href="../styles/components/table-controls.css?v=20260715r11tablecontrols1" />
   <link rel="stylesheet" href="../styles/components/top-three.css?v=20260715r11topthree1" />
-  <link rel="stylesheet" href="../styles/components/tables.css?v=20260808racetype1" />
+  <link rel="stylesheet" href="../styles/components/tables.css?v=20260827racesserversearch1" />
   <link rel="stylesheet" href="../styles/components/pagination.css?v=20260715r11pagination1" />
   <link rel="stylesheet" href="../styles/components/modals.css?v=20260715r11modals1" />
   <link rel="stylesheet" href="../styles/components/server-players-modal.css?v=20260715r11serverplayers1" />
@@ -236,6 +236,15 @@
           <h2 class="section-title" data-i18n="racesTableTitle">Race Results</h2>
           <p class="section-subtitle section-subtitle-hint" data-i18n="racesTableSubtitle">Sorted from newest to oldest.</p>
         </div>
+        <input
+          class="search-input races-header-search"
+          id="races-search"
+          type="search"
+          autocomplete="off"
+          placeholder="Search track, server, winner, date or time..."
+          aria-label="Search track, server, winner, date or time"
+          data-i18n-aria-label="racesSearchAriaLabel"
+        />
       </div>
 
       <div class="table-card">
@@ -329,6 +338,6 @@
   </div>
 
   <script src="../legal.js" defer></script>
-    <script type="module" src="../src/entrypoints/races.js?v=20260823winnercar2"></script>
+    <script type="module" src="../src/entrypoints/races.js?v=20260827racesserversearch1"></script>
 </body>
 </html>

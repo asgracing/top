@@ -1,7 +1,7 @@
 ﻿import { readPageContext } from "./src/runtime/page-context.js";
 
 import { runWhenDocumentReady } from "./src/runtime/application-bootstrap.js";
-import { loadPageFeatures } from "./src/runtime/page-feature-loader.js?v=20260823winnercar2";
+import { loadPageFeatures } from "./src/runtime/page-feature-loader.js?v=20260827racesserversearch1";
 import { createPageOrchestrator } from "./src/runtime/page-orchestrator.js";
 import { HOME_STATS_TABS, bestlapsColumns, clubsTeamsColumns, createHomeStatsState, leaderboardColumns } from "./src/pages/home/stats-config.js?v=20260811hometable2";
 import { filterClubsTeamsRows, processBestlaps, processLeaderboard, processSafety } from "./src/pages/home/stats-model.js?v=20260811hometable2";
@@ -44,7 +44,7 @@ const {
   CARS_COLUMNS, processCars, createCarsTableView, createCarsSummaryView, createCarsPage,
   getCommunityLikesText, getCommunityPostKey, sortCommunityPosts, renderCommunityPostCard, renderCommunityTextBlocks: renderCommunityTextBlocksView, createCommunityPageController, createCommunityPage,
   createNewsPageView, createNewsPage,
-  buildRacesPageState, buildRacesSummary, processRaces, createRacesTableView, createRacesSummaryView, createRacesPage,
+  buildRacesPageState, buildRacesSummary, filterRaces, processRaces, createRacesTableView, createRacesSummaryView, createRacesPage,
   getFunStatsPeriodWindow: buildFunStatsPeriodWindow, selectFunStatsPeriodRaces,
   renderFunStatsAwardCard: renderFunStatsAwardCardView,
   renderFunStatsSummaryCard: renderFunStatsSummaryCardView,
@@ -569,6 +569,8 @@ function setupTopHomeDeferredSections() {
   appLifecycle?.add(() => homeDeferredSectionsController.destroy());
 }
 let racesArchiveSummary = null;
+let racesSearchData = null;
+let racesSearchDataPromise = null;
 let funStatsApiData = null;
 let leaderboardPage = initialHomeStatsState.pages.leaderboard;
 let bestlapsPage = initialHomeStatsState.pages.bestlaps;
@@ -1164,7 +1166,8 @@ const translations = {
     racesEyebrow: "Race archive",
     racesPageTitle: "Last Races",
     racesPageSubtitle: "Latest race sessions from ASG Racing. Click any row to open the full result sheet.",
-    racesSearchPlaceholder: "Search track or driver...",
+    racesSearchPlaceholder: "Search track, server, winner, date or time...",
+    racesSearchAriaLabel: "Search race results",
     racesTrackFilterAll: "All tracks",
     clearFilters: "Clear filters",
     resultsCount: "Results: {count}",
@@ -1257,7 +1260,7 @@ const translations = {
     racesTableTitle: "Race Results",
     racesTableSubtitle: "Row click opens quick view. Name opens full profile.",
     raceModalEyebrow: "Race details",
-    racesCols: ["Date", "Track", "Type", "Winner", "Car", "Drivers", "Avg ELO", "Best Lap"],
+    racesCols: ["Date", "Track", "Server", "Type", "Winner", "Car", "Drivers", "Avg ELO", "Best Lap"],
     raceModalCols: ["Pos", "Start", "\u0394 Pos", "Driver", "Best Lap", "Car", "Gap", "\u0394ELO", "SR", "Pts"],
     notCountedBadge: "Not counted",
     countedBadge: "Counted",
@@ -1854,7 +1857,8 @@ const translations = {
     racesEyebrow: "Архив гонок",
     racesPageTitle: "Последние гонки",
     racesPageSubtitle: "Последние гоночные сессии ASG Racing. Нажмите на строку, чтобы открыть полный протокол.",
-    racesSearchPlaceholder: "Поиск по трассе или пилоту...",
+    racesSearchPlaceholder: "Поиск по трассе, серверу, победителю, дате или времени...",
+    racesSearchAriaLabel: "Поиск по результатам гонок",
     racesTrackFilterAll: "Все трассы",
     clearFilters: "Сбросить фильтры",
     resultsCount: "Результатов: {count}",
@@ -1873,7 +1877,7 @@ const translations = {
     racesTableTitle: "Результаты гонок",
     racesTableSubtitle: "Клик по строке открывает окно деталей. Имя открывает полный профиль.",
     raceModalEyebrow: "Детали гонки",
-    racesCols: ["Дата", "Трасса", "Тип", "Победитель", "Машина", "Пилоты", "Ср. ELO", "Лучший круг"],
+    racesCols: ["Дата", "Трасса", "Сервер", "Тип", "Победитель", "Машина", "Пилоты", "Ср. ELO", "Лучший круг"],
     raceModalCols: ["Поз.", "Старт", "\u0394 Поз.", "Пилот", "Лучший круг", "Машина", "Отставание", "\u0394ELO", "SR", "Очки"],
     notCountedBadge: "Не засчитано",
     countedBadge: "Засчитано",
@@ -6153,6 +6157,38 @@ async function loadFullRacesData() {
   return Array.isArray(payload?.items) ? payload.items : [];
 }
 
+async function ensureRacesSearchData() {
+  if (Array.isArray(racesSearchData)) return racesSearchData;
+  racesSearchDataPromise ||= (async () => {
+    const manifest = await loadTopDataV2Manifest();
+    const meta = manifest?.races || {};
+    const totalItems = Number(meta.total_items) || 0;
+    const storagePageSize = Number(meta.storage_page_size) || 100;
+    const chunkPath = String(meta.chunk_path || "races/chunk-{chunk}.json");
+    const totalChunks = Math.max(1, Math.ceil(totalItems / storagePageSize));
+    const items = [];
+    const concurrency = 4;
+    for (let start = 1; start <= totalChunks; start += concurrency) {
+      const chunkNumbers = Array.from(
+        { length: Math.min(concurrency, totalChunks - start + 1) },
+        (_, index) => start + index
+      );
+      const payloads = await Promise.all(chunkNumbers.map(chunk =>
+        loadTopDataV2Json(chunkPath.replace("{chunk}", String(chunk)))
+      ));
+      payloads.forEach(payload => {
+        if (Array.isArray(payload?.items)) items.push(...payload.items);
+      });
+    }
+    racesSearchData = items;
+    return racesSearchData;
+  })()
+    .finally(() => {
+      racesSearchDataPromise = null;
+    });
+  return racesSearchDataPromise;
+}
+
 async function loadFunStatsData() {
   const payload = await loadTopDataV2Json("fun-stats.json");
   return payload && typeof payload === "object" ? payload : null;
@@ -8402,6 +8438,7 @@ function bindSearchInputs() {
   const bestlapsInput = document.getElementById("bestlaps-search");
   const safetyInput = document.getElementById("safety-search");
   const clubsTeamsInput = document.getElementById("clubs-teams-home-search");
+  const racesInput = document.getElementById("races-search");
   const handleLeaderboardInput = debounce(async (value) => {
     statsStore?.dispatch({ type: "table/search", table: "leaderboard", value });
     if (isServerPagedTopDataV2Table("leaderboard")) {
@@ -8424,6 +8461,15 @@ function bindSearchInputs() {
     if (value) await loadFullTopDataV2Table("safety").catch(() => null);
     statsStore?.dispatch({ type: "table/search", table: "safety", value });
     renderSafetyTablePage();
+  });
+  const handleRacesInput = debounce(async (value) => {
+    racesSearch = String(value || "").trim();
+    racesPage = 1;
+    renderRacesPage();
+    if (racesSearch) {
+      await ensureRacesSearchData().catch(() => []);
+      renderRacesPage();
+    }
   });
 
   if (leaderboardInput) {
@@ -8450,10 +8496,16 @@ function bindSearchInputs() {
       renderClubsTeamsHomeTable();
     });
   }
+  if (racesInput) {
+    appLifecycle.listen(racesInput, "input", event => {
+      handleRacesInput(event.target.value);
+    });
+  }
   appLifecycle.add(() => {
     handleLeaderboardInput.cancel();
     handleBestlapsInput.cancel();
     handleSafetyInput.cancel();
+    handleRacesInput.cancel();
   });
 }
 
@@ -9199,12 +9251,23 @@ function renderFilterMeta(containerId, { items = [], count = 0, onClearId = "" }
   });
 }
 
-function getProcessedRaces() {
+function getBaseProcessedRaces() {
   return processRaces({ rows: racesData, archiveMeta: racesArchiveMeta, sortRows: sortData });
 }
 
+function getProcessedRaces() {
+  const hasSearch = Boolean(racesSearch);
+  const rows = hasSearch && Array.isArray(racesSearchData) ? racesSearchData : racesData;
+  const processed = processRaces({ rows, archiveMeta: hasSearch ? null : racesArchiveMeta, sortRows: sortData });
+  return filterRaces(processed, racesSearch, {
+    humanizeTrack: humanizeTrackName,
+    formatDateTime: formatDateTimeLocal,
+    locale: currentLang,
+  });
+}
+
 function renderRacesSummary() {
-  const processedRaces = getProcessedRaces();
+  const processedRaces = getBaseProcessedRaces();
   const summary = buildRacesSummary({ rows: processedRaces, archiveSummary: racesArchiveSummary, isActiveResult: isActiveRaceResult, getCarName: getResultCarName });
   getRacesSummaryView().render(summary);
 }
@@ -9219,7 +9282,7 @@ function getRacesSummaryView() {
 function renderRacesTablePage() {
   const result = buildRacesPageState({
     rows: getProcessedRaces(),
-    archiveMeta: racesArchiveMeta,
+    archiveMeta: racesSearch ? null : racesArchiveMeta,
     page: racesPage,
     pageSize: PAGE_SIZE,
     paginateRows: paginate

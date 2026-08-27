@@ -1,3 +1,5 @@
+import { getRaceServerName, splitRaceServerLabel } from "./model.js?v=20260827racesserversearch1";
+
 export function getRaceTypeCode(race) {
   const competitionMode = String(race?.competition_mode || "").trim().toLowerCase();
   const raceFormat = String(race?.race_format || "").trim().toLowerCase();
@@ -33,15 +35,20 @@ export function createRacesTableView({
         return;
       }
       const headers = translate("racesCols").map(label => `<th>${escapeHtml(label)}</th>`).join("");
-      const rows = result.items.map((race, index) => `<tr class="is-interactive-row" data-race-index="${escapeHtml(index)}" tabindex="0" role="button" aria-label="${escapeHtml(`${translate("openRaceDetailsLabel")}: ${humanizeTrack(race.track)}`)}">
+      const rows = result.items.map((race, index) => {
+        const serverName = getRaceServerName(race);
+        const server = splitRaceServerLabel(serverName);
+        return `<tr class="is-interactive-row" data-race-index="${escapeHtml(index)}" tabindex="0" role="button" aria-label="${escapeHtml(`${translate("openRaceDetailsLabel")}: ${humanizeTrack(race.track)}`)}">
         <td>${escapeHtml(formatDateTime(race.finished_at, locale))}</td>
         <td><div class="race-track-cell"><span class="race-track-name">${escapeHtml(humanizeTrack(race.track))}</span></div></td>
+        <td class="race-server-cell" title="${escapeHtml(serverName)}"><span class="race-server-name">${escapeHtml(server.primary)}</span>${server.secondary ? `<span class="race-server-detail">${escapeHtml(server.secondary)}</span>` : ""}</td>
         <td class="race-type-cell">${renderRaceTypeBadge(race)}</td>
         <td><span class="race-winner">${renderDriverLink(race.winner || translate("noWinner"), race.winner_public_id, "driver-link")}</span></td>
         <td>${escapeHtml(race.winner_car_name || race.winner_car_name_raw || "-")}</td>
         <td>${escapeHtml(race.participants_count ?? "-")}</td><td>${escapeHtml(race.average_elo ?? "-")}</td>
         <td><div>${escapeHtml(race.best_lap || "-")}</div><div class="race-note">${renderDriverLink(race.best_lap_driver || "-", race.best_lap_public_id, "driver-link driver-link-subtle")}</div></td>
-      </tr>`).join("");
+      </tr>`;
+      }).join("");
       table.innerHTML = `<table class="races-table"><thead><tr>${headers}</tr></thead><tbody>${rows}</tbody></table>`;
       if (typeof onOpen === "function") bindInteractiveRows(table, "tbody tr[data-race-index]", row => onOpen(result.items[Number(row.dataset.raceIndex)] || null, row));
       renderPagination("races-pagination", "races-pagination-info", "races-pagination-wrap", result.page, result.totalPages,

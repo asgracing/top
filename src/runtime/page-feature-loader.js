@@ -23,7 +23,7 @@ const PAGE_FEATURE_PATHS = Object.freeze({
 export async function loadPageFeatures(page, importer = path => import(path)) {
   if (typeof importer !== "function") throw new TypeError("Page feature loader requires an importer");
   const paths = PAGE_FEATURE_PATHS[page] || [];
-  const modules = await Promise.all(paths.map(path => importer(page === "races" && path.endsWith("/table-view.js") ? `${path}?v=20260823winnercar2` : path)));
+  const modules = await Promise.all(paths.map(path => importer(page === "races" ? `${path}?v=20260827racesserversearch1` : path)));
   return Object.freeze(Object.assign({}, ...modules));
 }
 

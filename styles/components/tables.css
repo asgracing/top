@@ -169,6 +169,41 @@
     font-weight: 800;
   }
 
+  .race-server-cell {
+    min-width: 145px;
+    max-width: 210px;
+    font-size: 12px;
+    line-height: 1.25;
+    white-space: normal;
+  }
+
+  .races-table {
+    min-width: 1040px;
+  }
+
+  .race-server-name,
+  .race-server-detail {
+    display: block;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+  }
+
+  .race-server-name {
+    font-weight: 800;
+    color: var(--text);
+  }
+
+  .race-server-detail {
+    margin-top: 2px;
+    color: var(--muted);
+  }
+
+  .races-header-search {
+    width: min(360px, 100%);
+    margin-left: auto;
+  }
+
   .safety-warning-cell .driver-strikes {
     justify-content: center;
     cursor: help;

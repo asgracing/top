@@ -482,6 +482,10 @@
 }
 
 @media (max-width: 640px) {
+  .races-header-search {
+    width: 100%;
+    margin-left: 0;
+  }
   .server-player-row:not(.server-status-row){grid-template-columns:30px minmax(0,1fr) 58px;gap:4px;min-height:0;padding:2px 3px}.server-player-row:not(.server-status-row) .server-player-main{display:grid;gap:1px}.server-player-row:not(.server-status-row) .server-player-car{max-width:58px;max-height:24px}
 
   .clubs-teams-home-toolbar {

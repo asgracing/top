@@ -1,11 +1,68 @@
 export const RACES_COLUMNS = Object.freeze([
   { key: "finished_at", type: "string" },
   { key: "track", type: "string" },
+  { key: "server_name", type: "string" },
   { key: "winner", type: "string" },
   { key: "participants_count", type: "number" },
   { key: "average_elo", type: "number" },
   { key: "best_lap", type: "time" }
 ].map(column => Object.freeze(column)));
+
+function normalizeSearchValue(value) {
+  return String(value || "").trim().toLocaleLowerCase().replace(/\s+/g, " ");
+}
+
+export function normalizeRaceServerName(value) {
+  let name = String(value || "")
+    .replace(/^\s*ASG\s+Racing\b\s*/i, "")
+    .replace(/\s*\([^)]*$/u, "")
+    .replace(/\s+/g, " ")
+    .replace(/^\s*[-:]+|[-:]+\s*$/g, "")
+    .trim();
+  if (!name) return "-";
+  if (/^Race(?:\b|\s*[,;:])/i.test(name)) return "Race";
+
+  const parts = name.split(/\s+-\s+/).map(part => part.trim()).filter(Boolean);
+  if (parts.length >= 2 && parts.length % 2 === 0) {
+    const middle = parts.length / 2;
+    const first = parts.slice(0, middle).join(" - ").toLocaleLowerCase();
+    const second = parts.slice(middle).join(" - ").toLocaleLowerCase();
+    if (first === second) name = parts.slice(0, middle).join(" - ");
+  }
+  return name || "-";
+}
+
+export function splitRaceServerLabel(value) {
+  const normalized = normalizeRaceServerName(value);
+  if (normalized === "-") return Object.freeze({ primary: "-", secondary: "" });
+  const [primary, ...rest] = normalized.split(/\s+-\s+/);
+  return Object.freeze({ primary, secondary: rest.join(" - ") });
+}
+
+export function getRaceServerName(race) {
+  return normalizeRaceServerName(
+    race?.server_name || race?.serverName || race?.server || race?.server_id || race?.source
+  );
+}
+
+export function filterRaces(rows, query, { humanizeTrack, formatDateTime, locale = "en" } = {}) {
+  const normalizedQuery = normalizeSearchValue(query);
+  const races = Array.isArray(rows) ? rows : [];
+  if (!normalizedQuery) return [...races];
+  return races.filter(race => {
+    const date = race?.finished_at || race?.date || "";
+    const values = [
+      race?.track,
+      typeof humanizeTrack === "function" ? humanizeTrack(race?.track) : "",
+      race?.server_name,
+      getRaceServerName(race),
+      race?.winner,
+      date,
+      typeof formatDateTime === "function" ? formatDateTime(date, locale) : "",
+    ];
+    return normalizeSearchValue(values.filter(Boolean).join(" ")).includes(normalizedQuery);
+  });
+}
 
 export function processRaces({ rows = [], archiveMeta = null, sortRows }) {
   const normalizedRows = Array.isArray(rows) ? rows : [];

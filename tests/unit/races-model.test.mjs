@@ -1,10 +1,27 @@
 import test from "node:test";
 import assert from "node:assert/strict";
-import { buildRacesPageState, buildRacesSummary, processRaces, RACES_COLUMNS } from "../../src/pages/races/model.js";
+import { buildRacesPageState, buildRacesSummary, filterRaces, normalizeRaceServerName, processRaces, RACES_COLUMNS, splitRaceServerLabel } from "../../src/pages/races/model.js";
 
 test("declares the races table contract", () => {
-  assert.deepEqual(RACES_COLUMNS.map(column => column.key), ["finished_at", "track", "winner", "participants_count", "average_elo", "best_lap"]);
+  assert.deepEqual(RACES_COLUMNS.map(column => column.key), ["finished_at", "track", "server_name", "winner", "participants_count", "average_elo", "best_lap"]);
   assert.equal(Object.isFrozen(RACES_COLUMNS), true);
+});
+
+test("normalizes public server names and the Race exception", () => {
+  assert.equal(normalizeRaceServerName("ASG Racing Monza - Live Leaderboard"), "Monza - Live Leaderboard");
+  assert.equal(normalizeRaceServerName("ASG Racing Nordschleife - Live Leaderboard - Nordschleife - Live Leaderboard"), "Nordschleife - Live Leaderboard");
+  assert.equal(normalizeRaceServerName("ASG Racing Race, password 'privet'"), "Race");
+  assert.equal(normalizeRaceServerName("ASG Racing Spa - SA Gainer 3 (Q 10"), "Spa - SA Gainer 3");
+  assert.deepEqual(splitRaceServerLabel("ASG Racing Spa - SA Gainer 3"), { primary: "Spa", secondary: "SA Gainer 3" });
+});
+
+test("searches races by track, server, winner, date and time", () => {
+  const rows = [{ track: "monza", server_name: "ASG Racing Monza - Live Leaderboard", winner: "Alice", finished_at: "2026-08-27T18:45:00Z" }];
+  const options = { humanizeTrack: () => "Монца", formatDateTime: () => "27.08.2026, 21:45", locale: "ru" };
+  for (const query of ["монца", "live leaderboard", "alice", "27.08.2026", "21:45"]) {
+    assert.equal(filterRaces(rows, query, options).length, 1, query);
+  }
+  assert.equal(filterRaces(rows, "spa", options).length, 0);
 });
 
 test("preserves server ordering for paged archives", () => {

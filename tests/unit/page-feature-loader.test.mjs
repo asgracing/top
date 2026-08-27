@@ -24,7 +24,7 @@ test("cache-busts the races table view without changing the route manifest", asy
   const calls = [];
   await loadPageFeatures("races", async path => { calls.push(path); return {}; });
   assert.ok(getPageFeaturePaths("races").includes("../pages/races/table-view.js"));
-  assert.ok(calls.includes("../pages/races/table-view.js?v=20260823winnercar2"));
+  assert.ok(calls.includes("../pages/races/table-view.js?v=20260827racesserversearch1"));
 });
 
 test("rejects an invalid importer", async () => {

@@ -7,7 +7,7 @@ function setup() {
   const wrap = { style: {} };
   const calls = [];
   const view = createRacesTableView({
-    documentRef: { getElementById: id => id === "races-table" ? table : wrap }, translate: key => key === "racesCols" ? ["Date", "Track", "Type", "Winner", "Car", "Drivers", "Avg ELO", "Best Lap"] : key,
+    documentRef: { getElementById: id => id === "races-table" ? table : wrap }, translate: key => key === "racesCols" ? ["Date", "Track", "Server", "Type", "Winner", "Car", "Drivers", "Avg ELO", "Best Lap"] : key,
     escapeHtml: String, formatDateTime: value => value, humanizeTrack: value => `track:${value}`,
     renderDriverLink: value => value, bindInteractiveRows: (...args) => calls.push(["rows", ...args]),
     renderPagination: (...args) => calls.push(["pagination", ...args]), replaceWithTextState: (...args) => calls.push(["state", ...args])
@@ -17,9 +17,11 @@ function setup() {
 
 test("renders race rows and pagination", () => {
   const { view, table, calls } = setup();
-  view.render({ items: [{ track: "monza", winner: "Driver", winner_car_name: "BMW M4 GT3" }], page: 1, totalPages: 2, totalItems: 1, startIndex: 1, endIndex: 1 }, { onOpen() {}, onPage() {} });
+  view.render({ items: [{ track: "monza", server_name: "ASG Racing Monza - Live Leaderboard", winner: "Driver", winner_car_name: "BMW M4 GT3" }], page: 1, totalPages: 2, totalItems: 1, startIndex: 1, endIndex: 1 }, { onOpen() {}, onPage() {} });
   assert.match(table.innerHTML, /track:monza/);
   assert.match(table.innerHTML, /BMW M4 GT3/);
+  assert.match(table.innerHTML, /race-server-name[^>]*>Monza</);
+  assert.match(table.innerHTML, /race-server-detail[^>]*>Live Leaderboard</);
   assert.match(table.innerHTML, /race-type-pub[^>]*>PUB</);
   assert.deepEqual(calls.map(call => call[0]), ["rows", "pagination"]);
 });
