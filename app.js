@@ -25,6 +25,7 @@ import {
 import { createAuthHeaderController, safeAvatarUrl } from "./src/features/auth/header-auth.js?v=20260811invites1";
 import { applyRandomTrackBackground, normalizeTrackBackgroundCode, resolveTrackBackgroundFile } from "./src/features/server-status/track-background.js?v=20260726staticfallback1";
 import { bindServerStatusFreshness, isServerStatusStale } from "./src/features/server-status/freshness.js?v=20260825statusfreshness1";
+import { selectNextHourlyAnnouncement } from "./src/features/hourly/announcement-model.js?v=20260828hourlynext1";
 
 const PAGE_CONTEXT = readPageContext(document);
 const PAGE_FEATURES = await loadPageFeatures(PAGE_CONTEXT.page);
@@ -6102,7 +6103,7 @@ async function loadSiteData() {
 
 async function loadHourlyAnnouncementData() {
   try {
-    const data = await loadJson(hourlyAnnouncementUrl);
+    const data = await requestJson(hourlyAnnouncementUrl, { cache: "no-store", retries: 1 });
     const { normalizeHourlyAnnouncement } = await dataSchemaModulePromise;
     return normalizeHourlyAnnouncement(data);
   } catch (error) {
@@ -6113,22 +6114,12 @@ async function loadHourlyAnnouncementData() {
 
 async function loadHourlyScheduleData() {
   try {
-    const data = await loadJson(hourlyScheduleUrl);
+    const data = await requestJson(hourlyScheduleUrl, { cache: "no-store", retries: 1 });
     return data && typeof data === "object" ? data : null;
   } catch (error) {
     console.warn("hourly schedule is unavailable.", error);
     return null;
   }
-}
-
-function mergeHourlyAnnouncementWithSchedule(announcement, schedule) {
-  const items = Array.isArray(schedule?.items) ? schedule.items : [];
-  if (!announcement || !items.length) return announcement;
-  const match = items.find(item =>
-    item?.event_id === announcement.event_id ||
-    (item?.date === announcement.date && item?.start_time_local === announcement.start_time_local)
-  );
-  return match ? { ...match, ...announcement, event_type: announcement.event_type || match.event_type, voting_disabled: announcement.voting_disabled ?? match.voting_disabled } : announcement;
 }
 
 async function loadRacesData() {
@@ -11187,7 +11178,7 @@ async function initializeHomeData() {
   const hourlyAnnouncement = hourlyAnnouncementResult.status === "fulfilled" ? hourlyAnnouncementResult.value : null;
   const hourlySchedule = hourlyScheduleResult.status === "fulfilled" ? hourlyScheduleResult.value : null;
   hourlyScheduleData = hourlySchedule;
-  hourlyAnnouncementData = mergeHourlyAnnouncementWithSchedule(hourlyAnnouncement, hourlySchedule);
+  hourlyAnnouncementData = selectNextHourlyAnnouncement(hourlyAnnouncement, hourlySchedule);
   topLoadState.hourly = false;
   rerenderUI();
   loadHourlyVotes(hourlyAnnouncementData).finally(() => {
