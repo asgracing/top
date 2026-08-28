@@ -18,6 +18,7 @@ const COPY = Object.freeze({
     profile: "Driver profile",
     cabinet: "Driver account",
     settings: "Profile settings",
+    moderation: "Bans & Strikes",
     discord: "Discord",
     discordLink: "Link Discord",
     discordLinked: "Discord linked",
@@ -40,6 +41,7 @@ const COPY = Object.freeze({
   },
   ru: {
     rank: "Rank",
+    moderation: "Баны и страйки",
     login: "Войти в личный кабинет",
     loginShort: "Steam",
     loading: "Проверяем вход",
@@ -234,6 +236,9 @@ export function normalizeAuthPayload(payload) {
     active: currentTitleCatalog ? normalizeDriverTitle(rawTitles.active) : null,
     available: availableTitles
   };
+  const permissions = {
+    moderationIssue: payload.permissions?.moderation_issue === true
+  };
   return {
     authenticated: true,
     linked: Boolean(driver),
@@ -242,6 +247,7 @@ export function normalizeAuthPayload(payload) {
     discord,
     preferences,
     titles,
+    permissions,
     clubsTeams: normalizeClubsTeamsAuthState(payload.clubs_teams),
     csrfToken: safeText(payload.csrf_token, 256)
   };
@@ -415,6 +421,17 @@ export function createAuthHeaderController({
     settings.href = "/account/settings/";
     settings.setAttribute("role", "menuitem");
     menu.appendChild(settings);
+    if (auth.permissions?.moderationIssue) {
+      const moderation = makeElement(
+        documentRef,
+        "a",
+        "auth-header-menu-item auth-header-moderation",
+        translate("moderation")
+      );
+      moderation.href = "/moderation/";
+      moderation.setAttribute("role", "menuitem");
+      menu.appendChild(moderation);
+    }
     if (auth.driver?.profileUrl) {
       const profile = makeElement(documentRef, "a", "auth-header-menu-item", translate("profile"));
       profile.href = auth.driver.profileUrl;

@@ -1,0 +1,90 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <meta name="robots" content="noindex,nofollow">
+  <title>Bans &amp; Strikes | ASG Racing</title>
+  <link rel="icon" href="../favicon.ico">
+  <link rel="stylesheet" href="../styles/tokens.css">
+  <link rel="stylesheet" href="../styles/base.css">
+  <link rel="stylesheet" href="../styles/components/site-background.css">
+  <link rel="stylesheet" href="../styles/components/top-navigation.css">
+  <link rel="stylesheet" href="../styles/components/language-switch.css">
+  <link rel="stylesheet" href="../styles/components/auth-header.css">
+  <link rel="stylesheet" href="../styles/responsive.css">
+  <link rel="stylesheet" href="../styles/components/responsive-accessibility.css">
+  <link rel="stylesheet" href="../styles/components/moderation.css?v=20260828mod1">
+</head>
+<body class="monza-bg-page moderation-page">
+  <div class="site-video-overlay" aria-hidden="true"></div>
+  <header class="moderation-site-header">
+    <nav class="top-nav">
+      <div class="top-nav-inner">
+        <a class="top-nav-brand" href="/" aria-label="ASG Racing home">
+          <img class="top-nav-brand-logo" src="/social/asg.png" alt="">
+          <span class="top-nav-brand-text">ASG Racing</span>
+        </a>
+        <div class="top-nav-center"><a class="top-nav-link top-nav-link-secondary" href="/bans/">Ban List</a></div>
+        <div class="top-nav-actions">
+          <div class="lang-switch top-nav-lang" aria-label="Language switcher">
+            <button class="lang-btn" type="button" data-lang="en" aria-label="English"><span class="lang-flag"><img src="/social/cif--gb.svg" alt=""></span></button>
+            <button class="lang-btn" type="button" data-lang="ru" aria-label="Русский"><span class="lang-flag"><img src="/social/cif--ru.svg" alt=""></span></button>
+          </div>
+        </div>
+      </div>
+    </nav>
+  </header>
+  <main class="moderation-shell">
+    <section class="moderation-card" aria-labelledby="moderation-title">
+      <div class="moderation-heading">
+        <p class="moderation-eyebrow" data-copy="eyebrow">ADMIN TOOLS</p>
+        <h1 id="moderation-title" data-copy="title">Bans &amp; Strikes</h1>
+        <p data-copy="intro">Issue a ban or strike. Removing sanctions remains available only in the backend.</p>
+      </div>
+      <div id="moderation-gate" class="moderation-gate" role="status">Checking administrator access…</div>
+      <div id="moderation-workspace" hidden>
+        <div class="moderation-tabs" role="tablist" aria-label="Moderation action">
+          <button type="button" role="tab" aria-selected="true" data-action="ban.issue" data-copy="banTab">Bans</button>
+          <button type="button" role="tab" aria-selected="false" data-action="strike.issue" data-copy="strikeTab">Strikes</button>
+        </div>
+        <form id="moderation-form" novalidate>
+          <label class="moderation-field moderation-search-field">
+            <span data-copy="pilot">Pilot</span>
+            <input id="moderation-search" type="search" autocomplete="off" minlength="2" maxlength="160" data-copy-placeholder="searchPlaceholder" placeholder="Name or public profile ID">
+          </label>
+          <div id="moderation-results" class="moderation-results" role="listbox" aria-label="Pilot search results"></div>
+          <div id="moderation-target" class="moderation-target" hidden></div>
+          <label class="moderation-field">
+            <span data-copy="reason">Reason</span>
+            <select id="moderation-reason" required>
+              <option value="" data-copy="selectReason">Select a reason</option>
+              <option value="dangerous_driving" data-copy="reasonDangerous">Dangerous driving</option>
+              <option value="intentional_contact" data-copy="reasonContact">Intentional contact</option>
+              <option value="unsporting_conduct" data-copy="reasonUnsporting">Unsporting conduct</option>
+              <option value="abusive_behavior" data-copy="reasonAbusive">Abusive behavior</option>
+              <option value="cheating" data-copy="reasonCheating">Cheating</option>
+              <option value="rule_violation" data-copy="reasonRules">Rule violation</option>
+              <option value="other" data-copy="reasonOther">Other</option>
+            </select>
+          </label>
+          <label class="moderation-field">
+            <span data-copy="comment">Comment (at least 20 characters)</span>
+            <textarea id="moderation-comment" minlength="20" maxlength="1000" required></textarea>
+          </label>
+          <div class="moderation-grid">
+            <label class="moderation-field"><span data-copy="evidence">Evidence URL (HTTPS, optional)</span><input id="moderation-evidence" type="url" maxlength="1000"></label>
+            <label class="moderation-field"><span data-copy="event">Event reference (optional)</span><input id="moderation-event" maxlength="240"></label>
+          </div>
+          <p class="moderation-warning" data-copy="warning">This action cannot be undone here. Verify the pilot and reason before submitting.</p>
+          <div class="moderation-actions">
+            <button id="moderation-submit" class="moderation-submit" type="submit" data-copy="issueBan">Issue ban</button>
+          </div>
+          <p id="moderation-message" class="moderation-message" role="status" aria-live="polite"></p>
+        </form>
+      </div>
+    </section>
+  </main>
+  <script type="module" src="../src/pages/moderation/moderation-page.js?v=20260828mod1"></script>
+</body>
+</html>

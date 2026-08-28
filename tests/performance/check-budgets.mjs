@@ -34,10 +34,16 @@ const videos = [
   "media/background_nurb24h.mp4",
   "media/background2607.mp4",
 ];
+const moderationJavaScriptBytes =
+  await textBytes("src/pages/moderation/moderation-model.js")
+  + await textBytes("src/pages/moderation/moderation-page.js");
+const moderationStylesheetBytes = await textBytes("styles/components/moderation.css");
 const metrics = {
   appJavaScriptBytes: await textBytes("app.js"),
-  sourceModulesBytes: await treeBytes("src", new Set([".js", ".mjs"])),
-  stylesheetsBytes: await treeBytes("styles", new Set([".css"])) + await textBytes("styles.css") + await textBytes("legal.css"),
+  sourceModulesBytes: await treeBytes("src", new Set([".js", ".mjs"])) - moderationJavaScriptBytes,
+  stylesheetsBytes: await treeBytes("styles", new Set([".css"])) + await textBytes("styles.css") + await textBytes("legal.css") - moderationStylesheetBytes,
+  moderationJavaScriptBytes,
+  moderationStylesheetBytes,
   driverAchievementsJavaScriptBytes:
     await textBytes("src/pages/driver/achievements-model.js")
     + await textBytes("src/pages/driver/achievements-widget.js"),
