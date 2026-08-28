@@ -21,7 +21,8 @@ const COPY = {
     unavailable: "Moderation is temporarily unavailable.", searching: "Searching…", noResults: "No pilots found.",
     searchHint: "Enter at least 2 characters.", selected: "Selected", protected: "Protected administrator",
     banned: "Banned", strikes: "Strikes", rank: "Rank", confirmBan: "Confirm ban for {name}?",
-    confirmStrike: "Confirm strike for {name}?", queued: "Command queued. Waiting for the primary backend…",
+    confirmStrike: "Confirm strike for {name}?", confirmThird: "This is the third active strike and will globally restrict the pilot. Confirm once more.",
+    queued: "Command queued. Waiting for the primary backend…",
     applied: "Action applied and entrylist updated.", rejected: "Action rejected: {code}",
     pending: "Command remains queued and will be retried safely.", target_required: "Select a pilot.",
     reason_required: "Select a reason.", comment_length: "Comment must contain 20–1000 characters.",
@@ -43,7 +44,8 @@ const COPY = {
     unavailable: "Модерация временно недоступна.", searching: "Ищем…", noResults: "Пилоты не найдены.",
     searchHint: "Введите минимум 2 символа.", selected: "Выбран", protected: "Защищённый администратор",
     banned: "Забанен", strikes: "Страйки", rank: "Место", confirmBan: "Подтвердить бан для {name}?",
-    confirmStrike: "Подтвердить страйк для {name}?", queued: "Команда поставлена в очередь. Ожидаем основной бэкенд…",
+    confirmStrike: "Подтвердить страйк для {name}?", confirmThird: "Это третий активный страйк: пилот получит глобальное ограничение. Подтвердите действие ещё раз.",
+    queued: "Команда поставлена в очередь. Ожидаем основной бэкенд…",
     applied: "Действие применено, entrylist обновлён.", rejected: "Действие отклонено: {code}",
     pending: "Команда остаётся в очереди и будет безопасно повторена.", target_required: "Выберите пилота.",
     reason_required: "Выберите причину.", comment_length: "Комментарий должен содержать 20–1000 символов.",
@@ -207,6 +209,7 @@ async function submit(event) {
   if (selectedDriver.protected) { setMessage(t("protected"), "error"); return; }
   const confirmation = t(action === "ban.issue" ? "confirmBan" : "confirmStrike").replace("{name}", selectedDriver.displayName);
   if (!confirm(confirmation)) return;
+  if (action === "strike.issue" && selectedDriver.activeStrikes === 2 && !confirm(t("confirmThird"))) return;
   const button = document.getElementById("moderation-submit");
   button.disabled = true;
   retryIdempotencyKey ||= createIdempotencyKey();
