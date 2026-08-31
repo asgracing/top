@@ -48,7 +48,7 @@ test("normalizes linked auth data without exposing unexpected identity fields", 
       avatar_url: "https://avatars.cloudflare.steamstatic.com/avatar.jpg"
     },
     csrf_token: "csrf-token",
-    permissions: { moderation_issue: true, unexpected_permission: true },
+    permissions: { moderation_issue: true, portal_manage: true, unexpected_permission: true },
     discord: {
       linked: true,
       sync_status: "synced",
@@ -91,7 +91,7 @@ test("normalizes linked auth data without exposing unexpected identity fields", 
   });
 
   assert.equal(normalized.authenticated, true);
-  assert.deepEqual(normalized.permissions, { moderationIssue: true });
+  assert.deepEqual(normalized.permissions, { moderationIssue: true, portalManage: true });
   assert.equal(normalized.linked, true);
   assert.deepEqual(normalized.driver, {
     publicId: "drv_abc",

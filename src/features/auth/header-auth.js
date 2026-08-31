@@ -19,6 +19,7 @@ const COPY = Object.freeze({
     cabinet: "Driver account",
     settings: "Profile settings",
     moderation: "Bans & Strikes",
+    portalOps: "Portal operations",
     discord: "Discord",
     discordLink: "Link Discord",
     discordLinked: "Discord linked",
@@ -42,6 +43,7 @@ const COPY = Object.freeze({
   ru: {
     rank: "Rank",
     moderation: "Баны и страйки",
+    portalOps: "Управление порталом",
     login: "Войти в личный кабинет",
     loginShort: "Steam",
     loading: "Проверяем вход",
@@ -237,7 +239,8 @@ export function normalizeAuthPayload(payload) {
     available: availableTitles
   };
   const permissions = {
-    moderationIssue: payload.permissions?.moderation_issue === true
+    moderationIssue: payload.permissions?.moderation_issue === true,
+    portalManage: payload.permissions?.portal_manage === true
   };
   return {
     authenticated: true,
@@ -431,6 +434,17 @@ export function createAuthHeaderController({
       moderation.href = "/moderation/";
       moderation.setAttribute("role", "menuitem");
       menu.appendChild(moderation);
+    }
+    if (auth.permissions?.portalManage) {
+      const portalOps = makeElement(
+        documentRef,
+        "a",
+        "auth-header-menu-item auth-header-portal-ops",
+        translate("portalOps")
+      );
+      portalOps.href = "/portal-ops/";
+      portalOps.setAttribute("role", "menuitem");
+      menu.appendChild(portalOps);
     }
     if (auth.driver?.profileUrl) {
       const profile = makeElement(documentRef, "a", "auth-header-menu-item", translate("profile"));

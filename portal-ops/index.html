@@ -1,0 +1,108 @@
+<!doctype html>
+<html lang="ru">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <meta name="robots" content="noindex,nofollow">
+  <title>Управление порталом | ASG Racing</title>
+  <link rel="icon" href="../favicon.ico">
+  <link rel="stylesheet" href="../styles/tokens.css">
+  <link rel="stylesheet" href="../styles/base.css">
+  <link rel="stylesheet" href="../styles/components/site-background.css">
+  <link rel="stylesheet" href="../styles/components/top-navigation.css">
+  <link rel="stylesheet" href="../styles/components/language-switch.css">
+  <link rel="stylesheet" href="../styles/components/auth-header.css">
+  <link rel="stylesheet" href="../styles/responsive.css">
+  <link rel="stylesheet" href="../styles/components/responsive-accessibility.css">
+  <link rel="stylesheet" href="../styles/components/portal-ops.css?v=20260830ops1">
+  <link rel="stylesheet" href="../styles/components/portal-ops-clubs.css?v=20260830ops2">
+</head>
+<body class="monza-bg-page portal-ops-page">
+  <div class="site-video-overlay" aria-hidden="true"></div>
+  <header class="portal-ops-site-header"><nav class="top-nav"><div class="top-nav-inner">
+    <a class="top-nav-brand" href="/" aria-label="ASG Racing"><img class="top-nav-brand-logo" src="/social/asg.png" alt=""><span class="top-nav-brand-text">ASG Racing</span></a>
+    <div class="top-nav-center"><span class="top-nav-link top-nav-link-secondary">Portal Operations</span></div>
+    <div class="top-nav-actions"><div class="lang-switch top-nav-lang" aria-label="Язык">
+      <button class="lang-btn" type="button" data-lang="en" aria-label="English"><span class="lang-flag"><img src="/social/cif--gb.svg" alt=""></span></button>
+      <button class="lang-btn" type="button" data-lang="ru" aria-label="Русский"><span class="lang-flag"><img src="/social/cif--ru.svg" alt=""></span></button>
+    </div></div>
+  </div></nav></header>
+  <main class="portal-ops-shell">
+    <section class="portal-ops-card" aria-labelledby="portal-ops-title">
+      <header class="portal-ops-heading">
+        <p class="portal-ops-eyebrow" data-copy="eyebrow">ASG CONTROL</p>
+        <h1 id="portal-ops-title" data-copy="title">Управление порталом</h1>
+        <p data-copy="intro">Клубы, команды и будущие события часовой гонки — в одном защищённом разделе.</p>
+      </header>
+      <div id="portal-ops-gate" class="portal-ops-gate" role="status">Проверяем доступ…</div>
+      <div id="portal-ops-workspace" hidden>
+        <div class="portal-ops-tabs" role="tablist" aria-label="Раздел">
+          <button type="button" role="tab" aria-selected="true" data-panel="clubs" data-copy="clubsTab">Клубы и команды</button>
+          <button type="button" role="tab" aria-selected="false" data-panel="hourly" data-copy="hourlyTab">Часовые события</button>
+        </div>
+        <section id="portal-panel-clubs" class="portal-ops-panel">
+          <div class="portal-ops-section-heading"><div><h2 data-copy="clubsTitle">Клубы и команды</h2><p data-copy="clubsIntro">Актуальные сущности и ожидающие изменения основного backend.</p></div><button id="portal-clubs-refresh" type="button" data-copy="refresh">Обновить</button></div>
+          <div id="portal-clubs-summary" class="portal-ops-summary"></div>
+          <div id="portal-clubs-list" class="portal-ops-entity-list"></div>
+          <form id="portal-clubs-form" class="portal-clubs-form" hidden>
+            <h3 id="portal-clubs-selected"></h3>
+            <div class="portal-clubs-review">
+              <section><h4>Изменения</h4><div id="portal-clubs-diff" class="portal-clubs-detail-list"></div></section>
+              <section><h4>Логотип</h4><div id="portal-clubs-logo" class="portal-clubs-detail-list"></div></section>
+              <section><h4>Состав</h4><div id="portal-clubs-roster" class="portal-clubs-detail-list"></div></section>
+              <section><h4>Заявки</h4><div id="portal-clubs-requests" class="portal-clubs-detail-list"></div></section>
+              <section><h4>Последние действия</h4><div id="portal-clubs-audit" class="portal-clubs-detail-list"></div></section>
+            </div>
+            <div class="portal-ops-grid">
+              <label><span>Действие</span><select id="portal-clubs-action">
+                <option value="portal.entity.revision_decide:approved">Одобрить изменения</option>
+                <option value="portal.entity.revision_decide:rejected">Отклонить изменения</option>
+                <option value="portal.entity.logo_decide:approved">Одобрить логотип</option>
+                <option value="portal.entity.logo_decide:rejected">Отклонить логотип</option>
+                <option value="portal.membership.admin_add">Добавить участника</option>
+                <option value="portal.membership.admin_remove">Удалить участника</option>
+              </select></label>
+              <label id="portal-clubs-member-field"><span>Public ID пилота</span><input id="portal-clubs-member" maxlength="160" placeholder="drv_..."></label>
+              <label class="portal-clubs-reason"><span>Причина / комментарий</span><textarea id="portal-clubs-reason" maxlength="1000" rows="3"></textarea></label>
+            </div>
+            <div class="portal-ops-actions"><button type="submit" class="portal-ops-primary">Отправить команду</button></div>
+            <p id="portal-clubs-message" class="portal-ops-message" role="status" aria-live="polite"></p>
+          </form>
+        </section>
+        <section id="portal-panel-hourly" class="portal-ops-panel" hidden>
+          <div class="portal-ops-section-heading"><div><h2 data-copy="hourlyTitle">Будущие часовые события</h2><p data-copy="hourlyIntro">Время указано по Москве (UTC+3). Изменения проходят обязательный серверный preview.</p></div><button id="portal-hourly-refresh" type="button" data-copy="refresh">Обновить</button></div>
+          <div id="portal-hourly-state" class="portal-ops-summary"></div>
+          <div class="portal-hourly-layout">
+            <div id="portal-hourly-events" class="portal-hourly-events" role="listbox" aria-label="Будущие события"></div>
+            <form id="portal-hourly-form" class="portal-hourly-form" novalidate hidden>
+              <input id="hourly-occurrence-id" type="hidden">
+              <div class="portal-hourly-form-title"><strong id="hourly-selected-title"></strong><span id="hourly-override-badge" class="portal-ops-badge" hidden data-copy="override">Изменено</span></div>
+              <div class="portal-ops-grid">
+                <label><span data-copy="raceStart">Старт гонки, МСК</span><input id="hourly-race-start" type="datetime-local" required></label>
+                <label><span data-copy="serverOpen">Открытие сервера, МСК</span><input id="hourly-server-open" type="datetime-local" required></label>
+                <label><span data-copy="track">Трасса</span><select id="hourly-track" required></select></label>
+                <label><span data-copy="gameHour">Игровой час</span><input id="hourly-game-hour" type="number" min="0" max="23" required></label>
+                <label><span>Practice, мин</span><input id="hourly-practice" type="number" min="1" max="720" required></label>
+                <label><span>Qualifying, мин</span><input id="hourly-qualifying" type="number" min="1" max="720" required></label>
+                <label><span>Race, мин</span><input id="hourly-race" type="number" min="1" max="1440" required></label>
+                <label><span data-copy="window">Окно сервера, мин</span><input id="hourly-window" type="number" min="1" max="2880" required></label>
+                <label><span>Pre-race wait, сек</span><input id="hourly-wait" type="number" min="0" max="3600" required></label>
+                <label><span>Session overtime, сек</span><input id="hourly-overtime" type="number" min="0" max="3600" required></label>
+                <label><span data-copy="temperature">Температура, °C</span><input id="hourly-temp" type="number" min="10" max="40" required></label>
+                <label><span data-copy="randomness">Погода randomness</span><input id="hourly-randomness" type="number" min="0" max="7" required></label>
+                <label><span data-copy="cloud">Облачность 0–1</span><input id="hourly-cloud" type="number" min="0" max="1" step="0.01" required></label>
+                <label><span data-copy="rain">Дождь 0–1</span><input id="hourly-rain" type="number" min="0" max="1" step="0.01" required></label>
+              </div>
+              <p id="hourly-window-hint" class="portal-ops-hint"></p>
+              <div class="portal-ops-actions"><button id="hourly-restore" type="button" class="portal-ops-secondary" data-copy="restore" hidden>Вернуть recurring defaults</button><button id="hourly-preview" type="submit" class="portal-ops-primary" data-copy="preview">Предпросмотр</button></div>
+              <div id="hourly-preview-card" class="portal-hourly-preview" hidden><h3 data-copy="previewTitle">Проверенный preview</h3><pre id="hourly-preview-details"></pre><button id="hourly-apply" type="button" class="portal-ops-primary" data-copy="apply">Применить изменение</button></div>
+              <p id="portal-hourly-message" class="portal-ops-message" role="status" aria-live="polite"></p>
+            </form>
+          </div>
+        </section>
+      </div>
+    </section>
+  </main>
+  <script type="module" src="../src/pages/portal-ops/portal-ops-page.js?v=20260830ops1"></script>
+</body>
+</html>

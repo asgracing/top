@@ -38,12 +38,19 @@ const moderationJavaScriptBytes =
   await textBytes("src/pages/moderation/moderation-model.js")
   + await textBytes("src/pages/moderation/moderation-page.js");
 const moderationStylesheetBytes = await textBytes("styles/components/moderation.css");
+const portalOpsJavaScriptBytes =
+  await textBytes("src/pages/portal-ops/portal-ops-model.js")
+  + await textBytes("src/pages/portal-ops/portal-ops-page.js");
+const portalOpsStylesheetBytes = await textBytes("styles/components/portal-ops.css")
+  + await textBytes("styles/components/portal-ops-clubs.css");
 const metrics = {
   appJavaScriptBytes: await textBytes("app.js"),
-  sourceModulesBytes: await treeBytes("src", new Set([".js", ".mjs"])) - moderationJavaScriptBytes,
-  stylesheetsBytes: await treeBytes("styles", new Set([".css"])) + await textBytes("styles.css") + await textBytes("legal.css") - moderationStylesheetBytes,
+  sourceModulesBytes: await treeBytes("src", new Set([".js", ".mjs"])) - moderationJavaScriptBytes - portalOpsJavaScriptBytes,
+  stylesheetsBytes: await treeBytes("styles", new Set([".css"])) + await textBytes("styles.css") + await textBytes("legal.css") - moderationStylesheetBytes - portalOpsStylesheetBytes,
   moderationJavaScriptBytes,
   moderationStylesheetBytes,
+  portalOpsJavaScriptBytes,
+  portalOpsStylesheetBytes,
   driverAchievementsJavaScriptBytes:
     await textBytes("src/pages/driver/achievements-model.js")
     + await textBytes("src/pages/driver/achievements-widget.js"),

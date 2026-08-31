@@ -1,0 +1,15 @@
+.portal-ops-entity{cursor:pointer}
+.portal-ops-entity.is-selected{border-color:#e43131;background:rgba(228,49,49,.1)}
+.portal-clubs-form{margin-top:18px;padding:18px;border:1px solid rgba(255,255,255,.11);border-radius:12px;background:rgba(255,255,255,.025)}
+.portal-clubs-form h3{margin-top:0}
+.portal-clubs-form textarea{width:100%;box-sizing:border-box;resize:vertical;border:1px solid rgba(255,255,255,.18);border-radius:8px;background:#121722;color:#fff;padding:10px;font:inherit}
+.portal-clubs-reason{grid-column:1/-1}
+.portal-clubs-review{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:12px;margin:14px 0 18px}
+.portal-clubs-review section{min-width:0;padding:12px;border:1px solid rgba(255,255,255,.1);border-radius:10px;background:rgba(0,0,0,.13)}
+.portal-clubs-review h4{margin:0 0 9px;font-size:.92rem}
+.portal-clubs-detail-list{display:grid;gap:7px;color:#c9ced8;font-size:.84rem;overflow-wrap:anywhere}
+.portal-clubs-detail-item{padding-bottom:7px;border-bottom:1px solid rgba(255,255,255,.07)}
+.portal-clubs-detail-item:last-child{padding-bottom:0;border-bottom:0}
+.portal-clubs-detail-item b{display:block;color:#fff;font-weight:650}
+.portal-clubs-logo-preview{display:block;width:min(100%,220px);aspect-ratio:1;object-fit:contain;margin:0 auto 10px;border-radius:10px;background:#090c12}
+@media(max-width:720px){.portal-clubs-review{grid-template-columns:1fr}}
