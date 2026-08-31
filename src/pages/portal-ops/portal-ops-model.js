@@ -1,5 +1,5 @@
 export const HOURLY_FIELDS = Object.freeze([
-  "occurrence_id", "race_start_local", "server_open_local", "track_code",
+  "occurrence_id", "race_format", "points_multiplier", "race_start_local", "server_open_local", "track_code",
   "practice_minutes", "qualifying_minutes", "race_minutes", "pre_race_wait_seconds",
   "session_overtime_seconds", "server_window_minutes", "hour_of_day", "ambient_temp_c",
   "cloud_level", "rain_level", "weather_randomness"
@@ -24,6 +24,8 @@ export function createIdempotencyKey(cryptoRef = globalThis.crypto) {
 export function validateHourlyDraft(raw, trackCodes = []) {
   const value = {
     occurrence_id: String(raw?.occurrence_id || "").trim(),
+    race_format: String(raw?.race_format || "").trim().toLowerCase(),
+    points_multiplier: finite(raw?.points_multiplier, 0, 100),
     race_start_local: String(raw?.race_start_local || ""),
     server_open_local: String(raw?.server_open_local || ""),
     track_code: String(raw?.track_code || "").trim(),
@@ -38,6 +40,7 @@ export function validateHourlyDraft(raw, trackCodes = []) {
     weather_randomness: integer(raw?.weather_randomness, 0, 7)
   };
   if (!/^[\x21-\x7e]{1,160}$/.test(value.occurrence_id)) return { ok: false, code: "invalid_event" };
+  if (!["hourly", "endurance"].includes(value.race_format)) return { ok: false, code: "invalid_event_type" };
   if (!localTime(value.race_start_local) || !localTime(value.server_open_local)) return { ok: false, code: "invalid_time" };
   const start = Date.parse(`${value.race_start_local}:00+03:00`);
   const open = Date.parse(`${value.server_open_local}:00+03:00`);
@@ -56,7 +59,21 @@ export function normalizeHourlyState(payload) {
   return {
     stale: payload.stale === true,
     revision: /^[0-9a-f]{64}$/.test(payload.schedule_revision || "") ? payload.schedule_revision : null,
-    generatedAt: String(payload.generated_at || ""), tracks: payload.tracks, events: payload.events
+    generatedAt: String(payload.generated_at || ""), tracks: payload.tracks,
+    events: payload.events.map(event => {
+      const championship = event?.competition_mode === "championship"
+        || String(event?.occurrence_id || "").startsWith("championship_");
+      const raceFormat = ["hourly", "endurance"].includes(event?.race_format)
+        ? event.race_format : "hourly";
+      return {
+        ...event,
+        race_format: raceFormat,
+        competition_mode: championship ? "championship" : "standalone",
+        points_multiplier: Number.isFinite(Number(event?.points_multiplier))
+          ? Number(event.points_multiplier) : (championship ? 1 : raceFormat === "endurance" ? 10 : 5),
+        editable: event?.editable !== false && !championship
+      };
+    })
   };
 }
 

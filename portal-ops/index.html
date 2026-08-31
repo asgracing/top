@@ -14,8 +14,8 @@
   <link rel="stylesheet" href="../styles/components/auth-header.css">
   <link rel="stylesheet" href="../styles/responsive.css">
   <link rel="stylesheet" href="../styles/components/responsive-accessibility.css">
-  <link rel="stylesheet" href="../styles/components/portal-ops.css?v=20260830ops1">
-  <link rel="stylesheet" href="../styles/components/portal-ops-clubs.css?v=20260830ops2">
+  <link rel="stylesheet" href="../styles/components/portal-ops.css?v=20260831ops5">
+  <link rel="stylesheet" href="../styles/components/portal-ops-clubs.css?v=20260831ops5">
 </head>
 <body class="monza-bg-page portal-ops-page">
   <div class="site-video-overlay" aria-hidden="true"></div>
@@ -76,8 +76,10 @@
             <div id="portal-hourly-events" class="portal-hourly-events" role="listbox" aria-label="Будущие события"></div>
             <form id="portal-hourly-form" class="portal-hourly-form" novalidate hidden>
               <input id="hourly-occurrence-id" type="hidden">
-              <div class="portal-hourly-form-title"><strong id="hourly-selected-title"></strong><span id="hourly-override-badge" class="portal-ops-badge" hidden data-copy="override">Изменено</span></div>
+              <div class="portal-hourly-form-title"><strong id="hourly-selected-title"></strong><span id="hourly-override-badge" class="portal-ops-badge" hidden data-copy="override">Изменено</span><span id="hourly-lock-badge" class="portal-ops-badge portal-ops-badge--locked" hidden data-copy="championshipLocked">Гонка чемпионата — только просмотр</span></div>
               <div class="portal-ops-grid">
+                <label><span data-copy="eventType">Тип события</span><select id="hourly-race-format" required><option value="hourly">Hourly</option><option value="endurance">Endurance</option></select></label>
+                <label><span data-copy="pointsMultiplier">Множитель очков</span><input id="hourly-points-multiplier" type="number" min="0" max="100" step="0.1" required></label>
                 <label><span data-copy="raceStart">Старт гонки, МСК</span><input id="hourly-race-start" type="datetime-local" required></label>
                 <label><span data-copy="serverOpen">Открытие сервера, МСК</span><input id="hourly-server-open" type="datetime-local" required></label>
                 <label><span data-copy="track">Трасса</span><select id="hourly-track" required></select></label>
@@ -103,6 +105,6 @@
       </div>
     </section>
   </main>
-  <script type="module" src="../src/pages/portal-ops/portal-ops-page.js?v=20260831ops4"></script>
+  <script type="module" src="../src/pages/portal-ops/portal-ops-page.js?v=20260831ops5"></script>
 </body>
 </html>

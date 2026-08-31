@@ -11,5 +11,6 @@
 .portal-clubs-detail-item{padding-bottom:7px;border-bottom:1px solid rgba(255,255,255,.07)}
 .portal-clubs-detail-item:last-child{padding-bottom:0;border-bottom:0}
 .portal-clubs-detail-item b{display:block;color:#fff;font-weight:650}
+.portal-clubs-detail-item a{color:#9bc7ff;text-decoration:none}.portal-clubs-detail-item a:hover,.portal-clubs-detail-item a:focus-visible{text-decoration:underline}
 .portal-clubs-logo-preview{display:block;width:min(100%,220px);aspect-ratio:1;object-fit:contain;margin:0 auto 10px;border-radius:10px;background:#090c12}
 @media(max-width:720px){.portal-clubs-review{grid-template-columns:1fr}}
