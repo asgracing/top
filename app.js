@@ -22,7 +22,7 @@ import {
   markNewsRead,
   saveNewsReadState as saveSharedNewsReadState
 } from "./news-read-state.js?v=20260813newsread1";
-import { createAuthHeaderController, safeAvatarUrl } from "./src/features/auth/header-auth.js?v=20260811invites1";
+import { createAuthHeaderController, safeAvatarUrl } from "./src/features/auth/header-auth.js?v=20260831opsmenu1";
 import { applyRandomTrackBackground, normalizeTrackBackgroundCode, resolveTrackBackgroundFile } from "./src/features/server-status/track-background.js?v=20260726staticfallback1";
 import { bindServerStatusFreshness, isServerStatusStale } from "./src/features/server-status/freshness.js?v=20260825statusfreshness1";
 import { selectNextHourlyAnnouncement } from "./src/features/hourly/announcement-model.js?v=20260828hourlynext1";

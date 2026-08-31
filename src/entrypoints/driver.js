@@ -1,4 +1,4 @@
-import { bootstrapLegacyPage } from "./legacy-bootstrap.js?v=20260813bfcache1";
+import { bootstrapLegacyPage } from "./legacy-bootstrap.js?v=20260831opsmenu1";
 import { applyRandomTrackBackground } from "../features/server-status/track-background.js?v=20260726staticfallback1";
 import { createDriverAchievementsController } from "../pages/driver/achievements-widget.js?v=20260826titles1";
 import { normalizePublicDriverTitle } from "../pages/driver/achievements-model.js?v=20260826titles1";
