@@ -5,6 +5,16 @@ export const HOURLY_FIELDS = Object.freeze([
   "cloud_level", "rain_level", "weather_randomness"
 ]);
 
+export function snapshotHourlyDraft(value) {
+  return Object.freeze(Object.fromEntries(
+    HOURLY_FIELDS.map(field => [field, value?.[field]])
+  ));
+}
+
+export function hourlyDraftEquals(left, right) {
+  return HOURLY_FIELDS.every(field => left?.[field] === right?.[field]);
+}
+
 const integer = (value, min, max) => {
   const number = Number(value);
   return Number.isInteger(number) && number >= min && number <= max ? number : null;

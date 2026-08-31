@@ -36,6 +36,7 @@
       </header>
       <div id="portal-ops-gate" class="portal-ops-gate" role="status">Проверяем доступ…</div>
       <div id="portal-ops-workspace" hidden>
+        <div class="portal-ops-actions"><a id="portal-ops-reauth" class="portal-ops-primary" href="https://auth.asgracing.ru/v1/auth/steam/start?return_path=%2Fportal-ops%2F" data-copy="reauthAction" hidden>Sign in with Steam again</a></div>
         <div class="portal-ops-tabs" role="tablist" aria-label="Раздел">
           <button type="button" role="tab" aria-selected="true" data-panel="clubs" data-copy="clubsTab">Клубы и команды</button>
           <button type="button" role="tab" aria-selected="false" data-panel="hourly" data-copy="hourlyTab">Часовые события</button>
@@ -105,6 +106,6 @@
       </div>
     </section>
   </main>
-  <script type="module" src="../src/pages/portal-ops/portal-ops-page.js?v=20260831ops5"></script>
+  <script type="module" src="../src/pages/portal-ops/portal-ops-page.js?v=20260831ops9"></script>
 </body>
 </html>
