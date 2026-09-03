@@ -5,6 +5,7 @@ import {
   markNewsRead,
   saveNewsReadState as saveSharedNewsReadState
 } from "../news-read-state.js?v=20260813newsread1";
+import { getSpecialEventPresentation, isSpecialEvent } from "../src/features/hourly/special-event.js?v=20260903special1";
 
 const pageParams = new URLSearchParams(window.location.search);
 function normalizeBaseUrl(value) {
@@ -546,6 +547,8 @@ Object.assign(translations.en, {
   modalFormatTitle: "Event format",
   modalConditionsTitle: "Race conditions",
   modalClassLabel: "Class",
+  modalCarLabel: "Car",
+  carRestrictionOpen: "Any car",
   modalSlotsLabel: "Slots",
   modalSafetyLabel: "Safety Rating",
   modalPreparationLabel: "Preparation",
@@ -577,6 +580,8 @@ Object.assign(translations.ru, {
   modalFormatTitle: "\u0424\u043e\u0440\u043c\u0430\u0442 \u0441\u043e\u0431\u044b\u0442\u0438\u044f",
   modalConditionsTitle: "\u0423\u0441\u043b\u043e\u0432\u0438\u044f \u0433\u043e\u043d\u043a\u0438",
   modalClassLabel: "\u041a\u043b\u0430\u0441\u0441",
+  modalCarLabel: "\u041c\u0430\u0448\u0438\u043d\u0430",
+  carRestrictionOpen: "\u0411\u0435\u0437 \u043e\u0433\u0440\u0430\u043d\u0438\u0447\u0435\u043d\u0438\u044f",
   modalSlotsLabel: "\u0421\u043b\u043e\u0442\u044b",
   modalSafetyLabel: "Safety Rating",
   modalPreparationLabel: "\u041f\u043e\u0434\u0433\u043e\u0442\u043e\u0432\u043a\u0430",
@@ -652,6 +657,8 @@ function buildScheduleItems(schedule, announcement) {
       competition_mode: announcement.competition_mode,
       points_multiplier: announcement.points_multiplier,
       scoring_mode: announcement.scoring_mode,
+      car_restriction: announcement.car_restriction,
+      rules: announcement.rules,
       server_window_minutes: announcement.server_window_minutes,
       launch_at: announcement.launch_at,
       weather: announcement.weather,
@@ -663,17 +670,22 @@ function isChampionshipEvent(item) {
   return String(item?.competition_mode || item?.event_type || item?.type || "").trim().toLowerCase() === "championship";
 }
 function isEnduranceEvent(item) {
+  if (isSpecialEvent(item, announcementData)) return false;
   return String(item?.race_format || item?.event_type || item?.type || "").trim().toLowerCase() === "endurance";
 }
 function isVotingDisabledForItem(item) {
   return Boolean(item?.voting_disabled) && !isChampionshipEvent(item);
 }
 function eventBadgeLabel(item) {
+  const specialEvent = getSpecialEventPresentation(item, currentLang, announcementData);
+  if (specialEvent) return specialEvent.badge_label;
   if (item?.badge_label) return getLocalizedField(item, "badge_label", item.badge_label);
   if (isEnduranceEvent(item)) return t("enduranceBadge");
   return isChampionshipEvent(item) ? t("championshipBadge") : t("hourlyBadge");
 }
 function eventBadgeLabels(item) {
+  const specialEvent = getSpecialEventPresentation(item, currentLang, announcementData);
+  if (specialEvent) return [specialEvent.badge_label];
   const labels = [];
   if (item?.badge_label) labels.push(getLocalizedField(item, "badge_label", item.badge_label));
   else if (isEnduranceEvent(item)) labels.push(t("enduranceBadge"));
@@ -692,6 +704,11 @@ function renderEventBadges(item) {
     .map(label => `<span class="event-type-badge">${escapeHtml(label)}</span>`)
     .join("");
   return `<div class="event-badges">${types}<span class="points-multiplier-badge">${escapeHtml(scoringBadgeLabel(item))}</span></div>`;
+}
+function renderSpecialEventArtwork(item, className = "") {
+  const specialEvent = getSpecialEventPresentation(item, currentLang, announcementData);
+  if (!specialEvent?.car_image_asset) return "";
+  return `<img class="special-event-car-artwork ${escapeHtml(className)}" src="${escapeHtml(specialEvent.car_image_asset)}" alt="" aria-hidden="true" onerror="this.hidden=true" />`;
 }
 let recentRacesPage = 1;
 let recentRacesPageSize = 10;
@@ -1760,6 +1777,7 @@ function getScheduleModalViewModel(item) {
   const server = item?.server || announcementData?.server || {};
   const session = getEventSession(item, announcementData?.session || {});
   const rules = item?.rules || announcementData?.rules || {};
+  const carRestriction = item?.car_restriction || rules?.car_model || announcementData?.car_restriction || {};
   const weather = item?.weather || announcementData?.weather || {};
   const voteState = getVoteState(item);
   const startTime = getLocalizedField(item, "start_time_local", item?.start_time_local || "--");
@@ -1773,6 +1791,9 @@ function getScheduleModalViewModel(item) {
     serverName: server.name || server.full_name || t("unknownValue"),
     password: server.password || t("passwordNone"),
     carClass: server.car_group || t("modalNotSpecified"),
+    carModel: carRestriction?.mode === "single_model"
+      ? (carRestriction.car_model_name || `Car model ${carRestriction.car_model_id}`)
+      : t("carRestrictionOpen"),
     slotCount: getNumericModalValue(server, ["max_car_slots", "maxCarSlots"]),
     safetyRating: getNumericModalValue(server, ["safety_rating_requirement", "safetyRatingRequirement"]),
     preparationMinutes: minutesFromSeconds(session.pre_race_waiting_time_seconds),
@@ -1944,6 +1965,7 @@ function buildScheduleModalDetailsV2(item) {
     buildEventDetailsV2Row(t("modalTimeMultiplierLabel"), escapeHtml(formatModalTimeMultiplierValue(viewModel.timeMultiplier)), "fast")
   ].join("");
   const conditionsRows = [
+    buildEventDetailsV2Row(t("modalCarLabel"), `<span class="event-details-v2-class-badge">${escapeHtml(viewModel.carModel)}</span>`, "flag", { accent: viewModel.carModel !== t("carRestrictionOpen") }),
     buildEventDetailsV2Row(t("heroPitstopLabel"), escapeHtml(formatModalMandatoryPitstopCountValue(viewModel.mandatoryPitstopCount)), "wrench", { accent: true }),
     buildEventDetailsV2Row(t("modalPitWindowLabel"), escapeHtml(formatModalMinutesValue(viewModel.pitWindowMinutes)), "timer", { accent: true }),
     buildEventDetailsV2Row(t("modalRefuelAllowedLabel"), escapeHtml(formatModalAllowedValue(viewModel.refuellingAllowed)), "fuel"),
@@ -2483,6 +2505,7 @@ function buildUpcomingEventInfoGrid(item) {
   ].join("");
 
   const conditionsRows = [
+    buildEventDetailsV2Row(t("modalCarLabel"), `<span class="event-details-v2-class-badge">${escapeHtml(viewModel.carModel)}</span>`, "flag", { accent: viewModel.carModel !== t("carRestrictionOpen") }),
     buildEventDetailsV2Row(t("heroPitstopLabel"), escapeHtml(formatModalMandatoryPitstopCountValue(viewModel.mandatoryPitstopCount)), "wrench", { accent: true }),
     buildEventDetailsV2Row(t("modalPitWindowLabel"), escapeHtml(formatModalMinutesValue(viewModel.pitWindowMinutes)), "timer", { accent: true }),
     buildEventDetailsV2Row(t("modalRefuelAllowedLabel"), escapeHtml(formatModalAllowedValue(viewModel.refuellingAllowed)), "fuel"),
@@ -2515,6 +2538,22 @@ function renderUpcomingHeroV2(data) {
   const startTime = getLocalizedField(data, "start_time_local", data?.start_time_local || "--");
   const timezone = getLocalizedField(data, "timezone", data?.timezone || "UTC+3");
   const trackName = getLocalizedField(data, "track_name", data?.track_name || "--");
+  const specialEvent = getSpecialEventPresentation(data, currentLang, announcementData);
+
+  root.classList.toggle("is-special-event", Boolean(specialEvent));
+  root.dataset.eventType = isEnduranceEvent(data) ? "endurance" : "hourly";
+  const specialBadgeEl = document.getElementById("hourly-upcoming-v2-special-badge");
+  if (specialBadgeEl) {
+    specialBadgeEl.textContent = specialEvent?.badge_label || "";
+    specialBadgeEl.hidden = !specialEvent;
+  }
+  const specialCarEl = document.getElementById("hourly-upcoming-v2-special-car");
+  if (specialCarEl) {
+    const asset = specialEvent?.car_image_asset || "";
+    specialCarEl.hidden = !asset;
+    if (asset) specialCarEl.src = asset;
+    specialCarEl.onerror = () => { specialCarEl.hidden = true; };
+  }
 
   if (titleEl) titleEl.textContent = trackName;
   if (dateTimeEl) {
@@ -2638,9 +2677,10 @@ function renderChampionshipHeroV2(data) {
 
 function buildScheduleCardV2(row, index) {
   const backgroundUrl = getTrackBackgroundUrl(row?.track_code);
+  const specialEvent = getSpecialEventPresentation(row, currentLang, announcementData);
   return `
     <article
-      class="hourly-slot-card-v2 is-interactive-row${isChampionshipEvent(row) ? " is-championship-event" : ""}${isEnduranceEvent(row) ? " is-endurance-event" : ""}"
+      class="hourly-slot-card-v2 is-interactive-row${isChampionshipEvent(row) ? " is-championship-event" : ""}${isEnduranceEvent(row) ? " is-endurance-event" : ""}${specialEvent ? " is-special-event" : ""}"
       data-event-type="${escapeHtml(isEnduranceEvent(row) ? "endurance" : "hourly")}"
       data-schedule-index="${index}"
       tabindex="0"
@@ -2648,6 +2688,7 @@ function buildScheduleCardV2(row, index) {
       aria-label="${escapeHtml(`${t("openScheduleDetailsLabel")}: ${row.track_name || row.track_code || "-"}`)}"
       style="--hourly-slot-track-photo: ${backgroundUrl ? `url('${escapeHtml(backgroundUrl)}')` : "none"};"
     >
+      ${renderSpecialEventArtwork(row, "special-event-car-artwork-slot")}
       <div class="hourly-slot-card-v2-inner">
         ${renderEventBadges(row)}
         <div class="hourly-slot-card-v2-time">${escapeHtml(formatScheduleCardDateTime(row))}</div>
@@ -2924,13 +2965,15 @@ function renderCalendar(scheduleRows, raceRows = calendarRaceItems) {
       const isFinished = kind === "finished";
       const trackCode = String(row?.track_code || "").trim().toLowerCase();
       const backgroundUrl = getTrackBackgroundUrl(trackCode);
+      const specialEvent = getSpecialEventPresentation(row, currentLang, announcementData);
       return `
         <button
-          class="calendar-event${isFinished ? " is-finished" : ""}${isChampionshipEvent(row) ? " is-championship-event" : ""}${isEnduranceEvent(row) ? " is-endurance-event" : ""}"
+          class="calendar-event${isFinished ? " is-finished" : ""}${isChampionshipEvent(row) ? " is-championship-event" : ""}${isEnduranceEvent(row) ? " is-endurance-event" : ""}${specialEvent ? " is-special-event" : ""}"
           type="button"
           data-calendar-index="${index}"
           style="--calendar-track-photo: ${backgroundUrl ? `url('${escapeHtml(backgroundUrl)}')` : "none"};"
         >
+          ${renderSpecialEventArtwork(row, "special-event-car-artwork-calendar")}
           <span class="calendar-event-time">${escapeHtml(isFinished ? t("finishedLabel") : (row?.start_time_local || "--"))}</span>
           <span class="calendar-event-track">${escapeHtml(getLocalizedField(row, "track_name", row?.track_name || row?.track_code || "--"))}</span>
           ${renderEventBadges(row)}

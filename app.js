@@ -26,6 +26,7 @@ import { createAuthHeaderController, safeAvatarUrl } from "./src/features/auth/h
 import { applyRandomTrackBackground, normalizeTrackBackgroundCode, resolveTrackBackgroundFile } from "./src/features/server-status/track-background.js?v=20260726staticfallback1";
 import { bindServerStatusFreshness, isServerStatusStale } from "./src/features/server-status/freshness.js?v=20260825statusfreshness1";
 import { selectNextHourlyAnnouncement } from "./src/features/hourly/announcement-model.js?v=20260828hourlynext1";
+import { getSpecialEventPresentation, normalizeSingleModelRestriction } from "./src/features/hourly/special-event.js?v=20260903special1";
 
 const PAGE_CONTEXT = readPageContext(document);
 const PAGE_FEATURES = await loadPageFeatures(PAGE_CONTEXT.page);
@@ -817,6 +818,9 @@ const translations = {
     endurancePromoMultiplier: "x{value} points for Endurance!!!",
     endurancePromoNote: "Endurance awards increased points in the overall rating.",
     enduranceOpenDetailsLabel: "Open Endurance event details",
+    specialEventPromoTitle: "Only {car}",
+    specialEventPromoNote: "Single-model race: every driver uses the same car.",
+    specialEventOpenDetailsLabel: "Open single-model race details",
     hourlyPromoStandard: "Standard championship scoring x1",
     hourlyPromoChampionshipNote: "This championship stage uses the standard scoring table.",
     hourlyPromoNote: "The hourly event hits the championship harder.",
@@ -1431,6 +1435,9 @@ const translations = {
     endurancePromoMultiplier: "x{value} очков за Endurance!!!",
     endurancePromoNote: "Endurance начисляет повышенные очки в общий рейтинг.",
     enduranceOpenDetailsLabel: "Открыть детали Endurance-события",
+    specialEventPromoTitle: "Только {car}",
+    specialEventPromoNote: "Мономашина: все пилоты участвуют на одной модели.",
+    specialEventOpenDetailsLabel: "Открыть детали гонки с мономашиной",
     hourlyPromoStandard: "Стандартная сетка чемпионата x1",
     hourlyPromoChampionshipNote: "Для этапа чемпионата действует стандартная сетка очков.",
     hourlyPromoNote: "Часовой заезд сильнее влияет на чемпионат.",
@@ -2989,6 +2996,7 @@ function renderHourlyHeroModal() {
     session.race_duration_minutes = eventRaceDuration;
   }
   const rules = data?.rules || {};
+  const carRestriction = normalizeSingleModelRestriction(data);
   const weather = data?.weather || {};
   const startTime = getHourlyLocalizedField(data, "start_time_local", "—");
   const timezone = getHourlyLocalizedField(data, "timezone", "UTC+3");
@@ -3043,6 +3051,14 @@ function renderHourlyHeroModal() {
   ].join("");
 
   const conditionsRows = [
+    carRestriction
+      ? buildHourlyEventDetailsV2Row(
+          currentLang === "ru" ? "Машина" : "Car",
+          `<span class="event-details-v2-class-badge special-event-modal-car">${escapeHtml(carRestriction.car_model_name)}</span>`,
+          "flag",
+          { accent: true }
+        )
+      : "",
     buildHourlyEventDetailsV2Row(t("hourlyPitstopLabel"), escapeHtml(formatHourlyEventDetailsPitstopCount(rules.mandatory_pitstop_count)), "wrench", { accent: true }),
     buildHourlyEventDetailsV2Row(getHourlyEventDetailsV2Text("pitWindowLabel"), escapeHtml(formatHourlyEventDetailsMinutes(pitWindow)), "timer", { accent: true }),
     buildHourlyEventDetailsV2Row(getHourlyEventDetailsV2Text("refuelAllowedLabel"), escapeHtml(formatHourlyEventDetailsBool(Boolean(rules.refuelling_allowed_in_race), "allowed", "forbidden")), "fuel"),
@@ -3134,7 +3150,9 @@ function renderHourlyHeroCard() {
 
   const data = hourlyAnnouncementData;
   const isChampionship = isHourlyChampionshipEvent(data);
-  const isEndurance = String(data?.race_format || data?.event_type || "").trim().toLowerCase() === "endurance";
+  const specialEvent = getSpecialEventPresentation(data, currentLang);
+  const isSpecial = Boolean(specialEvent);
+  const isEndurance = !isSpecial && String(data?.race_format || data?.event_type || "").trim().toLowerCase() === "endurance";
   const rootRaceDuration = Number(data?.race_duration_minutes);
   const sessionRaceDuration = Number(data?.session?.race_duration_minutes);
   const raceDuration = Number.isFinite(rootRaceDuration) && rootRaceDuration > 0
@@ -3150,17 +3168,29 @@ function renderHourlyHeroCard() {
   cardEl.style.setProperty("--hero-hourly-track-photo", backgroundUrl ? `url("${backgroundUrl}")` : "none");
   cardEl.classList.toggle("is-championship-event", isChampionship);
   cardEl.classList.toggle("is-endurance-event", isEndurance);
+  cardEl.classList.toggle("is-special-event", isSpecial);
+  const specialCarEl = document.getElementById("hourly-special-event-car");
+  if (specialCarEl) {
+    const asset = specialEvent?.car_image_asset || "";
+    specialCarEl.hidden = !asset;
+    if (asset) specialCarEl.src = asset;
+    specialCarEl.onerror = () => { specialCarEl.hidden = true; };
+  }
   const promoTitleEl = document.querySelector(".hero-hourly-promo-title");
   if (promoTitleEl) {
     const multiplier = Number(data?.points_multiplier);
-    promoTitleEl.textContent = isChampionship
+    promoTitleEl.textContent = isSpecial
+      ? replaceTokens(t("specialEventPromoTitle"), { car: specialEvent.car_model_name })
+      : isChampionship
       ? t("hourlyPromoStandard")
       : String(t(isEndurance ? "endurancePromoMultiplier" : "hourlyPromoMultiplier"))
           .replace("{value}", String(Number.isFinite(multiplier) ? multiplier : 5));
   }
   const promoNoteEl = document.querySelector(".hero-hourly-promo-note");
   if (promoNoteEl) {
-    const noteKey = isChampionship
+    const noteKey = isSpecial
+      ? "specialEventPromoNote"
+      : isChampionship
       ? "hourlyPromoChampionshipNote"
       : isEndurance
         ? "endurancePromoNote"
@@ -3170,7 +3200,9 @@ function renderHourlyHeroCard() {
   }
   const eyebrowEl = document.getElementById("hourly-eyebrow");
   if (eyebrowEl) {
-    eyebrowEl.textContent = isEndurance
+    eyebrowEl.textContent = isSpecial
+      ? specialEvent.badge_label
+      : isEndurance
       ? String(t("enduranceEyebrow")).replace("{duration}", String(raceDuration))
       : isChampionship
         ? getActiveChampionshipTitle(data)
@@ -3204,7 +3236,7 @@ function renderHourlyHeroCard() {
   unvoteBtn.setAttribute("aria-label", t("hourlyUnvoteBtn"));
   cardEl.setAttribute(
     "aria-label",
-    `${t(isEndurance ? "enduranceOpenDetailsLabel" : "hourlyOpenDetailsLabel")}: ${data?.track_name || t("hourlyNoEvent")}`
+    `${t(isSpecial ? "specialEventOpenDetailsLabel" : isEndurance ? "enduranceOpenDetailsLabel" : "hourlyOpenDetailsLabel")}: ${data?.track_name || t("hourlyNoEvent")}`
   );
   cardEl.setAttribute("aria-disabled", (!data?.event_id && !data?.track_name) ? "true" : "false");
   updateTopChampionshipLink();
