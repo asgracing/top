@@ -1689,7 +1689,7 @@ body.championship-body .top-nav-menu {
   z-index: 0;
   object-fit: contain;
   object-position: center;
-  transform: rotate(-45deg);
+  transform: rotate(-10deg);
   transform-origin: center;
   pointer-events: none;
   user-select: none;
@@ -1698,25 +1698,28 @@ body.championship-body .top-nav-menu {
 }
 
 .special-event-car-artwork-slot {
-  right: 6%;
-  bottom: 22%;
-  width: 28%;
+  right: 0;
+  bottom: 0;
+  width: 42%;
   height: auto;
+  transform-origin: bottom left;
 }
 
 .special-event-car-artwork-calendar {
-  right: 7%;
-  bottom: 15%;
-  width: 30%;
+  right: 0;
+  bottom: 0;
+  width: 42%;
   height: auto;
+  transform-origin: bottom left;
   opacity: 0.58;
 }
 
 .special-event-car-artwork-upcoming {
-  right: 6%;
-  bottom: 18%;
-  width: 25%;
+  right: 0;
+  bottom: 0;
+  width: 40%;
   height: auto;
+  transform-origin: bottom left;
   opacity: 0.72;
 }
 
