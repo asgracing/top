@@ -1092,7 +1092,10 @@ body.championship-body .top-nav-menu {
 
 .hourly-upcoming-v2 .event-details-v2-class-badge {
   min-height: 28px;
-  padding: 0 10px;
+  height: auto;
+  padding: 5px 10px;
+  white-space: normal;
+  text-align: center;
   font-size: 0.72rem;
 }
 
@@ -1242,6 +1245,13 @@ body.championship-body .top-nav-menu {
 .hourly-v2-details-link {
   color: #f5a21a;
   text-decoration: none;
+}
+
+.hourly-v2-legal-note {
+  justify-self: end;
+  align-self: end;
+  max-width: 360px;
+  line-height: 1.35;
 }
 
 .hourly-v2-details-link {
@@ -1752,6 +1762,10 @@ body.championship-body .top-nav-menu {
   font-size: 0.56rem;
   line-height: 1.15;
   white-space: normal;
+}
+
+.special-event-hero-badge[hidden] {
+  display: none;
 }
 
 .hourly-upcoming-v2.is-special-event .hourly-upcoming-v2-inner,
@@ -4605,8 +4619,10 @@ tbody tr:not(.is-interactive-row):hover {
   align-items: center;
   justify-content: center;
   min-width: 58px;
-  height: 30px;
-  padding: 0 12px;
+  min-height: 30px;
+  padding: 5px 12px;
+  white-space: normal;
+  text-align: center;
   border: 1px solid rgba(242, 126, 52, 0.65);
   border-radius: 999px;
   color: #fff;
@@ -4619,7 +4635,8 @@ tbody tr:not(.is-interactive-row):hover {
   grid-template-columns: 190px 44px minmax(145px, auto) 1fr auto;
   align-items: center;
   column-gap: 10px;
-  height: 64px;
+  min-height: 64px;
+  height: auto;
   padding: 8px 14px;
   overflow: hidden;
   border: 1px solid rgba(255, 255, 255, 0.14);
@@ -4693,9 +4710,11 @@ tbody tr:not(.is-interactive-row):hover {
 
 .event-details-v2-voting-notice {
   min-width: 0;
-  overflow: hidden;
-  text-overflow: ellipsis;
-  white-space: nowrap;
+  justify-self: end;
+  align-self: end;
+  max-width: 360px;
+  white-space: normal;
+  line-height: 1.35;
   color: #949ca8;
   font-size: 10.5px;
   text-align: right;
@@ -4786,6 +4805,10 @@ tbody tr:not(.is-interactive-row):hover {
   .event-details-v2-participant-count {
     white-space: normal;
     text-align: left;
+  }
+
+  .event-details-v2-voting-notice {
+    text-align: right;
   }
 }
 

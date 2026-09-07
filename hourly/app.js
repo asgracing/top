@@ -1945,6 +1945,10 @@ function buildEventDetailsV2Footer(viewModel) {
 
 function buildScheduleModalDetailsV2(item) {
   const viewModel = getScheduleModalViewModel(item);
+  const isSingleModel = viewModel.carModel !== t("carRestrictionOpen");
+  const carAdmission = isSingleModel
+    ? viewModel.carModel
+    : `${currentLang === "ru" ? "Все" : "All"} ${viewModel.carClass}`;
   const passwordId = `schedule-modal-password-v2-${escapeHtml(String(item?.event_id || item?.date || "slot"))}`;
   const connectionRows = [
     buildEventDetailsV2Row(t("heroServerLabel"), escapeHtml(viewModel.serverName), "server"),
@@ -1953,7 +1957,7 @@ function buildScheduleModalDetailsV2(item) {
       `<div class="event-details-v2-password-row"><span class="event-details-v2-password" id="${passwordId}">${escapeHtml(viewModel.password)}</span>${buildEventDetailsV2CopyButton(passwordId)}</div>`,
       "copy"
     ),
-    buildEventDetailsV2Row(t("modalClassLabel"), `<span class="event-details-v2-class-badge">${escapeHtml(viewModel.carClass)}</span>`, "flag"),
+    buildEventDetailsV2Row(currentLang === "ru" ? "Допуск" : "Eligible cars", `<span class="event-details-v2-class-badge">${escapeHtml(carAdmission)}</span>`, "flag", { accent: isSingleModel }),
     buildEventDetailsV2Row(t("modalSlotsLabel"), escapeHtml(viewModel.slotCount ?? t("modalNotSpecified")), "users"),
     buildEventDetailsV2Row(t("modalSafetyLabel"), escapeHtml(viewModel.safetyRating ?? t("modalNotSpecified")), "flag")
   ].join("");
@@ -1965,7 +1969,6 @@ function buildScheduleModalDetailsV2(item) {
     buildEventDetailsV2Row(t("modalTimeMultiplierLabel"), escapeHtml(formatModalTimeMultiplierValue(viewModel.timeMultiplier)), "fast")
   ].join("");
   const conditionsRows = [
-    buildEventDetailsV2Row(t("modalCarLabel"), `<span class="event-details-v2-class-badge">${escapeHtml(viewModel.carModel)}</span>`, "flag", { accent: viewModel.carModel !== t("carRestrictionOpen") }),
     buildEventDetailsV2Row(t("heroPitstopLabel"), escapeHtml(formatModalMandatoryPitstopCountValue(viewModel.mandatoryPitstopCount)), "wrench", { accent: true }),
     buildEventDetailsV2Row(t("modalPitWindowLabel"), escapeHtml(formatModalMinutesValue(viewModel.pitWindowMinutes)), "timer", { accent: true }),
     buildEventDetailsV2Row(t("modalRefuelAllowedLabel"), escapeHtml(formatModalAllowedValue(viewModel.refuellingAllowed)), "fuel"),
@@ -2483,6 +2486,10 @@ function buildParticipationControlsV2(item, options = {}) {
 
 function buildUpcomingEventInfoGrid(item) {
   const viewModel = getScheduleModalViewModel(item);
+  const isSingleModel = viewModel.carModel !== t("carRestrictionOpen");
+  const carAdmission = isSingleModel
+    ? viewModel.carModel
+    : `${currentLang === "ru" ? "Все" : "All"} ${viewModel.carClass}`;
   const passwordId = `hourly-v2-password-${escapeHtml(String(item?.event_id || item?.date || "slot"))}`;
   const connectionRows = [
     buildEventDetailsV2Row(t("heroServerLabel"), escapeHtml(viewModel.serverName), "server"),
@@ -2491,7 +2498,7 @@ function buildUpcomingEventInfoGrid(item) {
       `<div class="event-details-v2-password-row"><span class="event-details-v2-password" id="${passwordId}">${escapeHtml(viewModel.password)}</span>${buildEventDetailsV2CopyButton(passwordId)}</div>`,
       "copy"
     ),
-    buildEventDetailsV2Row(t("modalClassLabel"), `<span class="event-details-v2-class-badge">${escapeHtml(viewModel.carClass)}</span>`, "flag"),
+    buildEventDetailsV2Row(currentLang === "ru" ? "Допуск" : "Eligible cars", `<span class="event-details-v2-class-badge">${escapeHtml(carAdmission)}</span>`, "flag", { accent: isSingleModel }),
     buildEventDetailsV2Row(t("modalSlotsLabel"), escapeHtml(viewModel.slotCount ?? t("modalNotSpecified")), "users"),
     buildEventDetailsV2Row(t("modalSafetyLabel"), escapeHtml(viewModel.safetyRating ?? t("modalNotSpecified")), "flag")
   ].join("");
@@ -2505,7 +2512,6 @@ function buildUpcomingEventInfoGrid(item) {
   ].join("");
 
   const conditionsRows = [
-    buildEventDetailsV2Row(t("modalCarLabel"), `<span class="event-details-v2-class-badge">${escapeHtml(viewModel.carModel)}</span>`, "flag", { accent: viewModel.carModel !== t("carRestrictionOpen") }),
     buildEventDetailsV2Row(t("heroPitstopLabel"), escapeHtml(formatModalMandatoryPitstopCountValue(viewModel.mandatoryPitstopCount)), "wrench", { accent: true }),
     buildEventDetailsV2Row(t("modalPitWindowLabel"), escapeHtml(formatModalMinutesValue(viewModel.pitWindowMinutes)), "timer", { accent: true }),
     buildEventDetailsV2Row(t("modalRefuelAllowedLabel"), escapeHtml(formatModalAllowedValue(viewModel.refuellingAllowed)), "fuel"),
@@ -2571,8 +2577,8 @@ function renderUpcomingHeroV2(data) {
     footerEl.innerHTML = `
       <div class="hourly-v2-footer-side">
         ${buildParticipationControlsV2(voteItem, { showDetails: true })}
-        <div class="hourly-v2-voting-note">${buildCompactVoteLegalNoteHtml()}</div>
       </div>
+      <div class="hourly-v2-voting-note hourly-v2-legal-note">${buildCompactVoteLegalNoteHtml()}</div>
     `;
   }
 
