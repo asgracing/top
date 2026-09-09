@@ -1,3 +1,65 @@
+/* Keep all event details visible when text grows or the desktop column narrows.
+   These rules are unlayered to override the legacy homepage stylesheet. */
+.hero-card .hero-hourly-card {
+  min-width: 0;
+  height: auto;
+  overflow-wrap: anywhere;
+}
+
+.hero-hourly-card .hero-hourly-meta,
+.hero-hourly-card .hero-hourly-meta-row {
+  min-width: 0;
+}
+
+.hero-hourly-card .hero-hourly-meta-line {
+  min-width: 0;
+  flex-wrap: wrap;
+  gap: 6px 12px;
+}
+
+.hero-hourly-card .hero-hourly-meta-value {
+  white-space: normal;
+  overflow: visible;
+  text-overflow: clip;
+}
+
+.hero-hourly-card .hero-hourly-meta-schedule {
+  min-width: 0;
+  max-width: 100%;
+  flex-wrap: wrap;
+  justify-content: flex-start;
+  white-space: normal;
+  gap: 6px 8px;
+}
+
+.hero-hourly-card .hero-hourly-meta-time {
+  flex: 0 1 auto;
+  white-space: normal;
+}
+
+.hero-hourly-card .hero-hourly-countdown {
+  white-space: nowrap;
+}
+
+.hero-hourly-card .hero-hourly-actions {
+  min-width: 0;
+}
+
+.hero-hourly-card .btn.hero-hourly-btn {
+  min-width: 0;
+  width: auto;
+  white-space: normal;
+}
+
+@media (min-width: 1181px) {
+  .hero-card .hero-hourly-stack {
+    grid-template-columns: minmax(0, 1fr);
+    grid-template-rows: auto auto;
+    height: auto;
+    min-height: var(--hero-panel-height);
+  }
+}
+
 @layer overrides {
   @media (min-width: 1181px) {
     .hero-grid {
