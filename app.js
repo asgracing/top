@@ -28,6 +28,7 @@ import { bindServerStatusFreshness, isServerStatusStale } from "./src/features/s
 import { selectNextHourlyAnnouncement } from "./src/features/hourly/announcement-model.js?v=20260828hourlynext1";
 import { getSpecialEventPresentation, normalizeSingleModelRestriction } from "./src/features/hourly/special-event.js?v=20260903special1";
 import { safeImageUrl, safeLinkUrl } from "./src/shared/safe-dom.js";
+import { createHourlyVotesClient } from "./src/shared/hourly-votes-client.js?v=20260910votefix1";
 
 const PAGE_CONTEXT = readPageContext(document);
 const PAGE_FEATURES = await loadPageFeatures(PAGE_CONTEXT.page);
@@ -135,7 +136,6 @@ const donationsApiUrl = "https://data.asgracing.ru/donations-api/recent";
 const hourlyAnnouncementUrl = `${HOURLY_DATA_BASE_URL}/announcement.json`;
 const hourlyScheduleUrl = `${HOURLY_DATA_BASE_URL}/schedule.json`;
 const hourlyVotesApiUrl = "https://data.asgracing.ru/hourly-votes-api";
-const hourlyVotesApiEndpoint = path => `${hourlyVotesApiUrl}/${String(path || "").replace(/^\/+/, "")}`;
 const communityLikesApiUrl =
   document.querySelector('meta[name="community-likes-api"]')?.getAttribute("content")?.trim() || "";
 const HOURLY_SITE_BASE_URL = "/hourly";
@@ -3377,10 +3377,9 @@ async function loadHourlyVotes(announcement) {
   }
   applyHourlyAnnouncementVoteStateFromCache(announcement);
   try {
-    const url = new URL(hourlyVotesApiEndpoint("votes"));
-    url.searchParams.set("event_ids", eventId);
-    url.searchParams.set("voter_id", getHourlyBrowserVoterId());
-    const payload = await requestJson(url, { cache: "no-store", retries: 1 });
+    const response = await getHomeHourlyVotesClient().load([eventId]);
+    if (!response.ok) throw new Error(`HTTP ${response.status}`);
+    const payload = await response.json();
     const item = payload?.items?.[eventId];
     applyHourlyAnnouncementVoteState(item);
     mergeHourlyStoredVoteStateItems({ [eventId]: item });
@@ -3402,17 +3401,9 @@ async function submitHourlyHeroVote() {
   renderHourlyHeroModal();
 
   try {
-    const payload = await requestJson(new URL(hourlyVotesApiEndpoint("vote")), {
-      method: "POST",
-      headers: { "content-type": "application/json; charset=utf-8" },
-      body: JSON.stringify({
-        event_id: eventId,
-        track: hourlyAnnouncementData?.track_name || hourlyAnnouncementData?.track_code || "-",
-        date: hourlyAnnouncementData?.date || "",
-        time: hourlyAnnouncementData?.start_time_local || "",
-        voter_id: getHourlyBrowserVoterId()
-      })
-    });
+    const response = await getHomeHourlyVotesClient().vote(eventId);
+    if (!response.ok) throw new Error(`HTTP ${response.status}`);
+    const payload = await response.json();
       await invalidateRuntimeQueries();
       const nextState = {
         event_id: eventId,
@@ -3441,14 +3432,9 @@ async function submitHourlyHeroUnvote() {
   renderHourlyHeroModal();
 
   try {
-    const payload = await requestJson(new URL(hourlyVotesApiEndpoint("unvote")), {
-      method: "POST",
-      headers: { "content-type": "application/json; charset=utf-8" },
-      body: JSON.stringify({
-        event_id: eventId,
-        voter_id: getHourlyBrowserVoterId()
-      })
-    });
+    const response = await getHomeHourlyVotesClient().unvote(eventId);
+    if (!response.ok) throw new Error(`HTTP ${response.status}`);
+    const payload = await response.json();
     await invalidateRuntimeQueries();
     const nextState = {
       event_id: eventId,
@@ -3520,6 +3506,17 @@ function minutesFromSeconds(value) {
 function getHourlyBrowserVoterId() {
   const storageKey = "hourlyVoteVoterId";
   return getExpiringStorageValue(storageKey, VOTER_ID_STORAGE_TTL_MS);
+}
+
+let homeHourlyVotesClient = null;
+function getHomeHourlyVotesClient() {
+  homeHourlyVotesClient ||= createHourlyVotesClient({
+    apiBase: hourlyVotesApiUrl,
+    request: window.fetch.bind(window),
+    storage: window.localStorage,
+    getLegacyVoterId: getHourlyBrowserVoterId
+  });
+  return homeHourlyVotesClient;
 }
 
 function escapeHtml(value) {
