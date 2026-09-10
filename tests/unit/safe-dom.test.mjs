@@ -1,6 +1,6 @@
 import test from "node:test";
 import assert from "node:assert/strict";
-import { element, safeUrl, setTrustedHtml, tableStateElement, trustedHtml } from "../../src/shared/safe-dom.js";
+import { element, safeImageUrl, safeLinkUrl, safeUrl, setTrustedHtml, tableStateElement, trustedHtml } from "../../src/shared/safe-dom.js";
 
 function fakeDocument() {
   return { baseURI: "https://asgracing.ru/", createElement: tagName => ({ tagName, attrs: {}, children: [], setAttribute(name, value) { this.attrs[name] = value; }, append(...children) { this.children.push(...children); } }) };
@@ -12,6 +12,13 @@ test("creates text nodes without HTML parsing", () => {
 test("allows only safe URL protocols", () => {
   assert.equal(safeUrl("javascript:alert(1)", "https://asgracing.ru/"), null);
   assert.equal(safeUrl("/driver/", "https://asgracing.ru/"), "/driver/");
+  assert.equal(safeUrl("mailto:test@example.com", "https://asgracing.ru/"), null);
+  assert.equal(safeUrl("mailto:test@example.com", "https://asgracing.ru/", { allowMailto: true }), "mailto:test@example.com");
+  assert.equal(safeLinkUrl("//evil.example/path", "https://asgracing.ru/"), null);
+  assert.equal(safeLinkUrl("https://discord.gg/asg", "https://asgracing.ru/"), "https://discord.gg/asg");
+  assert.equal(safeImageUrl("https://evil.example/tracker.png", "https://asgracing.ru/"), null);
+  assert.equal(safeImageUrl("https://data.asgracing.ru/hourly-data/image.png", "https://asgracing.ru/"), "https://data.asgracing.ru/hourly-data/image.png");
+  assert.equal(safeImageUrl("data:image/png;base64,abc", "https://asgracing.ru/"), null);
 });
 test("requires an explicit trusted HTML token", () => {
   const node = {};

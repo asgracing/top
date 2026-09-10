@@ -6,6 +6,8 @@ import {
   saveNewsReadState as saveSharedNewsReadState
 } from "../news-read-state.js?v=20260813newsread1";
 import { getSpecialEventPresentation, isSpecialEvent } from "../src/features/hourly/special-event.js?v=20260903special1";
+import { createHourlyVotesClient } from "../src/shared/hourly-votes-client.js?v=20260910security1";
+import { safeImageUrl, safeLinkUrl } from "../src/shared/safe-dom.js";
 
 const pageParams = new URLSearchParams(window.location.search);
 function normalizeBaseUrl(value) {
@@ -40,7 +42,6 @@ const recentRaceDetailsBaseUrl = `${hourlyDataBaseUrl}/`;
 const serverStatusUrl = pageParams.get("serverStatusUrl") || (topApiRoot || hourlyApiRoot ? `${topApiRoot || hourlyApiRoot}/server-status` : `${defaultTopDataBaseUrl}/server_status.json`);
 const votesApiBase =
   document.querySelector('meta[name="hourly-votes-api"]')?.getAttribute("content")?.trim() || "";
-const votesApiEndpoint = path => `${votesApiBase.replace(/\/+$/, "")}/${String(path || "").replace(/^\/+/, "")}`;
 const VOTER_ID_STORAGE_TTL_MS = 365 * 24 * 60 * 60 * 1000;
 const VOTE_STATE_STORAGE_KEY = "hourlyVoteStateByEventId";
 const VOTE_STATE_STORAGE_TTL_MS = 30 * 24 * 60 * 60 * 1000;
@@ -814,11 +815,11 @@ function markNewsItemRead(item) {
 function normalizeNewsImageUrl(value) {
   const sourceValue = String(value || "").trim();
   if (!sourceValue) return "";
-  if (/^(?:https?:)?\/\//i.test(sourceValue)) return sourceValue;
   try {
-    return new URL(sourceValue, newsFeedSourceUrl || window.location.href).toString();
-  } catch (error) {
-    return sourceValue;
+    const resolved = new URL(sourceValue, newsFeedSourceUrl || window.location.href).toString();
+    return safeImageUrl(resolved, window.location.href, { allowedOrigins: [newsFeedSourceUrl] }) || "";
+  } catch {
+    return "";
   }
 }
 function normalizeNewsItem(rawItem) {
@@ -1592,7 +1593,7 @@ function buildScheduleModalDetailsLegacy(item) {
   const session = announcementData?.session || {};
   const rules = announcementData?.rules || {};
   const weather = item?.weather || announcementData?.weather || {};
-  const detailsUrl = item?.details_url ? String(item.details_url) : "";
+  const detailsUrl = safeLinkUrl(item?.details_url, window.location.href) || "";
   return `
     <div class="schedule-modal-hero">
       <div class="schedule-modal-vote">
@@ -1813,7 +1814,7 @@ function getScheduleModalViewModel(item) {
     rainProbabilityPercent: percentValue(weather.rain_level),
     weatherRandomness: getNumericModalValue(weather, ["weather_randomness", "weatherRandomness"]),
     voteState,
-    detailsUrl: item?.details_url ? String(item.details_url) : ""
+    detailsUrl: safeLinkUrl(item?.details_url, window.location.href) || ""
   };
 }
 
@@ -2178,6 +2179,18 @@ function getBrowserVoterId() {
   const storageKey = "hourlyVoteVoterId";
   return getExpiringStorageValue(storageKey, VOTER_ID_STORAGE_TTL_MS);
 }
+let hourlyVotesClient = null;
+function getHourlyVotesClient() {
+  if (!hourlyVotesClient && votesApiBase) {
+    hourlyVotesClient = createHourlyVotesClient({
+      apiBase: votesApiBase,
+      request: fetchVotesWithRetry,
+      storage: window.localStorage,
+      getLegacyVoterId: getBrowserVoterId
+    });
+  }
+  return hourlyVotesClient;
+}
 function getVoteLabel(count) {
   if (typeof count !== "number" || count <= 0) return t("voteCountZero");
   return tf(count === 1 ? "voteCountOne" : "voteCountMany", { value: count });
@@ -2200,10 +2213,7 @@ async function loadVotesForSchedule(items) {
   const eventIds = items.filter(item => !isVotingDisabledForItem(item)).map(buildSlotEventId).filter(Boolean);
   if (!eventIds.length) return;
   try {
-    const url = new URL(votesApiEndpoint("votes"));
-    url.searchParams.set("event_ids", eventIds.join(","));
-    url.searchParams.set("voter_id", getBrowserVoterId());
-    const response = await fetchVotesWithRetry(url, { cache: "no-store" });
+    const response = await getHourlyVotesClient().load(eventIds);
     if (!response.ok) {
       throw new Error(`HTTP ${response.status}`);
     }
@@ -2228,19 +2238,7 @@ async function submitVote(item) {
   renderScheduleTable(scheduleItems);
   renderUpcomingHeroV2(announcementData || {});
   try {
-    const voterId = getBrowserVoterId();
-    const body = {
-      event_id: eventId,
-      track: getLocalizedField(item, "track_name", item?.track_name || item?.track_code || "-"),
-      date: item?.date || "",
-      time: item?.start_time_local || "",
-      voter_id: voterId
-    };
-    const response = await fetchVotesWithRetry(new URL(votesApiEndpoint("vote")), {
-      method: "POST",
-      headers: { "content-type": "application/json; charset=utf-8" },
-      body: JSON.stringify(body)
-    }, 0);
+    const response = await getHourlyVotesClient().vote(eventId);
     if (!response.ok) {
       throw new Error(`HTTP ${response.status}`);
     }
@@ -2274,16 +2272,7 @@ async function submitUnvote(item) {
   renderHeroVote();
   renderUpcomingHeroV2(announcementData || {});
   try {
-    const response = await fetchVotesWithRetry(new URL(votesApiEndpoint("unvote")), {
-      method: "POST",
-      headers: { "content-type": "application/json; charset=utf-8" },
-      body: JSON.stringify({
-        event_id: eventId,
-        date: item?.date || "",
-        time: item?.start_time_local || "",
-        voter_id: getBrowserVoterId()
-      })
-    }, 0);
+    const response = await getHourlyVotesClient().unvote(eventId);
     if (!response.ok) throw new Error(`HTTP ${response.status}`);
     const payload = await response.json();
     voteStateByEventId[eventId] = {
@@ -2436,8 +2425,9 @@ function buildParticipationControlsV2(item, options = {}) {
   const isLocked = isVotingDisabledForItem(item);
   const voteLabel = voteState.already_voted ? t("voteButtonDone") : t("voteButton");
   const countLabel = getModalParticipantCountLabel(voteState.votes);
-  const detailsLink = showDetails && item?.details_url
-    ? `<a class="hourly-v2-details-link" href="${escapeHtml(String(item.details_url))}">${escapeHtml(currentLang === "ru" ? "Подробнее" : "Details")}</a>`
+  const detailsUrl = safeLinkUrl(item?.details_url, window.location.href);
+  const detailsLink = showDetails && detailsUrl
+    ? `<a class="hourly-v2-details-link" href="${escapeHtml(detailsUrl)}">${escapeHtml(currentLang === "ru" ? "Подробнее" : "Details")}</a>`
     : "";
 
   if (isLocked) {

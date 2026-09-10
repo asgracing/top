@@ -9,7 +9,7 @@ function setup() {
   }]));
   const reads = [];
   const view = createNewsPageView({
-    documentRef: { getElementById: id => nodes.get(id) }, translate: key => key,
+    documentRef: { baseURI: "https://asgracing.ru/news/", getElementById: id => nodes.get(id) }, translate: key => key,
     escapeHtml: value => String(value).replaceAll("<", "&lt;"), escapeAttribute: String,
     formatDateTime: value => `date:${value}`, getArticleHref: slug => `/news/?article=${slug}`,
     getListHref: () => "/news/", renderThumb: item => `<thumb>${item.title}</thumb>`,
@@ -30,6 +30,24 @@ test("renders article and updates its read state", () => {
   view.render({ items: [{ slug: "one", title: "Title", published_at: "now", body: ["Body"] }], slug: "one" });
   assert.deepEqual(reads, ["one", "changed"]);
   assert.match(nodes.get("news-article").innerHTML, /<p>Body<\/p>/);
+});
+
+test("rejects script links and untrusted cover images without hiding article text", () => {
+  const { view, nodes } = setup();
+  view.render({
+    items: [{
+      slug: "unsafe",
+      title: "Title",
+      published_at: "now",
+      cover_image_url: "https://tracker.example/pixel.png",
+      body: [{ type: "link", href: "javascript:alert(1)", label: "Open" }]
+    }],
+    slug: "unsafe"
+  });
+  const html = nodes.get("news-article").innerHTML;
+  assert.doesNotMatch(html, /javascript:/);
+  assert.doesNotMatch(html, /tracker\.example/);
+  assert.match(html, /<p>Open<\/p>/);
 });
 
 test("renders missing article state", () => {

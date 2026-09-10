@@ -1,3 +1,5 @@
+import { safeImageUrl } from "../../shared/safe-dom.js";
+
 export function renderCommunityTextBlocks(text, { escapeHtml }) {
   if (typeof escapeHtml !== "function") throw new TypeError("Community text blocks require escaping");
   const blocks = Array.isArray(text) ? text : String(text || "").split(/\n{2,}/);
@@ -28,7 +30,9 @@ export function renderCommunityPostCard(post, {
   const title = getLocalizedValue(post?.title, "-");
   const postId = getPostKey(post);
   const text = getLocalizedValue(post?.text, "");
-  const images = normalizeImages(post?.images);
+  const images = normalizeImages(post?.images)
+    .map(image => ({ ...image, src: safeImageUrl(image?.src, "https://asgracing.ru/") }))
+    .filter(image => image.src);
   const dateLabel = formatDate(post?.date, locale);
   return `
     <article class="community-feed-card reveal">

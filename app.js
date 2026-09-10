@@ -27,6 +27,7 @@ import { applyRandomTrackBackground, normalizeTrackBackgroundCode, resolveTrackB
 import { bindServerStatusFreshness, isServerStatusStale } from "./src/features/server-status/freshness.js?v=20260825statusfreshness1";
 import { selectNextHourlyAnnouncement } from "./src/features/hourly/announcement-model.js?v=20260828hourlynext1";
 import { getSpecialEventPresentation, normalizeSingleModelRestriction } from "./src/features/hourly/special-event.js?v=20260903special1";
+import { safeImageUrl, safeLinkUrl } from "./src/shared/safe-dom.js";
 
 const PAGE_CONTEXT = readPageContext(document);
 const PAGE_FEATURES = await loadPageFeatures(PAGE_CONTEXT.page);
@@ -3071,8 +3072,9 @@ function renderHourlyHeroModal() {
     buildHourlyEventDetailsV2Row(getHourlyEventDetailsV2Text("randomnessLabel"), escapeHtml(getHourlyEventDetailsValue(randomness)), "wind")
   ].join("");
 
-  const detailsLinkHtml = data?.details_url
-    ? `<a class="event-details-v2-details-link" href="${escapeHtml(data.details_url)}">${escapeHtml(getHourlyEventDetailsV2Text("details"))}</a>`
+  const detailsUrl = safeLinkUrl(data?.details_url, window.location.href);
+  const detailsLinkHtml = detailsUrl
+    ? `<a class="event-details-v2-details-link" href="${escapeHtml(detailsUrl)}">${escapeHtml(getHourlyEventDetailsV2Text("details"))}</a>`
     : "";
 
   contentEl.innerHTML = `
@@ -5356,21 +5358,21 @@ function isNewsRecordExpired(item) {
 function normalizeNewsImageUrl(value) {
   const sourceValue = String(value || "").trim();
   if (!sourceValue) return "";
-  if (/^(?:https?:)?\/\//i.test(sourceValue)) return sourceValue;
   if (sourceValue.startsWith("/")) {
     if (sourceValue.startsWith("/news-content/") && window.location.pathname.startsWith("/top/")) {
-      return `/top${sourceValue}`;
+      return safeImageUrl(`/top${sourceValue}`, window.location.href) || "";
     }
-    return sourceValue;
+    return safeImageUrl(sourceValue, window.location.href) || "";
   }
   try {
     const resolved = new URL(sourceValue, newsFeedSourceUrl || window.location.href);
-    if (resolved.origin === window.location.origin) {
-      return `${resolved.pathname}${resolved.search}${resolved.hash}`;
-    }
-    return resolved.toString();
-  } catch (error) {
-    return sourceValue;
+    const safe = safeImageUrl(resolved.toString(), window.location.href, { allowedOrigins: [newsFeedSourceUrl] });
+    if (!safe) return "";
+    return resolved.origin === window.location.origin
+      ? `${resolved.pathname}${resolved.search}${resolved.hash}`
+      : resolved.toString();
+  } catch {
+    return "";
   }
 }
 

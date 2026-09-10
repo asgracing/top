@@ -5,6 +5,8 @@ import {
   markNewsRead,
   saveNewsReadState as saveSharedNewsReadState
 } from "../../news-read-state.js?v=20260813newsread1";
+import { createHourlyVotesClient } from "../../src/shared/hourly-votes-client.js?v=20260910security1";
+import { safeImageUrl, safeLinkUrl } from "../../src/shared/safe-dom.js";
 
 const params = new URLSearchParams(window.location.search);
 
@@ -25,7 +27,6 @@ const dataBase = normalizeBaseUrl(params.get("hourlyApiBase")) || defaultDataBas
 const githubDataBase = "https://asgracing.github.io/hourly-data";
 const hourlyAssetBase = "../assets";
 const votesApiBase = "https://data.asgracing.ru/hourly-votes-api";
-const votesApiEndpoint = path => `${votesApiBase.replace(/\/+$/, "")}/${String(path || "").replace(/^\/+/, "")}`;
 const VOTE_STATE_STORAGE_KEY = "hourlyVoteStateByEventId";
 const VOTE_STATE_STORAGE_TTL_MS = 30 * 24 * 60 * 60 * 1000;
 
@@ -400,11 +401,11 @@ function markNewsItemRead(item) {
 function normalizeNewsImageUrl(value) {
   const sourceValue = String(value || "").trim();
   if (!sourceValue) return "";
-  if (/^(?:https?:)?\/\//i.test(sourceValue)) return sourceValue;
   try {
-    return new URL(sourceValue, newsFeedSourceUrl || window.location.href).toString();
+    const resolved = new URL(sourceValue, newsFeedSourceUrl || window.location.href).toString();
+    return safeImageUrl(resolved, window.location.href, { allowedOrigins: [newsFeedSourceUrl] }) || "";
   } catch {
-    return sourceValue;
+    return "";
   }
 }
 
@@ -754,6 +755,18 @@ async function loadJsonOrNull(url) {
     return null;
   }
 }
+let championshipVotesClient = null;
+function getChampionshipVotesClient() {
+  if (!championshipVotesClient) {
+    championshipVotesClient = createHourlyVotesClient({
+      apiBase: votesApiBase,
+      request: fetchVotesWithTimeout,
+      storage: window.localStorage,
+      getLegacyVoterId: getBrowserVoterId
+    });
+  }
+  return championshipVotesClient;
+}
 
 async function fetchVotesWithTimeout(url, options = {}, retries = 0, timeoutMs = 12000) {
   let lastError = null;
@@ -778,10 +791,7 @@ async function loadVotesForSchedule(items) {
   const eventIds = items.map(buildSlotEventId).filter(Boolean);
   if (!eventIds.length) return;
   try {
-    const url = new URL(votesApiEndpoint("votes"));
-    url.searchParams.set("event_ids", [...new Set(eventIds)].join(","));
-    url.searchParams.set("voter_id", getBrowserVoterId());
-    const response = await fetchVotesWithTimeout(url, { cache: "no-store" }, 1);
+    const response = await getChampionshipVotesClient().load(eventIds, 1);
     if (!response.ok) throw new Error(`HTTP ${response.status}`);
     const payload = await response.json();
     if (payload?.items && typeof payload.items === "object") {
@@ -800,24 +810,9 @@ async function submitVote(item) {
   renderUpcoming(championshipUpcomingItems, []);
   try {
     const voteState = voteStateByEventId[eventId] || {};
-    const endpoint = voteState.already_voted ? "/unvote" : "/vote";
-    const body = voteState.already_voted
-      ? {
-          event_id: eventId,
-          voter_id: getBrowserVoterId()
-        }
-      : {
-          event_id: eventId,
-          track: getLocalizedField(item, "track_name", item?.track_name || item?.track_code || "-"),
-          date: item?.date || "",
-          time: item?.start_time_local || "",
-          voter_id: getBrowserVoterId()
-        };
-    const response = await fetchVotesWithTimeout(new URL(votesApiEndpoint(endpoint)), {
-      method: "POST",
-      headers: { "content-type": "application/json; charset=utf-8" },
-      body: JSON.stringify(body)
-    });
+    const response = voteState.already_voted
+      ? await getChampionshipVotesClient().unvote(eventId)
+      : await getChampionshipVotesClient().vote(eventId);
     if (!response.ok) throw new Error(`HTTP ${response.status}`);
     const payload = await response.json();
     voteStateByEventId[eventId] = {
@@ -1422,7 +1417,7 @@ function buildScheduleModalDetails(item) {
   const rules = championshipAnnouncementData?.rules || {};
   const weather = item?.weather || championshipAnnouncementData?.weather || {};
   const voteState = getVoteState(item);
-  const detailsUrl = item?.details_url ? String(item.details_url) : "";
+  const detailsUrl = safeLinkUrl(item?.details_url, window.location.href) || "";
   const startTime = getLocalizedField(item, "start_time_local", item?.start_time_local || "--");
   const timezone = getLocalizedField(item, "timezone", item?.timezone || "UTC+3");
   const passwordId = `championship-modal-password-${String(item?.event_id || item?.date || "slot").replace(/[^a-z0-9_-]+/gi, "-")}`;
@@ -1594,11 +1589,12 @@ function normalizePrizeItems(prizes) {
 function normalizeAssetUrl(path, slug, assetBase = dataBase) {
   const value = String(path || "").trim();
   if (!value) return "";
-  if (/^(https?:)?\/\//i.test(value) || value.startsWith("data:")) return value;
-  if (value.startsWith("/")) return value;
-  if (value.startsWith("./") || value.startsWith("../")) return value;
-  if (value.startsWith("events/") || value.startsWith("assets/")) return `${assetBase}/${value}`;
-  return `${assetBase}/events/${encodeURIComponent(slug || "championship")}/${value}`;
+  let resolved = value;
+  if (value.startsWith("events/") || value.startsWith("assets/")) resolved = `${assetBase}/${value}`;
+  else if (!/^(https?:)?\/\//i.test(value) && !value.startsWith("/") && !value.startsWith("./") && !value.startsWith("../")) {
+    resolved = `${assetBase}/events/${encodeURIComponent(slug || "championship")}/${value}`;
+  }
+  return safeImageUrl(resolved, window.location.href, { allowedOrigins: [assetBase, dataBase, githubDataBase] }) || "";
 }
 
 function renderPrizes(prizes, slug, assetBase = dataBase) {
@@ -1609,8 +1605,12 @@ function renderPrizes(prizes, slug, assetBase = dataBase) {
     root.innerHTML = `<div class="championship-empty">${esc(t("noPrizes"))}</div>`;
     return;
   }
-  root.innerHTML = items.map((item, index) => {
-    const src = normalizeAssetUrl(item.src, slug, assetBase);
+  const safeItems = items.map((item, index) => ({ item, index, src: normalizeAssetUrl(item.src, slug, assetBase) })).filter(entry => entry.src);
+  if (!safeItems.length) {
+    root.innerHTML = `<div class="championship-empty">${esc(t("noPrizes"))}</div>`;
+    return;
+  }
+  root.innerHTML = safeItems.map(({ item, index, src }) => {
     const title = item.title || `P${index + 1}`;
     const alt = item.alt || title;
     return `

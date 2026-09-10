@@ -17,9 +17,15 @@ test("renders localized community post actions", () => {
 });
 
 test("renders escaped community gallery", () => {
-  const html = renderCommunityPostCard({ title: "Title", images: [{ src: "<photo>", alt: "<alt>" }] }, deps);
-  assert.match(html, /data-community-image-src="&lt;photo>"/);
+  const html = renderCommunityPostCard({ title: "Title", images: [{ src: "/media/photo.jpg", alt: "<alt>" }] }, deps);
+  assert.match(html, /data-community-image-src="\/media\/photo.jpg"/);
   assert.match(html, /alt="&lt;alt>"/);
+});
+
+test("drops untrusted community images without hiding the post", () => {
+  const html = renderCommunityPostCard({ title: "Title", text: "Story", images: [{ src: "https://tracker.example/pixel.png" }] }, deps);
+  assert.doesNotMatch(html, /tracker\.example/);
+  assert.match(html, /Story/);
 });
 
 test("rejects incomplete dependencies", () => {

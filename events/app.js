@@ -1,3 +1,5 @@
+import { safeImageUrl } from "../src/shared/safe-dom.js";
+
 const params = new URLSearchParams(window.location.search);
 const pathSlug = window.location.pathname.split("/").filter(Boolean).pop();
 const slug = params.get("slug") || (pathSlug && pathSlug !== "events" ? pathSlug : "");
@@ -26,7 +28,9 @@ function prizeItems(prizes) {
 
 function renderPrizes(data) {
   const grid = document.getElementById("prize-grid");
-  const prizes = prizeItems(data.prizes);
+  const prizes = prizeItems(data.prizes)
+    .map(src => safeImageUrl(src, window.location.href, { allowedOrigins: [defaultHourlyDataBaseUrl] }))
+    .filter(Boolean);
   grid.innerHTML = prizes.length
     ? prizes.map((src, index) => `
         <figure class="prize-card">

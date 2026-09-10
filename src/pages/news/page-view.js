@@ -1,3 +1,5 @@
+import { safeImageUrl, safeLinkUrl } from "../../shared/safe-dom.js";
+
 export function createNewsPageView({
   documentRef, translate, escapeHtml, escapeAttribute, formatDateTime,
   getArticleHref, getListHref, renderThumb, markRead, onReadStateChanged
@@ -23,8 +25,12 @@ export function createNewsPageView({
         return `<ul>${block.items.map(item => `<li>${escapeHtml(String(item || ""))}</li>`).join("")}</ul>`;
       }
       if (block?.type === "link" && block.href) {
-        const href = String(block.href).trim();
-        return `<p><a class="news-inline-link" href="${escapeHtml(href)}">${escapeHtml(String(block.label || href).trim())}</a></p>`;
+        const rawHref = String(block.href).trim();
+        const label = String(block.label || rawHref).trim();
+        const href = safeLinkUrl(rawHref, documentRef.baseURI || "https://asgracing.ru/");
+        return href
+          ? `<p><a class="news-inline-link" href="${escapeHtml(href)}" rel="noopener noreferrer">${escapeHtml(label)}</a></p>`
+          : `<p>${escapeHtml(label)}</p>`;
       }
       return "";
     }).join("");
@@ -56,10 +62,11 @@ export function createNewsPageView({
     refs.subtitle.textContent = formatDateTime(item.published_at);
     refs.list.hidden = true;
     refs.article.hidden = false;
+    const coverImageUrl = safeImageUrl(item.cover_image_url, documentRef.baseURI || "https://asgracing.ru/");
     refs.article.innerHTML = `
       <a class="news-back-link" href="${escapeHtml(getListHref())}">${escapeHtml(translate("newsBackToList"))}</a>
       <article class="news-article-card">
-        ${item.cover_image_url ? `<div class="news-article-cover-wrap"><img class="news-article-cover" src="${escapeHtml(item.cover_image_url)}" alt="${escapeHtml(item.image_alt || item.title)}" loading="lazy" /></div>` : ""}
+        ${coverImageUrl ? `<div class="news-article-cover-wrap"><img class="news-article-cover" src="${escapeHtml(coverImageUrl)}" alt="${escapeHtml(item.image_alt || item.title)}" loading="lazy" /></div>` : ""}
         <div class="news-article-body">${renderBody(item.body)}</div>
       </article>`;
   }
