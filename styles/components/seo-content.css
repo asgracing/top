@@ -8,6 +8,11 @@
   border-radius: 16px;
   background: var(--card, rgba(10, 16, 24, .8));
 }
+#combined-stats-shell + .seo-intro,
+#recent-races + .seo-intro {
+  max-width: none;
+  grid-column: 1 / -1;
+}
 .seo-intro h1, .seo-intro h2 {
   margin: 0 0 10px;
   font-size: clamp(1.2rem, 2.5vw, 1.65rem);

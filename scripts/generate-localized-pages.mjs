@@ -79,7 +79,7 @@ function metadata(html, page, lang) {
   }
   html = edit(html, changes);
   const extra = Object.entries(values).filter(([k]) => !found.has(k)).map(([k, v]) => `<meta ${k.startsWith("og:") ? "property" : "name"}="${k}" content="${escape(v)}">`);
-  extra.push('<link rel="stylesheet" href="/styles/components/seo-content.css?v=20260917seo1">');
+  extra.push('<link rel="stylesheet" href="/styles/components/seo-content.css?v=20260917seo2">');
   if (!found.has("canonical")) extra.push(`<link rel="canonical" href="${url}">`);
   for (const alternate of ["en", "ru", "x-default"]) extra.push(`<link rel="alternate" hreflang="${alternate}" href="${urlFor(page.path, alternate === "ru" ? "ru" : "en")}">`);
   if (page.key === "home") extra.push(`<script type="application/ld+json">${JSON.stringify({ "@context": "https://schema.org", "@graph": [{ "@type": "WebSite", "@id": `${origin}/#website`, name: "ASG Racing", url: `${origin}/`, inLanguage: ["en", "ru"] }, { "@type": "Organization", "@id": `${origin}/#organization`, name: "ASG Racing", url: `${origin}/` }] })}</script>`);
@@ -116,9 +116,14 @@ for (const page of pages) {
       html = edit(html, nodes(html).filter(n => n.attrs.id in values).map(n => ({ start: n.openEnd, end: n.close, value: values[n.attrs.id] })));
     }
     html = metadata(html, page, lang);
-    html = page.key === "home"
-      ? html.replace(/<section class="section combined-stats-shell"/, match => intro(page, lang) + match)
-      : html.replace(/<main\b[^>]*>/, match => match + intro(page, lang));
+    const afterId = { home: "combined-stats-shell", hourly: "recent-races" }[page.key];
+    if (afterId) {
+      const anchor = nodes(html).find(node => node.attrs.id === afterId);
+      if (!anchor) throw new Error(`SEO placement target missing: ${afterId}`);
+      html = html.slice(0, anchor.end) + intro(page, lang) + html.slice(anchor.end).replace(/^\s*/, "\n");
+    } else {
+      html = html.replace(/<main\b[^>]*>/, match => match + intro(page, lang));
+    }
     await output(lang === "en" ? page.path : page.path.replace(/index\.html$/, "index.ru.html"), html);
   }
 }
