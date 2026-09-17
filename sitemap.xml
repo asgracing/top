@@ -50,12 +50,6 @@
   </url>
 
   <url>
-    <loc>https://asgracing.ru/driver/</loc>
-    <changefreq>daily</changefreq>
-    <priority>0.7</priority>
-  </url>
-
-  <url>
     <loc>https://asgracing.ru/hourly/</loc>
     <changefreq>hourly</changefreq>
     <priority>0.9</priority>
@@ -84,5 +78,15 @@
     <changefreq>monthly</changefreq>
     <priority>0.4</priority>
   </url>
+
+  <url><loc>https://asgracing.ru/index.ru.html</loc></url>
+  <url><loc>https://asgracing.ru/hourly/index.ru.html</loc></url>
+  <url><loc>https://asgracing.ru/hourly/championship/index.ru.html</loc></url>
+  <url><loc>https://asgracing.ru/teams/index.ru.html</loc></url>
+  <url><loc>https://asgracing.ru/community/index.ru.html</loc></url>
+  <url><loc>https://asgracing.ru/join/</loc></url>
+  <url><loc>https://asgracing.ru/join/index.ru.html</loc></url>
+  <url><loc>https://asgracing.ru/about/</loc></url>
+  <url><loc>https://asgracing.ru/about/index.ru.html</loc></url>
 
 </urlset>

@@ -8,11 +8,11 @@ const dist = resolve(root, "dist");
 const previous = resolve(root, "dist.previous");
 const allowedRootFiles = new Set([
   "404.html", "CNAME", "app.js", "apple-touch-icon.png", "favicon-16x16.png", "favicon-32x32.png",
-  "favicon.ico", "index.html", "legal.css", "legal.js", "news-read-state.js", "robots.txt", "sitemap.xml",
+  "favicon.ico", "index.html", "index.ru.html", "legal.css", "legal.js", "news-read-state.js", "robots.txt", "sitemap.xml",
   "styles.css", "yandex_c76adf2164af15e6.html",
 ]);
 const allowedDirectories = [
-  "account", "assets", "bans", "cars", "clubs", "community", "cookies", "driver", "events", "fun-stats",
+  "about", "join", "account", "assets", "bans", "cars", "clubs", "community", "cookies", "driver", "events", "fun-stats",
   "hourly", "media", "moderation", "news", "news-content", "overlay", "portal-ops", "privacy", "races", "social", "src", "styles", "teams",
 ];
 const allowedExtensions = new Set([

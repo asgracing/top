@@ -1,0 +1,29 @@
+.seo-intro {
+  box-sizing: border-box;
+  max-width: 1100px;
+  width: 100%;
+  margin: 20px auto;
+  padding: 18px 22px;
+  border: 1px solid var(--line);
+  border-radius: 16px;
+  background: var(--card, rgba(10, 16, 24, .8));
+}
+.seo-intro h1, .seo-intro h2 {
+  margin: 0 0 10px;
+  font-size: clamp(1.2rem, 2.5vw, 1.65rem);
+  line-height: 1.25;
+}
+.seo-intro p { margin: 0 0 12px; line-height: 1.65; color: var(--muted); }
+.seo-intro a, .seo-guide a { color: var(--accent-2, var(--accent)); text-underline-offset: 3px; }
+.seo-guide {
+  max-width: 880px;
+  margin: 0 auto;
+  padding: 28px 20px 60px;
+  background: var(--bg-soft);
+  min-height: 100vh;
+  line-height: 1.7;
+  overflow-wrap: anywhere;
+}
+.seo-guide nav { margin-bottom: 18px; }
+.seo-guide h1 { font-size: clamp(1.6rem, 5vw, 2.4rem); line-height: 1.2; }
+.seo-guide section { margin-top: 28px; }

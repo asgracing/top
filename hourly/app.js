@@ -1,3 +1,5 @@
+import { pageLanguage, initializeLocalizedPage } from "../src/shared/localized-page.js?v=20260917seo1";
+initializeLocalizedPage();
 import {
   NEWS_READ_LEGACY_STORAGE_KEY,
   NEWS_READ_STORAGE_KEY,
@@ -770,6 +772,7 @@ function tf(key, replacements = {}) {
   return value;
 }
 function resolveInitialLanguage() {
+  if (pageLanguage()) return pageLanguage();
   const urlLang = new URLSearchParams(window.location.search).get("lang");
   if (urlLang && translations[urlLang]) return urlLang;
   const storedLang = localStorage.getItem("asgLang");
@@ -2700,6 +2703,7 @@ function buildScheduleCardV2(row, index) {
 
 function applyTranslations() {
   document.documentElement.lang = t("htmlLang");
+  if (!pageLanguage()) {
   document.title = t("pageTitle");
   const descriptionMeta = document.querySelector('meta[name="description"]');
   const ogTitleMeta = document.querySelector('meta[property="og:title"]');
@@ -2713,13 +2717,14 @@ function applyTranslations() {
   if (ogLocaleMeta) ogLocaleMeta.setAttribute("content", t("ogLocale"));
   if (twitterTitleMeta) twitterTitleMeta.setAttribute("content", t("twitterTitle"));
   if (twitterDescriptionMeta) twitterDescriptionMeta.setAttribute("content", t("twitterDescription"));
+  }
   document.querySelectorAll("[data-i18n]").forEach(el => { const value = t(el.dataset.i18n); if (value !== undefined) el.textContent = value; });
   document.querySelectorAll("[data-i18n-aria-label]").forEach(el => { const value = t(el.dataset.i18nAriaLabel); if (value !== undefined) el.setAttribute("aria-label", value); });
   bindHeroCopyButtons();
   document.querySelectorAll(".lang-btn").forEach(btn => {
     const isActive = btn.dataset.lang === currentLang;
     btn.classList.toggle("active", isActive);
-    btn.setAttribute("aria-pressed", isActive ? "true" : "false");
+    if (btn.tagName !== "A") btn.setAttribute("aria-pressed", isActive ? "true" : "false");
   });
   renderNewsBell();
   renderNewsNotificationsModal();
@@ -3467,6 +3472,7 @@ function renderUI() {
 }
 function bindLanguageButtons() {
   document.querySelectorAll(".lang-btn").forEach(btn => {
+    if (btn.tagName === "A") return;
     btn.addEventListener("click", () => {
       const lang = btn.dataset.lang;
       if (!translations[lang] || lang === currentLang) return;

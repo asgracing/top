@@ -1,3 +1,5 @@
+import { pageLanguage, initializeLocalizedPage } from "./src/shared/localized-page.js?v=20260917seo1";
+initializeLocalizedPage();
 ﻿import { readPageContext } from "./src/runtime/page-context.js";
 
 import { runWhenDocumentReady } from "./src/runtime/application-bootstrap.js";
@@ -206,7 +208,7 @@ async function initializeAppStorage() {
   appStorage.migrateLegacy("hourlyVoteState", HOURLY_VOTE_STATE_STORAGE_KEY, value => {
     try { const parsed = JSON.parse(value); return parsed?.items && typeof parsed.items === "object" ? normalizeHourlyVoteStateItems(parsed.items) : undefined; } catch { return undefined; }
   });
-  currentLang = appStorage.get("language", currentLang);
+  currentLang = pageLanguage() || appStorage.get("language", currentLang);
 }
 
 async function initializeQueryRuntime() {
@@ -381,6 +383,7 @@ function syncHourlyVoteStateFromStorage() {
 }
 
 function resolveInitialLanguage() {
+  if (pageLanguage()) return pageLanguage();
   const urlLang = new URLSearchParams(window.location.search).get("lang");
   if (urlLang && translations[urlLang]) return urlLang;
 
@@ -2240,6 +2243,12 @@ Object.assign(translations.ru, {
   emptySafety: "Пока нет данных Safety Rating."
 });
 
+Object.assign(translations.en, {
+  heroTitle: "ASG Racing — ACC Racing Community"
+});
+Object.assign(translations.ru, {
+  heroTitle: "ASG Racing — сообщество ACC"
+});
 currentLang = resolveInitialLanguage();
 
 const carModelNames = {
@@ -6429,6 +6438,7 @@ async function loadBansData() {
 
 function applyStaticTranslations() {
   document.documentElement.lang = t("htmlLang");
+  if (!pageLanguage()) {
   document.title = IS_DRIVER_PAGE
     ? t("pageTitleDriver")
     : IS_CARS_PAGE
@@ -6508,6 +6518,8 @@ function applyStaticTranslations() {
     ogLocaleMeta.setAttribute("content", t("ogLocale"));
   }
 
+  }
+
   document.querySelectorAll("[data-i18n]").forEach(el => {
     const key = el.dataset.i18n;
     const value = t(key);
@@ -6523,7 +6535,7 @@ function applyStaticTranslations() {
 
   document.querySelectorAll(".lang-btn").forEach(btn => {
     btn.classList.toggle("active", btn.dataset.lang === currentLang);
-    btn.setAttribute("aria-pressed", btn.dataset.lang === currentLang ? "true" : "false");
+    if (btn.tagName !== "A") btn.setAttribute("aria-pressed", btn.dataset.lang === currentLang ? "true" : "false");
   });
 
   const leaderboardInput = document.getElementById("leaderboard-search");
@@ -8278,6 +8290,7 @@ function renderSafetyTablePage() {
 
 function bindLanguageButtons() {
   document.querySelectorAll(".lang-btn").forEach(btn => {
+    if (btn.tagName === "A") return;
     btn.addEventListener("click", () => {
       const lang = btn.dataset.lang;
       if (!translations[lang] || lang === currentLang) return;
@@ -11472,4 +11485,3 @@ async function init() {
 runWhenDocumentReady(document, () => {
   void init();
 });
-

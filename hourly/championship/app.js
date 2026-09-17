@@ -1,3 +1,5 @@
+import { pageLanguage, initializeLocalizedPage } from "../../src/shared/localized-page.js?v=20260917seo1";
+initializeLocalizedPage();
 import {
   NEWS_READ_LEGACY_STORAGE_KEY,
   NEWS_READ_STORAGE_KEY,
@@ -54,7 +56,7 @@ const topSiteBaseUrl = isAsgPublicSite
     ? "https://asgracing.github.io/top"
     : "/top";
 const newsFeedUrl = `${topSiteBaseUrl}/news-content/news.json`;
-let currentLang = localStorage.getItem("asgLang") || (((navigator.language || "").toLowerCase().startsWith("ru")) ? "ru" : "en");
+let currentLang = pageLanguage() || localStorage.getItem("asgLang") || (((navigator.language || "").toLowerCase().startsWith("ru")) ? "ru" : "en");
 
 const translations = {
   en: {
@@ -1786,7 +1788,7 @@ function applyTranslations() {
   document.querySelectorAll(".lang-btn").forEach(button => {
     const active = button.dataset.lang === currentLang;
     button.classList.toggle("active", active);
-    button.setAttribute("aria-pressed", active ? "true" : "false");
+    if (button.tagName !== "A") button.setAttribute("aria-pressed", active ? "true" : "false");
   });
   renderNewsBell();
   renderNewsNotificationsModal();
@@ -1993,6 +1995,7 @@ async function init() {
   bindTopNavMoreMenu();
   initNewsNotificationsModal();
   document.querySelectorAll(".lang-btn").forEach(button => {
+    if (button.tagName === "A") return;
     button.addEventListener("click", () => {
       currentLang = button.dataset.lang || "en";
       localStorage.setItem("asgLang", currentLang);

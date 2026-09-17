@@ -70,6 +70,8 @@
   let metrikaLoaded = false;
 
   function getLanguage() {
+    const fixed = document.documentElement.dataset.pageLanguage;
+    if (fixed === "ru" || fixed === "en") return fixed;
     const stored = localStorage.getItem("asgLang");
     if (stored === "ru" || stored === "en") return stored;
 

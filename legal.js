@@ -117,6 +117,8 @@
   }
 
   function getLanguage() {
+    const fixed = document.documentElement.dataset.pageLanguage;
+    if (fixed === "ru" || fixed === "en") return fixed;
     const stored = getStoredLanguage();
     if (stored === "ru" || stored === "en") return stored;
 

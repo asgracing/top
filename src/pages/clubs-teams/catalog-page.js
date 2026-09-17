@@ -1,3 +1,4 @@
+import { pageLanguage, initializeLocalizedPage } from "../../shared/localized-page.js?v=20260917seo1";
 import {
   createAuthHeaderController,
   eloCategoryId,
@@ -183,7 +184,8 @@ export function createCatalogPage({
   documentRef = document,
   fetchImpl = windowRef.fetch.bind(windowRef)
 } = {}) {
-  const lang = language(windowRef);
+  initializeLocalizedPage(documentRef, windowRef);
+  const lang = pageLanguage(documentRef) || language(windowRef);
   const initialParams = new URLSearchParams(windowRef.location.search);
   const initialTab = initialParams.get("tab");
   const state = {
@@ -372,6 +374,7 @@ export function createCatalogPage({
     render();
   });
   documentRef.querySelectorAll(".lang-btn[data-lang]").forEach(button => {
+    if (button.tagName === "A") return;
     button.addEventListener("click", () => {
       try {
         windowRef.localStorage.setItem("asgLang", button.dataset.lang);
