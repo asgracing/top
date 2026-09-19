@@ -1,44 +1,28 @@
 @layer components {
   .activity-controls {
-    display: grid;
-    grid-template-columns: 220px minmax(0, 1fr);
-    gap: 12px;
-    align-items: start;
-    margin-bottom: 16px;
+    display: grid; grid-template-columns: 220px minmax(0, 1fr);
+    gap: 12px; align-items: end;
+    margin-bottom: 12px;
   }
 
   .activity-month-picker {
-    display: grid;
-    gap: 8px;
-  }
-
-  .activity-month-picker span {
-    font-size: 0.82rem;
-    color: var(--muted);
+    display: grid; gap: 8px;
   }
 
   .activity-month-picker select {
-    width: 100%;
-    min-width: 0;
+    width: 100%; min-width: 0;
     padding: 12px 14px;
     border: 1px solid rgba(255, 255, 255, 0.18);
     border-radius: 14px;
-    background:
-      linear-gradient(180deg, rgba(20, 28, 38, 0.96), rgba(17, 24, 33, 0.92));
-    color: var(--text);
-    color-scheme: dark;
-    font-weight: 800;
-    outline: none;
-    box-shadow:
-      inset 0 1px 0 rgba(255, 255, 255, 0.04),
-      0 10px 24px rgba(0, 0, 0, 0.16);
+    background: linear-gradient(180deg, rgba(20, 28, 38, 0.96), rgba(17, 24, 33, 0.92));
+    color: var(--text); color-scheme: dark;
+    font-weight: 800; outline: none;
+    box-shadow: inset 0 1px 0 rgba(255,255,255,.04), 0 10px 24px rgba(0,0,0,.16);
   }
 
   .activity-month-picker select:focus {
     border-color: rgba(255, 91, 46, 0.72);
-    box-shadow:
-      0 0 0 4px rgba(255, 91, 46, 0.16),
-      0 14px 30px rgba(0, 0, 0, 0.22);
+    box-shadow: 0 0 0 4px rgba(255,91,46,.16), 0 14px 30px rgba(0,0,0,.22);
   }
 
   .activity-month-picker select option {
@@ -48,46 +32,67 @@
   }
 
   .activity-days-strip {
-    display: flex;
-    gap: 8px;
-    overflow-x: auto;
-    padding-bottom: 6px;
+    display: flex; gap: 8px;
+    overflow-x: auto; min-width: 0;
+    padding: 2px 1px 5px;
+  }
+
+  .activity-days-navigation {
+    display: grid; grid-template-columns: 40px minmax(0, 1fr) 40px;
+    gap: 8px; align-items: center; min-width: 0;
+  }
+
+  .activity-scroll-button {
+    display: inline-grid; place-items: center;
+    width: 40px; height: 40px; padding: 0;
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    border-radius: 12px;
+    background: rgba(255, 255, 255, 0.06);
+    color: var(--text);
+    font: inherit; font-size: 1.4rem; line-height: 1;
+    cursor: pointer;
+  }
+
+  .activity-scroll-button:hover,
+  .activity-scroll-button:focus-visible {
+    border-color: rgba(255, 179, 71, 0.4);
+    background: rgba(255, 179, 71, 0.12);
+    outline: none;
+  }
+
+  .activity-month-history {
+    margin-top: 14px;
+  }
+
+  .activity-month-history-head {
+    margin-bottom: 10px;
   }
 
   .activity-month-overview {
-    display: grid;
-    grid-template-columns: repeat(3, minmax(0, 1fr));
-    gap: 10px;
-    margin: -2px 0 16px;
+    display: flex; gap: 10px; min-width: 0;
+    overflow-x: auto; padding: 1px 1px 5px;
   }
 
   .activity-month-card {
-    display: grid;
-    gap: 5px;
-    min-width: 0;
+    display: grid; gap: 5px;
+    flex: 1 0 168px; min-width: 168px;
     padding: 12px 14px;
     border: 1px solid rgba(255, 255, 255, 0.1);
     border-radius: 14px;
     background: rgba(255, 255, 255, 0.04);
     color: var(--text);
-    cursor: pointer;
-    text-align: left;
-    transition: border-color 0.18s ease, background 0.18s ease, transform 0.18s ease;
+    cursor: pointer; text-align: left;
   }
 
   .activity-month-card span {
-    font-size: 0.88rem;
-    font-weight: 850;
-    line-height: 1.2;
+    font-size: 0.88rem; font-weight: 850; line-height: 1.2;
   }
 
   .activity-month-card small {
     overflow: hidden;
     color: var(--muted);
-    font-size: 0.74rem;
-    line-height: 1.25;
-    text-overflow: ellipsis;
-    white-space: nowrap;
+    font-size: 0.74rem; line-height: 1.25;
+    text-overflow: ellipsis; white-space: nowrap;
   }
 
   .activity-month-card:hover,
@@ -97,28 +102,36 @@
   }
 
   .activity-day-pill {
-    display: inline-flex;
-    align-items: center;
-    gap: 8px;
+    display: grid; justify-items: center; gap: 4px;
     flex: 0 0 auto;
-    padding: 9px 12px;
+    min-width: 82px; min-height: 46px;
+    padding: 7px 10px;
     border: 1px solid rgba(255, 255, 255, 0.1);
-    border-radius: 999px;
+    border-radius: 12px;
     background: rgba(255, 255, 255, 0.04);
-    color: var(--text);
-    cursor: pointer;
-    transition: border-color 0.18s ease, transform 0.18s ease, background 0.18s ease;
+    color: var(--text); cursor: pointer;
     white-space: nowrap;
   }
 
   .activity-day-pill strong {
-    color: var(--accent);
+    color: var(--accent); font-size: 0.9rem; line-height: 1;
+  }
+
+  .activity-day-pill span {
+    max-width: 100%; overflow: hidden;
+    color: var(--muted);
+    font-size: 0.72rem; line-height: 1.1;
+    text-overflow: ellipsis; white-space: nowrap;
   }
 
   .activity-day-pill:hover,
   .activity-day-pill.is-active {
     border-color: rgba(255, 179, 71, 0.4);
     background: rgba(255, 179, 71, 0.12);
+  }
+
+  .activity-day-pill.is-active span {
+    color: var(--text);
   }
 }
 

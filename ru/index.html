@@ -69,16 +69,16 @@
   <link rel="stylesheet" href="/styles/components/top-three.css?v=20260715r11topthree1" />
   <link rel="stylesheet" href="/styles/components/tables.css?v=20260813warnings1" />
   <link rel="stylesheet" href="/styles/components/pagination.css?v=20260715r11pagination1" />
-  <link rel="stylesheet" href="/styles/components/modals.css?v=20260715r11modals1" />
+  <link rel="stylesheet" href="/styles/components/modals.css?v=20260920activityux1" />
   <link rel="stylesheet" href="/styles/components/server-players-modal.css?v=20260715r11serverplayers1" />
   <link rel="stylesheet" href="/styles/components/today-stats-modal.css?v=20260715r11todaystats1" />
-  <link rel="stylesheet" href="/styles/components/activity-controls.css?v=20260715r11activitycontrols1" />
-  <link rel="stylesheet" href="/styles/components/activity-summary.css?v=20260715r11activitysummary1" />
+  <link rel="stylesheet" href="/styles/components/activity-controls.css?v=20260920activityux1" />
+  <link rel="stylesheet" href="/styles/components/activity-summary.css?v=20260920activityux1" />
   <link rel="stylesheet" href="/styles/components/hourly-event-modal.css?v=20260715r11hourlymodal1" />
   <link rel="stylesheet" href="/styles/components/driver-day-modal.css?v=20260826previewtitle1" />
   <link rel="stylesheet" href="/styles/components/footer.css?v=20260720topguide1" />
   <link rel="stylesheet" href="/styles/utilities.css?v=20260715r12states1" />
-  <link rel="stylesheet" href="/styles/responsive.css?v=20260826previewtitle1" />
+  <link rel="stylesheet" href="/styles/responsive.css?v=20260920activityux1" />
   <link rel="stylesheet" href="/styles.css?v=20260907special4" />
   <link rel="stylesheet" href="/styles/components/hero-layout.css?v=20260909eventwrap1" />
   <link rel="stylesheet" href="/styles/components/hero-server-summary.css?v=20260715hero-spacing2" />
@@ -324,27 +324,11 @@
           Driver of the day: —
         </button>
 
-        <div
-          class="hero-online-card hero-online-card-inline"
-          id="hero-online-card"
-          role="button"
-          tabindex="0"
-          aria-haspopup="dialog"
-          aria-controls="online-activity-modal"
-        >
-          <div class="hero-online-head">
-            <div class="hero-online-title" data-i18n="onlineTitle">Онлайн по датам</div>
-            <div class="hero-online-range" id="online-range">—</div>
-          </div>
-
+        <div class="hero-online-card hero-online-card-inline" id="hero-online-card" role="button" tabindex="0" aria-haspopup="dialog" aria-controls="online-activity-modal">
+          <div class="hero-online-head"><div class="hero-online-title" data-i18n="onlineTitle">Онлайн по датам</div><div class="hero-online-range" id="online-range">—</div></div>
           <div class="hero-online-chart-wrap">
-            <div class="hero-online-chart" id="online-chart">
-              <div class="hero-online-empty" data-i18n="onlineNoData">Нет данных</div>
-            </div>
-
-            <div class="hero-online-scale" id="online-scale">
-              <span>0</span>
-            </div>
+            <div class="hero-online-chart" id="online-chart"><div class="hero-online-empty" data-i18n="onlineNoData">Нет данных</div></div>
+            <div class="hero-online-scale" id="online-scale"><span>0</span></div>
           </div>
         </div>
 
@@ -1057,34 +1041,12 @@
 </div>
 <div class="modal-overlay" id="online-activity-modal" aria-hidden="true">
   <div class="modal-card modal-card-activity" role="dialog" aria-modal="true" aria-labelledby="online-activity-title" aria-describedby="online-activity-subtitle">
-    <button class="modal-close" id="online-activity-close" type="button" aria-label="Закрыть" data-i18n-aria-label="closeLabel">✕</button>
-
-    <div class="modal-header">
-      <div>
-        <h3 id="online-activity-title" class="modal-title" data-i18n="onlineActivityTitle">Пик активности по дням</h3>
-        <p class="modal-subtitle" id="online-activity-subtitle">—</p>
-      </div>
-    </div>
-
-    <div class="activity-controls">
-      <label class="activity-month-picker">
-        <span data-i18n="onlineActivityMonthLabel">Месяц</span>
-        <select id="online-activity-months"></select>
-      </label>
-      <div class="activity-days-strip" id="online-activity-days"></div>
-    </div>
-    <div class="activity-month-overview" id="online-activity-month-overview"></div>
+    <button class="modal-close" id="online-activity-close" aria-label="Закрыть" data-i18n-aria-label="closeLabel">✕</button>
+    <div class="modal-header"><div><h3 id="online-activity-title" class="modal-title" data-i18n="onlineActivityTitle">Пик активности по дням</h3><p class="modal-subtitle" id="online-activity-subtitle">—</p></div></div>
+    <div class="activity-controls"><label class="activity-month-picker"><select id="online-activity-months" aria-label="Месяц" data-i18n-aria-label="onlineActivityMonthLabel"></select></label><div class="activity-days-navigation"><button class="activity-scroll-button" id="online-activity-days-previous" aria-label="Назад" data-i18n-aria-label="topGuideBack">‹</button><div class="activity-days-strip" id="online-activity-days"></div><button class="activity-scroll-button" id="online-activity-days-next" aria-label="Дальше" data-i18n-aria-label="topGuideNext">›</button></div></div>
     <div class="activity-summary-grid" id="online-activity-summary"></div>
-
-    <div class="activity-layout">
-      <section class="activity-panel">
-        <div class="activity-panel-head">
-          <h4 class="activity-panel-title" data-i18n="onlineActivityHoursTitle">Почасовая активность: уникальные пилоты</h4>
-          <div class="activity-panel-note" id="online-activity-prime-time">—</div>
-        </div>
-        <div class="activity-hours-list" id="online-activity-hours"></div>
-      </section>
-    </div>
+    <section class="activity-panel"><div class="activity-panel-head"><h4 class="activity-panel-title" data-i18n="onlineActivityHoursTitle">Почасовая активность: уникальные пилоты</h4><div class="activity-panel-note" id="online-activity-prime-time">—</div></div><div class="activity-chart-scroll"><div class="activity-hours-list" id="online-activity-hours"></div></div></section>
+    <section class="activity-month-history"><h4 class="activity-panel-title activity-month-history-head" data-i18n="onlineActivityMonthsTitle">Показатели по месяцам</h4><div class="activity-month-overview" id="online-activity-month-overview"></div></section>
   </div>
 </div>
 <div class="modal-overlay" id="hourly-details-modal" aria-hidden="true">
@@ -1185,6 +1147,6 @@
   </div>
 
   <script src="/legal.js?v=20260917seo1" defer></script>
-  <script type="module" src="/src/entrypoints/home.js?v=20260919seo3"></script>
+  <script type="module" src="/src/entrypoints/home.js?v=20260920activityux1"></script>
 </body>
 </html>

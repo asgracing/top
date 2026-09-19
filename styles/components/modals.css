@@ -43,7 +43,7 @@
   }
 
   .modal-card-activity {
-    width: min(1140px, 100%);
+    width: min(1280px, 100%);
     max-height: calc(100dvh - var(--top-nav-modal-offset, 140px) - var(--modal-offset-bottom, 20px));
   }
 

@@ -126,15 +126,15 @@ for (const [page, [htmlPath, entrySrc]] of Object.entries(pageEntrypoints)) {
   if (!pageHtml.includes(tablesHref)) failures.push(`${page} page is missing the shared tables stylesheet`);
   const paginationHref = page === "home" ? "./styles/components/pagination.css?v=20260715r11pagination1" : "../styles/components/pagination.css?v=20260715r11pagination1";
   if (!pageHtml.includes(paginationHref)) failures.push(`${page} page is missing the shared pagination stylesheet`);
-  const modalsHref = page === "home" ? "./styles/components/modals.css?v=20260715r11modals1" : "../styles/components/modals.css?v=20260715r11modals1";
+  const modalsHref = page === "home" ? "./styles/components/modals.css?v=20260920activityux1" : "../styles/components/modals.css?v=20260715r11modals1";
   if (!pageHtml.includes(modalsHref)) failures.push(`${page} page is missing the modal foundation stylesheet`);
   const serverPlayersModalHref = page === "home" ? "./styles/components/server-players-modal.css?v=20260715r11serverplayers1" : "../styles/components/server-players-modal.css?v=20260715r11serverplayers1";
   if (!pageHtml.includes(serverPlayersModalHref)) failures.push(`${page} page is missing the server players modal stylesheet`);
   const todayStatsModalHref = page === "home" ? "./styles/components/today-stats-modal.css?v=20260715r11todaystats1" : "../styles/components/today-stats-modal.css?v=20260715r11todaystats1";
   if (!pageHtml.includes(todayStatsModalHref)) failures.push(`${page} page is missing the today stats modal stylesheet`);
-  const activityControlsHref = page === "home" ? "./styles/components/activity-controls.css?v=20260715r11activitycontrols1" : "../styles/components/activity-controls.css?v=20260715r11activitycontrols1";
+  const activityControlsHref = page === "home" ? "./styles/components/activity-controls.css?v=20260920activityux1" : "../styles/components/activity-controls.css?v=20260715r11activitycontrols1";
   if (!pageHtml.includes(activityControlsHref)) failures.push(`${page} page is missing the activity controls stylesheet`);
-  const activitySummaryHref = page === "home" ? "./styles/components/activity-summary.css?v=20260715r11activitysummary1" : "../styles/components/activity-summary.css?v=20260715r11activitysummary1";
+  const activitySummaryHref = page === "home" ? "./styles/components/activity-summary.css?v=20260920activityux1" : "../styles/components/activity-summary.css?v=20260715r11activitysummary1";
   if (!pageHtml.includes(activitySummaryHref)) failures.push(`${page} page is missing the activity summary stylesheet`);
   const hourlyEventModalHref = page === "home" ? "./styles/components/hourly-event-modal.css?v=20260715r11hourlymodal1" : "../styles/components/hourly-event-modal.css?v=20260715r11hourlymodal1";
   if (!pageHtml.includes(hourlyEventModalHref)) failures.push(`${page} page is missing the hourly event modal stylesheet`);
@@ -145,7 +145,7 @@ for (const [page, [htmlPath, entrySrc]] of Object.entries(pageEntrypoints)) {
     `${page === "home" ? "./" : "../"}styles/components/footer.css?v=20260720topguide1`,
     `${page === "home" ? "./" : "../"}styles/utilities.css?v=20260715r12states1`,
     page === "home"
-      ? "./styles/responsive.css?v=20260826previewtitle1"
+      ? "./styles/responsive.css?v=20260920activityux1"
       : "../styles/responsive.css?v=20260813driveraffiliations1",
     `${page === "home" ? "./" : "../"}styles/components/responsive-accessibility.css?v=20260715r13a11y1`
   ]) if (!pageHtml.includes(href)) failures.push(`${page} page is missing R11 stylesheet ${href}`);

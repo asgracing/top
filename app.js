@@ -785,6 +785,7 @@ const translations = {
     onlineActivityPrimeTime: "Prime time {hour} · score {score}",
     onlineActivityHoursTitle: "Hourly activity, unique drivers",
     onlineActivityMonthLabel: "Month",
+    onlineActivityMonthsTitle: "Monthly overview",
     onlineActivityUniqueLabel: "Unique drivers",
     onlineActivityRacesLabel: "Races",
     onlineActivityAvgPlayersLabel: "Avg drivers per race",
@@ -1402,6 +1403,7 @@ const translations = {
     onlineActivityPrimeTime: "Пик активности {hour} · индекс {score}",
     onlineActivityHoursTitle: "Почасовая активность: уникальные пилоты",
     onlineActivityMonthLabel: "Месяц",
+    onlineActivityMonthsTitle: "Показатели по месяцам",
     onlineActivityUniqueLabel: "Уникальные пилоты",
     onlineActivityRacesLabel: "Гонки",
     onlineActivityAvgPlayersLabel: "Среднее пилотов на гонку",
@@ -10214,6 +10216,11 @@ function renderOnlineActivityModal() {
 
   if (!daysEl || !monthsEl || !monthOverviewEl || !summaryEl || !subtitleEl || !primeTimeEl || !hoursEl) return;
 
+  [["previous", -1], ["next", 1]].forEach(([id, direction]) => {
+    const button = document.getElementById(`online-activity-days-${id}`);
+    if (button) button.onclick = () => daysEl.scrollBy({ left: direction * Math.max(180, daysEl.clientWidth * 0.72), behavior: "smooth" });
+  });
+
   const days = buildRelativeActivityDays(Array.isArray(raceActivityInsights) ? raceActivityInsights : []);
   if (!days.length) {
     subtitleEl.textContent = t("onlineActivityEmpty");
@@ -10233,7 +10240,7 @@ function renderOnlineActivityModal() {
   }
   monthsEl.innerHTML = months.map(month => `
     <option value="${escapeHtml(month)}"${month === selectedActivityMonth ? " selected" : ""}>
-      ${escapeHtml(`${formatActivityMonthLabel(month, currentLang)} · ${monthInsights.find(item => item.month === month)?.activity_score ?? 0}/100`)}
+      ${escapeHtml(formatActivityMonthLabel(month, currentLang))}
     </option>
   `).join("");
 
@@ -10312,15 +10319,15 @@ function renderOnlineActivityModal() {
   const peakHour = selectedDay.peak_hour;
 
   summaryEl.innerHTML = [
+    buildActivitySummaryCardWithClass(t("onlineActivityScoreLabel"), `${selectedDay.activity_score ?? 0}/100`, "activity-summary-card-primary", true),
+    buildActivitySummaryCardWithClass(t("onlineActivityMonthScoreLabel"), `${selectedMonth?.activity_score ?? 0}/100`, "activity-summary-card-primary", true),
     buildActivitySummaryCard(t("onlineActivityUniqueLabel"), selectedDay.unique_players ?? 0),
     buildActivitySummaryCard(t("onlineActivityRacesLabel"), selectedDay.races ?? 0),
     buildActivitySummaryCard(
       t("onlineActivityAvgPlayersLabel"),
       typeof selectedDay.avg_players_per_race === "number" ? selectedDay.avg_players_per_race.toFixed(2) : "-"
     ),
-    buildActivitySummaryCardWithClass(t("onlineActivityTracksLabel"), tracksLabel, "activity-summary-card-tracks"),
-    buildActivitySummaryCard(t("onlineActivityScoreLabel"), `${selectedDay.activity_score ?? 0}/100`, true),
-    buildActivitySummaryCard(t("onlineActivityMonthScoreLabel"), `${selectedMonth?.activity_score ?? 0}/100`, true)
+    buildActivitySummaryCardWithClass(t("onlineActivityTracksLabel"), tracksLabel, "activity-summary-card-tracks")
   ].join("");
 
   primeTimeEl.textContent = peakHour

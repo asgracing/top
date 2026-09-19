@@ -381,10 +381,12 @@
     grid-template-columns: 1fr;
   }
 
-  .activity-controls,
-  .activity-month-overview,
-  .activity-summary-grid {
+  .activity-controls {
     grid-template-columns: 1fr;
+  }
+
+  .activity-summary-grid {
+    grid-template-columns: repeat(3, minmax(0, 1fr));
   }
 
   .driver-day-grid {
@@ -854,6 +856,38 @@
 
   .race-modal-summary {
     grid-template-columns: 1fr;
+  }
+
+  .activity-summary-grid {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+
+  .activity-summary-card {
+    min-height: 82px;
+    padding: 12px;
+  }
+
+  .activity-days-navigation {
+    grid-template-columns: 36px minmax(0, 1fr) 36px;
+    gap: 6px;
+  }
+
+  .activity-scroll-button {
+    width: 36px;
+    height: 36px;
+  }
+
+  .activity-day-pill {
+    min-width: 76px;
+  }
+
+  .activity-panel {
+    margin-inline: -2px;
+    padding: 12px;
+  }
+
+  .activity-hours-list {
+    min-width: 760px;
   }
 
   .driver-day-card-wide {
