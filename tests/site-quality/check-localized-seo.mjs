@@ -36,6 +36,9 @@ for (const path of paths) {
       const results = parsed.find(n => n.attrs.id === "championship-race-results-section");
       const seoIntro = parsed.find(n => (n.attrs.class || "").split(/\s+/).includes("seo-intro"));
       assert(results && seoIntro && seoIntro.start > results.end, `${file}: SEO block must follow championship results`);
+      const footer = parsed.find(n => (n.attrs.class || "").split(/\s+/).includes("footer"));
+      assert(footer && footer.start > seoIntro.end, `${file}: main-site footer must follow championship content`);
+      assert.equal(parsed.filter(n => (n.attrs.class || "").split(/\s+/).includes("footer-social-link")).length, 5, `${file}: footer social links`);
     }
     for (const node of parsed.filter(n => n.name === "a" && n.attrs["data-lang"])) assert(node.attrs.href, `${file}: language must be a link`);
     // The same executable scripts and API configuration are used at the same directory depth.
@@ -55,6 +58,8 @@ for (const path of paths) {
 }
 assert(!sitemap.includes("<loc>https://asgracing.ru/driver/</loc>"));
 for (const path of ["account/index.html", "portal-ops/index.html"]) assert((await readFile(resolve(root, path), "utf8")).includes("noindex"), path);
+const championshipApp = await readFile(resolve(root, "hourly/championship/app.js"), "utf8");
+assert(!championshipApp.includes("race.results.slice(0, 12)"), "championship race results must not be capped at 12 drivers");
 // Static page language wins even when cookie UI sees an opposite saved language.
 for (const path of ["legal.js", "hourly/legal.js"]) {
   const source = await readFile(resolve(root, path), "utf8");

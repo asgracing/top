@@ -24,6 +24,7 @@ for (const candidate of ["C:/Program Files/Google/Chrome/Application/chrome.exe"
 }
 const browser = await chromium.launch({ headless: true, ...(executablePath ? { executablePath } : {}) });
 const announcement = { event_id: "seo_fixture", date: "2026-09-18", start_time_local: "21:00", timezone: "UTC+3", track_code: "monza", track_name: "Monza", status: "scheduled", session_label: "Fixture race", server_name: "ASG fixture", competition_mode: "hourly", race_format: "sprint", launch_at: "2026-09-18T18:00:00Z", rules: { car_class: "GT3", quali_minutes: 10, race_minutes: 20 }, car_restriction: { mode: "open" } };
+const championshipResults = Array.from({ length: 15 }, (_, index) => ({ position: index + 1, driver: `Driver ${index + 1}`, public_id: `fixture-${index + 1}`, points: Math.max(0, 25 - index), best_lap: `1:4${index}.000` }));
 const mime = { ".html": "text/html; charset=utf-8", ".js": "text/javascript; charset=utf-8", ".css": "text/css", ".json": "application/json", ".svg": "image/svg+xml", ".png": "image/png", ".jpg": "image/jpeg", ".ico": "image/x-icon" };
 const reports = [];
 async function run(routePath, lang, width, before = false) {
@@ -65,6 +66,14 @@ async function run(routePath, lang, width, before = false) {
     }
     if (url.pathname.endsWith("/announcement.json")) return json(announcement);
     if (url.pathname.endsWith("/schedule.json")) return json({ items: [announcement] });
+    if (url.pathname.endsWith("/events/championship/index.json")) return json({
+      slug: "championship",
+      title: "Fixture championship",
+      status: "active",
+      standings: [],
+      upcoming_races: [],
+      races: [{ event_id: "fixture-race", track_name: "Spa", participants_count: championshipResults.length, results: championshipResults }]
+    });
     if (url.pathname.endsWith("/v1/me")) return json({ authenticated: false });
     if (url.pathname.endsWith("/voter-token")) return json({ voter_token: "seo-fixture-token", expires_at: "2030-01-01T00:00:00Z" });
     if (url.pathname.includes("hourly-votes-api")) return json({ ok: true, items: [{ event_id: "seo_fixture", votes: 1, already_voted: false }], event_id: "seo_fixture", votes: 1, already_voted: request.method() === "POST" && !url.pathname.endsWith("unvote") });
@@ -96,10 +105,18 @@ async function run(routePath, lang, width, before = false) {
       await page.waitForTimeout(350);
       assert.equal(await modal.isVisible(), false, "event modal closes");
     }
+    if (routePath.includes("/hourly/championship/")) {
+      assert.equal(await page.locator("#championship-race-results tbody tr").count(), championshipResults.length, "all championship race finishers render");
+      assert(await page.locator("footer.footer").isVisible(), "championship footer is visible");
+      assert.equal(await page.locator("footer.footer .footer-social-link").count(), 5, "championship footer matches the main social links");
+    }
     const consent = page.getByRole("button", { name: /Только необходимые|Necessary only|Only necessary|Required only/ });
     if (await consent.count()) await consent.first().click({ force: true });
     await page.evaluate(() => window.scrollTo(0, 0));
     await page.screenshot({ path: path.join(output, `${routePath.replace(/[^a-z0-9]/gi, "_") || "home"}-${width}.png`) });
+    if (routePath.includes("/hourly/championship/")) {
+      await page.locator("footer.footer").screenshot({ path: path.join(output, `${routePath.replace(/[^a-z0-9]/gi, "_")}-${width}-footer.png`) });
+    }
     const overflow = await page.evaluate(() => document.documentElement.scrollWidth > innerWidth + 2);
     assert.equal(overflow, false, `horizontal overflow ${routePath} ${width}`);
   }

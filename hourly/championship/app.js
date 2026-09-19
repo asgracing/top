@@ -169,6 +169,7 @@ const translations = {
     voteSending: "Saving...",
     voteFailed: "Try again",
     unvoteButton: "Remove vote",
+    footerText: "Statistics are generated from ACC Dedicated Server result files and published via GitHub Pages.",
     unknown: "--"
   },
   ru: {
@@ -251,6 +252,7 @@ const translations = {
     tyresNone: "без правил по шинам",
     passwordNone: "Без пароля",
     eventDetailsLink: "Открыть детали события",
+    footerText: "Данные собираются из файлов результатов ACC Dedicated Server и публикуются через GitHub Pages.",
     unknown: "--"
   }
 };
@@ -1668,7 +1670,7 @@ function renderRaceResults(races) {
     return;
   }
   root.innerHTML = races.map((race, index) => {
-    const results = Array.isArray(race.results) ? race.results.slice(0, 12) : [];
+    const results = Array.isArray(race.results) ? race.results : [];
     return `
       <article class="championship-race-card">
         <div class="championship-race-card-head">
