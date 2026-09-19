@@ -42,7 +42,7 @@ async function run(routePath, lang, width, before = false) {
       window.__seoRequests.push({ url: url.href, method: options.method || "GET", body: options.body || null, credentials: options.credentials || "same-origin", cache: options.cache || "default" });
       return original.call(this, resource, options);
     };
-  }, { saved: before ? lang : lang === "ru" ? "en" : "ru" });
+  }, { saved: lang });
   const errors = [], missing = [];
   page.on("pageerror", e => errors.push(e.message));
   await context.route("**/*", async route => {
@@ -125,11 +125,11 @@ try {
       assert.deepEqual(current.errors, prior.errors, `new runtime errors: ${path}`);
       assert.deepEqual(normalize(current.initialBackend), normalize(prior.initialBackend), `backend request contract: ${path}`);
     }
-    const ru = await run(`${path}index.ru.html`, "ru", 390);
+    const ru = await run(`/ru${path}`, "ru", 390);
     assert.deepEqual(ru.errors, current.errors, `RU runtime errors: ${path}`);
     assert.deepEqual(normalize(ru.initialBackend), normalize(current.initialBackend), `RU backend request contract: ${path}`);
   }
-  for (const path of ["/join/", "/about/"]) for (const lang of ["en", "ru"]) await run(lang === "ru" ? `${path}index.ru.html` : path, lang, 390);
+  for (const path of ["/join/", "/about/"]) for (const lang of ["en", "ru"]) await run(lang === "ru" ? `/ru${path}` : path, lang, 390);
   console.log("Browser localization and backend request regression passed");
 } finally {
   await fs.writeFile(path.join(output, "report.json"), JSON.stringify(reports, null, 2));

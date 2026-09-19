@@ -79,14 +79,14 @@
     <priority>0.4</priority>
   </url>
 
-  <url><loc>https://asgracing.ru/index.ru.html</loc></url>
-  <url><loc>https://asgracing.ru/hourly/index.ru.html</loc></url>
-  <url><loc>https://asgracing.ru/hourly/championship/index.ru.html</loc></url>
-  <url><loc>https://asgracing.ru/teams/index.ru.html</loc></url>
-  <url><loc>https://asgracing.ru/community/index.ru.html</loc></url>
+  <url><loc>https://asgracing.ru/ru/</loc></url>
+  <url><loc>https://asgracing.ru/ru/hourly/</loc></url>
+  <url><loc>https://asgracing.ru/ru/hourly/championship/</loc></url>
+  <url><loc>https://asgracing.ru/ru/teams/</loc></url>
+  <url><loc>https://asgracing.ru/ru/community/</loc></url>
   <url><loc>https://asgracing.ru/join/</loc></url>
-  <url><loc>https://asgracing.ru/join/index.ru.html</loc></url>
+  <url><loc>https://asgracing.ru/ru/join/</loc></url>
   <url><loc>https://asgracing.ru/about/</loc></url>
-  <url><loc>https://asgracing.ru/about/index.ru.html</loc></url>
+  <url><loc>https://asgracing.ru/ru/about/</loc></url>
 
 </urlset>

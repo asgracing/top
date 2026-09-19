@@ -8,7 +8,11 @@ const root = resolve(import.meta.dirname, "..");
 const check = process.argv.includes("--check");
 const outputRoot = process.argv.includes("--output-dir") ? resolve(process.argv[process.argv.indexOf("--output-dir") + 1]) : root;
 const origin = "https://asgracing.ru";
-const urlFor = (path, lang) => `${origin}/${lang === "ru" ? path.replace(/index\.html$/, "index.ru.html") : path.replace(/index\.html$/, "")}`;
+const cleanPath = path => path.replace(/index\.html$/, "");
+const localizedPath = (path, lang) => `/${lang === "ru" ? `ru/${cleanPath(path)}` : cleanPath(path)}`;
+const urlFor = (path, lang) => `${origin}${localizedPath(path, lang)}`;
+const outputPath = (path, lang) => lang === "ru" ? `ru/${path}` : path;
+const legacyRuPath = path => path.replace(/index\.html$/, "index.ru.html");
 const allPaths = [...pages.map(p => p.path), "join/index.html", "about/index.html"];
 const translations = new Map();
 async function dictionary(path) {
@@ -25,12 +29,20 @@ async function dictionary(path) {
   return context.result;
 }
 function localLink(href, path, lang) {
-  if (lang !== "ru" || href.startsWith("#") || !href || !/^(?:\.?\.?\/|[a-z0-9/-])/.test(href)) return href;
+  if (lang !== "ru") return href;
+  if (href.startsWith("#") || !href || /^(?:mailto:|tel:|javascript:)/i.test(href)) return href;
   const url = new URL(href.replaceAll("&amp;", "&"), urlFor(path, "en"));
   if (url.origin !== origin) return href;
   const match = allPaths.find(p => new URL(urlFor(p, "en")).pathname === url.pathname || `/${p}` === url.pathname);
-  if (!match) return href;
-  return new URL(urlFor(match, "ru")).pathname + url.search + url.hash;
+  if (match) return localizedPath(match, lang) + url.search + url.hash;
+  // RU documents live one directory deeper. Root-absolute local links keep
+  // non-localized pages and assets at their real production locations.
+  return url.pathname + url.search + url.hash;
+}
+function localResource(value, path) {
+  if (!value || /^(?:data:|blob:|mailto:|tel:|javascript:|#)/i.test(value)) return value;
+  const url = new URL(value.replaceAll("&amp;", "&"), urlFor(path, "en"));
+  return url.origin === origin ? url.pathname + url.search + url.hash : value;
 }
 function translate(html, page, lang, copy) {
   const changes = [], covered = [];
@@ -43,17 +55,26 @@ function translate(html, page, lang, copy) {
       const href = localLink(a.href, page.path, lang);
       if (href !== a.href) tag = setAttribute(tag, "href", href);
     }
+    if (lang === "ru") {
+      if (["img", "script", "source", "video", "audio"].includes(node.name) && a.src) tag = setAttribute(tag, "src", localResource(a.src, page.path));
+      if (node.name === "link" && a.href) tag = setAttribute(tag, "href", localResource(a.href, page.path));
+      if (node.name === "form" && a.action) tag = setAttribute(tag, "action", localResource(a.action, page.path));
+      if (node.name === "meta" && a.name === "legal-base-path" && a.content) tag = setAttribute(tag, "content", localResource(a.content, page.path));
+      if (a["data-bg-options"]) tag = setAttribute(tag, "data-bg-options", a["data-bg-options"].split("|").map(value => localResource(value, page.path)).join("|"));
+    }
     for (const [marker, attribute] of [["data-i18n-aria-label", "aria-label"], ["data-i18n-placeholder", "placeholder"], ["data-clubs-copy-placeholder", "placeholder"]]) {
       if (a[marker] && typeof copy[a[marker]] === "string") tag = setAttribute(tag, attribute, copy[a[marker]]);
     }
     if ((a.class || "").split(/\s+/).includes("lang-btn") && a["data-lang"]) {
       tag = tag.replace(/^<button/, "<a").replace(/\s(?:type|aria-pressed|aria-current)="[^"]*"/g, "");
       const selected = a["data-lang"];
-      tag = setAttribute(tag, "href", new URL(urlFor(page.path, selected)).pathname);
+      tag = setAttribute(tag, "href", localizedPath(page.path, selected));
       tag = setAttribute(tag, "hreflang", selected);
       tag = setAttribute(tag, "class", `lang-btn${selected === lang ? " active" : ""}`);
       if (selected === lang) tag = setAttribute(tag, "aria-current", "page");
-      changes.push({ start: node.start, end: node.end, value: tag + html.slice(node.openEnd, node.close) + "</a>" });
+      let inner = html.slice(node.openEnd, node.close);
+      if (lang === "ru") inner = inner.replace(/\bsrc="([^"]+)"/g, (_match, value) => `src="${localResource(value, page.path)}"`);
+      changes.push({ start: node.start, end: node.end, value: tag + inner + "</a>" });
       covered.push([node.start, node.end]); continue;
     }
     if (tag !== html.slice(node.start, node.openEnd)) changes.push({ start: node.start, end: node.openEnd, value: tag });
@@ -79,9 +100,9 @@ function metadata(html, page, lang) {
   }
   html = edit(html, changes);
   const extra = Object.entries(values).filter(([k]) => !found.has(k)).map(([k, v]) => `<meta ${k.startsWith("og:") ? "property" : "name"}="${k}" content="${escape(v)}">`);
-  extra.push('<link rel="stylesheet" href="/styles/components/seo-content.css?v=20260917seo2">');
+  extra.push('<link rel="stylesheet" href="/styles/components/seo-content.css?v=20260919seo3">');
   if (!found.has("canonical")) extra.push(`<link rel="canonical" href="${url}">`);
-  for (const alternate of ["en", "ru", "x-default"]) extra.push(`<link rel="alternate" hreflang="${alternate}" href="${urlFor(page.path, alternate === "ru" ? "ru" : "en")}">`);
+  for (const alternate of ["en", "ru-RU", "x-default"]) extra.push(`<link rel="alternate" hreflang="${alternate}" href="${urlFor(page.path, alternate === "ru-RU" ? "ru" : "en")}">`);
   if (page.key === "home") extra.push(`<script type="application/ld+json">${JSON.stringify({ "@context": "https://schema.org", "@graph": [{ "@type": "WebSite", "@id": `${origin}/#website`, name: "ASG Racing", url: `${origin}/`, inLanguage: ["en", "ru"] }, { "@type": "Organization", "@id": `${origin}/#organization`, name: "ASG Racing", url: `${origin}/` }] })}</script>`);
   return html.replace("</head>", `  <!-- seo-head:start -->\n  ${extra.join("\n  ")}\n  <!-- seo-head:end -->\n</head>`);
 }
@@ -116,7 +137,7 @@ for (const page of pages) {
       html = edit(html, nodes(html).filter(n => n.attrs.id in values).map(n => ({ start: n.openEnd, end: n.close, value: values[n.attrs.id] })));
     }
     html = metadata(html, page, lang);
-    const afterId = { home: "combined-stats-shell", hourly: "recent-races" }[page.key];
+    const afterId = { home: "combined-stats-shell", hourly: "recent-races", championship: "championship-race-results-section" }[page.key];
     if (afterId) {
       const anchor = nodes(html).find(node => node.attrs.id === afterId);
       if (!anchor) throw new Error(`SEO placement target missing: ${afterId}`);
@@ -124,7 +145,7 @@ for (const page of pages) {
     } else {
       html = html.replace(/<main\b[^>]*>/, match => match + intro(page, lang));
     }
-    await output(lang === "en" ? page.path : page.path.replace(/index\.html$/, "index.ru.html"), html);
+    await output(outputPath(page.path, lang), html);
   }
 }
 
@@ -143,9 +164,15 @@ for (const [key, versions] of Object.entries(guideCopy)) {
   for (const lang of ["en", "ru"]) {
     const c = page[lang], ru = lang === "ru";
     const links = [["index.html", "ASG Racing"], ["hourly/index.html", ru ? "Расписание" : "Race schedule"], ["teams/index.html", ru ? "Клубы и команды" : "Clubs & teams"], ["join/index.html", ru ? "Как участвовать" : "How to join"], ["about/index.html", ru ? "О сообществе" : "About"]];
-    let html = `<!DOCTYPE html>\n<html lang="${lang}" data-page-language="${lang}">\n<head>\n<meta charset="UTF-8">\n<meta name="viewport" content="width=device-width, initial-scale=1">\n<title>${escape(c.title)}</title>\n<link rel="icon" href="/favicon.ico">\n<link rel="stylesheet" href="/styles/tokens.css">\n<link rel="stylesheet" href="/styles/base.css?v=20260917seo1">\n</head>\n<body>\n<main class="seo-guide">\n<nav aria-label="${ru ? "Навигация" : "Navigation"}">${links.map(([p, text]) => `<a href="${new URL(urlFor(p, lang)).pathname}">${text}</a>`).join(" · ")}</nav>\n<nav aria-label="Language">${["en", "ru"].map(l => `<a class="lang-btn" data-lang="${l}" href="${new URL(urlFor(page.path, l)).pathname}" hreflang="${l}"${lang === l ? ' aria-current="page"' : ""}>${l === "ru" ? "Русский" : "English"}</a>`).join(" · ")}</nav>\n<h1>${escape(c.heading)}</h1>\n<p>${escape(c.text)}</p>\n${c.sections.map(([h, p]) => `<section><h2>${escape(h)}</h2><p>${escape(p)}</p></section>`).join("\n")}\n<p><a href="${new URL(urlFor("hourly/index.html", lang)).pathname}">${ru ? "Выбрать гонку" : "Find your next race"}</a> · <a href="${new URL(urlFor("index.html", lang)).pathname}#rules">${ru ? "Гоночные правила" : "Racing rules"}</a></p>\n</main>\n<script type="module">import { initializeLocalizedPage } from "/src/shared/localized-page.js?v=20260917seo1"; initializeLocalizedPage();</script>\n</body>\n</html>\n`;
+    let html = `<!DOCTYPE html>\n<html lang="${lang}" data-page-language="${lang}">\n<head>\n<meta charset="UTF-8">\n<meta name="viewport" content="width=device-width, initial-scale=1">\n<title>${escape(c.title)}</title>\n<link rel="icon" href="/favicon.ico">\n<link rel="stylesheet" href="/styles/tokens.css">\n<link rel="stylesheet" href="/styles/base.css?v=20260917seo1">\n</head>\n<body>\n<main class="seo-guide">\n<nav aria-label="${ru ? "Навигация" : "Navigation"}">${links.map(([p, text]) => `<a href="${new URL(urlFor(p, lang)).pathname}">${text}</a>`).join(" · ")}</nav>\n<nav aria-label="Language">${["en", "ru"].map(l => `<a class="lang-btn" data-lang="${l}" href="${new URL(urlFor(page.path, l)).pathname}" hreflang="${l}"${lang === l ? ' aria-current="page"' : ""}>${l === "ru" ? "Русский" : "English"}</a>`).join(" · ")}</nav>\n<h1>${escape(c.heading)}</h1>\n<p>${escape(c.text)}</p>\n${c.sections.map(([h, p]) => `<section><h2>${escape(h)}</h2><p>${escape(p)}</p></section>`).join("\n")}\n<p><a href="${new URL(urlFor("hourly/index.html", lang)).pathname}">${ru ? "Выбрать гонку" : "Find your next race"}</a> · <a href="${new URL(urlFor("index.html", lang)).pathname}#rules">${ru ? "Гоночные правила" : "Racing rules"}</a></p>\n</main>\n<script type="module">import { initializeLocalizedPage } from "/src/shared/localized-page.js?v=20260919seo3"; initializeLocalizedPage();</script>\n</body>\n</html>\n`;
     html = metadata(html, page, lang);
-    await output(lang === "en" ? page.path : page.path.replace("index.html", "index.ru.html"), html);
+    await output(outputPath(page.path, lang), html);
   }
 }
-console.log(check ? "Localized HTML is current (14 pages)" : "Localized HTML generated (14 pages)");
+for (const path of allPaths) {
+  const target = urlFor(path, "ru");
+  const targetPath = new URL(target).pathname;
+  const legacy = `<!DOCTYPE html>\n<html lang="ru">\n<head>\n<meta charset="UTF-8">\n<meta name="viewport" content="width=device-width, initial-scale=1">\n<title>Страница перемещена | ASG Racing</title>\n<meta name="robots" content="noindex, follow">\n<link rel="canonical" href="${target}">\n<meta http-equiv="refresh" content="0; url=${targetPath}">\n<script>location.replace(${JSON.stringify(targetPath)} + location.search + location.hash);</script>\n</head>\n<body><p><a href="${targetPath}">Страница перемещена</a></p></body>\n</html>\n`;
+  await output(legacyRuPath(path), legacy);
+}
+console.log(check ? "Localized HTML is current (14 pages + 7 compatibility redirects)" : "Localized HTML generated (14 pages + 7 compatibility redirects)");

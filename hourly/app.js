@@ -1,4 +1,4 @@
-import { pageLanguage, initializeLocalizedPage } from "../src/shared/localized-page.js?v=20260917seo1";
+import { pageLanguage, initializeLocalizedPage } from "../src/shared/localized-page.js?v=20260919seo3";
 initializeLocalizedPage();
 import {
   NEWS_READ_LEGACY_STORAGE_KEY,

@@ -32,3 +32,38 @@
 .seo-guide nav { margin-bottom: 18px; }
 .seo-guide h1 { font-size: clamp(1.6rem, 5vw, 2.4rem); line-height: 1.2; }
 .seo-guide section { margin-top: 28px; }
+
+.locale-suggestion {
+  position: fixed;
+  z-index: 10050;
+  right: max(16px, env(safe-area-inset-right));
+  bottom: max(16px, env(safe-area-inset-bottom));
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  max-width: min(420px, calc(100vw - 32px));
+  padding: 14px 16px;
+  border: 1px solid var(--line);
+  border-radius: 14px;
+  color: var(--text);
+  background: var(--card, #101822);
+  box-shadow: 0 16px 42px rgba(0, 0, 0, .38);
+}
+.locale-suggestion-action { color: var(--accent-2, var(--accent)); font-weight: 700; white-space: nowrap; }
+.locale-suggestion-dismiss {
+  width: 32px;
+  height: 32px;
+  padding: 0;
+  border: 0;
+  border-radius: 50%;
+  color: var(--muted);
+  background: transparent;
+  font: inherit;
+  font-size: 1.35rem;
+  cursor: pointer;
+}
+.locale-suggestion-dismiss:hover, .locale-suggestion-dismiss:focus-visible { color: var(--text); background: rgba(255, 255, 255, .08); }
+@media (max-width: 560px) {
+  .locale-suggestion { left: 12px; right: 12px; bottom: max(12px, env(safe-area-inset-bottom)); }
+  .locale-suggestion span { flex: 1; }
+}

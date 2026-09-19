@@ -1,4 +1,4 @@
-import { pageLanguage, initializeLocalizedPage } from "../../shared/localized-page.js?v=20260917seo1";
+import { pageLanguage, initializeLocalizedPage } from "../../shared/localized-page.js?v=20260919seo3";
 import {
   createAuthHeaderController,
   eloCategoryId,
