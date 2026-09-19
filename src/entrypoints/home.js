@@ -1,3 +1,3 @@
-import { bootstrapLegacyPage } from "./legacy-bootstrap.js?v=20260920activityux1";
+import { bootstrapLegacyPage } from "./legacy-bootstrap.js?v=20260920route1";
 
 await bootstrapLegacyPage("home");

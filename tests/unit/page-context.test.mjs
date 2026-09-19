@@ -22,3 +22,17 @@ test("applies and reads page identity through the document root", () => {
   assert.equal(documentRef.documentElement.dataset.page, "driver");
   assert.deepEqual(readPageContext(documentRef), applied);
 });
+
+test("resolves runtime links from localized Russian pages to the site root", () => {
+  const production = {
+    baseURI: "https://asgracing.ru/ru/community/",
+    documentElement: { dataset: { page: "community", pageLanguage: "ru" } }
+  };
+  assert.equal(readPageContext(production).siteBasePath, "/");
+
+  const projectPages = {
+    baseURI: "https://asgracing.github.io/top/ru/",
+    documentElement: { dataset: { page: "home", pageLanguage: "ru" } }
+  };
+  assert.equal(readPageContext(projectPages).siteBasePath, "/top/");
+});

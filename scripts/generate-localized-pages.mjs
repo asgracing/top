@@ -14,6 +14,14 @@ const urlFor = (path, lang) => `${origin}${localizedPath(path, lang)}`;
 const outputPath = (path, lang) => lang === "ru" ? `ru/${path}` : path;
 const legacyRuPath = path => path.replace(/index\.html$/, "index.ru.html");
 const allPaths = [...pages.map(p => p.path), "join/index.html", "about/index.html"];
+const runtimeCompatibilityPaths = [
+  "driver/index.html",
+  "cars/index.html",
+  "races/index.html",
+  "fun-stats/index.html",
+  "news/index.html",
+  "bans/index.html"
+];
 const translations = new Map();
 async function dictionary(path) {
   if (translations.has(path)) return translations.get(path);
@@ -175,4 +183,9 @@ for (const path of allPaths) {
   const legacy = `<!DOCTYPE html>\n<html lang="ru">\n<head>\n<meta charset="UTF-8">\n<meta name="viewport" content="width=device-width, initial-scale=1">\n<title>Страница перемещена | ASG Racing</title>\n<meta name="robots" content="noindex, follow">\n<link rel="canonical" href="${target}">\n<meta http-equiv="refresh" content="0; url=${targetPath}">\n<script>location.replace(${JSON.stringify(targetPath)} + location.search + location.hash);</script>\n</head>\n<body><p><a href="${targetPath}">Страница перемещена</a></p></body>\n</html>\n`;
   await output(legacyRuPath(path), legacy);
 }
-console.log(check ? "Localized HTML is current (14 pages + 7 compatibility redirects)" : "Localized HTML generated (14 pages + 7 compatibility redirects)");
+for (const path of runtimeCompatibilityPaths) {
+  const targetPath = `/${cleanPath(path)}`;
+  const redirect = `<!DOCTYPE html>\n<html lang="ru">\n<head>\n<meta charset="UTF-8">\n<meta name="viewport" content="width=device-width, initial-scale=1">\n<title>Переход на страницу | ASG Racing</title>\n<meta name="robots" content="noindex, follow">\n<link rel="canonical" href="${origin}${targetPath}">\n<meta http-equiv="refresh" content="0; url=${targetPath}?lang=ru">\n<script>const target=new URL(${JSON.stringify(targetPath)},location.origin);const params=new URLSearchParams(location.search);params.set("lang","ru");target.search=params;target.hash=location.hash;location.replace(target);</script>\n</head>\n<body><p><a href="${targetPath}?lang=ru">Перейти на страницу</a></p></body>\n</html>\n`;
+  await output(`ru/${path}`, redirect);
+}
+console.log(check ? "Localized HTML is current (14 pages + 7 compatibility redirects + 6 runtime redirects)" : "Localized HTML generated (14 pages + 7 compatibility redirects + 6 runtime redirects)");

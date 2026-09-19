@@ -18,5 +18,16 @@ export function applyPageContext(documentRef, page) {
 }
 
 export function readPageContext(documentRef) {
-  return createPageContext(documentRef?.documentElement?.dataset?.page);
+  const context = createPageContext(documentRef?.documentElement?.dataset?.page);
+  if (documentRef?.documentElement?.dataset?.pageLanguage !== "ru") return context;
+
+  let pathname = "";
+  try { pathname = new URL(documentRef.baseURI || documentRef.location?.href).pathname; } catch {}
+  const markerIndex = pathname.indexOf("/ru/");
+  if (markerIndex < 0) return context;
+
+  return Object.freeze({
+    ...context,
+    siteBasePath: pathname.slice(0, markerIndex + 1) || "/"
+  });
 }

@@ -56,6 +56,16 @@ for (const path of paths) {
   assert(parsed.some(n => n.attrs["http-equiv"] === "refresh" && n.attrs.content?.includes(new URL(target).pathname)), legacy);
   assert(!sitemap.includes(`<loc>https://asgracing.ru/${legacy}</loc>`), legacy);
 }
+for (const path of ["driver/index.html", "cars/index.html", "races/index.html", "fun-stats/index.html", "news/index.html", "bans/index.html"]) {
+  const file = `ru/${path}`;
+  const html = await readFile(resolve(root, file), "utf8");
+  const parsed = nodes(html);
+  const targetPath = `/${path.replace("index.html", "")}`;
+  assert.equal(parsed.find(n => n.attrs.rel === "canonical")?.attrs.href, `https://asgracing.ru${targetPath}`, file);
+  assert(parsed.some(n => n.attrs.name === "robots" && n.attrs.content === "noindex, follow"), file);
+  assert(html.includes('params.set("lang","ru")'), `${file}: redirect must preserve the RU language`);
+  assert(html.includes("location.search"), `${file}: redirect must preserve entity/filter parameters`);
+}
 assert(!sitemap.includes("<loc>https://asgracing.ru/driver/</loc>"));
 for (const path of ["account/index.html", "portal-ops/index.html"]) assert((await readFile(resolve(root, path), "utf8")).includes("noindex"), path);
 const championshipApp = await readFile(resolve(root, "hourly/championship/app.js"), "utf8");

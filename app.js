@@ -4225,9 +4225,9 @@ function makePublicDriverId(playerId) {
   if (!playerId) return null;
   return `drv_${sha1(playerId).slice(0, 12)}`;
 }
-
 function withCurrentDataParams(href) {
   const url = new URL(href, window.location.href);
+  if(pageLanguage())url.searchParams.set("lang",currentLang);
   if (IS_LOCAL_DEV_HOST) {
     ["topApiBase", "hourlyApiBase", "serverStatusUrl", "topDataBase", "data"].forEach(key => {
       const value = pageParams.get(key);
@@ -4236,7 +4236,6 @@ function withCurrentDataParams(href) {
   }
   return `${url.pathname}${url.search}${url.hash}`;
 }
-
 function getDriverProfileHref(publicId, playerId = null) {
   const resolvedId = publicId || makePublicDriverId(playerId);
   if (!resolvedId) return null;
@@ -5297,7 +5296,7 @@ function initCommunityLightbox() {
 }
 
 function getNewsListHref() {
-  return `${SITE_BASE_PATH}news/`;
+  return withCurrentDataParams(`${SITE_BASE_PATH}news/`);
 }
 
 function getNewsArticleHref(slug) {
