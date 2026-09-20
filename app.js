@@ -4225,7 +4225,7 @@ function makePublicDriverId(playerId) {
   if (!playerId) return null;
   return `drv_${sha1(playerId).slice(0, 12)}`;
 }
-function withCurrentDataParams(href) {
+function withPageParams(href) {
   const url = new URL(href, window.location.href);
   if(pageLanguage())url.searchParams.set("lang",currentLang);
   if (IS_LOCAL_DEV_HOST) {
@@ -4239,12 +4239,12 @@ function withCurrentDataParams(href) {
 function getDriverProfileHref(publicId, playerId = null) {
   const resolvedId = publicId || makePublicDriverId(playerId);
   if (!resolvedId) return null;
-  return withCurrentDataParams(`${SITE_BASE_PATH}driver/?id=${encodeURIComponent(resolvedId)}`);
+  return withPageParams(`${SITE_BASE_PATH}driver/?id=${encodeURIComponent(resolvedId)}`);
 }
 
 function getCarsPageHref(carName) {
   if (!carName) return null;
-  return withCurrentDataParams(`${SITE_BASE_PATH}cars/?car=${encodeURIComponent(carName)}`);
+  return withPageParams(`${SITE_BASE_PATH}cars/?car=${encodeURIComponent(carName)}`);
 }
 
 function renderDriverLink(name, publicId, className = "driver-link", playerId = null) {
@@ -5296,7 +5296,7 @@ function initCommunityLightbox() {
 }
 
 function getNewsListHref() {
-  return withCurrentDataParams(`${SITE_BASE_PATH}news/`);
+  return withPageParams(`${SITE_BASE_PATH}news/`);
 }
 
 function getNewsArticleHref(slug) {
