@@ -1,4 +1,4 @@
-import { pageLanguage, initializeLocalizedPage } from "../src/shared/localized-page.js?v=20260919seo3";
+import { initializeLocalizedPage, resolvePageLocale, setPageLocale } from "../src/shared/localized-page.js?v=20260920locale1";
 initializeLocalizedPage();
 import {
   NEWS_READ_LEGACY_STORAGE_KEY,
@@ -514,7 +514,7 @@ Object.assign(translations.ru, {
   scheduleModalRain: "Прогноз дождя",
   calendarSummary: "Полный календарь событий",
   calendarEmpty: "Пока нет событий в календаре.",
-  finishedLabel: "FINISHED",
+  finishedLabel: "ЗАВЕРШЕНО",
   championshipBadge: "Событие чемпионата",
   hourlyBadge: "Часовая гонка",
   enduranceBadge: "Эндюранс",
@@ -772,14 +772,7 @@ function tf(key, replacements = {}) {
   return value;
 }
 function resolveInitialLanguage() {
-  if (pageLanguage()) return pageLanguage();
-  const urlLang = new URLSearchParams(window.location.search).get("lang");
-  if (urlLang && translations[urlLang]) return urlLang;
-  const storedLang = localStorage.getItem("asgLang");
-  if (storedLang && translations[storedLang]) return storedLang;
-  const browserLanguages = Array.isArray(navigator.languages) && navigator.languages.length ? navigator.languages : [navigator.language];
-  const preferred = browserLanguages.map(value => String(value || "").trim().toLowerCase()).find(Boolean);
-  return preferred && preferred.startsWith("ru") ? "ru" : "en";
+  return resolvePageLocale({ documentRef: document, windowRef: window }).language;
 }
 function escapeHtml(value) {
   return String(value ?? "").replaceAll("&", "&amp;").replaceAll("<", "&lt;").replaceAll(">", "&gt;").replaceAll('"', "&quot;").replaceAll("'", "&#39;");
@@ -796,7 +789,9 @@ function formatNewsDateTime(dateString) {
   return `${day}.${month}.${year} ${hours}:${minutes}`;
 }
 function getNewsListHref() {
-  return `${topSiteBaseUrl}/news/`;
+  const url = new URL(`${topSiteBaseUrl}/news/`, window.location.href);
+  if (currentLang === "ru") url.searchParams.set("lang", "ru");
+  return `${url.pathname}${url.search}${url.hash}`;
 }
 function getNewsArticleHref(slug) {
   return slug ? `${getNewsListHref()}?slug=${encodeURIComponent(slug)}` : getNewsListHref();
@@ -1513,12 +1508,13 @@ function formatGameTimeHour(value) {
 function getGameTimeLabel(gameTime) {
   if (!gameTime || typeof gameTime !== "object") return "";
   if (currentLang === "ru" && gameTime.label_ru) return String(gameTime.label_ru);
-  if (gameTime.label) return String(gameTime.label);
+  if (currentLang === "en" && gameTime.label_en) return String(gameTime.label_en);
   const code = String(gameTime.code || gameTime.profile_id || "").trim().toLowerCase();
   if (code === "morning") return currentLang === "ru" ? "Утро" : "Morning";
   if (code === "day") return currentLang === "ru" ? "День" : "Day";
   if (code === "evening") return currentLang === "ru" ? "Вечер" : "Evening";
   if (code === "night") return currentLang === "ru" ? "Ночь" : "Night";
+  if (gameTime.label) return String(gameTime.label);
   return code ? code.replace(/[_-]+/g, " ") : "";
 }
 function formatGameTimeValue(gameTime) {
@@ -2703,7 +2699,7 @@ function buildScheduleCardV2(row, index) {
 
 function applyTranslations() {
   document.documentElement.lang = t("htmlLang");
-  if (!pageLanguage()) {
+  if (!document.documentElement.dataset.pageLanguage) {
   document.title = t("pageTitle");
   const descriptionMeta = document.querySelector('meta[name="description"]');
   const ogTitleMeta = document.querySelector('meta[property="og:title"]');
@@ -3477,7 +3473,7 @@ function bindLanguageButtons() {
       const lang = btn.dataset.lang;
       if (!translations[lang] || lang === currentLang) return;
       currentLang = lang;
-      localStorage.setItem("asgLang", currentLang);
+      setPageLocale(currentLang, { documentRef: document, windowRef: window });
       renderUI();
     });
   });

@@ -6,6 +6,8 @@ import {
   languageHref,
   pageLanguage,
   readLocalePreference,
+  resolvePageLocale,
+  setPageLocale,
   saveLocalePreference
 } from "../../src/shared/localized-page.js";
 
@@ -49,10 +51,11 @@ test("locale preference stores region and remains compatible with asgLang", () =
   const windowRef = { localStorage };
   assert.equal(saveLocalePreference("ru", "RU", windowRef), true);
   assert.equal(localStorage.getItem("asgLang"), "ru");
+  assert.equal(JSON.parse(localStorage.getItem("asg.top.v1:language")).value, "ru");
   assert.deepEqual(readLocalePreference(windowRef), { language: "ru", region: "RU", source: "saved" });
 });
 
-test("saved locale redirects to the clean equivalent URL", () => {
+test("an explicit static route is not overridden by a saved locale", () => {
   let redirected;
   const links = [link("en", "https://asgracing.ru/hourly/"), link("ru", "https://asgracing.ru/ru/hourly/")];
   const localStorage = storage({ asgLocale: JSON.stringify({ version: 1, language: "ru", region: "RU" }) });
@@ -60,7 +63,7 @@ test("saved locale redirects to the clean equivalent URL", () => {
     { documentElement: { dataset: { pageLanguage: "en" } }, querySelectorAll: () => links, body: {} },
     { navigator: { languages: ["en-US"] }, Intl, localStorage, location: { href: "https://asgracing.ru/hourly/?event=example#calendar", search: "?event=example", hash: "#calendar", replace: href => { redirected = href; } } }
   );
-  assert.equal(redirected, "https://asgracing.ru/ru/hourly/?event=example#calendar");
+  assert.equal(redirected, undefined);
 });
 
 test("old lang query selects and saves its clean translation", () => {
@@ -73,4 +76,34 @@ test("old lang query selects and saves its clean translation", () => {
   );
   assert.equal(redirected, "https://asgracing.ru/ru/hourly/?event=example#calendar");
   assert.equal(readLocalePreference({ localStorage }).language, "ru");
+});
+
+test("route and query language win over conflicting legacy storage", () => {
+  const localStorage = storage({
+    asgLang: "en",
+    "asg.top.v1:language": JSON.stringify({ version: 1, value: "en", expiresAt: 0 })
+  });
+  const windowRef = { navigator: { languages: ["en-US"] }, Intl, localStorage, location: { search: "?lang=ru" } };
+  assert.deepEqual(resolvePageLocale({ documentRef: { documentElement: { dataset: {} } }, windowRef }), { language: "ru", region: "US", source: "query" });
+  assert.deepEqual(resolvePageLocale({ documentRef: { documentElement: { dataset: { pageLanguage: "ru" } } }, windowRef: { ...windowRef, location: { search: "?lang=en" } } }), { language: "ru", region: "US", source: "route" });
+});
+
+test("namespaced legacy preference is read before the plain legacy key", () => {
+  const localStorage = storage({
+    asgLang: "en",
+    "asg.top.v1:language": JSON.stringify({ version: 1, value: "ru", expiresAt: 0 })
+  });
+  assert.deepEqual(readLocalePreference({ localStorage }), { language: "ru", region: "GLOBAL", source: "legacy-namespaced" });
+});
+
+test("setting page locale synchronizes document controls and every storage format", () => {
+  const localStorage = storage();
+  const controls = [link("en", "#"), link("ru", "#")];
+  const documentRef = { documentElement: { lang: "en" }, querySelectorAll: () => controls };
+  const windowRef = { navigator: { languages: ["en-US"] }, Intl, localStorage, dispatchEvent() {}, CustomEvent: class { constructor(_name, init) { this.detail = init.detail; } } };
+  assert.equal(setPageLocale("ru", { documentRef, windowRef }), true);
+  assert.equal(documentRef.documentElement.lang, "ru");
+  assert.equal(localStorage.getItem("asgLang"), "ru");
+  assert.equal(JSON.parse(localStorage.getItem("asg.top.v1:language")).value, "ru");
+  assert.equal(JSON.parse(localStorage.getItem("asgLocale")).region, "US");
 });

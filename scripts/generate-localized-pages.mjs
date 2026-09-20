@@ -188,4 +188,6 @@ for (const path of runtimeCompatibilityPaths) {
   const redirect = `<!DOCTYPE html>\n<html lang="ru">\n<head>\n<meta charset="UTF-8">\n<meta name="viewport" content="width=device-width, initial-scale=1">\n<title>Переход на страницу | ASG Racing</title>\n<meta name="robots" content="noindex, follow">\n<link rel="canonical" href="${origin}${targetPath}">\n<meta http-equiv="refresh" content="0; url=${targetPath}?lang=ru">\n<script>const target=new URL(${JSON.stringify(targetPath)},location.origin);const params=new URLSearchParams(location.search);params.set("lang","ru");target.search=params;target.hash=location.hash;location.replace(target);</script>\n</head>\n<body><p><a href="${targetPath}?lang=ru">Перейти на страницу</a></p></body>\n</html>\n`;
   await output(`ru/${path}`, redirect);
 }
-console.log(check ? "Localized HTML is current (14 pages + 7 compatibility redirects + 6 runtime redirects)" : "Localized HTML generated (14 pages + 7 compatibility redirects + 6 runtime redirects)");
+const generatedPageCount = pages.length + 2;
+const summary = `${generatedPageCount} pages + ${allPaths.length} compatibility redirects + ${runtimeCompatibilityPaths.length} runtime redirects`;
+console.log(check ? `Localized HTML is current (${summary})` : `Localized HTML generated (${summary})`);

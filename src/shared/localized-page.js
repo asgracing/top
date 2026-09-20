@@ -1,7 +1,9 @@
 // Presentation only: this module does not read or alter API configuration.
 export const LOCALE_STORAGE_KEY = "asgLocale";
 export const LEGACY_LANGUAGE_STORAGE_KEY = "asgLang";
+export const LEGACY_NAMESPACED_LANGUAGE_STORAGE_KEY = "asg.top.v1:language";
 export const LOCALE_SUGGESTION_DISMISSED_KEY = "asgLocaleSuggestionDismissed";
+export const LOCALE_CHANGE_EVENT = "asg:locale-change";
 
 const RUSSIAN_TIME_ZONES = new Set([
   "Europe/Kaliningrad", "Europe/Moscow", "Europe/Simferopol", "Europe/Kirov",
@@ -13,7 +15,7 @@ const RUSSIAN_TIME_ZONES = new Set([
   "Asia/Kamchatka", "Asia/Anadyr"
 ]);
 
-function validLanguage(value) {
+export function validLanguage(value) {
   return value === "ru" || value === "en" ? value : null;
 }
 
@@ -51,8 +53,11 @@ export function readLocalePreference(windowRef = window) {
     const parsed = JSON.parse(windowRef.localStorage.getItem(LOCALE_STORAGE_KEY) || "null");
     const language = validLanguage(parsed?.language);
     if (language) return { language, region: String(parsed.region || (language === "ru" ? "RU" : "GLOBAL")), source: "saved" };
+    const namespaced = JSON.parse(windowRef.localStorage.getItem(LEGACY_NAMESPACED_LANGUAGE_STORAGE_KEY) || "null");
+    const namespacedLanguage = validLanguage(namespaced?.value);
+    if (namespacedLanguage) return { language: namespacedLanguage, region: detectVisitorLocale(windowRef).region, source: "legacy-namespaced" };
     const legacy = validLanguage(windowRef.localStorage.getItem(LEGACY_LANGUAGE_STORAGE_KEY));
-    if (legacy) return { language: legacy, region: legacy === "ru" ? "RU" : "GLOBAL", source: "legacy" };
+    if (legacy) return { language: legacy, region: detectVisitorLocale(windowRef).region, source: "legacy" };
   } catch {}
   return null;
 }
@@ -60,14 +65,53 @@ export function readLocalePreference(windowRef = window) {
 export function saveLocalePreference(language, region, windowRef = window) {
   const normalized = validLanguage(language);
   if (!normalized) return false;
-  const value = { version: 1, language: normalized, region: String(region || (normalized === "ru" ? "RU" : "GLOBAL")), source: "user", updatedAt: new Date().toISOString() };
+  const value = { version: 1, language: normalized, region: String(region || detectVisitorLocale(windowRef).region), source: "user", updatedAt: new Date().toISOString() };
   try {
     windowRef.localStorage.setItem(LOCALE_STORAGE_KEY, JSON.stringify(value));
-    // Existing site modules still consume asgLang; keep them synchronized.
+    // Existing site modules still consume both legacy formats. Keep them in
+    // sync until every page has migrated to this module.
     windowRef.localStorage.setItem(LEGACY_LANGUAGE_STORAGE_KEY, normalized);
+    windowRef.localStorage.setItem(LEGACY_NAMESPACED_LANGUAGE_STORAGE_KEY, JSON.stringify({ version: 1, value: normalized, expiresAt: 0 }));
     windowRef.localStorage.removeItem(LOCALE_SUGGESTION_DISMISSED_KEY);
     return true;
   } catch { return false; }
+}
+
+export function resolvePageLocale({ documentRef = document, windowRef = window } = {}) {
+  const detected = detectVisitorLocale(windowRef);
+  const saved = readLocalePreference(windowRef);
+  const region = saved?.region || detected.region;
+  const routeLanguage = pageLanguage(documentRef);
+  if (routeLanguage) return { language: routeLanguage, region, source: "route" };
+  const requested = validLanguage(new URLSearchParams(windowRef.location?.search || "").get("lang"));
+  if (requested) return { language: requested, region, source: "query" };
+  return saved || detected;
+}
+
+export function setPageLocale(language, { documentRef = document, windowRef = window, region } = {}) {
+  const normalized = validLanguage(language);
+  if (!normalized) return false;
+  const detected = detectVisitorLocale(windowRef);
+  const resolvedRegion = region || detected.region;
+  saveLocalePreference(normalized, resolvedRegion, windowRef);
+  if (documentRef.documentElement) documentRef.documentElement.lang = normalized;
+  documentRef.querySelectorAll?.(".lang-btn[data-lang]").forEach(control => {
+    const active = control.dataset.lang === normalized;
+    control.classList.toggle("active", active);
+    if (active) control.setAttribute?.("aria-current", "page");
+    else control.removeAttribute?.("aria-current");
+  });
+  try {
+    windowRef.dispatchEvent?.(new windowRef.CustomEvent(LOCALE_CHANGE_EVENT, { detail: { language: normalized, region: resolvedRegion } }));
+  } catch {}
+  return true;
+}
+
+export function subscribeLocaleChange(listener, windowRef = window) {
+  if (typeof listener !== "function" || !windowRef.addEventListener) return () => {};
+  const handler = event => listener(event?.detail || {});
+  windowRef.addEventListener(LOCALE_CHANGE_EVENT, handler);
+  return () => windowRef.removeEventListener?.(LOCALE_CHANGE_EVENT, handler);
 }
 
 function showLocaleSuggestion(documentRef, windowRef, detected, alternate) {
@@ -108,21 +152,16 @@ export function initializeLocalizedPage(documentRef = document, windowRef = wind
     link.classList.toggle("active", link.dataset.lang === language);
     if (link.dataset.lang === language) link.setAttribute("aria-current", "page");
     else link.removeAttribute("aria-current");
-    link.addEventListener("click", () => saveLocalePreference(link.dataset.lang, link.dataset.lang === "ru" ? "RU" : detected.region, windowRef));
+    link.addEventListener("click", () => saveLocalePreference(link.dataset.lang, detected.region, windowRef));
   }
   const requested = validLanguage(new URLSearchParams(windowRef.location.search).get("lang"));
   const requestedLink = links.find(link => link.dataset.lang === requested);
   if (requestedLink && requested !== language) {
-    saveLocalePreference(requested, requested === "ru" ? "RU" : detected.region, windowRef);
+    saveLocalePreference(requested, detected.region, windowRef);
     windowRef.location.replace(requestedLink.href);
     return;
   }
   const saved = readLocalePreference(windowRef);
-  const savedLink = links.find(link => link.dataset.lang === saved?.language);
-  if (savedLink && saved.language !== language) {
-    windowRef.location.replace(savedLink.href);
-    return;
-  }
   const suggestedLink = links.find(link => link.dataset.lang === detected.language);
   if (!saved && suggestedLink && detected.language !== language) {
     const ready = () => showLocaleSuggestion(documentRef, windowRef, detected, suggestedLink);

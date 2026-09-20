@@ -131,11 +131,14 @@ function element(documentRef, tag, className, value = "") {
 function currentLanguage(documentRef, windowRef) {
   const active = documentRef.querySelector(".lang-btn.active[data-lang]")?.dataset.lang;
   if (active === "ru" || active === "en") return active;
+  const htmlLanguage = String(documentRef.documentElement?.lang || "").toLowerCase();
+  if (htmlLanguage.startsWith("ru")) return "ru";
+  if (htmlLanguage.startsWith("en")) return "en";
   try {
-    const stored = windowRef.localStorage?.getItem("asgLang");
+    const stored = windowRef.localStorage?.getItem("asgLocale") || windowRef.localStorage?.getItem("asgLang");
     if (stored === "ru" || stored === "en") return stored;
   } catch {}
-  return String(documentRef.documentElement?.lang || "").toLowerCase().startsWith("ru") ? "ru" : "en";
+  return "en";
 }
 
 function safePublicId(value) {

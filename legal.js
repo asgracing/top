@@ -109,6 +109,8 @@
 
   function getStoredLanguage() {
     try {
+      const locale = JSON.parse(localStorage.getItem("asgLocale") || "null");
+      if (locale?.language === "ru" || locale?.language === "en") return locale.language;
       const stored = localStorage.getItem("asgLang");
       return stored === "ru" || stored === "en" ? stored : "";
     } catch (error) {
@@ -151,6 +153,16 @@
   function setStoredLanguage(lang) {
     if (lang !== "ru" && lang !== "en") return;
     try {
+      const existingLocale = JSON.parse(localStorage.getItem("asgLocale") || "null");
+      const browserRegion = String(navigator.language || "").replace("_", "-").split("-")[1]?.toUpperCase() || "GLOBAL";
+      localStorage.setItem("asgLocale", JSON.stringify({
+        version: 1,
+        language: lang,
+        region: existingLocale?.region || browserRegion,
+        source: "user",
+        updatedAt: new Date().toISOString()
+      }));
+      localStorage.setItem("asg.top.v1:language", JSON.stringify({ version: 1, value: lang, updatedAt: Date.now() }));
       localStorage.setItem("asgLang", lang);
     } catch (error) {
       // Ignore storage write failures; the page can still switch language for the current session.
@@ -580,7 +592,7 @@
     });
 
     window.addEventListener("storage", event => {
-      if (event.key === "asgLang") {
+      if (event.key === "asgLang" || event.key === "asgLocale" || event.key === "asg.top.v1:language") {
         rerenderUi();
       }
     });

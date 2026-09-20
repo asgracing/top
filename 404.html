@@ -1,10 +1,10 @@
 <!doctype html>
-<html lang="ru">
+<html lang="en">
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width,initial-scale=1" />
   <meta name="robots" content="noindex, follow" />
-  <title>Страница не найдена | ASG Racing</title>
+  <title>Page not found | ASG Racing</title>
   <link rel="stylesheet" href="/styles/tokens.css" />
   <link rel="stylesheet" href="/styles/base.css" />
   <script>
@@ -16,9 +16,34 @@
 </head>
 <body>
   <main class="container" style="padding-block:4rem">
-    <h1>Страница не найдена</h1>
-    <p>Возможно, ссылка устарела. Перейдите на главную страницу ASG Racing.</p>
-    <p><a class="btn btn-primary" href="/">На главную</a></p>
+    <h1 id="not-found-title">Page not found</h1>
+    <p id="not-found-copy">The link may be outdated. Return to the ASG Racing home page.</p>
+    <p><a class="btn btn-primary" href="/" id="not-found-home">Home</a></p>
   </main>
+  <script type="module">
+    import { resolvePageLocale } from "/src/shared/localized-page.js?v=20260920locale1";
+    const routeLanguage = location.pathname === "/ru" || location.pathname.startsWith("/ru/") ? "ru" : null;
+    const language = routeLanguage || resolvePageLocale({ documentRef: document, windowRef: window }).language;
+    const copy = language === "ru"
+      ? {
+          title: "Страница не найдена",
+          body: "Возможно, ссылка устарела. Перейдите на главную страницу ASG Racing.",
+          home: "На главную",
+          href: "/ru/"
+        }
+      : {
+          title: "Page not found",
+          body: "The link may be outdated. Return to the ASG Racing home page.",
+          home: "Home",
+          href: "/"
+        };
+    document.documentElement.lang = language;
+    document.title = `${copy.title} | ASG Racing`;
+    document.getElementById("not-found-title").textContent = copy.title;
+    document.getElementById("not-found-copy").textContent = copy.body;
+    const home = document.getElementById("not-found-home");
+    home.textContent = copy.home;
+    home.href = copy.href;
+  </script>
 </body>
 </html>

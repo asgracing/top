@@ -1,4 +1,4 @@
-import { bootstrapLegacyPage } from "./legacy-bootstrap.js?v=20260831opsmenu1";
+import { bootstrapLegacyPage } from "./legacy-bootstrap.js?v=20260920locale1";
 import { applyRandomTrackBackground } from "../features/server-status/track-background.js?v=20260726staticfallback1";
 import { createDriverAchievementsController } from "../pages/driver/achievements-widget.js?v=20260826titles1";
 import { normalizePublicDriverTitle } from "../pages/driver/achievements-model.js?v=20260826titles1";
@@ -59,7 +59,9 @@ const achievementsCollapseController = achievementsRoot ? createCollapsibleWidge
   storageKey: "asgDriverAchievementsCollapsed",
   initialCollapsed: window.matchMedia?.("(max-width: 1279px)")?.matches ?? false,
   forceInitialCollapsed: window.matchMedia?.("(max-width: 760px)")?.matches ?? false,
-  getLabels: () => ({ name: "Achievements", collapse: "Collapse", expand: "Expand" })
+  getLabels: () => String(document.documentElement.lang || "").toLowerCase().startsWith("ru")
+    ? { name: "Достижения", collapse: "Свернуть", expand: "Развернуть" }
+    : { name: "Achievements", collapse: "Collapse", expand: "Expand" }
 }) : null;
 
 const achievementsController = createDriverAchievementsController();

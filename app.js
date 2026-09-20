@@ -1,4 +1,4 @@
-import { pageLanguage, initializeLocalizedPage } from "./src/shared/localized-page.js?v=20260919seo3";
+import { initializeLocalizedPage, resolvePageLocale, setPageLocale } from "./src/shared/localized-page.js?v=20260920locale1";
 initializeLocalizedPage();
 ﻿import { readPageContext } from "./src/runtime/page-context.js";
 
@@ -201,14 +201,12 @@ const HOURLY_VOTE_STATE_STORAGE_TTL_MS = 30 * 24 * 60 * 60 * 1000;
 async function initializeAppStorage() {
   const { createStorage } = await storageModulePromise;
   appStorage = createStorage("asg.top.v1", window.localStorage);
-  appStorage.migrateLegacy("language", "asgLang", value => ["ru", "en"].includes(value) ? value : undefined);
   appStorage.migrateLegacy("backgroundVideoVolume", BG_VIDEO_VOLUME_STORAGE_KEY, value => clampBackgroundVideoVolume(Number(value) / 100));
   appStorage.migrateLegacy("backgroundVideoPlayback", BG_VIDEO_PLAYBACK_STORAGE_KEY, value => !["0", "false", "off", "no"].includes(String(value).trim().toLowerCase()));
   appStorage.migrateLegacy("topGuideSeen", TOP_GUIDE_STORAGE_KEY, value => value === "1");
   appStorage.migrateLegacy("hourlyVoteState", HOURLY_VOTE_STATE_STORAGE_KEY, value => {
     try { const parsed = JSON.parse(value); return parsed?.items && typeof parsed.items === "object" ? normalizeHourlyVoteStateItems(parsed.items) : undefined; } catch { return undefined; }
   });
-  currentLang = pageLanguage() || appStorage.get("language", currentLang);
 }
 
 async function initializeQueryRuntime() {
@@ -383,27 +381,7 @@ function syncHourlyVoteStateFromStorage() {
 }
 
 function resolveInitialLanguage() {
-  if (pageLanguage()) return pageLanguage();
-  const urlLang = new URLSearchParams(window.location.search).get("lang");
-  if (urlLang && translations[urlLang]) return urlLang;
-
-  let storedLang = null;
-  try {
-    storedLang = localStorage.getItem("asgLang");
-  } catch (error) {
-    storedLang = null;
-  }
-  if (storedLang && translations[storedLang]) return storedLang;
-
-  const browserLanguages = Array.isArray(navigator.languages) && navigator.languages.length
-    ? navigator.languages
-    : [navigator.language];
-
-  const preferred = browserLanguages
-    .map(value => String(value || "").trim().toLowerCase())
-    .find(Boolean);
-
-  return preferred && preferred.startsWith("ru") ? "ru" : "en";
+  return resolvePageLocale({ documentRef: document, windowRef: window }).language;
 }
 
 let leaderboardData = [];
@@ -3490,6 +3468,28 @@ function replaceTokens(template, values = {}) {
   return String(template).replace(/\{(\w+)\}/g, (_, key) => values[key] ?? "");
 }
 
+function russianCountLabel(value, forms) {
+  const count = Math.abs(Number(value) || 0);
+  const lastTwo = count % 100;
+  const last = count % 10;
+  if (lastTwo >= 11 && lastTwo <= 14) return forms[2];
+  if (last === 1) return forms[0];
+  if (last >= 2 && last <= 4) return forms[1];
+  return forms[2];
+}
+
+function formatOnlineActivityMonthMeta(days, races, average) {
+  if (currentLang !== "ru") {
+    return replaceTokens(t("onlineActivityMonthCardMeta"), { days, races, avg: average });
+  }
+  return `${days} ${russianCountLabel(days, ["активный день", "активных дня", "активных дней"])} · ${races} ${russianCountLabel(races, ["гонка", "гонки", "гонок"])} · ср. ${average}`;
+}
+
+function formatOnlineActivityRaceCount(value) {
+  if (currentLang !== "ru") return replaceTokens(t("onlineActivityHourRaces"), { value });
+  return `${value} ${russianCountLabel(value, ["гонка", "гонки", "гонок"])}`;
+}
+
 function getHourlyLocalizedField(item, key, fallback = null) {
   if (!item || typeof item !== "object") return fallback ?? t("hourlyUnknownValue");
 
@@ -4227,7 +4227,8 @@ function makePublicDriverId(playerId) {
 }
 function withPageParams(href) {
   const url = new URL(href, window.location.href);
-  if(pageLanguage())url.searchParams.set("lang",currentLang);
+  if (currentLang === "ru") url.searchParams.set("lang", "ru");
+  else url.searchParams.delete("lang");
   if (IS_LOCAL_DEV_HOST) {
     ["topApiBase", "hourlyApiBase", "serverStatusUrl", "topDataBase", "data"].forEach(key => {
       const value = pageParams.get(key);
@@ -5383,21 +5384,50 @@ function normalizeNewsImageUrl(value) {
   }
 }
 
+function legacyLocalizedNewsText(value) {
+  const text = String(value || "").trim();
+  const parts = text.split(/\s+\/\s+/);
+  if (parts.length < 2) return text;
+  return currentLang === "ru" ? parts[0].trim() : parts.slice(1).join(" / ").trim();
+}
+
+function localizedNewsValue(item, key) {
+  const explicit = item?.[`${key}_${currentLang}`];
+  if (typeof explicit === "string" && explicit.trim()) return explicit.trim();
+  const value = item?.[key];
+  if (value && typeof value === "object" && !Array.isArray(value)) {
+    const localized = value[currentLang] ?? value.en ?? value.ru;
+    if (typeof localized === "string") return localized.trim();
+  }
+  return legacyLocalizedNewsText(value);
+}
+
+function localizedNewsBody(item) {
+  const explicit = item?.[`body_${currentLang}`];
+  const raw = item?.body;
+  const source = explicit ?? (raw && typeof raw === "object" && !Array.isArray(raw) ? (raw[currentLang] ?? raw.en ?? raw.ru) : raw);
+  const body = Array.isArray(source) ? source : typeof source === "string" ? [source] : [];
+  const ruMarker = body.findIndex(value => value === "РУССКИЙ");
+  const enMarker = body.findIndex(value => value === "ENGLISH");
+  const selected = ruMarker >= 0 && enMarker > ruMarker
+    ? (currentLang === "ru" ? body.slice(ruMarker + 1, enMarker) : body.slice(enMarker + 1))
+    : body;
+  return selected.filter(value => !(typeof value === "string" && /^─+$/.test(value.trim())))
+    .filter(Boolean)
+    .map(value => typeof value === "string" ? value.trim() : value);
+}
+
 function normalizeNewsItem(rawItem) {
   if (!rawItem || typeof rawItem !== "object") return null;
   const slug = String(rawItem.slug || rawItem.id || "").trim();
-  const title = String(rawItem.title || "").trim();
+  const title = localizedNewsValue(rawItem, "title");
   if (!slug || !title) return null;
 
-  const body = Array.isArray(rawItem.body)
-    ? rawItem.body.filter(Boolean).map(item => typeof item === "string" ? item.trim() : item)
-    : typeof rawItem.body === "string"
-      ? [rawItem.body.trim()]
-      : [];
-  const summary = String(rawItem.summary || "").trim() || body.find(item => typeof item === "string") || "";
+  const body = localizedNewsBody(rawItem);
+  const summary = localizedNewsValue(rawItem, "summary") || body.find(item => typeof item === "string") || "";
   const thumbnailUrl = normalizeNewsImageUrl(rawItem.thumbnail_url || rawItem.image?.thumbnail || rawItem.cover_image_url || rawItem.image?.cover);
   const coverUrl = normalizeNewsImageUrl(rawItem.cover_image_url || rawItem.image?.cover || rawItem.thumbnail_url || rawItem.image?.thumbnail);
-  const imageAlt = String(rawItem.image_alt || rawItem.image?.alt || title).trim();
+  const imageAlt = localizedNewsValue(rawItem, "image_alt") || localizedNewsValue(rawItem.image, "alt") || title;
 
   return {
     id: String(rawItem.id || slug).trim(),
@@ -5468,18 +5498,7 @@ function renderNewsThumb(item, className = "") {
 function renderNewsNotificationBilingualText(text, primaryClass, secondaryClass) {
   const value = String(text || "").trim();
   if (!value) return "";
-  const parts = value.split(/\s+\/\s+/);
-  if (parts.length < 2) {
-    return `<span class="${escapeAttribute(primaryClass)}">${escapeHtml(value)}</span>`;
-  }
-  const [ruPart, ...restParts] = parts;
-  const enPart = restParts.join(" / ").trim();
-  return `
-    <span class="news-bilingual-stack">
-      <span class="${escapeAttribute(primaryClass)}">${escapeHtml(ruPart.trim())}</span>
-      <span class="${escapeAttribute(secondaryClass)}">${escapeHtml(enPart)}</span>
-    </span>
-  `;
+  return `<span class="${escapeAttribute(primaryClass)}">${escapeHtml(value)}</span>`;
 }
 
 function renderNewsNotificationItem(item) {
@@ -6439,7 +6458,7 @@ async function loadBansData() {
 
 function applyStaticTranslations() {
   document.documentElement.lang = t("htmlLang");
-  if (!pageLanguage()) {
+  if (!document.documentElement.dataset.pageLanguage) {
   document.title = IS_DRIVER_PAGE
     ? t("pageTitleDriver")
     : IS_CARS_PAGE
@@ -8296,10 +8315,7 @@ function bindLanguageButtons() {
       const lang = btn.dataset.lang;
       if (!translations[lang] || lang === currentLang) return;
       currentLang = lang;
-      if (appStorage) appStorage.set("language", currentLang);
-      else {
-        try { localStorage.setItem("asgLang", currentLang); } catch (_error) { /* Keep runtime language only. */ }
-      }
+      setPageLocale(currentLang, { documentRef: document, windowRef: window });
       rerenderUI();
     });
   });
@@ -10259,11 +10275,11 @@ function renderOnlineActivityModal() {
       month: formatActivityMonthLabel(month.month, currentLang),
       score: month.activity_score ?? 0
     });
-    const meta = replaceTokens(t("onlineActivityMonthCardMeta"), {
-      days: month.active_days ?? 0,
-      races: month.races ?? 0,
-      avg: typeof month.avg_players_per_race === "number" ? month.avg_players_per_race.toFixed(2) : "-"
-    });
+    const meta = formatOnlineActivityMonthMeta(
+      month.active_days ?? 0,
+      month.races ?? 0,
+      typeof month.avg_players_per_race === "number" ? month.avg_players_per_race.toFixed(2) : "-"
+    );
     return `
       <button class="activity-month-card${isActive ? " is-active" : ""}" type="button" data-activity-month="${escapeHtml(month.month)}">
         <span>${escapeHtml(title)}</span>
@@ -10347,7 +10363,7 @@ function renderOnlineActivityModal() {
     const isPrime = peakHour && hour.hour === peakHour.hour;
     const tooltip = [
       hour.label || `${hour.hour}:00`,
-      replaceTokens(t("onlineActivityHourRaces"), { value: hour.races ?? 0 }),
+      formatOnlineActivityRaceCount(hour.races ?? 0),
       replaceTokens(t("onlineActivityHourUnique"), { value: hour.unique_players ?? 0 })
     ].join(" • ");
     return `

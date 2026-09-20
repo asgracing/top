@@ -1,4 +1,4 @@
-import { pageLanguage, initializeLocalizedPage } from "../../src/shared/localized-page.js?v=20260919seo3";
+import { initializeLocalizedPage, resolvePageLocale, setPageLocale } from "../../src/shared/localized-page.js?v=20260920locale1";
 initializeLocalizedPage();
 import {
   NEWS_READ_LEGACY_STORAGE_KEY,
@@ -56,7 +56,7 @@ const topSiteBaseUrl = isAsgPublicSite
     ? "https://asgracing.github.io/top"
     : "/top";
 const newsFeedUrl = `${topSiteBaseUrl}/news-content/news.json`;
-let currentLang = pageLanguage() || localStorage.getItem("asgLang") || (((navigator.language || "").toLowerCase().startsWith("ru")) ? "ru" : "en");
+let currentLang = resolvePageLocale({ documentRef: document, windowRef: window }).language;
 
 const translations = {
   en: {
@@ -110,6 +110,10 @@ const translations = {
     upcoming: "upcoming races",
     drivers: "drivers scored",
     status: "status",
+    statusActive: "Active",
+    statusUpcoming: "Upcoming",
+    statusFinished: "Finished",
+    statusArchived: "Archived",
     dateTime: "Date & time",
     track: "Track",
     weather: "Weather",
@@ -202,6 +206,10 @@ const translations = {
     upcoming: "гонок впереди",
     drivers: "пилотов в таблице",
     status: "статус",
+    statusActive: "Активен",
+    statusUpcoming: "Скоро",
+    statusFinished: "Завершен",
+    statusArchived: "В архиве",
     dateTime: "Дата и время",
     track: "Трасса",
     weather: "Погода",
@@ -377,7 +385,9 @@ function formatNewsDateTime(dateString) {
 }
 
 function getNewsListHref() {
-  return `${topSiteBaseUrl}/news/`;
+  const url = new URL(`${topSiteBaseUrl}/news/`, window.location.href);
+  if (currentLang === "ru") url.searchParams.set("lang", "ru");
+  return `${url.pathname}${url.search}${url.hash}`;
 }
 
 function getNewsArticleHref(slug) {
@@ -936,18 +946,16 @@ function formatChampionshipGameTime(gameTime) {
     ? `${String(Math.max(0, Math.min(23, Math.round(numericHour)))).padStart(2, "0")}:00`
     : "";
   let label = "";
+  const code = String(gameTime.code || gameTime.profile_id || "").trim().toLowerCase();
+  const labels = {
+    morning: { en: "Morning", ru: "\u0423\u0442\u0440\u043e" },
+    day: { en: "Day", ru: "\u0414\u0435\u043d\u044c" },
+    evening: { en: "Evening", ru: "\u0412\u0435\u0447\u0435\u0440" },
+    night: { en: "Night", ru: "\u041d\u043e\u0447\u044c" }
+  };
   if (currentLang === "ru" && gameTime.label_ru) label = String(gameTime.label_ru);
-  else if (gameTime.label) label = String(gameTime.label);
-  else {
-    const code = String(gameTime.code || gameTime.profile_id || "").trim().toLowerCase();
-    const labels = {
-      morning: { en: "Morning", ru: "\u0423\u0442\u0440\u043e" },
-      day: { en: "Day", ru: "\u0414\u0435\u043d\u044c" },
-      evening: { en: "Evening", ru: "\u0412\u0435\u0447\u0435\u0440" },
-      night: { en: "Night", ru: "\u041d\u043e\u0447\u044c" }
-    };
-    label = labels[code]?.[currentLang] || labels[code]?.en || code.replace(/[_-]+/g, " ");
-  }
+  else if (currentLang === "en" && gameTime.label_en) label = String(gameTime.label_en);
+  else label = labels[code]?.[currentLang] || labels[code]?.en || String(gameTime.label || code.replace(/[_-]+/g, " "));
   if (label && hour) return `${label} \u00b7 ${hour}`;
   return label || hour;
 }
@@ -1207,7 +1215,7 @@ function renderProgress(data, races, upcoming, standings) {
     [races.length, t("completed")],
     [upcoming.length, t("upcoming")],
     [standings.length, t("drivers")],
-    [data?.status || "active", t("status")]
+    [championshipStatusLabel(data?.status), t("status")]
   ];
   root.innerHTML = cards.map(([value, label]) => `
     <div class="championship-progress-card">
@@ -1215,6 +1223,14 @@ function renderProgress(data, races, upcoming, standings) {
       <div class="championship-progress-label">${esc(label)}</div>
     </div>
   `).join("");
+}
+
+function championshipStatusLabel(value) {
+  const status = String(value || "active").trim().toLowerCase();
+  if (status === "upcoming") return t("statusUpcoming");
+  if (status === "finished") return t("statusFinished");
+  if (status === "archived") return t("statusArchived");
+  return t("statusActive");
 }
 
 function renderWinners(standings) {
@@ -2000,7 +2016,7 @@ async function init() {
     if (button.tagName === "A") return;
     button.addEventListener("click", () => {
       currentLang = button.dataset.lang || "en";
-      localStorage.setItem("asgLang", currentLang);
+      setPageLocale(currentLang, { documentRef: document, windowRef: window });
       init();
     }, { once: true });
   });

@@ -1,5 +1,6 @@
 import { createAuthHeaderController } from "../../features/auth/header-auth.js?v=20260831ops3";
 import { createIdempotencyKey, hourlyDraftEquals, isSafeLogoPreview, normalizeHourlyState, snapshotHourlyDraft, validateClubsCommand, validateHourlyDraft } from "./portal-ops-model.js?v=20260831ops8";
+import { resolvePageLocale, setPageLocale } from "../../shared/localized-page.js?v=20260920locale1";
 
 const AUTH = "https://auth.asgracing.ru";
 const COPY = {
@@ -14,10 +15,10 @@ Object.assign(COPY.ru,{recent_auth_required:"Для административн
 Object.assign(COPY.en,{recent_auth_required:"Sign in with Steam again before making an administrative change.",reauthAction:"Sign in with Steam again"});
 Object.assign(COPY.ru,{preview_changed:"Поля изменены. Повторите предпросмотр."});
 Object.assign(COPY.en,{preview_changed:"Fields changed. Preview again."});
-const lang=()=>{try{return localStorage.getItem("asgLang")==="en"?"en":"ru"}catch{return"ru"}};
+const lang=()=>resolvePageLocale({documentRef:document,windowRef:window}).language;
 const t=key=>COPY[lang()][key]||COPY.ru[key]||key,$=id=>document.getElementById(id),$a=s=>document.querySelectorAll(s),$c=t=>document.createElement(t),$e=Object.entries,$u=encodeURIComponent;
 async function api(path,options={}){const response=await fetch(`${AUTH}${path}`,{credentials:"include",cache:"no-store",...options,headers:{Accept:"application/json",...(options.headers||{})}});let payload=null;try{payload=await response.json()}catch{}if(!response.ok)throw new Error(String(payload?.detail||`http_${response.status}`));return payload}
-function copy(){document.documentElement.lang=lang();$a("[data-copy]").forEach(node=>node.textContent=t(node.dataset.copy));$a(".lang-btn").forEach(button=>{button.classList.toggle("active",button.dataset.lang===lang());button.onclick=()=>{localStorage.setItem("asgLang",button.dataset.lang);location.reload()}})}
+function copy(){document.documentElement.lang=lang();document.title=lang()==="ru"?"Управление порталом | ASG Racing":"Portal Operations | ASG Racing";$a("[data-copy]").forEach(node=>node.textContent=t(node.dataset.copy));$a(".lang-btn").forEach(button=>{button.classList.toggle("active",button.dataset.lang===lang());button.onclick=()=>{setPageLocale(button.dataset.lang,{documentRef:document,windowRef:window});location.reload()}})}
 function hideReauth(){$("portal-ops-reauth").hidden=true}
 function message(value,kind=""){hideReauth();const node=$("portal-hourly-message");node.textContent=value;node.dataset.kind=kind}
 function portalError(error,node=$("portal-hourly-message")){const code=String(error?.message||error);if(code==="recent_auth_required"){node.textContent=t(code);node.dataset.kind="error";const link=$("portal-ops-reauth");link.href=`${AUTH}/v1/auth/steam/start?return_path=${$u("/portal-ops/")}`;link.hidden=false;return}node.textContent=t(code);node.dataset.kind="error"}

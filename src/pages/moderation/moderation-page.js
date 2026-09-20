@@ -1,4 +1,5 @@
 import { createAuthHeaderController } from "../../features/auth/header-auth.js?v=20260828mod1";
+import { resolvePageLocale, setPageLocale } from "../../shared/localized-page.js?v=20260920locale1";
 import {
   createIdempotencyKey,
   normalizeModerationSearch,
@@ -63,7 +64,7 @@ let searchController = null;
 let searchTimer = null;
 
 function language() {
-  try { return localStorage.getItem("asgLang") === "ru" ? "ru" : "en"; } catch { return "en"; }
+  return resolvePageLocale({ documentRef: document, windowRef: window }).language;
 }
 function t(key) { return COPY[language()][key] || COPY.en[key] || key; }
 function setMessage(value, kind = "") {
@@ -93,12 +94,13 @@ async function api(path, options = {}) {
 
 function applyCopy() {
   document.documentElement.lang = language();
+  document.title = language() === "ru" ? "Баны и страйки | ASG Racing" : "Bans & Strikes | ASG Racing";
   document.querySelectorAll("[data-copy]").forEach(node => { node.textContent = t(node.dataset.copy); });
   document.querySelectorAll("[data-copy-placeholder]").forEach(node => { node.placeholder = t(node.dataset.copyPlaceholder); });
   document.querySelectorAll(".lang-btn[data-lang]").forEach(button => {
     button.classList.toggle("active", button.dataset.lang === language());
     button.addEventListener("click", () => {
-      try { localStorage.setItem("asgLang", button.dataset.lang); } catch {}
+      setPageLocale(button.dataset.lang, { documentRef: document, windowRef: window });
       location.reload();
     });
   });

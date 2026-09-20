@@ -80,4 +80,4 @@ for (const path of ["legal.js", "hourly/legal.js"]) {
     assert.equal(actual, lang, path);
   }
 }
-console.log("Localized SEO passed: clean RU URLs, 14 pages, compatibility redirects and stable resource URLs");
+console.log(`Localized SEO passed: clean RU URLs, ${pages.length + 2} pages, compatibility redirects and stable resource URLs`);

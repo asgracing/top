@@ -40,6 +40,40 @@ body {
   font-weight: 800;
 }
 
+.event-nav {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16px;
+}
+
+.event-language {
+  display: inline-flex;
+  gap: 4px;
+  padding: 4px;
+  border: 1px solid var(--line);
+  border-radius: 9px;
+  background: rgba(255, 255, 255, 0.04);
+}
+
+.lang-btn {
+  min-width: 42px;
+  padding: 7px 10px;
+  border: 0;
+  border-radius: 6px;
+  background: transparent;
+  color: var(--muted);
+  font: inherit;
+  font-size: 0.78rem;
+  font-weight: 900;
+  cursor: pointer;
+}
+
+.lang-btn.active {
+  background: var(--accent);
+  color: var(--text);
+}
+
 .eyebrow {
   margin: 0;
   color: var(--accent);

@@ -1,3 +1,7 @@
+import { initializeLocalizedPage, resolvePageLocale, setPageLocale } from "../../../src/shared/localized-page.js?v=20260920locale1";
+
+initializeLocalizedPage();
+
 const params = new URLSearchParams(window.location.search);
 
 function normalizeBaseUrl(value) {
@@ -21,7 +25,7 @@ const topSiteBaseUrl = isAsgPublicSite
   : window.location.hostname === "asgracing.github.io"
     ? "https://asgracing.github.io/top"
     : "/top";
-let currentLang = localStorage.getItem("asgLang") || (((navigator.language || "").toLowerCase().startsWith("ru")) ? "ru" : "en");
+let currentLang = resolvePageLocale({ documentRef: document, windowRef: window }).language;
 
 const translations = {
   en: {
@@ -125,6 +129,7 @@ function getDriverProfileHref(publicId) {
   const url = new URL(`${topSiteBaseUrl}/driver/?id=${encodeURIComponent(resolvedId)}`, window.location.href);
   const hourlyApiBase = params.get("hourlyApiBase");
   if (hourlyApiBase) url.searchParams.set("hourlyApiBase", hourlyApiBase);
+  if (currentLang === "ru") url.searchParams.set("lang", "ru");
   return `${url.pathname}${url.search}${url.hash}`;
 }
 
@@ -310,11 +315,12 @@ function applyTranslations() {
 
 function bindLanguageButtons() {
   document.querySelectorAll(".lang-btn").forEach(button => {
+    if (button.tagName === "A") return;
     button.addEventListener("click", () => {
       const nextLang = button.dataset.lang || "en";
       if (nextLang === currentLang) return;
       currentLang = nextLang;
-      localStorage.setItem("asgLang", currentLang);
+      setPageLocale(currentLang, { documentRef: document, windowRef: window });
       applyTranslations();
     });
   });

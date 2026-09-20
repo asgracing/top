@@ -1,4 +1,58 @@
 import { safeImageUrl } from "../src/shared/safe-dom.js";
+import {
+  initializeLocalizedPage,
+  resolvePageLocale,
+  setPageLocale
+} from "../src/shared/localized-page.js?v=20260920locale1";
+
+initializeLocalizedPage();
+
+const currentLang = resolvePageLocale({ windowRef: window, documentRef: document }).language;
+const COPY = {
+  en: {
+    title: "Championship Event",
+    eyebrow: "ASG Racing Special Event",
+    prizes: "Prizes",
+    top3: "Top 3",
+    standings: "Standings",
+    races: "Races",
+    prize: "Prize",
+    place: "Place",
+    noPrizes: "No prize images yet.",
+    noResults: "No results yet.",
+    driver: "Driver",
+    total: "Total",
+    noStandings: "No standings yet.",
+    race: "Race",
+    winner: "Winner",
+    bestLap: "Best lap",
+    noRaces: "No races yet.",
+    missingSlug: "Missing championship slug.",
+    loadError: "Failed to load event data."
+  },
+  ru: {
+    title: "Событие чемпионата",
+    eyebrow: "Специальное событие ASG Racing",
+    prizes: "Призы",
+    top3: "Топ-3",
+    standings: "Положение участников",
+    races: "Гонки",
+    prize: "Приз",
+    place: "Место",
+    noPrizes: "Изображения призов пока не добавлены.",
+    noResults: "Результатов пока нет.",
+    driver: "Пилот",
+    total: "Итого",
+    noStandings: "Таблица результатов пока пуста.",
+    race: "Гонка",
+    winner: "Победитель",
+    bestLap: "Лучший круг",
+    noRaces: "Гонок пока нет.",
+    missingSlug: "Не указан идентификатор чемпионата.",
+    loadError: "Не удалось загрузить данные события."
+  }
+};
+const t = key => COPY[currentLang]?.[key] || COPY.en[key] || key;
 
 const params = new URLSearchParams(window.location.search);
 const pathSlug = window.location.pathname.split("/").filter(Boolean).pop();
@@ -34,11 +88,11 @@ function renderPrizes(data) {
   grid.innerHTML = prizes.length
     ? prizes.map((src, index) => `
         <figure class="prize-card">
-          <img src="${esc(src)}" alt="Prize ${index + 1}" />
-          <figcaption>Place ${index + 1}</figcaption>
+          <img src="${esc(src)}" alt="${esc(t("prize"))} ${index + 1}" />
+          <figcaption>${esc(t("place"))} ${index + 1}</figcaption>
         </figure>
       `).join("")
-    : `<div class="empty">No prize images yet.</div>`;
+    : `<div class="empty">${esc(t("noPrizes"))}</div>`;
 }
 
 function renderPodium(data) {
@@ -52,7 +106,7 @@ function renderPodium(data) {
           <div class="podium-points">${esc(row.points)} pts</div>
         </article>
       `).join("")
-    : `<div class="empty">No results yet.</div>`;
+    : `<div class="empty">${esc(t("noResults"))}</div>`;
 }
 
 function renderStandings(data) {
@@ -71,8 +125,8 @@ function renderStandings(data) {
     `;
   }).join("");
   table.innerHTML = rows
-    ? `<table><thead><tr><th>#</th><th>Driver</th>${raceHeaders}<th>Total</th></tr></thead><tbody>${rows}</tbody></table>`
-    : `<div class="empty">No standings yet.</div>`;
+    ? `<table><thead><tr><th>#</th><th>${esc(t("driver"))}</th>${raceHeaders}<th>${esc(t("total"))}</th></tr></thead><tbody>${rows}</tbody></table>`
+    : `<div class="empty">${esc(t("noStandings"))}</div>`;
 }
 
 function renderRaces(data) {
@@ -82,19 +136,42 @@ function renderRaces(data) {
     ? races.map(race => `
         <article class="race-card">
           <div>
-            <strong>${esc(race.track_name || race.track || "Race")}</strong>
+            <strong>${esc(race.track_name || race.track || t("race"))}</strong>
             <span>${esc(race.finished_at_local || race.finished_at || "")}</span>
           </div>
-          <div>Winner: ${esc(race.winner || "-")}</div>
-          <div>Best lap: ${esc(race.best_lap || "-")}</div>
+          <div>${esc(t("winner"))}: ${esc(race.winner || "-")}</div>
+          <div>${esc(t("bestLap"))}: ${esc(race.best_lap || "-")}</div>
         </article>
       `).join("")
-    : `<div class="empty">No races yet.</div>`;
+    : `<div class="empty">${esc(t("noRaces"))}</div>`;
+}
+
+function applyLanguage() {
+  document.documentElement.lang = currentLang;
+  document.title = `${t("title")} | ASG Racing`;
+  const eventTitle = document.getElementById("event-title");
+  if (eventTitle) eventTitle.textContent = t("title");
+  document.querySelectorAll("[data-i18n]").forEach(node => {
+    node.textContent = t(node.dataset.i18n);
+  });
+  const back = document.querySelector("[data-event-back]");
+  if (back) back.href = currentLang === "ru" ? "/ru/hourly/" : "/hourly/";
+  document.querySelectorAll("[data-lang]").forEach(button => {
+    const active = button.dataset.lang === currentLang;
+    button.classList.toggle("active", active);
+    button.setAttribute("aria-pressed", active ? "true" : "false");
+    button.addEventListener("click", () => {
+      setPageLocale(button.dataset.lang, { windowRef: window, documentRef: document });
+      const next = new URL(window.location.href);
+      next.searchParams.set("lang", button.dataset.lang);
+      window.location.assign(next.toString());
+    });
+  });
 }
 
 async function init() {
   if (!slug) {
-    document.getElementById("event-description").textContent = "Missing championship slug.";
+    document.getElementById("event-description").textContent = t("missingSlug");
     return;
   }
   const response = await fetch(`${defaultHourlyDataBaseUrl}/events/${encodeURIComponent(slug)}/index.json`, { cache: "no-store" });
@@ -110,7 +187,8 @@ async function init() {
   renderRaces(data);
 }
 
+applyLanguage();
 init().catch(error => {
   console.error(error);
-  document.getElementById("event-description").textContent = "Failed to load event data.";
+  document.getElementById("event-description").textContent = t("loadError");
 });

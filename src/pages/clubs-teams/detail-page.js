@@ -6,6 +6,7 @@ import {
 } from "../../features/auth/header-auth.js";
 import { createHttpClient } from "../../shared/http-client.js";
 import { element } from "../../shared/safe-dom.js";
+import { resolvePageLocale, setPageLocale } from "../../shared/localized-page.js?v=20260920locale1";
 import { resolveRuntimeOverride } from "../../shared/runtime-config.js";
 import { formatRatingMetric } from "../../shared/rating-format.js?v=20260820ratingsdot1";
 import {
@@ -78,9 +79,12 @@ const copy = (lang, key, ...values) => {
   const selected = COPY[lang][key] ?? COPY.en[key] ?? key;
   return typeof selected === "function" ? selected(...values) : selected;
 };
-const language = windowRef => {
-  try { return windowRef.localStorage.getItem("asgLang") === "ru" ? "ru" : "en"; }
-  catch { return "en"; }
+const language = (windowRef, documentRef) => resolvePageLocale({ documentRef, windowRef }).language;
+const localizedRuntimeHref = (href, lang, base = window.location.href) => {
+  const url = new URL(href, base);
+  if (lang === "ru") url.searchParams.set("lang", "ru");
+  else url.searchParams.delete("lang");
+  return `${url.pathname}${url.search}${url.hash}`;
 };
 const formattedNumber = (value, digits = 0) => value === null
   ? "—"
@@ -201,9 +205,9 @@ const firstRaceNumber = (...values) => {
   return NaN;
 };
 
-function raceDriverIdentity(documentRef, result, siteBase) {
+function raceDriverIdentity(documentRef, result, siteBase, lang) {
   const driver = result.public_id
-    ? element(documentRef, "a", { className: "driver-link", text: raceValue(result.driver), attrs: { href: `${siteBase}driver/?id=${encodeURIComponent(result.public_id)}` } })
+    ? element(documentRef, "a", { className: "driver-link", text: raceValue(result.driver), attrs: { href: localizedRuntimeHref(`${siteBase}driver/?id=${encodeURIComponent(result.public_id)}`, lang) } })
     : element(documentRef, "span", { text: raceValue(result.driver) });
   const driverNumber = firstRaceNumber(result.race_number, result.car_number, result.driver_number, result.number);
   const elo = firstRaceNumber(result.elo_rating_after, result.elo_after, result.new_rating, result.elo, result.elo_internal_rating);
@@ -269,7 +273,7 @@ function createRaceModal({ documentRef, client, lang, siteBase }) {
         element(documentRef, "td", { text: raceValue(result.position) }),
         element(documentRef, "td", { text: raceValue(result.start_position ?? result.starting_position) }),
         element(documentRef, "td", { className: Number.isFinite(delta) ? `positions-delta ${delta > 0 ? "delta-positive" : delta < 0 ? "delta-negative" : "delta-neutral"}` : "", text: Number.isFinite(delta) ? `${delta > 0 ? "+" : ""}${delta}` : "—" }),
-        element(documentRef, "td", { className: "clubs-race-driver" }, [raceDriverIdentity(documentRef, result, siteBase)]),
+        element(documentRef, "td", { className: "clubs-race-driver" }, [raceDriverIdentity(documentRef, result, siteBase, lang)]),
         element(documentRef, "td", { className: result.had_best_lap ? "best-lap-value" : "", text: raceValue(result.best_lap) }),
         element(documentRef, "td", { text: raceValue(result.car_name) }),
         element(documentRef, "td", { text: raceValue(result.gap) }),
@@ -370,6 +374,7 @@ function renderProfile({ documentRef, lang, siteBase, entityType, result, client
   requestUrl.searchParams.set("membership_type", entityType);
   requestUrl.searchParams.set("membership_target", detail.public_id);
   requestUrl.searchParams.set("membership_name", detail.display_name);
+  if (lang === "ru") requestUrl.searchParams.set("lang", "ru");
   actions.push(element(documentRef, "a", {
     className: "btn btn-primary", text: copy(lang, "requestMembership"),
     attrs: { href: `${requestUrl.pathname}${requestUrl.search}` }
@@ -379,6 +384,7 @@ function renderProfile({ documentRef, lang, siteBase, entityType, result, client
   affiliationUrl.searchParams.set("affiliation_action", affiliationAction);
   affiliationUrl.searchParams.set("affiliation_target", detail.public_id);
   affiliationUrl.searchParams.set("affiliation_name", detail.display_name);
+  if (lang === "ru") affiliationUrl.searchParams.set("lang", "ru");
   actions.push(element(documentRef, "a", {
     className: "btn btn-secondary", text: copy(lang, entityType === "club"
       ? "requestTeamAffiliation"
@@ -435,7 +441,7 @@ function renderProfile({ documentRef, lang, siteBase, entityType, result, client
     const badges = [rosterBadge(documentRef, "elo", member.elo), rosterBadge(documentRef, "sr", member.safety_rating)].filter(Boolean);
     return element(documentRef, "a", {
       className: "clubs-teams-roster-card",
-      attrs: { href: `${siteBase}driver/?id=${encodeURIComponent(member.public_id)}` }
+      attrs: { href: localizedRuntimeHref(`${siteBase}driver/?id=${encodeURIComponent(member.public_id)}`, lang) }
     }, [
       avatar,
       element(documentRef, "span", { className: "clubs-teams-roster-name", text: member.display_name }),
@@ -454,7 +460,7 @@ function renderProfile({ documentRef, lang, siteBase, entityType, result, client
   const relations = entityType === "club" ? detail.teams : (detail.club ? [detail.club] : []);
   const relationChildren = relations.length ? relations.map(item => element(documentRef, "a", {
     className: "clubs-teams-related-card",
-    attrs: { href: entityDetailHref(entityType === "club" ? "team" : "club", item.slug, { siteBase }) }
+    attrs: { href: entityDetailHref(entityType === "club" ? "team" : "club", item.slug, { siteBase, language: lang }) }
   }, [
     element(documentRef, "strong", { text: item.display_name }),
     element(documentRef, "span", { text: entityType === "club" ? copy(lang, "team") : copy(lang, "club") })
@@ -483,7 +489,7 @@ export function createEntityDetailPage({
   documentRef = document,
   fetchImpl = windowRef.fetch.bind(windowRef)
 }) {
-  const lang = language(windowRef);
+  const lang = language(windowRef, documentRef);
   const root = documentRef.getElementById("clubs-teams-detail-root");
   const baseMeta = documentRef.querySelector('meta[name="clubs-teams-data-base"]')?.content;
   const dataBaseUrl = resolveRuntimeOverride({
@@ -499,7 +505,7 @@ export function createEntityDetailPage({
   documentRef.querySelectorAll(".lang-btn[data-lang]").forEach(button => {
     button.classList.toggle("active", button.dataset.lang === lang);
     button.addEventListener("click", () => {
-      try { windowRef.localStorage.setItem("asgLang", button.dataset.lang); } catch {}
+      setPageLocale(button.dataset.lang, { documentRef, windowRef });
       windowRef.location.reload();
     });
   });

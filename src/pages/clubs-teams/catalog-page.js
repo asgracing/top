@@ -1,4 +1,4 @@
-import { pageLanguage, initializeLocalizedPage } from "../../shared/localized-page.js?v=20260919seo3";
+import { initializeLocalizedPage, resolvePageLocale, setPageLocale } from "../../shared/localized-page.js?v=20260920locale1";
 import {
   createAuthHeaderController,
   eloCategoryId,
@@ -88,12 +88,8 @@ const COPY = {
   }
 };
 
-function language(windowRef) {
-  try {
-    return windowRef.localStorage.getItem("asgLang") === "ru" ? "ru" : "en";
-  } catch {
-    return "en";
-  }
+function language(windowRef, documentRef) {
+  return resolvePageLocale({ documentRef, windowRef }).language;
 }
 
 function copy(lang, key, value) {
@@ -185,7 +181,7 @@ export function createCatalogPage({
   fetchImpl = windowRef.fetch.bind(windowRef)
 } = {}) {
   initializeLocalizedPage(documentRef, windowRef);
-  const lang = pageLanguage(documentRef) || language(windowRef);
+  const lang = language(windowRef, documentRef);
   const initialParams = new URLSearchParams(windowRef.location.search);
   const initialTab = initialParams.get("tab");
   const state = {
@@ -300,7 +296,7 @@ export function createCatalogPage({
       ]);
       grid.appendChild(element(documentRef, "a", {
         className: "clubs-teams-card",
-        attrs: { href: entityDetailHref(entry.entity_type, entry.slug, { siteBase: "../" }) }
+        attrs: { href: entityDetailHref(entry.entity_type, entry.slug, { siteBase: "../", language: lang }) }
       }, [
         element(documentRef, "div", { className: "clubs-teams-card-head" }, [
           logo,
@@ -376,10 +372,7 @@ export function createCatalogPage({
   documentRef.querySelectorAll(".lang-btn[data-lang]").forEach(button => {
     if (button.tagName === "A") return;
     button.addEventListener("click", () => {
-      try {
-        windowRef.localStorage.setItem("asgLang", button.dataset.lang);
-      } catch {
-      }
+      setPageLocale(button.dataset.lang, { documentRef, windowRef });
       windowRef.location.reload();
     });
   });

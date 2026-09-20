@@ -1,5 +1,6 @@
 import { createAuthHeaderController } from "../../features/auth/header-auth.js?v=20260826titles1";
 import { createHttpClient } from "../../shared/http-client.js";
+import { resolvePageLocale, setPageLocale } from "../../shared/localized-page.js?v=20260920locale1";
 import { resolveRuntimeOverride } from "../../shared/runtime-config.js";
 import { loadEntityDetail } from "../clubs-teams/detail-model.js";
 import {
@@ -339,13 +340,7 @@ const COPY = {
 };
 
 function language() {
-  let stored = "";
-  try {
-    stored = localStorage.getItem("asgLang") || "";
-  } catch {
-    stored = "";
-  }
-  return stored === "ru" ? "ru" : "en";
+  return resolvePageLocale({ documentRef: document, windowRef: window }).language;
 }
 
 function t(key, ...values) {
@@ -1395,6 +1390,10 @@ async function saveTitle(auth) {
 function render(auth) {
   const root = document.getElementById("account-content");
   if (!root) return;
+  document.documentElement.lang = language();
+  document.title = document.body.dataset.accountPage === "settings"
+    ? (language() === "ru" ? "Настройки профиля | ASG Racing" : "Profile Settings | ASG Racing")
+    : (language() === "ru" ? "Личный кабинет пилота | ASG Racing" : "Driver Account | ASG Racing");
   if (!auth?.authenticated) {
     renderSignedOut(root);
   } else if (document.body.dataset.accountPage === "settings") {
@@ -1442,11 +1441,7 @@ document.addEventListener("keydown", event => {
 
 document.querySelectorAll(".lang-btn[data-lang]").forEach(button => {
   button.addEventListener("click", () => {
-    try {
-      localStorage.setItem("asgLang", button.dataset.lang);
-    } catch {
-      // The selected language remains valid for the current document.
-    }
+    setPageLocale(button.dataset.lang, { documentRef: document, windowRef: window });
     location.reload();
   });
   button.classList.toggle("active", button.dataset.lang === language());
