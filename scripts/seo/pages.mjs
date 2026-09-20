@@ -18,3 +18,12 @@ export const pages = [
     en: { title: "ACC Community & Race Stories | ASG Racing", description: "Meet the ASG Racing ACC community through race stories, photos and highlights. Find out how to join races and connect with other drivers.", heading: "A community beyond the finish line", text: "Share the experience of racing in Assetto Corsa Competizione: event stories, photos and memorable moments. Discover ASG Racing, meet other drivers and find your next race." },
     ru: { title: "Сообщество ACC и истории гонок | ASG Racing", description: "Сообщество ASG Racing в ACC: истории гонок, фотографии и яркие моменты. Узнайте, как участвовать и общаться с другими пилотами.", heading: "Сообщество за пределами финишной черты", text: "Общение и впечатления от гонок в Assetto Corsa Competizione: истории событий, фотографии и яркие моменты. Познакомьтесь с ASG Racing, найдите других пилотов и выберите следующий старт." } }
 ];
+
+export const runtimePages = [
+  { path: "driver/index.html", dictionary: "app.js", key: "driver", titleKey: "pageTitleDriver", descriptionKey: "metaDescriptionDriver", sitemap: false },
+  { path: "cars/index.html", dictionary: "app.js", key: "cars", titleKey: "pageTitleCars", descriptionKey: "metaDescriptionCars", sitemap: true },
+  { path: "races/index.html", dictionary: "app.js", key: "races", titleKey: "pageTitleRaces", descriptionKey: "metaDescriptionRaces", sitemap: true },
+  { path: "fun-stats/index.html", dictionary: "app.js", key: "fun-stats", titleKey: "pageTitleFunStats", descriptionKey: "metaDescriptionFunStats", sitemap: true },
+  { path: "news/index.html", dictionary: "app.js", key: "news", titleKey: "pageTitleNews", descriptionKey: "metaDescriptionNews", sitemap: true },
+  { path: "bans/index.html", dictionary: "app.js", key: "bans", titleKey: "pageTitleBans", descriptionKey: "metaDescriptionBans", sitemap: true }
+];

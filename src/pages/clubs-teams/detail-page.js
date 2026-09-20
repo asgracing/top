@@ -6,7 +6,7 @@ import {
 } from "../../features/auth/header-auth.js";
 import { createHttpClient } from "../../shared/http-client.js";
 import { element } from "../../shared/safe-dom.js";
-import { resolvePageLocale, setPageLocale } from "../../shared/localized-page.js?v=20260920locale1";
+import { applyLocalizedNavigation, currentPageLanguageHref, localizedPageHref, resolvePageLocale, setPageLocale } from "../../shared/localized-page.js?v=20260920routes1";
 import { resolveRuntimeOverride } from "../../shared/runtime-config.js";
 import { formatRatingMetric } from "../../shared/rating-format.js?v=20260820ratingsdot1";
 import {
@@ -81,9 +81,7 @@ const copy = (lang, key, ...values) => {
 };
 const language = (windowRef, documentRef) => resolvePageLocale({ documentRef, windowRef }).language;
 const localizedRuntimeHref = (href, lang, base = window.location.href) => {
-  const url = new URL(href, base);
-  if (lang === "ru") url.searchParams.set("lang", "ru");
-  else url.searchParams.delete("lang");
+  const url = new URL(localizedPageHref(href, lang, { href: base }));
   return `${url.pathname}${url.search}${url.hash}`;
 };
 const formattedNumber = (value, digits = 0) => value === null
@@ -501,12 +499,13 @@ export function createEntityDetailPage({
   const client = createHttpClient({ fetchImpl, defaultTimeoutMs: 8000 });
   const slug = entitySlugFromLocation({ pathname: windowRef.location.pathname, search: windowRef.location.search, entityType });
   documentRef.documentElement.lang = lang;
+  applyLocalizedNavigation(lang, documentRef, windowRef);
   documentRef.querySelectorAll("[data-detail-copy]").forEach(node => { node.textContent = copy(lang, node.dataset.detailCopy); });
   documentRef.querySelectorAll(".lang-btn[data-lang]").forEach(button => {
     button.classList.toggle("active", button.dataset.lang === lang);
     button.addEventListener("click", () => {
       setPageLocale(button.dataset.lang, { documentRef, windowRef });
-      windowRef.location.reload();
+      windowRef.location.assign(currentPageLanguageHref(button.dataset.lang, windowRef.location));
     });
   });
   navigation(documentRef);

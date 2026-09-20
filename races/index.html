@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="en" data-page-language="en">
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
@@ -31,21 +31,21 @@
 
   <meta property="og:type" content="website" />
   <meta property="og:url" content="https://asgracing.ru/races/" />
-  <meta property="og:title" content="ASG Racing Last Races" />
+  <meta property="og:title" content="ASG Racing Last Races | Assetto Corsa Competizione Results" />
   <meta
     property="og:description"
-    content="Latest race sessions from ASG Racing with winner, track, best lap and full finishing order."
+    content="Latest ASG Racing ACC race results with winner, track, best lap and full finishing order."
   />
   <meta property="og:image" content="https://asgracing.ru/social/og.jpg" />
   <meta property="og:image:alt" content="ASG Racing race archive preview" />
-  <meta property="og:site_name" content="ASG Racing ACC Leaderboard" />
+  <meta property="og:site_name" content="ASG Racing" />
   <meta property="og:locale" content="en_US" />
 
   <meta name="twitter:card" content="summary_large_image" />
-  <meta name="twitter:title" content="ASG Racing Last Races" />
+  <meta name="twitter:title" content="ASG Racing Last Races | Assetto Corsa Competizione Results" />
   <meta
     name="twitter:description"
-    content="Latest race sessions from ASG Racing with winner, track, best lap and full finishing order."
+    content="Latest ASG Racing ACC race results with winner, track, best lap and full finishing order."
   />
   <meta name="twitter:image" content="https://asgracing.ru/social/og.jpg" />
   <meta name="twitter:image:alt" content="ASG Racing race archive preview" />
@@ -79,6 +79,12 @@
   <link rel="stylesheet" href="../styles.css?v=20260713r11css1" />
   <link rel="stylesheet" href="../legal.css" />
   <link rel="stylesheet" href="../styles/components/responsive-accessibility.css?v=20260715r13a11y1" />
+  <!-- seo-head:start -->
+  <link rel="stylesheet" href="/styles/components/seo-content.css?v=20260919seo3">
+  <link rel="alternate" hreflang="en" href="https://asgracing.ru/races/">
+  <link rel="alternate" hreflang="ru-RU" href="https://asgracing.ru/ru/races/">
+  <link rel="alternate" hreflang="x-default" href="https://asgracing.ru/races/">
+  <!-- seo-head:end -->
 </head>
 <body id="top" class="monza-bg-page">
   <div class="site-video-bg" aria-hidden="true">
@@ -129,7 +135,7 @@
               <span class="top-nav-group-caret" aria-hidden="true">▾</span>
             </button>
             <div class="top-nav-group-menu" hidden>
-              <a class="top-nav-group-link is-current" href="./" data-i18n="btnLastRaces">Last Races</a>
+              <a class="top-nav-group-link is-current" href="./" data-i18n="btnLastRaces">Race Archive</a>
             </div>
           </div>
           <div class="top-nav-group" data-nav-item="true">
@@ -143,7 +149,7 @@
               <a class="top-nav-group-link" href="../#championship" data-i18n="btnChampionship">Rating</a>
               <a class="top-nav-group-link" href="../#bestlaps" data-i18n="btnBestLaps">Best Laps</a>
               <a class="top-nav-group-link" href="../#worst-safety" data-i18n="btnWorstSafety">Safety Rating</a>
-              <a class="top-nav-group-link" href="../#clubs-teams-stats" data-i18n="teamsRatingLink">Clubs &amp; Teams</a>
+              <a class="top-nav-group-link" href="../#clubs-teams-stats" data-i18n="teamsRatingLink">Clubs & Teams</a>
               <a class="top-nav-group-link" href="../bans/" data-i18n="btnBans">Ban List</a>
             </div>
           </div>
@@ -153,7 +159,7 @@
               <span class="top-nav-group-caret" aria-hidden="true">▾</span>
             </button>
             <div class="top-nav-group-menu" hidden>
-              <a class="top-nav-group-link" href="../teams/?tab=clubs" data-i18n="teamsRatingLink">Clubs &amp; Teams</a>
+              <a class="top-nav-group-link" href="../teams/?tab=clubs" data-i18n="teamsRatingLink">Clubs & Teams</a>
               <a class="top-nav-group-link" href="../community/" data-i18n="btnCommunity">Community</a>
               <a class="top-nav-group-link" href="../#about-server" data-i18n="btnAboutServer">About Server</a>
             </div>
@@ -178,12 +184,12 @@
 
       <div class="top-nav-actions">
         <div class="lang-switch top-nav-lang" aria-label="Language switcher" data-i18n-aria-label="langSwitcherLabel">
-          <button class="lang-btn" type="button" data-lang="en" aria-label="English">
+          <a class="lang-btn active" data-lang="en" aria-label="English" href="/races/" hreflang="en" aria-current="page">
             <span class="lang-flag"><img src="../social/cif--gb.svg" alt="" /></span>
-          </button>
-          <button class="lang-btn" type="button" data-lang="ru" aria-label="Russian">
+          </a>
+          <a class="lang-btn" data-lang="ru" aria-label="Russian" href="/ru/races/" hreflang="ru">
             <span class="lang-flag"><img src="../social/cif--ru.svg" alt="" /></span>
-          </button>
+          </a>
         </div>
       </div>
     </div>
@@ -195,9 +201,7 @@
         <div class="page-hero-copy">
           <div class="eyebrow" data-i18n="racesEyebrow">Race archive</div>
           <h1 data-i18n="racesPageTitle">Last Races</h1>
-          <p class="hero-subtitle page-hero-subtitle" data-i18n="racesPageSubtitle">
-            Latest race sessions from ASG Racing. Click any row to open the full result sheet.
-          </p>
+          <p class="hero-subtitle page-hero-subtitle" data-i18n="racesPageSubtitle">Latest race sessions from ASG Racing. Click any row to open the full result sheet.</p>
 
           <div class="page-hero-stats" id="races-summary-cards">
             <div class="mini-stat">
@@ -234,7 +238,7 @@
       <div class="section-header">
         <div>
           <h2 class="section-title" data-i18n="racesTableTitle">Race Results</h2>
-          <p class="section-subtitle section-subtitle-hint" data-i18n="racesTableSubtitle">Sorted from newest to oldest.</p>
+          <p class="section-subtitle section-subtitle-hint" data-i18n="racesTableSubtitle">Row click opens quick view. Name opens full profile.</p>
         </div>
         <input
           class="search-input races-header-search"
@@ -242,7 +246,7 @@
           type="search"
           autocomplete="off"
           placeholder="Search track, server, winner, date or time..."
-          aria-label="Search track, server, winner, date or time"
+          aria-label="Search race results"
           data-i18n-aria-label="racesSearchAriaLabel"
         />
       </div>
@@ -284,7 +288,7 @@
 
         <div class="modal-header">
           <div>
-            <div class="eyebrow" data-i18n="eloModalEyebrow">Performance rating</div>
+            <div class="eyebrow" data-i18n="eloModalEyebrow">Driver strength</div>
             <h3 id="elo-modal-title" class="modal-title">ELO rating</h3>
             <p class="modal-subtitle" id="elo-modal-subtitle" data-i18n="eloModalSubtitle">Rating history across counted races.</p>
           </div>
@@ -300,7 +304,7 @@
 
         <div class="modal-header">
           <div>
-            <div class="eyebrow" data-i18n="safetyModalEyebrow">Driver consistency</div>
+            <div class="eyebrow" data-i18n="safetyModalEyebrow">Racecraft</div>
             <h3 id="safety-modal-title" class="modal-title">Safety Rating</h3>
             <p class="modal-subtitle" id="safety-modal-subtitle" data-i18n="safetyModalSubtitle">Safety Rating history across counted races.</p>
           </div>
@@ -314,9 +318,7 @@
       <div class="footer-inner">
         <div class="footer-left">
           <div class="footer-brand">ASG Racing ACC Leaderboard</div>
-          <div class="footer-text" data-i18n="footerText">
-            Statistics are generated from ACC Dedicated Server result files and published via GitHub Pages.
-          </div>
+          <div class="footer-text" data-i18n="footerText">Statistics are generated from ACC Dedicated Server result files and published via GitHub Pages.</div>
         </div>
 
         <div class="footer-links">

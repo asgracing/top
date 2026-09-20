@@ -1,13 +1,272 @@
 <!DOCTYPE html>
-<html lang="ru">
+<html lang="ru" data-page-language="ru">
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1">
-<title>Переход на страницу | ASG Racing</title>
-<meta name="robots" content="noindex, follow">
-<link rel="canonical" href="https://asgracing.ru/fun-stats/">
-<meta http-equiv="refresh" content="0; url=/fun-stats/?lang=ru">
-<script>const target=new URL("/fun-stats/",location.origin);const params=new URLSearchParams(location.search);params.set("lang","ru");target.search=params;target.hash=location.hash;location.replace(target);</script>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta name="yandex-metrika-id" content="107697834" />
+  <meta name="legal-base-path" content="/" />
+
+  <title>ASG Racing Fun Stats | Недельные и месячные истории ACC</title>
+  <meta
+    name="description"
+    content="Недельная и месячная фан-статистика ASG Racing ACC: камбэки, чистые гонщики, быстрые круги, активность и самые яркие истории сервера."
+  />
+  <meta
+    name="keywords"
+    content="ASG Racing, ACC fun stats, weekly stats, monthly stats, Assetto Corsa Competizione, Monza, race stories"
+  />
+
+  <meta name="yandex-verification" content="c76adf2164af15e6" />
+  <meta name="google-site-verification" content="Q9-gOMKl6WbBLelP-Vl__xxrrF2Qyrm47kdie0mGxz8" />
+
+  <meta name="robots" content="index, follow" />
+  <meta name="author" content="ASG Racing" />
+  <meta name="theme-color" content="#0b0f14" />
+
+  <link rel="canonical" href="https://asgracing.ru/ru/fun-stats/" />
+  <link rel="icon" href="/favicon.ico" sizes="any" />
+  <link rel="icon" type="image/png" sizes="32x32" href="/favicon-32x32.png" />
+  <link rel="icon" type="image/png" sizes="16x16" href="/favicon-16x16.png" />
+  <link rel="apple-touch-icon" href="/apple-touch-icon.png" />
+
+  <meta property="og:type" content="website" />
+  <meta property="og:url" content="https://asgracing.ru/ru/fun-stats/" />
+  <meta property="og:title" content="ASG Racing Fun Stats | Недельные и месячные истории ACC" />
+  <meta
+    property="og:description"
+    content="Недельная и месячная фан-статистика ASG Racing ACC: камбэки, чистые гонщики, быстрые круги, активность и самые яркие истории сервера."
+  />
+  <meta property="og:image" content="https://asgracing.ru/social/og.jpg" />
+  <meta property="og:image:alt" content="ASG Racing fun stats preview" />
+  <meta property="og:site_name" content="ASG Racing" />
+  <meta property="og:locale" content="ru_RU" />
+
+  <meta name="twitter:card" content="summary_large_image" />
+  <meta name="twitter:title" content="ASG Racing Fun Stats | Недельные и месячные истории ACC" />
+  <meta
+    name="twitter:description"
+    content="Недельная и месячная фан-статистика ASG Racing ACC: камбэки, чистые гонщики, быстрые круги, активность и самые яркие истории сервера."
+  />
+  <meta name="twitter:image" content="https://asgracing.ru/social/og.jpg" />
+  <meta name="twitter:image:alt" content="ASG Racing fun stats preview" />
+
+  <link rel="stylesheet" href="/styles/tokens.css?v=20260713r11tokens1" />
+  <link rel="stylesheet" href="/styles/base.css?v=20260726staticfallback1" />
+  <link rel="stylesheet" href="/styles/components/site-background.css?v=20260713r11background1" />
+  <link rel="stylesheet" href="/styles/components/top-navigation.css?v=20260713r11nav1" />
+  <link rel="stylesheet" href="/styles/components/language-switch.css?v=20260713r11lang1" />
+  <link rel="stylesheet" href="/styles/components/buttons.css?v=20260713r11buttons1" />
+  <link rel="stylesheet" href="/styles/components/hero-foundation.css?v=20260713r11hero1" />
+  <link rel="stylesheet" href="/styles/components/hero-actions.css?v=20260713r11heroactions1" />
+  <link rel="stylesheet" href="/styles/components/hero-stats.css?v=20260813driveraffiliations1" />
+  <link rel="stylesheet" href="/styles/components/server-sticky-layout.css?v=20260715r11serversticky1" />
+  <link rel="stylesheet" href="/styles/components/sections.css?v=20260813clublogos1" />
+  <link rel="stylesheet" href="/styles/components/support-widget.css?v=20260715r11support1" />
+  <link rel="stylesheet" href="/styles/components/table-controls.css?v=20260715r11tablecontrols1" />
+  <link rel="stylesheet" href="/styles/components/top-three.css?v=20260715r11topthree1" />
+  <link rel="stylesheet" href="/styles/components/tables.css?v=20260726authrow1" />
+  <link rel="stylesheet" href="/styles/components/pagination.css?v=20260715r11pagination1" />
+  <link rel="stylesheet" href="/styles/components/modals.css?v=20260715r11modals1" />
+  <link rel="stylesheet" href="/styles/components/server-players-modal.css?v=20260715r11serverplayers1" />
+  <link rel="stylesheet" href="/styles/components/today-stats-modal.css?v=20260715r11todaystats1" />
+  <link rel="stylesheet" href="/styles/components/activity-controls.css?v=20260715r11activitycontrols1" />
+  <link rel="stylesheet" href="/styles/components/activity-summary.css?v=20260715r11activitysummary1" />
+  <link rel="stylesheet" href="/styles/components/hourly-event-modal.css?v=20260715r11hourlymodal1" />
+  <link rel="stylesheet" href="/styles/components/driver-day-modal.css?v=20260813driveraffiliations1" />
+  <link rel="stylesheet" href="/styles/components/footer.css?v=20260720topguide1" />
+  <link rel="stylesheet" href="/styles/utilities.css?v=20260715r12states1" />
+  <link rel="stylesheet" href="/styles/responsive.css?v=20260813driveraffiliations1" />
+  <link rel="stylesheet" href="/styles.css?v=20260713r11css1" />
+  <link rel="stylesheet" href="/legal.css" />
+  <link rel="stylesheet" href="/styles/components/responsive-accessibility.css?v=20260715r13a11y1" />
+  <!-- seo-head:start -->
+  <link rel="stylesheet" href="/styles/components/seo-content.css?v=20260919seo3">
+  <link rel="alternate" hreflang="en" href="https://asgracing.ru/fun-stats/">
+  <link rel="alternate" hreflang="ru-RU" href="https://asgracing.ru/ru/fun-stats/">
+  <link rel="alternate" hreflang="x-default" href="https://asgracing.ru/fun-stats/">
+  <!-- seo-head:end -->
 </head>
-<body><p><a href="/fun-stats/?lang=ru">Перейти на страницу</a></p></body>
+<body id="top" class="monza-bg-page fun-stats-page">
+  <div class="site-video-bg" aria-hidden="true">
+    <video
+      class="site-bg-video"
+      muted
+      playsinline
+      preload="none"
+    data-bg-options="/media/background.mp4?v=20260715r14media1|/media/background_nurb24h.mp4?v=20260715r14media1|/media/background2607.mp4?v=20260726media1"
+    ></video>
+  </div>
+  <div class="site-video-overlay" aria-hidden="true"></div>
+
+  <nav class="top-nav" id="top-nav">
+    <div class="top-nav-inner">
+      <a class="top-nav-brand" href="/ru/" aria-label="Главная ASG Racing" data-i18n-aria-label="homeAriaLabel">
+        <img class="top-nav-brand-logo" src="/social/asg.png" alt="" />
+        <span class="top-nav-brand-text">ASG Racing</span>
+      </a>
+
+      <div class="top-nav-socials">
+        <a class="top-nav-link top-nav-link-primary nav-social nav-social-discord" href="https://discord.gg/cEPFHXXtTC" target="_blank" rel="noopener noreferrer" aria-label="Discord" title="Discord">
+          <img class="social-icon" src="/social/discord.svg" alt="" />
+        </a>
+        <a class="top-nav-link top-nav-link-primary nav-social nav-social-telegram" href="https://t.me/+JUymrENgddcyMTdi" target="_blank" rel="noopener noreferrer" aria-label="Telegram" title="Telegram">
+          <img class="social-icon" src="/social/telegram.svg" alt="" />
+        </a>
+        <a class="top-nav-link top-nav-link-primary nav-social nav-social-tiktok" href="https://www.tiktok.com/@asgracingacc" target="_blank" rel="noopener noreferrer" aria-label="TikTok" title="TikTok">
+          <img class="social-icon" src="/social/tiktok.svg" alt="" />
+        </a>
+        <a class="top-nav-link top-nav-link-primary nav-social nav-social-youtube" href="https://www.youtube.com/channel/UCwVcW5iUFxcT5Z8AHVqPhTg" target="_blank" rel="noopener noreferrer" aria-label="YouTube" title="YouTube">
+          <img class="social-icon" src="/social/youtube.svg" alt="" />
+        </a>
+        <a class="top-nav-link top-nav-link-primary nav-social nav-social-twitch" href="https://www.twitch.tv/asgracing" target="_blank" rel="noopener noreferrer" aria-label="Twitch" title="Twitch">
+          <img class="social-icon" src="/social/twitch.svg" alt="" />
+        </a>
+      </div>
+
+      <div class="top-nav-center">
+        <div class="top-nav-menu">
+          <a class="top-nav-link top-nav-link-secondary top-nav-link-special" href="/ru/hourly/" data-i18n="btnSpecialEvent" data-nav-item="true">Спец. ивент</a>
+          <a class="top-nav-link top-nav-link-secondary top-nav-link-championship" href="/ru/hourly/championship/" id="top-nav-championship-link" data-i18n="btnChampionshipEvent" data-nav-item="true">Чемпионат</a>
+          <a class="top-nav-link top-nav-link-secondary top-nav-link-rules" href="/ru/#rules" data-i18n="btnRules" data-nav-item="true">Правила</a>
+          <a class="top-nav-link top-nav-link-secondary" href="/ru/news/" data-i18n="btnNews" data-nav-item="true">Новости</a>
+          <div class="top-nav-group" data-nav-item="true">
+            <button class="top-nav-link top-nav-link-secondary top-nav-group-toggle" type="button" aria-expanded="false" aria-haspopup="true">
+              <span data-i18n="navGroupRacing">Гонки</span>
+              <span class="top-nav-group-caret" aria-hidden="true">▾</span>
+            </button>
+            <div class="top-nav-group-menu" hidden>
+              <a class="top-nav-group-link" href="/ru/races/" data-i18n="btnLastRaces">Архив гонок</a>
+            </div>
+          </div>
+          <div class="top-nav-group is-current" data-nav-item="true">
+            <button class="top-nav-link top-nav-link-secondary top-nav-group-toggle" type="button" aria-expanded="false" aria-haspopup="true">
+              <span data-i18n="navGroupStats">Статистика</span>
+              <span class="top-nav-group-caret" aria-hidden="true">▾</span>
+            </button>
+            <div class="top-nav-group-menu" hidden>
+              <a class="top-nav-group-link" href="/ru/cars/" data-i18n="btnCars">Машины</a>
+              <a class="top-nav-group-link is-current" href="/ru/fun-stats/" data-i18n="btnFunStats">Фан-стата</a>
+              <a class="top-nav-group-link" href="/ru/#championship" data-i18n="btnChampionship">Рейтинг</a>
+              <a class="top-nav-group-link" href="/ru/#bestlaps" data-i18n="btnBestLaps">Лучшие круги</a>
+              <a class="top-nav-group-link" href="/ru/#worst-safety" data-i18n="btnWorstSafety">Safety Rating</a>
+              <a class="top-nav-group-link" href="/ru/#clubs-teams-stats" data-i18n="teamsRatingLink">Клубы и команды</a>
+              <a class="top-nav-group-link" href="/ru/bans/" data-i18n="btnBans">Баны</a>
+            </div>
+          </div>
+          <div class="top-nav-group" data-nav-item="true">
+            <button class="top-nav-link top-nav-link-secondary top-nav-group-toggle" type="button" aria-expanded="false" aria-haspopup="true">
+              <span data-i18n="navGroupCommunity">Сообщество</span>
+              <span class="top-nav-group-caret" aria-hidden="true">▾</span>
+            </button>
+            <div class="top-nav-group-menu" hidden>
+              <a class="top-nav-group-link" href="/ru/teams/?tab=clubs" data-i18n="teamsRatingLink">Клубы и команды</a>
+              <a class="top-nav-group-link" href="/ru/community/" data-i18n="btnCommunity">Сообщество</a>
+              <a class="top-nav-group-link" href="/ru/#about-server" data-i18n="btnAboutServer">О сервере</a>
+            </div>
+          </div>
+          <div class="top-nav-more" id="top-nav-more">
+            <button
+              class="top-nav-link top-nav-link-secondary top-nav-more-toggle"
+              id="top-nav-more-toggle"
+              type="button"
+              aria-expanded="false"
+              aria-haspopup="true"
+              aria-label="Открыть дополнительную навигацию"
+              data-i18n-aria-label="navMoreAriaLabel"
+            >
+              <span class="top-nav-more-icon" aria-hidden="true">☰</span>
+              <span class="top-nav-more-text" data-i18n="navMore">Ещё</span>
+            </button>
+            <div class="top-nav-more-menu" id="top-nav-more-menu" hidden></div>
+          </div>
+        </div>
+      </div>
+
+      <div class="top-nav-actions">
+        <div class="lang-switch top-nav-lang" aria-label="Переключение языка" data-i18n-aria-label="langSwitcherLabel">
+          <a class="lang-btn" data-lang="en" aria-label="English" href="/fun-stats/" hreflang="en">
+            <span class="lang-flag"><img src="/social/cif--gb.svg" alt="" /></span>
+          </a>
+          <a class="lang-btn active" data-lang="ru" aria-label="Russian" href="/ru/fun-stats/" hreflang="ru" aria-current="page">
+            <span class="lang-flag"><img src="/social/cif--ru.svg" alt="" /></span>
+          </a>
+        </div>
+      </div>
+    </div>
+  </nav>
+
+  <div class="container">
+    <section class="hero">
+      <div class="hero-card hero-card-page fun-hero-card">
+        <div class="page-hero-copy">
+          <h1 data-i18n="funStatsPageTitle">Фан-статистика</h1>
+          <p class="hero-subtitle page-hero-subtitle" data-i18n="funStatsPageSubtitle">Не только победы и подиумы. Здесь собраны самые живые истории последних гонок ASG Racing: активность, камбэки, чистые заезды, быстрые круги и немного хаоса.</p>
+
+          <div class="fun-period-toolbar">
+            <div class="fun-period-switch" role="group" aria-label="Переключатель периода" data-i18n-aria-label="funStatsPeriodSwitcherLabel">
+              <button class="fun-period-btn active" type="button" data-fun-period="week" data-i18n="funStatsWeekTab">Последние 7 дней</button>
+              <button class="fun-period-btn" type="button" data-fun-period="month" data-i18n="funStatsMonthTab">Последние 30 дней</button>
+            </div>
+            <div class="fun-period-range" id="fun-stats-range">—</div>
+          </div>
+
+          <div class="fun-summary-grid" id="fun-stats-summary">
+            <div class="loading" role="status" aria-live="polite" data-i18n="loadingRaces">Загрузка гонок...</div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section class="section">
+      <div class="section-header">
+        <div>
+          <h2 class="section-title" data-i18n="funStatsAwardsTitle">Фан-награды</h2>
+          <p class="section-subtitle" data-i18n="funStatsAwardsSubtitle">Более живой недельный и месячный взгляд на то, что происходило на сервере.</p>
+        </div>
+      </div>
+      <div class="fun-awards-grid" id="fun-stats-awards">
+        <div class="loading" role="status" aria-live="polite" data-i18n="loadingRaces">Загрузка гонок...</div>
+      </div>
+    </section>
+
+    <section class="section">
+      <div class="section-header">
+        <div>
+          <h2 class="section-title" data-i18n="funStatsLeaderboardsTitle">Быстрые рейтинги</h2>
+          <p class="section-subtitle" data-i18n="funStatsLeaderboardsSubtitle">Главные имена и тренды за выбранный период.</p>
+        </div>
+      </div>
+      <div class="fun-lists-grid" id="fun-stats-leaderboards">
+        <div class="loading" role="status" aria-live="polite" data-i18n="loadingRaces">Загрузка гонок...</div>
+      </div>
+    </section>
+
+    <footer class="footer">
+      <div class="footer-inner">
+        <div class="footer-left">
+          <div class="footer-brand">ASG Racing ACC Leaderboard</div>
+          <div class="footer-text" data-i18n="footerText">Данные собираются из файлов результатов ACC Dedicated Server и публикуются через GitHub Pages.</div>
+        </div>
+
+        <div class="footer-links">
+          <a class="footer-social-link" href="https://discord.gg/cEPFHXXtTC" target="_blank" rel="noopener noreferrer" aria-label="Discord" title="Discord">
+            <img class="social-icon" src="/social/discord.svg" alt="" />
+          </a>
+          <a class="footer-social-link" href="https://t.me/+JUymrENgddcyMTdi" target="_blank" rel="noopener noreferrer" aria-label="Telegram" title="Telegram">
+            <img class="social-icon" src="/social/telegram.svg" alt="" />
+          </a>
+          <a class="footer-social-link" href="https://www.tiktok.com/@asgracingacc" target="_blank" rel="noopener noreferrer" aria-label="TikTok" title="TikTok">
+            <img class="social-icon" src="/social/tiktok.svg" alt="" />
+          </a>
+          <a class="footer-social-link" href="https://www.youtube.com/channel/UCwVcW5iUFxcT5Z8AHVqPhTg" target="_blank" rel="noopener noreferrer" aria-label="YouTube" title="YouTube">
+            <img class="social-icon" src="/social/youtube.svg" alt="" />
+          </a>
+        </div>
+      </div>
+    </footer>
+  </div>
+
+  <script src="/legal.js?v=20260920locale1" defer></script>
+  <script type="module" src="/src/entrypoints/fun-stats.js?v=20260920locale1"></script>
+</body>
 </html>

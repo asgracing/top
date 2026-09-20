@@ -1,6 +1,6 @@
 import { createAuthHeaderController } from "../../features/auth/header-auth.js?v=20260826titles1";
 import { createHttpClient } from "../../shared/http-client.js";
-import { resolvePageLocale, setPageLocale } from "../../shared/localized-page.js?v=20260920locale1";
+import { applyLocalizedNavigation, currentPageLanguageHref, resolvePageLocale, setPageLocale } from "../../shared/localized-page.js?v=20260920routes1";
 import { resolveRuntimeOverride } from "../../shared/runtime-config.js";
 import { loadEntityDetail } from "../clubs-teams/detail-model.js";
 import {
@@ -1442,9 +1442,11 @@ document.addEventListener("keydown", event => {
 document.querySelectorAll(".lang-btn[data-lang]").forEach(button => {
   button.addEventListener("click", () => {
     setPageLocale(button.dataset.lang, { documentRef: document, windowRef: window });
-    location.reload();
+    location.assign(currentPageLanguageHref(button.dataset.lang, window.location));
   });
   button.classList.toggle("active", button.dataset.lang === language());
 });
+
+applyLocalizedNavigation(language(), document, window);
 
 const controller = createAuthHeaderController({ onAuthChange: handleAccountAuthChange });

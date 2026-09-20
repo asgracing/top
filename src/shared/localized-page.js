@@ -5,6 +5,77 @@ export const LEGACY_NAMESPACED_LANGUAGE_STORAGE_KEY = "asg.top.v1:language";
 export const LOCALE_SUGGESTION_DISMISSED_KEY = "asgLocaleSuggestionDismissed";
 export const LOCALE_CHANGE_EVENT = "asg:locale-change";
 
+export const LOCALIZED_PAGE_ROUTES = Object.freeze([
+  { id: "home", en: "/", ru: "/ru/" },
+  { id: "about", en: "/about/", ru: "/ru/about/" },
+  { id: "join", en: "/join/", ru: "/ru/join/" },
+  { id: "hourly", en: "/hourly/", ru: "/ru/hourly/" },
+  { id: "championship", en: "/hourly/championship/", ru: "/ru/hourly/championship/" },
+  { id: "championship-history", en: "/hourly/championship/history/", ru: "/ru/hourly/championship/history/" },
+  { id: "teams", en: "/teams/", ru: "/ru/teams/" },
+  { id: "community", en: "/community/", ru: "/ru/community/" },
+  { id: "driver", en: "/driver/", ru: "/ru/driver/", compatibility: true },
+  { id: "cars", en: "/cars/", ru: "/ru/cars/", compatibility: true },
+  { id: "races", en: "/races/", ru: "/ru/races/", compatibility: true },
+  { id: "fun-stats", en: "/fun-stats/", ru: "/ru/fun-stats/", compatibility: true },
+  { id: "news", en: "/news/", ru: "/ru/news/", compatibility: true },
+  { id: "bans", en: "/bans/", ru: "/ru/bans/", compatibility: true }
+]);
+
+function normalizedPathname(value) {
+  const pathname = String(value || "/").replace(/\/{2,}/g, "/");
+  if (pathname === "/") return pathname;
+  return pathname.endsWith("/") ? pathname : `${pathname}/`;
+}
+
+export function localizedPageRoute(pathname) {
+  const normalized = normalizedPathname(pathname);
+  return LOCALIZED_PAGE_ROUTES.find(route => route.en === normalized || route.ru === normalized) || null;
+}
+
+export function localizedPageHref(href, language, locationRef = window.location) {
+  const normalized = validLanguage(language);
+  if (!normalized) return new URL(href, locationRef.href).href;
+  const target = new URL(href, locationRef.href);
+  const route = localizedPageRoute(target.pathname);
+  if (route) {
+    target.pathname = route[normalized];
+    target.searchParams.delete("lang");
+  } else if (normalized === "ru") {
+    target.searchParams.set("lang", "ru");
+  } else {
+    target.searchParams.delete("lang");
+  }
+  return target.href;
+}
+
+export function currentPageLanguageHref(language, locationRef = window.location) {
+  return localizedPageHref(locationRef.href, language, locationRef);
+}
+
+export function legacyMalformedLanguageHref(locationRef = window.location) {
+  const target = new URL(locationRef.href);
+  const rawLanguage = target.searchParams.get("lang") || "";
+  const match = rawLanguage.match(/^(ru|en)\?(.+)$/);
+  if (!match) return null;
+  target.searchParams.delete("lang");
+  const recovered = new URLSearchParams(match[2]);
+  recovered.forEach((value, key) => target.searchParams.set(key, value));
+  return localizedPageHref(target.href, match[1], locationRef);
+}
+
+export function applyLocalizedNavigation(language, documentRef = document, windowRef = window) {
+  const normalized = validLanguage(language);
+  if (!normalized) return;
+  documentRef.querySelectorAll?.("a[href]:not(.lang-btn)").forEach(link => {
+    const rawHref = link.getAttribute?.("href");
+    if (!rawHref || /^(?:mailto:|tel:|javascript:|data:|blob:)/i.test(rawHref)) return;
+    const target = new URL(rawHref, windowRef.location.href);
+    if (target.origin !== windowRef.location.origin || !localizedPageRoute(target.pathname)) return;
+    link.href = localizedPageHref(target.href, normalized, windowRef.location);
+  });
+}
+
 const RUSSIAN_TIME_ZONES = new Set([
   "Europe/Kaliningrad", "Europe/Moscow", "Europe/Simferopol", "Europe/Kirov",
   "Europe/Volgograd", "Europe/Astrakhan", "Europe/Saratov", "Europe/Ulyanovsk",
@@ -95,6 +166,7 @@ export function setPageLocale(language, { documentRef = document, windowRef = wi
   const resolvedRegion = region || detected.region;
   saveLocalePreference(normalized, resolvedRegion, windowRef);
   if (documentRef.documentElement) documentRef.documentElement.lang = normalized;
+  applyLocalizedNavigation(normalized, documentRef, windowRef);
   documentRef.querySelectorAll?.(".lang-btn[data-lang]").forEach(control => {
     const active = control.dataset.lang === normalized;
     control.classList.toggle("active", active);
@@ -143,8 +215,16 @@ function showLocaleSuggestion(documentRef, windowRef, detected, alternate) {
 }
 
 export function initializeLocalizedPage(documentRef = document, windowRef = window) {
-  const language = pageLanguage(documentRef);
-  if (!language) return;
+  const routeLanguage = pageLanguage(documentRef);
+  if (!windowRef?.location) return;
+  const repairedHref = legacyMalformedLanguageHref(windowRef.location);
+  if (repairedHref) {
+    windowRef.location.replace(repairedHref);
+    return;
+  }
+  const language = routeLanguage || resolvePageLocale({ documentRef, windowRef }).language;
+  applyLocalizedNavigation(language, documentRef, windowRef);
+  if (!routeLanguage) return;
   const links = [...documentRef.querySelectorAll("a.lang-btn[data-lang]")];
   const detected = detectVisitorLocale(windowRef);
   for (const link of links) {

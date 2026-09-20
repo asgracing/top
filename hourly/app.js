@@ -1,4 +1,4 @@
-import { initializeLocalizedPage, resolvePageLocale, setPageLocale } from "../src/shared/localized-page.js?v=20260920locale1";
+import { initializeLocalizedPage, localizedPageHref, resolvePageLocale, setPageLocale } from "../src/shared/localized-page.js?v=20260920routes1";
 initializeLocalizedPage();
 import {
   NEWS_READ_LEGACY_STORAGE_KEY,
@@ -789,12 +789,13 @@ function formatNewsDateTime(dateString) {
   return `${day}.${month}.${year} ${hours}:${minutes}`;
 }
 function getNewsListHref() {
-  const url = new URL(`${topSiteBaseUrl}/news/`, window.location.href);
-  if (currentLang === "ru") url.searchParams.set("lang", "ru");
+  const url = new URL(localizedPageHref(`${topSiteBaseUrl}/news/`, currentLang, window.location));
   return `${url.pathname}${url.search}${url.hash}`;
 }
 function getNewsArticleHref(slug) {
-  return slug ? `${getNewsListHref()}?slug=${encodeURIComponent(slug)}` : getNewsListHref();
+  const url = new URL(getNewsListHref(), window.location.href);
+  if (slug) url.searchParams.set("slug", slug);
+  return `${url.pathname}${url.search}${url.hash}`;
 }
 function loadNewsReadState() {
   return loadSharedNewsReadState(localStorage);

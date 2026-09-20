@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="en" data-page-language="en">
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
@@ -31,21 +31,21 @@
 
   <meta property="og:type" content="website" />
   <meta property="og:url" content="https://asgracing.ru/driver/" />
-  <meta property="og:title" content="ASG Racing Driver Profile" />
+  <meta property="og:title" content="ASG Racing Driver Profile | Assetto Corsa Competizione Stats" />
   <meta
     property="og:description"
-    content="Driver profile with race history, points, best lap and safety stats from ASG Racing ACC."
+    content="Driver profile with race history, best lap, points and safety stats from ASG Racing ACC."
   />
   <meta property="og:image" content="https://asgracing.ru/social/og.jpg" />
   <meta property="og:image:alt" content="ASG Racing driver profile preview" />
-  <meta property="og:site_name" content="ASG Racing ACC Leaderboard" />
+  <meta property="og:site_name" content="ASG Racing" />
   <meta property="og:locale" content="en_US" />
 
   <meta name="twitter:card" content="summary_large_image" />
-  <meta name="twitter:title" content="ASG Racing Driver Profile" />
+  <meta name="twitter:title" content="ASG Racing Driver Profile | Assetto Corsa Competizione Stats" />
   <meta
     name="twitter:description"
-    content="Driver profile with race history, points, best lap and safety stats from ASG Racing ACC."
+    content="Driver profile with race history, best lap, points and safety stats from ASG Racing ACC."
   />
   <meta name="twitter:image" content="https://asgracing.ru/social/og.jpg" />
   <meta name="twitter:image:alt" content="ASG Racing driver profile preview" />
@@ -81,6 +81,12 @@
   <link rel="stylesheet" href="../styles/components/responsive-accessibility.css?v=20260715r13a11y1" />
   <link rel="stylesheet" href="../styles/components/floating-widgets.css?v=20260824achievements2" />
   <link rel="stylesheet" href="../styles/components/driver-achievements.css?v=20260824titles2" />
+  <!-- seo-head:start -->
+  <link rel="stylesheet" href="/styles/components/seo-content.css?v=20260919seo3">
+  <link rel="alternate" hreflang="en" href="https://asgracing.ru/driver/">
+  <link rel="alternate" hreflang="ru-RU" href="https://asgracing.ru/ru/driver/">
+  <link rel="alternate" hreflang="x-default" href="https://asgracing.ru/driver/">
+  <!-- seo-head:end -->
 </head>
 <body id="top" class="monza-bg-page">
   <div class="site-video-bg" aria-hidden="true">
@@ -131,7 +137,7 @@
               <span class="top-nav-group-caret" aria-hidden="true">▾</span>
             </button>
             <div class="top-nav-group-menu" hidden>
-              <a class="top-nav-group-link" href="../races/" data-i18n="btnLastRaces">Last Races</a>
+              <a class="top-nav-group-link" href="../races/" data-i18n="btnLastRaces">Race Archive</a>
             </div>
           </div>
           <div class="top-nav-group is-current" data-nav-item="true">
@@ -145,7 +151,7 @@
               <a class="top-nav-group-link is-current" href="../#championship" data-i18n="btnChampionship">Rating</a>
               <a class="top-nav-group-link" href="../#bestlaps" data-i18n="btnBestLaps">Best Laps</a>
               <a class="top-nav-group-link" href="../#worst-safety" data-i18n="btnWorstSafety">Safety Rating</a>
-              <a class="top-nav-group-link" href="../#clubs-teams-stats" data-i18n="teamsRatingLink">Clubs &amp; Teams</a>
+              <a class="top-nav-group-link" href="../#clubs-teams-stats" data-i18n="teamsRatingLink">Clubs & Teams</a>
               <a class="top-nav-group-link" href="../bans/" data-i18n="btnBans">Ban List</a>
             </div>
           </div>
@@ -155,7 +161,7 @@
               <span class="top-nav-group-caret" aria-hidden="true">▾</span>
             </button>
             <div class="top-nav-group-menu" hidden>
-              <a class="top-nav-group-link" href="../teams/?tab=clubs" data-i18n="teamsRatingLink">Clubs &amp; Teams</a>
+              <a class="top-nav-group-link" href="../teams/?tab=clubs" data-i18n="teamsRatingLink">Clubs & Teams</a>
               <a class="top-nav-group-link" href="../community/" data-i18n="btnCommunity">Community</a>
               <a class="top-nav-group-link" href="../#about-server" data-i18n="btnAboutServer">About Server</a>
             </div>
@@ -180,12 +186,12 @@
 
       <div class="top-nav-actions">
         <div class="lang-switch top-nav-lang" aria-label="Language switcher" data-i18n-aria-label="langSwitcherLabel">
-          <button class="lang-btn" type="button" data-lang="en" aria-label="English">
+          <a class="lang-btn active" data-lang="en" aria-label="English" href="/driver/" hreflang="en" aria-current="page">
             <span class="lang-flag"><img src="../social/cif--gb.svg" alt="" /></span>
-          </button>
-          <button class="lang-btn" type="button" data-lang="ru" aria-label="Russian">
+          </a>
+          <a class="lang-btn" data-lang="ru" aria-label="Russian" href="/ru/driver/" hreflang="ru">
             <span class="lang-flag"><img src="../social/cif--ru.svg" alt="" /></span>
-          </button>
+          </a>
         </div>
       </div>
     </div>
@@ -363,9 +369,7 @@
       <div class="footer-inner">
         <div class="footer-left">
           <div class="footer-brand">ASG Racing ACC Leaderboard</div>
-          <div class="footer-text" data-i18n="footerText">
-            Statistics are generated from ACC Dedicated Server result files and published via GitHub Pages.
-          </div>
+          <div class="footer-text" data-i18n="footerText">Statistics are generated from ACC Dedicated Server result files and published via GitHub Pages.</div>
         </div>
 
         <div class="footer-links">

@@ -1,4 +1,4 @@
-import { initializeLocalizedPage, resolvePageLocale, setPageLocale } from "./src/shared/localized-page.js?v=20260920locale1";
+import { currentPageLanguageHref, initializeLocalizedPage, localizedPageHref, resolvePageLocale, setPageLocale } from "./src/shared/localized-page.js?v=20260920routes1";
 initializeLocalizedPage();
 ﻿import { readPageContext } from "./src/runtime/page-context.js";
 
@@ -4226,9 +4226,7 @@ function makePublicDriverId(playerId) {
   return `drv_${sha1(playerId).slice(0, 12)}`;
 }
 function withPageParams(href) {
-  const url = new URL(href, window.location.href);
-  if (currentLang === "ru") url.searchParams.set("lang", "ru");
-  else url.searchParams.delete("lang");
+  const url = new URL(localizedPageHref(href, currentLang, window.location));
   if (IS_LOCAL_DEV_HOST) {
     ["topApiBase", "hourlyApiBase", "serverStatusUrl", "topDataBase", "data"].forEach(key => {
       const value = pageParams.get(key);
@@ -5303,7 +5301,9 @@ function getNewsListHref() {
 function getNewsArticleHref(slug) {
   const baseHref = getNewsListHref();
   if (!slug) return baseHref;
-  return `${baseHref}?slug=${encodeURIComponent(slug)}`;
+  const url = new URL(baseHref, window.location.href);
+  url.searchParams.set("slug", slug);
+  return `${url.pathname}${url.search}${url.hash}`;
 }
 
 function getRequestedNewsSlug() {
@@ -8316,7 +8316,9 @@ function bindLanguageButtons() {
       if (!translations[lang] || lang === currentLang) return;
       currentLang = lang;
       setPageLocale(currentLang, { documentRef: document, windowRef: window });
-      rerenderUI();
+      const target = currentPageLanguageHref(currentLang, window.location);
+      if (target !== window.location.href) window.location.assign(target);
+      else rerenderUI();
     });
   });
 }

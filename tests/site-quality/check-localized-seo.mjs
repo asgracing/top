@@ -2,7 +2,7 @@ import assert from "node:assert/strict";
 import { readFile } from "node:fs/promises";
 import { resolve, posix } from "node:path";
 import vm from "node:vm";
-import { pages } from "../../scripts/seo/pages.mjs";
+import { pages, runtimePages } from "../../scripts/seo/pages.mjs";
 import { nodes } from "../../scripts/seo/html-source.mjs";
 const root = resolve(import.meta.dirname, "../..");
 const sitemap = await readFile(resolve(root, "sitemap.xml"), "utf8");
@@ -56,15 +56,21 @@ for (const path of paths) {
   assert(parsed.some(n => n.attrs["http-equiv"] === "refresh" && n.attrs.content?.includes(new URL(target).pathname)), legacy);
   assert(!sitemap.includes(`<loc>https://asgracing.ru/${legacy}</loc>`), legacy);
 }
-for (const path of ["driver/index.html", "cars/index.html", "races/index.html", "fun-stats/index.html", "news/index.html", "bans/index.html"]) {
-  const file = `ru/${path}`;
-  const html = await readFile(resolve(root, file), "utf8");
-  const parsed = nodes(html);
-  const targetPath = `/${path.replace("index.html", "")}`;
-  assert.equal(parsed.find(n => n.attrs.rel === "canonical")?.attrs.href, `https://asgracing.ru${targetPath}`, file);
-  assert(parsed.some(n => n.attrs.name === "robots" && n.attrs.content === "noindex, follow"), file);
-  assert(html.includes('params.set("lang","ru")'), `${file}: redirect must preserve the RU language`);
-  assert(html.includes("location.search"), `${file}: redirect must preserve entity/filter parameters`);
+for (const page of runtimePages) {
+  const en = await readFile(resolve(root, page.path), "utf8");
+  for (const lang of ["en", "ru"]) {
+    const file = lang === "en" ? page.path : `ru/${page.path}`;
+    const html = await readFile(resolve(root, file), "utf8");
+    const parsed = nodes(html);
+    const canonical = `https://asgracing.ru/${lang === "en" ? page.path.replace("index.html", "") : `ru/${page.path.replace("index.html", "")}`}`;
+    assert.equal(parsed.find(n => n.name === "html")?.attrs["data-page-language"], lang, file);
+    assert.equal(parsed.find(n => n.attrs.rel === "canonical")?.attrs.href, canonical, file);
+    assert(!parsed.some(n => n.attrs["http-equiv"] === "refresh"), `${file}: localized runtime page must not redirect`);
+    assert(parsed.some(n => n.name === "a" && n.attrs["data-lang"] === lang && n.attrs["aria-current"] === "page"), `${file}: language route link`);
+    const signature = (text, pageUrl) => nodes(text).filter(n => n.name === "script" && n.attrs.src).map(n => new URL(n.attrs.src, pageUrl).pathname);
+    assert.deepEqual(signature(html, canonical), signature(en, `https://asgracing.ru/${page.path.replace("index.html", "")}`), `${file}: shared runtime scripts`);
+    if (page.sitemap) assert(sitemap.includes(`<loc>${canonical}</loc>`), file);
+  }
 }
 assert(!sitemap.includes("<loc>https://asgracing.ru/driver/</loc>"));
 for (const path of ["account/index.html", "portal-ops/index.html"]) assert((await readFile(resolve(root, path), "utf8")).includes("noindex"), path);
@@ -80,4 +86,4 @@ for (const path of ["legal.js", "hourly/legal.js"]) {
     assert.equal(actual, lang, path);
   }
 }
-console.log(`Localized SEO passed: clean RU URLs, ${pages.length + 2} pages, compatibility redirects and stable resource URLs`);
+console.log(`Localized SEO passed: clean RU URLs, ${pages.length + runtimePages.length + 2} pages, compatibility redirects and stable resource URLs`);

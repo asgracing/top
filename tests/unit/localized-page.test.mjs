@@ -1,9 +1,14 @@
 import test from "node:test";
 import assert from "node:assert/strict";
 import {
+  applyLocalizedNavigation,
+  currentPageLanguageHref,
   detectVisitorLocale,
   initializeLocalizedPage,
   languageHref,
+  legacyMalformedLanguageHref,
+  localizedPageHref,
+  localizedPageRoute,
   pageLanguage,
   readLocalePreference,
   resolvePageLocale,
@@ -32,6 +37,55 @@ function link(lang, href) {
 
 test("language links retain entity/filter parameters and anchor, dropping only lang", () => {
   assert.equal(languageHref("/ru/teams/", { href: "https://asgracing.ru/teams/?tab=teams&lang=en#ranking", search: "?tab=teams&lang=en", hash: "#ranking" }), "https://asgracing.ru/ru/teams/?tab=teams#ranking");
+});
+
+test("localized page registry maps public EN and RU routes", () => {
+  assert.equal(localizedPageRoute("/races/")?.id, "races");
+  assert.equal(localizedPageRoute("/ru/hourly/championship/")?.id, "championship");
+  assert.equal(localizedPageRoute("/account/"), null);
+});
+
+test("localized page URLs preserve entity state without retaining lang", () => {
+  const locationRef = { href: "https://asgracing.ru/driver/?id=drv_example&lang=en#summary" };
+  assert.equal(
+    currentPageLanguageHref("ru", locationRef),
+    "https://asgracing.ru/ru/driver/?id=drv_example#summary"
+  );
+  assert.equal(
+    localizedPageHref("/news/?slug=safety-rating-server-access&lang=ru", "en", locationRef),
+    "https://asgracing.ru/news/?slug=safety-rating-server-access"
+  );
+});
+
+test("legacy malformed language URLs recover the page parameter", () => {
+  assert.equal(
+    legacyMalformedLanguageHref({ href: "https://asgracing.ru/news/?lang=ru?slug=safety-rating-server-access" }),
+    "https://asgracing.ru/ru/news/?slug=safety-rating-server-access"
+  );
+  assert.equal(
+    legacyMalformedLanguageHref({ href: "https://asgracing.ru/news/?slug=safety-rating-server-access" }),
+    null
+  );
+});
+
+test("unregistered utility pages retain query based language compatibility", () => {
+  const locationRef = { href: "https://asgracing.ru/account/settings/?section=privacy" };
+  assert.equal(
+    currentPageLanguageHref("ru", locationRef),
+    "https://asgracing.ru/account/settings/?section=privacy&lang=ru"
+  );
+});
+
+test("localized navigation rewrites the brand and known internal links only", () => {
+  const links = [
+    { value: "/", getAttribute: () => "/", set href(value) { this.value = value; } },
+    { value: "/driver/?id=drv_example", getAttribute: () => "/driver/?id=drv_example", set href(value) { this.value = value; } },
+    { value: "https://discord.gg/example", getAttribute: () => "https://discord.gg/example", set href(value) { this.value = value; } }
+  ];
+  applyLocalizedNavigation("ru", { querySelectorAll: () => links }, { location: { href: "https://asgracing.ru/races/", origin: "https://asgracing.ru" } });
+  assert.equal(links[0].value, "https://asgracing.ru/ru/");
+  assert.equal(links[1].value, "https://asgracing.ru/ru/driver/?id=drv_example");
+  assert.equal(links[2].value, "https://discord.gg/example");
 });
 
 test("page language is opt-in", () => {

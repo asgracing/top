@@ -1,5 +1,5 @@
 import { createAuthHeaderController } from "../../features/auth/header-auth.js?v=20260828mod1";
-import { resolvePageLocale, setPageLocale } from "../../shared/localized-page.js?v=20260920locale1";
+import { applyLocalizedNavigation, currentPageLanguageHref, resolvePageLocale, setPageLocale } from "../../shared/localized-page.js?v=20260920routes1";
 import {
   createIdempotencyKey,
   normalizeModerationSearch,
@@ -101,7 +101,7 @@ function applyCopy() {
     button.classList.toggle("active", button.dataset.lang === language());
     button.addEventListener("click", () => {
       setPageLocale(button.dataset.lang, { documentRef: document, windowRef: window });
-      location.reload();
+      location.assign(currentPageLanguageHref(button.dataset.lang, window.location));
     });
   });
 }
@@ -233,6 +233,7 @@ async function submit(event) {
   } finally { button.disabled = false; }
 }
 
+applyLocalizedNavigation(language(), document, window);
 applyCopy();
 document.getElementById("moderation-gate").textContent = t("checking");
 document.querySelectorAll("[data-action]").forEach(tab => tab.addEventListener("click", () => {

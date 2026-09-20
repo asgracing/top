@@ -1,7 +1,7 @@
 import { readFile, writeFile, mkdir } from "node:fs/promises";
 import { dirname, resolve } from "node:path";
 import vm from "node:vm";
-import { pages } from "./seo/pages.mjs";
+import { pages, runtimePages } from "./seo/pages.mjs";
 import { nodes, edit, escape, setAttribute } from "./seo/html-source.mjs";
 
 const root = resolve(import.meta.dirname, "..");
@@ -13,15 +13,8 @@ const localizedPath = (path, lang) => `/${lang === "ru" ? `ru/${cleanPath(path)}
 const urlFor = (path, lang) => `${origin}${localizedPath(path, lang)}`;
 const outputPath = (path, lang) => lang === "ru" ? `ru/${path}` : path;
 const legacyRuPath = path => path.replace(/index\.html$/, "index.ru.html");
-const allPaths = [...pages.map(p => p.path), "join/index.html", "about/index.html"];
-const runtimeCompatibilityPaths = [
-  "driver/index.html",
-  "cars/index.html",
-  "races/index.html",
-  "fun-stats/index.html",
-  "news/index.html",
-  "bans/index.html"
-];
+const allPaths = [...pages.map(p => p.path), ...runtimePages.map(p => p.path), "join/index.html", "about/index.html"];
+const legacyLocalizedPaths = [...pages.map(p => p.path), "join/index.html", "about/index.html"];
 const translations = new Map();
 async function dictionary(path) {
   if (translations.has(path)) return translations.get(path);
@@ -144,6 +137,7 @@ for (const page of pages) {
       const values = { "championship-title": lang === "ru" ? "Чемпионат" : "Championship", "championship-status": lang === "ru" ? "Чемпионат" : "Championship", "championship-description": lang === "ru" ? "Загружаем текущий чемпионат…" : "Loading the current championship…" };
       html = edit(html, nodes(html).filter(n => n.attrs.id in values).map(n => ({ start: n.openEnd, end: n.close, value: values[n.attrs.id] })));
     }
+    html = html.replace("localized-page.js?v=20260919seo3", "localized-page.js?v=20260920routes1");
     html = metadata(html, page, lang);
     const afterId = { home: "combined-stats-shell", hourly: "recent-races", championship: "championship-race-results-section" }[page.key];
     if (afterId) {
@@ -153,6 +147,22 @@ for (const page of pages) {
     } else {
       html = html.replace(/<main\b[^>]*>/, match => match + intro(page, lang));
     }
+    await output(outputPath(page.path, lang), html);
+  }
+}
+
+for (const config of runtimePages) {
+  const source = (await readFile(resolve(root, config.path), "utf8")).replaceAll("\r\n", "\n")
+    .replace(/\s*<!-- seo-head:start -->[\s\S]*?<!-- seo-head:end -->/g, "");
+  const dict = await dictionary(config.dictionary);
+  const page = {
+    ...config,
+    en: { title: dict.en[config.titleKey], description: dict.en[config.descriptionKey] },
+    ru: { title: dict.ru[config.titleKey], description: dict.ru[config.descriptionKey] }
+  };
+  for (const lang of ["ru"]) {
+    let html = translate(source, page, lang, dict[lang]);
+    html = metadata(html, page, lang);
     await output(outputPath(page.path, lang), html);
   }
 }
@@ -173,21 +183,17 @@ for (const [key, versions] of Object.entries(guideCopy)) {
     const c = page[lang], ru = lang === "ru";
     const links = [["index.html", "ASG Racing"], ["hourly/index.html", ru ? "Расписание" : "Race schedule"], ["teams/index.html", ru ? "Клубы и команды" : "Clubs & teams"], ["join/index.html", ru ? "Как участвовать" : "How to join"], ["about/index.html", ru ? "О сообществе" : "About"]];
     let html = `<!DOCTYPE html>\n<html lang="${lang}" data-page-language="${lang}">\n<head>\n<meta charset="UTF-8">\n<meta name="viewport" content="width=device-width, initial-scale=1">\n<title>${escape(c.title)}</title>\n<link rel="icon" href="/favicon.ico">\n<link rel="stylesheet" href="/styles/tokens.css">\n<link rel="stylesheet" href="/styles/base.css?v=20260917seo1">\n</head>\n<body>\n<main class="seo-guide">\n<nav aria-label="${ru ? "Навигация" : "Navigation"}">${links.map(([p, text]) => `<a href="${new URL(urlFor(p, lang)).pathname}">${text}</a>`).join(" · ")}</nav>\n<nav aria-label="Language">${["en", "ru"].map(l => `<a class="lang-btn" data-lang="${l}" href="${new URL(urlFor(page.path, l)).pathname}" hreflang="${l}"${lang === l ? ' aria-current="page"' : ""}>${l === "ru" ? "Русский" : "English"}</a>`).join(" · ")}</nav>\n<h1>${escape(c.heading)}</h1>\n<p>${escape(c.text)}</p>\n${c.sections.map(([h, p]) => `<section><h2>${escape(h)}</h2><p>${escape(p)}</p></section>`).join("\n")}\n<p><a href="${new URL(urlFor("hourly/index.html", lang)).pathname}">${ru ? "Выбрать гонку" : "Find your next race"}</a> · <a href="${new URL(urlFor("index.html", lang)).pathname}#rules">${ru ? "Гоночные правила" : "Racing rules"}</a></p>\n</main>\n<script type="module">import { initializeLocalizedPage } from "/src/shared/localized-page.js?v=20260919seo3"; initializeLocalizedPage();</script>\n</body>\n</html>\n`;
+    html = html.replace("localized-page.js?v=20260919seo3", "localized-page.js?v=20260920routes1");
     html = metadata(html, page, lang);
     await output(outputPath(page.path, lang), html);
   }
 }
-for (const path of allPaths) {
+for (const path of legacyLocalizedPaths) {
   const target = urlFor(path, "ru");
   const targetPath = new URL(target).pathname;
   const legacy = `<!DOCTYPE html>\n<html lang="ru">\n<head>\n<meta charset="UTF-8">\n<meta name="viewport" content="width=device-width, initial-scale=1">\n<title>Страница перемещена | ASG Racing</title>\n<meta name="robots" content="noindex, follow">\n<link rel="canonical" href="${target}">\n<meta http-equiv="refresh" content="0; url=${targetPath}">\n<script>location.replace(${JSON.stringify(targetPath)} + location.search + location.hash);</script>\n</head>\n<body><p><a href="${targetPath}">Страница перемещена</a></p></body>\n</html>\n`;
   await output(legacyRuPath(path), legacy);
 }
-for (const path of runtimeCompatibilityPaths) {
-  const targetPath = `/${cleanPath(path)}`;
-  const redirect = `<!DOCTYPE html>\n<html lang="ru">\n<head>\n<meta charset="UTF-8">\n<meta name="viewport" content="width=device-width, initial-scale=1">\n<title>Переход на страницу | ASG Racing</title>\n<meta name="robots" content="noindex, follow">\n<link rel="canonical" href="${origin}${targetPath}">\n<meta http-equiv="refresh" content="0; url=${targetPath}?lang=ru">\n<script>const target=new URL(${JSON.stringify(targetPath)},location.origin);const params=new URLSearchParams(location.search);params.set("lang","ru");target.search=params;target.hash=location.hash;location.replace(target);</script>\n</head>\n<body><p><a href="${targetPath}?lang=ru">Перейти на страницу</a></p></body>\n</html>\n`;
-  await output(`ru/${path}`, redirect);
-}
-const generatedPageCount = pages.length + 2;
-const summary = `${generatedPageCount} pages + ${allPaths.length} compatibility redirects + ${runtimeCompatibilityPaths.length} runtime redirects`;
+const generatedPageCount = pages.length + runtimePages.length + 2;
+const summary = `${generatedPageCount} pages + ${legacyLocalizedPaths.length} compatibility redirects`;
 console.log(check ? `Localized HTML is current (${summary})` : `Localized HTML generated (${summary})`);

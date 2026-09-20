@@ -93,6 +93,8 @@ async function run(routePath, lang, width, before = false) {
     assert.equal(await page.locator("html").getAttribute("lang"), lang, routePath);
     assert.equal(await page.locator("html").getAttribute("data-page-language"), lang, routePath);
     assert.equal(await page.locator('a.lang-btn[aria-current="page"]').getAttribute("data-lang"), lang);
+    const brand = page.locator("a.top-nav-brand").first();
+    if (await brand.count()) assert.equal(new URL(await brand.getAttribute("href"), page.url()).pathname, lang === "ru" ? "/ru/" : "/", `${routePath}: localized brand target`);
     if (lang === "ru") assert.match(await page.title(), /[А-Яа-яЁё]/);
     if (routePath.startsWith("/hourly/") && !routePath.includes("championship")) {
       assert.match(await page.locator("#hourly-upcoming-v2-title").innerText(), /Monza/);
@@ -120,7 +122,7 @@ async function run(routePath, lang, width, before = false) {
     const overflow = await page.evaluate(() => document.documentElement.scrollWidth > innerWidth + 2);
     assert.equal(overflow, false, `horizontal overflow ${routePath} ${width}`);
   }
-  const report = { routePath, lang, width, before, errors, missing, initialBackend, title: await page.title() };
+  const report = { routePath, lang, width, before, errors, missing, initialBackend, title: await page.title(), url: page.url() };
   reports.push(report);
   await context.close();
   return report;
@@ -147,6 +149,13 @@ try {
     assert.deepEqual(normalize(ru.initialBackend), normalize(current.initialBackend), `RU backend request contract: ${path}`);
   }
   for (const path of ["/join/", "/about/"]) for (const lang of ["en", "ru"]) await run(lang === "ru" ? `/ru${path}` : path, lang, 390);
+  for (const path of ["/races/", "/cars/", "/fun-stats/", "/news/", "/bans/"]) {
+    for (const lang of ["en", "ru"]) await run(lang === "ru" ? `/ru${path}` : path, lang, 390);
+  }
+  for (const lang of ["en", "ru"]) await run(`${lang === "ru" ? "/ru" : ""}/driver/?id=drv_fixture`, lang, 390);
+  const repairedNews = await run("/news/?lang=ru?slug=safety-rating-server-access", "ru", 390);
+  assert.equal(new URL(repairedNews.url).pathname, "/ru/news/", "legacy malformed news language URL is repaired");
+  assert.equal(new URL(repairedNews.url).searchParams.get("slug"), "safety-rating-server-access", "legacy malformed news slug is retained");
   console.log("Browser localization and backend request regression passed");
 } finally {
   await fs.writeFile(path.join(output, "report.json"), JSON.stringify(reports, null, 2));

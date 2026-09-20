@@ -1,13 +1,345 @@
 <!DOCTYPE html>
-<html lang="ru">
+<html lang="ru" data-page-language="ru">
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1">
-<title>Переход на страницу | ASG Racing</title>
-<meta name="robots" content="noindex, follow">
-<link rel="canonical" href="https://asgracing.ru/races/">
-<meta http-equiv="refresh" content="0; url=/races/?lang=ru">
-<script>const target=new URL("/races/",location.origin);const params=new URLSearchParams(location.search);params.set("lang","ru");target.search=params;target.hash=location.hash;location.replace(target);</script>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta name="yandex-metrika-id" content="107697834" />
+  <meta name="legal-base-path" content="/" />
+
+  <title>ASG Racing Последние гонки | Результаты Assetto Corsa Competizione</title>
+  <meta
+    name="description"
+    content="Последние результаты гонок ASG Racing ACC: победитель, трасса, лучший круг и полный порядок финиша."
+  />
+  <meta
+    name="keywords"
+    content="ASG Racing, ACC race results, Assetto Corsa Competizione races, finishing order, best lap, race archive"
+  />
+
+  <meta name="yandex-verification" content="c76adf2164af15e6" />
+  <meta name="google-site-verification" content="Q9-gOMKl6WbBLelP-Vl__xxrrF2Qyrm47kdie0mGxz8" />
+
+  <meta name="robots" content="index, follow" />
+  <meta name="author" content="ASG Racing" />
+  <meta name="theme-color" content="#0b0f14" />
+
+  <link rel="canonical" href="https://asgracing.ru/ru/races/" />
+  <link rel="icon" href="/favicon.ico" sizes="any" />
+  <link rel="icon" type="image/png" sizes="32x32" href="/favicon-32x32.png" />
+  <link rel="icon" type="image/png" sizes="16x16" href="/favicon-16x16.png" />
+  <link rel="apple-touch-icon" href="/apple-touch-icon.png" />
+
+  <meta property="og:type" content="website" />
+  <meta property="og:url" content="https://asgracing.ru/ru/races/" />
+  <meta property="og:title" content="ASG Racing Последние гонки | Результаты Assetto Corsa Competizione" />
+  <meta
+    property="og:description"
+    content="Последние результаты гонок ASG Racing ACC: победитель, трасса, лучший круг и полный порядок финиша."
+  />
+  <meta property="og:image" content="https://asgracing.ru/social/og.jpg" />
+  <meta property="og:image:alt" content="ASG Racing race archive preview" />
+  <meta property="og:site_name" content="ASG Racing" />
+  <meta property="og:locale" content="ru_RU" />
+
+  <meta name="twitter:card" content="summary_large_image" />
+  <meta name="twitter:title" content="ASG Racing Последние гонки | Результаты Assetto Corsa Competizione" />
+  <meta
+    name="twitter:description"
+    content="Последние результаты гонок ASG Racing ACC: победитель, трасса, лучший круг и полный порядок финиша."
+  />
+  <meta name="twitter:image" content="https://asgracing.ru/social/og.jpg" />
+  <meta name="twitter:image:alt" content="ASG Racing race archive preview" />
+
+  <link rel="stylesheet" href="/styles/tokens.css?v=20260713r11tokens1" />
+  <link rel="stylesheet" href="/styles/base.css?v=20260726staticfallback1" />
+  <link rel="stylesheet" href="/styles/components/site-background.css?v=20260713r11background1" />
+  <link rel="stylesheet" href="/styles/components/top-navigation.css?v=20260713r11nav1" />
+  <link rel="stylesheet" href="/styles/components/language-switch.css?v=20260713r11lang1" />
+  <link rel="stylesheet" href="/styles/components/buttons.css?v=20260713r11buttons1" />
+  <link rel="stylesheet" href="/styles/components/hero-foundation.css?v=20260713r11hero1" />
+  <link rel="stylesheet" href="/styles/components/hero-actions.css?v=20260713r11heroactions1" />
+  <link rel="stylesheet" href="/styles/components/hero-stats.css?v=20260813driveraffiliations1" />
+  <link rel="stylesheet" href="/styles/components/server-sticky-layout.css?v=20260715r11serversticky1" />
+  <link rel="stylesheet" href="/styles/components/sections.css?v=20260813clublogos1" />
+  <link rel="stylesheet" href="/styles/components/support-widget.css?v=20260715r11support1" />
+  <link rel="stylesheet" href="/styles/components/table-controls.css?v=20260715r11tablecontrols1" />
+  <link rel="stylesheet" href="/styles/components/top-three.css?v=20260715r11topthree1" />
+  <link rel="stylesheet" href="/styles/components/tables.css?v=20260827racesserversearch1" />
+  <link rel="stylesheet" href="/styles/components/pagination.css?v=20260715r11pagination1" />
+  <link rel="stylesheet" href="/styles/components/modals.css?v=20260715r11modals1" />
+  <link rel="stylesheet" href="/styles/components/server-players-modal.css?v=20260715r11serverplayers1" />
+  <link rel="stylesheet" href="/styles/components/today-stats-modal.css?v=20260715r11todaystats1" />
+  <link rel="stylesheet" href="/styles/components/activity-controls.css?v=20260715r11activitycontrols1" />
+  <link rel="stylesheet" href="/styles/components/activity-summary.css?v=20260715r11activitysummary1" />
+  <link rel="stylesheet" href="/styles/components/hourly-event-modal.css?v=20260715r11hourlymodal1" />
+  <link rel="stylesheet" href="/styles/components/driver-day-modal.css?v=20260813driveraffiliations1" />
+  <link rel="stylesheet" href="/styles/components/footer.css?v=20260720topguide1" />
+  <link rel="stylesheet" href="/styles/utilities.css?v=20260715r12states1" />
+  <link rel="stylesheet" href="/styles/responsive.css?v=20260813driveraffiliations1" />
+  <link rel="stylesheet" href="/styles.css?v=20260713r11css1" />
+  <link rel="stylesheet" href="/legal.css" />
+  <link rel="stylesheet" href="/styles/components/responsive-accessibility.css?v=20260715r13a11y1" />
+  <!-- seo-head:start -->
+  <link rel="stylesheet" href="/styles/components/seo-content.css?v=20260919seo3">
+  <link rel="alternate" hreflang="en" href="https://asgracing.ru/races/">
+  <link rel="alternate" hreflang="ru-RU" href="https://asgracing.ru/ru/races/">
+  <link rel="alternate" hreflang="x-default" href="https://asgracing.ru/races/">
+  <!-- seo-head:end -->
 </head>
-<body><p><a href="/races/?lang=ru">Перейти на страницу</a></p></body>
+<body id="top" class="monza-bg-page">
+  <div class="site-video-bg" aria-hidden="true">
+    <video
+      class="site-bg-video"
+      muted
+      playsinline
+      preload="none"
+    data-bg-options="/media/background.mp4?v=20260715r14media1|/media/background_nurb24h.mp4?v=20260715r14media1|/media/background2607.mp4?v=20260726media1"
+    ></video>
+  </div>
+  <div class="site-video-overlay" aria-hidden="true"></div>
+
+  <nav class="top-nav" id="top-nav">
+    <div class="top-nav-inner">
+      <a class="top-nav-brand" href="/ru/" aria-label="Главная ASG Racing" data-i18n-aria-label="homeAriaLabel">
+        <img class="top-nav-brand-logo" src="/social/asg.png" alt="" />
+        <span class="top-nav-brand-text">ASG Racing</span>
+      </a>
+
+      <div class="top-nav-socials">
+        <a class="top-nav-link top-nav-link-primary nav-social nav-social-discord" href="https://discord.gg/cEPFHXXtTC" target="_blank" rel="noopener noreferrer" aria-label="Discord" title="Discord">
+          <img class="social-icon" src="/social/discord.svg" alt="" />
+        </a>
+        <a class="top-nav-link top-nav-link-primary nav-social nav-social-telegram" href="https://t.me/+JUymrENgddcyMTdi" target="_blank" rel="noopener noreferrer" aria-label="Telegram" title="Telegram">
+          <img class="social-icon" src="/social/telegram.svg" alt="" />
+        </a>
+        <a class="top-nav-link top-nav-link-primary nav-social nav-social-tiktok" href="https://www.tiktok.com/@asgracingacc" target="_blank" rel="noopener noreferrer" aria-label="TikTok" title="TikTok">
+          <img class="social-icon" src="/social/tiktok.svg" alt="" />
+        </a>
+        <a class="top-nav-link top-nav-link-primary nav-social nav-social-youtube" href="https://www.youtube.com/channel/UCwVcW5iUFxcT5Z8AHVqPhTg" target="_blank" rel="noopener noreferrer" aria-label="YouTube" title="YouTube">
+          <img class="social-icon" src="/social/youtube.svg" alt="" />
+        </a>
+        <a class="top-nav-link top-nav-link-primary nav-social nav-social-twitch" href="https://www.twitch.tv/asgracing" target="_blank" rel="noopener noreferrer" aria-label="Twitch" title="Twitch">
+          <img class="social-icon" src="/social/twitch.svg" alt="" />
+        </a>
+      </div>
+
+      <div class="top-nav-center">
+        <div class="top-nav-menu">
+          <a class="top-nav-link top-nav-link-secondary top-nav-link-special" href="/ru/hourly/" data-i18n="btnSpecialEvent" data-nav-item="true">Спец. ивент</a>
+          <a class="top-nav-link top-nav-link-secondary top-nav-link-championship" href="/ru/hourly/championship/" id="top-nav-championship-link" data-i18n="btnChampionshipEvent" data-nav-item="true">Чемпионат</a>
+          <a class="top-nav-link top-nav-link-secondary top-nav-link-rules" href="/ru/#rules" data-i18n="btnRules" data-nav-item="true">Правила</a>
+          <a class="top-nav-link top-nav-link-secondary" href="/ru/news/" data-i18n="btnNews" data-nav-item="true">Новости</a>
+          <div class="top-nav-group is-current" data-nav-item="true">
+            <button class="top-nav-link top-nav-link-secondary top-nav-group-toggle" type="button" aria-expanded="false" aria-haspopup="true">
+              <span data-i18n="navGroupRacing">Гонки</span>
+              <span class="top-nav-group-caret" aria-hidden="true">▾</span>
+            </button>
+            <div class="top-nav-group-menu" hidden>
+              <a class="top-nav-group-link is-current" href="/ru/races/" data-i18n="btnLastRaces">Архив гонок</a>
+            </div>
+          </div>
+          <div class="top-nav-group" data-nav-item="true">
+            <button class="top-nav-link top-nav-link-secondary top-nav-group-toggle" type="button" aria-expanded="false" aria-haspopup="true">
+              <span data-i18n="navGroupStats">Статистика</span>
+              <span class="top-nav-group-caret" aria-hidden="true">▾</span>
+            </button>
+            <div class="top-nav-group-menu" hidden>
+              <a class="top-nav-group-link" href="/ru/cars/" data-i18n="btnCars">Машины</a>
+              <a class="top-nav-group-link" href="/ru/fun-stats/" data-i18n="btnFunStats">Фан-стата</a>
+              <a class="top-nav-group-link" href="/ru/#championship" data-i18n="btnChampionship">Рейтинг</a>
+              <a class="top-nav-group-link" href="/ru/#bestlaps" data-i18n="btnBestLaps">Лучшие круги</a>
+              <a class="top-nav-group-link" href="/ru/#worst-safety" data-i18n="btnWorstSafety">Safety Rating</a>
+              <a class="top-nav-group-link" href="/ru/#clubs-teams-stats" data-i18n="teamsRatingLink">Клубы и команды</a>
+              <a class="top-nav-group-link" href="/ru/bans/" data-i18n="btnBans">Баны</a>
+            </div>
+          </div>
+          <div class="top-nav-group" data-nav-item="true">
+            <button class="top-nav-link top-nav-link-secondary top-nav-group-toggle" type="button" aria-expanded="false" aria-haspopup="true">
+              <span data-i18n="navGroupCommunity">Сообщество</span>
+              <span class="top-nav-group-caret" aria-hidden="true">▾</span>
+            </button>
+            <div class="top-nav-group-menu" hidden>
+              <a class="top-nav-group-link" href="/ru/teams/?tab=clubs" data-i18n="teamsRatingLink">Клубы и команды</a>
+              <a class="top-nav-group-link" href="/ru/community/" data-i18n="btnCommunity">Сообщество</a>
+              <a class="top-nav-group-link" href="/ru/#about-server" data-i18n="btnAboutServer">О сервере</a>
+            </div>
+          </div>
+          <div class="top-nav-more" id="top-nav-more">
+            <button
+              class="top-nav-link top-nav-link-secondary top-nav-more-toggle"
+              id="top-nav-more-toggle"
+              type="button"
+              aria-expanded="false"
+              aria-haspopup="true"
+              aria-label="Открыть дополнительную навигацию"
+              data-i18n-aria-label="navMoreAriaLabel"
+            >
+              <span class="top-nav-more-icon" aria-hidden="true">☰</span>
+              <span class="top-nav-more-text" data-i18n="navMore">Ещё</span>
+            </button>
+            <div class="top-nav-more-menu" id="top-nav-more-menu" hidden></div>
+          </div>
+        </div>
+      </div>
+
+      <div class="top-nav-actions">
+        <div class="lang-switch top-nav-lang" aria-label="Переключение языка" data-i18n-aria-label="langSwitcherLabel">
+          <a class="lang-btn" data-lang="en" aria-label="English" href="/races/" hreflang="en">
+            <span class="lang-flag"><img src="/social/cif--gb.svg" alt="" /></span>
+          </a>
+          <a class="lang-btn active" data-lang="ru" aria-label="Russian" href="/ru/races/" hreflang="ru" aria-current="page">
+            <span class="lang-flag"><img src="/social/cif--ru.svg" alt="" /></span>
+          </a>
+        </div>
+      </div>
+    </div>
+  </nav>
+
+  <div class="container">
+    <section class="hero">
+      <div class="hero-card hero-card-page">
+        <div class="page-hero-copy">
+          <div class="eyebrow" data-i18n="racesEyebrow">Архив гонок</div>
+          <h1 data-i18n="racesPageTitle">Последние гонки</h1>
+          <p class="hero-subtitle page-hero-subtitle" data-i18n="racesPageSubtitle">Последние гоночные сессии ASG Racing. Нажмите на строку, чтобы открыть полный протокол.</p>
+
+          <div class="page-hero-stats" id="races-summary-cards">
+            <div class="mini-stat">
+              <div class="mini-label" data-i18n="racesSummaryTotal">Всего гонок</div>
+              <div class="mini-value" id="races-total-count">—</div>
+            </div>
+            <div class="mini-stat">
+              <div class="mini-label" data-i18n="racesSummaryAvgActive">Ср. активных пилотов</div>
+              <div class="mini-value" id="races-avg-active">—</div>
+            </div>
+            <div class="mini-stat">
+              <div class="mini-label" data-i18n="racesSummaryAvgOvertakes">Ср. обгонов</div>
+              <div class="mini-value" id="races-avg-overtakes">—</div>
+            </div>
+            <div class="mini-stat">
+              <div class="mini-label" data-i18n="racesSummaryTopWinner">Лучший победитель</div>
+              <div class="mini-value" id="races-top-winner">—</div>
+            </div>
+            <div class="mini-stat">
+              <div class="mini-label" data-i18n="racesSummaryLatestWinner">Последний победитель</div>
+              <div class="mini-value" id="races-latest-winner">—</div>
+            </div>
+            <div class="mini-stat">
+              <div class="mini-label" data-i18n="racesSummaryLastWinnerBestLap">Лучший круг победителя</div>
+              <div class="mini-value" id="races-last-winner-best-lap">—</div>
+              <div class="mini-note" id="races-last-winner-best-lap-note">—</div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section class="section">
+      <div class="section-header">
+        <div>
+          <h2 class="section-title" data-i18n="racesTableTitle">Результаты гонок</h2>
+          <p class="section-subtitle section-subtitle-hint" data-i18n="racesTableSubtitle">Клик по строке открывает окно деталей. Имя открывает полный профиль.</p>
+        </div>
+        <input
+          class="search-input races-header-search"
+          id="races-search"
+          type="search"
+          autocomplete="off"
+          placeholder="Search track, server, winner, date or time..."
+          aria-label="Поиск по результатам гонок"
+          data-i18n-aria-label="racesSearchAriaLabel"
+        />
+      </div>
+
+      <div class="table-card">
+        <div class="table-wrap" id="races-table">
+          <div class="loading" role="status" aria-live="polite" data-i18n="loadingRaces">Загрузка гонок...</div>
+        </div>
+        <div class="pagination-wrap" id="races-pagination-wrap" style="display:none;">
+          <div class="pagination-info" id="races-pagination-info"></div>
+          <div class="pagination" id="races-pagination"></div>
+        </div>
+      </div>
+    </section>
+
+    <div class="modal-overlay" id="race-results-modal" aria-hidden="true">
+      <div class="modal-card modal-card-race" role="dialog" aria-modal="true" aria-labelledby="race-results-title">
+        <button class="modal-close" id="race-results-close" type="button" aria-label="Закрыть" data-i18n-aria-label="closeLabel">✕</button>
+
+        <div class="modal-header">
+          <div>
+            <div class="eyebrow" data-i18n="raceModalEyebrow">Детали гонки</div>
+            <h3 id="race-results-title" class="modal-title">—</h3>
+            <p class="modal-subtitle" id="race-results-subtitle">—</p>
+          </div>
+        </div>
+
+        <div class="race-modal-summary" id="race-modal-summary"></div>
+
+        <div class="table-card table-card-modal">
+          <div class="table-wrap" id="race-results-table"></div>
+        </div>
+      </div>
+    </div>
+
+    <div class="modal-overlay" id="elo-modal" aria-hidden="true">
+      <div class="modal-card modal-card-elo" role="dialog" aria-modal="true" aria-labelledby="elo-modal-title">
+        <button class="modal-close" id="elo-modal-close" type="button" aria-label="Закрыть" data-i18n-aria-label="closeLabel">✕</button>
+
+        <div class="modal-header">
+          <div>
+            <div class="eyebrow" data-i18n="eloModalEyebrow">Сила пилота</div>
+            <h3 id="elo-modal-title" class="modal-title">ELO rating</h3>
+            <p class="modal-subtitle" id="elo-modal-subtitle" data-i18n="eloModalSubtitle">История изменения рейтинга по засчитанным гонкам.</p>
+          </div>
+        </div>
+
+        <div id="elo-modal-body"></div>
+      </div>
+    </div>
+
+    <div class="modal-overlay" id="safety-modal" aria-hidden="true">
+      <div class="modal-card modal-card-elo" role="dialog" aria-modal="true" aria-labelledby="safety-modal-title">
+        <button class="modal-close" id="safety-modal-close" type="button" aria-label="Закрыть" data-i18n-aria-label="closeLabel">✕</button>
+
+        <div class="modal-header">
+          <div>
+            <div class="eyebrow" data-i18n="safetyModalEyebrow">Безопасность пилота</div>
+            <h3 id="safety-modal-title" class="modal-title">Safety Rating</h3>
+            <p class="modal-subtitle" id="safety-modal-subtitle" data-i18n="safetyModalSubtitle">История изменения Safety Rating по зачтенным гонкам.</p>
+          </div>
+        </div>
+
+        <div id="safety-modal-body"></div>
+      </div>
+    </div>
+
+    <footer class="footer">
+      <div class="footer-inner">
+        <div class="footer-left">
+          <div class="footer-brand">ASG Racing ACC Leaderboard</div>
+          <div class="footer-text" data-i18n="footerText">Данные собираются из файлов результатов ACC Dedicated Server и публикуются через GitHub Pages.</div>
+        </div>
+
+        <div class="footer-links">
+          <a class="footer-social-link" href="https://discord.gg/cEPFHXXtTC" target="_blank" rel="noopener noreferrer" aria-label="Discord" title="Discord">
+            <img class="social-icon" src="/social/discord.svg" alt="" />
+          </a>
+          <a class="footer-social-link" href="https://t.me/+JUymrENgddcyMTdi" target="_blank" rel="noopener noreferrer" aria-label="Telegram" title="Telegram">
+            <img class="social-icon" src="/social/telegram.svg" alt="" />
+          </a>
+          <a class="footer-social-link" href="https://www.tiktok.com/@asgracingacc" target="_blank" rel="noopener noreferrer" aria-label="TikTok" title="TikTok">
+            <img class="social-icon" src="/social/tiktok.svg" alt="" />
+          </a>
+          <a class="footer-social-link" href="https://www.youtube.com/channel/UCwVcW5iUFxcT5Z8AHVqPhTg" target="_blank" rel="noopener noreferrer" aria-label="YouTube" title="YouTube">
+            <img class="social-icon" src="/social/youtube.svg" alt="" />
+          </a>
+        </div>
+      </div>
+    </footer>
+  </div>
+
+  <script src="/legal.js?v=20260920locale1" defer></script>
+    <script type="module" src="/src/entrypoints/races.js?v=20260920locale1"></script>
+</body>
 </html>

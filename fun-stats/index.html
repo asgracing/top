@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="en" data-page-language="en">
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
@@ -79,6 +79,12 @@
   <link rel="stylesheet" href="../styles.css?v=20260713r11css1" />
   <link rel="stylesheet" href="../legal.css" />
   <link rel="stylesheet" href="../styles/components/responsive-accessibility.css?v=20260715r13a11y1" />
+  <!-- seo-head:start -->
+  <link rel="stylesheet" href="/styles/components/seo-content.css?v=20260919seo3">
+  <link rel="alternate" hreflang="en" href="https://asgracing.ru/fun-stats/">
+  <link rel="alternate" hreflang="ru-RU" href="https://asgracing.ru/ru/fun-stats/">
+  <link rel="alternate" hreflang="x-default" href="https://asgracing.ru/fun-stats/">
+  <!-- seo-head:end -->
 </head>
 <body id="top" class="monza-bg-page fun-stats-page">
   <div class="site-video-bg" aria-hidden="true">
@@ -178,12 +184,12 @@
 
       <div class="top-nav-actions">
         <div class="lang-switch top-nav-lang" aria-label="Language switcher" data-i18n-aria-label="langSwitcherLabel">
-          <button class="lang-btn" type="button" data-lang="en" aria-label="English">
+          <a class="lang-btn active" data-lang="en" aria-label="English" href="/fun-stats/" hreflang="en" aria-current="page">
             <span class="lang-flag"><img src="../social/cif--gb.svg" alt="" /></span>
-          </button>
-          <button class="lang-btn" type="button" data-lang="ru" aria-label="Russian">
+          </a>
+          <a class="lang-btn" data-lang="ru" aria-label="Russian" href="/ru/fun-stats/" hreflang="ru">
             <span class="lang-flag"><img src="../social/cif--ru.svg" alt="" /></span>
-          </button>
+          </a>
         </div>
       </div>
     </div>

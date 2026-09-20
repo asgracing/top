@@ -21,7 +21,7 @@
     <p><a class="btn btn-primary" href="/" id="not-found-home">Home</a></p>
   </main>
   <script type="module">
-    import { resolvePageLocale } from "/src/shared/localized-page.js?v=20260920locale1";
+    import { resolvePageLocale } from "/src/shared/localized-page.js?v=20260920routes1";
     const routeLanguage = location.pathname === "/ru" || location.pathname.startsWith("/ru/") ? "ru" : null;
     const language = routeLanguage || resolvePageLocale({ documentRef: document, windowRef: window }).language;
     const copy = language === "ru"
