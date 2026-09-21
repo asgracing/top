@@ -15,6 +15,9 @@ assert.equal(hourlyDraftEquals(approvedDraft,changedDraft),false);
 const legacyChampionship=normalizeHourlyState({available:true,tracks:[],events:[{occurrence_id:"championship_2099-07-25_2100"}]});
 assert.equal(legacyChampionship.events[0].editable,false);
 assert.equal(legacyChampionship.events[0].competition_mode,"championship");
+const standalone=normalizeHourlyState({available:true,tracks:[],events:[{occurrence_id:"hourly_2099-07-26_2000",race_format:"endurance",competition_mode:"standalone",editable:true,points_multiplier:10}]});
+assert.equal(standalone.events[0].editable,true);
+assert.equal(standalone.events[0].competition_mode,"standalone");
 
 const club={entity_type:"club",public_id:"clb_fixture0001",row_version:3,pending_revision:true,pending_logo:false};
 const approval=validateClubsCommand(club,"portal.entity.revision_decide:approved","","");
