@@ -1,4 +1,4 @@
-import { createAuthHeaderController } from "../../features/auth/header-auth.js?v=20260828mod1";
+import { createAuthHeaderController } from "../../features/auth/header-auth.js?v=20260921l2";
 import { applyLocalizedNavigation, currentPageLanguageHref, resolvePageLocale, setPageLocale } from "../../shared/localized-page.js?v=20260920routes1";
 import {
   createIdempotencyKey,

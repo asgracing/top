@@ -133,13 +133,14 @@ export function safeAvatarUrl(value) {
   }
 }
 
-export function safeDriverProfileUrl(value) {
+export function safeDriverProfileUrl(value, language = "en") {
   const raw = safeText(value, 512);
   if (!raw.startsWith("/driver/?id=")) return null;
   try {
     const url = new URL(raw, "https://asgracing.ru");
     if (url.origin !== "https://asgracing.ru" || url.pathname !== "/driver/") return null;
-    return `${url.pathname}${url.search}`;
+    const safeUrl = `${url.pathname}${url.search}`;
+    return language === "ru" ? `/ru${safeUrl}` : safeUrl;
   } catch {
     return null;
   }
@@ -448,7 +449,7 @@ export function createAuthHeaderController({
     }
     if (auth.driver?.profileUrl) {
       const profile = makeElement(documentRef, "a", "auth-header-menu-item", translate("profile"));
-      profile.href = auth.driver.profileUrl;
+      profile.href = safeDriverProfileUrl(auth.driver.profileUrl, currentLanguage(documentRef, windowRef));
       profile.setAttribute("role", "menuitem");
       menu.appendChild(profile);
     } else {

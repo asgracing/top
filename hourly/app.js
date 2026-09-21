@@ -3103,7 +3103,8 @@ function renderRaceDriverProfileLink(name, publicId, className = "driver-name") 
   const safeName = escapeHtml(name || "-");
   const resolvedPublicId = String(publicId || "").trim();
   if (!resolvedPublicId) return `<span class="${className}">${safeName}</span>`;
-  return `<a class="${className} race-driver-profile-link" href="/driver/?id=${encodeURIComponent(resolvedPublicId)}">${safeName}</a>`;
+  const url = new URL(localizedPageHref(`/driver/?id=${encodeURIComponent(resolvedPublicId)}`, currentLang, window.location));
+  return `<a class="${className} race-driver-profile-link" href="${url.pathname}${url.search}${url.hash}">${safeName}</a>`;
 }
 function renderRaceResultsModal() {
   const titleEl = document.getElementById("race-results-title");

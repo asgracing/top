@@ -1,4 +1,4 @@
-import { createAuthHeaderController } from "../../features/auth/header-auth.js?v=20260831ops3";
+import { createAuthHeaderController } from "../../features/auth/header-auth.js?v=20260921l2";
 import { createIdempotencyKey, hourlyDraftEquals, isSafeLogoPreview, normalizeHourlyState, snapshotHourlyDraft, validateClubsCommand, validateHourlyDraft } from "./portal-ops-model.js?v=20260831ops8";
 import { applyLocalizedNavigation, resolvePageLocale, setPageLocale } from "../../shared/localized-page.js?v=20260920routes1";
 

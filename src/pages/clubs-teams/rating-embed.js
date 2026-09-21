@@ -1,7 +1,8 @@
 import { createHttpClient } from "../../shared/http-client.js";
+import { localizedPageHref, resolvePageLocale } from "../../shared/localized-page.js?v=20260920routes1";
 import { resolveRuntimeOverride } from "../../shared/runtime-config.js";
 import { element } from "../../shared/safe-dom.js";
-import { entityDetailHref } from "./detail-model.js";
+import { entityDetailHref } from "./detail-model.js?v=20260921links1";
 import { loadPublicRatingSnapshot, normalizeRatingContext } from "./rating-model.js";
 
 const COPY = {
@@ -22,7 +23,7 @@ export function createRatingEmbed({
 }) {
   const root = documentRef.getElementById(rootId);
   if (!root) return null;
-  const lang = (() => { try { return windowRef.localStorage.getItem("asgLang") === "ru" ? "ru" : "en"; } catch { return "en"; } })();
+  const lang = resolvePageLocale({ documentRef, windowRef }).language;
   const normalizedContext = normalizeRatingContext(context);
   const baseMeta = documentRef.querySelector('meta[name="clubs-teams-data-base"]')?.content || "https://data.asgracing.ru/public-cache-clubs-teams";
   const dataBaseUrl = resolveRuntimeOverride({
@@ -66,7 +67,7 @@ export function createRatingEmbed({
     if (!rows.length) list.appendChild(element(documentRef, "div", { className: "clubs-rating-embed-state", text: text(lang, "empty") }));
     rows.forEach(row => list.appendChild(element(documentRef, "a", {
       className: "clubs-rating-embed-row",
-      attrs: { href: entityDetailHref(row.entity_type, row.slug, { siteBase }) }
+      attrs: { href: entityDetailHref(row.entity_type, row.slug, { language: lang }) }
     }, [
       element(documentRef, "span", { className: "clubs-rating-embed-position", text: `#${row.position}` }),
       element(documentRef, "strong", { text: row.display_name }),
@@ -76,7 +77,12 @@ export function createRatingEmbed({
     root.append(list, element(documentRef, "a", {
       className: "clubs-rating-embed-all",
       text: text(lang, "all"),
-      attrs: { href: `${siteBase}teams/?context=${normalizedContext}&tab=${state.entityType}s` }
+      attrs: { href: (() => {
+        const url = new URL(localizedPageHref("/teams/", lang, windowRef.location));
+        url.searchParams.set("context", normalizedContext);
+        url.searchParams.set("tab", `${state.entityType}s`);
+        return `${url.pathname}${url.search}`;
+      })() }
     }));
   };
 

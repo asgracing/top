@@ -3,7 +3,7 @@ import {
   createAuthHeaderController,
   eloCategoryId,
   srCategory
-} from "../../features/auth/header-auth.js";
+} from "../../features/auth/header-auth.js?v=20260921l2";
 import { createHttpClient } from "../../shared/http-client.js";
 import { element } from "../../shared/safe-dom.js";
 import { resolveRuntimeOverride } from "../../shared/runtime-config.js";
@@ -14,7 +14,7 @@ import {
   filterCatalogEntries,
   resolveCatalogAssetUrl
 } from "./catalog-model.js";
-import { entityDetailHref } from "./detail-model.js";
+import { entityDetailHref } from "./detail-model.js?v=20260921links1";
 import { loadPublicRatingSnapshot, normalizeRatingContext } from "./rating-model.js";
 
 const COPY = {

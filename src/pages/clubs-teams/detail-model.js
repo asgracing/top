@@ -152,12 +152,12 @@ export function entitySlugFromLocation({ pathname = "", search = "", entityType 
   return normalizeEntitySlug(candidate);
 }
 
-export function entityDetailHref(entityType, slug, { siteBase = "../", language = "en" } = {}) {
+export function entityDetailHref(entityType, slug, { language = "en" } = {}) {
   const normalizedSlug = normalizeEntitySlug(slug);
   const query = new URLSearchParams({ slug: normalizedSlug });
   if (language === "ru") query.set("lang", "ru");
-  if (entityType === "club") return `${siteBase}clubs/?${query}`;
-  if (entityType === "team") return `${siteBase}teams/detail/?${query}`;
+  if (entityType === "club") return `/clubs/?${query}`;
+  if (entityType === "team") return `/teams/detail/?${query}`;
   throw new CatalogContractError("entityType is invalid");
 }
 

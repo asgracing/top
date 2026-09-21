@@ -1,3 +1,3 @@
-import { bootstrapLegacyPage } from "./legacy-bootstrap.js?v=20260920locale1";
+import { bootstrapLegacyPage } from "./legacy-bootstrap.js?v=20260921l2";
 
 await bootstrapLegacyPage("bans");

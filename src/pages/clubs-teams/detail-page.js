@@ -3,7 +3,7 @@ import {
   eloCategoryId,
   safeAvatarUrl,
   srCategory
-} from "../../features/auth/header-auth.js";
+} from "../../features/auth/header-auth.js?v=20260921l2";
 import { createHttpClient } from "../../shared/http-client.js";
 import { element } from "../../shared/safe-dom.js";
 import { applyLocalizedNavigation, currentPageLanguageHref, localizedPageHref, resolvePageLocale, setPageLocale } from "../../shared/localized-page.js?v=20260920routes1";
@@ -13,7 +13,7 @@ import {
   entityDetailHref,
   entitySlugFromLocation,
   loadEntityDetail
-} from "./detail-model.js";
+} from "./detail-model.js?v=20260921links1";
 
 const AUTH_BASE_URL = "https://auth.asgracing.ru";
 const RACE_DETAILS_BASE_URL = "https://data.asgracing.ru/top-data/v2/races/details";

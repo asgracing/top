@@ -73,9 +73,10 @@ test("resolves static-host query routes and future rewritten pretty paths", () =
   assert.equal(entitySlugFromLocation({ pathname: "/clubs/", search: "?slug=asg-racing", entityType: "club" }), "asg-racing");
   assert.equal(entitySlugFromLocation({ pathname: "/clubs/asg-racing/", entityType: "club" }), "asg-racing");
   assert.equal(entitySlugFromLocation({ pathname: "/teams/detail/", search: "?slug=asg-factory", entityType: "team" }), "asg-factory");
-  assert.equal(entityDetailHref("club", "asg-racing"), "../clubs/?slug=asg-racing");
-  assert.equal(entityDetailHref("team", "asg-factory"), "../teams/detail/?slug=asg-factory");
-  assert.equal(entityDetailHref("club", "asg-racing", { language: "ru" }), "../clubs/?slug=asg-racing&lang=ru");
+  assert.equal(entityDetailHref("club", "asg-racing"), "/clubs/?slug=asg-racing");
+  assert.equal(entityDetailHref("team", "asg-factory"), "/teams/detail/?slug=asg-factory");
+  assert.equal(entityDetailHref("club", "asg-racing", { language: "ru" }), "/clubs/?slug=asg-racing&lang=ru");
+  assert.equal(entityDetailHref("team", "who-is-that", { language: "ru" }), "/teams/detail/?slug=who-is-that&lang=ru");
 });
 
 test("validates a complete approved detail bound to the active rating run", () => {

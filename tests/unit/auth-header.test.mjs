@@ -204,3 +204,15 @@ test("keeps authenticated but unlinked Steam accounts explicit", () => {
   assert.equal(normalized.driver, null);
   assert.equal(normalized.steam.personaName, "Steam Driver");
 });
+
+test("localizes the header driver profile link from the current page language", () => {
+  assert.equal(
+    safeDriverProfileUrl("/driver/?id=drv_abc", "ru"),
+    "/ru/driver/?id=drv_abc"
+  );
+  assert.equal(
+    safeDriverProfileUrl("/driver/?id=drv_abc", "en"),
+    "/driver/?id=drv_abc"
+  );
+  assert.equal(safeDriverProfileUrl("https://evil.example/driver/?id=x", "ru"), null);
+});
