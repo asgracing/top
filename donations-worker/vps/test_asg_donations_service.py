@@ -33,6 +33,9 @@ class DonationServiceTests(unittest.TestCase):
         self.config = make_config(state_path)
         self.store = module.StateStore(state_path)
 
+    def test_default_goal_matches_public_widget(self) -> None:
+        self.assertEqual(self.config.goal_id, "9940111")
+
     def test_unknown_origin_is_not_granted_cors(self) -> None:
         service = module.DonationService(self.config, self.store)
         self.assertEqual(service.allowed_origin("https://asgracing.ru"), "https://asgracing.ru")

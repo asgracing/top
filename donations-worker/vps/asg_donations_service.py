@@ -175,7 +175,7 @@ class Config:
             ).strip(),
             scope=str(source.get("DONATIONALERTS_SCOPE", "oauth-donation-index oauth-goal-subscribe")).strip(),
             widget_token=str(source.get("DONATIONALERTS_WIDGET_TOKEN", "")).strip(),
-            goal_id=str(source.get("DONATIONALERTS_GOAL_ID", "9854518")).strip(),
+            goal_id=str(source.get("DONATIONALERTS_GOAL_ID", "9940111")).strip(),
             donations_limit=integer("DONATIONS_LIMIT", 50, 1, 100),
             cache_ttl_seconds=integer("DONATIONS_CACHE_TTL_SECONDS", 120, 15, 600),
             min_timestamp=min_timestamp,
