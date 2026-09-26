@@ -759,9 +759,9 @@ const HERO_TRACK_BACKGROUNDS = {
   zolder: `${topSiteBaseUrl}/assets/zolder.jpg`
 };
 const WEATHER_ICON_PATHS = {
-  clouds: "./assets/weather/cloudness.png",
-  rain: "./assets/weather/rain.png",
-  random: "./assets/weather/random.png"
+  clouds: new URL("./assets/weather/cloudness.png", import.meta.url).href,
+  rain: new URL("./assets/weather/rain.png", import.meta.url).href,
+  random: new URL("./assets/weather/random.png", import.meta.url).href
 };
 const pendingVoteEventIds = new Set();
 
@@ -799,7 +799,7 @@ function getNewsArticleHref(slug) {
 }
 function getLocalizedInternalHref(value) {
   const href = safeLinkUrl(value, location.href);
-  return href && new URL(href).origin === location.origin
+  return href && new URL(href, location.href).origin === location.origin
     ? localizedPageHref(href, currentLang, location)
     : href || "";
 }

@@ -1,3 +1,3 @@
-import { bootstrapLegacyPage } from "./legacy-bootstrap.js?v=20260921l2";
+import { bootstrapLegacyPage } from "./legacy-bootstrap.js?v=20260926hotfix1";
 
 await bootstrapLegacyPage("cars");

@@ -3062,7 +3062,7 @@ function renderHourlyHeroModal() {
   ].join("");
 
   let detailsUrl = safeLinkUrl(data?.details_url, window.location.href);
-  if (detailsUrl && new URL(detailsUrl).origin === window.location.origin) {
+  if (detailsUrl && new URL(detailsUrl, window.location.href).origin === window.location.origin) {
     detailsUrl = localizedPageHref(detailsUrl, currentLang, window.location);
   }
   const detailsLinkHtml = detailsUrl
