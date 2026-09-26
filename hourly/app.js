@@ -797,6 +797,12 @@ function getNewsArticleHref(slug) {
   if (slug) url.searchParams.set("slug", slug);
   return `${url.pathname}${url.search}${url.hash}`;
 }
+function getLocalizedInternalHref(value) {
+  const href = safeLinkUrl(value, location.href);
+  return href && new URL(href).origin === location.origin
+    ? localizedPageHref(href, currentLang, location)
+    : href || "";
+}
 function loadNewsReadState() {
   return loadSharedNewsReadState(localStorage);
 }
@@ -1593,7 +1599,7 @@ function buildScheduleModalDetailsLegacy(item) {
   const session = announcementData?.session || {};
   const rules = announcementData?.rules || {};
   const weather = item?.weather || announcementData?.weather || {};
-  const detailsUrl = safeLinkUrl(item?.details_url, window.location.href) || "";
+  const detailsUrl = getLocalizedInternalHref(item?.details_url);
   return `
     <div class="schedule-modal-hero">
       <div class="schedule-modal-vote">
@@ -1814,7 +1820,7 @@ function getScheduleModalViewModel(item) {
     rainProbabilityPercent: percentValue(weather.rain_level),
     weatherRandomness: getNumericModalValue(weather, ["weather_randomness", "weatherRandomness"]),
     voteState,
-    detailsUrl: safeLinkUrl(item?.details_url, window.location.href) || ""
+    detailsUrl: getLocalizedInternalHref(item?.details_url)
   };
 }
 
@@ -2425,7 +2431,7 @@ function buildParticipationControlsV2(item, options = {}) {
   const isLocked = isVotingDisabledForItem(item);
   const voteLabel = voteState.already_voted ? t("voteButtonDone") : t("voteButton");
   const countLabel = getModalParticipantCountLabel(voteState.votes);
-  const detailsUrl = safeLinkUrl(item?.details_url, window.location.href);
+  const detailsUrl = getLocalizedInternalHref(item?.details_url);
   const detailsLink = showDetails && detailsUrl
     ? `<a class="hourly-v2-details-link" href="${escapeHtml(detailsUrl)}">${escapeHtml(currentLang === "ru" ? "Подробнее" : "Details")}</a>`
     : "";

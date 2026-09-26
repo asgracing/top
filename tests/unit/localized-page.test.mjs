@@ -57,6 +57,20 @@ test("localized page URLs preserve entity state without retaining lang", () => {
   );
 });
 
+test("championship locale switches preserve the selected season slug", () => {
+  const locationRef = {
+    href: "https://asgracing.ru/hourly/championship/?slug=october-2026"
+  };
+  assert.equal(
+    localizedPageHref(locationRef.href, "ru", locationRef),
+    "https://asgracing.ru/ru/hourly/championship/?slug=october-2026"
+  );
+  assert.equal(
+    localizedPageHref("/ru/hourly/championship/?slug=october-2026", "en", locationRef),
+    "https://asgracing.ru/hourly/championship/?slug=october-2026"
+  );
+});
+
 test("legacy malformed language URLs recover the page parameter", () => {
   assert.equal(
     legacyMalformedLanguageHref({ href: "https://asgracing.ru/news/?lang=ru?slug=safety-rating-server-access" }),

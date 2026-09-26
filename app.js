@@ -3061,7 +3061,10 @@ function renderHourlyHeroModal() {
     buildHourlyEventDetailsV2Row(getHourlyEventDetailsV2Text("randomnessLabel"), escapeHtml(getHourlyEventDetailsValue(randomness)), "wind")
   ].join("");
 
-  const detailsUrl = safeLinkUrl(data?.details_url, window.location.href);
+  let detailsUrl = safeLinkUrl(data?.details_url, window.location.href);
+  if (detailsUrl && new URL(detailsUrl).origin === window.location.origin) {
+    detailsUrl = localizedPageHref(detailsUrl, currentLang, window.location);
+  }
   const detailsLinkHtml = detailsUrl
     ? `<a class="event-details-v2-details-link" href="${escapeHtml(detailsUrl)}">${escapeHtml(getHourlyEventDetailsV2Text("details"))}</a>`
     : "";
@@ -6198,7 +6201,7 @@ function updateTopChampionshipLink() {
   const link = document.getElementById("top-nav-championship-link");
   if (!link) return;
   link.textContent = getActiveChampionshipTitle();
-  link.href = "/hourly/championship/";
+  link.href = localizedPageHref("/hourly/championship/", currentLang, window.location);
 }
 
 async function loadFullRacesData() {
