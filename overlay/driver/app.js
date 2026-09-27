@@ -14,7 +14,7 @@ function render(payload) {
   root.querySelector("[data-elo-category]").textContent = state.eloCategoryName.toUpperCase();
   root.querySelector("[data-elo]").textContent = String(state.elo);
   root.querySelector("[data-sr]").textContent = `SR ${state.sr}`;
-  root.querySelector("[data-race-number]").textContent = state.raceNumber || "—";
+  root.querySelector("[data-race-number]").textContent = state.raceNumber ? `#${state.raceNumber}` : "—";
   const image = root.querySelector("[data-avatar]");
   const fallback = root.querySelector("[data-avatar-fallback]");
   if (state.avatarUrl) {
