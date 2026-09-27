@@ -5947,12 +5947,7 @@ function isServerPagedTopDataV2Table(tableName) {
   return Boolean(meta?.page_path && !getServerPagedTableSearch(tableName) && !sortState?.key);
 }
 
-function getServerPagedTableSearch(tableName) {
-  if (tableName === "leaderboard") return leaderboardSearch;
-  if (tableName === "bestlaps") return bestlapsSearch;
-  if(tableName==="safety")return safetySearch
-  return""
-}
+function getServerPagedTableSearch(t){return t==="leaderboard"?leaderboardSearch:t==="bestlaps"?bestlapsSearch:t==="safety"?safetySearch:""}
 
 function getServerPagedTableSort(tableName) {
   if (tableName === "leaderboard") return leaderboardSort;
