@@ -20,6 +20,7 @@ import {
 } from "./clubs-teams-command-model.js?v=20260811batchinvite1";
 import { loadPilotIndex, searchPilots } from "./pilot-search-model.js?v=20260811pilotsearch1";
 import { canUploadEntityLogo, inspectLogoFile, LogoUploadError, normalizeAssetResponse } from "./logo-upload-model.js?v=20260813logo2";
+import { mountDriverOverlayManager } from "../../../account/driver-overlay.js?v=20260927overlay1";
 
 const AUTH_BASE_URL = "https://auth.asgracing.ru";
 const COPY = {
@@ -152,6 +153,29 @@ const COPY = {
     nameTaken: "This club or team name is already reserved.",
     versionConflict: "The profile changed. Refresh the account before editing it again.",
     detailUnavailable: "The approved profile could not be loaded safely. Editing remains disabled.",
+    overlayButton: "OBS widget",
+    overlayTitle: "ASG broadcast widget",
+    overlayHelp: "Add this personal URL to an OBS Browser Source. ELO and SR update automatically.",
+    overlayLoading: "Loading widget settings…",
+    overlayUnavailable: "The broadcast widget is temporarily unavailable.",
+    overlayActive: "Active",
+    overlayInactive: "Not enabled",
+    overlayUrlLabel: "Personal OBS URL",
+    overlayCopy: "Copy URL",
+    overlayCopied: "URL copied.",
+    overlayCopyFailed: "Select and copy the URL manually.",
+    overlaySecret: "Keep this URL private: anyone with it can display your widget.",
+    overlayOptions: "Widget elements",
+    overlayShowAvatar: "Show Steam avatar",
+    overlayShowNumber: "Show race number",
+    overlaySave: "Save display settings",
+    overlaySaved: "Widget settings updated.",
+    overlayEnable: "Create personal widget URL",
+    overlayRotate: "Replace URL",
+    overlayRevoke: "Disable widget",
+    overlayRotateConfirm: "Replace the URL? The previous OBS source will stop working.",
+    overlayRevokeConfirm: "Disable the widget? The current OBS source will stop working.",
+    overlayFailed: "The widget operation could not be completed. Try again.",
     numberSettings: "Race number settings",
     titleSettings: "Driver title",
     titleHelp: "Choose one of your earned titles. It will replace “Driver profile” in your public profile hero.",
@@ -272,6 +296,29 @@ const COPY = {
     nameTaken: "Название клуба или команды уже зарезервировано.",
     versionConflict: "Профиль изменился. Обновите кабинет перед повторным редактированием.",
     detailUnavailable: "Не удалось безопасно загрузить подтверждённый профиль. Редактирование отключено.",
+    overlayButton: "Виджет для OBS",
+    overlayTitle: "Виджет ASG для трансляции",
+    overlayHelp: "Добавьте персональную ссылку как источник «Браузер» в OBS. ELO и SR обновляются автоматически.",
+    overlayLoading: "Загружаем настройки виджета…",
+    overlayUnavailable: "Виджет для трансляции временно недоступен.",
+    overlayActive: "Активен",
+    overlayInactive: "Не включён",
+    overlayUrlLabel: "Персональная ссылка для OBS",
+    overlayCopy: "Копировать ссылку",
+    overlayCopied: "Ссылка скопирована.",
+    overlayCopyFailed: "Выделите и скопируйте ссылку вручную.",
+    overlaySecret: "Не публикуйте эту ссылку: любой, у кого она есть, сможет показать ваш виджет.",
+    overlayOptions: "Элементы виджета",
+    overlayShowAvatar: "Показывать аватар Steam",
+    overlayShowNumber: "Показывать гоночный номер",
+    overlaySave: "Сохранить отображение",
+    overlaySaved: "Настройки виджета обновлены.",
+    overlayEnable: "Создать персональную ссылку",
+    overlayRotate: "Заменить ссылку",
+    overlayRevoke: "Отключить виджет",
+    overlayRotateConfirm: "Заменить ссылку? Старый источник в OBS перестанет работать.",
+    overlayRevokeConfirm: "Отключить виджет? Текущий источник в OBS перестанет работать.",
+    overlayFailed: "Не удалось выполнить операцию с виджетом. Попробуйте ещё раз.",
     clubsTeams: "Клубы и команды",
     clubsTeamsUnavailable: "Управление клубами и командами временно недоступно.",
     clubsTeamsStale: "Снимок состава недоступен или устарел. Изменения заблокированы до его обновления.",
@@ -370,6 +417,8 @@ let forceAccountRender = false;
 
 function hasActiveAccountWorkspace() {
   if (document.querySelector("[data-account-workspace]")) return true;
+  const overlayPanel = document.getElementById("driver-overlay-manager");
+  if (overlayPanel && !overlayPanel.hidden) return true;
   const raceNumberInput = document.getElementById("race-number-input");
   const titleSelect = document.getElementById("driver-title-select");
   return Boolean(
@@ -1224,11 +1273,30 @@ function renderOverview(root, auth) {
         <div class="account-actions">
           <a class="account-action account-action--primary" href="/account/settings/">${t("settings")}</a>
           <a class="account-action" href="${escapeHtml(auth.driver.profileUrl)}">${t("profile")}</a>
+          <button class="account-action" id="driver-overlay-toggle" type="button" aria-expanded="false" aria-controls="driver-overlay-manager">${t("overlayButton")}</button>
         </div>
+        <section class="account-overlay-manager" id="driver-overlay-manager" hidden></section>
         ${renderClubsTeams(auth)}
       ` : `<p class="account-muted">${t("noProfile")}</p>`}
     </div>`;
-  if (auth.linked) bindClubsTeamsActions(auth);
+  if (auth.linked) {
+    mountDriverOverlayManager({
+      button: document.getElementById("driver-overlay-toggle"),
+      panel: document.getElementById("driver-overlay-manager"),
+      authBaseUrl: AUTH_BASE_URL,
+      csrfToken: auth.csrfToken,
+      copy: {
+        title: t("overlayTitle"), help: t("overlayHelp"), loading: t("overlayLoading"),
+        unavailable: t("overlayUnavailable"), active: t("overlayActive"), inactive: t("overlayInactive"),
+        urlLabel: t("overlayUrlLabel"), copy: t("overlayCopy"), copied: t("overlayCopied"),
+        copyFailed: t("overlayCopyFailed"), secret: t("overlaySecret"), options: t("overlayOptions"),
+        showAvatar: t("overlayShowAvatar"), showRaceNumber: t("overlayShowNumber"), save: t("overlaySave"),
+        saved: t("overlaySaved"), enable: t("overlayEnable"), rotate: t("overlayRotate"), revoke: t("overlayRevoke"),
+        rotateConfirm: t("overlayRotateConfirm"), revokeConfirm: t("overlayRevokeConfirm"), failed: t("overlayFailed")
+      }
+    });
+    bindClubsTeamsActions(auth);
+  }
 }
 
 function renderTitleSettings(auth) {

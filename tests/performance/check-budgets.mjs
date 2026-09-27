@@ -43,6 +43,9 @@ const portalOpsJavaScriptBytes =
   + await textBytes("src/pages/portal-ops/portal-ops-page.js");
 const portalOpsStylesheetBytes = await textBytes("styles/components/portal-ops.css")
   + await textBytes("styles/components/portal-ops-clubs.css");
+const driverOverlayJavaScriptBytes = await textBytes("account/driver-overlay.js")
+  + await textBytes("overlay/driver/model.js")
+  + await textBytes("overlay/driver/app.js");
 const metrics = {
   appJavaScriptBytes: await textBytes("app.js"),
   sourceModulesBytes: await treeBytes("src", new Set([".js", ".mjs"])) - moderationJavaScriptBytes - portalOpsJavaScriptBytes,
@@ -55,6 +58,8 @@ const metrics = {
     await textBytes("src/pages/driver/achievements-model.js")
     + await textBytes("src/pages/driver/achievements-widget.js"),
   driverAchievementsStylesheetBytes: await textBytes("styles/components/driver-achievements.css"),
+  driverOverlayJavaScriptBytes,
+  driverOverlayStylesheetBytes: await textBytes("overlay/driver/styles.css"),
   homeHtmlBytes: Buffer.byteLength(html.replace(/\r\n/g, "\n")),
   backgroundVideoBytes: Math.max(...await Promise.all(videos.map(fileBytes))),
   backgroundPlaylistBytes: (await Promise.all(videos.map(fileBytes))).reduce((sum, bytes) => sum + bytes, 0),
