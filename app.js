@@ -5777,10 +5777,10 @@ function getFastestLapMs(items = [], key = "best_lap_ms") {
   return values.length ? Math.min(...values) : null;
 }
 
-async function loadJson(url, { signal = null, force = false } = {}) {
+async function loadJson(url,{force=false,...options}={}) {
   await initializeQueryRuntime();
   const key = `json:${String(url)}`;
-  return jsonQueryCache.query(key, () => requestJson(url, { cache: "default", retries: 1, signal }), { ttlMs: 15000, force });
+  return jsonQueryCache.query(key,()=>requestJson(url,{cache:"default",retries:1,...options}),{ttlMs:15000,force});
 }
 
 function hydrateSafetyAboutCopy() {
@@ -5820,10 +5820,7 @@ async function loadTopDataV2Manifest() {
   return topDataV2Manifest;
 }
 
-async function loadTopDataV2Json(path) {
-  await loadTopDataV2Manifest();
-  return loadJson(withTopDataV2Version(topDataV2Path(path)));
-}
+async function loadTopDataV2Json(path){await loadTopDataV2Manifest();return loadJson(withTopDataV2Version(topDataV2Path(path)))}
 
 async function loadSiteDataV2() {
   const manifest = await loadTopDataV2Manifest();
@@ -5904,7 +5901,7 @@ async function loadFullTopDataV2Table(tableName) {
     const meta = getTopDataV2TableMeta(tableName);
     const trackSafe = String(bestlapsTrackFilter || "").replace(/[^a-z0-9_-]+/g, "");
     const fullPath = useTrackFile ? `tables/bestlaps-${trackSafe}.json` : meta?.full || `tables/${tableName}.json`;
-    const payload = await loadTopDataV2Json(fullPath);
+    const payload=await loadJson(withTopDataV2Version(topDataV2Path(fullPath)),{timeoutMs:6e4});
     if (tableName === "bestlaps") {
       bestlapTracksData = Array.isArray(payload?.tracks) ? payload.tracks : bestlapTracksData;
       if (payload?.selected_track) bestlapsTrackFilter = String(payload.selected_track).trim().toLowerCase();
@@ -5953,7 +5950,8 @@ function isServerPagedTopDataV2Table(tableName) {
 function getServerPagedTableSearch(tableName) {
   if (tableName === "leaderboard") return leaderboardSearch;
   if (tableName === "bestlaps") return bestlapsSearch;
-  return "";
+  if(tableName==="safety")return safetySearch
+  return""
 }
 
 function getServerPagedTableSort(tableName) {
@@ -7705,26 +7703,16 @@ function paginate(data, page, pageSize) {
   };
 }
 
-function getPreviewAwareTablePage(tableName, data, page, pageSize) {
-  const result = paginate(data, page, pageSize);
-  const meta = getTopDataV2TableMeta(tableName);
-  const totalItems = Number(meta?.total_items) || result.totalItems;
-  if (totalItems <= result.totalItems) return result;
-
-  const totalPages = Math.max(1, Math.ceil(totalItems / pageSize));
-  const safePage = Math.min(Math.max(1, page), totalPages);
-  const start = (safePage - 1) * pageSize;
-  const end = start + pageSize;
-
-  return {
-    ...result,
-    page: safePage,
-    totalPages,
-    totalItems,
-    startIndex: totalItems ? start + 1 : 0,
-    endIndex: Math.min(end, totalItems),
-    items: data.slice(start, end)
-  };
+function getPreviewAwareTablePage(tableName,data,page,pageSize) {
+  const result=paginate(data,page,pageSize);
+  const meta=getTopDataV2TableMeta(tableName);
+  const totalItems=getServerPagedTableSearch(tableName).trim()?result.totalItems:+meta?.total_items||result.totalItems;
+  if(totalItems<=result.totalItems)return result;
+  const totalPages=Math.max(1,Math.ceil(totalItems/pageSize));
+  const safePage=Math.min(Math.max(1,page),totalPages);
+  const start=(safePage-1)*pageSize;
+  const end=start+pageSize;
+  return {...result,page:safePage,totalPages,totalItems,startIndex:totalItems?start+1:0,endIndex:Math.min(end,totalItems),items:data.slice(start,end)};
 }
 
 function getPageList(current, total) {
@@ -8515,8 +8503,10 @@ function bindSearchInputs() {
     renderBestLapsTablePage();
   });
   const handleSafetyInput = debounce(async (value) => {
-    if (value) await loadFullTopDataV2Table("safety").catch(() => null);
     statsStore?.dispatch({ type: "table/search", table: "safety", value });
+    if (value) {
+      await loadFullTopDataV2Table("safety").catch(() => null);
+    }
     renderSafetyTablePage();
   });
   const handleRacesInput = debounce(async (value) => {
