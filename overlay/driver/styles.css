@@ -5,10 +5,11 @@ body { display: grid; place-items: center; padding: 34px; }
 .driver-overlay { width: min(1500px, 96vw); opacity: 0; transform: translateY(8px); transition: opacity .3s ease, transform .3s ease; }
 .driver-overlay[data-ready="true"] { opacity: 1; transform: none; }
 .driver-overlay__bar { position: relative; display: grid; grid-template-columns: 270px minmax(300px, 1fr) 180px 210px 190px; align-items: center; min-height: 178px; padding: 18px 28px 18px 38px; border: 2px solid #34363a; border-radius: 44px; background: linear-gradient(110deg, rgba(15,16,18,.98), rgba(2,2,3,.96)); box-shadow: 0 24px 55px rgba(0,0,0,.55), inset 0 1px rgba(255,255,255,.08); }
-.driver-overlay__brand { display: grid; align-content: center; height: 120px; padding-right: 28px; border-right: 4px solid #ff3e1f; transform: skew(-8deg); }
+.driver-overlay__brand { position: relative; display: grid; align-content: center; justify-items: center; height: 120px; }
 .driver-overlay__brand strong { color: #f52519; font-size: 63px; font-style: italic; font-weight: 1000; letter-spacing: -5px; line-height: .78; text-shadow: 0 5px 16px rgba(0,0,0,.6); }
 .driver-overlay__brand span { margin-top: 14px; color: #fff; font-size: 30px; font-style: italic; font-weight: 950; letter-spacing: 1px; line-height: .8; }
 .driver-overlay__metric { position: relative; display: grid; gap: 10px; padding: 0 28px; }
+.driver-overlay__brand::after,
 .driver-overlay__metric::after { content: ""; position: absolute; top: 50%; right: -2px; width: 4px; height: 120px; border-radius: 4px; background: #ff3e1f; transform: translateY(-50%) skew(-8deg); box-shadow: 0 0 14px rgba(255,62,31,.25); }
 .driver-overlay__label { color: #d8d8dc; font-size: 22px; font-weight: 800; letter-spacing: .16em; line-height: 1; }
 .driver-overlay__label small { display: inline-block; margin-left: 6px; color: #7ee4b6; font-size: .9em; font-weight: 1000; letter-spacing: .04em; }
@@ -41,7 +42,7 @@ body { display: grid; place-items: center; padding: 34px; }
   .driver-overlay__brand strong { font-size: 46px; }
   .driver-overlay__brand span { font-size: 21px; }
   .driver-overlay__metric { padding: 0 15px; }
-  .driver-overlay__metric::after { right: -2px; height: 90px; }
+  .driver-overlay__brand::after, .driver-overlay__metric::after { right: -2px; height: 90px; }
   .driver-overlay__label { font-size: 15px; }
   .driver-overlay__pill { min-height: 52px; padding: 0 15px; }
   .driver-overlay__elo-pill { gap: 10px; padding-inline: 17px; }
