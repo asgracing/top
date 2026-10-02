@@ -795,18 +795,18 @@ const translations = {
     hourlyVotesZero: "No registrations yet",
     hourlyVotesOne: "{value} registered driver",
     hourlyVotesMany: "{value} registered drivers",
-    hourlyPromoTitle: "x5 points for the race!!!",
-    hourlyPromoMultiplier: "x{value} points for the race!!!",
+    hourlyPromoTitle: "×5 RATING POINTS",
+    hourlyPromoMultiplier: "×{value} RATING POINTS",
     enduranceEyebrow: "Next event — Endurance ({duration} min)",
-    endurancePromoMultiplier: "x{value} points for Endurance!!!",
-    endurancePromoNote: "Endurance awards increased points in the overall rating.",
+    endurancePromoMultiplier: "×{value} POINTS · ENDURANCE",
+    endurancePromoNote: "Extra points in the overall rating",
     enduranceOpenDetailsLabel: "Open Endurance event details",
-    specialEventPromoTitle: "Only {car}",
-    specialEventPromoNote: "Single-model race: every driver uses the same car.",
+    specialEventPromoTitle: "SPECIAL EVENT · SINGLE MODEL",
+    specialEventPromoNote: "Everyone races in {car}",
     specialEventOpenDetailsLabel: "Open single-model race details",
-    hourlyPromoStandard: "Standard championship scoring x1",
-    hourlyPromoChampionshipNote: "This championship stage uses the standard scoring table.",
-    hourlyPromoNote: "The hourly event hits the championship harder.",
+    hourlyPromoStandard: "×1 · CHAMPIONSHIP",
+    hourlyPromoChampionshipNote: "Standard championship points",
+    hourlyPromoNote: "Extra points in the overall rating",
     hourlyLastWinnerLabel: "Last hourly winner",
     hourlyLastWinnerEmpty: "No completed hourly race yet",
     todayStatsBtn: "Today Stats",
@@ -1413,18 +1413,18 @@ const translations = {
     hourlyVotesZero: "Нет регистраций",
     hourlyVotesOne: "{value} участник",
     hourlyVotesMany: "{value} участников",
-    hourlyPromoTitle: "x5 очков за гонку!!!",
-    hourlyPromoMultiplier: "x{value} очков за гонку!!!",
+    hourlyPromoTitle: "×5 ОЧКОВ В РЕЙТИНГ",
+    hourlyPromoMultiplier: "×{value} ОЧКОВ В РЕЙТИНГ",
     enduranceEyebrow: "Ближайший ивент — Endurance ({duration} мин)",
-    endurancePromoMultiplier: "x{value} очков за Endurance!!!",
-    endurancePromoNote: "Endurance начисляет повышенные очки в общий рейтинг.",
+    endurancePromoMultiplier: "×{value} ОЧКОВ · ENDURANCE",
+    endurancePromoNote: "Повышенные очки в общий рейтинг",
     enduranceOpenDetailsLabel: "Открыть детали Endurance-события",
-    specialEventPromoTitle: "Только {car}",
-    specialEventPromoNote: "Мономашина: все пилоты участвуют на одной модели.",
+    specialEventPromoTitle: "СПЕЦИВЕНТ · МОНОМАШИНА",
+    specialEventPromoNote: "Все пилоты на {car}",
     specialEventOpenDetailsLabel: "Открыть детали гонки с мономашиной",
-    hourlyPromoStandard: "Стандартная сетка чемпионата x1",
-    hourlyPromoChampionshipNote: "Для этапа чемпионата действует стандартная сетка очков.",
-    hourlyPromoNote: "Часовой заезд сильнее влияет на чемпионат.",
+    hourlyPromoStandard: "×1 · ЧЕМПИОНАТ",
+    hourlyPromoChampionshipNote: "Стандартные очки чемпионата",
+    hourlyPromoNote: "Повышенные очки в общий рейтинг",
     hourlyLastWinnerLabel: "Последний победитель",
     hourlyLastWinnerEmpty: "Пока нет завершенной часовой гонки",
     todayStatsBtn: "Статистика за сегодня",
@@ -3171,6 +3171,10 @@ function renderHourlyHeroCard() {
     specialCarEl.onerror = () => { specialCarEl.hidden = true; };
   }
   const promoTitleEl = document.querySelector(".hero-hourly-promo-title");
+  const promoEl = promoTitleEl?.closest(".hero-hourly-promo");
+  promoEl?.classList.toggle("is-endurance-event", isEndurance);
+  promoEl?.classList.toggle("is-championship-event", isChampionship);
+  promoEl?.classList.toggle("is-special-event", isSpecial);
   if (promoTitleEl) {
     const multiplier = Number(data?.points_multiplier);
     promoTitleEl.textContent = isSpecial
@@ -3190,7 +3194,7 @@ function renderHourlyHeroCard() {
         ? "endurancePromoNote"
         : "hourlyPromoNote";
     promoNoteEl.dataset.i18n = noteKey;
-    promoNoteEl.textContent = t(noteKey);
+    promoNoteEl.textContent = replaceTokens(t(noteKey), { car: specialEvent?.car_model_name || "" });
   }
   const eyebrowEl = document.getElementById("hourly-eyebrow");
   if (eyebrowEl) {
@@ -3328,7 +3332,7 @@ function renderHourlyWinnerCard() {
 
   cardEl.classList.remove("is-empty");
   nameEl.innerHTML = renderDriverLink(winnerName, winnerPublicId, "driver-link driver-link-heading", winnerPlayerId);
-  metaEl.textContent = [trackName, raceDate, carName].filter(Boolean).join(" · ") || "—";
+  metaEl.innerHTML = `<span>${escapeHtml([trackName, raceDate].filter(Boolean).join(" · ") || "—")}</span>${carName ? `<span class="hero-hourly-winner-model">${escapeHtml(carName)}</span>` : ""}`;
   mediaEl.innerHTML = renderCarImage(
     winnerResult || {},
     { className: "hero-hourly-winner-car", alt: carName || winnerName }
