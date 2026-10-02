@@ -741,7 +741,7 @@
   padding: 14px;
   gap: 4px;
   border: 0;
-  background: rgba(21, 19, 20, 0.92);
+  background: rgba(21, 19, 20, 0.46);
   box-shadow: none;
 }
 .hero-hourly-promo .hero-hourly-promo-title {
@@ -763,6 +763,7 @@
   overflow-wrap: anywhere;
 }
 .hero-hourly-promo .hero-hourly-winner-card {
+  position: static;
   min-height: 0;
   margin: 4px 0 0;
   padding: 8px 0 0;
@@ -771,6 +772,10 @@
   border-radius: 0;
   background: none;
   box-shadow: none;
+}
+.hero-hourly-promo .hero-hourly-winner-media {
+  position: absolute;
+  inset: 0;
 }
 .hero-hourly-promo .hero-hourly-winner-copy {
   width: 100%;
@@ -797,8 +802,9 @@
 }
 .hero-hourly-promo .hero-hourly-winner-model { color: rgb(255 255 255); }
 .hero-hourly-promo .hero-hourly-winner-car {
-  right: 0;
-  bottom: 0;
+  right: 14px;
+  /* Compensate for transparent padding below the car in the source PNG. */
+  bottom: -10px;
   width: min(180px, 54%);
   opacity: 0.3;
 }
