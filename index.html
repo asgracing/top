@@ -59,7 +59,7 @@
   <link rel="stylesheet" href="./styles/components/language-switch.css?v=20260713r11lang1" />
   <link rel="stylesheet" href="./styles/components/buttons.css?v=20260713r11buttons1" />
   <link rel="stylesheet" href="./styles/components/hero-foundation.css?v=20260713r11hero1" />
-  <link rel="stylesheet" href="./styles/components/hero-actions.css?v=20260713r11heroactions1" />
+  <link rel="stylesheet" href="./styles/components/hero-actions.css?v=20261003ratinglinks1" />
   <link rel="stylesheet" href="./styles/components/hero-stats.css?v=20260813driveraffiliations1" />
   <link rel="stylesheet" href="./styles/components/clubs-teams-metrics.css?v=20260811clubsmetrics2" />
   <link rel="stylesheet" href="./styles/components/server-sticky-layout.css?v=20260820widgetheader1" />
@@ -293,7 +293,7 @@
       <div class="hero-funnel-card">
         <div class="hero-funnel-copy">
           <div class="hero-funnel-title" data-i18n="heroFunnelTitle">Monza 24/7, daily events, beginner-friendly help</div>
-          <p class="hero-funnel-note" data-i18n="heroFunnelNote"><a class="hero-funnel-link hero-funnel-link-telegram" href="https://t.me/+JUymrENgddcyMTdi" target="_blank" rel="noopener noreferrer">Telegram</a> and <a class="hero-funnel-link hero-funnel-link-discord" href="https://discord.gg/cEPFHXXtTC" target="_blank" rel="noopener noreferrer">Discord</a> are the most convenient ways to stay in touch with the community. Here you will find reminders, results, voting, and live sim racing conversations.</p>
+          <p class="hero-funnel-note" data-i18n="heroFunnelNote"><a class="hero-funnel-link hero-funnel-link-telegram" href="https://t.me/+JUymrENgddcyMTdi" target="_blank" rel="noopener noreferrer">Telegram</a> and <a class="hero-funnel-link hero-funnel-link-discord" href="https://discord.gg/cEPFHXXtTC" target="_blank" rel="noopener noreferrer">Discord</a> — reminders, results, voting and community. <a class="hero-funnel-link hero-funnel-link-sr" href="#safety-about">SR — safety</a> · <a class="hero-funnel-link hero-funnel-link-elo" href="#elo-about">ELO — skill</a>.</p>
         </div>
 
       </div>
@@ -800,7 +800,7 @@
 
           <p data-i18n="pointsP2">All scaled values are rounded to whole points: 0.1-0.5 rounds down, 0.6-0.9 rounds up. The fastest lap always gives <strong>+1 point</strong>.</p>
 
-          <div class="elo-about-block">
+          <div class="elo-about-block" id="elo-about">
             <div class="elo-about-copy">
               <h3 data-i18n="eloAboutTitle">ELO rating</h3>
               <p data-i18n="eloAboutP1">ELO is recalculated after counted races. Finish position is compared with lobby strength, so beating stronger rivals gives more rating and losing to weaker rivals removes more ELO.</p>
@@ -816,7 +816,7 @@
             </div>
           </div>
 
-          <div class="elo-about-block safety-about-block">
+          <div class="elo-about-block safety-about-block" id="safety-about">
             <div class="elo-about-copy">
               <h3 data-i18n="safetyAboutTitle">Safety Rating</h3>
               <p data-i18n="safetyAboutP1">SR is recalculated from counted race finishes.</p>
@@ -1146,6 +1146,6 @@
   </div>
 
   <script src="./legal.js?v=20260920locale1" defer></script>
-  <script type="module" src="./src/entrypoints/home.js?v=20261003promocrown1"></script>
+  <script type="module" src="./src/entrypoints/home.js?v=20261003ratinglinks1"></script>
 </body>
 </html>

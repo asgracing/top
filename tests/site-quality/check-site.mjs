@@ -108,7 +108,7 @@ for (const [page, [htmlPath, entrySrc]] of Object.entries(pageEntrypoints)) {
   if (!pageHtml.includes(buttonsHref)) failures.push(`${page} page is missing the shared button stylesheet`);
   const heroHref = page === "home" ? "./styles/components/hero-foundation.css?v=20260713r11hero1" : "../styles/components/hero-foundation.css?v=20260713r11hero1";
   if (!pageHtml.includes(heroHref)) failures.push(`${page} page is missing the shared hero foundation stylesheet`);
-  const heroActionsHref = page === "home" ? "./styles/components/hero-actions.css?v=20260713r11heroactions1" : "../styles/components/hero-actions.css?v=20260713r11heroactions1";
+  const heroActionsHref = page === "home" ? "./styles/components/hero-actions.css?v=20261003ratinglinks1" : "../styles/components/hero-actions.css?v=20260713r11heroactions1";
   if (!pageHtml.includes(heroActionsHref)) failures.push(`${page} page is missing the shared hero actions stylesheet`);
   const heroStatsHref = page === "home" ? "./styles/components/hero-stats.css?v=20260813driveraffiliations1" : "../styles/components/hero-stats.css?v=20260813driveraffiliations1";
   if (!pageHtml.includes(heroStatsHref)) failures.push(`${page} page is missing the shared hero stats stylesheet`);

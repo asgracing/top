@@ -396,3 +396,8 @@
     padding-inline: 18px;
   }
 }
+
+.hero-funnel-link-sr { color: rgb(143 255 120); }
+.hero-funnel-link-elo { color: rgb(216 180 254); }
+#safety-about, #elo-about { scroll-margin-top: 110px; }
+html { scroll-behavior: smooth; }

@@ -59,7 +59,7 @@
   <link rel="stylesheet" href="/styles/components/language-switch.css?v=20260713r11lang1" />
   <link rel="stylesheet" href="/styles/components/buttons.css?v=20260713r11buttons1" />
   <link rel="stylesheet" href="/styles/components/hero-foundation.css?v=20260713r11hero1" />
-  <link rel="stylesheet" href="/styles/components/hero-actions.css?v=20260713r11heroactions1" />
+  <link rel="stylesheet" href="/styles/components/hero-actions.css?v=20261003ratinglinks1" />
   <link rel="stylesheet" href="/styles/components/hero-stats.css?v=20260813driveraffiliations1" />
   <link rel="stylesheet" href="/styles/components/clubs-teams-metrics.css?v=20260811clubsmetrics2" />
   <link rel="stylesheet" href="/styles/components/server-sticky-layout.css?v=20260820widgetheader1" />
@@ -293,7 +293,7 @@
       <div class="hero-funnel-card">
         <div class="hero-funnel-copy">
           <div class="hero-funnel-title" data-i18n="heroFunnelTitle">Monza 24/7, ежедневные заезды, помощь новичкам</div>
-          <p class="hero-funnel-note" data-i18n="heroFunnelNote"><a class="hero-funnel-link hero-funnel-link-telegram" href="https://t.me/+JUymrENgddcyMTdi" target="_blank" rel="noopener noreferrer">Telegram</a> и <a class="hero-funnel-link hero-funnel-link-discord" href="https://discord.gg/cEPFHXXtTC" target="_blank" rel="noopener noreferrer">Discord</a> - самые удобные способы общения в комьюнити. Здесь ты найдёшь напоминания, результаты, голосования и живое общение на симрейсинговые темы.</p>
+          <p class="hero-funnel-note" data-i18n="heroFunnelNote"><a class="hero-funnel-link hero-funnel-link-telegram" href="https://t.me/+JUymrENgddcyMTdi" target="_blank" rel="noopener noreferrer">Telegram</a> и <a class="hero-funnel-link hero-funnel-link-discord" href="https://discord.gg/cEPFHXXtTC" target="_blank" rel="noopener noreferrer">Discord</a> — напоминания, результаты, голосования и общение. <a class="hero-funnel-link hero-funnel-link-sr" href="#safety-about">SR — безопасность</a> · <a class="hero-funnel-link hero-funnel-link-elo" href="#elo-about">ELO — мастерство</a>.</p>
         </div>
 
       </div>
@@ -800,7 +800,7 @@
 
           <p data-i18n="pointsP2">Все дробные значения округляются до целых: 0.1-0.5 вниз, 0.6-0.9 вверх. За лучший круг пилот всегда получает <strong>+1 очко</strong>.</p>
 
-          <div class="elo-about-block">
+          <div class="elo-about-block" id="elo-about">
             <div class="elo-about-copy">
               <h3 data-i18n="eloAboutTitle">ELO рейтинг</h3>
               <p data-i18n="eloAboutP1">ELO пересчитывается после зачтенных гонок. Финиш сравнивается с силой лобби: победа над сильными соперниками дает больше рейтинга, проигрыш слабым снимает больше ELO.</p>
@@ -816,7 +816,7 @@
             </div>
           </div>
 
-          <div class="elo-about-block safety-about-block">
+          <div class="elo-about-block safety-about-block" id="safety-about">
             <div class="elo-about-copy">
               <h3 data-i18n="safetyAboutTitle">Safety Rating</h3>
               <p data-i18n="safetyAboutP1">SR пересчитывается по зачтённым финишам гонок.</p>
@@ -1146,6 +1146,6 @@
   </div>
 
   <script src="/legal.js?v=20260920locale1" defer></script>
-  <script type="module" src="/src/entrypoints/home.js?v=20261003promocrown1"></script>
+  <script type="module" src="/src/entrypoints/home.js?v=20261003ratinglinks1"></script>
 </body>
 </html>
