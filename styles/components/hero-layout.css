@@ -741,9 +741,10 @@
   padding: 14px;
   gap: 4px;
   border: 0;
-  background: rgba(21, 19, 20, 0.46);
+  background: rgba(21, 19, 20, 0.2);
   box-shadow: none;
 }
+.hero-hourly-promo::after { opacity: 0.25; }
 .hero-hourly-promo .hero-hourly-promo-title {
   display: block;
   width: auto;
@@ -806,7 +807,7 @@
   /* Compensate for transparent padding below the car in the source PNG. */
   bottom: -10px;
   width: min(180px, 54%);
-  opacity: 0.3;
+  opacity: 0.7;
 }
 .hero-hourly-promo.is-endurance-event .hero-hourly-promo-accent { color: rgb(143 255 120); }
 .hero-hourly-promo.is-championship-event .hero-hourly-promo-accent { color: rgb(216 180 254); }
