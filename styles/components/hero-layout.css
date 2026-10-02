@@ -1,3 +1,97 @@
+/* Compact upcoming card: let content determine height at every breakpoint. */
+.hero-card .hero-hourly-card {
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-start;
+  align-self: start;
+  gap: 8px;
+  height: auto;
+  min-height: 0;
+  padding: 14px;
+}
+
+.hero-hourly-card .hero-hourly-head {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) auto;
+  align-items: start;
+  gap: 8px;
+}
+
+.hero-hourly-card .hero-hourly-eyebrow {
+  min-width: 0;
+  font-size: 0.72rem;
+  line-height: 1.4;
+  letter-spacing: 0.06em;
+}
+
+.hero-hourly-card .hero-hourly-countdown {
+  padding: 4px 7px;
+  border: 1px solid rgba(255, 166, 51, 0.6);
+  border-radius: 999px;
+  background: rgba(43, 24, 10, 0.85);
+  font-size: 0.76rem;
+  line-height: 1.2;
+}
+
+.hero-hourly-card .hero-hourly-meta,
+.hero-hourly-card .hero-hourly-meta-row {
+  gap: 7px;
+}
+
+.hero-hourly-card .hero-hourly-meta-value {
+  max-width: 100%;
+  font-size: clamp(1.15rem, 2vw, 1.35rem);
+  line-height: 1.2;
+}
+
+.hero-hourly-card .hero-hourly-meta-schedule {
+  display: flex;
+  align-items: baseline;
+  gap: 4px 12px;
+}
+
+.hero-hourly-card .hero-hourly-meta-time {
+  font-size: 0.76rem;
+  line-height: 1.4;
+}
+
+.hero-hourly-card .hero-hourly-votes {
+  align-self: auto;
+  justify-content: flex-start;
+  min-height: 0;
+  margin: 0;
+  padding: 0;
+  border: 0;
+  background: none;
+  backdrop-filter: none;
+  font-size: 0.76rem;
+  line-height: 1.4;
+  text-align: left;
+}
+
+.hero-hourly-card .hero-hourly-actions {
+  margin: 0;
+  gap: 8px;
+}
+
+.hero-hourly-card .btn.hero-hourly-btn {
+  min-height: 44px;
+  padding: 10px 14px;
+  border-radius: 999px;
+}
+
+.hero-hourly-card .hero-hourly-cancel {
+  flex-basis: 44px;
+  width: 44px;
+  height: 44px;
+}
+
+.hero-hourly-card .legal-inline-note {
+  margin: 0;
+  font-size: 0.62rem;
+  line-height: 1.4;
+}
+
 /* Keep all event details visible when text grows or the desktop column narrows.
    These rules are unlayered to override the legacy homepage stylesheet. */
 .hero-card .hero-hourly-card {
@@ -612,4 +706,20 @@
     grid-row: auto;
     transform: none;
   }
+}
+
+/* Override the earlier breakpoint rules that stretch both cards to equal height. */
+.hero-card .hero-hourly-card {
+  align-self: start;
+  height: auto;
+  min-height: 0;
+  padding: 14px;
+}
+
+.hero-hourly-card.is-championship-event .hero-hourly-meta-value {
+  display: inline-flex;
+  padding: 6px 11px;
+  border: 1px solid rgba(192, 132, 252, 0.7);
+  border-radius: 12px;
+  background: rgba(39, 17, 57, 0.85);
 }
