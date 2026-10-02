@@ -65,6 +65,36 @@
   font-weight: 750;
 }
 
+.championship-progress-card.is-active,
+#championship-status.is-active {
+  border-color: rgba(168, 85, 247, 0.48);
+  color: #e9d5ff;
+}
+
+.championship-progress-card.is-active {
+  background: rgba(126, 34, 206, 0.16);
+}
+
+.championship-progress-card.is-scheduled,
+#championship-status.is-scheduled {
+  border-color: rgba(245, 158, 11, 0.5);
+  color: #fed7aa;
+}
+
+.championship-progress-card.is-scheduled {
+  background: rgba(217, 119, 6, 0.16);
+}
+
+.championship-progress-card.is-finished,
+#championship-status.is-finished {
+  border-color: rgba(148, 163, 184, 0.38);
+  color: #cbd5e1;
+}
+
+.championship-progress-card.is-finished {
+  background: rgba(71, 85, 105, 0.18);
+}
+
 .championship-section {
   margin-top: 0;
   min-width: 0;

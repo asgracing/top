@@ -164,10 +164,20 @@
   font-weight: 800;
 }
 
+.championship-history-chip.is-active {
+  background: rgba(168, 85, 247, 0.18);
+  color: #e9d5ff;
+}
+
+.championship-history-chip.is-scheduled {
+  background: rgba(245, 158, 11, 0.18);
+  color: #fed7aa;
+}
+
 .championship-history-chip.is-finished,
 .championship-history-chip.is-archived {
-  background: rgba(255, 209, 102, 0.14);
-  color: #fff0bc;
+  background: rgba(148, 163, 184, 0.16);
+  color: #cbd5e1;
 }
 
 .card-subtle {

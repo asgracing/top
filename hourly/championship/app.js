@@ -9,6 +9,7 @@ import {
 } from "../../news-read-state.js?v=20260813newsread1";
 import { createHourlyVotesClient } from "../../src/shared/hourly-votes-client.js?v=20260910security1";
 import { safeImageUrl, safeLinkUrl } from "../../src/shared/safe-dom.js";
+import { championshipStatusTone, normalizeChampionshipStatus } from "../../src/pages/hourly/championship-status.js?v=20261002status1";
 
 const params = new URLSearchParams(window.location.search);
 
@@ -111,7 +112,7 @@ const translations = {
     drivers: "drivers scored",
     status: "status",
     statusActive: "Active",
-    statusUpcoming: "Upcoming",
+    statusUpcoming: "Scheduled",
     statusFinished: "Finished",
     statusArchived: "Archived",
     dateTime: "Date & time",
@@ -207,7 +208,7 @@ const translations = {
     drivers: "пилотов в таблице",
     status: "статус",
     statusActive: "Активен",
-    statusUpcoming: "Скоро",
+    statusUpcoming: "Запланирован",
     statusFinished: "Завершен",
     statusArchived: "В архиве",
     dateTime: "Дата и время",
@@ -1213,13 +1214,13 @@ function renderProgress(data, races, upcoming, standings) {
   const root = document.getElementById("championship-progress");
   if (!root) return;
   const cards = [
-    [races.length, t("completed")],
-    [upcoming.length, t("upcoming")],
-    [standings.length, t("drivers")],
-    [championshipStatusLabel(data?.status), t("status")]
+    [races.length, t("completed"), ""],
+    [upcoming.length, t("upcoming"), ""],
+    [standings.length, t("drivers"), ""],
+    [championshipStatusLabel(data?.status), t("status"), ` is-${championshipStatusTone(data?.status)}`]
   ];
-  root.innerHTML = cards.map(([value, label]) => `
-    <div class="championship-progress-card">
+  root.innerHTML = cards.map(([value, label, statusClass]) => `
+    <div class="championship-progress-card${statusClass}">
       <div class="championship-progress-value">${esc(value)}</div>
       <div class="championship-progress-label">${esc(label)}</div>
     </div>
@@ -1227,8 +1228,8 @@ function renderProgress(data, races, upcoming, standings) {
 }
 
 function championshipStatusLabel(value) {
-  const status = String(value || "active").trim().toLowerCase();
-  if (status === "upcoming") return t("statusUpcoming");
+  const status = normalizeChampionshipStatus(value || "active");
+  if (status === "scheduled") return t("statusUpcoming");
   if (status === "finished") return t("statusFinished");
   if (status === "archived") return t("statusArchived");
   return t("statusActive");
@@ -2060,7 +2061,11 @@ async function init() {
     await loadVotesForSchedule(upcoming.slice(0, 3));
 
     document.getElementById("championship-title").textContent = data.title || announcement?.championship_title || firstChampionship?.championship_title || "ASG Racing June 2026";
-    document.getElementById("championship-status").textContent = [data.period, data.status].filter(Boolean).join(" · ") || t("championship");
+    const statusElement = document.getElementById("championship-status");
+    const normalizedStatus = normalizeChampionshipStatus(data.status);
+    statusElement.textContent = [data.period, championshipStatusLabel(normalizedStatus)].filter(Boolean).join(" · ") || t("championship");
+    statusElement.classList.remove("is-active", "is-scheduled", "is-finished");
+    statusElement.classList.add(`is-${championshipStatusTone(normalizedStatus)}`);
     document.getElementById("championship-description").textContent = getLocalizedDescription(data, announcement?.championship, firstChampionship) || t("activeChampionship");
 
     renderProgress(data, races, upcoming, standings);

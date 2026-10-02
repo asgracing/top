@@ -1,4 +1,5 @@
 import { initializeLocalizedPage, resolvePageLocale, setPageLocale } from "../../../src/shared/localized-page.js?v=20260920routes1";
+import { championshipStatusTone, normalizeChampionshipStatus } from "../../../src/pages/hourly/championship-status.js?v=20261002status1";
 
 initializeLocalizedPage();
 
@@ -54,6 +55,7 @@ const translations = {
     historySearchLabel: "Search championships",
     historySearchPlaceholder: "Search championships",
     historyFilterAll: "All",
+    historyFilterScheduled: "Scheduled",
     historyFilterFinished: "Finished",
     historyFilterArchived: "Archived",
     historyEmpty: "No past championships have been published yet.",
@@ -66,7 +68,9 @@ const translations = {
     historyDetailNoDescription: "No description has been published for this championship yet.",
     historyLoading: "Loading...",
     statusFinished: "Finished",
-    statusArchived: "Archived"
+    statusArchived: "Archived",
+    statusScheduled: "Scheduled",
+    statusActive: "Active"
   },
   ru: {
     navHourly: "\u0427\u0430\u0441\u043e\u0432\u0430\u044f \u0433\u043e\u043d\u043a\u0430",
@@ -94,6 +98,7 @@ const translations = {
     historySearchLabel: "\u041f\u043e\u0438\u0441\u043a \u0447\u0435\u043c\u043f\u0438\u043e\u043d\u0430\u0442\u043e\u0432",
     historySearchPlaceholder: "\u041d\u0430\u0439\u0442\u0438 \u0447\u0435\u043c\u043f\u0438\u043e\u043d\u0430\u0442",
     historyFilterAll: "\u0412\u0441\u0435",
+    historyFilterScheduled: "\u0417\u0430\u043f\u043b\u0430\u043d\u0438\u0440\u043e\u0432\u0430\u043d",
     historyFilterFinished: "\u0417\u0430\u0432\u0435\u0440\u0448\u0435\u043d",
     historyFilterArchived: "\u0412 \u0430\u0440\u0445\u0438\u0432\u0435",
     historyEmpty: "\u041f\u0440\u043e\u0448\u0435\u0434\u0448\u0438\u0445 \u0447\u0435\u043c\u043f\u0438\u043e\u043d\u0430\u0442\u043e\u0432 \u043f\u043e\u043a\u0430 \u043d\u0435 \u043e\u043f\u0443\u0431\u043b\u0438\u043a\u043e\u0432\u0430\u043d\u043e.",
@@ -106,7 +111,9 @@ const translations = {
     historyDetailNoDescription: "\u0414\u043b\u044f \u044d\u0442\u043e\u0433\u043e \u0447\u0435\u043c\u043f\u0438\u043e\u043d\u0430\u0442\u0430 \u043e\u043f\u0438\u0441\u0430\u043d\u0438\u0435 \u043f\u043e\u043a\u0430 \u043d\u0435 \u043e\u043f\u0443\u0431\u043b\u0438\u043a\u043e\u0432\u0430\u043d\u043e.",
     historyLoading: "\u0417\u0430\u0433\u0440\u0443\u0437\u043a\u0430...",
     statusFinished: "\u0417\u0430\u0432\u0435\u0440\u0448\u0435\u043d",
-    statusArchived: "\u0412 \u0430\u0440\u0445\u0438\u0432\u0435"
+    statusArchived: "\u0412 \u0430\u0440\u0445\u0438\u0432\u0435",
+    statusScheduled: "\u0417\u0430\u043f\u043b\u0430\u043d\u0438\u0440\u043e\u0432\u0430\u043d",
+    statusActive: "\u0410\u043a\u0442\u0438\u0432\u0435\u043d"
   }
 };
 
@@ -141,7 +148,11 @@ function renderDriverLink(name, publicId, className = "driver-link") {
 }
 
 function statusLabel(status) {
-  return status === "archived" ? t("statusArchived") : t("statusFinished");
+  const normalized = normalizeChampionshipStatus(status);
+  if (normalized === "active") return t("statusActive");
+  if (normalized === "scheduled") return t("statusScheduled");
+  if (normalized === "finished") return t("statusFinished");
+  return t("statusArchived");
 }
 
 function championshipUrl(slug) {
@@ -179,7 +190,7 @@ function normalizeChampionship(item, activeSlug) {
   const slug = String(item.slug || "").trim();
   if (!slug || slug === activeSlug) return null;
   const standings = Array.isArray(item.standings) ? item.standings : [];
-  const top3 = standings.slice(0, 3);
+  const top3 = (Array.isArray(item.results_top3) ? item.results_top3 : standings).slice(0, 3);
   const rawStatus = String(item.status || "").trim().toLowerCase();
   return {
     slug,
@@ -190,7 +201,7 @@ function normalizeChampionship(item, activeSlug) {
     winnerPublicId: extractDriverPublicId(top3[0]) || extractDriverPublicId(item.winner),
     raceCount: Number(item.race_count || 0),
     driverCount: Number(item.driver_count || standings.length || 0),
-    status: rawStatus === "archived" ? "archived" : "finished",
+    status: normalizeChampionshipStatus(rawStatus),
     top3
   };
 }
@@ -233,7 +244,7 @@ function renderDetail(item) {
         <div class="eyebrow">${esc(item.period || statusLabel(item.status))}</div>
         <h2 class="championship-history-detail-title">${esc(item.title)}</h2>
       </div>
-      <span class="championship-history-chip is-${esc(item.status)}">${esc(statusLabel(item.status))}</span>
+      <span class="championship-history-chip is-${esc(championshipStatusTone(item.status))}">${esc(statusLabel(item.status))}</span>
     </div>
     <p class="championship-history-detail-description">${esc(item.description || t("historyDetailNoDescription"))}</p>
     <div class="championship-history-detail-grid">
@@ -281,7 +292,7 @@ function renderList() {
           <div class="championship-history-row-period">${esc(item.period || statusLabel(item.status))}</div>
           <div class="championship-history-row-title">${esc(item.title)}</div>
         </div>
-        <span class="championship-history-chip is-${esc(item.status)}">${esc(statusLabel(item.status))}</span>
+        <span class="championship-history-chip is-${esc(championshipStatusTone(item.status))}">${esc(statusLabel(item.status))}</span>
       </div>
       <div class="championship-history-row-meta">
         <span class="championship-history-chip">${esc(t("historyDetailWinner"))}: ${esc(item.winner || "-")}</span>

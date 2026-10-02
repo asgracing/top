@@ -10,6 +10,7 @@ import {
 import { getSpecialEventPresentation, isSpecialEvent } from "../src/features/hourly/special-event.js?v=20260903special1";
 import { createHourlyVotesClient } from "../src/shared/hourly-votes-client.js?v=20260910security1";
 import { safeImageUrl, safeLinkUrl } from "../src/shared/safe-dom.js";
+import { normalizeChampionshipStatus } from "../src/pages/hourly/championship-status.js?v=20261002status1";
 
 const pageParams = new URLSearchParams(window.location.search);
 function normalizeBaseUrl(value) {
@@ -287,7 +288,7 @@ const translations = {
     championshipHistorySubtitle: "Current and archived ASG Racing championships with standings and results.",
     championshipHistoryEmpty: "No published championships yet.",
     championshipStatusActive: "Active",
-    championshipStatusUpcoming: "Upcoming",
+    championshipStatusUpcoming: "Scheduled",
     championshipStatusFinished: "Finished",
     championshipStatusArchived: "Archive",
     championshipWinnerLabel: "Winner",
@@ -620,7 +621,7 @@ Object.assign(translations.ru, {
   championshipHistorySubtitle: "РўРµРєСѓС‰РёРµ Рё Р°СЂС…РёРІРЅС‹Рµ С‡РµРјРїРёРѕРЅР°С‚С‹ ASG Racing СЃ РёС‚РѕРіР°РјРё Рё СЃСЃС‹Р»РєР°РјРё РЅР° СЂРµР·СѓР»СЊС‚Р°С‚С‹.",
   championshipHistoryEmpty: "РћРїСѓР±Р»РёРєРѕРІР°РЅРЅС‹С… С‡РµРјРїРёРѕРЅР°С‚РѕРІ РїРѕРєР° РЅРµС‚.",
   championshipStatusActive: "РђРєС‚РёРІРЅС‹Р№",
-  championshipStatusUpcoming: "РЎРєРѕСЂРѕ",
+  championshipStatusUpcoming: "Запланирован",
   championshipStatusFinished: "Р—Р°РІРµСЂС€РµРЅ",
   championshipStatusArchived: "РђСЂС…РёРІ",
   championshipWinnerLabel: "РџРѕР±РµРґРёС‚РµР»СЊ",
@@ -1080,17 +1081,10 @@ function renderRecentRacesLoadingState() {
   const container = document.getElementById("recent-races-table");
   if (container) container.innerHTML = renderLoadingMarkup(t("loadingShort"));
 }
-function normalizeChampionshipStatus(value) {
-  const normalized = String(value || "").trim().toLowerCase();
-  if (normalized === "active") return "active";
-  if (normalized === "upcoming") return "upcoming";
-  if (normalized === "finished") return "finished";
-  return "archived";
-}
 function getChampionshipStatusLabel(value) {
   const normalized = normalizeChampionshipStatus(value);
   if (normalized === "active") return t("championshipStatusActive");
-  if (normalized === "upcoming") return t("championshipStatusUpcoming");
+  if (normalized === "scheduled") return t("championshipStatusUpcoming");
   if (normalized === "finished") return t("championshipStatusFinished");
   return t("championshipStatusArchived");
 }
