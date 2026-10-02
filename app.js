@@ -3183,6 +3183,9 @@ function renderHourlyHeroCard() {
       ? t("hourlyPromoStandard")
       : String(t(isEndurance ? "endurancePromoMultiplier" : "hourlyPromoMultiplier"))
           .replace("{value}", String(Number.isFinite(multiplier) ? multiplier : 5));
+    const accent = isSpecial ? (currentLang === "ru" ? "МОНОМАШИНА" : "SINGLE MODEL")
+      : isChampionship ? (currentLang === "ru" ? "ЧЕМПИОНАТ" : "CHAMPIONSHIP") : isEndurance ? "ENDURANCE" : "";
+    if (accent) promoTitleEl.innerHTML = escapeHtml(promoTitleEl.textContent).replace(accent, `<span class="hero-hourly-promo-accent">${accent}</span>`);
   }
   const promoNoteEl = document.querySelector(".hero-hourly-promo-note");
   if (promoNoteEl) {

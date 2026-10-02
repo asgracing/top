@@ -727,7 +727,7 @@
 /* Shared with the existing single-model track title accent. */
 :root { --hourly-single-model-text: rgb(223 246 255); }
 .hero-hourly-card.is-special-event .hero-hourly-meta-value,
-.hero-hourly-promo.is-special-event .hero-hourly-promo-title {
+.hero-hourly-promo.is-special-event .hero-hourly-promo-accent {
   color: var(--hourly-single-model-text);
 }
 
@@ -740,12 +740,9 @@
   min-height: 0;
   padding: 14px;
   gap: 4px;
-  border: 1px solid rgba(255, 209, 102, 0.6);
-}
-.hero-hourly-promo::after {
-  inset: 8px 12px auto auto;
-  width: 60px;
-  height: 60px;
+  border: 0;
+  background: rgba(21, 19, 20, 0.92);
+  box-shadow: none;
 }
 .hero-hourly-promo .hero-hourly-promo-title {
   display: block;
@@ -756,7 +753,7 @@
   box-shadow: none;
   font-size: 1.1rem;
   line-height: 1.2;
-  animation: none;
+  color: rgb(255 209 102);
   overflow-wrap: anywhere;
 }
 .hero-hourly-promo .hero-hourly-promo-note {
@@ -805,14 +802,5 @@
   width: min(180px, 54%);
   opacity: 0.3;
 }
-.hero-hourly-promo.is-endurance-event {
-  border-color: rgba(57, 255, 20, 0.82);
-  background: linear-gradient(135deg, rgba(12, 49, 17, 0.9), rgba(7, 18, 11, 0.94));
-}
-.hero-hourly-promo.is-endurance-event .hero-hourly-promo-title { color: rgb(143 255 120); }
-.hero-hourly-promo.is-championship-event { border-color: rgb(216 180 254); }
-.hero-hourly-promo.is-championship-event .hero-hourly-promo-title { color: rgb(216 180 254); }
-.hero-hourly-promo.is-special-event {
-  border-color: rgb(174 226 247);
-  background: linear-gradient(135deg, rgba(7, 28, 40, 0.94), rgba(5, 15, 23, 0.94));
-}
+.hero-hourly-promo.is-endurance-event .hero-hourly-promo-accent { color: rgb(143 255 120); }
+.hero-hourly-promo.is-championship-event .hero-hourly-promo-accent { color: rgb(216 180 254); }
