@@ -741,7 +741,9 @@
   padding: 14px;
   gap: 4px;
   border: 0;
-  background: rgba(21, 19, 20, 0.2);
+  background:
+    linear-gradient(150deg, rgba(255, 209, 102, 0.24), rgba(255, 91, 46, 0.15) 38%, rgba(255, 255, 255, 0.055)),
+    rgba(21, 19, 20, 0.2);
   box-shadow: none;
 }
 .hero-hourly-promo::after { opacity: 0.25; }
