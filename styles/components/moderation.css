@@ -25,4 +25,10 @@
 .moderation-warning{padding:12px;border-radius:8px;background:rgba(255,180,0,.09);color:#ffd47a}
 .moderation-actions{display:flex;justify-content:flex-end}.moderation-submit{border:0;border-radius:9px;padding:13px 22px;background:#d92727;color:#fff;font:inherit;font-weight:800;cursor:pointer}.moderation-submit:disabled{opacity:.55;cursor:wait}
 .moderation-message{min-height:24px;margin:14px 0 0}.moderation-message[data-kind="error"]{color:#ff9898}.moderation-message[data-kind="success"]{color:#8de2a8}
+.moderation-number-review{padding-bottom:28px;margin-bottom:28px;border-bottom:1px solid rgba(255,255,255,.1)}
+.moderation-number-review h2{margin-top:0}.moderation-number-review p{color:rgba(255,255,255,.72)}
+.moderation-number-request{display:flex;align-items:center;justify-content:space-between;gap:16px;padding:14px 0;border-bottom:1px solid rgba(255,255,255,.1)}
+.moderation-number-request>div{min-width:0;overflow-wrap:anywhere}.moderation-number-request strong,.moderation-number-request small{display:block}.moderation-number-request small{margin-top:6px;color:rgba(255,255,255,.62)}
+.moderation-number-request button{flex-shrink:0}.moderation-number-review .moderation-message[data-kind="error"]{color:#ff9898}.moderation-number-review .moderation-message[data-kind="success"]{color:#8de2a8}
+@media(max-width:540px){.moderation-number-request{align-items:flex-start;flex-direction:column}.moderation-number-request button{max-width:100%}}
 @media(max-width:720px){.moderation-shell{width:min(100% - 18px,980px);margin-top:18px}.moderation-heading,#moderation-workspace{padding:22px 18px}.moderation-grid{grid-template-columns:1fr}.moderation-result{grid-template-columns:1fr}.moderation-badges{justify-content:flex-start}}

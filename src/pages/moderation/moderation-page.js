@@ -1,4 +1,5 @@
 import { createAuthHeaderController } from "../../features/auth/header-auth.js?v=20260921l2";
+import { createRaceNumberReview } from "./race-number-review.js?v=20261003numbers1";
 import { applyLocalizedNavigation, currentPageLanguageHref, resolvePageLocale, setPageLocale } from "../../shared/localized-page.js?v=20260920routes1";
 import {
   createIdempotencyKey,
@@ -62,6 +63,7 @@ let action = "ban.issue";
 let retryIdempotencyKey = null;
 let searchController = null;
 let searchTimer = null;
+let raceNumberReview = null;
 
 function language() {
   return resolvePageLocale({ documentRef: document, windowRef: window }).language;
@@ -110,6 +112,7 @@ function renderGate(auth) {
   const gate = document.getElementById("moderation-gate");
   const workspace = document.getElementById("moderation-workspace");
   authState = auth;
+  raceNumberReview?.update(auth);
   if (!auth?.authenticated) {
     gate.textContent = t("signIn"); gate.hidden = false; workspace.hidden = true; return;
   }
@@ -249,4 +252,5 @@ document.getElementById("moderation-search").addEventListener("input", () => {
   clearTimeout(searchTimer); searchTimer = setTimeout(() => void searchPilots(), 250);
 });
 document.getElementById("moderation-form").addEventListener("submit", event => void submit(event));
+raceNumberReview = createRaceNumberReview({ api, language, getAuth: () => authState, authBaseUrl: AUTH_BASE_URL });
 createAuthHeaderController({ onAuthChange: renderGate });

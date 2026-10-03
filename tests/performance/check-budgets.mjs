@@ -36,7 +36,8 @@ const videos = [
 ];
 const moderationJavaScriptBytes =
   await textBytes("src/pages/moderation/moderation-model.js")
-  + await textBytes("src/pages/moderation/moderation-page.js");
+  + await textBytes("src/pages/moderation/moderation-page.js")
+  + await textBytes("src/pages/moderation/race-number-review.js");
 const moderationStylesheetBytes = await textBytes("styles/components/moderation.css");
 const portalOpsJavaScriptBytes =
   await textBytes("src/pages/portal-ops/portal-ops-model.js")

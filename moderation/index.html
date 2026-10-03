@@ -14,7 +14,7 @@
   <link rel="stylesheet" href="../styles/components/auth-header.css">
   <link rel="stylesheet" href="../styles/responsive.css">
   <link rel="stylesheet" href="../styles/components/responsive-accessibility.css">
-  <link rel="stylesheet" href="../styles/components/moderation.css?v=20260828mod1">
+  <link rel="stylesheet" href="../styles/components/moderation.css?v=20261003numbers1">
 </head>
 <body class="monza-bg-page moderation-page">
   <div class="site-video-overlay" aria-hidden="true"></div>
@@ -44,6 +44,13 @@
       </div>
       <div id="moderation-gate" class="moderation-gate" role="status">Checking administrator access…</div>
       <div id="moderation-workspace" hidden>
+        <section class="moderation-number-review" aria-labelledby="race-number-review-title">
+          <h2 id="race-number-review-title"></h2>
+          <p id="race-number-review-hint"></p>
+          <button id="race-number-review-refresh" class="moderation-submit" type="button"></button>
+          <p id="race-number-review-message" class="moderation-message" role="status" aria-live="polite"></p>
+          <div id="race-number-review-list"></div>
+        </section>
         <div class="moderation-tabs" role="tablist" aria-label="Moderation action">
           <button type="button" role="tab" aria-selected="true" data-action="ban.issue" data-copy="banTab">Bans</button>
           <button type="button" role="tab" aria-selected="false" data-action="strike.issue" data-copy="strikeTab">Strikes</button>
@@ -85,6 +92,6 @@
       </div>
     </section>
   </main>
-  <script type="module" src="../src/pages/moderation/moderation-page.js?v=20260921links2"></script>
+  <script type="module" src="../src/pages/moderation/moderation-page.js?v=20261003numbers1"></script>
 </body>
 </html>
