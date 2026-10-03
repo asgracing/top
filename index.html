@@ -85,6 +85,7 @@
   <link rel="stylesheet" href="./styles/components/floating-widgets.css?v=20260820widgetcollapse8" />
   <link rel="stylesheet" href="./legal.css" />
   <link rel="stylesheet" href="./styles/components/responsive-accessibility.css?v=20260715r13a11y1" />
+  <link rel="stylesheet" href="./styles/components/support-announcements.css?v=20261003support3" />
   <!-- seo-head:start -->
   <link rel="stylesheet" href="/styles/components/seo-content.css?v=20260919seo3">
   <link rel="alternate" hreflang="en" href="https://asgracing.ru/">
@@ -366,32 +367,30 @@
     </div>
 
     <aside class="support-inline-widget support-center-widget" aria-labelledby="support-widget-title">
-      <div class="support-widget-card">
-        <div class="support-widget-copy-block">
-          <h3 class="support-widget-title" id="support-widget-title" data-i18n="supportWidgetTitle">Support ASG Racing</h3>
-          <p class="support-widget-copy" data-i18n="supportWidgetText">If you enjoy the server, streams and stats site, you can help the project keep rolling with a quick support drop.</p>
+      <div class="support-widget-card support-widget-card-announcements">
+        <div class="support-announcements" aria-label="Upcoming announcements" data-i18n-aria-label="supportAnnouncementsAria">
+          <a class="support-announcement" role="link" aria-disabled="true" tabindex="0" data-i18n-aria-label="supportAnnouncementOneAria" aria-label="Announcement 1 is coming soon; section not open yet">
+            <span class="support-announcement-label" data-i18n="supportAnnouncementOne">COMING SOON #1</span><span class="support-announcement-arrow" aria-hidden="true">›</span>
+          </a>
+          <a class="support-announcement" role="link" aria-disabled="true" tabindex="0" data-i18n-aria-label="supportAnnouncementTwoAria" aria-label="Announcement 2 is coming soon; section not open yet">
+            <span class="support-announcement-label" data-i18n="supportAnnouncementTwo">COMING SOON #2</span><span class="support-announcement-arrow" aria-hidden="true">›</span>
+          </a>
         </div>
-
-        <a
-          class="support-widget-btn"
-          href="https://www.donationalerts.com/r/asgracing"
-          target="_blank"
-          rel="noopener noreferrer"
-          data-i18n="supportWidgetButton"
-          data-i18n-aria-label="supportWidgetButtonAria" aria-label="Open DonationAlerts support page for ASG Racing"
-        >Support the project</a>
-
-        <div class="support-widget-qr-shell">
-          <img
-            class="support-widget-qr"
-            src="https://files.donationalerts.com/uploads/qr/9055152/qr_4df1b4ad36b732d700f04a21d318b3fe.png"
-            alt="ASG Racing DonationAlerts QR code"
-            loading="lazy"
-            decoding="async"
-          />
+        <div class="support-donation">
+          <div class="support-widget-copy-block">
+            <h3 class="support-widget-title" id="support-widget-title" data-i18n="supportWidgetTitle">Support ASG Racing</h3>
+            <p class="support-widget-copy" data-i18n="supportWidgetText">Help the project grow.</p>
+          </div>
+          <div class="support-donation-body">
+            <div class="support-widget-qr-shell">
+              <img class="support-widget-qr" src="https://files.donationalerts.com/uploads/qr/9055152/qr_4df1b4ad36b732d700f04a21d318b3fe.png" alt="ASG Racing DonationAlerts QR code" loading="lazy" decoding="async" />
+            </div>
+            <div class="support-donation-actions">
+              <a class="support-widget-btn" href="https://www.donationalerts.com/r/asgracing" target="_blank" rel="noopener noreferrer" data-i18n-aria-label="supportWidgetButtonAria" aria-label="Open DonationAlerts support page for ASG Racing"><span data-i18n="supportWidgetButton">Support</span><span aria-hidden="true">↗</span></a>
+              <p class="support-widget-note" data-i18n="supportWidgetQrNote">Every contribution helps.</p>
+            </div>
+          </div>
         </div>
-
-        <p class="support-widget-note" data-i18n="supportWidgetQrNote">Open DonationAlerts or scan the QR code from your phone.</p>
       </div>
     </aside>
 

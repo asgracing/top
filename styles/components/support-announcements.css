@@ -1,0 +1,76 @@
+/* Home support concept 3: keep the existing hero column and desktop height. */
+.hero-card .support-inline-widget.support-center-widget .support-widget-card.support-widget-card-announcements {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr);
+  grid-template-rows: auto minmax(0, 1fr);
+  gap: 16px;
+  padding: 16px;
+  align-items: stretch;
+}
+.support-announcements { display: grid; gap: 8px; min-width: 0; }
+.support-announcement {
+  position: relative;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 10px;
+  min-height: 48px;
+  padding: 10px 13px 10px 19px;
+  border: 1px solid rgba(255, 157, 62, .45);
+  border-radius: 11px;
+  background: linear-gradient(110deg, rgba(255, 122, 42, .16), rgba(255, 122, 42, .035));
+  box-shadow: inset 0 0 22px rgba(255, 122, 42, .04), 0 0 14px rgba(255, 122, 42, .07);
+  color: #fff4e9;
+  text-decoration: none;
+  cursor: default;
+}
+.support-announcement::before {
+  content: "";
+  position: absolute;
+  left: 7px;
+  top: 10px;
+  bottom: 10px;
+  width: 3px;
+  border-radius: 3px;
+  background: #ffad50;
+  box-shadow: 0 0 9px rgba(255, 146, 49, .7);
+}
+.support-announcement-label { font-size: .88rem; font-weight: 850; line-height: 1.25; letter-spacing: .025em; }
+.support-announcement-arrow { color: #ffab57; font-size: 22px; line-height: 1; flex: 0 0 auto; }
+.support-announcement:focus-visible { outline: 2px solid #ffb661; outline-offset: 3px; }
+.support-donation { display: grid; gap: 14px; align-content: center; min-width: 0; border-top: 1px solid rgba(255,255,255,.14); padding-top: 14px; }
+.hero-card .support-center-widget .support-donation .support-widget-copy-block { grid-column: auto; grid-row: auto; gap: 5px; min-width: 0; }
+.hero-card .support-center-widget .support-donation .support-widget-title { font-size: 18px; line-height: 1.2; margin: 0; }
+.hero-card .support-center-widget .support-donation .support-widget-copy { display: block; font-size: 12px; line-height: 1.4; margin: 0; -webkit-line-clamp: unset; }
+.support-donation-body { display: grid; grid-template-columns: 108px minmax(0, 1fr); gap: 14px; align-items: center; }
+.hero-card .support-center-widget .support-donation .support-widget-qr-shell { display: block; grid-column: auto; grid-row: auto; width: 108px; padding: 0; margin: 0; border: 0; background: none; border-radius: 10px; justify-self: start; align-self: center; }
+.hero-card .support-center-widget .support-donation .support-widget-qr { width: 108px; height: 108px; padding: 5px; border-radius: 10px; }
+.support-donation-actions { display: grid; gap: 8px; min-width: 0; }
+.hero-card .support-center-widget .support-donation .support-widget-btn { grid-column: auto; grid-row: auto; justify-self: stretch; align-self: center; width: 100%; min-width: 0; min-height: 38px; padding: 8px 10px; border-radius: 9px; font-size: 13px; line-height: 1.25; gap: 7px; animation: none; box-shadow: 0 5px 16px rgba(255,91,46,.16); }
+.hero-card .support-center-widget .support-donation .support-widget-note { display: block; font-size: 10px; line-height: 1.4; text-align: left; margin: 0; color: rgba(230,234,240,.7); }
+@media (min-width: 641px) and (max-width: 1180px) {
+  .hero-card .support-inline-widget.support-center-widget .support-widget-card.support-widget-card-announcements { grid-template-columns: minmax(0, .9fr) minmax(0, 1.1fr); grid-template-rows: auto; gap: 20px; }
+  .support-donation { grid-template-columns: minmax(0, 1fr) 88px; grid-template-rows: auto auto; gap: 6px 12px; border-top: 0; border-left: 1px solid rgba(255,255,255,.14); padding: 0 0 0 20px; }
+  .support-donation-body { display: contents; }
+  .hero-card .support-center-widget .support-donation .support-widget-copy-block { grid-column: 1; grid-row: 1; }
+  .hero-card .support-center-widget .support-donation .support-widget-qr-shell { grid-column: 2; grid-row: 1 / span 2; width: 88px; }
+  .hero-card .support-center-widget .support-donation .support-widget-qr { width: 88px; height: 88px; }
+  .support-donation-actions { grid-column: 1; grid-row: 2; gap: 4px; }
+  .hero-card .support-center-widget .support-donation .support-widget-btn { min-height: 34px; padding-block: 6px; }
+  .support-announcement { min-height: 40px; padding-block: 7px; }
+}
+@media (max-width: 640px) {
+  .hero-card .support-inline-widget.support-center-widget .support-widget-card.support-widget-card-announcements { gap: 10px; padding: 12px; grid-template-rows: auto auto; }
+  .support-announcements { gap: 6px; }
+  .support-announcement { min-height: 36px; padding: 7px 11px 7px 18px; border-radius: 8px; }
+  .support-announcement-label { font-size: 12px; }
+  .support-announcement-arrow { font-size: 19px; }
+  .support-donation { padding-top: 10px; gap: 8px; align-content: start; }
+  .hero-card .support-center-widget .support-donation .support-widget-title { font-size: 17px; }
+  .hero-card .support-center-widget .support-donation .support-widget-copy { font-size: 11px; }
+  .support-donation-body { grid-template-columns: minmax(0, 1fr); gap: 0; }
+  .hero-card .support-center-widget .support-donation .support-widget-qr-shell { display: none; }
+  .support-donation-actions { grid-template-columns: minmax(0, 1fr) auto; gap: 10px; align-items: center; }
+  .hero-card .support-center-widget .support-donation .support-widget-btn { min-height: 34px; font-size: 12px; padding: 7px 10px; }
+  .hero-card .support-center-widget .support-donation .support-widget-note { font-size: 9px; max-width: 100px; }
+}
