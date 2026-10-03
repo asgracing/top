@@ -18,7 +18,7 @@ const COPY = Object.freeze({
     profile: "Driver profile",
     cabinet: "Driver account",
     settings: "Profile settings",
-    moderation: "Bans & Strikes",
+    moderation: "Bans, Strikes & Race Numbers",
     portalOps: "Portal operations",
     discord: "Discord",
     discordLink: "Link Discord",
@@ -42,7 +42,7 @@ const COPY = Object.freeze({
   },
   ru: {
     rank: "Rank",
-    moderation: "Баны и страйки",
+    moderation: "Баны, страйки и гоночные номера",
     portalOps: "Управление порталом",
     login: "Войти в личный кабинет",
     loginShort: "Steam",

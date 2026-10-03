@@ -1,4 +1,4 @@
-import { createAuthHeaderController } from "../../src/features/auth/header-auth.js?v=20260921l2";
+import { createAuthHeaderController } from "../../src/features/auth/header-auth.js?v=20261003names1";
 
 const BASE = "https://auth.asgracing.ru/v1/asg-lab";
 const content = document.getElementById("lab-content");

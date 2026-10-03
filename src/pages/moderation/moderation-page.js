@@ -1,4 +1,4 @@
-import { createAuthHeaderController } from "../../features/auth/header-auth.js?v=20260921l2";
+import { createAuthHeaderController } from "../../features/auth/header-auth.js?v=20261003names1";
 import { createRaceNumberReview } from "./race-number-review.js?v=20261003numbers1";
 import { applyLocalizedNavigation, currentPageLanguageHref, resolvePageLocale, setPageLocale } from "../../shared/localized-page.js?v=20260920routes1";
 import {
@@ -10,7 +10,7 @@ import {
 const AUTH_BASE_URL = "https://auth.asgracing.ru";
 const COPY = {
   en: {
-    eyebrow: "ADMIN TOOLS", title: "Bans & Strikes",
+    eyebrow: "ADMIN TOOLS", title: "Bans, Strikes & Race Numbers",
     intro: "Issue a ban or strike. Removing sanctions remains available only in the backend.",
     banTab: "Bans", strikeTab: "Strikes", pilot: "Pilot", searchPlaceholder: "Name or public profile ID",
     reason: "Reason", selectReason: "Select a reason", reasonDangerous: "Dangerous driving",
@@ -33,7 +33,7 @@ const COPY = {
     submitFailed: "Could not queue the command. You may retry; the same operation key will be reused."
   },
   ru: {
-    eyebrow: "ИНСТРУМЕНТЫ АДМИНИСТРАТОРА", title: "Баны и страйки",
+    eyebrow: "ИНСТРУМЕНТЫ АДМИНИСТРАТОРА", title: "Баны, страйки и гоночные номера",
     intro: "Здесь можно выдать бан или страйк. Снятие санкций пока доступно только через бэкенд.",
     banTab: "Баны", strikeTab: "Страйки", pilot: "Пилот", searchPlaceholder: "Имя или публичный ID профиля",
     reason: "Причина", selectReason: "Выберите причину", reasonDangerous: "Опасное вождение",
@@ -96,7 +96,7 @@ async function api(path, options = {}) {
 
 function applyCopy() {
   document.documentElement.lang = language();
-  document.title = language() === "ru" ? "Баны и страйки | ASG Racing" : "Bans & Strikes | ASG Racing";
+  document.title = `${t("title")} | ASG Racing`;
   document.querySelectorAll("[data-copy]").forEach(node => { node.textContent = t(node.dataset.copy); });
   document.querySelectorAll("[data-copy-placeholder]").forEach(node => { node.placeholder = t(node.dataset.copyPlaceholder); });
   document.querySelectorAll(".lang-btn[data-lang]").forEach(button => {

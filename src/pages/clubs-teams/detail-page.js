@@ -3,7 +3,7 @@ import {
   eloCategoryId,
   safeAvatarUrl,
   srCategory
-} from "../../features/auth/header-auth.js?v=20260921l2";
+} from "../../features/auth/header-auth.js?v=20261003names1";
 import { createHttpClient } from "../../shared/http-client.js";
 import { element } from "../../shared/safe-dom.js";
 import { applyLocalizedNavigation, currentPageLanguageHref, localizedPageHref, resolvePageLocale, setPageLocale } from "../../shared/localized-page.js?v=20260920routes1";

@@ -3,7 +3,7 @@ import {
   createAuthHeaderController,
   eloCategoryId,
   srCategory
-} from "../../features/auth/header-auth.js?v=20260921l2";
+} from "../../features/auth/header-auth.js?v=20261003names1";
 import { createHttpClient } from "../../shared/http-client.js";
 import { element } from "../../shared/safe-dom.js";
 import { resolveRuntimeOverride } from "../../shared/runtime-config.js";
