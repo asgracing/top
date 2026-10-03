@@ -1272,6 +1272,7 @@ function renderOverview(root, auth) {
         </div>
         <div class="account-actions">
           <a class="account-action account-action--primary" href="/account/settings/">${t("settings")}</a>
+          <a class="account-action" href="/account/asg-lab/">ASG Lab</a>
           <a class="account-action" href="${escapeHtml(auth.driver.profileUrl)}">${t("profile")}</a>
           <button class="account-action" id="driver-overlay-toggle" type="button" aria-expanded="false" aria-controls="driver-overlay-manager">${t("overlayButton")}</button>
         </div>

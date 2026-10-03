@@ -1,6 +1,8 @@
 {
   "appJavaScriptBytes": 494650,
-  "sourceModulesBytes": 423100,
+  "sourceModulesBytes": 423250,
+  "labAccountJavaScriptBytes": 17500,
+  "labAccountStylesheetBytes": 3000,
   "stylesheetsBytes": 403000,
   "moderationJavaScriptBytes": 18500,
   "moderationStylesheetBytes": 4000,

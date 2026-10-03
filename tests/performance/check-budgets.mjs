@@ -60,6 +60,8 @@ const metrics = {
   driverAchievementsStylesheetBytes: await textBytes("styles/components/driver-achievements.css"),
   driverOverlayJavaScriptBytes,
   driverOverlayStylesheetBytes: await textBytes("overlay/driver/styles.css"),
+  labAccountJavaScriptBytes: await textBytes("account/asg-lab/app.js"),
+  labAccountStylesheetBytes: await textBytes("account/asg-lab/page.css"),
   homeHtmlBytes: Buffer.byteLength(html.replace(/\r\n/g, "\n")),
   backgroundVideoBytes: Math.max(...await Promise.all(videos.map(fileBytes))),
   backgroundPlaylistBytes: (await Promise.all(videos.map(fileBytes))).reduce((sum, bytes) => sum + bytes, 0),
