@@ -1,4 +1,4 @@
-import { normalizeOverlayPayload, overlayTokenFromHash } from "./model.js?v=20260927overlay1";
+import { normalizeOverlayPayload, overlayTokenFromHash } from "./model.js?v=20261003palette1";
 
 const AUTH_BASE_URL = "https://auth.asgracing.ru";
 const POLL_MS = 60_000;
@@ -9,6 +9,12 @@ let hasRendered = false;
 function render(payload) {
   const state = normalizeOverlayPayload(payload);
   root.dataset.eloCategory = String(state.eloCategoryId);
+  for (let category = 1; category <= 6; category += 1) {
+    root.querySelector(".driver-overlay__elo-pill").classList.toggle(`elo-cat-${category}`, category === state.eloCategoryId);
+  }
+  for (const category of ["A", "B", "C"]) {
+    root.querySelector(".driver-overlay__sr-pill").classList.toggle(`sr-cat-${category}`, category === state.srCategory);
+  }
   root.dataset.showAvatar = String(state.showAvatar);
   root.dataset.showNumber = String(state.showRaceNumber);
   root.querySelector("[data-elo-category]").textContent = state.eloCategoryName.toUpperCase();

@@ -19,6 +19,17 @@ test("account accepts only the dedicated ASG overlay fragment URL", () => {
   }).settings.showAvatar, false);
 });
 
+test("OBS uses the supplied SR category with the site thresholds as fallback", () => {
+  const normalize = (sr, sr_category) => normalizeOverlayPayload({ elo: 1252, sr, sr_category });
+  assert.equal(normalize(2.61).srCategory, "B");
+  assert.equal(normalize(2.49).srCategory, "C");
+  assert.equal(normalize(2.5).srCategory, "B");
+  assert.equal(normalize(4.99).srCategory, "B");
+  assert.equal(normalize(5).srCategory, "A");
+  assert.equal(normalize(0, " a ").srCategory, "A");
+  assert.equal(normalize(2.61, "invalid").srCategory, "B");
+});
+
 test("OBS model validates token, payload and Steam avatar hosts", () => {
   assert.equal(overlayTokenFromHash(`#token=${token}`), token);
   assert.equal(overlayTokenFromHash("#token=broken"), null);

@@ -26,12 +26,13 @@ export function normalizeOverlayPayload(payload) {
   const categoryId = Number(payload?.elo_category_id);
   const number = Number(payload?.race_number);
   if (!Number.isFinite(elo) || !Number.isFinite(sr)) throw new TypeError("invalid_overlay_payload");
+  const srCategory = String(payload?.sr_category || "").trim().toUpperCase();
   return {
     elo: Math.round(elo),
     eloCategoryId: Number.isInteger(categoryId) && categoryId >= 1 && categoryId <= 6 ? categoryId : 6,
     eloCategoryName: String(payload?.elo_category_name || "Racer").trim().slice(0, 24) || "Racer",
     sr: Math.max(0, sr).toFixed(2),
-    srCategory: String(payload?.sr_category || "").trim().slice(0, 4),
+    srCategory: ["A", "B", "C"].includes(srCategory) ? srCategory : sr >= 5 ? "A" : sr >= 2.5 ? "B" : "C",
     raceNumber: Number.isInteger(number) && number >= 1 && number <= 999 ? number : null,
     avatarUrl: safeSteamAvatarUrl(payload?.avatar_url),
     showAvatar: payload?.display?.show_avatar !== false,
