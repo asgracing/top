@@ -1,0 +1,52 @@
+@layer tokens {
+  :root {
+    --bg: #0b0f14;
+    --bg-soft: #121922;
+    --card: rgba(18, 25, 34, 0.9);
+    --card-2: rgba(25, 34, 46, 0.9);
+    --line: rgba(255, 255, 255, 0.08);
+    --text: #ecf3ff;
+    --muted: #9fb0c5;
+    --accent: #ff5b2e;
+    --accent-2: #ffd166;
+    --gold: #f5c451;
+    --silver: #b8c4d4;
+    --bronze: #d28b5f;
+    --green: #39d98a;
+    --red: #ef4444;
+    --shadow: 0 20px 60px rgba(0, 0, 0, 0.35);
+    --radius: 22px;
+    --space-1: 4px;
+    --space-2: 8px;
+    --space-3: 12px;
+    --space-4: 16px;
+    --space-5: 20px;
+    --space-6: 24px;
+    --space-8: 32px;
+    --radius-sm: 8px;
+    --radius-md: 12px;
+    --radius-lg: 16px;
+    --radius-pill: 999px;
+    --shadow-sm: 0 8px 24px rgba(0, 0, 0, 0.24);
+    --shadow-lg: var(--shadow);
+    --layer-background: 0;
+    --layer-decoration: 1;
+    --layer-content: 2;
+    --layer-sticky: 20;
+    --layer-dropdown: 100;
+    --layer-nav: 1000;
+    --layer-floating: 1100;
+    --layer-guide-scrim: 1180;
+    --layer-guide-highlight: 1190;
+    --layer-widget: 1200;
+    --layer-guide-launcher: 1240;
+    --layer-guide: 1250;
+    --layer-toast: 2600;
+    --layer-modal: 9999;
+    --layer-modal-priority: 100000;
+    --duration-fast: 160ms;
+    --duration-normal: 240ms;
+    --ease-standard: ease;
+    --nav-scroll-offset: 84px;
+  }
+}

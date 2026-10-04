@@ -1,0 +1,2080 @@
+import { initializeLocalizedPage, localizedPageHref, resolvePageLocale, setPageLocale } from "../../src/shared/localized-page.js?v=20260920routes1";
+initializeLocalizedPage();
+import {
+  NEWS_READ_LEGACY_STORAGE_KEY,
+  NEWS_READ_STORAGE_KEY,
+  loadNewsReadState as loadSharedNewsReadState,
+  markNewsRead,
+  saveNewsReadState as saveSharedNewsReadState
+} from "../../news-read-state.js?v=20260813newsread1";
+import { formatMoscowDateTime, parseAsgTimestamp } from "../../src/shared/time.js?v=20260910msk1";
+import { createHourlyVotesClient } from "../../src/shared/hourly-votes-client.js?v=20260910security1";
+import { safeImageUrl, safeLinkUrl } from "../../src/shared/safe-dom.js";
+import { championshipStatusTone, normalizeChampionshipStatus } from "../../src/pages/hourly/championship-status.js?v=20261002status1";
+
+const params = new URLSearchParams(window.location.search);
+
+function normalizeBaseUrl(value) {
+  return String(value || "").replace(/\/+$/, "");
+}
+
+const isAsgPublicSite = /(^|\.)asgracing\.ru$/i.test(window.location.hostname);
+const isLocalDevHost = /^(localhost|127\.0\.0\.1|::1)$/i.test(window.location.hostname);
+const defaultDataBase = isAsgPublicSite
+  ? "https://data.asgracing.ru/hourly-data"
+  : isLocalDevHost
+    ? "https://data.asgracing.ru/hourly-data"
+  : window.location.hostname === "asgracing.github.io"
+    ? "https://asgracing.github.io/hourly-data"
+    : "/hourly-data";
+const dataBase = normalizeBaseUrl(params.get("hourlyApiBase")) || defaultDataBase;
+const githubDataBase = "https://asgracing.github.io/hourly-data";
+const hourlyAssetBase = "../assets";
+const votesApiBase = "https://data.asgracing.ru/hourly-votes-api";
+const VOTE_STATE_STORAGE_KEY = "hourlyVoteStateByEventId";
+const VOTE_STATE_STORAGE_TTL_MS = 30 * 24 * 60 * 60 * 1000;
+
+function getLegalUrls() {
+  const fallbackBase =
+    document.querySelector('meta[name="legal-base-path"]')?.getAttribute("content")?.trim() || "../";
+  return window.ASGLegal?.getUrls?.() || {
+    privacy: `${fallbackBase}privacy/`,
+    cookies: `${fallbackBase}cookies/`
+  };
+}
+
+function buildCompactVoteLegalNoteHtml() {
+  const { privacy } = getLegalUrls();
+  if (currentLang === "ru") {
+    return `Голосуя, вы соглашаетесь с обработкой тех. идентификатора браузера. <a href="${esc(privacy)}">Подробнее</a>.`;
+  }
+  return `Voting means you agree to processing of a technical browser identifier. <a href="${esc(privacy)}">Details</a>.`;
+}
+const topSiteBaseUrl = isAsgPublicSite
+  ? "https://asgracing.ru"
+  : isLocalDevHost
+    ? ""
+  : window.location.hostname === "asgracing.github.io"
+    ? "https://asgracing.github.io/top"
+    : "";
+const newsFeedUrl = `${topSiteBaseUrl}/news-content/news.json`;
+let currentLang = resolvePageLocale({ documentRef: document, windowRef: window }).language;
+
+const translations = {
+  en: {
+    locale: "en-GB",
+    navHourly: "Hourly Race",
+    navChampionship: "Championship",
+    navLeaderboard: "Back to Main",
+    navStandings: "Standings",
+    navPastRaces: "Past races",
+    navCurrentChampionship: "Current championship",
+    navPastChampionships: "Past championships",
+    navMore: "More",
+    navMoreAriaLabel: "Open extra navigation",
+    navGroupChampionship: "Championship",
+    navGroupAsg: "ASG Racing",
+    btnRules: "Rules",
+    btnNews: "News",
+    btnChampionship: "Rating",
+    btnBestLaps: "Best Laps",
+    btnWorstSafety: "Safety Rating",
+    navClubsTeamsTable: "Clubs & Teams standings",
+    navClubsTeamsCatalog: "Clubs & Teams",
+    btnBans: "Ban List",
+    btnCommunity: "Community",
+    btnAboutServer: "About Server",
+    newsBellAriaLabel: "Open notifications",
+    newsBellUnreadLabel: "{count} unread notifications",
+    newsBellEmpty: "No new notifications yet.",
+    newsModalTitle: "Notifications",
+    newsModalSubtitle: "Latest updates, maintenance notes and community news.",
+    newsModalOpenAll: "Open all news",
+    championship: "Championship",
+    championshipEvent: "Championship Event",
+    activeChampionship: "Active ASG Racing championship.",
+    loadError: "Failed to load championship data.",
+    upcomingEyebrow: "Upcoming",
+    upcomingTitle: "Upcoming races",
+    winnersTitle: "Winners",
+    winnersEyebrow: "Final top 3",
+    noUpcoming: "No upcoming championship races yet.",
+    noResults: "No championship results yet.",
+    noRaceResults: "No completed championship races yet.",
+    noPrizes: "Prize images are not uploaded yet.",
+    prizesEyebrow: "Prizes",
+    prizesTitle: "Rewards",
+    standingsEyebrow: "Standings",
+    standingsTitle: "Championship results",
+    raceResultsEyebrow: "Archive",
+    raceResultsTitle: "Championship race results",
+    completed: "completed races",
+    upcoming: "upcoming races",
+    drivers: "drivers scored",
+    status: "status",
+    statusActive: "Active",
+    statusUpcoming: "Scheduled",
+    statusFinished: "Finished",
+    statusArchived: "Archived",
+    dateTime: "Date & time",
+    track: "Track",
+    weather: "Weather",
+    format: "Format",
+    conditions: "Conditions",
+    closeLabel: "Close",
+    position: "Position",
+    driver: "Full name",
+    total: "Total points",
+    points: "points",
+    winner: "Winner",
+    bestLap: "Best lap",
+    participants: "Drivers",
+    fieldStrength: "Field strength",
+    weatherClear: "Clear",
+    weatherMixed: "Mixed clouds",
+    weatherCloudy: "Cloudy",
+    weatherWet: "Wet risk",
+    weatherTemp: "{value}C",
+    weatherTempHintTitle: "Ambient temperature",
+    weatherTempHintBody: "Air temperature around the session start: {value}C. It affects tyre warm-up and overall grip.",
+    weatherCloudsHintTitle: "Cloud cover",
+    weatherCloudsHintBody: "{value}% cloud cover expected for this slot. More clouds usually mean a cooler, flatter track.",
+    weatherRainHintTitle: "Rain chance",
+    weatherRainHintBody: "{value}% rain probability for this slot. Higher values mean a greater chance of wet conditions.",
+    weatherRandomHintTitle: "Weather randomness",
+    weatherRandomHintBody: "Randomness level {value}. Higher values make the weather less predictable during the event.",
+    heroServerLabel: "Server",
+    heroPasswordLabel: "Password",
+    heroPitstopLabel: "Pitstop",
+    heroRefuelLabel: "Refuel",
+    heroTyresLabel: "Tyres",
+    labelDate: "Date",
+    labelTime: "Time",
+    entrySlots: "{value} slots",
+    entrySafety: "SA {value}+",
+    entryTrackMedals: "Track medals {value}",
+    entryRacecraft: "RC {value}+",
+    pitWindow: "window {value}m",
+    pitNone: "No mandatory pitstop",
+    pitMandatory: "{value} mandatory",
+    pitRefuelAllowed: "refuelling allowed",
+    pitRefuelFixed: "fixed refuel time",
+    refuelMandatory: "mandatory refuel",
+    refuelNone: "no refuel rules",
+    tyresMandatory: "mandatory tyre change",
+    tyresSets: "{value} sets",
+    tyresNone: "no tyre rules",
+    passwordNone: "No password",
+    eventDetailsLink: "Open event details",
+    voteButton: "I want to race!",
+    voteButtonDone: "You're in",
+    voteCountZero: "No votes yet",
+    voteCountOne: "{value} wants to race",
+    voteCountMany: "{value} want to race",
+    voteSoon: "Voting soon",
+    voteSending: "Saving...",
+    voteFailed: "Try again",
+    unvoteButton: "Remove vote",
+    footerText: "Statistics are generated from ACC Dedicated Server result files and published via GitHub Pages.",
+    unknown: "--"
+  },
+  ru: {
+    locale: "ru-RU",
+    navHourly: "Часовая гонка",
+    navChampionship: "Чемпионат",
+    navStandings: "Таблица",
+    navPastRaces: "Прошедшие гонки",
+    navMore: "Еще",
+    navMoreAriaLabel: "Открыть дополнительную навигацию",
+    championship: "Чемпионат",
+    championshipEvent: "Событие чемпионата",
+    activeChampionship: "Активный чемпионат ASG Racing.",
+    loadError: "Не удалось загрузить данные чемпионата.",
+    upcomingEyebrow: "Календарь",
+    upcomingTitle: "Предстоящие гонки",
+    winnersTitle: "Победители",
+    winnersEyebrow: "Итоговый топ 3",
+    noUpcoming: "Ближайшие гонки чемпионата пока не опубликованы.",
+    noResults: "Результатов чемпионата пока нет.",
+    noRaceResults: "Завершенных гонок чемпионата пока нет.",
+    noPrizes: "Картинки призов пока не загружены.",
+    prizesEyebrow: "Призы",
+    prizesTitle: "Награды",
+    standingsEyebrow: "Таблица",
+    standingsTitle: "Результаты чемпионата",
+    raceResultsEyebrow: "Архив",
+    raceResultsTitle: "Результаты гонок чемпионата",
+    completed: "гонок завершено",
+    upcoming: "гонок впереди",
+    drivers: "пилотов в таблице",
+    status: "статус",
+    statusActive: "Активен",
+    statusUpcoming: "Запланирован",
+    statusFinished: "Завершен",
+    statusArchived: "В архиве",
+    dateTime: "Дата и время",
+    track: "Трасса",
+    weather: "Погода",
+    format: "Формат",
+    conditions: "Условия",
+    closeLabel: "Закрыть",
+    position: "Позиция",
+    driver: "Имя фамилия",
+    total: "Итого очков",
+    points: "очков",
+    winner: "Победитель",
+    bestLap: "Лучший круг",
+    participants: "Пилоты",
+    fieldStrength: "Сила поля",
+    weatherClear: "Ясно",
+    weatherMixed: "Переменная облачность",
+    weatherCloudy: "Облачно",
+    weatherWet: "Есть риск дождя",
+    weatherTemp: "{value}C",
+    weatherTempHintTitle: "Температура воздуха",
+    weatherTempHintBody: "Температура воздуха к началу сессии: {value}C. Она влияет на прогрев шин и общий уровень сцепления.",
+    weatherCloudsHintTitle: "Облачность",
+    weatherCloudsHintBody: "Ожидаемая облачность для этого слота: {value}%. Чем ее больше, тем прохладнее и ровнее покрытие.",
+    weatherRainHintTitle: "Вероятность дождя",
+    weatherRainHintBody: "Вероятность дождя для этого слота: {value}%. Чем выше значение, тем больше шанс влажной трассы.",
+    weatherRandomHintTitle: "Рандомность погоды",
+    weatherRandomHintBody: "Уровень рандомности: {value}. Чем он выше, тем менее предсказуемой будет погода по ходу ивента.",
+    heroServerLabel: "Сервер",
+    heroPasswordLabel: "Пароль",
+    heroPitstopLabel: "Пит-стоп",
+    heroRefuelLabel: "Заправка",
+    heroTyresLabel: "Шины",
+    labelDate: "Дата",
+    labelTime: "Время",
+    entrySlots: "{value} слотов",
+    entrySafety: "SA {value}+",
+    entryTrackMedals: "Медали трассы {value}",
+    entryRacecraft: "RC {value}+",
+    pitWindow: "окно {value}м",
+    pitNone: "Без обязательного пит-стопа",
+    pitMandatory: "{value} обязат.",
+    pitRefuelAllowed: "дозаправка разрешена",
+    pitRefuelFixed: "фикс. время дозаправки",
+    refuelMandatory: "обязат. дозаправка",
+    refuelNone: "без правил по заправке",
+    tyresMandatory: "обязат. смена шин",
+    tyresSets: "{value} компл.",
+    tyresNone: "без правил по шинам",
+    passwordNone: "Без пароля",
+    eventDetailsLink: "Открыть детали события",
+    footerText: "Данные собираются из файлов результатов ACC Dedicated Server и публикуются через GitHub Pages.",
+    unknown: "--"
+  }
+};
+
+Object.assign(translations.ru, {
+  navLeaderboard: "\u041d\u0430 \u0433\u043b\u0430\u0432\u043d\u0443\u044e",
+  navGroupChampionship: "\u0427\u0435\u043c\u043f\u0438\u043e\u043d\u0430\u0442",
+  navCurrentChampionship: "\u0422\u0435\u043a\u0443\u0449\u0438\u0439 \u0447\u0435\u043c\u043f\u0438\u043e\u043d\u0430\u0442",
+  navPastChampionships: "\u041f\u0440\u043e\u0448\u0435\u0434\u0448\u0438\u0435 \u0447\u0435\u043c\u043f\u0438\u043e\u043d\u0430\u0442\u044b",
+  navGroupAsg: "ASG Racing",
+  btnRules: "\u041f\u0440\u0430\u0432\u0438\u043b\u0430",
+  btnNews: "\u041d\u043e\u0432\u043e\u0441\u0442\u0438",
+  btnChampionship: "\u0420\u0435\u0439\u0442\u0438\u043d\u0433",
+  btnBestLaps: "\u041b\u0443\u0447\u0448\u0438\u0435 \u043a\u0440\u0443\u0433\u0438",
+  btnWorstSafety: "Safety Rating",
+  navClubsTeamsTable: "Рейтинг клубов и команд",
+  navClubsTeamsCatalog: "Клубы и команды",
+  btnBans: "\u0411\u0430\u043d\u044b",
+  btnCommunity: "\u0421\u043e\u043e\u0431\u0449\u0435\u0441\u0442\u0432\u043e",
+  btnAboutServer: "\u041e \u0441\u0435\u0440\u0432\u0435\u0440\u0435",
+  newsBellAriaLabel: "\u041e\u0442\u043a\u0440\u044b\u0442\u044c \u0443\u0432\u0435\u0434\u043e\u043c\u043b\u0435\u043d\u0438\u044f",
+  newsBellUnreadLabel: "{count} \u043d\u0435\u043f\u0440\u043e\u0447\u0438\u0442\u0430\u043d\u043d\u044b\u0445 \u0443\u0432\u0435\u0434\u043e\u043c\u043b\u0435\u043d\u0438\u0439",
+  newsBellEmpty: "\u041f\u043e\u043a\u0430 \u043d\u0435\u0442 \u043d\u043e\u0432\u044b\u0445 \u0443\u0432\u0435\u0434\u043e\u043c\u043b\u0435\u043d\u0438\u0439.",
+  newsModalTitle: "\u0423\u0432\u0435\u0434\u043e\u043c\u043b\u0435\u043d\u0438\u044f",
+  newsModalSubtitle: "\u041f\u043e\u0441\u043b\u0435\u0434\u043d\u0438\u0435 \u043e\u0431\u043d\u043e\u0432\u043b\u0435\u043d\u0438\u044f, \u0442\u0435\u0445\u0440\u0430\u0431\u043e\u0442\u044b \u0438 \u043d\u043e\u0432\u043e\u0441\u0442\u0438 \u0441\u043e\u043e\u0431\u0449\u0435\u0441\u0442\u0432\u0430.",
+  newsModalOpenAll: "\u041e\u0442\u043a\u0440\u044b\u0442\u044c \u0432\u0441\u0435 \u043d\u043e\u0432\u043e\u0441\u0442\u0438"
+});
+
+const TRACK_BACKGROUNDS = {
+  barcelona: `${topSiteBaseUrl}/assets/barcelona.jpg`,
+  hungaroring: `${topSiteBaseUrl}/assets/hungaroring.jpg`,
+  imola: `${topSiteBaseUrl}/assets/imola.jpg`,
+  kyalami: `${topSiteBaseUrl}/assets/kyalami.jpg`,
+  laguna_seca: `${topSiteBaseUrl}/assets/laguna_seca.jpg`,
+  lagunaseca: `${topSiteBaseUrl}/assets/laguna_seca.jpg`,
+  misano: `${topSiteBaseUrl}/assets/misano.jpg`,
+  monza: `${topSiteBaseUrl}/assets/monza.jpg`,
+  monzatg: `${topSiteBaseUrl}/assets/monzaTG.jpg`,
+  mount_panorama: `${topSiteBaseUrl}/assets/mount_panorama.jpg`,
+  mountpanorama: `${topSiteBaseUrl}/assets/mount_panorama.jpg`,
+  nurburgring: `${topSiteBaseUrl}/assets/nurburgring.jpg`,
+  nurburgring_24h: `${topSiteBaseUrl}/assets/nurburgring_24h.jpg`,
+  nurburgring24h: `${topSiteBaseUrl}/assets/nurburgring_24h.jpg`,
+  nordschl: `${topSiteBaseUrl}/assets/nurburgring_24h.jpg`,
+  nordschleife: `${topSiteBaseUrl}/assets/nurburgring_24h.jpg`,
+  paul_ricard: `${topSiteBaseUrl}/assets/paul_ricard.jpg`,
+  paulricard: `${topSiteBaseUrl}/assets/paul_ricard.jpg`,
+  silverstone: `${topSiteBaseUrl}/assets/silverstone.jpg`,
+  spa: `${topSiteBaseUrl}/assets/spa.jpg`,
+  suzuka: `${topSiteBaseUrl}/assets/suzuka.jpg`,
+  zandvoort: `${topSiteBaseUrl}/assets/zandvoort.jpg`,
+  zolder: `${topSiteBaseUrl}/assets/zolder.jpg`
+};
+const WEATHER_ICON_PATHS = {
+  clouds: `${hourlyAssetBase}/weather/cloudness.png`,
+  rain: `${hourlyAssetBase}/weather/rain.png`,
+  random: `${hourlyAssetBase}/weather/random.png`
+};
+let championshipAnnouncementData = {};
+let championshipUpcomingItems = [];
+let selectedScheduleItem = null;
+let votesLoaded = false;
+let voteStateByEventId = loadStoredVoteState();
+let newsFeedData = [];
+let newsFeedSourceUrl = newsFeedUrl;
+let newsModalController = null;
+const pendingVoteEventIds = new Set();
+
+const ruVoteTranslations = {
+  voteButton: "\u042f \u0445\u043e\u0447\u0443 \u043f\u043e\u0435\u0445\u0430\u0442\u044c!",
+  voteButtonDone: "\u0422\u044b \u0432 \u0441\u043f\u0438\u0441\u043a\u0435",
+  voteCountZero: "\u041f\u043e\u043a\u0430 \u043d\u0438\u043a\u0442\u043e \u043d\u0435 \u043e\u0442\u043c\u0435\u0442\u0438\u043b\u0441\u044f",
+  voteCountOne: "{value} \u0445\u043e\u0447\u0435\u0442 \u043f\u043e\u0435\u0445\u0430\u0442\u044c",
+  voteCountMany: "{value} \u0445\u043e\u0442\u044f\u0442 \u043f\u043e\u0435\u0445\u0430\u0442\u044c",
+  voteSoon: "\u041e\u043f\u0440\u043e\u0441 \u0441\u043a\u043e\u0440\u043e",
+  voteSending: "\u0421\u043e\u0445\u0440\u0430\u043d\u044f\u0435\u043c...",
+  voteFailed: "\u041f\u043e\u0432\u0442\u043e\u0440\u0438 \u043f\u043e\u0437\u0436\u0435",
+  unvoteButton: "\u041e\u0442\u043c\u0435\u043d\u0438\u0442\u044c \u0433\u043e\u043b\u043e\u0441"
+};
+
+function t(key) {
+  if (currentLang === "ru" && ruVoteTranslations[key]) return ruVoteTranslations[key];
+  return translations[currentLang]?.[key] ?? translations.en[key] ?? key;
+}
+
+function tf(key, replacements = {}) {
+  return Object.entries(replacements).reduce((text, [name, value]) => (
+    text.replaceAll(`{${name}}`, String(value))
+  ), t(key));
+}
+
+function esc(value) {
+  return String(value ?? "").replace(/[&<>"']/g, char => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" }[char]));
+}
+
+function getDriverProfileHref(publicId) {
+  const resolvedId = String(publicId || "").trim();
+  if (!resolvedId) return null;
+  const url = new URL(`${topSiteBaseUrl}/driver/?id=${encodeURIComponent(resolvedId)}`, window.location.href);
+  const hourlyApiBase = params.get("hourlyApiBase");
+  if (hourlyApiBase) url.searchParams.set("hourlyApiBase", hourlyApiBase);
+  return `${url.pathname}${url.search}${url.hash}`;
+}
+
+function renderDriverLink(name, publicId, className = "driver-link") {
+  const safeName = esc(name || "-");
+  const href = getDriverProfileHref(publicId);
+  if (!href) return `<span class="${esc(className)}">${safeName}</span>`;
+  return `<a class="${esc(className)}" href="${esc(href)}">${safeName}</a>`;
+}
+
+function formatNewsDateTime(dateString) {
+  if (!dateString) return "-";
+  return formatMoscowDateTime(dateString, "ru-RU") || dateString;
+}
+
+function getNewsListHref() {
+  const url = new URL(localizedPageHref(`${topSiteBaseUrl}/news/`, currentLang, window.location));
+  return `${url.pathname}${url.search}${url.hash}`;
+}
+
+function getNewsArticleHref(slug) {
+  const url = new URL(getNewsListHref(), window.location.href);
+  if (slug) url.searchParams.set("slug", slug);
+  return `${url.pathname}${url.search}${url.hash}`;
+}
+
+function loadNewsReadState() {
+  return loadSharedNewsReadState(localStorage);
+}
+
+function saveNewsReadState(items) {
+  saveSharedNewsReadState(localStorage, items);
+}
+
+function isNewsItemRead(item) {
+  const state = loadNewsReadState();
+  const key = String(item?.id || item?.slug || "").trim();
+  return Boolean(key && state[key]);
+}
+
+function markNewsItemRead(item) {
+  markNewsRead(localStorage, item);
+}
+
+function normalizeNewsImageUrl(value) {
+  const sourceValue = String(value || "").trim();
+  if (!sourceValue) return "";
+  try {
+    const resolved = new URL(sourceValue, newsFeedSourceUrl || window.location.href).toString();
+    return safeImageUrl(resolved, window.location.href, { allowedOrigins: [newsFeedSourceUrl] }) || "";
+  } catch {
+    return "";
+  }
+}
+
+function normalizeNewsItem(rawItem) {
+  if (!rawItem || typeof rawItem !== "object") return null;
+  const slug = String(rawItem.slug || rawItem.id || "").trim();
+  const title = String(rawItem.title || "").trim();
+  if (!slug || !title) return null;
+  return {
+    id: String(rawItem.id || slug).trim(),
+    slug,
+    title,
+    thumbnail_url: normalizeNewsImageUrl(rawItem.thumbnail_url || rawItem.image?.thumbnail || rawItem.cover_image_url || rawItem.image?.cover),
+    published_at: String(rawItem.published_at || rawItem.date || "").trim(),
+    expires_at: String(rawItem.expires_at || "").trim(),
+    priority: Number(rawItem.priority) || 0,
+    is_pinned: Boolean(rawItem.is_pinned)
+  };
+}
+
+function getSortedNewsFeed(items = newsFeedData) {
+  return [...items]
+    .filter(Boolean)
+    .filter(item => {
+      const publishedAt = parseAsgTimestamp(item?.published_at)?.getTime() ?? Number.NaN;
+      return !Number.isFinite(publishedAt) || publishedAt <= Date.now();
+    })
+    .filter(item => {
+      const expiresAt = parseAsgTimestamp(item?.expires_at)?.getTime() ?? Number.NaN;
+      return !(Number.isFinite(expiresAt) && expiresAt < Date.now());
+    })
+    .sort((a, b) => {
+      if (Boolean(a.is_pinned) !== Boolean(b.is_pinned)) return a.is_pinned ? -1 : 1;
+      if ((Number(a.priority) || 0) !== (Number(b.priority) || 0)) return (Number(b.priority) || 0) - (Number(a.priority) || 0);
+      return (parseAsgTimestamp(b.published_at)?.getTime() || 0) - (parseAsgTimestamp(a.published_at)?.getTime() || 0);
+    });
+}
+
+function getUnreadNewsCount(items = newsFeedData) {
+  return getSortedNewsFeed(items).filter(item => !isNewsItemRead(item)).length;
+}
+
+async function loadNewsFeed() {
+  let payload = null;
+  try {
+    const response = await fetch(newsFeedUrl, { cache: "no-store" });
+    if (!response.ok) throw new Error(`HTTP ${response.status}`);
+    payload = await response.json();
+  } catch {
+    payload = null;
+  }
+  const items = Array.isArray(payload?.items) ? payload.items : Array.isArray(payload) ? payload : [];
+  newsFeedSourceUrl = newsFeedUrl;
+  newsFeedData = items.map(normalizeNewsItem).filter(Boolean);
+  return newsFeedData;
+}
+
+function renderNewsThumb(item) {
+  if (item?.thumbnail_url) {
+    return `<img class="news-thumb news-notification-thumb" src="${esc(item.thumbnail_url)}" alt="${esc(item.title || "")}" loading="lazy" />`;
+  }
+  return `<div class="news-thumb news-thumb-placeholder news-notification-thumb" aria-hidden="true"><span>NEWS</span></div>`;
+}
+
+function renderNewsNotificationTitle(title) {
+  const value = String(title || "").trim();
+  if (!value) return "";
+  const parts = value.split(/\s+\/\s+/);
+  if (parts.length < 2) return `<span class="news-notification-title">${esc(value)}</span>`;
+  return `<span class="news-bilingual-stack"><span class="news-notification-title">${esc(parts[0].trim())}</span><span class="news-notification-title-secondary">${esc(parts.slice(1).join(" / ").trim())}</span></span>`;
+}
+
+function renderNewsNotificationsModal() {
+  const listEl = document.getElementById("news-notifications-list");
+  if (!listEl) return;
+  const items = getSortedNewsFeed(newsFeedData).slice(0, 6);
+  listEl.innerHTML = items.length
+    ? items.map(item => `
+      <a class="news-notification-card${!isNewsItemRead(item) ? " is-unread" : ""}" href="${esc(getNewsArticleHref(item.slug))}" data-news-open-slug="${esc(item.slug)}">
+        <span class="news-notification-copy">
+          <span class="news-notification-meta">${esc(formatNewsDateTime(item.published_at))}</span>
+          ${renderNewsNotificationTitle(item.title)}
+          ${renderNewsThumb(item)}
+        </span>
+      </a>
+    `).join("")
+    : `<div class="empty-box">${esc(t("newsBellEmpty"))}</div>`;
+}
+
+function renderNewsBell() {
+  const button = document.getElementById("news-bell-button");
+  const badge = document.getElementById("news-bell-badge");
+  const panel = document.getElementById("news-notifications-panel");
+  if (!button || !badge) return;
+  const unreadCount = getUnreadNewsCount(newsFeedData);
+  button.classList.toggle("has-unread", unreadCount > 0);
+  badge.hidden = unreadCount <= 0;
+  badge.textContent = unreadCount > 99 ? "99+" : String(unreadCount);
+  button.setAttribute("aria-label", unreadCount > 0 ? tf("newsBellUnreadLabel", { count: unreadCount }) : t("newsBellAriaLabel"));
+  if (panel) button.setAttribute("aria-expanded", panel.hidden ? "false" : "true");
+}
+
+function closeNewsNotificationsPopover() {
+  const panel = document.getElementById("news-notifications-panel");
+  const button = document.getElementById("news-bell-button");
+  if (!panel || panel.hidden) return;
+  panel.hidden = true;
+  button?.setAttribute("aria-expanded", "false");
+}
+
+function syncNewsNotificationsPopoverPosition() {
+  const panel = document.getElementById("news-notifications-panel");
+  const button = document.getElementById("news-bell-button");
+  if (!panel || !button) return;
+  const viewportWidth = window.innerWidth || document.documentElement.clientWidth || 0;
+  if (viewportWidth > 640) {
+    panel.style.removeProperty("--news-popover-top");
+    panel.style.removeProperty("--news-popover-inset");
+    return;
+  }
+  const rect = button.getBoundingClientRect();
+  const inset = viewportWidth <= 420 ? 6 : 10;
+  const top = Math.max(56, Math.round(rect.bottom + 10));
+  panel.style.setProperty("--news-popover-top", `${top}px`);
+  panel.style.setProperty("--news-popover-inset", `${inset}px`);
+}
+
+function openNewsNotificationsPopover() {
+  const panel = document.getElementById("news-notifications-panel");
+  const button = document.getElementById("news-bell-button");
+  if (!panel || !button) return;
+  renderNewsNotificationsModal();
+  syncNewsNotificationsPopoverPosition();
+  panel.hidden = false;
+  button.setAttribute("aria-expanded", "true");
+}
+
+function ensureNewsNotificationsUi() {
+  const actionsEl = document.querySelector(".top-nav-actions");
+  if (actionsEl && !document.getElementById("news-bell-button")) {
+    const wrapper = document.createElement("div");
+    wrapper.className = "top-nav-news-bell";
+    wrapper.innerHTML = `
+      <button class="news-bell-btn" id="news-bell-button" type="button" aria-label="${esc(t("newsBellAriaLabel"))}" aria-haspopup="dialog" aria-expanded="false" aria-controls="news-notifications-panel">
+        <span class="news-bell-icon" aria-hidden="true">&#128276;</span>
+        <span class="news-bell-badge" id="news-bell-badge" hidden>0</span>
+      </button>
+      <div class="news-notifications-panel" id="news-notifications-panel" role="dialog" aria-modal="false" aria-labelledby="news-notifications-title" hidden>
+        <div class="news-notifications-popover-head">
+          <div>
+            <h3 id="news-notifications-title" class="news-notifications-popover-title" data-i18n="newsModalTitle">${esc(t("newsModalTitle"))}</h3>
+            <p class="news-notifications-popover-subtitle" data-i18n="newsModalSubtitle">${esc(t("newsModalSubtitle"))}</p>
+          </div>
+        </div>
+        <div class="news-notifications-list" id="news-notifications-list"></div>
+        <div class="news-notifications-footer">
+          <a class="top-nav-link top-nav-link-secondary news-notifications-open-all" href="${esc(getNewsListHref())}" data-i18n="newsModalOpenAll">${esc(t("newsModalOpenAll"))}</a>
+        </div>
+      </div>
+    `;
+    actionsEl.insertBefore(wrapper, actionsEl.firstChild || null);
+  }
+}
+
+function initNewsNotificationsModal() {
+  if (newsModalController) return;
+  const wrapper = document.querySelector(".top-nav-news-bell");
+  const button = document.getElementById("news-bell-button");
+  const panel = document.getElementById("news-notifications-panel");
+  const listEl = document.getElementById("news-notifications-list");
+  if (!wrapper || !button || !panel || !listEl) return;
+  button.addEventListener("click", event => {
+    event.preventDefault();
+    event.stopPropagation();
+    if (panel.hidden) openNewsNotificationsPopover();
+    else closeNewsNotificationsPopover();
+  });
+  listEl.addEventListener("click", event => {
+    const link = event.target?.closest?.("[data-news-open-slug]");
+    if (!link) return;
+    const item = newsFeedData.find(entry => entry.slug === String(link.dataset.newsOpenSlug || "").trim());
+    if (item) markNewsItemRead(item);
+    closeNewsNotificationsPopover();
+    renderNewsBell();
+    renderNewsNotificationsModal();
+  });
+  panel.addEventListener("click", event => event.stopPropagation());
+  document.addEventListener("click", event => {
+    if (!wrapper.contains(event.target)) closeNewsNotificationsPopover();
+  });
+  document.addEventListener("keydown", event => {
+    if (event.key === "Escape") closeNewsNotificationsPopover();
+  });
+  window.addEventListener("resize", () => {
+    if (!panel.hidden) syncNewsNotificationsPopoverPosition();
+  });
+  newsModalController = { open: openNewsNotificationsPopover, close: closeNewsNotificationsPopover };
+}
+
+function normalizeEventId(value) {
+  return String(value || "")
+    .trim()
+    .toLowerCase()
+    .replace(/[^a-z0-9._-]+/g, "_")
+    .replace(/^_+|_+$/g, "");
+}
+
+function canonicalizeSlotEventId(value) {
+  const normalized = normalizeEventId(value);
+  const match = normalized.match(/^hourly_(\d{4}-\d{2}-\d{2})_(\d{4})(?:_.+)?$/);
+  return match ? `hourly_${match[1]}_${match[2]}` : normalized;
+}
+
+function buildSlotEventId(item) {
+  const explicitId = canonicalizeSlotEventId(item?.event_id);
+  if (explicitId) return explicitId;
+  const date = String(item?.date || "").trim();
+  const time = String(item?.start_time_local || "").trim().replace(/[^0-9]/g, "");
+  if (!date || !time) return "";
+  return normalizeEventId(`hourly_${date}_${time}`);
+}
+
+function getBrowserVoterId() {
+  const storageKey = "hourlyVoteVoterId";
+  const existing = localStorage.getItem(storageKey);
+  const now = Date.now();
+  if (existing) {
+    try {
+      const parsed = JSON.parse(existing);
+      if (parsed && typeof parsed.value === "string" && parsed.value.trim()) {
+        if (!parsed.expiresAt || Number(parsed.expiresAt) > now) {
+          return parsed.value.trim();
+        }
+      }
+    } catch {
+      if (existing.trim()) {
+        localStorage.setItem(storageKey, JSON.stringify({
+          value: existing.trim(),
+          createdAt: now,
+          expiresAt: now + 365 * 24 * 60 * 60 * 1000
+        }));
+        return existing.trim();
+      }
+    }
+  }
+  const next = `${Date.now().toString(36)}-${Math.random().toString(36).slice(2, 12)}`;
+  localStorage.setItem(storageKey, JSON.stringify({
+    value: next,
+    createdAt: now,
+    expiresAt: now + 365 * 24 * 60 * 60 * 1000
+  }));
+  return next;
+}
+
+function loadStoredVoteState() {
+  try {
+    const rawValue = localStorage.getItem(VOTE_STATE_STORAGE_KEY);
+    if (!rawValue) return {};
+    const parsed = JSON.parse(rawValue);
+    if (!parsed || typeof parsed !== "object") return {};
+    if (parsed.expiresAt && Number(parsed.expiresAt) <= Date.now()) {
+      localStorage.removeItem(VOTE_STATE_STORAGE_KEY);
+      return {};
+    }
+    return parsed.items && typeof parsed.items === "object" ? parsed.items : {};
+  } catch {
+    return {};
+  }
+}
+
+function normalizeVoteStateItems(items) {
+  return Object.fromEntries(
+    Object.entries(items || {})
+      .filter(([eventId, state]) => eventId && state && typeof state === "object")
+      .map(([eventId, state]) => [
+        eventId,
+        {
+          event_id: state.event_id || eventId,
+          votes: typeof state.votes === "number" ? state.votes : 0,
+          already_voted: Boolean(state.already_voted)
+        }
+      ])
+  );
+}
+
+function saveStoredVoteState(state) {
+  try {
+    localStorage.setItem(
+      VOTE_STATE_STORAGE_KEY,
+      JSON.stringify({
+        items: normalizeVoteStateItems(state),
+        updatedAt: Date.now(),
+        expiresAt: Date.now() + VOTE_STATE_STORAGE_TTL_MS
+      })
+    );
+  } catch {
+    // Ignore storage quota/privacy mode failures; the worker remains the source of truth.
+  }
+}
+
+function mergeVoteStateItems(items) {
+  voteStateByEventId = {
+    ...voteStateByEventId,
+    ...normalizeVoteStateItems(items)
+  };
+  saveStoredVoteState(voteStateByEventId);
+}
+
+function syncVoteStateFromStorage() {
+  voteStateByEventId = loadStoredVoteState();
+  if (Array.isArray(championshipUpcomingItems) && championshipUpcomingItems.length) {
+    renderUpcoming(championshipUpcomingItems, []);
+  }
+  if (selectedScheduleItem && typeof renderScheduleModal === "function") {
+    renderScheduleModal();
+  }
+}
+
+function getVoteLabel(count) {
+  if (typeof count !== "number" || count <= 0) return t("voteCountZero");
+  return tf(count === 1 ? "voteCountOne" : "voteCountMany", { value: count });
+}
+
+function getVoteState(item) {
+  const eventId = buildSlotEventId(item);
+  return {
+    eventId,
+    pending: pendingVoteEventIds.has(eventId),
+    ...(voteStateByEventId[eventId] || { votes: 0, already_voted: false })
+  };
+}
+
+function isVotingDisabledForItem(item) {
+  return Boolean(item?.voting_disabled);
+}
+
+async function loadJson(url) {
+  const response = await fetch(url, { cache: "no-store" });
+  if (!response.ok) throw new Error(`HTTP ${response.status}`);
+  return response.json();
+}
+
+async function loadJsonOrNull(url) {
+  try {
+    return await loadJson(url);
+  } catch (error) {
+    return null;
+  }
+}
+let championshipVotesClient = null;
+function getChampionshipVotesClient() {
+  if (!championshipVotesClient) {
+    championshipVotesClient = createHourlyVotesClient({
+      apiBase: votesApiBase,
+      request: fetchVotesWithTimeout,
+      storage: window.localStorage,
+      getLegacyVoterId: getBrowserVoterId
+    });
+  }
+  return championshipVotesClient;
+}
+
+async function fetchVotesWithTimeout(url, options = {}, retries = 0, timeoutMs = 12000) {
+  let lastError = null;
+  for (let attempt = 0; attempt <= retries; attempt += 1) {
+    const controller = new AbortController();
+    const timeoutId = window.setTimeout(() => controller.abort("timeout"), timeoutMs);
+    try {
+      const response = await fetch(url, { ...options, signal: controller.signal });
+      if (response.ok || response.status < 500 || attempt === retries) return response;
+      lastError = new Error(`HTTP ${response.status}`);
+    } catch (error) {
+      lastError = error;
+      if (attempt === retries) throw error;
+    } finally {
+      window.clearTimeout(timeoutId);
+    }
+  }
+  throw lastError || new Error("championship votes request failed");
+}
+
+async function loadVotesForSchedule(items) {
+  const eventIds = items.map(buildSlotEventId).filter(Boolean);
+  if (!eventIds.length) return;
+  try {
+    const response = await getChampionshipVotesClient().load(eventIds, 1);
+    if (!response.ok) throw new Error(`HTTP ${response.status}`);
+    const payload = await response.json();
+    if (payload?.items && typeof payload.items === "object") {
+      mergeVoteStateItems(payload.items);
+      votesLoaded = true;
+    }
+  } catch (error) {
+    console.warn("championship votes are unavailable.", error);
+  }
+}
+
+async function submitVote(item) {
+  const eventId = buildSlotEventId(item);
+  if (!eventId || pendingVoteEventIds.has(eventId)) return;
+  pendingVoteEventIds.add(eventId);
+  renderUpcoming(championshipUpcomingItems, []);
+  try {
+    const voteState = voteStateByEventId[eventId] || {};
+    const response = voteState.already_voted
+      ? await getChampionshipVotesClient().unvote(eventId)
+      : await getChampionshipVotesClient().vote(eventId);
+    if (!response.ok) throw new Error(`HTTP ${response.status}`);
+    const payload = await response.json();
+    voteStateByEventId[eventId] = {
+      event_id: eventId,
+      votes: typeof payload?.votes === "number" ? payload.votes : 0,
+      already_voted: Boolean(payload?.already_voted)
+    };
+    mergeVoteStateItems({ [eventId]: voteStateByEventId[eventId] });
+  } catch (error) {
+    console.warn("championship vote failed.", error);
+    voteStateByEventId[eventId] = {
+      ...(voteStateByEventId[eventId] || { votes: 0, already_voted: false }),
+      failed: true
+    };
+  } finally {
+    pendingVoteEventIds.delete(eventId);
+    renderUpcoming(championshipUpcomingItems, []);
+    if (selectedScheduleItem && buildSlotEventId(selectedScheduleItem) === eventId) renderScheduleModal();
+  }
+}
+
+function getLocalizedField(item, key, fallback = "--") {
+  if (!item || typeof item !== "object") return fallback;
+  const directLocalized = item[`${key}_${currentLang}`];
+  if (typeof directLocalized === "string" && directLocalized.trim()) return directLocalized;
+  const raw = item[key];
+  if (typeof raw === "string" && raw.trim()) return raw;
+  if (raw && typeof raw === "object") {
+    const nested = raw[currentLang] ?? raw.en ?? raw.ru;
+    if (typeof nested === "string" && nested.trim()) return nested;
+  }
+  return fallback;
+}
+
+function getLocalizedDescription(...sources) {
+  for (const source of sources) {
+    const value = getLocalizedField(source, "description", "");
+    if (value && value !== "--") return value;
+    const i18n = source?.description_i18n || source?.description_localized || source?.descriptions;
+    if (i18n && typeof i18n === "object") {
+      const localized = i18n[currentLang] ?? i18n.en ?? i18n.ru;
+      if (typeof localized === "string" && localized.trim()) return localized.trim();
+    }
+  }
+  return "";
+}
+
+function resolveHourlyAssetUrl(value) {
+  const rawValue = String(value || "").trim();
+  if (!rawValue) return "";
+  if (/^(https?:)?\/\//i.test(rawValue)) return rawValue;
+  if (rawValue.startsWith("/hourly/assets/")) return rawValue;
+  if (rawValue.startsWith("/")) return rawValue;
+  if (rawValue.startsWith("../assets/") || rawValue.startsWith("./assets/")) return rawValue;
+  const assetPath = rawValue.replace(/^(\.\.\/|\.\/)?assets\//, "").replace(/^\.?\//, "");
+  return `${hourlyAssetBase}/${assetPath}`;
+}
+
+function resolveTrackBackground(item) {
+  const directValue = item?.track_image || item?.track_photo || item?.background_image || item?.image;
+  if (directValue) return resolveHourlyAssetUrl(directValue);
+  const trackCode = String(item?.track_code || "").trim().toLowerCase().replace(/[^a-z0-9]+/g, "-");
+  return TRACK_BACKGROUNDS[trackCode] || TRACK_BACKGROUNDS[trackCode.replace(/-/g, "")] || "";
+}
+
+function isChampionshipEvent(item) {
+  return String(item?.event_type || item?.type || "").trim().toLowerCase() === "championship";
+}
+
+function formatDate(isoDate) {
+  if (!isoDate) return t("unknown");
+  const date = new Date(`${isoDate}T00:00:00+03:00`);
+  if (Number.isNaN(date.getTime())) return isoDate;
+  return new Intl.DateTimeFormat(t("locale"), { day: "numeric", month: "long", year: "numeric", timeZone: "Europe/Moscow" }).format(date);
+}
+
+function formatSlotDateTime(item) {
+  const startTime = getLocalizedField(item, "start_time_local", item?.start_time_local || t("unknown"));
+  const timezone = getLocalizedField(item, "timezone", item?.timezone || "UTC+3");
+  return `${formatDate(item?.date)} · ${startTime} ${timezone}`;
+}
+
+function percentValue(value) {
+  if (typeof value !== "number" || Number.isNaN(value)) return null;
+  const normalized = value <= 1 ? value * 100 : value;
+  return Math.round(normalized);
+}
+
+function getChampionshipWeatherVisualState(weather) {
+  const state = String(weather?.summary_key || "").trim().toLowerCase();
+  if (state === "wet" || state === "rain" || state === "rainy") return "wet";
+  if (state === "clear") return "clear";
+  if (state === "mixed" || state === "cloudy") return "mixed";
+  const rain = percentValue(weather?.rain_level);
+  if (rain !== null && rain > 5) return "wet";
+  const clouds = percentValue(weather?.cloud_level);
+  if (clouds === null) return "mixed";
+  return clouds >= 35 ? "mixed" : "clear";
+}
+
+function renderChampionshipWeatherStateIcon(weather) {
+  const state = getChampionshipWeatherVisualState(weather);
+  if (state === "wet") {
+    return `<svg class="weather-state-icon is-wet" viewBox="0 0 24 24" aria-hidden="true"><path d="M7.1 15.3h9.3a3.6 3.6 0 0 0 .35-7.18A5 5 0 0 0 7 7.45a3.95 3.95 0 0 0 .1 7.85Z" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/><path d="m8.5 18-1 2.3m5-2.3-1 2.3m5-2.3-1 2.3" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/></svg>`;
+  }
+  if (state === "mixed") {
+    return `<svg class="weather-state-icon is-mixed" viewBox="0 0 24 24" aria-hidden="true"><circle cx="8.2" cy="8.1" r="3.1" fill="none" stroke="currentColor" stroke-width="1.7"/><path d="M8.2 2.5v1.6m0 8v1.4M2.7 8.1h1.5m8 0h1.5M4.3 4.2l1.1 1.1m5.7 0 1.1-1.1" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round"/><path d="M8.1 18.2h9a3.5 3.5 0 0 0 .36-6.98 4.75 4.75 0 0 0-9.28-.65 3.85 3.85 0 0 0-.08 7.63Z" fill="currentColor" fill-opacity=".18" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg>`;
+  }
+  return `<svg class="weather-state-icon is-clear" viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="4.2" fill="currentColor" fill-opacity=".18" stroke="currentColor" stroke-width="1.8"/><path d="M12 2.5v2.2m0 14.6v2.2M2.5 12h2.2m14.6 0h2.2M5.3 5.3l1.6 1.6m10.2 10.2 1.6 1.6m0-13.4-1.6 1.6M6.9 17.1l-1.6 1.6" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/></svg>`;
+}
+
+function formatChampionshipGameTime(gameTime) {
+  if (!gameTime || typeof gameTime !== "object") return "";
+  const hourValue = gameTime.hour_of_day ?? gameTime.game_time_hour;
+  const numericHour = typeof hourValue === "number" ? hourValue : Number(hourValue);
+  const hour = Number.isFinite(numericHour)
+    ? `${String(Math.max(0, Math.min(23, Math.round(numericHour)))).padStart(2, "0")}:00`
+    : "";
+  let label = "";
+  const code = String(gameTime.code || gameTime.profile_id || "").trim().toLowerCase();
+  const labels = {
+    morning: { en: "Morning", ru: "\u0423\u0442\u0440\u043e" },
+    day: { en: "Day", ru: "\u0414\u0435\u043d\u044c" },
+    evening: { en: "Evening", ru: "\u0412\u0435\u0447\u0435\u0440" },
+    night: { en: "Night", ru: "\u041d\u043e\u0447\u044c" }
+  };
+  if (currentLang === "ru" && gameTime.label_ru) label = String(gameTime.label_ru);
+  else if (currentLang === "en" && gameTime.label_en) label = String(gameTime.label_en);
+  else label = labels[code]?.[currentLang] || labels[code]?.en || String(gameTime.label || code.replace(/[_-]+/g, " "));
+  if (label && hour) return `${label} \u00b7 ${hour}`;
+  return label || hour;
+}
+
+function getChampionshipGameTimeVisualState(gameTime, fallbackHour) {
+  const code = String(gameTime?.code || gameTime?.profile_id || "").trim().toLowerCase();
+  if (["morning", "day", "evening", "night"].includes(code)) return code;
+  const hour = Number(gameTime?.hour_of_day ?? gameTime?.game_time_hour ?? fallbackHour);
+  if (!Number.isFinite(hour)) return "day";
+  if (hour >= 5 && hour < 11) return "morning";
+  if (hour >= 11 && hour < 17) return "day";
+  if (hour >= 17 && hour < 21) return "evening";
+  return "night";
+}
+
+function getChampionshipGameTimeStateSvg(state) {
+  if (state === "morning") return `<svg class="game-time-state-icon is-morning" viewBox="0 0 24 24" aria-hidden="true"><path d="M4 18h16M7 18a5 5 0 0 1 10 0M12 5v3M5.6 10.2l2.1 2.1M18.4 10.2l-2.1 2.1" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"/></svg>`;
+  if (state === "evening") return `<svg class="game-time-state-icon is-evening" viewBox="0 0 24 24" aria-hidden="true"><path d="M4 14h16M7 14a5 5 0 0 0 10 0M12 19v2M5.6 18.5l2.1-2.1M18.4 18.5l-2.1-2.1" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"/></svg>`;
+  if (state === "night") return `<svg class="game-time-state-icon is-night" viewBox="0 0 24 24" aria-hidden="true"><path d="M19.2 15.3A7.7 7.7 0 0 1 8.7 4.8 7.8 7.8 0 1 0 19.2 15.3Z" fill="currentColor" fill-opacity=".16" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"/><path d="M17.8 4.2v2.4M16.6 5.4H19" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"/></svg>`;
+  return `<svg class="game-time-state-icon is-day" viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="4.25" fill="currentColor" fill-opacity=".14" stroke="currentColor" stroke-width="1.9"/><path d="M12 2.75v2.5M12 18.75v2.5M21.25 12h-2.5M5.25 12h-2.5M18.54 5.46l-1.77 1.77M7.23 16.77l-1.77 1.77M18.54 18.54l-1.77-1.77M7.23 7.23 5.46 5.46" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round"/></svg>`;
+}
+
+function renderChampionshipGameTime(item) {
+  const value = formatChampionshipGameTime(item?.game_time);
+  if (!value) return "";
+  const icon = getChampionshipGameTimeStateSvg(getChampionshipGameTimeVisualState(item?.game_time));
+  return `<span class="schedule-condition-separator" aria-hidden="true">\u00b7</span>${icon}<span>${esc(value)}</span>`;
+}
+
+function getChampionshipWeatherMetricIconName(metric, percent) {
+  if (percent === null || percent === undefined || percent === "") return metric;
+  const value = Number(percent);
+  if (!Number.isFinite(value)) return metric;
+  if (metric === "cloud") {
+    if (value <= 25) return "cloud-clear";
+    if (value <= 59) return "cloud-mixed";
+    if (value <= 79) return "cloud-heavy";
+    return "cloud-overcast";
+  }
+  if (value <= 1) return "rain-none";
+  if (value <= 10) return "rain-light";
+  if (value <= 34) return "rain-medium";
+  if (value <= 59) return "rain-heavy";
+  return "rain-storm";
+}
+
+function getChampionshipWeatherMetricIconSvg(name) {
+  if (name === "cloud-clear") return `<svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="4" fill="none" stroke="currentColor" stroke-width="1.8"/><path d="M12 3v2.2M12 18.8V21M3 12h2.2M18.8 12H21M5.6 5.6l1.5 1.5m9.8 9.8 1.5 1.5m0-12.8-1.5 1.5M7.1 16.9l-1.5 1.5" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/></svg>`;
+  if (name === "cloud-mixed") return `<svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="8" cy="8" r="3" fill="none" stroke="currentColor" stroke-width="1.7"/><path d="M8 2.8v1.3M3 8h1.3m.2-3.5 1 1M13 4.5l-1 1M7.8 18.5h9.3a3.6 3.6 0 0 0 .37-7.18 4.8 4.8 0 0 0-9.4-.65 3.95 3.95 0 0 0-.27 7.83Z" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg>`;
+  if (name === "cloud-heavy") return `<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M7.2 18.2h9a4 4 0 0 0 .42-7.98A5.25 5.25 0 0 0 6.35 9.3a3.75 3.75 0 0 0 .85 8.9Z" fill="currentColor" fill-opacity=".14" stroke="currentColor" stroke-width="1.9"/></svg>`;
+  if (name === "cloud-overcast") return `<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M5.5 12.7h8.7a3.5 3.5 0 0 0 .35-6.98 4.6 4.6 0 0 0-8.98-.6 3.8 3.8 0 0 0-.07 7.58Z" fill="none" stroke="currentColor" stroke-width="1.7"/><path d="M7.2 19h9.4a3.7 3.7 0 0 0 .38-7.38 4.9 4.9 0 0 0-9.57-.65A4 4 0 0 0 7.2 19Z" fill="currentColor" fill-opacity=".2" stroke="currentColor" stroke-width="1.8"/></svg>`;
+  if (name === "rain-none") return `<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 4.5c2.8 3.5 4.2 5.9 4.2 7.8a4.2 4.2 0 1 1-8.4 0c0-1.9 1.4-4.3 4.2-7.8Z" fill="none" stroke="currentColor" stroke-width="1.8"/><path d="m5 5 14 14" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round"/></svg>`;
+  if (name === "rain-light") return `<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 4.3c3 3.8 4.5 6.3 4.5 8.3a4.5 4.5 0 1 1-9 0c0-2 1.5-4.5 4.5-8.3Z" fill="currentColor" fill-opacity=".12" stroke="currentColor" stroke-width="1.8"/></svg>`;
+  const drops = name === "rain-medium" ? "M12 17.5l-.8 2.2" : name === "rain-heavy" ? "M8.5 17.3l-.8 2.4m4.8-2.4-.8 2.4m4.8-2.4-.8 2.4" : "M7.5 17l-.9 2.8m4-2.8-.9 2.8m4-2.8-.9 2.8m4-2.8-.9 2.8";
+  return `<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M7.1 15.3h9.3a3.6 3.6 0 0 0 .35-7.18A5 5 0 0 0 7 7.45a3.95 3.95 0 0 0 .1 7.85Z" fill="currentColor" fill-opacity=".12" stroke="currentColor" stroke-width="1.8"/><path d="${drops}" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/></svg>`;
+}
+
+function minutesFromSeconds(value) {
+  return typeof value === "number" && !Number.isNaN(value) ? Math.round(value / 60) : null;
+}
+
+function weatherLabel(weather) {
+  const state = String(weather?.summary_key || "").trim().toLowerCase();
+  const stateLabel = state === "clear" ? t("weatherClear")
+    : state === "mixed" ? t("weatherMixed")
+      : state === "cloudy" ? t("weatherCloudy")
+        : state === "wet" ? t("weatherWet")
+          : "";
+  const rain = percentValue(weather?.rain_level);
+  if (stateLabel && rain !== null) return `${stateLabel} · ${rain}%`;
+  return stateLabel || (rain !== null ? `${rain}%` : t("unknown"));
+}
+
+function raceEventId(race, index) {
+  return race?.event_id || `race_${index + 1}`;
+}
+
+function normalizeRaces(data) {
+  return (Array.isArray(data?.races) ? data.races : []).slice().sort((a, b) => String(a.finished_at || a.date || "").localeCompare(String(b.finished_at || b.date || "")));
+}
+
+function normalizeStandings(data) {
+  return (Array.isArray(data?.standings) ? data.standings : []).slice().sort((a, b) => {
+    const pointsDelta = Number(b.points || 0) - Number(a.points || 0);
+    if (pointsDelta) return pointsDelta;
+    return String(a.driver || a.public_id || "").localeCompare(String(b.driver || b.public_id || ""));
+  });
+}
+
+function resolveDriverName(row) {
+  return row?.driver || row?.display_name || row?.name || row?.public_id || "-";
+}
+
+function formatEloDelta(value) {
+  const numeric = Number(value);
+  if (!Number.isFinite(numeric) || numeric === 0) return "-";
+  return `${numeric > 0 ? "+" : ""}${Math.round(numeric)}`;
+}
+
+function resolveDriverPublicId(row) {
+  return row?.public_id || row?.driver_public_id || row?.winner_public_id || null;
+}
+
+function normalizeUpcoming(data, schedule, slug) {
+  const source = Array.isArray(data?.upcoming_races) && data.upcoming_races.length
+    ? data.upcoming_races
+    : (Array.isArray(schedule?.items) ? schedule.items : []);
+  const scheduleByEventId = new Map(
+    (Array.isArray(schedule?.items) ? schedule.items : [])
+      .filter(item => item?.event_id)
+      .map(item => [item.event_id, item])
+  );
+  return source
+    .filter(isChampionshipEvent)
+    .filter(item => !slug || !item?.championship_slug || item.championship_slug === slug)
+    .map(item => {
+      const scheduleItem = item?.event_id ? scheduleByEventId.get(item.event_id) : null;
+      return scheduleItem ? { ...item, ...scheduleItem } : item;
+    })
+    .slice(0, 6);
+}
+
+function compactJoin(values, separator = " · ") {
+  return values.filter(value => value !== null && value !== undefined && String(value).trim()).join(separator);
+}
+
+function buildWeatherDetails(weather) {
+  const rain = percentValue(weather?.rain_level);
+  const clouds = percentValue(weather?.cloud_level);
+  const temp = typeof weather?.ambient_temp_c === "number" ? `${Math.round(weather.ambient_temp_c)}C` : "";
+  const randomness = weather?.weather_randomness != null ? `${weather.weather_randomness}` : "";
+  return compactJoin([
+    weatherLabel(weather || {}),
+    temp,
+    clouds !== null ? `${clouds}% clouds` : "",
+    rain !== null ? `${rain}% rain` : "",
+    randomness ? `random ${randomness}` : ""
+  ]);
+}
+
+function createHeroToken(label, tone = "default", icon = "", tooltipTitle = "", tooltipBody = "") {
+  return { label, tone, icon, tooltipTitle, tooltipBody };
+}
+
+function renderHeroTokenGroups(groups) {
+  const tokens = (groups || []).flatMap(group => (group || []).filter(token => token && token.label));
+  const normalizedTokens = tokens.length ? tokens : [createHeroToken(t("unknown"), "muted")];
+  return `<div class="hero-token-list">${normalizedTokens.map(token => {
+    const hasTooltip = token.tooltipTitle || token.tooltipBody;
+    return `<span class="hero-token hero-token-${esc(token.tone || "default")}${hasTooltip ? " hero-token-has-tooltip" : ""}"${hasTooltip ? ' tabindex="0"' : ""}>${token.icon ? `<img class="hero-token-icon" src="${esc(token.icon)}" alt="" aria-hidden="true" />` : ""}<span class="hero-token-text">${esc(token.label)}</span>${hasTooltip ? `<span class="hero-token-tooltip" role="tooltip">${token.icon ? `<img class="hero-token-tooltip-icon" src="${esc(token.icon)}" alt="" aria-hidden="true" />` : ""}<span class="hero-token-tooltip-copy"><span class="hero-token-tooltip-title">${esc(token.tooltipTitle || token.label)}</span>${token.tooltipBody ? `<span class="hero-token-tooltip-body">${esc(token.tooltipBody)}</span>` : ""}</span></span>` : ""}</span>`;
+  }).join("")}</div>`;
+}
+
+function formatMandatoryPitstopCount(value) {
+  const count = Number(value || 0);
+  return count > 0 ? tf("pitMandatory", { value: count }) : t("pitNone");
+}
+
+function buildEntryTokenGroups(server) {
+  if (!server || typeof server !== "object") return [];
+  const tokens = [];
+  if (server.car_group) tokens.push(createHeroToken(server.car_group, "primary"));
+  if (typeof server.max_car_slots === "number" && server.max_car_slots > 0) tokens.push(createHeroToken(tf("entrySlots", { value: server.max_car_slots }), "default"));
+  if (typeof server.safety_rating_requirement === "number" && server.safety_rating_requirement > 0) tokens.push(createHeroToken(tf("entrySafety", { value: server.safety_rating_requirement }), "muted"));
+  if (typeof server.track_medals_requirement === "number" && server.track_medals_requirement > 0) tokens.push(createHeroToken(tf("entryTrackMedals", { value: server.track_medals_requirement }), "muted"));
+  if (typeof server.racecraft_rating_requirement === "number" && server.racecraft_rating_requirement > 0) tokens.push(createHeroToken(tf("entryRacecraft", { value: server.racecraft_rating_requirement }), "muted"));
+  return [tokens];
+}
+
+function buildRaceFormatTokenGroups(session) {
+  if (!session || typeof session !== "object") return [];
+  const primary = [];
+  if (typeof session.qualifying_duration_minutes === "number" && session.qualifying_duration_minutes > 0) primary.push(createHeroToken(`Q ${session.qualifying_duration_minutes}m`, "primary"));
+  if (typeof session.race_duration_minutes === "number" && session.race_duration_minutes > 0) primary.push(createHeroToken(`R ${session.race_duration_minutes}m`, "primary"));
+  if (!primary.length && session.format_label) {
+    session.format_label.split(" + ").map(part => part.trim()).filter(Boolean).forEach(part => primary.push(createHeroToken(part, "primary")));
+  }
+  return [primary];
+}
+
+function buildPitstopTokenGroups(rules) {
+  if (!rules || typeof rules !== "object") return [];
+  const primary = [createHeroToken(formatMandatoryPitstopCount(rules.mandatory_pitstop_count), rules.mandatory_pitstop_count > 0 ? "primary" : "muted")];
+  const secondary = [];
+  if (typeof rules.pit_window_length_minutes === "number" && rules.pit_window_length_minutes > 0) secondary.push(createHeroToken(tf("pitWindow", { value: rules.pit_window_length_minutes }), "default"));
+  return [primary, secondary];
+}
+
+function buildRefuelTokenGroups(rules) {
+  if (!rules || typeof rules !== "object") return [];
+  const primary = [];
+  if (rules.refuelling_allowed_in_race) primary.push(createHeroToken(t("pitRefuelAllowed"), "default"));
+  if (rules.refuelling_time_fixed) primary.push(createHeroToken(t("pitRefuelFixed"), "muted"));
+  if (rules.mandatory_pitstop_refuelling_required) primary.push(createHeroToken(t("refuelMandatory"), "primary"));
+  if (!primary.length) primary.push(createHeroToken(t("refuelNone"), "muted"));
+  return [primary];
+}
+
+function buildTyreTokenGroups(rules) {
+  if (!rules || typeof rules !== "object") return [];
+  const primary = [];
+  if (rules.mandatory_pitstop_tyre_change_required) primary.push(createHeroToken(t("tyresMandatory"), "primary"));
+  if (typeof rules.tyre_set_count === "number" && rules.tyre_set_count > 0) primary.push(createHeroToken(tf("tyresSets", { value: rules.tyre_set_count }), "muted"));
+  if (!primary.length) primary.push(createHeroToken(t("tyresNone"), "muted"));
+  return [primary];
+}
+
+function buildWeatherTokenGroups(weather) {
+  if (!weather || typeof weather !== "object") return [];
+  const primary = [];
+  const secondary = [];
+  if (typeof weather.ambient_temp_c === "number") {
+    primary.push(createHeroToken(
+      tf("weatherTemp", { value: weather.ambient_temp_c }),
+      "default",
+      "",
+      t("weatherTempHintTitle"),
+      tf("weatherTempHintBody", { value: weather.ambient_temp_c })
+    ));
+  }
+  const cloudPercent = percentValue(weather.cloud_level);
+  if (cloudPercent !== null) {
+    secondary.push(createHeroToken(
+      `${cloudPercent}%`,
+      "muted",
+      WEATHER_ICON_PATHS.clouds,
+      t("weatherCloudsHintTitle"),
+      tf("weatherCloudsHintBody", { value: cloudPercent })
+    ));
+  }
+  const rainPercent = percentValue(weather.rain_level);
+  if (rainPercent !== null) {
+    secondary.push(createHeroToken(
+      `${rainPercent}%`,
+      rainPercent > 15 ? "primary" : "muted",
+      WEATHER_ICON_PATHS.rain,
+      t("weatherRainHintTitle"),
+      tf("weatherRainHintBody", { value: rainPercent })
+    ));
+  }
+  if (weather.weather_randomness !== null && weather.weather_randomness !== undefined) {
+    secondary.push(createHeroToken(
+      String(weather.weather_randomness),
+      "muted",
+      WEATHER_ICON_PATHS.random,
+      t("weatherRandomHintTitle"),
+      tf("weatherRandomHintBody", { value: weather.weather_randomness })
+    ));
+  }
+  return [primary, secondary];
+}
+
+function renderProgress(data, races, upcoming, standings) {
+  const root = document.getElementById("championship-progress");
+  if (!root) return;
+  const cards = [
+    [races.length, t("completed"), ""],
+    [upcoming.length, t("upcoming"), ""],
+    [standings.length, t("drivers"), ""],
+    [championshipStatusLabel(data?.status), t("status"), ` is-${championshipStatusTone(data?.status)}`]
+  ];
+  root.innerHTML = cards.map(([value, label, statusClass]) => `
+    <div class="championship-progress-card${statusClass}">
+      <div class="championship-progress-value">${esc(value)}</div>
+      <div class="championship-progress-label">${esc(label)}</div>
+    </div>
+  `).join("");
+}
+
+function championshipStatusLabel(value) {
+  const status = normalizeChampionshipStatus(value || "active");
+  if (status === "scheduled") return t("statusUpcoming");
+  if (status === "finished") return t("statusFinished");
+  if (status === "archived") return t("statusArchived");
+  return t("statusActive");
+}
+
+function renderWinners(standings) {
+  const root = document.getElementById("championship-upcoming");
+  if (!root) return;
+  const winners = standings.slice(0, 3);
+  if (!winners.length) {
+    root.innerHTML = `<div class="championship-empty">${esc(t("noResults"))}</div>`;
+    return;
+  }
+  const medals = ["gold", "silver", "bronze"];
+  root.innerHTML = winners.map((row, index) => `
+    <article class="championship-winner-card is-${medals[index]}">
+      <div class="championship-winner-medal">${index + 1}</div>
+      <div class="championship-winner-name">${renderDriverLink(resolveDriverName(row), resolveDriverPublicId(row), "driver-link driver-link-heading")}</div>
+      <div class="championship-winner-points">${esc(row.points || 0)} ${esc(t("points"))}</div>
+    </article>
+  `).join("");
+}
+
+function renderVoteControl(item) {
+  const voteState = getVoteState(item);
+  const voteCountLabel = voteState.failed
+    ? t("voteFailed")
+    : voteState.pending
+      ? t("voteSending")
+      : votesLoaded || voteStateByEventId[voteState.eventId]
+        ? getVoteLabel(voteState.votes)
+        : t("voteSoon");
+  return `
+    <div class="schedule-event-vote">
+      <div class="schedule-event-vote-actions">
+        <button
+          class="schedule-event-vote-btn${voteState.already_voted ? " is-voted" : ""}"
+          type="button"
+          data-vote-event-id="${esc(voteState.eventId)}"
+          ${voteState.pending ? "disabled" : ""}
+        >
+          <span class="schedule-event-vote-icon" aria-hidden="true">+</span>
+          <span>${esc(voteState.already_voted ? t("voteButtonDone") : t("voteButton"))}</span>
+        </button>
+        ${
+          voteState.already_voted
+            ? `<button
+                class="schedule-event-vote-cancel"
+                type="button"
+                data-vote-event-id="${esc(voteState.eventId)}"
+                aria-label="${esc(t("unvoteButton"))}"
+                ${voteState.pending ? "disabled" : ""}
+              >x</button>`
+            : ""
+        }
+      </div>
+      <div class="schedule-event-vote-meta">${esc(voteCountLabel)}</div>
+    </div>
+  `;
+}
+
+function bindVoteControls(root) {
+  root?.querySelectorAll("[data-vote-event-id]").forEach(button => {
+    button.addEventListener("click", event => {
+      event.stopPropagation();
+      const eventId = button.dataset.voteEventId;
+      const item = championshipUpcomingItems.find(row => buildSlotEventId(row) === eventId)
+        || (selectedScheduleItem && buildSlotEventId(selectedScheduleItem) === eventId ? selectedScheduleItem : null);
+      if (item) void submitVote(item);
+    });
+  });
+}
+
+function renderUpcoming(items, standings) {
+  const root = document.getElementById("championship-upcoming");
+  const title = document.getElementById("championship-upcoming-title");
+  const eyebrow = document.getElementById("championship-upcoming-eyebrow");
+  if (!root) return;
+  if (!items.length && standings.length) {
+    if (title) title.textContent = t("winnersTitle");
+    if (eyebrow) eyebrow.textContent = t("winnersEyebrow");
+    renderWinners(standings);
+    return;
+  }
+  if (title) title.textContent = t("upcomingTitle");
+  if (eyebrow) eyebrow.textContent = t("upcomingEyebrow");
+  const upcoming = items.slice(0, 3);
+  if (!upcoming.length) {
+    root.innerHTML = `<div class="championship-empty">${esc(t("noUpcoming"))}</div>`;
+    return;
+  }
+  championshipUpcomingItems = upcoming;
+  root.innerHTML = upcoming.map((item, index) => {
+    const backgroundUrl = resolveTrackBackground(item);
+    return `
+      <article
+        class="schedule-event-card is-championship-event is-interactive-row"
+        data-schedule-index="${index}"
+        tabindex="0"
+        role="button"
+        aria-label="${esc(`${t("championshipEvent")}: ${getLocalizedField(item, "track_name", item.track_code || t("unknown"))}`)}"
+        style="--schedule-track-photo: ${backgroundUrl ? `url('${esc(backgroundUrl)}')` : "none"};"
+      >
+        <div class="schedule-event-card-inner">
+          <div class="event-type-badge">${esc(t("championshipEvent"))}</div>
+          <div class="schedule-event-time">${esc(formatSlotDateTime(item))}</div>
+          <div class="schedule-event-track">${esc(getLocalizedField(item, "track_name", item.track_code || "--"))}</div>
+          <div class="schedule-event-weather">${renderChampionshipWeatherStateIcon(item.weather || {})}<span>${esc(weatherLabel(item.weather || {}))}</span>${renderChampionshipGameTime(item)}</div>
+          ${renderVoteControl(item)}
+          <div class="legal-inline-note">${buildCompactVoteLegalNoteHtml()}</div>
+        </div>
+      </article>
+    `;
+  }).join("");
+  bindVoteControls(root);
+  root.querySelectorAll(".schedule-event-card[data-schedule-index]").forEach(card => {
+    const openCard = () => openScheduleModal(championshipUpcomingItems[Number(card.dataset.scheduleIndex)] || null);
+    card.addEventListener("click", openCard);
+    card.addEventListener("keydown", event => {
+      if (event.key === "Enter" || event.key === " ") {
+        event.preventDefault();
+        openCard();
+      }
+    });
+  });
+}
+
+function eventDetailsIcon(name, className = "") {
+  if (name.startsWith("cloud-") || name.startsWith("rain-")) {
+    return `<span class="event-details-v2-icon${className}" aria-hidden="true">${getChampionshipWeatherMetricIconSvg(name)}</span>`;
+  }
+  if (["morning", "day", "evening", "night"].includes(name)) {
+    return `<span class="event-details-v2-icon${className}" aria-hidden="true">${getChampionshipGameTimeStateSvg(name)}</span>`;
+  }
+  const icons = {
+    calendar: `<svg viewBox="0 0 24 24"><path d="M8 3v3M16 3v3M4 9h16M5.75 5.75h12.5a2 2 0 0 1 2 2v10.5a2 2 0 0 1-2 2H5.75a2 2 0 0 1-2-2V7.75a2 2 0 0 1 2-2Z" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"></path></svg>`,
+    copy: `<svg viewBox="0 0 24 24"><path d="M9 9h11v11H9z" fill="none" stroke="currentColor" stroke-width="1.8"></path><path d="M4 4h11v11H4z" fill="none" stroke="currentColor" stroke-width="1.8"></path></svg>`,
+    check: `<svg viewBox="0 0 24 24"><path d="M5 12.5 9.2 16.7 19 7.5" fill="none" stroke="currentColor" stroke-width="2.1" stroke-linecap="round" stroke-linejoin="round"></path></svg>`,
+    close: `<svg viewBox="0 0 24 24"><path d="m6 6 12 12M18 6 6 18" fill="none" stroke="currentColor" stroke-width="2.1" stroke-linecap="round"></path></svg>`,
+    server: `<svg viewBox="0 0 24 24"><path d="M4.75 6.5h14.5M4.75 12h14.5M4.75 17.5h14.5M6.75 4.75h10.5a2 2 0 0 1 2 2v10.5a2 2 0 0 1-2 2H6.75a2 2 0 0 1-2-2V6.75a2 2 0 0 1 2-2Z" fill="none" stroke="currentColor" stroke-width="1.85" stroke-linecap="round" stroke-linejoin="round"></path></svg>`,
+    flag: `<svg viewBox="0 0 24 24"><path d="m5 4 11 2.5-4 4 4 3.5-4 4L16 20 5 17.5V4Z" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"></path></svg>`,
+    wrench: `<svg viewBox="0 0 24 24"><path d="m14.4 6.6 3-3a2.12 2.12 0 0 1 3 3l-3 3M13 8l3 3-8.75 8.75H4.25v-3L13 8Z" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"></path></svg>`,
+    timer: `<svg viewBox="0 0 24 24"><circle cx="12" cy="13" r="7.25" fill="none" stroke="currentColor" stroke-width="1.9"></circle><path d="M12 13V9.25M9.25 2.75h5.5M14.75 5.5l1.5-1.5" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"></path></svg>`,
+    stopwatch: `<svg viewBox="0 0 24 24"><circle cx="12" cy="13" r="7.25" fill="none" stroke="currentColor" stroke-width="1.9"></circle><path d="M9.25 2.75h5.5M12 13l3.25-2.25M14.75 5.5l1.5-1.5" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"></path></svg>`,
+    play: `<svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="8" fill="none" stroke="currentColor" stroke-width="1.9"></circle><path d="m10.25 8.75 5 3.25-5 3.25V8.75Z" fill="currentColor"></path></svg>`,
+    sun: `<svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="4.25" fill="none" stroke="currentColor" stroke-width="1.9"></circle><path d="M12 2.75v2.5M12 18.75v2.5M21.25 12h-2.5M5.25 12h-2.5M18.54 5.46l-1.77 1.77M7.23 16.77l-1.77 1.77M18.54 18.54l-1.77-1.77M7.23 7.23 5.46 5.46" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round"></path></svg>`,
+    fast: `<svg viewBox="0 0 24 24"><path d="m4.5 6.75 6.5 5.25-6.5 5.25V6.75Zm8.5 0 6.5 5.25-6.5 5.25V6.75Z" fill="currentColor"></path></svg>`,
+    fuel: `<svg viewBox="0 0 24 24"><path d="M6.25 5.25h7.5a1.5 1.5 0 0 1 1.5 1.5v10.5a1.5 1.5 0 0 1-1.5 1.5h-7.5a1.5 1.5 0 0 1-1.5-1.5V6.75a1.5 1.5 0 0 1 1.5-1.5Zm9-1.5 3 3v7.25a1.75 1.75 0 0 1-3.5 0V12" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"></path></svg>`,
+    drop: `<svg viewBox="0 0 24 24"><path d="M12 4.25c3.4 4.16 5.1 6.95 5.1 9.1A5.1 5.1 0 1 1 6.9 13.35c0-2.15 1.7-4.94 5.1-9.1Z" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"></path></svg>`,
+    tyre: `<svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="7.25" fill="none" stroke="currentColor" stroke-width="1.9"></circle><circle cx="12" cy="12" r="2.5" fill="none" stroke="currentColor" stroke-width="1.9"></circle></svg>`,
+    temp: `<svg viewBox="0 0 24 24"><path d="M10.25 6a2.25 2.25 0 1 1 4.5 0v7.2a4 4 0 1 1-4.5 0V6Z" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"></path><path d="M12.5 10v5" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round"></path></svg>`,
+    cloud: `<svg viewBox="0 0 24 24"><path d="M7.25 18.25h9a4 4 0 0 0 .42-7.98A5.25 5.25 0 0 0 6.4 9.35 3.75 3.75 0 0 0 7.25 18.25Z" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"></path></svg>`,
+    rain: `<svg viewBox="0 0 24 24"><path d="M7.25 15.5h9a4 4 0 0 0 .42-7.98A5.25 5.25 0 0 0 6.4 6.6a3.75 3.75 0 0 0 .85 8.9Z" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"></path><path d="M9 17.75 8.25 20M13 17.75 12.25 20M17 17.75 16.25 20" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round"></path></svg>`,
+    wind: `<svg viewBox="0 0 24 24"><path d="M4 9.25h9.5a2.75 2.75 0 1 0-2.7-3.25M4 14h13.5a2.25 2.25 0 1 1-2.2 2.75M4 18.25h7.5a2.25 2.25 0 1 0-2.2 2.75" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"></path></svg>`,
+    users: `<svg viewBox="0 0 24 24"><path d="M8.5 11.25a2.75 2.75 0 1 0 0-5.5 2.75 2.75 0 0 0 0 5.5Zm7 2a2.5 2.5 0 1 0 0-5 2.5 2.5 0 0 0 0 5ZM3.75 18c.5-2.55 2.66-4.25 5.25-4.25S13.75 15.45 14.25 18M13.25 18c.38-1.78 1.88-3 3.75-3s3.37 1.22 3.75 3" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"></path></svg>`
+  };
+  return `<span class="event-details-v2-icon${className}" aria-hidden="true">${icons[name] || icons.server}</span>`;
+}
+
+function buildEventDetailsRow(label, value, iconName, options = {}) {
+  const rowClass = options.rowClass ? ` ${options.rowClass}` : "";
+  const labelClass = options.accent ? " event-details-v2-info-label-accent" : "";
+  const valueClass = options.accent ? " event-details-v2-info-value-accent" : "";
+  const iconClass = options.accent ? " event-details-v2-info-icon-accent" : "";
+  return `<div class="event-details-v2-info-row${rowClass}"><div class="event-details-v2-info-label${labelClass}">${eventDetailsIcon(iconName, ` event-details-v2-info-icon${iconClass}`)}<span>${esc(label)}</span></div><div class="event-details-v2-info-value${valueClass}">${value}</div></div>`;
+}
+
+function buildEventDetailsCard(title, iconName, className, rowsHtml) {
+  return `<section class="event-details-v2-card ${esc(className)}"><div class="event-details-v2-card-header">${eventDetailsIcon(iconName, " event-details-v2-card-icon")}<h4 class="event-details-v2-card-title">${esc(title)}</h4></div><div class="event-details-v2-card-body">${rowsHtml}</div></section>`;
+}
+
+function getChampionshipEventDetailsText(key) {
+  const copy = {
+    eyebrow: { en: "Event details", ru: "Детали события" },
+    connection: { en: "Connection", ru: "Подключение" },
+    format: { en: "Event format", ru: "Формат события" },
+    conditions: { en: "Race conditions", ru: "Условия гонки" },
+    classLabel: { en: "Class", ru: "Класс" },
+    slotsLabel: { en: "Slots", ru: "Слоты" },
+    safetyLabel: { en: "Safety Rating", ru: "Safety Rating" },
+    preparationLabel: { en: "Preparation", ru: "Подготовка" },
+    qualifyingLabel: { en: "Qualifying", ru: "Квалификация" },
+    raceLabel: { en: "Race", ru: "Гонка" },
+    gameTimeLabel: { en: "In-game time", ru: "Игровое время" },
+    timeMultiplierLabel: { en: "Time acceleration", ru: "Ускорение времени" },
+    pitWindowLabel: { en: "Pit window", ru: "Окно пит-стопа" },
+    refuelAllowedLabel: { en: "Refuel", ru: "Заправка" },
+    mandatoryRefuelLabel: { en: "Mandatory refuel", ru: "Обязательная заправка" },
+    fixedRefuelLabel: { en: "Fixed refuel time", ru: "Фикс. время заправки" },
+    temperatureLabel: { en: "Temperature", ru: "Температура" },
+    cloudsLabel: { en: "Cloud cover", ru: "Облачность" },
+    rainLabel: { en: "Rain chance", ru: "Вероятность дождя" },
+    randomnessLabel: { en: "Randomness", ru: "Изменчивость" },
+    notAvailable: { en: "N/A", ru: "н/д" },
+    allowed: { en: "allowed", ru: "разрешена" },
+    forbidden: { en: "forbidden", ru: "запрещена" },
+    yes: { en: "yes", ru: "да" },
+    no: { en: "no", ru: "нет" },
+    votingNotice: { en: "Voting uses a browser ID", ru: "Для голосования используется ID браузера" }
+  };
+  return copy[key]?.[currentLang] || copy[key]?.en || key;
+}
+
+function buildScheduleModalDetails(item) {
+  const server = championshipAnnouncementData?.server || {};
+  const session = championshipAnnouncementData?.session || {};
+  const rules = championshipAnnouncementData?.rules || {};
+  const weather = item?.weather || championshipAnnouncementData?.weather || {};
+  const voteState = getVoteState(item);
+  const detailsUrl = safeLinkUrl(item?.details_url, window.location.href) || "";
+  const startTime = getLocalizedField(item, "start_time_local", item?.start_time_local || "--");
+  const timezone = getLocalizedField(item, "timezone", item?.timezone || "UTC+3");
+  const passwordId = `championship-modal-password-${String(item?.event_id || item?.date || "slot").replace(/[^a-z0-9_-]+/gi, "-")}`;
+  const sessionGameTime = session.hour_of_day ?? session.game_hour_of_day ?? session.session_hour ?? session.time_of_day_hour;
+  const gameTime = formatChampionshipGameTime(item?.game_time)
+    || (typeof sessionGameTime === "number"
+      ? `${String(Math.round(sessionGameTime)).padStart(2, "0")}:00`
+      : getChampionshipEventDetailsText("notAvailable"));
+  const multiplier = typeof (session.time_multiplier ?? session.timeMultiplier ?? session.session_time_multiplier ?? session.time_scale) === "number"
+    ? `x${session.time_multiplier ?? session.timeMultiplier ?? session.session_time_multiplier ?? session.time_scale}`
+    : getChampionshipEventDetailsText("notAvailable");
+  const cloudPercent = percentValue(weather.cloud_level);
+  const rainPercent = percentValue(weather.rain_level);
+  const connectionRows = [
+    buildEventDetailsRow(t("heroServerLabel"), esc(server.name || server.full_name || t("unknown")), "server"),
+    buildEventDetailsRow(t("heroPasswordLabel"), `<div class="event-details-v2-password-row"><span class="event-details-v2-password" id="${esc(passwordId)}">${esc(server.password || t("passwordNone"))}</span><button class="event-details-v2-copy-button" type="button" data-copy-target="${esc(passwordId)}" aria-label="${esc(t("heroPasswordLabel"))}">${eventDetailsIcon("copy", " event-details-v2-info-icon hero-copy-icon-copy")}${eventDetailsIcon("check", " event-details-v2-info-icon hero-copy-icon-done")}</button></div>`, "copy"),
+    buildEventDetailsRow(getChampionshipEventDetailsText("classLabel"), `<span class="event-details-v2-class-badge">${esc(server.car_group || getChampionshipEventDetailsText("notAvailable"))}</span>`, "flag"),
+    buildEventDetailsRow(getChampionshipEventDetailsText("slotsLabel"), esc(server.max_car_slots ?? getChampionshipEventDetailsText("notAvailable")), "users"),
+    buildEventDetailsRow(getChampionshipEventDetailsText("safetyLabel"), esc(server.safety_rating_requirement ?? getChampionshipEventDetailsText("notAvailable")), "flag")
+  ].join("");
+  const formatRows = [
+    buildEventDetailsRow(getChampionshipEventDetailsText("preparationLabel"), esc(typeof minutesFromSeconds(session.pre_race_waiting_time_seconds) === "number" ? `${minutesFromSeconds(session.pre_race_waiting_time_seconds)} мин` : getChampionshipEventDetailsText("notAvailable")), "timer"),
+    buildEventDetailsRow(getChampionshipEventDetailsText("qualifyingLabel"), esc(typeof session.qualifying_duration_minutes === "number" ? `${session.qualifying_duration_minutes} мин` : getChampionshipEventDetailsText("notAvailable")), "stopwatch"),
+    buildEventDetailsRow(getChampionshipEventDetailsText("raceLabel"), esc(typeof session.race_duration_minutes === "number" ? `${session.race_duration_minutes} мин` : getChampionshipEventDetailsText("notAvailable")), "play"),
+    buildEventDetailsRow(getChampionshipEventDetailsText("gameTimeLabel"), esc(gameTime), getChampionshipGameTimeVisualState(item?.game_time, sessionGameTime)),
+    buildEventDetailsRow(getChampionshipEventDetailsText("timeMultiplierLabel"), esc(multiplier), "fast")
+  ].join("");
+  const conditionsRows = [
+    buildEventDetailsRow(t("heroPitstopLabel"), esc(typeof rules.mandatory_pitstop_count === "number" && rules.mandatory_pitstop_count > 0 ? `${rules.mandatory_pitstop_count}` : getChampionshipEventDetailsText("notAvailable")), "wrench", { accent: true }),
+    buildEventDetailsRow(getChampionshipEventDetailsText("pitWindowLabel"), esc(typeof rules.pit_window_length_minutes === "number" ? `${rules.pit_window_length_minutes} мин` : getChampionshipEventDetailsText("notAvailable")), "timer", { accent: true }),
+    buildEventDetailsRow(getChampionshipEventDetailsText("refuelAllowedLabel"), esc(rules.refuelling_allowed_in_race === true ? getChampionshipEventDetailsText("allowed") : rules.refuelling_allowed_in_race === false ? getChampionshipEventDetailsText("forbidden") : getChampionshipEventDetailsText("notAvailable")), "fuel"),
+    buildEventDetailsRow(getChampionshipEventDetailsText("mandatoryRefuelLabel"), esc(rules.mandatory_pitstop_refuelling_required === true ? getChampionshipEventDetailsText("yes") : rules.mandatory_pitstop_refuelling_required === false ? getChampionshipEventDetailsText("no") : getChampionshipEventDetailsText("notAvailable")), "drop"),
+    buildEventDetailsRow(getChampionshipEventDetailsText("fixedRefuelLabel"), esc(rules.refuelling_time_fixed === true ? getChampionshipEventDetailsText("yes") : rules.refuelling_time_fixed === false ? getChampionshipEventDetailsText("no") : getChampionshipEventDetailsText("notAvailable")), "timer"),
+    buildEventDetailsRow(t("heroTyresLabel"), esc(rules.tyre_set_count ?? getChampionshipEventDetailsText("notAvailable")), "tyre", { rowClass: " event-details-v2-divider-row" }),
+    buildEventDetailsRow(getChampionshipEventDetailsText("temperatureLabel"), esc(typeof weather.ambient_temp_c === "number" ? `${Math.round(weather.ambient_temp_c)}°C` : getChampionshipEventDetailsText("notAvailable")), "temp"),
+    buildEventDetailsRow(getChampionshipEventDetailsText("cloudsLabel"), esc(typeof cloudPercent === "number" ? `${cloudPercent}%` : getChampionshipEventDetailsText("notAvailable")), getChampionshipWeatherMetricIconName("cloud", cloudPercent)),
+    buildEventDetailsRow(getChampionshipEventDetailsText("rainLabel"), esc(typeof rainPercent === "number" ? `${rainPercent}%` : getChampionshipEventDetailsText("notAvailable")), getChampionshipWeatherMetricIconName("rain", rainPercent)),
+    buildEventDetailsRow(getChampionshipEventDetailsText("randomnessLabel"), esc(weather.weather_randomness ?? getChampionshipEventDetailsText("notAvailable")), "wind")
+  ].join("");
+  return `
+    <div class="event-details-v2">
+      <div class="event-details-v2-background"></div>
+      <div class="event-details-v2-shade"></div>
+      <div class="event-details-v2-inner">
+        <header class="event-details-v2-header">
+          <div class="event-details-v2-title-block">
+            <div class="event-details-v2-eyebrow">${esc(getChampionshipEventDetailsText("eyebrow"))}</div>
+            <h2 class="event-details-v2-title">${esc(getLocalizedField(item, "track_name", item?.track_code || "--"))}</h2>
+          </div>
+          <div class="event-details-v2-date-time">
+            ${eventDetailsIcon("calendar", " event-details-v2-date-time-icon")}
+            <span>${esc(formatDate(item?.date))}</span>
+            <span aria-hidden="true">•</span>
+            <span>${esc(`${startTime} ${timezone}`.trim())}</span>
+          </div>
+        </header>
+        <div class="event-details-v2-grid">
+          ${buildEventDetailsCard(getChampionshipEventDetailsText("connection"), "server", "event-details-v2-card-connection", connectionRows)}
+          ${buildEventDetailsCard(getChampionshipEventDetailsText("format"), "flag", "event-details-v2-card-format", formatRows)}
+          ${buildEventDetailsCard(getChampionshipEventDetailsText("conditions"), "wrench", "event-details-v2-card-conditions", conditionsRows)}
+        </div>
+        <footer class="event-details-v2-footer">
+          <button class="event-details-v2-participation-button${voteState.already_voted ? " is-voted" : ""}" type="button" data-v2-vote-action="true" ${voteState.pending || voteState.already_voted ? "disabled" : ""}>
+            ${eventDetailsIcon("check", " event-details-v2-participation-icon")}
+            <span>${esc(voteState.already_voted ? t("voteButtonDone") : t("voteButton"))}</span>
+          </button>
+          ${voteState.already_voted ? `<button class="event-details-v2-cancel-button" type="button" data-v2-vote-action="true" aria-label="${esc(t("unvoteButton"))}" ${voteState.pending ? "disabled" : ""}>${eventDetailsIcon("close", " event-details-v2-cancel-icon")}</button>` : `<div class="event-details-v2-cancel-placeholder" aria-hidden="true"></div>`}
+          <div class="event-details-v2-participant-count">
+            ${eventDetailsIcon("users", " event-details-v2-participant-icon")}
+            <span>${esc(getVoteLabel(voteState.votes))}</span>
+          </div>
+          <div class="event-details-v2-voting-notice">${esc(getChampionshipEventDetailsText("votingNotice"))}</div>
+          ${detailsUrl ? `<a class="event-details-v2-details-link" href="${esc(detailsUrl)}">${esc(t("eventDetailsLink"))}</a>` : ""}
+        </footer>
+      </div>
+    </div>
+  `;
+}
+
+function applyScheduleModalTrackBackground(itemOrTrackCode) {
+  const modalCard = document.querySelector("#schedule-modal .modal-card-slot");
+  if (!modalCard) return;
+  const backgroundUrl = itemOrTrackCode && typeof itemOrTrackCode === "object"
+    ? resolveTrackBackground(itemOrTrackCode)
+    : TRACK_BACKGROUNDS[String(itemOrTrackCode || "").trim().toLowerCase()];
+  modalCard.style.setProperty("--modal-track-photo", backgroundUrl ? `url("${backgroundUrl}")` : "none");
+}
+
+function renderScheduleModal() {
+  const modalCard = document.querySelector("#schedule-modal .modal-card-slot");
+  const headerEl = document.querySelector("#schedule-modal .modal-header");
+  const titleEl = document.getElementById("schedule-modal-title");
+  const subtitleEl = document.getElementById("schedule-modal-subtitle");
+  const detailsEl = document.getElementById("schedule-modal-details");
+  if (!modalCard || !headerEl || !titleEl || !subtitleEl || !detailsEl) return;
+  if (!selectedScheduleItem) {
+    applyScheduleModalTrackBackground("");
+    titleEl.textContent = "-";
+    subtitleEl.textContent = "-";
+    detailsEl.innerHTML = "";
+    modalCard.classList.remove("is-event-details-v2");
+    headerEl.classList.remove("event-details-v2-legacy-header");
+    return;
+  }
+  modalCard.classList.add("is-event-details-v2");
+  headerEl.classList.add("event-details-v2-legacy-header");
+  applyScheduleModalTrackBackground(selectedScheduleItem);
+  titleEl.textContent = getLocalizedField(selectedScheduleItem, "track_name", selectedScheduleItem.track_code || t("unknown"));
+  const startTime = getLocalizedField(selectedScheduleItem, "start_time_local", selectedScheduleItem?.start_time_local || "--");
+  const timezone = getLocalizedField(selectedScheduleItem, "timezone", selectedScheduleItem?.timezone || "UTC+3");
+  subtitleEl.textContent = `${formatDate(selectedScheduleItem?.date)} • ${startTime} ${timezone}`;
+  detailsEl.innerHTML = buildScheduleModalDetails(selectedScheduleItem);
+  detailsEl.querySelectorAll("[data-copy-target]").forEach(button => {
+    if (button.dataset.bound === "true") return;
+    button.addEventListener("click", async () => {
+      const target = document.getElementById(button.dataset.copyTarget || "");
+      if (!target) return;
+      try {
+        await navigator.clipboard.writeText(target.textContent || "");
+        button.classList.add("is-copied");
+        window.setTimeout(() => button.classList.remove("is-copied"), 1200);
+      } catch (error) {
+        console.warn("championship modal copy failed.", error);
+      }
+    });
+    button.dataset.bound = "true";
+  });
+  detailsEl.querySelectorAll("[data-v2-vote-action]").forEach(button => {
+    if (button.dataset.bound === "true") return;
+    button.addEventListener("click", event => {
+      event.stopPropagation();
+      if (selectedScheduleItem) void submitVote(selectedScheduleItem);
+    });
+    button.dataset.bound = "true";
+  });
+}
+
+function openScheduleModal(item) {
+  const modal = document.getElementById("schedule-modal");
+  if (!modal || !item) return;
+  selectedScheduleItem = item;
+  modal.classList.add("is-open");
+  modal.setAttribute("aria-hidden", "false");
+  document.body.classList.add("modal-open");
+  renderScheduleModal();
+}
+
+function closeScheduleModal() {
+  const modal = document.getElementById("schedule-modal");
+  if (!modal) return;
+  modal.classList.remove("is-open");
+  modal.setAttribute("aria-hidden", "true");
+  document.body.classList.remove("modal-open");
+  selectedScheduleItem = null;
+  applyScheduleModalTrackBackground("");
+}
+
+function normalizePrizeItems(prizes) {
+  if (!prizes) return [];
+  if (Array.isArray(prizes)) return prizes;
+  return ["prize1", "prize2", "prize3"].map((key, index) => {
+    const value = prizes[key];
+    if (!value) return null;
+    if (typeof value === "string") return { src: value, title: `P${index + 1}` };
+    return { src: value.src || value.url || value.path, title: value.title || value.alt || `P${index + 1}`, alt: value.alt };
+  }).filter(Boolean);
+}
+
+function normalizeAssetUrl(path, slug, assetBase = dataBase) {
+  const value = String(path || "").trim();
+  if (!value) return "";
+  let resolved = value;
+  if (value.startsWith("events/") || value.startsWith("assets/")) resolved = `${assetBase}/${value}`;
+  else if (!/^(https?:)?\/\//i.test(value) && !value.startsWith("/") && !value.startsWith("./") && !value.startsWith("../")) {
+    resolved = `${assetBase}/events/${encodeURIComponent(slug || "championship")}/${value}`;
+  }
+  return safeImageUrl(resolved, window.location.href, { allowedOrigins: [assetBase, dataBase, githubDataBase] }) || "";
+}
+
+function renderPrizes(prizes, slug, assetBase = dataBase) {
+  const root = document.getElementById("championship-prizes-grid");
+  if (!root) return;
+  const items = normalizePrizeItems(prizes);
+  if (!items.length) {
+    root.innerHTML = `<div class="championship-empty">${esc(t("noPrizes"))}</div>`;
+    return;
+  }
+  const safeItems = items.map((item, index) => ({ item, index, src: normalizeAssetUrl(item.src, slug, assetBase) })).filter(entry => entry.src);
+  if (!safeItems.length) {
+    root.innerHTML = `<div class="championship-empty">${esc(t("noPrizes"))}</div>`;
+    return;
+  }
+  root.innerHTML = safeItems.map(({ item, index, src }) => {
+    const title = item.title || `P${index + 1}`;
+    const alt = item.alt || title;
+    return `
+      <button class="championship-prize-thumb" type="button" data-full-src="${esc(src)}" data-alt="${esc(alt)}">
+        <img src="${esc(src)}" alt="${esc(alt)}" loading="lazy" />
+        <span>${esc(title)}</span>
+      </button>
+    `;
+  }).join("");
+}
+
+function renderStandings(data, races) {
+  const root = document.getElementById("championship-standings");
+  const standings = normalizeStandings(data);
+  if (!root) return;
+  if (!standings.length) {
+    root.innerHTML = `<div class="championship-empty">${esc(t("noResults"))}</div>`;
+    return;
+  }
+  const raceColumns = Array.from({ length: 4 }, (_, index) => races[index] || { event_id: `R${index + 1}` });
+  root.innerHTML = `
+    <table class="championship-standings-table">
+      <thead>
+        <tr>
+          <th>${esc(t("position"))}</th>
+          <th>${esc(t("driver"))}</th>
+          ${raceColumns.map((_, index) => `<th>R${index + 1}</th>`).join("")}
+          <th>${esc(t("total"))}</th>
+        </tr>
+      </thead>
+      <tbody>
+        ${standings.map((row, index) => `
+          <tr>
+            <td>${esc(index + 1)}</td>
+            <td>${renderDriverLink(resolveDriverName(row), resolveDriverPublicId(row), "driver-link")}</td>
+            ${raceColumns.map((race, raceIndex) => {
+              const value = row.race_points?.[raceEventId(race, raceIndex)];
+              return `<td>${esc(value ?? "-")}</td>`;
+            }).join("")}
+            <td><strong>${esc(row.points || 0)}</strong></td>
+          </tr>
+        `).join("")}
+      </tbody>
+    </table>
+  `;
+}
+
+function renderRaceResults(races) {
+  const root = document.getElementById("championship-race-results");
+  if (!root) return;
+  if (!races.length) {
+    root.innerHTML = `<div class="championship-empty">${esc(t("noRaceResults"))}</div>`;
+    return;
+  }
+  root.innerHTML = races.map((race, index) => {
+    const results = Array.isArray(race.results) ? race.results : [];
+    return `
+      <article class="championship-race-card">
+        <div class="championship-race-card-head">
+          <div>
+            <div class="event-type-badge">${esc(`R${index + 1}`)}</div>
+            <h3>${esc(race.track_name || race.track || race.track_code || "-")}</h3>
+            <p>${esc(race.finished_at_local || formatDate(race.date))}</p>
+          </div>
+          <div class="championship-race-summary">
+            <span>${esc(t("winner"))}: ${renderDriverLink(race.winner || "-", race.winner_public_id, "driver-link")}</span>
+            <span>${esc(t("bestLap"))}: ${esc(race.best_lap || "-")}</span>
+            <span>${esc(t("participants"))}: ${esc(race.participants_count || results.length || "-")}</span>
+            <span>${esc(t("fieldStrength"))}: ${esc(race.average_elo ?? "-")}</span>
+          </div>
+        </div>
+        ${
+          results.length
+            ? `<div class="table-card table-card-compact">
+                <div class="table-wrap">
+                  <table class="championship-race-table">
+                    <thead><tr><th>#</th><th>${esc(t("driver"))}</th><th>ELO</th><th>ΔELO</th><th>${esc(t("points"))}</th><th>${esc(t("bestLap"))}</th></tr></thead>
+                    <tbody>
+                      ${results.map(result => `
+                        <tr>
+                          <td>${esc(result.position || "-")}</td>
+                          <td>${renderDriverLink(resolveDriverName(result), resolveDriverPublicId(result), "driver-link")}</td>
+                          <td>${esc(result.elo ?? "-")}</td>
+                          <td>${esc(formatEloDelta(result.elo_rating_delta))}</td>
+                          <td>${esc(result.points ?? "-")}</td>
+                          <td>${esc(result.best_lap || "-")}</td>
+                        </tr>
+                      `).join("")}
+                    </tbody>
+                  </table>
+                </div>
+              </div>`
+            : `<div class="championship-empty">${esc(t("noResults"))}</div>`
+        }
+      </article>
+    `;
+  }).join("");
+}
+
+async function loadRaceDetails(data, slug, assetBase = dataBase) {
+  const races = normalizeRaces(data);
+  const publishedRaceIndex = await loadJsonOrNull(`${assetBase}/races/races.json`);
+  const publishedRaces = Array.isArray(publishedRaceIndex?.items) ? publishedRaceIndex.items : [];
+  const detailed = await Promise.all(races.map(async race => {
+    const detailsPath = race.details_path || `races/${race.event_id}.json`;
+    const legacyDetail = Array.isArray(race.results)
+      ? race
+      : await loadJsonOrNull(`${assetBase}/events/${encodeURIComponent(slug)}/${detailsPath}`);
+    const mergedLegacy = legacyDetail ? { ...race, ...legacyDetail } : race;
+    const resultFile = String(
+      mergedLegacy.results_repo_path
+      || mergedLegacy.source_file
+      || race.results_repo_path
+      || ""
+    ).split(/[\\/]/).pop();
+    const publishedRace = publishedRaces.find(item => {
+      const publishedFile = String(item?.source_file || "").split(/[\\/]/).pop();
+      return Boolean(
+        (resultFile && publishedFile === resultFile)
+        || (mergedLegacy.race_id && item?.race_id === mergedLegacy.race_id)
+      );
+    });
+    if (!publishedRace?.details_path) return mergedLegacy;
+    const eloDetail = await loadJsonOrNull(`${assetBase}/${publishedRace.details_path}`);
+    if (!eloDetail) return mergedLegacy;
+    const eloByPublicId = new Map(
+      (Array.isArray(eloDetail.results) ? eloDetail.results : [])
+        .filter(item => item?.public_id)
+        .map(item => [item.public_id, item])
+    );
+    return {
+      ...mergedLegacy,
+      average_elo: eloDetail.average_elo,
+      results: (Array.isArray(mergedLegacy.results) ? mergedLegacy.results : []).map(result => {
+        const eloResult = eloByPublicId.get(resolveDriverPublicId(result));
+        if (!eloResult) return result;
+        return {
+          ...result,
+          elo: eloResult.elo,
+          elo_internal_rating: eloResult.elo_internal_rating,
+          elo_rating_delta: eloResult.elo_rating_delta,
+          elo_category_id: eloResult.elo_category_id,
+          elo_category_name: eloResult.elo_category_name
+        };
+      })
+    };
+  }));
+  return detailed;
+}
+
+async function loadChampionshipData(slug) {
+  const primaryUrl = `${dataBase}/events/${encodeURIComponent(slug)}/index.json`;
+  const primaryData = await loadJsonOrNull(primaryUrl);
+  if (primaryData) return { data: primaryData, assetBase: dataBase };
+
+  if (dataBase !== githubDataBase) {
+    const githubUrl = `${githubDataBase}/events/${encodeURIComponent(slug)}/index.json`;
+    const githubData = await loadJsonOrNull(githubUrl);
+    if (githubData) return { data: githubData, assetBase: githubDataBase };
+  }
+
+  return { data: null, assetBase: dataBase };
+}
+
+function applyTranslations() {
+  document.documentElement.lang = currentLang;
+  document.querySelectorAll("[data-i18n]").forEach(element => {
+    element.textContent = t(element.dataset.i18n);
+  });
+  document.querySelectorAll("[data-i18n-aria-label]").forEach(element => {
+    element.setAttribute("aria-label", t(element.dataset.i18nAriaLabel));
+  });
+  document.querySelectorAll(".lang-btn").forEach(button => {
+    const active = button.dataset.lang === currentLang;
+    button.classList.toggle("active", active);
+    if (button.tagName !== "A") button.setAttribute("aria-pressed", active ? "true" : "false");
+  });
+  renderNewsBell();
+  renderNewsNotificationsModal();
+  document.getElementById("top-nav-more")?.rebuildOverflowMenu?.();
+}
+
+function bindTopNavMoreMenu() {
+  const root = document.getElementById("top-nav-more");
+  const toggle = document.getElementById("top-nav-more-toggle");
+  const menu = document.getElementById("top-nav-more-menu");
+  const navMenu = document.querySelector(".top-nav-menu");
+  if (navMenu?.querySelector(".top-nav-group")) {
+    if (root) {
+      root.hidden = true;
+      root.classList.remove("is-visible", "is-open");
+    }
+    return;
+  }
+  const items = navMenu ? [...navMenu.querySelectorAll("[data-nav-item='true']")] : [];
+  if (!root || !toggle || !menu || !navMenu || !items.length || root.dataset.bound === "true") return;
+
+  const closeMenu = () => {
+    toggle.setAttribute("aria-expanded", "false");
+    menu.hidden = true;
+    root.classList.remove("is-open");
+  };
+
+  const rebuildOverflowMenu = () => {
+    menu.innerHTML = "";
+    items.forEach(item => {
+      item.hidden = false;
+    });
+    root.classList.remove("is-visible");
+    root.hidden = true;
+    closeMenu();
+
+    if (window.innerWidth > 980) return;
+
+    root.hidden = false;
+    root.classList.add("is-visible");
+    const toggleWidth = root.offsetWidth || 96;
+    const navRect = navMenu.getBoundingClientRect();
+    const maxVisibleRight = navRect.width - toggleWidth - 10;
+    items.forEach(item => {
+      const itemRightEdge = item.offsetLeft + item.offsetWidth;
+      if (itemRightEdge > maxVisibleRight) item.hidden = true;
+    });
+
+    const hiddenItems = items.filter(item => item.hidden);
+    if (!hiddenItems.length) {
+      root.classList.remove("is-visible");
+      root.hidden = true;
+      return;
+    }
+
+    hiddenItems.forEach(item => {
+      const clone = item.cloneNode(true);
+      clone.className = item.classList.contains("top-nav-link-hourly")
+        ? "top-nav-more-link top-nav-more-link-hourly"
+        : item.classList.contains("championship-nav-link")
+          ? "top-nav-more-link top-nav-more-link-championship"
+          : "top-nav-more-link";
+      clone.hidden = false;
+      clone.removeAttribute("data-nav-item");
+      menu.appendChild(clone);
+    });
+  };
+
+  const openMenu = () => {
+    toggle.setAttribute("aria-expanded", "true");
+    menu.hidden = false;
+    root.classList.add("is-open");
+  };
+
+  toggle.addEventListener("click", event => {
+    event.preventDefault();
+    if (menu.hidden) openMenu();
+    else closeMenu();
+  });
+  document.addEventListener("click", event => {
+    if (!root.contains(event.target)) closeMenu();
+  });
+  document.addEventListener("keydown", event => {
+    if (event.key === "Escape") closeMenu();
+  });
+  menu.addEventListener("click", event => {
+    if (event.target.closest("a")) closeMenu();
+  });
+  window.addEventListener("resize", rebuildOverflowMenu);
+
+  requestAnimationFrame(rebuildOverflowMenu);
+  window.addEventListener("load", rebuildOverflowMenu, { once: true });
+  root.rebuildOverflowMenu = rebuildOverflowMenu;
+  root.dataset.bound = "true";
+}
+
+function bindTopNavGroups() {
+  const groups = [...document.querySelectorAll(".top-nav-group")];
+  if (!groups.length || document.body.dataset.topNavGroupsBound === "true") return;
+  const navMenu = document.querySelector(".top-nav-menu");
+  navMenu?.classList.add("has-nav-groups");
+
+  const closeGroup = (group) => {
+    const toggle = group.querySelector(".top-nav-group-toggle");
+    const menu = group.querySelector(".top-nav-group-menu");
+    if (!toggle || !menu) return;
+    toggle.setAttribute("aria-expanded", "false");
+    menu.hidden = true;
+    group.classList.remove("is-open");
+  };
+
+  const closeAllGroups = (exceptGroup = null) => {
+    groups.forEach(group => {
+      if (group !== exceptGroup) closeGroup(group);
+    });
+  };
+
+  groups.forEach(group => {
+    const toggle = group.querySelector(".top-nav-group-toggle");
+    const menu = group.querySelector(".top-nav-group-menu");
+    if (!toggle || !menu) return;
+
+    toggle.addEventListener("click", event => {
+      event.preventDefault();
+      const shouldOpen = menu.hidden;
+      closeAllGroups(shouldOpen ? group : null);
+      if (shouldOpen) {
+        toggle.setAttribute("aria-expanded", "true");
+        menu.hidden = false;
+        group.classList.add("is-open");
+      } else {
+        closeGroup(group);
+      }
+    });
+
+    menu.addEventListener("click", event => {
+      if (event.target.closest("a")) closeGroup(group);
+    });
+  });
+
+  document.addEventListener("click", event => {
+    if (!event.target.closest(".top-nav-group")) closeAllGroups();
+  });
+
+  document.addEventListener("keydown", event => {
+    if (event.key === "Escape") closeAllGroups();
+  });
+
+  document.body.dataset.topNavGroupsBound = "true";
+}
+
+function bindLightbox() {
+  const modal = document.getElementById("championship-lightbox");
+  const image = document.getElementById("championship-lightbox-image");
+  const close = document.getElementById("championship-lightbox-close");
+  document.addEventListener("click", event => {
+    const thumb = event.target.closest(".championship-prize-thumb");
+    if (!thumb || !modal || !image) return;
+    image.src = thumb.dataset.fullSrc || "";
+    image.alt = thumb.dataset.alt || "";
+    modal.classList.add("is-open");
+    modal.setAttribute("aria-hidden", "false");
+  });
+  const closeLightbox = () => {
+    if (!modal || !image) return;
+    modal.classList.remove("is-open");
+    modal.setAttribute("aria-hidden", "true");
+    image.src = "";
+  };
+  close?.addEventListener("click", closeLightbox);
+  modal?.addEventListener("click", event => {
+    if (event.target === modal) closeLightbox();
+  });
+  document.addEventListener("keydown", event => {
+    if (event.key === "Escape") closeLightbox();
+  });
+}
+
+function bindScheduleModal() {
+  const modal = document.getElementById("schedule-modal");
+  const closeButton = document.getElementById("schedule-modal-close");
+  closeButton?.addEventListener("click", closeScheduleModal);
+  modal?.addEventListener("click", event => {
+    if (event.target === modal) closeScheduleModal();
+  });
+  document.addEventListener("keydown", event => {
+    if (event.key === "Escape") closeScheduleModal();
+  });
+}
+
+async function init() {
+  window.addEventListener("storage", event => {
+    if (event.key === VOTE_STATE_STORAGE_KEY) {
+      syncVoteStateFromStorage();
+    }
+    if (event.key === NEWS_READ_LEGACY_STORAGE_KEY || event.key === NEWS_READ_STORAGE_KEY) {
+      renderNewsBell();
+      renderNewsNotificationsModal();
+    }
+  });
+  ensureNewsNotificationsUi();
+  applyTranslations();
+  bindTopNavGroups();
+  bindTopNavMoreMenu();
+  initNewsNotificationsModal();
+  document.querySelectorAll(".lang-btn").forEach(button => {
+    if (button.tagName === "A") return;
+    button.addEventListener("click", () => {
+      currentLang = button.dataset.lang || "en";
+      setPageLocale(currentLang, { documentRef: document, windowRef: window });
+      init();
+    }, { once: true });
+  });
+  void loadNewsFeed().then(() => {
+    renderNewsBell();
+    renderNewsNotificationsModal();
+  });
+  try {
+    const [announcement, schedule] = await Promise.all([
+      loadJson(`${dataBase}/announcement.json`),
+      loadJson(`${dataBase}/schedule.json`)
+    ]);
+    championshipAnnouncementData = announcement || {};
+    const firstChampionship = (schedule?.items || []).find(isChampionshipEvent);
+    const slug = params.get("slug")
+      || announcement?.championship_slug
+      || announcement?.championship?.slug
+      || firstChampionship?.championship_slug
+      || "championship";
+    const loaded = await loadChampionshipData(slug);
+    const loadedData = loaded.data;
+    const assetBase = loaded.assetBase;
+    const data = loadedData || {
+      slug,
+      title: announcement?.championship_title || announcement?.championship?.title || firstChampionship?.championship_title || "ASG Racing June 2026",
+      status: announcement?.championship?.status || "active",
+      period: announcement?.championship?.period,
+      description: getLocalizedDescription(announcement?.championship, firstChampionship),
+      prizes: announcement?.championship?.prizes,
+      upcoming_races: normalizeUpcoming({}, schedule, slug),
+      standings: [],
+      races: []
+    };
+    if (!data.prizes && announcement?.championship?.prizes) {
+      data.prizes = announcement.championship.prizes;
+    }
+    const upcoming = normalizeUpcoming(data, schedule, slug);
+    const races = await loadRaceDetails(data, slug, assetBase);
+    const standings = normalizeStandings(data);
+    await loadVotesForSchedule(upcoming.slice(0, 3));
+
+    document.getElementById("championship-title").textContent = data.title || announcement?.championship_title || firstChampionship?.championship_title || "ASG Racing June 2026";
+    const statusElement = document.getElementById("championship-status");
+    const normalizedStatus = normalizeChampionshipStatus(data.status);
+    statusElement.textContent = [data.period, championshipStatusLabel(normalizedStatus)].filter(Boolean).join(" · ") || t("championship");
+    statusElement.classList.remove("is-active", "is-scheduled", "is-finished");
+    statusElement.classList.add(`is-${championshipStatusTone(normalizedStatus)}`);
+    document.getElementById("championship-description").textContent = getLocalizedDescription(data, announcement?.championship, firstChampionship) || t("activeChampionship");
+
+    renderProgress(data, races, upcoming, standings);
+    renderUpcoming(upcoming, standings);
+    renderPrizes(data.prizes, slug, assetBase);
+    renderStandings(data, races);
+    renderRaceResults(races);
+  } catch (error) {
+    console.error(error);
+    document.getElementById("championship-description").textContent = t("loadError");
+  }
+}
+
+document.addEventListener("DOMContentLoaded", () => {
+  bindLightbox();
+  bindScheduleModal();
+  init();
+});

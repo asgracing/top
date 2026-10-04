@@ -1,0 +1,37 @@
+/* R13 final responsive and accessibility safeguards. */
+:where(a, button, input, select, [role="button"], [role="tab"]):focus-visible {
+  outline: 2px solid var(--accent-2);
+  outline-offset: 3px;
+}
+
+:where(.modal-card, .table-wrap, .hero-card, .support-widget-card) {
+  max-width: 100%;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  html { scroll-behavior: auto; }
+
+  *,
+  *::before,
+  *::after {
+    animation: none;
+    transition: none;
+    scroll-behavior: auto;
+  }
+
+  .site-bg-video { display: none; }
+}
+
+@media (pointer: coarse) {
+  :where(.top-nav-link, .top-nav-group-toggle, .top-nav-more-toggle, .lang-btn, .combined-stats-tab, .pagination button, .modal-close, .table-sort-button, .server-sticky-card-clickable, .hero-server-online-stat, .hero-online-card, .hero-hourly-card) {
+    min-height: 44px;
+  }
+}
+
+@media (forced-colors: active) {
+  :where(a, button, input, select, [role="button"], [role="tab"]):focus-visible {
+    outline: 2px solid Highlight;
+  }
+
+  .modal-overlay.is-open { background: Canvas; }
+}
