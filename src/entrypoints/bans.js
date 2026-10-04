@@ -1,3 +1,3 @@
-import { bootstrapLegacyPage } from "./legacy-bootstrap.js?v=20260926hotfix1";
+import { bootstrapLegacyPage } from "./legacy-bootstrap.js?v=20261004teams1";
 
 await bootstrapLegacyPage("bans");

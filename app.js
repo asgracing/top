@@ -1,4 +1,6 @@
 import { currentPageLanguageHref, initializeLocalizedPage, localizedPageHref, resolvePageLocale, setPageLocale } from "./src/shared/localized-page.js?v=20260920routes1";
+import { isTeamRace, teamRaceUrl } from "./src/shared/team-racing-client.js?v=20261004teams1";
+import { renderTeamResults } from "./src/shared/team-racing-results-view.js?v=20261004teams1";
 initializeLocalizedPage();
 ﻿import { readPageContext } from "./src/runtime/page-context.js";
 
@@ -3128,6 +3130,10 @@ function renderHourlyHeroModal() {
   `;
 
   bindHourlyEventDetailsV2(contentEl);
+  if (isTeamRace(data)) {
+    contentEl.querySelector('.event-details-v2-eyebrow').textContent = currentLang === "ru" ? "КОМАНДНАЯ ГОНКА" : "TEAM RACE";
+    contentEl.querySelector('.event-details-v2-footer').innerHTML = `<a class="event-details-v2-details-link" href="${escapeHtml(teamRaceUrl(data,currentLang))}">${escapeHtml(currentLang === "ru" ? "Заявка команды и составы" : "Team entry and crews")}</a><span>${escapeHtml(currentLang === "ru" ? "Все изменения закрываются за час до открытия сервера. Капитан входит первым." : "All changes close one hour before server opening. The captain joins first.")}</span>`;
+  }
 }
 function renderHourlyHeroCard() {
   const startsEl = document.getElementById("hourly-starts-value");
@@ -3211,7 +3217,7 @@ function renderHourlyHeroCard() {
   }
   const eyebrowEl = document.getElementById("hourly-eyebrow");
   if (eyebrowEl) {
-    eyebrowEl.textContent = isSpecial
+    eyebrowEl.textContent = isTeamRace(data) ? (currentLang === "ru" ? "КОМАНДНАЯ ГОНКА" : "TEAM RACE") : isSpecial
       ? specialEvent.badge_label
       : isEndurance
       ? String(t("enduranceEyebrow")).replace("{duration}", String(raceDuration))
@@ -3250,11 +3256,18 @@ function renderHourlyHeroCard() {
     `${t(isSpecial ? "specialEventOpenDetailsLabel" : isEndurance ? "enduranceOpenDetailsLabel" : "hourlyOpenDetailsLabel")}: ${data?.track_name || t("hourlyNoEvent")}`
   );
   cardEl.setAttribute("aria-disabled", (!data?.event_id && !data?.track_name) ? "true" : "false");
+  if (isTeamRace(data)) {
+    votesEl.textContent = currentLang === "ru" ? "Одна команда — одна машина · соло разрешено" : "One team — one car · solo allowed";
+    voteBtn.textContent = currentLang === "ru" ? "Заявка команды" : "Team entry";
+    voteBtn.disabled = false; unvoteBtn.hidden = true;
+    legalNoteEl.textContent = currentLang === "ru" ? "Регистрация, подтверждения и изменения закрываются за час до открытия сервера." : "Entries, confirmations and changes close one hour before server opening.";
+  }
   updateTopChampionshipLink();
 
   if (!voteBtn.dataset.bound) {
     voteBtn.addEventListener("click", (event) => {
       event.stopPropagation();
+      if (isTeamRace(hourlyAnnouncementData)) { window.location.href=teamRaceUrl(hourlyAnnouncementData,currentLang); return; }
       void submitHourlyHeroVote();
     });
     voteBtn.addEventListener("keydown", (event) => {
@@ -3336,7 +3349,7 @@ function renderHourlyWinnerCard() {
     car_name_raw: race.winner_car_name_raw,
     car_name: race.winner_car_name
   };
-  const winnerName = race.winner || winnerResult?.driver || "—";
+  const winnerName = race.winner_team || race.winner || winnerResult?.driver || "—";
   const winnerPublicId = race.winner_public_id || winnerResult?.public_id || null;
   const winnerPlayerId = winnerResult?.player_id || null;
   const carName = winnerResult?.car_name || winnerResult?.car_name_raw || "";
@@ -3345,6 +3358,7 @@ function renderHourlyWinnerCard() {
 
   cardEl.classList.remove("is-empty");
   nameEl.innerHTML = renderDriverLink(winnerName, winnerPublicId, "driver-link driver-link-heading", winnerPlayerId);
+  if (isTeamRace(race)) nameEl.textContent = winnerName;
   metaEl.innerHTML = `<span>${escapeHtml([trackName, raceDate].filter(Boolean).join(" · ") || "—")}</span>${carName ? `<span class="hero-hourly-winner-model">${escapeHtml(carName)}</span>` : ""}`;
   mediaEl.innerHTML = renderCarImage(
     winnerResult || {},
@@ -9441,6 +9455,11 @@ function renderRaceResultsModal() {
     ? `${trackName} [${serverName}]`
     : trackName;
   subtitleEl.textContent = `${formatDateTimeLocal(selectedRace.finished_at, currentLang)} / ${raceCountedLabel}`;
+  if (isTeamRace(selectedRace)) {
+    summaryEl.innerHTML = `<div class="race-summary-card">${escapeHtml(currentLang === "ru" ? "КОМАНДНАЯ ГОНКА" : "TEAM RACE")}</div>`;
+    tableEl.innerHTML = renderTeamResults(selectedRace,currentLang);
+    return;
+  }
 
   summaryEl.innerHTML = `
     <div class="race-summary-card">

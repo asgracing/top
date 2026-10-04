@@ -9,6 +9,8 @@ import {
 } from "../news-read-state.js?v=20260813newsread1";
 import { getSpecialEventPresentation, isSpecialEvent } from "../src/features/hourly/special-event.js?v=20260903special1";
 import { createHourlyVotesClient } from "../src/shared/hourly-votes-client.js?v=20260910security1";
+import { isTeamRace, teamRaceUrl } from "../src/shared/team-racing-client.js?v=20261004teams1";
+import { renderTeamResults } from "../src/shared/team-racing-results-view.js?v=20261004teams1";
 import { safeImageUrl, safeLinkUrl } from "../src/shared/safe-dom.js";
 import { normalizeChampionshipStatus } from "../src/pages/hourly/championship-status.js?v=20261002status1";
 
@@ -659,6 +661,10 @@ function buildScheduleItems(schedule, announcement) {
       event_type: announcement.event_type,
       race_format: announcement.race_format,
       competition_mode: announcement.competition_mode,
+      participation_mode:announcement.participation_mode,
+      occurrence_id:announcement.occurrence_id || announcement.event_id,
+      registration_closes_at:announcement.registration_closes_at,
+      team_max_drivers:announcement.team_max_drivers,
       points_multiplier: announcement.points_multiplier,
       scoring_mode: announcement.scoring_mode,
       car_restriction: announcement.car_restriction,
@@ -681,6 +687,7 @@ function isVotingDisabledForItem(item) {
   return Boolean(item?.voting_disabled) && !isChampionshipEvent(item);
 }
 function eventBadgeLabel(item) {
+  if (isTeamRace(item)) return currentLang === "ru" ? "КОМАНДНАЯ ГОНКА" : "TEAM RACE";
   const specialEvent = getSpecialEventPresentation(item, currentLang, announcementData);
   if (specialEvent) return specialEvent.badge_label;
   if (item?.badge_label) return getLocalizedField(item, "badge_label", item.badge_label);
@@ -689,8 +696,9 @@ function eventBadgeLabel(item) {
 }
 function eventBadgeLabels(item) {
   const specialEvent = getSpecialEventPresentation(item, currentLang, announcementData);
-  if (specialEvent) return [specialEvent.badge_label];
-  const labels = [];
+  const teamLabel = currentLang === "ru" ? "КОМАНДНАЯ ГОНКА" : "TEAM RACE";
+  if (specialEvent) return isTeamRace(item) ? [specialEvent.badge_label,teamLabel] : [specialEvent.badge_label];
+  const labels = isTeamRace(item) ? [teamLabel] : [];
   if (item?.badge_label) labels.push(getLocalizedField(item, "badge_label", item.badge_label));
   else if (isEnduranceEvent(item)) labels.push(t("enduranceBadge"));
   else labels.push(t("hourlyBadge"));
@@ -1895,6 +1903,7 @@ function buildEventDetailsV2Card(title, iconName, bodyClassName, rowsHtml) {
 }
 
 function buildEventDetailsV2Footer(viewModel) {
+  if (isTeamRace(viewModel.item)) return `<footer class="event-details-v2-footer">${buildParticipationControlsV2(viewModel.item)}<p>${escapeHtml(currentLang === "ru" ? "Капитан входит первым. Соло разрешено; остальные пилоты подтверждают участие на странице заявки." : "The captain joins first. Solo is allowed; other drivers confirm on the entry page.")}</p></footer>`;
   const detailsLinkHtml = viewModel.detailsUrl
     ? `<a class="event-details-v2-details-link" href="${escapeHtml(viewModel.detailsUrl)}">${escapeHtml(currentLang === "ru" ? "\u041f\u043e\u0434\u0440\u043e\u0431\u043d\u0435\u0435" : "Details")}</a>`
     : "";
@@ -2419,6 +2428,10 @@ function getHourlyConnectHref(server = {}) {
 }
 
 function buildParticipationControlsV2(item, options = {}) {
+  if (isTeamRace(item)) {
+    const cutoff = formatDateTimeLocal(item.registration_closes_at || item.closes_at);
+    return `<div class="hourly-v2-actions-main"><a class="hourly-v2-details-link" href="${escapeHtml(teamRaceUrl(item,currentLang))}">${escapeHtml(currentLang === "ru" ? "Заявка команды и составы" : "Team entry and crews")}</a><span class="hourly-v2-voting-note">${escapeHtml(currentLang === "ru" ? `Командная гонка · закрытие заявок: ${cutoff}` : `Team race · entries close: ${cutoff}`)}</span></div>`;
+  }
   const variant = options.variant === "compact" ? "compact" : "hero";
   const showDetails = options.showDetails !== false;
   const voteState = getVoteState(item);
@@ -2540,8 +2553,8 @@ function renderUpcomingHeroV2(data) {
   root.dataset.eventType = isEnduranceEvent(data) ? "endurance" : "hourly";
   const specialBadgeEl = document.getElementById("hourly-upcoming-v2-special-badge");
   if (specialBadgeEl) {
-    specialBadgeEl.textContent = specialEvent?.badge_label || "";
-    specialBadgeEl.hidden = !specialEvent;
+    specialBadgeEl.textContent = isTeamRace(voteItem) ? (currentLang === "ru" ? "КОМАНДНАЯ ГОНКА" : "TEAM RACE") : specialEvent?.badge_label || "";
+    specialBadgeEl.hidden = !specialEvent && !isTeamRace(voteItem);
   }
   const specialCarEl = document.getElementById("hourly-upcoming-v2-special-car");
   if (specialCarEl) {
@@ -3126,6 +3139,11 @@ function renderRaceResultsModal() {
   titleEl.textContent = selectedRace.track_name || humanizeTrackName(selectedRace.track);
   subtitleEl.textContent = formatDateTimeLocal(selectedRace.finished_at || selectedRace.finished_at_local);
   if (statusEl) statusEl.hidden = false;
+  if (isTeamRace(selectedRace)) {
+    summaryEl.innerHTML = `<div class="race-summary-card">${escapeHtml(currentLang === "ru" ? "КОМАНДНАЯ ГОНКА" : "TEAM RACE")}</div>`;
+    tableEl.innerHTML = renderTeamResults(selectedRace,currentLang);
+    return;
+  }
   summaryEl.innerHTML = `
     <div class="race-summary-card"><div class="race-summary-label">${escapeHtml(t("raceSummaryTrack"))}</div><div class="race-summary-value">${escapeHtml(selectedRace.track_name || humanizeTrackName(selectedRace.track))}</div></div>
     <div class="race-summary-card"><div class="race-summary-label">${escapeHtml(t("raceSummaryWinner"))}</div><div class="race-summary-value">${renderRaceDriverProfileLink(selectedRace.winner || t("noWinner"), selectedRace.winner_public_id, "race-summary-driver-link")}</div></div>
@@ -3226,6 +3244,7 @@ function renderScheduleModal() {
     </span>
   `;
   detailsEl.innerHTML = buildScheduleModalDetailsLegacy(selectedScheduleItem);
+  if (isTeamRace(selectedScheduleItem)) detailsEl.innerHTML += buildParticipationControlsV2(selectedScheduleItem);
   bindVoteControls(detailsEl);
   bindHeroCopyButtons(detailsEl);
 }
@@ -3334,6 +3353,7 @@ async function openRaceResultsModal(race) {
     finished_at: race.finished_at,
     participants_count: race.participants_count,
     winner: race.winner,
+    participation_mode:race.participation_mode,
     best_lap: race.best_lap,
     results: []
   };

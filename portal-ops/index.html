@@ -80,6 +80,8 @@
               <div class="portal-hourly-form-title"><strong id="hourly-selected-title"></strong><span id="hourly-override-badge" class="portal-ops-badge" hidden data-copy="override">Изменено</span><span id="hourly-lock-badge" class="portal-ops-badge portal-ops-badge--locked" hidden data-copy="championshipLocked">Гонка чемпионата — только просмотр</span></div>
               <div class="portal-ops-grid">
                 <label><span data-copy="eventType">Тип события</span><select id="hourly-race-format" required><option value="hourly">Hourly</option><option value="endurance">Endurance</option></select></label>
+                <label><span data-copy="participationMode">Участие</span><select id="hourly-participation-mode" required><option value="individual" data-copy="individualRace">Личная гонка</option><option value="team" data-copy="teamRace">Командная гонка</option></select></label>
+                <label><span data-copy="teamMaxDrivers">Максимум пилотов в экипаже (соло разрешено)</span><input id="hourly-team-max-drivers" type="number" min="1" max="4" step="1" required></label>
                 <label><span data-copy="pointsMultiplier">Множитель очков</span><input id="hourly-points-multiplier" type="number" min="0" max="100" step="0.1" required></label>
                 <label><span data-copy="raceStart">Старт гонки, МСК</span><input id="hourly-race-start" type="datetime-local" required></label>
                 <label><span data-copy="serverOpen">Открытие сервера, МСК</span><input id="hourly-server-open" type="datetime-local" required></label>
@@ -107,6 +109,6 @@
     </section>
     <section class="portal-ops-card"><h2>ASG Lab</h2><p><a href="/portal-ops/asg-lab/">Реквизиты, проекты документов и тестовые коды / Seller details, document drafts and test codes ↗</a></p></section>
   </main>
-  <script type="module" src="../src/pages/portal-ops/portal-ops-page.js?v=20260921links2"></script>
+  <script type="module" src="../src/pages/portal-ops/portal-ops-page.js?v=20261004teams1"></script>
 </body>
 </html>

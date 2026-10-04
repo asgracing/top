@@ -368,6 +368,7 @@ function getDriverProfileHref(publicId) {
 
 function renderDriverLink(name, publicId, className = "driver-link") {
   const safeName = esc(name || "-");
+  if (String(publicId || "").startsWith("tm_")) return `<a class="${esc(className)}" href="/teams/detail/?id=${encodeURIComponent(publicId)}">${safeName}</a>`;
   const href = getDriverProfileHref(publicId);
   if (!href) return `<span class="${esc(className)}">${safeName}</span>`;
   return `<a class="${esc(className)}" href="${esc(href)}">${safeName}</a>`;
@@ -1254,6 +1255,7 @@ function renderWinners(standings) {
 }
 
 function renderVoteControl(item) {
+  if (isTeamRace(item)) return `<a class="event-details-link" href="${esc(teamRaceUrl(item,currentLang))}">${esc(currentLang === "ru" ? "КОМАНДНАЯ ГОНКА · заявка и составы" : "TEAM RACE · entry and crews")}</a>`;
   const voteState = getVoteState(item);
   const voteCountLabel = voteState.failed
     ? t("voteFailed")
@@ -1334,7 +1336,7 @@ function renderUpcoming(items, standings) {
         style="--schedule-track-photo: ${backgroundUrl ? `url('${esc(backgroundUrl)}')` : "none"};"
       >
         <div class="schedule-event-card-inner">
-          <div class="event-type-badge">${esc(t("championshipEvent"))}</div>
+          <div class="event-type-badge">${esc(t("championshipEvent"))}${isTeamRace(item) ? ` · ${esc(currentLang === "ru" ? "КОМАНДНАЯ ГОНКА" : "TEAM RACE")}` : ""}</div>
           <div class="schedule-event-time">${esc(formatSlotDateTime(item))}</div>
           <div class="schedule-event-track">${esc(getLocalizedField(item, "track_name", item.track_code || "--"))}</div>
           <div class="schedule-event-weather">${renderChampionshipWeatherStateIcon(item.weather || {})}<span>${esc(weatherLabel(item.weather || {}))}</span>${renderChampionshipGameTime(item)}</div>
@@ -1552,6 +1554,10 @@ function renderScheduleModal() {
   const timezone = getLocalizedField(selectedScheduleItem, "timezone", selectedScheduleItem?.timezone || "UTC+3");
   subtitleEl.textContent = `${formatDate(selectedScheduleItem?.date)} • ${startTime} ${timezone}`;
   detailsEl.innerHTML = buildScheduleModalDetails(selectedScheduleItem);
+  if (isTeamRace(selectedScheduleItem)) {
+    detailsEl.querySelector('.event-details-v2-eyebrow').textContent = currentLang === "ru" ? "КОМАНДНАЯ ГОНКА" : "TEAM RACE";
+    detailsEl.querySelector('.event-details-v2-footer').innerHTML = `<a class="event-details-v2-details-link" href="${esc(teamRaceUrl(selectedScheduleItem,currentLang))}">${esc(currentLang === "ru" ? "Заявка команды и составы" : "Team entry and crews")}</a><span>${esc(currentLang === "ru" ? "Все изменения закрываются за час до открытия сервера. Капитан входит первым." : "All changes close one hour before server opening. The captain joins first.")}</span>`;
+  }
   detailsEl.querySelectorAll("[data-copy-target]").forEach(button => {
     if (button.dataset.bound === "true") return;
     button.addEventListener("click", async () => {
@@ -1658,7 +1664,7 @@ function renderStandings(data, races) {
       <thead>
         <tr>
           <th>${esc(t("position"))}</th>
-          <th>${esc(t("driver"))}</th>
+          <th>${esc(standings.every(row=>row.team_id) ? (currentLang === "ru" ? "Команда" : "Team") : t("driver"))}</th>
           ${raceColumns.map((_, index) => `<th>R${index + 1}</th>`).join("")}
           <th>${esc(t("total"))}</th>
         </tr>
@@ -1688,6 +1694,7 @@ function renderRaceResults(races) {
     return;
   }
   root.innerHTML = races.map((race, index) => {
+    if (isTeamRace(race)) return `<article class="championship-race-card"><h3>${esc(race.track_name || race.track || "—")} · ${esc(currentLang === "ru" ? "КОМАНДНАЯ ГОНКА" : "TEAM RACE")}</h3>${renderTeamResults(race,currentLang)}</article>`;
     const results = Array.isArray(race.results) ? race.results : [];
     return `
       <article class="championship-race-card">
@@ -1758,6 +1765,7 @@ async function loadRaceDetails(data, slug, assetBase = dataBase) {
     if (!publishedRace?.details_path) return mergedLegacy;
     const eloDetail = await loadJsonOrNull(`${assetBase}/${publishedRace.details_path}`);
     if (!eloDetail) return mergedLegacy;
+    if (isTeamRace(eloDetail)) return {...mergedLegacy,...eloDetail,event_id:mergedLegacy.event_id};
     const eloByPublicId = new Map(
       (Array.isArray(eloDetail.results) ? eloDetail.results : [])
         .filter(item => item?.public_id)
@@ -2057,6 +2065,7 @@ async function init() {
     }
     const upcoming = normalizeUpcoming(data, schedule, slug);
     const races = await loadRaceDetails(data, slug, assetBase);
+    if (races.length && races.every(isTeamRace)) data.standings = teamSeasonStandings(races);
     const standings = normalizeStandings(data);
     await loadVotesForSchedule(upcoming.slice(0, 3));
 
@@ -2084,3 +2093,5 @@ document.addEventListener("DOMContentLoaded", () => {
   bindScheduleModal();
   init();
 });
+import { isTeamRace, teamRaceUrl } from "../../src/shared/team-racing-client.js?v=20261004teams1";
+import { renderTeamResults, teamSeasonStandings } from "../../src/shared/team-racing-results-view.js?v=20261004teams1";
