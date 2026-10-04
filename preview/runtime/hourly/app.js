@@ -1,3 +1,7 @@
+let previewLinkedEventOpened = false;
+// asg-preview:event-links-v1
+import { emitPreviewView } from "../../components/runtime-events.js?v=20261004p2";
+// asg-preview:hooks-v2
 import { initializeLocalizedPage, localizedPageHref, resolvePageLocale, setPageLocale } from "../src/shared/localized-page.js?v=20260920routes1";
 initializeLocalizedPage();
 import {
@@ -2568,6 +2572,7 @@ function renderUpcomingHeroV2(data) {
   root.style.setProperty("--hourly-upcoming-track-photo", getTrackBackgroundUrl(data?.track_code) ? `url("${getTrackBackgroundUrl(data?.track_code)}")` : "none");
   bindHeroCopyButtons(root);
   bindVoteControls(root);
+  emitPreviewView("event", {data,model:getScheduleModalViewModel(data)});
 }
 
 function getUpcomingEventStartMs(dateString, timeString, timezoneString) {
@@ -2885,6 +2890,11 @@ function renderScheduleTable(rows) {
     card.addEventListener("keydown", event => { if (event.key === "Enter" || event.key === " ") { event.preventDefault(); openCard(); } });
   });
   bindVoteControls(container);
+  const previewEvent = new URLSearchParams(location.search).get("event");
+  if (previewEvent && !previewLinkedEventOpened) {
+    const match = rows.find(item => String(item.event_id || "") === previewEvent || buildSlotEventId(item) === previewEvent);
+    if (match) { previewLinkedEventOpened = true; openScheduleModal(match); }
+  }
 }
 function buildCalendarItems(scheduleRows, raceRows) {
   const upcomingItems = (Array.isArray(scheduleRows) ? scheduleRows : []).map(row => ({

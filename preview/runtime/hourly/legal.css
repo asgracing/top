@@ -200,7 +200,7 @@ body.legal-page {
 }
 
 .asg-legal-banner[hidden] {
-  display: none !important;
+  display: none;
 }
 
 .asg-legal-banner-card {

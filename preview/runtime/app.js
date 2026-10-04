@@ -1,3 +1,5 @@
+import { emitPreviewView } from "../components/runtime-events.js?v=20261004p2";
+// asg-preview:hooks-v2
 import { currentPageLanguageHref, initializeLocalizedPage, localizedPageHref, resolvePageLocale, setPageLocale } from "./src/shared/localized-page.js?v=20260920routes1";
 initializeLocalizedPage();
 ﻿import { readPageContext } from "./src/runtime/page-context.js";
@@ -3131,6 +3133,7 @@ function renderHourlyHeroModal() {
   bindHourlyEventDetailsV2(contentEl);
 }
 function renderHourlyHeroCard() {
+  emitPreviewView("schedule", {schedule:hourlyScheduleData,announcement:hourlyAnnouncementData});
   const startsEl = document.getElementById("hourly-starts-value");
   const countdownEl = document.getElementById("hourly-countdown-value");
   const trackEl = document.getElementById("hourly-track-value");
@@ -8949,6 +8952,8 @@ function getServerConnectFallback(key) {
 }
 
 function renderServerStickyWidget(serverStatus = serverStatusData) {
+  emitPreviewView("servers", { stale: serverStatusIsStale(serverStatus), updatedAt: serverStatus?.updated_at,
+    items: getServerStatusItems(serverStatus).map(({key,label,server}) => ({key,label,online:serverIsOnline(server),players:serverPlayersOnline(server),track:humanizeTrackName(server?.track_code || server?.track || ""),sa:getServerSaRequirement(server),sr:getServerSrRequirement(key,server),session:getServerSessionShortLabel(server)})) });
   const cardsEl = document.querySelector(".server-sticky-cards");
   if (!cardsEl) return;
 
@@ -9948,6 +9953,7 @@ function renderSteamPortrait(portraitId, imageId, profile, rawAvatarUrl, fallbac
 }
 
 function renderDriverPage() {
+  emitPreviewView("profile", {profile:driverProfileData,rank:getDriverRankInfo(driverProfileData),elo:getEloInfo(driverProfileData) || getEloInfo(findEloSource(driverProfileData?.public_id,driverProfileData?.player_id)),safety:getSafetyInfo(driverProfileData) || getSafetyInfo(findSafetySource(driverProfileData?.public_id,driverProfileData?.player_id))});
   getDriverPageView().render({ loading: topLoadState.driver, profile: driverProfileData });
   renderSteamPortrait(
     "driver-steam-portrait",

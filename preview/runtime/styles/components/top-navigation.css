@@ -107,7 +107,7 @@
   }
   
   .top-nav-menu > [hidden] {
-    display: none !important;
+    display: none;
   }
   
   .top-nav-actions {
@@ -226,7 +226,7 @@
   }
   
   .top-nav-more-menu[hidden] {
-    display: none !important;
+    display: none;
   }
   
   .top-nav-more-link {
@@ -283,7 +283,7 @@
   }
   
   .top-nav-group-menu[hidden] {
-    display: none !important;
+    display: none;
   }
   
   .top-nav-group-link {
@@ -324,7 +324,7 @@
   
   .top-nav-menu.has-nav-groups .top-nav-more,
   .top-nav-group ~ .top-nav-more {
-    display: none !important;
+    display: none;
   }
   
   .top-nav-link-primary,

@@ -1,4 +1,4 @@
-import { readFile } from "node:fs/promises";
+import { readFile, readdir } from "node:fs/promises";
 import { createHash } from "node:crypto";
 import { resolve } from "node:path";
 import { execFileSync } from "node:child_process";
@@ -17,7 +17,7 @@ for (const file of manifest.files) {
   if (destination.endsWith('.js')) execFileSync(process.execPath, ['--check', destination], {cwd:root,stdio:'pipe'});
   if (destination.endsWith('.html') && !content.includes('content="noindex,nofollow,noarchive"')) throw Error(`Preview index policy missing: ${destination}`);
 }
-for (const file of ['preview/app.js','preview/routes.js','scripts/build-preview.mjs']) execFileSync(process.execPath,['--check',file],{cwd:root,stdio:'pipe'});
+for (const file of ['preview/app.js','preview/bootstrap.js','preview/routes.js','scripts/preview-presentation-policy.mjs','scripts/build-preview.mjs','scripts/refresh-preview-presentation.mjs',...(await readdir(resolve(root,'preview/components'))).filter(name=>name.endsWith('.js')).map(name=>`preview/components/${name}`)]) execFileSync(process.execPath,['--check',file],{cwd:root,stdio:'pipe'});
 const sitemap = await readFile(resolve(root,'sitemap.xml'),'utf8');
 if (sitemap.includes('/preview/')) throw Error('Preview must not enter the production sitemap');
 console.log(`Preview checked: ${ROUTES.length} routes, snapshot integrity, JavaScript syntax, indexing isolation${verifySources ? ", source consistency" : "; source tree deliberately independent"}.`);

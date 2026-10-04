@@ -134,7 +134,7 @@ body {
 }
 
 .top-nav-menu > [hidden] {
-  display: none !important;
+  display: none;
 }
 
 .top-nav-actions {
@@ -289,7 +289,7 @@ body.championship-body .top-nav-menu {
 }
 
 .top-nav-more-menu[hidden] {
-  display: none !important;
+  display: none;
 }
 
 .top-nav-more-link {
@@ -403,7 +403,7 @@ body.championship-body .top-nav-menu {
 }
 
 .top-nav-group-menu[hidden] {
-  display: none !important;
+  display: none;
 }
 
 .top-nav-group-link {
@@ -444,7 +444,7 @@ body.championship-body .top-nav-menu {
 
 .top-nav-menu.has-nav-groups .top-nav-more,
 .top-nav-group ~ .top-nav-more {
-  display: none !important;
+  display: none;
 }
 
 .top-nav-link-primary,

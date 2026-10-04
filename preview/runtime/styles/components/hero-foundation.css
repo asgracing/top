@@ -444,7 +444,7 @@
   
   .hero-hourly-cancel[hidden],
   .hourly-modal-cta-cancel[hidden] {
-    display: none !important;
+    display: none;
   }
   
   .hero-hourly-cancel:hover:not(:disabled),

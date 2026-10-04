@@ -5,6 +5,7 @@ import { createHash } from "node:crypto";
 import { dirname, resolve, extname } from "node:path";
 import { execFileSync } from "node:child_process";
 import { ROUTES, previewHref } from "../preview/routes.js";
+import { styleSnapshot, pageSnapshot, runtimeSnapshot, PRESENTATION_VERSION } from "./preview-presentation-policy.mjs";
 
 const root = resolve(import.meta.dirname, "..");
 const origin = "https://asgracing.ru";
@@ -60,6 +61,7 @@ for (const path of [...files].sort()) {
     source = source.replace('a[href]:not(.lang-btn)', 'a[href]:not(.lang-btn):not([data-preview-classic])');
     // Alternate-language links are generated in the preview HTML itself.
   }
+  source = path.endsWith('.css') ? styleSnapshot(source) : runtimeSnapshot(path,source.replace(/\r\n/g,'\n'));
   await emit(`runtime/${path}`, source);
   manifest.files.push({ path, sha256: sha(original), snapshotSha256: sha(source) });
 }
@@ -88,8 +90,11 @@ for (const route of ROUTES) {
     return files.has(file) ? `${before}/preview/runtime/${href}${after}` : match;
   });
   source = source.replace("</head>", '<link rel="stylesheet" href="/preview/design.css?v=20261004p1">\n<script type="module" src="/preview/app.js?v=20261004p1"></script>\n</head>');
+  source = pageSnapshot(source);
   await emit(path, source);
   manifest.files.push({ path, sha256: sha(original), snapshotSha256: sha(source) });
 }
+manifest.presentationVersion = PRESENTATION_VERSION;
+manifest.presentationPolicy = "Layered legacy styles; preview-only public view events. API snapshot and classic sources remain independent.";
 await emit("source-manifest.json", JSON.stringify(manifest, null, 2) + "\n");
 console.log(`Preview generated: ${ROUTES.length} routes, ${files.size} isolated runtime files. Classic source files unchanged.`);

@@ -5,7 +5,7 @@
 .moderation-heading{padding:32px;border-bottom:1px solid rgba(255,255,255,.1)}
 .moderation-heading h1{margin:4px 0 8px;font-size:clamp(28px,5vw,48px)}
 .moderation-heading p{max-width:720px;margin:0;color:rgba(255,255,255,.72)}
-.moderation-eyebrow{font-size:12px!important;font-weight:800;letter-spacing:.16em;color:#e43131!important}
+.moderation-eyebrow{font-size:12px;font-weight:800;letter-spacing:.16em;color:#e43131}
 .moderation-gate{padding:32px;color:rgba(255,255,255,.72)}
 #moderation-workspace{padding:28px 32px 36px}
 .moderation-tabs{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-bottom:28px}

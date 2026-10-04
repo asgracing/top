@@ -98,7 +98,7 @@
   }
   
   .bg-video-sound-toggle[hidden] {
-    display: none !important;
+    display: none;
   }
   
   .bg-video-sound-toggle::before {

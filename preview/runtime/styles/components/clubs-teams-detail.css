@@ -65,7 +65,7 @@
   .clubs-teams-race-row td:nth-child(3),
   .clubs-teams-race-row td:nth-child(4) { font-weight: 800; text-transform: capitalize; }
   .clubs-teams-race-points { color: var(--accent-2, #ffd166); font-weight: 950; }
-  .clubs-teams-race-action { width: 48px; text-align: right !important; }
+  .clubs-teams-race-action { width: 48px; text-align: right; }
   .clubs-teams-race-open { display: inline-grid; width: 32px; height: 32px; place-items: center; border: 1px solid rgba(255,112,45,.35); border-radius: 999px; color: var(--accent); text-decoration: none; background: rgba(255,112,45,.08); }
   .clubs-teams-race-open:hover,
   .clubs-teams-race-open:focus-visible { border-color: var(--accent); background: rgba(255,112,45,.18); }
@@ -121,7 +121,7 @@
     .clubs-teams-race-row { overflow: hidden; border: 1px solid rgba(255,255,255,.09); border-radius: 14px; background: rgba(255,255,255,.035); }
     .clubs-teams-races-table td { display: grid; grid-template-columns: 88px minmax(0,1fr); gap: 10px; padding: 9px 12px; border-bottom: 1px solid rgba(255,255,255,.06); white-space: normal; }
     .clubs-teams-races-table td::before { content: attr(data-label); color: var(--muted); font-size: .68rem; font-weight: 900; text-transform: uppercase; }
-    .clubs-teams-race-action { width: auto; text-align: left !important; }
+    .clubs-teams-race-action { width: auto; text-align: left; }
     .clubs-teams-races-page-status { width: 100%; margin: 3px 0 0; }
   }
 }

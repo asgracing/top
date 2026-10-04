@@ -112,9 +112,9 @@
 
   #donation-collapsible-widget.collapsible-widget.is-collapsed {
     box-sizing: border-box;
-    width: 42px !important;
-    min-width: 42px !important;
-    max-width: 42px !important;
+    width: 42px;
+    min-width: 42px;
+    max-width: 42px;
     height: 190px;
     min-height: 190px;
     max-height: 190px;

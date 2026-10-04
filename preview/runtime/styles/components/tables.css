@@ -109,7 +109,7 @@
     background-color: rgba(255, 255, 255, 0.035);
   }
 
-  tbody tr.is-authenticated-driver>td { background:rgba(255,91,46,.1)!important; }
+  tbody tr.is-authenticated-driver>td { background:rgba(255,91,46,.1); }
   tbody tr.is-authenticated-driver>td:first-child { box-shadow: inset 3px 0 0 rgba(255,132,72,.92); }
 
   tbody tr.is-driver-preview-row td:last-child {

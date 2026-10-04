@@ -244,7 +244,7 @@
   }
 
   .auth-header-menu[hidden] {
-    display: none !important;
+    display: none;
   }
 
   .auth-header-menu-item,

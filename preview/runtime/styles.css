@@ -1082,7 +1082,7 @@
   .top-guide,
   .top-guide-launcher,
   .top-guide-highlight {
-    display: none !important;
+    display: none;
   }
 }
 
@@ -1094,7 +1094,7 @@
 
 @media (max-width: 768px) {
   .bg-video-sound-toggle {
-    display: none !important;
+    display: none;
   }
 }
 
@@ -2491,7 +2491,7 @@
 }
 
 .btn-last-races {
-  display: none !important;
+  display: none;
 }
 
 .hero-actions-stacked-mobile .btn-today-stats,
@@ -3834,7 +3834,7 @@
 }
 
 .donation-alerts-goal[hidden] {
-  display: none !important;
+  display: none;
 }
 
 .donation-alerts-goal-embed {
@@ -3852,7 +3852,7 @@
 }
 
 .donation-alerts-goal-embed[hidden] {
-  display: none !important;
+  display: none;
 }
 
 .donation-alerts-goal-embed-frame {
