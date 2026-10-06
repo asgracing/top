@@ -54,7 +54,7 @@ async function checkServerSrAccess(page,options){
     await page.locator('#v2-site-shell [data-modal="servers"]').click();assert.equal(await page.locator('.server-summary-item.is-sr-blocked').count(),blocked.length);await page.locator('#v2-modal .modal-close').click();
   }
   // SR changes and logout must refresh admission without a server-status update.
-  await page.evaluate(async()=>{const {subscribe,publish}=await import('/v2/bridge.js?v=20261006v2j');let state;subscribe(s=>state=s)();window.__srAccessState=state;window.__srAccessPublish=publish;publish({...state,auth:{...state.auth,driver:{...state.auth.driver,sr:5}}})});
+  await page.evaluate(async()=>{const {subscribe,publish}=await import('/v2/bridge.js?v=20261006v2k');let state;subscribe(s=>state=s)();window.__srAccessState=state;window.__srAccessPublish=publish;publish({...state,auth:{...state.auth,driver:{...state.auth.driver,sr:5}}})});
   assert.equal(await page.locator('#v2-servers .is-sr-blocked').count(),0);
   await page.evaluate(()=>window.__srAccessPublish({...window.__srAccessState,auth:{authenticated:false}}));
   assert.equal(await page.locator('#v2-servers .is-sr-blocked').count(),0);
@@ -62,7 +62,8 @@ async function checkServerSrAccess(page,options){
 async function checkSafetyColumns(page,language,width){
   assert.deepEqual(await page.locator('#v2-rating-table th').allTextContents(),language==='ru'?['№','Пилот','SR','Страйки','Гонки','Всего кругов','Грязные круги','Автоштрафы','Инциденты']:['№','Driver','SR','Strikes','Races','Total laps','Invalid laps','Auto penalties','Incidents']);
   const row=snapshot.home.safety[0],values=await page.locator('#v2-rating-table tbody tr').first().locator('td').allTextContents();
-  assert.deepEqual(values.slice(3).map(v=>v.replace(/[\s,]/g,'')),[row.strikes.active,row.races_count,row.total_laps,row.total_invalid_laps,row.total_counted_penalties,row.total_incident_points].map(String));
+  assert.equal(values[3],row.strikes.active+'/3');
+  assert.deepEqual(values.slice(4).map(v=>v.replace(/[\s,]/g,'')),[row.races_count,row.total_laps,row.total_invalid_laps,row.total_counted_penalties,row.total_incident_points].map(String));
   assert.equal(await page.locator('#v2-rating-table [data-rating="elo"]').count(),0);
   assert.equal(await page.locator('#v2-rating-table tbody tr').first().locator('a[href*="/driver/"]').count(),1);
   assert.equal(await page.locator('#v2-rating-table tbody tr').first().locator('[data-rating="sr"]').count(),1);
@@ -93,6 +94,7 @@ futureEvent.date=futureDate;futureEvent.status='scheduled';futureEvent.launch_at
 const signedDriver=snapshot.home.driver_of_the_day.public_id;
 function pagePayload(entries,kind,context='general',rating=false){return {schema_version:1,kind:rating?'clubs_teams_rating_page':'clubs_teams_catalog_page',entity_type:kind==='clubs'?'club':'team',context,context_version:1,season_id:null,rating_run_id:site.pointer.rating_run_id,page:1,total_pages:1,total:entries.length,limit:100,offset:0,completed_at:site.pointer.completed_at,entries,entries_sha256:createHash('sha256').update(JSON.stringify(entries)).digest('hex')}}
 const publicRows=snapshot.leaderboard.items;
+function strikeFixture(rows){return rows.map((row,i)=>i<6?{...row,active_strikes:i>=4?0:i,strikes:{active:i>=4?0:i},is_banned:i===5,global_banned:i===4}:row)}
 const safetyRows=[...snapshot.home.safety,...publicRows.filter(r=>!snapshot.home.safety.some(s=>s.public_id===r.public_id))];
 async function fixture(route,log,options={}){
   const request=route.request(),u=new URL(request.url()),pathname=u.pathname;
@@ -108,7 +110,7 @@ async function fixture(route,log,options={}){
   else if(u.hostname==='mc.yandex.ru'){return route.fulfill({status:200,contentType:'application/javascript',body:'window.__v2MetrikaLoaded=true;'})}
   else if(u.hostname==='data.asgracing.ru'){
     if(pathname==='/top-data/v2/manifest.json')payload={...snapshot.manifest,tables:{...snapshot.manifest.tables,safety:{...snapshot.manifest.tables.safety,total_items:safetyRows.length,total_pages:Math.ceil(safetyRows.length/10)}}};
-    else if(pathname==='/top-data/v2/home.json')payload=options.emptyHomePreviews?{...snapshot.home,leaderboard:[],bestlaps:[]}:snapshot.home;
+    else if(pathname==='/top-data/v2/home.json')payload=options.strikeStates?{...snapshot.home,safety:strikeFixture(snapshot.home.safety)}:options.emptyHomePreviews?{...snapshot.home,leaderboard:[],bestlaps:[]}:snapshot.home;
     else if(pathname==='/top-data/server_status.json'){payload=structuredClone(snapshot.live_servers?{servers:snapshot.live_servers}:snapshot.servers);payload.updated_at=options.staleServers?'2020-01-01T00:00:00Z':new Date().toISOString();for(const s of Object.values(payload.servers||{}))s.updated_at=payload.updated_at;if(options.thresholds)for(const [key,sr] of Object.entries(options.thresholds))payload.servers[key].sr_requirement=sr;const s=payload.servers[populatedServer];if(options.largeRoster){const drivers=s.drivers;s.drivers=Array.from({length:32},(_,i)=>({...drivers[i%drivers.length],position:i+1}));s.players_online=32}if(options.missingRoster)s.drivers=[];}
     else if(pathname==='/hourly-data/announcement.json')payload=event;
     else if(pathname==='/hourly-data/schedule.json')payload={...snapshot.schedule,items:[event]};
@@ -125,7 +127,7 @@ async function fixture(route,log,options={}){
     else if(pathname.startsWith('/top-data/v2/tables/')){
       const p=Number(pathname.match(/page-(\d+)/)?.[1]||1),chunk=pathname.includes('chunk-'),safety=pathname.includes('/safety'),best=pathname.includes('/bestlaps');
       if(pathname.includes('/safety/'))return route.fulfill({status:404,contentType:'application/json',body:'{}'});
-      const rows=best?snapshot.bestlap_tables[ pathname.match(/bestlaps-([^/]+)/)?.[1]||'monza']?.items||snapshot.home.bestlaps:safety?safetyRows:publicRows;
+      const rows=best?snapshot.bestlap_tables[ pathname.match(/bestlaps-([^/]+)/)?.[1]||'monza']?.items||snapshot.home.bestlaps:safety?(options.strikeStates?strikeFixture(safetyRows):safetyRows):publicRows;
       const total=options.longPagination&&!safety&&!best?33314:rows.length;
       payload={items:chunk||pathname.endsWith('/safety.json')?rows:rows.slice((p-1)*10,p*10),page:p,page_size:10,total_items:total,total_pages:Math.ceil(total/10)};
     }
@@ -210,12 +212,18 @@ try{
     if(width<1280){await page.locator('#v2-site-shell [data-tab="safety"]').click();await page.waitForTimeout(250);await checkSafetyColumns(page,language,width);await checkPagination(page)}
     assert.deepEqual(errors,[]);reports.push({width,height,language,rows:info.rows,servers:info.servers});await page.close();
   }
-  for(const options of [{signed:true,srAccess:true,viewerSr:2.25},{signed:true,srAccess:true,viewerSr:1.5,language:'en',width:390},{signed:true,srAccess:true,viewerSr:2.5},{signed:true,srAccess:true,viewerSr:3.5,thresholds:{main:3,hourly:4}},{signed:true,srAccess:true,viewerSr:null},{signed:true},{signed:true,admin:true},{failVote:true},{emptyHomePreviews:true},{normalEvent:true},{carousel:true},{motion:true},{longPagination:true},{bannedDriver:true,noTitle:true},{largeRoster:true},{missingRoster:true},{staleServers:true}]){
+  for(const options of [{strikeStates:true},{strikeStates:true,language:'en',width:390},{signed:true,srAccess:true,viewerSr:2.25},{signed:true,srAccess:true,viewerSr:1.5,language:'en',width:390},{signed:true,srAccess:true,viewerSr:2.5},{signed:true,srAccess:true,viewerSr:3.5,thresholds:{main:3,hourly:4}},{signed:true,srAccess:true,viewerSr:null},{signed:true},{signed:true,admin:true},{failVote:true},{emptyHomePreviews:true},{normalEvent:true},{carousel:true},{motion:true},{longPagination:true},{bannedDriver:true,noTitle:true},{largeRoster:true},{missingRoster:true},{staleServers:true}]){
     const page=await browser.newPage({viewport:{width:options.longPagination?320:options.width||1920,height:936},reducedMotion:'reduce'}),log=[],errors=[];page.on('pageerror',e=>errors.push(e.message));await page.route('**/*',r=>fixture(r,log,options));
     if(options.carousel){await page.emulateMedia({reducedMotion:'no-preference'});await page.clock.install()}
     if(options.motion){await page.emulateMedia({reducedMotion:'no-preference'});await page.addInitScript(()=>sessionStorage.setItem('asgV2IntroSeen','1'))}
     await page.goto(base+(options.language?'/v2/'+options.language+'/':'/v2/'),{waitUntil:'networkidle'});assert.ok(page.url().endsWith('/v2/'+(options.language||'ru')+'/'));await page.waitForTimeout(250);
-    if(options.srAccess){await checkServerSrAccess(page,options)}
+    if(options.strikeStates){
+      await page.locator('.asg-legal-banner-btn-secondary').click();await page.locator('#v2-site-shell [data-tab="safety"]').click();await page.waitForFunction(()=>document.querySelector('#v2-rating-table tbody tr:nth-child(4) .banned-badge'));
+      const cells=page.locator('#v2-rating-table tbody tr td:nth-child(4)');assert.deepEqual((await cells.allTextContents()).slice(0,5),['0/3','1/3','2/3',options.language==='en'?'BANNED':'ЗАБАНЕН',options.language==='en'?'BANNED':'ЗАБАНЕН']);
+      assert.equal(await cells.nth(3).locator('.banned-badge').count(),1);assert.equal(await cells.nth(4).locator('.banned-badge').count(),1);assert.equal(await cells.nth(5).locator('.banned-badge').count(),1);
+      await page.locator('#v2-rating-table').screenshot({path:path.join(root,`design-research/v2-verification/safety-strikes-${options.language||'ru'}.png`)});
+    }
+    else if(options.srAccess){await checkServerSrAccess(page,options)}
     else if(options.signed){await page.locator('#v2-rating-table .current-user-row').waitFor({state:'visible'});assert.equal(await page.locator('#v2-rating-table .current-user-row').count(),1);await page.locator('.asg-legal-banner-btn-secondary').click();await page.locator('#v2-profile-trigger').click();assert.equal(await page.locator('#v2-profile-popover').evaluate(n=>n.matches(':popover-open')),true);assert.equal(await page.locator('#v2-profile-popover [href*="/moderation/"]').count(),options.admin?1:0);assert.equal(await page.locator('#v2-profile-popover [href*="/portal-ops/"]').count(),options.admin?1:0);await page.screenshot({path:path.join(root,'design-research/v2-verification/header-profile.png')})}
     else if(options.failVote){await page.locator('#v2-race-vote').click();await page.waitForTimeout(200);assert.equal(await page.locator('#v2-participation-note .v2-error').count(),1);assert.ok(!(await page.locator('#v2-race-vote').textContent()).includes('\u043e\u0442\u043c\u0435\u043d\u0438\u0442\u044c'))}
     else if(options.emptyHomePreviews){assert.equal(await page.locator('#v2-rating-table tbody tr[data-row]').count(),10);await page.locator('#v2-site-shell [data-tab="bestlaps"]').click();await page.waitForTimeout(250);assert.equal(await page.locator('#v2-rating-table tbody tr[data-row]').count(),10)}
@@ -225,7 +233,7 @@ try{
     else if(options.motion){
       await page.locator('.asg-legal-banner-btn-secondary').click();await page.waitForTimeout(4100);
       assert.equal(await page.evaluate(()=>document.getAnimations().filter(a=>a.playState==='running').length),0,'Idle homepage has no decorative frame loop');
-      await page.evaluate(async()=>{const {subscribe,publish}=await import('/v2/bridge.js?v=20261006v2j');let model;subscribe(m=>model=m)();window.__motionModel=structuredClone(model);window.__motionModel.announcement.event_id+=':motion-test';window.__motionModel.donations.goal.raised_amount+=1;window.__motionPublish=publish;publish(window.__motionModel)});
+      await page.evaluate(async()=>{const {subscribe,publish}=await import('/v2/bridge.js?v=20261006v2k');let model;subscribe(m=>model=m)();window.__motionModel=structuredClone(model);window.__motionModel.announcement.event_id+=':motion-test';window.__motionModel.donations.goal.raised_amount+=1;window.__motionPublish=publish;publish(window.__motionModel)});
       await page.waitForTimeout(120);
       assert.equal(await page.evaluate(()=>document.getAnimations().filter(a=>a.playState==='running'&&['v2-multiplier','v2-fund-progress'].includes(a.effect.target.id||a.effect.target.parentElement?.id)).length),2);
       assert.ok(await page.evaluate(()=>document.getAnimations().filter(a=>a.effect.target.id==='v2-multiplier').every(a=>a.effect.getTiming().iterations===2&&a.effect.getKeyframes().every(k=>!('color' in k)&&!('textShadow' in k)))));

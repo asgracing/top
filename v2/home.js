@@ -1,10 +1,10 @@
-import copy from './copy.js?v=20261006v2j';
-import { subscribe, getRuntime } from './bridge.js?v=20261006v2j';
-import {eventKind,normalizeTablePage,normalizeSafetyRow,paginationPages,serverSrRestriction} from './models.js?v=20261006v2j';
-import {createPresentation} from './presentation.js?v=20261006v2j';
-import {createHeader} from './header.js?v=20261006v2j';
-import {createGuide} from './guide.js?v=20261006v2j';
-import {createHomeMotion} from './motion.js?v=20261006v2j';
+import copy from './copy.js?v=20261006v2k';
+import { subscribe, getRuntime } from './bridge.js?v=20261006v2k';
+import {eventKind,normalizeTablePage,normalizeSafetyRow,paginationPages,serverSrRestriction} from './models.js?v=20261006v2k';
+import {createPresentation} from './presentation.js?v=20261006v2k';
+import {createHeader} from './header.js?v=20261006v2k';
+import {createGuide} from './guide.js?v=20261006v2k';
+import {createHomeMotion} from './motion.js?v=20261006v2k';
 import { resolveTrackBackgroundFile, selectRandomTrackBackgroundFile } from '/src/features/server-status/track-background.js';
 const language=document.documentElement.dataset.pageLanguage==='en'?'en':'ru';
 const ru=language==='ru', words=copy[language].labels, editorial=copy[language].editorial;
@@ -138,6 +138,7 @@ function tableCell(row,key,index){
   if(key==='rank')return `<span class="${index<3?`rank-medal rank-${['gold','silver','bronze'][index]}`:''}">${index+1}</span>`;
   if(key==='driver')return row.public_id?`<a href="${driverHref(row.public_id)}">${esc(row.driver||row.name)}</a>`:esc(row.driver||row.name);
   if(key==='elo'||key==='safety_rating')return rating(row,key==='elo'?'elo':'sr');
+  if(key==='active_strikes')return Number(row.active_strikes)>=3||row.global_banned||row.manually_banned||native().isBanned(row)?`<span class="banned-badge">${text('ЗАБАНЕН','BANNED')}</span>`:`${esc(row.active_strikes??'—')}/3`;
   if(key==='club'||key==='team')return native().affiliation(row,key);
   if(key==='favorite_car'||key==='car_name'){if(row.is_banned)return `<span class="banned-badge">${text('ЗАБАНЕН','BANNED')}</span>`;return key==='favorite_car'?car({car_name:row.favorite_car_name||row.favorite_car,car_model_id:row.favorite_car_model_id}):car(row)}
   if(key==='updated_at')return date(row.updated_at||row.best_lap_updated_at);
@@ -256,4 +257,4 @@ const boot=$('site-shell'),loader=document.querySelector('.home-loader');
 let seenIntro=false;try{seenIntro=Boolean(sessionStorage.getItem('asgV2IntroSeen'))}catch{}
 if(reduced.matches||seenIntro){document.documentElement.classList.remove('home-booting');loader.hidden=true}else{document.documentElement.classList.add('home-booting');boot.inert=true;setTimeout(()=>{document.documentElement.classList.remove('home-booting');document.documentElement.classList.add('home-ready');boot.inert=false;loader.hidden=true;try{sessionStorage.setItem('asgV2IntroSeen','1')}catch{}},1050)}
 renderTable();$('race-vote').disabled=true;
-try{await import('./runtime/home.js?v=20261006v2j');setTimeout(applyHash,1500)}catch(error){console.error('V2 runtime unavailable',error);$('event-track').textContent=text('Не удалось загрузить данные','Could not load data');$('day-driver').textContent=text('Данные недоступны','Data unavailable');tableError=true;tableBusy=false;renderTable()}
+try{await import('./runtime/home.js?v=20261006v2k');setTimeout(applyHash,1500)}catch(error){console.error('V2 runtime unavailable',error);$('event-track').textContent=text('Не удалось загрузить данные','Could not load data');$('day-driver').textContent=text('Данные недоступны','Data unavailable');tableError=true;tableBusy=false;renderTable()}
