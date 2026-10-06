@@ -27,6 +27,7 @@ await new Promise(resolveListen => server.listen(0, "127.0.0.1", resolveListen))
 const { port } = server.address();
 const checks = ["/", "/account/", "/account/settings/", "/moderation/", "/src/pages/moderation/moderation-page.js", "/styles/components/moderation.css", "/clubs/", "/clubs/app.js", "/teams/", "/teams/app.js", "/teams/detail/", "/teams/detail/app.js", "/hourly/", "/hourly/clubs-teams-rating.js", "/hourly/championship/", "/hourly/championship/clubs-teams-rating.js", "/styles/components/clubs-teams-rating.css", "/races/", "/driver/", "/cars/", "/fun-stats/", "/community/", "/news/", "/bans/", "/app.js", "/src/entrypoints/home.js", "/asset-manifest.json", "/build-meta.json"];
 const failures = [];
+checks.push('/v2/', '/v2/ru/', '/v2/en/', '/v2/home.js', '/v2/runtime/home.js', '/v2/styles/design.css', '/v2/assets/asg-racing-wordmark.svg');
 try {
   for (const path of checks) {
     const response = await fetch(`http://127.0.0.1:${port}${path}`);

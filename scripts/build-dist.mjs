@@ -13,7 +13,7 @@ const allowedRootFiles = new Set([
 ]);
 const allowedDirectories = [
   "about", "join", "account", "asg-lab", "assets", "bans", "cars", "clubs", "community", "cookies", "driver", "events", "fun-stats",
-  "hourly", "media", "moderation", "news", "news-content", "overlay", "portal-ops", "preview", "privacy", "races", "ru", "social", "src", "styles", "teams",
+  "hourly", "media", "moderation", "news", "news-content", "overlay", "portal-ops", "preview", "privacy", "races", "ru", "social", "src", "styles", "teams", "v2",
 ];
 const allowedExtensions = new Set([
   ".css", ".gif", ".html", ".ico", ".jpeg", ".jpg", ".js", ".json", ".mp4", ".png",

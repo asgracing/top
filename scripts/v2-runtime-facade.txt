@@ -1,0 +1,46 @@
+// Build-only facade: lexical access to the canonical controllers/read models.
+const v2Votes = createHourlyVotesClient({apiBase:hourlyVotesApiUrl,request:(url,options)=>fetch(url,options),getLegacyVoterId:getHourlyBrowserVoterId});
+let v2PublishPending=false;
+function v2SchedulePublish() {
+  if(v2PublishPending)return;
+  v2PublishPending=true;
+  queueMicrotask(()=>{v2PublishPending=false;publish({
+    loading:{...topLoadState},generatedAt:topDataV2Manifest?.generated_at,
+    day:driverOfDayData,stats:todayStatsData,winner:getLatestHourlyRace(),
+    leaderboard:leaderboardData,safety:safetyData,bestlaps:bestlapsData,
+    tracks:bestlapTracksData,online:getLast7DaysOnline(onlineData),
+    announcement:hourlyAnnouncementData,schedule:hourlyScheduleData,targetMs:hourlyCountdownTargetMs,
+    voteDisabled:document.getElementById(hourlyVoteAlreadyVoted?'hourly-unvote-btn':'hourly-vote-btn')?.disabled,
+    votes:{count:hourlyVotesCount,voted:hourlyVoteAlreadyVoted,pending:hourlyVotePending,error:hourlyVoteFailed},
+    donations:donationAlertsData,donationsLoading:donationAlertsLoading,donationsError:donationAlertsFailed,
+    clubs:homeClubsTeamsSnapshot,clubsError:homeClubsTeamsError,affiliationsSize:driverAffiliations.size,viewer:authenticatedDriverPublicId,
+    servers:getServerStatusItems().map(({key,label,server})=>({key,label,server,
+      online:!serverStatusIsStale()&&serverIsOnline(server),players:serverStatusIsStale()?0:serverPlayersOnline(server),
+      track:humanizeTrackName(server?.track_code||server?.track||''),sa:getServerSaRequirement(server),sr:getServerSrRequirement(key,server),session:getServerSessionShortLabel(server),drivers:getServerDrivers(server)})),
+    serversStale:serverStatusIsStale(),updatedAt:serverStatusData?.updated_at
+  })});
+}
+installRuntime({
+  translate:t,track:humanizeTrackName,formatDate:value=>formatDateTimeLocal(value,currentLang),
+  affiliation:(row,type)=>renderDriverAffiliation(row,type).replace(/href="([^"]+)"/g,(_,href)=>'href="'+localizedPageHref(href,currentLang)+'"'),elo:renderEloBadge,sr:renderSafetyBadge,car:getResultCarName,
+  special:data=>getSpecialEventPresentation(data,currentLang),
+  eventSr:()=>getServerSrRequirement('hourly',resolveNamedServerStatus(serverStatusData,'hourly')),
+  winner:race=>getRaceWinnerResult(race),profile:loadDriverProfileCached,
+  openDriver:(row,trigger)=>openDriverPreviewFromRowElement({dataset:{publicId:row.public_id,playerId:row.player_id,driverName:row.driver||row.name}},trigger),
+  openRating:(row,kind,trigger)=>kind==='elo'?openEloModalForSource(row,trigger):openSafetyModalForSource(row,trigger),
+  openEvent:openHourlyHeroModal,openOnline:openOnlineActivityModal,
+  openServer:(key,trigger)=>{selectedServerPlayersKey=key;serverPlayersModalMode='serverPlayers';serverPlayersModalController?.open(trigger)},
+  openServers:trigger=>{serverPlayersModalMode='summary';serverPlayersModalController?.open(trigger)},
+  vote:()=>{if(isTeamRace(hourlyAnnouncementData)){location.assign(teamRaceUrl(hourlyAnnouncementData,currentLang));return}return hourlyVoteAlreadyVoted?submitHourlyHeroUnvote():submitHourlyHeroVote()},
+  loadClubs:async context=>{const {loadPublicRatingSnapshot}=await clubsTeamsRatingModelPromise;return loadPublicRatingSnapshot({client:{requestJson},dataBaseUrl:CLUBS_TEAMS_DATA_BASE_URL,context})},
+  loadTable:async(tab,page,track,search,sort)=>{
+    if(tab==='bestlaps')bestlapsTrackFilter=track;
+    if(search||sort){const rows=await loadFullTopDataV2Table(tab);return {items:rows,full:true,total_items:rows.length}}
+    if(tab==='safety'){const meta=getTopDataV2TableMeta(tab);return loadTopDataV2Json((meta?.page_path||'tables/safety/page-{page}.json').replace('{page}',page))}
+    return loadServerPagedTopDataV2Table(tab,page);
+  },
+  hydrateWinner:async race=>{const [profile,details]=await Promise.all([race.winner_public_id?loadDriverProfileCached(race.winner_public_id).catch(()=>null):null,loadRaceDetailsCached(race).catch(()=>null)]);return {profile,details}},
+  rules:()=>document.getElementById('rules')?.innerHTML||'',
+  about:()=>document.getElementById('about-server')?.innerHTML||'',
+  guide:()=>{if(!topGuideController){const storage={get:(key,fallback)=>{try{return JSON.parse(localStorage.getItem('asgV2Guide:'+key))??fallback}catch{return fallback}},set:(key,value)=>{try{localStorage.setItem('asgV2Guide:'+key,JSON.stringify(value))}catch{}}};const targets=['.page-intro','#v2-ranking','#v2-search','#v2-rating-table','.nav-group','.upcoming-panel','.auth-header'];const kinds=['Welcome','Championship','Search','Profile','Races','Hourly','Auth'];topGuideController=createTopGuideController({documentRef:document,windowRef:window,lifecycle:appLifecycle,storage,translate:t,replaceTokens,steps:targets.map((targetSelector,i)=>({targetSelector,titleKey:'topGuideStep'+kinds[i]+'Title',textKey:'topGuideStep'+kinds[i]+'Text',scrollBlock:'nearest'})),mediaQuery:'(min-width: 0px)',autoOpen:false});topGuideController.mount()}topGuideController.open(0,{force:true})}
+});
