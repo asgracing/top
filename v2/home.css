@@ -12,6 +12,20 @@ body[data-v2].v2-motion-paused *,body[data-v2].v2-motion-paused *::before,body[d
 body[data-v2].v2-motion-paused .track-layer { transition:none; }
 body[data-v2] [data-dock-open="false"] .sidebar-content *,body[data-v2] [data-dock-open="false"] .sidebar-content *::before,body[data-v2] [data-dock-open="false"] .sidebar-content *::after { animation-play-state:paused!important; }
 body[data-v2] .site-shell { position:relative; z-index:1; }
+body[data-v2] .table-footer { display:grid; grid-template-columns:auto minmax(0,1fr) auto; align-items:center; gap:10px; }
+body[data-v2] .pagination { justify-content:center; gap:4px; min-width:0; }
+body[data-v2] .pagination .pagination-pages { display:flex; align-items:center; gap:4px; padding:0; background:none; color:inherit; }
+body[data-v2] .pagination button { min-width:30px; min-height:32px; padding:4px 6px; font-size:12px; background:#142231; border:1px solid #40556b; }
+body[data-v2] .pagination button:hover:not(:disabled) { background:#29415b; border-color:#78a9ce; }
+body[data-v2] .pagination button.is-current { background:#a51832; border-color:#ff4059; color:#fff; }
+body[data-v2] .pagination .page-gap { background:none; padding:0 2px; color:#a8b3c2; }
+body[data-v2] .pagination button span { background:none; color:inherit; padding:0; }
+body[data-v2] .page-jump,body[data-v2] .page-jump label { display:flex; align-items:center; gap:6px; white-space:nowrap; }
+body[data-v2] .page-jump input { width:65px; height:32px; padding:4px 6px; color:#eef3fa; background:#0f1c29; border:1px solid #40556b; border-radius:2px; appearance:textfield; }
+body[data-v2] .page-jump input::-webkit-inner-spin-button,body[data-v2] .page-jump input::-webkit-outer-spin-button { appearance:none; margin:0; }
+body[data-v2] .page-jump button { min-height:32px; padding:4px 9px; border:1px solid #40556b; border-radius:2px; background:#142231; font-size:12px; }
+@media(max-width:1500px){body[data-v2] .table-footer { grid-template-columns:1fr auto; }body[data-v2] .pagination { grid-column:1/-1; grid-row:2; }body[data-v2] .page-jump { justify-self:end; }}
+@media(max-width:600px){body[data-v2] .pagination,body[data-v2] .pagination .pagination-pages { gap:3px; }body[data-v2] .pagination button { min-width:28px; padding:4px 3px; font-size:11px; }body[data-v2] .page-jump label>[data-copy="page"] { display:none; }body[data-v2] .page-jump input { width:48px; }body[data-v2] .page-jump,body[data-v2] .page-jump label { gap:4px; }}
 body[data-v2] .header-actions>.auth-header,body[data-v2] .header-actions>.top-nav-news-bell { display:none!important; }
 body[data-v2] .header-actions #news-bell-button,body[data-v2] #news-notifications-panel { display:none!important; }
 body[data-v2] .profile-trigger { min-width:0; }

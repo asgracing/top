@@ -5,7 +5,7 @@ import { resolve } from 'node:path';
 import { createHash } from 'node:crypto';
 import { nodes, edit } from './seo/html-source.mjs';
 const root = resolve(import.meta.dirname, '..');
-const version = '20261006v2g';
+const version = '20261006v2h';
 const read = path => readFile(resolve(root, path), 'utf8');
 async function emit(path, value) { await mkdir(resolve(root, path, '..'), {recursive:true}); await writeFile(resolve(root, path), path.endsWith('.html')?value.replace(/[ \t]+(?=\r?$)/gm,''):value); }
 const prototype = await read('v2-source/home.html');
@@ -24,6 +24,8 @@ body = body.replace(/<button\b[^>]*id="v2-profile-trigger"[\s\S]*?<\/button>/, '
   .replace(/<span class="snapshot-label">[\s\S]*?<\/span><\/span>/, '<span class="snapshot-label">ASG Racing · V2</span>')
   .replace('data-modal="cookies"', 'data-cookie-settings');
 body = body.replace(/(src|href)="assets\/([^"]+)"/g,(_,attr,path)=>`${attr}="/v2/assets/${path}"`);
+body=body.replace('<span id="v2-page-number">01</span>','<span class="pagination-pages" id="v2-page-links"></span>')
+  .replace(/<span class="scroll-hint" data-copy="scrollHint">[^<]*<\/span>/,'<form id="v2-page-jump" class="page-jump"><label><span data-copy="page">Страница</span><input id="v2-page-input" type="number" min="1" step="1" inputmode="numeric" required><span id="v2-page-total"></span></label><button type="submit" data-copy="go">Перейти</button></form>');
 // There is no fixture winner before the first successful live read.
 body = body.replace('src="/v2/assets/21.png"', 'hidden');
 body = body.replace('href="championships/"','href="/hourly/championship/"')

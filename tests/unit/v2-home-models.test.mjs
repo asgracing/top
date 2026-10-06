@@ -1,6 +1,6 @@
 import test from 'node:test';
 import assert from 'node:assert/strict';
-import {eventKind,normalizeTablePage,normalizeSafetyRow} from '../../v2/models.js';
+import {eventKind,normalizeTablePage,normalizeSafetyRow,paginationPages} from '../../v2/models.js';
 test('Hourly championship metadata does not turn a standalone race into a championship',()=>{
   const event={event_type:'hourly',race_format:'hourly',competition_mode:'standalone',championship_slug:'october-2026'};
   assert.equal(eventKind(event),'hourly');assert.equal(eventKind(event,true),'mono');
@@ -19,4 +19,12 @@ test('Safety counters survive both published row schemas, including actual zeroe
   const preview=normalizeSafetyRow({...full,strikes:{active:0},races_count:0,total_laps:0,total_invalid_laps:0,total_counted_penalties:0,total_incident_points:0});
   assert.deepEqual([preview.active_strikes,preview.races_count,preview.total_laps,preview.total_invalid_laps,preview.total_counted_penalties,preview.total_incident_points],[0,0,0,0,0,0]);
   assert.equal(normalizeSafetyRow({}).total_laps,null,'Missing data is not an invented zero');
+});
+test('Rating page navigation keeps current and boundary pages available in long lists',()=>{
+  assert.deepEqual(paginationPages(1,0),[1]);assert.deepEqual(paginationPages(3,5),[1,2,3,4,5]);
+  for(const current of [1,2,1500,3332]){
+    const pages=paginationPages(current,3332),numbers=pages.filter(p=>p!==null);
+    assert.equal(numbers[0],1);assert.equal(numbers.at(-1),3332);assert.ok(numbers.includes(current));assert.ok(pages.length<=7);
+    assert.equal(new Set(numbers).size,numbers.length);
+  }
 });

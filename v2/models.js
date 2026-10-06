@@ -20,3 +20,10 @@ export function normalizeSafetyRow(row) {
     total_incident_points:row.total_incident_points??row.safety_total_incident_points??null
   };
 }
+export function paginationPages(current,total) {
+  total=Math.max(1,Math.floor(total));current=Math.max(1,Math.min(total,Math.floor(current)));
+  if(total<=7)return Array.from({length:total},(_,i)=>i+1);
+  const selected=[...new Set([1,current-1,current,current+1,total].filter(p=>p>=1&&p<=total))].sort((a,b)=>a-b),pages=[];
+  for(const value of selected){const last=pages.at(-1);if(last&&value-last>1)pages.push(value-last===2?last+1:null);pages.push(value)}
+  return pages;
+}

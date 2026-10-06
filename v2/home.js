@@ -1,10 +1,10 @@
-import copy from './copy.js?v=20261006v2g';
-import { subscribe, getRuntime } from './bridge.js?v=20261006v2g';
-import {eventKind,normalizeTablePage,normalizeSafetyRow} from './models.js?v=20261006v2g';
-import {createPresentation} from './presentation.js?v=20261006v2g';
-import {createHeader} from './header.js?v=20261006v2g';
-import {createGuide} from './guide.js?v=20261006v2g';
-import {createHomeMotion} from './motion.js?v=20261006v2g';
+import copy from './copy.js?v=20261006v2h';
+import { subscribe, getRuntime } from './bridge.js?v=20261006v2h';
+import {eventKind,normalizeTablePage,normalizeSafetyRow,paginationPages} from './models.js?v=20261006v2h';
+import {createPresentation} from './presentation.js?v=20261006v2h';
+import {createHeader} from './header.js?v=20261006v2h';
+import {createGuide} from './guide.js?v=20261006v2h';
+import {createHomeMotion} from './motion.js?v=20261006v2h';
 import { resolveTrackBackgroundFile, selectRandomTrackBackgroundFile } from '/src/features/server-status/track-background.js';
 const language=document.documentElement.dataset.pageLanguage==='en'?'en':'ru';
 const ru=language==='ru', words=copy[language].labels, editorial=copy[language].editorial;
@@ -46,6 +46,9 @@ const header=createHeader({$,native,esc,text,number,rating,driverHref,privacy});
 const guide=createGuide({$,copy:editorial.guide});
 const motion=createHomeMotion();
 $('participation-note').innerHTML=privacy();
+const pager=$('prev').parentElement;pager.setAttribute('role','navigation');pager.setAttribute('aria-label',text('Страницы рейтинга','Ranking pages'));
+$('prev').setAttribute('aria-label',text('Предыдущая страница','Previous page'));$('next').setAttribute('aria-label',text('Следующая страница','Next page'));
+$('page-jump').querySelector('[data-copy="page"]').textContent=text('Страница','Page');$('page-jump').querySelector('button').textContent=text('Перейти','Go');$('page-input').setAttribute('aria-label',text('Номер страницы','Page number'));
 $('search').placeholder=text('Поиск пилота','Search drivers');$('search').setAttribute('aria-label',$('search').placeholder);
 function rating(row,kind,delta=null,withLabel=false){
   row={...row?.summary,...row};
@@ -140,7 +143,12 @@ function renderTable(){
   if(sortKey)rows=[...rows].sort((a,b)=>(typeof a[sortKey]==='number'?a[sortKey]-b[sortKey]:String(a[sortKey]??'').localeCompare(String(b[sortKey]??'')))*sortDirection);
   $('rating-table').dataset.view=tab;
   $('rating-table').innerHTML=`<thead><tr>${columns.map(([key,title])=>`<th scope="col"${sortKey===key?` aria-sort="${sortDirection>0?'ascending':'descending'}"`:''}><button type="button" data-sort="${key}">${esc(words[title]||title)}</button></th>`).join('')}</tr></thead><tbody>${tableBusy?`<tr><td colspan="${columns.length}" class="empty">${text('Загрузка…','Loading…')}</td></tr>`:tableError?`<tr><td colspan="${columns.length}" class="empty">${text('Не удалось загрузить рейтинг.','Could not load rankings.')} <button type="button" data-table-retry>${text('Повторить','Retry')}</button></td></tr>`:rows.length?rows.map((r,i)=>`<tr data-row="${esc(r.public_id||'')}" tabindex="${tab==='clubs'?'-1':'0'}"${r.public_id&&r.public_id===model?.viewer?' class="current-user-row" aria-current="true"':''}>${columns.map(([key])=>`<td>${tableCell(r,key,(page-1)*10+i)}</td>`).join('')}</tr>`).join(''):`<tr><td colspan="${columns.length}" class="empty">${label('noResults')}</td></tr>`}</tbody>`;
-  $('table-count').textContent=`${tableTotal?(page-1)*10+1:0}–${Math.min(page*10,tableTotal)} ${label('of')} ${number(tableTotal)}`;$('page-number').textContent=String(page).padStart(2,'0');$('prev').disabled=page===1||tableBusy;$('next').disabled=page*10>=tableTotal||tableBusy;
+  const totalPages=Math.max(1,Math.ceil(tableTotal/10));
+  page=Math.max(1,Math.min(page,totalPages));
+  $('table-count').textContent=`${tableTotal?(page-1)*10+1:0}–${Math.min(page*10,tableTotal)} ${label('of')} ${number(tableTotal)}`;
+  $('page-links').innerHTML=paginationPages(page,totalPages).map(value=>value===null?'<span class="page-gap" aria-hidden="true">…</span>':`<button type="button" data-page="${value}" aria-label="${text('Страница','Page')} ${value}"${value===page?' aria-current="page" class="is-current"':''}${tableBusy||!tableTotal?' disabled':''}>${value===page?`<span id="v2-page-number">${value}</span>`:value}</button>`).join('');
+  $('prev').disabled=page===1||tableBusy;$('next').disabled=page===totalPages||tableBusy;
+  $('page-input').max=totalPages;$('page-input').value=page;$('page-input').disabled=tableBusy||!tableTotal;$('page-total').textContent=`${label('of')} ${number(totalPages)}`;$('page-jump').querySelector('button').disabled=tableBusy||!tableTotal;
   $('ranking-filters').hidden=!['bestlaps','clubs'].includes(tab);$('track-filter-label').hidden=tab!=='bestlaps';$('club-type-label').hidden=tab!=='clubs';$('club-context-label').hidden=tab!=='clubs';
 }
 async function loadTable(){
@@ -148,11 +156,18 @@ async function loadTable(){
   if(tab==='clubs'){tableBusy=false;tableError=Boolean(model?.clubsError);renderTable();return}
   tableBusy=true;tableError=false;renderTable();
   try{const result=normalizeTablePage(await native().loadTable(tab,page,track,$('search').value.trim(),sortKey));if(request!==tableRequest)return;let rows=(result?.items||[]).map(row=>tab==='safety'?normalizeSafetyRow(row):row);
-    if(result?.full){const q=$('search').value.toLocaleLowerCase();rows=rows.filter(r=>String(r.driver||r.name||'').toLocaleLowerCase().includes(q));if(sortKey)rows.sort((a,b)=>(typeof a[sortKey]==='number'?a[sortKey]-b[sortKey]:String(a[sortKey]??'').localeCompare(String(b[sortKey]??'')))*sortDirection);tableTotal=rows.length;rows=rows.slice((page-1)*10,page*10)}else tableTotal=result?.total_items??rows.length;
+    if(result?.full){const q=$('search').value.toLocaleLowerCase();rows=rows.filter(r=>String(r.driver||r.name||'').toLocaleLowerCase().includes(q));if(sortKey)rows.sort((a,b)=>(typeof a[sortKey]==='number'?a[sortKey]-b[sortKey]:String(a[sortKey]??'').localeCompare(String(b[sortKey]??'')))*sortDirection);tableTotal=rows.length;page=Math.min(page,Math.max(1,Math.ceil(tableTotal/10)));rows=rows.slice((page-1)*10,page*10)}else tableTotal=result?.total_items??rows.length;
     tableRows=rows;
   }catch{if(request===tableRequest){tableRows=[];tableTotal=0;tableError=true}}finally{if(request===tableRequest){tableBusy=false;renderTable()}}
 }
 function chooseTab(next){tab=next;page=1;sortKey='';$('search').value='';document.querySelectorAll('#v2-site-shell [data-tab]').forEach(button=>{button.classList.toggle('active',button.dataset.tab===tab);button.setAttribute('aria-selected',String(button.dataset.tab===tab))});loadTable()}
+async function goToPage(value){
+  if(tableBusy||!Number.isInteger(value))return;
+  const next=Math.max(1,Math.min(Math.max(1,Math.ceil(tableTotal/10)),value));if(next===page)return;
+  const focusNumber=Boolean(document.activeElement?.closest('[data-page]'));page=next;await loadTable();
+  document.querySelector('#v2-ranking .table-scroll').scrollTop=0;
+  if(focusNumber)$('page-links').querySelector('[aria-current="page"]')?.focus({preventScroll:true});
+}
 function showDialog(title,html,trigger){if(!$('modal').open)lastTrigger=trigger||document.activeElement;$('modal').dataset.kind='';$('modal').style.removeProperty('--modal-track');$('modal-title').textContent=title;$('modal-body').innerHTML=html;if(!$('modal').open)$('modal').showModal();$('site-shell').inert=true;$('modal').querySelector('button').focus()}
 function closeDialog(){$('modal').close();$('site-shell').inert=false;lastTrigger?.focus?.({preventScroll:true})}
 function rowById(id){return tableRows.find(r=>r.public_id===id)||[dayProfile,winnerExtra?.profile,model?.day,...(winnerExtra?.details?.results||[]),...(model?.servers||[]).flatMap(s=>s.drivers||[])].find(r=>r?.public_id===id)||{public_id:id,driver:id}}
@@ -173,6 +188,7 @@ function startStream(trigger){
 }
 document.addEventListener('click',event=>{
   if(event.target.closest('#v1-runtime-host'))return;
+  const pageButton=event.target.closest('#v2-page-links [data-page]');if(pageButton){goToPage(Number(pageButton.dataset.page));return}
   const ratingButton=event.target.closest('button[data-rating]');if(ratingButton&&!ratingButton.disabled){const row=rowById(ratingButton.dataset.driver);presentation.openRating(row,ratingButton.dataset.rating,ratingButton);return}
   const server=event.target.closest('[data-server]');if(server){openServers(server.dataset.server,server);return}
   const pilot=event.target.closest('#v2-day-driver,#v2-winner-name');if(pilot?.dataset.driver){presentation.openDriver(rowById(pilot.dataset.driver),pilot);return}
@@ -188,7 +204,8 @@ document.addEventListener('click',event=>{
   if(event.target.closest('[data-close-popover="stream-popover"]'))$('stream-popover').hidePopover();
 });
 $('rating-table').addEventListener('keydown',event=>{const row=event.target.closest('tr[data-row]');if(row&&event.target===row&&row.dataset.row&&['Enter',' '].includes(event.key)){event.preventDefault();presentation.openDriver(rowById(row.dataset.row),row)}});
-$('race-vote').onclick=()=>native().vote();$('prev').onclick=()=>{page--;loadTable()};$('next').onclick=()=>{page++;loadTable()};
+$('race-vote').onclick=()=>native().vote();$('prev').onclick=()=>goToPage(page-1);$('next').onclick=()=>goToPage(page+1);
+$('page-jump').onsubmit=event=>{event.preventDefault();goToPage(Number($('page-input').value))};
 let searchTimer;$('search').oninput=()=>{clearTimeout(searchTimer);searchTimer=setTimeout(()=>{page=1;loadTable()},250)};
 $('ranking-track').onchange=event=>{track=event.target.value;page=1;loadTable()};$('ranking-club-type').onchange=event=>{type=event.target.value;page=1;loadTable()};
 $('ranking-club-context').onchange=async event=>{context=event.target.value;const selected=context;tableBusy=true;renderTable();try{const data=await native().loadClubs(context);if(context===selected){clubSnapshot=data;tableError=false;page=1}}catch{if(context===selected)tableError=true}finally{if(context===selected){tableBusy=false;renderTable()}}};
@@ -229,4 +246,4 @@ const boot=$('site-shell'),loader=document.querySelector('.home-loader');
 let seenIntro=false;try{seenIntro=Boolean(sessionStorage.getItem('asgV2IntroSeen'))}catch{}
 if(reduced.matches||seenIntro){document.documentElement.classList.remove('home-booting');loader.hidden=true}else{document.documentElement.classList.add('home-booting');boot.inert=true;setTimeout(()=>{document.documentElement.classList.remove('home-booting');document.documentElement.classList.add('home-ready');boot.inert=false;loader.hidden=true;try{sessionStorage.setItem('asgV2IntroSeen','1')}catch{}},1050)}
 renderTable();$('race-vote').disabled=true;
-try{await import('./runtime/home.js?v=20261006v2g');setTimeout(applyHash,1500)}catch(error){console.error('V2 runtime unavailable',error);$('event-track').textContent=text('Не удалось загрузить данные','Could not load data');$('day-driver').textContent=text('Данные недоступны','Data unavailable');tableError=true;tableBusy=false;renderTable()}
+try{await import('./runtime/home.js?v=20261006v2h');setTimeout(applyHash,1500)}catch(error){console.error('V2 runtime unavailable',error);$('event-track').textContent=text('Не удалось загрузить данные','Could not load data');$('day-driver').textContent=text('Данные недоступны','Data unavailable');tableError=true;tableBusy=false;renderTable()}
