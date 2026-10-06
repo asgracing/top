@@ -1,6 +1,6 @@
 import test from 'node:test';
 import assert from 'node:assert/strict';
-import {eventKind,normalizeTablePage,normalizeSafetyRow,paginationPages} from '../../v2/models.js';
+import {eventKind,normalizeTablePage,normalizeSafetyRow,paginationPages,serverSrRestriction} from '../../v2/models.js';
 test('Hourly championship metadata does not turn a standalone race into a championship',()=>{
   const event={event_type:'hourly',race_format:'hourly',competition_mode:'standalone',championship_slug:'october-2026'};
   assert.equal(eventKind(event),'hourly');assert.equal(eventKind(event,true),'mono');
@@ -27,4 +27,15 @@ test('Rating page navigation keeps current and boundary pages available in long 
     assert.equal(numbers[0],1);assert.equal(numbers.at(-1),3332);assert.ok(numbers.includes(current));assert.ok(pages.length<=7);
     assert.equal(new Set(numbers).size,numbers.length);
   }
+});
+test('Server admission compares an authenticated driver with each server threshold',()=>{
+  const auth=sr=>({authenticated:true,driver:{sr}});
+  assert.deepEqual(serverSrRestriction({key:'hourly',sr:2.5},auth(2.25)),{actual:2.25,required:2.5});
+  assert.equal(serverSrRestriction({key:'main',sr:2},auth(2.25)),null);
+  assert.equal(serverSrRestriction({key:'hourly',sr:2.5},auth(2.5)),null,'The threshold itself is sufficient');
+  assert.deepEqual(serverSrRestriction({key:'main',sr:4},auth(3)),{actual:3,required:4},'Use the published threshold');
+  for(const sr of [null,undefined,'','invalid'])assert.equal(serverSrRestriction({key:'main',sr:2},auth(sr)),null);
+  assert.equal(serverSrRestriction({key:'main',sr:null},auth(1)),null);
+  assert.equal(serverSrRestriction({key:'main',sr:2},{authenticated:false,driver:{sr:1}}),null);
+  assert.equal(serverSrRestriction({key:'sunset',sr:2},auth(1)),null);
 });

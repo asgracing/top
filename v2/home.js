@@ -1,10 +1,10 @@
-import copy from './copy.js?v=20261006v2i';
-import { subscribe, getRuntime } from './bridge.js?v=20261006v2i';
-import {eventKind,normalizeTablePage,normalizeSafetyRow,paginationPages} from './models.js?v=20261006v2i';
-import {createPresentation} from './presentation.js?v=20261006v2i';
-import {createHeader} from './header.js?v=20261006v2i';
-import {createGuide} from './guide.js?v=20261006v2i';
-import {createHomeMotion} from './motion.js?v=20261006v2i';
+import copy from './copy.js?v=20261006v2j';
+import { subscribe, getRuntime } from './bridge.js?v=20261006v2j';
+import {eventKind,normalizeTablePage,normalizeSafetyRow,paginationPages,serverSrRestriction} from './models.js?v=20261006v2j';
+import {createPresentation} from './presentation.js?v=20261006v2j';
+import {createHeader} from './header.js?v=20261006v2j';
+import {createGuide} from './guide.js?v=20261006v2j';
+import {createHomeMotion} from './motion.js?v=20261006v2j';
 import { resolveTrackBackgroundFile, selectRandomTrackBackgroundFile } from '/src/features/server-status/track-background.js';
 const language=document.documentElement.dataset.pageLanguage==='en'?'en':'ru';
 const ru=language==='ru', words=copy[language].labels, editorial=copy[language].editorial;
@@ -41,7 +41,7 @@ document.querySelectorAll('.v2-language a').forEach(a=>{a.href+=location.search+
 document.querySelector('[data-v1-home]').addEventListener('click',event=>{const a=event.currentTarget;const hashes={leaderboard:'championship',bestlaps:'bestlaps',safety:'worst-safety',clubs:'clubs-teams-stats'};a.href=(ru?'/ru/':'/')+location.search+(location.hash||'#'+hashes[tab]);});
 document.querySelectorAll('.thanks-list span').forEach(node=>{node.textContent=node.textContent.trim()});
 const privacy=()=>`${text('Для голосования используется ID браузера. Участвуя, ты соглашаешься с','Voting uses a browser ID. By entering, you agree to the')} <a href="/privacy/${ru?'?lang=ru':''}">${text('условиями обработки данных','data processing terms')}</a>`;
-const presentation=createPresentation({$,native,getModel:()=>model,esc,text,label,date,number,rating,car,driverHref,classic,privacy,showDialog});
+const presentation=createPresentation({$,native,getModel:()=>model,esc,text,label,date,number,rating,car,driverHref,classic,privacy,serverAdmission,showDialog});
 const header=createHeader({$,native,esc,text,number,rating,driverHref,privacy});
 const guide=createGuide({$,copy:editorial.guide});
 const motion=createHomeMotion();
@@ -117,11 +117,21 @@ function renderEvent(){
   presentation.refreshEntry();
 }
 function updateClock(){if(!model?.targetMs){$('race-countdown').textContent='';return}const seconds=Math.max(0,Math.floor((model.targetMs-Date.now())/1000)),days=Math.floor(seconds/86400);$('race-countdown').textContent=(days?days+text('д ','d '):'')+[Math.floor(seconds/3600)%24,Math.floor(seconds/60)%60,seconds%60].map(v=>String(v).padStart(2,'0')).join(':')}
+function serverAdmission(server){
+  const restriction=serverSrRestriction(server,model?.auth);if(!restriction)return '';
+  const actual=restriction.actual.toFixed(2),required=restriction.required.toFixed(2);
+  return text(`Вашего SR недостаточно для входа: ваш SR ${actual}, требуется SR ${required}.`,`Your SR is too low to join: your SR ${actual}, required SR ${required}.`);
+}
 function renderServers(){
   const order=['hourly','main','sunset'],rows=[...model.servers].sort((a,b)=>(order.includes(a.key)?order.indexOf(a.key):3)-(order.includes(b.key)?order.indexOf(b.key):3));$('servers-up').textContent=`${model.serversStale?'—':rows.filter(s=>s.online).length} / ${rows.length}`;
   $('total-online').textContent=model.serversStale?text('Данные устарели','Stale data'):number(rows.reduce((n,s)=>n+s.players,0))+' '+label('players');
   const phase=s=>{if(!s.online)return label('waiting');const value=String(s.server?.session_type||s.server?.current_session||s.server?.session||s.session||'').trim().toLowerCase();return value.startsWith('r')?label('race'):value.startsWith('q')?label('qualifying'):value.startsWith('p')?label('practice'):'—'};
-  $('servers').innerHTML=rows.map((s,i)=>{const name=s.key==='hourly'?'Hourly / ASG Racing Race':String(s.label).replace(/^ASG Racing\s+/i,''),session=phase(s),short=s.online?(s.session?.split(/\s+/)[0]||String(s.server?.session_type||'').slice(0,1).toUpperCase()||'—'):'OFF';return `<button type="button" class="server-card${s.online?'':' offline'}" data-server="${esc(s.key)}" aria-label="${esc(s.label)} · ${esc(session)}" title="${esc(s.label)} · ${esc(session)} · ${number(s.players)} ${text('пилотов','drivers')}"><span class="server-top"><span class="server-id">${String(i+1).padStart(2,'0')}</span><span class="server-name">${esc(name)}</span><span class="server-compact-live">${esc(short)} · ${number(s.players)}</span><span class="status-dot" aria-hidden="true"></span></span><span class="server-facts"><span class="server-track">${esc(s.track||'—')}</span><span class="server-admission">SA ${esc(s.sa)} · SR ${esc(s.sr)}</span><span class="server-live">${number(s.players)} ${text('пилотов','drivers')} · ${esc(session)}</span></span></button>`}).join('')||`<p class="empty">${text('Статусы недоступны','Server status unavailable')}</p>`;
+  $('servers').innerHTML=rows.map((s,i)=>{
+    const name=s.key==='hourly'?'Hourly / ASG Racing Race':String(s.label).replace(/^ASG Racing\s+/i,''),session=phase(s),hint=serverAdmission(s);
+    const short=s.online?(s.session?.split(/\s+/)[0]||String(s.server?.session_type||'').slice(0,1).toUpperCase()||'—'):'OFF';
+    const description=hint||`${s.label} · ${session} · ${number(s.players)} ${text('пилотов','drivers')}`;
+    return `<button type="button" class="server-card${s.online?'':' offline'}${hint?' is-sr-blocked':''}" data-server="${esc(s.key)}" aria-label="${esc(description)}" title="${esc(description)}"><span class="server-top"><span class="server-id">${String(i+1).padStart(2,'0')}</span><span class="server-name">${esc(name)}</span><span class="server-compact-live">${esc(short)} · ${number(s.players)}</span><span class="status-dot" aria-hidden="true"></span></span><span class="server-facts"><span class="server-track">${esc(s.track||'—')}</span><span class="server-admission">SA ${esc(s.sa)} · ${hint?'&#128274; ':''}SR ${esc(s.sr)}</span><span class="server-live">${number(s.players)} ${text('пилотов','drivers')} · ${esc(session)}</span></span></button>`;
+  }).join('')||`<p class="empty">${text('Статусы недоступны','Server status unavailable')}</p>`;
 }
 const cols={leaderboard:[['rank','#'],['driver','driver'],['elo','ELO'],['safety_rating','SR'],['points','points'],['wins','wins'],['podiums','podiums'],['races','racesCol'],['average_finish','finish'],['club','club'],['team','team']],safety:[['rank','№'],['driver','driver'],['safety_rating','SR'],['active_strikes',text('Страйки','Strikes')],['races_count','racesCol'],['total_laps',text('Всего кругов','Total laps')],['total_invalid_laps',text('Грязные круги','Invalid laps')],['total_counted_penalties',text('Автоштрафы','Auto penalties')],['total_incident_points',text('Инциденты','Incidents')]],bestlaps:[['rank','#'],['driver','driver'],['best_lap','lap'],['car_name','car'],['updated_at','date'],['session_type','session'],['elo','ELO'],['safety_rating','SR'],['club','club'],['team','team']],clubs:[['rank','#'],['display_name','teams'],['total_points','points'],['average_elo','ELO'],['average_sr','SR'],['race_count','racesCol']]};
 function tableCell(row,key,index){
@@ -218,7 +228,7 @@ subscribe(next=>{
   changed('stats',[next.day,next.stats,next.online,next.serversStale,next.servers.map(s=>s.players)],renderStats);
   changed('winner',next.winner,renderWinner);
   changed('event',[next.announcement,next.votes,next.voteDisabled],renderEvent);
-  changed('servers',[next.servers,next.serversStale],renderServers);
+  changed('servers',[next.servers,next.serversStale,next.auth?.authenticated,next.auth?.driver?.sr],renderServers);
   if(!seen.has('tables-ready')&&!next.loading.home){seen.set('tables-ready','yes');if(next.tracks.length)$('ranking-track').innerHTML=next.tracks.map(t=>`<option value="${esc(t.track_code||t.track)}"${(t.track_code||t.track)===track?' selected':''}>${esc(native().track(t.track_code||t.track))}</option>`).join('');loadTable()}
   changed('viewer',next.viewer,renderTable);
   changed('affiliations',next.affiliationsSize,renderTable);
@@ -246,4 +256,4 @@ const boot=$('site-shell'),loader=document.querySelector('.home-loader');
 let seenIntro=false;try{seenIntro=Boolean(sessionStorage.getItem('asgV2IntroSeen'))}catch{}
 if(reduced.matches||seenIntro){document.documentElement.classList.remove('home-booting');loader.hidden=true}else{document.documentElement.classList.add('home-booting');boot.inert=true;setTimeout(()=>{document.documentElement.classList.remove('home-booting');document.documentElement.classList.add('home-ready');boot.inert=false;loader.hidden=true;try{sessionStorage.setItem('asgV2IntroSeen','1')}catch{}},1050)}
 renderTable();$('race-vote').disabled=true;
-try{await import('./runtime/home.js?v=20261006v2i');setTimeout(applyHash,1500)}catch(error){console.error('V2 runtime unavailable',error);$('event-track').textContent=text('Не удалось загрузить данные','Could not load data');$('day-driver').textContent=text('Данные недоступны','Data unavailable');tableError=true;tableBusy=false;renderTable()}
+try{await import('./runtime/home.js?v=20261006v2j');setTimeout(applyHash,1500)}catch(error){console.error('V2 runtime unavailable',error);$('event-track').textContent=text('Не удалось загрузить данные','Could not load data');$('day-driver').textContent=text('Данные недоступны','Data unavailable');tableError=true;tableBusy=false;renderTable()}

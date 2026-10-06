@@ -34,6 +34,31 @@ async function checkPagination(page){
   assert.deepEqual(medals,[{rank:'1',color:'rgb(247, 204, 67)'},{rank:'2',color:'rgb(195, 208, 223)'},{rank:'3',color:'rgb(214, 154, 101)'}]);
   assert.ok(await page.locator('.table-footer').evaluate(n=>n.scrollWidth<=n.clientWidth+1),'Page controls fit horizontally');
 }
+async function checkServerSrAccess(page,options){
+  await page.locator('#v2-rating-table .current-user-row').waitFor({state:'visible'});
+  await page.locator('.asg-legal-banner-btn-secondary').click();
+  const thresholds=options.thresholds||{main:2,hourly:2.5};
+  const blocked=Object.keys(thresholds).filter(key=>options.viewerSr!=null&&options.viewerSr<thresholds[key]).sort();
+  assert.deepEqual((await page.locator('#v2-servers .is-sr-blocked').evaluateAll(nodes=>nodes.map(n=>n.dataset.server))).sort(),blocked);
+  for(const key of blocked){
+    const card=page.locator('#v2-servers [data-server="'+key+'"]');await card.hover();
+    const hint=await card.getAttribute('title');assert.ok(hint.includes(options.viewerSr.toFixed(2))&&hint.includes(thresholds[key].toFixed(2)));
+    assert.ok(hint.includes(options.language==='en'?'Your SR is too low':'Вашего SR недостаточно'));
+    assert.equal(await card.getAttribute('aria-label'),hint);assert.equal(await card.isDisabled(),false);
+    assert.equal(await card.evaluate(n=>getComputedStyle(n).borderLeftColor),'rgb(255, 135, 151)');
+  }
+  if(blocked.length){
+    await page.locator('#v2-servers').screenshot({path:path.join(root,`design-research/v2-verification/server-sr-${options.viewerSr}-${options.language||'ru'}.png`)});
+    await page.locator('#v2-servers [data-server="'+blocked[0]+'"]').click();
+    assert.ok((await page.locator('.server-sr-warning').textContent()).includes(options.viewerSr.toFixed(2)));await page.locator('#v2-modal .modal-close').click();
+    await page.locator('#v2-site-shell [data-modal="servers"]').click();assert.equal(await page.locator('.server-summary-item.is-sr-blocked').count(),blocked.length);await page.locator('#v2-modal .modal-close').click();
+  }
+  // SR changes and logout must refresh admission without a server-status update.
+  await page.evaluate(async()=>{const {subscribe,publish}=await import('/v2/bridge.js?v=20261006v2j');let state;subscribe(s=>state=s)();window.__srAccessState=state;window.__srAccessPublish=publish;publish({...state,auth:{...state.auth,driver:{...state.auth.driver,sr:5}}})});
+  assert.equal(await page.locator('#v2-servers .is-sr-blocked').count(),0);
+  await page.evaluate(()=>window.__srAccessPublish({...window.__srAccessState,auth:{authenticated:false}}));
+  assert.equal(await page.locator('#v2-servers .is-sr-blocked').count(),0);
+}
 async function checkSafetyColumns(page,language,width){
   assert.deepEqual(await page.locator('#v2-rating-table th').allTextContents(),language==='ru'?['№','Пилот','SR','Страйки','Гонки','Всего кругов','Грязные круги','Автоштрафы','Инциденты']:['№','Driver','SR','Strikes','Races','Total laps','Invalid laps','Auto penalties','Incidents']);
   const row=snapshot.home.safety[0],values=await page.locator('#v2-rating-table tbody tr').first().locator('td').allTextContents();
@@ -79,12 +104,12 @@ async function fixture(route,log,options={}){
     if(options.noTitle)return route.fulfill({status:404,contentType:'application/json',body:'{}'});
     payload={definitions_version:6,achievement_id:'grand_slam',title:'Grand Slam',icon:'♛',selected:true};
   }
-  else if(u.hostname==='auth.asgracing.ru'){payload=options.signed?{authenticated:true,linked:true,driver:{public_id:signedDriver,display_name:'Andrei Soldatenkov [ASG]',profile_url:'/driver/?id='+signedDriver,rank:3,elo:1445,sr:9.99},steam:{persona_name:'Test pilot'},permissions:{moderation_issue:Boolean(options.admin),portal_manage:Boolean(options.admin)},csrf_token:'test-only-csrf'}:{authenticated:false};}
+  else if(u.hostname==='auth.asgracing.ru'){payload=options.signed?{authenticated:true,linked:true,driver:{public_id:signedDriver,display_name:'Andrei Soldatenkov [ASG]',profile_url:'/driver/?id='+signedDriver,rank:3,elo:1445,sr:Object.hasOwn(options,'viewerSr')?options.viewerSr:9.99},steam:{persona_name:'Test pilot'},permissions:{moderation_issue:Boolean(options.admin),portal_manage:Boolean(options.admin)},csrf_token:'test-only-csrf'}:{authenticated:false};}
   else if(u.hostname==='mc.yandex.ru'){return route.fulfill({status:200,contentType:'application/javascript',body:'window.__v2MetrikaLoaded=true;'})}
   else if(u.hostname==='data.asgracing.ru'){
     if(pathname==='/top-data/v2/manifest.json')payload={...snapshot.manifest,tables:{...snapshot.manifest.tables,safety:{...snapshot.manifest.tables.safety,total_items:safetyRows.length,total_pages:Math.ceil(safetyRows.length/10)}}};
     else if(pathname==='/top-data/v2/home.json')payload=options.emptyHomePreviews?{...snapshot.home,leaderboard:[],bestlaps:[]}:snapshot.home;
-    else if(pathname==='/top-data/server_status.json'){payload=structuredClone(snapshot.live_servers?{servers:snapshot.live_servers}:snapshot.servers);payload.updated_at=options.staleServers?'2020-01-01T00:00:00Z':new Date().toISOString();for(const s of Object.values(payload.servers||{}))s.updated_at=payload.updated_at;const s=payload.servers[populatedServer];if(options.largeRoster){const drivers=s.drivers;s.drivers=Array.from({length:32},(_,i)=>({...drivers[i%drivers.length],position:i+1}));s.players_online=32}if(options.missingRoster)s.drivers=[];}
+    else if(pathname==='/top-data/server_status.json'){payload=structuredClone(snapshot.live_servers?{servers:snapshot.live_servers}:snapshot.servers);payload.updated_at=options.staleServers?'2020-01-01T00:00:00Z':new Date().toISOString();for(const s of Object.values(payload.servers||{}))s.updated_at=payload.updated_at;if(options.thresholds)for(const [key,sr] of Object.entries(options.thresholds))payload.servers[key].sr_requirement=sr;const s=payload.servers[populatedServer];if(options.largeRoster){const drivers=s.drivers;s.drivers=Array.from({length:32},(_,i)=>({...drivers[i%drivers.length],position:i+1}));s.players_online=32}if(options.missingRoster)s.drivers=[];}
     else if(pathname==='/hourly-data/announcement.json')payload=event;
     else if(pathname==='/hourly-data/schedule.json')payload={...snapshot.schedule,items:[event]};
     else if(pathname==='/donations-api/recent')payload=snapshot.donations;
@@ -185,12 +210,13 @@ try{
     if(width<1280){await page.locator('#v2-site-shell [data-tab="safety"]').click();await page.waitForTimeout(250);await checkSafetyColumns(page,language,width);await checkPagination(page)}
     assert.deepEqual(errors,[]);reports.push({width,height,language,rows:info.rows,servers:info.servers});await page.close();
   }
-  for(const options of [{signed:true},{signed:true,admin:true},{failVote:true},{emptyHomePreviews:true},{normalEvent:true},{carousel:true},{motion:true},{longPagination:true},{bannedDriver:true,noTitle:true},{largeRoster:true},{missingRoster:true},{staleServers:true}]){
-    const page=await browser.newPage({viewport:{width:options.longPagination?320:1920,height:936},reducedMotion:'reduce'}),log=[],errors=[];page.on('pageerror',e=>errors.push(e.message));await page.route('**/*',r=>fixture(r,log,options));
+  for(const options of [{signed:true,srAccess:true,viewerSr:2.25},{signed:true,srAccess:true,viewerSr:1.5,language:'en',width:390},{signed:true,srAccess:true,viewerSr:2.5},{signed:true,srAccess:true,viewerSr:3.5,thresholds:{main:3,hourly:4}},{signed:true,srAccess:true,viewerSr:null},{signed:true},{signed:true,admin:true},{failVote:true},{emptyHomePreviews:true},{normalEvent:true},{carousel:true},{motion:true},{longPagination:true},{bannedDriver:true,noTitle:true},{largeRoster:true},{missingRoster:true},{staleServers:true}]){
+    const page=await browser.newPage({viewport:{width:options.longPagination?320:options.width||1920,height:936},reducedMotion:'reduce'}),log=[],errors=[];page.on('pageerror',e=>errors.push(e.message));await page.route('**/*',r=>fixture(r,log,options));
     if(options.carousel){await page.emulateMedia({reducedMotion:'no-preference'});await page.clock.install()}
     if(options.motion){await page.emulateMedia({reducedMotion:'no-preference'});await page.addInitScript(()=>sessionStorage.setItem('asgV2IntroSeen','1'))}
-    await page.goto(base+'/v2/',{waitUntil:'networkidle'});assert.ok(page.url().endsWith('/v2/ru/'));await page.waitForTimeout(250);
-    if(options.signed){await page.locator('#v2-rating-table .current-user-row').waitFor({state:'visible'});assert.equal(await page.locator('#v2-rating-table .current-user-row').count(),1);await page.locator('.asg-legal-banner-btn-secondary').click();await page.locator('#v2-profile-trigger').click();assert.equal(await page.locator('#v2-profile-popover').evaluate(n=>n.matches(':popover-open')),true);assert.equal(await page.locator('#v2-profile-popover [href*="/moderation/"]').count(),options.admin?1:0);assert.equal(await page.locator('#v2-profile-popover [href*="/portal-ops/"]').count(),options.admin?1:0);await page.screenshot({path:path.join(root,'design-research/v2-verification/header-profile.png')})}
+    await page.goto(base+(options.language?'/v2/'+options.language+'/':'/v2/'),{waitUntil:'networkidle'});assert.ok(page.url().endsWith('/v2/'+(options.language||'ru')+'/'));await page.waitForTimeout(250);
+    if(options.srAccess){await checkServerSrAccess(page,options)}
+    else if(options.signed){await page.locator('#v2-rating-table .current-user-row').waitFor({state:'visible'});assert.equal(await page.locator('#v2-rating-table .current-user-row').count(),1);await page.locator('.asg-legal-banner-btn-secondary').click();await page.locator('#v2-profile-trigger').click();assert.equal(await page.locator('#v2-profile-popover').evaluate(n=>n.matches(':popover-open')),true);assert.equal(await page.locator('#v2-profile-popover [href*="/moderation/"]').count(),options.admin?1:0);assert.equal(await page.locator('#v2-profile-popover [href*="/portal-ops/"]').count(),options.admin?1:0);await page.screenshot({path:path.join(root,'design-research/v2-verification/header-profile.png')})}
     else if(options.failVote){await page.locator('#v2-race-vote').click();await page.waitForTimeout(200);assert.equal(await page.locator('#v2-participation-note .v2-error').count(),1);assert.ok(!(await page.locator('#v2-race-vote').textContent()).includes('\u043e\u0442\u043c\u0435\u043d\u0438\u0442\u044c'))}
     else if(options.emptyHomePreviews){assert.equal(await page.locator('#v2-rating-table tbody tr[data-row]').count(),10);await page.locator('#v2-site-shell [data-tab="bestlaps"]').click();await page.waitForTimeout(250);assert.equal(await page.locator('#v2-rating-table tbody tr[data-row]').count(),10)}
     else if(options.normalEvent){assert.equal(await page.locator('.upcoming-panel').getAttribute('data-event-kind'),'hourly');await page.locator('.asg-legal-banner-btn-secondary').click();await page.locator('[data-modal="event"]').click();assert.match(await page.locator('#v2-modal-eyebrow').textContent(),/Часовая гонка/);assert.equal(await page.locator('#v2-modal-eyebrow .event-kind').evaluate(n=>getComputedStyle(n).backgroundColor),'rgb(247, 204, 67)')}
@@ -199,7 +225,7 @@ try{
     else if(options.motion){
       await page.locator('.asg-legal-banner-btn-secondary').click();await page.waitForTimeout(4100);
       assert.equal(await page.evaluate(()=>document.getAnimations().filter(a=>a.playState==='running').length),0,'Idle homepage has no decorative frame loop');
-      await page.evaluate(async()=>{const {subscribe,publish}=await import('/v2/bridge.js?v=20261006v2i');let model;subscribe(m=>model=m)();window.__motionModel=structuredClone(model);window.__motionModel.announcement.event_id+=':motion-test';window.__motionModel.donations.goal.raised_amount+=1;window.__motionPublish=publish;publish(window.__motionModel)});
+      await page.evaluate(async()=>{const {subscribe,publish}=await import('/v2/bridge.js?v=20261006v2j');let model;subscribe(m=>model=m)();window.__motionModel=structuredClone(model);window.__motionModel.announcement.event_id+=':motion-test';window.__motionModel.donations.goal.raised_amount+=1;window.__motionPublish=publish;publish(window.__motionModel)});
       await page.waitForTimeout(120);
       assert.equal(await page.evaluate(()=>document.getAnimations().filter(a=>a.playState==='running'&&['v2-multiplier','v2-fund-progress'].includes(a.effect.target.id||a.effect.target.parentElement?.id)).length),2);
       assert.ok(await page.evaluate(()=>document.getAnimations().filter(a=>a.effect.target.id==='v2-multiplier').every(a=>a.effect.getTiming().iterations===2&&a.effect.getKeyframes().every(k=>!('color' in k)&&!('textShadow' in k)))));

@@ -95,6 +95,10 @@ body[data-v2] .chart-column small { font-size:9px; color:#b2c0d1; }
 body[data-v2] .bar-track { height:80px; width:26px; display:flex; align-items:flex-end; margin:5px 0; }
 body[data-v2] .bar-track span { width:100%; background:linear-gradient(#829bad,#506d84); border-radius:1px; }
 body[data-v2] .server-card { color:inherit; width:100%; text-align:left; cursor:pointer; }
+body[data-v2] .server-card.is-sr-blocked,body[data-v2] .server-summary-item.is-sr-blocked { border-color:#e9586c; background:linear-gradient(110deg,#801d3045,#30141f50); box-shadow:inset 3px 0 #e9586c; }
+body[data-v2] .server-card.is-sr-blocked:hover,body[data-v2] .server-card.is-sr-blocked:focus-visible,body[data-v2] .server-summary-item.is-sr-blocked:hover,body[data-v2] .server-summary-item.is-sr-blocked:focus-visible { border-color:#ff8797; background:#6d203b66; }
+body[data-v2] .server-card.is-sr-blocked .server-admission,body[data-v2] .server-sr-warning { color:#ff9baa; }
+body[data-v2] .server-sr-warning { padding:9px 12px; background:#801d3033; border:1px solid #e9586c; border-radius:3px; }
 body[data-v2] .participation-active { background:#15834f; border-color:#45dc8c; }
 body[data-v2] .v2-error { color:#ff8091; }
 body[data-v2] .seo-panel { padding:14px 16px; }

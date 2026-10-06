@@ -27,3 +27,10 @@ export function paginationPages(current,total) {
   for(const value of selected){const last=pages.at(-1);if(last&&value-last>1)pages.push(value-last===2?last+1:null);pages.push(value)}
   return pages;
 }
+export function serverSrRestriction(server,auth) {
+  if(!auth?.authenticated||!['hourly','main'].includes(server?.key))return null;
+  const raw=auth.driver?.sr,minimum=server.sr;
+  if(raw==null||raw===''||minimum==null||minimum==='')return null;
+  const actual=Number(raw),required=Number(minimum);
+  return Number.isFinite(actual)&&Number.isFinite(required)&&required>=0&&actual<required?{actual,required}:null;
+}
