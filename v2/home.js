@@ -1,9 +1,10 @@
-import copy from './copy.js?v=20261006v2e';
-import { subscribe, getRuntime } from './bridge.js?v=20261006v2e';
-import {eventKind,normalizeTablePage} from './models.js?v=20261006v2e';
-import {createPresentation} from './presentation.js?v=20261006v2e';
-import {createHeader} from './header.js?v=20261006v2e';
-import {createGuide} from './guide.js?v=20261006v2e';
+import copy from './copy.js?v=20261006v2f';
+import { subscribe, getRuntime } from './bridge.js?v=20261006v2f';
+import {eventKind,normalizeTablePage} from './models.js?v=20261006v2f';
+import {createPresentation} from './presentation.js?v=20261006v2f';
+import {createHeader} from './header.js?v=20261006v2f';
+import {createGuide} from './guide.js?v=20261006v2f';
+import {createHomeMotion} from './motion.js?v=20261006v2f';
 import { resolveTrackBackgroundFile, selectRandomTrackBackgroundFile } from '/src/features/server-status/track-background.js';
 const language=document.documentElement.dataset.pageLanguage==='en'?'en':'ru';
 const ru=language==='ru', words=copy[language].labels, editorial=copy[language].editorial;
@@ -43,6 +44,7 @@ const privacy=()=>`${text('Для голосования используетс�
 const presentation=createPresentation({$,native,getModel:()=>model,esc,text,label,date,number,rating,car,driverHref,classic,privacy,showDialog});
 const header=createHeader({$,native,esc,text,number,rating,driverHref,privacy});
 const guide=createGuide({$,copy:editorial.guide});
+const motion=createHomeMotion();
 $('participation-note').innerHTML=privacy();
 $('search').placeholder=text('Поиск пилота','Search drivers');$('search').setAttribute('aria-label',$('search').placeholder);
 function rating(row,kind,delta=null,withLabel=false){
@@ -60,6 +62,7 @@ function renderSupport(){
     $('goal-name').textContent=goal.title||label('goal');$('fund-value').textContent=money(goal.raised_amount,goal.currency);
     const percent=Math.max(0,Math.min(100,Math.round(Number(goal.raised_amount)/Number(goal.goal_amount)*100)));
     $('fund-total').textContent=`${label('fundOf')} ${money(goal.goal_amount,goal.currency)}`;$('fund-percent').textContent=percent+'%';$('fund-progress').setAttribute('aria-valuenow',percent);$('fund-progress').setAttribute('aria-valuemin','0');$('fund-progress').setAttribute('aria-valuemax','100');$('fund-progress').firstElementChild.style.width=percent+'%';
+    motion.run('fund',[goal.raised_amount,goal.goal_amount,goal.currency]);
   }else{$('goal-name').textContent=model.donationsError?text('Сбор временно недоступен','Fundraising data unavailable'):label('goal');$('fund-value').textContent='—';$('fund-total').textContent='';$('fund-percent').textContent='';$('fund-progress').firstElementChild.style.width='0%'}
   const items=data?.items||[];
   $('donations').innerHTML=items.slice(0,5).map(d=>{const value=String(d.created_at||'').replace(' ','T');return `<div class="donation-row"><b>${esc(d.username||d.name)}</b><strong>${esc(money(d.amount,d.currency))}</strong><time>${date(value+(/[Zz]|[+-]\d{2}:?\d{2}$/.test(value)?'':'+03:00'))}</time></div>`}).join('')||`<p class="empty">${model.donationsLoading?text('Загрузка…','Loading…'):model.donationsError?text('Донаты временно недоступны','Donations unavailable'):label('noData')}</p>`;
@@ -96,6 +99,7 @@ function renderEvent(){
   $('event-kind').textContent=kind==='mono'?text('Монокласс','Single model'):kind==='championship'?text('Чемпионат','Championship'):kind==='endurance'?text('Эндюранс','Endurance'):text('Часовая гонка','Hourly race');
   $('event-track').textContent=a.track_name||native().track(a.track_code)||'—';
   $('multiplier').textContent=`×${a.points_multiplier??1} ${text('ОЧКОВ В РЕЙТИНГ','RANKING POINTS')}`;
+  motion.run('points',[a.event_id,a.date,a.start_time_local,a.points_multiplier??1]);
   $('event-date').textContent=`${date(a.date&&a.start_time_local?`${a.date}T${a.start_time_local}:00+03:00`:null)} · ${a.timezone||'UTC+3'}`;
   const restriction=a.car_restriction||a.rules?.car_model,carName=restriction?.mode==='single_model'?restriction.car_model_name:text('Все машины класса GT3','All GT3 cars');
   $('event-car').textContent=carName||'—';$('event-car-image').hidden=restriction?.mode!=='single_model'||restriction?.car_model_id==null;if(!$('event-car-image').hidden)$('event-car-image').src=`/assets/car-icons/${Number(restriction.car_model_id)}.png`;
@@ -211,7 +215,7 @@ function initialiseDocks(){
   for(const [i,selector] of ['.left-column','.right-column'].entries()){
     const aside=document.querySelector(selector),content=document.createElement('div'),button=document.createElement('button'),key=i?'servers':'support';content.className='sidebar-content';content.id='v2-'+key+'-dock-content';content.append(...aside.childNodes);button.className='widget-dock-toggle';button.type='button';button.dataset.widgetDock=key;button.setAttribute('aria-controls',content.id);aside.append(button,content);
     function apply(open){aside.dataset.dockOpen=String(open);content.inert=!open;content.setAttribute('aria-hidden',String(!open));dashboard.classList.toggle(i?'right-closed':'left-closed',!open);button.setAttribute('aria-expanded',String(open));button.setAttribute('aria-label',(open?text('Скрыть ','Hide '):text('Показать ','Show '))+(i?label('serverStatus'):label('support')));button.innerHTML=`<span class="dock-symbol">${open?'<svg viewBox="0 0 24 24" aria-hidden="true"><path d="m6 6 12 12M18 6 6 18"/></svg>':i?'▤':'♡'}</span><span class="dock-label">${i?text('Серверы','Servers'):text('Поддержка','Support')}</span><span class="dock-arrow">${open?'‹':'›'}</span>`}
-    apply(typeof saved[key]==='boolean'?saved[key]:true);button.onclick=()=>{saved[key]=aside.dataset.dockOpen!=='true';apply(saved[key]);try{localStorage.setItem('asgV2WidgetDocks',JSON.stringify(saved))}catch{}};
+    apply(typeof saved[key]==='boolean'?saved[key]:true);button.onclick=()=>{saved[key]=aside.dataset.dockOpen!=='true';apply(saved[key]);motion.refresh();try{localStorage.setItem('asgV2WidgetDocks',JSON.stringify(saved))}catch{}};
   }
   dashboard.classList.add('widgets-enhanced');
 }
@@ -225,4 +229,4 @@ const boot=$('site-shell'),loader=document.querySelector('.home-loader');
 let seenIntro=false;try{seenIntro=Boolean(sessionStorage.getItem('asgV2IntroSeen'))}catch{}
 if(reduced.matches||seenIntro){document.documentElement.classList.remove('home-booting');loader.hidden=true}else{document.documentElement.classList.add('home-booting');boot.inert=true;setTimeout(()=>{document.documentElement.classList.remove('home-booting');document.documentElement.classList.add('home-ready');boot.inert=false;loader.hidden=true;try{sessionStorage.setItem('asgV2IntroSeen','1')}catch{}},1050)}
 renderTable();$('race-vote').disabled=true;
-try{await import('./runtime/home.js?v=20261006v2e');setTimeout(applyHash,1500)}catch(error){console.error('V2 runtime unavailable',error);$('event-track').textContent=text('Не удалось загрузить данные','Could not load data');$('day-driver').textContent=text('Данные недоступны','Data unavailable');tableError=true;tableBusy=false;renderTable()}
+try{await import('./runtime/home.js?v=20261006v2f');setTimeout(applyHash,1500)}catch(error){console.error('V2 runtime unavailable',error);$('event-track').textContent=text('Не удалось загрузить данные','Could not load data');$('day-driver').textContent=text('Данные недоступны','Data unavailable');tableError=true;tableBusy=false;renderTable()}
