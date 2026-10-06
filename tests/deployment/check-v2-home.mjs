@@ -86,8 +86,13 @@ try{
     assert.equal(await page.locator('meta[name="yandex-metrika-id"]').getAttribute('content'),'107697834');
     assert.equal(await page.locator('meta[name="robots"]').getAttribute('content'),'noindex,follow');
     assert.ok(!log.some(x=>x.url.includes('mc.yandex.ru')),'No analytics without consent');
+    if(width>1000){
+      assert.ok(await page.locator('#v2-servers').evaluate(list=>{const box=list.getBoundingClientRect();return [...list.children].every(card=>{const r=card.getBoundingClientRect();return r.left>=box.left&&r.right<=box.right+1&&r.bottom<=box.bottom+1})}),'All nine server cards fit the desktop widget');
+    }
     if(width===1920){
       await page.locator('.asg-legal-banner-btn-secondary').click();
+      await page.locator('.servers-panel').screenshot({path:path.join(root,`design-research/v2-verification/servers-${language}-${width}.png`)});
+      await page.locator('#v2-servers .server-card').first().click();assert.equal(await page.locator('#v2-modal .v2-server-parameters').count(),1);assert.match(await page.locator('#v2-modal-title').textContent(),/ASG Racing/);await page.locator('#v2-modal .modal-close').click();
       assert.ok(await page.locator('#v2-day-ratings').evaluate(n=>{const [elo,sr]=n.children;return sr.getBoundingClientRect().left-elo.getBoundingClientRect().right>=7}),'Day rating badges have a gap');
       for(const key of ['support','servers'])assert.equal(await page.locator(`[data-widget-dock="${key}"] .dock-symbol svg`).count(),1,'Visible dock has a close icon');
       assert.ok(await page.locator('.upcoming-panel').evaluate(n=>n.querySelector('.event-topline').getBoundingClientRect().top-n.querySelector('.panel-head').getBoundingClientRect().bottom<=14),'Event content starts directly below heading');
@@ -118,6 +123,7 @@ try{
       await page.locator('#v2-stream-widget summary').click();assert.equal(await page.locator('#v2-stream-popover').evaluate(n=>n.matches(':popover-open')),true);await page.locator('#v2-stream-popover [data-close-popover]').click();
       await page.locator('[data-cookie-settings]').first().click();assert.equal(await page.locator('.asg-legal-banner').isVisible(),true);assert.equal(await page.locator('.asg-legal-banner-card').evaluate(n=>getComputedStyle(n).borderRadius),'4px');await page.locator('.asg-legal-banner-btn-primary').click();await page.waitForTimeout(150);assert.equal(log.filter(x=>x.url.includes('mc.yandex.ru/metrika/tag.js')).length,1);assert.equal(await page.evaluate(()=>window.ym.a.filter(args=>args[1]==='init').length),1);
       await page.locator('[data-widget-dock="support"]').click();assert.equal(await page.locator('.left-column').getAttribute('data-dock-open'),'false');await page.reload({waitUntil:'networkidle'});assert.equal(await page.locator('.left-column').getAttribute('data-dock-open'),'false');
+      await page.locator('[data-widget-dock="servers"]').click();assert.equal(await page.locator('.right-column').getAttribute('data-dock-open'),'false');assert.ok(await page.locator('#v2-winner-results').evaluate(n=>n.scrollWidth<=n.clientWidth+1),'Winner counters fit when both docks are collapsed');if(language==='ru')await page.screenshot({path:path.join(root,'design-research/v2-verification/home-docks-collapsed.png')});
     }
     if(width===390){
       await page.locator('.asg-legal-banner-btn-secondary').click();await page.locator('[data-modal="event"]').click();await dialogSnapshot(page,'event',language,width);await page.locator('#v2-modal .modal-close').click();

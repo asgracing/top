@@ -1,4 +1,4 @@
-import {eventKind} from './models.js?v=20261006v2c';
+import {eventKind} from './models.js?v=20261006v2d';
 import {resolveTrackBackgroundFile} from '/src/features/server-status/track-background.js';
 
 // R24 views consume the canonical controllers. They never calculate ratings or

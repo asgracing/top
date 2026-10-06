@@ -5,7 +5,7 @@ import { resolve } from 'node:path';
 import { createHash } from 'node:crypto';
 import { nodes, edit } from './seo/html-source.mjs';
 const root = resolve(import.meta.dirname, '..');
-const version = '20261006v2c';
+const version = '20261006v2d';
 const read = path => readFile(resolve(root, path), 'utf8');
 async function emit(path, value) { await mkdir(resolve(root, path, '..'), {recursive:true}); await writeFile(resolve(root, path), path.endsWith('.html')?value.replace(/[ \t]+(?=\r?$)/gm,''):value); }
 const prototype = await read('v2-source/home.html');

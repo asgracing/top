@@ -1,9 +1,9 @@
-import copy from './copy.js?v=20261006v2c';
-import { subscribe, getRuntime } from './bridge.js?v=20261006v2c';
-import {eventKind,normalizeTablePage} from './models.js?v=20261006v2c';
-import {createPresentation} from './presentation.js?v=20261006v2c';
-import {createHeader} from './header.js?v=20261006v2c';
-import {createGuide} from './guide.js?v=20261006v2c';
+import copy from './copy.js?v=20261006v2d';
+import { subscribe, getRuntime } from './bridge.js?v=20261006v2d';
+import {eventKind,normalizeTablePage} from './models.js?v=20261006v2d';
+import {createPresentation} from './presentation.js?v=20261006v2d';
+import {createHeader} from './header.js?v=20261006v2d';
+import {createGuide} from './guide.js?v=20261006v2d';
 import { resolveTrackBackgroundFile, selectRandomTrackBackgroundFile } from '/src/features/server-status/track-background.js';
 const language=document.documentElement.dataset.pageLanguage==='en'?'en':'ru';
 const ru=language==='ru', words=copy[language].labels, editorial=copy[language].editorial;
@@ -45,12 +45,12 @@ const header=createHeader({$,native,esc,text,number,rating,driverHref,privacy});
 const guide=createGuide({$,copy:editorial.guide});
 $('participation-note').innerHTML=privacy();
 $('search').placeholder=text('Поиск пилота','Search drivers');$('search').setAttribute('aria-label',$('search').placeholder);
-function rating(row,kind,delta=null){
+function rating(row,kind,delta=null,withLabel=false){
   row={...row?.summary,...row};
   const value=kind==='elo'?(row.elo??row.elo_rating_after??row.elo_after):(row.safety_rating_after??row.safety_rating);
   if(value==null)return '—';
   const cat=kind==='elo'?(row.elo_category_id??(value>=1350?1:value>=1250?2:value>=1150?3:value>=1050?4:value>=950?5:6)):(row.safety_category??(value>=5?'A':value>=2.5?'B':'C'));
-  return `<button type="button" class="rating-badge ${kind==='elo'?'elo-'+cat:'sr sr-'+String(cat).toLowerCase()}" data-rating="${kind}" data-driver="${esc(row.public_id||'')}"${!row.public_id?' disabled':''}>${kind==='elo'?'C'+cat+' '+elo(value):cat+' '+Number(value).toFixed(2)}${delta==null?'':`<small class="race-rating-delta">${delta>0?'+':''}${Number(delta).toFixed(kind==='elo'?0:2)}</small>`}</button>`;
+  return `<button type="button" class="rating-badge ${kind==='elo'?'elo-'+cat:'sr sr-'+String(cat).toLowerCase()}" data-rating="${kind}" data-driver="${esc(row.public_id||'')}"${!row.public_id?' disabled':''}>${withLabel?`<span class="rating-prefix">${kind==='elo'?'ELO':'SR'}</span> `:''}${kind==='elo'?'C'+cat+' '+elo(value):cat+' '+Number(value).toFixed(2)}${delta==null?'':`<small class="race-rating-delta">${delta>0?'+':''}${Number(delta).toFixed(kind==='elo'?0:2)}</small>`}</button>`;
 }
 function car(row){const name=row.car_name||row.car_name_raw||row.favorite_car||row.favorite_car_name||'—',id=row.car_model_id??row.winner_car_model_id;return `<span class="car-cell">${id!=null?`<img src="/assets/car-icons/${Number(id)}.png" alt="" loading="lazy" onerror="this.hidden=true">`:''}<span>${esc(name)}</span></span>`}
 function renderSupport(){
@@ -67,7 +67,7 @@ function renderSupport(){
 function renderStats(){
   const d=model.day,s=model.stats;$('day-driver').textContent=d?.driver||text('Нет пилота дня','No driver of the day');$('day-driver').dataset.driver=d?.public_id||'';
   const ratingSource=dayProfile||model.leaderboard.find(row=>row.public_id===d?.public_id)||d;
-  $('day-ratings').innerHTML=d?rating(ratingSource,'elo')+rating(ratingSource,'sr'):'';
+  $('day-ratings').innerHTML=d?rating(ratingSource,'elo',null,true)+rating(ratingSource,'sr',null,true):'';
   if(d?.public_id&&dayRequest!==d.public_id){dayRequest=d.public_id;dayProfile=null;native().profile(d.public_id).then(profile=>{if(dayRequest===d.public_id){dayProfile=profile;renderStats()}}).catch(()=>{})}
   const metric=(value,title)=>`<div class="metric"><span>${title}</span><b>${number(value)}</b></div>`;
   $('metrics').innerHTML=metric(s?.drivers_total,label('pilots'))+metric(s?.races_total,label('racesCol'))+metric(model.serversStale?null:model.servers.reduce((n,s)=>n+s.players,0),text('Пилотов онлайн','Drivers online'));
@@ -83,7 +83,7 @@ function renderWinner(){
   $('winner-meta').innerHTML=`${esc(native().track(race.track_code||race.track))} · ${date(race.finished_at)}<br>${esc(race.winner_car_name||result.car_name||'—')}`;
   const image=document.querySelector('.winner-car');const carId=race.winner_car_model_id??result.car_model_id;
   image.hidden=carId==null;if(carId!=null)image.src=`/assets/car-icons/${Number(carId)}.png`;image.alt=race.winner_car_name||'';
-  $('winner-results').innerHTML=['wins','podiums','races'].map(key=>{const value=profile?.summary?.[key]??profile?.[key];return `<div class="result"><span>${label(key==='races'?'racesCol':key)}</span><b>${Array.isArray(value)?'—':number(value)}</b></div>`}).join('');
+  $('winner-results').innerHTML=['wins','podiums','races'].map(key=>{const value=profile?.summary?.[key]??profile?.[key];return `<div class="metric"><span>${label(key==='races'?'racesCol':key)}</span><b>${Array.isArray(value)?'—':number(value)}</b></div>`}).join('');
   const points=result.points,eloDelta=result.elo_rating_delta,srDelta=result.safety_delta;
   $('winner-race-results').innerHTML=`<div class="winner-race-heading">${text('За последнюю гонку','Last race results')}</div><div class="winner-race-grid"><div><span>${label('points')}</span><b class="race-points">${points==null?'—':(points>0?'+':'')+number(points)}</b></div><div><span>ELO</span>${rating(d,'elo',eloDelta)}</div><div><span>SR</span>${rating(d,'sr',srDelta)}</div></div>`;
   if(race.race_id&&winnerRequest!==race.race_id){winnerRequest=race.race_id;winnerExtra=null;native().hydrateWinner(race).then(extra=>{if(winnerRequest===race.race_id){winnerExtra=extra;renderWinner()}}).catch(()=>{})}
@@ -111,9 +111,10 @@ function renderEvent(){
 }
 function updateClock(){if(!model?.targetMs){$('race-countdown').textContent='';return}const seconds=Math.max(0,Math.floor((model.targetMs-Date.now())/1000)),days=Math.floor(seconds/86400);$('race-countdown').textContent=(days?days+text('д ','d '):'')+[Math.floor(seconds/3600)%24,Math.floor(seconds/60)%60,seconds%60].map(v=>String(v).padStart(2,'0')).join(':')}
 function renderServers(){
-  const rows=model.servers;$('servers-up').textContent=`${model.serversStale?'—':rows.filter(s=>s.online).length} / ${rows.length}`;
+  const order=['hourly','main','sunset'],rows=[...model.servers].sort((a,b)=>(order.includes(a.key)?order.indexOf(a.key):3)-(order.includes(b.key)?order.indexOf(b.key):3));$('servers-up').textContent=`${model.serversStale?'—':rows.filter(s=>s.online).length} / ${rows.length}`;
   $('total-online').textContent=model.serversStale?text('Данные устарели','Stale data'):number(rows.reduce((n,s)=>n+s.players,0))+' '+label('players');
-  $('servers').innerHTML=rows.map((s,i)=>`<button type="button" class="server-card${s.online?'':' offline'}" data-server="${esc(s.key)}"><span class="server-top"><span class="server-id">${String(i+1).padStart(2,'0')}</span><span class="server-name">${esc(s.label)}</span><span class="server-compact-live">${esc(s.session)} · ${number(s.players)}</span><span class="status-dot"></span></span><span class="server-facts"><span>${esc(s.track||'—')}</span><span>SA ${esc(s.sa)} · SR ${esc(s.sr)}</span><span>${number(s.players)} · ${esc(s.session)}</span></span></button>`).join('')||`<p class="empty">${text('Статусы недоступны','Server status unavailable')}</p>`;
+  const phase=s=>{if(!s.online)return label('waiting');const value=String(s.server?.session_type||s.server?.current_session||s.server?.session||s.session||'').trim().toLowerCase();return value.startsWith('r')?label('race'):value.startsWith('q')?label('qualifying'):value.startsWith('p')?label('practice'):'—'};
+  $('servers').innerHTML=rows.map((s,i)=>{const name=s.key==='hourly'?'Hourly / ASG Racing Race':String(s.label).replace(/^ASG Racing\s+/i,''),session=phase(s),short=s.online?(s.session?.split(/\s+/)[0]||String(s.server?.session_type||'').slice(0,1).toUpperCase()||'—'):'OFF';return `<button type="button" class="server-card${s.online?'':' offline'}" data-server="${esc(s.key)}" aria-label="${esc(s.label)} · ${esc(session)}" title="${esc(s.label)} · ${esc(session)} · ${number(s.players)} ${text('пилотов','drivers')}"><span class="server-top"><span class="server-id">${String(i+1).padStart(2,'0')}</span><span class="server-name">${esc(name)}</span><span class="server-compact-live">${esc(short)} · ${number(s.players)}</span><span class="status-dot" aria-hidden="true"></span></span><span class="server-facts"><span class="server-track">${esc(s.track||'—')}</span><span class="server-admission">SA ${esc(s.sa)} · SR ${esc(s.sr)}</span><span class="server-live">${number(s.players)} ${text('пилотов','drivers')} · ${esc(session)}</span></span></button>`}).join('')||`<p class="empty">${text('Статусы недоступны','Server status unavailable')}</p>`;
 }
 const cols={leaderboard:[['rank','#'],['driver','driver'],['elo','ELO'],['safety_rating','SR'],['points','points'],['wins','wins'],['podiums','podiums'],['races','racesCol'],['average_finish','finish'],['club','club'],['team','team']],safety:[['rank','#'],['driver','driver'],['safety_rating','SR'],['elo','ELO'],['races_count','racesCol'],['favorite_car','car'],['club','club'],['team','team']],bestlaps:[['rank','#'],['driver','driver'],['best_lap','lap'],['car_name','car'],['updated_at','date'],['session_type','session'],['elo','ELO'],['safety_rating','SR'],['club','club'],['team','team']],clubs:[['rank','#'],['display_name','teams'],['total_points','points'],['average_elo','ELO'],['average_sr','SR'],['race_count','racesCol']]};
 function tableCell(row,key,index){
@@ -226,4 +227,4 @@ const boot=$('site-shell'),loader=document.querySelector('.home-loader');
 let seenIntro=false;try{seenIntro=Boolean(sessionStorage.getItem('asgV2IntroSeen'))}catch{}
 if(reduced.matches||seenIntro){document.documentElement.classList.remove('home-booting');loader.hidden=true}else{document.documentElement.classList.add('home-booting');boot.inert=true;setTimeout(()=>{document.documentElement.classList.remove('home-booting');document.documentElement.classList.add('home-ready');boot.inert=false;loader.hidden=true;try{sessionStorage.setItem('asgV2IntroSeen','1')}catch{}},1050)}
 renderTable();$('race-vote').disabled=true;
-try{await import('./runtime/home.js?v=20261006v2c');setTimeout(applyHash,1500)}catch(error){console.error('V2 runtime unavailable',error);$('event-track').textContent=text('Не удалось загрузить данные','Could not load data');$('day-driver').textContent=text('Данные недоступны','Data unavailable');tableError=true;tableBusy=false;renderTable()}
+try{await import('./runtime/home.js?v=20261006v2d');setTimeout(applyHash,1500)}catch(error){console.error('V2 runtime unavailable',error);$('event-track').textContent=text('Не удалось загрузить данные','Could not load data');$('day-driver').textContent=text('Данные недоступны','Data unavailable');tableError=true;tableBusy=false;renderTable()}
