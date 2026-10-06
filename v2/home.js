@@ -1,10 +1,10 @@
-import copy from './copy.js?v=20261006v2f';
-import { subscribe, getRuntime } from './bridge.js?v=20261006v2f';
-import {eventKind,normalizeTablePage} from './models.js?v=20261006v2f';
-import {createPresentation} from './presentation.js?v=20261006v2f';
-import {createHeader} from './header.js?v=20261006v2f';
-import {createGuide} from './guide.js?v=20261006v2f';
-import {createHomeMotion} from './motion.js?v=20261006v2f';
+import copy from './copy.js?v=20261006v2g';
+import { subscribe, getRuntime } from './bridge.js?v=20261006v2g';
+import {eventKind,normalizeTablePage,normalizeSafetyRow} from './models.js?v=20261006v2g';
+import {createPresentation} from './presentation.js?v=20261006v2g';
+import {createHeader} from './header.js?v=20261006v2g';
+import {createGuide} from './guide.js?v=20261006v2g';
+import {createHomeMotion} from './motion.js?v=20261006v2g';
 import { resolveTrackBackgroundFile, selectRandomTrackBackgroundFile } from '/src/features/server-status/track-background.js';
 const language=document.documentElement.dataset.pageLanguage==='en'?'en':'ru';
 const ru=language==='ru', words=copy[language].labels, editorial=copy[language].editorial;
@@ -120,7 +120,7 @@ function renderServers(){
   const phase=s=>{if(!s.online)return label('waiting');const value=String(s.server?.session_type||s.server?.current_session||s.server?.session||s.session||'').trim().toLowerCase();return value.startsWith('r')?label('race'):value.startsWith('q')?label('qualifying'):value.startsWith('p')?label('practice'):'—'};
   $('servers').innerHTML=rows.map((s,i)=>{const name=s.key==='hourly'?'Hourly / ASG Racing Race':String(s.label).replace(/^ASG Racing\s+/i,''),session=phase(s),short=s.online?(s.session?.split(/\s+/)[0]||String(s.server?.session_type||'').slice(0,1).toUpperCase()||'—'):'OFF';return `<button type="button" class="server-card${s.online?'':' offline'}" data-server="${esc(s.key)}" aria-label="${esc(s.label)} · ${esc(session)}" title="${esc(s.label)} · ${esc(session)} · ${number(s.players)} ${text('пилотов','drivers')}"><span class="server-top"><span class="server-id">${String(i+1).padStart(2,'0')}</span><span class="server-name">${esc(name)}</span><span class="server-compact-live">${esc(short)} · ${number(s.players)}</span><span class="status-dot" aria-hidden="true"></span></span><span class="server-facts"><span class="server-track">${esc(s.track||'—')}</span><span class="server-admission">SA ${esc(s.sa)} · SR ${esc(s.sr)}</span><span class="server-live">${number(s.players)} ${text('пилотов','drivers')} · ${esc(session)}</span></span></button>`}).join('')||`<p class="empty">${text('Статусы недоступны','Server status unavailable')}</p>`;
 }
-const cols={leaderboard:[['rank','#'],['driver','driver'],['elo','ELO'],['safety_rating','SR'],['points','points'],['wins','wins'],['podiums','podiums'],['races','racesCol'],['average_finish','finish'],['club','club'],['team','team']],safety:[['rank','#'],['driver','driver'],['safety_rating','SR'],['elo','ELO'],['races_count','racesCol'],['favorite_car','car'],['club','club'],['team','team']],bestlaps:[['rank','#'],['driver','driver'],['best_lap','lap'],['car_name','car'],['updated_at','date'],['session_type','session'],['elo','ELO'],['safety_rating','SR'],['club','club'],['team','team']],clubs:[['rank','#'],['display_name','teams'],['total_points','points'],['average_elo','ELO'],['average_sr','SR'],['race_count','racesCol']]};
+const cols={leaderboard:[['rank','#'],['driver','driver'],['elo','ELO'],['safety_rating','SR'],['points','points'],['wins','wins'],['podiums','podiums'],['races','racesCol'],['average_finish','finish'],['club','club'],['team','team']],safety:[['rank','№'],['driver','driver'],['safety_rating','SR'],['active_strikes',text('Страйки','Strikes')],['races_count','racesCol'],['total_laps',text('Всего кругов','Total laps')],['total_invalid_laps',text('Грязные круги','Invalid laps')],['total_counted_penalties',text('Автоштрафы','Auto penalties')],['total_incident_points',text('Инциденты','Incidents')]],bestlaps:[['rank','#'],['driver','driver'],['best_lap','lap'],['car_name','car'],['updated_at','date'],['session_type','session'],['elo','ELO'],['safety_rating','SR'],['club','club'],['team','team']],clubs:[['rank','#'],['display_name','teams'],['total_points','points'],['average_elo','ELO'],['average_sr','SR'],['race_count','racesCol']]};
 function tableCell(row,key,index){
   if(key==='rank')return `<span class="${index<3?'top-rank':''}">${index+1}</span>`;
   if(key==='driver')return row.public_id?`<a href="${driverHref(row.public_id)}">${esc(row.driver||row.name)}</a>`:esc(row.driver||row.name);
@@ -147,7 +147,7 @@ async function loadTable(){
   const request=++tableRequest;
   if(tab==='clubs'){tableBusy=false;tableError=Boolean(model?.clubsError);renderTable();return}
   tableBusy=true;tableError=false;renderTable();
-  try{const result=normalizeTablePage(await native().loadTable(tab,page,track,$('search').value.trim(),sortKey));if(request!==tableRequest)return;let rows=result?.items||[];
+  try{const result=normalizeTablePage(await native().loadTable(tab,page,track,$('search').value.trim(),sortKey));if(request!==tableRequest)return;let rows=(result?.items||[]).map(row=>tab==='safety'?normalizeSafetyRow(row):row);
     if(result?.full){const q=$('search').value.toLocaleLowerCase();rows=rows.filter(r=>String(r.driver||r.name||'').toLocaleLowerCase().includes(q));if(sortKey)rows.sort((a,b)=>(typeof a[sortKey]==='number'?a[sortKey]-b[sortKey]:String(a[sortKey]??'').localeCompare(String(b[sortKey]??'')))*sortDirection);tableTotal=rows.length;rows=rows.slice((page-1)*10,page*10)}else tableTotal=result?.total_items??rows.length;
     tableRows=rows;
   }catch{if(request===tableRequest){tableRows=[];tableTotal=0;tableError=true}}finally{if(request===tableRequest){tableBusy=false;renderTable()}}
@@ -229,4 +229,4 @@ const boot=$('site-shell'),loader=document.querySelector('.home-loader');
 let seenIntro=false;try{seenIntro=Boolean(sessionStorage.getItem('asgV2IntroSeen'))}catch{}
 if(reduced.matches||seenIntro){document.documentElement.classList.remove('home-booting');loader.hidden=true}else{document.documentElement.classList.add('home-booting');boot.inert=true;setTimeout(()=>{document.documentElement.classList.remove('home-booting');document.documentElement.classList.add('home-ready');boot.inert=false;loader.hidden=true;try{sessionStorage.setItem('asgV2IntroSeen','1')}catch{}},1050)}
 renderTable();$('race-vote').disabled=true;
-try{await import('./runtime/home.js?v=20261006v2f');setTimeout(applyHash,1500)}catch(error){console.error('V2 runtime unavailable',error);$('event-track').textContent=text('Не удалось загрузить данные','Could not load data');$('day-driver').textContent=text('Данные недоступны','Data unavailable');tableError=true;tableBusy=false;renderTable()}
+try{await import('./runtime/home.js?v=20261006v2g');setTimeout(applyHash,1500)}catch(error){console.error('V2 runtime unavailable',error);$('event-track').textContent=text('Не удалось загрузить данные','Could not load data');$('day-driver').textContent=text('Данные недоступны','Data unavailable');tableError=true;tableBusy=false;renderTable()}

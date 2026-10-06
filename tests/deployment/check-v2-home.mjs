@@ -14,6 +14,15 @@ assert.ok(pw,'Playwright is required');
 const browser=await pw.chromium.launch({headless:true,executablePath:'C:/Program Files/Google/Chrome/Application/chrome.exe'});
 const base=process.env.ASG_V2_PREVIEW||'http://127.0.0.1:8840',reports=[];
 let fixtureWrites=0;
+async function checkSafetyColumns(page,language,width){
+  assert.deepEqual(await page.locator('#v2-rating-table th').allTextContents(),language==='ru'?['№','Пилот','SR','Страйки','Гонки','Всего кругов','Грязные круги','Автоштрафы','Инциденты']:['№','Driver','SR','Strikes','Races','Total laps','Invalid laps','Auto penalties','Incidents']);
+  const row=snapshot.home.safety[0],values=await page.locator('#v2-rating-table tbody tr').first().locator('td').allTextContents();
+  assert.deepEqual(values.slice(3).map(v=>v.replace(/[\s,]/g,'')),[row.strikes.active,row.races_count,row.total_laps,row.total_invalid_laps,row.total_counted_penalties,row.total_incident_points].map(String));
+  assert.equal(await page.locator('#v2-rating-table [data-rating="elo"]').count(),0);
+  assert.equal(await page.locator('#v2-rating-table tbody tr').first().locator('a[href*="/driver/"]').count(),1);
+  assert.equal(await page.locator('#v2-rating-table tbody tr').first().locator('[data-rating="sr"]').count(),1);
+  if(language==='ru')await page.screenshot({path:path.join(root,`design-research/v2-verification/safety-columns-${width}.png`)});
+}
 async function dialogSnapshot(page,name,language,width){
   await page.waitForTimeout(250);assert.ok(await page.locator('#v2-modal').evaluate(n=>n.scrollWidth<=n.clientWidth+1),name+' dialog overflow');
   if(language==='ru')await page.screenshot({path:path.join(root,`design-research/v2-verification/${name}-${language}-${width}.png`)});
@@ -129,6 +138,7 @@ try{
       await page.locator('#v2-site-shell [data-tab="bestlaps"]').click();await page.waitForTimeout(250);assert.equal(await page.locator('#v2-ranking-track').isVisible(),true);assert.equal(await page.locator('#v2-rating-table tbody tr[data-row]').count(),10);
       await page.locator('#v2-next').click();await page.waitForTimeout(250);assert.equal(await page.locator('#v2-page-number').textContent(),'02');assert.equal(await page.locator('#v2-rating-table tbody tr[data-row]').count(),10);
       await page.locator('#v2-site-shell [data-tab="safety"]').click();await page.waitForTimeout(250);assert.equal(await page.locator('#v2-rating-table tbody tr[data-row]').count(),10);
+      await checkSafetyColumns(page,language,width);
       await page.locator('#v2-next').click();await page.waitForTimeout(250);assert.equal(await page.locator('#v2-page-number').textContent(),'02');assert.equal(await page.locator('#v2-rating-table tbody tr[data-row]').count(),10);assert.ok(!log.some(r=>new URL(r.url).pathname.includes('/tables/safety/')));
       await page.locator('#v2-site-shell [data-tab="clubs"]').click();assert.ok(await page.locator('#v2-rating-table tbody tr[data-row]').count()>0);
       await page.locator('#v2-ranking-club-type').selectOption('clubs');assert.ok(await page.locator('#v2-rating-table tbody a[href*="/clubs/"]').count()>0);
@@ -147,6 +157,7 @@ try{
       await page.locator('#v2-rating-table tbody tr').first().click({position:{x:15,y:15}});await page.waitForTimeout(250);await dialogSnapshot(page,'driver',language,width);await page.locator('#v2-driver-lap-value').scrollIntoViewIfNeeded();assert.ok(await page.locator('#v2-driver-lap-value').evaluate(n=>n.scrollWidth<=n.clientWidth+1));if(language==='ru')await page.screenshot({path:path.join(root,'design-research/v2-verification/driver-lap-mobile.png')});await page.locator('#v2-modal .modal-close').click();
       await page.locator('#v2-site-shell [data-modal="elo"]').first().click();await dialogSnapshot(page,'elo-reference',language,width);await page.locator('#v2-modal .modal-close').click();
     }
+    if(width<1280){await page.locator('#v2-site-shell [data-tab="safety"]').click();await page.waitForTimeout(250);await checkSafetyColumns(page,language,width)}
     assert.deepEqual(errors,[]);reports.push({width,height,language,rows:info.rows,servers:info.servers});await page.close();
   }
   for(const options of [{signed:true},{signed:true,admin:true},{failVote:true},{emptyHomePreviews:true},{normalEvent:true},{carousel:true},{motion:true},{bannedDriver:true,noTitle:true},{largeRoster:true},{missingRoster:true},{staleServers:true}]){
@@ -162,7 +173,7 @@ try{
     else if(options.motion){
       await page.locator('.asg-legal-banner-btn-secondary').click();await page.waitForTimeout(4100);
       assert.equal(await page.evaluate(()=>document.getAnimations().filter(a=>a.playState==='running').length),0,'Idle homepage has no decorative frame loop');
-      await page.evaluate(async()=>{const {subscribe,publish}=await import('/v2/bridge.js?v=20261006v2f');let model;subscribe(m=>model=m)();window.__motionModel=structuredClone(model);window.__motionModel.announcement.event_id+=':motion-test';window.__motionModel.donations.goal.raised_amount+=1;window.__motionPublish=publish;publish(window.__motionModel)});
+      await page.evaluate(async()=>{const {subscribe,publish}=await import('/v2/bridge.js?v=20261006v2g');let model;subscribe(m=>model=m)();window.__motionModel=structuredClone(model);window.__motionModel.announcement.event_id+=':motion-test';window.__motionModel.donations.goal.raised_amount+=1;window.__motionPublish=publish;publish(window.__motionModel)});
       await page.waitForTimeout(120);
       assert.equal(await page.evaluate(()=>document.getAnimations().filter(a=>a.playState==='running'&&['v2-multiplier','v2-fund-progress'].includes(a.effect.target.id||a.effect.target.parentElement?.id)).length),2);
       assert.ok(await page.evaluate(()=>document.getAnimations().filter(a=>a.effect.target.id==='v2-multiplier').every(a=>a.effect.getTiming().iterations===2&&a.effect.getKeyframes().every(k=>!('color' in k)&&!('textShadow' in k)))));

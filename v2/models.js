@@ -9,3 +9,14 @@ export function normalizeTablePage(result) {
   if(!result)return {items:[],total_items:0};
   return {...result,total_items:result.total_items??result.totalItems??result.items?.length??0};
 }
+// Home previews and full rating rows publish the same SR counters under two schemas.
+export function normalizeSafetyRow(row) {
+  return {...row,
+    active_strikes:row.strikes?.active??row.active_strikes??null,
+    races_count:row.races_count??row.safety_races??null,
+    total_laps:row.total_laps??row.safety_total_laps??null,
+    total_invalid_laps:row.total_invalid_laps??row.safety_total_invalid_laps??null,
+    total_counted_penalties:row.total_counted_penalties??row.safety_total_counted_penalties??null,
+    total_incident_points:row.total_incident_points??row.safety_total_incident_points??null
+  };
+}
