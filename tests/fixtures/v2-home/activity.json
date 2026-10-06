@@ -1,0 +1,1725 @@
+[
+  {
+    "date": "2026-10-06",
+    "races": 15,
+    "race_participants_total": 326,
+    "avg_players_per_race": 21.73,
+    "sessions": 41,
+    "unique_players": 204,
+    "activity_score": 16,
+    "tracks": [
+      "monza",
+      "nurburgring_24h",
+      "spa"
+    ],
+    "peak_hour": {
+      "hour": "00",
+      "races": 5,
+      "avg_players_per_race": 33.89,
+      "unique_players": 103,
+      "label": "00:00",
+      "activity_score": 100
+    },
+    "hours": [
+      {
+        "hour": "00",
+        "races": 5,
+        "avg_players_per_race": 33.89,
+        "unique_players": 103,
+        "label": "00:00",
+        "activity_score": 100
+      },
+      {
+        "hour": "01",
+        "races": 4,
+        "avg_players_per_race": 33.0,
+        "unique_players": 59,
+        "label": "01:00",
+        "activity_score": 80
+      },
+      {
+        "hour": "02",
+        "races": 3,
+        "avg_players_per_race": 28.03,
+        "unique_players": 43,
+        "label": "02:00",
+        "activity_score": 60
+      },
+      {
+        "hour": "03",
+        "races": 2,
+        "avg_players_per_race": 26.58,
+        "unique_players": 42,
+        "label": "03:00",
+        "activity_score": 40
+      },
+      {
+        "hour": "04",
+        "races": 0,
+        "avg_players_per_race": 0,
+        "unique_players": 0,
+        "label": "04:00",
+        "activity_score": 0
+      },
+      {
+        "hour": "05",
+        "races": 0,
+        "avg_players_per_race": 0,
+        "unique_players": 0,
+        "label": "05:00",
+        "activity_score": 0
+      },
+      {
+        "hour": "06",
+        "races": 0,
+        "avg_players_per_race": 0,
+        "unique_players": 0,
+        "label": "06:00",
+        "activity_score": 0
+      },
+      {
+        "hour": "07",
+        "races": 0,
+        "avg_players_per_race": 0,
+        "unique_players": 0,
+        "label": "07:00",
+        "activity_score": 0
+      },
+      {
+        "hour": "08",
+        "races": 0,
+        "avg_players_per_race": 0,
+        "unique_players": 0,
+        "label": "08:00",
+        "activity_score": 0
+      },
+      {
+        "hour": "09",
+        "races": 1,
+        "avg_players_per_race": 14.0,
+        "unique_players": 14,
+        "label": "09:00",
+        "activity_score": 20
+      },
+      {
+        "hour": "10",
+        "races": 0,
+        "avg_players_per_race": 0,
+        "unique_players": 0,
+        "label": "10:00",
+        "activity_score": 0
+      },
+      {
+        "hour": "11",
+        "races": 0,
+        "avg_players_per_race": 0,
+        "unique_players": 0,
+        "label": "11:00",
+        "activity_score": 0
+      },
+      {
+        "hour": "12",
+        "races": 0,
+        "avg_players_per_race": 0,
+        "unique_players": 0,
+        "label": "12:00",
+        "activity_score": 0
+      },
+      {
+        "hour": "13",
+        "races": 0,
+        "avg_players_per_race": 0,
+        "unique_players": 0,
+        "label": "13:00",
+        "activity_score": 0
+      },
+      {
+        "hour": "14",
+        "races": 0,
+        "avg_players_per_race": 0,
+        "unique_players": 0,
+        "label": "14:00",
+        "activity_score": 0
+      },
+      {
+        "hour": "15",
+        "races": 0,
+        "avg_players_per_race": 0,
+        "unique_players": 0,
+        "label": "15:00",
+        "activity_score": 0
+      },
+      {
+        "hour": "16",
+        "races": 0,
+        "avg_players_per_race": 0,
+        "unique_players": 0,
+        "label": "16:00",
+        "activity_score": 0
+      },
+      {
+        "hour": "17",
+        "races": 0,
+        "avg_players_per_race": 0,
+        "unique_players": 0,
+        "label": "17:00",
+        "activity_score": 0
+      },
+      {
+        "hour": "18",
+        "races": 0,
+        "avg_players_per_race": 0,
+        "unique_players": 0,
+        "label": "18:00",
+        "activity_score": 0
+      },
+      {
+        "hour": "19",
+        "races": 0,
+        "avg_players_per_race": 0,
+        "unique_players": 0,
+        "label": "19:00",
+        "activity_score": 0
+      },
+      {
+        "hour": "20",
+        "races": 0,
+        "avg_players_per_race": 0,
+        "unique_players": 0,
+        "label": "20:00",
+        "activity_score": 0
+      },
+      {
+        "hour": "21",
+        "races": 0,
+        "avg_players_per_race": 0,
+        "unique_players": 0,
+        "label": "21:00",
+        "activity_score": 0
+      },
+      {
+        "hour": "22",
+        "races": 0,
+        "avg_players_per_race": 0,
+        "unique_players": 0,
+        "label": "22:00",
+        "activity_score": 0
+      },
+      {
+        "hour": "23",
+        "races": 0,
+        "avg_players_per_race": 0,
+        "unique_players": 0,
+        "label": "23:00",
+        "activity_score": 0
+      }
+    ]
+  },
+  {
+    "date": "2026-09-30",
+    "races": 57,
+    "race_participants_total": 1409,
+    "avg_players_per_race": 24.72,
+    "sessions": 151,
+    "unique_players": 769,
+    "activity_score": 62,
+    "tracks": [
+      "monza",
+      "mount_panorama",
+      "nurburgring",
+      "spa"
+    ],
+    "peak_hour": {
+      "hour": "19",
+      "races": 7,
+      "avg_players_per_race": 36.07,
+      "unique_players": 140,
+      "label": "19:00",
+      "activity_score": 100
+    },
+    "hours": [
+      {
+        "hour": "00",
+        "races": 6,
+        "avg_players_per_race": 22.36,
+        "unique_players": 87,
+        "label": "00:00",
+        "activity_score": 86
+      },
+      {
+        "hour": "01",
+        "races": 4,
+        "avg_players_per_race": 5.11,
+        "unique_players": 14,
+        "label": "01:00",
+        "activity_score": 57
+      },
+      {
+        "hour": "02",
+        "races": 2,
+        "avg_players_per_race": 5.0,
+        "unique_players": 6,
+        "label": "02:00",
+        "activity_score": 29
+      },
+      {
+        "hour": "03",
+        "races": 0,
+        "avg_players_per_race": 0,
+        "unique_players": 0,
+        "label": "03:00",
+        "activity_score": 0
+      },
+      {
+        "hour": "04",
+        "races": 0,
+        "avg_players_per_race": 0,
+        "unique_players": 0,
+        "label": "04:00",
+        "activity_score": 0
+      },
+      {
+        "hour": "05",
+        "races": 0,
+        "avg_players_per_race": 0,
+        "unique_players": 0,
+        "label": "05:00",
+        "activity_score": 0
+      },
+      {
+        "hour": "06",
+        "races": 0,
+        "avg_players_per_race": 0,
+        "unique_players": 0,
+        "label": "06:00",
+        "activity_score": 0
+      },
+      {
+        "hour": "07",
+        "races": 0,
+        "avg_players_per_race": 0,
+        "unique_players": 0,
+        "label": "07:00",
+        "activity_score": 0
+      },
+      {
+        "hour": "08",
+        "races": 0,
+        "avg_players_per_race": 0,
+        "unique_players": 0,
+        "label": "08:00",
+        "activity_score": 0
+      },
+      {
+        "hour": "09",
+        "races": 0,
+        "avg_players_per_race": 0,
+        "unique_players": 0,
+        "label": "09:00",
+        "activity_score": 0
+      },
+      {
+        "hour": "10",
+        "races": 0,
+        "avg_players_per_race": 0,
+        "unique_players": 0,
+        "label": "10:00",
+        "activity_score": 0
+      },
+      {
+        "hour": "11",
+        "races": 0,
+        "avg_players_per_race": 0,
+        "unique_players": 0,
+        "label": "11:00",
+        "activity_score": 0
+      },
+      {
+        "hour": "12",
+        "races": 0,
+        "avg_players_per_race": 0,
+        "unique_players": 0,
+        "label": "12:00",
+        "activity_score": 0
+      },
+      {
+        "hour": "13",
+        "races": 0,
+        "avg_players_per_race": 0,
+        "unique_players": 0,
+        "label": "13:00",
+        "activity_score": 0
+      },
+      {
+        "hour": "14",
+        "races": 0,
+        "avg_players_per_race": 0,
+        "unique_players": 0,
+        "label": "14:00",
+        "activity_score": 0
+      },
+      {
+        "hour": "15",
+        "races": 3,
+        "avg_players_per_race": 19.06,
+        "unique_players": 30,
+        "label": "15:00",
+        "activity_score": 43
+      },
+      {
+        "hour": "16",
+        "races": 5,
+        "avg_players_per_race": 32.95,
+        "unique_players": 94,
+        "label": "16:00",
+        "activity_score": 71
+      },
+      {
+        "hour": "17",
+        "races": 5,
+        "avg_players_per_race": 35.18,
+        "unique_players": 125,
+        "label": "17:00",
+        "activity_score": 71
+      },
+      {
+        "hour": "18",
+        "races": 5,
+        "avg_players_per_race": 37.76,
+        "unique_players": 126,
+        "label": "18:00",
+        "activity_score": 71
+      },
+      {
+        "hour": "19",
+        "races": 7,
+        "avg_players_per_race": 36.07,
+        "unique_players": 140,
+        "label": "19:00",
+        "activity_score": 100
+      },
+      {
+        "hour": "20",
+        "races": 6,
+        "avg_players_per_race": 36.91,
+        "unique_players": 151,
+        "label": "20:00",
+        "activity_score": 86
+      },
+      {
+        "hour": "21",
+        "races": 6,
+        "avg_players_per_race": 37.38,
+        "unique_players": 168,
+        "label": "21:00",
+        "activity_score": 86
+      },
+      {
+        "hour": "22",
+        "races": 4,
+        "avg_players_per_race": 35.38,
+        "unique_players": 86,
+        "label": "22:00",
+        "activity_score": 57
+      },
+      {
+        "hour": "23",
+        "races": 4,
+        "avg_players_per_race": 39.47,
+        "unique_players": 104,
+        "label": "23:00",
+        "activity_score": 57
+      }
+    ]
+  },
+  {
+    "date": "2026-08-31",
+    "races": 56,
+    "race_participants_total": 1637,
+    "avg_players_per_race": 29.23,
+    "sessions": 136,
+    "unique_players": 790,
+    "activity_score": 61,
+    "tracks": [
+      "monza",
+      "nurburgring_24h"
+    ],
+    "peak_hour": {
+      "hour": "17",
+      "races": 5,
+      "avg_players_per_race": 41.2,
+      "unique_players": 114,
+      "label": "17:00",
+      "activity_score": 100
+    },
+    "hours": [
+      {
+        "hour": "00",
+        "races": 3,
+        "avg_players_per_race": 29.99,
+        "unique_players": 69,
+        "label": "00:00",
+        "activity_score": 60
+      },
+      {
+        "hour": "01",
+        "races": 2,
+        "avg_players_per_race": 10.16,
+        "unique_players": 19,
+        "label": "01:00",
+        "activity_score": 40
+      },
+      {
+        "hour": "02",
+        "races": 1,
+        "avg_players_per_race": 12.0,
+        "unique_players": 12,
+        "label": "02:00",
+        "activity_score": 20
+      },
+      {
+        "hour": "03",
+        "races": 0,
+        "avg_players_per_race": 0,
+        "unique_players": 0,
+        "label": "03:00",
+        "activity_score": 0
+      },
+      {
+        "hour": "04",
+        "races": 1,
+        "avg_players_per_race": 11.0,
+        "unique_players": 11,
+        "label": "04:00",
+        "activity_score": 20
+      },
+      {
+        "hour": "05",
+        "races": 0,
+        "avg_players_per_race": 0,
+        "unique_players": 0,
+        "label": "05:00",
+        "activity_score": 0
+      },
+      {
+        "hour": "06",
+        "races": 0,
+        "avg_players_per_race": 0,
+        "unique_players": 0,
+        "label": "06:00",
+        "activity_score": 0
+      },
+      {
+        "hour": "07",
+        "races": 1,
+        "avg_players_per_race": 10.0,
+        "unique_players": 10,
+        "label": "07:00",
+        "activity_score": 20
+      },
+      {
+        "hour": "08",
+        "races": 1,
+        "avg_players_per_race": 12.0,
+        "unique_players": 12,
+        "label": "08:00",
+        "activity_score": 20
+      },
+      {
+        "hour": "09",
+        "races": 1,
+        "avg_players_per_race": 11.0,
+        "unique_players": 11,
+        "label": "09:00",
+        "activity_score": 20
+      },
+      {
+        "hour": "10",
+        "races": 2,
+        "avg_players_per_race": 13.0,
+        "unique_players": 23,
+        "label": "10:00",
+        "activity_score": 40
+      },
+      {
+        "hour": "11",
+        "races": 1,
+        "avg_players_per_race": 20.0,
+        "unique_players": 20,
+        "label": "11:00",
+        "activity_score": 20
+      },
+      {
+        "hour": "12",
+        "races": 2,
+        "avg_players_per_race": 30.19,
+        "unique_players": 44,
+        "label": "12:00",
+        "activity_score": 40
+      },
+      {
+        "hour": "13",
+        "races": 3,
+        "avg_players_per_race": 32.44,
+        "unique_players": 53,
+        "label": "13:00",
+        "activity_score": 60
+      },
+      {
+        "hour": "14",
+        "races": 3,
+        "avg_players_per_race": 31.57,
+        "unique_players": 82,
+        "label": "14:00",
+        "activity_score": 60
+      },
+      {
+        "hour": "15",
+        "races": 4,
+        "avg_players_per_race": 40.61,
+        "unique_players": 120,
+        "label": "15:00",
+        "activity_score": 80
+      },
+      {
+        "hour": "16",
+        "races": 4,
+        "avg_players_per_race": 36.55,
+        "unique_players": 79,
+        "label": "16:00",
+        "activity_score": 80
+      },
+      {
+        "hour": "17",
+        "races": 5,
+        "avg_players_per_race": 41.2,
+        "unique_players": 114,
+        "label": "17:00",
+        "activity_score": 100
+      },
+      {
+        "hour": "18",
+        "races": 3,
+        "avg_players_per_race": 42.15,
+        "unique_players": 97,
+        "label": "18:00",
+        "activity_score": 60
+      },
+      {
+        "hour": "19",
+        "races": 3,
+        "avg_players_per_race": 41.12,
+        "unique_players": 102,
+        "label": "19:00",
+        "activity_score": 60
+      },
+      {
+        "hour": "20",
+        "races": 4,
+        "avg_players_per_race": 40.46,
+        "unique_players": 114,
+        "label": "20:00",
+        "activity_score": 80
+      },
+      {
+        "hour": "21",
+        "races": 4,
+        "avg_players_per_race": 39.77,
+        "unique_players": 124,
+        "label": "21:00",
+        "activity_score": 80
+      },
+      {
+        "hour": "22",
+        "races": 5,
+        "avg_players_per_race": 41.95,
+        "unique_players": 129,
+        "label": "22:00",
+        "activity_score": 100
+      },
+      {
+        "hour": "23",
+        "races": 3,
+        "avg_players_per_race": 33.26,
+        "unique_players": 81,
+        "label": "23:00",
+        "activity_score": 60
+      }
+    ]
+  },
+  {
+    "date": "2026-07-31",
+    "races": 63,
+    "race_participants_total": 1553,
+    "avg_players_per_race": 24.65,
+    "sessions": 164,
+    "unique_players": 797,
+    "activity_score": 68,
+    "tracks": [
+      "monza",
+      "mount_panorama",
+      "nurburgring_24h",
+      "spa"
+    ],
+    "peak_hour": {
+      "hour": "22",
+      "races": 6,
+      "avg_players_per_race": 35.99,
+      "unique_players": 121,
+      "label": "22:00",
+      "activity_score": 100
+    },
+    "hours": [
+      {
+        "hour": "00",
+        "races": 5,
+        "avg_players_per_race": 32.62,
+        "unique_players": 107,
+        "label": "00:00",
+        "activity_score": 83
+      },
+      {
+        "hour": "01",
+        "races": 5,
+        "avg_players_per_race": 21.59,
+        "unique_players": 65,
+        "label": "01:00",
+        "activity_score": 83
+      },
+      {
+        "hour": "02",
+        "races": 0,
+        "avg_players_per_race": 0,
+        "unique_players": 0,
+        "label": "02:00",
+        "activity_score": 0
+      },
+      {
+        "hour": "03",
+        "races": 1,
+        "avg_players_per_race": 6.0,
+        "unique_players": 6,
+        "label": "03:00",
+        "activity_score": 17
+      },
+      {
+        "hour": "04",
+        "races": 0,
+        "avg_players_per_race": 0,
+        "unique_players": 0,
+        "label": "04:00",
+        "activity_score": 0
+      },
+      {
+        "hour": "05",
+        "races": 3,
+        "avg_players_per_race": 14.7,
+        "unique_players": 19,
+        "label": "05:00",
+        "activity_score": 50
+      },
+      {
+        "hour": "06",
+        "races": 1,
+        "avg_players_per_race": 10.0,
+        "unique_players": 10,
+        "label": "06:00",
+        "activity_score": 17
+      },
+      {
+        "hour": "07",
+        "races": 1,
+        "avg_players_per_race": 8.0,
+        "unique_players": 8,
+        "label": "07:00",
+        "activity_score": 17
+      },
+      {
+        "hour": "08",
+        "races": 0,
+        "avg_players_per_race": 0,
+        "unique_players": 0,
+        "label": "08:00",
+        "activity_score": 0
+      },
+      {
+        "hour": "09",
+        "races": 0,
+        "avg_players_per_race": 0,
+        "unique_players": 0,
+        "label": "09:00",
+        "activity_score": 0
+      },
+      {
+        "hour": "10",
+        "races": 2,
+        "avg_players_per_race": 13.96,
+        "unique_players": 20,
+        "label": "10:00",
+        "activity_score": 33
+      },
+      {
+        "hour": "11",
+        "races": 2,
+        "avg_players_per_race": 28.32,
+        "unique_players": 44,
+        "label": "11:00",
+        "activity_score": 33
+      },
+      {
+        "hour": "12",
+        "races": 2,
+        "avg_players_per_race": 26.58,
+        "unique_players": 38,
+        "label": "12:00",
+        "activity_score": 33
+      },
+      {
+        "hour": "13",
+        "races": 3,
+        "avg_players_per_race": 32.04,
+        "unique_players": 52,
+        "label": "13:00",
+        "activity_score": 50
+      },
+      {
+        "hour": "14",
+        "races": 2,
+        "avg_players_per_race": 37.0,
+        "unique_players": 53,
+        "label": "14:00",
+        "activity_score": 33
+      },
+      {
+        "hour": "15",
+        "races": 2,
+        "avg_players_per_race": 30.28,
+        "unique_players": 39,
+        "label": "15:00",
+        "activity_score": 33
+      },
+      {
+        "hour": "16",
+        "races": 2,
+        "avg_players_per_race": 45.51,
+        "unique_players": 70,
+        "label": "16:00",
+        "activity_score": 33
+      },
+      {
+        "hour": "17",
+        "races": 5,
+        "avg_players_per_race": 33.97,
+        "unique_players": 69,
+        "label": "17:00",
+        "activity_score": 83
+      },
+      {
+        "hour": "18",
+        "races": 3,
+        "avg_players_per_race": 44.54,
+        "unique_players": 78,
+        "label": "18:00",
+        "activity_score": 50
+      },
+      {
+        "hour": "19",
+        "races": 5,
+        "avg_players_per_race": 38.94,
+        "unique_players": 103,
+        "label": "19:00",
+        "activity_score": 83
+      },
+      {
+        "hour": "20",
+        "races": 3,
+        "avg_players_per_race": 39.0,
+        "unique_players": 89,
+        "label": "20:00",
+        "activity_score": 50
+      },
+      {
+        "hour": "21",
+        "races": 5,
+        "avg_players_per_race": 34.43,
+        "unique_players": 109,
+        "label": "21:00",
+        "activity_score": 83
+      },
+      {
+        "hour": "22",
+        "races": 6,
+        "avg_players_per_race": 35.99,
+        "unique_players": 121,
+        "label": "22:00",
+        "activity_score": 100
+      },
+      {
+        "hour": "23",
+        "races": 5,
+        "avg_players_per_race": 36.46,
+        "unique_players": 142,
+        "label": "23:00",
+        "activity_score": 83
+      }
+    ]
+  },
+  {
+    "date": "2026-06-30",
+    "races": 63,
+    "race_participants_total": 1838,
+    "avg_players_per_race": 29.17,
+    "sessions": 167,
+    "unique_players": 950,
+    "activity_score": 68,
+    "tracks": [
+      "monza",
+      "nurburgring",
+      "spa"
+    ],
+    "peak_hour": {
+      "hour": "20",
+      "races": 6,
+      "avg_players_per_race": 43.8,
+      "unique_players": 130,
+      "label": "20:00",
+      "activity_score": 100
+    },
+    "hours": [
+      {
+        "hour": "00",
+        "races": 5,
+        "avg_players_per_race": 33.58,
+        "unique_players": 125,
+        "label": "00:00",
+        "activity_score": 83
+      },
+      {
+        "hour": "01",
+        "races": 5,
+        "avg_players_per_race": 23.22,
+        "unique_players": 86,
+        "label": "01:00",
+        "activity_score": 83
+      },
+      {
+        "hour": "02",
+        "races": 2,
+        "avg_players_per_race": 26.0,
+        "unique_players": 38,
+        "label": "02:00",
+        "activity_score": 33
+      },
+      {
+        "hour": "03",
+        "races": 3,
+        "avg_players_per_race": 19.83,
+        "unique_players": 48,
+        "label": "03:00",
+        "activity_score": 50
+      },
+      {
+        "hour": "04",
+        "races": 3,
+        "avg_players_per_race": 21.21,
+        "unique_players": 49,
+        "label": "04:00",
+        "activity_score": 50
+      },
+      {
+        "hour": "05",
+        "races": 1,
+        "avg_players_per_race": 4.0,
+        "unique_players": 4,
+        "label": "05:00",
+        "activity_score": 17
+      },
+      {
+        "hour": "06",
+        "races": 0,
+        "avg_players_per_race": 0,
+        "unique_players": 0,
+        "label": "06:00",
+        "activity_score": 0
+      },
+      {
+        "hour": "07",
+        "races": 0,
+        "avg_players_per_race": 0,
+        "unique_players": 0,
+        "label": "07:00",
+        "activity_score": 0
+      },
+      {
+        "hour": "08",
+        "races": 1,
+        "avg_players_per_race": 11.0,
+        "unique_players": 11,
+        "label": "08:00",
+        "activity_score": 17
+      },
+      {
+        "hour": "09",
+        "races": 0,
+        "avg_players_per_race": 0,
+        "unique_players": 0,
+        "label": "09:00",
+        "activity_score": 0
+      },
+      {
+        "hour": "10",
+        "races": 1,
+        "avg_players_per_race": 10.0,
+        "unique_players": 10,
+        "label": "10:00",
+        "activity_score": 17
+      },
+      {
+        "hour": "11",
+        "races": 3,
+        "avg_players_per_race": 22.88,
+        "unique_players": 37,
+        "label": "11:00",
+        "activity_score": 50
+      },
+      {
+        "hour": "12",
+        "races": 1,
+        "avg_players_per_race": 33.0,
+        "unique_players": 33,
+        "label": "12:00",
+        "activity_score": 17
+      },
+      {
+        "hour": "13",
+        "races": 3,
+        "avg_players_per_race": 38.37,
+        "unique_players": 67,
+        "label": "13:00",
+        "activity_score": 50
+      },
+      {
+        "hour": "14",
+        "races": 2,
+        "avg_players_per_race": 33.38,
+        "unique_players": 47,
+        "label": "14:00",
+        "activity_score": 33
+      },
+      {
+        "hour": "15",
+        "races": 3,
+        "avg_players_per_race": 43.76,
+        "unique_players": 70,
+        "label": "15:00",
+        "activity_score": 50
+      },
+      {
+        "hour": "16",
+        "races": 3,
+        "avg_players_per_race": 44.45,
+        "unique_players": 105,
+        "label": "16:00",
+        "activity_score": 50
+      },
+      {
+        "hour": "17",
+        "races": 3,
+        "avg_players_per_race": 33.12,
+        "unique_players": 84,
+        "label": "17:00",
+        "activity_score": 50
+      },
+      {
+        "hour": "18",
+        "races": 5,
+        "avg_players_per_race": 38.9,
+        "unique_players": 108,
+        "label": "18:00",
+        "activity_score": 83
+      },
+      {
+        "hour": "19",
+        "races": 3,
+        "avg_players_per_race": 40.88,
+        "unique_players": 107,
+        "label": "19:00",
+        "activity_score": 50
+      },
+      {
+        "hour": "20",
+        "races": 6,
+        "avg_players_per_race": 43.8,
+        "unique_players": 130,
+        "label": "20:00",
+        "activity_score": 100
+      },
+      {
+        "hour": "21",
+        "races": 3,
+        "avg_players_per_race": 45.31,
+        "unique_players": 110,
+        "label": "21:00",
+        "activity_score": 50
+      },
+      {
+        "hour": "22",
+        "races": 4,
+        "avg_players_per_race": 40.99,
+        "unique_players": 135,
+        "label": "22:00",
+        "activity_score": 67
+      },
+      {
+        "hour": "23",
+        "races": 3,
+        "avg_players_per_race": 38.2,
+        "unique_players": 89,
+        "label": "23:00",
+        "activity_score": 50
+      }
+    ]
+  },
+  {
+    "date": "2026-05-31",
+    "races": 36,
+    "race_participants_total": 1221,
+    "avg_players_per_race": 33.92,
+    "sessions": 99,
+    "unique_players": 543,
+    "activity_score": 39,
+    "tracks": [
+      "monza"
+    ],
+    "peak_hour": {
+      "hour": "01",
+      "races": 3,
+      "avg_players_per_race": 41.21,
+      "unique_players": 51,
+      "label": "01:00",
+      "activity_score": 100
+    },
+    "hours": [
+      {
+        "hour": "00",
+        "races": 2,
+        "avg_players_per_race": 49.37,
+        "unique_players": 72,
+        "label": "00:00",
+        "activity_score": 67
+      },
+      {
+        "hour": "01",
+        "races": 3,
+        "avg_players_per_race": 41.21,
+        "unique_players": 51,
+        "label": "01:00",
+        "activity_score": 100
+      },
+      {
+        "hour": "02",
+        "races": 2,
+        "avg_players_per_race": 41.22,
+        "unique_players": 63,
+        "label": "02:00",
+        "activity_score": 67
+      },
+      {
+        "hour": "03",
+        "races": 2,
+        "avg_players_per_race": 22.6,
+        "unique_players": 32,
+        "label": "03:00",
+        "activity_score": 67
+      },
+      {
+        "hour": "04",
+        "races": 1,
+        "avg_players_per_race": 27.0,
+        "unique_players": 27,
+        "label": "04:00",
+        "activity_score": 33
+      },
+      {
+        "hour": "05",
+        "races": 1,
+        "avg_players_per_race": 14.0,
+        "unique_players": 14,
+        "label": "05:00",
+        "activity_score": 33
+      },
+      {
+        "hour": "06",
+        "races": 1,
+        "avg_players_per_race": 3.0,
+        "unique_players": 3,
+        "label": "06:00",
+        "activity_score": 33
+      },
+      {
+        "hour": "07",
+        "races": 0,
+        "avg_players_per_race": 0,
+        "unique_players": 0,
+        "label": "07:00",
+        "activity_score": 0
+      },
+      {
+        "hour": "08",
+        "races": 0,
+        "avg_players_per_race": 0,
+        "unique_players": 0,
+        "label": "08:00",
+        "activity_score": 0
+      },
+      {
+        "hour": "09",
+        "races": 0,
+        "avg_players_per_race": 0,
+        "unique_players": 0,
+        "label": "09:00",
+        "activity_score": 0
+      },
+      {
+        "hour": "10",
+        "races": 1,
+        "avg_players_per_race": 11.0,
+        "unique_players": 11,
+        "label": "10:00",
+        "activity_score": 33
+      },
+      {
+        "hour": "11",
+        "races": 1,
+        "avg_players_per_race": 34.0,
+        "unique_players": 34,
+        "label": "11:00",
+        "activity_score": 33
+      },
+      {
+        "hour": "12",
+        "races": 2,
+        "avg_players_per_race": 27.73,
+        "unique_players": 44,
+        "label": "12:00",
+        "activity_score": 67
+      },
+      {
+        "hour": "13",
+        "races": 1,
+        "avg_players_per_race": 24.0,
+        "unique_players": 24,
+        "label": "13:00",
+        "activity_score": 33
+      },
+      {
+        "hour": "14",
+        "races": 2,
+        "avg_players_per_race": 9.62,
+        "unique_players": 11,
+        "label": "14:00",
+        "activity_score": 67
+      },
+      {
+        "hour": "15",
+        "races": 2,
+        "avg_players_per_race": 46.55,
+        "unique_players": 64,
+        "label": "15:00",
+        "activity_score": 67
+      },
+      {
+        "hour": "16",
+        "races": 1,
+        "avg_players_per_race": 49.0,
+        "unique_players": 49,
+        "label": "16:00",
+        "activity_score": 33
+      },
+      {
+        "hour": "17",
+        "races": 2,
+        "avg_players_per_race": 42.79,
+        "unique_players": 57,
+        "label": "17:00",
+        "activity_score": 67
+      },
+      {
+        "hour": "18",
+        "races": 2,
+        "avg_players_per_race": 49.75,
+        "unique_players": 68,
+        "label": "18:00",
+        "activity_score": 67
+      },
+      {
+        "hour": "19",
+        "races": 1,
+        "avg_players_per_race": 49.0,
+        "unique_players": 49,
+        "label": "19:00",
+        "activity_score": 33
+      },
+      {
+        "hour": "20",
+        "races": 2,
+        "avg_players_per_race": 42.79,
+        "unique_players": 58,
+        "label": "20:00",
+        "activity_score": 67
+      },
+      {
+        "hour": "21",
+        "races": 1,
+        "avg_players_per_race": 51.0,
+        "unique_players": 51,
+        "label": "21:00",
+        "activity_score": 33
+      },
+      {
+        "hour": "22",
+        "races": 3,
+        "avg_players_per_race": 47.09,
+        "unique_players": 107,
+        "label": "22:00",
+        "activity_score": 100
+      },
+      {
+        "hour": "23",
+        "races": 3,
+        "avg_players_per_race": 42.14,
+        "unique_players": 81,
+        "label": "23:00",
+        "activity_score": 100
+      }
+    ]
+  },
+  {
+    "date": "2026-04-30",
+    "races": 29,
+    "race_participants_total": 936,
+    "avg_players_per_race": 32.28,
+    "sessions": 68,
+    "unique_players": 465,
+    "activity_score": 32,
+    "tracks": [
+      "monza"
+    ],
+    "peak_hour": {
+      "hour": "01",
+      "races": 2,
+      "avg_players_per_race": 41.55,
+      "unique_players": 56,
+      "label": "01:00",
+      "activity_score": 100
+    },
+    "hours": [
+      {
+        "hour": "00",
+        "races": 1,
+        "avg_players_per_race": 41.0,
+        "unique_players": 41,
+        "label": "00:00",
+        "activity_score": 50
+      },
+      {
+        "hour": "01",
+        "races": 2,
+        "avg_players_per_race": 41.55,
+        "unique_players": 56,
+        "label": "01:00",
+        "activity_score": 100
+      },
+      {
+        "hour": "02",
+        "races": 2,
+        "avg_players_per_race": 26.67,
+        "unique_players": 36,
+        "label": "02:00",
+        "activity_score": 100
+      },
+      {
+        "hour": "03",
+        "races": 1,
+        "avg_players_per_race": 18.0,
+        "unique_players": 18,
+        "label": "03:00",
+        "activity_score": 50
+      },
+      {
+        "hour": "04",
+        "races": 0,
+        "avg_players_per_race": 0,
+        "unique_players": 0,
+        "label": "04:00",
+        "activity_score": 0
+      },
+      {
+        "hour": "05",
+        "races": 1,
+        "avg_players_per_race": 16.0,
+        "unique_players": 16,
+        "label": "05:00",
+        "activity_score": 50
+      },
+      {
+        "hour": "06",
+        "races": 0,
+        "avg_players_per_race": 0,
+        "unique_players": 0,
+        "label": "06:00",
+        "activity_score": 0
+      },
+      {
+        "hour": "07",
+        "races": 1,
+        "avg_players_per_race": 9.0,
+        "unique_players": 9,
+        "label": "07:00",
+        "activity_score": 50
+      },
+      {
+        "hour": "08",
+        "races": 1,
+        "avg_players_per_race": 6.0,
+        "unique_players": 6,
+        "label": "08:00",
+        "activity_score": 50
+      },
+      {
+        "hour": "09",
+        "races": 1,
+        "avg_players_per_race": 13.0,
+        "unique_players": 13,
+        "label": "09:00",
+        "activity_score": 50
+      },
+      {
+        "hour": "10",
+        "races": 0,
+        "avg_players_per_race": 0,
+        "unique_players": 0,
+        "label": "10:00",
+        "activity_score": 0
+      },
+      {
+        "hour": "11",
+        "races": 2,
+        "avg_players_per_race": 21.05,
+        "unique_players": 37,
+        "label": "11:00",
+        "activity_score": 100
+      },
+      {
+        "hour": "12",
+        "races": 0,
+        "avg_players_per_race": 0,
+        "unique_players": 0,
+        "label": "12:00",
+        "activity_score": 0
+      },
+      {
+        "hour": "13",
+        "races": 1,
+        "avg_players_per_race": 4.0,
+        "unique_players": 4,
+        "label": "13:00",
+        "activity_score": 50
+      },
+      {
+        "hour": "14",
+        "races": 1,
+        "avg_players_per_race": 5.0,
+        "unique_players": 5,
+        "label": "14:00",
+        "activity_score": 50
+      },
+      {
+        "hour": "15",
+        "races": 2,
+        "avg_players_per_race": 33.18,
+        "unique_players": 42,
+        "label": "15:00",
+        "activity_score": 100
+      },
+      {
+        "hour": "16",
+        "races": 1,
+        "avg_players_per_race": 47.0,
+        "unique_players": 47,
+        "label": "16:00",
+        "activity_score": 50
+      },
+      {
+        "hour": "17",
+        "races": 2,
+        "avg_players_per_race": 44.51,
+        "unique_players": 64,
+        "label": "17:00",
+        "activity_score": 100
+      },
+      {
+        "hour": "18",
+        "races": 2,
+        "avg_players_per_race": 54.46,
+        "unique_players": 82,
+        "label": "18:00",
+        "activity_score": 100
+      },
+      {
+        "hour": "19",
+        "races": 1,
+        "avg_players_per_race": 48.0,
+        "unique_players": 48,
+        "label": "19:00",
+        "activity_score": 50
+      },
+      {
+        "hour": "20",
+        "races": 2,
+        "avg_players_per_race": 50.08,
+        "unique_players": 76,
+        "label": "20:00",
+        "activity_score": 100
+      },
+      {
+        "hour": "21",
+        "races": 2,
+        "avg_players_per_race": 42.37,
+        "unique_players": 61,
+        "label": "21:00",
+        "activity_score": 100
+      },
+      {
+        "hour": "22",
+        "races": 2,
+        "avg_players_per_race": 45.02,
+        "unique_players": 68,
+        "label": "22:00",
+        "activity_score": 100
+      },
+      {
+        "hour": "23",
+        "races": 1,
+        "avg_players_per_race": 51.0,
+        "unique_players": 51,
+        "label": "23:00",
+        "activity_score": 50
+      }
+    ]
+  },
+  {
+    "date": "2026-03-31",
+    "races": 39,
+    "race_participants_total": 1378,
+    "avg_players_per_race": 35.33,
+    "sessions": 78,
+    "unique_players": 665,
+    "activity_score": 42,
+    "tracks": [
+      "monza"
+    ],
+    "peak_hour": {
+      "hour": "00",
+      "races": 2,
+      "avg_players_per_race": 41.02,
+      "unique_players": 57,
+      "label": "00:00",
+      "activity_score": 100
+    },
+    "hours": [
+      {
+        "hour": "00",
+        "races": 2,
+        "avg_players_per_race": 41.02,
+        "unique_players": 57,
+        "label": "00:00",
+        "activity_score": 100
+      },
+      {
+        "hour": "01",
+        "races": 1,
+        "avg_players_per_race": 29.0,
+        "unique_players": 29,
+        "label": "01:00",
+        "activity_score": 50
+      },
+      {
+        "hour": "02",
+        "races": 2,
+        "avg_players_per_race": 33.12,
+        "unique_players": 47,
+        "label": "02:00",
+        "activity_score": 100
+      },
+      {
+        "hour": "03",
+        "races": 2,
+        "avg_players_per_race": 32.13,
+        "unique_players": 46,
+        "label": "03:00",
+        "activity_score": 100
+      },
+      {
+        "hour": "04",
+        "races": 1,
+        "avg_players_per_race": 32.0,
+        "unique_players": 32,
+        "label": "04:00",
+        "activity_score": 50
+      },
+      {
+        "hour": "05",
+        "races": 2,
+        "avg_players_per_race": 30.03,
+        "unique_players": 49,
+        "label": "05:00",
+        "activity_score": 100
+      },
+      {
+        "hour": "06",
+        "races": 2,
+        "avg_players_per_race": 24.51,
+        "unique_players": 41,
+        "label": "06:00",
+        "activity_score": 100
+      },
+      {
+        "hour": "07",
+        "races": 1,
+        "avg_players_per_race": 16.0,
+        "unique_players": 16,
+        "label": "07:00",
+        "activity_score": 50
+      },
+      {
+        "hour": "08",
+        "races": 1,
+        "avg_players_per_race": 12.0,
+        "unique_players": 12,
+        "label": "08:00",
+        "activity_score": 50
+      },
+      {
+        "hour": "09",
+        "races": 2,
+        "avg_players_per_race": 18.5,
+        "unique_players": 31,
+        "label": "09:00",
+        "activity_score": 100
+      },
+      {
+        "hour": "10",
+        "races": 2,
+        "avg_players_per_race": 23.17,
+        "unique_players": 39,
+        "label": "10:00",
+        "activity_score": 100
+      },
+      {
+        "hour": "11",
+        "races": 1,
+        "avg_players_per_race": 21.0,
+        "unique_players": 21,
+        "label": "11:00",
+        "activity_score": 50
+      },
+      {
+        "hour": "12",
+        "races": 2,
+        "avg_players_per_race": 34.57,
+        "unique_players": 56,
+        "label": "12:00",
+        "activity_score": 100
+      },
+      {
+        "hour": "13",
+        "races": 2,
+        "avg_players_per_race": 36.84,
+        "unique_players": 55,
+        "label": "13:00",
+        "activity_score": 100
+      },
+      {
+        "hour": "14",
+        "races": 1,
+        "avg_players_per_race": 41.0,
+        "unique_players": 41,
+        "label": "14:00",
+        "activity_score": 50
+      },
+      {
+        "hour": "15",
+        "races": 2,
+        "avg_players_per_race": 39.66,
+        "unique_players": 63,
+        "label": "15:00",
+        "activity_score": 100
+      },
+      {
+        "hour": "16",
+        "races": 1,
+        "avg_players_per_race": 52.0,
+        "unique_players": 52,
+        "label": "16:00",
+        "activity_score": 50
+      },
+      {
+        "hour": "17",
+        "races": 2,
+        "avg_players_per_race": 41.39,
+        "unique_players": 57,
+        "label": "17:00",
+        "activity_score": 100
+      },
+      {
+        "hour": "18",
+        "races": 2,
+        "avg_players_per_race": 43.02,
+        "unique_players": 67,
+        "label": "18:00",
+        "activity_score": 100
+      },
+      {
+        "hour": "19",
+        "races": 1,
+        "avg_players_per_race": 50.0,
+        "unique_players": 50,
+        "label": "19:00",
+        "activity_score": 50
+      },
+      {
+        "hour": "20",
+        "races": 2,
+        "avg_players_per_race": 49.02,
+        "unique_players": 71,
+        "label": "20:00",
+        "activity_score": 100
+      },
+      {
+        "hour": "21",
+        "races": 1,
+        "avg_players_per_race": 46.0,
+        "unique_players": 46,
+        "label": "21:00",
+        "activity_score": 50
+      },
+      {
+        "hour": "22",
+        "races": 2,
+        "avg_players_per_race": 46.02,
+        "unique_players": 71,
+        "label": "22:00",
+        "activity_score": 100
+      },
+      {
+        "hour": "23",
+        "races": 2,
+        "avg_players_per_race": 49.63,
+        "unique_players": 75,
+        "label": "23:00",
+        "activity_score": 100
+      }
+    ]
+  }
+]

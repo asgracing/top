@@ -1,9 +1,9 @@
-import copy from './copy.js?v=20261006v2b';
-import { subscribe, getRuntime } from './bridge.js?v=20261006v2b';
-import {eventKind,normalizeTablePage} from './models.js?v=20261006v2b';
-import {createPresentation} from './presentation.js?v=20261006v2b';
-import {createHeader} from './header.js?v=20261006v2b';
-import {createGuide} from './guide.js?v=20261006v2b';
+import copy from './copy.js?v=20261006v2c';
+import { subscribe, getRuntime } from './bridge.js?v=20261006v2c';
+import {eventKind,normalizeTablePage} from './models.js?v=20261006v2c';
+import {createPresentation} from './presentation.js?v=20261006v2c';
+import {createHeader} from './header.js?v=20261006v2c';
+import {createGuide} from './guide.js?v=20261006v2c';
 import { resolveTrackBackgroundFile, selectRandomTrackBackgroundFile } from '/src/features/server-status/track-background.js';
 const language=document.documentElement.dataset.pageLanguage==='en'?'en':'ru';
 const ru=language==='ru', words=copy[language].labels, editorial=copy[language].editorial;
@@ -211,7 +211,7 @@ function initialiseDocks(){
   const dashboard=document.querySelector('.dashboard');
   for(const [i,selector] of ['.left-column','.right-column'].entries()){
     const aside=document.querySelector(selector),content=document.createElement('div'),button=document.createElement('button'),key=i?'servers':'support';content.className='sidebar-content';content.id='v2-'+key+'-dock-content';content.append(...aside.childNodes);button.className='widget-dock-toggle';button.type='button';button.dataset.widgetDock=key;button.setAttribute('aria-controls',content.id);aside.append(button,content);
-    function apply(open){aside.dataset.dockOpen=String(open);content.inert=!open;content.setAttribute('aria-hidden',String(!open));dashboard.classList.toggle(i?'right-closed':'left-closed',!open);button.setAttribute('aria-expanded',String(open));button.setAttribute('aria-label',(open?text('Скрыть ','Hide '):text('Показать ','Show '))+(i?label('serverStatus'):label('support')));button.innerHTML=`<span class="dock-symbol">${i?'▤':'♡'}</span><span class="dock-label">${i?text('Серверы','Servers'):text('Поддержка','Support')}</span><span class="dock-arrow">${open?'‹':'›'}</span>`}
+    function apply(open){aside.dataset.dockOpen=String(open);content.inert=!open;content.setAttribute('aria-hidden',String(!open));dashboard.classList.toggle(i?'right-closed':'left-closed',!open);button.setAttribute('aria-expanded',String(open));button.setAttribute('aria-label',(open?text('Скрыть ','Hide '):text('Показать ','Show '))+(i?label('serverStatus'):label('support')));button.innerHTML=`<span class="dock-symbol">${open?'<svg viewBox="0 0 24 24" aria-hidden="true"><path d="m6 6 12 12M18 6 6 18"/></svg>':i?'▤':'♡'}</span><span class="dock-label">${i?text('Серверы','Servers'):text('Поддержка','Support')}</span><span class="dock-arrow">${open?'‹':'›'}</span>`}
     apply(typeof saved[key]==='boolean'?saved[key]:true);button.onclick=()=>{saved[key]=aside.dataset.dockOpen!=='true';apply(saved[key]);try{localStorage.setItem('asgV2WidgetDocks',JSON.stringify(saved))}catch{}};
   }
   dashboard.classList.add('widgets-enhanced');
@@ -226,4 +226,4 @@ const boot=$('site-shell'),loader=document.querySelector('.home-loader');
 let seenIntro=false;try{seenIntro=Boolean(sessionStorage.getItem('asgV2IntroSeen'))}catch{}
 if(reduced.matches||seenIntro){document.documentElement.classList.remove('home-booting');loader.hidden=true}else{document.documentElement.classList.add('home-booting');boot.inert=true;setTimeout(()=>{document.documentElement.classList.remove('home-booting');document.documentElement.classList.add('home-ready');boot.inert=false;loader.hidden=true;try{sessionStorage.setItem('asgV2IntroSeen','1')}catch{}},1050)}
 renderTable();$('race-vote').disabled=true;
-try{await import('./runtime/home.js?v=20261006v2b');setTimeout(applyHash,1500)}catch(error){console.error('V2 runtime unavailable',error);$('event-track').textContent=text('Не удалось загрузить данные','Could not load data');$('day-driver').textContent=text('Данные недоступны','Data unavailable');tableError=true;tableBusy=false;renderTable()}
+try{await import('./runtime/home.js?v=20261006v2c');setTimeout(applyHash,1500)}catch(error){console.error('V2 runtime unavailable',error);$('event-track').textContent=text('Не удалось загрузить данные','Could not load data');$('day-driver').textContent=text('Данные недоступны','Data unavailable');tableError=true;tableBusy=false;renderTable()}

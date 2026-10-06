@@ -1,4 +1,4 @@
-import { publish, installRuntime } from '/v2/bridge.js?v=20261006v2b';
+import { publish, installRuntime } from '/v2/bridge.js?v=20261006v2c';
 import { currentPageLanguageHref, initializeLocalizedPage, localizedPageHref, resolvePageLocale, setPageLocale } from "/src/shared/localized-page.js?v=20260920routes1";
 import { isTeamRace, teamRaceUrl } from "/src/shared/team-racing-client.js?v=20261004teams1";
 import { renderTeamResults } from "/src/shared/team-racing-results-view.js?v=20261004teams1";
@@ -11577,7 +11577,7 @@ function v2SchedulePublish() {
     votes:{count:hourlyVotesCount,voted:hourlyVoteAlreadyVoted,pending:hourlyVotePending,error:hourlyVoteFailed},
     donations:donationAlertsData,donationsLoading:donationAlertsLoading,donationsError:donationAlertsFailed,
     clubs:homeClubsTeamsSnapshot,clubsError:homeClubsTeamsError,affiliationsSize:driverAffiliations.size,viewer:authenticatedDriverPublicId,auth:v2Auth,
-    onlineDays:onlineData,news:getSortedNewsFeed(newsFeedData).slice(0,6),invitations:membershipInvitationNotifications,
+    onlineDays:buildRelativeActivityDays(raceActivityInsights?.length?raceActivityInsights:onlineData),news:getSortedNewsFeed(newsFeedData).slice(0,6),invitations:membershipInvitationNotifications,
     unreadNews:getUnreadNewsCount(newsFeedData)+membershipInvitationNotifications.filter(action=>!isMembershipInvitationRead(action)).length,
     servers:getServerStatusItems().map(({key,label,server})=>({key,label,server,
       online:!serverStatusIsStale()&&serverIsOnline(server),players:serverStatusIsStale()?0:serverPlayersOnline(server),
@@ -11591,6 +11591,7 @@ installRuntime({
   special:data=>getSpecialEventPresentation(data,currentLang),
   eventSr:()=>getServerSrRequirement('hourly',resolveNamedServerStatus(serverStatusData,'hourly')),
   winner:race=>getRaceWinnerResult(race),profile:loadDriverProfileCached,
+  driverTitle:loadDriverTitle,driverRank:getDriverRankInfo,isBanned:isDriverBanned,
   ratingHistory:(profile,kind)=>kind==='elo'?normalizeEloHistory(profile):normalizeSafetyHistory(profile),
   ratingInfo:(profile,kind)=>kind==='elo'?getEloInfo(profile):getSafetyInfo(profile),
   favorite:getFavoriteCarName,lapTime:formatLapTimeFromMs,
