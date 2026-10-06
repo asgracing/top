@@ -1,4 +1,4 @@
-import { publish, installRuntime } from '/v2/bridge.js?v=20261006v2a';
+import { publish, installRuntime } from '/v2/bridge.js?v=20261006v2b';
 import { currentPageLanguageHref, initializeLocalizedPage, localizedPageHref, resolvePageLocale, setPageLocale } from "/src/shared/localized-page.js?v=20260920routes1";
 import { isTeamRace, teamRaceUrl } from "/src/shared/team-racing-client.js?v=20261004teams1";
 import { renderTeamResults } from "/src/shared/team-racing-results-view.js?v=20261004teams1";
@@ -5581,6 +5581,7 @@ function renderMembershipInvitationNotification(action) {
 }
 
 function renderNewsNotificationsModal() {
+  v2SchedulePublish();
   const listEl = document.getElementById("news-notifications-list");
   if (!listEl) return;
   const invitations = membershipInvitationNotifications.map(renderMembershipInvitationNotification);
@@ -5592,6 +5593,7 @@ function renderNewsNotificationsModal() {
 }
 
 function renderNewsBell() {
+  v2SchedulePublish();
   const button = document.getElementById("news-bell-button");
   const badge = document.getElementById("news-bell-badge");
   const panel = document.getElementById("news-notifications-panel");
@@ -11511,7 +11513,7 @@ function initializeWindowLifecycle() {
   }
 }
 
-function updateAuthenticatedDriver(auth) {
+function updateAuthenticatedDriver(auth) { v2Auth=auth;
   v2SchedulePublish();
   membershipInvitationNotifications = auth?.authenticated
     ? (auth.clubsTeams?.membershipActions || []).filter(action => (
@@ -11560,6 +11562,7 @@ runWhenDocumentReady(document, () => {
 
 // Build-only facade: lexical access to the canonical controllers/read models.
 const v2Votes = createHourlyVotesClient({apiBase:hourlyVotesApiUrl,request:(url,options)=>fetch(url,options),getLegacyVoterId:getHourlyBrowserVoterId});
+let v2Auth=null;
 let v2PublishPending=false;
 function v2SchedulePublish() {
   if(v2PublishPending)return;
@@ -11573,7 +11576,9 @@ function v2SchedulePublish() {
     voteDisabled:document.getElementById(hourlyVoteAlreadyVoted?'hourly-unvote-btn':'hourly-vote-btn')?.disabled,
     votes:{count:hourlyVotesCount,voted:hourlyVoteAlreadyVoted,pending:hourlyVotePending,error:hourlyVoteFailed},
     donations:donationAlertsData,donationsLoading:donationAlertsLoading,donationsError:donationAlertsFailed,
-    clubs:homeClubsTeamsSnapshot,clubsError:homeClubsTeamsError,affiliationsSize:driverAffiliations.size,viewer:authenticatedDriverPublicId,
+    clubs:homeClubsTeamsSnapshot,clubsError:homeClubsTeamsError,affiliationsSize:driverAffiliations.size,viewer:authenticatedDriverPublicId,auth:v2Auth,
+    onlineDays:onlineData,news:getSortedNewsFeed(newsFeedData).slice(0,6),invitations:membershipInvitationNotifications,
+    unreadNews:getUnreadNewsCount(newsFeedData)+membershipInvitationNotifications.filter(action=>!isMembershipInvitationRead(action)).length,
     servers:getServerStatusItems().map(({key,label,server})=>({key,label,server,
       online:!serverStatusIsStale()&&serverIsOnline(server),players:serverStatusIsStale()?0:serverPlayersOnline(server),
       track:humanizeTrackName(server?.track_code||server?.track||''),sa:getServerSaRequirement(server),sr:getServerSrRequirement(key,server),session:getServerSessionShortLabel(server),drivers:getServerDrivers(server)})),
@@ -11586,6 +11591,14 @@ installRuntime({
   special:data=>getSpecialEventPresentation(data,currentLang),
   eventSr:()=>getServerSrRequirement('hourly',resolveNamedServerStatus(serverStatusData,'hourly')),
   winner:race=>getRaceWinnerResult(race),profile:loadDriverProfileCached,
+  ratingHistory:(profile,kind)=>kind==='elo'?normalizeEloHistory(profile):normalizeSafetyHistory(profile),
+  ratingInfo:(profile,kind)=>kind==='elo'?getEloInfo(profile):getSafetyInfo(profile),
+  favorite:getFavoriteCarName,lapTime:formatLapTimeFromMs,
+  ratingChart:(info,kind,period,grid,offset)=>kind==='elo'?renderEloChart(info,period,grid,offset):renderSafetyChart(info,period,grid,offset),
+  historyPoints:getFilteredEloHistory,historyPeriod:renderEloPeriodLabel,
+  markNews:item=>{markNewsItemRead(item);renderNewsBell();renderNewsNotificationsModal()},
+  markInvitation:item=>{markMembershipInvitationRead(item);renderNewsBell();renderNewsNotificationsModal()},
+  newsHref:item=>getNewsArticleHref(item.slug),
   openDriver:(row,trigger)=>openDriverPreviewFromRowElement({dataset:{publicId:row.public_id,playerId:row.player_id,driverName:row.driver||row.name}},trigger),
   openRating:(row,kind,trigger)=>kind==='elo'?openEloModalForSource(row,trigger):openSafetyModalForSource(row,trigger),
   openEvent:openHourlyHeroModal,openOnline:openOnlineActivityModal,
@@ -11596,8 +11609,13 @@ installRuntime({
   loadTable:async(tab,page,track,search,sort)=>{
     if(tab==='bestlaps')bestlapsTrackFilter=track;
     if(search||sort){const rows=await loadFullTopDataV2Table(tab);return {items:rows,full:true,total_items:rows.length}}
-    if(tab==='safety'){const meta=getTopDataV2TableMeta(tab);return loadTopDataV2Json((meta?.page_path||'tables/safety/page-{page}.json').replace('{page}',page))}
-    return loadServerPagedTopDataV2Table(tab,page);
+    if(tab==='safety'){
+      const meta=getTopDataV2TableMeta(tab);
+      if(page===1&&!search&&!sort&&safetyData.length>=10)return {items:safetyData.slice(0,10),total_items:meta?.total_items??safetyData.length};
+      const rows=await loadFullTopDataV2Table(tab);return {items:rows,full:true,total_items:rows.length};
+    }
+    const result=await loadServerPagedTopDataV2Table(tab,page);
+    return {...result,total_items:result?.totalItems??result?.total_items??0};
   },
   hydrateWinner:async race=>{const [profile,details]=await Promise.all([race.winner_public_id?loadDriverProfileCached(race.winner_public_id).catch(()=>null):null,loadRaceDetailsCached(race).catch(()=>null)]);return {profile,details}},
   rules:()=>document.getElementById('rules')?.innerHTML||'',

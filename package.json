@@ -11,7 +11,7 @@
     "build:preview": "node scripts/build-preview.mjs",
     "check:preview": "node scripts/check-preview.mjs",
     "build:v2": "node scripts/build-v2.mjs",
-    "check:v2": "node scripts/build-v2.mjs && node --check v2/runtime/home.js && node --check v2/home.js && node --check v2/bridge.js && node --check src/features/home-version-switch.js && node tests/site-quality/check-v2-home.mjs",
+    "check:v2": "node scripts/build-v2.mjs && node --check v2/runtime/home.js && node --check v2/home.js && node --check v2/bridge.js && node --check v2/presentation.js && node --check v2/header.js && node --check v2/guide.js && node --check v2/models.js && node --check src/features/home-version-switch.js && node tests/site-quality/check-v2-home.mjs",
     "build": "node scripts/build-v2.mjs && node scripts/check-preview.mjs && node scripts/build-dist.mjs",
     "verify:dist": "node tests/deployment/verify-dist.mjs && node tests/deployment/verify-references.mjs",
     "smoke:dist": "node tests/deployment/smoke-dist.mjs",

@@ -5,7 +5,7 @@ import {resolve} from 'node:path';
 const root=resolve(import.meta.dirname,'../..');
 const read=path=>readFile(resolve(root,path),'utf8');
 const source=await read('app.js'),build=JSON.parse(await read('v2/runtime-source.json'));
-assert.equal(build.sha256,createHash('sha256').update(source).digest('hex'),'Rebuild V2 after changing canonical controllers');
+assert.equal(build.sha256,createHash('sha256').update(source.replace(/\r\n/g,'\n')).digest('hex'),'Rebuild V2 after changing canonical controllers');
 for(const language of ['ru','en']){
   const classic=await read(language==='ru'?'ru/index.html':'index.html');
   const html=await read(`v2/${language}/index.html`);

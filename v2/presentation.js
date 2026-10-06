@@ -1,0 +1,78 @@
+import {eventKind} from './models.js?v=20261006v2b';
+import {resolveTrackBackgroundFile} from '/src/features/server-status/track-background.js';
+
+// R24 views consume the canonical controllers. They never calculate ratings or
+// create a second auth/voting state.
+export function createPresentation({$,native,getModel,esc,text,label,date,number,rating,car,driverHref,classic,privacy,showDialog}) {
+  let request=0,profile=null,parent=null,historyView=null,month='',day='';
+  const detail=(name,value)=>`<div><span>${esc(name)}</span><b>${esc(value??'—')}</b></div>`;
+  const name=p=>p.driver||p.name||p.summary?.driver||'—';
+  const flatten=p=>({...p?.summary,...p});
+  const kinds={hourly:text('Часовая гонка','Hourly race'),championship:text('Гонка чемпионата','Championship race'),endurance:text('Эндюранс','Endurance'),mono:text('Монокласс','Single model')};
+  function display(title,html,kind,trigger){showDialog(title,html,trigger);$('modal').dataset.kind=kind;$('modal-eyebrow').textContent='ASG RACING / '+kind.toUpperCase();$('modal').style.removeProperty('--modal-track')}
+  function lapsHtml(p){
+    const laps=p.best_laps_by_track||[];
+    return `<section class="lap-picker"><label for="v2-driver-track">${text('Лучший круг · выбери трассу','Best lap · choose track')}</label><select id="v2-driver-track">${laps.length?laps.map((l,i)=>`<option value="${i}">${esc(native().track(l.track_code||l.track))}</option>`).join(''):'<option>—</option>'}</select><div id="v2-driver-lap-value">${lapValue(laps[0])}</div></section>`;
+  }
+  function lapValue(l){return `<b class="best-lap-value">${esc(l?.best_lap||native().lapTime(l?.best_lap_ms)||'—')}</b><span>${car({car_name:l?.car_name||l?.best_lap_car_name,car_model_id:l?.car_model_id??l?.best_lap_car_model_id})} · ${esc(l?.session_type||l?.best_lap_session_type||'—')} · ${date(l?.updated_at||l?.best_lap_updated_at)}</span>`}
+  function driverHtml(p){
+    const d=flatten(p);
+    return `<div class="driver-ratings">${rating(d,'elo')}${rating(d,'sr')}</div><div class="detail-grid">${detail(text('Гоночный номер','Race number'),d.race_number==null?'—':'#'+d.race_number)}${detail(text('Любимая машина','Favourite car'),native().favorite(p)||d.favorite_car||'—')}<div><span>${label('team')}</span><b>${native().affiliation(d,'team')}</b></div><div><span>${label('club')}</span><b>${native().affiliation(d,'club')}</b></div>${detail(label('points'),number(d.points))}${detail(label('racesCol'),number(typeof d.races==='number'?d.races:p.summary?.races??d.races_count))}${detail(label('wins'),number(d.wins))}${detail(label('podiums'),number(d.podiums))}</div>${lapsHtml(p)}<p class="data-note">${text('Любимая машина — самая частая в опубликованной истории гонок.','Favourite car is the most frequent in the published race history.')}</p><a class="button primary" href="${driverHref(d.public_id)}">${text('Профиль пилота','Driver profile')} ↗</a>`;
+  }
+  async function loadProfile(row,kind,trigger){
+    const ticket=++request;parent=kind==='driver'?null:profile;
+    display(name(row),`<p role="status">${text('Загрузка профиля…','Loading profile…')}</p>`,kind,trigger);
+    try{const p=await native().profile(row.public_id);if(ticket!==request||!$('modal').open)return;profile={...row,...p,public_id:row.public_id};
+      if(kind==='driver'){$('modal-title').textContent=name(profile);$('modal-body').innerHTML=driverHtml(profile)}
+      else {historyView={kind:kind==='driver-elo'?'elo':'sr',period:'all',grid:'medium',offset:0};renderHistory()}
+    }catch{if(ticket===request&&$('modal').open)$('modal-body').innerHTML=`<p class="v2-error">${text('Профиль временно недоступен.','Profile temporarily unavailable.')}</p><button class="button" data-profile-retry>${text('Повторить','Retry')}</button><a class="button" href="${driverHref(row.public_id)}">${text('Профиль пилота','Driver profile')} ↗</a>`}
+    const retry=$('modal-body').querySelector('[data-profile-retry]');if(retry)retry.onclick=()=>loadProfile(row,kind,trigger);
+  }
+  function renderHistory(){
+    const v=historyView,d=flatten(profile),info=native().ratingInfo(profile,v.kind)||{history:[]};
+    const points=native().historyPoints(info,v.period,v.offset),periods=['all','365','180','90','30','7','1'];
+    $('modal-title').textContent=(v.kind==='elo'?'ELO':'Safety Rating')+' · '+name(profile);
+    $('modal-body').innerHTML=`<div class="rating-history-summary"><div><span class="eyebrow">${text('Текущий рейтинг','Current rating')}</span>${rating(d,v.kind)}</div><p>${text('История изменения рейтинга по зачтённым гонкам.','Rating history across counted races.')}</p><a class="text-link" href="${driverHref(d.public_id)}">${esc(name(profile))}</a></div><div class="rating-history-controls"><div class="segmented-control">${periods.map(p=>`<button type="button" data-history-period="${p}" class="${p===v.period?'active':''}">${p==='all'?text('Всё время','All time'):p==='1'?text('День','Day'):p+' '+text('дн.','days')}</button>`).join('')}</div><label>${text('Сетка','Grid')} <select id="v2-history-grid">${['low','medium','high'].map((g,i)=>`<option value="${g}"${g===v.grid?' selected':''}>${[text('Редкая','Low'),text('Средняя','Medium'),text('Частая','High')][i]}</option>`).join('')}</select></label></div>${v.period==='all'?'':`<div class="rating-period-pager"><button type="button" data-history-step="older">‹</button><span>${esc(native().historyPeriod(points,v.period)||text('Нет гонок в этом периоде','No races in this period'))}</span><button type="button" data-history-step="newer"${v.offset===0?' disabled':''}>›</button></div>`}<div class="rating-chart-wrap">${native().ratingChart(info,v.kind,v.period,v.grid,v.offset)}</div><div id="v2-sr-inspection"></div>${v.kind==='sr'?`<div class="rating-summary-metrics">${detail(text('Зачтённых гонок','Counted races'),d.safety_races??info.racesCount??info.history.length)}${detail(text('Кругов','Laps'),d.safety_total_laps)}${detail(text('Невалидных кругов','Invalid laps'),d.safety_total_invalid_laps)}${detail(text('Инциденты','Incidents'),d.safety_total_incident_points)}${detail(text('Автоштрафы','Penalties'),d.safety_total_counted_penalties)}</div>`:''}${parent?`<button class="button" data-profile-return>${text('← Вернуться к пилоту','← Back to driver')}</button>`:''}`;
+  }
+  function inspectSr(index){
+    const points=native().historyPoints(native().ratingInfo(profile,'sr'),historyView.period,historyView.offset),p=points[index];if(!p)return;
+    const raw=(profile.safety_history||profile.summary?.safety_history||[])[p.index]||{};
+    $('sr-inspection').innerHTML=`<div class="sr-race-summary"><h3>${date(raw.finished_at||p.date)} · ${esc(native().track(raw.track||raw.track_code||''))}</h3><div class="detail-grid">${detail('SR',Number(p.rating).toFixed(2))}${detail(text('Изменение','Change'),(p.delta>0?'+':'')+Number(p.delta).toFixed(2))}${detail(text('Кругов','Laps'),raw.completed_laps)}${detail(text('Невалидных','Invalid'),raw.invalid_laps)}${detail(text('Инциденты','Incidents'),raw.incident_points)}${detail(text('Автоштрафы','Penalties'),raw.counted_penalties_count)}</div></div>`;
+  }
+  const minutes=v=>v==null||v<0?text('Без ограничения','Unlimited'):v+' '+text('мин','min');
+  function boolDetail(title,value){return `<div><span>${esc(title)}</span><b class="rule-state ${value==null?'is-unknown':value?'is-yes':'is-no'}">${value==null?'—':`<svg viewBox="0 0 24 24" aria-hidden="true"><path d="${value?'m5 12 4 4L19 6':'m6 6 12 12M18 6 6 18'}"/></svg>${value?text('Да','Yes'):text('Нет','No')}`}</b></div>`}
+  function entryHtml(){const m=getModel();return `<button type="button" class="button primary${m.votes.voted?' participation-active':''}" data-event-vote${m.votes.pending||m.voteDisabled?' disabled':''}>${m.votes.pending?text('Сохраняем…','Saving…'):m.votes.voted?text('Ты в списке · отменить','You are registered · cancel'):text('Я хочу поехать!','I want to race!')}</button><span class="participants">${text('Участники','Participants')}: <b>${number(m.votes.count)}</b></span>${m.votes.error?`<span class="v2-error">${text('Не удалось обновить участие. Попробуй ещё раз.','Could not update participation. Try again.')}</span>`:''}`}
+  function openEvent(trigger){
+    ++request;const e=getModel().announcement;if(!e)return;
+    const r=e.rules||{},s=e.session||{},restriction=e.car_restriction||r.car_model||{},server=e.server||{},w=e.weather||{},kind=eventKind(e,restriction.mode==='single_model');
+    const weatherCode=e.game_time?.code,weatherName=({evening:text('Вечер','Evening'),night:text('Ночь','Night'),morning:text('Утро','Morning'),afternoon:text('День','Afternoon')})[weatherCode]||e.game_time?.label||'—';
+    display((e.track_name||native().track(e.track_code))+` · ×${e.points_multiplier??1} `+text('очков в рейтинг','ranking points'),`<div class="detail-grid race-summary">${detail(label('date'),`${e.date}, ${e.start_time_local} · ${e.timezone||'UTC+3'}`)}${detail(label('car'),restriction.mode==='single_model'?restriction.car_model_name:server.car_group||'GT3')}${detail(text('Допуск','Admission'),'SA '+(server.safety_rating_requirement??'—')+' · SR '+(server.sr_requirement??native().eventSr()??'—'))}${detail(text('Погода','Weather'),`${w.ambient_temp_c??'—'} °C · ${text('Облачность','Cloud')} ${w.cloud_level==null?'—':Math.round(w.cloud_level*100)}% · ${text('Дождь','Rain')} ${w.rain_level==null?'—':Math.round(w.rain_level*100)}%`)}</div><div class="race-session-registration"><section><h3>${text('Сессии гонки','Race sessions')}</h3><div class="session-sequence"><span><b>P</b> ${text('Практика','Practice')} ${minutes(s.practice_duration_minutes??e.practice_duration_minutes)}</span><span><b>Q</b> ${text('Квалификация','Qualifying')} ${minutes(s.qualifying_duration_minutes)}</span><span><b>R</b> ${text('Гонка','Race')} ${minutes(s.race_duration_minutes??e.race_duration_minutes)}</span></div><p>${text('Время в игре','In-game time')}: ${esc(weatherName)} · ${e.game_time?.hour_of_day??'—'}:00 · ${text('Ускорение времени','Time multiplier')} ×${s.time_multiplier??'—'}</p></section><section class="race-registration"><h3>${text('Регистрация на событие','Event registration')}</h3><div class="modal-participation">${entryHtml()}</div></section></div><h3>${text('Полные правила питстопа','Full pitstop rules')}</h3><div class="pitstop-grid">${detail(text('Питстопы','Pitstops'),r.mandatory_pitstop_count)}${detail(text('Пит-окно','Pit window'),minutes(r.pit_window_length_minutes))}${boolDetail(text('Дозаправка в гонке','Refuelling in race'),r.refuelling_allowed_in_race)}${boolDetail(text('Обязательная дозаправка','Mandatory refuelling'),r.mandatory_pitstop_refuelling_required)}${boolDetail(text('Фиксированное время дозаправки','Fixed refuelling time'),r.refuelling_time_fixed)}${boolDetail(text('Обязательная смена шин','Mandatory tyre change'),r.mandatory_pitstop_tyre_change_required)}${boolDetail(text('Обязательная смена пилота','Mandatory driver swap'),r.mandatory_pitstop_swap_driver_required)}${detail(text('Длина стинта','Stint length'),minutes(r.driver_stint_time_minutes))}${detail(text('Общее время за рулём','Total driving time'),minutes(r.max_total_driving_time_minutes))}${detail(text('Комплектов шин','Tyre sets'),r.tyre_set_count)}${detail(text('Пилотов в машине','Drivers per car'),r.max_drivers_count)}</div><p class="voting-disclosure modal-voting-disclosure">${privacy()} · <a href="${classic('hourly/')}">${text('Подробнее о гонках','More about races')}</a></p>`,'event',trigger);
+    const f=resolveTrackBackgroundFile(e.track_code);if(f)$('modal').style.setProperty('--modal-track',`url('/assets/${f}')`);
+    $('modal-eyebrow').innerHTML=`<span class="event-kind kind-${kind==='mono'?'monoclass':kind}">${kinds[kind]}</span>`;
+  }
+  function onlineHtml(){
+    const days=[...(getModel().onlineDays||[])].sort((a,b)=>String(b.date).localeCompare(String(a.date))),months=[...new Set(days.map(d=>String(d.date).slice(0,7)))];
+    if(!months.length)return `<p class="empty">${label('noData')}</p>`;
+    if(!months.includes(month))month=months[0];const visible=days.filter(d=>d.date.startsWith(month));
+    if(!visible.some(d=>d.date===day))day=visible[0]?.date;const d=visible.find(d=>d.date===day),hours=d.hours||[],max=Math.max(1,...hours.map(h=>h.unique_players));
+    return `<div class="online-controls"><label>${text('Месяц','Month')} <select id="v2-online-month">${months.map(m=>`<option${m===month?' selected':''}>${esc(m)}</option>`).join('')}</select></label><label>${label('date')} <select id="v2-online-date">${visible.map(v=>`<option${v.date===day?' selected':''}>${esc(v.date)}</option>`).join('')}</select></label></div><div class="detail-grid">${detail(text('Пилоты','Drivers'),number(d.unique_players))}${detail(label('racesCol'),number(d.races))}${detail(text('Среднее пилотов на гонку','Average drivers per race'),d.avg_players_per_race)}${detail(text('Индекс активности','Activity score'),(d.activity_score??'—')+'/100')}${detail(text('Пик активности','Peak activity'),d.peak_hour?.label)}${detail(label('track'),(d.tracks||[]).map(t=>native().track(t)).join(', '))}</div><h3>${text('Онлайн по часам · уникальные пилоты','Hourly activity · unique drivers')}</h3><div class="hour-chart">${hours.map(h=>`<div title="${esc(h.label)} · ${number(h.races)} ${label('racesCol')}"><b>${number(h.unique_players)}</b><span style="--hour-height:${Math.max(2,h.unique_players/max*100)}px"></span><small>${esc(h.hour)}</small></div>`).join('')}</div>`;
+  }
+  function openOnline(trigger){++request;display(text('Онлайн по датам','Activity by date'),onlineHtml(),'online',trigger)}
+  $('modal-body').addEventListener('change',e=>{
+    const id=e.target.id;
+    if(id==='v2-driver-track')$('driver-lap-value').innerHTML=lapValue(profile?.best_laps_by_track?.[Number(e.target.value)]);
+    if(id==='v2-online-month'||id==='v2-online-date'){if(id==='v2-online-month'){month=e.target.value;day=''}else day=e.target.value;$('modal-body').innerHTML=onlineHtml();document.getElementById(id).focus()}
+    if(id==='v2-history-grid'){historyView.grid=e.target.value;renderHistory();$('history-grid').focus()}
+  });
+  $('modal-body').addEventListener('click',e=>{
+    const period=e.target.closest('[data-history-period]'),step=e.target.closest('[data-history-step]'),point=e.target.closest('[data-sr-history-index]');
+    if(period){historyView.period=period.dataset.historyPeriod;historyView.offset=0;renderHistory();$('modal-body').querySelector(`[data-history-period="${historyView.period}"]`).focus()}
+    if(step){historyView.offset=Math.max(0,historyView.offset+(step.dataset.historyStep==='older'?1:-1));renderHistory()}
+    if(point){e.stopPropagation();inspectSr(Number(point.dataset.srHistoryIndex))}
+    if(e.target.closest('[data-profile-return]')&&parent)loadProfile(parent,'driver',document.activeElement);
+    if(e.target.closest('[data-event-vote]'))native().vote();
+  });
+  $('modal-body').addEventListener('keydown',e=>{const point=e.target.closest('[data-sr-history-index]');if(point&&['Enter',' '].includes(e.key)){e.preventDefault();e.stopPropagation();inspectSr(Number(point.dataset.srHistoryIndex))}});
+  $('modal').addEventListener('close',()=>{++request;profile=null;parent=null;historyView=null});
+  return {openDriver:(row,trigger)=>loadProfile(row,'driver',trigger),openRating:(row,kind,trigger)=>loadProfile(row,'driver-'+kind,trigger),openEvent,openOnline,refreshEntry(){if($('modal').open&&$('modal').dataset.kind==='event'){const node=$('modal-body').querySelector('.modal-participation');if(node)node.innerHTML=entryHtml()}}};
+}

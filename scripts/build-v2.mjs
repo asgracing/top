@@ -5,7 +5,7 @@ import { resolve } from 'node:path';
 import { createHash } from 'node:crypto';
 import { nodes, edit } from './seo/html-source.mjs';
 const root = resolve(import.meta.dirname, '..');
-const version = '20261006v2a';
+const version = '20261006v2b';
 const read = path => readFile(resolve(root, path), 'utf8');
 async function emit(path, value) { await mkdir(resolve(root, path, '..'), {recursive:true}); await writeFile(resolve(root, path), path.endsWith('.html')?value.replace(/[ \t]+(?=\r?$)/gm,''):value); }
 const prototype = await read('v2-source/home.html');
@@ -40,7 +40,7 @@ await emit('v2/copy.js',`export default ${JSON.stringify(copy)};\n`);
   await emit('v2/styles/design.css',css);
 }
 let runtime = await read('app.js');
-const originalHash = createHash('sha256').update(runtime).digest('hex');
+const originalHash = createHash('sha256').update(runtime.replace(/\r\n/g,'\n')).digest('hex');
 function required(from,to) { if(!runtime.includes(from)) throw Error(`V2 runtime hook missing: ${from.slice(0,90)}`); runtime=runtime.replace(from,to); }
 runtime = runtime.replace(/(["'])\.\/(src\/|news-read-state\.js)/g,'$1/$2');
 required('initializeLocalizedPage();','// V2 has explicit static RU/EN entrypoints; do not reroute them through V1.');
@@ -51,11 +51,13 @@ required('function ensureTopGuide() {','function ensureTopGuide() { return; // T
 required('function ensureTwitchWidget() {','function ensureTwitchWidget() { return; // V2 owns the stream launcher.');
 required('function optimizeBackgroundMedia() {','function optimizeBackgroundMedia() { return; // V2 owns its static track carousel.');
 const hooks=['renderHourlyHeroCard','renderHourlyWinnerCard','renderDonationAlertsWidget','renderOnlineWidget','renderLeaderboardTablePage','renderSafetyTablePage','renderBestLapsTablePage','renderClubsTeamsHomeTable','renderServerStickyWidget','updateAuthenticatedDriver','handleHomePageInitializationError'];
+hooks.push('renderNewsBell','renderNewsNotificationsModal');
 for (const name of hooks) {
   const re = new RegExp(`function ${name}\\([^\\n]*\\) \\{`);
   if(!re.test(runtime)) throw Error(`Missing V2 notification hook ${name}`);
   runtime = runtime.replace(re,match=>`${match}\n  v2SchedulePublish();`);
 }
+runtime=runtime.replace('function updateAuthenticatedDriver(auth) {','function updateAuthenticatedDriver(auth) { v2Auth=auth;');
 // V2 owns table rendering and pagination. Hidden legacy tables must not start
 // deferred full-table downloads or duplicate visible controls.
 for(const name of ['renderLeaderboardTablePage','renderBestLapsTablePage','renderSafetyTablePage','renderClubsTeamsHomeTable']) {

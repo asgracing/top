@@ -1,5 +1,9 @@
-import copy from './copy.js?v=20261006v2a';
-import { subscribe, getRuntime } from './bridge.js?v=20261006v2a';
+import copy from './copy.js?v=20261006v2b';
+import { subscribe, getRuntime } from './bridge.js?v=20261006v2b';
+import {eventKind,normalizeTablePage} from './models.js?v=20261006v2b';
+import {createPresentation} from './presentation.js?v=20261006v2b';
+import {createHeader} from './header.js?v=20261006v2b';
+import {createGuide} from './guide.js?v=20261006v2b';
 import { resolveTrackBackgroundFile, selectRandomTrackBackgroundFile } from '/src/features/server-status/track-background.js';
 const language=document.documentElement.dataset.pageLanguage==='en'?'en':'ru';
 const ru=language==='ru', words=copy[language].labels, editorial=copy[language].editorial;
@@ -36,6 +40,9 @@ document.querySelectorAll('.v2-language a').forEach(a=>{a.href+=location.search+
 document.querySelector('[data-v1-home]').addEventListener('click',event=>{const a=event.currentTarget;const hashes={leaderboard:'championship',bestlaps:'bestlaps',safety:'worst-safety',clubs:'clubs-teams-stats'};a.href=(ru?'/ru/':'/')+location.search+(location.hash||'#'+hashes[tab]);});
 document.querySelectorAll('.thanks-list span').forEach(node=>{node.textContent=node.textContent.trim()});
 const privacy=()=>`${text('Для голосования используется ID браузера. Участвуя, ты соглашаешься с','Voting uses a browser ID. By entering, you agree to the')} <a href="/privacy/${ru?'?lang=ru':''}">${text('условиями обработки данных','data processing terms')}</a>`;
+const presentation=createPresentation({$,native,getModel:()=>model,esc,text,label,date,number,rating,car,driverHref,classic,privacy,showDialog});
+const header=createHeader({$,native,esc,text,number,rating,driverHref,privacy});
+const guide=createGuide({$,copy:editorial.guide});
 $('participation-note').innerHTML=privacy();
 $('search').placeholder=text('Поиск пилота','Search drivers');$('search').setAttribute('aria-label',$('search').placeholder);
 function rating(row,kind,delta=null){
@@ -84,12 +91,12 @@ function renderWinner(){
 function renderEvent(){
   const a=model.announcement,button=$('race-vote');
   if(!a){$('event-track').textContent=model.loading.hourly?text('Загрузка…','Loading…'):text('Расписание обновляется','Schedule is being updated');button.disabled=true;return}
-  const special=native().special(a),isChamp=a.competition_mode==='championship'||a.event_type==='championship'||Boolean(a.championship_slug),isEndurance=a.race_format==='endurance'||a.event_type==='endurance',kind=special?'mono':isChamp?'championship':isEndurance?'endurance':'hourly';
+  const kind=eventKind(a,(a.car_restriction||a.rules?.car_model)?.mode==='single_model');
   document.querySelector('.upcoming-panel').dataset.eventKind=kind;
   $('event-kind').textContent=kind==='mono'?text('Монокласс','Single model'):kind==='championship'?text('Чемпионат','Championship'):kind==='endurance'?text('Эндюранс','Endurance'):text('Часовая гонка','Hourly race');
   $('event-track').textContent=a.track_name||native().track(a.track_code)||'—';
   $('multiplier').textContent=`×${a.points_multiplier??1} ${text('ОЧКОВ В РЕЙТИНГ','RANKING POINTS')}`;
-  $('event-date').textContent=`${a.date||'—'}, ${a.start_time_local||'—'} · ${a.timezone||'UTC+3'}`;
+  $('event-date').textContent=`${date(a.date&&a.start_time_local?`${a.date}T${a.start_time_local}:00+03:00`:null)} · ${a.timezone||'UTC+3'}`;
   const restriction=a.car_restriction||a.rules?.car_model,carName=restriction?.mode==='single_model'?restriction.car_model_name:text('Все машины класса GT3','All GT3 cars');
   $('event-car').textContent=carName||'—';$('event-car-image').hidden=restriction?.mode!=='single_model'||restriction?.car_model_id==null;if(!$('event-car-image').hidden)$('event-car-image').src=`/assets/car-icons/${Number(restriction.car_model_id)}.png`;
   const server=a.server||{},rules=a.rules||{};
@@ -100,6 +107,7 @@ function renderEvent(){
   $('participation-note').innerHTML=(model.votes.error?`<strong class="v2-error">${text('Не удалось обновить участие. Попробуй ещё раз.','Could not update participation. Try again.')}</strong> `:'')+privacy();
   const file=resolveTrackBackgroundFile(a.track_code);document.querySelector('.upcoming-panel').style.setProperty('--event-image',file?`url('/assets/${file}')`:'none');
   updateClock();
+  presentation.refreshEntry();
 }
 function updateClock(){if(!model?.targetMs){$('race-countdown').textContent='';return}const seconds=Math.max(0,Math.floor((model.targetMs-Date.now())/1000)),days=Math.floor(seconds/86400);$('race-countdown').textContent=(days?days+text('д ','d '):'')+[Math.floor(seconds/3600)%24,Math.floor(seconds/60)%60,seconds%60].map(v=>String(v).padStart(2,'0')).join(':')}
 function renderServers(){
@@ -134,13 +142,13 @@ async function loadTable(){
   const request=++tableRequest;
   if(tab==='clubs'){tableBusy=false;tableError=Boolean(model?.clubsError);renderTable();return}
   tableBusy=true;tableError=false;renderTable();
-  try{const result=await native().loadTable(tab,page,track,$('search').value.trim(),sortKey);if(request!==tableRequest)return;let rows=result?.items||[];
+  try{const result=normalizeTablePage(await native().loadTable(tab,page,track,$('search').value.trim(),sortKey));if(request!==tableRequest)return;let rows=result?.items||[];
     if(result?.full){const q=$('search').value.toLocaleLowerCase();rows=rows.filter(r=>String(r.driver||r.name||'').toLocaleLowerCase().includes(q));if(sortKey)rows.sort((a,b)=>(typeof a[sortKey]==='number'?a[sortKey]-b[sortKey]:String(a[sortKey]??'').localeCompare(String(b[sortKey]??'')))*sortDirection);tableTotal=rows.length;rows=rows.slice((page-1)*10,page*10)}else tableTotal=result?.total_items??rows.length;
     tableRows=rows;
   }catch{if(request===tableRequest){tableRows=[];tableTotal=0;tableError=true}}finally{if(request===tableRequest){tableBusy=false;renderTable()}}
 }
 function chooseTab(next){tab=next;page=1;sortKey='';$('search').value='';document.querySelectorAll('#v2-site-shell [data-tab]').forEach(button=>{button.classList.toggle('active',button.dataset.tab===tab);button.setAttribute('aria-selected',String(button.dataset.tab===tab))});loadTable()}
-function showDialog(title,html,trigger){lastTrigger=trigger||document.activeElement;$('modal').dataset.kind='';$('modal-title').textContent=title;$('modal-body').innerHTML=html;$('modal').showModal();$('site-shell').inert=true;$('modal').querySelector('button').focus()}
+function showDialog(title,html,trigger){if(!$('modal').open)lastTrigger=trigger||document.activeElement;$('modal').dataset.kind='';$('modal').style.removeProperty('--modal-track');$('modal-title').textContent=title;$('modal-body').innerHTML=html;if(!$('modal').open)$('modal').showModal();$('site-shell').inert=true;$('modal').querySelector('button').focus()}
 function closeDialog(){$('modal').close();$('site-shell').inert=false;lastTrigger?.focus?.({preventScroll:true})}
 function rowById(id){return tableRows.find(r=>r.public_id===id)||[dayProfile,winnerExtra?.profile,model?.day,...(winnerExtra?.details?.results||[])].find(r=>r?.public_id===id)||{public_id:id,driver:id}}
 function showReference(key,trigger){
@@ -148,9 +156,10 @@ function showReference(key,trigger){
   if(key==='elo')showDialog(label('elo'),editorial.elo,trigger);
   if(key==='safety')showDialog('Safety Rating',editorial.safety,trigger);
   $('modal').dataset.kind=key;
+  $('modal-eyebrow').textContent='ASG RACING / '+key.toUpperCase();
 }
 function openServers(key,trigger){
-  if(!key){native().openServers(trigger);return}
+  if(!key){showDialog(label('serverStatus'),`<div class="v2-server-summary">${model.servers.map(s=>`<button type="button" class="server-card" data-server="${esc(s.key)}"><b>${esc(s.label)}</b><span>${esc(s.track)} · ${number(s.players)} ${label('players')} · ${esc(s.session)}</span></button>`).join('')}</div>`,trigger);return}
   const server=model.servers.find(s=>s.key===key);if(!server)return;
   const drivers=server.drivers;showDialog(server.label,`<div class="v2-server-parameters"><span>${esc(server.track)}</span><span>SA ${esc(server.sa)}</span><span>SR ${esc(server.sr)}</span><span>${esc(server.session)}</span></div><div class="v2-server-pilots">${drivers.length?drivers.map((p,i)=>`<article class="v2-server-pilot"><div><b class="v2-race-number">#${esc(p.raceNumber??p.car_number??p.race_number??i+1)}</b> ${p.public_id?`<a href="${driverHref(p.public_id)}">${esc(p.name||p.driver)}</a>`:esc(p.name||p.driver)}</div><div>${rating(p,'elo')}${rating(p,'sr')}</div><div>${car(p)}</div></article>`).join(''):`<p class="empty">${model.serversStale?text('Онлайн устарел; актуальный список недоступен.','Online status is stale; current roster is unavailable.'):text('Нет пилотов онлайн','No drivers online')}</p>`}</div>`,trigger);
 }
@@ -161,29 +170,30 @@ function startStream(trigger){
 }
 document.addEventListener('click',event=>{
   if(event.target.closest('#v1-runtime-host'))return;
-  const ratingButton=event.target.closest('[data-rating]');if(ratingButton){const row=rowById(ratingButton.dataset.driver);if($('modal').open)closeDialog();native().openRating(row,ratingButton.dataset.rating,ratingButton);return}
+  const ratingButton=event.target.closest('button[data-rating]');if(ratingButton&&!ratingButton.disabled){const row=rowById(ratingButton.dataset.driver);presentation.openRating(row,ratingButton.dataset.rating,ratingButton);return}
   const server=event.target.closest('[data-server]');if(server){openServers(server.dataset.server,server);return}
-  const pilot=event.target.closest('#v2-day-driver,#v2-winner-name');if(pilot?.dataset.driver){native().openDriver(rowById(pilot.dataset.driver),pilot);return}
-  const row=event.target.closest('#v2-rating-table tbody tr[data-row]');if(row&&!event.target.closest('a,button,input')&&row.dataset.row){native().openDriver(rowById(row.dataset.row),row);return}
-  const button=event.target.closest('[data-modal]');if(button&&button.closest('#v2-site-shell')){const key=button.dataset.modal;if(['rules','elo','safety'].includes(key))showReference(key,button);else if(key==='event')native().openEvent();else if(key==='online')native().openOnline();else if(key==='servers')openServers(null,button);else if(key.startsWith('announce'))showDialog(button.textContent,`<p>${text('Подробности будут опубликованы в новостях.','Details will be published in the news.')}</p><a href="${classic('news/')}">${label('news')}</a>`,button);return}
+  const pilot=event.target.closest('#v2-day-driver,#v2-winner-name');if(pilot?.dataset.driver){presentation.openDriver(rowById(pilot.dataset.driver),pilot);return}
+  const row=event.target.closest('#v2-rating-table tbody tr[data-row]');if(row&&!event.target.closest('a,button,input')&&row.dataset.row){presentation.openDriver(rowById(row.dataset.row),row);return}
+  const button=event.target.closest('[data-modal]');if(button&&button.closest('#v2-site-shell')){const key=button.dataset.modal;if(['rules','elo','safety'].includes(key))showReference(key,button);else if(key==='event')presentation.openEvent(button);else if(key==='online')presentation.openOnline(button);else if(key==='servers')openServers(null,button);else if(key.startsWith('announce'))showDialog(button.textContent,`<p>${text('Подробности будут опубликованы в новостях.','Details will be published in the news.')}</p><a href="${classic('news/')}">${label('news')}</a>`,button);return}
   const nextTab=event.target.closest('[data-tab],[data-ranking-nav]');if(nextTab){chooseTab(nextTab.dataset.tab||nextTab.dataset.rankingNav);$('ranking').scrollIntoView({block:'nearest'});return}
   if(event.target.closest('[data-table-retry]'))loadTable();
   const sort=event.target.closest('[data-sort]');if(sort){sortDirection=sortKey===sort.dataset.sort?-sortDirection:1;sortKey=sort.dataset.sort;page=1;if(tab==='clubs')renderTable();else loadTable()}
   if(event.target.closest('[data-cookie-settings]'))window.ASGLegal?.openSettings();
   if(event.target.closest('[data-about-nav]')){document.querySelector('.about-more').open=true;$('about-server').scrollIntoView({block:'start'})}
-  if(event.target.closest('[data-tour-start]')){event.preventDefault();native().guide()}
+  if(event.target.closest('[data-tour-start]')){event.preventDefault();guide.open()}
   const stream=event.target.closest('#v2-stream-widget summary');if(stream){event.preventDefault();startStream(stream)}
-  if(event.target.closest('[data-close-popover]'))$('stream-popover').hidePopover();
+  if(event.target.closest('[data-close-popover="stream-popover"]'))$('stream-popover').hidePopover();
 });
-$('rating-table').addEventListener('keydown',event=>{const row=event.target.closest('tr[data-row]');if(row&&event.target===row&&row.dataset.row&&['Enter',' '].includes(event.key)){event.preventDefault();native().openDriver(rowById(row.dataset.row),row)}});
+$('rating-table').addEventListener('keydown',event=>{const row=event.target.closest('tr[data-row]');if(row&&event.target===row&&row.dataset.row&&['Enter',' '].includes(event.key)){event.preventDefault();presentation.openDriver(rowById(row.dataset.row),row)}});
 $('race-vote').onclick=()=>native().vote();$('prev').onclick=()=>{page--;loadTable()};$('next').onclick=()=>{page++;loadTable()};
 let searchTimer;$('search').oninput=()=>{clearTimeout(searchTimer);searchTimer=setTimeout(()=>{page=1;loadTable()},250)};
 $('ranking-track').onchange=event=>{track=event.target.value;page=1;loadTable()};$('ranking-club-type').onchange=event=>{type=event.target.value;page=1;loadTable()};
 $('ranking-club-context').onchange=async event=>{context=event.target.value;const selected=context;tableBusy=true;renderTable();try{const data=await native().loadClubs(context);if(context===selected){clubSnapshot=data;tableError=false;page=1}}catch{if(context===selected)tableError=true}finally{if(context===selected){tableBusy=false;renderTable()}}};
 $('modal').querySelector('.modal-close').onclick=closeDialog;$('modal').addEventListener('cancel',event=>{event.preventDefault();closeDialog()});$('modal').addEventListener('click',event=>{if(event.target===$('modal'))closeDialog()});
-const onlineButton=document.querySelector('.online');onlineButton.addEventListener('keydown',event=>{if(['Enter',' '].includes(event.key)){event.preventDefault();native().openOnline()}});
+const onlineButton=document.querySelector('.online');onlineButton.addEventListener('keydown',event=>{if(['Enter',' '].includes(event.key)){event.preventDefault();presentation.openOnline(onlineButton)}});
 subscribe(next=>{
   model=next;
+  changed('header',[next.auth,next.news,next.invitations,next.unreadNews],()=>header.update(next));
   changed('support',[next.donations,next.donationsLoading,next.donationsError],renderSupport);
   changed('stats',[next.day,next.stats,next.online,next.serversStale,next.servers.map(s=>s.players)],renderStats);
   changed('winner',next.winner,renderWinner);
@@ -216,4 +226,4 @@ const boot=$('site-shell'),loader=document.querySelector('.home-loader');
 let seenIntro=false;try{seenIntro=Boolean(sessionStorage.getItem('asgV2IntroSeen'))}catch{}
 if(reduced.matches||seenIntro){document.documentElement.classList.remove('home-booting');loader.hidden=true}else{document.documentElement.classList.add('home-booting');boot.inert=true;setTimeout(()=>{document.documentElement.classList.remove('home-booting');document.documentElement.classList.add('home-ready');boot.inert=false;loader.hidden=true;try{sessionStorage.setItem('asgV2IntroSeen','1')}catch{}},1050)}
 renderTable();$('race-vote').disabled=true;
-try{await import('./runtime/home.js?v=20261006v2a');setTimeout(applyHash,1500)}catch(error){console.error('V2 runtime unavailable',error);$('event-track').textContent=text('Не удалось загрузить данные','Could not load data');$('day-driver').textContent=text('Данные недоступны','Data unavailable');tableError=true;tableBusy=false;renderTable()}
+try{await import('./runtime/home.js?v=20261006v2b');setTimeout(applyHash,1500)}catch(error){console.error('V2 runtime unavailable',error);$('event-track').textContent=text('Не удалось загрузить данные','Could not load data');$('day-driver').textContent=text('Данные недоступны','Data unavailable');tableError=true;tableBusy=false;renderTable()}
