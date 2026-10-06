@@ -1,9 +1,9 @@
-import copy from './copy.js?v=20261006v2d';
-import { subscribe, getRuntime } from './bridge.js?v=20261006v2d';
-import {eventKind,normalizeTablePage} from './models.js?v=20261006v2d';
-import {createPresentation} from './presentation.js?v=20261006v2d';
-import {createHeader} from './header.js?v=20261006v2d';
-import {createGuide} from './guide.js?v=20261006v2d';
+import copy from './copy.js?v=20261006v2e';
+import { subscribe, getRuntime } from './bridge.js?v=20261006v2e';
+import {eventKind,normalizeTablePage} from './models.js?v=20261006v2e';
+import {createPresentation} from './presentation.js?v=20261006v2e';
+import {createHeader} from './header.js?v=20261006v2e';
+import {createGuide} from './guide.js?v=20261006v2e';
 import { resolveTrackBackgroundFile, selectRandomTrackBackgroundFile } from '/src/features/server-status/track-background.js';
 const language=document.documentElement.dataset.pageLanguage==='en'?'en':'ru';
 const ru=language==='ru', words=copy[language].labels, editorial=copy[language].editorial;
@@ -151,7 +151,7 @@ async function loadTable(){
 function chooseTab(next){tab=next;page=1;sortKey='';$('search').value='';document.querySelectorAll('#v2-site-shell [data-tab]').forEach(button=>{button.classList.toggle('active',button.dataset.tab===tab);button.setAttribute('aria-selected',String(button.dataset.tab===tab))});loadTable()}
 function showDialog(title,html,trigger){if(!$('modal').open)lastTrigger=trigger||document.activeElement;$('modal').dataset.kind='';$('modal').style.removeProperty('--modal-track');$('modal-title').textContent=title;$('modal-body').innerHTML=html;if(!$('modal').open)$('modal').showModal();$('site-shell').inert=true;$('modal').querySelector('button').focus()}
 function closeDialog(){$('modal').close();$('site-shell').inert=false;lastTrigger?.focus?.({preventScroll:true})}
-function rowById(id){return tableRows.find(r=>r.public_id===id)||[dayProfile,winnerExtra?.profile,model?.day,...(winnerExtra?.details?.results||[])].find(r=>r?.public_id===id)||{public_id:id,driver:id}}
+function rowById(id){return tableRows.find(r=>r.public_id===id)||[dayProfile,winnerExtra?.profile,model?.day,...(winnerExtra?.details?.results||[]),...(model?.servers||[]).flatMap(s=>s.drivers||[])].find(r=>r?.public_id===id)||{public_id:id,driver:id}}
 function showReference(key,trigger){
   if(key==='rules')showDialog(label('rules'),native().rules()||editorial.rules,trigger);
   if(key==='elo')showDialog(label('elo'),editorial.elo,trigger);
@@ -160,9 +160,7 @@ function showReference(key,trigger){
   $('modal-eyebrow').textContent='ASG RACING / '+key.toUpperCase();
 }
 function openServers(key,trigger){
-  if(!key){showDialog(label('serverStatus'),`<div class="v2-server-summary">${model.servers.map(s=>`<button type="button" class="server-card" data-server="${esc(s.key)}"><b>${esc(s.label)}</b><span>${esc(s.track)} · ${number(s.players)} ${label('players')} · ${esc(s.session)}</span></button>`).join('')}</div>`,trigger);return}
-  const server=model.servers.find(s=>s.key===key);if(!server)return;
-  const drivers=server.drivers;showDialog(server.label,`<div class="v2-server-parameters"><span>${esc(server.track)}</span><span>SA ${esc(server.sa)}</span><span>SR ${esc(server.sr)}</span><span>${esc(server.session)}</span></div><div class="v2-server-pilots">${drivers.length?drivers.map((p,i)=>`<article class="v2-server-pilot"><div><b class="v2-race-number">#${esc(p.raceNumber??p.car_number??p.race_number??i+1)}</b> ${p.public_id?`<a href="${driverHref(p.public_id)}">${esc(p.name||p.driver)}</a>`:esc(p.name||p.driver)}</div><div>${rating(p,'elo')}${rating(p,'sr')}</div><div>${car(p)}</div></article>`).join(''):`<p class="empty">${model.serversStale?text('Онлайн устарел; актуальный список недоступен.','Online status is stale; current roster is unavailable.'):text('Нет пилотов онлайн','No drivers online')}</p>`}</div>`,trigger);
+  presentation.openServer(key,trigger);
 }
 function startStream(trigger){
   const pop=$('stream-popover');if(pop.matches(':popover-open')){pop.hidePopover();return}
@@ -227,4 +225,4 @@ const boot=$('site-shell'),loader=document.querySelector('.home-loader');
 let seenIntro=false;try{seenIntro=Boolean(sessionStorage.getItem('asgV2IntroSeen'))}catch{}
 if(reduced.matches||seenIntro){document.documentElement.classList.remove('home-booting');loader.hidden=true}else{document.documentElement.classList.add('home-booting');boot.inert=true;setTimeout(()=>{document.documentElement.classList.remove('home-booting');document.documentElement.classList.add('home-ready');boot.inert=false;loader.hidden=true;try{sessionStorage.setItem('asgV2IntroSeen','1')}catch{}},1050)}
 renderTable();$('race-vote').disabled=true;
-try{await import('./runtime/home.js?v=20261006v2d');setTimeout(applyHash,1500)}catch(error){console.error('V2 runtime unavailable',error);$('event-track').textContent=text('Не удалось загрузить данные','Could not load data');$('day-driver').textContent=text('Данные недоступны','Data unavailable');tableError=true;tableBusy=false;renderTable()}
+try{await import('./runtime/home.js?v=20261006v2e');setTimeout(applyHash,1500)}catch(error){console.error('V2 runtime unavailable',error);$('event-track').textContent=text('Не удалось загрузить данные','Could not load data');$('day-driver').textContent=text('Данные недоступны','Data unavailable');tableError=true;tableBusy=false;renderTable()}

@@ -18,6 +18,22 @@ async function dialogSnapshot(page,name,language,width){
   await page.waitForTimeout(250);assert.ok(await page.locator('#v2-modal').evaluate(n=>n.scrollWidth<=n.clientWidth+1),name+' dialog overflow');
   if(language==='ru')await page.screenshot({path:path.join(root,`design-research/v2-verification/${name}-${language}-${width}.png`)});
 }
+const populatedServer='assetto-corsa-competizione-dedic';
+async function serverModal(page,language,width){
+  await page.locator(`#v2-servers [data-server="${populatedServer}"]`).click();
+  assert.equal(await page.locator('#v2-modal').getAttribute('data-kind'),'server');
+  assert.equal(await page.locator('.server-parameter-row>div').count(),4);
+  assert.equal(await page.locator('.server-driver-list>li:not(.empty)').count(),3);
+  assert.equal(await page.locator('.server-driver-list .pilot-name[href*="/driver/"]').count(),3);
+  assert.equal(await page.locator('.server-driver-list .pilot-car img').count(),3);
+  assert.ok(await page.locator('.server-driver-list .pilot-car img').first().getAttribute('src').then(src=>src.endsWith('/32.png')));
+  assert.ok((await page.locator('.server-driver-list .pilot-car').first().textContent()).includes('Ferrari 296 GT3'));
+  assert.ok(await page.locator('.server-driver-list').evaluate(n=>n.scrollWidth<=n.clientWidth+1),'Server roster fits horizontally');
+  await dialogSnapshot(page,'server-roster',language,width);
+  await page.locator('.server-driver-list [data-rating="elo"]').first().click();await page.waitForTimeout(250);assert.equal(await page.locator('#v2-modal').getAttribute('data-kind'),'driver-elo');assert.equal(await page.locator('#v2-modal .elo-chart').count(),1);await page.locator('#v2-modal .modal-close').click();
+  await page.locator('#v2-site-shell [data-modal="servers"]').click();assert.equal(await page.locator('#v2-modal').getAttribute('data-kind'),'servers');assert.equal(await page.locator('.server-summary-item').count(),9);
+  await page.locator(`.server-summary-item[data-server="${populatedServer}"]`).click();assert.equal(await page.locator('#v2-modal').getAttribute('data-kind'),'server');await page.locator('.server-driver-list [data-rating="sr"]').first().click();await page.waitForTimeout(250);assert.equal(await page.locator('#v2-modal').getAttribute('data-kind'),'driver-sr');await page.locator('#v2-modal .modal-close').click();
+}
 const futureEvent=structuredClone(snapshot.event),futureDate=new Date(Date.now()+86400000).toISOString().slice(0,10);
 futureEvent.date=futureDate;futureEvent.status='scheduled';futureEvent.launch_at=futureDate+'T19:50:00+03:00';
 const signedDriver=snapshot.home.driver_of_the_day.public_id;
@@ -39,7 +55,7 @@ async function fixture(route,log,options={}){
   else if(u.hostname==='data.asgracing.ru'){
     if(pathname==='/top-data/v2/manifest.json')payload=snapshot.manifest;
     else if(pathname==='/top-data/v2/home.json')payload=options.emptyHomePreviews?{...snapshot.home,leaderboard:[],bestlaps:[]}:snapshot.home;
-    else if(pathname==='/top-data/server_status.json'){payload=structuredClone(snapshot.live_servers?{servers:snapshot.live_servers}:snapshot.servers);payload.updated_at=new Date().toISOString();for(const s of Object.values(payload.servers||{}))s.updated_at=payload.updated_at;}
+    else if(pathname==='/top-data/server_status.json'){payload=structuredClone(snapshot.live_servers?{servers:snapshot.live_servers}:snapshot.servers);payload.updated_at=options.staleServers?'2020-01-01T00:00:00Z':new Date().toISOString();for(const s of Object.values(payload.servers||{}))s.updated_at=payload.updated_at;const s=payload.servers[populatedServer];if(options.largeRoster){const drivers=s.drivers;s.drivers=Array.from({length:32},(_,i)=>({...drivers[i%drivers.length],position:i+1}));s.players_online=32}if(options.missingRoster)s.drivers=[];}
     else if(pathname==='/hourly-data/announcement.json')payload=event;
     else if(pathname==='/hourly-data/schedule.json')payload={...snapshot.schedule,items:[event]};
     else if(pathname==='/donations-api/recent')payload=snapshot.donations;
@@ -86,13 +102,14 @@ try{
     assert.equal(await page.locator('meta[name="yandex-metrika-id"]').getAttribute('content'),'107697834');
     assert.equal(await page.locator('meta[name="robots"]').getAttribute('content'),'noindex,follow');
     assert.ok(!log.some(x=>x.url.includes('mc.yandex.ru')),'No analytics without consent');
+    await page.locator('.asg-legal-banner-btn-secondary').click();
+    await serverModal(page,language,width);
     if(width>1000){
       assert.ok(await page.locator('#v2-servers').evaluate(list=>{const box=list.getBoundingClientRect();return [...list.children].every(card=>{const r=card.getBoundingClientRect();return r.left>=box.left&&r.right<=box.right+1&&r.bottom<=box.bottom+1})}),'All nine server cards fit the desktop widget');
     }
     if(width===1920){
-      await page.locator('.asg-legal-banner-btn-secondary').click();
       await page.locator('.servers-panel').screenshot({path:path.join(root,`design-research/v2-verification/servers-${language}-${width}.png`)});
-      await page.locator('#v2-servers .server-card').first().click();assert.equal(await page.locator('#v2-modal .v2-server-parameters').count(),1);assert.match(await page.locator('#v2-modal-title').textContent(),/ASG Racing/);await page.locator('#v2-modal .modal-close').click();
+      await page.locator('#v2-servers .server-card').first().click();assert.equal(await page.locator('#v2-modal .server-parameter-row').count(),1);assert.match(await page.locator('#v2-modal-title').textContent(),/ASG Racing/);assert.equal(await page.locator('.server-driver-list .empty').count(),1);await page.locator('#v2-modal .modal-close').click();
       assert.ok(await page.locator('#v2-day-ratings').evaluate(n=>{const [elo,sr]=n.children;return sr.getBoundingClientRect().left-elo.getBoundingClientRect().right>=7}),'Day rating badges have a gap');
       for(const key of ['support','servers'])assert.equal(await page.locator(`[data-widget-dock="${key}"] .dock-symbol svg`).count(),1,'Visible dock has a close icon');
       assert.ok(await page.locator('.upcoming-panel').evaluate(n=>n.querySelector('.event-topline').getBoundingClientRect().top-n.querySelector('.panel-head').getBoundingClientRect().bottom<=14),'Event content starts directly below heading');
@@ -126,13 +143,13 @@ try{
       await page.locator('[data-widget-dock="servers"]').click();assert.equal(await page.locator('.right-column').getAttribute('data-dock-open'),'false');assert.ok(await page.locator('#v2-winner-results').evaluate(n=>n.scrollWidth<=n.clientWidth+1),'Winner counters fit when both docks are collapsed');if(language==='ru')await page.screenshot({path:path.join(root,'design-research/v2-verification/home-docks-collapsed.png')});
     }
     if(width===390){
-      await page.locator('.asg-legal-banner-btn-secondary').click();await page.locator('[data-modal="event"]').click();await dialogSnapshot(page,'event',language,width);await page.locator('#v2-modal .modal-close').click();
+      await page.locator('[data-modal="event"]').click();await dialogSnapshot(page,'event',language,width);await page.locator('#v2-modal .modal-close').click();
       await page.locator('#v2-rating-table tbody tr').first().click({position:{x:15,y:15}});await page.waitForTimeout(250);await dialogSnapshot(page,'driver',language,width);await page.locator('#v2-driver-lap-value').scrollIntoViewIfNeeded();assert.ok(await page.locator('#v2-driver-lap-value').evaluate(n=>n.scrollWidth<=n.clientWidth+1));if(language==='ru')await page.screenshot({path:path.join(root,'design-research/v2-verification/driver-lap-mobile.png')});await page.locator('#v2-modal .modal-close').click();
       await page.locator('#v2-site-shell [data-modal="elo"]').first().click();await dialogSnapshot(page,'elo-reference',language,width);await page.locator('#v2-modal .modal-close').click();
     }
     assert.deepEqual(errors,[]);reports.push({width,height,language,rows:info.rows,servers:info.servers});await page.close();
   }
-  for(const options of [{signed:true},{signed:true,admin:true},{failVote:true},{emptyHomePreviews:true},{normalEvent:true},{carousel:true},{bannedDriver:true,noTitle:true}]){
+  for(const options of [{signed:true},{signed:true,admin:true},{failVote:true},{emptyHomePreviews:true},{normalEvent:true},{carousel:true},{bannedDriver:true,noTitle:true},{largeRoster:true},{missingRoster:true},{staleServers:true}]){
     const page=await browser.newPage({viewport:{width:1920,height:936},reducedMotion:'reduce'}),log=[],errors=[];page.on('pageerror',e=>errors.push(e.message));await page.route('**/*',r=>fixture(r,log,options));
     if(options.carousel){await page.emulateMedia({reducedMotion:'no-preference'});await page.clock.install()}
     await page.goto(base+'/v2/',{waitUntil:'networkidle'});assert.ok(page.url().endsWith('/v2/ru/'));await page.waitForTimeout(250);
@@ -142,6 +159,7 @@ try{
     else if(options.normalEvent){assert.equal(await page.locator('.upcoming-panel').getAttribute('data-event-kind'),'hourly');await page.locator('.asg-legal-banner-btn-secondary').click();await page.locator('[data-modal="event"]').click();assert.match(await page.locator('#v2-modal-eyebrow').textContent(),/Часовая гонка/);assert.equal(await page.locator('#v2-modal-eyebrow .event-kind').evaluate(n=>getComputedStyle(n).backgroundColor),'rgb(247, 204, 67)')}
     else if(options.carousel){const image=await page.locator('.track-layer.is-active').evaluate(n=>n.style.backgroundImage);await page.clock.fastForward(30000);assert.notEqual(await page.locator('.track-layer.is-active').evaluate(n=>n.style.backgroundImage),image);assert.equal(await page.locator('.home-loader').isVisible(),false)}
     else if(options.bannedDriver){await page.locator('.asg-legal-banner-btn-secondary').click();await page.locator('#v2-rating-table tbody tr').first().click({position:{x:15,y:15}});await page.waitForTimeout(500);assert.equal(await page.locator('.driver-ban-status.is-banned').count(),1);assert.match(await page.locator('.driver-strikes').textContent(),/3 \/ 3/);assert.match(await page.locator('.driver-achievement-title').textContent(),/\u0412\u0440\u0435\u043c\u0435\u043d\u043d\u043e \u043d\u0435\u0434\u043e\u0441\u0442\u0443\u043f\u043d\u043e/);assert.ok(await page.locator('#v2-driver-track').count())}
+    else if(options.largeRoster||options.missingRoster||options.staleServers){await page.locator('.asg-legal-banner-btn-secondary').click();await page.locator(`#v2-servers [data-server="${populatedServer}"]`).click();if(options.largeRoster){assert.equal(await page.locator('.server-driver-list>li:not(.empty)').count(),32);assert.ok(await page.locator('#v2-modal .modal-body').evaluate(n=>n.scrollHeight>n.clientHeight));await page.locator('.server-driver-list>li').last().scrollIntoViewIfNeeded();assert.ok(await page.locator('.server-driver-list>li').last().isVisible());await dialogSnapshot(page,'server-large-roster','ru',1920)}else{assert.equal(await page.locator('.server-driver-list .empty').count(),1);assert.match(await page.locator('.server-driver-list .empty').textContent(),options.staleServers?/Онлайн устарел/:/ещё не опубликован/)}await page.keyboard.press('Escape');assert.equal(await page.locator('#v2-modal').evaluate(n=>n.open),false);assert.equal(await page.locator('#v2-site-shell').evaluate(n=>n.inert),false)}
     assert.deepEqual(errors,[]);await page.close();
   }
   await fs.writeFile(path.join(root,'design-research/v2-verification/report.json'),JSON.stringify({reports,fixtureWrites,productionWrites:0},null,2));
