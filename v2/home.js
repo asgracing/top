@@ -1,10 +1,10 @@
-import copy from './copy.js?v=20261006v2h';
-import { subscribe, getRuntime } from './bridge.js?v=20261006v2h';
-import {eventKind,normalizeTablePage,normalizeSafetyRow,paginationPages} from './models.js?v=20261006v2h';
-import {createPresentation} from './presentation.js?v=20261006v2h';
-import {createHeader} from './header.js?v=20261006v2h';
-import {createGuide} from './guide.js?v=20261006v2h';
-import {createHomeMotion} from './motion.js?v=20261006v2h';
+import copy from './copy.js?v=20261006v2i';
+import { subscribe, getRuntime } from './bridge.js?v=20261006v2i';
+import {eventKind,normalizeTablePage,normalizeSafetyRow,paginationPages} from './models.js?v=20261006v2i';
+import {createPresentation} from './presentation.js?v=20261006v2i';
+import {createHeader} from './header.js?v=20261006v2i';
+import {createGuide} from './guide.js?v=20261006v2i';
+import {createHomeMotion} from './motion.js?v=20261006v2i';
 import { resolveTrackBackgroundFile, selectRandomTrackBackgroundFile } from '/src/features/server-status/track-background.js';
 const language=document.documentElement.dataset.pageLanguage==='en'?'en':'ru';
 const ru=language==='ru', words=copy[language].labels, editorial=copy[language].editorial;
@@ -125,7 +125,7 @@ function renderServers(){
 }
 const cols={leaderboard:[['rank','#'],['driver','driver'],['elo','ELO'],['safety_rating','SR'],['points','points'],['wins','wins'],['podiums','podiums'],['races','racesCol'],['average_finish','finish'],['club','club'],['team','team']],safety:[['rank','№'],['driver','driver'],['safety_rating','SR'],['active_strikes',text('Страйки','Strikes')],['races_count','racesCol'],['total_laps',text('Всего кругов','Total laps')],['total_invalid_laps',text('Грязные круги','Invalid laps')],['total_counted_penalties',text('Автоштрафы','Auto penalties')],['total_incident_points',text('Инциденты','Incidents')]],bestlaps:[['rank','#'],['driver','driver'],['best_lap','lap'],['car_name','car'],['updated_at','date'],['session_type','session'],['elo','ELO'],['safety_rating','SR'],['club','club'],['team','team']],clubs:[['rank','#'],['display_name','teams'],['total_points','points'],['average_elo','ELO'],['average_sr','SR'],['race_count','racesCol']]};
 function tableCell(row,key,index){
-  if(key==='rank')return `<span class="${index<3?'top-rank':''}">${index+1}</span>`;
+  if(key==='rank')return `<span class="${index<3?`rank-medal rank-${['gold','silver','bronze'][index]}`:''}">${index+1}</span>`;
   if(key==='driver')return row.public_id?`<a href="${driverHref(row.public_id)}">${esc(row.driver||row.name)}</a>`:esc(row.driver||row.name);
   if(key==='elo'||key==='safety_rating')return rating(row,key==='elo'?'elo':'sr');
   if(key==='club'||key==='team')return native().affiliation(row,key);
@@ -246,4 +246,4 @@ const boot=$('site-shell'),loader=document.querySelector('.home-loader');
 let seenIntro=false;try{seenIntro=Boolean(sessionStorage.getItem('asgV2IntroSeen'))}catch{}
 if(reduced.matches||seenIntro){document.documentElement.classList.remove('home-booting');loader.hidden=true}else{document.documentElement.classList.add('home-booting');boot.inert=true;setTimeout(()=>{document.documentElement.classList.remove('home-booting');document.documentElement.classList.add('home-ready');boot.inert=false;loader.hidden=true;try{sessionStorage.setItem('asgV2IntroSeen','1')}catch{}},1050)}
 renderTable();$('race-vote').disabled=true;
-try{await import('./runtime/home.js?v=20261006v2h');setTimeout(applyHash,1500)}catch(error){console.error('V2 runtime unavailable',error);$('event-track').textContent=text('Не удалось загрузить данные','Could not load data');$('day-driver').textContent=text('Данные недоступны','Data unavailable');tableError=true;tableBusy=false;renderTable()}
+try{await import('./runtime/home.js?v=20261006v2i');setTimeout(applyHash,1500)}catch(error){console.error('V2 runtime unavailable',error);$('event-track').textContent=text('Не удалось загрузить данные','Could not load data');$('day-driver').textContent=text('Данные недоступны','Data unavailable');tableError=true;tableBusy=false;renderTable()}

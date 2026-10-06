@@ -22,10 +22,16 @@ async function checkPagination(page){
   if(total>1){
     await page.locator('#v2-page-links [data-page]').last().click();await page.waitForFunction(p=>document.querySelector('#v2-page-number')?.textContent===String(p)&&!document.querySelector('#v2-prev').disabled,total);
     assert.equal(await page.locator('#v2-next').isDisabled(),true);
+    assert.equal(await page.locator('#v2-rating-table .rank-medal').count(),0,'No medal ranks on the last page');
     await page.locator('#v2-page-input').fill('2');await page.locator('#v2-page-jump button').click();await page.waitForFunction(()=>document.querySelector('#v2-page-number')?.textContent==='2'&&!document.querySelector('#v2-prev').disabled);
+    assert.equal(await page.locator('#v2-rating-table .rank-medal').count(),0,'No medal ranks on page two');
+    const laterColors=await page.locator('#v2-rating-table tbody tr td:first-child').evaluateAll(cells=>cells.slice(0,4).map(cell=>getComputedStyle(cell.firstElementChild||cell).color));
+    assert.equal(new Set(laterColors).size,1,'Later-page ranks all have the normal color');
     await page.locator('#v2-page-links [data-page="1"]').click();await page.waitForFunction(()=>document.querySelector('#v2-page-number')?.textContent==='1'&&!document.querySelector('#v2-next').disabled);
   }
   assert.equal(await page.locator('#v2-prev').isDisabled(),true);
+  const medals=await page.locator('#v2-rating-table .rank-medal').evaluateAll(nodes=>nodes.map(node=>({rank:node.textContent,color:getComputedStyle(node).color})));
+  assert.deepEqual(medals,[{rank:'1',color:'rgb(247, 204, 67)'},{rank:'2',color:'rgb(195, 208, 223)'},{rank:'3',color:'rgb(214, 154, 101)'}]);
   assert.ok(await page.locator('.table-footer').evaluate(n=>n.scrollWidth<=n.clientWidth+1),'Page controls fit horizontally');
 }
 async function checkSafetyColumns(page,language,width){
@@ -184,7 +190,7 @@ try{
     if(options.carousel){await page.emulateMedia({reducedMotion:'no-preference'});await page.clock.install()}
     if(options.motion){await page.emulateMedia({reducedMotion:'no-preference'});await page.addInitScript(()=>sessionStorage.setItem('asgV2IntroSeen','1'))}
     await page.goto(base+'/v2/',{waitUntil:'networkidle'});assert.ok(page.url().endsWith('/v2/ru/'));await page.waitForTimeout(250);
-    if(options.signed){assert.equal(await page.locator('#v2-rating-table .current-user-row').count(),1);await page.locator('.asg-legal-banner-btn-secondary').click();await page.locator('#v2-profile-trigger').click();assert.equal(await page.locator('#v2-profile-popover').evaluate(n=>n.matches(':popover-open')),true);assert.equal(await page.locator('#v2-profile-popover [href*="/moderation/"]').count(),options.admin?1:0);assert.equal(await page.locator('#v2-profile-popover [href*="/portal-ops/"]').count(),options.admin?1:0);await page.screenshot({path:path.join(root,'design-research/v2-verification/header-profile.png')})}
+    if(options.signed){await page.locator('#v2-rating-table .current-user-row').waitFor({state:'visible'});assert.equal(await page.locator('#v2-rating-table .current-user-row').count(),1);await page.locator('.asg-legal-banner-btn-secondary').click();await page.locator('#v2-profile-trigger').click();assert.equal(await page.locator('#v2-profile-popover').evaluate(n=>n.matches(':popover-open')),true);assert.equal(await page.locator('#v2-profile-popover [href*="/moderation/"]').count(),options.admin?1:0);assert.equal(await page.locator('#v2-profile-popover [href*="/portal-ops/"]').count(),options.admin?1:0);await page.screenshot({path:path.join(root,'design-research/v2-verification/header-profile.png')})}
     else if(options.failVote){await page.locator('#v2-race-vote').click();await page.waitForTimeout(200);assert.equal(await page.locator('#v2-participation-note .v2-error').count(),1);assert.ok(!(await page.locator('#v2-race-vote').textContent()).includes('\u043e\u0442\u043c\u0435\u043d\u0438\u0442\u044c'))}
     else if(options.emptyHomePreviews){assert.equal(await page.locator('#v2-rating-table tbody tr[data-row]').count(),10);await page.locator('#v2-site-shell [data-tab="bestlaps"]').click();await page.waitForTimeout(250);assert.equal(await page.locator('#v2-rating-table tbody tr[data-row]').count(),10)}
     else if(options.normalEvent){assert.equal(await page.locator('.upcoming-panel').getAttribute('data-event-kind'),'hourly');await page.locator('.asg-legal-banner-btn-secondary').click();await page.locator('[data-modal="event"]').click();assert.match(await page.locator('#v2-modal-eyebrow').textContent(),/Часовая гонка/);assert.equal(await page.locator('#v2-modal-eyebrow .event-kind').evaluate(n=>getComputedStyle(n).backgroundColor),'rgb(247, 204, 67)')}
@@ -193,7 +199,7 @@ try{
     else if(options.motion){
       await page.locator('.asg-legal-banner-btn-secondary').click();await page.waitForTimeout(4100);
       assert.equal(await page.evaluate(()=>document.getAnimations().filter(a=>a.playState==='running').length),0,'Idle homepage has no decorative frame loop');
-      await page.evaluate(async()=>{const {subscribe,publish}=await import('/v2/bridge.js?v=20261006v2h');let model;subscribe(m=>model=m)();window.__motionModel=structuredClone(model);window.__motionModel.announcement.event_id+=':motion-test';window.__motionModel.donations.goal.raised_amount+=1;window.__motionPublish=publish;publish(window.__motionModel)});
+      await page.evaluate(async()=>{const {subscribe,publish}=await import('/v2/bridge.js?v=20261006v2i');let model;subscribe(m=>model=m)();window.__motionModel=structuredClone(model);window.__motionModel.announcement.event_id+=':motion-test';window.__motionModel.donations.goal.raised_amount+=1;window.__motionPublish=publish;publish(window.__motionModel)});
       await page.waitForTimeout(120);
       assert.equal(await page.evaluate(()=>document.getAnimations().filter(a=>a.playState==='running'&&['v2-multiplier','v2-fund-progress'].includes(a.effect.target.id||a.effect.target.parentElement?.id)).length),2);
       assert.ok(await page.evaluate(()=>document.getAnimations().filter(a=>a.effect.target.id==='v2-multiplier').every(a=>a.effect.getTiming().iterations===2&&a.effect.getKeyframes().every(k=>!('color' in k)&&!('textShadow' in k)))));

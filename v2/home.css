@@ -12,6 +12,11 @@ body[data-v2].v2-motion-paused *,body[data-v2].v2-motion-paused *::before,body[d
 body[data-v2].v2-motion-paused .track-layer { transition:none; }
 body[data-v2] [data-dock-open="false"] .sidebar-content *,body[data-v2] [data-dock-open="false"] .sidebar-content *::before,body[data-v2] [data-dock-open="false"] .sidebar-content *::after { animation-play-state:paused!important; }
 body[data-v2] .site-shell { position:relative; z-index:1; }
+/* Medal colors follow the absolute rank, never the visible row position. */
+body[data-v2] #v2-rating-table tbody tr td:first-child { color:var(--muted); }
+body[data-v2] #v2-rating-table .rank-gold { color:#f7cc43; }
+body[data-v2] #v2-rating-table .rank-silver { color:#c3d0df; }
+body[data-v2] #v2-rating-table .rank-bronze { color:#d69a65; }
 body[data-v2] .table-footer { display:grid; grid-template-columns:auto minmax(0,1fr) auto; align-items:center; gap:10px; }
 body[data-v2] .pagination { justify-content:center; gap:4px; min-width:0; }
 body[data-v2] .pagination .pagination-pages { display:flex; align-items:center; gap:4px; padding:0; background:none; color:inherit; }
