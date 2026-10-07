@@ -186,3 +186,18 @@ body[data-v2] .asg-legal-link-row a { color:#a7d4f6; }
  body[data-v2] #v2-driver-lap-value .lap-date { justify-self:end; font-size:12px; }
  body[data-v2] #v2-driver-lap-value .lap-session { justify-self:center; }
 }
+
+/* Full-width partner art replaces the top intro; its text remains below ratings. */
+body[data-v2] .home-partner-banner {
+ display:block;
+ width:100%;
+ padding:0;
+ overflow:hidden;
+ border:0;
+ border-radius:6px;
+ background:#fff;
+}
+body[data-v2] .home-partner-banner picture,
+body[data-v2] .home-partner-banner img { display:block; width:100%; }
+body[data-v2] .home-partner-banner img { height:auto; }
+body[data-v2] .home-partner-banner:focus-visible { outline:2px solid #73caff; outline-offset:2px; }

@@ -79,7 +79,8 @@
   <style>@import url("/styles/utilities.css?v=20260715r12states1") layer(v1Runtime);</style>
   <style>@import url("/styles/responsive.css?v=20260920activityux1") layer(v1Runtime);</style>
   <style>@import url("/styles.css?v=20260907special4") layer(v1Runtime);</style>
-  <style>@import url("/styles/components/hero-layout.css?v=20261003promogradient1") layer(v1Runtime);</style>
+  <style>@import url("/styles/components/hero-layout.css?v=20261007advert1") layer(v1Runtime);</style>
+
   <style>@import url("/styles/components/hero-server-summary.css?v=20260715hero-spacing2") layer(v1Runtime);</style>
   <style>@import url("/styles/components/floating-widgets.css?v=20260820widgetcollapse8") layer(v1Runtime);</style>
   <style>@import url("/legal.css") layer(v1Runtime);</style>
@@ -94,10 +95,10 @@
   <!-- seo-head:end -->
 
 <link rel="stylesheet" href="/v2/styles/design.css?v=20261006v2k">
-<link rel="stylesheet" href="/v2/home.css?v=20261006v2k">
+<link rel="stylesheet" href="/v2/home.css?v=20261007advert1">
 <script>(()=>{try{if(!matchMedia('(prefers-reduced-motion: reduce)').matches&&!sessionStorage.getItem('asgV2IntroSeen'))document.documentElement.classList.add('home-booting')}catch{}setTimeout(()=>{document.documentElement.classList.remove('home-booting');const s=document.getElementById('v2-site-shell');if(s&&!document.querySelector('.is-open,dialog[open]'))s.inert=false},4500)})()</script>
 <script src="/legal.js?v=20260920locale1" defer></script>
-<script type="module" src="/v2/home.js?v=20261006v2k"></script>
+<script type="module" src="/v2/home.js?v=20261007advert1"></script>
 </head><body data-v2="home">
 <div class="home-loader" role="status" aria-label="ASG Racing: загрузка"><img src="/v2/assets/asg-racing-wordmark.svg" alt="ASG RACING"><div class="home-loader-meter" aria-hidden="true"></div><span class="home-loader-label">Готовимся к старту</span></div>
 <div class="track-backdrop" aria-hidden="true"><div class="track-layer is-active"></div><div class="track-layer"></div></div>
@@ -134,7 +135,7 @@
       <details class="panel compact-widget" id="v2-welcome-widget"><summary data-tour-start="" aria-haspopup="dialog" aria-expanded="false"><span class="head-icon" data-icon="compass"></span><b data-copy="welcome">Впервые здесь?</b><span class="chevron">+</span></summary></details>
     </aside>
     <div class="center-column" tabindex="0" aria-label="Главная: прокручиваемый контент">
-      <section class="panel page-intro" id="v2-top"><div class="intro-main"><h1 data-copy="title">ASG Racing — сообщество ACC</h1><p class="intro-subtitle" id="v2-intro-subtitle"></p></div><div class="intro-side"><p class="intro-note" id="v2-intro-note"></p></div></section>
+      <a class="panel home-partner-banner" id="v2-top" href="https://dudarevmotorsport.ru?utm_source=partner&amp;utm_medium=asg&amp;utm_campaign=web" data-mobile-href="https://dudarevmotorsport.ru?utm_source=partner&amp;utm_medium=asg&amp;utm_campaign=mob" target="_blank" rel="sponsored noopener noreferrer"><picture><source media="(max-width: 640px)" srcset="/ads/mobile.jpeg" width="300" height="160"><img src="/ads/desktop.jpeg" width="1150" height="80" alt="Dudarev Motorsport — магазин симрейсингового оборудования. Промокод ASG." fetchpriority="high" decoding="async"></picture></a>
       <div class="event-grid">
         <section class="panel winner-panel"><div class="panel-head"><span class="head-icon" data-icon="flag"></span><h2 data-copy="lastWinner">Последний победитель</h2><a class="winner-history text-link" href="https://asgracing.ru/ru/races/" data-route="races/" data-copy="history">История гонок <span>↗</span></a></div><div class="winner-body"><div class="winner-identity"><span class="eyebrow" data-copy="hourlyRace">Часовая гонка</span><button type="button" class="winner-name" id="v2-winner-name"></button><div id="v2-winner-meta" class="winner-meta"></div></div><div id="v2-winner-race-results"></div><div class="winner-car-slot"><img class="winner-car" hidden alt="Honda NSX Evo"></div><div class="winner-results" id="v2-winner-results"></div></div></section>
         <section class="panel upcoming-panel" id="v2-event"><div class="panel-head"><span class="head-icon" data-icon="calendar"></span><h2 data-copy="upcoming">Ближайшая гонка</h2><span class="event-kind" id="v2-event-kind"></span></div><div class="event-photo"><div class="event-topline"><div class="event-title-row"><h3 id="v2-event-track"></h3><span class="event-multiplier-separator" aria-hidden="true">·</span><span class="event-badge points-pulse" id="v2-multiplier"></span></div><span id="v2-race-countdown" class="race-countdown" role="timer"></span></div><div class="event-columns"><div><div class="event-date" id="v2-event-date"></div><div class="event-car-row"><div class="event-car" id="v2-event-car"></div><img class="event-car-image" id="v2-event-car-image" alt="" hidden></div></div><div><div class="event-facts" id="v2-event-facts"></div><div class="participants" id="v2-participants" aria-live="polite"></div></div></div></div><div class="event-actions"><button class="button primary" type="button" id="v2-race-vote" data-participation="">Я хочу поехать!</button><button class="button" type="button" data-modal="event" data-copy="details">Подробнее</button></div><div class="participation-note" id="v2-participation-note"></div></section>
@@ -144,6 +145,7 @@
         <div class="stats-body"><div class="day-driver"><span class="eyebrow" data-copy="dayDriver">Пилот дня</span><button type="button" id="v2-day-driver" class="day-driver-name"></button><div id="v2-day-ratings" class="day-ratings"></div><div class="metric-strip" id="v2-metrics"></div></div><div class="online" role="button" tabindex="0" data-modal="online" aria-label="Онлайн по датам: подробности"><div class="subhead"><span class="eyebrow" data-copy="online">Онлайн по датам</span><span class="chart-unit" data-copy="pilots">пилоты</span></div><div class="chart" id="v2-chart"></div></div><div class="announcements"><span class="eyebrow" data-copy="announcements">Анонсы</span><button type="button" data-modal="announce1" data-copy="announce1">Скоро Анонс №1</button><button type="button" data-modal="announce2" data-copy="announce2">Скоро Анонс №2</button></div></div>
       </section>
       <section class="panel ranking-panel" id="v2-ranking" aria-labelledby="v2-ranking-title"><div class="panel-head"><span class="head-icon" data-icon="trophy"></span><h2 id="v2-ranking-title" data-copy="ranking">Таблицы и рейтинги</h2><a class="head-note text-link" href="https://asgracing.ru/ru/fun-stats/" data-route="fun-stats/" data-copy="fullStats">Полная статистика ↗</a></div><div class="table-tools"><div class="tabs" role="tablist" aria-label="Таблицы"><button class="active" type="button" role="tab" aria-selected="true" aria-controls="v2-rating-panel" id="v2-tab-rating" data-tab="leaderboard" data-copy="rating">Рейтинг</button><button type="button" role="tab" aria-selected="false" aria-controls="v2-rating-panel" id="v2-bestlaps-link" data-tab="bestlaps" data-copy="bestlaps">Лучшие круги</button><button type="button" role="tab" aria-selected="false" aria-controls="v2-rating-panel" id="v2-tab-safety" data-tab="safety">Safety Rating</button><button type="button" role="tab" aria-selected="false" aria-controls="v2-rating-panel" id="v2-clubs-link" data-tab="clubs" data-copy="teams">Клубы и команды</button></div><div id="v2-ranking-filters" class="ranking-filters" hidden><label id="v2-track-filter-label">Трасса <select id="v2-ranking-track"></select></label><label id="v2-club-type-label" hidden>Клубы / команды <select id="v2-ranking-club-type"><option value="teams">Команды</option><option value="clubs">Клубы</option></select></label><label id="v2-club-context-label" hidden>Рейтинг <select id="v2-ranking-club-context"><option value="general">Общий</option><option value="hourly">Часовые гонки</option><option value="championship">Чемпионат</option></select></label></div><label class="search"><span data-icon="search"></span><input type="search" id="v2-search" aria-label="Поиск пилота" placeholder="Поиск пилота"></label></div><div class="table-scroll" id="v2-rating-panel" role="tabpanel" aria-labelledby="v2-tab-rating" tabindex="0" aria-label="Рейтинг: прокрутка дополнительных колонок"><table id="v2-rating-table"></table></div><div class="table-footer"><span id="v2-table-count"></span><div class="pagination"><button type="button" id="v2-prev" aria-label="Предыдущая страница">‹</button><span class="pagination-pages" id="v2-page-links"></span><button type="button" id="v2-next" aria-label="Следующая страница">›</button></div><form id="v2-page-jump" class="page-jump"><label><span data-copy="page">Страница</span><input id="v2-page-input" type="number" min="1" step="1" inputmode="numeric" required><span id="v2-page-total"></span></label><button type="submit" data-copy="go">Перейти</button></form></div></section>
+      <section class="panel page-intro" id="v2-community-intro"><div class="intro-main"><h1 data-copy="title">ASG Racing — сообщество ACC</h1><p class="intro-subtitle" id="v2-intro-subtitle"></p></div><div class="intro-side"><p class="intro-note" id="v2-intro-note"></p></div></section>
       <section class="panel about-panel" id="v2-about-server"><div class="about-intro"><span class="eyebrow">WELCOME TO THE PADDOCK</span><h2 data-copy="about">О сервере ASG Racing</h2><p id="v2-about-lead"></p></div><div class="about-socials"><a href="https://t.me/+JUymrENgddcyMTdi"><img src="/v2/assets/telegram.svg" alt="">Telegram ↗</a><a href="https://discord.gg/cEPFHXXtTC"><img src="/v2/assets/discord.svg" alt="">Discord ↗</a></div><details class="about-more"><summary data-copy="moreAbout">Подробнее о сервере и подсчёте очков</summary><div id="v2-about-content"></div></details></section>
       <section class="panel seo-panel" id="v2-seo-content"><section class="seo-intro" aria-labelledby="v2-seo-intro-title">
   <h2 id="v2-seo-intro-title">Гоняйте вместе с сообществом ASG Racing</h2>
@@ -353,16 +355,13 @@
 
 <div class="hero-grid">
   <div class="hero-main-column">
-    <div class="hero-copy">
-      <h1 data-i18n="heroTitle">ASG Racing — сообщество ACC</h1>
-
-      <div class="hero-funnel-card">
-        <div class="hero-funnel-copy">
-          <div class="hero-funnel-title" data-i18n="heroFunnelTitle">Monza 24/7, ежедневные заезды, помощь новичкам</div>
-          <p class="hero-funnel-note" data-i18n="heroFunnelNote"><a class="hero-funnel-link hero-funnel-link-telegram" href="https://t.me/+JUymrENgddcyMTdi" target="_blank" rel="noopener noreferrer">Telegram</a> и <a class="hero-funnel-link hero-funnel-link-discord" href="https://discord.gg/cEPFHXXtTC" target="_blank" rel="noopener noreferrer">Discord</a> — напоминания, результаты, голосования и общение.<br><a class="hero-funnel-link hero-funnel-link-sr" href="#safety-about">SR — безопасность</a> · <a class="hero-funnel-link hero-funnel-link-elo" href="#elo-about">ELO — мастерство</a>.</p>
-        </div>
-
-      </div>
+    <div class="hero-copy hero-copy-ad">
+      <a class="hero-ad-banner" data-home-ad href="https://dudarevmotorsport.ru?utm_source=partner&amp;utm_medium=asg&amp;utm_campaign=web" data-mobile-href="https://dudarevmotorsport.ru?utm_source=partner&amp;utm_medium=asg&amp;utm_campaign=mob" target="_blank" rel="sponsored noopener noreferrer">
+      <picture>
+        <source media="(max-width: 640px)" srcset="/ads/mobile.jpeg" width="300" height="160" />
+        <img src="/ads/desktop.jpeg" width="1150" height="80" alt="Dudarev Motorsport — sim racing equipment. Promo code ASG." fetchpriority="high" decoding="async" />
+      </picture>
+      </a>
     </div>
 
     <div class="hero-actions-row">
@@ -686,6 +685,16 @@
         <div>
           <h2 class="section-title" data-i18n="aboutTitle">О сервере ASG Racing</h2>
           <p class="section-subtitle" data-i18n="aboutSubtitle">Публичный сервер Assetto Corsa Competizione</p>
+        </div>
+      </div>
+
+      <div class="table-card about-community-intro">
+        <div class="hero-funnel-copy">
+          <h1 data-i18n="heroTitle">ASG Racing — сообщество ACC</h1>
+          <div class="hero-funnel-title" data-i18n="heroFunnelTitle">Monza 24/7, ежедневные заезды, помощь новичкам</div>
+        </div>
+        <div class="hero-funnel-card">
+          <p class="hero-funnel-note" data-i18n="heroFunnelNote"><a class="hero-funnel-link hero-funnel-link-telegram" href="https://t.me/+JUymrENgddcyMTdi" target="_blank" rel="noopener noreferrer">Telegram</a> и <a class="hero-funnel-link hero-funnel-link-discord" href="https://discord.gg/cEPFHXXtTC" target="_blank" rel="noopener noreferrer">Discord</a> — напоминания, результаты, голосования и общение.<br><a class="hero-funnel-link hero-funnel-link-sr" href="#safety-about">SR — безопасность</a> · <a class="hero-funnel-link hero-funnel-link-elo" href="#elo-about">ELO — мастерство</a>.</p>
         </div>
       </div>
 

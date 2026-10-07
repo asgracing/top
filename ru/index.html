@@ -80,7 +80,8 @@
   <link rel="stylesheet" href="/styles/utilities.css?v=20260715r12states1" />
   <link rel="stylesheet" href="/styles/responsive.css?v=20260920activityux1" />
   <link rel="stylesheet" href="/styles.css?v=20260907special4" />
-  <link rel="stylesheet" href="/styles/components/hero-layout.css?v=20261003promogradient1" />
+  <link rel="stylesheet" href="/styles/components/hero-layout.css?v=20261007advert1" />
+  <script type="module" src="/src/features/home-ad-banner.js?v=20261007advert1"></script>
   <link rel="stylesheet" href="/styles/components/hero-server-summary.css?v=20260715hero-spacing2" />
   <link rel="stylesheet" href="/styles/components/floating-widgets.css?v=20260820widgetcollapse8" />
   <link rel="stylesheet" href="/legal.css" />
@@ -288,16 +289,13 @@
 
 <div class="hero-grid">
   <div class="hero-main-column">
-    <div class="hero-copy">
-      <h1 data-i18n="heroTitle">ASG Racing — сообщество ACC</h1>
-
-      <div class="hero-funnel-card">
-        <div class="hero-funnel-copy">
-          <div class="hero-funnel-title" data-i18n="heroFunnelTitle">Monza 24/7, ежедневные заезды, помощь новичкам</div>
-          <p class="hero-funnel-note" data-i18n="heroFunnelNote"><a class="hero-funnel-link hero-funnel-link-telegram" href="https://t.me/+JUymrENgddcyMTdi" target="_blank" rel="noopener noreferrer">Telegram</a> и <a class="hero-funnel-link hero-funnel-link-discord" href="https://discord.gg/cEPFHXXtTC" target="_blank" rel="noopener noreferrer">Discord</a> — напоминания, результаты, голосования и общение.<br><a class="hero-funnel-link hero-funnel-link-sr" href="#safety-about">SR — безопасность</a> · <a class="hero-funnel-link hero-funnel-link-elo" href="#elo-about">ELO — мастерство</a>.</p>
-        </div>
-
-      </div>
+    <div class="hero-copy hero-copy-ad">
+      <a class="hero-ad-banner" data-home-ad href="https://dudarevmotorsport.ru?utm_source=partner&amp;utm_medium=asg&amp;utm_campaign=web" data-mobile-href="https://dudarevmotorsport.ru?utm_source=partner&amp;utm_medium=asg&amp;utm_campaign=mob" target="_blank" rel="sponsored noopener noreferrer">
+      <picture>
+        <source media="(max-width: 640px)" srcset="/ads/mobile.jpeg" width="300" height="160" />
+        <img src="/ads/desktop.jpeg" width="1150" height="80" alt="Dudarev Motorsport — sim racing equipment. Promo code ASG." fetchpriority="high" decoding="async" />
+      </picture>
+      </a>
     </div>
 
     <div class="hero-actions-row">
@@ -621,6 +619,16 @@
         <div>
           <h2 class="section-title" data-i18n="aboutTitle">О сервере ASG Racing</h2>
           <p class="section-subtitle" data-i18n="aboutSubtitle">Публичный сервер Assetto Corsa Competizione</p>
+        </div>
+      </div>
+
+      <div class="table-card about-community-intro">
+        <div class="hero-funnel-copy">
+          <h1 data-i18n="heroTitle">ASG Racing — сообщество ACC</h1>
+          <div class="hero-funnel-title" data-i18n="heroFunnelTitle">Monza 24/7, ежедневные заезды, помощь новичкам</div>
+        </div>
+        <div class="hero-funnel-card">
+          <p class="hero-funnel-note" data-i18n="heroFunnelNote"><a class="hero-funnel-link hero-funnel-link-telegram" href="https://t.me/+JUymrENgddcyMTdi" target="_blank" rel="noopener noreferrer">Telegram</a> и <a class="hero-funnel-link hero-funnel-link-discord" href="https://discord.gg/cEPFHXXtTC" target="_blank" rel="noopener noreferrer">Discord</a> — напоминания, результаты, голосования и общение.<br><a class="hero-funnel-link hero-funnel-link-sr" href="#safety-about">SR — безопасность</a> · <a class="hero-funnel-link hero-funnel-link-elo" href="#elo-about">ELO — мастерство</a>.</p>
         </div>
       </div>
 

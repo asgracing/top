@@ -6,6 +6,7 @@ import { createHash } from 'node:crypto';
 import { nodes, edit } from './seo/html-source.mjs';
 const root = resolve(import.meta.dirname, '..');
 const version = '20261006v2k';
+const bannerVersion = '20261007advert1';
 const read = path => readFile(resolve(root, path), 'utf8');
 async function emit(path, value) { await mkdir(resolve(root, path, '..'), {recursive:true}); await writeFile(resolve(root, path), path.endsWith('.html')?value.replace(/[ \t]+(?=\r?$)/gm,''):value); }
 const prototype = await read('v2-source/home.html');
@@ -85,11 +86,13 @@ for (const language of ['ru','en']) {
   const classic = await read(language==='ru'?'ru/index.html':'index.html');
   let head = classic.match(/<head>([\s\S]*?)<\/head>/i)[1];
   head=absoluteSourceLinks(head);
+  // Only V1 observes its floating banner widgets.
+  head=head.replace(/<script\b[^>]*src="[^\"]*\/src\/features\/home-ad-banner\.js[^\"]*"[^>]*><\/script>/g,'');
   head=head.replace(/<meta name="robots"[^>]*>/,'<meta name="robots" content="noindex,follow">')
     .replace(/<link\b[^>]*rel="(?:canonical|alternate)"[^>]*>/g,'')
     .replace(/(<meta property="og:url" content=")[^"]+/,`$1https://asgracing.ru/v2/${language}/`)
     .replace(/(<link\b[^>]*rel="stylesheet"[^>]*href=")([^"?]+)([^"<>]*")([^>]*>)/g,(_,before,path,query)=>`<style>@import url("${new URL(path,'https://asgracing.ru/').pathname}${query.slice(0,-1)}") layer(v1Runtime);</style>`);
-  head += `\n<link rel="stylesheet" href="/v2/styles/design.css?v=${version}">\n<link rel="stylesheet" href="/v2/home.css?v=${version}">\n<script>(()=>{try{if(!matchMedia('(prefers-reduced-motion: reduce)').matches&&!sessionStorage.getItem('asgV2IntroSeen'))document.documentElement.classList.add('home-booting')}catch{}setTimeout(()=>{document.documentElement.classList.remove('home-booting');const s=document.getElementById('v2-site-shell');if(s&&!document.querySelector('.is-open,dialog[open]'))s.inert=false},4500)})()</script>\n<script src="/legal.js?v=20260920locale1" defer></script>\n<script type="module" src="/v2/home.js?v=${version}"></script>\n`;
+  head += `\n<link rel="stylesheet" href="/v2/styles/design.css?v=${version}">\n<link rel="stylesheet" href="/v2/home.css?v=${bannerVersion}">\n<script>(()=>{try{if(!matchMedia('(prefers-reduced-motion: reduce)').matches&&!sessionStorage.getItem('asgV2IntroSeen'))document.documentElement.classList.add('home-booting')}catch{}setTimeout(()=>{document.documentElement.classList.remove('home-booting');const s=document.getElementById('v2-site-shell');if(s&&!document.querySelector('.is-open,dialog[open]'))s.inert=false},4500)})()</script>\n<script src="/legal.js?v=20260920locale1" defer></script>\n<script type="module" src="/v2/home.js?v=${bannerVersion}"></script>\n`;
   // Preserve required legacy modal/controller nodes, outside the hidden source
   // host so real dialogs remain visible and accessible. No duplicate IDs.
   let oldBody = classic.match(/<body[^>]*>([\s\S]*)<\/body>/i)[1];

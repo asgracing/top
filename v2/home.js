@@ -27,6 +27,14 @@ document.querySelectorAll('#v2-site-shell [data-copy]').forEach(node=>node.textC
 $('intro-subtitle').textContent=editorial.subtitle;
 $('intro-note').innerHTML=editorial.introNote;
 $('intro-note').querySelectorAll('a[href="#safety-about"],a[href="#elo-about"]').forEach(a=>{a.dataset.modal=a.hash==='#elo-about'?'elo':'safety';a.href='#'+a.dataset.modal});
+const partnerBanner=$('top');
+if(partnerBanner?.classList.contains('home-partner-banner')){
+  const mobileArt=window.matchMedia('(max-width: 640px)'),desktopHref=partnerBanner.href;
+  const updatePartnerLink=()=>{partnerBanner.href=mobileArt.matches?partnerBanner.dataset.mobileHref:desktopHref;};
+  updatePartnerLink();
+  mobileArt.addEventListener('change',updatePartnerLink);
+  partnerBanner.querySelector('img').alt=text('Dudarev Motorsport — магазин симрейсингового оборудования. Промокод ASG.','Dudarev Motorsport — sim racing equipment. Promo code ASG.');
+}
 $('language').outerHTML=`<div id="v2-language" class="v2-language" aria-label="${text('Язык','Language')}"><a href="/v2/ru/" data-language="ru"${ru?' aria-current="page" class="active"':''}>RU</a><a href="/v2/en/" data-language="en"${!ru?' aria-current="page" class="active"':''}>EN</a></div>`;
 try{localStorage.setItem('asgV2Language',language)}catch{}
 const routeNames={championships:text('Чемпионат','Championship'),cars:text('Машины','Cars'),fun:text('Фан-статистика','Fun statistics'),about:text('О сообществе','About the community'),instructions:text('Как играть','How to join'),documents:text('Документы','Documents')};
