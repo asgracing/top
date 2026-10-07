@@ -6,7 +6,7 @@ import { createHash } from 'node:crypto';
 import { nodes, edit } from './seo/html-source.mjs';
 const root = resolve(import.meta.dirname, '..');
 const version = '20261006v2k';
-const bannerVersion = '20261007advert1';
+const bannerVersion = '20261007partner2';
 const read = path => readFile(resolve(root, path), 'utf8');
 async function emit(path, value) { await mkdir(resolve(root, path, '..'), {recursive:true}); await writeFile(resolve(root, path), path.endsWith('.html')?value.replace(/[ \t]+(?=\r?$)/gm,''):value); }
 const prototype = await read('v2-source/home.html');
@@ -87,7 +87,7 @@ for (const language of ['ru','en']) {
   let head = classic.match(/<head>([\s\S]*?)<\/head>/i)[1];
   head=absoluteSourceLinks(head);
   // Only V1 observes its floating banner widgets.
-  head=head.replace(/<script\b[^>]*src="[^\"]*\/src\/features\/home-ad-banner\.js[^\"]*"[^>]*><\/script>/g,'');
+  head=head.replace(/<script\b[^>]*src="[^\"]*\/src\/features\/home-(?:ad|partner)-banner\.js[^\"]*"[^>]*><\/script>/g,'');
   head=head.replace(/<meta name="robots"[^>]*>/,'<meta name="robots" content="noindex,follow">')
     .replace(/<link\b[^>]*rel="(?:canonical|alternate)"[^>]*>/g,'')
     .replace(/(<meta property="og:url" content=")[^"]+/,`$1https://asgracing.ru/v2/${language}/`)

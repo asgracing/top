@@ -1,5 +1,5 @@
 // Match the destination's campaign to the same breakpoint as the supplied art.
-const banner=document.querySelector('[data-home-ad]');
+const banner=document.querySelector('[data-home-partner], [data-home-ad]');
 if(banner){
   const mobile=window.matchMedia('(max-width: 640px)'),desktopHref=banner.href;
   const update=()=>{banner.href=mobile.matches?banner.dataset.mobileHref:desktopHref;};
