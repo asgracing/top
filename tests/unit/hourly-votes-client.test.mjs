@@ -20,10 +20,17 @@ test("issues one token and never sends voter id in the votes URL", async () => {
   const calls = [];
   const request = async (url, options = {}) => {
     calls.push({ url: String(url), options });
-    if (String(url).endsWith("/voter-token")) return response(200, { voter_token: "signed-token", expires_at: "2099-01-01T00:00:00Z" });
+    if (String(url).endsWith("/voter-token")) {
+      return response(200, { voter_token: "signed-token", expires_at: "2099-01-01T00:00:00Z" });
+    }
     return response(200, { ok: true, items: {} });
   };
-  const client = createHourlyVotesClient({ apiBase: "https://data.asgracing.ru/hourly-votes-api", request, storage: memoryStorage(), getLegacyVoterId: () => "browser-legacy" });
+  const client = createHourlyVotesClient({
+    apiBase: "https://data.asgracing.ru/hourly-votes-api",
+    request,
+    storage: memoryStorage(),
+    getLegacyVoterId: () => "browser-legacy"
+  });
   await client.load(["hourly_2026-09-10_2100"]);
   await client.load(["hourly_2026-09-10_2100"]);
   assert.equal(calls.filter(call => call.url.endsWith("/voter-token")).length, 1);
@@ -36,10 +43,17 @@ test("vote mutation contains only event id and bearer token", async () => {
   const calls = [];
   const request = async (url, options = {}) => {
     calls.push({ url: String(url), options });
-    if (String(url).endsWith("/voter-token")) return response(200, { voter_token: "signed-token", expires_at: "2099-01-01T00:00:00Z" });
+    if (String(url).endsWith("/voter-token")) {
+      return response(200, { voter_token: "signed-token", expires_at: "2099-01-01T00:00:00Z" });
+    }
     return response(200, { ok: true, votes: 1, already_voted: true });
   };
-  const client = createHourlyVotesClient({ apiBase: "https://data.asgracing.ru/hourly-votes-api/", request, storage: memoryStorage(), getLegacyVoterId: () => "legacy" });
+  const client = createHourlyVotesClient({
+    apiBase: "https://data.asgracing.ru/hourly-votes-api/",
+    request,
+    storage: memoryStorage(),
+    getLegacyVoterId: () => "legacy"
+  });
   await client.vote("hourly_2026-09-10_2100");
   const mutation = calls.at(-1);
   assert.deepEqual(JSON.parse(mutation.options.body), { event_id: "hourly_2026-09-10_2100" });
@@ -57,7 +71,12 @@ test("expired stored token is replaced", async () => {
     }
     return response(200, { ok: true, items: {} });
   };
-  const client = createHourlyVotesClient({ apiBase: "https://data.asgracing.ru/hourly-votes-api", request, storage, getLegacyVoterId: () => "legacy" });
+  const client = createHourlyVotesClient({
+    apiBase: "https://data.asgracing.ru/hourly-votes-api",
+    request,
+    storage,
+    getLegacyVoterId: () => "legacy"
+  });
   await client.load(["hourly_2026-09-10_2100"]);
   assert.equal(tokenCalls, 1);
 });

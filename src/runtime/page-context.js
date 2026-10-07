@@ -19,6 +19,7 @@ export function applyPageContext(documentRef, page) {
 
 export function readPageContext(documentRef) {
   const context = createPageContext(documentRef?.documentElement?.dataset?.page);
+  if(documentRef?.documentElement?.dataset?.siteLayout==='root')return Object.freeze({...context,siteBasePath:'/'});
   if (documentRef?.documentElement?.dataset?.pageLanguage !== "ru") return context;
 
   let pathname = "";

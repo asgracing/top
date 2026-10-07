@@ -1,4 +1,4 @@
-import { initializeLocalizedPage, resolvePageLocale, setPageLocale } from "../../../src/shared/localized-page.js?v=20260920routes1";
+import { initializeLocalizedPage, resolvePageLocale, setPageLocale } from "../../../src/shared/localized-page.js?v=20261007root1";
 import { championshipStatusTone, normalizeChampionshipStatus } from "../../../src/pages/hourly/championship-status.js?v=20261002status1";
 
 initializeLocalizedPage();

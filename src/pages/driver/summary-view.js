@@ -2,8 +2,8 @@ function requireFunctions(dependencies,names){if(!dependencies||names.some(name=
 
 export function renderDriverHeroTitle(profile, rankInfo, eloSource, dependencies) {
   if (!profile) return "-";
-  requireFunctions(dependencies, ["escapeHtml", "escapeAttribute", "translate", "renderEloBadge", "renderTrendBadge"]);
-  const { escapeHtml, escapeAttribute, translate, renderEloBadge, renderTrendBadge } = dependencies;
+  requireFunctions(dependencies, ["escapeHtml", "escapeAttribute", "translate", "renderEloBadge", "renderTrendBadge", "isDriverBanned", "renderBannedBadge"]);
+  const { escapeHtml, escapeAttribute, translate, renderEloBadge, renderTrendBadge, isDriverBanned, renderBannedBadge } = dependencies;
   const raceNumber = Number.isInteger(profile.race_number)
     && profile.race_number >= 1
     && profile.race_number <= 999
@@ -12,6 +12,7 @@ export function renderDriverHeroTitle(profile, rankInfo, eloSource, dependencies
   return `
     <span class="driver-title-primary">
       <span class="driver-title-name">${escapeHtml(profile.driver || "-")}</span>
+      ${isDriverBanned(profile) ? renderBannedBadge() : ""}
     </span>
     <span class="driver-hero-meta-row driver-hero-ratings">
       ${rankInfo ? `<span class="driver-rank-pill ${escapeHtml(rankInfo.rankClass)}" title="${escapeHtml(translate("driverRankingPosition"))}"><span class="driver-rank-label">${escapeHtml(translate("driverRankingShort"))}</span><span class="driver-rank-value">#${escapeHtml(rankInfo.rank)}</span>${renderTrendBadge(rankInfo.change, "championship_rank", { compact: true })}</span>` : ""}

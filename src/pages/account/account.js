@@ -1,7 +1,8 @@
 import { createAuthHeaderController } from "../../features/auth/header-auth.js?v=20261003names1";
 import { createHttpClient } from "../../shared/http-client.js";
-import { applyLocalizedNavigation, currentPageLanguageHref, resolvePageLocale, setPageLocale } from "../../shared/localized-page.js?v=20260920routes1";
+import { applyLocalizedNavigation, currentPageLanguageHref, resolvePageLocale, setPageLocale } from "../../shared/localized-page.js?v=20261007root1";
 import { resolveRuntimeOverride } from "../../shared/runtime-config.js";
+import { formatMoscowDateTime } from "../../shared/time.js?v=20260910msk1";
 import { loadEntityDetail } from "../clubs-teams/detail-model.js";
 import {
   ClubsTeamsCommandError,
@@ -17,7 +18,7 @@ import {
   buildTeamClubResolveCommand,
   buildReviseEntityCommand,
   normalizeCommandResponse
-} from "./clubs-teams-command-model.js?v=20260811batchinvite1";
+} from "./clubs-teams-command-model.js?v=20260910msk1";
 import { loadPilotIndex, searchPilots } from "./pilot-search-model.js?v=20260811pilotsearch1";
 import { canUploadEntityLogo, inspectLogoFile, LogoUploadError, normalizeAssetResponse } from "./logo-upload-model.js?v=20260813logo2";
 import { mountDriverOverlayManager } from "../../../account/driver-overlay.js?v=20260927overlay1";
@@ -413,6 +414,9 @@ let flashMessage = { text: "", kind: "" };
 let clubsTeamsFlash = { text: "", kind: "" };
 const pendingMembershipResolutionIds = new Set();
 let latestAccountAuth = null;
+let controller = null;
+let accountPresentation = null;
+let confirmAccountAction = message => globalThis.confirm(message);
 let forceAccountRender = false;
 
 function hasActiveAccountWorkspace() {
@@ -460,11 +464,9 @@ function numberBadge(preferences) {
 
 function formatAccountDate(value) {
   if (!value) return "";
-  const date = new Date(value);
-  if (!Number.isFinite(date.getTime())) return "";
-  return new Intl.DateTimeFormat(language() === "ru" ? "ru-RU" : "en-GB", {
-    day: "2-digit", month: "short", hour: "2-digit", minute: "2-digit"
-  }).format(date);
+  return formatMoscowDateTime(value, language() === "ru" ? "ru-RU" : "en-GB", {
+    year: undefined, day: "2-digit", month: "short"
+  });
 }
 
 function membershipRequestFromLocation() {
@@ -658,7 +660,7 @@ async function loadApprovedEntityDetail(entity) {
   return (await loadApprovedEntityProfile(entity)).detail;
 }
 
-async function loadApprovedEntityProfile(entity) {
+export async function loadApprovedEntityProfile(entity) {
   const client = createHttpClient({ fetchImpl: globalThis.fetch, defaultTimeoutMs: 8000 });
   const result = await loadEntityDetail({
     client,
@@ -993,9 +995,9 @@ async function openMemberManager(auth, entityType) {
     section.innerHTML = memberManagerMarkup(entity, detail.roster);
     section.querySelector("[data-ct-cancel]")?.addEventListener("click", () => closeAccountWorkspace(auth));
     section.querySelectorAll("[data-ct-remove-member]").forEach(button => {
-      button.addEventListener("click", () => {
+      button.addEventListener("click", async () => {
         const name = button.dataset.ctMemberName || "";
-        if (!confirm(t("confirmRemove", name))) return;
+        if (!await confirmAccountAction(t("confirmRemove", name))) return;
         try {
           void submitMembershipCommand(auth, buildMembershipRemoveCommand({ entity, subjectPublicId: button.dataset.ctRemoveMember }), button);
         } catch (error) {
@@ -1071,7 +1073,7 @@ async function openMemberManager(auth, entityType) {
     });
     sendInvites.addEventListener("click", async () => {
       const recipients = [...selectedPilots.entries()].map(([publicId, displayName]) => ({ publicId, displayName }));
-      if (!recipients.length || !confirm(t("confirmBatchInvites", recipients.length))) return;
+      if (!recipients.length || !await confirmAccountAction(t("confirmBatchInvites", recipients.length))) return;
       sendInvites.disabled = true;
       input.disabled = true;
       inviteStatus.textContent = t("commandQueued");
@@ -1145,11 +1147,11 @@ function bindClubsTeamsActions(auth) {
       button.addEventListener("click", () => void openEntityForm(auth, button.dataset.ctMode, button.dataset.ctType));
   });
   document.querySelectorAll("[data-ct-resolve]").forEach(button => {
-    button.addEventListener("click", () => {
+    button.addEventListener("click", async () => {
       const action = auth.clubsTeams.membershipActions[Number(button.dataset.ctActionIndex)];
       const decision = button.dataset.ctResolve;
       const prompt = decision === "accepted" ? t("confirmAccept") : t("confirmReject");
-      if (!action || !confirm(prompt)) return;
+      if (!action || !await confirmAccountAction(prompt)) return;
       try {
         void submitMembershipCommand(auth, buildMembershipResolveCommand({ action, decision }), button);
       } catch (error) {
@@ -1159,9 +1161,9 @@ function bindClubsTeamsActions(auth) {
     });
   });
   document.querySelectorAll("[data-ct-leave]").forEach(button => {
-    button.addEventListener("click", () => {
+    button.addEventListener("click", async () => {
       const entity = auth.clubsTeams[button.dataset.ctLeave];
-      if (!entity || !confirm(t("confirmLeave"))) return;
+      if (!entity || !await confirmAccountAction(t("confirmLeave"))) return;
       try {
         void submitMembershipCommand(auth, buildMembershipLeaveCommand(entity), button);
       } catch (error) {
@@ -1189,11 +1191,11 @@ function bindClubsTeamsActions(auth) {
     }
   });
   document.querySelectorAll("[data-ct-team-club-resolve]").forEach(button => {
-    button.addEventListener("click", () => {
+    button.addEventListener("click", async () => {
       const action = auth.clubsTeams.teamClubActions[Number(button.dataset.ctTeamClubIndex)];
       const decision = button.dataset.ctTeamClubResolve;
       const prompt = decision === "accepted" ? t("confirmAccept") : t("confirmReject");
-      if (!action || !confirm(prompt)) return;
+      if (!action || !await confirmAccountAction(prompt)) return;
       try {
         void submitMembershipCommand(auth, buildTeamClubResolveCommand({ action, decision }), button);
       } catch (error) {
@@ -1202,9 +1204,9 @@ function bindClubsTeamsActions(auth) {
       }
     });
   });
-  document.querySelector("[data-ct-affiliation-action]")?.addEventListener("click", event => {
+  document.querySelector("[data-ct-affiliation-action]")?.addEventListener("click", async event => {
     const target = affiliationTargetFromLocation();
-    if (!target || (target.action === "detach" && !confirm(t("confirmDetach")))) return;
+    if (!target || (target.action === "detach" && !await confirmAccountAction(t("confirmDetach")))) return;
     try {
       let command;
       if (target.action === "request") {
@@ -1241,7 +1243,7 @@ function renderSignedOut(root) {
 
 function renderOverview(root, auth) {
   const name = auth.driver?.displayName || auth.steam?.personaName || t("title");
-  const avatar = auth.steam?.avatarUrl || "../social/asg.png";
+  const avatar = auth.steam?.avatarUrl || "/social/asg.png";
   const pending = auth.preferences?.pendingRequest;
   root.innerHTML = `
     <div class="account-card-header">
@@ -1281,11 +1283,18 @@ function renderOverview(root, auth) {
       ` : `<p class="account-muted">${t("noProfile")}</p>`}
     </div>`;
   if (auth.linked) {
+    mountAccountOverlay(auth);
+    bindClubsTeamsActions(auth);
+  }
+}
+
+function mountAccountOverlay(auth) {
     mountDriverOverlayManager({
       button: document.getElementById("driver-overlay-toggle"),
       panel: document.getElementById("driver-overlay-manager"),
       authBaseUrl: AUTH_BASE_URL,
       csrfToken: auth.csrfToken,
+      confirmFn: confirmAccountAction,
       copy: {
         title: t("overlayTitle"), help: t("overlayHelp"), loading: t("overlayLoading"),
         unavailable: t("overlayUnavailable"), active: t("overlayActive"), inactive: t("overlayInactive"),
@@ -1296,8 +1305,6 @@ function renderOverview(root, auth) {
         rotateConfirm: t("overlayRotateConfirm"), revokeConfirm: t("overlayRevokeConfirm"), failed: t("overlayFailed")
       }
     });
-    bindClubsTeamsActions(auth);
-  }
 }
 
 function renderTitleSettings(auth) {
@@ -1428,8 +1435,8 @@ function cancelRequest(auth) {
   );
 }
 
-function releaseNumber(auth) {
-  if (!confirm(t("releaseConfirm"))) return;
+async function releaseNumber(auth) {
+  if (!await confirmAccountAction(t("releaseConfirm"))) return;
   const button = document.getElementById("race-number-release");
   void runAction(
     button,
@@ -1471,11 +1478,13 @@ function render(auth) {
   } else {
     renderOverview(root, auth);
   }
+  accountPresentation?.(root, auth);
   if (flashMessage.text) {
     setMessage(flashMessage.text, flashMessage.kind);
   }
 }
 
+function initializeLegacyAccount() {
 document.querySelectorAll("[data-account-copy]").forEach(element => {
   element.textContent = t(element.dataset.accountCopy);
 });
@@ -1509,7 +1518,7 @@ document.addEventListener("keydown", event => {
 });
 
 document.querySelectorAll(".lang-btn[data-lang]").forEach(button => {
-  button.addEventListener("click", () => {
+  button.addEventListener("click", async () => {
     setPageLocale(button.dataset.lang, { documentRef: document, windowRef: window });
     location.assign(currentPageLanguageHref(button.dataset.lang, window.location));
   });
@@ -1518,4 +1527,16 @@ document.querySelectorAll(".lang-btn[data-lang]").forEach(button => {
 
 applyLocalizedNavigation(language(), document, window);
 
-const controller = createAuthHeaderController({ onAuthChange: handleAccountAuthChange });
+controller = createAuthHeaderController({ onAuthChange: handleAccountAuthChange });
+
+}
+
+// V2 reuses account actions while its existing header owns authentication.
+export function mountAccountWorkspace({ refreshAuth, onRender, confirmAction } = {}) {
+  controller = { refresh: refreshAuth };
+  accountPresentation = onRender;
+  if (confirmAction) confirmAccountAction = confirmAction;
+  return { update: handleAccountAuthChange, mountOverlay: mountAccountOverlay };
+}
+
+if (!document.documentElement.dataset.v2Page) initializeLegacyAccount();

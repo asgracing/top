@@ -1,0 +1,55 @@
+@import url('/styles/components/driver-account.css?v=20261007accountv2') layer(v1Runtime);
+.v2-account {display:grid;gap:9px;min-width:0;}
+.v2-account [hidden] {display:none!important;}
+.v2-account .panel {min-width:0;}
+.v2-account .account-card-header {border:1px solid var(--line);margin:0;}
+.v2-account .control-avatar {border-radius:2px;}
+.v2-account .account-heading {min-width:0;flex:1;}
+.v2-account .account-title {font-size:29px;line-height:1.2;margin:5px 0 9px;overflow-wrap:anywhere;}
+.v2-account .account-eyebrow {color:var(--muted);font-size:12px;text-transform:uppercase;}
+.v2-account .control-account-hero>.control-actions {flex-wrap:wrap;justify-content:flex-end;}
+.v2-account .control-actions {gap:8px;}
+.v2-account .account-number {border:0;border-radius:2px;line-height:1.2;white-space:nowrap;min-width:0;min-height:0;}
+.v2-account .control-summary .control-actions {margin-top:auto;}
+.v2-account .control-summary .control-actions .button {margin-top:0;}
+.v2-account .account-clubs-teams {padding:14px;margin:0;}
+.v2-account h2,.v2-account h3 {margin:0 0 12px;font-size:15px;line-height:1.3;}
+.v2-account h2 {text-transform:uppercase;}
+.v2-account .account-section-heading {display:flex;justify-content:space-between;gap:8px;}
+.v2-account .account-memberships {display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:13px;}
+.v2-account .account-membership {display:flex;flex-direction:column;align-items:stretch;padding:13px;border:1px solid #40556975;background:#09162288;border-radius:3px;gap:8px;min-width:0;}
+.v2-account .account-membership-link {display:grid;gap:6px;color:#c9e5fa;overflow-wrap:anywhere;}
+.v2-account .account-membership-link strong {font-size:17px;color:#eff5ff;}
+.v2-account .account-membership-link span,.v2-account .account-membership-link em {font-size:12px;}
+.v2-account .account-membership-logo {width:46px;height:46px;object-fit:contain;}
+.v2-account .account-actions,.v2-account .account-membership-action-buttons,.v2-account .account-form-actions {display:flex;gap:7px;flex-wrap:wrap;margin-top:12px;}
+.v2-account .account-action,.v2-account .account-entity-action {border:1px solid #40546a;background:#162434;color:#eaf4ff;padding:8px 11px;border-radius:3px;min-height:35px;font:inherit;font-size:13px;text-decoration:none;cursor:pointer;max-width:100%;}
+.v2-account .account-action--primary {background:#be1530;border-color:#ff3450;}
+.v2-account .account-action--danger,.v2-account .account-entity-action--danger {background:#a5122d75;border-color:#ff3b58;}
+.v2-account button:disabled {opacity:.55;cursor:default;}
+.v2-account .account-membership-actions {margin:0 0 10px;}
+.v2-account .account-membership-action {display:flex;gap:10px;align-items:center;padding:12px 0;border-bottom:1px solid #41596b55;}
+.v2-account .account-membership-action>div:first-child {display:grid;gap:5px;flex:1;min-width:0;}
+.v2-account .account-membership-action a {color:#c9e5fa;}
+.v2-account .account-membership-action span,.v2-account time {font-size:12px;color:var(--muted);overflow-wrap:anywhere;}
+.v2-account .account-operation {display:flex;gap:12px;justify-content:space-between;padding:12px 0;border-bottom:1px solid #41596b55;font-size:13px;}
+.v2-account .account-command-summary:empty {display:none;}
+.v2-account .account-command-summary,.v2-account .account-snapshot-warning,.v2-account .account-command-message {margin:0;padding:10px 0;font-size:13px;line-height:1.5;overflow-wrap:anywhere;}
+.v2-account [data-kind="error"],.v2-account .account-snapshot-warning {color:#ff9aab;}
+.v2-account [data-kind="success"] {color:#43f2b1;}
+.v2-account .account-muted {color:var(--muted);font-size:13px;line-height:1.5;}
+.v2-account .account-entity-form,.v2-account .account-logo-form {display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:12px;}
+.v2-account label {display:grid;gap:6px;font-size:13px;min-width:0;}
+.v2-account input,.v2-account textarea,.v2-account select {box-sizing:border-box;min-width:0;width:100%;padding:9px 11px;border:1px solid #466077;background:#081724cf;color:#eff6ff;border-radius:3px;font:inherit;}
+.v2-account textarea {resize:vertical;line-height:1.4;}
+.v2-account .account-form-actions,.v2-account .account-command-message,.v2-account .account-command-reauth {grid-column:1/-1;}
+.v2-account .account-entry {padding:18px;}
+.v2-account .account-overlay-manager {border:0;margin:12px 0 0;padding:0;}
+.v2-account .account-overlay-manager h3 {font-size:15px;}
+.v2-account .account-overlay-manager input[type=checkbox] {width:auto;}
+.v2-account .account-overlay-manager button {max-width:100%;white-space:normal;}
+.v2-account .account-pilot-results,.v2-account .account-roster {max-height:480px;overflow:auto;}
+.v2-account .account-pilot-row,.v2-account .account-roster-row {display:flex;align-items:center;gap:8px;flex-wrap:wrap;}
+.v2-account .account-pilot-row input[type=checkbox] {width:auto;}
+@media(max-width:1000px){.v2-account .control-account-hero>.control-actions {justify-content:flex-start;}.v2-account .account-entity-form {grid-template-columns:1fr;}}
+@media(max-width:650px){.v2-account .account-title{font-size:24px;}.v2-account .account-memberships{grid-template-columns:1fr;}.v2-account .account-membership-action{flex-wrap:wrap;}.v2-account .account-membership-action>div:first-child{flex-basis:100%;}.v2-account .account-operation{flex-wrap:wrap;}.v2-account .control-number{font-size:12px;}.v2-account .control-actions .badge {max-width:100%;}}

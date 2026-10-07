@@ -1,5 +1,6 @@
 import { readFile, readdir, stat } from "node:fs/promises";
 import { extname, resolve } from "node:path";
+import {readClassicQuality} from '../../scripts/classic-quality-source.mjs';
 
 const root = resolve(import.meta.dirname, "../..");
 const budgets = JSON.parse(await readFile(resolve(root, "performance-budgets.json"), "utf8"));
@@ -25,7 +26,7 @@ async function treeBytes(path, extensions) {
 }
 
 const [html, appSource, featureLoaderSource] = await Promise.all([
-  readFile(resolve(root, "index.html"), "utf8"),
+  readClassicQuality('index.html'),
   readFile(resolve(root, "app.js"), "utf8"),
   readFile(resolve(root, "src/runtime/page-feature-loader.js"), "utf8"),
 ]);

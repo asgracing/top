@@ -1,12 +1,12 @@
 import { publish, installRuntime } from '/v2/bridge.js?v=20261006v2k';
-import { currentPageLanguageHref, initializeLocalizedPage, localizedPageHref, resolvePageLocale, setPageLocale } from "/src/shared/localized-page.js?v=20260920routes1";
+import { currentPageLanguageHref, initializeLocalizedPage, localizedPageHref, resolvePageLocale, setPageLocale } from "/src/shared/localized-page.js?v=20261007root1";
 import { isTeamRace, teamRaceUrl } from "/src/shared/team-racing-client.js?v=20261004teams1";
 import { renderTeamResults } from "/src/shared/team-racing-results-view.js?v=20261004teams1";
 // V2 has explicit static RU/EN entrypoints; do not reroute them through V1.
-﻿import { readPageContext } from "/src/runtime/page-context.js";
+﻿import { readPageContext } from "/src/runtime/page-context.js?v=20261007root1";
 
 import { runWhenDocumentReady } from "/src/runtime/application-bootstrap.js";
-import { loadPageFeatures } from "/src/runtime/page-feature-loader.js?v=20260827racesserversearch1";
+import { loadPageFeatures } from "/src/runtime/page-feature-loader.js?v=20260910msk1";
 import { createPageOrchestrator } from "/src/runtime/page-orchestrator.js";
 import { HOME_STATS_TABS, bestlapsColumns, clubsTeamsColumns, createHomeStatsState, leaderboardColumns } from "/src/pages/home/stats-config.js?v=20260811hometable2";
 import { filterClubsTeamsRows, processBestlaps, processLeaderboard, processSafety } from "/src/pages/home/stats-model.js?v=20260811hometable2";
@@ -19,7 +19,8 @@ import { createTopGuideController } from "/src/pages/home/top-guide.js?v=2026072
 import { HOME_LOADING_TEXT_IDS, applyHomeTableViewState } from "/src/pages/home/view-state-config.js";
 import { createModalControllerFactory } from "/src/shared/modal-controller.js";
 import { parseTableNumber, sortTableRows } from "/src/shared/table-model.js";
-import { countUnreadNews, sortPublishedNews } from "/src/shared/news-feed-model.js";
+import { countUnreadNews, sortPublishedNews } from "/src/shared/news-feed-model.js?v=20260910msk1";
+import { formatMoscowDate, formatMoscowDateTime, moscowDateKey, moscowHourKey, parseAsgTimestamp } from "/src/shared/time.js?v=20260910msk1";
 import {
   NEWS_READ_LEGACY_STORAGE_KEY,
   NEWS_READ_STORAGE_KEY,
@@ -33,7 +34,7 @@ import { bindServerStatusFreshness, isServerStatusStale } from "/src/features/se
 import { selectNextHourlyAnnouncement } from "/src/features/hourly/announcement-model.js?v=20260828hourlynext1";
 import { getSpecialEventPresentation, normalizeSingleModelRestriction } from "/src/features/hourly/special-event.js?v=20260903special1";
 import { safeImageUrl, safeLinkUrl } from "/src/shared/safe-dom.js";
-import { createHourlyVotesClient } from "/src/shared/hourly-votes-client.js?v=20260910votefix1";
+import { createHourlyVotesClient } from "/src/shared/hourly-votes-client.js?v=20261007runtime1";
 
 const PAGE_CONTEXT = readPageContext(document);
 const PAGE_FEATURES = await loadPageFeatures(PAGE_CONTEXT.page);
@@ -99,14 +100,6 @@ let replaceWithTextState = null;
 let collapsibleWidgetControllers = [];
 const tableRequestControllers = new Map();
 const requestJson = async (url, options = {}) => {
-  const parsed = new URL(url, location.href);
-  if (parsed.origin === 'https://data.asgracing.ru' && parsed.pathname.startsWith('/hourly-votes-api/')) {
-    const action = parsed.pathname.split('/').pop();
-    const response = action === 'votes' ? await v2Votes.load((parsed.searchParams.get('event_ids') || '').split(','))
-      : action === 'vote' ? await v2Votes.vote(JSON.parse(options.body).event_id)
-      : action === 'unvote' ? await v2Votes.unvote(JSON.parse(options.body).event_id) : null;
-    if(response) { if(!response.ok) throw Error('HTTP '+response.status); return response.json(); }
-  }
   const { createHttpClient } = await httpClientModulePromise;
   requestJson.client ||= createHttpClient({ defaultTimeoutMs: 12000 });
   return requestJson.client.requestJson(url, options);
@@ -2366,11 +2359,11 @@ function buildRaceActivityInsights(races = []) {
     const finishedAt = race?.finished_at;
     if (!finishedAt) return;
 
-    const finishedDate = new Date(finishedAt);
-    if (Number.isNaN(finishedDate.getTime())) return;
+    const finishedDate = parseAsgTimestamp(finishedAt);
+    if (!finishedDate) return;
 
-    const dayKey = finishedAt.slice(0, 10);
-    const hourKey = String(finishedDate.getHours()).padStart(2, "0");
+    const dayKey = moscowDateKey(finishedAt);
+    const hourKey = moscowHourKey(finishedAt);
     const participants = Array.isArray(race?.results) ? race.results : [];
     const participantsCount = Number.isFinite(race?.participants_count)
       ? race.participants_count
@@ -3317,7 +3310,8 @@ function getLatestHourlyRace() {
   if (latestHourlyRaceData) return latestHourlyRaceData;
   return (Array.isArray(racesData) ? racesData : [])
     .filter(isHourlyRace)
-    .sort((a, b) => new Date(b?.finished_at || b?.date || 0).getTime() - new Date(a?.finished_at || a?.date || 0).getTime())[0] || null;
+    .sort((a, b) => (parseAsgTimestamp(b?.finished_at || b?.date)?.getTime() || 0)
+      - (parseAsgTimestamp(a?.finished_at || a?.date)?.getTime() || 0))[0] || null;
 }
 
 function getRaceWinnerResult(race) {
@@ -4829,7 +4823,10 @@ function renderSafetyRaceCell(row) {
 
 function isDriverBanned(source) {
   if (!source || typeof source !== "object") return false;
-  return Boolean(source.is_banned || source.banned || source.ban || source.summary?.is_banned || source.summary?.ban);
+  const summary = source.summary || {};
+  const banned = value => value?.is_banned || value?.global_banned || value?.manually_banned || value?.banned || value?.ban;
+  const strikes = Number(source.active_strikes ?? source.strikes?.active ?? summary.active_strikes ?? summary.strikes?.active);
+  return Boolean(banned(source) || banned(summary) || (Number.isFinite(strikes) && strikes >= 3));
 }
 
 function renderBannedBadge({ compact = false } = {}) {
@@ -5094,27 +5091,21 @@ function formatCommunityDateLong(dateString, lang = currentLang) {
   if (!dateString) return "-";
 
   const locale = lang === "ru" ? "ru-RU" : "en-US";
-  const date = new Date(`${dateString}T00:00:00`);
-  if (Number.isNaN(date.getTime())) return dateString;
+  const date = parseAsgTimestamp(dateString);
+  if (!date) return dateString;
 
   const formatted = new Intl.DateTimeFormat(locale, {
     day: "numeric",
     month: "long",
-    year: "numeric"
+    year: "numeric",
+    timeZone: "Europe/Moscow"
   }).format(date);
   return lang === "ru" ? formatted.replace(/\s*г\.$/, "") : formatted;
 }
 
 function formatNewsDateTime(dateString) {
   if (!dateString) return "-";
-  const date = new Date(dateString);
-  if (Number.isNaN(date.getTime())) return dateString;
-  const day = String(date.getDate()).padStart(2, "0");
-  const month = String(date.getMonth() + 1).padStart(2, "0");
-  const year = String(date.getFullYear()).padStart(4, "0");
-  const hours = String(date.getHours()).padStart(2, "0");
-  const minutes = String(date.getMinutes()).padStart(2, "0");
-  return `${day}.${month}.${year} ${hours}:${minutes}`;
+  return formatMoscowDateTime(dateString, "ru-RU") || dateString;
 }
 
 function getCommunityPostId(post) {
@@ -5401,12 +5392,12 @@ function markMembershipInvitationRead(action) {
 }
 
 function isNewsRecordPublished(item) {
-  const publishedAt = Date.parse(String(item?.published_at || ""));
+  const publishedAt = parseAsgTimestamp(item?.published_at)?.getTime() ?? Number.NaN;
   return !Number.isFinite(publishedAt) || publishedAt <= Date.now();
 }
 
 function isNewsRecordExpired(item) {
-  const expiresAt = Date.parse(String(item?.expires_at || ""));
+  const expiresAt = parseAsgTimestamp(item?.expires_at)?.getTime() ?? Number.NaN;
   return Number.isFinite(expiresAt) && expiresAt < Date.now();
 }
 
@@ -6492,8 +6483,8 @@ async function loadBansData() {
     }))
     .filter((item) => item.name)
     .sort((a, b) => {
-      const timeA = a.banned_at ? Date.parse(a.banned_at) : 0;
-      const timeB = b.banned_at ? Date.parse(b.banned_at) : 0;
+      const timeA = parseAsgTimestamp(a.banned_at)?.getTime() || 0;
+      const timeB = parseAsgTimestamp(b.banned_at)?.getTime() || 0;
       return timeB - timeA;
     });
 }
@@ -8119,7 +8110,6 @@ function renderLeaderboardTablePage() {
     wrapEl.style.display = "none";
     return;
   }
-
   const result = getServerPagedTableResult("leaderboard", leaderboardPage) ||
     getPreviewAwareTablePage("leaderboard", getProcessedLeaderboard(), leaderboardPage, PAGE_SIZE);
   statsStore?.dispatch({ type: "table/page", table: "leaderboard", page: result.page });
@@ -8195,7 +8185,6 @@ function renderBestLapsTablePage() {
     wrapEl.style.display = "none";
     return;
   }
-
   const result = getServerPagedTableResult("bestlaps", bestlapsPage) ||
     getPreviewAwareTablePage("bestlaps", getProcessedBestlaps(), bestlapsPage, PAGE_SIZE);
   statsStore?.dispatch({ type: "table/page", table: "bestlaps", page: result.page });
@@ -8294,7 +8283,6 @@ function renderSafetyTablePage() {
     wrapEl.style.display = "none";
     return;
   }
-
   const result = getPreviewAwareTablePage("safety", getProcessedSafety(), safetyPage, PAGE_SIZE);
   statsStore?.dispatch({ type: "table/page", table: "safety", page: result.page });
 
@@ -8609,29 +8597,14 @@ function formatDateTimeLocal(isoString, lang = "en") {
   if (!isoString) return "-";
 
   const locale = lang === "ru" ? "ru-RU" : "en-GB";
-  const date = new Date(isoString);
-  if (Number.isNaN(date.getTime())) return "-";
-
-  return new Intl.DateTimeFormat(locale, {
-    year: "numeric",
-    month: "2-digit",
-    day: "2-digit",
-    hour: "2-digit",
-    minute: "2-digit"
-  }).format(date);
+  return formatMoscowDateTime(isoString, locale) || "-";
 }
 
 function formatDateLocal(isoString, lang = "en") {
   if (!isoString) return "-";
 
   const locale = lang === "ru" ? "ru-RU" : "en-US";
-  const date = new Date(isoString);
-  if (Number.isNaN(date.getTime())) return "-";
-
-  return new Intl.DateTimeFormat(locale, {
-    day: "numeric",
-    month: "short"
-  }).format(date);
+  return formatMoscowDate(isoString, locale) || "-";
 }
 
 function getCurrentLangSafe() {
@@ -9718,7 +9691,7 @@ function buildDriverHeroTitle(profile) {
   if (!profile) return "-";
   const rankInfo = getDriverRankInfo(profile);
   const eloSource = getEloInfo(profile) ? profile : findEloSource(profile.public_id, profile.player_id);
-  return `${renderDriverHeroTitleView(profile, rankInfo, eloSource, { escapeHtml, escapeAttribute, translate: t, renderEloBadge, renderTrendBadge })}${renderDriverHeroAffiliations(profile)}`;
+  return `${renderDriverHeroTitleView(profile, rankInfo, eloSource, { escapeHtml, escapeAttribute, translate: t, renderEloBadge, renderTrendBadge, isDriverBanned, renderBannedBadge })}${renderDriverHeroAffiliations(profile)}`;
 }
 
 function getDriverSelectionKey(profile) {
@@ -11227,6 +11200,9 @@ function initializeHomeControllers() {
 function initializePageControllers() {
   if (PAGE_CONTEXT.page === "races" || PAGE_CONTEXT.page === "driver") {
     runInitStep("initRaceResultsModal", () => initRaceResultsModal());
+    // A direct result does not depend on the archive list being available.
+    const raceId = new URLSearchParams(location.search).get('race_id');
+    if (PAGE_CONTEXT.page === 'races' && document.documentElement.dataset.siteLayout === 'root' && (document.documentElement.dataset.siteVersion === 'old' || document.documentElement.dataset.siteFallback === '1') && raceId) openRaceResultsModal({race_id: raceId});
   } else if (PAGE_CONTEXT.page === "community") {
     runInitStep("initCommunityLightbox", () => initCommunityLightbox());
   } else if (PAGE_CONTEXT.page === "fun-stats") {
@@ -11561,7 +11537,6 @@ runWhenDocumentReady(document, () => {
 });
 
 // Build-only facade: lexical access to the canonical controllers/read models.
-const v2Votes = createHourlyVotesClient({apiBase:hourlyVotesApiUrl,request:(url,options)=>fetch(url,options),getLegacyVoterId:getHourlyBrowserVoterId});
 let v2Auth=null;
 let v2PublishPending=false;
 function v2SchedulePublish() {

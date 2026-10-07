@@ -59,6 +59,18 @@ body[data-v2] .elo-category-card { display:grid; gap:9px; align-items:center; mi
 body[data-v2] .elo-category-card strong { overflow-wrap:anywhere; }
 body[data-v2] .elo-category-card small { white-space:nowrap; }
 body[data-v2] #v2-modal[data-kind="elo"] { width:min(960px,calc(100vw - 28px)); }
+body[data-v2] #v2-modal[data-kind="driver-day"] {width:min(760px,calc(100vw - 28px));}
+body[data-v2] .driver-day-summary {display:grid;gap:7px;margin-bottom:16px;}
+body[data-v2] .driver-day-profile {font-size:22px;font-weight:700;line-height:1.3;color:#d7edff;overflow-wrap:anywhere;}
+body[data-v2] a.driver-day-profile:hover {color:#8edaff;}
+body[data-v2] .driver-day-stats {grid-template-columns:repeat(3,minmax(0,1fr));}
+body[data-v2] .driver-day-stats>div {min-width:0;}
+body[data-v2] .driver-day-stats span {white-space:normal;}
+body[data-v2] .driver-day-lap {padding:12px 0;border-top:1px solid #63799055;border-bottom:1px solid #63799055;}
+body[data-v2] .driver-day-lap-details {display:flex;align-items:center;gap:8px 14px;flex-wrap:wrap;margin-top:5px;}
+body[data-v2] .driver-day-lap-details .best-lap-value {font-size:23px;}
+body[data-v2] .driver-day-lap-details .car-cell {white-space:normal;min-width:0;}
+@media(max-width:600px){body[data-v2] .driver-day-stats {grid-template-columns:repeat(2,minmax(0,1fr));}body[data-v2] .driver-day-profile {font-size:19px;}}
 body[data-v2] #v2-modal .elo-about-block { display:block; padding:0; margin:0; border:0; border-radius:0; background:transparent; }
 body[data-v2] #v2-modal .elo-about-copy { max-width:none; margin-bottom:18px; }
 body[data-v2] #v2-modal .elo-category-card { grid-template-columns:36px minmax(0,1fr) auto; padding:14px 10px; }
@@ -156,7 +168,8 @@ body[data-v2] .hour-chart>div>span { background:linear-gradient(#829bad,#506d84)
 body[data-v2] .upcoming-panel .event-photo { justify-content:flex-start; }
 body[data-v2] .event-kind.kind-hourly { background:#f7cc43; border-color:#f7cc43; color:#17202a; }
 body[data-v2] .event-kind.kind-championship { background:#7c30c1; border-color:#bd73ff; }
-body[data-v2] .event-kind.kind-endurance { background:#1d7e3b; border-color:#48e16d; }
+body[data-v2] .event-kind.kind-endurance { background:#1d7e3b; border-color:#48e16d; color:#e8ffef; }
+body[data-v2] .event-kind.kind-public { background:#58616a55; border-color:#9ca5ae80; color:#cbd0d5; }
 body[data-v2] .driver-achievement-title { margin:0 0 10px; color:#aebdd0; font-size:13px; }
 body[data-v2] .driver-achievement-title b { color:#f7d577; }
 body[data-v2] .driver-status-row { gap:10px; flex-wrap:wrap; align-items:center; }
@@ -180,13 +193,6 @@ body[data-v2] .asg-legal-banner-btn,body[data-v2] .asg-legal-link-button { borde
 body[data-v2] .asg-legal-banner-btn-primary { background:linear-gradient(#f52b43,#be152e); border:1px solid #ff4059; box-shadow:none; }
 body[data-v2] .asg-legal-banner-btn-secondary { background:#162434; border-color:#40546a; }
 body[data-v2] .asg-legal-link-row a { color:#a7d4f6; }
-@media(max-width:600px){
- body[data-v2] #v2-driver-lap-value { grid-template-columns:auto minmax(0,1fr) auto; gap:8px; }
- body[data-v2] #v2-driver-lap-value .lap-car { grid-column:1/-1; grid-row:2; }
- body[data-v2] #v2-driver-lap-value .lap-date { justify-self:end; font-size:12px; }
- body[data-v2] #v2-driver-lap-value .lap-session { justify-self:center; }
-}
-
 /* Full-width partner art replaces the top intro; its text remains below ratings. */
 body[data-v2] .home-partner-banner {
  display:block;
@@ -203,3 +209,111 @@ body[data-v2] .home-partner-banner picture { aspect-ratio:1150 / 80; }
 body[data-v2] .home-partner-banner picture > img { height:100%; object-fit:contain; }
 @media(max-width:640px){ body[data-v2] .home-partner-banner picture { aspect-ratio:300 / 160; } }
 body[data-v2] .home-partner-banner:focus-visible { outline:2px solid #73caff; outline-offset:2px; }
+/* The home list uses Hourly's renderer; scope its compact presentation to this dialog. */
+#v2-modal.home-races-mode[data-kind="home-recent"] {width:min(900px,calc(100vw - 24px));}
+#v2-modal.home-races-mode[data-kind="home-calendar"] {width:min(1080px,calc(100vw - 24px));}
+body[data-v2] .upcoming-panel .event-calendar-link {font-size:11px;white-space:nowrap;padding:4px 6px;flex-shrink:0;color:#bce4ff;border:1px solid #80b8d44d;border-radius:2px;}
+body[data-v2] .upcoming-panel .event-calendar-link:hover {color:#fff;background:#3286b944;}
+.home-races-mode .page-calendar {background:transparent;border:0;}
+.home-races-mode .page-calendar>.panel-head {display:none;}
+.home-races-mode .calendar-controls {display:flex;align-items:center;gap:10px;padding:0 0 12px;flex-wrap:wrap;}
+.home-races-mode .calendar-controls>b {text-transform:capitalize;font-size:16px;}
+.home-races-mode .calendar-controls button {border:1px solid #637d994a;background:#12213377;border-radius:3px;padding:5px 10px;}
+.home-races-mode .calendar-controls [data-month-reset] {margin-left:auto;font-size:12px;}
+.home-races-mode .calendar-grid {display:grid;grid-template-columns:repeat(7,minmax(72px,1fr));gap:4px;overflow:auto;padding:2px 1px 8px;scrollbar-width:thin;}
+.home-races-mode .calendar-weekday {font-size:12px;text-align:center;padding:3px;color:#91a5ba;}
+.home-races-mode .calendar-day {min-height:79px;min-width:0;padding:3px;background:#0914216b;border:1px solid #647d932b;display:flex;flex-direction:column;gap:3px;border-radius:2px;}
+.home-races-mode .calendar-date {font-size:13px;line-height:16px;color:#c1cedb;flex-shrink:0;}
+.home-races-mode .calendar-day.is-outside {background:transparent;border-color:transparent;}
+.home-races-mode .calendar-day.snapshot-day {border-color:#ff3c57aa;background:#50202d44;}
+.home-races-mode .calendar-entry {display:flex;flex-direction:column;text-align:left;gap:2px;border-left:2px solid #e8c645;background:#d1a92516;padding:4px;color:#f9e294;font-size:12px;line-height:1.2;min-height:39px;overflow:hidden;justify-content:center;}
+.home-races-mode .calendar-entry span {overflow:hidden;text-overflow:ellipsis;white-space:nowrap;}
+.home-races-mode .calendar-entry.kind-monoclass {border-color:#8ed8f8;background:#559dc71a;color:#b6e5fa;}
+.home-races-mode .calendar-entry.kind-endurance {border-color:#39ff14;background:#64ce521a;color:#a6f194;}
+.home-races-mode .calendar-entry.kind-championship {border-color:#a855f7;background:#a855f71a;color:#e2b7ff;}
+.home-races-mode .calendar-entry.is-finished {border-color:#758ea6;background:#758ea618;color:#b7c9d9;}
+.home-races-mode .calendar-entry:hover {filter:brightness(1.4);}
+.home-races-mode .calendar-legend {display:flex;gap:10px;flex-wrap:wrap;font-size:12px;margin-top:8px;}
+.home-races-mode .calendar-legend .legend-kind {display:inline-flex;gap:5px;align-items:center;--kind-color:#facc15;color:#b9cbdc;background:transparent;border:0;}
+.home-races-mode .calendar-legend .kind-monoclass {--kind-color:#8ed8f8;}
+.home-races-mode .calendar-legend .kind-championship {--kind-color:#a855f7;}
+.home-races-mode .calendar-legend .kind-endurance {--kind-color:#39ff14;}
+.home-races-mode .calendar-legend i {width:8px;height:8px;border-radius:1px;background:var(--kind-color);}
+.home-calendar-note {margin-top:12px;color:#a5b7c9;font-size:12px;}
+.home-races-mode .page-participants {font-size:12px;color:#a5b7c9;}
+.home-races-mode .modal-participation .page-participants {display:block;margin-top:6px;}
+#v2-modal.home-races-mode[data-kind="home-race"] {width:min(1450px,calc(100vw - 24px));background:linear-gradient(110deg,#101925ed,#0d1822eb),var(--modal-track) center/cover;}
+.home-races-mode .page-recent {background:transparent;border:0;}
+.home-races-mode .page-recent>.panel-head {display:none;}
+.home-races-mode .page-recent-race {display:flex;align-items:center;gap:9px;padding:15px 4px;border-bottom:1px solid #7391a631;cursor:pointer;}
+.home-races-mode .page-recent-race:hover {background:#25405650;}
+.home-races-mode .page-recent-race:focus-visible {outline:1px solid #ff536b;outline-offset:-1px;}
+.home-races-mode .recent-track-image {width:54px;height:43px;object-fit:cover;border:1px solid #6f91aa55;border-radius:2px;flex-shrink:0;}
+.home-races-mode .recent-content {display:flex;flex-direction:column;gap:5px;min-width:0;flex:1;}
+.home-races-mode .recent-titleline,.home-races-mode .recent-metaline {display:flex;align-items:center;gap:6px;min-width:0;white-space:nowrap;}
+.home-races-mode .recent-circuit {font-size:16px;min-width:0;max-width:38%;overflow:hidden;text-overflow:ellipsis;}
+.home-races-mode .recent-winner {display:flex;gap:5px;align-items:center;min-width:0;flex:1;font-size:13px;}
+.home-races-mode .recent-winner>span {display:none;}
+.home-races-mode .recent-winner::before {content:'·';color:#8ea5b9;}
+.home-races-mode .recent-profile-link {display:inline-block;min-width:0;overflow:hidden;text-overflow:ellipsis;padding:2px 4px;border-radius:2px;color:#bce4ff;background:#529bc51c;text-decoration:underline;text-underline-offset:3px;}
+.home-races-mode .recent-profile-link:hover,.home-races-mode .recent-profile-link:focus-visible {color:#fff;background:#3286b966;outline:1px solid #8dd9ff;}
+.home-races-mode .recent-average-elo {color:#a5b7c9;font-size:12px;margin-left:auto;flex-shrink:0;}
+.home-races-mode .recent-metaline {font-size:12px;color:#a5b7c9;overflow-x:auto;scrollbar-width:none;}
+.home-races-mode .recent-metaline>span:not(.recent-best-lap) {flex-shrink:0;}
+.home-races-mode .recent-best-lap {display:flex;align-items:center;gap:4px;min-width:110px;flex:1;}
+.home-races-mode .recent-best-lap>b {flex-shrink:0;}
+.home-races-mode .recent-lap-author {min-width:0;}
+.home-races-mode .recent-open {display:grid;place-items:center;width:20px;flex-shrink:0;}
+.home-races-mode .page-pagination {display:flex;align-items:center;gap:9px;padding:12px 4px;font-size:13px;}
+.home-races-mode .page-pagination>span {margin-right:auto;color:#a5b7c7;}
+.home-races-mode .page-pagination button {display:grid;place-items:center;width:30px;height:28px;padding:0;border:1px solid #7c92a943;border-radius:2px;background:#14233875;}
+.home-races-mode .page-pagination button svg {width:12px;height:12px;}
+.home-races-mode .page-pagination button:disabled {opacity:.35;}
+.home-recent-archive {margin:8px 0 0;}
+.home-race-back {margin-bottom:12px;}
+.home-races-mode .race-summary-grid {grid-template-columns:repeat(5,minmax(0,1fr));}
+#v2-modal.home-races-mode .best-lap-value {color:#c49aff;}
+.home-races-mode .best-lap-driver {display:block;margin-top:5px;font-size:12px;}
+.home-races-mode .page-table-scroll {overflow:auto;max-width:100%;padding-bottom:8px;}
+.home-races-mode .page-table {border-collapse:collapse;width:100%;font-size:12px;white-space:nowrap;}
+.home-races-mode .page-table th {color:#9db6cb;background:#14202c9c;padding:9px 10px;border-bottom:1px solid #7e9cb64f;font-size:11px;font-weight:500;text-align:left;}
+.home-races-mode .page-table td {padding:9px 10px;border-bottom:1px solid #63799027;}
+.home-races-mode .page-table th,.home-races-mode .page-table td {position:static!important;left:auto!important;}
+.home-races-mode .page-table th:first-child,.home-races-mode .page-table td:first-child,.home-races-mode .page-table th:nth-child(2),.home-races-mode .page-table td:nth-child(2) {width:auto;min-width:0;background:transparent;}
+.home-races-mode .page-table td:first-child {color:inherit;}
+.home-races-mode .page-table tbody tr:nth-child(even) {background:#07131d35;}
+.home-races-mode .page-table a {color:#deedf9;font-weight:700;}
+.home-races-mode .page-table a:hover {color:#83d4fa;text-decoration:underline;}
+.home-races-mode .page-table .car-cell img {width:33px;height:24px;}
+.home-races-mode .result-driver-identity {display:flex;gap:8px;align-items:center;}
+.home-races-mode .result-driver-identity small {color:#a8bccd;min-width:30px;}
+.home-races-mode .race-rating-delta {margin-left:6px;}
+body .home-races-mode .results-table tr[data-podium-place="1"] td:first-child {color:#f3cf70;}
+body .home-races-mode .results-table tr[data-podium-place="2"] td:first-child {color:#c9d4df;}
+body .home-races-mode .results-table tr[data-podium-place="3"] td:first-child {color:#d49b73;}
+.home-races-mode .results-table tr.current-user-row td {background-color:#283141;}
+.home-races-mode .page-help {color:#a5b7c9;font-size:12px;}
+@media(max-width:600px){
+ body[data-v2] .upcoming-panel .panel-head {gap:5px;flex-wrap:wrap;padding-top:5px;padding-bottom:5px;height:auto;min-height:39px;}
+ body[data-v2] .upcoming-panel .panel-head h2 {font-size:11px;}
+ body[data-v2] .upcoming-panel .event-calendar-link {font-size:10px;padding:3px 4px;}
+ .home-races-mode .calendar-controls {gap:6px;}
+ .home-races-mode .calendar-controls>b {font-size:14px;}
+ .home-races-mode .calendar-controls [data-month-reset] {font-size:11px;}
+ .home-races-mode .calendar-grid {grid-template-columns:repeat(7,minmax(0,1fr));gap:3px;}
+ .home-races-mode .calendar-day {min-height:73px;padding:2px;gap:2px;}
+ .home-races-mode .calendar-entry {font-size:10px;padding:3px 2px;}
+ .home-races-mode .recent-track-image {width:36px;height:38px;}
+ .home-races-mode .recent-circuit {font-size:14px;max-width:38%;}
+ .home-races-mode .recent-winner {font-size:12px;}
+ .home-races-mode .recent-average-elo {font-size:10px;}
+ .home-races-mode .recent-metaline {font-size:11px;}
+ .home-races-mode .race-summary-grid {grid-template-columns:repeat(2,minmax(0,1fr));}
+ .home-races-mode .recent-open {width:12px;}
+}
+@media(max-width:600px){
+ body[data-v2] #v2-driver-lap-value { grid-template-columns:auto minmax(0,1fr) auto; gap:8px; }
+ body[data-v2] #v2-driver-lap-value .lap-car { grid-column:1/-1; grid-row:2; }
+ body[data-v2] #v2-driver-lap-value .lap-date { justify-self:end; font-size:12px; }
+ body[data-v2] #v2-driver-lap-value .lap-session { justify-self:center; }
+}

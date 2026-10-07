@@ -13,7 +13,7 @@ const PAGE_FEATURE_PATHS = Object.freeze({
   home: [...DRIVER_PREVIEW_FEATURE_PATHS],
   bans: ["../pages/bans/index.js"],
   cars: ["../pages/cars/model.js", "../pages/cars/table-view.js", "../pages/cars/summary-view.js", "../pages/cars/index.js"],
-  community: ["../pages/community/feed-model.js", "../pages/community/post-view.js", "../pages/community/page-controller.js", "../pages/community/index.js"],
+  community: ["../pages/community/feed-model.js?v=20260910msk1", "../pages/community/post-view.js", "../pages/community/page-controller.js", "../pages/community/index.js"],
   driver: [...DRIVER_PREVIEW_FEATURE_PATHS, "../pages/driver/penalty-list-view.js", "../pages/driver/tables-model.js", "../pages/driver/tables-view.js", "../pages/driver/page-view.js", "../pages/driver/index.js"],
   "fun-stats": ["../pages/fun-stats/period-model.js", "../pages/fun-stats/period-controller.js", "../pages/fun-stats/cards-view.js", "../pages/fun-stats/page-view.js", "../pages/fun-stats/aggregation-model.js", "../pages/fun-stats/index.js"],
   news: ["../pages/news/page-view.js", "../pages/news/index.js"],

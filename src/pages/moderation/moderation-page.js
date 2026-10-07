@@ -1,6 +1,6 @@
-import { createAuthHeaderController } from "../../features/auth/header-auth.js?v=20261003names1";
-import { createRaceNumberReview } from "./race-number-review.js?v=20261003numbers1";
-import { applyLocalizedNavigation, currentPageLanguageHref, resolvePageLocale, setPageLocale } from "../../shared/localized-page.js?v=20260920routes1";
+import { createAuthHeaderController, buildAuthReturnPath } from "../../features/auth/header-auth.js?v=20261003names1";
+import { createRaceNumberReview } from "./race-number-review.js?v=20261007controlv2";
+import { applyLocalizedNavigation, currentPageLanguageHref, resolvePageLocale, setPageLocale } from "../../shared/localized-page.js?v=20261007root1";
 import {
   createIdempotencyKey,
   normalizeModerationSearch,
@@ -64,6 +64,7 @@ let retryIdempotencyKey = null;
 let searchController = null;
 let searchTimer = null;
 let raceNumberReview = null;
+let confirmModerationAction = message => globalThis.confirm(message);
 
 function language() {
   return resolvePageLocale({ documentRef: document, windowRef: window }).language;
@@ -97,8 +98,9 @@ async function api(path, options = {}) {
 function applyCopy() {
   document.documentElement.lang = language();
   document.title = `${t("title")} | ASG Racing`;
-  document.querySelectorAll("[data-copy]").forEach(node => { node.textContent = t(node.dataset.copy); });
-  document.querySelectorAll("[data-copy-placeholder]").forEach(node => { node.placeholder = t(node.dataset.copyPlaceholder); });
+  const page = document.documentElement.dataset.v2Page ? document.getElementById("v2-control-root") : document;
+  page.querySelectorAll("[data-copy]").forEach(node => { node.textContent = t(node.dataset.copy); });
+  page.querySelectorAll("[data-copy-placeholder]").forEach(node => { node.placeholder = t(node.dataset.copyPlaceholder); });
   document.querySelectorAll(".lang-btn[data-lang]").forEach(button => {
     button.classList.toggle("active", button.dataset.lang === language());
     button.addEventListener("click", () => {
@@ -213,8 +215,9 @@ async function submit(event) {
   if (!validation.ok) { setMessage(t(validation.code), "error"); return; }
   if (selectedDriver.protected) { setMessage(t("protected"), "error"); return; }
   const confirmation = t(action === "ban.issue" ? "confirmBan" : "confirmStrike").replace("{name}", selectedDriver.displayName);
-  if (!confirm(confirmation)) return;
-  if (action === "strike.issue" && selectedDriver.activeStrikes === 2 && !confirm(t("confirmThird"))) return;
+  if (!await confirmModerationAction(confirmation)) return;
+  if (action === "strike.issue" && selectedDriver.activeStrikes === 2 && !await confirmModerationAction(t("confirmThird"))) return;
+  if (!authState?.authenticated || !authState.permissions?.moderationIssue || !authState.csrfToken) return;
   const button = document.getElementById("moderation-submit");
   button.disabled = true;
   retryIdempotencyKey ||= createIdempotencyKey();
@@ -229,14 +232,16 @@ async function submit(event) {
     await pollCommand(payload.command.command_id);
   } catch (error) {
     if (error.message === "recent_auth_required") {
-      location.assign(`${AUTH_BASE_URL}/v1/auth/steam/start?return_path=${encodeURIComponent("/moderation/")}`);
+      location.assign(`${AUTH_BASE_URL}/v1/auth/steam/start?return_path=${encodeURIComponent(buildAuthReturnPath(window.location))}`);
       return;
     }
     setMessage(error.message && !error.message.startsWith("http_") ? `${t("rejected").replace("{code}", error.message)}` : t("submitFailed"), "error");
   } finally { button.disabled = false; }
 }
 
-applyLocalizedNavigation(language(), document, window);
+export function mountModerationWorkspace({ confirmAction, standalone = false } = {}) {
+if (confirmAction) confirmModerationAction = confirmAction;
+if (standalone) applyLocalizedNavigation(language(), document, window);
 applyCopy();
 document.getElementById("moderation-gate").textContent = t("checking");
 document.querySelectorAll("[data-action]").forEach(tab => tab.addEventListener("click", () => {
@@ -252,5 +257,9 @@ document.getElementById("moderation-search").addEventListener("input", () => {
   clearTimeout(searchTimer); searchTimer = setTimeout(() => void searchPilots(), 250);
 });
 document.getElementById("moderation-form").addEventListener("submit", event => void submit(event));
-raceNumberReview = createRaceNumberReview({ api, language, getAuth: () => authState, authBaseUrl: AUTH_BASE_URL });
-createAuthHeaderController({ onAuthChange: renderGate });
+raceNumberReview = createRaceNumberReview({ api, language, getAuth: () => authState, authBaseUrl: AUTH_BASE_URL, confirmAction: confirmModerationAction });
+if (standalone) createAuthHeaderController({ onAuthChange: renderGate });
+return { update: renderGate };
+}
+
+if (!document.documentElement.dataset.v2Page) mountModerationWorkspace({ standalone: true });

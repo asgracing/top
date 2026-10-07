@@ -150,6 +150,7 @@ try{
     page.on('pageerror',e=>errors.push(e.message));
     await page.route('**/*',route=>fixture(route,log));
     await page.goto(`${base}/v2/${language}/`,{waitUntil:'networkidle'});
+    await page.locator('#v2-rating-table tbody tr[data-row]').first().waitFor();
     await page.waitForTimeout(500);
     await fs.mkdir(path.join(root,'design-research/v2-verification'),{recursive:true});
     if(width===1920||width===390)await page.screenshot({path:path.join(root,`design-research/v2-verification/home-${language}-${width}.png`)});

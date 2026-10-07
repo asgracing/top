@@ -8,6 +8,8 @@ const dependencies = {
   translate: key => `t:${key}`,
   renderEloBadge: () => "ELO",
   renderTrendBadge: () => "TREND",
+  isDriverBanned: profile => profile?.is_banned === true,
+  renderBannedBadge: () => "BANNED_BADGE",
   renderStatValueWithTrend: value => `stat:${value}`,
   renderPositionsDelta: value => `positions:${value}`,
 };
@@ -28,6 +30,11 @@ test("renders Driver hero identity, ELO and rank", () => {
 test("does not render an invalid race number", () => {
   const markup = renderDriverHeroTitle({ driver: "Alex", race_number: 1000 }, null, {}, dependencies);
   assert.doesNotMatch(markup, /driver-race-number-pill/);
+});
+
+test("renders a banned badge next to the Driver name", () => {
+  const markup = renderDriverHeroTitle({ driver: "Alex", is_banned: true }, null, {}, dependencies);
+  assert.match(markup, /driver-title-primary[\s\S]*BANNED_BADGE/);
 });
 
 test("renders Driver statistic cards from a prepared model", () => {

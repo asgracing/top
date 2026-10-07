@@ -1,4 +1,4 @@
-import { bootstrapLegacyPage } from "./legacy-bootstrap.js?v=20261004teams1";
+import { bootstrapLegacyPage } from "./legacy-bootstrap.js?v=20261007root1";
 import { applyRandomTrackBackground } from "../features/server-status/track-background.js?v=20260726staticfallback1";
 
 applyRandomTrackBackground(document);

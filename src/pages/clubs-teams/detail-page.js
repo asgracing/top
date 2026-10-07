@@ -6,9 +6,10 @@ import {
 } from "../../features/auth/header-auth.js?v=20261003names1";
 import { createHttpClient } from "../../shared/http-client.js";
 import { element } from "../../shared/safe-dom.js";
-import { applyLocalizedNavigation, currentPageLanguageHref, localizedPageHref, resolvePageLocale, setPageLocale } from "../../shared/localized-page.js?v=20260920routes1";
+import { applyLocalizedNavigation, currentPageLanguageHref, localizedPageHref, resolvePageLocale, setPageLocale } from "../../shared/localized-page.js?v=20261007root1";
 import { resolveRuntimeOverride } from "../../shared/runtime-config.js";
 import { formatRatingMetric } from "../../shared/rating-format.js?v=20260820ratingsdot1";
+import { formatMoscowDateTime } from "../../shared/time.js?v=20260910msk1";
 import {
   entityDetailHref,
   entitySlugFromLocation,
@@ -89,11 +90,9 @@ const formattedNumber = (value, digits = 0) => value === null
   : new Intl.NumberFormat(undefined, { maximumFractionDigits: digits }).format(value);
 const formattedDate = (value, lang) => {
   if (!value) return "—";
-  const date = new Date(value);
-  if (Number.isNaN(date.getTime())) return "—";
-  return new Intl.DateTimeFormat(lang === "ru" ? "ru-RU" : "en-GB", {
-    day: "2-digit", month: "short", year: "numeric", hour: "2-digit", minute: "2-digit"
-  }).format(date);
+  return formatMoscowDateTime(value, lang === "ru" ? "ru-RU" : "en-GB", {
+    day: "2-digit", month: "short", year: "numeric"
+  }) || "—";
 };
 const displayToken = value => String(value || "—").replaceAll("_", " ");
 const displayTrack = value => displayToken(value).replace(/\b[a-zа-яё]/giu, letter => letter.toLocaleUpperCase());

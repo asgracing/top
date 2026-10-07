@@ -1,0 +1,56 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Championship Event | ASG Racing</title>
+  <meta name="description" content="ASG Racing championship event results and standings." />
+  <link rel="stylesheet" href="./styles.css" />
+</head>
+<body>
+  <main class="event-page">
+    <header class="event-hero">
+      <div class="event-nav">
+        <a class="back-link" href="/hourly/" data-event-back>← Hourly</a>
+        <div class="event-language" aria-label="Language">
+          <button class="lang-btn" type="button" data-lang="ru">RU</button>
+          <button class="lang-btn" type="button" data-lang="en">EN</button>
+        </div>
+      </div>
+      <p class="eyebrow" data-i18n="eyebrow">ASG Racing Special Event</p>
+      <h1 id="event-title">Championship Event</h1>
+      <p id="event-period" class="event-period"></p>
+      <p id="event-description" class="event-description"></p>
+    </header>
+
+    <section class="event-section">
+      <div class="section-head">
+        <h2 data-i18n="prizes">Prizes</h2>
+      </div>
+      <div class="prize-grid" id="prize-grid"></div>
+    </section>
+
+    <section class="event-section">
+      <div class="section-head">
+        <h2 data-i18n="top3">Top 3</h2>
+      </div>
+      <div class="podium-grid" id="podium-grid"></div>
+    </section>
+
+    <section class="event-section">
+      <div class="section-head">
+        <h2 data-i18n="standings">Standings</h2>
+      </div>
+      <div class="table-wrap" id="standings-table"></div>
+    </section>
+
+    <section class="event-section">
+      <div class="section-head">
+        <h2 data-i18n="races">Races</h2>
+      </div>
+      <div class="race-list" id="race-list"></div>
+    </section>
+  </main>
+  <script type="module" src="./app.js?v=20261007root1"></script>
+</body>
+</html>

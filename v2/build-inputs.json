@@ -1,0 +1,198 @@
+{
+  "schemaVersion": 1,
+  "runtimeVersion": "20261007v2release3",
+  "inputs": [
+    {
+      "path": "app.js",
+      "sha256": "d5ba752eeb5c97f31add4e95f04dcdb5870a2327a745bb9ab8362288124956c8"
+    },
+    {
+      "path": "hourly/app.js",
+      "sha256": "60d161fd77a6783e8cc74528121df341beb527890fd4b0c653b7b9fd16966ade"
+    },
+    {
+      "path": "hourly/championship/app.js",
+      "sha256": "b3d311c089a896b8a801049054efa79db870a3e26a0122136fa14fcb268851bf"
+    },
+    {
+      "path": "hourly/championship/history/app.js",
+      "sha256": "0fc651235a8065c7a5851bbc3e98cdbebd839066d76bb2cb0c430e1f215bf7f8"
+    },
+    {
+      "path": "scripts/build-v2.mjs",
+      "sha256": "f02a3c34afed39b44bad7694f381e68b3cafc99406eff75a916ea60688130899"
+    },
+    {
+      "path": "scripts/generate-localized-pages.mjs",
+      "sha256": "68b0d415e2b8f99e6f7395c8d2e6913cbdfd60044ae9eba6790cd9dd2d447d3e"
+    },
+    {
+      "path": "scripts/seo/html-source.mjs",
+      "sha256": "e8863ed75191d51873a4f9fde8dfc46bb5cdf2905d7e4b623b97daa6143735fa"
+    },
+    {
+      "path": "scripts/seo/pages.mjs",
+      "sha256": "15de792bb089fa06d8b745b7339106df0936d7442ebd4ebbc0416b39e291dcf9"
+    },
+    {
+      "path": "scripts/v1-source.mjs",
+      "sha256": "01d6e02ad823d667286a01669eac52277c6f6e6e4890704a056ecd5add79d6ee"
+    },
+    {
+      "path": "scripts/v2-information-content.mjs",
+      "sha256": "adcd7a16e4abfd5e787a7b20c2ca8ac935c0c086f562c0b36367b084f92b21ce"
+    },
+    {
+      "path": "scripts/v2-runtime-facade.txt",
+      "sha256": "ea807f46dbe9323d1a8ba9ec28747d4de2d732f60734dd3ab270c13ea3028d86"
+    },
+    {
+      "path": "src/pages/clubs-teams/catalog-page.js",
+      "sha256": "16e2e61fc35dfb7b71309adfab0845fdc10f7176972a71fca4e4d4b0d730bf79"
+    },
+    {
+      "path": "v1-source/html/bans/index.html",
+      "sha256": "913c15c21d0c3ed5148f28d57b455a89a98b5330e64e24df5dcfc16b29fffbd7"
+    },
+    {
+      "path": "v1-source/html/cars/index.html",
+      "sha256": "949f442971a3bbaf0eff545cb56007af9b8d2c278e73293b1cbf49b8d54bc52d"
+    },
+    {
+      "path": "v1-source/html/community/index.html",
+      "sha256": "642e7b9ca6b7889345205db0e6f974ab605b6864d7cbe9105fef925463008f33"
+    },
+    {
+      "path": "v1-source/html/cookies/index.html",
+      "sha256": "a5fe04fe51aaab58b4c33867536d240809e6655f19569c72ae55b6af3498fb87"
+    },
+    {
+      "path": "v1-source/html/driver/index.html",
+      "sha256": "a040085b6ab45b9db996f89ec753c07a14beadd94b7b79f1e58966d807bf24c6"
+    },
+    {
+      "path": "v1-source/html/fun-stats/index.html",
+      "sha256": "4f764be7ffa7be6dc919df30194164f1a714a56b5e791b3d7312850387c3b0ca"
+    },
+    {
+      "path": "v1-source/html/hourly/championship/history/index.html",
+      "sha256": "5be4aea08ca466fa3c37fed35076d0fca7d93ac06a1c8cba3d967e0d91e61f60"
+    },
+    {
+      "path": "v1-source/html/hourly/championship/index.html",
+      "sha256": "d84e1f238c9115bda25e59665f39017f1c4feb84fcf3dfaf363f551ef8f8f603"
+    },
+    {
+      "path": "v1-source/html/hourly/index.html",
+      "sha256": "ecd4b973787549f3f5ca2b030c14c587b054e794be7d57a7c3bb211aa676229e"
+    },
+    {
+      "path": "v1-source/html/index.html",
+      "sha256": "0481fdb9dbd449e3ad31fb6cb531f1d4372d76c12f6071b1cf6534181498bb1d"
+    },
+    {
+      "path": "v1-source/html/moderation/index.html",
+      "sha256": "a16986e3ef72fa786b0f6a5985ce98553395633dca5c1b94af3f768442fd7227"
+    },
+    {
+      "path": "v1-source/html/news/index.html",
+      "sha256": "2a4afa7242a320bb52c8befa9434e4fbb75e5edf4243e13e83fb10fdaa44f6a0"
+    },
+    {
+      "path": "v1-source/html/portal-ops/index.html",
+      "sha256": "a08f3e6c65b78b445f69bcbd524bdd6c0d65662c634d953fc4d5c5a0def59780"
+    },
+    {
+      "path": "v1-source/html/privacy/index.html",
+      "sha256": "71877ccba7f54624fe7e91d0b33c59510525d2410b947b568f38b8b65cd832bc"
+    },
+    {
+      "path": "v1-source/html/races/index.html",
+      "sha256": "15b0550d19d2e06fd29065896fbd354eab5064e391af1dd2d42a8b8a36b66f7a"
+    },
+    {
+      "path": "v1-source/html/teams/index.html",
+      "sha256": "c3ebb41ce41a5fe92a2ddfd178c4e9e6042151a0e6c8fa623cac3bbecc85b334"
+    },
+    {
+      "path": "v1-source/manifest.json",
+      "sha256": "1e5e973e1dea7a7426f49a03b2464f7507b6076c87721f3766367ea3509843c0"
+    },
+    {
+      "path": "v2-source/copy.json",
+      "sha256": "de5d8e8e88e838e497ede72a428d6584dc8fa9a4a8520dbb9766b6b8f5b29c8a"
+    },
+    {
+      "path": "v2-source/design.css",
+      "sha256": "189feeed5cd483bf66e21c07a9db7fde2524b1c3b859703e572943b88bbe600e"
+    },
+    {
+      "path": "v2-source/home.html",
+      "sha256": "d5045728056de1502e47baa96f3af70c3e7edd87ff958350aafa7007ff4d7622"
+    },
+    {
+      "path": "v2-source/pages/archive.js",
+      "sha256": "ff2ab52e1cfac0f49ca9dde991384b4bf92b7452346dad1dc3b5c0b618778a77"
+    },
+    {
+      "path": "v2-source/pages/bans.js",
+      "sha256": "77a776f15acb7b085d2e0cab049bcde53d332a8415b03150319ef9ed03fec78c"
+    },
+    {
+      "path": "v2-source/pages/cars.js",
+      "sha256": "351ead7c4730499ffe813f8a277a3eab501f18257d220c0943a3d38ba887b957"
+    },
+    {
+      "path": "v2-source/pages/championships.js",
+      "sha256": "51fe072f2edad801454eec2997426142e79f0441c2b2a1b44e82c95c75162226"
+    },
+    {
+      "path": "v2-source/pages/control-pages.css",
+      "sha256": "bfc25e9a178b5975d3c65a74732ee16f8be0b9dd659999d83b077443151975de"
+    },
+    {
+      "path": "v2-source/pages/core.js",
+      "sha256": "b535bf81a6480deda29f8d9e901a6496ef505f80d9640888df26d92cb1eec556"
+    },
+    {
+      "path": "v2-source/pages/editorial.js",
+      "sha256": "da099a80254333deec76d278f698956a05900ac5c1297ceeec82bc5bcdcfb7a9"
+    },
+    {
+      "path": "v2-source/pages/entities.js",
+      "sha256": "ea5e6cdd3812b183fd16c9c382bd15b4eab16e6af9956b1b8343e33092f9c677"
+    },
+    {
+      "path": "v2-source/pages/fun.js",
+      "sha256": "a8a7e52cbbc14189fec82aa4a1a7b48c5ca1f98373b0d8b7b70e79b771e3c350"
+    },
+    {
+      "path": "v2-source/pages/history.js",
+      "sha256": "81a5ec37c0910bd41d3df3ed8d7f44cbf20d47d99d95591ae1a094ac7b38c104"
+    },
+    {
+      "path": "v2-source/pages/information.js",
+      "sha256": "d07d42e4085e7238e5f492e2a1741ff97bdebe86c0a14ce922287e3ddcd7c7f6"
+    },
+    {
+      "path": "v2-source/pages/pages.css",
+      "sha256": "5cd3f340be230570bcd98a53f8b4bd4bb625b493565276694b6a038769f68016"
+    },
+    {
+      "path": "v2-source/pages/r24-pages.css",
+      "sha256": "0f6f1c70ebe9dd1f50f88c3d43910315a920b4d089d879e9918920352075c33a"
+    },
+    {
+      "path": "v2-source/pages/race-modal.js",
+      "sha256": "cb6d84e31d772d1495cd23b107624bfc5bf22708b34399afc970d723d9c50e15"
+    },
+    {
+      "path": "v2-source/pages/site-pages.css",
+      "sha256": "8179fa1219b79fe9099a9cc1c3bd3b79ba5ed63a9c42c6c7aabf059b6ea1faa4"
+    },
+    {
+      "path": "v2/page-registry.js",
+      "sha256": "2effdf2e4d73b6caef7cf14e3ceb89b9969fd4bf686ecf2b90ab64e23fb9b68e"
+    }
+  ]
+}

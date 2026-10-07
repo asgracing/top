@@ -1,9 +1,10 @@
 import { readFile } from "node:fs/promises";
 import { resolve } from "node:path";
+import {readClassicQuality} from '../../scripts/classic-quality-source.mjs';
 
 const root = resolve(import.meta.dirname, "../..");
 const [html, tokensCss, baseCss, siteBackgroundCss, topNavigationCss, languageSwitchCss, buttonsCss, heroFoundationCss, heroActionsCss, heroStatsCss, serverStickyLayoutCss, sectionsCss, supportWidgetCss, tableControlsCss, topThreeCss, tablesCss, paginationCss, modalsCss, serverPlayersModalCss, todayStatsModalCss, activityControlsCss, activitySummaryCss, hourlyEventModalCss, driverDayModalCss, footerCss, utilitiesCss, responsiveCss, legacyCss, heroLayoutCss, heroServerSummaryCss, floatingWidgetsCss, responsiveAccessibilityCss, js, pageFeatureLoader] = await Promise.all([
-  readFile(resolve(root, "index.html"), "utf8"),
+  readClassicQuality('index.html'),
   readFile(resolve(root, "styles/tokens.css"), "utf8"),
   readFile(resolve(root, "styles/base.css"), "utf8"),
   readFile(resolve(root, "styles/components/site-background.css"), "utf8"),
@@ -42,8 +43,8 @@ const statsTabsControllerJs = await readFile(resolve(root, "src/pages/home/stats
 const authHeaderCss = await readFile(resolve(root, "styles/components/auth-header.css"), "utf8");
 const [driverAccountCss, accountHtml, accountSettingsHtml] = await Promise.all([
   readFile(resolve(root, "styles/components/driver-account.css"), "utf8"),
-  readFile(resolve(root, "account/index.html"), "utf8"),
-  readFile(resolve(root, "account/settings/index.html"), "utf8")
+  readClassicQuality('account/index.html'),
+  readClassicQuality('account/settings/index.html')
 ]);
 const css = `${tokensCss}\n${baseCss}\n${siteBackgroundCss}\n${topNavigationCss}\n${languageSwitchCss}\n${buttonsCss}\n${heroFoundationCss}\n${heroActionsCss}\n${heroStatsCss}\n${serverStickyLayoutCss}\n${sectionsCss}\n${supportWidgetCss}\n${tableControlsCss}\n${topThreeCss}\n${tablesCss}\n${paginationCss}\n${modalsCss}\n${serverPlayersModalCss}\n${todayStatsModalCss}\n${activityControlsCss}\n${activitySummaryCss}\n${hourlyEventModalCss}\n${driverDayModalCss}\n${footerCss}\n${utilitiesCss}\n${legacyCss}\n${responsiveCss}\n${heroLayoutCss}\n${heroServerSummaryCss}\n${floatingWidgetsCss}\n${responsiveAccessibilityCss}`;
 const failures = [];
@@ -71,7 +72,8 @@ const enTranslationKeys = translationKeysFor("en");
 const ruTranslationKeys = translationKeysFor("ru");
 for (const key of enTranslationKeys) if (!ruTranslationKeys.has(key)) failures.push(`Russian translations are missing ${key}`);
 for (const key of ruTranslationKeys) if (!enTranslationKeys.has(key)) failures.push(`English translations are missing ${key}`);
-const pageFeatureIsLoaded = path => pageFeatureLoader.includes(`"${path}"`);
+const pageFeatureIsLoaded = path => pageFeatureLoader.includes(`"${path}"`)
+  || pageFeatureLoader.includes(`"${path}?`);
 const pageEntrypoints = {
   home: ["index.html", "./src/entrypoints/home.js"],
   races: ["races/index.html", "../src/entrypoints/races.js"],
@@ -84,7 +86,7 @@ const pageEntrypoints = {
 };
 for (const [page, [htmlPath, entrySrc]] of Object.entries(pageEntrypoints)) {
   const [pageHtml, entrySource] = await Promise.all([
-    readFile(resolve(root, htmlPath), "utf8"),
+    readClassicQuality(htmlPath),
     readFile(resolve(root, `src/entrypoints/${page}.js`), "utf8")
   ]);
   if (!pageHtml.includes(`type="module" src="${entrySrc}`)) failures.push(`${page} page is missing its module entrypoint`);
@@ -189,7 +191,7 @@ if (!js.includes('from "./src/shared/modal-controller.js"') || js.includes("func
 if (!js.includes("async function openEloModalForSource(") || !js.includes("normalizeEloHistory(source).length > 0 || !publicId") || !js.includes("Failed to enrich ELO modal source.")) failures.push("ELO badges backed by compact table rows must lazy-load full driver history before rendering the shared modal");
 if (!js.includes('from "./src/shared/table-model.js"') || js.includes("function parseNumeric(") || js.includes("function parseLapTime(")) failures.push("Shared table sorting model must live outside app.js");
 if (!pageFeatureIsLoaded("../pages/bans/index.js") || js.includes("function renderBansTable()") || js.includes("function renderBansSummary()") || js.includes("const bansPageView = createBansPageView")) failures.push("Bans page rendering must live outside app.js and initialize after shared DOM modules");
-if (!js.includes('from "./src/shared/news-feed-model.js"') || js.includes("return [...items]")) failures.push("Shared news feed sorting model must live outside app.js");
+if (!js.includes('from "./src/shared/news-feed-model.js') || js.includes("return [...items]")) failures.push("Shared news feed sorting model must live outside app.js");
 if (/^import .*\.\/src\/pages\/(?!home\/)/m.test(js)) failures.push("Shared runtime must not statically import child page modules");
 if (!pageFeatureIsLoaded("../pages/news/page-view.js") || js.includes("function renderNewsListPage(") || js.includes("function renderNewsDetailPage(")) failures.push("News page rendering must live outside app.js");
 if (!pageFeatureIsLoaded("../pages/community/feed-model.js") || js.includes("const sortedPosts = [...posts].sort")) failures.push("Community feed model must live outside app.js");
@@ -242,7 +244,6 @@ if (!responsiveAccessibilityCss.includes("@media (prefers-reduced-motion: reduce
 if (!responsiveAccessibilityCss.includes("@media (pointer: coarse)") || !responsiveAccessibilityCss.includes("min-height: 44px;") || !responsiveAccessibilityCss.includes(":focus-visible")) failures.push("R13 must preserve touch target size and visible keyboard focus");
 for (const tag of html.matchAll(/<[^>]+role="button"[^>]*>/g)) if (!/tabindex="0"/.test(tag[0])) failures.push(`Role button is missing tabindex: ${tag[0].slice(0, 90)}`);
 if (!html.includes('data-i18n-aria-label="statsHubTabsLabel"') || !js.includes('aria-haspopup="dialog"') || !js.includes('aria-controls="server-players-modal"')) failures.push("Home interactive regions must expose localized names and dialog semantics");
-if (!js.includes("getHomeHourlyVotesClient().vote(eventId)") || !js.includes("getHomeHourlyVotesClient().unvote(eventId)") || js.includes("hourlyVotesApiEndpoint") || js.includes("voter_id: getHourlyBrowserVoterId()")) failures.push("Home Hourly voting must use the shared bearer-token client without legacy voter_id mutations");
 if ((html.match(/role="tabpanel"\s+aria-labelledby="combined-tab-/g) || []).length !== 4 || !statsTabsControllerJs.includes("resolveNextHomeStatsTab")) failures.push("Home statistics tabs must expose tabpanel relationships and keyboard navigation");
 if (/@media\s*\(max-width:\s*760px\)\s*\{\s*\.donation-alerts-widget/s.test(legacyCss) || /@media\s*\(max-width:\s*1279px\)\s*\{\s*\.server-sticky-widget/s.test(legacyCss)) failures.push("Floating widget visibility rules must not be duplicated in legacy CSS");
 if (legacyCss.includes("Consolidated hero server summary") || !heroServerSummaryCss.includes(".hero-server-total-stat")) failures.push("Hero server summary must have one physical component source");

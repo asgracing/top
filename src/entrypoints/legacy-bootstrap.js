@@ -1,6 +1,6 @@
-import{applyPageContext}from"../runtime/page-context.js?v=20260920route1";
+import{applyPageContext}from"../runtime/page-context.js?v=20261007root1";
 
 export async function bootstrapLegacyPage(page) {
   applyPageContext(document, page);
-  await import("../../app.js?v=20261004teams1");
+  await import("../../app.js?v=20261007root1");
 }

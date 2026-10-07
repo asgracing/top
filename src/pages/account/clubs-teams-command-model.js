@@ -1,4 +1,4 @@
-import { managementEntityId, membershipActionId, teamClubActionId } from "../../features/auth/clubs-teams-auth-model.js";
+import { managementEntityId, membershipActionId, teamClubActionId } from "../../features/auth/clubs-teams-auth-model.js?v=20260910msk1";
 
 const ENTITY_TYPES = new Set(["club", "team"]);
 const FINAL_STATUSES = new Set(["applied", "rejected", "expired", "dead_letter"]);

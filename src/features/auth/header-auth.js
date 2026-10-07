@@ -1,4 +1,4 @@
-import { normalizeClubsTeamsAuthState } from "./clubs-teams-auth-model.js";
+import { normalizeClubsTeamsAuthState } from "./clubs-teams-auth-model.js?v=20260910msk1";
 import { createHttpClient } from "../../shared/http-client.js";
 
 const DEFAULT_AUTH_BASE_URL = "https://auth.asgracing.ru";

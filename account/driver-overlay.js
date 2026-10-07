@@ -151,11 +151,11 @@ export function mountDriverOverlayManager({
         show_race_number: panel.querySelector("[data-overlay-number]")?.checked === true
       });
     });
-    panel.querySelector("[data-overlay-rotate]")?.addEventListener("click", () => {
-      if (confirmFn(copy.rotateConfirm)) void mutate("/v1/me/driver-overlay/rotate");
+    panel.querySelector("[data-overlay-rotate]")?.addEventListener("click", async () => {
+      if (await confirmFn(copy.rotateConfirm)) void mutate("/v1/me/driver-overlay/rotate");
     });
-    panel.querySelector("[data-overlay-revoke]")?.addEventListener("click", () => {
-      if (confirmFn(copy.revokeConfirm)) void mutate("/v1/me/driver-overlay/revoke");
+    panel.querySelector("[data-overlay-revoke]")?.addEventListener("click", async () => {
+      if (await confirmFn(copy.revokeConfirm)) void mutate("/v1/me/driver-overlay/revoke");
     });
   }
 

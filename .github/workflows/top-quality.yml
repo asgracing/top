@@ -18,9 +18,21 @@ jobs:
         with:
           node-version: 20
       - run: npm run ci
+      - name: Prepare root publication and URL-compatible fallback
+        if: hashFiles('site-release.json') != ''
+        run: |
+          if node --input-type=module -e "import fs from 'node:fs'; process.exit(JSON.parse(fs.readFileSync('site-release.json')).layout === 'parallel' ? 0 : 1)"; then
+            npm run prepare:site-release
+          fi
       - uses: actions/upload-artifact@v4
         with:
           name: top-dist-${{ github.sha }}
           path: dist/
           if-no-files-found: error
           retention-days: 14
+      - uses: actions/upload-artifact@v4
+        with:
+          name: top-root-release-preparation-${{ github.sha }}
+          path: ../tmp/site-releases/
+          if-no-files-found: ignore
+          retention-days: 30

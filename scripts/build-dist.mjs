@@ -2,10 +2,8 @@ import { createHash } from "node:crypto";
 import { execFileSync } from "node:child_process";
 import { cp, mkdir, readFile, readdir, rm, stat, writeFile } from "node:fs/promises";
 import { extname, resolve, sep } from "node:path";
+import {root,dist,previous,rollbackArtifact} from './dist-paths.mjs';
 
-const root = resolve(import.meta.dirname, "..");
-const dist = resolve(root, "dist");
-const previous = resolve(root, "dist.previous");
 const allowedRootFiles = new Set([
   "404.html", "CNAME", "app.js", "apple-touch-icon.png", "favicon-16x16.png", "favicon-32x32.png",
   "favicon.ico", "index.html", "index.ru.html", "legal.css", "legal.js", "news-read-state.js", "robots.txt", "sitemap.xml",
@@ -45,8 +43,9 @@ try {
 }
 await mkdir(dist, { recursive: true });
 
-const runtimeFiles = [...allowedRootFiles];
-for (const directory of allowedDirectories) runtimeFiles.push(...await collectRuntimeFiles(resolve(root, directory), directory));
+let runtimeFiles = [...allowedRootFiles];
+if(process.env.ASG_ROOT_RELEASE==='1'&&process.env.ASG_SITE_LAYOUT!=='root')throw Error('Root release requires the root layout');
+for (const directory of allowedDirectories.filter(path=>process.env.ASG_ROOT_RELEASE!=='1'||path!=='preview')) runtimeFiles.push(...await collectRuntimeFiles(resolve(root, directory), directory));
 runtimeFiles.sort();
 
 for (const path of runtimeFiles) {
@@ -54,16 +53,32 @@ for (const path of runtimeFiles) {
   await mkdir(resolve(target, ".."), { recursive: true });
   await cp(resolve(root, path), target);
 }
+if(process.env.ASG_V2_OUTPUT_DIR){
+ const compilation=resolve(process.env.ASG_V2_OUTPUT_DIR);
+ if(compilation===root)throw Error('Isolated V2 compilation cannot be the public root');
+ await cp(resolve(compilation,'v2'),resolve(dist,'v2'),{recursive:true});
+}
+
+if(process.env.ASG_SITE_LAYOUT==='root'){
+  await import('./build-root-layout.mjs');
+  if(process.env.ASG_ROOT_RELEASE==='1')await import(process.env.ASG_ROOT_FALLBACK==='1'?'./build-root-fallback.mjs':'./build-root-seo.mjs');
+  runtimeFiles=(await collectRuntimeFiles(dist)).sort();
+}
 
 let revision = "unknown";
-try { revision = execFileSync("git", ["rev-parse", "HEAD"], { cwd: root, encoding: "utf8" }).trim(); } catch {}
+if(process.env.ASG_SOURCE_REVISION){if(!/^[a-f0-9]{40}$/.test(process.env.ASG_SOURCE_REVISION))throw Error('Invalid source revision');revision=process.env.ASG_SOURCE_REVISION;}
+else try { revision = execFileSync("git", ["rev-parse", "HEAD"], { cwd: root, encoding: "utf8" }).trim(); } catch {}
+let worktreeDirty = null;
+if(process.env.ASG_SOURCE_REVISION)worktreeDirty=true;
+else try { worktreeDirty = Boolean(execFileSync('git', ['status','--porcelain','--untracked-files=normal'], {cwd:root,encoding:'utf8'}).trim()); } catch {}
 const metadata = {
   schemaVersion: 1,
   revision,
   builtAt: new Date().toISOString(),
-  rollbackArtifact: "../dist.previous",
+  rollbackArtifact,
+  worktreeDirty,
+  siteLayout:process.env.ASG_ROOT_FALLBACK==='1'?'root-fallback':process.env.ASG_ROOT_RELEASE==='1'?'root-release-candidate':process.env.ASG_SITE_LAYOUT==='root'?'root-review':'parallel',
 };
-await writeFile(resolve(dist, "build-meta.json"), `${JSON.stringify(metadata, null, 2)}\n`);
 
 const assets = [];
 for (const path of runtimeFiles) {
@@ -71,6 +86,8 @@ for (const path of runtimeFiles) {
   assets.push({ path, bytes: content.byteLength, sha256: sha256(content) });
 }
 const manifest = { schemaVersion: 1, revision, files: assets.length, bytes: assets.reduce((sum, asset) => sum + asset.bytes, 0), assets };
+metadata.sourceSnapshotSha256 = sha256(Buffer.from(JSON.stringify(assets)));
+await writeFile(resolve(dist, "build-meta.json"), `${JSON.stringify(metadata, null, 2)}\n`);
 await writeFile(resolve(dist, "asset-manifest.json"), `${JSON.stringify(manifest, null, 2)}\n`);
 
 const checksumFiles = [...runtimeFiles, "asset-manifest.json", "build-meta.json"].sort();

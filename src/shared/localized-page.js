@@ -1,4 +1,5 @@
 // Presentation only: this module does not read or alter API configuration.
+import {siteContext,scopeSiteHref,languageHref as siteLanguageHref} from '../../v2/site-routing.js?v=20261007root1';
 export const LOCALE_STORAGE_KEY = "asgLocale";
 export const LEGACY_LANGUAGE_STORAGE_KEY = "asgLang";
 export const LEGACY_NAMESPACED_LANGUAGE_STORAGE_KEY = "asg.top.v1:language";
@@ -34,6 +35,7 @@ export function localizedPageRoute(pathname) {
 }
 
 export function localizedPageHref(href, language, locationRef = window.location) {
+  if(siteContext(locationRef).layout==='root')return new URL(scopeSiteHref(href,language,locationRef),locationRef.href).href;
   const normalized = validLanguage(language);
   if (!normalized) return new URL(href, locationRef.href).href;
   const target = new URL(href, locationRef.href);
@@ -50,6 +52,7 @@ export function localizedPageHref(href, language, locationRef = window.location)
 }
 
 export function currentPageLanguageHref(language, locationRef = window.location) {
+  if(siteContext(locationRef).layout==='root')return new URL(siteLanguageHref(language,locationRef),locationRef.href).href;
   return localizedPageHref(locationRef.href, language, locationRef);
 }
 
@@ -67,10 +70,15 @@ export function legacyMalformedLanguageHref(locationRef = window.location) {
 export function applyLocalizedNavigation(language, documentRef = document, windowRef = window) {
   const normalized = validLanguage(language);
   if (!normalized) return;
-  documentRef.querySelectorAll?.("a[href]:not(.lang-btn)").forEach(link => {
+  documentRef.querySelectorAll?.("a[href]:not(.lang-btn):not([data-v2-home]):not([data-site-version-link])").forEach(link => {
     const rawHref = link.getAttribute?.("href");
     if (!rawHref || /^(?:mailto:|tel:|javascript:|data:|blob:)/i.test(rawHref)) return;
     const target = new URL(rawHref, windowRef.location.href);
+    if(siteContext(windowRef.location,documentRef).layout==='root'){
+      const next=scopeSiteHref(rawHref,normalized,windowRef.location,siteContext(windowRef.location,documentRef));
+      if(next!==rawHref)link.setAttribute('href',next);
+      return;
+    }
     if (target.origin !== windowRef.location.origin || !localizedPageRoute(target.pathname)) return;
     link.href = localizedPageHref(target.href, normalized, windowRef.location);
   });
@@ -236,14 +244,14 @@ export function initializeLocalizedPage(documentRef = document, windowRef = wind
   }
   const requested = validLanguage(new URLSearchParams(windowRef.location.search).get("lang"));
   const requestedLink = links.find(link => link.dataset.lang === requested);
-  if (requestedLink && requested !== language) {
+  if (siteContext(windowRef.location,documentRef).layout!=='root' && requestedLink && requested !== language) {
     saveLocalePreference(requested, detected.region, windowRef);
     windowRef.location.replace(requestedLink.href);
     return;
   }
   const saved = readLocalePreference(windowRef);
   const suggestedLink = links.find(link => link.dataset.lang === detected.language);
-  if (!saved && suggestedLink && detected.language !== language) {
+  if (siteContext(windowRef.location,documentRef).layout!=='root' && !saved && suggestedLink && detected.language !== language) {
     const ready = () => showLocaleSuggestion(documentRef, windowRef, detected, suggestedLink);
     if (documentRef.body) ready();
     else documentRef.addEventListener("DOMContentLoaded", ready, { once: true });

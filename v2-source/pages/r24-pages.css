@@ -1,0 +1,101 @@
+/* R24: compact glass panels and shared racing palette. */
+.r24-feature-season {display:grid;grid-template-columns:minmax(0,1fr) minmax(190px,.45fr);gap:18px;padding:17px;border-color:#a855f77a;background:linear-gradient(110deg,#45225170,#101c28ad);}
+.r24-feature-season h2 {font-size:26px;margin:9px 0;}
+.r24-feature-season p {font-size:14px;color:#bfd0de;}
+.r24-feature-next {display:flex;flex-direction:column;gap:9px;justify-content:center;padding-left:18px;border-left:1px solid #9388b24d;}
+.r24-feature-next>b {font-size:25px;}
+.r24-feature-next>span:not(.eyebrow) {font-size:13px;color:#b8ccdf;}
+.r24-season-grid {display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:10px;padding:13px;}
+.r24-season-card {display:flex;flex-direction:column;gap:10px;min-width:0;padding:15px;border:1px solid #a855f768;border-radius:3px;background:linear-gradient(100deg,#131b29eb,#201328b5),var(--site-cover) center/cover;transition:border-color .2s,transform .2s;}
+.r24-season-card:hover {border-color:#c58aff;transform:translateY(-2px);}
+.r24-season-top,.r24-season-meta {display:flex;justify-content:space-between;align-items:center;gap:8px;font-size:12px;color:#c1cad7;}
+.r24-season-card h2 {font-size:21px;margin:0;line-height:1.3;}
+.r24-season-card p {margin:0;font-size:13px;color:#b2c6d8;}
+.r24-season-card .button {margin-top:auto;align-self:flex-start;}
+body[data-v2] .season-status.status-finished {color:#d0d8df;background:#465360;border-color:#7b8997;}
+body[data-v2] .season-status.status-active {color:#d4ffeb;background:#146745;border-color:#33cc8c;}
+body[data-v2] .season-status.status-scheduled {color:#fff1b6;background:#756017;border-color:#e0ba49;}
+.season-intro>div:first-child {flex:1;}
+.season-intro .site-intro-actions {display:grid;grid-template-columns:minmax(140px,245px) auto auto;align-items:end;max-width:100%;flex-shrink:1;}
+.season-intro .site-intro-actions select {width:100%;min-width:0;height:34px;}
+.season-intro .site-intro-actions .button {display:flex;align-items:center;justify-content:center;min-height:34px;white-space:nowrap;box-sizing:border-box;}
+@media(max-width:1499px){.season-intro .site-intro-actions {grid-template-columns:repeat(2,minmax(0,1fr));}.season-intro .site-intro-actions label {grid-column:1/-1;}.season-intro .site-intro-actions select {max-width:none;}}
+@media(max-width:760px){.season-intro .site-intro-actions {width:100%;}.season-intro .site-intro-actions .button {white-space:normal;text-align:center;}}
+.r24-progress {height:3px;background:#8880a238;}
+.r24-progress>span {display:block;height:100%;background:#b96aff;box-shadow:0 0 10px #a855f766;}
+.r24-season-extras {display:grid;grid-template-columns:1fr 1fr;gap:10px;}
+.r24-season-extras>.panel {min-width:0;}
+.r24-podium {padding:12px 14px;display:grid;gap:8px;}
+.r24-podium article {display:flex;align-items:center;gap:12px;padding:9px;border:1px solid var(--podium-border,#40556975);background:var(--podium-background,#09162288);}
+.r24-podium article[data-podium-place="1"] {--podium-color:#f3cf70;--podium-border:#d7b85c80;--podium-background:#d7b85c16;}
+.r24-podium article[data-podium-place="2"] {--podium-color:#d7e0eb;--podium-border:#a8bacd80;--podium-background:#a8bacd16;}
+.r24-podium article[data-podium-place="3"] {--podium-color:#e2ab7f;--podium-border:#c28a6080;--podium-background:#c28a6016;}
+.r24-place {font-size:24px;color:var(--podium-color,#b6c8d9);font-weight:800;width:27px;text-align:center;}
+.r24-podium article>div {display:flex;flex-direction:column;gap:4px;min-width:0;}
+.r24-podium a {font-size:15px;font-weight:700;overflow-wrap:anywhere;}
+.r24-podium small {font-size:12px;color:#b6c8d9;}
+.r24-prizes {display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:8px;padding:12px;}
+.r24-prizes button {display:flex;flex-direction:column;gap:7px;padding:7px;border:1px solid #997cca5e;background:#17223265;border-radius:3px;text-align:left;}
+.r24-prizes img {width:100%;height:104px;object-fit:contain;background:#0b15296e;}
+.r24-prizes b {font-size:15px;color:#e4c16e;}
+.r24-prizes span {font-size:11px;color:#c5a3f7;}
+.site-zoom-image {display:block;max-width:100%;max-height:72vh;margin:auto;object-fit:contain;}
+.r24-car-hero {display:flex;align-items:center;gap:20px;padding:14px 18px;}
+.r24-car-hero>div {flex:1;min-width:0;}
+.r24-car-hero h2 {font-size:27px;margin:7px 0;}
+.r24-car-hero p {font-size:13px;color:#a8c1d4;margin:7px 0 12px;}
+.r24-car-image {width:56px;height:33px;object-fit:contain;flex-shrink:0;}
+.r24-car-image.large {width:220px;height:135px;filter:drop-shadow(0 8px 9px #0008);}
+.r24-car-stats {display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:12px;}
+.r24-car-stats .page-metric>b {font-size:23px;}
+.r24-car-cell {display:flex;align-items:center;gap:8px;}
+.r24-cars-table {min-width:1190px;}
+.r24-cars-table td {height:51px;}
+.r24-sort {border:0;padding:0;background:none;text-align:left;color:inherit;font:inherit;}
+.r24-sort:hover {color:#c7a2ff;}
+.r24-lap-note {display:block;font-size:11px;color:#9eb6ca;margin-top:4px;}
+.r24-lap-note a {font-weight:500!important;}
+.r24-car-record-status {padding:4px 14px 12px;font-size:12px;color:#afc4d7;line-height:1.5;}
+.r24-car-record-status .button {padding:5px 9px;margin-left:8px;}
+.r24-lap-placeholder {font-size:12px;color:#9eb6ca;}
+.r24-period-tabs {display:flex;align-items:center;justify-content:space-between;gap:10px;padding:11px 14px;}
+.r24-period-tabs>span,.r24-fun-range {font-size:12px;color:#a9c1d4;}
+.r24-fun-range {padding:4px 0 9px;}
+#r24-fun-content {display:flex;flex-direction:column;gap:10px;}
+.r24-award-grid {display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:10px;}
+.r24-award {padding:13px;display:flex;flex-direction:column;gap:7px;min-width:0;border-top:2px solid var(--award-accent,#8abedb);background:linear-gradient(125deg,color-mix(in srgb,var(--award-accent) 12%,transparent),#14202bb0);}
+.r24-award h2 {font-size:17px;margin:0;line-height:1.35;overflow-wrap:anywhere;}
+.r24-award>b {font-size:27px;color:var(--award-accent);}
+.r24-award>span:last-child {font-size:12px;color:#b1c6d6;}
+.accent-gold {--award-accent:#efca6c;}.accent-cyan {--award-accent:#8ed8f8;}.accent-purple {--award-accent:#c49aff;}.accent-green {--award-accent:#35ef9b;}.accent-red {--award-accent:#ff637e;}
+.r24-fun-lists {display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:10px;}
+.r24-fun-lists>.panel {min-width:0;}
+.r24-stat-list {list-style:none;padding:0 12px;margin:0;}
+.r24-stat-list li {display:flex;align-items:center;gap:9px;min-height:56px;padding:8px 0;border-bottom:1px solid #7894ad30;font-size:13px;}
+.r24-stat-list li>span {color:#94b1c8;width:14px;flex-shrink:0;}
+.r24-stat-list li>div {flex:1;min-width:0;overflow-wrap:anywhere;}
+.r24-stat-list li>b {font-size:17px;text-align:right;flex-shrink:0;}
+.r24-stat-list small {display:block;font-size:10px;color:#a7bdcf;font-weight:400;}
+.r24-about-layout {display:grid;grid-template-columns:minmax(0,1fr) 270px;gap:10px;}
+.r24-about-layout>.site-reader {max-width:1050px;width:100%;margin-inline:auto;}
+.r24-reader-links {display:flex;flex-direction:column;gap:9px;padding:16px;align-self:start;position:sticky;top:0;}
+.r24-reader-links h2 {font-size:18px;margin:0 0 4px;}
+.r24-error {display:flex;flex-direction:column;align-items:flex-start;justify-content:center;gap:12px;padding:clamp(24px,5vw,70px);min-height:350px;position:relative;overflow:hidden;}
+.r24-error h1 {font-size:clamp(25px,3vw,40px);margin:0;}
+.r24-error p {font-size:15px;line-height:1.6;max-width:620px;color:#b9cedf;margin:0;}
+.r24-error-code {position:absolute;right:3%;top:15%;font-size:clamp(90px,16vw,230px);font-weight:900;color:#ff324815;pointer-events:none;}
+.r24-error>*:not(.r24-error-code) {position:relative;}
+.r24-error code {font-size:12px;color:#f293a6;overflow-wrap:anywhere;max-width:100%;}
+.r24-error .control-actions {display:flex;align-items:center;gap:8px;flex-wrap:wrap;}
+.r24-error .control-actions .button {width:auto;min-height:35px;}
+.r24-consent-option {display:flex;gap:10px;padding:14px 0;border-bottom:1px solid #7794b033;font-size:14px;}
+.r24-consent-option>span {display:flex;flex-direction:column;gap:5px;}
+.r24-consent-option small {color:#adc3d7;line-height:1.5;}
+#r24-consent-status {font-size:13px;color:#77e7b3;}
+.site-document-reader .legal-header h1 {font-size:21px;margin:0;}
+.site-document-reader .legal-header {margin-bottom:22px;}
+@media(min-width:1600px){.r24-season-grid {grid-template-columns:repeat(3,minmax(0,1fr));}}
+@media(max-width:1100px){.r24-award-grid {grid-template-columns:repeat(2,minmax(0,1fr));}.r24-fun-lists {grid-template-columns:repeat(2,minmax(0,1fr));}}
+@media(max-width:760px){.r24-feature-season,.r24-season-grid,.r24-season-extras,.r24-about-layout {grid-template-columns:1fr;}.r24-feature-next {padding:12px 0 0;border-left:0;border-top:1px solid #9388b24d;}.r24-car-hero {flex-direction:column;align-items:stretch;gap:8px;}.r24-car-image.large {align-self:center;width:190px;height:95px;}.r24-car-stats {grid-template-columns:repeat(2,minmax(0,1fr));}.r24-car-hero h2 {font-size:23px;}.r24-period-tabs {flex-wrap:wrap;}.r24-reader-links {position:static;}.r24-fun-lists {grid-template-columns:1fr;}.r24-error {min-height:310px;padding:23px;}.r24-prizes img {height:85px;}}
+@media(max-width:390px){.r24-award-grid {grid-template-columns:1fr;}.r24-award h2 {font-size:18px;}}
+@media(prefers-reduced-motion:reduce){.r24-season-card {transition:none;}.r24-season-card:hover {transform:none;}}

@@ -1,4 +1,4 @@
-import { initializeLocalizedPage, resolvePageLocale, setPageLocale } from "../../shared/localized-page.js?v=20260920routes1";
+import { initializeLocalizedPage, resolvePageLocale, setPageLocale } from "../../shared/localized-page.js?v=20261007root1";
 import {
   createAuthHeaderController,
   eloCategoryId,
@@ -7,6 +7,7 @@ import {
 import { createHttpClient } from "../../shared/http-client.js";
 import { element } from "../../shared/safe-dom.js";
 import { resolveRuntimeOverride } from "../../shared/runtime-config.js";
+import { formatMoscowDate } from "../../shared/time.js?v=20260910msk1";
 import { formatRatingMetric } from "../../shared/rating-format.js?v=20260820ratingsdot1";
 import {
   catalogEntityTypeFromTab,
@@ -139,13 +140,9 @@ function setupTabKeyboard(buttons) {
 }
 
 function formatDate(value, lang) {
-  const date = new Date(value);
-  if (Number.isNaN(date.getTime())) return value;
-  return new Intl.DateTimeFormat(lang === "ru" ? "ru-RU" : "en-GB", {
-    day: "2-digit",
-    month: "short",
-    year: "numeric"
-  }).format(date);
+  return formatMoscowDate(value, lang === "ru" ? "ru-RU" : "en-GB", {
+    day: "2-digit", month: "short", year: "numeric"
+  }) || value;
 }
 
 function setupNavigation(documentRef) {

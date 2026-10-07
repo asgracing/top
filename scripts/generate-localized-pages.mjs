@@ -1,12 +1,15 @@
-import { readFile, writeFile, mkdir } from "node:fs/promises";
+import { readFile, writeFile, mkdir, rename } from "node:fs/promises";
 import { dirname, resolve } from "node:path";
+import { pathToFileURL } from "node:url";
 import vm from "node:vm";
 import { pages, runtimePages } from "./seo/pages.mjs";
 import { nodes, edit, escape, setAttribute } from "./seo/html-source.mjs";
+import { readV1Html } from "./v1-source.mjs";
+import {readSiteRelease} from './site-release.mjs';
 
 const root = resolve(import.meta.dirname, "..");
-const check = process.argv.includes("--check");
-const outputRoot = process.argv.includes("--output-dir") ? resolve(process.argv[process.argv.indexOf("--output-dir") + 1]) : root;
+export async function renderLocalizedPages({readHtml = readV1Html, readSource = path => readFile(resolve(root, path), "utf8")} = {}) {
+const outputs = new Map();
 const origin = "https://asgracing.ru";
 const cleanPath = path => path.replace(/index\.html$/, "");
 const localizedPath = (path, lang) => `/${lang === "ru" ? `ru/${cleanPath(path)}` : cleanPath(path)}`;
@@ -18,7 +21,7 @@ const legacyLocalizedPaths = [...pages.map(p => p.path), "join/index.html", "abo
 const translations = new Map();
 async function dictionary(path) {
   if (translations.has(path)) return translations.get(path);
-  const source = await readFile(resolve(root, path), "utf8");
+  const source = await readSource(path);
   const name = path.includes("catalog-page") ? "COPY" : "translations";
   const start = source.indexOf(`const ${name} = {`);
   const end = source.indexOf("\n};", start) + 3;
@@ -114,15 +117,10 @@ function intro(page, lang) {
 }
 async function output(path, content) {
   content = content.replace(/[\t ]+$/gm, "");
-  const file = resolve(outputRoot, path);
-  let existing; try { existing = (await readFile(file, "utf8")).replaceAll("\r\n", "\n"); } catch {}
-  if (existing === content) return;
-  if (check) throw new Error(`Localized HTML is stale: ${path}. Run npm run generate:seo`);
-  await mkdir(dirname(file), { recursive: true }); await writeFile(file, content);
-  console.log(`Generated ${path}`);
+  outputs.set(path, content);
 }
 for (const page of pages) {
-  let source = (await readFile(resolve(root, page.path), "utf8")).replaceAll("\r\n", "\n");
+  let source = (await readHtml(page.path)).replaceAll("\r\n", "\n");
   source = source.replace(/\s*<!-- seo-intro:start -->[\s\S]*?<!-- seo-intro:end -->\s*/g, "\n");
   source = source.replace(/(<main\b[^>]*>)\s*/, "$1\n");
   if (page.key === "home") source = source.replace(/(<div class="container">)\s*/, "$1\n");
@@ -152,7 +150,7 @@ for (const page of pages) {
 }
 
 for (const config of runtimePages) {
-  const source = (await readFile(resolve(root, config.path), "utf8")).replaceAll("\r\n", "\n")
+  const source = (await readHtml(config.path)).replaceAll("\r\n", "\n")
     .replace(/\s*<!-- seo-head:start -->[\s\S]*?<!-- seo-head:end -->/g, "");
   const dict = await dictionary(config.dictionary);
   const page = {
@@ -196,4 +194,23 @@ for (const path of legacyLocalizedPaths) {
 }
 const generatedPageCount = pages.length + runtimePages.length + 2;
 const summary = `${generatedPageCount} pages + ${legacyLocalizedPaths.length} compatibility redirects`;
-console.log(check ? `Localized HTML is current (${summary})` : `Localized HTML generated (${summary})`);
+return {outputs, summary};
+}
+
+if (process.argv[1] && import.meta.url === pathToFileURL(resolve(process.argv[1])).href) {
+  const check = process.argv.includes("--check");
+  const outputRoot = process.argv.includes("--output-dir") ? resolve(process.argv[process.argv.indexOf("--output-dir") + 1]) : root;
+  if(outputRoot===root&&(await readSiteRelease()).layout!=='parallel')throw Error('Legacy HTML generation cannot overwrite the root release. Edit maintained templates and run npm run build.');
+  const {outputs, summary} = await renderLocalizedPages();
+  for (const [path, content] of outputs) {
+    const file = resolve(outputRoot, path);
+    let existing; try { existing = (await readFile(file, "utf8")).replaceAll("\r\n", "\n"); } catch {}
+    if (existing === content) continue;
+    if (check) throw new Error(`Localized HTML is stale: ${path}. Run npm run generate:seo`);
+    await mkdir(dirname(file), {recursive: true});
+    const temporary=file+'.asg-build-tmp';
+    await writeFile(temporary,content);await rename(temporary,file);
+    console.log(`Generated ${path}`);
+  }
+  console.log(check ? `Localized HTML is current (${summary})` : `Localized HTML generated (${summary})`);
+}

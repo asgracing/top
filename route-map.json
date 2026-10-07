@@ -1,0 +1,606 @@
+{
+  "schemaVersion": 1,
+  "layout": "root",
+  "status": "release-candidate-awaiting-approval",
+  "pages": [
+    {
+      "path": "/",
+      "version": "v2",
+      "language": "ru",
+      "screen": "home"
+    },
+    {
+      "path": "/hourly/",
+      "version": "v2",
+      "language": "ru",
+      "screen": "hourly"
+    },
+    {
+      "path": "/driver/",
+      "version": "v2",
+      "language": "ru",
+      "screen": "driver"
+    },
+    {
+      "path": "/races/",
+      "version": "v2",
+      "language": "ru",
+      "screen": "archive"
+    },
+    {
+      "path": "/race/",
+      "version": "v2",
+      "language": "ru",
+      "screen": "race"
+    },
+    {
+      "path": "/championships/",
+      "version": "v2",
+      "language": "ru",
+      "screen": "championships"
+    },
+    {
+      "path": "/hourly/championship/",
+      "version": "v2",
+      "language": "ru",
+      "screen": "championship"
+    },
+    {
+      "path": "/teams/",
+      "version": "v2",
+      "language": "ru",
+      "screen": "catalog"
+    },
+    {
+      "path": "/clubs/",
+      "version": "v2",
+      "language": "ru",
+      "screen": "club"
+    },
+    {
+      "path": "/teams/detail/",
+      "version": "v2",
+      "language": "ru",
+      "screen": "team"
+    },
+    {
+      "path": "/cars/",
+      "version": "v2",
+      "language": "ru",
+      "screen": "cars"
+    },
+    {
+      "path": "/fun-stats/",
+      "version": "v2",
+      "language": "ru",
+      "screen": "fun"
+    },
+    {
+      "path": "/bans/",
+      "version": "v2",
+      "language": "ru",
+      "screen": "bans"
+    },
+    {
+      "path": "/hourly/championship/history/",
+      "version": "v2",
+      "language": "ru",
+      "screen": "seasons"
+    },
+    {
+      "path": "/news/",
+      "version": "v2",
+      "language": "ru",
+      "screen": "news"
+    },
+    {
+      "path": "/news/article/",
+      "version": "v2",
+      "language": "ru",
+      "screen": "article"
+    },
+    {
+      "path": "/community/",
+      "version": "v2",
+      "language": "ru",
+      "screen": "community"
+    },
+    {
+      "path": "/about/",
+      "version": "v2",
+      "language": "ru",
+      "screen": "about"
+    },
+    {
+      "path": "/instructions/",
+      "version": "v2",
+      "language": "ru",
+      "screen": "instructions"
+    },
+    {
+      "path": "/join/",
+      "version": "v2",
+      "language": "ru",
+      "screen": "guide"
+    },
+    {
+      "path": "/documents/",
+      "version": "v2",
+      "language": "ru",
+      "screen": "documents"
+    },
+    {
+      "path": "/documents/read/",
+      "version": "v2",
+      "language": "ru",
+      "screen": "document"
+    },
+    {
+      "path": "/privacy/",
+      "version": "v2",
+      "language": "ru",
+      "screen": "document"
+    },
+    {
+      "path": "/cookies/",
+      "version": "v2",
+      "language": "ru",
+      "screen": "document"
+    },
+    {
+      "path": "/404/",
+      "version": "v2",
+      "language": "ru",
+      "screen": "notfound"
+    },
+    {
+      "path": "/account/",
+      "version": "v2",
+      "language": "ru",
+      "screen": "account"
+    },
+    {
+      "path": "/account/settings/",
+      "version": "v2",
+      "language": "ru",
+      "screen": "settings"
+    },
+    {
+      "path": "/moderation/",
+      "version": "v2",
+      "language": "ru",
+      "screen": "moderation"
+    },
+    {
+      "path": "/portal-ops/",
+      "version": "v2",
+      "language": "ru",
+      "screen": "ops"
+    },
+    {
+      "path": "/en/",
+      "version": "v2",
+      "language": "en",
+      "screen": "home"
+    },
+    {
+      "path": "/en/hourly/",
+      "version": "v2",
+      "language": "en",
+      "screen": "hourly"
+    },
+    {
+      "path": "/en/driver/",
+      "version": "v2",
+      "language": "en",
+      "screen": "driver"
+    },
+    {
+      "path": "/en/races/",
+      "version": "v2",
+      "language": "en",
+      "screen": "archive"
+    },
+    {
+      "path": "/en/race/",
+      "version": "v2",
+      "language": "en",
+      "screen": "race"
+    },
+    {
+      "path": "/en/championships/",
+      "version": "v2",
+      "language": "en",
+      "screen": "championships"
+    },
+    {
+      "path": "/en/hourly/championship/",
+      "version": "v2",
+      "language": "en",
+      "screen": "championship"
+    },
+    {
+      "path": "/en/teams/",
+      "version": "v2",
+      "language": "en",
+      "screen": "catalog"
+    },
+    {
+      "path": "/en/clubs/",
+      "version": "v2",
+      "language": "en",
+      "screen": "club"
+    },
+    {
+      "path": "/en/teams/detail/",
+      "version": "v2",
+      "language": "en",
+      "screen": "team"
+    },
+    {
+      "path": "/en/cars/",
+      "version": "v2",
+      "language": "en",
+      "screen": "cars"
+    },
+    {
+      "path": "/en/fun-stats/",
+      "version": "v2",
+      "language": "en",
+      "screen": "fun"
+    },
+    {
+      "path": "/en/bans/",
+      "version": "v2",
+      "language": "en",
+      "screen": "bans"
+    },
+    {
+      "path": "/en/hourly/championship/history/",
+      "version": "v2",
+      "language": "en",
+      "screen": "seasons"
+    },
+    {
+      "path": "/en/news/",
+      "version": "v2",
+      "language": "en",
+      "screen": "news"
+    },
+    {
+      "path": "/en/news/article/",
+      "version": "v2",
+      "language": "en",
+      "screen": "article"
+    },
+    {
+      "path": "/en/community/",
+      "version": "v2",
+      "language": "en",
+      "screen": "community"
+    },
+    {
+      "path": "/en/about/",
+      "version": "v2",
+      "language": "en",
+      "screen": "about"
+    },
+    {
+      "path": "/en/instructions/",
+      "version": "v2",
+      "language": "en",
+      "screen": "instructions"
+    },
+    {
+      "path": "/en/join/",
+      "version": "v2",
+      "language": "en",
+      "screen": "guide"
+    },
+    {
+      "path": "/en/documents/",
+      "version": "v2",
+      "language": "en",
+      "screen": "documents"
+    },
+    {
+      "path": "/en/documents/read/",
+      "version": "v2",
+      "language": "en",
+      "screen": "document"
+    },
+    {
+      "path": "/en/privacy/",
+      "version": "v2",
+      "language": "en",
+      "screen": "document"
+    },
+    {
+      "path": "/en/cookies/",
+      "version": "v2",
+      "language": "en",
+      "screen": "document"
+    },
+    {
+      "path": "/en/404/",
+      "version": "v2",
+      "language": "en",
+      "screen": "notfound"
+    },
+    {
+      "path": "/en/account/",
+      "version": "v2",
+      "language": "en",
+      "screen": "account"
+    },
+    {
+      "path": "/en/account/settings/",
+      "version": "v2",
+      "language": "en",
+      "screen": "settings"
+    },
+    {
+      "path": "/en/moderation/",
+      "version": "v2",
+      "language": "en",
+      "screen": "moderation"
+    },
+    {
+      "path": "/en/portal-ops/",
+      "version": "v2",
+      "language": "en",
+      "screen": "ops"
+    },
+    {
+      "path": "/old/",
+      "version": "old",
+      "language": "ru"
+    },
+    {
+      "path": "/old/about/",
+      "version": "old",
+      "language": "ru"
+    },
+    {
+      "path": "/old/join/",
+      "version": "old",
+      "language": "ru"
+    },
+    {
+      "path": "/old/account/",
+      "version": "old",
+      "language": "ru"
+    },
+    {
+      "path": "/old/account/settings/",
+      "version": "old",
+      "language": "ru"
+    },
+    {
+      "path": "/old/bans/",
+      "version": "old",
+      "language": "ru"
+    },
+    {
+      "path": "/old/cars/",
+      "version": "old",
+      "language": "ru"
+    },
+    {
+      "path": "/old/clubs/",
+      "version": "old",
+      "language": "ru"
+    },
+    {
+      "path": "/old/community/",
+      "version": "old",
+      "language": "ru"
+    },
+    {
+      "path": "/old/cookies/",
+      "version": "old",
+      "language": "ru"
+    },
+    {
+      "path": "/old/driver/",
+      "version": "old",
+      "language": "ru"
+    },
+    {
+      "path": "/old/events/",
+      "version": "old",
+      "language": "ru"
+    },
+    {
+      "path": "/old/fun-stats/",
+      "version": "old",
+      "language": "ru"
+    },
+    {
+      "path": "/old/hourly/",
+      "version": "old",
+      "language": "ru"
+    },
+    {
+      "path": "/old/hourly/championship/",
+      "version": "old",
+      "language": "ru"
+    },
+    {
+      "path": "/old/hourly/championship/history/",
+      "version": "old",
+      "language": "ru"
+    },
+    {
+      "path": "/old/hourly/privacy/",
+      "version": "old",
+      "language": "ru"
+    },
+    {
+      "path": "/old/hourly/cookies/",
+      "version": "old",
+      "language": "ru"
+    },
+    {
+      "path": "/old/moderation/",
+      "version": "old",
+      "language": "ru"
+    },
+    {
+      "path": "/old/news/",
+      "version": "old",
+      "language": "ru"
+    },
+    {
+      "path": "/old/portal-ops/",
+      "version": "old",
+      "language": "ru"
+    },
+    {
+      "path": "/old/privacy/",
+      "version": "old",
+      "language": "ru"
+    },
+    {
+      "path": "/old/races/",
+      "version": "old",
+      "language": "ru"
+    },
+    {
+      "path": "/old/teams/",
+      "version": "old",
+      "language": "ru"
+    },
+    {
+      "path": "/old/teams/detail/",
+      "version": "old",
+      "language": "ru"
+    },
+    {
+      "path": "/old/en/",
+      "version": "old",
+      "language": "en"
+    },
+    {
+      "path": "/old/en/about/",
+      "version": "old",
+      "language": "en"
+    },
+    {
+      "path": "/old/en/join/",
+      "version": "old",
+      "language": "en"
+    },
+    {
+      "path": "/old/en/account/",
+      "version": "old",
+      "language": "en"
+    },
+    {
+      "path": "/old/en/account/settings/",
+      "version": "old",
+      "language": "en"
+    },
+    {
+      "path": "/old/en/bans/",
+      "version": "old",
+      "language": "en"
+    },
+    {
+      "path": "/old/en/cars/",
+      "version": "old",
+      "language": "en"
+    },
+    {
+      "path": "/old/en/clubs/",
+      "version": "old",
+      "language": "en"
+    },
+    {
+      "path": "/old/en/community/",
+      "version": "old",
+      "language": "en"
+    },
+    {
+      "path": "/old/en/cookies/",
+      "version": "old",
+      "language": "en"
+    },
+    {
+      "path": "/old/en/driver/",
+      "version": "old",
+      "language": "en"
+    },
+    {
+      "path": "/old/en/events/",
+      "version": "old",
+      "language": "en"
+    },
+    {
+      "path": "/old/en/fun-stats/",
+      "version": "old",
+      "language": "en"
+    },
+    {
+      "path": "/old/en/hourly/",
+      "version": "old",
+      "language": "en"
+    },
+    {
+      "path": "/old/en/hourly/championship/",
+      "version": "old",
+      "language": "en"
+    },
+    {
+      "path": "/old/en/hourly/championship/history/",
+      "version": "old",
+      "language": "en"
+    },
+    {
+      "path": "/old/en/hourly/privacy/",
+      "version": "old",
+      "language": "en"
+    },
+    {
+      "path": "/old/en/hourly/cookies/",
+      "version": "old",
+      "language": "en"
+    },
+    {
+      "path": "/old/en/moderation/",
+      "version": "old",
+      "language": "en"
+    },
+    {
+      "path": "/old/en/news/",
+      "version": "old",
+      "language": "en"
+    },
+    {
+      "path": "/old/en/portal-ops/",
+      "version": "old",
+      "language": "en"
+    },
+    {
+      "path": "/old/en/privacy/",
+      "version": "old",
+      "language": "en"
+    },
+    {
+      "path": "/old/en/races/",
+      "version": "old",
+      "language": "en"
+    },
+    {
+      "path": "/old/en/teams/",
+      "version": "old",
+      "language": "en"
+    },
+    {
+      "path": "/old/en/teams/detail/",
+      "version": "old",
+      "language": "en"
+    }
+  ],
+  "previewIncluded": false
+}

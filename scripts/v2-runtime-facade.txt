@@ -1,5 +1,4 @@
 // Build-only facade: lexical access to the canonical controllers/read models.
-const v2Votes = createHourlyVotesClient({apiBase:hourlyVotesApiUrl,request:(url,options)=>fetch(url,options),getLegacyVoterId:getHourlyBrowserVoterId});
 let v2Auth=null;
 let v2PublishPending=false;
 function v2SchedulePublish() {

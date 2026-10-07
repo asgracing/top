@@ -1,0 +1,40 @@
+import assert from 'node:assert/strict';
+import {readFile,stat,readdir} from 'node:fs/promises';
+import {resolve} from 'node:path';
+import {dist,root} from '../../scripts/dist-paths.mjs';
+import {pageRegistry} from '../../v2/page-registry.js';
+import {nodes,escape} from '../../scripts/seo/html-source.mjs';
+import {redirects,redirectFor} from '../../scripts/root-redirects.mjs';
+const origin='https://asgracing.ru',sitemap=await readFile(resolve(dist,'sitemap.xml'),'utf8');
+const original=nodes(await readFile(resolve(process.env.ASG_V2_OUTPUT_DIR||root,'v2/ru/index.html'),'utf8'));
+const google=original.find(n=>n.attrs.name==='google-site-verification')?.attrs.content;
+const yandex=original.filter(n=>n.attrs.name==='yandex-verification').map(n=>n.attrs.content);
+assert.ok(yandex.length,'Yandex Webmaster verification must exist');
+for(const p of pageRegistry)for(const lang of ['ru','en']){
+ const html=await readFile(resolve(dist,p.target[lang].slice(1),'index.html'),'utf8'),parsed=nodes(html);
+ assert.equal(parsed.find(n=>n.attrs.rel==='canonical')?.attrs.href,origin+p.target[lang]);
+ assert.equal(parsed.filter(n=>n.attrs.rel==='canonical').length,1);
+ if(p.description?.[lang])assert.equal(parsed.find(n=>n.attrs.name==='description')?.attrs.content,escape(p.description[lang]));
+ if(p.title?.[lang])assert.equal(parsed.find(n=>n.attrs.property==='og:title')?.attrs.content,escape(p.title[lang]+' · ASG Racing'));
+ assert.equal(parsed.find(n=>n.attrs.name==='robots')?.attrs.content,p.indexable?'index,follow':'noindex,follow');
+ for(const [code,path]of [['ru-RU',p.target.ru],['en',p.target.en],['x-default',p.target.ru]])assert.equal(parsed.find(n=>n.attrs.rel==='alternate'&&n.attrs.hreflang===code)?.attrs.href,origin+path);
+ assert.equal(parsed.find(n=>n.attrs.name==='yandex-metrika-id')?.attrs.content,'107697834');
+ assert.equal(parsed.find(n=>n.attrs.name==='google-site-verification')?.attrs.content,google);
+ assert.deepEqual(parsed.filter(n=>n.attrs.name==='yandex-verification').map(n=>n.attrs.content),yandex);
+ assert.ok(google,'Search Console verification must exist');
+ assert.equal(sitemap.includes(`<loc>${origin+p.target[lang]}</loc>`),p.indexable&&p.sitemap!==false);
+ assert.ok(parsed.some(n=>n.name==='script'&&n.attrs.src?.startsWith('/legal.js')),'existing consent/analytics runtime');
+ assert.ok(!/\b(?:href|src)="\/preview\//.test(html));
+}
+assert.equal((sitemap.match(/<loc>/g)||[]).length,pageRegistry.filter(p=>p.indexable&&p.sitemap!==false).length*2);
+assert.ok(!/\/(?:v2|ru|old|preview)\//.test(sitemap));
+await assert.rejects(stat(resolve(dist,'preview')),e=>e.code==='ENOENT');
+const map=JSON.parse(await readFile(resolve(dist,'route-map.json'),'utf8'));
+for(const p of map.pages.filter(p=>p.version==='old'))assert.match(await readFile(resolve(dist,p.path.slice(1),'index.html'),'utf8'),/name="robots" content="noindex,follow"/);
+for(const r of redirects){await stat(resolve(dist,r.target.slice(1),'index.html'));assert.equal(redirectFor(r.target),null);}
+const manifest=JSON.parse(await readFile(resolve(dist,'asset-manifest.json'),'utf8'));
+assert.ok(!manifest.assets.some(a=>a.path.startsWith('preview/')));
+assert.ok(!manifest.assets.some(a=>a.path.includes('root-redirects-cloudflare')),'operational files must not be published');
+assert.match(await readFile(resolve(dist,'robots.txt'),'utf8'),/Sitemap: https:\/\/asgracing\.ru\/sitemap\.xml/);
+assert.equal(await readFile(resolve(dist,'yandex_c76adf2164af15e6.html'),'utf8'),await readFile(resolve(root,'yandex_c76adf2164af15e6.html'),'utf8'));
+console.log(`Release SEO passed: ${pageRegistry.length*2} localized pages; ${pageRegistry.filter(p=>p.indexable&&p.sitemap!==false).length*2} sitemap URLs; ${redirects.length} redirect targets, no loops; existing Metrika/Search Console retained; Preview absent.`);

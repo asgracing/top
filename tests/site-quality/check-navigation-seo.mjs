@@ -1,5 +1,6 @@
 import { readFile, readdir } from "node:fs/promises";
 import { extname, resolve } from "node:path";
+import {readClassicQuality} from '../../scripts/classic-quality-source.mjs';
 
 const root = resolve(import.meta.dirname, "../..");
 const failures = [];
@@ -24,7 +25,7 @@ const headerTargets = {
 };
 
 for (const [path, targets] of Object.entries(headerTargets)) {
-  const html = await readFile(resolve(root, path), "utf8");
+  const html = await readClassicQuality(path);
   for (const target of targets) {
     if (!html.includes(`href="${target}"`)) failures.push(`${path} is missing navigation target ${target}`);
   }
@@ -42,7 +43,7 @@ const canonicalTargets = {
 };
 
 for (const [path, canonical] of Object.entries(canonicalTargets)) {
-  const html = await readFile(resolve(root, path), "utf8");
+  const html = await readClassicQuality(path);
   if (!html.includes(`<link rel="canonical" href="${canonical}"`)) failures.push(`${path} has the wrong canonical URL`);
 }
 
@@ -65,7 +66,7 @@ for (const path of await collectHtml(root)) {
   }
 }
 
-const sitemap = await readFile(resolve(root, "sitemap.xml"), "utf8");
+const sitemap = await readClassicQuality('sitemap.xml');
 for (const url of [
   "https://asgracing.ru/news/",
   "https://asgracing.ru/bans/",

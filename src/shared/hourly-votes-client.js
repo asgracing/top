@@ -24,15 +24,24 @@ function saveToken(storage, token, expiresAt) {
   try {
     storage?.setItem?.(TOKEN_STORAGE_KEY, JSON.stringify({ token, expiresAt }));
   } catch {
-    // Persistence is optional; the in-memory token remains usable.
+    // Private mode/quota failures only remove persistence; the in-memory token still works.
   }
 }
 
-export function createHourlyVotesClient({ apiBase, request, storage = globalThis.localStorage, getLegacyVoterId = () => "", now = () => Date.now() } = {}) {
+export function createHourlyVotesClient({
+  apiBase,
+  request,
+  storage = globalThis.localStorage,
+  getLegacyVoterId = () => "",
+  now = () => Date.now()
+} = {}) {
   const base = normalizeBaseUrl(apiBase);
-  if (!base || typeof request !== "function") throw new TypeError("Hourly votes client requires apiBase and request");
+  if (!base || typeof request !== "function") {
+    throw new TypeError("Hourly votes client requires apiBase and request");
+  }
   let currentToken = readStoredToken(storage, now());
   let tokenPromise = null;
+
   const endpoint = path => `${base}/${String(path || "").replace(/^\/+/, "")}`;
 
   function clearToken() {

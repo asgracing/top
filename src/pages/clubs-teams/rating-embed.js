@@ -1,5 +1,5 @@
 import { createHttpClient } from "../../shared/http-client.js";
-import { localizedPageHref, resolvePageLocale } from "../../shared/localized-page.js?v=20260920routes1";
+import { localizedPageHref, resolvePageLocale } from "../../shared/localized-page.js?v=20261007root1";
 import { resolveRuntimeOverride } from "../../shared/runtime-config.js";
 import { element } from "../../shared/safe-dom.js";
 import { entityDetailHref } from "./detail-model.js?v=20260921links1";

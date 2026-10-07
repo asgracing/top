@@ -52,7 +52,7 @@ function safeInteger(value, minimum = 0, maximum = 1_000_000_000) {
 
 function safeDate(value) {
   const text = boundedText(value, 64);
-  return text && Number.isFinite(Date.parse(text)) ? text : null;
+  return text && parseAsgTimestamp(text) ? text : null;
 }
 
 function hasExactKeys(value, expected) {
@@ -127,7 +127,7 @@ function normalizeMembershipActions(value) {
       !id || ids.has(id) || !targetPublicId || !targetSlug || !targetDisplayName
       || !subjectPublicId || !initiatedByPublicId
       || !subjectDisplayName || !createdAt || !expiresAt
-      || Date.parse(expiresAt) <= Date.parse(createdAt)
+      || parseAsgTimestamp(expiresAt).getTime() <= parseAsgTimestamp(createdAt).getTime()
       || !["request", "invitation"].includes(source.action_type)
       || !["club", "team"].includes(source.target_type)
       || !["subject", "manager", "observer"].includes(source.resolution_role)
@@ -173,7 +173,7 @@ function normalizeTeamClubActions(value) {
     if (
       !id || ids.has(id) || !teamPublicId || !teamSlug || !teamDisplayName
       || !clubPublicId || !clubSlug || !clubDisplayName || !initiatedByPublicId
-      || !createdAt || !expiresAt || Date.parse(expiresAt) <= Date.parse(createdAt)
+      || !createdAt || !expiresAt || parseAsgTimestamp(expiresAt).getTime() <= parseAsgTimestamp(createdAt).getTime()
       || !["request", "invitation"].includes(source.action_type)
       || !["manager", "observer"].includes(source.resolution_role)
     ) return { actions: [], valid: false };
@@ -291,3 +291,4 @@ export function normalizeClubsTeamsAuthState(value) {
     snapshot: normalizeSnapshot(source.snapshot)
   };
 }
+import { parseAsgTimestamp } from "../../shared/time.js";

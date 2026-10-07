@@ -1,0 +1,93 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>ASG Racing Server Standings</title>
+  <meta name="robots" content="noindex,nofollow" />
+  <link rel="icon" href="../favicon.ico" />
+  <link rel="stylesheet" href="./styles.css" />
+</head>
+<body>
+  <main class="overlay-root">
+    <section class="overlay-card" aria-labelledby="overlay-title">
+      <header class="overlay-header">
+        <div class="overlay-brand">
+          <img class="overlay-logo" src="../social/asg.png" alt="ASG Racing" />
+          <div class="overlay-title-wrap">
+            <h1 class="overlay-title" id="overlay-title">ASG Racing<br />Server Standings</h1>
+          </div>
+        </div>
+        <div class="overlay-qr overlay-qr-site">
+          <div class="overlay-qr-label">website</div>
+          <img
+            id="overlay-qr-site"
+            class="overlay-qr-image"
+            alt="ASG Racing website QR code"
+          />
+        </div>
+      </header>
+
+      <section class="overlay-section">
+        <div class="section-head">
+          <div>
+            <h2 class="section-title" id="overlay-rating-title">Server rating</h2>
+          </div>
+          <div class="section-updated" id="overlay-updated">updating...</div>
+        </div>
+
+        <div class="leaderboard-card">
+          <table class="overlay-table" aria-label="ASG Racing top 10 standings">
+            <thead>
+              <tr>
+                <th class="col-rank">#</th>
+                <th class="col-driver">Pilot</th>
+                <th class="col-points">Points</th>
+                <th class="col-wins">Wins</th>
+                <th class="col-bestlap">bestlap</th>
+              </tr>
+            </thead>
+            <tbody id="overlay-leaderboard-body">
+              <tr>
+                <td colspan="5" class="overlay-empty">Loading standings...</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </section>
+
+      <section class="overlay-section overlay-bottom-grid">
+        <article class="bestlap-card">
+          <h2 class="section-title">Server bestlap</h2>
+          <div class="bestlap-time" id="overlay-bestlap-time">--:--.---</div>
+          <div class="bestlap-driver" id="overlay-bestlap-driver">Pilot name</div>
+          <div class="bestlap-meta" id="overlay-bestlap-meta">Track / car</div>
+        </article>
+
+        <div class="qr-grid">
+          <article class="overlay-qr overlay-qr-telegram">
+            <div class="overlay-qr-label">Telegram</div>
+            <img
+              id="overlay-qr-telegram"
+              class="overlay-qr-image"
+              alt="ASG Racing Telegram QR code"
+            />
+          </article>
+
+          <article class="overlay-qr overlay-qr-discord">
+            <div class="overlay-qr-label">Discord</div>
+            <img
+              id="overlay-qr-discord"
+              class="overlay-qr-image"
+              alt="ASG Racing Discord QR code"
+            />
+          </article>
+        </div>
+      </section>
+    </section>
+  </main>
+
+  <script src="./app.js"></script>
+  <script type="module" src="./daily-refresh.js?v=20261003daily1"></script>
+</body>
+</html>

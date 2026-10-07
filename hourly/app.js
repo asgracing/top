@@ -1,4 +1,4 @@
-import { initializeLocalizedPage, localizedPageHref, resolvePageLocale, setPageLocale } from "../src/shared/localized-page.js?v=20260920routes1";
+import { initializeLocalizedPage, localizedPageHref, resolvePageLocale, setPageLocale } from "../src/shared/localized-page.js?v=20261007root1";
 initializeLocalizedPage();
 import {
   NEWS_READ_LEGACY_STORAGE_KEY,
@@ -8,6 +8,7 @@ import {
   saveNewsReadState as saveSharedNewsReadState
 } from "../news-read-state.js?v=20260813newsread1";
 import { getSpecialEventPresentation, isSpecialEvent } from "../src/features/hourly/special-event.js?v=20260903special1";
+import { formatMoscowDateTime, moscowDateKey, parseAsgTimestamp } from "../src/shared/time.js?v=20260910msk1";
 import { createHourlyVotesClient } from "../src/shared/hourly-votes-client.js?v=20260910security1";
 import { isTeamRace, teamRaceUrl } from "../src/shared/team-racing-client.js?v=20261004teams1";
 import { renderTeamResults } from "../src/shared/team-racing-results-view.js?v=20261004teams1";
@@ -788,14 +789,7 @@ function escapeHtml(value) {
 }
 function formatNewsDateTime(dateString) {
   if (!dateString) return "-";
-  const date = new Date(dateString);
-  if (Number.isNaN(date.getTime())) return dateString;
-  const day = String(date.getDate()).padStart(2, "0");
-  const month = String(date.getMonth() + 1).padStart(2, "0");
-  const year = String(date.getFullYear()).padStart(4, "0");
-  const hours = String(date.getHours()).padStart(2, "0");
-  const minutes = String(date.getMinutes()).padStart(2, "0");
-  return `${day}.${month}.${year} ${hours}:${minutes}`;
+  return formatMoscowDateTime(dateString, "ru-RU") || dateString;
 }
 function getNewsListHref() {
   const url = new URL(localizedPageHref(`${topSiteBaseUrl}/news/`, currentLang, window.location));
@@ -856,17 +850,17 @@ function getSortedNewsFeed(items = newsFeedData) {
   return [...items]
     .filter(Boolean)
     .filter(item => {
-      const publishedAt = Date.parse(String(item?.published_at || ""));
+      const publishedAt = parseAsgTimestamp(item?.published_at)?.getTime() ?? Number.NaN;
       return !Number.isFinite(publishedAt) || publishedAt <= Date.now();
     })
     .filter(item => {
-      const expiresAt = Date.parse(String(item?.expires_at || ""));
+      const expiresAt = parseAsgTimestamp(item?.expires_at)?.getTime() ?? Number.NaN;
       return !(Number.isFinite(expiresAt) && expiresAt < Date.now());
     })
     .sort((a, b) => {
       if (Boolean(a.is_pinned) !== Boolean(b.is_pinned)) return a.is_pinned ? -1 : 1;
       if ((Number(a.priority) || 0) !== (Number(b.priority) || 0)) return (Number(b.priority) || 0) - (Number(a.priority) || 0);
-      return Date.parse(String(b.published_at || "")) - Date.parse(String(a.published_at || ""));
+      return (parseAsgTimestamp(b.published_at)?.getTime() || 0) - (parseAsgTimestamp(a.published_at)?.getTime() || 0);
     });
 }
 function getUnreadNewsCount(items = newsFeedData) {
@@ -2089,9 +2083,8 @@ function getCalendarWeekdayNames() {
 }
 function formatDateTimeLocal(isoString) {
   if (!isoString) return "--";
-  const date = new Date(isoString);
-  if (Number.isNaN(date.getTime())) return String(isoString).replace("T", " ").slice(0, 16);
-  return new Intl.DateTimeFormat(t("locale"), { year: "numeric", month: "2-digit", day: "2-digit", hour: "2-digit", minute: "2-digit", timeZone: "Europe/Moscow" }).format(date);
+  if (!parseAsgTimestamp(isoString)) return String(isoString).replace("T", " ").slice(0, 16);
+  return formatMoscowDateTime(isoString, t("locale"));
 }
 function formatPositionsDelta(value) {
   if (typeof value !== "number" || Number.isNaN(value)) return "-";
@@ -2918,7 +2911,7 @@ function buildCalendarItems(scheduleRows, raceRows) {
       race,
       row: {
         ...race,
-        date: race.date || String(race.finished_at || race.finished_at_local || "").slice(0, 10),
+        date: race.date || moscowDateKey(race.finished_at || race.finished_at_local),
         track_code: race.track_code || race.track,
         track_name: race.track_name || humanizeTrackName(race.track_code || race.track),
         race_format: race.race_format || "hourly",

@@ -1,7 +1,7 @@
 import { readFile, readdir, stat } from "node:fs/promises";
 import { dirname, extname, relative, resolve, sep } from "node:path";
+import {dist} from '../../scripts/dist-paths.mjs';
 
-const dist = resolve(import.meta.dirname, "../../dist");
 const toPosix = path => path.split(sep).join("/");
 const files = new Set();
 

@@ -23,7 +23,7 @@ const COPY = {
   }
 };
 
-export function createRaceNumberReview({ api, language, getAuth, authBaseUrl }) {
+export function createRaceNumberReview({ api, language, getAuth, authBaseUrl, confirmAction = message => window.confirm(message) }) {
   const list = document.getElementById("race-number-review-list");
   const message = document.getElementById("race-number-review-message");
   const refresh = document.getElementById("race-number-review-refresh");
@@ -82,7 +82,8 @@ export function createRaceNumberReview({ api, language, getAuth, authBaseUrl }) 
   }
   async function approve(entry, button) {
     if (busy || !getAuth()?.permissions?.moderationIssue) return;
-    if (!window.confirm(t("confirm").replace("{number}", entry.requested_number).replace("{name}", entry.display_name))) return;
+    if (!await confirmAction(t("confirm").replace("{number}", entry.requested_number).replace("{name}", entry.display_name))) return;
+    if (!getAuth()?.authenticated || !getAuth()?.permissions?.moderationIssue || !getAuth()?.csrfToken) return;
     busy = true;
     button.disabled = true;
     refresh.disabled = true;

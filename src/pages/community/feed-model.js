@@ -4,8 +4,8 @@ export function getCommunityPostKey(post) {
 
 export function sortCommunityPosts(posts) {
   return [...(Array.isArray(posts) ? posts : [])].sort((a, b) => {
-    const bTime = new Date(b?.date || 0).getTime();
-    const aTime = new Date(a?.date || 0).getTime();
+    const bTime = parseAsgTimestamp(b?.date)?.getTime();
+    const aTime = parseAsgTimestamp(a?.date)?.getTime();
     return (Number.isFinite(bTime) ? bTime : 0) - (Number.isFinite(aTime) ? aTime : 0);
   });
 }
@@ -19,3 +19,4 @@ export function getCommunityLikesText(state, { translate, replaceTokens }) {
   if (state.likes <= 0) return translate("communityLikesZero");
   return replaceTokens(translate(state.likes === 1 ? "communityLikesOne" : "communityLikesMany"), { value: state.likes });
 }
+import { parseAsgTimestamp } from "../../shared/time.js";

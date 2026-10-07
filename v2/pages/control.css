@@ -1,0 +1,108 @@
+/* Native private-page controls arranged in the approved R21/R22 grids. */
+.v2-control {display:grid;gap:10px;min-width:0;}
+.v2-control [hidden] {display:none!important;}
+.v2-control * {box-sizing:border-box;}
+.v2-control .control-native-host {border:0;background:none;padding:0;}
+.v2-control .control-heading h1 {margin:4px 0 8px;}
+.v2-control .control-heading p {margin:0;}
+.control-navigation {margin-bottom:10px;}
+.control-navigation [aria-current=page] {border-color:#f33551;background:#96203960;}
+.v2-control button,.v2-control input,.v2-control select,.v2-control textarea {font:inherit;}
+.v2-control button {cursor:pointer;}
+.v2-control button:disabled {opacity:.5;cursor:default;}
+.v2-control input,.v2-control select,.v2-control textarea {min-width:0;width:100%;background:#081724cf;color:#eff6ff;border:1px solid #466077;padding:9px 11px;border-radius:3px;}
+.v2-control textarea {resize:vertical;min-height:92px;}
+.v2-control label {display:grid;gap:7px;align-content:start;min-width:0;font-size:13px;color:#b5c6d6;}
+.v2-control p {line-height:1.5;}
+.v2-control h2,.v2-control h3,.v2-control h4 {overflow-wrap:anywhere;}
+.v2-control a {color:#b8ddf4;}
+.v2-control .button {color:#e9f3ff;}
+.v2-control button:not(.button):not(.portal-hourly-event):not(.moderation-result) {color:#eaf4ff;border:1px solid #587084;border-radius:3px;background:#152838;padding:8px 11px;min-height:35px;}
+.v2-control button:hover,.v2-control [role=button]:hover {border-color:#a1cde3;background-color:#264158;}
+.v2-control .moderation-submit,.v2-control .portal-ops-primary {background:#b91530!important;border-color:#fc3652!important;color:white;}
+.v2-control .control-panel-body {min-width:0;}
+.v2-control .control-columns>div,.v2-control .control-columns>aside {display:grid;gap:10px;align-content:start;min-width:0;}
+.v2-control .account-title-settings,.v2-control .account-number-settings {margin:0;padding:0;border:0;background:none;border-radius:0;}
+.v2-control .account-active-title {font-size:26px;color:#ffe08a;display:flex;align-items:center;gap:15px;padding:0;border:0;background:none;box-shadow:none;text-shadow:none;border-radius:0;}
+.v2-control .account-active-title>span {font-size:42px;line-height:1;}
+.v2-control .account-title-settings-heading {display:block;}
+.v2-control .account-field {margin-top:12px;}
+.v2-control .account-title-field {max-width:100%;}
+.v2-control #driver-title-select,.v2-control #race-number-input {min-height:38px;height:38px;}
+.v2-control .account-action--primary {background:#be1530!important;border-color:#ff3450!important;}
+.v2-control .account-form-actions {margin-bottom:14px;}
+.v2-control .account-status {padding:9px;border:1px solid #d1b65755;background:#5b431626;color:#efcd86;font-size:13px;}
+.v2-control #account-message {margin:0;}
+.v2-control #account-message:empty {display:none;}
+.v2-control #driver-overlay-manager {margin-top:10px;}
+.v2-control #driver-overlay-manager input[type=checkbox] {width:16px;}
+.v2-control .account-overlay-row {flex-wrap:wrap;}
+.v2-control .account-overlay-url input {max-width:100%;}
+.v2-control .moderation-gate,.v2-control .portal-ops-gate {padding:30px;min-height:125px;text-align:center;}
+.v2-control .moderation-tabs {display:flex;gap:8px;margin:0 0 15px;}
+.v2-control .moderation-tabs [aria-selected=true] {border-color:#ff4360!important;background:#a2183460!important;}
+.v2-control #moderation-form {display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:13px;}
+.v2-control .moderation-search-field,.v2-control .moderation-results,.v2-control .moderation-target,.v2-control .moderation-grid,.v2-control .moderation-warning,.v2-control .moderation-actions,.v2-control .moderation-message {grid-column:1/-1;}
+.v2-control .moderation-results:empty,.v2-control .moderation-message:empty {display:none;}
+.v2-control .moderation-result {display:flex;align-items:center;justify-content:space-between;gap:10px;padding:11px;text-align:left;color:#d9edf8;background:#0c1b2aa8;border:1px solid #46687e88;border-radius:3px;width:100%;margin-bottom:6px;}
+.v2-control .moderation-result>span {min-width:0;}
+.v2-control .moderation-result strong {font-size:15px;}
+.v2-control .moderation-result small {display:block;color:#99b2c8;font-size:12px;margin-top:4px;overflow-wrap:anywhere;}
+.v2-control .moderation-badges {display:flex;gap:6px;flex-wrap:wrap;}
+.v2-control .moderation-badge,.v2-control .portal-ops-badge {font-size:12px;padding:4px 7px;border:1px solid #628394;color:#b7d0e2;display:inline-flex;border-radius:2px;}
+.v2-control .moderation-badge--danger {border-color:#ff5267;color:#ff99a7;}
+.v2-control .moderation-target {padding:13px;background:#111e2cbf;border-left:3px solid #83cce9;display:grid;gap:8px;font-size:14px;}
+.v2-control .moderation-grid,.v2-control .portal-ops-grid {display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:13px;}
+.v2-control .moderation-warning {margin:0;color:#d8b87e;font-size:13px;}
+.v2-control .moderation-number-review h2 {display:none;}
+.v2-control .moderation-number-review p {font-size:13px;color:#b0c2d2;margin:0 0 12px;}
+.v2-control .moderation-number-request {display:flex;gap:12px;align-items:center;padding:13px 0;border-bottom:1px solid #41596b55;}
+.v2-control .moderation-number-request>div {flex:1;min-width:0;}
+.v2-control .moderation-number-request small {display:block;font-size:12px;color:#a7b9c7;margin-top:5px;overflow-wrap:anywhere;}
+.v2-control [data-kind=error] {color:#ff9aab;}
+.v2-control [data-kind=success] {color:#43f2b1;}
+.v2-control .moderation-message,.v2-control .portal-ops-message {font-size:13px;overflow-wrap:anywhere;margin:10px 0 0;}
+.v2-control .portal-ops-tabs {display:flex;justify-content:flex-start;gap:8px;margin:0 0 10px;}
+.v2-control .portal-ops-tabs button[aria-selected=true],.v2-control .control-tabs button[aria-pressed=true] {border-color:#80c6e5!important;background:#294965!important;}
+.v2-control .portal-ops-section-heading {display:flex;align-items:center;gap:12px;padding:5px 0 9px;}
+.v2-control .portal-ops-section-heading>div {flex:1;min-width:0;}
+.v2-control .portal-ops-section-heading h2 {margin:0;font-size:17px;}
+.v2-control .portal-ops-section-heading p {margin:5px 0 0;font-size:13px;color:#a8bfd0;}
+.v2-control .portal-ops-summary {font-size:12px;color:#aac0d2;margin-bottom:10px;overflow-wrap:anywhere;}
+.v2-control .portal-hourly-event,.v2-control .portal-ops-entity {display:grid;gap:6px;width:100%;padding:12px;margin-bottom:7px;background:#081b2d95;border:1px solid #52697c55;border-left:2px solid #e8c34b;border-radius:3px;color:#e4edf6;text-align:left;font-size:13px;cursor:pointer;overflow-wrap:anywhere;}
+.v2-control .portal-hourly-event.is-championship {border-left-color:#ad55f2;}
+.v2-control .portal-hourly-event.is-endurance {border-left-color:#42d184;}
+.v2-control .portal-ops-entity {border-left-color:#8fb4cf;}
+.v2-control .portal-ops-entity p {font-size:12px;margin:0;color:#a8bdd0;}
+.v2-control .portal-hourly-event.is-selected,.v2-control .portal-ops-entity.is-selected {border-color:#9fd4ef;background:#25446585;}
+.v2-control .portal-hourly-event span {color:#a8bdd0;font-size:12px;}
+.v2-control .portal-hourly-form-title {display:flex;align-items:center;gap:10px;flex-wrap:wrap;margin-bottom:17px;}
+.v2-control .portal-hourly-form-title strong,.v2-control #portal-clubs-selected {font-size:22px;margin:0;}
+.v2-control .control-editor-head h2 {font-size:23px;margin:5px 0 0;}
+.v2-control .control-source-title {display:none;}
+.v2-control .control-form-details {margin:12px 0;}
+.v2-control .control-preview-diff>div {display:grid;grid-template-columns:1fr 2fr;gap:12px;padding:9px 0;border-bottom:1px solid #3c566955;font-size:13px;}
+.v2-control .control-preview-diff dd {margin:0;overflow-wrap:anywhere;}
+.v2-control .control-preview-diff dt {color:#adc3d5;}
+.v2-control .control-preview-diff del {color:#8a9faf;}
+.v2-control .control-preview-diff b {color:#57edac;}
+.v2-control .portal-ops-actions {display:flex;gap:8px;flex-wrap:wrap;margin-top:14px;}
+.v2-control .portal-ops-hint {font-size:12px;color:#adc3d5;}
+.v2-control .portal-hourly-preview {padding:14px;border:1px solid #40c18a88;background:#0c503533;margin-top:15px;}
+.v2-control .portal-hourly-preview h3 {margin:0 0 10px;font-size:16px;}
+.v2-control .portal-hourly-preview pre {font-size:12px;white-space:pre-wrap;overflow-wrap:anywhere;max-height:330px;overflow:auto;}
+.v2-control .portal-clubs-review {display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:15px;margin:15px 0;}
+.v2-control .portal-clubs-review>section {min-width:0;}
+.v2-control .portal-clubs-review>section:nth-child(n+3) {grid-column:1/-1;}
+.v2-control .portal-clubs-review h4 {font-size:15px;margin:0 0 10px;}
+.v2-control .portal-clubs-detail-list article {display:grid;grid-template-columns:minmax(95px,.55fr) minmax(0,1fr);gap:10px;border-bottom:1px solid #39536a55;padding:9px 0;font-size:13px;overflow-wrap:anywhere;}
+.v2-control .portal-clubs-detail-list article span {color:#afc6d7;}
+.v2-control .portal-clubs-detail-list img {max-width:130px;max-height:130px;object-fit:contain;}
+.v2-control .portal-clubs-reason {grid-column:1/-1;}
+.v2-control .control-lab-link {padding:14px;margin-top:10px;}
+.v2-control .control-lab-link h2 {font-size:15px;}
+.control-confirm dl {display:grid;gap:0;}
+.control-confirm dl>div {display:grid;grid-template-columns:1fr 2fr;gap:12px;padding:9px 0;border-bottom:1px solid #3c566955;}
+.control-confirm dd {margin:0;overflow-wrap:anywhere;}
+@media(min-width:1600px){.v2-control .portal-hourly-form>.portal-ops-grid{grid-template-columns:repeat(4,minmax(0,1fr));}}
+@media(max-width:650px){.v2-control #moderation-form,.v2-control .moderation-grid,.v2-control .portal-ops-grid,.v2-control .portal-clubs-review{grid-template-columns:1fr;}.v2-control .moderation-result,.v2-control .moderation-number-request{flex-wrap:wrap;}.v2-control .moderation-badges{width:100%;}.v2-control .portal-ops-section-heading{flex-wrap:wrap;}.v2-control .portal-ops-section-heading>div{flex-basis:100%;}.v2-control .portal-clubs-detail-list article,.control-confirm dl>div{grid-template-columns:1fr;}.v2-control .control-number-display{align-items:start;}.v2-control .control-ops-toolbar{padding:10px;}}

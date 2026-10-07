@@ -1,9 +1,8 @@
 import { createHash } from "node:crypto";
 import { readFile, readdir, stat } from "node:fs/promises";
 import { relative, resolve, sep } from "node:path";
+import {dist,rollbackArtifact} from '../../scripts/dist-paths.mjs';
 
-const root = resolve(import.meta.dirname, "../..");
-const dist = resolve(root, "dist");
 const toPosix = path => path.split(sep).join("/");
 const sha256 = buffer => createHash("sha256").update(buffer).digest("hex");
 
@@ -28,7 +27,7 @@ for (const required of ["index.html", "account/index.html", "account/settings/in
   if (!files.includes(required)) failures.push(`Missing required dist file: ${required}`);
 }
 for (const path of files) {
-  if (/(^|\/)(?:tests|scripts|stats_tool|donations-worker|community-likes-worker)(\/|$)/.test(path)) failures.push(`Forbidden directory in dist: ${path}`);
+  if (/(^|\/)(?:tests|scripts|v1-source|v2-source|design-research|stats_tool|donations-worker|community-likes-worker)(\/|$)/.test(path)) failures.push(`Forbidden directory in dist: ${path}`);
   if (/\.map$|\.md$|parser\.(?:log|json)$|background\.original/i.test(path)) failures.push(`Forbidden artifact in dist: ${path}`);
 }
 for (const asset of manifest.assets) {
@@ -38,7 +37,9 @@ for (const asset of manifest.assets) {
 for (const [path, checksum] of checksumMap) {
   if (sha256(await readFile(resolve(dist, path))) !== checksum) failures.push(`Checksum mismatch: ${path}`);
 }
-if (!metadata.revision || !metadata.builtAt || metadata.rollbackArtifact !== "../dist.previous") failures.push("Invalid build metadata");
+if (!metadata.revision || !metadata.builtAt || metadata.rollbackArtifact !== rollbackArtifact) failures.push("Invalid build metadata");
+if (metadata.sourceSnapshotSha256 !== sha256(Buffer.from(JSON.stringify(manifest.assets)))) failures.push('Invalid source snapshot hash');
+if (metadata.worktreeDirty !== null && typeof metadata.worktreeDirty !== 'boolean') failures.push('Invalid working-tree state');
 if (manifest.files !== manifest.assets.length) failures.push("Invalid manifest file count");
 if (failures.length) { console.error(failures.join("\n")); process.exitCode = 1; }
 else console.log(`Verified dist: ${files.length} files, ${manifest.bytes} runtime bytes, ${metadata.revision.slice(0, 12)}`);

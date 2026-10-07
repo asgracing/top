@@ -191,6 +191,12 @@ test("builds a bounded local return path without fragments", () => {
   assert.equal(buildAuthReturnPath({ pathname: "/\\evil", search: "" }), "/");
 });
 
+test('root release keeps language, entity and query on Steam return across new and old URLs',()=>{
+ for(const pathname of ['/','/en/','/driver/','/en/driver/','/account/settings/','/en/account/settings/','/moderation/','/en/portal-ops/','/old/driver/','/old/en/driver/','/asg-lab/','/hourly/team/']){
+  assert.equal(buildAuthReturnPath({pathname,search:'?id=drv_test&utm_source=asg',hash:'#private'}),pathname+'?id=drv_test&utm_source=asg');
+ }
+});
+
 test("keeps authenticated but unlinked Steam accounts explicit", () => {
   const normalized = normalizeAuthPayload({
     authenticated: true,
