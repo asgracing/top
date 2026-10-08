@@ -349,3 +349,10 @@ body[data-v2] .mobile-menu-trigger {display:none;}
  body[data-v2] .mobile-menu .nav-group>div>a,body[data-v2] .mobile-menu .nav-group>div>button {display:flex;align-items:center;width:100%;min-height:44px;padding:10px 12px;font-size:13px;text-align:left;}
  body[data-v2] .mobile-menu .v2-language a,body[data-v2] .mobile-menu .version-switch {min-width:44px;min-height:44px;display:flex;align-items:center;justify-content:center;padding:8px 12px;font-size:12px;}
 }
+
+.sr-component-note {display:block;font-size:12px;margin-top:6px;line-height:1.5;color:#adbdcc;}
+.sr-race-summary .sr-components-explanation {margin-top:12px;}
+
+.sr-race-summary .sr-component-note span {display:inline;font-size:12px;}
+.sr-race-summary .sr-component-note .positive {color:#39dda6;}
+.sr-race-summary .sr-component-note .negative {color:#ff657b;}

@@ -5,7 +5,7 @@ import {serverSessionLabel} from './server-session.js?v=20261008widgets1';
 // R24 views consume the canonical controllers. They never calculate ratings or
 // create a second auth/voting state.
 export function createPresentation({$,native,getModel,esc,text,label,date,number,rating,car,driverHref,classic,affiliation,privacy,serverAdmission,showDialog}) {
-  let request=0,profile=null,parent=null,historyView=null,month='',day='',eventEntry=null,driverDaySignature='';
+  let request=0,profile=null,parent=null,historyView=null,month='',day='',eventEntry=null,driverDaySignature='',inspectionRequest=0;
   const detail=(name,value)=>`<div><span>${esc(name)}</span><b>${esc(value??'—')}</b></div>`;
   const name=p=>p.driver||p.name||p.summary?.driver||'—';
   const flatten=p=>({...p?.summary,...p});
@@ -52,15 +52,24 @@ export function createPresentation({$,native,getModel,esc,text,label,date,number
     const retry=$('modal-body').querySelector('[data-profile-retry]');if(retry)retry.onclick=()=>loadProfile(row,kind,trigger);
   }
   function renderHistory(){
+    ++inspectionRequest;
     const v=historyView,d=flatten(profile),info=native().ratingInfo(profile,v.kind)||{history:[]};
     const points=native().historyPoints(info,v.period,v.offset),periods=['all','365','180','90','30','7','1'];
     $('modal-title').textContent=(v.kind==='elo'?'ELO':'Safety Rating')+' · '+name(profile);
     $('modal-body').innerHTML=`<div class="rating-history-summary"><div><span class="eyebrow">${text('Текущий рейтинг','Current rating')}</span>${rating(d,v.kind)}</div><p>${text('История изменения рейтинга по зачтённым гонкам.','Rating history across counted races.')}</p><a class="text-link" href="${driverHref(d.public_id)}">${esc(name(profile))}</a></div><div class="rating-history-controls"><div class="segmented-control">${periods.map(p=>`<button type="button" data-history-period="${p}" class="${p===v.period?'active':''}">${p==='all'?text('Всё время','All time'):p==='1'?text('День','Day'):p+' '+text('дн.','days')}</button>`).join('')}</div><label>${text('Сетка','Grid')} <select id="v2-history-grid">${['low','medium','high'].map((g,i)=>`<option value="${g}"${g===v.grid?' selected':''}>${[text('Редкая','Low'),text('Средняя','Medium'),text('Частая','High')][i]}</option>`).join('')}</select></label></div>${v.period==='all'?'':`<div class="rating-period-pager"><button type="button" data-history-step="older">‹</button><span>${esc(native().historyPeriod(points,v.period)||text('Нет гонок в этом периоде','No races in this period'))}</span><button type="button" data-history-step="newer"${v.offset===0?' disabled':''}>›</button></div>`}<div class="rating-chart-wrap">${native().ratingChart(info,v.kind,v.period,v.grid,v.offset)}</div><div id="v2-sr-inspection"></div>${v.kind==='sr'?`<div class="rating-summary-metrics">${detail(text('Зачтённых гонок','Counted races'),d.safety_races??info.racesCount??info.history.length)}${detail(text('Кругов','Laps'),d.safety_total_laps)}${detail(text('Невалидных кругов','Invalid laps'),d.safety_total_invalid_laps)}${detail(text('Инциденты','Incidents'),d.safety_total_incident_points)}${detail(text('Автоштрафы','Penalties'),d.safety_total_counted_penalties)}</div>`:''}${parent?`<button class="button" data-profile-return>${text('← Вернуться к пилоту','← Back to driver')}</button>`:''}`;
   }
-  function inspectSr(index){
+  async function inspectSr(index){
     const points=native().historyPoints(native().ratingInfo(profile,'sr'),historyView.period,historyView.offset),p=points[index];if(!p)return;
     const raw=(profile.safety_history||profile.summary?.safety_history||[])[p.index]||{};
-    $('sr-inspection').innerHTML=`<div class="sr-race-summary"><h3>${date(raw.finished_at||p.date)} · ${esc(native().track(raw.track||raw.track_code||''))}</h3><div class="detail-grid">${detail('SR',Number(p.rating).toFixed(2))}${detail(text('Изменение','Change'),(p.delta>0?'+':'')+Number(p.delta).toFixed(2))}${detail(text('Кругов','Laps'),raw.completed_laps)}${detail(text('Невалидных','Invalid'),raw.invalid_laps)}${detail(text('Инциденты','Incidents'),raw.incident_points)}${detail(text('Автоштрафы','Penalties'),raw.counted_penalties_count)}</div></div>`;
+    const ticket=++inspectionRequest,owner=request,container=$('sr-inspection');
+    const numeric=value=>value!==null&&value!==undefined&&String(value).trim()!==''&&Number.isFinite(Number(value))?Number(value):null;
+    const component=(title,value,loading=false)=>{const delta=numeric(value);return `<small class="sr-component-note">${esc(title)}: <span class="${delta>0?'positive':delta<0?'negative':''}">${loading?text('Загрузка…','Loading…'):delta===null?'—':`${delta>0?'+':''}${delta.toFixed(2)} SR`}</span></small>`;};
+    const countDetail=(title,value,note)=>`<div><span>${esc(title)}</span><b>${esc(value??'—')}</b>${note}</div>`;
+    const draw=(breakdown,loading=false)=>{container.innerHTML=`<div class="sr-race-summary"><h3>${date(raw.finished_at||p.date)} · ${esc(native().track(raw.track||raw.track_code||''))}</h3><div class="detail-grid">${detail('SR',Number(p.rating).toFixed(2))}${detail(text('Изменение','Change'),(p.delta>0?'+':'')+Number(p.delta).toFixed(2))}${detail(text('Кругов','Laps'),raw.completed_laps)}${countDetail(text('Невалидных','Invalid'),raw.invalid_laps,component(text('Чистота','Cleanliness'),breakdown?.clean,loading))}${countDetail(text('Инциденты · очки','Incidents · points'),raw.incident_points,component(text('Изменение SR','SR change'),breakdown?.incidents??raw.incident_penalty_delta))}${detail(text('Автоштрафы','Penalties'),raw.counted_penalties_count)}</div><p class="data-note sr-components-explanation">${text('Компоненты показывают начисление или снятие SR. Итоговое изменение ограничено границами рейтинга.','Components show SR gains or losses. The final change is limited by the rating floor and ceiling.')}</p></div>`;};
+    draw(null,true);
+    const breakdown=await native().safetyBreakdown({source:raw,publicId:profile.public_id,playerId:profile.player_id,raceId:p.raceId}).catch(()=>null);
+    if(ticket!==inspectionRequest||owner!==request||!$('modal').open||container!==$('sr-inspection'))return;
+    draw(breakdown);
   }
   const minutes=v=>v==null||v<0?text('Без ограничения','Unlimited'):v+' '+text('мин','min');
   function boolDetail(title,value){return `<div><span>${esc(title)}</span><b class="rule-state ${value==null?'is-unknown':value?'is-yes':'is-no'}">${value==null?'—':`<svg viewBox="0 0 24 24" aria-hidden="true"><path d="${value?'m5 12 4 4L19 6':'m6 6 12 12M18 6 6 18'}"/></svg>${value?text('Да','Yes'):text('Нет','No')}`}</b></div>`}

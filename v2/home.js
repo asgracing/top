@@ -1,7 +1,7 @@
 import copy from './copy.js?v=20261006v2k';
 import { subscribe, getRuntime } from './bridge.js?v=20261006v2k';
 import {eventKind,normalizeTablePage,normalizeSafetyRow,paginationPages,serverSrRestriction} from './models.js?v=20261006v2k';
-import {createPresentation} from './presentation.js?v=20261008widgets1';
+import {createPresentation} from './presentation.js?v=20261008sr1';
 import {createRecentRaces} from './recent-races.js?v=20261008v2pages15';
 import {createHeader} from './header.js?v=20261008mobile1';
 import {serverSessionLabel} from './server-session.js?v=20261008widgets1';
@@ -300,7 +300,7 @@ const boot=$('site-shell'),loader=document.querySelector('.home-loader');
 let seenIntro=false;try{seenIntro=Boolean(sessionStorage.getItem('asgV2IntroSeen'))}catch{}
 if(reduced.matches||seenIntro){document.documentElement.classList.remove('home-booting');loader.hidden=true}else{document.documentElement.classList.add('home-booting');boot.inert=true;setTimeout(()=>{document.documentElement.classList.remove('home-booting');document.documentElement.classList.add('home-ready');boot.inert=false;loader.hidden=true;try{sessionStorage.setItem('asgV2IntroSeen','1')}catch{}},1050)}
 renderTable();$('race-vote').disabled=true;
-try{await import('./runtime/home.js?v=20261008profile1');setTimeout(applyHash,1500)}catch(error){console.error('V2 runtime unavailable',error);$('event-track').textContent=text('Не удалось загрузить данные','Could not load data');$('day-driver').textContent=text('Данные недоступны','Data unavailable');tableError=true;tableBusy=false;renderTable()}
+try{await import('./runtime/home.js?v=20261008sr1');setTimeout(applyHash,1500)}catch(error){console.error('V2 runtime unavailable',error);$('event-track').textContent=text('Не удалось загрузить данные','Could not load data');$('day-driver').textContent=text('Данные недоступны','Data unavailable');tableError=true;tableBusy=false;renderTable()}
 if(document.documentElement.dataset.v2Page){
   const {startPage}=await import('./pages/controller.js?v=20261008thumbs1');
   await startPage({native,presentation,showDialog,esc,text,date,number,rating,car,language,subscribe});

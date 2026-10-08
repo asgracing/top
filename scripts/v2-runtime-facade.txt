@@ -31,6 +31,11 @@ installRuntime({
   driverTitle:loadDriverTitle,steamAvatar:loadDriverSteamAvatar,driverRank:getDriverRankInfo,isBanned:isDriverBanned,
   ratingHistory:(profile,kind)=>kind==='elo'?normalizeEloHistory(profile):normalizeSafetyHistory(profile),
   ratingInfo:(profile,kind)=>kind==='elo'?getEloInfo(profile):getSafetyInfo(profile),
+  safetyBreakdown:async options=>{
+    const source=await resolveSafetyBreakdownSource(options);
+    // Published components, before the rating floor/ceiling. Do not recompute SR.
+    return source?{clean:source.safety_base_delta??null,incidents:source.safety_incident_penalty_delta??null}:null;
+  },
   favorite:getFavoriteCarName,lapTime:formatLapTimeFromMs,
   ratingChart:(info,kind,period,grid,offset)=>kind==='elo'?renderEloChart(info,period,grid,offset):renderSafetyChart(info,period,grid,offset),
   historyPoints:getFilteredEloHistory,historyPeriod:renderEloPeriodLabel,

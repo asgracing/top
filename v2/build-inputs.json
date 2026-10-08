@@ -1,6 +1,6 @@
 {
   "schemaVersion": 1,
-  "runtimeVersion": "20261008profile1",
+  "runtimeVersion": "20261008sr1",
   "inputs": [
     {
       "path": "app.js",
@@ -24,7 +24,7 @@
     },
     {
       "path": "scripts/build-v2.mjs",
-      "sha256": "7979a0d9a808b96261b8d450519262373c15db880d9df2de6b3a7f4b66bed3f1"
+      "sha256": "5e4923d0070d42fea18577d246968157cca9cb207f6a405d3549fe9cd3e57d01"
     },
     {
       "path": "scripts/generate-localized-pages.mjs",
@@ -48,7 +48,7 @@
     },
     {
       "path": "scripts/v2-runtime-facade.txt",
-      "sha256": "becb1a7b40255099e30f8af6b82382df8306f8f9217038a505ff9ea4c5b7f479"
+      "sha256": "03f47e06fab4a9677f0b39ded523fe857856e3f9f1a78023b9364277f6676eb7"
     },
     {
       "path": "src/pages/clubs-teams/catalog-page.js",
