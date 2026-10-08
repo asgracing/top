@@ -1,10 +1,12 @@
 import {routeHref} from './site-routing.js?v=20261007root1';
+import {createMobileNavigation} from './mobile-navigation.js?v=20261008mobile1';
 export function createHeader({$,esc,text,number,rating,driverHref,privacy,native,newsHref}){
   const language=document.documentElement.lang==='en'?'en':'ru';
   const host=document.querySelector('.header-actions'),nativeAuth=()=>host.querySelector('.auth-header');
   const bell=document.createElement('button');bell.type='button';bell.id='v2-notification-trigger';bell.className='notification-trigger';bell.setAttribute('aria-label',text('Уведомления','Notifications'));bell.setAttribute('aria-haspopup','dialog');bell.innerHTML='<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M18 8a6 6 0 0 0-12 0c0 7-3 7-3 9h18c0-2-3-2-3-9M10 21h4"/></svg><span class="v2-notification-count" hidden></span>';
   const trigger=document.createElement('button');trigger.type='button';trigger.id='v2-profile-trigger';trigger.className='profile-trigger';trigger.setAttribute('aria-haspopup','dialog');trigger.setAttribute('aria-label',text('Открыть панель профиля','Open profile panel'));
   host.prepend(bell);host.append(trigger);
+  const mobileNavigation=createMobileNavigation({header:host.closest('.header'),host,text});
   for(const id of ['profile','notification'])$(id+'-popover-title').textContent=id==='profile'?text('Профиль пилота','Driver profile'):text('Уведомления','Notifications');
   const readAll=document.createElement('button');readAll.type='button';readAll.className='notification-read-all';readAll.textContent=text('Прочитано всё','Mark all as read');readAll.disabled=true;
   $('notification-popover').querySelector('.popover-head').insertBefore(readAll,$('notification-popover').querySelector('[data-close-popover]'));
@@ -12,7 +14,7 @@ export function createHeader({$,esc,text,number,rating,driverHref,privacy,native
   let auth=null,currentModel=null;
   function place(panel,anchor){const rect=anchor.getBoundingClientRect(),width=Math.min(350,innerWidth-24);panel.style.width=width+'px';panel.style.left=Math.max(12,Math.min(innerWidth-width-12,rect.right-width))+'px';panel.style.top=Math.max(12,Math.min(innerHeight-panel.getBoundingClientRect().height-12,rect.bottom+9))+'px'}
   function close(id){const panel=$(id);if(panel.matches(':popover-open'))panel.hidePopover();$(id.replace('-popover','-trigger'))?.setAttribute('aria-expanded','false')}
-  function open(id,anchor){const panel=$(id),wasOpen=panel.matches(':popover-open');for(const key of ['profile-popover','notification-popover'])close(key);if(wasOpen)return;panel.showPopover();anchor.setAttribute('aria-expanded','true');place(panel,anchor);panel.querySelector('button').focus({preventScroll:true})}
+  function open(id,anchor){mobileNavigation.close();const panel=$(id),wasOpen=panel.matches(':popover-open');for(const key of ['profile-popover','notification-popover'])close(key);if(wasOpen)return;panel.showPopover();anchor.setAttribute('aria-expanded','true');place(panel,anchor);panel.querySelector('button').focus({preventScroll:true})}
   trigger.onclick=()=>open('profile-popover',trigger);bell.onclick=()=>open('notification-popover',bell);
   function authContent(){
     const source=nativeAuth(),content=$('profile-popover-content');
