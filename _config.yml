@@ -2,6 +2,7 @@ plugins: []
 exclude:
   - ".editorconfig"
   - ".git"
+  - ".gitattributes"
   - ".github"
   - ".gitignore"
   - "ASG_LAB_FRONTEND_BACKLOG_2026-10-03.md"
@@ -36,4 +37,3 @@ exclude:
   - "tests"
   - "v1-source"
   - "v2-source"
-  - ".gitattributes"

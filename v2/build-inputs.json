@@ -1,6 +1,6 @@
 {
   "schemaVersion": 1,
-  "runtimeVersion": "20261007v2release3",
+  "runtimeVersion": "20261008profile1",
   "inputs": [
     {
       "path": "app.js",
@@ -24,7 +24,7 @@
     },
     {
       "path": "scripts/build-v2.mjs",
-      "sha256": "42cd1c65dd012353f555003df7fdf7819cf0c4a7bdf76a6c4c2eb0e214ff01ad"
+      "sha256": "9f2102547bbac7f6fa73849b5073649700c9539a02584756239d3ecb0c147b2e"
     },
     {
       "path": "scripts/generate-localized-pages.mjs",
@@ -48,7 +48,7 @@
     },
     {
       "path": "scripts/v2-runtime-facade.txt",
-      "sha256": "ea807f46dbe9323d1a8ba9ec28747d4de2d732f60734dd3ab270c13ea3028d86"
+      "sha256": "becb1a7b40255099e30f8af6b82382df8306f8f9217038a505ff9ea4c5b7f479"
     },
     {
       "path": "src/pages/clubs-teams/catalog-page.js",
@@ -296,7 +296,7 @@
     },
     {
       "path": "v2-source/pages/core.js",
-      "sha256": "b535bf81a6480deda29f8d9e901a6496ef505f80d9640888df26d92cb1eec556"
+      "sha256": "39c4a48693b92fb9c7d66a78c2a27c3ad282325b9bb407826fc680391ff1c793"
     },
     {
       "path": "v2-source/pages/editorial.js",
@@ -304,7 +304,7 @@
     },
     {
       "path": "v2-source/pages/entities.js",
-      "sha256": "ea5e6cdd3812b183fd16c9c382bd15b4eab16e6af9956b1b8343e33092f9c677"
+      "sha256": "56d6905c5b325be4e7d7700ac5b0a34cb79430704fb6a32a6b5946ddb0404397"
     },
     {
       "path": "v2-source/pages/fun.js",

@@ -50,6 +50,13 @@ body[data-v2] .metric b { font-size:17px; }
 body[data-v2] .rating-history-controls .segmented-control { border:0; border-radius:3px; background:none; padding:0; }
 body[data-v2] .header-popover .button { display:flex; justify-content:center; margin-top:9px; }
 body[data-v2] .modal-close,body[data-v2] .popover-head button { display:grid; place-items:center; padding:0; line-height:1; flex-shrink:0; }
+body[data-v2] .popover-head .notification-read-all { width:auto; height:auto; min-height:31px; margin-left:auto; padding:5px 7px; font-size:11px; line-height:1.3; }
+body[data-v2] .notification-read-all:disabled { opacity:.5; cursor:default; }
+body[data-v2] .notification-read-all:hover:not(:disabled) { background:#29415b; border-color:#78a9ce; }
+body[data-v2] dialog[data-kind="achievements"] .driver-achievements-widget { position:static; width:auto; max-height:none; padding:0; border:0; background:none; box-shadow:none; }
+body[data-v2] dialog[data-kind="achievements"] .driver-achievements-cards { grid-template-columns:repeat(auto-fit,minmax(min(240px,100%),1fr)); }
+/* The selected title is shown in the profile; the collection is about awards. */
+body[data-v2] dialog[data-kind="achievements"] .driver-achievements-driver-title { display:none; }
 body[data-v2] #v2-modal { color:#eef3fa; max-height:calc(100dvh - 28px); padding:0; }
 body[data-v2] #v2-modal .modal-body { overflow:auto; max-height:calc(100dvh - 142px); }
 body[data-v2] .top-guide { height:auto; min-height:0; max-height:calc(100dvh - 90px); width:min(365px,calc(100vw - 24px)); overflow:auto; inset:auto 340px 110px auto; transform:none; }

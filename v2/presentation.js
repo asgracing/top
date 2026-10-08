@@ -1,5 +1,6 @@
 import {eventKind} from './models.js?v=20261006v2k';
 import {resolveTrackBackgroundFile} from '/src/features/server-status/track-background.js';
+import {serverSessionLabel} from './server-session.js?v=20261008widgets1';
 
 // R24 views consume the canonical controllers. They never calculate ratings or
 // create a second auth/voting state.
@@ -82,9 +83,9 @@ export function createPresentation({$,native,getModel,esc,text,label,date,number
   function openOnline(trigger){++request;display(text('Онлайн по датам','Activity by date'),onlineHtml(),'online',trigger)}
   function openServer(key,trigger){
     ++request;const m=getModel();if(!m)return;
-    const phase=s=>{if(!s.online)return label('waiting');const value=String(s.server?.session_type||s.server?.current_session||s.server?.session||s.session||'').trim().toLowerCase();return value.startsWith('r')?label('race'):value.startsWith('q')?label('qualifying'):value.startsWith('p')?label('practice'):'—'};
+    const phase=s=>serverSessionLabel(s,label);
     if(!key){
-      display(label('serverStatus'),`<div class="server-summary-list">${m.servers.map(s=>`<button type="button" class="server-summary-item${serverAdmission(s)?' is-sr-blocked':''}" title="${esc(serverAdmission(s)||s.label)}" aria-label="${esc(s.label)}${serverAdmission(s)?` · ${esc(serverAdmission(s))}`:''}" data-server="${esc(s.key)}"><b>${esc(s.label)}</b><span>${esc(s.track)} · <strong class="${s.online?'is-online':'is-offline'}">${m.serversStale?text('Данные устарели','Stale data'):s.online?label('live'):label('offline')}</strong> · SA ${esc(s.sa)} · SR ${esc(s.sr)} · ${m.serversStale?'—':number(s.players)} ${text('пилотов','drivers')}</span></button>`).join('')||`<p class="empty">${label('noData')}</p>`}</div>`,'servers',trigger);return;
+      display(label('serverStatus'),`<div class="server-summary-list">${m.servers.map(s=>`<button type="button" class="server-summary-item${serverAdmission(s)?' is-sr-blocked':''}" title="${esc(serverAdmission(s)||s.label)}" aria-label="${esc(s.label)}${serverAdmission(s)?` · ${esc(serverAdmission(s))}`:''}" data-server="${esc(s.key)}"><b>${esc(s.label)}</b><span>${esc(s.track)} · <strong class="${s.online?'is-online':'is-offline'}">${m.serversStale?text('Данные устарели','Stale data'):s.online?label('live'):label('offline')}</strong> · ${esc(phase(s))} · SA ${esc(s.sa)} · SR ${esc(s.sr)} · ${m.serversStale?'—':number(s.players)} ${text('пилотов','drivers')}</span></button>`).join('')||`<p class="empty">${label('noData')}</p>`}</div>`,'servers',trigger);return;
     }
     const s=m.servers.find(server=>server.key===key);if(!s)return;
     const drivers=s.drivers||[],empty=m.serversStale?text('Онлайн устарел; актуальный список недоступен.','Online status is stale; the current roster is unavailable.'):s.players>0?text('Список имён ещё не опубликован.','Driver names have not been published yet.'):text('Сейчас пилотов нет.','No drivers currently online.');

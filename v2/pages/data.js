@@ -169,8 +169,9 @@ export function createPageData(native) {
   }
   async function driver(id) {
     if(!/^drv_[a-z0-9]+$/i.test(id||''))throw Object.assign(new Error('Missing driver'),{status:404});
-    const [profile,achievement]=await Promise.all([
-      native().profile(id),readJson(publicUrl(`achievements/v1/drivers/${encodeURIComponent(id)}.json`)).catch(()=>null)
+    const [profile,achievement,avatar,title]=await Promise.all([
+      native().profile(id),readJson(publicUrl(`achievements/v1/drivers/${encodeURIComponent(id)}.json`)).catch(()=>null),
+      native().steamAvatar(id).catch(()=>null),native().driverTitle(id).catch(()=>undefined)
     ]);
     const eloByRace=new Map(),eloByFile=new Map();
     const filename=value=>String(value||'').split(/[\\/]/).pop().toLowerCase();
@@ -184,7 +185,7 @@ export function createPageData(native) {
       return {...r,elo:value!=null&&Number.isFinite(Number(value))?Number(value):null,elo_rating_delta:r.elo_rating_delta??entry?.rating_delta};
     });
     const favorite=native().favorite({...profile,race_history:history}) || profile.favorite_car;
-    return {profile:{...profile.summary,...profile,public_id:id,
+    return {profile:{...profile.summary,...profile,public_id:id,avatar_url:avatar||profile.avatar_url,achievementTitle:title,
       races:typeof profile.races==='number'?profile.races:profile.summary?.races,
       race_history:history,favorite_car:favorite,driver:profile.driver || profile.summary?.driver || id},achievement};
   }

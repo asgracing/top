@@ -1,9 +1,10 @@
 import copy from './copy.js?v=20261006v2k';
 import { subscribe, getRuntime } from './bridge.js?v=20261006v2k';
 import {eventKind,normalizeTablePage,normalizeSafetyRow,paginationPages,serverSrRestriction} from './models.js?v=20261006v2k';
-import {createPresentation} from './presentation.js?v=20261008v2pages15';
+import {createPresentation} from './presentation.js?v=20261008widgets1';
 import {createRecentRaces} from './recent-races.js?v=20261008v2pages15';
-import {createHeader} from './header.js?v=20261008v2pages15';
+import {createHeader} from './header.js?v=20261008widgets1';
+import {serverSessionLabel} from './server-session.js?v=20261008widgets1';
 import {createGuide} from './guide.js?v=20261006v2k';
 import {createHomeMotion} from './motion.js?v=20261006v2k';
 import {v2Route,currentV2Path,v2EntityLinks} from './routes.js?v=20261008v2pages15';
@@ -154,10 +155,10 @@ function serverAdmission(server){
 function renderServers(){
   const order=['hourly','main','sunset'],rows=[...model.servers].sort((a,b)=>(order.includes(a.key)?order.indexOf(a.key):3)-(order.includes(b.key)?order.indexOf(b.key):3));$('servers-up').textContent=`${model.serversStale?'—':rows.filter(s=>s.online).length} / ${rows.length}`;
   $('total-online').textContent=model.serversStale?text('Данные устарели','Stale data'):number(rows.reduce((n,s)=>n+s.players,0))+' '+label('players');
-  const phase=s=>{if(!s.online)return label('waiting');const value=String(s.server?.session_type||s.server?.current_session||s.server?.session||s.session||'').trim().toLowerCase();return value.startsWith('r')?label('race'):value.startsWith('q')?label('qualifying'):value.startsWith('p')?label('practice'):'—'};
+  const phase=s=>serverSessionLabel(s,label);
   $('servers').innerHTML=rows.map((s,i)=>{
     const name=s.key==='hourly'?'Hourly / ASG Racing Race':String(s.label).replace(/^ASG Racing\s+/i,''),session=phase(s),hint=serverAdmission(s);
-    const short=s.online?(s.session?.split(/\s+/)[0]||String(s.server?.session_type||'').slice(0,1).toUpperCase()||'—'):'OFF';
+    const short=serverSessionLabel(s,label,{compact:true});
     const description=hint||`${s.label} · ${session} · ${number(s.players)} ${text('пилотов','drivers')}`;
     return `<button type="button" class="server-card${s.online?'':' offline'}${hint?' is-sr-blocked':''}" data-server="${esc(s.key)}" aria-label="${esc(description)}" title="${esc(description)}"><span class="server-top"><span class="server-id">${String(i+1).padStart(2,'0')}</span><span class="server-name">${esc(name)}</span><span class="server-compact-live">${esc(short)} · ${number(s.players)}</span><span class="status-dot" aria-hidden="true"></span></span><span class="server-facts"><span class="server-track">${esc(s.track||'—')}</span><span class="server-admission">SA ${esc(s.sa)} · ${hint?'&#128274; ':''}SR ${esc(s.sr)}</span><span class="server-live">${number(s.players)} ${text('пилотов','drivers')} · ${esc(session)}</span></span></button>`;
   }).join('')||`<p class="empty">${text('Статусы недоступны','Server status unavailable')}</p>`;
@@ -299,8 +300,8 @@ const boot=$('site-shell'),loader=document.querySelector('.home-loader');
 let seenIntro=false;try{seenIntro=Boolean(sessionStorage.getItem('asgV2IntroSeen'))}catch{}
 if(reduced.matches||seenIntro){document.documentElement.classList.remove('home-booting');loader.hidden=true}else{document.documentElement.classList.add('home-booting');boot.inert=true;setTimeout(()=>{document.documentElement.classList.remove('home-booting');document.documentElement.classList.add('home-ready');boot.inert=false;loader.hidden=true;try{sessionStorage.setItem('asgV2IntroSeen','1')}catch{}},1050)}
 renderTable();$('race-vote').disabled=true;
-try{await import('./runtime/home.js?v=20261007v2release3');setTimeout(applyHash,1500)}catch(error){console.error('V2 runtime unavailable',error);$('event-track').textContent=text('Не удалось загрузить данные','Could not load data');$('day-driver').textContent=text('Данные недоступны','Data unavailable');tableError=true;tableBusy=false;renderTable()}
+try{await import('./runtime/home.js?v=20261008profile1');setTimeout(applyHash,1500)}catch(error){console.error('V2 runtime unavailable',error);$('event-track').textContent=text('Не удалось загрузить данные','Could not load data');$('day-driver').textContent=text('Данные недоступны','Data unavailable');tableError=true;tableBusy=false;renderTable()}
 if(document.documentElement.dataset.v2Page){
-  const {startPage}=await import('./pages/controller.js?v=20261008v2pages15');
+  const {startPage}=await import('./pages/controller.js?v=20261008profile1');
   await startPage({native,presentation,showDialog,esc,text,date,number,rating,car,language,subscribe});
 }

@@ -11566,7 +11566,7 @@ installRuntime({
   special:data=>getSpecialEventPresentation(data,currentLang),
   eventSr:()=>getServerSrRequirement('hourly',resolveNamedServerStatus(serverStatusData,'hourly')),
   winner:race=>getRaceWinnerResult(race),profile:loadDriverProfileCached,
-  driverTitle:loadDriverTitle,driverRank:getDriverRankInfo,isBanned:isDriverBanned,
+  driverTitle:loadDriverTitle,steamAvatar:loadDriverSteamAvatar,driverRank:getDriverRankInfo,isBanned:isDriverBanned,
   ratingHistory:(profile,kind)=>kind==='elo'?normalizeEloHistory(profile):normalizeSafetyHistory(profile),
   ratingInfo:(profile,kind)=>kind==='elo'?getEloInfo(profile):getSafetyInfo(profile),
   favorite:getFavoriteCarName,lapTime:formatLapTimeFromMs,
@@ -11574,6 +11574,17 @@ installRuntime({
   historyPoints:getFilteredEloHistory,historyPeriod:renderEloPeriodLabel,
   markNews:item=>{markNewsItemRead(item);renderNewsBell();renderNewsNotificationsModal()},
   markInvitation:item=>{markMembershipInvitationRead(item);renderNewsBell();renderNewsNotificationsModal()},
+  markAllNotifications:()=>{
+    // Include the complete current feed, not only the six-item preview.
+    const state=loadNewsReadState(),readAt=Date.now();
+    for(const item of getSortedNewsFeed(newsFeedData)){
+      const key=String(item.id||item.slug||'').trim();if(key&&!state[key])state[key]=readAt;
+    }
+    for(const item of membershipInvitationNotifications){
+      const key=membershipInvitationKey(item);if(key&&!state[key])state[key]=readAt;
+    }
+    saveNewsReadState(state);renderNewsBell();renderNewsNotificationsModal();
+  },
   newsHref:item=>getNewsArticleHref(item.slug),
   openDriver:(row,trigger)=>openDriverPreviewFromRowElement({dataset:{publicId:row.public_id,playerId:row.player_id,driverName:row.driver||row.name}},trigger),
   openRating:(row,kind,trigger)=>kind==='elo'?openEloModalForSource(row,trigger):openSafetyModalForSource(row,trigger),

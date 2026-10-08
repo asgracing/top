@@ -1,9 +1,9 @@
 {
   "schemaVersion": 1,
-  "revision": "fbaa8eacfa03e5e057efe919f7154732e94d4ed4",
-  "builtAt": "2026-10-08T05:53:26.051Z",
-  "rollbackArtifact": "../v2-metrika2-dist.previous",
+  "revision": "ad84092ae4f454760ab65e907c0dbcf9954c65e3",
+  "builtAt": "2026-10-08T13:57:41.390Z",
+  "rollbackArtifact": "../v2-root-release-candidate.previous",
   "worktreeDirty": true,
   "siteLayout": "root-release-candidate",
-  "sourceSnapshotSha256": "9bf079a567a7642b3e935f4ca5d599fb37501b6b17a4c67f77d0a2b722a602fb"
+  "sourceSnapshotSha256": "f53f62ec0aeda11025458a2aba0fe2f42686d505f916d8ef91e558117e864abf"
 }

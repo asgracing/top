@@ -5,23 +5,28 @@ import {createHistoryViews} from './views/history.js?v=20261007v2pages14';
 import {markNewsRead} from '/news-read-state.js';
 import {editorialImage} from './editorial-model.js?v=20261007v2pages14';
 import {getCommunityPostKey} from '/src/pages/community/feed-model.js';
-import {createPageViews} from './views/core.js?v=20261007v2pages14';
+import {createPageViews} from './views/core.js?v=20261008profile1';
 import {createArchiveViews} from './views/archive.js?v=20261007v2pages14';
 import {createChampionshipViews} from './views/championships.js?v=20261007v2pages14';
-import {createEntityViews} from './views/entities.js?v=20261007v2pages14';
+import {createEntityViews} from './views/entities.js?v=20261008profile1';
 import {createFunViews} from './views/fun.js?v=20261007v2pages14';
 import {createBansViews} from './views/bans.js?v=20261007v2pages14';
 import {formatMoscowDateTime} from '/src/shared/time.js';
 import {createCarsViews} from './views/cars.js?v=20261007v2pages14';
 import {createCarLapsLoader} from './cars-laps-model.js?v=20261007carlaps1';
 import {paintRace} from './views/race-modal.js?v=20261007v2pages14';
-import {createPageData} from './data.js?v=20261007v2pages14';
+import {createPageData} from './data.js?v=20261008profile1';
+import {createDriverAchievementsController} from '/src/pages/driver/achievements-widget.js?v=20261008profile1';
 import {v2Route,v2EntityLinks,currentV2Path,migratedPaths} from '../routes.js?v=20261007v2pages14';
 import {screenPath,scopeSiteHref,siteContext} from '../site-routing.js?v=20261007root1';
 import {eventKind as resolveKind} from '../models.js?v=20261006v2k';
 
 export async function startPage(api) {
   const {native,presentation,showDialog,esc,text,date,number,rating,car,language,subscribe}=api;
+  let achievementCollection=null;
+  const closeCollection=()=>{achievementCollection?.destroy();achievementCollection=null;};
+  document.getElementById('v2-modal').addEventListener('close',closeCollection);
+  window.addEventListener('pagehide',closeCollection,{once:true});
   const params=new URLSearchParams(location.search),screen=document.documentElement.dataset.v2Page==='news'&&params.has('slug')?'article':document.documentElement.dataset.v2Page;document.documentElement.dataset.v2Page=screen;
   const center=document.querySelector('.center-column'),home=document.createElement('div'),view=document.createElement('div');
   home.id='home-view';home.hidden=true;home.append(...center.childNodes);view.id='page-view';center.append(home,view);
@@ -143,6 +148,17 @@ export async function startPage(api) {
   function openWeather(e,trigger){const w=e.weather||{};showDialog(text('Погода','Weather')+' · '+(e.track_name||native().track(e.track_code)),`<div class="detail-grid">${modalApi.detail(text('Температура воздуха','Ambient temperature'),w.ambient_temp_c==null?'—':w.ambient_temp_c+' °C')}${modalApi.detail(text('Облачность','Cloud cover'),w.cloud_level==null?'—':Math.round(w.cloud_level*100)+'%')}${modalApi.detail(text('Дождь','Rain'),w.rain_level==null?'—':Math.round(w.rain_level*100)+'%')}${modalApi.detail(text('Изменчивость погоды','Weather randomness'),w.weather_randomness??'—')}</div>`,trigger);}
   document.addEventListener('click',event=>{
     const target=event.target;if(target.closest('#v1-runtime-host'))return;
+    const collection=target.closest('[data-profile-achievements]');
+    if(collection){
+      closeCollection();
+      if(!document.getElementById('v2-achievements-style')){
+        const sheet=document.createElement('link');sheet.id='v2-achievements-style';sheet.rel='stylesheet';sheet.href='/styles/components/driver-achievements.css?v=20261008profile1';document.head.append(sheet);
+      }
+      showDialog(text('Полная коллекция достижений','Full achievement collection'),'<div id="driver-achievements-widget" class="driver-achievements-widget"><div id="driver-achievements-content"></div></div>',collection);
+      document.getElementById('v2-modal').dataset.kind='achievements';
+      achievementCollection=createDriverAchievementsController();
+      return;
+    }
     if(target.closest('[data-page-retry]')){location.reload();return;}
     const scroll=target.closest('[data-site-scroll]');if(scroll){const id=new URL(scroll.href).hash.slice(1),node=document.getElementById(id);if(node){event.preventDefault();history.replaceState(null,'','#'+id);document.querySelectorAll('.v2-language a').forEach(a=>a.href=currentV2Path(a.dataset.language));node.scrollIntoView({block:'start',behavior:matchMedia('(prefers-reduced-motion: reduce)').matches?'instant':'smooth'});}return;}
     const contentPage=target.closest('[data-site-step="news"],[data-site-step="community"]');if(contentPage){const key=contentPage.dataset.siteStep+'Page';state[key]+=Number(contentPage.dataset.step);refreshEditorial();return;}
