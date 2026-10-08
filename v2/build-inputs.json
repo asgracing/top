@@ -24,7 +24,7 @@
     },
     {
       "path": "scripts/build-v2.mjs",
-      "sha256": "9f2102547bbac7f6fa73849b5073649700c9539a02584756239d3ecb0c147b2e"
+      "sha256": "1d04672ffc810eb1d489da28767f79b352cf27b3b535f1ff56ab2477d7aba740"
     },
     {
       "path": "scripts/generate-localized-pages.mjs",
@@ -304,7 +304,7 @@
     },
     {
       "path": "v2-source/pages/entities.js",
-      "sha256": "56d6905c5b325be4e7d7700ac5b0a34cb79430704fb6a32a6b5946ddb0404397"
+      "sha256": "eb530c9b2fd6bd907a7c1af15bf21099729a1d04486de701df753e187e07b786"
     },
     {
       "path": "v2-source/pages/fun.js",
@@ -332,7 +332,7 @@
     },
     {
       "path": "v2-source/pages/site-pages.css",
-      "sha256": "8179fa1219b79fe9099a9cc1c3bd3b79ba5ed63a9c42c6c7aabf059b6ea1faa4"
+      "sha256": "9748c3c55f9f88bd964f457ed0d5778049d9a7a008e063e6a2df842541e327db"
     },
     {
       "path": "v2/page-registry.js",

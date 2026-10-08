@@ -117,7 +117,8 @@ export function createPageData(native) {
   async function entity(type,slug) {
     if(!/^[a-z0-9][a-z0-9-]{0,127}$/.test(slug||''))throw Object.assign(new Error('Missing entity'),{status:404});
     const result=await loadEntityDetail({client,dataBaseUrl:entityBase,entityType:type,slug});
-    return {...result,detail:{...result.detail,local_asset:result.assetUrl,recent_races:result.detail.recent_races.map(r=>({...r,race_uid:String(r.race_uid).trim().toLowerCase().replace(/\.json$/i,'').replace(/[^a-z0-9._-]+/g,'_').replace(/^[._-]+|[._-]+$/g,'')}))}};
+    const teams=result.detail.teams?.length?(await catalog().catch(()=>null))?.teams:[];
+    return {...result,detail:{...result.detail,local_asset:result.assetUrl,teams:result.detail.teams?.map(team=>({...team,local_asset:teams?.find(item=>item.public_id===team.public_id)?.local_asset||null}))??result.detail.teams,recent_races:result.detail.recent_races.map(r=>({...r,race_uid:String(r.race_uid).trim().toLowerCase().replace(/\.json$/i,'').replace(/[^a-z0-9._-]+/g,'_').replace(/^[._-]+|[._-]+$/g,'')}))}};
   }
   const votes = createHourlyVotesClient({apiBase:publicUrl('hourly-votes-api'), request:fetch,
     getLegacyVoterId:()=>{try {const value=JSON.parse(localStorage.getItem('hourlyVoteVoterId')||'null');return value?.value || '';}catch{return '';}}});

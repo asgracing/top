@@ -230,3 +230,15 @@
  .site-document-card {padding:13px;gap:10px;}
  .site-reader {padding:13px;font-size:14px;}
 }
+
+/* Absolute thumbnails reserve width without adding to the row's line box. */
+.entity-roster-name,.entity-team-name {position:relative;display:inline-block;padding-left:28px;white-space:nowrap;}
+.entity-miniature {position:absolute;left:0;top:50%;transform:translateY(-50%);width:20px;height:20px;display:grid;place-items:center;border-radius:3px;background:#213547;color:#bed1e0;font-size:9px;font-weight:700;line-height:1;overflow:hidden;}
+.entity-miniature img {position:absolute;inset:0;width:100%;height:100%;object-fit:cover;}
+.entity-miniature img[hidden] {display:none;}
+.team-miniature img {object-fit:contain;background:#162633;}
+.entity-result-track {position:relative;display:block;padding-left:50px;min-width:0;}
+.entity-track-miniature {position:absolute;left:0;top:50%;transform:translateY(-50%);width:42px;height:29px;object-fit:cover;border-radius:2px;}
+
+.entity-team-name {min-width:0;max-width:calc(100% - 25px);}
+.entity-name-text {display:block;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;}

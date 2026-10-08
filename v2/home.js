@@ -302,6 +302,6 @@ if(reduced.matches||seenIntro){document.documentElement.classList.remove('home-b
 renderTable();$('race-vote').disabled=true;
 try{await import('./runtime/home.js?v=20261008profile1');setTimeout(applyHash,1500)}catch(error){console.error('V2 runtime unavailable',error);$('event-track').textContent=text('Не удалось загрузить данные','Could not load data');$('day-driver').textContent=text('Данные недоступны','Data unavailable');tableError=true;tableBusy=false;renderTable()}
 if(document.documentElement.dataset.v2Page){
-  const {startPage}=await import('./pages/controller.js?v=20261008profile1');
+  const {startPage}=await import('./pages/controller.js?v=20261008thumbs1');
   await startPage({native,presentation,showDialog,esc,text,date,number,rating,car,language,subscribe});
 }
