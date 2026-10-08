@@ -19,8 +19,12 @@
       "sha256": "0fc651235a8065c7a5851bbc3e98cdbebd839066d76bb2cb0c430e1f215bf7f8"
     },
     {
+      "path": "legal.css",
+      "sha256": "9b62a3b1599fab9b173ff2e0d1d6b8fdc94e89f74828f12e92c6b3b180852905"
+    },
+    {
       "path": "scripts/build-v2.mjs",
-      "sha256": "f02a3c34afed39b44bad7694f381e68b3cafc99406eff75a916ea60688130899"
+      "sha256": "50090f5609d8b6f7c6f043c398dcd6bf072db5a6f19216f4e26e4b69590db19f"
     },
     {
       "path": "scripts/generate-localized-pages.mjs",
@@ -49,6 +53,146 @@
     {
       "path": "src/pages/clubs-teams/catalog-page.js",
       "sha256": "16e2e61fc35dfb7b71309adfab0845fdc10f7176972a71fca4e4d4b0d730bf79"
+    },
+    {
+      "path": "styles.css",
+      "sha256": "0a1c71662ca06c964b430964b54799f0b0c06e834e44bbb3d341ad03cc7770cc"
+    },
+    {
+      "path": "styles/base.css",
+      "sha256": "9b5e04706ed5a07972d4816ca8e641d3861ab3fc3ad39609c462ef44e8ac8d7b"
+    },
+    {
+      "path": "styles/components/activity-controls.css",
+      "sha256": "5cb5240a2fce9a85986c8cf206f7bfd8760f360c440474fe091af97aa1508a90"
+    },
+    {
+      "path": "styles/components/activity-summary.css",
+      "sha256": "58e6e5150f82c2dabcb59c6fe038749f09730c6e4444cc39fffd62cdb2a148f6"
+    },
+    {
+      "path": "styles/components/buttons.css",
+      "sha256": "a6a10ffe78478ecc461232546f1deb58e2c904ae90a24fbe1bf132dc9900c699"
+    },
+    {
+      "path": "styles/components/clubs-teams-metrics.css",
+      "sha256": "f0c45d50894b754840a5acd22513cf9f7c56f32b970dcfdbbf0bd71401d25d78"
+    },
+    {
+      "path": "styles/components/driver-day-modal.css",
+      "sha256": "070f6ed3c5da7a5f7e408abd543fb06d3b0e1611156567f35c11e2edb3e9dba3"
+    },
+    {
+      "path": "styles/components/floating-widgets.css",
+      "sha256": "2615f085aab3bff50cce74158fe611fba05a107dfcd2ea9ce92f50ed4885b59a"
+    },
+    {
+      "path": "styles/components/footer.css",
+      "sha256": "d718e08e490adc255b8732fea325728dceede61ec34534cd1fe113d5265aa26b"
+    },
+    {
+      "path": "styles/components/hero-actions.css",
+      "sha256": "c2d1d73752b4f8c6ad1705fb156cb30efc2b0a2694c188739e3393d9443a3d6f"
+    },
+    {
+      "path": "styles/components/hero-foundation.css",
+      "sha256": "01a7965c0b778c5ddc5331e7be4a05eb4be1fa8d0d523ae585ce60da3207b8f2"
+    },
+    {
+      "path": "styles/components/hero-layout.css",
+      "sha256": "3508f85afb5a6c213ba406c399ead7e477f243e030f0439e7da85b09e4755792"
+    },
+    {
+      "path": "styles/components/hero-server-summary.css",
+      "sha256": "1d8520562c1631e622f3c23a6bdbff29cc4a015162935c332f6ae4ea11facaf3"
+    },
+    {
+      "path": "styles/components/hero-stats.css",
+      "sha256": "e96219e6478ecec93b7048d1fc443ef3feff8d8fdb0742ae03457ecaace0a228"
+    },
+    {
+      "path": "styles/components/hourly-event-modal.css",
+      "sha256": "60c0576f72b7a575968536dff8eb81999b67ea00e6a3ab6dbb7456b2604b4143"
+    },
+    {
+      "path": "styles/components/language-switch.css",
+      "sha256": "1aa59a06684f1e4d61917c2d8b702e29224392039f9b6d3b8367db3565bfedbd"
+    },
+    {
+      "path": "styles/components/modals.css",
+      "sha256": "9bddde2738b356e750a5863b5a0ac369edcc5f41961d510cf17dec9eb25c2199"
+    },
+    {
+      "path": "styles/components/pagination.css",
+      "sha256": "b13757b68d7c8d10c3e14ca5ce4987efe43d8155997b9d97dcccbba9ec39a78c"
+    },
+    {
+      "path": "styles/components/rating-palette.css",
+      "sha256": "c1ef13903c8d19cffc2582203d0218e2deaab7132741406ff138af17abea0eaa"
+    },
+    {
+      "path": "styles/components/responsive-accessibility.css",
+      "sha256": "0c6103989547b71a3911b91bfd3d197502abea4f6dc18e4e81c6788a5129b575"
+    },
+    {
+      "path": "styles/components/sections.css",
+      "sha256": "32b7b3bf7f7bad92c62a65f34ab6cd548894433f0b2d386f975d40b70a1bd89f"
+    },
+    {
+      "path": "styles/components/seo-content.css",
+      "sha256": "639399b30c240704ad8bf7e3e25152e554b85f86c5338576a5748ff0c3ce3230"
+    },
+    {
+      "path": "styles/components/server-players-modal.css",
+      "sha256": "16bef3f0a5ef7d353f76e7ed45bf9ac3a6770b58ba69e8674a93fde978ecc524"
+    },
+    {
+      "path": "styles/components/server-sticky-layout.css",
+      "sha256": "57e7a2c30483ef37e2a2efb1bc713a1d0788de60a917b25b7bb65d6e95d0fb20"
+    },
+    {
+      "path": "styles/components/site-background.css",
+      "sha256": "a490e17003ed93df2ef97d24b5099979c60b25b7c75d34a2023d8ae603334c11"
+    },
+    {
+      "path": "styles/components/support-announcements.css",
+      "sha256": "1aa2c3d38960c898201b52dbc75991c649a61d52af40406ef3f443221439d860"
+    },
+    {
+      "path": "styles/components/support-widget.css",
+      "sha256": "04dc486ec84b44b52e29b0f314be229674befa06b346727896d6096fc4729a20"
+    },
+    {
+      "path": "styles/components/table-controls.css",
+      "sha256": "3622932632534956ff263d9650574074007f8030f7e6ddfc3b50fa30134de0fd"
+    },
+    {
+      "path": "styles/components/tables.css",
+      "sha256": "f36cbd7dff24c47b8ae493f4ea8ff3b13fd99fbe5b64e10fd582c0029b954ef5"
+    },
+    {
+      "path": "styles/components/today-stats-modal.css",
+      "sha256": "1efc1be4454227e827094ea3563802b2cba3e50c0e5d62c7a201e90eb9fc0340"
+    },
+    {
+      "path": "styles/components/top-navigation.css",
+      "sha256": "96beaf44f7081af8478a291bb7cc2f18a51a67da53e9e0e3d2b52073b5084c77"
+    },
+    {
+      "path": "styles/components/top-three.css",
+      "sha256": "5b6b0a7162cd6180208b10f31001db20ac40a9af8be08ce1d1668d5325d97c78"
+    },
+    {
+      "path": "styles/responsive.css",
+      "sha256": "cc074083e06bad85ba555414238b1ef0e963627ed9e780e6d8dccb2acf41b280"
+    },
+    {
+      "path": "styles/tokens.css",
+      "sha256": "f0d72d04fe51cc177e9d9ea9bf29cccc74f8171458a832f40b73b3e1ba711eaa"
+    },
+    {
+      "path": "styles/utilities.css",
+      "sha256": "0d5b198993ff1a9848c4ff2d85711ea3d401fd78a37757e285dfb3904f6f19d4"
     },
     {
       "path": "v1-source/html/bans/index.html",

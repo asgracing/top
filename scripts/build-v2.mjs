@@ -15,6 +15,7 @@ if (process.env.ASG_V2_PRESENTATION_ONLY === '1') throw Error('Presentation-only
 const version = '20261006v2k';
 const runtimeVersion = '20261007v2release3';
 const presentationVersion = '20261008v2pages15';
+const legalVersion = '20261008metrika1';
 const buildInputs = new Map();
 const hash = value => createHash('sha256').update(value.replace(/\r\n/g,'\n')).digest('hex');
 const record = (path, value) => { buildInputs.set(path, hash(value)); return value; };
@@ -22,6 +23,21 @@ const read = async path => record(path, (await readFile(resolve(root, path), 'ut
 const readTemplate = async path => record('v1-source/html/'+path, await readV1Html(path));
 const {outputs:classicPages} = await renderLocalizedPages({readHtml:readTemplate, readSource:read});
 const readClassic = async path => classicPages.get(path) ?? readTemplate(path);
+// A normal, immutable stylesheet is easier for replay tools to fetch than
+// dozens of inline @import rules. Keep the original cascade layers and URLs.
+async function replayCss(path, ancestors = []) {
+  if (ancestors.includes(path)) throw Error('CSS import cycle: '+path);
+  let css = await read(path);
+  for (const match of [...css.matchAll(/@import\s+url\(["']([^"']+)["']\)\s*;/g)]) {
+    const imported = new URL(match[1], 'https://asgracing.ru/'+path);
+    if (imported.origin !== 'https://asgracing.ru') throw Error('External CSS import: '+path);
+    css = css.replace(match[0], await replayCss(imported.pathname.slice(1), [...ancestors,path]));
+  }
+  return css.replace(/@charset\s+["'][^"']+["'];/gi,'').replace(/url\((["']?)([^)"']+)\1\)/g,(match,quote,value)=>{
+    if (/^(?:data:|blob:|#)/i.test(value)) return match;
+    return `url("${new URL(value,'https://asgracing.ru/'+path).href}")`;
+  });
+}
 async function emit(path, value) {
   const target=resolve(outputRoot,path);
   const content=path.endsWith('.html')?value.replace(/[ \t]+(?=\r?$)/gm,''):value;
@@ -113,6 +129,12 @@ for (const language of ['ru','en']) {
   const classic = await readClassic(language==='ru'?'ru/index.html':'index.html');
   let head = classic.match(/<head>([\s\S]*?)<\/head>/i)[1];
   head=absoluteSourceLinks(head);
+  const runtimeStyles=[...head.matchAll(/<link\b[^>]*rel="stylesheet"[^>]*href="([^"?]+)[^"<>]*"[^>]*>/g)];
+  const runtimeCss=(await Promise.all(runtimeStyles.map(async match=>`@layer v1Runtime {\n${await replayCss(match[1].replace(/^\//,''))}\n}`))).join('\n');
+  const runtimeStylePath=`v2/styles/runtime-${hash(runtimeCss).slice(0,16)}.css`;
+  await emit(runtimeStylePath,runtimeCss);
+  for(const match of runtimeStyles)head=head.replace(match[0],'');
+  head+=`\n<link rel="stylesheet" href="/${runtimeStylePath}">\n`;
   // Consent links must resolve from every V2 depth and language.
   head=head.replace(/(<meta name="legal-base-path" content=")[^"]+/,`$1/v2/${language}/`);
   // V1's banner fitting must not observe the hidden legacy markup in V2.
@@ -120,8 +142,8 @@ for (const language of ['ru','en']) {
   head=head.replace(/<meta name="robots"[^>]*>/,'<meta name="robots" content="noindex,follow">')
     .replace(/<link\b[^>]*rel="(?:canonical|alternate)"[^>]*>/g,'')
     .replace(/(<meta property="og:url" content=")[^"]+/,`$1https://asgracing.ru/v2/${language}/`)
-    .replace(/(<link\b[^>]*rel="stylesheet"[^>]*href=")([^"?]+)([^"<>]*")([^>]*>)/g,(_,before,path,query)=>`<style>@import url("${new URL(path,'https://asgracing.ru/').pathname}${query.slice(0,-1)}") layer(v1Runtime);</style>`);
-  head += `\n<link rel="stylesheet" href="/v2/styles/design.css?v=${version}">\n<link rel="stylesheet" href="/v2/home.css?v=${presentationVersion}">\n<script>(()=>{try{if(!matchMedia('(prefers-reduced-motion: reduce)').matches&&!sessionStorage.getItem('asgV2IntroSeen'))document.documentElement.classList.add('home-booting')}catch{}setTimeout(()=>{document.documentElement.classList.remove('home-booting');const s=document.getElementById('v2-site-shell');if(s&&!document.querySelector('.is-open,dialog[open]'))s.inert=false},4500)})()</script>\n<script src="/legal.js?v=20260920locale1" defer></script>\n<script type="module" src="/v2/home.js?v=${presentationVersion}"></script>\n`;
+    ;
+  head += `\n<link rel="stylesheet" href="/v2/styles/design.css?v=${version}">\n<link rel="stylesheet" href="/v2/home.css?v=${presentationVersion}">\n<script>(()=>{try{if(!matchMedia('(prefers-reduced-motion: reduce)').matches&&!sessionStorage.getItem('asgV2IntroSeen'))document.documentElement.classList.add('home-booting')}catch{}setTimeout(()=>{document.documentElement.classList.remove('home-booting');const s=document.getElementById('v2-site-shell');if(s&&!document.querySelector('.is-open,dialog[open]'))s.inert=false},4500)})()</script>\n<script src="/legal.js?v=${legalVersion}" defer></script>\n<script type="module" src="/v2/home.js?v=${presentationVersion}"></script>\n`;
   // Preserve required legacy modal/controller nodes, outside the hidden source
   // host so real dialogs remain visible and accessible. No duplicate IDs.
   let oldBody = classic.match(/<body[^>]*>([\s\S]*)<\/body>/i)[1];

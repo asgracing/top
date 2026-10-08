@@ -58,6 +58,7 @@ for(const language of ['ru','en'])for(const path of legacyRoutes){
     html=`<!doctype html><html lang="${language}" data-site-layout="root" data-site-version="old"><head><meta charset="utf-8"><meta name="robots" content="noindex,follow"><title>ASG Racing</title></head><body><a href="${destination}">ASG Racing</a><script>const u=new URL(location.href);u.searchParams.delete('lang');location.replace(${JSON.stringify(destination)}+u.search+u.hash)</script></body></html>`;
   }
   html=html.replace(/<link\b[^>]*rel="(?:canonical|alternate)"[^>]*>/g,'').replace(/<meta\b[^>]*name="robots"[^>]*>/g,'');
+  html=html.replace(/(src="[^"<>]*\blegal\.js)(?:\?[^"<>]*)?"/g,'$1?v=20261008metrika1"');
   const current=routeHref(path==='events/'?'hourly/championship/':path,language,context);
   const canonical=pageRegistry.some(page=>page.target[language]===current)?`<link rel="canonical" href="${origin+current}">`:'';
   html=html.replace('</head>',`<meta name="robots" content="noindex,follow">${canonical}</head>`)

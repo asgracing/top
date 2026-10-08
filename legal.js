@@ -106,6 +106,8 @@
   };
 
   let metrikaLoaded = false;
+  let sessionConsent = null;
+  const metrikaDebug = ["1", "2"].includes(new URLSearchParams(location.search).get("_ym_debug"));
 
   function getStoredLanguage() {
     try {
@@ -259,15 +261,17 @@
 
   function readCookie(name) {
     const prefix = `${name}=`;
-    return document.cookie
+    try { return document.cookie
       .split(";")
       .map(item => item.trim())
       .find(item => item.startsWith(prefix))
-      ?.slice(prefix.length) || "";
+      ?.slice(prefix.length) || ""; } catch { return ""; }
   }
 
   function writeConsentCookie(payload) {
-    document.cookie = `${CONSENT_COOKIE_NAME}=${encodeURIComponent(payload)}; max-age=${CONSENT_COOKIE_MAX_AGE}; path=/; SameSite=Lax${getCookieDomain()}`;
+    try {
+      document.cookie = `${CONSENT_COOKIE_NAME}=${encodeURIComponent(payload)}; max-age=${CONSENT_COOKIE_MAX_AGE}; path=/; SameSite=Lax${getCookieDomain()}`;
+    } catch { /* Embedded tools may deny cookies; retain this page's choice. */ }
   }
 
   function parseConsent(rawValue) {
@@ -284,6 +288,7 @@
   }
 
   function readConsent() {
+    if (sessionConsent) return sessionConsent;
     const storageConsent = (() => {
       try {
         return parseConsent(localStorage.getItem(CONSENT_STORAGE_KEY) || "");
@@ -292,7 +297,9 @@
       }
     })();
     if (storageConsent) return storageConsent;
-    const cookieConsent = parseConsent(decodeURIComponent(readCookie(CONSENT_COOKIE_NAME) || ""));
+    let cookieConsent;
+    try { cookieConsent = parseConsent(decodeURIComponent(readCookie(CONSENT_COOKIE_NAME) || "")); }
+    catch { return null; }
     if (!cookieConsent) return null;
     try {
       localStorage.setItem(CONSENT_STORAGE_KEY, JSON.stringify(cookieConsent));
@@ -308,6 +315,7 @@
       analytics: Boolean(analytics),
       savedAt: new Date().toISOString()
     });
+    sessionConsent = JSON.parse(payload);
     try {
       localStorage.setItem(CONSENT_STORAGE_KEY, payload);
     } catch (error) {
@@ -369,28 +377,27 @@
       cookieDomains.add(`.${hostParts.slice(index).join(".")}`);
     }
 
-    document.cookie
+    let cookies = "";
+    try { cookies = document.cookie; } catch { /* Third-party storage unavailable. */ }
+    cookies
       .split(";")
       .map(item => item.split("=")[0]?.trim())
       .filter(Boolean)
       .forEach(name => {
         if (!cookieNameMatches(name)) return;
         cookieDomains.forEach(domain => {
-          expireCookie(name, domain, "/");
+          try { expireCookie(name, domain, "/"); } catch { /* Cookies blocked. */ }
         });
       });
 
-    Object.keys(localStorage).forEach(key => {
-      if (cookieNameMatches(key) || key.startsWith("_ym")) {
-        localStorage.removeItem(key);
-      }
-    });
-
-    Object.keys(sessionStorage).forEach(key => {
-      if (cookieNameMatches(key) || key.startsWith("_ym")) {
-        sessionStorage.removeItem(key);
-      }
-    });
+    for (const name of ["localStorage", "sessionStorage"]) {
+      try {
+        const storage = window[name];
+        Object.keys(storage).forEach(key => {
+          if (cookieNameMatches(key) || key.startsWith("_ym")) storage.removeItem(key);
+        });
+      } catch { /* Embedded tools may deny access to browser storage. */ }
+    }
   }
 
   function initMetrika() {
@@ -442,6 +449,11 @@
     const body = document.createElement("p");
     body.className = "asg-legal-banner-body";
     body.textContent = t("bannerBody");
+    if (metrikaDebug && !consent?.analytics) {
+      body.textContent += getLanguage() === "en"
+        ? " To check Metrica or select a goal button, allow analytics on this page."
+        : " Для проверки Метрики или выбора кнопки цели разрешите аналитику на этой странице.";
+    }
 
     const links = document.createElement("div");
     links.className = "asg-legal-link-row";
@@ -580,7 +592,7 @@
     const consent = readConsent();
     if (consent) {
       if (consent.analytics) initMetrika();
-      showBanner(false);
+      showBanner(metrikaDebug && !consent.analytics);
     } else {
       showBanner(true);
     }
@@ -612,6 +624,17 @@
       return Boolean(readConsent()?.analytics);
     }
   };
+
+  document.addEventListener("click", event => {
+    const banner = event.target.closest?.("a.home-partner-banner, a[data-home-partner], a[data-home-ad]");
+    if (!banner || !readConsent()?.analytics || !metrikaLoaded) return;
+    const destination = new URL(banner.href, location.href);
+    if (destination.hostname !== "dudarevmotorsport.ru") return;
+    window.ym(METRIKA_ID, "reachGoal", "dudarev_banner_click", {
+      site_version: document.documentElement.dataset.siteVersion || "old",
+      placement: matchMedia("(max-width: 640px)").matches ? "mobile" : "desktop"
+    });
+  }, true);
 
   init();
 })();
