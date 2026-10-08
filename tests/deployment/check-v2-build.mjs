@@ -32,8 +32,8 @@ try{
   const workspace=join(work,'source'),first=join(work,'first'),second=join(work,'second');
   await mkdir(workspace,{recursive:true});
   // Copy maintained inputs only. No public index/ru/legal/controller HTML.
-  for(const path of ['package.json','scripts','v1-source','v2-source','styles','styles.css','legal.css','app.js','hourly/app.js','hourly/championship/app.js','hourly/championship/history/app.js','src/pages/clubs-teams/catalog-page.js','v2/page-registry.js']){
-    const destination=join(workspace,path);await mkdir(dirname(destination),{recursive:true});await cp(join(root,path),destination,{recursive:true});
+  for(const path of ['package.json','package-lock.json','node_modules','scripts','v1-source','v2-source','styles','styles.css','legal.css','app.js','news-read-state.js','community/posts.js','account/driver-overlay.js','overlay/driver','hourly/app.js','hourly/championship/app.js','hourly/championship/history/app.js','src','v2']){
+    const destination=join(workspace,path);await mkdir(dirname(destination),{recursive:true});await cp(join(root,path),destination,{recursive:true,filter:source=>path!=='v2'||!/[\\/]v2[\\/](?:ru|en|runtime|boot|assets|styles|pages[\\/]views)(?:[\\/]|$)/.test(source)});
   }
   const run=out=>exec(process.execPath,['scripts/build-v2.mjs'],{cwd:workspace,env:{...process.env,ASG_V2_OUTPUT_DIR:out,ASG_V2_PRESENTATION_ONLY:'0'},maxBuffer:1024*1024});
   await run(first);

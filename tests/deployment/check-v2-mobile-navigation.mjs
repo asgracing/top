@@ -67,6 +67,7 @@ try {
     await page.locator('#v2-modal').waitFor({state:'visible'});
     assert.equal(await page.locator('#v2-mobile-menu').evaluate(n=>n.matches(':popover-open')),false);
     await page.locator('#v2-modal .modal-close').click();
+    await page.waitForFunction(()=>document.activeElement?.id==='v2-menu-trigger');
     assert.equal(await page.locator('#v2-menu-trigger').evaluate(n=>n===document.activeElement),true,'Return focus from rules to menu');
     await page.setViewportSize({width:667,height:375});await page.waitForFunction(()=>document.querySelector('.header>.navigation'));
     await page.setViewportSize({width:375,height:375});await page.waitForFunction(()=>document.querySelector('#v2-mobile-menu .navigation'));

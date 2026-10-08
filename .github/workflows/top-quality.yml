@@ -17,6 +17,7 @@ jobs:
       - uses: actions/setup-node@v4
         with:
           node-version: 20
+      - run: npm ci
       - run: npm run ci
       - name: Prepare root publication and URL-compatible fallback
         if: hashFiles('site-release.json') != ''

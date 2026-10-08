@@ -9,12 +9,13 @@ import {renderLocalizedPages} from './generate-localized-pages.mjs';
 import {readV1Html} from './v1-source.mjs';
 import {pageRegistry} from '../v2/page-registry.js';
 import {readSiteRelease} from './site-release.mjs';
+import {buildV2Boot} from './build-v2-boot.mjs';
 const root = resolve(import.meta.dirname, '..');
 const outputRoot = resolve(process.env.ASG_V2_OUTPUT_DIR || ((await readSiteRelease()).layout==='parallel'?root:resolve(root,'../tmp/site-v2-compilation')));
 if (process.env.ASG_V2_PRESENTATION_ONLY === '1') throw Error('Presentation-only builds are retired: rebuild V2 with its canonical runtime.');
 const version = '20261006v2k';
-const runtimeVersion = '20261008sr1';
-const presentationVersion = '20261008sr1';
+const runtimeVersion = '20261008load1';
+const presentationVersion = '20261008load1';
 const legalVersion = '20261008metrika2';
 const buildInputs = new Map();
 const hash = value => createHash('sha256').update(value.replace(/\r\n/g,'\n')).digest('hex');
@@ -88,6 +89,7 @@ await emit('v2/copy.js',`export default ${JSON.stringify(copy)};\n`);
   let css = await read('v2-source/design.css');
   for (const id of [...ids].sort((a,b)=>b.length-a.length)) css = css.replace(new RegExp(`#${id}(?![\\w-])`, 'g'),`#v2-${id}`);
   css = css.replace(/url\((['"]?)assets\//g,'url($1/assets/');
+  css = css.replaceAll('/assets/crown.png','/assets/v2-light/crown.webp').replaceAll('/assets/silverstone.jpg','/assets/v2-light/tracks/silverstone.webp').replaceAll('/assets/spa.jpg','/assets/v2-light/tracks/spa.webp');
   await emit('v2/styles/design.css',css);
 }
 {
@@ -112,7 +114,7 @@ for (const name of hooks) {
 runtime=runtime.replace('function updateAuthenticatedDriver(auth) {','function updateAuthenticatedDriver(auth) { v2Auth=auth;');
 // V2 owns table rendering and pagination. Hidden legacy tables must not start
 // deferred full-table downloads or duplicate visible controls.
-for(const name of ['renderLeaderboardTablePage','renderBestLapsTablePage','renderSafetyTablePage','renderClubsTeamsHomeTable']) {
+for(const name of ['renderLeaderboardTablePage','renderBestLapsTablePage','renderSafetyTablePage','renderClubsTeamsHomeTable','renderHourlyWinnerCard','renderOnlineWidget','renderDonationAlertsWidget']) {
   runtime=runtime.replace(new RegExp(`(function ${name}\\([^\\n]*\\) \\{\\n  v2SchedulePublish\\(\\);)`),'$1\n  return; // V2 renders this read model.');
 }
 // Transport belongs to app.js/the shared client, not to the presentation facade.
@@ -143,7 +145,7 @@ for (const language of ['ru','en']) {
     .replace(/<link\b[^>]*rel="(?:canonical|alternate)"[^>]*>/g,'')
     .replace(/(<meta property="og:url" content=")[^"]+/,`$1https://asgracing.ru/v2/${language}/`)
     ;
-  head += `\n<link rel="stylesheet" href="/v2/styles/design.css?v=${version}">\n<link rel="stylesheet" href="/v2/home.css?v=${presentationVersion}">\n<script>(()=>{try{if(!matchMedia('(prefers-reduced-motion: reduce)').matches&&!sessionStorage.getItem('asgV2IntroSeen'))document.documentElement.classList.add('home-booting')}catch{}setTimeout(()=>{document.documentElement.classList.remove('home-booting');const s=document.getElementById('v2-site-shell');if(s&&!document.querySelector('.is-open,dialog[open]'))s.inert=false},4500)})()</script>\n<script src="/legal.js?v=${legalVersion}" defer></script>\n<script type="module" src="/v2/home.js?v=${presentationVersion}"></script>\n`;
+  head += `\n<link rel="stylesheet" href="/v2/styles/design.css?v=${presentationVersion}">\n<link rel="stylesheet" href="/v2/home.css?v=${presentationVersion}">\n<script src="/legal.js?v=${legalVersion}" defer></script>\n<script type="module" src="/v2/boot/home.js?v=${presentationVersion}"></script>\n`;
   // Preserve required legacy modal/controller nodes, outside the hidden source
   // host so real dialogs remain visible and accessible. No duplicate IDs.
   let oldBody = classic.match(/<body[^>]*>([\s\S]*)<\/body>/i)[1];
@@ -154,6 +156,8 @@ for (const language of ['ru','en']) {
   const modals=topModals.map(n=>oldBody.slice(n.start,n.end)).join('\n');
   oldBody=edit(oldBody,topModals.map(n=>({start:n.start,end:n.end,value:''})));
   oldBody=oldBody.replace(/id="top-nav"/,'id="v1-source-nav"').replace(/class="top-nav-actions"/,'class="v1-source-actions"');
+  // Hidden legacy controllers need these nodes, not their eager image requests.
+  oldBody=oldBody.replace(/<img\b[^>]*>/gi,tag=>tag.replace(/\b(src|srcset)=/gi,'data-runtime-$1=').replace(/\bfetchpriority="high"/gi,''));
   // Searchable SEO content is static and visible before JavaScript/data loads.
   const seoNodes=nodes(classic).filter(n=>n.attrs.class?.split(' ').includes('seo-intro'));
   const seo=seoNodes.map(n=>classic.slice(n.start,n.end).replaceAll('seo-intro-title','v2-seo-intro-title')).join('');
@@ -178,6 +182,7 @@ for (const [screen,path] of [['moderation','moderation/index.html'],['ops','port
   controlMarkup[screen]=html.match(/<main\b[^>]*>([\s\S]*?)<\/main>/i)[1];
 }
 await emit('v2/pages/control-content.js',`export default ${JSON.stringify(controlMarkup)};\n`);
-for (const path of ['scripts/build-v2.mjs','scripts/generate-localized-pages.mjs','scripts/v1-source.mjs','scripts/seo/pages.mjs','scripts/seo/html-source.mjs','scripts/v2-information-content.mjs','v1-source/manifest.json','v2/page-registry.js']) await read(path);
+await buildV2Boot({root,outputRoot,read,emit});
+for (const path of ['scripts/build-v2.mjs','scripts/build-v2-boot.mjs','package.json','package-lock.json','scripts/generate-localized-pages.mjs','scripts/v1-source.mjs','scripts/seo/pages.mjs','scripts/seo/html-source.mjs','scripts/v2-information-content.mjs','v1-source/manifest.json','v2/page-registry.js']) await read(path);
 await emit('v2/build-inputs.json',JSON.stringify({schemaVersion:1,runtimeVersion,inputs:[...buildInputs].sort(([a],[b])=>a.localeCompare(b)).map(([path,sha256])=>({path,sha256}))},null,2)+'\n');
 console.log('Built complete V2 RU/EN over canonical runtime and maintained V1 inputs; fixture datasets excluded.');

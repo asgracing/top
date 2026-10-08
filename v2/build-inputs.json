@@ -1,10 +1,18 @@
 {
   "schemaVersion": 1,
-  "runtimeVersion": "20261008sr1",
+  "runtimeVersion": "20261008load1",
   "inputs": [
     {
+      "path": "account/driver-overlay.js",
+      "sha256": "9802cc3ee867502a4cda183c9ca626c3af3393cb7fd192d17e201b682d908749"
+    },
+    {
       "path": "app.js",
-      "sha256": "d5ba752eeb5c97f31add4e95f04dcdb5870a2327a745bb9ab8362288124956c8"
+      "sha256": "1b8f774b3acf6cadb9baf81e8b21e3205bbf3569ed29f6151bb802db9dad940e"
+    },
+    {
+      "path": "community/posts.js",
+      "sha256": "cf302da0b4241c8d11c48331b492b12a8fe5326d0a0fbd823da839091c7cf89f"
     },
     {
       "path": "hourly/app.js",
@@ -23,8 +31,24 @@
       "sha256": "9b62a3b1599fab9b173ff2e0d1d6b8fdc94e89f74828f12e92c6b3b180852905"
     },
     {
+      "path": "news-read-state.js",
+      "sha256": "4d12c96110dcfe5b3ec94978d9a975cfff0dcdd0c75a988d148f54ad65288662"
+    },
+    {
+      "path": "package-lock.json",
+      "sha256": "651dcce126a6501556a0ef06361cceeebd3bd445e7c22551aca25a08415b90ae"
+    },
+    {
+      "path": "package.json",
+      "sha256": "66d198a505e59d02b29cec00b3f4742e567831e34b152c113c8da92e45419934"
+    },
+    {
+      "path": "scripts/build-v2-boot.mjs",
+      "sha256": "eb1c13b5ee3304b18f64797bc7e38c0981d153f397d79bf100ee19849116e585"
+    },
+    {
       "path": "scripts/build-v2.mjs",
-      "sha256": "5e4923d0070d42fea18577d246968157cca9cb207f6a405d3549fe9cd3e57d01"
+      "sha256": "e68d47ff8349addcc60f2e16897fb9c52f03677199ba168ace123acb629f7ebb"
     },
     {
       "path": "scripts/generate-localized-pages.mjs",
@@ -48,11 +72,227 @@
     },
     {
       "path": "scripts/v2-runtime-facade.txt",
-      "sha256": "03f47e06fab4a9677f0b39ded523fe857856e3f9f1a78023b9364277f6676eb7"
+      "sha256": "5cdc7eb2342716b75e84d4bec63f3353f3378d5b068fe151790f5e8771867323"
+    },
+    {
+      "path": "src/features/auth/clubs-teams-auth-model.js",
+      "sha256": "a25e52a365514f354e6034c50a96278d9c685556164ff685dd3ff4f78262d2fb"
+    },
+    {
+      "path": "src/features/auth/header-auth.js",
+      "sha256": "c01d153c74435f6b22a672c4ff69f01467946d71248ad813ae4e8b8cb642d2bd"
+    },
+    {
+      "path": "src/features/hourly/announcement-model.js",
+      "sha256": "cc02a6b4ae29fd50c9fa45e0c62dd6acde9f3b8af46475216194119c9fcd65d2"
+    },
+    {
+      "path": "src/features/hourly/special-event.js",
+      "sha256": "c9e776323760dead27aa14eac44dab682b099a541b97fd49cd4aa18e6ba00f08"
+    },
+    {
+      "path": "src/features/server-status/freshness.js",
+      "sha256": "f49c74ffe6a0928890041c9f453ef0a14d11f0692859b532ce938a9edb583bc7"
+    },
+    {
+      "path": "src/features/server-status/track-background.js",
+      "sha256": "398fc7d77d46c5fd6261f22b47a11fb4955437323d9f0f686aceb2a084e2263d"
+    },
+    {
+      "path": "src/features/stats/table-engine.js",
+      "sha256": "4304c9480ac7d039c552d4b8dfa1446d179169049fed11ae47c32bfc7e291240"
+    },
+    {
+      "path": "src/pages/account/account.js",
+      "sha256": "944fef7198e0d6cf32c0fa59b9bbd4d4e6a3796c7c3d4e7b744d9ab660524236"
+    },
+    {
+      "path": "src/pages/account/clubs-teams-command-model.js",
+      "sha256": "b0fbd80bbd7a55f2792487067338b4eb28a8b94923c9f98192724794039f618f"
+    },
+    {
+      "path": "src/pages/account/logo-upload-model.js",
+      "sha256": "175ae80933376e9cf609bee7e3beb036e8ee191205f506bd00cf0d11bff928c9"
+    },
+    {
+      "path": "src/pages/account/pilot-search-model.js",
+      "sha256": "84ee865623fbffeef6e4224906ea043f64901f775f1071c4003bdaeae2018695"
+    },
+    {
+      "path": "src/pages/cars/model.js",
+      "sha256": "c1b40b7654fe38255982c26fc3b180b5cbdb68de3ce086fef58472a2a6ccfef3"
+    },
+    {
+      "path": "src/pages/clubs-teams/catalog-model.js",
+      "sha256": "2add2daed43153ba76a4c299227ba3d38c0734e9681e66daa44ffc17253ab4eb"
     },
     {
       "path": "src/pages/clubs-teams/catalog-page.js",
       "sha256": "16e2e61fc35dfb7b71309adfab0845fdc10f7176972a71fca4e4d4b0d730bf79"
+    },
+    {
+      "path": "src/pages/clubs-teams/detail-model.js",
+      "sha256": "29864d6226b5376b033330aa5cf1d9d0749c9653fec390dea2fa49f2d335a714"
+    },
+    {
+      "path": "src/pages/clubs-teams/rating-model.js",
+      "sha256": "6d097b7dae36df49ba76188f8fe29553f1977efbaa28f9b2c83fe9067ea59b73"
+    },
+    {
+      "path": "src/pages/community/feed-model.js",
+      "sha256": "fdb68120509dd9d588d30dc665efc5a146c802284a89955391a84075eb4aac52"
+    },
+    {
+      "path": "src/pages/community/post-view.js",
+      "sha256": "7548ded219811fabc222be4c103da4ad7b07f8d8736192b009f158840d86b230"
+    },
+    {
+      "path": "src/pages/driver/achievements-model.js",
+      "sha256": "faa2e27f277e00ff355b456291dc21311ea672d25e612b07fe6ee321aad56795"
+    },
+    {
+      "path": "src/pages/driver/achievements-widget.js",
+      "sha256": "fd5e824f07e06dc7605b9e95ff7f8480b2d1acc63869bb1f739206ca19844660"
+    },
+    {
+      "path": "src/pages/home/deferred-sections.js",
+      "sha256": "1f6647e9772a0c1a7a1874e8c1ab6593b0a68b7dbddcd64ab189985828bd96ad"
+    },
+    {
+      "path": "src/pages/home/index.js",
+      "sha256": "1e94863c42d99bf948aad197ce7e3ef17f5b452dd0a172f8a0e71da8774cf15a"
+    },
+    {
+      "path": "src/pages/home/stats-config.js",
+      "sha256": "bfa8f4874d5ddf2a29b4f45d16ab9885d2ea496d883dcb42d799d26acad62969"
+    },
+    {
+      "path": "src/pages/home/stats-model.js",
+      "sha256": "403c819ec9c08661158a0e717ff7d13e1a5fd59c6dd9a4185c64fc36c5fb604e"
+    },
+    {
+      "path": "src/pages/home/stats-tabs-controller.js",
+      "sha256": "b50787bbae031cf60119acf4a9edf0a2d588ff4fc18148bc05c5078f86b02397"
+    },
+    {
+      "path": "src/pages/home/top-guide.js",
+      "sha256": "b39f2cc7bda5121a4327265a99c46c5bb794d50c26a875b8ed672b9e5e3203e0"
+    },
+    {
+      "path": "src/pages/home/view-state-config.js",
+      "sha256": "1c78c95cf12d5471bbe0f4a349cdcec63bfb88d8e0d95f1084340281264c60a3"
+    },
+    {
+      "path": "src/pages/hourly/championship-status.js",
+      "sha256": "96415af58ba08db5c95927512e19cf152cb2dd4626ba18acdb152ab8bcb7e14c"
+    },
+    {
+      "path": "src/pages/moderation/moderation-model.js",
+      "sha256": "af5262edad7a6fea23fd22c07cccec3fd4029297c2439b36a1e85355046f3d06"
+    },
+    {
+      "path": "src/pages/moderation/moderation-page.js",
+      "sha256": "771702ea5a0b67812b275d32c42167919bef913fee7c8ff3e7356fa8e5dcb1a1"
+    },
+    {
+      "path": "src/pages/moderation/race-number-review.js",
+      "sha256": "95155642abd1aeb7d9d55ebfdfa18e76d12ca2c230d48b7f76102371d3c4ba24"
+    },
+    {
+      "path": "src/pages/portal-ops/portal-ops-model.js",
+      "sha256": "400b44c14fcc6c83a4d57964ef1013aae1cca39c5b7b4267d7dbc4ba3cead047"
+    },
+    {
+      "path": "src/pages/portal-ops/portal-ops-page.js",
+      "sha256": "ddec3f2d5decff3f18aacf2a32ab72263d7e0970ee7cda22a0c94bbc47401104"
+    },
+    {
+      "path": "src/pages/races/model.js",
+      "sha256": "9f94f4b7e39cc21e178954cc7a060f62ca8a9aa7f111f8cd1caf9ef8294fd90c"
+    },
+    {
+      "path": "src/runtime/application-bootstrap.js",
+      "sha256": "32dc7cf16849279a5e7541895113db78f931d8f843bf51752566b9a49bc35b77"
+    },
+    {
+      "path": "src/runtime/page-context.js",
+      "sha256": "1ef6009a9f6289688aba7d8ad447836fd26955a6774d45e6865b6de67f30ba96"
+    },
+    {
+      "path": "src/runtime/page-orchestrator.js",
+      "sha256": "79d407c43e3a6af1262e109c27936227aa9adca4d36fa65aa4095e2ba4b61a82"
+    },
+    {
+      "path": "src/shared/collapsible-widget.js",
+      "sha256": "ce20cd2de053093e4a7c070bf1029aef1e1b0098474e7e5cfef02efd98c217dd"
+    },
+    {
+      "path": "src/shared/data-schema.js",
+      "sha256": "d13d130b17e119acbb4e28c20749985f964b0abd818bc707b44e31c23ebac962"
+    },
+    {
+      "path": "src/shared/feature-store.js",
+      "sha256": "467f142bb3cecdc67c302ded3ef238921a99851cad92ba0581c8b04356d75bdb"
+    },
+    {
+      "path": "src/shared/hourly-votes-client.js",
+      "sha256": "e512d4bc2b56773c918c5244a3bc8dab8a059e726a4a797da20987eb928888a5"
+    },
+    {
+      "path": "src/shared/http-client.js",
+      "sha256": "24d03fb7bb208d6d239598c370330c89d8702a17c08edfa2c0156a15b8c4daa5"
+    },
+    {
+      "path": "src/shared/lifecycle.js",
+      "sha256": "6b8bf326323d47efe54464ad268aafba07b65bc741e8b27282bdb35be22ac229"
+    },
+    {
+      "path": "src/shared/localized-page.js",
+      "sha256": "7edeb751cb64749075498f4e2db06c1d80495679e20e699ec298ca12267c6c34"
+    },
+    {
+      "path": "src/shared/modal-controller.js",
+      "sha256": "cd4a52932264349110bf32d5cbc4dea1fd40523844483d6714155c1878c93d8b"
+    },
+    {
+      "path": "src/shared/news-feed-model.js",
+      "sha256": "1d036f63852e450365278da7d2260c43926cb4d80d627a7c8b1caadaa629f708"
+    },
+    {
+      "path": "src/shared/query-cache.js",
+      "sha256": "bdf7cdab4436b15579a3aa9a30c30dacfd470071fb616916c9f70409b561729e"
+    },
+    {
+      "path": "src/shared/rating-format.js",
+      "sha256": "01d4447039cffc8f7ab14ac939186fd0fa032a1c5e38db361d5e8bb1c49772bf"
+    },
+    {
+      "path": "src/shared/runtime-config.js",
+      "sha256": "0c63028668f18659a4bee3747d6729c7dc86bf28daf3f978616563b9289eb34e"
+    },
+    {
+      "path": "src/shared/safe-dom.js",
+      "sha256": "427f3825881d5d09754cea49fb779dffbc2dbf4be354aa2de8817555d15e87c6"
+    },
+    {
+      "path": "src/shared/storage.js",
+      "sha256": "7e371b9c7e07e3e65e65cecac62dffb8a1dc900288c7f4b43ca4cc99a8996d26"
+    },
+    {
+      "path": "src/shared/table-model.js",
+      "sha256": "71f411340eeed42db1053101b526488ca5b0dd51c5bd78e8e7162717334717a2"
+    },
+    {
+      "path": "src/shared/team-racing-client.js",
+      "sha256": "d68a6da2c94ea9e66cfa699482108d8b29c0516cb212f27048497d6ae862cb0c"
+    },
+    {
+      "path": "src/shared/team-racing-results-view.js",
+      "sha256": "47be7995a9b17d2cc7d131a19ecae5c92407d8e703d6ebea9966527eae7bb911"
+    },
+    {
+      "path": "src/shared/time.js",
+      "sha256": "251614db3fa6325c103ad26a0dce4e159466f9ec50a0c46da4a646d2b5ff45f0"
     },
     {
       "path": "styles.css",
@@ -335,8 +575,88 @@
       "sha256": "9748c3c55f9f88bd964f457ed0d5778049d9a7a008e063e6a2df842541e327db"
     },
     {
+      "path": "v2/guide.js",
+      "sha256": "544744ce8e66b2f7c971e731c557e953879ec32164ca6ccb9f2a225f065546c2"
+    },
+    {
+      "path": "v2/header.js",
+      "sha256": "3c460ee39d2ee074cd806903dbe2d9faec3b4901b78b3cc0646e30ab4188d2b4"
+    },
+    {
+      "path": "v2/home.js",
+      "sha256": "a8d3a19e1b8340e601549f778ae651000598db7758e27a06a6f421ef33125759"
+    },
+    {
+      "path": "v2/mobile-navigation.js",
+      "sha256": "0c852303b4fdcf7b9743909bfac6678ae91f97ca10e0ce37047ab5eb8247eb63"
+    },
+    {
+      "path": "v2/models.js",
+      "sha256": "8af9b69972fa15e330e05aef7a163d1764e3b36dda4bc9ef8acb77dddf3434cc"
+    },
+    {
+      "path": "v2/motion.js",
+      "sha256": "4c82c064698b758280e20bdb54b5483485282ed7d891f2c755af3dda0e625649"
+    },
+    {
       "path": "v2/page-registry.js",
       "sha256": "2effdf2e4d73b6caef7cf14e3ceb89b9969fd4bf686ecf2b90ab64e23fb9b68e"
+    },
+    {
+      "path": "v2/pages/account.js",
+      "sha256": "3dbabb4a4ef8aa10a92c49120eaac0cc52f668c515002f948f91dd13e39f1e04"
+    },
+    {
+      "path": "v2/pages/bans-model.js",
+      "sha256": "efb2b5bc64d89ade2c8311791d73f17d29ce9a8c40c60e3482837c459c2c7333"
+    },
+    {
+      "path": "v2/pages/cars-laps-model.js",
+      "sha256": "e86eeed51c2d288a05e35ce2f72da7f1a79671a1fdd4f5b7c4ab92cb14219c06"
+    },
+    {
+      "path": "v2/pages/community-client.js",
+      "sha256": "335694a3a1013e9bb792f673ff5f30ed533dcf56b0e9ddf6b529cda8d916dd5d"
+    },
+    {
+      "path": "v2/pages/control.js",
+      "sha256": "e4fe455089e5966803e0a7a62d87acee5c44019b89e79e54c8157d2627f64616"
+    },
+    {
+      "path": "v2/pages/controller.js",
+      "sha256": "0415ad843c04a3b999a5cbab0d960651530ee195fed40dbd6bc675ae3b93fc05"
+    },
+    {
+      "path": "v2/pages/data.js",
+      "sha256": "79bc8ab1f15133685e80032223b58b785f1346de61fdd435f849919b847b4de3"
+    },
+    {
+      "path": "v2/pages/editorial-model.js",
+      "sha256": "40bc5640b21e2c46281c7dae685d47fe844ebd89f8897f24e7452625293b8a95"
+    },
+    {
+      "path": "v2/pages/entity-thumbnails.js",
+      "sha256": "264784e3565d30730536ff8475d77fa1fdcb47851f3f96762d0b99e9784a1123"
+    },
+    {
+      "path": "v2/presentation.js",
+      "sha256": "41ee79035f04268740f5b17174b39a31bdec9c1d76ff1e76bc5177051fb97f2a"
+    },
+    {
+      "path": "v2/recent-races.js",
+      "sha256": "48e60210c2c7c6ee7c48bb143e31342207e25cb6e6419cd79b7a28dd9d720429"
+    },
+    {
+      "path": "v2/routes.js",
+      "sha256": "f8bc2d4463652396709999b941e5189dd8df75973c6aaa7be44fd14a55b8b8b5"
+    },
+    {
+      "path": "v2/server-session.js",
+      "sha256": "bb9748cd57b7e96199655d06271a9310a34a3c451d560d9247f1a28884208c77"
+    },
+    {
+      "path": "v2/site-routing.js",
+      "sha256": "0691514bd2169d6f9231d63bea70a8bf6b4c793adde432290f6c25d7143d09c3"
     }
   ]
 }

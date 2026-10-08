@@ -1,6 +1,25 @@
 // Build-only facade: lexical access to the canonical controllers/read models.
 let v2Auth=null;
 let v2PublishPending=false;
+let v2AffiliationsPromise=null,v2BestlapMetadataPromise=null;
+const v2ClubSnapshots=new Map();
+function v2LoadAffiliations() {
+  return v2AffiliationsPromise ||= loadDriverAffiliations().then(({affiliations,entities})=>{
+    driverAffiliations=affiliations;clubsTeamsEntityDetails=entities;v2SchedulePublish();
+  }).catch(error=>{v2AffiliationsPromise=null;throw error;});
+}
+function v2LoadBestlapMetadata() {
+  return v2BestlapMetadataPromise ||= (async()=>{
+    const meta=getTopDataV2TableMeta('bestlaps')||{};
+    const [tracks,leaders]=await Promise.all([
+      loadTopDataV2Json(meta.tracks||'tracks/bestlaps.json').catch(()=>null),
+      loadTopDataV2Json(meta.track_leaders||'tracks/bestlap-leaders.json').catch(()=>null)
+    ]);
+    bestlapTracksData=Array.isArray(tracks?.items)?tracks.items:[];
+    bestlapTrackLeadersData=Array.isArray(leaders?.items)?leaders.items:[];
+    v2SchedulePublish();
+  })().catch(error=>{v2BestlapMetadataPromise=null;throw error;});
+}
 function v2SchedulePublish() {
   if(v2PublishPending)return;
   v2PublishPending=true;
@@ -26,6 +45,7 @@ installRuntime({
   translate:t,track:humanizeTrackName,formatDate:value=>formatDateTimeLocal(value,currentLang),
   affiliation:(row,type)=>renderDriverAffiliation(row,type).replace(/href="([^"]+)"/g,(_,href)=>'href="'+localizedPageHref(href,currentLang)+'"'),elo:renderEloBadge,sr:renderSafetyBadge,car:getResultCarName,
   special:data=>getSpecialEventPresentation(data,currentLang),
+  prepareAffiliations:()=>IS_V2_HOME?v2LoadAffiliations():Promise.resolve(),
   eventSr:()=>getServerSrRequirement('hourly',resolveNamedServerStatus(serverStatusData,'hourly')),
   winner:race=>getRaceWinnerResult(race),profile:loadDriverProfileCached,
   driverTitle:loadDriverTitle,steamAvatar:loadDriverSteamAvatar,driverRank:getDriverRankInfo,isBanned:isDriverBanned,
@@ -59,16 +79,24 @@ installRuntime({
   openServer:(key,trigger)=>{selectedServerPlayersKey=key;serverPlayersModalMode='serverPlayers';serverPlayersModalController?.open(trigger)},
   openServers:trigger=>{serverPlayersModalMode='summary';serverPlayersModalController?.open(trigger)},
   vote:()=>{if(isTeamRace(hourlyAnnouncementData)){location.assign(teamRaceUrl(hourlyAnnouncementData,currentLang));return}return hourlyVoteAlreadyVoted?submitHourlyHeroUnvote():submitHourlyHeroVote()},
-  loadClubs:async context=>{const {loadPublicRatingSnapshot}=await clubsTeamsRatingModelPromise;return loadPublicRatingSnapshot({client:{requestJson},dataBaseUrl:CLUBS_TEAMS_DATA_BASE_URL,context})},
+  loadClubs:context=>{
+    if(!v2ClubSnapshots.has(context))v2ClubSnapshots.set(context,(async()=>{
+      const {loadPublicRatingSnapshot}=await clubsTeamsRatingModelPromise;
+      const snapshot=await loadPublicRatingSnapshot({client:{requestJson},dataBaseUrl:CLUBS_TEAMS_DATA_BASE_URL,context});
+      if(context==='general'){homeClubsTeamsSnapshot=snapshot;homeClubsTeamsError=false;v2SchedulePublish();}
+      return snapshot;
+    })().catch(error=>{v2ClubSnapshots.delete(context);throw error;}));
+    return v2ClubSnapshots.get(context);
+  },
   loadTable:async(tab,page,track,search,sort)=>{
-    if(tab==='bestlaps')bestlapsTrackFilter=track;
+    if(tab==='bestlaps'){bestlapsTrackFilter=track;if(IS_V2_HOME)await v2LoadBestlapMetadata();}
     if(search||sort){const rows=await loadFullTopDataV2Table(tab);return {items:rows,full:true,total_items:rows.length}}
     if(tab==='safety'){
       const meta=getTopDataV2TableMeta(tab);
       if(page===1&&!search&&!sort&&safetyData.length>=10)return {items:safetyData.slice(0,10),total_items:meta?.total_items??safetyData.length};
       const rows=await loadFullTopDataV2Table(tab);return {items:rows,full:true,total_items:rows.length};
     }
-    const result=await loadServerPagedTopDataV2Table(tab,page);
+    const result=await loadServerPagedTopDataV2Table(tab,page,{preferPages:IS_V2_HOME});
     return {...result,total_items:result?.totalItems??result?.total_items??0};
   },
   hydrateWinner:async race=>{const [profile,details]=await Promise.all([race.winner_public_id?loadDriverProfileCached(race.winner_public_id).catch(()=>null):null,loadRaceDetailsCached(race).catch(()=>null)]);return {profile,details}},

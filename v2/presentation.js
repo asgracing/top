@@ -45,7 +45,7 @@ export function createPresentation({$,native,getModel,esc,text,label,date,number
   async function loadProfile(row,kind,trigger){
     const ticket=++request;parent=kind==='driver'?null:profile;
     display(name(row),`<p role="status">${text('Загрузка профиля…','Loading profile…')}</p>`,kind,trigger);
-    try{const [p,title]=await Promise.all([native().profile(row.public_id),kind==='driver'?native().driverTitle(row.public_id).catch(()=>undefined):null]);if(ticket!==request||!$('modal').open)return;profile={...row,...p,public_id:row.public_id,achievementTitle:title};
+    try{const [p,title]=await Promise.all([native().profile(row.public_id),kind==='driver'?native().driverTitle(row.public_id).catch(()=>undefined):null,kind==='driver'?native().prepareAffiliations().catch(()=>{}):null]);if(ticket!==request||!$('modal').open)return;profile={...row,...p,public_id:row.public_id,achievementTitle:title};
       if(kind==='driver'){const rank=native().driverRank(profile)?.rank||profile.summary?.championship_rank||profile.championship_rank||row.rank;$('modal-title').textContent=name(profile)+' · '+text('Позиция','Position')+' '+(rank?'#'+rank:'—');$('modal-body').innerHTML=driverHtml(profile)}
       else {historyView={kind:kind==='driver-elo'?'elo':'sr',period:'all',grid:'medium',offset:0};renderHistory()}
     }catch{if(ticket===request&&$('modal').open)$('modal-body').innerHTML=`<p class="v2-error">${text('Профиль временно недоступен.','Profile temporarily unavailable.')}</p><button class="button" data-profile-retry>${text('Повторить','Retry')}</button><a class="button" href="${driverHref(row.public_id)}">${text('Профиль пилота','Driver profile')} ↗</a>`}

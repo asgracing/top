@@ -1,7 +1,7 @@
 import copy from './copy.js?v=20261006v2k';
 import { subscribe, getRuntime } from './bridge.js?v=20261006v2k';
 import {eventKind,normalizeTablePage,normalizeSafetyRow,paginationPages,serverSrRestriction} from './models.js?v=20261006v2k';
-import {createPresentation} from './presentation.js?v=20261008sr1';
+import {createPresentation} from './presentation.js?v=20261008load1';
 import {createRecentRaces} from './recent-races.js?v=20261008v2pages15';
 import {createHeader} from './header.js?v=20261008mobile1';
 import {serverSessionLabel} from './server-session.js?v=20261008widgets1';
@@ -23,7 +23,7 @@ const native=()=>getRuntime();
 const classic=path=>v2Route(path,language);
 const affiliation=(row,kind)=>v2EntityLinks(native().affiliation(row,kind),language);
 const driverHref=id=>classic('driver/')+'?id='+encodeURIComponent(id);
-let model=null,tab='leaderboard',page=1,track='monza',type='teams',context='general',tableRows=[],tableTotal=0,tableRequest=0,tableBusy=false,tableError=false,sortKey='',sortDirection=1;
+let model=null,tab='leaderboard',page=1,track='monza',type='teams',context='general',tableRows=[],tableTotal=0,tableRequest=0,tableBusy=!isSubpage,tableError=false,sortKey='',sortDirection=1,rankingRequested=false,rankingStarted=false;
 let winnerExtra=null,winnerRequest='',dayProfile=null,dayRequest='',clubSnapshot=null,lastTrigger=null;
 const seen=new Map();
 function changed(key,value,render){const signature=JSON.stringify(value);if(seen.get(key)===signature)return;seen.set(key,signature);render()}
@@ -87,7 +87,9 @@ function rating(row,kind,delta=null,withLabel=false){
   const cat=kind==='elo'?(row.elo_category_id??(value>=1350?1:value>=1250?2:value>=1150?3:value>=1050?4:value>=950?5:6)):(row.safety_category??(value>=5?'A':value>=2.5?'B':'C'));
   return `<button type="button" class="rating-badge ${kind==='elo'?'elo-'+cat:'sr sr-'+String(cat).toLowerCase()}" data-rating="${kind}" data-driver="${esc(row.public_id||'')}"${!row.public_id?' disabled':''}>${withLabel?`<span class="rating-prefix">${kind==='elo'?'ELO':'SR'}</span> `:''}${kind==='elo'?'C'+cat+' '+elo(value):cat+' '+Number(value).toFixed(2)}${delta==null?'':`<small class="race-rating-delta">${delta>0?'+':''}${Number(delta).toFixed(kind==='elo'?0:2)}</small>`}</button>`;
 }
-function car(row){const name=row.car_name||row.car_name_raw||row.favorite_car||row.favorite_car_name||'—',id=row.car_model_id??row.winner_car_model_id;return `<span class="car-cell">${id!=null?`<img src="/assets/car-icons/${Number(id)}.png" alt="" loading="lazy" onerror="this.hidden=true">`:''}<span>${esc(name)}</span></span>`}
+const carImage=id=>`/assets/v2-light/car-icons/${Number(id)}.webp`;
+const trackImage=file=>`/assets/v2-light/tracks/${file.replace(/\.jpg$/i,'.webp')}`;
+function car(row){const name=row.car_name||row.car_name_raw||row.favorite_car||row.favorite_car_name||'—',id=row.car_model_id??row.winner_car_model_id;return `<span class="car-cell">${id!=null?`<img src="${carImage(id)}" alt="" loading="lazy" decoding="async" onerror="this.hidden=true">`:''}<span>${esc(name)}</span></span>`}
 function renderSupport(){
   const data=model.donations,goal=data?.goal;
   const money=(value,currency='RUB')=>{try{return new Intl.NumberFormat(ru?'ru-RU':'en-GB',{style:'currency',currency,maximumFractionDigits:0}).format(value)}catch{return number(value)}};
@@ -118,7 +120,7 @@ function renderWinner(){
   $('winner-name').textContent=d.driver||'—';$('winner-name').dataset.driver=d.public_id||'';
   $('winner-meta').innerHTML=`${esc(native().track(race.track_code||race.track))} · ${date(race.finished_at)}<br>${esc(race.winner_car_name||result.car_name||'—')}`;
   const image=document.querySelector('.winner-car');const carId=race.winner_car_model_id??result.car_model_id;
-  image.hidden=carId==null;if(carId!=null)image.src=`/assets/car-icons/${Number(carId)}.png`;image.alt=race.winner_car_name||'';
+  image.hidden=carId==null;if(carId!=null)image.src=carImage(carId);image.alt=race.winner_car_name||'';
   $('winner-results').innerHTML=['wins','podiums','races'].map(key=>{const value=profile?.summary?.[key]??profile?.[key];return `<div class="metric"><span>${label(key==='races'?'racesCol':key)}</span><b>${Array.isArray(value)?'—':number(value)}</b></div>`}).join('');
   const points=result.points,eloDelta=result.elo_rating_delta,srDelta=result.safety_delta;
   $('winner-race-results').innerHTML=`<div class="winner-race-heading">${text('За последнюю гонку','Last race results')}</div><div class="winner-race-grid"><div><span>${label('points')}</span><b class="race-points">${points==null?'—':(points>0?'+':'')+number(points)}</b></div><div><span>ELO</span>${rating(d,'elo',eloDelta)}</div><div><span>SR</span>${rating(d,'sr',srDelta)}</div></div>`;
@@ -135,14 +137,14 @@ function renderEvent(){
   motion.run('points',[a.event_id,a.date,a.start_time_local,a.points_multiplier??1]);
   $('event-date').textContent=`${date(a.date&&a.start_time_local?`${a.date}T${a.start_time_local}:00+03:00`:null)} · ${a.timezone||'UTC+3'}`;
   const restriction=a.car_restriction||a.rules?.car_model,carName=restriction?.mode==='single_model'?restriction.car_model_name:text('Все машины класса GT3','All GT3 cars');
-  $('event-car').textContent=carName||'—';$('event-car-image').hidden=restriction?.mode!=='single_model'||restriction?.car_model_id==null;if(!$('event-car-image').hidden)$('event-car-image').src=`/assets/car-icons/${Number(restriction.car_model_id)}.png`;
+  $('event-car').textContent=carName||'—';$('event-car-image').hidden=restriction?.mode!=='single_model'||restriction?.car_model_id==null;if(!$('event-car-image').hidden)$('event-car-image').src=carImage(restriction.car_model_id);
   const server=a.server||{},rules=a.rules||{};
   $('event-facts').textContent=`${a.session?.race_duration_minutes??a.race_duration_minutes??'—'} ${text('мин','min')} · SA ${server.safety_rating_requirement??'—'} · SR ${server.sr_requirement??server.safety_rating_asg_requirement??server.asg_sr_requirement??native().eventSr()??'—'} · ${rules.mandatory_pitstop_count??rules.mandatory_pit_stop_count??'—'} PIT`;
   $('participants').textContent=text('Участники: ','Participants: ')+number(model.votes.count);
   button.textContent=model.votes.pending?text('Сохраняем…','Saving…'):model.votes.voted?text('Ты в списке · отменить','You are registered · cancel'):text('Я хочу поехать!','I want to race!');
   button.disabled=Boolean(model.votes.pending||model.voteDisabled);button.classList.toggle('participation-active',model.votes.voted);
   $('participation-note').innerHTML=(model.votes.error?`<strong class="v2-error">${text('Не удалось обновить участие. Попробуй ещё раз.','Could not update participation. Try again.')}</strong> `:'')+privacy();
-  const file=resolveTrackBackgroundFile(a.track_code);document.querySelector('.upcoming-panel').style.setProperty('--event-image',file?`url('/assets/${file}')`:'none');
+  const file=resolveTrackBackgroundFile(a.track_code);document.querySelector('.upcoming-panel').style.setProperty('--event-image',file?`url('${trackImage(file)}')`:'none');
   updateClock();
   presentation.refreshEntry();
 }
@@ -193,12 +195,20 @@ function renderTable(){
   $('ranking-filters').hidden=!['bestlaps','clubs'].includes(tab);$('track-filter-label').hidden=tab!=='bestlaps';$('club-type-label').hidden=tab!=='clubs';$('club-context-label').hidden=tab!=='clubs';
 }
 async function loadTable(){
+  rankingRequested=true;
+  if(!model||model.loading.home){tableBusy=true;renderTable();return;}
+  rankingStarted=true;
   const request=++tableRequest;
-  if(tab==='clubs'){tableBusy=false;tableError=Boolean(model?.clubsError);renderTable();return}
+  if(tab==='clubs'){
+    const selected=context;tableBusy=true;tableError=false;renderTable();
+    try{const data=await native().loadClubs(selected);if(request!==tableRequest)return;clubSnapshot=data;tableError=false;}catch{if(request===tableRequest)tableError=true;}
+    finally{if(request===tableRequest){tableBusy=false;renderTable();}}return;
+  }
   tableBusy=true;tableError=false;renderTable();
   try{const result=normalizeTablePage(await native().loadTable(tab,page,track,$('search').value.trim(),sortKey));if(request!==tableRequest)return;let rows=(result?.items||[]).map(row=>tab==='safety'?normalizeSafetyRow(row):row);
     if(result?.full){const q=$('search').value.toLocaleLowerCase();rows=rows.filter(r=>String(r.driver||r.name||'').toLocaleLowerCase().includes(q));if(sortKey)rows.sort((a,b)=>(typeof a[sortKey]==='number'?a[sortKey]-b[sortKey]:String(a[sortKey]??'').localeCompare(String(b[sortKey]??'')))*sortDirection);tableTotal=rows.length;page=Math.min(page,Math.max(1,Math.ceil(tableTotal/10)));rows=rows.slice((page-1)*10,page*10)}else tableTotal=result?.total_items??rows.length;
     tableRows=rows;
+    if(tab==='leaderboard')void native().prepareAffiliations().catch(()=>{});
   }catch{if(request===tableRequest){tableRows=[];tableTotal=0;tableError=true}}finally{if(request===tableRequest){tableBusy=false;renderTable()}}
 }
 function chooseTab(next){tab=next;page=1;sortKey='';$('search').value='';document.querySelectorAll('#v2-site-shell [data-tab]').forEach(button=>{button.classList.toggle('active',button.dataset.tab===tab);button.setAttribute('aria-selected',String(button.dataset.tab===tab))});loadTable()}
@@ -273,10 +283,15 @@ subscribe(next=>{
   changed('winner',next.winner,renderWinner);
    changed('event',[next.announcement,next.votes,next.voteDisabled],renderEvent);}
   changed('servers',[next.servers,next.serversStale,next.auth?.authenticated,next.auth?.driver?.sr],renderServers);
-   if(!isSubpage&&!seen.has('tables-ready')&&!next.loading.home){seen.set('tables-ready','yes');if(next.tracks.length)$('ranking-track').innerHTML=next.tracks.map(t=>`<option value="${esc(t.track_code||t.track)}"${(t.track_code||t.track)===track?' selected':''}>${esc(native().track(t.track_code||t.track))}</option>`).join('');loadTable()}
+   if(!isSubpage){
+     changed('tracks',next.tracks,()=>{if(next.tracks.length)$('ranking-track').innerHTML=next.tracks.map(t=>`<option value="${esc(t.track_code||t.track)}"${(t.track_code||t.track)===track?' selected':''}>${esc(native().track(t.track_code||t.track))}</option>`).join('');});
+     if(next.loading.homeError&&!rankingStarted){rankingStarted=true;tableBusy=false;tableError=true;renderTable();}
+     else if(rankingRequested&&!rankingStarted&&!next.loading.home)loadTable();
+     if(!next.loading.home)startBackground();
+   }
   changed('viewer',next.viewer,renderTable);
   changed('affiliations',next.affiliationsSize,renderTable);
-  if(tab==='clubs')changed('clubs',[next.clubs,next.clubsError],renderTable);
+  if(tab==='clubs'&&!tableBusy)changed('clubs',[next.clubs,next.clubsError],renderTable);
   $('about-lead').innerHTML=editorial.about[0]||'';
   if(!$('about-content').innerHTML)$('about-content').innerHTML=editorial.about.slice(1).join('').replace(/(<li[^>]*>[^<]*[\s\S]*?<\/li>)/g,'<ul>$1</ul>');
 });
@@ -293,14 +308,18 @@ function initialiseDocks(){
 initialiseDocks();
 function applyHash(){const aliases={championship:'leaderboard',bestlaps:'bestlaps','worst-safety':'safety','clubs-teams-stats':'clubs'};const id=decodeURIComponent(location.hash.slice(1));if(aliases[id]){chooseTab(aliases[id]);$('ranking').scrollIntoView({block:'start'})}else if(['rules','elo-about','safety-about'].includes(id)&&model){showReference(id==='elo-about'?'elo':id==='safety-about'?'safety':'rules')}else if(id==='tour'){guide.open()}else if(id==='about-server'){document.querySelector('.about-more').open=true;$('about-server').scrollIntoView({block:'start'})}}
 window.addEventListener('hashchange',applyHash);
-const reduced=matchMedia('(prefers-reduced-motion: reduce)'),layers=document.querySelectorAll('.track-layer');let background=0,previousBackground='';
-function nextBackground(){if(document.hidden||reduced.matches&&background>0)return;const file=selectRandomTrackBackgroundFile(Math.random,previousBackground),layer=layers[background%2];previousBackground=file;layer.style.backgroundImage=`url('/assets/${file}')`;layers.forEach(other=>other.classList.toggle('is-active',other===layer));background++}
-nextBackground();setInterval(nextBackground,28000);setInterval(()=>{if(!document.hidden)updateClock()},1000);
+const reduced=matchMedia('(prefers-reduced-motion: reduce)'),layers=document.querySelectorAll('.track-layer');let background=0,previousBackground='',backgroundStarted=false;
+async function nextBackground(){if(document.hidden||reduced.matches&&background>0)return;const file=selectRandomTrackBackgroundFile(Math.random,previousBackground),layer=layers[background%2],url=trackImage(file),image=new Image();image.fetchPriority='low';image.src=url;try{await image.decode();}catch{return;}previousBackground=file;layer.style.backgroundImage=`url('${url}')`;layers.forEach(other=>other.classList.toggle('is-active',other===layer));background++}
+function startBackground(){if(backgroundStarted)return;backgroundStarted=true;const start=()=>{nextBackground();if(!navigator.connection?.saveData)setInterval(nextBackground,28000);};if(window.requestIdleCallback)requestIdleCallback(start,{timeout:2000});else setTimeout(start,0);}
+setInterval(()=>{if(!document.hidden)updateClock()},1000);
 const boot=$('site-shell'),loader=document.querySelector('.home-loader');
-let seenIntro=false;try{seenIntro=Boolean(sessionStorage.getItem('asgV2IntroSeen'))}catch{}
-if(reduced.matches||seenIntro){document.documentElement.classList.remove('home-booting');loader.hidden=true}else{document.documentElement.classList.add('home-booting');boot.inert=true;setTimeout(()=>{document.documentElement.classList.remove('home-booting');document.documentElement.classList.add('home-ready');boot.inert=false;loader.hidden=true;try{sessionStorage.setItem('asgV2IntroSeen','1')}catch{}},1050)}
+document.documentElement.classList.remove('home-booting');loader.hidden=true;boot.inert=false;
 renderTable();$('race-vote').disabled=true;
-try{await import('./runtime/home.js?v=20261008sr1');setTimeout(applyHash,1500)}catch(error){console.error('V2 runtime unavailable',error);$('event-track').textContent=text('Не удалось загрузить данные','Could not load data');$('day-driver').textContent=text('Данные недоступны','Data unavailable');tableError=true;tableBusy=false;renderTable()}
+if(!isSubpage){
+  if('IntersectionObserver' in window){const observer=new IntersectionObserver(entries=>{if(entries.some(entry=>entry.isIntersecting)){observer.disconnect();loadTable();}},{rootMargin:'240px 0px'});observer.observe($('ranking'));}
+  else loadTable();
+}
+try{await import('./runtime/home.js?v=20261008load1');applyHash();if(isSubpage)startBackground();}catch(error){console.error('V2 runtime unavailable',error);$('event-track').textContent=text('Не удалось загрузить данные','Could not load data');$('day-driver').textContent=text('Данные недоступны','Data unavailable');tableError=true;tableBusy=false;renderTable()}
 if(document.documentElement.dataset.v2Page){
   const {startPage}=await import('./pages/controller.js?v=20261008thumbs1');
   await startPage({native,presentation,showDialog,esc,text,date,number,rating,car,language,subscribe});

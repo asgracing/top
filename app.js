@@ -36,6 +36,7 @@ import { safeImageUrl, safeLinkUrl } from "./src/shared/safe-dom.js";
 import { createHourlyVotesClient } from "./src/shared/hourly-votes-client.js?v=20261007runtime1";
 
 const PAGE_CONTEXT = readPageContext(document);
+const IS_V2_HOME = PAGE_CONTEXT.isHome && document.documentElement.dataset.v2 === "home" && !document.documentElement.dataset.v2Page;
 const PAGE_FEATURES = await loadPageFeatures(PAGE_CONTEXT.page);
 const {
   buildDriverRaceTableState, buildDriverTrackTableState, DRIVER_RACE_COLUMNS, DRIVER_TRACK_COLUMNS,
@@ -5852,13 +5853,15 @@ async function loadTopDataV2Manifest() {
 
 async function loadTopDataV2Json(path){await loadTopDataV2Manifest();return loadJson(withTopDataV2Version(topDataV2Path(path)))}
 
-async function loadSiteDataV2() {
+async function loadSiteDataV2({ deferTables = false } = {}) {
   const manifest = await loadTopDataV2Manifest();
   const homePath = manifest?.home || "home.json";
   const rawData = await loadTopDataV2Json(homePath);
   const { normalizeHomePayload } = await dataSchemaModulePromise;
   const data = normalizeHomePayload(rawData);
   const normalized = normalizeSnapshotPayload(data);
+  // V2 publishes the visible cards before optional ranking read models finish.
+  if (deferTables) return normalized;
   const bestlapsMeta = data?.tables?.bestlaps || manifest?.tables?.bestlaps || {};
   const [tracksPayload, leadersPayload] = await Promise.all([
     bestlapsMeta.tracks ? loadTopDataV2Json(bestlapsMeta.tracks).catch(() => null) : Promise.resolve(null),
@@ -6003,14 +6006,14 @@ function getServerPagedTableResult(tableName, page) {
   return state.result;
 }
 
-async function loadServerPagedTopDataV2Table(tableName, page) {
+async function loadServerPagedTopDataV2Table(tableName, page, { preferPages = false } = {}) {
   if (!isServerPagedTopDataV2Table(tableName)) return null;
   await loadTopDataV2Manifest();
   const meta = getTopDataV2TableMeta(tableName);
   const useTrackFile = tableName === "bestlaps" && bestlapsTrackFilter && !TOP_API_BASE_URL;
   const trackSafe = String(bestlapsTrackFilter || "").replace(/[^a-z0-9_-]+/g, "");
   const storagePageSize = !TOP_API_BASE_URL ? Number(meta?.storage_page_size) || 0 : 0;
-  const useChunks = storagePageSize >= PAGE_SIZE && Boolean(meta?.chunk_path);
+  const useChunks = !preferPages && storagePageSize >= PAGE_SIZE && Boolean(meta?.chunk_path);
   const chunk = useChunks ? Math.floor(((page - 1) * PAGE_SIZE) / storagePageSize) + 1 : null;
   const pagePath = useTrackFile
     ? useChunks && meta?.track_chunk_path
@@ -6046,6 +6049,8 @@ async function loadServerPagedTopDataV2Table(tableName, page) {
   try {
     rawPayload = await loadJson(url.toString(), { signal: requestController.signal });
   } catch (error) {
+    // Existing ten-row files are preferred by V2; retain the chunk fallback.
+    if (preferPages && error?.status === 404 && meta?.chunk_path) return loadServerPagedTopDataV2Table(tableName, page);
     if (tableRequestGuard.isCurrent(requestToken) && error?.kind !== "aborted") statsStore?.dispatch({ type: "table/error", table: tableName, error });
     throw error;
   } finally {
@@ -11232,6 +11237,29 @@ function applyHomeSiteData(data) {
 
 async function initializeHomeData() {
   const hourlyDataPromise = Promise.allSettled([loadHourlyAnnouncementData(), loadHourlyScheduleData()]);
+  if (IS_V2_HOME) {
+    // Each first-screen block owns its completion/error state. A slow ranking
+    // or donation endpoint must not hold back an already available event.
+    void hourlyDataPromise.then(applyHourlyHomeData);
+    void loadStandaloneServerStatus().then(status => {
+      if (!status) return;
+      serverStatusData = status;
+      updateHeroServerSummary(status);
+      renderServerStickyWidget(status);
+    });
+    void loadNewsFeed().catch(() => []).then(() => {
+      renderNewsBell();
+      renderNewsNotificationsModal();
+    });
+    const data = await loadSiteDataV2({ deferTables: true }).catch(error => {
+      topLoadState.home = false;
+      topLoadState.homeError = true;
+      rerenderUI();
+      throw error;
+    });
+    applyHomeSiteData(mergeStandaloneServerStatus(data, serverStatusData));
+    return;
+  }
   const affiliationsPromise = loadDriverAffiliations().catch((error) => {
     console.warn("Failed to load driver club/team affiliations.", error);
     return { affiliations: new Map(), entities: new Map() };
@@ -11250,7 +11278,10 @@ async function initializeHomeData() {
     if (driverPreviewState) renderDriverPreviewModal();
   });
 
-  const [hourlyAnnouncementResult, hourlyScheduleResult] = await hourlyDataPromise;
+  applyHourlyHomeData(await hourlyDataPromise);
+}
+
+function applyHourlyHomeData([hourlyAnnouncementResult, hourlyScheduleResult]) {
   const hourlyAnnouncement = hourlyAnnouncementResult.status === "fulfilled" ? hourlyAnnouncementResult.value : null;
   const hourlySchedule = hourlyScheduleResult.status === "fulfilled" ? hourlyScheduleResult.value : null;
   hourlyScheduleData = hourlySchedule;

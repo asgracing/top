@@ -28,6 +28,8 @@ exclude:
   - "dist.previous"
   - "docs"
   - "donations-worker"
+  - "node_modules"
+  - "package-lock.json"
   - "package.json"
   - "performance-budgets.json"
   - "preview"

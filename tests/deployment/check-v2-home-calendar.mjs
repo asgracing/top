@@ -58,7 +58,8 @@ try{
   await modal.locator('[data-page-join]').waitFor();
   assert.equal(await modal.getAttribute('data-kind'),'event');
   assert.equal(await modal.locator('.pitstop-grid .rule-state').count(),5);
-  assert.equal(await modal.locator('.modal-voting-disclosure a').first().getAttribute('href'),`/v2/${language}/privacy/`);
+  const prefix=await page.evaluate(()=>document.documentElement.dataset.siteLayout==='root'?(document.documentElement.lang==='en'?'/en':''):'/v2/'+document.documentElement.lang);
+  assert.equal(await modal.locator('.modal-voting-disclosure a').first().getAttribute('href'),`${prefix}/privacy/`);
   assert.equal(await modal.locator('[data-page-participants] b').innerText(),'4');
   voteDelay=100;await modal.locator('[data-page-join]').click();assert.equal(await modal.locator('[data-page-join]').isDisabled(),true);
   await page.waitForFunction(()=>document.querySelector('#v2-modal [data-page-join]')?.getAttribute('aria-pressed')==='true');

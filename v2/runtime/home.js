@@ -37,6 +37,7 @@ import { safeImageUrl, safeLinkUrl } from "/src/shared/safe-dom.js";
 import { createHourlyVotesClient } from "/src/shared/hourly-votes-client.js?v=20261007runtime1";
 
 const PAGE_CONTEXT = readPageContext(document);
+const IS_V2_HOME = PAGE_CONTEXT.isHome && document.documentElement.dataset.v2 === "home" && !document.documentElement.dataset.v2Page;
 const PAGE_FEATURES = await loadPageFeatures(PAGE_CONTEXT.page);
 const {
   buildDriverRaceTableState, buildDriverTrackTableState, DRIVER_RACE_COLUMNS, DRIVER_TRACK_COLUMNS,
@@ -2532,6 +2533,7 @@ function buildRaceActivityInsights(races = []) {
 
 function renderOnlineWidget() {
   v2SchedulePublish();
+  return; // V2 renders this read model.
   const chartEl = document.getElementById("online-chart");
   const scaleEl = document.getElementById("online-scale");
   const rangeEl = document.getElementById("online-range");
@@ -3324,6 +3326,7 @@ function getRaceWinnerResult(race) {
 
 function renderHourlyWinnerCard() {
   v2SchedulePublish();
+  return; // V2 renders this read model.
   const cardEl = document.getElementById("hero-hourly-winner-card");
   const nameEl = document.getElementById("hero-hourly-winner-name");
   const metaEl = document.getElementById("hero-hourly-winner-meta");
@@ -3600,6 +3603,7 @@ function formatDonationAmount(amount, currency) {
 
 function renderDonationAlertsWidget() {
   v2SchedulePublish();
+  return; // V2 renders this read model.
   const listEl = document.getElementById("donation-alerts-list");
   const goalEl = document.getElementById("donation-alerts-goal");
   const goalFallbackEl = document.getElementById("donation-alerts-goal-fallback");
@@ -5859,13 +5863,15 @@ async function loadTopDataV2Manifest() {
 
 async function loadTopDataV2Json(path){await loadTopDataV2Manifest();return loadJson(withTopDataV2Version(topDataV2Path(path)))}
 
-async function loadSiteDataV2() {
+async function loadSiteDataV2({ deferTables = false } = {}) {
   const manifest = await loadTopDataV2Manifest();
   const homePath = manifest?.home || "home.json";
   const rawData = await loadTopDataV2Json(homePath);
   const { normalizeHomePayload } = await dataSchemaModulePromise;
   const data = normalizeHomePayload(rawData);
   const normalized = normalizeSnapshotPayload(data);
+  // V2 publishes the visible cards before optional ranking read models finish.
+  if (deferTables) return normalized;
   const bestlapsMeta = data?.tables?.bestlaps || manifest?.tables?.bestlaps || {};
   const [tracksPayload, leadersPayload] = await Promise.all([
     bestlapsMeta.tracks ? loadTopDataV2Json(bestlapsMeta.tracks).catch(() => null) : Promise.resolve(null),
@@ -6010,14 +6016,14 @@ function getServerPagedTableResult(tableName, page) {
   return state.result;
 }
 
-async function loadServerPagedTopDataV2Table(tableName, page) {
+async function loadServerPagedTopDataV2Table(tableName, page, { preferPages = false } = {}) {
   if (!isServerPagedTopDataV2Table(tableName)) return null;
   await loadTopDataV2Manifest();
   const meta = getTopDataV2TableMeta(tableName);
   const useTrackFile = tableName === "bestlaps" && bestlapsTrackFilter && !TOP_API_BASE_URL;
   const trackSafe = String(bestlapsTrackFilter || "").replace(/[^a-z0-9_-]+/g, "");
   const storagePageSize = !TOP_API_BASE_URL ? Number(meta?.storage_page_size) || 0 : 0;
-  const useChunks = storagePageSize >= PAGE_SIZE && Boolean(meta?.chunk_path);
+  const useChunks = !preferPages && storagePageSize >= PAGE_SIZE && Boolean(meta?.chunk_path);
   const chunk = useChunks ? Math.floor(((page - 1) * PAGE_SIZE) / storagePageSize) + 1 : null;
   const pagePath = useTrackFile
     ? useChunks && meta?.track_chunk_path
@@ -6053,6 +6059,8 @@ async function loadServerPagedTopDataV2Table(tableName, page) {
   try {
     rawPayload = await loadJson(url.toString(), { signal: requestController.signal });
   } catch (error) {
+    // Existing ten-row files are preferred by V2; retain the chunk fallback.
+    if (preferPages && error?.status === 404 && meta?.chunk_path) return loadServerPagedTopDataV2Table(tableName, page);
     if (tableRequestGuard.isCurrent(requestToken) && error?.kind !== "aborted") statsStore?.dispatch({ type: "table/error", table: tableName, error });
     throw error;
   } finally {
@@ -11248,6 +11256,29 @@ function applyHomeSiteData(data) {
 
 async function initializeHomeData() {
   const hourlyDataPromise = Promise.allSettled([loadHourlyAnnouncementData(), loadHourlyScheduleData()]);
+  if (IS_V2_HOME) {
+    // Each first-screen block owns its completion/error state. A slow ranking
+    // or donation endpoint must not hold back an already available event.
+    void hourlyDataPromise.then(applyHourlyHomeData);
+    void loadStandaloneServerStatus().then(status => {
+      if (!status) return;
+      serverStatusData = status;
+      updateHeroServerSummary(status);
+      renderServerStickyWidget(status);
+    });
+    void loadNewsFeed().catch(() => []).then(() => {
+      renderNewsBell();
+      renderNewsNotificationsModal();
+    });
+    const data = await loadSiteDataV2({ deferTables: true }).catch(error => {
+      topLoadState.home = false;
+      topLoadState.homeError = true;
+      rerenderUI();
+      throw error;
+    });
+    applyHomeSiteData(mergeStandaloneServerStatus(data, serverStatusData));
+    return;
+  }
   const affiliationsPromise = loadDriverAffiliations().catch((error) => {
     console.warn("Failed to load driver club/team affiliations.", error);
     return { affiliations: new Map(), entities: new Map() };
@@ -11266,7 +11297,10 @@ async function initializeHomeData() {
     if (driverPreviewState) renderDriverPreviewModal();
   });
 
-  const [hourlyAnnouncementResult, hourlyScheduleResult] = await hourlyDataPromise;
+  applyHourlyHomeData(await hourlyDataPromise);
+}
+
+function applyHourlyHomeData([hourlyAnnouncementResult, hourlyScheduleResult]) {
   const hourlyAnnouncement = hourlyAnnouncementResult.status === "fulfilled" ? hourlyAnnouncementResult.value : null;
   const hourlySchedule = hourlyScheduleResult.status === "fulfilled" ? hourlyScheduleResult.value : null;
   hourlyScheduleData = hourlySchedule;
@@ -11539,6 +11573,25 @@ runWhenDocumentReady(document, () => {
 // Build-only facade: lexical access to the canonical controllers/read models.
 let v2Auth=null;
 let v2PublishPending=false;
+let v2AffiliationsPromise=null,v2BestlapMetadataPromise=null;
+const v2ClubSnapshots=new Map();
+function v2LoadAffiliations() {
+  return v2AffiliationsPromise ||= loadDriverAffiliations().then(({affiliations,entities})=>{
+    driverAffiliations=affiliations;clubsTeamsEntityDetails=entities;v2SchedulePublish();
+  }).catch(error=>{v2AffiliationsPromise=null;throw error;});
+}
+function v2LoadBestlapMetadata() {
+  return v2BestlapMetadataPromise ||= (async()=>{
+    const meta=getTopDataV2TableMeta('bestlaps')||{};
+    const [tracks,leaders]=await Promise.all([
+      loadTopDataV2Json(meta.tracks||'tracks/bestlaps.json').catch(()=>null),
+      loadTopDataV2Json(meta.track_leaders||'tracks/bestlap-leaders.json').catch(()=>null)
+    ]);
+    bestlapTracksData=Array.isArray(tracks?.items)?tracks.items:[];
+    bestlapTrackLeadersData=Array.isArray(leaders?.items)?leaders.items:[];
+    v2SchedulePublish();
+  })().catch(error=>{v2BestlapMetadataPromise=null;throw error;});
+}
 function v2SchedulePublish() {
   if(v2PublishPending)return;
   v2PublishPending=true;
@@ -11564,6 +11617,7 @@ installRuntime({
   translate:t,track:humanizeTrackName,formatDate:value=>formatDateTimeLocal(value,currentLang),
   affiliation:(row,type)=>renderDriverAffiliation(row,type).replace(/href="([^"]+)"/g,(_,href)=>'href="'+localizedPageHref(href,currentLang)+'"'),elo:renderEloBadge,sr:renderSafetyBadge,car:getResultCarName,
   special:data=>getSpecialEventPresentation(data,currentLang),
+  prepareAffiliations:()=>IS_V2_HOME?v2LoadAffiliations():Promise.resolve(),
   eventSr:()=>getServerSrRequirement('hourly',resolveNamedServerStatus(serverStatusData,'hourly')),
   winner:race=>getRaceWinnerResult(race),profile:loadDriverProfileCached,
   driverTitle:loadDriverTitle,steamAvatar:loadDriverSteamAvatar,driverRank:getDriverRankInfo,isBanned:isDriverBanned,
@@ -11597,16 +11651,24 @@ installRuntime({
   openServer:(key,trigger)=>{selectedServerPlayersKey=key;serverPlayersModalMode='serverPlayers';serverPlayersModalController?.open(trigger)},
   openServers:trigger=>{serverPlayersModalMode='summary';serverPlayersModalController?.open(trigger)},
   vote:()=>{if(isTeamRace(hourlyAnnouncementData)){location.assign(teamRaceUrl(hourlyAnnouncementData,currentLang));return}return hourlyVoteAlreadyVoted?submitHourlyHeroUnvote():submitHourlyHeroVote()},
-  loadClubs:async context=>{const {loadPublicRatingSnapshot}=await clubsTeamsRatingModelPromise;return loadPublicRatingSnapshot({client:{requestJson},dataBaseUrl:CLUBS_TEAMS_DATA_BASE_URL,context})},
+  loadClubs:context=>{
+    if(!v2ClubSnapshots.has(context))v2ClubSnapshots.set(context,(async()=>{
+      const {loadPublicRatingSnapshot}=await clubsTeamsRatingModelPromise;
+      const snapshot=await loadPublicRatingSnapshot({client:{requestJson},dataBaseUrl:CLUBS_TEAMS_DATA_BASE_URL,context});
+      if(context==='general'){homeClubsTeamsSnapshot=snapshot;homeClubsTeamsError=false;v2SchedulePublish();}
+      return snapshot;
+    })().catch(error=>{v2ClubSnapshots.delete(context);throw error;}));
+    return v2ClubSnapshots.get(context);
+  },
   loadTable:async(tab,page,track,search,sort)=>{
-    if(tab==='bestlaps')bestlapsTrackFilter=track;
+    if(tab==='bestlaps'){bestlapsTrackFilter=track;if(IS_V2_HOME)await v2LoadBestlapMetadata();}
     if(search||sort){const rows=await loadFullTopDataV2Table(tab);return {items:rows,full:true,total_items:rows.length}}
     if(tab==='safety'){
       const meta=getTopDataV2TableMeta(tab);
       if(page===1&&!search&&!sort&&safetyData.length>=10)return {items:safetyData.slice(0,10),total_items:meta?.total_items??safetyData.length};
       const rows=await loadFullTopDataV2Table(tab);return {items:rows,full:true,total_items:rows.length};
     }
-    const result=await loadServerPagedTopDataV2Table(tab,page);
+    const result=await loadServerPagedTopDataV2Table(tab,page,{preferPages:IS_V2_HOME});
     return {...result,total_items:result?.totalItems??result?.total_items??0};
   },
   hydrateWinner:async race=>{const [profile,details]=await Promise.all([race.winner_public_id?loadDriverProfileCached(race.winner_public_id).catch(()=>null):null,loadRaceDetailsCached(race).catch(()=>null)]);return {profile,details}},

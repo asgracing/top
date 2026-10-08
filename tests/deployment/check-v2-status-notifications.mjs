@@ -10,7 +10,8 @@ try {
     await page.addInitScript(()=>sessionStorage.setItem('asgV2IntroSeen','1'));
     let extra=false;
     await page.route('**/*',async route=>{
-      const url=new URL(route.request().url());
+      let url=new URL(route.request().url());
+      if(url.origin===base&&url.pathname.startsWith('/__asg_public__/'))url=new URL('https://data.asgracing.ru'+url.pathname.slice('/__asg_public__'.length)+url.search);
       if(url.hostname==='auth.asgracing.ru'&&!url.pathname.includes('/drivers/')){
         assert.equal(route.request().method(),'GET','Read-all must not accept an invitation or send commands');
         return route.fulfill({json:{authenticated:true,linked:true,driver:{public_id:signedDriver,display_name:'Fixture driver'},steam:{persona_name:'Fixture driver'},clubs_teams:{enabled:true,applied_state:{public_id:signedDriver,club:null,team:null,membership_actions:[invite]}}}});

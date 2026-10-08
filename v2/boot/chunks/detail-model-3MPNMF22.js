@@ -1,0 +1,1 @@
+import{entityDetailHref,entitySlugFromLocation,loadEntityDetail,normalizeEntitySlug,validateEntityDetail}from"./chunk-ADRC6Z6N.js";import"./chunk-5HEMKE2A.js";export{entityDetailHref,entitySlugFromLocation,loadEntityDetail,normalizeEntitySlug,validateEntityDetail};

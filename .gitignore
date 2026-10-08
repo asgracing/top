@@ -4,3 +4,4 @@ donations-worker/.wrangler/
 community-likes-worker/.wrangler/
 dist/
 dist.previous/
+node_modules/

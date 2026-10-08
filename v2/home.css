@@ -356,3 +356,6 @@ body[data-v2] .mobile-menu-trigger {display:none;}
 .sr-race-summary .sr-component-note span {display:inline;font-size:12px;}
 .sr-race-summary .sr-component-note .positive {color:#39dda6;}
 .sr-race-summary .sr-component-note .negative {color:#ff657b;}
+
+/* Reserve the ranking rows while its data waits for the viewport. */
+body[data-v2="home"] #v2-ranking .table-scroll {min-height:380px;}
