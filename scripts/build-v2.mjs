@@ -15,7 +15,7 @@ if (process.env.ASG_V2_PRESENTATION_ONLY === '1') throw Error('Presentation-only
 const version = '20261006v2k';
 const runtimeVersion = '20261007v2release3';
 const presentationVersion = '20261008v2pages15';
-const legalVersion = '20261008metrika1';
+const legalVersion = '20261008metrika2';
 const buildInputs = new Map();
 const hash = value => createHash('sha256').update(value.replace(/\r\n/g,'\n')).digest('hex');
 const record = (path, value) => { buildInputs.set(path, hash(value)); return value; };

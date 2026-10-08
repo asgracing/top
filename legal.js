@@ -108,6 +108,8 @@
   let metrikaLoaded = false;
   let sessionConsent = null;
   const metrikaDebug = ["1", "2"].includes(new URLSearchParams(location.search).get("_ym_debug"));
+  let metrikaScriptState = "idle";
+  let metrikaDiagnostic = null;
 
   function getStoredLanguage() {
     try {
@@ -414,11 +416,75 @@
       const metrikaScript = document.createElement("script");
       metrikaScript.async = true;
       metrikaScript.src = METRIKA_SRC;
+      metrikaScriptState = "loading";
+      metrikaScript.addEventListener("load", () => {
+        metrikaScriptState = "loaded";
+        updateMetrikaDiagnostic();
+      });
+      metrikaScript.addEventListener("error", () => {
+        metrikaScriptState = "error";
+        updateMetrikaDiagnostic();
+      });
       document.head.appendChild(metrikaScript);
     }
 
     window.ym(METRIKA_ID, "init", { ...METRIKA_OPTIONS });
     metrikaLoaded = true;
+  }
+
+  function updateMetrikaDiagnostic() {
+    if (!metrikaDiagnostic) return;
+    const en = getLanguage() === "en";
+    const consent = Boolean(readConsent()?.analytics);
+    let registered = false;
+    try {
+      registered = Boolean(window.Ya?.Metrika2?.counters?.().some(counter => Number(counter.id) === METRIKA_ID));
+    } catch { /* A failed vendor script is reported below. */ }
+    const states = en
+      ? {idle: "not requested", loading: "loading", loaded: "loaded", error: "failed to load; check browser blocking"}
+      : {idle: "не запрошен", loading: "загружается", loaded: "загружен", error: "ошибка загрузки; проверь блокировку в браузере"};
+    const status = metrikaDiagnostic.querySelector("[data-metrika-status]");
+    status.textContent = en
+      ? `Counter: ${METRIKA_ID || "missing ID"}\nAnalytics consent: ${consent ? "allowed" : "not allowed"}\nYandex script: ${states[metrikaScriptState]}\nCounter registered: ${registered ? "yes" : "no"}`
+      : `Счётчик: ${METRIKA_ID || "нет номера"}\nСогласие на аналитику: ${consent ? "есть" : "нет"}\nСкрипт Яндекса: ${states[metrikaScriptState]}\nСчётчик зарегистрирован: ${registered ? "да" : "нет"}`;
+  }
+
+  function showMetrikaDiagnostic() {
+    if (!metrikaDebug) return;
+    const en = getLanguage() === "en";
+    const panel = document.createElement("aside");
+    panel.id = "asg-metrika-diagnostic";
+    panel.className = "__ym_wv_ign";
+    panel.setAttribute("aria-label", en ? "ASG Metrica diagnostics" : "Диагностика Метрики ASG");
+    panel.style.cssText = "position:fixed;top:76px;left:12px;z-index:1500;width:340px;max-width:calc(100vw - 24px);box-sizing:border-box;padding:14px;border:1px solid #69859c;border-radius:8px;background:#14212e;color:#eaf2fa;font:13px/1.5 system-ui;box-shadow:0 4px 24px #0008";
+    const title = document.createElement("strong");
+    title.textContent = en ? "ASG · Metrica diagnostics" : "ASG · Диагностика Метрики";
+    const status = document.createElement("p");
+    status.dataset.metrikaStatus = "";
+    status.style.cssText = "white-space:pre-line;margin:8px 0";
+    status.setAttribute("role", "status");
+    panel.append(title, status);
+    for (const [label, action] of [
+      [en ? "Cookie settings" : "Настройки cookies", () => showBanner(true)],
+      [en ? "Refresh status" : "Обновить статус", updateMetrikaDiagnostic],
+      [en ? "Close" : "Закрыть", () => panel.remove()]
+    ]) {
+      const button = document.createElement("button");
+      button.type = "button";
+      button.textContent = label;
+      button.style.cssText = "padding:5px 8px;margin:4px 4px 0 0;background:#263f54;color:#eaf2fa;border:1px solid #69859c;border-radius:4px;font:inherit;cursor:pointer";
+      button.addEventListener("click", action);
+      panel.append(button);
+    }
+    document.body.append(panel);
+    metrikaDiagnostic = panel;
+    updateMetrikaDiagnostic();
+    // Bounded checks: only the explicitly requested debug page uses a timer.
+    let remaining = 20;
+    const timer = window.setInterval(() => {
+      updateMetrikaDiagnostic();
+      if (!panel.isConnected || --remaining === 0) window.clearInterval(timer);
+    }, 500);
   }
 
   function getBanner() {
@@ -490,9 +556,11 @@
     const hadAnalytics = Boolean(previous?.analytics);
 
     saveConsent(analytics);
+    updateMetrikaDiagnostic();
 
     if (analytics) {
       initMetrika();
+      updateMetrikaDiagnostic();
       hideBanner();
       return;
     }
@@ -596,6 +664,7 @@
     } else {
       showBanner(true);
     }
+    showMetrikaDiagnostic();
 
     const htmlObserver = new MutationObserver(() => rerenderUi());
     htmlObserver.observe(document.documentElement, {

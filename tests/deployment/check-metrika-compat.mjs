@@ -3,7 +3,7 @@ import assert from 'node:assert/strict';
 import {readFile,writeFile} from 'node:fs/promises';
 import {resolve} from 'node:path';
 import {browser,base,root,fixture} from './v2-browser-fixtures.mjs';
-const legal=await readFile(resolve(root,'legal.js'),'utf8'),reports=[];
+const legal=await readFile(resolve(root,'legal.js'),'utf8'),legalCss=await readFile(resolve(root,'legal.css'),'utf8'),reports=[];
 const denied={version:'2026-04-30',analytics:false,savedAt:new Date().toISOString()};
 try{
  for(const language of ['ru','en'])for(const blocked of [false,true]){
@@ -22,7 +22,7 @@ try{
     if(route.request().url().startsWith(base+'/__analytics_test__'))return route.fulfill({contentType:'text/html',body:html});
     return fixture(route,log);
   });
-  await page.goto(base+'/__analytics_test__?_ym_debug=1');await page.addScriptTag({content:legal});
+  await page.goto(base+'/__analytics_test__?_ym_debug=1');await page.addStyleTag({content:legalCss});await page.addScriptTag({content:legal});
   assert.equal(await page.locator('.asg-legal-banner').isVisible(),true,'debug must offer consent even after previous refusal');
   await page.locator('.asg-legal-banner-btn-secondary').click();
   await page.locator('.home-partner-banner').click();assert.equal(log.filter(r=>r.url.includes('/metrika/tag.js')).length,0);
