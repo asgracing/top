@@ -96,7 +96,7 @@ installRuntime({
       if(page===1&&!search&&!sort&&safetyData.length>=10)return {items:safetyData.slice(0,10),total_items:meta?.total_items??safetyData.length};
       const rows=await loadFullTopDataV2Table(tab);return {items:rows,full:true,total_items:rows.length};
     }
-    const result=await loadServerPagedTopDataV2Table(tab,page,{preferPages:IS_V2_HOME});
+    const result=await loadServerPagedTopDataV2Table(tab,page);
     return {...result,total_items:result?.totalItems??result?.total_items??0};
   },
   hydrateWinner:async race=>{const [profile,details]=await Promise.all([race.winner_public_id?loadDriverProfileCached(race.winner_public_id).catch(()=>null):null,loadRaceDetailsCached(race).catch(()=>null)]);return {profile,details}},

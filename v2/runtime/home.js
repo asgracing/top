@@ -6016,14 +6016,16 @@ function getServerPagedTableResult(tableName, page) {
   return state.result;
 }
 
-async function loadServerPagedTopDataV2Table(tableName, page, { preferPages = false } = {}) {
+async function loadServerPagedTopDataV2Table(tableName, page) {
   if (!isServerPagedTopDataV2Table(tableName)) return null;
   await loadTopDataV2Manifest();
   const meta = getTopDataV2TableMeta(tableName);
   const useTrackFile = tableName === "bestlaps" && bestlapsTrackFilter && !TOP_API_BASE_URL;
   const trackSafe = String(bestlapsTrackFilter || "").replace(/[^a-z0-9_-]+/g, "");
   const storagePageSize = !TOP_API_BASE_URL ? Number(meta?.storage_page_size) || 0 : 0;
-  const useChunks = !preferPages && storagePageSize >= PAGE_SIZE && Boolean(meta?.chunk_path);
+  // The manifest declares the active storage format. Legacy page files may
+  // still return HTTP 200 after the publisher switches to current chunks.
+  const useChunks = storagePageSize >= PAGE_SIZE && Boolean(meta?.chunk_path);
   const chunk = useChunks ? Math.floor(((page - 1) * PAGE_SIZE) / storagePageSize) + 1 : null;
   const pagePath = useTrackFile
     ? useChunks && meta?.track_chunk_path
@@ -6059,8 +6061,6 @@ async function loadServerPagedTopDataV2Table(tableName, page, { preferPages = fa
   try {
     rawPayload = await loadJson(url.toString(), { signal: requestController.signal });
   } catch (error) {
-    // Existing ten-row files are preferred by V2; retain the chunk fallback.
-    if (preferPages && error?.status === 404 && meta?.chunk_path) return loadServerPagedTopDataV2Table(tableName, page);
     if (tableRequestGuard.isCurrent(requestToken) && error?.kind !== "aborted") statsStore?.dispatch({ type: "table/error", table: tableName, error });
     throw error;
   } finally {
@@ -11668,7 +11668,7 @@ installRuntime({
       if(page===1&&!search&&!sort&&safetyData.length>=10)return {items:safetyData.slice(0,10),total_items:meta?.total_items??safetyData.length};
       const rows=await loadFullTopDataV2Table(tab);return {items:rows,full:true,total_items:rows.length};
     }
-    const result=await loadServerPagedTopDataV2Table(tab,page,{preferPages:IS_V2_HOME});
+    const result=await loadServerPagedTopDataV2Table(tab,page);
     return {...result,total_items:result?.totalItems??result?.total_items??0};
   },
   hydrateWinner:async race=>{const [profile,details]=await Promise.all([race.winner_public_id?loadDriverProfileCached(race.winner_public_id).catch(()=>null):null,loadRaceDetailsCached(race).catch(()=>null)]);return {profile,details}},

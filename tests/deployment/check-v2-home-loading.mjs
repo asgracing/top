@@ -34,22 +34,23 @@ try {
    }
    await page.locator('#v2-ranking').scrollIntoViewIfNeeded();
    await page.locator('#v2-rating-table tbody [data-driver]').first().waitFor();
-   assert.ok(requests.some(r=>r.path==='/top-data/v2/tables/leaderboard/page-1.json'));
-   assert.ok(!requests.some(r=>r.path.includes('/top-data/v2/tables/')&&/chunk-/.test(r.path)),'Ten-row page replaces the large chunk');
+   assert.ok(requests.some(r=>r.path==='/top-data/v2/tables/leaderboard/chunk-1.json'));
+   assert.ok(!requests.some(r=>r.path.includes('/top-data/v2/tables/')&&/page-/.test(r.path)),'Manifest chunks replace potentially stale legacy pages');
    assert.ok(!requests.some(r=>r.path.includes('/tracks/bestlaps.json')||r.path.includes('/ratings/')),'Inactive tabs are not loaded');
    await page.locator('#v2-next').click();
    await page.waitForFunction(()=>document.querySelector('#v2-page-number')?.textContent==='2'&&!document.querySelector('#v2-prev').disabled);
-   assert.ok(requests.some(r=>r.path==='/top-data/v2/tables/leaderboard/page-2.json'));
+   assert.ok(!requests.some(r=>r.path==='/top-data/v2/tables/leaderboard/page-2.json'));
+   assert.ok((await page.locator('#v2-rating-table tbody [data-driver]').count())>0,'Second UI page slices the current chunk');
    await page.locator('[data-tab="bestlaps"]').click();
    await page.waitForFunction(()=>document.querySelector('#v2-track-filter-label')?.hidden===false&&document.querySelector('#v2-rating-table tbody [data-driver]'));
    assert.ok(requests.some(r=>r.path==='/top-data/v2/tracks/bestlaps.json'));
-   assert.ok(requests.some(r=>r.path==='/top-data/v2/tables/bestlaps-monza/page-1.json'));
+   assert.ok(requests.some(r=>r.path==='/top-data/v2/tables/bestlaps-monza/chunk-1.json'));
    await page.locator('[data-tab="clubs"]').click();
    await page.waitForFunction(()=>document.querySelector('#v2-rating-table tbody a[href*="slug="]'));
    assert.ok(requests.some(r=>r.path.includes('/ratings/')));
    assert.ok(await page.evaluate(()=>document.documentElement.scrollWidth<=innerWidth+1));
    assert.deepEqual(errors,[]);
-   reports.push({language,width,independentCards:true,offscreenDeferred:width===375,tenRowPages:true,optionalTabs:true});
+   reports.push({language,width,independentCards:true,offscreenDeferred:width===375,manifestStorage:true,optionalTabs:true});
   } finally {releaseHome();await page.close();}
  }
  // Direct SR anchors must work without scrolling, and empty/missing metadata
@@ -62,18 +63,19 @@ try {
   assert.equal(await page.locator('#v2-rating-table').getAttribute('data-view'),hash==='#bestlaps'?'bestlaps':'safety');
   assert.deepEqual(errors,[]);await page.close();
  }
- // Keep the existing chunk as a fallback if a small page is not published.
+ // A missing active chunk must offer retry, never fall back to stale pages.
  {
   const page=await browser.newPage({viewport:{width:1440,height:900},reducedMotion:'reduce'}),requests=[],errors=[];
   page.on('pageerror',e=>errors.push(e.message));
   await page.route('**/*',route=>{
    const url=new URL(route.request().url());requests.push(url.pathname);
-   if(url.pathname.includes('/tables/leaderboard/page-1.json'))return route.fulfill({status:404,json:{}});
+   if(url.pathname.includes('/tables/leaderboard/chunk-1.json'))return route.fulfill({status:404,json:{}});
    return fixture(route,[],{emptyHomePreviews:true});
   });
   await page.goto(base+'/#championship',{waitUntil:'networkidle'});
-  await page.locator('#v2-rating-table tbody [data-driver]').first().waitFor();
+  await page.locator('[data-table-retry]').waitFor();
   assert.ok(requests.some(path=>path.includes('/tables/leaderboard/chunk-1.json')));
+  assert.ok(!requests.some(path=>path.includes('/tables/leaderboard/page-1.json')));
   assert.deepEqual(errors,[]);await page.close();
  }
  // A broken home snapshot does not remove the independent event/server data.
