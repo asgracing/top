@@ -16,7 +16,7 @@ for(const page of pageRegistry){
   assert.equal(page.target.en,'/en/'+page.route);
   for(const language of ['ru','en'])if(page.route){assert.ok(page.title[language]);assert.ok(page.description[language]);}
 }
-const parent=resolve(root,'../tmp/v2-source-build-check');await mkdir(parent,{recursive:true});
+const parent=resolve(process.env.ASG_V2_BUILD_CHECK_DIR||resolve(root,'../tmp/v2-source-build-check'));await mkdir(parent,{recursive:true});
 const work=await mkdtemp(join(parent,'candidate-'));
 assert.ok(work.startsWith(parent+sep),'Cleanup stays within the test directory');
 async function tree(directory,prefix=''){

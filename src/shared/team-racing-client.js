@@ -11,11 +11,11 @@ export function teamRaceUrl(event, language = "ru") {
 
 export function createTeamRacingClient({ fetchImpl = globalThis.fetch, base = "https://auth.asgracing.ru" } = {}) {
   async function request(path, options = {}) {
-    const response = await fetchImpl(`${base}${path}`, { credentials: "include", cache: "no-store", ...options,
-      headers: { Accept: "application/json", ...options.headers } });
-    const payload = await response.json();
-    if (!response.ok) throw new Error(typeof payload.detail === "string" ? payload.detail : "unavailable");
-    return payload;
+    const res = await fetchImpl(base + path, {credentials:"include", cache:"no-store", ...options,
+      headers:{Accept:"application/json", ...options.headers}});
+    const body = await res.json();
+    if (!res.ok) throw Object.assign(new Error(typeof body.detail === "string" ? body.detail : "unavailable"), {httpStatus:res.status});
+    return body;
   }
   return {
     state: () => request("/v1/team-racing/events"),

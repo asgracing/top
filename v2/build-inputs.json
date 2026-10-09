@@ -48,7 +48,7 @@
     },
     {
       "path": "scripts/build-v2.mjs",
-      "sha256": "a9c7d3cc8d5a76b8647c9536c08fc6b0e008dab0424b2096c171ca10aa52fda2"
+      "sha256": "77cfa2dffd50a495393d8eb960cd4b8bbbccb1408c91c133ee1e5160522ae91d"
     },
     {
       "path": "scripts/generate-localized-pages.mjs",
@@ -284,7 +284,7 @@
     },
     {
       "path": "src/shared/team-racing-client.js",
-      "sha256": "d68a6da2c94ea9e66cfa699482108d8b29c0516cb212f27048497d6ae862cb0c"
+      "sha256": "5857929693c18372d2db6fa3f5f38ce2b6a6b59e344f72133b36dacd653ac01a"
     },
     {
       "path": "src/shared/team-racing-results-view.js",
@@ -536,7 +536,7 @@
     },
     {
       "path": "v2-source/pages/core.js",
-      "sha256": "39c4a48693b92fb9c7d66a78c2a27c3ad282325b9bb407826fc680391ff1c793"
+      "sha256": "0e09647eb5437520375124b047b559bdbad12772ba429edd9a03412d93b6eb32"
     },
     {
       "path": "v2-source/pages/editorial.js",
@@ -624,7 +624,7 @@
     },
     {
       "path": "v2/pages/controller.js",
-      "sha256": "0415ad843c04a3b999a5cbab0d960651530ee195fed40dbd6bc675ae3b93fc05"
+      "sha256": "5172d70bd8defb50eabce9c7bda4452c4ac5980d7aff788fc20b6796b6d59a2d"
     },
     {
       "path": "v2/pages/data.js",

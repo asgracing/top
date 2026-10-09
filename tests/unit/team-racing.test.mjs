@@ -17,6 +17,10 @@ test('mutations carry CSRF and version, without caller-controlled identity',asyn
  assert.equal(captured.options.credentials,'include');assert.equal(captured.options.headers['X-CSRF-Token'],'csrf');
  assert.deepEqual(JSON.parse(captured.options.body),{action:'register',payload:{team_id:'tm_a'},expected_version:null,idempotency_key:'idempotency'});
 });
+test('API errors retain HTTP status so uncertain failures do not unlock another submission',async()=>{
+ const client=createTeamRacingClient({fetchImpl:async()=>({ok:false,status:409,json:async()=>({detail:'version_conflict'})})});
+ await assert.rejects(client.state(),error=>error.message==='version_conflict'&&error.httpStatus===409);
+});
 test('team classification escapes names and displays personal awards within crew',()=>{
  const html=renderTeamResults({team_results:[{position:1,team_name:'<img src=x>',points:25,drivers:[{public_id:'drv_a',personal_result:{driver:'A<script>',points:25,elo_rating_delta:10,safety_rating:4.1}}]}]},'ru');
  assert.ok(html.includes('&lt;img'));assert.ok(!html.includes('<script>'));assert.ok(html.includes('Очки команды'));assert.ok(html.includes('ΔElo 10'));

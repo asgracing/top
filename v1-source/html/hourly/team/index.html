@@ -8,22 +8,28 @@
   <title>Командная гонка | ASG Racing</title>
   <meta name="description" content="Регистрация команды ASG Racing на гонку, подтверждение состава и командный рейтинг.">
   <link rel="icon" href="/favicon.ico">
-  <link rel="stylesheet" href="./styles.css?v=20261004teams1">
-  <script type="module" src="./app.js?v=20261007root1"></script>
+  <link rel="stylesheet" href="./styles.css?v=20261009teams2">
+  <script type="module" src="./app.js?v=20261009teams2"></script>
 </head>
 <body>
-  <header><a href="/">ASG Racing</a><nav><a id="schedule-link" href="/ru/hourly/">Расписание</a><a id="teams-link" href="/ru/teams/">Команды</a><a id="account-link" href="/account/">Профиль</a><a id="language-link" href="?lang=en">EN</a></nav></header>
+  <a class="skip-link" id="skip-link" href="#entry-section">Перейти к заявке</a>
+  <header><a class="brand" id="home-link" href="/" aria-label="ASG Racing"><img src="/v2/assets/asg-racing-wordmark.svg" alt="ASG Racing" width="208" height="40"></a><nav aria-label="ASG Racing"><a id="schedule-link" href="/hourly/">Расписание</a><a id="teams-link" href="/teams/">Команды</a><a id="account-link" href="/account/">Кабинет</a><a id="language-link" href="?lang=en">EN</a></nav></header>
   <main>
     <p class="eyebrow" id="mode-label">КОМАНДНАЯ ГОНКА</p>
     <h1 id="event-title">Регистрация команды</h1>
-    <p id="event-info"></p>
-    <p id="deadline"></p>
-    <p id="captain-rule"></p>
-    <p id="status" role="status" aria-live="polite">Загрузка…</p>
-    <button id="refresh" type="button">Обновить</button>
-    <section aria-labelledby="entry-title"><h2 id="entry-title">Заявка</h2><div id="entry"></div></section>
-    <section aria-labelledby="registered-title"><h2 id="registered-title">Зарегистрированные команды</h2><div id="registrations"></div></section>
-    <section aria-labelledby="rating-title"><h2 id="rating-title">Рейтинг командных гонок</h2><div id="rating"></div></section>
+    <div id="event-context" class="event-context">
+      <p id="event-info"></p><span id="registration-state" class="registration-state"></span>
+      <p id="deadline"></p><p id="deadline-rule" class="note"></p>
+    </div>
+    <section class="workflow" aria-labelledby="workflow-title"><h2 id="workflow-title">Как записаться</h2><ol><li id="workflow-one">Выберите команду, машину и пилотов</li><li id="workflow-two">Назначьте капитана и отправьте заявку</li><li id="workflow-three">Каждый пилот подтверждает участие</li></ol></section>
+    <div class="status-row"><p id="status" role="status" aria-live="polite">Загрузка…</p><button id="refresh" type="button">Обновить данные</button></div>
+    <p id="availability" class="availability" hidden></p>
+    <div class="registration-layout">
+      <section id="entry-section" aria-labelledby="entry-title"><h2 id="entry-title">Заявка команды</h2><div id="entry"></div></section>
+      <section id="registered-section" aria-labelledby="registered-title"><div class="section-heading"><h2 id="registered-title">Команды на гонку</h2><span id="registration-count" class="note"></span></div><div id="registrations"></div></section>
+    </div>
+    <p id="captain-rule" class="race-rule"></p>
+    <section class="rating-section" aria-labelledby="rating-title"><h2 id="rating-title">Рейтинг командных гонок</h2><div id="rating"></div></section>
   </main>
 </body>
 </html>

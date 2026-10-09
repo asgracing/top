@@ -6,7 +6,7 @@ import {createHistoryViews} from './views/history.js?v=20261007v2pages14';
 import {markNewsRead} from '/news-read-state.js';
 import {editorialImage} from './editorial-model.js?v=20261007v2pages14';
 import {getCommunityPostKey} from '/src/pages/community/feed-model.js';
-import {createPageViews} from './views/core.js?v=20261008profile1';
+import {createPageViews} from './views/core.js?v=20261009teams2';
 import {createArchiveViews} from './views/archive.js?v=20261007v2pages14';
 import {createChampionshipViews} from './views/championships.js?v=20261007v2pages14';
 import {createEntityViews} from './views/entities.js?v=20261008thumbs1';

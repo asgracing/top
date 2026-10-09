@@ -1,4 +1,5 @@
 // Approved R13-R19 presentation. Data and actions are injected by the live adapter.
+import {teamRaceUrl} from '/src/shared/team-racing-client.js?v=20261009teams2';
 export function createPageViews(api) {
  const {raw,fixture,state,view,center,lang,tracks,participation,route,ruEn,escape,number,time,
  eloCategory,eloNumber,entityLink,eventKind,eventKindLabel,eventStart,countdownText,
@@ -38,11 +39,15 @@ export function createPageViews(api) {
   function eventData(id) {return [raw.event,...raw.schedule.items].find(e=>e?.event_id===id);}
   function entryLocked(e) {return e.voting_disabled===true || participation[e.event_id]?.pending===true;}
   function participantCount(e) {
+    if(e.participation_mode==='team') {
+      const maximum=e.max_drivers || e.rules?.max_drivers_count;
+      return `<span class="page-participants">${tx('Командная гонка','Team race')}${maximum?` · ${tx('до','up to')} ${Number(maximum)} ${tx('пилотов в экипаже','drivers per crew')}`:''}</span>`;
+    }
     return `<span class="page-participants" data-page-participants="${label(e.event_id)}">${tx('Участники','Participants')}: <b>${num(participation[e.event_id]?.count)}</b></span>`;
   }
   function joinControls(e,{count=true,disclosure=true}={}) {
     const privacy=disclosure?`<span class="entry-disclosure">${votingPrivacy()}</span>`:'';
-    if(e.participation_mode==='team')return `<a class="button primary" href="https://asgracing.ru/${lang==='ru'?'ru/':''}hourly/team/?event=${encodeURIComponent(e.event_id)}">${tx('Заявка команды и составы','Team entry and crews')} ↗</a><span class="page-help">${tx('Закрытие заявок','Entries close')}: ${time(e.registration_closes_at || e.closes_at)}</span>${privacy}`;
+    if(e.participation_mode==='team')return `<a class="button primary" href="${label(teamRaceUrl(e,lang))}">${tx('Заявка команды и составы','Team entry and crews')} ↗</a><span class="page-help">${tx('Закрытие заявок','Entries close')}: ${time(e.registration_closes_at || e.closes_at)}</span>`;
     const locked=entryLocked(e), joined=participation[e.event_id]?.voted===true,pending=participation[e.event_id]?.pending===true;
     return `<button class="button primary${joined?' is-voted':''}" type="button" data-page-join="${label(e.event_id)}" aria-pressed="${joined}"${locked?' disabled':''}>${pending?tx('Сохраняем…','Saving…'):locked?tx('Запись недоступна','Entry unavailable'):joined?tx('Ты в списке · отменить','You are in · cancel'):tx('Я хочу поехать!','I want to race!')}</button>${count?participantCount(e):''}${privacy}`;
   }

@@ -16,6 +16,7 @@ if (process.env.ASG_V2_PRESENTATION_ONLY === '1') throw Error('Presentation-only
 const version = '20261006v2k';
 const runtimeVersion = '20261009tables1';
 const presentationVersion = '20261009tables1';
+const bootVersion = '20261009teams2';
 const legalVersion = '20261008metrika2';
 const buildInputs = new Map();
 const hash = value => createHash('sha256').update(value.replace(/\r\n/g,'\n')).digest('hex');
@@ -145,7 +146,7 @@ for (const language of ['ru','en']) {
     .replace(/<link\b[^>]*rel="(?:canonical|alternate)"[^>]*>/g,'')
     .replace(/(<meta property="og:url" content=")[^"]+/,`$1https://asgracing.ru/v2/${language}/`)
     ;
-  head += `\n<link rel="stylesheet" href="/v2/styles/design.css?v=${presentationVersion}">\n<link rel="stylesheet" href="/v2/home.css?v=${presentationVersion}">\n<script src="/legal.js?v=${legalVersion}" defer></script>\n<script type="module" src="/v2/boot/home.js?v=${presentationVersion}"></script>\n`;
+  head += `\n<link rel="stylesheet" href="/v2/styles/design.css?v=${presentationVersion}">\n<link rel="stylesheet" href="/v2/home.css?v=${presentationVersion}">\n<script src="/legal.js?v=${legalVersion}" defer></script>\n<script type="module" src="/v2/boot/home.js?v=${bootVersion}"></script>\n`;
   // Preserve required legacy modal/controller nodes, outside the hidden source
   // host so real dialogs remain visible and accessible. No duplicate IDs.
   let oldBody = classic.match(/<body[^>]*>([\s\S]*)<\/body>/i)[1];
