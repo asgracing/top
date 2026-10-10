@@ -1,3 +1,4 @@
+import {decorateRaceHeading,renderResultTabs,installResultTabs,mergeResultContext} from '../src/shared/race-result-context.js?v=20261010results1';
 import { initializeLocalizedPage, localizedPageHref, resolvePageLocale, setPageLocale } from "../src/shared/localized-page.js?v=20261007root1";
 initializeLocalizedPage();
 import {
@@ -2013,7 +2014,7 @@ function buildScheduleModalDetailsV2(item) {
 }
 async function loadJson(url) {
   const response = await fetch(url, { cache: "no-store" });
-  if (!response.ok) throw new Error(`HTTP ${response.status} for ${url}`);
+  if (!response.ok) throw Object.assign(new Error(`HTTP ${response.status} for ${url}`), {status: response.status});
   return response.json();
 }
 async function fetchWithTimeout(url, options = {}, timeoutMs = 8000) {
@@ -3135,6 +3136,7 @@ function renderRaceResultsModal() {
   if (isTeamRace(selectedRace)) {
     summaryEl.innerHTML = `<div class="race-summary-card">${escapeHtml(currentLang === "ru" ? "КОМАНДНАЯ ГОНКА" : "TEAM RACE")}</div>`;
     tableEl.innerHTML = renderTeamResults(selectedRace,currentLang);
+    wrapClassicRaceContext(tableEl, titleEl);
     return;
   }
   summaryEl.innerHTML = `
@@ -3160,6 +3162,19 @@ function renderRaceResultsModal() {
     </tr>
   `).join("");
   tableEl.innerHTML = `<table class="race-results-grid"><thead><tr>${headers}</tr></thead><tbody>${rows}</tbody></table>`;
+  wrapClassicRaceContext(tableEl, titleEl);
+}
+
+function wrapClassicRaceContext(tableEl, titleEl) {
+  const api = {
+    tx: (ru,en) => currentLang === "ru" ? ru : en,
+    label: escapeHtml,
+    pageDriver: row => renderRaceDriverProfileLink(row.driver,row.public_id),
+    raceRating: (row,kind) => kind === "elo" ? renderRaceEloBadge(row) : renderRaceSafetyBadge(row)
+  };
+  installResultTabs();
+  decorateRaceHeading(titleEl, selectedRace, api);
+  tableEl.innerHTML = renderResultTabs(selectedRace, tableEl.innerHTML, api, "classic-results");
 }
 const renderRaceResultsModalBase = renderRaceResultsModal;
 renderRaceResultsModal = function() {
@@ -3334,7 +3349,10 @@ function closeWeatherModal() {
 async function loadRaceDetails(race) {
   if (!race?.details_path) return race;
   if (raceDetailsCache.has(race.details_path)) return raceDetailsCache.get(race.details_path);
-  const details = await loadJson(`${recentRaceDetailsBaseUrl}${race.details_path}`);
+  const payload = await loadJson(`${recentRaceDetailsBaseUrl}${race.details_path}`);
+  const raceId = payload.race_id || race.race_id;
+  const context = /^[a-z0-9_.-]+$/i.test(raceId||'') ? await loadJson(`${recentRaceDetailsBaseUrl}races/context/${raceId}.json`).catch(error => { if(error.status===404)return null; throw error; }) : null;
+  const details = mergeResultContext(payload,context?.result_context_version===1?context:{});
   raceDetailsCache.set(race.details_path, details);
   return details;
 }

@@ -5,6 +5,7 @@ import {loadPublicRatingSnapshot} from '/src/pages/clubs-teams/rating-model.js';
 import {loadEntityDetail} from '/src/pages/clubs-teams/detail-model.js';
 import {resolveCatalogAssetUrl} from '/src/pages/clubs-teams/catalog-model.js';
 import {normalizeNewsPayload} from '/src/shared/data-schema.js';
+import {mergeResultContext} from '/src/shared/race-result-context.js?v=20261010results1';
 import {createCommunityClient} from './community-client.js?v=20261007v2pages11';
 import {resolveBanProfiles,sortBans} from './bans-model.js?v=20261007v2pages11';
 const DATA = 'https://data.asgracing.ru/';
@@ -201,7 +202,7 @@ export function createPageData(native) {
       const official=published?.details_path?await readJson(hourlyUrl(published.details_path)).catch(()=>null):null;
       const ratings=new Map((official?.results||[]).map(r=>[r.public_id,r]));
       const fields=['elo','elo_internal_rating','elo_category_id','elo_rating_delta','safety_rating_after','safety_rating','safety_delta','safety_category','race_number'];
-      result={...seasonal,race_id:id,average_elo:official?.average_elo??seasonal.average_elo,results:(seasonal.results||[]).map(r=>({...r,...Object.fromEntries(fields.filter(key=>ratings.get(r.public_id)?.[key]!=null).map(key=>[key,ratings.get(r.public_id)[key]]))}))};
+      result={...seasonal,race_id:id,average_elo:official?.average_elo??seasonal.average_elo,qualifying:official?.qualifying??seasonal.qualifying,race_conditions:official?.race_conditions??seasonal.race_conditions,results:(seasonal.results||[]).map(r=>({...r,...Object.fromEntries(fields.filter(key=>ratings.get(r.public_id)?.[key]!=null).map(key=>[key,ratings.get(r.public_id)[key]]))}))};
     }else if(summary?._data_namespace==='entity') {
       result=await readJson(topUrl(path));
     }else {
@@ -210,8 +211,15 @@ export function createPageData(native) {
       result=await readJson(url);
     }
     if(!result||!Array.isArray(result.results))throw new Error('Invalid race result');
+    const published=summary?._data_namespace==='season'?summary._published_race:summary;
+    const contextId=published?.race_id||id;
+    if(/^[a-z0-9_.-]+$/i.test(contextId)) {
+      const contextUrl=summary?._data_namespace==='hourly'||summary?._data_namespace==='season'?hourlyUrl(`races/context/${contextId}.json`):topUrl(`races/context/${contextId}.json`);
+      const context=await readJson(contextUrl).catch(error => { if(error.status===404)return null; throw error; });
+      if(context?.result_context_version===1) result=mergeResultContext(result,context);
+    }
     // Match V1's displayed ELO fallback; old published races can have elo:null.
-    return {...await enrichRaceType({...summary,...result}),results:result.results.map(row=>({...row,elo:row.elo??row.summary?.elo??row.elo_internal_rating??row.summary?.elo_internal_rating}))};
+    return mergeResultContext({...await enrichRaceType({...summary,...result}),results:result.results.map(row=>({...row,elo:row.elo??row.summary?.elo??row.elo_internal_rating??row.summary?.elo_internal_rating}))});
   }
   async function news(){return normalizeNewsPayload(await readJson('/news-content/news.json'));}
   async function community(){

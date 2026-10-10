@@ -1,5 +1,7 @@
 {
-  "appJavaScriptBytes": 498500,
+  "appJavaScriptBytes": 500000,
+  "raceResultContextJavaScriptBytes": 9000,
+  "raceResultContextStylesheetBytes": 2500,
   "sourceModulesBytes": 433500,
   "labAccountJavaScriptBytes": 17500,
   "labAccountStylesheetBytes": 3000,

@@ -1,0 +1,26 @@
+.result-tabs {min-width:0;}
+.result-tablist {display:flex;gap:6px;align-items:center;margin:0 0 16px;border-bottom:1px solid rgba(255,255,255,.14);padding-bottom:10px;}
+.result-tablist [role="tab"] {width:auto;min-height:38px;padding:8px 16px;border:1px solid transparent;border-radius:7px;background:transparent;color:inherit;font:inherit;font-size:14px;cursor:pointer;}
+.result-tablist [aria-selected="true"] {background:rgba(57,221,166,.12);border-color:rgba(57,221,166,.35);color:#67edbe;}
+.result-tablist [role="tab"]:focus-visible {outline:2px solid #67edbe;outline-offset:3px;}
+.result-tabs [role="tabpanel"][hidden] {display:none !important;}
+.result-tabs .qualifying-table {min-width:560px;width:100%;border-collapse:collapse;}
+.qualifying-table th,.qualifying-table td {padding:9px 10px;text-align:left;}
+.qualifying-table td {white-space:nowrap;}
+.qualifying-table .result-driver-identity {display:flex;align-items:center;gap:8px;}
+.qualifying-table .result-driver-identity small {color:#9ca7b2;font-size:11px;}
+.race-results-heading {display:flex;align-items:center;justify-content:space-between;gap:16px;flex-wrap:wrap;min-width:0;}
+.race-title-text {min-width:0;overflow-wrap:anywhere;}
+.race-conditions {display:flex;align-items:center;justify-content:flex-end;flex-wrap:wrap;gap:5px 12px;min-width:0;color:#b7c2cb;font-size:12px;font-weight:400;line-height:1.5;letter-spacing:normal;}
+.race-conditions>span {white-space:nowrap;}
+.race-conditions>small {flex-basis:100%;text-align:right;color:#84929d;font-size:10px;}
+#v2-modal .modal-head>div:first-child:has(.race-results-heading) {flex:1;min-width:0;}
+.page-panel>.panel-head:has(.race-conditions) {align-items:flex-start;gap:15px;flex-wrap:wrap;}
+.page-panel>.panel-head>.race-conditions {margin-left:auto;}
+@media (max-width:600px) {
+  .race-results-heading {display:block;}
+  .race-conditions {justify-content:flex-start;margin-top:9px;font-size:11px;gap:4px 9px;}
+  .race-conditions>small {text-align:left;}
+  .page-panel>.panel-head>.race-conditions {margin-left:0;flex-basis:100%;}
+  .result-tablist [role="tab"] {padding:8px 12px;}
+}

@@ -223,11 +223,11 @@ function showDialog(title,html,trigger){if(!$('modal').open)lastTrigger=trigger|
 function pushDialog(trigger){
   if(!$('modal').open)return;
   const body=$('modal-body'),buttons=[...body.querySelectorAll('a,button,[tabindex]')];
-  dialogFrames.push({html:body.innerHTML,title:$('modal-title').textContent,eyebrow:$('modal-eyebrow').textContent,kind:$('modal').dataset.kind,track:$('modal').style.getPropertyValue('--modal-track'),scroll:body.scrollTop,focus:buttons.indexOf(trigger)});
+  dialogFrames.push({html:body.innerHTML,title:$('modal-title').textContent,titleHTML:$('modal-title').innerHTML,eyebrow:$('modal-eyebrow').textContent,kind:$('modal').dataset.kind,track:$('modal').style.getPropertyValue('--modal-track'),scroll:body.scrollTop,focus:buttons.indexOf(trigger)});
 }
 function closeDialog(){
   const frame=dialogFrames.pop();
-  if(frame){$('modal').dispatchEvent(new Event('v2-dialog-restore'));$('modal-body').innerHTML=frame.html;$('modal-title').textContent=frame.title;$('modal-eyebrow').textContent=frame.eyebrow;$('modal').dataset.kind=frame.kind;frame.track?$('modal').style.setProperty('--modal-track',frame.track):$('modal').style.removeProperty('--modal-track');$('modal-body').scrollTop=frame.scroll;const focus=$('modal-body').querySelectorAll('a,button,[tabindex]')[frame.focus];(focus||$('modal').querySelector('.modal-close')).focus({preventScroll:true});return;}
+  if(frame){$('modal').dispatchEvent(new Event('v2-dialog-restore'));$('modal-body').innerHTML=frame.html;$('modal-title').innerHTML=frame.titleHTML;$('modal-eyebrow').textContent=frame.eyebrow;$('modal').dataset.kind=frame.kind;frame.track?$('modal').style.setProperty('--modal-track',frame.track):$('modal').style.removeProperty('--modal-track');$('modal-body').scrollTop=frame.scroll;const focus=$('modal-body').querySelectorAll('a,button,[tabindex]')[frame.focus];(focus||$('modal').querySelector('.modal-close')).focus({preventScroll:true});return;}
   $('modal').close();$('site-shell').inert=false;lastTrigger?.focus?.({preventScroll:true})
 }
 function rowById(id){return tableRows.find(r=>r.public_id===id)||[dayProfile,winnerExtra?.profile,model?.day,...(winnerExtra?.details?.results||[]),...(model?.servers||[]).flatMap(s=>s.drivers||[])].find(r=>r?.public_id===id)||{public_id:id,driver:id}}

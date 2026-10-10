@@ -48,10 +48,14 @@ const portalOpsStylesheetBytes = await textBytes("styles/components/portal-ops.c
 const driverOverlayJavaScriptBytes = await textBytes("account/driver-overlay.js")
   + await textBytes("overlay/driver/model.js")
   + await textBytes("overlay/driver/app.js");
+const raceResultContextJavaScriptBytes = await textBytes("src/shared/race-result-context.js");
+const raceResultContextStylesheetBytes = await textBytes("styles/components/race-result-context.css");
 const metrics = {
   appJavaScriptBytes: await textBytes("app.js"),
-  sourceModulesBytes: await treeBytes("src", new Set([".js", ".mjs"])) - moderationJavaScriptBytes - portalOpsJavaScriptBytes,
-  stylesheetsBytes: await treeBytes("styles", new Set([".css"])) + await textBytes("styles.css") + await textBytes("legal.css") - moderationStylesheetBytes - portalOpsStylesheetBytes,
+  sourceModulesBytes: await treeBytes("src", new Set([".js", ".mjs"])) - moderationJavaScriptBytes - portalOpsJavaScriptBytes - raceResultContextJavaScriptBytes,
+  stylesheetsBytes: await treeBytes("styles", new Set([".css"])) + await textBytes("styles.css") + await textBytes("legal.css") - moderationStylesheetBytes - portalOpsStylesheetBytes - raceResultContextStylesheetBytes,
+  raceResultContextJavaScriptBytes,
+  raceResultContextStylesheetBytes,
   moderationJavaScriptBytes,
   moderationStylesheetBytes,
   portalOpsJavaScriptBytes,

@@ -1,6 +1,7 @@
 import { currentPageLanguageHref, initializeLocalizedPage, localizedPageHref, resolvePageLocale, setPageLocale } from "./src/shared/localized-page.js?v=20261007root1";
 import { isTeamRace, teamRaceUrl } from "./src/shared/team-racing-client.js?v=20261004teams1";
 import { renderTeamResults } from "./src/shared/team-racing-results-view.js?v=20261004teams1";
+import {decorateRaceHeading,renderResultTabs,installResultTabs,mergeResultContext} from './src/shared/race-result-context.js?v=20261010results1';
 initializeLocalizedPage();
 ﻿import { readPageContext } from "./src/runtime/page-context.js?v=20261007root1";
 
@@ -6379,7 +6380,8 @@ async function loadRaceDetailsCached(race) {
     for (const detailsPath of detailsPaths) {
       try {
         const details = await loadTopDataV2Json(detailsPath);
-        return details && typeof details === "object" ? mergeRaceDetails(race, details) : race;
+        const context = /^[a-z0-9_.-]+$/i.test(raceId) ? await loadTopDataV2Json(`races/context/${raceId}.json`).catch(error => { if(error.status===404)return null; throw error; }) : null;
+        return details && typeof details === "object" ? mergeResultContext(mergeRaceDetails(race, details),context?.result_context_version===1?context:{}) : race;
       } catch (error) {
         lastError = error;
       }
@@ -9091,7 +9093,8 @@ function renderSelectedServerPlayersModal(titleEl, subtitleEl, listEl) {
       <article class="server-player-row">
         <div class="server-player-position">${escapeHtml(driver.position || index + 1)}</div>
         <div class="server-player-main">
-          <div class="server-player-name">${escapeHtml(driver.name || "-")}</div>
+          <div class="server-player-name">${renderDriverLink(driver.name || "-", driver.public_id, "driver-link")}</div>
+          <div class="server-player-ratings">${renderEloBadge(driver,{compact:true})} ${renderSafetyBadge(driver,{compact:true})}</div>
           <div class="server-player-meta">
             ${raceNumber != null ? `<span>#${escapeHtml(raceNumber)}</span>` : ""}
             <span>${escapeHtml(carName)}</span>
@@ -9444,6 +9447,7 @@ function renderRaceResultsModal() {
   if (isTeamRace(selectedRace)) {
     summaryEl.innerHTML = `<div class="race-summary-card">${escapeHtml(currentLang === "ru" ? "КОМАНДНАЯ ГОНКА" : "TEAM RACE")}</div>`;
     tableEl.innerHTML = renderTeamResults(selectedRace,currentLang);
+    wrapClassicRaceContext(tableEl, titleEl);
     return;
   }
 
@@ -9508,6 +9512,19 @@ function renderRaceResultsModal() {
       <tbody>${rows}</tbody>
     </table>
   `;
+  wrapClassicRaceContext(tableEl, titleEl);
+}
+
+function wrapClassicRaceContext(tableEl, titleEl) {
+  const api = {
+    tx: (ru,en) => currentLang === "ru" ? ru : en,
+    label: escapeHtml,
+    pageDriver: row => renderDriverLink(row.driver,row.public_id,"driver-link"),
+    raceRating: (row,kind) => kind === "elo" ? renderEloBadge(row,{compact:true}) : renderSafetyBadge(row,{compact:true})
+  };
+  installResultTabs();
+  decorateRaceHeading(titleEl, selectedRace, api);
+  tableEl.innerHTML = renderResultTabs(selectedRace, tableEl.innerHTML, api, "classic-results");
 }
 
 let raceResultsModalController = null;
