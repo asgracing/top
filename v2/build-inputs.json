@@ -1,6 +1,6 @@
 {
   "schemaVersion": 1,
-  "runtimeVersion": "20261009tables1",
+  "runtimeVersion": "20261010profile1",
   "inputs": [
     {
       "path": "account/driver-overlay.js",
@@ -48,7 +48,7 @@
     },
     {
       "path": "scripts/build-v2.mjs",
-      "sha256": "77cfa2dffd50a495393d8eb960cd4b8bbbccb1408c91c133ee1e5160522ae91d"
+      "sha256": "a4a5c9067f51a75ffd1f71fe59f66cc79996f477a42f71b1725267f272dea3bd"
     },
     {
       "path": "scripts/generate-localized-pages.mjs",
@@ -72,7 +72,7 @@
     },
     {
       "path": "scripts/v2-runtime-facade.txt",
-      "sha256": "3bcfce515fb62e5f6dbda50cdc57d7c3d9fb13961de7b35780508b96f06855e2"
+      "sha256": "b3d0d402a3959ce7ac1148a83de0a647f14890456d469103d5a0654bb6e8debf"
     },
     {
       "path": "src/features/auth/clubs-teams-auth-model.js",
@@ -584,7 +584,7 @@
     },
     {
       "path": "v2/home.js",
-      "sha256": "72dd15eeed54998e45ce821ebecffe81a2a0a947fdd466776619c1a2243eac71"
+      "sha256": "2474e8592cd4cae5e726ea96fe522bacca578cf1ff3e63abd4125734e261b273"
     },
     {
       "path": "v2/mobile-navigation.js",
@@ -624,11 +624,11 @@
     },
     {
       "path": "v2/pages/controller.js",
-      "sha256": "5172d70bd8defb50eabce9c7bda4452c4ac5980d7aff788fc20b6796b6d59a2d"
+      "sha256": "d0eba1bb0d51ca792cf97b4e35aa776ea185c0c2584d5d25d403becd8dcf6856"
     },
     {
       "path": "v2/pages/data.js",
-      "sha256": "79bc8ab1f15133685e80032223b58b785f1346de61fdd435f849919b847b4de3"
+      "sha256": "f1db4e0c7bf9b3d2ae6b9a8119bcc85a1d68a2a283b93e4defbe6696047bcd6b"
     },
     {
       "path": "v2/pages/editorial-model.js",
@@ -640,7 +640,7 @@
     },
     {
       "path": "v2/presentation.js",
-      "sha256": "41ee79035f04268740f5b17174b39a31bdec9c1d76ff1e76bc5177051fb97f2a"
+      "sha256": "f9c4607c16dbb8a4e69d510408c77c697d77d4afa97d5c8af977bc5b2b05ba13"
     },
     {
       "path": "v2/recent-races.js",
@@ -649,6 +649,10 @@
     {
       "path": "v2/routes.js",
       "sha256": "f8bc2d4463652396709999b941e5189dd8df75973c6aaa7be44fd14a55b8b8b5"
+    },
+    {
+      "path": "v2/safety-history.js",
+      "sha256": "64b1ea2cfa850972027acc8aa4fe84e4e4968a875640a5e089bcea57918f20ca"
     },
     {
       "path": "v2/server-session.js",

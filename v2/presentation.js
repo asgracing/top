@@ -1,6 +1,7 @@
 import {eventKind} from './models.js?v=20261006v2k';
 import {resolveTrackBackgroundFile} from '/src/features/server-status/track-background.js';
 import {serverSessionLabel} from './server-session.js?v=20261008widgets1';
+import {safetyHistoryComponents} from './safety-history.js?v=20261010profile1';
 
 // R24 views consume the canonical controllers. They never calculate ratings or
 // create a second auth/voting state.
@@ -65,7 +66,10 @@ export function createPresentation({$,native,getModel,esc,text,label,date,number
     const numeric=value=>value!==null&&value!==undefined&&String(value).trim()!==''&&Number.isFinite(Number(value))?Number(value):null;
     const component=(title,value,loading=false)=>{const delta=numeric(value);return `<small class="sr-component-note">${esc(title)}: <span class="${delta>0?'positive':delta<0?'negative':''}">${loading?text('Загрузка…','Loading…'):delta===null?'—':`${delta>0?'+':''}${delta.toFixed(2)} SR`}</span></small>`;};
     const countDetail=(title,value,note)=>`<div><span>${esc(title)}</span><b>${esc(value??'—')}</b>${note}</div>`;
-    const draw=(breakdown,loading=false)=>{container.innerHTML=`<div class="sr-race-summary"><h3>${date(raw.finished_at||p.date)} · ${esc(native().track(raw.track||raw.track_code||''))}</h3><div class="detail-grid">${detail('SR',Number(p.rating).toFixed(2))}${detail(text('Изменение','Change'),(p.delta>0?'+':'')+Number(p.delta).toFixed(2))}${detail(text('Кругов','Laps'),raw.completed_laps)}${countDetail(text('Невалидных','Invalid'),raw.invalid_laps,component(text('Чистота','Cleanliness'),breakdown?.clean,loading))}${countDetail(text('Инциденты · очки','Incidents · points'),raw.incident_points,component(text('Изменение SR','SR change'),breakdown?.incidents??raw.incident_penalty_delta))}${detail(text('Автоштрафы','Penalties'),raw.counted_penalties_count)}</div><p class="data-note sr-components-explanation">${text('Компоненты показывают начисление или снятие SR. Итоговое изменение ограничено границами рейтинга.','Components show SR gains or losses. The final change is limited by the rating floor and ceiling.')}</p></div>`;};
+    const draw=(breakdown,loading=false)=>{
+      const values=safetyHistoryComponents(raw,breakdown);
+      container.innerHTML=`<div class="sr-race-summary"><h3>${date(raw.finished_at||p.date)} · ${esc(native().track(raw.track||raw.track_code||''))}</h3><div class="detail-grid">${detail('SR',Number(p.rating).toFixed(2))}${detail(text('Изменение','Change'),(p.delta>0?'+':'')+Number(p.delta).toFixed(2))}${detail(text('Кругов','Laps'),raw.completed_laps)}${countDetail(text('Невалидных','Invalid'),raw.invalid_laps,component(text('Чистота','Cleanliness'),values.clean,loading&&values.clean===null))}${countDetail(text('Инциденты · очки','Incidents · points'),raw.incident_points,component(text('Изменение SR','SR change'),values.incidents,loading&&values.incidents===null))}${countDetail(text('Автоштрафы','Penalties'),raw.counted_penalties_count,component(text('Изменение SR','SR change'),values.penalties,loading&&values.penalties===null))}</div><p class="data-note sr-components-explanation">${text('Компоненты показывают начисление или снятие SR. Итоговое изменение ограничено границами рейтинга.','Components show SR gains or losses. The final change is limited by the rating floor and ceiling.')}</p>${values.stale?`<p class="data-note sr-history-mismatch">${text('Протокол гонки расходится с историей SR. Показаны значения из истории; отсутствующие компоненты недоступны.','The race report differs from SR history. Values from history are shown; missing components are unavailable.')}</p>`:''}</div>`;
+    };
     draw(null,true);
     const breakdown=await native().safetyBreakdown({source:raw,publicId:profile.public_id,playerId:profile.player_id,raceId:p.raceId}).catch(()=>null);
     if(ticket!==inspectionRequest||owner!==request||!$('modal').open||container!==$('sr-inspection'))return;

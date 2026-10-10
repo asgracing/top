@@ -1,8 +1,8 @@
 {
   "schemaVersion": 1,
-  "version": "20261009tables1",
+  "version": "20261010profile1",
   "source": "app.js",
   "sha256": "7666828d55d1f28d1df248a2bbd914b7b68ebbe9f00e7ceb684870324c3cb36b",
-  "outputSha256": "fe37e9e54a79583b77fb0c7b8a92c8356eefa8f19a0e19e1266c62cadcb8b14b",
-  "facadeSha256": "3bcfce515fb62e5f6dbda50cdc57d7c3d9fb13961de7b35780508b96f06855e2"
+  "outputSha256": "eb1b0aad2261d74a9e4e02283dddebc8da65ec6fbfd4f7833048c1620fd4cdb8",
+  "facadeSha256": "b3d0d402a3959ce7ac1148a83de0a647f14890456d469103d5a0654bb6e8debf"
 }

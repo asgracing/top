@@ -45,7 +45,7 @@ installRuntime({
   translate:t,track:humanizeTrackName,formatDate:value=>formatDateTimeLocal(value,currentLang),
   affiliation:(row,type)=>renderDriverAffiliation(row,type).replace(/href="([^"]+)"/g,(_,href)=>'href="'+localizedPageHref(href,currentLang)+'"'),elo:renderEloBadge,sr:renderSafetyBadge,car:getResultCarName,
   special:data=>getSpecialEventPresentation(data,currentLang),
-  prepareAffiliations:()=>IS_V2_HOME?v2LoadAffiliations():Promise.resolve(),
+  prepareAffiliations:v2LoadAffiliations,
   eventSr:()=>getServerSrRequirement('hourly',resolveNamedServerStatus(serverStatusData,'hourly')),
   winner:race=>getRaceWinnerResult(race),profile:loadDriverProfileCached,
   driverTitle:loadDriverTitle,steamAvatar:loadDriverSteamAvatar,driverRank:getDriverRankInfo,isBanned:isDriverBanned,
@@ -54,7 +54,9 @@ installRuntime({
   safetyBreakdown:async options=>{
     const source=await resolveSafetyBreakdownSource(options);
     // Published components, before the rating floor/ceiling. Do not recompute SR.
-    return source?{clean:source.safety_base_delta??null,incidents:source.safety_incident_penalty_delta??null}:null;
+    return source?{clean:source.safety_base_delta??null,incidents:source.safety_incident_penalty_delta??null,
+      penalties:source.safety_penalty_delta??null,rating:source.safety_rating_after??source.safety_rating??null,
+      delta:source.safety_final_delta??source.safety_delta??null}:null;
   },
   favorite:getFavoriteCarName,lapTime:formatLapTimeFromMs,
   ratingChart:(info,kind,period,grid,offset)=>kind==='elo'?renderEloChart(info,period,grid,offset):renderSafetyChart(info,period,grid,offset),

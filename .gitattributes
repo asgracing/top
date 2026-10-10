@@ -566,4 +566,5 @@
 /v2/pages/entity-thumbnails.js -text
 /v2/mobile-navigation.js -text
 /v2/boot/** -text
+/v2/safety-history.js -text
 /assets/v2-light/** -text

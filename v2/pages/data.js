@@ -172,7 +172,8 @@ export function createPageData(native) {
     if(!/^drv_[a-z0-9]+$/i.test(id||''))throw Object.assign(new Error('Missing driver'),{status:404});
     const [profile,achievement,avatar,title]=await Promise.all([
       native().profile(id),readJson(publicUrl(`achievements/v1/drivers/${encodeURIComponent(id)}.json`)).catch(()=>null),
-      native().steamAvatar(id).catch(()=>null),native().driverTitle(id).catch(()=>undefined)
+      native().steamAvatar(id).catch(()=>null),native().driverTitle(id).catch(()=>undefined),
+      native().prepareAffiliations().catch(()=>{})
     ]);
     const eloByRace=new Map(),eloByFile=new Map();
     const filename=value=>String(value||'').split(/[\\/]/).pop().toLowerCase();
