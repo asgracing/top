@@ -1,7 +1,7 @@
 import copy from './copy.js?v=20261006v2k';
 import { subscribe, getRuntime } from './bridge.js?v=20261006v2k';
 import {eventKind,normalizeTablePage,normalizeSafetyRow,paginationPages,serverSrRestriction} from './models.js?v=20261006v2k';
-import {createPresentation} from './presentation.js?v=20261010profile1';
+import {createPresentation} from './presentation.js?v=20261011results2';
 import {createRecentRaces} from './recent-races.js?v=20261008v2pages15';
 import {createHeader} from './header.js?v=20261008mobile1';
 import {serverSessionLabel} from './server-session.js?v=20261008widgets1';
@@ -319,8 +319,8 @@ if(!isSubpage){
   if('IntersectionObserver' in window){const observer=new IntersectionObserver(entries=>{if(entries.some(entry=>entry.isIntersecting)){observer.disconnect();loadTable();}},{rootMargin:'240px 0px'});observer.observe($('ranking'));}
   else loadTable();
 }
-try{await import('./runtime/home.js?v=20261010profile1');applyHash();if(isSubpage)startBackground();}catch(error){console.error('V2 runtime unavailable',error);$('event-track').textContent=text('Не удалось загрузить данные','Could not load data');$('day-driver').textContent=text('Данные недоступны','Data unavailable');tableError=true;tableBusy=false;renderTable()}
+try{await import('./runtime/home.js?v=20261011results2');applyHash();if(isSubpage)startBackground();}catch(error){console.error('V2 runtime unavailable',error);$('event-track').textContent=text('Не удалось загрузить данные','Could not load data');$('day-driver').textContent=text('Данные недоступны','Data unavailable');tableError=true;tableBusy=false;renderTable()}
 if(document.documentElement.dataset.v2Page){
-  const {startPage}=await import('./pages/controller.js?v=20261010profile1');
+  const {startPage}=await import('./pages/controller.js?v=20261011results2');
   await startPage({native,presentation,showDialog,esc,text,date,number,rating,car,language,subscribe});
 }

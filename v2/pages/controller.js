@@ -16,7 +16,7 @@ import {formatMoscowDateTime} from '/src/shared/time.js';
 import {createCarsViews} from './views/cars.js?v=20261007v2pages14';
 import {createCarLapsLoader} from './cars-laps-model.js?v=20261007carlaps1';
 import {paintRace} from './views/race-modal.js?v=20261007v2pages14';
-import {createPageData} from './data.js?v=20261010profile1';
+import {createPageData} from './data.js?v=20261011results2';
 import {createDriverAchievementsController} from '/src/pages/driver/achievements-widget.js?v=20261008profile1';
 import {v2Route,v2EntityLinks,currentV2Path,migratedPaths} from '../routes.js?v=20261007v2pages14';
 import {screenPath,scopeSiteHref,siteContext} from '../site-routing.js?v=20261007root1';
