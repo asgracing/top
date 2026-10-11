@@ -105,7 +105,13 @@ html[data-v2-page] .center-column>:not(#page-view):not(#home-view) {display:none
 .page-championship .button {border-color:#ae6ee47a;font-size:12px;}
 .profile-example-picker {display:flex;align-items:center;gap:8px;}
 #page-view select {background:#0c1825;border:1px solid #8098ab55;color:#c9dbea;border-radius:3px;max-width:100%;padding:6px 8px;font-size:12px;}
-.profile-hero {display:flex;align-items:center;gap:20px;padding:14px 18px;position:relative;overflow:hidden;background:linear-gradient(105deg,#182435ce,#0e1824a6);}
+.profile-hero {display:grid;grid-template-columns:minmax(0,1.3fr) minmax(220px,.65fr) minmax(300px,.9fr);align-items:center;gap:20px;padding:14px 18px;position:relative;overflow:hidden;background:linear-gradient(105deg,#182435ce,#0e1824a6);}
+.profile-identity {display:flex;align-items:center;gap:14px;min-width:0;}
+.profile-discipline {min-width:0;border-left:1px solid #819db544;padding-left:16px;z-index:1;}
+.profile-discipline h2 {margin:0 0 12px;font-size:11px;}
+.profile-discipline-grid {display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:12px 14px;}
+.profile-discipline-grid .page-metric {padding-left:0;border-left:0;}
+.profile-discipline-grid .page-metric>b {font-size:22px;}
 .profile-hero::after {content:"";position:absolute;inset:0 0 0 55%;background:repeating-linear-gradient(115deg,transparent 0 38px,#6d879b08 38px 40px);pointer-events:none;}
 .profile-portrait {width:80px;height:80px;flex-shrink:0;border:1px solid #869fb055;position:relative;display:grid;place-items:center;background:linear-gradient(135deg,#304052,#101a28);font-size:26px;font-weight:800;}
 .profile-portrait img {width:100%;height:100%;object-fit:cover;}
@@ -353,7 +359,7 @@ body .page-table.results-table tbody tr[data-podium-place="3"] td:first-child {c
  .profile-workspace {display:grid;grid-template-columns:minmax(0,1fr) minmax(295px,340px);align-items:start;gap:9px;}
  .profile-sidebar {position:sticky;top:0;height:var(--profile-side-height);}
  .profile-main .profile-hero {flex-wrap:wrap;}
- .profile-main .profile-ratings {padding-left:14px;margin-left:auto;}
+ .profile-main .profile-ratings {padding-left:14px;}
  .profile-main .profile-portrait {width:64px;height:64px;}
  .profile-main .profile-ratings>span:last-child {max-width:140px;}
  .profile-main .profile-lap-grid {grid-template-columns:repeat(2,minmax(0,1fr));}
@@ -370,8 +376,9 @@ body .page-table.results-table tbody tr[data-podium-place="3"] td:first-child {c
  .page-recent .recent-track img {display:none;}
  .page-recent .recent-winner {flex-wrap:wrap;gap:5px;}
  .profile-workspace {grid-template-columns:minmax(0,1fr) 295px;}
- .profile-main .profile-heading {flex:1;}
- .profile-main .profile-ratings {border-left:0;border-top:1px solid #819db544;padding:8px 0 0;flex-direction:row;align-items:center;flex-wrap:wrap;width:100%;}
+ .profile-main .profile-hero {grid-template-columns:minmax(220px,1fr) minmax(0,1.2fr);}
+ .profile-main .profile-identity {grid-column:1/-1;}
+ .profile-main .profile-ratings {border-left:0;padding:0;}
  .profile-main .profile-ratings .rating-badge {font-size:12px;padding:5px 9px;}
  .profile-main .profile-ratings>span:last-child {max-width:none;}
  .profile-main .profile-stat-grid {grid-template-columns:repeat(3,minmax(0,1fr));}
@@ -388,6 +395,20 @@ body .page-table.results-table tbody tr[data-podium-place="3"] td:first-child {c
  .profile-main>.page-panel:has(#profile-history-content),.profile-main>.page-panel:has(#profile-history-content)~* {order:2;}
  .profile-sidebar {height:auto;position:static;}
  .profile-sidebar .page-disclosure {margin-top:0;}
+}
+
+@media(max-width:1000px) {
+ .profile-hero {grid-template-columns:minmax(220px,1fr) minmax(0,1.2fr);}
+ .profile-identity {grid-column:1/-1;}
+ .profile-ratings {border:0;padding:0;width:auto;flex-direction:column;align-items:flex-start;}
+ .profile-ratings>span:last-child {margin-left:0;}
+ .profile-discipline {padding-left:14px;}
+}
+@media(max-width:600px) {
+ .profile-hero {grid-template-columns:minmax(0,1fr);}
+ .profile-ratings {border-top:1px solid #819db544;padding-top:12px;}
+ .profile-discipline {border-left:0;border-top:1px solid #819db544;padding:12px 0 0;}
+ .profile-discipline-grid {gap:12px 16px;}
 }
 
 /* R15: one event-card composition and compact, fully interactive result rows. */

@@ -48,7 +48,7 @@
     },
     {
       "path": "scripts/build-v2.mjs",
-      "sha256": "b60f9f29ddaea41c8b391a67f7596f010103413ee3dbbc039ef8f0d2b9eb1ff3"
+      "sha256": "1c420be4c2842c502f9631c24d1e0e2e2eec9c0ac3ff2d929359ddaca3e9fb3a"
     },
     {
       "path": "scripts/generate-localized-pages.mjs",
@@ -544,7 +544,7 @@
     },
     {
       "path": "v2-source/pages/core.js",
-      "sha256": "0e09647eb5437520375124b047b559bdbad12772ba429edd9a03412d93b6eb32"
+      "sha256": "a99d39950a1d97c5603637ffe64541c0db9cfc42b2f047678e2e8afdb0923416"
     },
     {
       "path": "v2-source/pages/editorial.js",
@@ -568,7 +568,7 @@
     },
     {
       "path": "v2-source/pages/pages.css",
-      "sha256": "5cd3f340be230570bcd98a53f8b4bd4bb625b493565276694b6a038769f68016"
+      "sha256": "d5a875edda2cae2b40f82dd0131c2b4eacb036918b5719207976f01a1c085ea4"
     },
     {
       "path": "v2-source/pages/r24-pages.css",
@@ -592,7 +592,7 @@
     },
     {
       "path": "v2/home.js",
-      "sha256": "3853306a2ac46c25edce4e79dea1da1cade84d4a8eea4f35fb1508b58660d991"
+      "sha256": "702345db9aff233a881f939e0d265f7508a607f4ff18dd6adcb771cbb8fa4df0"
     },
     {
       "path": "v2/mobile-navigation.js",
@@ -632,7 +632,7 @@
     },
     {
       "path": "v2/pages/controller.js",
-      "sha256": "aa1359a0109f975fa0655c54a8e410cb8983ade713b4685a93e58be080b39424"
+      "sha256": "9e41989cff0bc6e00ba2d398b9bb982c49b483de5d43571537bf244430a81cfb"
     },
     {
       "path": "v2/pages/data.js",
