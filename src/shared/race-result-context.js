@@ -68,7 +68,7 @@ export function installResultTabs(root = document) {
   if (!root.getElementById('race-result-context-style')) {
     const sheet = root.createElement('link');
     sheet.id = 'race-result-context-style'; sheet.rel = 'stylesheet';
-    sheet.href = '/styles/components/race-result-context.css?v=20261011qual3';
+    sheet.href = '/styles/components/race-result-context.css?v=20261011conditions1';
     root.head.append(sheet);
   }
   function select(tab, focus) {
