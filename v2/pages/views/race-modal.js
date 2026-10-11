@@ -1,5 +1,5 @@
 // Approved results layout; only the official fastest lap is highlighted.
-import {decorateRaceHeading, renderResultTabs, installResultTabs} from '/src/shared/race-result-context.js?v=20261011conditions1';
+import {decorateRaceHeading, renderResultTabs, installResultTabs} from '/src/shared/race-result-context.js?v=20261011racelinks1';
 export function paintRace(r,api) {
  installResultTabs();
  decorateRaceHeading(document.getElementById('v2-modal-title'), r, api);

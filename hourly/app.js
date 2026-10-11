@@ -1,4 +1,4 @@
-import {decorateRaceHeading,renderResultTabs,installResultTabs,mergeResultContext} from '../src/shared/race-result-context.js?v=20261011conditions1';
+import {decorateRaceHeading,renderResultTabs,installResultTabs,mergeResultContext} from '../src/shared/race-result-context.js?v=20261011racelinks1';
 import { initializeLocalizedPage, localizedPageHref, resolvePageLocale, setPageLocale } from "../src/shared/localized-page.js?v=20261007root1";
 initializeLocalizedPage();
 import {
@@ -3352,13 +3352,15 @@ async function loadRaceDetails(race) {
   const payload = await loadJson(`${recentRaceDetailsBaseUrl}${race.details_path}`);
   const raceId = payload.race_id || race.race_id;
   const context = /^[a-z0-9_.-]+$/i.test(raceId||'') ? await loadJson(`${recentRaceDetailsBaseUrl}races/context/${raceId}.json`).catch(error => { if(error.status===404)return null; throw error; }) : null;
-  const details = mergeResultContext(payload,context?.result_context_version===1?context:{});
+  const details = mergeResultContext({...race,...payload,_data_namespace:"hourly"},context?.result_context_version===1?context:{});
   raceDetailsCache.set(race.details_path, details);
   return details;
 }
 async function openRaceResultsModal(race) {
   if (!race) return;
   selectedRace = {
+    ...race,
+    _data_namespace: "hourly",
     track_name: race.track_name,
     track: race.track,
     finished_at: race.finished_at,

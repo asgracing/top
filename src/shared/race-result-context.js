@@ -1,4 +1,5 @@
 // One result context for modals, standalone pages and the retained classic UI.
+import {raceResultUrl, resultTab} from './race-result-links.js?v=20261011racelinks1';
 const installed = new WeakSet();
 
 export function mergeResultContext(race, context = {}) {
@@ -37,7 +38,14 @@ export function decorateRaceHeading(element, race, api) {
   if (!element) return;
   const title = element.querySelector('.race-title-text')?.textContent || element.textContent;
   element.classList.add('race-results-heading');
-  element.innerHTML = `<span class="race-title-text">${api.label(title)}</span>${renderRaceConditions(race, api)}`;
+  element.innerHTML = `<span class="race-heading-title"><span class="race-title-text">${api.label(title)}</span>${renderRaceCopyButton(race, api)}</span>${renderRaceConditions(race, api)}`;
+}
+
+export function renderRaceCopyButton(race, {tx, label}) {
+  let url;
+  try { url = raceResultUrl(race, 'race', tx('ru', 'en')); } catch { return ''; }
+  const copy = tx('Скопировать ссылку', 'Copy link'), copied = tx('Ссылка скопирована', 'Link copied');
+  return `<span class="race-share"><button type="button" class="race-copy-link" data-race-copy="${label(url)}" data-copy-label="${label(copy)}" data-copied-label="${label(copied)}" data-manual-label="${label(tx('Скопируй ссылку из поля', 'Copy the link from this field'))}">${label(copy)}</button><span class="race-copy-status" role="status" aria-live="polite"></span></span>`;
 }
 
 export function renderResultTabs(race, raceHTML, api, id = 'race-results') {
@@ -59,7 +67,8 @@ export function renderResultTabs(race, raceHTML, api, id = 'race-results') {
     qualifyingHTML = `<p class="site-empty empty" role="status">${label(message)}</p>`;
   }
   const safeId = String(id).replace(/[^a-z0-9_-]/gi, '-');
-  return `<div class="result-tabs" data-result-tabs><div class="result-tablist" role="tablist" aria-label="${label(tx('Протокол сессии', 'Session results'))}">${['race', 'qualifying'].map((kind, index) => `<button type="button" role="tab" id="${safeId}-${kind}-tab" aria-controls="${safeId}-${kind}-panel" aria-selected="${index === 0}" tabindex="${index === 0 ? 0 : -1}" data-result-tab="${kind}">${label(kind === 'race' ? tx('Гонка', 'Race') : tx('Квалификация', 'Qualifying'))}</button>`).join('')}</div><div id="${safeId}-race-panel" role="tabpanel" aria-labelledby="${safeId}-race-tab" data-result-panel="race">${raceHTML}</div><div id="${safeId}-qualifying-panel" role="tabpanel" aria-labelledby="${safeId}-qualifying-tab" data-result-panel="qualifying" hidden>${qualifyingHTML}</div></div>`;
+  const selected = resultTab(api.resultTab);
+  return `<div class="result-tabs" data-result-tabs><div class="result-tablist" role="tablist" aria-label="${label(tx('Протокол сессии', 'Session results'))}">${['race', 'qualifying'].map(kind => `<button type="button" role="tab" id="${safeId}-${kind}-tab" aria-controls="${safeId}-${kind}-panel" aria-selected="${kind === selected}" tabindex="${kind === selected ? 0 : -1}" data-result-tab="${kind}">${label(kind === 'race' ? tx('Гонка', 'Race') : tx('Квалификация', 'Qualifying'))}</button>`).join('')}</div><div id="${safeId}-race-panel" role="tabpanel" aria-labelledby="${safeId}-race-tab" data-result-panel="race"${selected === 'race' ? '' : ' hidden'}>${raceHTML}</div><div id="${safeId}-qualifying-panel" role="tabpanel" aria-labelledby="${safeId}-qualifying-tab" data-result-panel="qualifying"${selected === 'qualifying' ? '' : ' hidden'}>${qualifyingHTML}</div></div>`;
 }
 
 export function installResultTabs(root = document) {
@@ -68,7 +77,7 @@ export function installResultTabs(root = document) {
   if (!root.getElementById('race-result-context-style')) {
     const sheet = root.createElement('link');
     sheet.id = 'race-result-context-style'; sheet.rel = 'stylesheet';
-    sheet.href = '/styles/components/race-result-context.css?v=20261011conditions1';
+    sheet.href = '/styles/components/race-result-context.css?v=20261011racelinks1';
     root.head.append(sheet);
   }
   function select(tab, focus) {
@@ -79,12 +88,38 @@ export function installResultTabs(root = document) {
       button.tabIndex = selected ? 0 : -1;
     }
     for (const panel of group.querySelectorAll('[data-result-panel]')) panel.hidden = panel.dataset.resultPanel !== tab.dataset.resultTab;
+    group.dispatchEvent(new CustomEvent('race-result-tab-change', {bubbles: true, detail: {tab: tab.dataset.resultTab}}));
     if (focus) tab.focus();
   }
   root.addEventListener('click', event => {
+    const copy = event.target.closest('[data-race-copy]');
+    if (copy) { event.preventDefault(); void copyLink(copy); return; }
     const tab = event.target.closest('[data-result-tab]');
     if (tab) { event.preventDefault(); select(tab, false); }
   });
+  async function copyLink(button) {
+    const scope = button.closest('dialog,.modal-overlay,.page-panel') || root;
+    const url = new URL(button.dataset.raceCopy);
+    if (scope.querySelector('[data-result-tab="qualifying"][aria-selected="true"]')) url.searchParams.set('tab', 'qualifying');
+    const share = button.closest('.race-share'), status = share.querySelector('.race-copy-status');
+    share.querySelector('input')?.remove();
+    let copied = false;
+    try { await root.defaultView.navigator.clipboard.writeText(url.href); copied = true; } catch {
+      const field = root.createElement('textarea'); field.value = url.href;
+      field.style.cssText = 'position:fixed;left:-10000px;top:0';
+      // Keep the fallback inside an open dialog, outside content made inert.
+      scope.append(field); field.select();
+      try { copied = root.execCommand('copy'); } catch { /* Manual copy below. */ }
+      field.remove(); button.focus();
+    }
+    status.textContent = copied ? button.dataset.copiedLabel : button.dataset.manualLabel;
+    button.textContent = copied ? button.dataset.copiedLabel : button.dataset.copyLabel;
+    if (!copied) {
+      const input = root.createElement('input'); input.type = 'text'; input.readOnly = true; input.value = url.href;
+      input.className = 'race-share-url'; input.setAttribute('aria-label', button.dataset.copyLabel);
+      share.append(input); input.focus(); input.select();
+    }
+  }
   root.addEventListener('keydown', event => {
     const tab = event.target.closest('[data-result-tab]');
     if (!tab || !['ArrowLeft', 'ArrowRight', 'Home', 'End'].includes(event.key)) return;

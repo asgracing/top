@@ -1,7 +1,7 @@
-import {createPageData,readJson,hourlyUrl,normalizeEvent} from './pages/data.js?v=20261007v2pages11';
+import {createPageData,readJson,hourlyUrl,normalizeEvent} from './pages/data.js?v=20261011racelinks1';
 import {eventKind as resolveKind} from './models.js?v=20261006v2k';
 import {createPageViews} from './pages/views/core.js?v=20261007v2pages11';
-import {paintRace} from './pages/views/race-modal.js?v=20261007v2pages11';
+import {paintRace} from './pages/views/race-modal.js?v=20261011racelinks1';
 
 // Use the same published list and protocol presentation as Hourly.
 export function createRecentRaces({$,native,getModel,presentation,showDialog,pushDialog,esc,text,date,number,car,classic,language}) {

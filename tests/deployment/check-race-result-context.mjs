@@ -11,7 +11,7 @@ const context={result_context_version:1,qualifying:{status:'available',rating_ba
   {position:1,public_id:pilot.public_id,driver:pilot.driver,best_lap:'1:30.123',race_number:25,car_name:'Ferrari 296 GT3',car_model_id:36,gap_ms:0,safety_delta:.25},
   {position:2,public_id:null,driver:'Q-only <pilot>',best_lap:'1:31.500',car_name:'BMW M4 GT3',car_model_id:30,gap_ms:1377}
 ]},race_conditions:{status:'available',game_time:{hour_of_day:16,time_multiplier:3},ambient_temp_c:23,track_temp_c:29,rain:0,cloud_level:.25,weather_randomness:2,evidence:{ambient_temp_c:{basis:'configured',source:'launch_snapshot'}}}};
-async function mock(page,{contextStatus=200}={}) {
+async function mock(page,{contextStatus=200,expiredIndex=false}={}) {
   const errors=[],requests=[];
   page.on('pageerror',e=>errors.push(e.message));
   await page.route('**/*',async route=>{
@@ -29,7 +29,7 @@ async function mock(page,{contextStatus=200}={}) {
       if(url.pathname.includes('/races/context/'))return route.fulfill({status:contextStatus,contentType:'application/json',body:JSON.stringify(contextStatus===200?context:{})});
       if(url.pathname==='/top-data/v2/manifest.json')payload=sample.manifest;
       else if(url.pathname.startsWith('/top-data/v2/drivers/'))payload={...Object.values(snapshot.profiles)[0],public_id:pilot.public_id,driver:pilot.driver,race_history:[sample.items[0]]};
-      else if(url.pathname==='/hourly-data/races/races.json')payload={items:[...sample.items.map(item=>({...item,source:'hourly'})),...championship.recent.items]};
+      else if(url.pathname==='/hourly-data/races/races.json')payload={items:expiredIndex?[]:[...sample.items.map(item=>({...item,source:'hourly',details_path:`races/${item.race_id}.json`})),...championship.recent.items]};
       else if(url.pathname==='/hourly-data/championships.json')payload=championship.index;
       else if(url.pathname==='/hourly-data/events/october-2026/index.json')payload=championship.seasons['october-2026'];
       else if(url.pathname==='/hourly-data/events/october-2026/'+championship.seasons['october-2026'].races[0].details_path)payload={...championship.protocol,results:race.results.map((row,i)=>i===0?{...row,points:4321}:row)};
@@ -81,6 +81,36 @@ async function checkTabs(page,scope,requests,language) {
   assert.ok(await page.evaluate(()=>document.documentElement.scrollWidth<=innerWidth+1),'No document overflow');
 }
 const report=[];
+async function checkShare(page,language,source='top') {
+  await page.evaluate(()=>Object.defineProperty(navigator,'clipboard',{configurable:true,value:{writeText:async text=>{window.__copiedRaceLink=text;}}}));
+  const button=page.locator('#v2-modal [data-race-copy]');
+  await button.click();
+  const copied=await page.evaluate(()=>window.__copiedRaceLink),url=new URL(copied);
+  assert.equal(url.origin,'https://asgracing.ru');assert.equal(url.pathname,language==='en'?'/en/race/':'/race/');
+  assert.equal(url.searchParams.get('tab'),'qualifying');assert.equal(url.searchParams.get('source')||'top',source);
+  const fresh=await browser.newPage({viewport:{width:390,height:936}}),state=await mock(fresh,{expiredIndex:source==='season'});
+  await fresh.goto(base+url.pathname+url.search,{waitUntil:'networkidle'});await dismiss(fresh);
+  const q=fresh.locator('#page-view [data-result-tab="qualifying"]');await q.waitFor();
+  assert.equal(await q.getAttribute('aria-selected'),'true','Copied tab opens immediately without Steam login');
+  assert.match(await fresh.locator('.qualifying-table').innerText(),/1:30\.123/);
+  assert.match(await fresh.locator('.race-conditions').innerText(),/16:00/);
+  assert.equal(await fresh.locator('.current-user-row').count(),0);
+  const raceTab=fresh.locator('#page-view [data-result-tab="race"]');await raceTab.click();
+  assert.equal(new URL(fresh.url()).searchParams.has('tab'),false);
+  if(source==='season') {
+    assert.ok(url.searchParams.get('season'));assert.ok(url.searchParams.get('published'));
+    assert.match(await fresh.locator('#page-view [data-result-panel="race"] tbody tr').first().locator('td').last().innerText(),/4.?321/);
+  }
+  await q.click();assert.equal(new URL(fresh.url()).searchParams.get('tab'),'qualifying');
+  const languageLink=fresh.locator(`.v2-language a[data-language="${language==='en'?'ru':'en'}"]`);
+  assert.equal(new URL(await languageLink.getAttribute('href'),base).searchParams.get('tab'),'qualifying');
+  await fresh.reload({waitUntil:'networkidle'});
+  assert.equal(await fresh.locator('#page-view [data-result-tab="qualifying"]').getAttribute('aria-selected'),'true');
+  assert.deepEqual(state.errors,[]);await fresh.close();
+  await page.locator('#v2-modal [data-result-tab="race"]').click();await button.click();
+  assert.equal(new URL(await page.evaluate(()=>window.__copiedRaceLink)).searchParams.has('tab'),false);
+  await page.locator('#v2-modal [data-result-tab="qualifying"]').click();
+}
 try {
   for(const language of ['ru','en'])for(const width of [1920,390,320]) {
     const page=await browser.newPage({viewport:{width,height:936},reducedMotion:'reduce'}),state=await mock(page);
@@ -88,6 +118,8 @@ try {
     await page.goto(`${base}${prefix}/races/`,{waitUntil:'networkidle'});await dismiss(page);
     await page.locator('.archive-table tbody tr').first().click({position:{x:12,y:15}});
     await checkTabs(page,'#v2-modal',state.requests,language);
+    await checkShare(page,language);
+    if(width===1920&&process.env.ASG_RESULT_SCREENSHOT_DIR)await page.screenshot({path:path.join(process.env.ASG_RESULT_SCREENSHOT_DIR,'qualifying-modal-desktop-'+language+'.png')});
     if(width===390&&process.env.ASG_RESULT_SCREENSHOT_DIR)await page.screenshot({path:path.join(process.env.ASG_RESULT_SCREENSHOT_DIR,'qualifying-modal-mobile-'+language+'.png')});
     await page.locator('#v2-modal .modal-close').click();
     await page.goto(`${base}${prefix}/race/?id=${sample.items[0].race_id}`,{waitUntil:'networkidle'});
@@ -106,6 +138,7 @@ try {
   await page.locator('#v2-modal .modal-close').click();
   await page.locator('#v2-recent-races').click();await page.locator('#v2-modal [data-page-race]').first().click({position:{x:12,y:15}});
   await checkTabs(page,'#v2-modal',state.requests,'ru');
+  await checkShare(page,'ru','hourly');
   await page.locator('#v2-modal .qualifying-table [data-rating-kind="elo"]').first().click();
   await page.locator('#v2-modal .rating-history-controls').waitFor();await page.locator('#v2-modal .modal-close').click();
   assert.equal(await page.locator('#v2-modal [data-result-tab="qualifying"]').getAttribute('aria-selected'),'true');
@@ -113,18 +146,35 @@ try {
   await page.goto(base+'/hourly/',{waitUntil:'networkidle'});
   await page.locator('[data-page-race]').first().click({position:{x:12,y:15}});
   await checkTabs(page,'#v2-modal',state.requests,'ru');
+  await checkShare(page,'ru','hourly');
   await page.goto(base+'/hourly/championship/?slug=october-2026',{waitUntil:'networkidle'});
   await page.locator('[data-page-race]').first().click();await checkTabs(page,'#v2-modal',state.requests,'ru');
+  await checkShare(page,'ru','season');
   await page.locator('#v2-modal [data-result-tab="race"]').click();
   assert.match(await page.locator('#v2-modal [data-result-panel="race"] tbody tr').first().locator('td').last().innerText(),/4.?321/,'Season points survive official rating enrichment');
   const team=site.entities.teams.find(t=>site.entity_details['teams/'+t.slug]?.recent_races?.length);
   if(team) {
     await page.goto(base+'/teams/detail/?slug='+team.slug,{waitUntil:'networkidle'});
     await page.locator('[data-page-race]').first().click();await checkTabs(page,'#v2-modal',state.requests,'ru');
+    await checkShare(page,'ru');
+  }
+  const club=site.entities.clubs.find(t=>site.entity_details['clubs/'+t.slug]?.recent_races?.length);
+  if(club) {
+    await page.goto(base+'/clubs/?slug='+club.slug,{waitUntil:'networkidle'});
+    await page.locator('[data-page-race]').first().click();await checkTabs(page,'#v2-modal',state.requests,'ru');await checkShare(page,'ru');
   }
   await page.goto(base+'/driver/?id='+pilot.public_id,{waitUntil:'networkidle'});
   await page.locator('[data-page-race]').first().click({position:{x:12,y:15}});await checkTabs(page,'#v2-modal',state.requests,'ru');
-  assert.deepEqual(state.errors,[]);await page.close();report.push({home:'passed',widget:'passed',nestedRating:'passed',hourly:'passed',championship:'passed',team:team?'passed':'no_fixture',driver:'passed'});
+  await checkShare(page,'ru');
+  await page.evaluate(()=>{
+    Object.defineProperty(navigator,'clipboard',{configurable:true,value:{writeText:async()=>{throw new Error('denied');}}});
+    document.execCommand=()=>false;
+  });
+  await page.locator('#v2-modal [data-race-copy]').click();
+  const manual=page.locator('#v2-modal .race-share-url');assert.equal(await manual.isVisible(),true);
+  assert.equal(new URL(await manual.inputValue()).searchParams.get('tab'),'qualifying');
+  assert.equal(await manual.evaluate(node=>node.selectionEnd-node.selectionStart), (await manual.inputValue()).length);
+  assert.deepEqual(state.errors,[]);await page.close();report.push({home:'passed',widget:'passed',nestedRating:'passed',hourly:'passed',championship:'passed',team:team?'passed':'no_fixture',club:club?'passed':'no_fixture',driver:'passed',clipboardFallback:'passed',anonymousDeepLinks:'passed',expiredChampionshipIndex:'passed'});
   for(const status of [404,503]) {
     const page=await browser.newPage({viewport:{width:390,height:936},reducedMotion:'reduce'}),state=await mock(page,{contextStatus:status});
     await page.goto(base+'/races/',{waitUntil:'networkidle'});await dismiss(page);
@@ -146,6 +196,10 @@ try {
     assert.equal(await modal.locator('.qualifying-table th').count(),7);
     assert.match(await modal.locator('.qualifying-table').innerText(),/1:30\.123/);
     assert.match(await modal.locator('.race-conditions').innerText(),/16:00/);
+    await page.evaluate(()=>Object.defineProperty(navigator,'clipboard',{configurable:true,value:{writeText:async text=>{window.__copiedRaceLink=text;}}}));
+    await modal.locator('[data-race-copy]').click();
+    const copied=new URL(await page.evaluate(()=>window.__copiedRaceLink));
+    assert.equal(copied.pathname,'/race/');assert.equal(copied.searchParams.get('tab'),'qualifying');
     assert.deepEqual(state.errors,[]);await page.close();report.push({classicArchive:'passed'});
   }
   console.log(JSON.stringify(report));

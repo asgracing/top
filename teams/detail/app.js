@@ -1,3 +1,3 @@
-import { createEntityDetailPage } from "../../src/pages/clubs-teams/detail-page.js?v=20260921links2";
+import { createEntityDetailPage } from "../../src/pages/clubs-teams/detail-page.js?v=20261011racelinks1";
 
 createEntityDetailPage({ entityType: "team", siteBase: "../../" });

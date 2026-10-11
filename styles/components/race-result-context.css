@@ -11,6 +11,13 @@
 .qualifying-table .result-driver-identity small {color:#9ca7b2;font-size:11px;}
 .race-results-heading {display:flex;align-items:center;justify-content:flex-start;gap:16px;flex-wrap:wrap;min-width:0;}
 .race-title-text {min-width:0;overflow-wrap:anywhere;}
+.race-heading-title {display:flex;align-items:center;gap:12px;flex-wrap:wrap;min-width:0;}
+.race-share {display:inline-flex;align-items:center;flex-wrap:wrap;gap:6px;max-width:100%;font-size:12px;font-weight:400;letter-spacing:normal;}
+.race-copy-link {width:auto;min-height:34px;padding:6px 10px;border:1px solid #819db566;border-radius:5px;background:#14212b;color:#dce7ee;font:inherit;cursor:pointer;white-space:nowrap;}
+.race-copy-link:hover {border-color:#67edbe;color:#67edbe;}
+.race-copy-link:focus-visible,.race-share-url:focus-visible {outline:2px solid #67edbe;outline-offset:3px;}
+.race-copy-status {position:absolute;width:1px;height:1px;overflow:hidden;clip-path:inset(50%);}
+.race-share-url {max-width:100%;width:280px;min-width:0;box-sizing:border-box;font:inherit;color:#dce7ee;background:#14212b;border:1px solid #819db566;padding:6px;}
 .race-conditions {display:flex;align-items:center;justify-content:flex-end;flex-wrap:wrap;gap:5px 12px;min-width:0;color:#b7c2cb;font-size:12px;font-weight:400;line-height:1.5;letter-spacing:normal;}
 .race-conditions>span {white-space:nowrap;}
 .race-conditions>small {flex-basis:100%;text-align:right;color:#84929d;font-size:10px;}

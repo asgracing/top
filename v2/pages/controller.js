@@ -7,7 +7,7 @@ import {markNewsRead} from '/news-read-state.js';
 import {editorialImage} from './editorial-model.js?v=20261007v2pages14';
 import {getCommunityPostKey} from '/src/pages/community/feed-model.js';
 import {createPageViews} from './views/core.js?v=20261011profile2';
-import {createArchiveViews} from './views/archive.js?v=20261007v2pages14';
+import {createArchiveViews} from './views/archive.js?v=20261011racelinks1';
 import {createChampionshipViews} from './views/championships.js?v=20261007v2pages14';
 import {createEntityViews} from './views/entities.js?v=20261008thumbs1';
 import {createFunViews} from './views/fun.js?v=20261007v2pages14';
@@ -15,8 +15,8 @@ import {createBansViews} from './views/bans.js?v=20261007v2pages14';
 import {formatMoscowDateTime} from '/src/shared/time.js';
 import {createCarsViews} from './views/cars.js?v=20261007v2pages14';
 import {createCarLapsLoader} from './cars-laps-model.js?v=20261007carlaps1';
-import {paintRace} from './views/race-modal.js?v=20261007v2pages14';
-import {createPageData} from './data.js?v=20261011qual3';
+import {paintRace} from './views/race-modal.js?v=20261011racelinks1';
+import {createPageData} from './data.js?v=20261011racelinks1';
 import {createDriverAchievementsController} from '/src/pages/driver/achievements-widget.js?v=20261008profile1';
 import {v2Route,v2EntityLinks,currentV2Path,migratedPaths} from '../routes.js?v=20261007v2pages14';
 import {screenPath,scopeSiteHref,siteContext} from '../site-routing.js?v=20261007root1';
@@ -35,7 +35,7 @@ export async function startPage(api) {
   home.id='home-view';home.hidden=true;home.append(...center.childNodes);view.id='page-view';center.append(home,view);
   if(screen==='account'){const {startAccountPage}=await import('./account.js?v=20261007v2pages14');return startAccountPage({...api,view,center});}
   if(['settings','moderation','ops'].includes(screen)){const {startControlPage}=await import('./control.js?v=20261007v2pages14');return startControlPage({...api,view,center,screen});}
-  const state={screen,id:params.get('id')||params.get('slug')||(screen==='document'?(location.pathname.endsWith('/privacy/')?'privacy':location.pathname.endsWith('/cookies/')?'cookies':null):null),month:'',racePage:1,query:'',track:'',paceTrack:'',raceSort:'date',recentPage:1,clubType:'teams',archivePage:Math.max(1,Number(params.get('page'))||1),archiveQuery:params.get('q')||'',archiveTrack:params.get('track')||'',archiveKind:params.get('kind')||'',archiveOrder:params.get('order')==='asc'?'asc':'desc',seasonQuery:'',seasonStatus:'',communityType:'clubs',standingPage:1,catalogType:(params.get('tab')||params.get('type'))==='teams'?'teams':'clubs',catalogContext:['hourly','championship'].includes(params.get('context'))?params.get('context'):'general',catalogQuery:params.get('q')||'',rosterQuery:'',entityRacePage:1};
+  const state={screen,raceTab:params.get('tab')==='qualifying'?'qualifying':'race',id:params.get('id')||params.get('slug')||(screen==='document'?(location.pathname.endsWith('/privacy/')?'privacy':location.pathname.endsWith('/cookies/')?'cookies':null):null),month:'',racePage:1,query:'',track:'',paceTrack:'',raceSort:'date',recentPage:1,clubType:'teams',archivePage:Math.max(1,Number(params.get('page'))||1),archiveQuery:params.get('q')||'',archiveTrack:params.get('track')||'',archiveKind:params.get('kind')||'',archiveOrder:params.get('order')==='asc'?'asc':'desc',seasonQuery:'',seasonStatus:'',communityType:'clubs',standingPage:1,catalogType:(params.get('tab')||params.get('type'))==='teams'?'teams':'clubs',catalogContext:['hourly','championship'].includes(params.get('context'))?params.get('context'):'general',catalogQuery:params.get('q')||'',rosterQuery:'',entityRacePage:1};
   const data=createPageData(native),raw={profiles:{},car_models:{},schedule:{items:[]},club_rankings:{},seasons:{},entities:{},entity_details:{}},fixture={profiles:raw.profiles,achievements:{},results:{},recent:[],captured_at:null};
   Object.assign(state,{selectedCar:params.get('car'),carQuery:params.get('q')||'',brand:params.get('brand')||'',carPage:Math.max(1,Number(params.get('page'))||1),carSort:params.get('sort')||'races',carDirection:params.get('direction')==='asc'?'asc':'desc',compare:[]});
   Object.assign(state,{period:params.get('period')==='month'?'month':'week',bansQuery:params.get('q')||'',bansPage:Math.max(1,Number(params.get('page'))||1)});
@@ -144,11 +144,19 @@ export async function startPage(api) {
     const ticket=++loadTicket;showDialog(text('Результаты гонки','Race results'),`<p role="status">${text('Загрузка…','Loading…')}</p>`,trigger);
     try{const r=await data.race(id,fixture.results[id] || fixture.recent.find(r=>r.race_id===id));if(ticket!==loadTicket||!document.getElementById('v2-modal').open)return;fixture.results[id]=r;
       const modal=document.getElementById('v2-modal');modal.dataset.kind='page-race';modal.style.setProperty('--modal-track',`url('/assets/${views.safeTrack(r)}.jpg')`);
-      document.getElementById('v2-modal-title').textContent=native().track(r.track_code||r.track)+' · '+text('Результаты гонки','Race results');modalApi.viewer={publicId:model?.auth?.driver?.publicId,authenticated:model?.auth?.authenticated};paintRace(r,modalApi);highlightResults();
+      document.getElementById('v2-modal-title').textContent=native().track(r.track_code||r.track)+' · '+text('Результаты гонки','Race results');modalApi.viewer={publicId:model?.auth?.driver?.publicId,authenticated:model?.auth?.authenticated};paintRace(r,{...modalApi,resultTab:screen==='race'?state.raceTab:'race'});highlightResults();
     }catch{if(ticket===loadTicket)document.getElementById('v2-modal-body').innerHTML=`<p>${text('Результаты временно недоступны.','Results temporarily unavailable.')}</p><button class="button" data-page-race="${esc(id)}">${text('Повторить','Retry')}</button>`;}
   }
   function openEvent(e,trigger){presentation.openEvent(trigger,e,{html:()=>views.joinControls(e,{disclosure:false}),vote:()=>toggle(e)});}
   function openWeather(e,trigger){const w=e.weather||{};showDialog(text('Погода','Weather')+' · '+(e.track_name||native().track(e.track_code)),`<div class="detail-grid">${modalApi.detail(text('Температура воздуха','Ambient temperature'),w.ambient_temp_c==null?'—':w.ambient_temp_c+' °C')}${modalApi.detail(text('Облачность','Cloud cover'),w.cloud_level==null?'—':Math.round(w.cloud_level*100)+'%')}${modalApi.detail(text('Дождь','Rain'),w.rain_level==null?'—':Math.round(w.rain_level*100)+'%')}${modalApi.detail(text('Изменчивость погоды','Weather randomness'),w.weather_randomness??'—')}</div>`,trigger);}
+  document.addEventListener('race-result-tab-change',event=>{
+    if(screen!=='race'||!event.target.closest('#page-view'))return;
+    state.raceTab=event.detail.tab;
+    const url=new URL(location.href);
+    state.raceTab==='qualifying'?url.searchParams.set('tab','qualifying'):url.searchParams.delete('tab');
+    history.replaceState(null,'',url);
+    document.querySelectorAll('.v2-language a').forEach(a=>a.href=currentV2Path(a.dataset.language));
+  });
   document.addEventListener('click',event=>{
     const target=event.target;if(target.closest('#v1-runtime-host'))return;
     const collection=target.closest('[data-profile-achievements]');
@@ -252,7 +260,7 @@ export async function startPage(api) {
       raw.archiveTracks=['barcelona','brands_hatch','donington','hungaroring','imola','kyalami','laguna_seca','misano','monza','mount_panorama','nurburgring','nurburgring_24h','oulton_park','paul_ricard','red_bull_ring','silverstone','snetterton','spa','suzuka','valencia','watkins_glen','zandvoort','zolder'];
       await loadArchive(true);
     }else if(screen==='race') {
-      fixture.results[state.id]=await data.race(state.id);document.title=views.trackName(views.trackCode(fixture.results[state.id]))+' · '+text('Результаты гонки','Race results')+' · ASG Racing';paint();
+      fixture.results[state.id]=await data.raceFromLink(params);document.title=views.trackName(views.trackCode(fixture.results[state.id]))+' · '+text('Результаты гонки','Race results')+' · ASG Racing';paint();
     }else{
       const result=await data.driver(state.id);raw.profiles[state.id]=result.profile;fixture.achievements[state.id]=result.achievement;fixture.captured_at=result.profile.updated_at;
       for(const r of result.profile.race_history||[])if(r.car_model_id!=null)raw.car_models[r.car_model_id]=r.car_name;

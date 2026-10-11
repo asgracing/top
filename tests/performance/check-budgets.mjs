@@ -48,7 +48,8 @@ const portalOpsStylesheetBytes = await textBytes("styles/components/portal-ops.c
 const driverOverlayJavaScriptBytes = await textBytes("account/driver-overlay.js")
   + await textBytes("overlay/driver/model.js")
   + await textBytes("overlay/driver/app.js");
-const raceResultContextJavaScriptBytes = await textBytes("src/shared/race-result-context.js");
+const raceResultContextJavaScriptBytes = await textBytes("src/shared/race-result-context.js")
+  + await textBytes("src/shared/race-result-links.js");
 const raceResultContextStylesheetBytes = await textBytes("styles/components/race-result-context.css");
 const personalNotificationsJavaScriptBytes = await textBytes("src/features/auth/personal-notifications.js");
 const personalNotificationsStylesheetBytes = await textBytes("styles/components/personal-notifications.css");

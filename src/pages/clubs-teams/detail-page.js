@@ -10,6 +10,7 @@ import { applyLocalizedNavigation, currentPageLanguageHref, localizedPageHref, r
 import { resolveRuntimeOverride } from "../../shared/runtime-config.js";
 import { formatRatingMetric } from "../../shared/rating-format.js?v=20260820ratingsdot1";
 import { formatMoscowDateTime } from "../../shared/time.js?v=20260910msk1";
+import {renderRaceCopyButton, installResultTabs} from '../../shared/race-result-context.js?v=20261011racelinks1';
 import {
   entityDetailHref,
   entitySlugFromLocation,
@@ -187,8 +188,11 @@ function createRaceTable({ documentRef, lang, races, onOpen }) {
   return root;
 }
 
+function normalizeRaceUid(raceUid) {
+  return String(raceUid || "").trim().toLowerCase().replace(/\.json$/i, "").replace(/[^a-z0-9._-]+/g, "_").replace(/^[._-]+|[._-]+$/g, "");
+}
 function raceDetailPath(raceUid) {
-  const id = String(raceUid || "").trim().toLowerCase().replace(/\.json$/i, "").replace(/[^a-z0-9._-]+/g, "_").replace(/^[._-]+|[._-]+$/g, "");
+  const id = normalizeRaceUid(raceUid);
   return id ? `${RACE_DETAILS_BASE_URL}/${encodeURIComponent(id)}.json` : null;
 }
 
@@ -232,9 +236,16 @@ function raceSafetyBadge(documentRef, result) {
 }
 
 function createRaceModal({ documentRef, client, lang, siteBase }) {
+  installResultTabs(documentRef);
   const cache = new Map();
   let trigger = null;
   const title = element(documentRef, "h3", { className: "modal-title", text: "—", attrs: { id: "clubs-race-modal-title" } });
+  const shareHeading = race => {
+    const label = value => String(value ?? '').replaceAll('&', '&amp;').replaceAll('<', '&lt;').replaceAll('"', '&quot;');
+    const text = title.textContent;
+    title.classList.add('race-results-heading');
+    title.innerHTML = `<span class="race-heading-title"><span class="race-title-text">${label(text)}</span>${renderRaceCopyButton(race, {tx:(ru,en)=>lang==='ru'?ru:en,label})}</span>`;
+  };
   const subtitle = element(documentRef, "p", { className: "modal-subtitle", text: "—" });
   const summary = element(documentRef, "div", { className: "race-modal-summary" });
   const table = element(documentRef, "div", { className: "table-wrap clubs-race-results-table" });
@@ -258,6 +269,7 @@ function createRaceModal({ documentRef, client, lang, siteBase }) {
   const render = details => {
     const track = displayTrack(details.track || details.track_code || details.track_name);
     title.textContent = details.server_name ? `${track} [${displayServer(details.server_name)}]` : track;
+    shareHeading(details);
     subtitle.textContent = `${formattedDate(details.finished_at || details.race_started_at, lang)} · ${copy(lang, details.counted_for_stats === false ? "notCounted" : "counted")}`;
     const summaryItems = [[copy(lang, "track"), track], [copy(lang, "winner"), raceValue(details.winner)], [copy(lang, "drivers"), raceValue(details.participants_count)], [copy(lang, "bestLap"), raceValue(details.best_lap)]];
     summary.replaceChildren(...summaryItems.map(([label, value]) => element(documentRef, "div", { className: "race-summary-card" }, [element(documentRef, "div", { className: "race-summary-label", text: label }), element(documentRef, "div", { className: "race-summary-value", text: value })])));
@@ -284,13 +296,14 @@ function createRaceModal({ documentRef, client, lang, siteBase }) {
   const open = async (race, source) => {
     trigger = source; overlay.classList.add("is-open"); overlay.setAttribute("aria-hidden", "false"); documentRef.body.classList.add("modal-open");
     title.textContent = displayTrack(race.track_code); subtitle.textContent = formattedDate(race.race_started_at, lang); summary.replaceChildren();
+    shareHeading({race_id:normalizeRaceUid(race.race_uid)});
     table.replaceChildren(element(documentRef, "div", { className: "clubs-teams-modal-state", text: copy(lang, "loadingRace"), attrs: { role: "status" } }));
     closeButton.focus();
     const path = raceDetailPath(race.race_uid);
     if (!path) return table.replaceChildren(element(documentRef, "div", { className: "clubs-teams-modal-state", text: copy(lang, "raceUnavailable") }));
     try {
       if (!cache.has(path)) cache.set(path, client.requestJson(path, { cache: "force-cache", retries: 1 }));
-      render(await cache.get(path));
+      render({race_id:normalizeRaceUid(race.race_uid),...await cache.get(path)});
     } catch {
       cache.delete(path);
       table.replaceChildren(element(documentRef, "div", { className: "clubs-teams-modal-state", text: copy(lang, "raceUnavailable"), attrs: { role: "alert" } }));

@@ -3,24 +3,24 @@
   "entry": "/v2/boot/home.js",
   "files": [
     {
-      "path": "/v2/boot/chunks/account-VNLUEY3D.js",
+      "path": "/v2/boot/chunks/account-3LBIY7IB.js",
       "bytes": 17518
     },
     {
-      "path": "/v2/boot/chunks/moderation-page-ZFNTPOMZ.js",
+      "path": "/v2/boot/chunks/moderation-page-CWSGXGHW.js",
       "bytes": 28180
     },
     {
-      "path": "/v2/boot/chunks/portal-ops-page-ZYENOFWB.js",
+      "path": "/v2/boot/chunks/portal-ops-page-RM5ZENAO.js",
       "bytes": 35915
     },
     {
-      "path": "/v2/boot/chunks/control-EYGXIZ53.js",
+      "path": "/v2/boot/chunks/control-2TSLFSZA.js",
       "bytes": 45825
     },
     {
-      "path": "/v2/boot/chunks/controller-QM5ZD676.js",
-      "bytes": 303422
+      "path": "/v2/boot/chunks/controller-UKEQ7WLX.js",
+      "bytes": 303990
     },
     {
       "path": "/v2/boot/chunks/safe-dom-ONQYSOA6.js",
@@ -47,11 +47,11 @@
       "bytes": 2253
     },
     {
-      "path": "/v2/boot/chunks/home-ARFRZ3LY.js",
+      "path": "/v2/boot/chunks/home-C6PSQOP6.js",
       "bytes": 515921
     },
     {
-      "path": "/v2/boot/chunks/chunk-DSWWNSEE.js",
+      "path": "/v2/boot/chunks/chunk-O36GHPJT.js",
       "bytes": 5087
     },
     {
@@ -59,19 +59,19 @@
       "bytes": 2820
     },
     {
-      "path": "/v2/boot/chunks/account-BTOBREAI.js",
+      "path": "/v2/boot/chunks/account-TUU4EF4J.js",
       "bytes": 306
     },
     {
-      "path": "/v2/boot/chunks/chunk-MMHCK7EB.js",
+      "path": "/v2/boot/chunks/chunk-NBNOVUFI.js",
       "bytes": 109531
     },
     {
-      "path": "/v2/boot/chunks/chunk-XTWSXVHR.js",
+      "path": "/v2/boot/chunks/chunk-I3RABYAQ.js",
       "bytes": 7575
     },
     {
-      "path": "/v2/boot/chunks/chunk-MWNFPFCP.js",
+      "path": "/v2/boot/chunks/chunk-UDXKFN7P.js",
       "bytes": 36127
     },
     {
@@ -79,11 +79,11 @@
       "bytes": 189506
     },
     {
-      "path": "/v2/boot/chunks/chunk-HBM2MGFH.js",
-      "bytes": 70646
+      "path": "/v2/boot/chunks/chunk-MHXMYVRS.js",
+      "bytes": 71058
     },
     {
-      "path": "/v2/boot/chunks/chunk-IBV7CUM7.js",
+      "path": "/v2/boot/chunks/chunk-CY3EG4DE.js",
       "bytes": 712
     },
     {
@@ -91,12 +91,12 @@
       "bytes": 9982
     },
     {
-      "path": "/v2/boot/chunks/chunk-6RGS65QD.js",
-      "bytes": 11667
+      "path": "/v2/boot/chunks/chunk-WRJ7DI54.js",
+      "bytes": 16141
     },
     {
-      "path": "/v2/boot/chunks/chunk-OZ5MRX3T.js",
-      "bytes": 24186
+      "path": "/v2/boot/chunks/chunk-DVJG73ZE.js",
+      "bytes": 24246
     },
     {
       "path": "/v2/boot/chunks/catalog-model-IMDBJ66K.js",
