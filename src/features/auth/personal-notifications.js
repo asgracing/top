@@ -160,7 +160,7 @@ export function createPersonalNotifications({ documentRef, windowRef, fetchImpl,
       const next = normalizeNotifications(raw);
       if (before) next.items = [...data.items, ...next.items].filter((item, index, items) => items.findIndex(other => other.id === item.id) === index);
       data = next; status = "ready"; render();
-    } catch (error) { if (current === generation && !destroyed && error.name !== "AbortError") { status = "error"; render(); } }
+    } catch (error) { if (current === generation && !destroyed && error.name !== "AbortError") { if (error.status === 401) data = normalizeNotifications(null); status = "error"; render(); } }
   }
   async function mark(selection) {
     if (busy || !auth?.csrfToken || destroyed) return false;
@@ -169,7 +169,7 @@ export function createPersonalNotifications({ documentRef, windowRef, fetchImpl,
       const raw = await client.requestJson(`${authBaseUrl}/v1/me/notifications/read`, { method: "POST", credentials: "include", cache: "no-store", headers: { "Content-Type": "application/json", "X-CSRF-Token": auth.csrfToken }, body: JSON.stringify(selection) });
       if (current !== generation || destroyed) return false;
       data = normalizeNotifications(raw); status = "ready"; return true;
-    } catch { if (current === generation) status = "error"; return false; }
+    } catch (error) { if (current === generation) { if (error.status === 401) data = normalizeNotifications(null); status = "error"; } return false; }
     finally { if (current === generation) { busy = false; render(); } }
   }
   const click = event => { if (!auth?.authenticated) return; event.stopImmediatePropagation(); event.preventDefault(); if (dialog.open) close(); else { documentRef.querySelector('#notification-popover:popover-open')?.hidePopover(); documentRef.querySelector('#profile-popover:popover-open')?.hidePopover(); dialog.showModal(); button.setAttribute("aria-expanded", "true"); render(); void refresh(); } };
@@ -182,7 +182,7 @@ export function createPersonalNotifications({ documentRef, windowRef, fetchImpl,
   return {
     update(nextAuth, host) {
       const nextOwner = nextAuth?.authenticated ? nextAuth.driver?.publicId || "unlinked" : "";
-      if (nextOwner !== owner) { generation++; controller?.abort(); close(); data = normalizeNotifications(null); status = "loading"; busy = false; owner = nextOwner; auth = nextAuth; if (nextOwner) void refresh(); }
+      if (nextOwner !== owner) { generation++; controller?.abort(); close(); dialog.replaceChildren(); data = normalizeNotifications(null); status = "loading"; busy = false; owner = nextOwner; auth = nextAuth; if (nextOwner) void refresh(); }
       auth = nextAuth;
       if (!buttonRef) { if (nextAuth?.authenticated) host.append(button); else button.remove(); }
       render();

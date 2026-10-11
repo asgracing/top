@@ -62,5 +62,16 @@ try{
   await page.goto(base+route,{waitUntil:'domcontentloaded'});await page.locator('.personal-notifications-bell').waitFor();
   assert.equal(await page.locator('.personal-notifications-bell').count(),1,route);reports.push({route,bell:true});await page.close();
  }
+ {
+  const page=await browser.newPage(),log=[];let requests=0;
+  await page.route('**/*',route=>fixture(route,log));
+  await page.route('**/*.kaspersky-labs.com/**',route=>route.abort());
+  await page.route('https://auth.asgracing.ru/v1/me/notifications**',route=>{requests++;return route.fulfill({status:401,body:'{}'})});
+  await page.goto(base+'/ru/',{waitUntil:'domcontentloaded'});
+  await page.locator('#v2-profile-trigger').getByText('Войти через Steam').waitFor();
+  assert.equal(requests,0,'Guest never queries another driver inbox');
+  assert.equal(await page.locator('.personal-notifications-dialog').count(),0,'Private UI is loaded only after authentication');
+  reports.push({anonymous:true,privateRequests:requests});await page.close();
+ }
  console.log(JSON.stringify(reports));
 }finally{await browser.close()}

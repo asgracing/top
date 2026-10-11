@@ -84,7 +84,7 @@
     },
     {
       "path": "src/features/auth/personal-notifications.js",
-      "sha256": "c5e2de10b86c30371555e689f3880242d222b5afeb710559c1e9c6f205b7d76d"
+      "sha256": "ef684506ea2812b2fba5384db33a6be7e6b01f3f9cad827205f425002c372b46"
     },
     {
       "path": "src/features/hourly/announcement-model.js",
