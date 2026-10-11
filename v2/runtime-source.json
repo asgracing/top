@@ -1,8 +1,8 @@
 {
   "schemaVersion": 1,
-  "version": "20261011qual3",
+  "version": "20261011notifications1",
   "source": "app.js",
-  "sha256": "49805a0f2d4ab0d01707aa8b25d7f127ac9a7d3c130747257dbb906c013955f1",
-  "outputSha256": "9df1bbfea0855c668b6d3f54256f1e9c4720debde0874a4a6627e03bb78e5d03",
-  "facadeSha256": "b3d0d402a3959ce7ac1148a83de0a647f14890456d469103d5a0654bb6e8debf"
+  "sha256": "9858e381d5581a8f5cc5efcf696f2dc12ca58f3090110ffaf1fcf649ee6fe374",
+  "outputSha256": "784002251d1b6fb5597b23f20c44f044efc665e2575bd6d46d976505541f5429",
+  "facadeSha256": "61f0789cd8c4930d43230ad65b9670c01148051eceba08fbdf389b3cd328b6b3"
 }

@@ -1,5 +1,5 @@
 ﻿import markup from './control-content.js?v=20261007v2pages14';
-import {normalizeAuthPayload} from '/src/features/auth/header-auth.js?v=20261003names1';
+import {normalizeAuthPayload} from '/src/features/auth/header-auth.js?v=20261011notifications1';
 import {v2Route} from '../routes.js?v=20261007v2pages14';
 
 // Approved control-page composition over the existing authenticated controllers.

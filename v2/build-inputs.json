@@ -1,6 +1,6 @@
 {
   "schemaVersion": 1,
-  "runtimeVersion": "20261011qual3",
+  "runtimeVersion": "20261011notifications1",
   "inputs": [
     {
       "path": "account/driver-overlay.js",
@@ -8,7 +8,7 @@
     },
     {
       "path": "app.js",
-      "sha256": "49805a0f2d4ab0d01707aa8b25d7f127ac9a7d3c130747257dbb906c013955f1"
+      "sha256": "9858e381d5581a8f5cc5efcf696f2dc12ca58f3090110ffaf1fcf649ee6fe374"
     },
     {
       "path": "community/posts.js",
@@ -48,7 +48,7 @@
     },
     {
       "path": "scripts/build-v2.mjs",
-      "sha256": "7e5295fd3a1b10b2e17659c1e24b4aaf069a068b38f729c06a9671782877a24c"
+      "sha256": "b60f9f29ddaea41c8b391a67f7596f010103413ee3dbbc039ef8f0d2b9eb1ff3"
     },
     {
       "path": "scripts/generate-localized-pages.mjs",
@@ -72,7 +72,7 @@
     },
     {
       "path": "scripts/v2-runtime-facade.txt",
-      "sha256": "b3d0d402a3959ce7ac1148a83de0a647f14890456d469103d5a0654bb6e8debf"
+      "sha256": "61f0789cd8c4930d43230ad65b9670c01148051eceba08fbdf389b3cd328b6b3"
     },
     {
       "path": "src/features/auth/clubs-teams-auth-model.js",
@@ -80,7 +80,11 @@
     },
     {
       "path": "src/features/auth/header-auth.js",
-      "sha256": "c01d153c74435f6b22a672c4ff69f01467946d71248ad813ae4e8b8cb642d2bd"
+      "sha256": "fe572fbe9b33a445745011a91bd4db8916254749b04308e10cd5bca92c0b000e"
+    },
+    {
+      "path": "src/features/auth/personal-notifications.js",
+      "sha256": "c5e2de10b86c30371555e689f3880242d222b5afeb710559c1e9c6f205b7d76d"
     },
     {
       "path": "src/features/hourly/announcement-model.js",
@@ -104,7 +108,7 @@
     },
     {
       "path": "src/pages/account/account.js",
-      "sha256": "944fef7198e0d6cf32c0fa59b9bbd4d4e6a3796c7c3d4e7b744d9ab660524236"
+      "sha256": "05320f7cc27b9071ec7b128ce59c908c254a307e5778b0bb8abd67d0b02e9639"
     },
     {
       "path": "src/pages/account/clubs-teams-command-model.js",
@@ -128,7 +132,7 @@
     },
     {
       "path": "src/pages/clubs-teams/catalog-page.js",
-      "sha256": "16e2e61fc35dfb7b71309adfab0845fdc10f7176972a71fca4e4d4b0d730bf79"
+      "sha256": "36c0387e70fd9de310849669b57986d95a693a00829407918ba0fd417e8be97e"
     },
     {
       "path": "src/pages/clubs-teams/detail-model.js",
@@ -152,7 +156,7 @@
     },
     {
       "path": "src/pages/driver/achievements-widget.js",
-      "sha256": "fd5e824f07e06dc7605b9e95ff7f8480b2d1acc63869bb1f739206ca19844660"
+      "sha256": "d7512d323bb09c4d6d2f4793016eff2cbfdadef6363c9f833992631dcd93b4ca"
     },
     {
       "path": "src/pages/home/deferred-sections.js",
@@ -192,7 +196,7 @@
     },
     {
       "path": "src/pages/moderation/moderation-page.js",
-      "sha256": "771702ea5a0b67812b275d32c42167919bef913fee7c8ff3e7356fa8e5dcb1a1"
+      "sha256": "c76035be1d3f5164f2e3f16753dc892b8a3f0eeadc88afcb2586c82bf6333853"
     },
     {
       "path": "src/pages/moderation/race-number-review.js",
@@ -204,7 +208,7 @@
     },
     {
       "path": "src/pages/portal-ops/portal-ops-page.js",
-      "sha256": "ddec3f2d5decff3f18aacf2a32ab72263d7e0970ee7cda22a0c94bbc47401104"
+      "sha256": "c327dc12b02a3f8a515b7424c139707ab1d68b85b306dc5df44249355c19dbc7"
     },
     {
       "path": "src/pages/races/model.js",
@@ -464,15 +468,15 @@
     },
     {
       "path": "v1-source/html/hourly/championship/history/index.html",
-      "sha256": "5be4aea08ca466fa3c37fed35076d0fca7d93ac06a1c8cba3d967e0d91e61f60"
+      "sha256": "0d1df6d17794565d950ce5fcee46f97921fd7fc5ac6d3b4898e274525642d597"
     },
     {
       "path": "v1-source/html/hourly/championship/index.html",
-      "sha256": "d84e1f238c9115bda25e59665f39017f1c4feb84fcf3dfaf363f551ef8f8f603"
+      "sha256": "d60e11d7a74fa8937f07df3b85ef0ff0018f5b68cda31b00cd1414d16d9d60aa"
     },
     {
       "path": "v1-source/html/hourly/index.html",
-      "sha256": "ecd4b973787549f3f5ca2b030c14c587b054e794be7d57a7c3bb211aa676229e"
+      "sha256": "892f30667bf2d764ec4f79963c7b36c42fcda8eabddd4c6f43a1a79bed8c5a48"
     },
     {
       "path": "v1-source/html/index.html",
@@ -584,11 +588,11 @@
     },
     {
       "path": "v2/header.js",
-      "sha256": "3c460ee39d2ee074cd806903dbe2d9faec3b4901b78b3cc0646e30ab4188d2b4"
+      "sha256": "361febedc256b5c472e338d2a58d4d7b583b0deec410a93e39485698e1591ead"
     },
     {
       "path": "v2/home.js",
-      "sha256": "d3457a80ebb39f653d1368e227d06c3bf34284a8df5110671daa4d8175bdcd6f"
+      "sha256": "3853306a2ac46c25edce4e79dea1da1cade84d4a8eea4f35fb1508b58660d991"
     },
     {
       "path": "v2/mobile-navigation.js",
@@ -608,7 +612,7 @@
     },
     {
       "path": "v2/pages/account.js",
-      "sha256": "3dbabb4a4ef8aa10a92c49120eaac0cc52f668c515002f948f91dd13e39f1e04"
+      "sha256": "8394feb2f451266c69e731d48ec98692dbdcecd2ce6b79e6c0c436de739274f7"
     },
     {
       "path": "v2/pages/bans-model.js",
@@ -624,7 +628,7 @@
     },
     {
       "path": "v2/pages/control.js",
-      "sha256": "e4fe455089e5966803e0a7a62d87acee5c44019b89e79e54c8157d2627f64616"
+      "sha256": "7be923ca53444bf99f7b4ca40a5c5720e22a8944b603a9d3d19b236b239f9d2b"
     },
     {
       "path": "v2/pages/controller.js",

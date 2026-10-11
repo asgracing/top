@@ -29,7 +29,7 @@ import {
   markNewsRead,
   saveNewsReadState as saveSharedNewsReadState
 } from "/news-read-state.js?v=20260813newsread1";
-import { createAuthHeaderController, safeAvatarUrl } from "/src/features/auth/header-auth.js?v=20261003names1";
+import { createAuthHeaderController, safeAvatarUrl } from "/src/features/auth/header-auth.js?v=20261011notifications1";
 import { applyRandomTrackBackground, normalizeTrackBackgroundCode, resolveTrackBackgroundFile } from "/src/features/server-status/track-background.js?v=20260726staticfallback1";
 import { bindServerStatusFreshness, isServerStatusStale } from "/src/features/server-status/freshness.js?v=20260825statusfreshness1";
 import { selectNextHourlyAnnouncement } from "/src/features/hourly/announcement-model.js?v=20260828hourlynext1";
@@ -11623,7 +11623,7 @@ function v2SchedulePublish() {
     donations:donationAlertsData,donationsLoading:donationAlertsLoading,donationsError:donationAlertsFailed,
     clubs:homeClubsTeamsSnapshot,clubsError:homeClubsTeamsError,affiliationsSize:driverAffiliations.size,viewer:authenticatedDriverPublicId,auth:v2Auth,
     onlineDays:buildRelativeActivityDays(raceActivityInsights?.length?raceActivityInsights:onlineData),news:getSortedNewsFeed(newsFeedData).slice(0,6),invitations:membershipInvitationNotifications,
-    unreadNews:getUnreadNewsCount(newsFeedData)+membershipInvitationNotifications.filter(action=>!isMembershipInvitationRead(action)).length,
+    unreadNews:getUnreadNewsCount(newsFeedData),
     servers:getServerStatusItems().map(({key,label,server})=>({key,label,server,
       online:!serverStatusIsStale()&&serverIsOnline(server),players:serverStatusIsStale()?0:serverPlayersOnline(server),
       track:humanizeTrackName(server?.track_code||server?.track||''),sa:getServerSaRequirement(server),sr:getServerSrRequirement(key,server),session:getServerSessionShortLabel(server),drivers:getServerDrivers(server)})),
@@ -11651,6 +11651,8 @@ installRuntime({
   ratingChart:(info,kind,period,grid,offset)=>kind==='elo'?renderEloChart(info,period,grid,offset):renderSafetyChart(info,period,grid,offset),
   historyPoints:getFilteredEloHistory,historyPeriod:renderEloPeriodLabel,
   markNews:item=>{markNewsItemRead(item);renderNewsBell();renderNewsNotificationsModal()},
+  isNewsRead:isNewsItemRead,
+  unreadNews:()=>getUnreadNewsCount(newsFeedData),
   markInvitation:item=>{markMembershipInvitationRead(item);renderNewsBell();renderNewsNotificationsModal()},
   markAllNotifications:()=>{
     // Include the complete current feed, not only the six-item preview.

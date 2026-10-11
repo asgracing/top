@@ -1,4 +1,4 @@
-import { createAuthHeaderController } from "../../features/auth/header-auth.js?v=20261003names1";
+import { createAuthHeaderController } from "../../features/auth/header-auth.js?v=20261011notifications1";
 import { createHttpClient } from "../../shared/http-client.js";
 import { applyLocalizedNavigation, currentPageLanguageHref, resolvePageLocale, setPageLocale } from "../../shared/localized-page.js?v=20261007root1";
 import { resolveRuntimeOverride } from "../../shared/runtime-config.js";

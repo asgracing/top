@@ -318,6 +318,21 @@ export function createAuthHeaderController({
   const root = makeElement(documentRef, "div", "auth-header");
   root.dataset.authState = "loading";
   actions.appendChild(root);
+  let personalNotifications = null;
+  let inboxLoading = false;
+  function updateInbox() {
+    if (documentRef.body.dataset.v2 !== undefined) return;
+    const auth = state.status === "ready" ? state.auth : null;
+    if (personalNotifications) personalNotifications.update(auth, root);
+    else if (auth?.authenticated && !inboxLoading) {
+      inboxLoading = true;
+      void import("./personal-notifications.js?v=20261011notifications1").then(({ createPersonalNotifications }) => {
+        if (destroyed) return;
+        personalNotifications = createPersonalNotifications({ documentRef, windowRef, fetchImpl, authBaseUrl: baseUrl });
+        personalNotifications.update(state.status === "ready" ? state.auth : null, root);
+      }).catch(() => {}).finally(() => { inboxLoading = false; });
+    }
+  }
 
   const closeMenu = () => {
     const menu = root.querySelector(".auth-header-menu");
@@ -539,6 +554,7 @@ export function createAuthHeaderController({
       "sr-cat-A", "sr-cat-B", "sr-cat-C"
     );
     root.dataset.authState = state.status;
+    updateInbox();
     if (state.status === "loading") {
       const loading = makeElement(documentRef, "span", "auth-header-loading", translate("loading"));
       loading.setAttribute("role", "status");
@@ -709,6 +725,7 @@ export function createAuthHeaderController({
         windowRef.clearInterval(refreshTimer);
       }
       root.remove();
+      personalNotifications?.destroy();
     }
   };
 }

@@ -1,5 +1,5 @@
 import { runWhenDocumentReady } from "../../runtime/application-bootstrap.js";
-import { createAuthHeaderController } from "./header-auth.js?v=20261003names1";
+import { createAuthHeaderController } from "./header-auth.js?v=20261011notifications1";
 
 runWhenDocumentReady(document, () => {
   const controller = createAuthHeaderController();

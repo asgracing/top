@@ -11,7 +11,18 @@ export function createHeader({$,esc,text,number,rating,driverHref,privacy,native
   const readAll=document.createElement('button');readAll.type='button';readAll.className='notification-read-all';readAll.textContent=text('Прочитано всё','Mark all as read');readAll.disabled=true;
   $('notification-popover').querySelector('.popover-head').insertBefore(readAll,$('notification-popover').querySelector('[data-close-popover]'));
   readAll.onclick=()=>native().markAllNotifications();
-  let auth=null,currentModel=null;
+  let auth=null,currentModel=null,inbox=null,inboxLoading=false;
+  function updateInbox(){
+    if(inbox){inbox.update(auth,host);return}
+    if(!auth?.authenticated||inboxLoading)return;
+    inboxLoading=true;
+    import('/src/features/auth/personal-notifications.js?v=20261011notifications1').then(({createPersonalNotifications})=>{
+      inbox=createPersonalNotifications({documentRef:document,windowRef:window,fetchImpl:globalThis.fetch,authBaseUrl:'https://auth.asgracing.ru',buttonRef:bell,newsProvider:()=>{
+        const lang=document.documentElement.lang,title=value=>typeof value==='string'?value:value?.[lang]||value?.ru||value?.en||'';
+        return {unread:native().unreadNews(),markAll:()=>native().markAllNotifications(),items:(currentModel?.news||[]).map(item=>({title:title(item.title),summary:title(item.summary),at:item.published_at||item.date,href:newsHref(item),read:native().isNewsRead(item),mark:()=>native().markNews(item)}))};
+      }});inbox.update(auth,host);
+    }).catch(()=>{}).finally(()=>{inboxLoading=false});
+  }
   function place(panel,anchor){const rect=anchor.getBoundingClientRect(),width=Math.min(350,innerWidth-24);panel.style.width=width+'px';panel.style.left=Math.max(12,Math.min(innerWidth-width-12,rect.right-width))+'px';panel.style.top=Math.max(12,Math.min(innerHeight-panel.getBoundingClientRect().height-12,rect.bottom+9))+'px'}
   function close(id){const panel=$(id);if(panel.matches(':popover-open'))panel.hidePopover();$(id.replace('-popover','-trigger'))?.setAttribute('aria-expanded','false')}
   function open(id,anchor){mobileNavigation.close();const panel=$(id),wasOpen=panel.matches(':popover-open');for(const key of ['profile-popover','notification-popover'])close(key);if(wasOpen)return;panel.showPopover();anchor.setAttribute('aria-expanded','true');place(panel,anchor);panel.querySelector('button').focus({preventScroll:true})}
@@ -35,6 +46,7 @@ export function createHeader({$,esc,text,number,rating,driverHref,privacy,native
     const news=model.news||[],invites=model.invitations||[],language=document.documentElement.lang;
     const title=value=>typeof value==='string'?value:value?.[language]||value?.ru||value?.en||'';
     $('notification-popover-content').innerHTML=[...invites.map((a,i)=>`<a class="v2-notice is-invitation" href="${routeHref('account/',language)}" data-invitation="${i}"><small>${text('Приглашение','Invitation')}</small><b>${esc(a.targetDisplayName||text('Приглашение в клуб или команду','Club or team invitation'))}</b></a>`),...news.map((n,i)=>`<a class="v2-notice" href="${esc(newsHref(n))}" data-news-read="${i}"><small>${esc(n.published_at||n.date||'')}</small><b>${esc(title(n.title))}</b>${n.summary?`<span>${esc(title(n.summary))}</span>`:''}</a>`)].join('')||`<div class="notifications-empty"><span>✓</span><b>${text('Центр уведомлений','Notification centre')}</b><p>${text('Новых уведомлений пока нет.','No notifications yet.')}</p></div>`;
+    updateInbox();
   }
   document.addEventListener('click',e=>{
     const button=e.target.closest('[data-auth-action]');if(button){const key=button.dataset.authAction;nativeAuth()?.querySelector(key==='retry'?'.auth-header-retry':'.auth-header-'+key)?.click();close('profile-popover')}

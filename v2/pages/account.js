@@ -1,5 +1,5 @@
 import {mountAccountWorkspace,loadApprovedEntityProfile} from '/src/pages/account/account.js?v=20261007controlv2';
-import {normalizeAuthPayload} from '/src/features/auth/header-auth.js?v=20261003names1';
+import {normalizeAuthPayload} from '/src/features/auth/header-auth.js?v=20261011notifications1';
 import {createHttpClient} from '/src/shared/http-client.js';
 import {v2Route} from '../routes.js?v=20261007v2pages14';
 
