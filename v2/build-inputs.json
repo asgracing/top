@@ -48,7 +48,7 @@
     },
     {
       "path": "scripts/build-v2.mjs",
-      "sha256": "4540d8d068eba0eba3d85604786d9550cf9dda53e78981585fb5c87b26f19f7b"
+      "sha256": "bbbc70853a279ad0ec0fcb67f92ff474fee584f21196047627dea144f145cb61"
     },
     {
       "path": "scripts/generate-localized-pages.mjs",
@@ -108,7 +108,7 @@
     },
     {
       "path": "src/pages/account/account.js",
-      "sha256": "05320f7cc27b9071ec7b128ce59c908c254a307e5778b0bb8abd67d0b02e9639"
+      "sha256": "60cab05491534cf740fae3745567e6e41809d796fd57be79e53f3b8a3cbda2d4"
     },
     {
       "path": "src/pages/account/clubs-teams-command-model.js",
@@ -616,7 +616,7 @@
     },
     {
       "path": "v2/pages/account.js",
-      "sha256": "8394feb2f451266c69e731d48ec98692dbdcecd2ce6b79e6c0c436de739274f7"
+      "sha256": "ed342f5b8966c3231cf28eba5d524ae270a65076b79c56220a1054b3102242f0"
     },
     {
       "path": "v2/pages/bans-model.js",
@@ -632,11 +632,11 @@
     },
     {
       "path": "v2/pages/control.js",
-      "sha256": "d8f71256e6953a9e5bceb4301029937cac144568e6cb10751471c6cb2460a2c5"
+      "sha256": "8ca267f25622ea70ecafd1f1c6377558b112e0918c0f8acee2a777c8a3a2d53c"
     },
     {
       "path": "v2/pages/controller.js",
-      "sha256": "37fe69470d4f4a4ff415cd6b5c259b5d101424ed633ae56fbd7aad4a2e0384fe"
+      "sha256": "9ddfce7dd946ffa7dca73e0a276c964ac8d45fdcee8e995a022f7449674d148a"
     },
     {
       "path": "v2/pages/data.js",

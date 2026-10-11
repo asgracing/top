@@ -196,7 +196,12 @@ const COPY = {
     released: "Number released.",
     blocked: "Race-number management is unavailable while the driver is banned.",
     cooldown: value => `You can change the number after ${value}.`,
-    taken: "This number is already assigned or reserved.",
+    taken: number => `Number #${number} is already assigned or reserved by another request. Choose a different number.`,
+    numberInvalid: "Enter a whole number from 1 to 999.",
+    numberOwn: "This number is already assigned to you.",
+    numberPending: "You already have a pending number request. Cancel it before choosing another number.",
+    numberCooldown: "You cannot change your number yet. Refresh the page to check when it becomes available.",
+    numberSending: "Processing your request…",
     failed: "The operation could not be completed. Try again.",
     navSpecial: "Special Event", navChampionship: "Championship", navRules: "Rules",
     navNews: "News", navRacing: "Racing", navLastRaces: "Last Races",
@@ -376,7 +381,12 @@ const COPY = {
     released: "Номер освобождён.",
     blocked: "Управление номером недоступно во время бана.",
     cooldown: value => `Изменить номер можно после ${value}.`,
-    taken: "Этот номер уже назначен или зарезервирован.",
+    taken: number => `Номер #${number} уже занят или зарезервирован другой заявкой. Выберите другой номер.`,
+    numberInvalid: "Введите целое число от 1 до 999.",
+    numberOwn: "Этот номер уже закреплён за вами.",
+    numberPending: "У вас уже есть заявка на номер. Отмените её, чтобы выбрать другой номер.",
+    numberCooldown: "Изменить номер пока нельзя. Обновите страницу, чтобы проверить дату следующего изменения.",
+    numberSending: "Выполняем запрос…",
     failed: "Не удалось выполнить операцию. Попробуйте ещё раз.",
     navSpecial: "Спецсобытие", navChampionship: "Чемпионат", navRules: "Правила",
     navNews: "Новости", navRacing: "Гонки", navLastRaces: "Последние гонки",
@@ -449,9 +459,9 @@ function closeAccountWorkspace(fallbackAuth) {
   render(latestAccountAuth || fallbackAuth);
 }
 
-function setMessage(text = "", kind = "") {
-  flashMessage = { text, kind };
-  const element = document.getElementById("account-message");
+function setMessage(text = "", kind = "", target = "account-message") {
+  flashMessage = { text, kind, target };
+  const element = document.getElementById(target);
   if (!element) return;
   element.textContent = text;
   element.dataset.kind = kind;
@@ -1357,9 +1367,10 @@ function renderSettings(root, auth) {
       ${preferences.nextChangeAt ? `<p class="account-status">${t("cooldown", preferences.nextChangeAt)}</p>` : ""}
       <div class="account-field">
         <label for="race-number-input">${t("numberLabel")}</label>
-        <input id="race-number-input" type="number" min="1" max="999" step="1" inputmode="numeric"
+        <input id="race-number-input" type="number" min="1" max="999" step="1" inputmode="numeric" aria-describedby="race-number-message"
           ${blocked || pending || preferences.nextChangeAt ? "disabled" : ""}>
       </div>
+      <p class="account-message" id="race-number-message" role="status" aria-live="polite" aria-atomic="true"></p>
       <div class="account-form-actions">
         <button class="account-action account-action--primary" id="race-number-submit"
           ${blocked || pending || preferences.nextChangeAt ? "disabled" : ""}>${t("submit")}</button>
@@ -1374,6 +1385,12 @@ function renderSettings(root, auth) {
   document.getElementById("race-number-submit")?.addEventListener("click", () => submitNumber(auth));
   document.getElementById("race-number-cancel")?.addEventListener("click", () => cancelRequest(auth));
   document.getElementById("race-number-release")?.addEventListener("click", () => releaseNumber(auth));
+  document.getElementById("race-number-input")?.addEventListener("input", event => {
+    event.target.removeAttribute("aria-invalid");
+    if (document.getElementById("race-number-message")?.dataset.kind === "error") {
+      setMessage("", "", "race-number-message");
+    }
+  });
 }
 
 async function mutation(path, csrfToken, body) {
@@ -1397,17 +1414,29 @@ async function mutation(path, csrfToken, body) {
   return payload;
 }
 
-async function runAction(button, action, successText) {
+async function runAction(button, action, successText, requestedNumber) {
   if (!button || button.disabled) return;
   button.disabled = true;
-  setMessage("");
+  button.setAttribute("aria-busy", "true");
+  setMessage(t("numberSending"), "info", "race-number-message");
   try {
     await action();
-    setMessage(successText, "success");
+    setMessage(successText, "success", "race-number-message");
     await refreshAccountState();
   } catch (error) {
-    setMessage(error?.code === "race_number_taken" ? t("taken") : t("failed"), "error");
+    const keys = {
+      race_number_taken: "taken", invalid_race_number: "numberInvalid",
+      race_number_already_assigned: "numberOwn", race_number_request_pending: "numberPending",
+      race_number_cooldown: "numberCooldown", driver_banned: "blocked"
+    };
+    setMessage(t(keys[error?.code] || "failed", requestedNumber), "error", "race-number-message");
+    if (["race_number_taken", "invalid_race_number", "race_number_already_assigned"].includes(error?.code)) {
+      document.getElementById("race-number-input")?.setAttribute("aria-invalid", "true");
+    }
+    document.getElementById("race-number-message")?.scrollIntoView({ block: "nearest" });
     button.disabled = false;
+  } finally {
+    button.removeAttribute("aria-busy");
   }
 }
 
@@ -1415,14 +1444,17 @@ function submitNumber(auth) {
   const input = document.getElementById("race-number-input");
   const number = Number(input?.value);
   if (!Number.isInteger(number) || number < 1 || number > 999) {
-    setMessage(t("failed"), "error");
+    setMessage(t("numberInvalid"), "error", "race-number-message");
+    input?.setAttribute("aria-invalid", "true");
+    document.getElementById("race-number-message")?.scrollIntoView({ block: "nearest" });
     return;
   }
   const button = document.getElementById("race-number-submit");
   void runAction(
     button,
     () => mutation("/v1/me/race-number", auth.csrfToken, { race_number: number }),
-    t("submitted")
+    t("submitted"),
+    number
   );
 }
 
@@ -1480,7 +1512,7 @@ function render(auth) {
   }
   accountPresentation?.(root, auth);
   if (flashMessage.text) {
-    setMessage(flashMessage.text, flashMessage.kind);
+    setMessage(flashMessage.text, flashMessage.kind, flashMessage.target);
   }
 }
 

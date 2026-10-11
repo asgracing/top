@@ -34,6 +34,12 @@
 .v2-control .account-status {padding:9px;border:1px solid #d1b65755;background:#5b431626;color:#efcd86;font-size:13px;}
 .v2-control #account-message {margin:0;}
 .v2-control #account-message:empty {display:none;}
+.v2-control #race-number-message:empty {display:none;}
+.v2-control #race-number-message:not(:empty) {margin:10px 0;padding:10px 12px;background:#0d1826d9;border-left:2px solid currentColor;overflow-wrap:anywhere;}
+.v2-control #race-number-message[data-kind=error] {color:#ff9aab;}
+.v2-control #race-number-message[data-kind=success] {color:#43f2b1;}
+.v2-control #race-number-message[data-kind=info] {color:#9adcf4;}
+.v2-control #race-number-input[aria-invalid=true] {border-color:#ff9aab;}
 .v2-control #driver-overlay-manager {margin-top:10px;}
 .v2-control #driver-overlay-manager input[type=checkbox] {width:16px;}
 .v2-control .account-overlay-row {flex-wrap:wrap;}
