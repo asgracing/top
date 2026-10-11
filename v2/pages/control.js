@@ -187,7 +187,7 @@ export async function startControlPage({view,screen,text,esc,language,subscribe,
         }).observe(list,{childList:true});
       }
       localizeOps();
-      const {mountPortalOpsWorkspace}=await import('/src/pages/portal-ops/portal-ops-page.js?v=20261007root1');
+      const {mountPortalOpsWorkspace}=await import('/src/pages/portal-ops/portal-ops-page.js?v=20261011hourlyru1');
       workspace=mountPortalOpsWorkspace({confirmAction});
       root.querySelector('[data-panel="hourly"]').click();
       const journal=makePanel(text('Журнал операций','Operation log'));journal.hidden=true;

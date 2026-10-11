@@ -159,7 +159,7 @@ function renderServers(){
   $('total-online').textContent=model.serversStale?text('Данные устарели','Stale data'):number(rows.reduce((n,s)=>n+s.players,0))+' '+label('players');
   const phase=s=>serverSessionLabel(s,label);
   $('servers').innerHTML=rows.map((s,i)=>{
-    const name=s.key==='hourly'?'Hourly / ASG Racing Race':String(s.label).replace(/^ASG Racing\s+/i,''),session=phase(s),hint=serverAdmission(s);
+    const name=s.key==='hourly'?text('Часовые гонки / ASG Racing Race','Hourly / ASG Racing Race'):String(s.label).replace(/^ASG Racing\s+/i,''),session=phase(s),hint=serverAdmission(s);
     const short=serverSessionLabel(s,label,{compact:true});
     const description=hint||`${s.label} · ${session} · ${number(s.players)} ${text('пилотов','drivers')}`;
     return `<button type="button" class="server-card${s.online?'':' offline'}${hint?' is-sr-blocked':''}" data-server="${esc(s.key)}" aria-label="${esc(description)}" title="${esc(description)}"><span class="server-top"><span class="server-id">${String(i+1).padStart(2,'0')}</span><span class="server-name">${esc(name)}</span><span class="server-compact-live">${esc(short)} · ${number(s.players)}</span><span class="status-dot" aria-hidden="true"></span></span><span class="server-facts"><span class="server-track">${esc(s.track||'—')}</span><span class="server-admission">SA ${esc(s.sa)} · ${hint?'&#128274; ':''}SR ${esc(s.sr)}</span><span class="server-live">${number(s.players)} ${text('пилотов','drivers')} · ${esc(session)}</span></span></button>`;

@@ -12,6 +12,12 @@ export const ACHIEVEMENT_CATEGORY_ORDER = Object.freeze([
 const CATEGORY_SET = new Set(ACHIEVEMENT_CATEGORY_ORDER);
 const MIN_TITLE_DEFINITIONS_VERSION = 6;
 
+// Old published snapshots can outlive the wording update on Main ASG.
+export function localizeAchievementDescription(value, language = "ru") {
+  const description = typeof value === "string" ? value : "";
+  return language === "ru" ? description.replace(/формата Hourly\b/g, "часового формата") : description;
+}
+
 const SERIES_DEFINITIONS = Object.freeze([
   { id: "career_races", names: { ru: "Гонки", en: "Races" }, unit: "race", tiers: ["career_first_start", "career_10", "career_50", "career_100", "career_250", "career_500", "career_750", "career_1000"] },
   { id: "career_distance", names: { ru: "Километраж", en: "Distance" }, unit: "km", tiers: ["distance_1000", "distance_5000", "distance_10000", "distance_around_world", "distance_twice_around_world", "distance_three_times_around_world"] },
@@ -26,8 +32,8 @@ const SERIES_DEFINITIONS = Object.freeze([
   { id: "comebacks", names: { ru: "Камбэки", en: "Comebacks" }, unit: "occurrence", tiers: ["positions_5", "positions_10", "positions_15"] },
   { id: "same_start_finish", names: { ru: "Всё по плану", en: "All according to plan" }, unit: "same_position_finish", tiers: ["same_position_first", "same_position_10", "same_position_50"] },
   { id: "sr", names: { ru: "Safety Rating", en: "Safety Rating" }, unit: "sr", tiers: ["sr_5", "sr_6", "sr_7", "sr_8", "sr_9"] },
-  { id: "hourly_races", names: { ru: "Гонки Hourly", en: "Hourly races" }, unit: "hourly_race", tiers: ["hourly_1", "hourly_5", "hourly_25", "hourly_50", "hourly_100"] },
-  { id: "hourly_wins", names: { ru: "Победы в Hourly", en: "Hourly victories" }, unit: "hourly_win", tiers: ["hourly_win_1", "hourly_win_10"] },
+  { id: "hourly_races", names: { ru: "Часовые гонки", en: "Hourly races" }, unit: "hourly_race", tiers: ["hourly_1", "hourly_5", "hourly_25", "hourly_50", "hourly_100"] },
+  { id: "hourly_wins", names: { ru: "Победы в часовых гонках", en: "Hourly victories" }, unit: "hourly_win", tiers: ["hourly_win_1", "hourly_win_10"] },
   { id: "endurance_duration", names: { ru: "Длительные гонки", en: "Endurance races" }, unit: "occurrence", tiers: ["endurance_2h", "endurance_3h", "endurance_6h", "endurance_12h"] },
   { id: "tracks", names: { ru: "Трассы", en: "Tracks" }, unit: "track", tiers: ["tracks_5", "tracks_10"] },
   { id: "race_days", names: { ru: "Гоночные дни", en: "Race days" }, unit: "race_day", tiers: ["race_days_10", "race_days_30", "race_days_100", "race_days_150", "race_days_250"] },

@@ -48,7 +48,7 @@
     },
     {
       "path": "scripts/build-v2.mjs",
-      "sha256": "5e9244f197ea527b503955a9d6747da3651797ce5039d87b73b1c2cf4b9216fc"
+      "sha256": "4540d8d068eba0eba3d85604786d9550cf9dda53e78981585fb5c87b26f19f7b"
     },
     {
       "path": "scripts/generate-localized-pages.mjs",
@@ -152,11 +152,11 @@
     },
     {
       "path": "src/pages/driver/achievements-model.js",
-      "sha256": "faa2e27f277e00ff355b456291dc21311ea672d25e612b07fe6ee321aad56795"
+      "sha256": "9af117bfaf8f206cb1af6e8a13349f5a8e2acab6a8bc3066d772563db3c3f0dc"
     },
     {
       "path": "src/pages/driver/achievements-widget.js",
-      "sha256": "d7512d323bb09c4d6d2f4793016eff2cbfdadef6363c9f833992631dcd93b4ca"
+      "sha256": "f1a471f8a83b544003953272f52f00ffdcd458d3a2ae816ec3077cb4d4f9d5e6"
     },
     {
       "path": "src/pages/home/deferred-sections.js",
@@ -208,7 +208,7 @@
     },
     {
       "path": "src/pages/portal-ops/portal-ops-page.js",
-      "sha256": "c327dc12b02a3f8a515b7424c139707ab1d68b85b306dc5df44249355c19dbc7"
+      "sha256": "f8870d45bd323c7793be6562383c188aa4a85bb0c3abcda663cdbfae88d5722a"
     },
     {
       "path": "src/pages/races/model.js",
@@ -496,7 +496,7 @@
     },
     {
       "path": "v1-source/html/portal-ops/index.html",
-      "sha256": "a08f3e6c65b78b445f69bcbd524bdd6c0d65662c634d953fc4d5c5a0def59780"
+      "sha256": "29cc9541d9874d0f78822e2f1d746307e476cbb2dfb184c0f63a028303253cd2"
     },
     {
       "path": "v1-source/html/privacy/index.html",
@@ -516,7 +516,7 @@
     },
     {
       "path": "v2-source/copy.json",
-      "sha256": "de5d8e8e88e838e497ede72a428d6584dc8fa9a4a8520dbb9766b6b8f5b29c8a"
+      "sha256": "f222fc31ddcc887bc5ffe6512ae249588c2e9d0118e673446f29b8bc5df71298"
     },
     {
       "path": "v2-source/design.css",
@@ -524,7 +524,7 @@
     },
     {
       "path": "v2-source/home.html",
-      "sha256": "6a54f515003d2330ce46437e9cfd1732326c4a787351c57aa72efc43d9fda115"
+      "sha256": "23dcdcd5c0be5fc7c807255aa3611c1a7df31c25f5c4ac84d1e62bfe009f563c"
     },
     {
       "path": "v2-source/pages/archive.js",
@@ -548,7 +548,7 @@
     },
     {
       "path": "v2-source/pages/core.js",
-      "sha256": "a99d39950a1d97c5603637ffe64541c0db9cfc42b2f047678e2e8afdb0923416"
+      "sha256": "1c8e1c8e4bea621636f0c1cc216eed92f0b5b5b96190d50e33c56ba5964722fe"
     },
     {
       "path": "v2-source/pages/editorial.js",
@@ -596,7 +596,7 @@
     },
     {
       "path": "v2/home.js",
-      "sha256": "b2842eab2cee11c1327f4a55c6db52f12a533824d042b9e10e9a3f8227393f0b"
+      "sha256": "e8d8cce4faf5e70fc4f2c02cd975b365a483a297f8ba3a148ff7d672b0fa1cb4"
     },
     {
       "path": "v2/mobile-navigation.js",
@@ -632,11 +632,11 @@
     },
     {
       "path": "v2/pages/control.js",
-      "sha256": "7be923ca53444bf99f7b4ca40a5c5720e22a8944b603a9d3d19b236b239f9d2b"
+      "sha256": "d8f71256e6953a9e5bceb4301029937cac144568e6cb10751471c6cb2460a2c5"
     },
     {
       "path": "v2/pages/controller.js",
-      "sha256": "a1a43572b05882f30c5bcfd8df10d7d06fa5225e6d0a44a04c7c69a8f8b57ecd"
+      "sha256": "37fe69470d4f4a4ff415cd6b5c259b5d101424ed633ae56fbd7aad4a2e0384fe"
     },
     {
       "path": "v2/pages/data.js",

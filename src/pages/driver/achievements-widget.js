@@ -3,8 +3,9 @@ import {
   categoryCounts,
   normalizeFullAchievements,
   normalizePublicAchievements,
+  localizeAchievementDescription,
   selectAchievementCards
-} from "./achievements-model.js?v=20260824titles1";
+} from "./achievements-model.js?v=20261011hourlyru1";
 import { buildAuthReturnPath, normalizeAuthPayload } from "../../features/auth/header-auth.js?v=20261011notifications1";
 import { createHttpClient } from "../../shared/http-client.js";
 
@@ -168,8 +169,8 @@ function unitLabel(unit, value, language) {
     fastest_lap: ["лучший круг", "лучших круга", "лучших кругов", "fastest lap", "fastest laps"],
     track: ["трасса", "трассы", "трасс", "track", "tracks"],
     race_day: ["гоночный день", "гоночных дня", "гоночных дней", "race day", "race days"],
-    hourly_race: ["гонка Hourly", "гонки Hourly", "гонок Hourly", "Hourly race", "Hourly races"],
-    hourly_win: ["победа Hourly", "победы Hourly", "побед Hourly", "Hourly victory", "Hourly victories"],
+    hourly_race: ["часовая гонка", "часовые гонки", "часовых гонок", "Hourly race", "Hourly races"],
+    hourly_win: ["победа в часовой гонке", "победы в часовых гонках", "побед в часовых гонках", "Hourly victory", "Hourly victories"],
     lap: ["круг", "круга", "кругов", "lap", "laps"],
     p4_finish: ["финиш P4", "финиша P4", "финишей P4", "P4 finish", "P4 finishes"],
     same_position_finish: ["финиш без изменения позиции", "финиша без изменения позиции", "финишей без изменения позиции", "unchanged-position finish", "unchanged-position finishes"],
@@ -239,7 +240,7 @@ export function createDriverAchievementsController({
       race_days: lang === "ru" ? `Участвовать в гонках в ${target} разных календарных дней по московскому времени.` : `Race on ${target} different calendar days in Moscow time.`,
       monza_regular: lang === "ru" ? `Завершить ${target} ${unit}; гонки на других трассах не мешают прогрессу.` : `Complete ${target} ${unit}; races at other tracks do not reset progress.`
     }[card.seriesId];
-    return generated || focus.description || card.description || (lang === "ru" ? "Условие достижения будет уточнено." : "Achievement condition will be clarified.");
+    return generated || localizeAchievementDescription(focus.description || card.description, lang) || (lang === "ru" ? "Условие достижения будет уточнено." : "Achievement condition will be clarified.");
   }
 
   function progressText(card) {
@@ -297,7 +298,7 @@ export function createDriverAchievementsController({
           driverTitle.classList.toggle("is-tooltip-open", open);
           info.setAttribute("aria-expanded", String(open));
         });
-        const tooltip = element(documentRef, "div", "driver-achievements-title-tooltip", data.summary.titleDescription);
+        const tooltip = element(documentRef, "div", "driver-achievements-title-tooltip", localizeAchievementDescription(data.summary.titleDescription, language()));
         tooltip.id = titleTooltipId;
         tooltip.setAttribute("role", "tooltip");
         driverTitle.addEventListener("keydown", event => {
