@@ -6,18 +6,24 @@ import {browser,base,fixture,root,snapshot,site} from './v2-browser-fixtures.mjs
 const sample=JSON.parse(await fs.readFile(path.join(root,'tests/fixtures/v2-pages/archive.json'),'utf8'));
 const championship=JSON.parse(await fs.readFile(path.join(root,'tests/fixtures/v2-pages/championships.json'),'utf8'));
 const race=structuredClone(sample.race), pilot=race.results[0];
-pilot.elo=1234;pilot.safety_rating_after=0;
+pilot.elo=1234;pilot.safety_rating_after=0;pilot.safety_delta=.25;
 const context={result_context_version:1,qualifying:{status:'available',rating_basis:'race_result',results:[
-  {position:1,public_id:pilot.public_id,driver:pilot.driver,best_lap:'1:30.123',race_number:25},
-  {position:2,public_id:null,driver:'Q-only <pilot>',best_lap:null}
+  {position:1,public_id:pilot.public_id,driver:pilot.driver,best_lap:'1:30.123',race_number:25,car_name:'Ferrari 296 GT3',car_model_id:36,gap_ms:0,safety_delta:.25},
+  {position:2,public_id:null,driver:'Q-only <pilot>',best_lap:'1:31.500',car_name:'BMW M4 GT3',car_model_id:30,gap_ms:1377}
 ]},race_conditions:{status:'available',game_time:{hour_of_day:16,time_multiplier:3},ambient_temp_c:23,track_temp_c:29,rain:0,cloud_level:.25,weather_randomness:2,evidence:{ambient_temp_c:{basis:'configured',source:'launch_snapshot'}}}};
 async function mock(page,{contextStatus=200}={}) {
   const errors=[],requests=[];
   page.on('pageerror',e=>errors.push(e.message));
   await page.route('**/*',async route=>{
     const request=route.request();let url=new URL(request.url());
+    // Local antivirus injects unrelated telemetry into headless Chrome.
+    // Abort it before checking that application fixtures perform only reads.
+    if(url.hostname.endsWith('.kaspersky-labs.com'))return route.abort();
     if(url.origin===base&&url.pathname.startsWith('/__asg_public__/'))url=new URL('https://data.asgracing.ru'+url.pathname.slice('/__asg_public__'.length)+url.search);
-    assert.equal(request.method(),'GET','This check performs only public reads');
+    if(request.method()==='POST'&&url.hostname==='data.asgracing.ru'&&url.pathname==='/hourly-votes-api/voter-token') {
+      return route.fulfill({contentType:'application/json',body:JSON.stringify({voter_token:'fixture-only-token',expires_at:new Date(Date.now()+3600000).toISOString()})});
+    }
+    assert.equal(request.method(),'GET','This check performs only public reads: '+url.href);
     if(url.hostname==='data.asgracing.ru') {
       requests.push(url.pathname);let payload;
       if(url.pathname.includes('/races/context/'))return route.fulfill({status:contextStatus,contentType:'application/json',body:JSON.stringify(contextStatus===200?context:{})});
@@ -53,11 +59,14 @@ async function checkTabs(page,scope,requests,language) {
   await q.click();
   assert.equal(await q.getAttribute('aria-selected'),'true');
   assert.equal(await group.locator('[data-result-panel="race"]').isVisible(),false);
-  const table=group.locator('.qualifying-table');assert.equal(await table.locator('th').count(),5);
+  const table=group.locator('.qualifying-table');assert.equal(await table.locator('th').count(),7);
   assert.equal(await table.locator('tbody tr').count(),2);
   assert.match(await table.locator('tbody tr').first().innerText(),/1:30\.123/);
-  assert.match(await table.locator('tbody tr').first().locator('td').nth(3).innerText(),/1234/);
-  assert.match(await table.locator('tbody tr').first().locator('td').nth(4).innerText(),/0[.,]00/);
+  assert.match(await table.locator('tbody tr').first().locator('td').nth(3).innerText(),/Ferrari/);
+  assert.match(await table.locator('tbody tr').nth(1).locator('td').nth(4).innerText(),/\+1\.377/);
+  assert.match(await table.locator('tbody tr').first().locator('td').nth(5).innerText(),/1234/);
+  assert.match(await table.locator('tbody tr').first().locator('td').nth(6).innerText(),/0[.,]00/);
+  assert.equal(await table.locator('.race-rating-delta,.sr-badge-delta').count(),0);
   assert.equal(await table.locator('tbody tr').first().locator('a').first().getAttribute('href'),(language==='en'?'/en':'')+'/driver/?id='+pilot.public_id);
   assert.match(await table.locator('tbody tr').nth(1).innerText(),/Q-only <pilot>/);
   assert.equal(await table.locator('tbody tr').nth(1).locator('a').count(),0);
@@ -134,7 +143,7 @@ try {
     await page.goto(base+'/old/races/?race_id='+sample.items[0].race_id,{waitUntil:'networkidle'});
     const modal=page.locator('#race-results-modal');
     await modal.locator('[data-result-tab="qualifying"]').click();
-    assert.equal(await modal.locator('.qualifying-table th').count(),5);
+    assert.equal(await modal.locator('.qualifying-table th').count(),7);
     assert.match(await modal.locator('.qualifying-table').innerText(),/1:30\.123/);
     assert.match(await modal.locator('.race-conditions').innerText(),/16:00/);
     assert.deepEqual(state.errors,[]);await page.close();report.push({classicArchive:'passed'});

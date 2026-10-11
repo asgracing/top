@@ -4,7 +4,7 @@
 .result-tablist [aria-selected="true"] {background:rgba(57,221,166,.12);border-color:rgba(57,221,166,.35);color:#67edbe;}
 .result-tablist [role="tab"]:focus-visible {outline:2px solid #67edbe;outline-offset:3px;}
 .result-tabs [role="tabpanel"][hidden] {display:none !important;}
-.result-tabs .qualifying-table {min-width:560px;width:100%;border-collapse:collapse;}
+.result-tabs .qualifying-table {min-width:760px;width:100%;border-collapse:collapse;}
 .qualifying-table th,.qualifying-table td {padding:9px 10px;text-align:left;}
 .qualifying-table td {white-space:nowrap;}
 .qualifying-table .result-driver-identity {display:flex;align-items:center;gap:8px;}

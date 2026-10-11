@@ -45,7 +45,15 @@ export function renderResultTabs(race, raceHTML, api, id = 'race-results') {
   const q = mergeResultContext(race).qualifying || {status: 'missing'};
   let qualifyingHTML;
   if (q.status === 'available' && Array.isArray(q.results) && q.results.length) {
-    qualifyingHTML = `<div class="page-table-scroll table-wrap"><table class="page-table results-table race-results-grid qualifying-table"><thead><tr>${['№', tx('Пилот', 'Driver'), tx('Круг квалификации', 'Qualifying lap'), 'ELO', 'SR'].map(value => `<th>${label(value)}</th>`).join('')}</tr></thead><tbody>${q.results.map(row => `<tr><td><b>${label(row.position ?? '—')}</b></td><td><span class="result-driver-identity">${row.race_number == null ? '' : `<small>#${label(row.race_number)}</small>`}${pageDriver(row)}</span></td><td>${label(row.best_lap || '—')}</td><td>${raceRating(row, 'elo')}</td><td>${raceRating(row, 'sr')}</td></tr>`).join('')}</tbody></table></div><p class="page-help">${label(tx('ELO и SR — сохранённый контекст этой гонки.', 'ELO and SR use this race’s saved rating context.'))}</p>`;
+    const rows = q.results.map(row => {
+      const badge = {...row, elo_rating_delta: null, elo_delta: null, safety_delta: null, safety_rating_delta: null};
+      const car = row.car_name || row.car_name_raw;
+      const carHTML = api.carMarkup && (car || row.car_model_id != null) ? api.carMarkup(car, row.car_model_id) : label(car || '—');
+      const gap = row.gap_ms != null && Number.isFinite(Number(row.gap_ms)) && Number(row.gap_ms) >= 0
+        ? '+' + (Number(row.gap_ms) / 1000).toFixed(3) : row.gap || '—';
+      return `<tr><td><b>${label(row.position ?? '—')}</b></td><td><span class="result-driver-identity">${row.race_number == null ? '' : `<small>#${label(row.race_number)}</small>`}${pageDriver(row)}</span></td><td>${label(row.best_lap || '—')}</td><td>${carHTML}</td><td>${label(gap)}</td><td>${row.elo == null ? '—' : raceRating(badge, 'elo') || '—'}</td><td>${(row.safety_rating_after ?? row.safety_rating) == null ? '—' : raceRating(badge, 'sr') || '—'}</td></tr>`;
+    }).join('');
+    qualifyingHTML = `<div class="page-table-scroll table-wrap"><table class="page-table results-table race-results-grid qualifying-table"><thead><tr>${['№', tx('Пилот', 'Driver'), tx('Круг квалификации', 'Qualifying lap'), tx('Машина', 'Car'), tx('Отставание', 'Gap'), 'ELO', 'SR'].map(value => `<th>${label(value)}</th>`).join('')}</tr></thead><tbody>${rows}</tbody></table></div><p class="page-help">${label(tx('ELO и SR — сохранённый контекст этой гонки.', 'ELO and SR use this race’s saved rating context.'))}</p>`;
   } else {
     const message = q.status === 'ambiguous' ? tx('Связь с квалификацией не подтверждена.', 'The qualifying session could not be verified.') : q.status === 'not_applicable' ? tx('Заезд проходил без квалификации.', 'This event had no qualifying session.') : tx('Данные квалификации недоступны.', 'Qualifying data is unavailable.');
     qualifyingHTML = `<p class="site-empty empty" role="status">${label(message)}</p>`;
@@ -60,7 +68,7 @@ export function installResultTabs(root = document) {
   if (!root.getElementById('race-result-context-style')) {
     const sheet = root.createElement('link');
     sheet.id = 'race-result-context-style'; sheet.rel = 'stylesheet';
-    sheet.href = '/styles/components/race-result-context.css?v=20261010results1';
+    sheet.href = '/styles/components/race-result-context.css?v=20261011qual3';
     root.head.append(sheet);
   }
   function select(tab, focus) {

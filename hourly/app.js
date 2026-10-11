@@ -1,4 +1,4 @@
-import {decorateRaceHeading,renderResultTabs,installResultTabs,mergeResultContext} from '../src/shared/race-result-context.js?v=20261010results1';
+import {decorateRaceHeading,renderResultTabs,installResultTabs,mergeResultContext} from '../src/shared/race-result-context.js?v=20261011qual3';
 import { initializeLocalizedPage, localizedPageHref, resolvePageLocale, setPageLocale } from "../src/shared/localized-page.js?v=20261007root1";
 initializeLocalizedPage();
 import {

@@ -1,6 +1,6 @@
 // Approved R20-R22 archive/results presentation with injected public data.
 import {archiveKind as kind} from '../data.js?v=20261007v2pages9';
-import {renderResultTabs,renderRaceConditions,installResultTabs} from '/src/shared/race-result-context.js?v=20261010results1';
+import {renderResultTabs,renderRaceConditions,installResultTabs} from '/src/shared/race-result-context.js?v=20261011qual3';
 export function createArchiveViews(api) {
   const {raw,state,tx,label,section,metric,num,delta,route,trackName,trackCode,safeTrack,pageDriver,raceRating,raceBestLapId,time,carMarkup,eloCategory,eloNumber,viewer}=api;
   const title=screen=>screen==='archive'?tx('Архив гонок','Race archive'):tx('Результаты гонки','Race results');
