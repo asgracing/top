@@ -2,7 +2,14 @@ import test from 'node:test';
 import assert from 'node:assert/strict';
 import {mkdtemp,mkdir,symlink,rm} from 'node:fs/promises';
 import {resolve} from 'node:path';
-import {archiveScratchRoot,workspaceRoot,assertChildPath,assertArchiveScratchPath,taskScratchPath} from '../../scripts/workspace-scratch.mjs';
+import {archiveScratchRoot,workspaceRoot,findWorkspaceRoot,assertChildPath,assertArchiveScratchPath,taskScratchPath} from '../../scripts/workspace-scratch.mjs';
+
+test('copied CI fixtures retain the shared scratch root without a WORKSPACE.md marker',()=>{
+ const copied=resolve(workspaceRoot,'_archive/tmp/2026-10-12/source-check/candidate/source');
+ assert.equal(findWorkspaceRoot(copied,()=>false),workspaceRoot);
+ const standalone=resolve(workspaceRoot,'ci-checkout/site');
+ assert.equal(findWorkspaceRoot(standalone,()=>false),resolve(workspaceRoot,'ci-checkout'));
+});
 
 test('scratch outputs reject the archive root, former tmp, traversal and missing paths',()=>{
  assert.throws(()=>assertArchiveScratchPath(archiveScratchRoot),/inside/);

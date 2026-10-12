@@ -1,11 +1,14 @@
 import {existsSync,mkdirSync,realpathSync} from 'node:fs';
-import {dirname,isAbsolute,relative,resolve,sep} from 'node:path';
+import {basename,dirname,isAbsolute,relative,resolve,sep} from 'node:path';
 
 const siteRoot=resolve(import.meta.dirname,'..');
-function findWorkspaceRoot(){
- for(let directory=dirname(siteRoot);;directory=dirname(directory)){
-  if(existsSync(resolve(directory,'WORKSPACE.md')))return directory;
-  if(dirname(directory)===directory)return dirname(siteRoot);
+export function findWorkspaceRoot(sourceRoot=siteRoot,markerExists=existsSync){
+ for(let directory=dirname(sourceRoot);;directory=dirname(directory)){
+  if(markerExists(resolve(directory,'WORKSPACE.md')))return directory;
+  // Standalone CI has no workspace map. Copied build fixtures still live in
+  // its known _archive/tmp hierarchy and must share the original scratch root.
+  if(basename(directory)==='_archive'&&relative(directory,sourceRoot).startsWith('tmp'+sep))return dirname(directory);
+  if(dirname(directory)===directory)return dirname(sourceRoot);
  }
 }
 export const workspaceRoot=findWorkspaceRoot();
