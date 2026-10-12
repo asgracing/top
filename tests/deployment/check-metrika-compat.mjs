@@ -1,3 +1,4 @@
+import {taskScratchPath} from '../../scripts/workspace-scratch.mjs';
 // Owner tools can partition/deny storage. No events go to the real counter.
 import assert from 'node:assert/strict';
 import {readFile,writeFile} from 'node:fs/promises';
@@ -47,5 +48,5 @@ try{
  assert.doesNotMatch(css,/url\(["']?\.\.\//);
  console.log(`Metrica compatibility passed: ${reports.length} consent/storage scenarios, explicit banner goal, replay stylesheet.`);
 }finally{
- await writeFile(resolve(root,'../tmp/metrika-compat.json'),JSON.stringify({reports,realAnalyticsEvents:0},null,2)+'\n');await browser.close();
+ await writeFile(taskScratchPath('metrika-compat.json'),JSON.stringify({reports,realAnalyticsEvents:0},null,2)+'\n');await browser.close();
 }

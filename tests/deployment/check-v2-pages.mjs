@@ -1,3 +1,4 @@
+import {taskScratchPath} from '../../scripts/workspace-scratch.mjs';
 // Real V2 controllers with bounded public datasets. Every external call is intercepted.
 import assert from 'node:assert/strict';
 import fs from 'node:fs/promises';
@@ -143,5 +144,5 @@ try {
     reports.push({screen:'home-shared-modals',language,width:1920,status:'passed'});
     await page.close();
   }
-} catch(error){console.log(diagnostics.at(-1));for(const page of browser.contexts().flatMap(c=>c.pages())){console.log({url:page.url(),title:await page.title(),pageView:await page.locator('#page-view').innerText().catch(()=>''),languageControls:await page.locator('.v2-language').count()});await page.screenshot({path:path.join(root,'../tmp/v2-pages-failure.png')});}throw error;} finally {await browser.close();}
+} catch(error){console.log(diagnostics.at(-1));for(const page of browser.contexts().flatMap(c=>c.pages())){console.log({url:page.url(),title:await page.title(),pageView:await page.locator('#page-view').innerText().catch(()=>''),languageControls:await page.locator('.v2-language').count()});await page.screenshot({path:taskScratchPath('v2-pages-failure.png')});}throw error;} finally {await browser.close();}
 console.log(JSON.stringify(reports));

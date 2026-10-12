@@ -1,3 +1,4 @@
+import {taskScratchPath} from '../../scripts/workspace-scratch.mjs';
 // Live V2 renderers over bounded published fixtures. External writes are blocked.
 import assert from 'node:assert/strict';
 import fs from 'node:fs/promises';
@@ -56,7 +57,7 @@ try{
   assert.equal(await page.locator('meta[name="robots"]').getAttribute('content'),'noindex,follow');
   assert.equal(await page.locator('meta[name="yandex-metrika-id"]').getAttribute('content'),'107697834');
   assert.ok(await page.evaluate(()=>document.documentElement.scrollWidth<=innerWidth+1),`${screen}/${language}/${width}: no page overflow`);
-  if(width===1920||width===390){await page.evaluate(()=>document.querySelector('.center-column').scrollTop=0);await page.screenshot({path:path.join(root,`../tmp/v2-${screen}-${language}-${width}.png`),fullPage:width===390});}
+  if(width===1920||width===390){await page.evaluate(()=>document.querySelector('.center-column').scrollTop=0);await page.screenshot({path:taskScratchPath(`v2-${screen}-${language}-${width}.png`),fullPage:width===390});}
   assert.deepEqual(t.errors,[]);reports.push({screen,language,width,layout:'passed'});await page.close();
  }
  const fun=await create('fun'),{page}=fun;await go(fun);

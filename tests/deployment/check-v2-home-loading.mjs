@@ -1,3 +1,4 @@
+import {taskScratchPath} from '../../scripts/workspace-scratch.mjs';
 // Real controllers with a deliberately stalled home payload. No external writes.
 import assert from 'node:assert/strict';
 import fs from 'node:fs/promises';
@@ -90,5 +91,5 @@ try {
   assert.ok(await page.locator('[data-table-retry]').count());
   assert.deepEqual(errors,[]);await page.close();
  }
- await fs.writeFile('C:/Python/asgracing/tmp/home-loading-browser.json',JSON.stringify(reports,null,2));console.log(JSON.stringify({reports,directAnchors:true}));
+ await fs.writeFile(taskScratchPath('home-loading-browser.json'),JSON.stringify(reports,null,2));console.log(JSON.stringify({reports,directAnchors:true}));
 }finally{await browser.close();}

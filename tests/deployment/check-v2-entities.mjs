@@ -1,3 +1,4 @@
+import {taskScratchPath} from '../../scripts/workspace-scratch.mjs';
 // Real V2 entity views with public fixtures; external writes are never forwarded.
 import assert from 'node:assert/strict';
 import fs from 'node:fs/promises';
@@ -57,7 +58,7 @@ try {
    assert.equal(await page.locator('.dashboard').evaluate(node=>node.classList.contains('page-wide')),true);
    assert.ok(await page.locator('.site-entity-hero img').evaluate(img=>img.complete&&img.naturalWidth>0));
   }
-  if(width===1920&&language==='ru')await page.screenshot({path:path.join(root,'../tmp/v2-entities-'+screen.replace('/','-')+'.png')});
+  if(width===1920&&language==='ru')await page.screenshot({path:taskScratchPath('v2-entities-'+screen.replace('/','-')+'.png')});
   reports.push({screen,language,width,layout:'passed'});await page.close();
  }
  const test=await create(1920,'ru',{signed:true,failContext:true,longRaces:true}),{page}=test;

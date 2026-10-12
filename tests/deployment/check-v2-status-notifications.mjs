@@ -1,3 +1,4 @@
+import {taskScratchPath} from '../../scripts/workspace-scratch.mjs';
 // Exercise real rendering and read-state persistence with intercepted public data.
 import assert from 'node:assert/strict';
 import {browser,base,fixture,signedDriver} from './v2-browser-fixtures.mjs';
@@ -43,7 +44,7 @@ try {
     assert.equal(await page.locator('#v2-notification-popover .v2-notice').count(),7);
     assert.equal(await button.textContent(),language==='ru'?'Прочитано всё':'Mark all as read');
     assert.ok(await page.locator('#v2-notification-popover').evaluate(n=>n.scrollWidth<=n.clientWidth+1));
-    if(language==='ru'&&[1920,320].includes(width))await page.screenshot({path:`../tmp/v2-notifications-${width}.png`});
+    if(language==='ru'&&[1920,320].includes(width))await page.screenshot({path:taskScratchPath(`v2-notifications-${width}.png`)});
     await button.click();await page.waitForFunction(()=>document.querySelector('.v2-notification-count').hidden);
     assert.equal(await button.isDisabled(),true);
     const read=await page.evaluate(()=>JSON.parse(localStorage.getItem('asgReadNewsIds.v2')));

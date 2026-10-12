@@ -1,12 +1,13 @@
+import {taskScratchPath} from '../../scripts/workspace-scratch.mjs';
 // A plain source/test directory, never a Git checkout or production target.
 import {cp,mkdir,readFile,writeFile} from 'node:fs/promises';
 import {resolve} from 'node:path';
 import {execFileSync} from 'node:child_process';
 import {siteRoot as root} from '../../scripts/site-release.mjs';
 import {safeTarget,fileHash,tree} from '../../scripts/site-release-files.mjs';
-const latest=JSON.parse(await readFile(resolve(root,'../tmp/site-release-latest.json'),'utf8'));
+const latest=JSON.parse(await readFile(taskScratchPath('site-release-latest.json'),'utf8'));
 const plan=JSON.parse(await readFile(resolve(latest.bundle,'candidate-plan.json'),'utf8'));
-const target=resolve(root,'../tmp/site-release-rehearsal',String(Date.now()),'source');await mkdir(target,{recursive:true});
+const target=taskScratchPath('site-release-rehearsal',String(Date.now()),'source');await mkdir(target,{recursive:true});
 if((await tree(target)).length)throw Error('Use a new empty rehearsal directory; previous results are preserved');
 const payload=resolve(latest.bundle,'candidate');
 for(const path of await tree(payload))if(await fileHash(root,path)!==null){const to=safeTarget(target,path);await mkdir(resolve(to,'..'),{recursive:true});await cp(safeTarget(root,path),to);}
@@ -21,5 +22,5 @@ let blocked=false;try{execFileSync(process.execPath,['scripts/generate-localized
 if(!blocked||await fileHash(target,'index.html')!==before)throw Error('Legacy generator overwrote the root release');
 execFileSync(process.execPath,['scripts/materialize-site-release.mjs','--bundle',latest.bundle,'--fallback','--directory',target,'--apply'],{cwd:root,stdio:'inherit'});
 execFileSync(process.platform==='win32'?'npm.cmd':'npm',['run','build'],{cwd:target,env,stdio:'inherit',shell:process.platform==='win32'});
-await writeFile(resolve(root,'../tmp/v2-step4-rehearsal.json'),JSON.stringify({version:plan.version,target,rootCI:'passed',legacyGeneratorBlocked:true,fallbackBuild:'passed',productionChanged:false},null,2)+'\n');
+await writeFile(taskScratchPath('v2-step4-rehearsal.json'),JSON.stringify({version:plan.version,target,rootCI:'passed',legacyGeneratorBlocked:true,fallbackBuild:'passed',productionChanged:false},null,2)+'\n');
 console.log('Rehearsal passed: root CI, guarded SEO generation, explicit-file activation and URL-compatible fallback.');

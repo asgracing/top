@@ -1,3 +1,4 @@
+import {taskScratchPath} from '../../scripts/workspace-scratch.mjs';
 // Approved pages over public fixtures; no request writes to external services.
 import assert from 'node:assert/strict';
 import fs from 'node:fs/promises';
@@ -79,7 +80,7 @@ try{
    assert.ok((await page.locator('.site-post-actions button[data-site-like]').first().innerText()).includes('7'));
    assert.equal(await page.locator('meta[name="community-likes-api"]').getAttribute('content'),'https://community-likes.asgracing.workers.dev');
   }
-  if(width===1920||width===390){await page.evaluate(()=>document.querySelector('.center-column').scrollTop=0);await page.screenshot({path:path.join(root,`../tmp/v2-${screen}-${language}-${width}.png`),fullPage:width===390});}
+  if(width===1920||width===390){await page.evaluate(()=>document.querySelector('.center-column').scrollTop=0);await page.screenshot({path:taskScratchPath(`v2-${screen}-${language}-${width}.png`),fullPage:width===390});}
   assert.deepEqual(t.errors,[]);reports.push({screen,language,width,layout:'passed'});await page.close();
  }
  }

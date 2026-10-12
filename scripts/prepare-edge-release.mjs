@@ -1,8 +1,9 @@
+import {taskScratchPath} from './workspace-scratch.mjs';
 import {mkdir,writeFile} from 'node:fs/promises';
 import {resolve} from 'node:path';
 import {createHash} from 'node:crypto';
 import {edgePlan,bulkCsv} from './edge-release-plan.mjs';
-const directory=resolve(import.meta.dirname,'../../tmp/v2-edge-preparation');
+const directory=taskScratchPath('v2-edge-preparation');
 await mkdir(directory,{recursive:true});
 const files=[];
 for(const status of [302,301]){

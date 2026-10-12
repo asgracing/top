@@ -1,3 +1,4 @@
+import {taskScratchPath} from '../../scripts/workspace-scratch.mjs';
 import assert from 'node:assert/strict';
 import fs from 'node:fs/promises';
 import {browser,base,fixture,signedDriver} from './v2-browser-fixtures.mjs';
@@ -54,9 +55,9 @@ try {
    await page.waitForFunction(()=>document.querySelector('#v2-notification-popover').matches(':popover-open'));
    await page.keyboard.press('Escape');
    if(width===375&&lang==='ru'&&signed){
-    await page.screenshot({path:'C:/Python/asgracing/tmp/mobile-header-375.png'});
+    await page.screenshot({path:taskScratchPath('mobile-header-375.png')});
     await page.locator('#v2-menu-trigger').click();
-    await page.screenshot({path:'C:/Python/asgracing/tmp/mobile-menu-375.png'});
+    await page.screenshot({path:taskScratchPath('mobile-menu-375.png')});
     await page.keyboard.press('Escape');
     await page.setViewportSize({width:1024,height:667});await page.waitForFunction(()=>document.querySelector('.header>.navigation'));
     assert.equal(await page.locator('.header>.navigation').count(),1);assert.equal(await page.locator('.header-actions>.v2-language').count(),1);
@@ -84,5 +85,5 @@ try {
   }
   assert.deepEqual(errors,[]);reports.push({lang,width,signed,mobile});await page.close();
  }
- await fs.writeFile('C:/Python/asgracing/tmp/mobile-navigation-check.json',JSON.stringify(reports,null,2));console.log(JSON.stringify({passed:reports.length}));
+ await fs.writeFile(taskScratchPath('mobile-navigation-check.json'),JSON.stringify(reports,null,2));console.log(JSON.stringify({passed:reports.length}));
 } finally {await browser.close();}

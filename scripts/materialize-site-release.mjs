@@ -1,15 +1,11 @@
+import {taskScratchPath,assertArchiveScratchPath} from './workspace-scratch.mjs';
 import {cp,mkdir,readFile,writeFile,unlink} from 'node:fs/promises';
-import {resolve,relative,isAbsolute,sep} from 'node:path';
+import {resolve} from 'node:path';
 import {siteRoot} from './site-release.mjs';
 import {safeTarget,digest,validatePlan,fileHash} from './site-release-files.mjs';
 const argument=name=>process.argv.includes(name)?process.argv[process.argv.indexOf(name)+1]:null;
-const temporaryRoot=resolve(siteRoot,'../tmp');
-function temporaryChild(value){
- if(!value)throw Error('A prepared bundle directory is required');
- const path=resolve(value),rel=relative(temporaryRoot,path);
- if(!rel||isAbsolute(rel)||rel==='..'||rel.startsWith('..'+sep))throw Error('Directory must remain inside workspace tmp');
- return path;
-}
+const temporaryRoot=taskScratchPath();
+const temporaryChild=value=>assertArchiveScratchPath(value);
 const bundle=temporaryChild(argument('--bundle'));
 const kind=process.argv.includes('--fallback')?'fallback':'candidate';
 const payload=resolve(bundle,kind);

@@ -1,3 +1,4 @@
+import {taskScratchPath} from '../../scripts/workspace-scratch.mjs';
 // Real home presentation over bounded fixtures; all remote writes intercepted.
 import assert from 'node:assert/strict';
 import fs from 'node:fs/promises';
@@ -37,7 +38,7 @@ try{
   assert.equal(log.filter(r=>/\/drivers\/drv_/.test(r.url)).length,before,'Opening daily statistics adds no profile fetch');
   assert.ok(await modal.evaluate(e=>e.scrollWidth<=e.clientWidth+1));
   assert.ok(await modal.locator('.modal-body').evaluate(e=>e.scrollWidth<=e.clientWidth+1));
-  if(language==='ru'&&[1920,390].includes(width))await page.screenshot({path:path.join(root,`../tmp/v2-driver-day-${width}.png`)});
+  if(language==='ru'&&[1920,390].includes(width))await page.screenshot({path:taskScratchPath(`v2-driver-day-${width}.png`)});
   await page.keyboard.press('Escape');assert.equal(await page.locator('#v2-day-driver').evaluate(e=>e===document.activeElement),true);
   await page.locator('#v2-day-ratings [data-rating="elo"]').click();await page.locator('.elo-chart').waitFor();assert.equal(await modal.getAttribute('data-kind'),'driver-elo');await modal.locator('.modal-close').click();
   await page.locator('#v2-day-ratings [data-rating="sr"]').click();await page.locator('.rating-history-summary').waitFor();assert.equal(await modal.getAttribute('data-kind'),'driver-sr');await modal.locator('.modal-close').click();

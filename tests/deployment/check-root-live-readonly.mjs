@@ -1,3 +1,4 @@
+import {taskScratchPath} from '../../scripts/workspace-scratch.mjs';
 // Public production feeds through the local GET proxy. No login, analytics or writes.
 import assert from 'node:assert/strict';
 import {writeFile} from 'node:fs/promises';
@@ -45,7 +46,7 @@ try{
  }
  assert.deepEqual(errors,[]);assert.deepEqual(failures,[]);
 }finally{
- await writeFile(resolve(root,'../tmp/v2-final-live-readonly.json'),JSON.stringify({reports,errors,failures,productionWrites:0,analyticsRequests:0},null,2)+'\n');
+ await writeFile(taskScratchPath('v2-final-live-readonly.json'),JSON.stringify({reports,errors,failures,productionWrites:0,analyticsRequests:0},null,2)+'\n');
  await browser.close();
 }
 console.log(`Root public-data check passed: ${reports.length} page/table checks, no production writes.`);

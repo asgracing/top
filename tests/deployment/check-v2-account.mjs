@@ -1,9 +1,10 @@
+import {taskScratchPath} from '../../scripts/workspace-scratch.mjs';
 // Real account controllers; all identities and private responses are fixtures.
 import assert from 'node:assert/strict';
 import fs from 'node:fs/promises';
 import path from 'node:path';
 import {browser,base,fixture,root,signedDriver,site} from './v2-browser-fixtures.mjs';
-const out=path.join(root,'../tmp/v2-account-check');await fs.mkdir(out,{recursive:true});
+const out=taskScratchPath('v2-account-check');await fs.mkdir(out,{recursive:true});
 const reports=[];
 function payload(mode='owner'){
  const club=site.entity_details['clubs/asg-racing'];

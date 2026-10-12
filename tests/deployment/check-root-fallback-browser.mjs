@@ -1,3 +1,4 @@
+import {taskScratchPath} from '../../scripts/workspace-scratch.mjs';
 import assert from 'node:assert/strict';
 import {writeFile} from 'node:fs/promises';
 import {resolve} from 'node:path';
@@ -25,6 +26,6 @@ try{
   }catch(e){failures.push({url,error:e.message,errors});console.error(failures.at(-1));}finally{await page.close();}
  }
 }finally{await browser.close();}
-await writeFile(resolve(root,'../tmp/v2-step4-fallback-browser.json'),JSON.stringify({reports,failures,realWrites:0},null,2)+'\n');
+await writeFile(taskScratchPath('v2-step4-fallback-browser.json'),JSON.stringify({reports,failures,realWrites:0},null,2)+'\n');
 assert.deepEqual(failures,[]);
 console.log(`Fallback browser passed: ${reports.length} root RU/EN screens, direct race results, policies and native access gates; no external writes.`);

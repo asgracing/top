@@ -1,3 +1,4 @@
+import {taskScratchPath} from '../../scripts/workspace-scratch.mjs';
 // Every external request is intercepted; this check never uses real identities or writes.
 import assert from 'node:assert/strict';
 import fs from 'node:fs/promises';
@@ -126,7 +127,7 @@ try{
   await t.page.close();reports.push({screen:'Metrika consent and single initialization',language:lang,status:'passed'});
  }
 }finally{
- await fs.writeFile(path.join(root,'../tmp/v2-step2-browser.json'),JSON.stringify({reports,failures,externalWrites:0},null,2));
+ await fs.writeFile(taskScratchPath('v2-step2-browser.json'),JSON.stringify({reports,failures,externalWrites:0},null,2));
  await browser.close();
 }
 assert.deepEqual(failures,[]);console.log(`Root browser passed: ${reports.length} checks, external writes 0.`);

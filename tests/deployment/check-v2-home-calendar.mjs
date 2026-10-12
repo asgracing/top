@@ -1,3 +1,4 @@
+import {taskScratchPath} from '../../scripts/workspace-scratch.mjs';
 // Home calendar and event participation over the real shared renderers.
 // All external writes are intercepted; no production vote is submitted.
 import assert from 'node:assert/strict';
@@ -75,7 +76,7 @@ try{
   assert.equal(await modal.locator('[data-page-join]').isDisabled(),false,'Championship entries stay open');
   assert.ok((await modal.locator('.event-kind').getAttribute('class')).includes('kind-championship'));
   await modal.locator('[data-home-races-back]').click();
-  if(language==='ru'&&[1920,390].includes(width))await page.screenshot({path:path.join(root,`../tmp/v2-home-calendar-${width}.png`)});
+  if(language==='ru'&&[1920,390].includes(width))await page.screenshot({path:taskScratchPath(`v2-home-calendar-${width}.png`)});
   await modal.locator(`[data-page-event="${data.event.event_id}"]`).click();await modal.locator('[data-event-vote]').waitFor();
   await modal.locator('[data-event-vote]').click();await page.waitForFunction(()=>document.querySelector('#v2-race-vote')?.classList.contains('participation-active'));
   assert.match(await page.locator('#v2-participants').innerText(),/5/);

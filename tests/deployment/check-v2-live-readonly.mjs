@@ -1,3 +1,4 @@
+import {taskScratchPath} from '../../scripts/workspace-scratch.mjs';
 // Optional public-data smoke. Never forwards mutation, auth, analytics or voting requests.
 import assert from 'node:assert/strict';
 import fs from 'node:fs/promises';
@@ -41,9 +42,9 @@ try{
   report.event=await page.locator('#v2-event-track').textContent();
   report.winner=await page.locator('#v2-winner-name').textContent();
   report.profileStats=await page.locator('#v2-winner-results').textContent();
-  await page.screenshot({path:path.join(root,'design-research/v2-verification/live-home-ru.png')});
+  await page.screenshot({path:taskScratchPath('v2-verification/live-home-ru.png')});
   assert.deepEqual(report.errors,[]);assert.equal(report.servers,9);
   assert.ok(report.responses.some(response=>response.url.includes('/top-data/v2/home.json')&&response.status===200));
   console.log(JSON.stringify(report));
-  await fs.writeFile(path.join(root,'design-research/v2-verification/live-readonly.json'),JSON.stringify(report,null,2));
-}catch(error){await fs.writeFile(path.join(root,'design-research/v2-verification/live-readonly.json'),JSON.stringify({...report,failure:error.message},null,2));console.log(JSON.stringify(report));throw error}finally{await browser.close()}
+  await fs.writeFile(taskScratchPath('v2-verification/live-readonly.json'),JSON.stringify(report,null,2));
+}catch(error){await fs.writeFile(taskScratchPath('v2-verification/live-readonly.json'),JSON.stringify({...report,failure:error.message},null,2));console.log(JSON.stringify(report));throw error}finally{await browser.close()}

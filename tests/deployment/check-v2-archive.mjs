@@ -1,3 +1,4 @@
+import {taskScratchPath} from '../../scripts/workspace-scratch.mjs';
 // Real archive/results controllers; bounded public fixtures and intercepted network.
 import assert from 'node:assert/strict';
 import fs from 'node:fs/promises';
@@ -86,7 +87,7 @@ try {
       await page.locator('#page-view .results-table tbody tr').first().locator('[data-rating-kind="sr"]').click();await page.locator('#v2-modal .elo-chart').waitFor();assert.equal(await page.locator('#v2-modal').getAttribute('data-kind'),'driver-sr');await page.locator('#v2-modal .modal-close').click();
       assert.deepEqual(errors,[]);
     }
-    if(width===1920)await page.screenshot({path:path.join(root,'../tmp/v2-archive-results-'+language+'.png')});
+    if(width===1920)await page.screenshot({path:taskScratchPath('v2-archive-results-'+language+'.png')});
     reports.push({language,width,archive:'passed',results:'passed'});await page.close();
   }
   const page=await browser.newPage({viewport:{width:1280,height:936},reducedMotion:'reduce'}),{errors}=await mock(page);

@@ -1,3 +1,4 @@
+import {taskScratchPath} from '../../scripts/workspace-scratch.mjs';
 import assert from 'node:assert/strict';
 import fs from 'node:fs/promises';
 import path from 'node:path';
@@ -65,6 +66,6 @@ try {
   reports.push({lang,width,kind,rows:heights.withImages.length,rowHeights:[...new Set(heights.withImages)],avatarLookups:requested.length,maxActive});
   await page.close();
  }
- await fs.writeFile(path.join(root,'../tmp/entity-thumbnails-check.json'),JSON.stringify(reports,null,2));
+ await fs.writeFile(taskScratchPath('entity-thumbnails-check.json'),JSON.stringify(reports,null,2));
  console.log(JSON.stringify({cases:reports.length,reports}));
 } finally {await browser.close();}

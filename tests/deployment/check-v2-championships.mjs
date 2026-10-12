@@ -1,3 +1,4 @@
+import {taskScratchPath} from '../../scripts/workspace-scratch.mjs';
 // Approved championship views with public fixtures; every remote write intercepted.
 import assert from 'node:assert/strict';
 import fs from 'node:fs/promises';
@@ -64,7 +65,7 @@ try {
    assert.equal((await page.locator('#r24-season-standings td').first().innerText()).trim(),'11');
    assert.equal(await page.locator('#r24-season-standings [data-podium-place]').count(),0);
   }
-  if(width===1920&&language==='ru')await page.screenshot({path:path.join(root,'../tmp/v2-'+screen.replace('/','-')+'.png')});
+  if(width===1920&&language==='ru')await page.screenshot({path:taskScratchPath('v2-'+screen.replace('/','-')+'.png')});
   reports.push({screen,language,width,layout:'passed'});await page.close();
  }
  const test=await create(1920,'ru',{signed:true}),{page}=test;

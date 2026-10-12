@@ -1,3 +1,4 @@
+import {taskScratchPath} from '../../scripts/workspace-scratch.mjs';
 // Approved Cars views over the live adapter; all external writes are blocked.
 import assert from 'node:assert/strict';
 import fs from 'node:fs/promises';
@@ -56,7 +57,7 @@ try {
   assert.equal(await page.locator('#r24-car-comparison tbody tr').count(),6);
   await page.locator('[data-r24-car-step="1"]').click();assert.match(await page.locator('#r24-car-content .page-pagination>span').innerText(),/^11–20/);
   assert.ok(await page.evaluate(()=>document.documentElement.scrollWidth<=innerWidth+1));
-  if(width===1920||width===390){await page.evaluate(()=>document.querySelector('.center-column').scrollTop=0);await page.screenshot({path:path.join(root,`../tmp/v2-cars-${language}-${width}.png`),fullPage:width===390});}
+  if(width===1920||width===390){await page.evaluate(()=>document.querySelector('.center-column').scrollTop=0);await page.screenshot({path:taskScratchPath(`v2-cars-${language}-${width}.png`),fullPage:width===390});}
   assert.deepEqual(test.errors,[]);reports.push({language,width,layout:'passed'});await page.close();
  }
  const test=await create(),{page}=test;await go(test);

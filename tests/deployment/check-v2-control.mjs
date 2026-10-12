@@ -1,9 +1,10 @@
+import {taskScratchPath} from '../../scripts/workspace-scratch.mjs';
 // Private responses are invented fixtures; every external write is intercepted.
 import assert from 'node:assert/strict';
 import fs from 'node:fs/promises';
 import path from 'node:path';
 import {browser,base,fixture,root,signedDriver} from './v2-browser-fixtures.mjs';
-const out=path.join(root,'../tmp/v2-control-check');await fs.mkdir(out,{recursive:true});
+const out=taskScratchPath('v2-control-check');await fs.mkdir(out,{recursive:true});
 const reports=[],revision='a'.repeat(64);
 const event={occurrence_id:'fixture_hourly_20261020',race_format:'hourly',points_multiplier:5,race_start_local:'2026-10-20T20:00',server_open_local:'2026-10-20T19:00',track_code:'monza',track_name:'Monza',practice_minutes:60,qualifying_minutes:20,race_minutes:60,pre_race_wait_seconds:120,session_overtime_seconds:600,server_window_minutes:180,hour_of_day:18,ambient_temp_c:25,cloud_level:.15,rain_level:0,weather_randomness:1,participation_mode:'individual',team_max_drivers:4,editable:true};
 const club={entity_type:'club',public_id:'club_fixture',slug:'fixture',display_name:'Fixture Racing Club',row_version:2,status:'approved',active_members:2,pending_revision:true,pending_logo:false,revision:{changes:[{field:'description_ru',before:'Before',after:'After'}]},members:[{public_id:signedDriver,display_name:'Fixture Pilot',role:'head'}],requests:[],audit:[{action:'revision.submit',occurred_at:'2026-10-07T08:00:00Z',actor_type:'pilot',actor_public_id:signedDriver}]};

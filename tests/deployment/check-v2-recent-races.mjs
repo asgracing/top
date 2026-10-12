@@ -1,3 +1,4 @@
+import {taskScratchPath} from '../../scripts/workspace-scratch.mjs';
 // Real home/Hourly renderers with bounded public data; no production writes.
 import assert from 'node:assert/strict';
 import fs from 'node:fs/promises';
@@ -38,7 +39,7 @@ try{
   assert.equal(await modal.locator('.results-table .best-lap-value').count(),1);
   const number=await modal.locator('.result-driver-identity small').first().innerText();assert.match(number,/^#/);
   assert.equal(await modal.locator('.race-summary-grid').count(),1);
-  if(width===1920&&language==='ru')await page.screenshot({path:path.join(root,'../tmp/v2-home-recent-results-1920.png')});
+  if(width===1920&&language==='ru')await page.screenshot({path:taskScratchPath('v2-home-recent-results-1920.png')});
   await modal.locator('[data-rating-kind="sr"]').first().click();
   await modal.locator('.rating-history-controls').waitFor();
   await page.keyboard.press('Escape');assert.equal(await modal.locator('.results-table').count(),1);
@@ -48,7 +49,7 @@ try{
   assert.equal(await page.evaluate(()=>document.activeElement.dataset.pageRace),firstId);
   assert.ok(await modal.evaluate(n=>n.getBoundingClientRect().right<=innerWidth+1));
   assert.ok(await page.evaluate(()=>document.documentElement.scrollWidth<=innerWidth+1));
-  if(language==='ru'&&[1920,390].includes(width))await page.screenshot({path:path.join(root,`../tmp/v2-home-recent-${width}.png`)});
+  if(language==='ru'&&[1920,390].includes(width))await page.screenshot({path:taskScratchPath(`v2-home-recent-${width}.png`)});
   await modal.locator('.modal-close').click();assert.equal(await modal.evaluate(n=>n.open),false);assert.equal(await trigger.evaluate(n=>n===document.activeElement),true);
   if(width===1920&&language==='ru'){
    // A child request completing after Escape must never overwrite the restored list.

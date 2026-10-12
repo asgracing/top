@@ -3,6 +3,7 @@ import {resolve,dirname} from 'node:path';
 import {dist,root} from './dist-paths.mjs';
 import {pageRegistry} from '../v2/page-registry.js';
 import {redirects,cloudflareCsv} from './root-redirects.mjs';
+import {taskScratchPath} from './workspace-scratch.mjs';
 import {nodes,edit,setAttribute,escape} from './seo/html-source.mjs';
 const origin='https://asgracing.ru';
 if(process.env.ASG_ROOT_RELEASE!=='1')throw Error('Release SEO is opt-in; review pages stay noindex');
@@ -38,7 +39,7 @@ for(const item of redirects.filter(r=>r.kind!=='preview'&&(r.source.endsWith('/'
  await emit(file,`<!doctype html><html lang="${item.target.startsWith('/en/')?'en':'ru'}"><head><meta charset="utf-8"><meta name="robots" content="noindex,follow"><link rel="canonical" href="${origin+item.target}"><title>ASG Racing</title></head><body><a href="${item.target}">ASG Racing</a><script>location.replace(${JSON.stringify(item.target)}+location.search+location.hash)</script></body></html>`);
 }
 const map=JSON.parse(await readFile(resolve(dist,'route-map.json'),'utf8'));map.status='release-candidate-awaiting-approval';map.previewIncluded=false;await emit('route-map.json',JSON.stringify(map,null,2)+'\n');
-// Operational artifacts remain beside the build, outside the public payload.
-await writeFile(resolve(dist,'../root-redirects.json'),JSON.stringify({schemaVersion:1,status:'not-applied',redirects},null,2)+'\n');
-await writeFile(resolve(dist,'../root-redirects-cloudflare.csv'),cloudflareCsv());
+// Operational exports use task scratch storage outside the public payload.
+await writeFile(taskScratchPath('root-redirects.json'),JSON.stringify({schemaVersion:1,status:'not-applied',redirects},null,2)+'\n');
+await writeFile(taskScratchPath('root-redirects-cloudflare.csv'),cloudflareCsv());
 console.log(`Root SEO: ${sitemap.length} sitemap URLs; ${redirects.length} exact redirect mappings prepared, none applied externally. Preview omitted.`);

@@ -1,3 +1,4 @@
+import {taskScratchPath} from '../../scripts/workspace-scratch.mjs';
 // Real V2 pages; all public/private API traffic stays inside fixtures.
 import assert from 'node:assert/strict';
 import fs from 'node:fs/promises';
@@ -51,7 +52,7 @@ async function check(language,width,options={}){
   }else assert.equal(await page.locator('.driver-achievements-steam-cta').count(),1);
   assert.equal(await page.locator('.driver-achievements-driver-title').isVisible(),false,'Collection does not substitute an automatically awarded title');
   assert.ok(await modal.evaluate(n=>n.scrollWidth<=n.clientWidth+1),'Achievement modal fits');
-  if(language==='ru'&&width===320)await page.screenshot({path:root+'/../tmp/v2-profile-collection-320.png'});
+  if(language==='ru'&&width===320)await page.screenshot({path:taskScratchPath('v2-profile-collection-320.png')});
   await modal.locator('.modal-close').click();await page.locator('[data-profile-achievements]').click();await page.locator('#driver-achievements-widget[data-state="ready"]').waitFor();await modal.locator('.modal-close').click();
   await page.goto(`${base}${prefix}clubs/?slug=asg-racing`,{waitUntil:'networkidle'});
   await page.locator('.site-entity-hero').waitFor();
@@ -62,7 +63,7 @@ async function check(language,width,options={}){
   assert.equal(await columns.nth(1).locator('section').nth(1).locator('.site-linked-list').count(),1);
   assert.equal(await teams.locator('a').first().getAttribute('href'),`${prefix}teams/detail/?slug=${entities.details['clubs/asg-racing'].teams[0].slug}`);
   assert.ok(await page.evaluate(()=>document.documentElement.scrollWidth<=innerWidth+1));
-  if(language==='ru'&&width===1920)await page.screenshot({path:root+'/../tmp/v2-club-teams-right.png'});
+  if(language==='ru'&&width===1920)await page.screenshot({path:taskScratchPath('v2-club-teams-right.png')});
   assert.deepEqual(errors,[]);await page.close();
 }
 try{

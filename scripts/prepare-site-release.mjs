@@ -1,10 +1,11 @@
+import {taskScratchPath} from './workspace-scratch.mjs';
 // Local/CI preparation only: no Git staging, push, hosting settings or edge writes.
 import {execFileSync} from 'node:child_process';
 import {cp,mkdir,readFile,writeFile,readdir} from 'node:fs/promises';
 import {resolve} from 'node:path';
 import {siteRoot as root,readSiteRelease} from './site-release.mjs';
 import {tree,digest,planFiles,fileHash} from './site-release-files.mjs';
-const tmp=resolve(root,'../tmp');
+const tmp=taskScratchPath();
 const candidate=resolve(tmp,'v2-root-release-candidate'),fallback=resolve(tmp,'v2-root-fallback');
 const config=await readSiteRelease();
 for(const [directory,isFallback]of [[candidate,false],[fallback,true]]){

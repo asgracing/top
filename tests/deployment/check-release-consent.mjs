@@ -1,3 +1,4 @@
+import {taskScratchPath} from '../../scripts/workspace-scratch.mjs';
 import assert from 'node:assert/strict';
 import {writeFile} from 'node:fs/promises';
 import {resolve} from 'node:path';
@@ -40,5 +41,5 @@ try{
   reports.push({path,initial,status:'passed'});console.log(`Passed consent ${path}: ${initial}`);await context.close();
  }
 }finally{await browser.close();}
-await writeFile(resolve(root,'../tmp/v2-step5-consent.json'),JSON.stringify({reports,realAnalyticsEvents:0,realWrites:0},null,2)+'\n');
+await writeFile(taskScratchPath('v2-step5-consent.json'),JSON.stringify({reports,realAnalyticsEvents:0,realWrites:0},null,2)+'\n');
 console.log(`Consent regression passed: ${reports.length} RU/EN/V1/V2 cases, cookie migration, deny/accept/withdrawal and one initialization.`);

@@ -1,3 +1,4 @@
+import {taskScratchPath} from '../../scripts/workspace-scratch.mjs';
 // A local HTTP rehearsal of the proposed rules, not a Cloudflare deployment test.
 import assert from 'node:assert/strict';
 import {createServer} from 'node:http';
@@ -6,7 +7,7 @@ import {resolve} from 'node:path';
 import {edgeDecision,bulkRows} from '../../scripts/edge-release-plan.mjs';
 import {nodes} from '../../scripts/seo/html-source.mjs';
 import {excludedRoute} from '../../v2/site-routing.js';
-const root=resolve(import.meta.dirname,'../..'),artifact=resolve(root,'../tmp/v2-root-release-candidate');
+const root=resolve(import.meta.dirname,'../..'),artifact=taskScratchPath('v2-root-release-candidate');
 const server=createServer(async(req,res)=>{
  const virtual=new URL(req.url,'http://'+req.headers['x-test-host']),status=Number(req.headers['x-test-status'])||301;
  const decision=edgeDecision(virtual.href,{method:req.method,status});
@@ -35,5 +36,5 @@ try{
   for(const query of [key+'=example%2Fid&utm_campaign=release','utm_campaign=release&'+key+'=example%2Fid'])await check('https://'+host+prefix+route+'?'+query,'https://asgracing.ru'+lang+target+'?'+query.replace(key+'=','id='),status);
  }
 }finally{await new Promise(done=>server.close(done));}
-await writeFile(resolve(root,'../tmp/v2-step5-edge-http.json'),JSON.stringify({checks,status:'passed-local-simulation',cloudflareValidation:false,productionChanged:false},null,2)+'\n');
+await writeFile(taskScratchPath('v2-step5-edge-http.json'),JSON.stringify({checks,status:'passed-local-simulation',cloudflareValidation:false,productionChanged:false},null,2)+'\n');
 console.log(`Local edge HTTP rehearsal passed: ${checks} redirects with query preservation, final 200 RU/EN, canonical and no HTTP chains.`);

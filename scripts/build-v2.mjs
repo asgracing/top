@@ -1,3 +1,4 @@
+import {taskScratchPath,assertArchiveScratchPath} from './workspace-scratch.mjs';
 // Reproducible V2 presentation over the canonical site's existing controllers.
 // Generated HTML/runtime files are not independent copies of business logic.
 import { readFile, writeFile, mkdir, rename } from 'node:fs/promises';
@@ -11,7 +12,8 @@ import {pageRegistry} from '../v2/page-registry.js';
 import {readSiteRelease} from './site-release.mjs';
 import {buildV2Boot} from './build-v2-boot.mjs';
 const root = resolve(import.meta.dirname, '..');
-const outputRoot = resolve(process.env.ASG_V2_OUTPUT_DIR || ((await readSiteRelease()).layout==='parallel'?root:resolve(root,'../tmp/site-v2-compilation')));
+const outputRoot = resolve(process.env.ASG_V2_OUTPUT_DIR || ((await readSiteRelease()).layout==='parallel'?root:taskScratchPath('site-v2-compilation')));
+if(outputRoot!==root)assertArchiveScratchPath(outputRoot);
 if (process.env.ASG_V2_PRESENTATION_ONLY === '1') throw Error('Presentation-only builds are retired: rebuild V2 with its canonical runtime.');
 const version = '20261006v2k';
 const runtimeVersion = '20261011racelinks1';

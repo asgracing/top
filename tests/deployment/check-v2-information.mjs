@@ -1,3 +1,4 @@
+import {taskScratchPath} from '../../scripts/workspace-scratch.mjs';
 // Actual V2 boot/render over public fixtures; external writes are blocked.
 import assert from 'node:assert/strict';
 import fs from 'node:fs/promises';
@@ -29,7 +30,7 @@ async function create(language='ru',width=1920,options={}){
 async function go(t,p,query=''){
  await t.page.goto(`${base}/v2/${t.language}/${p}${query}`,{waitUntil:'networkidle'});
  if(await t.page.locator('.asg-legal-banner-btn-secondary').isVisible())await t.page.locator('.asg-legal-banner-btn-secondary').click();
- try{await t.page.locator('#page-view h1').waitFor();}catch(error){console.log({url:t.page.url(),errors:t.errors,content:await t.page.locator('#page-view').innerText().catch(()=>''),headings:await t.page.locator('#page-view h1').count()});await t.page.screenshot({path:path.join(root,'../tmp/v2-information-failure.png')});throw error;}
+ try{await t.page.locator('#page-view h1').waitFor();}catch(error){console.log({url:t.page.url(),errors:t.errors,content:await t.page.locator('#page-view').innerText().catch(()=>''),headings:await t.page.locator('#page-view h1').count()});await t.page.screenshot({path:taskScratchPath('v2-information-failure.png')});throw error;}
 }
 try{
  if(stage==='all'||stage==='layouts'){
@@ -53,7 +54,7 @@ try{
   }
   for(const k of ['about','instructions','documents'])assert.equal(await page.locator(`[data-site-label="${k}"]`).getAttribute('href'),`/v2/${lang}/${k}/`);
   assert.equal(await page.locator('.footer-links a').first().getAttribute('href'),`/v2/${lang}/privacy/`);
-  if(width===1920&&lang==='ru'||width===390&&lang==='ru'&&screen==='cookies')await page.screenshot({path:path.join(root,`../tmp/v2-information-${screen}-${width}.png`),fullPage:width===390});
+  if(width===1920&&lang==='ru'||width===390&&lang==='ru'&&screen==='cookies')await page.screenshot({path:taskScratchPath(`v2-information-${screen}-${width}.png`),fullPage:width===390});
   assert.deepEqual(t.errors,[]);await page.close();reports.push({screen,lang,width,layout:'passed'});
  }
  console.log('RU/EN layout variants passed.');
@@ -84,5 +85,5 @@ try{
  const unknown=await create();await go(unknown,'unavailable-page/');assert.match(unknown.page.url(),/\/404\/\?path=/);assert.match(await unknown.page.locator('.r24-error code').innerText(),/unavailable-page/);assert.deepEqual(unknown.errors,[]);await unknown.page.close();
  reports.push({states:'9 entity types, service outage distinct from 404, actual unknown URL fallback passed'});
  }
- await fs.writeFile(path.join(root,`../tmp/v2-information-browser-${stage}-report.json`),JSON.stringify(reports,null,2));console.log('Information checks passed: '+stage);
-}catch(error){for(const page of browser.contexts().flatMap(c=>c.pages())){console.log({failedURL:page.url(),pageText:(await page.locator('#page-view').innerText().catch(()=>'')),runtimeText:(await page.locator('#v2-site-shell').innerText().catch(()=>'')).slice(0,120)});await page.screenshot({path:path.join(root,'../tmp/v2-information-interaction-failure.png')});}throw error;}finally{await browser.close();}
+ await fs.writeFile(taskScratchPath(`v2-information-browser-${stage}-report.json`),JSON.stringify(reports,null,2));console.log('Information checks passed: '+stage);
+}catch(error){for(const page of browser.contexts().flatMap(c=>c.pages())){console.log({failedURL:page.url(),pageText:(await page.locator('#page-view').innerText().catch(()=>'')),runtimeText:(await page.locator('#v2-site-shell').innerText().catch(()=>'')).slice(0,120)});await page.screenshot({path:taskScratchPath('v2-information-interaction-failure.png')});}throw error;}finally{await browser.close();}

@@ -5,3 +5,8 @@ community-likes-worker/.wrangler/
 dist/
 dist.previous/
 node_modules/
+
+# Python interpreter cache (local derived files only)
+__pycache__/
+*.pyc
+*.pyo
