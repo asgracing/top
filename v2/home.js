@@ -1,9 +1,10 @@
+import {carThumbnailAttributes} from '/src/shared/image-thumbnails.js?v=20261013delivery1';
 import copy from './copy.js?v=20261006v2k';
 import { subscribe, getRuntime } from './bridge.js?v=20261006v2k';
-import {eventKind,normalizeTablePage,normalizeSafetyRow,paginationPages,serverSrRestriction} from './models.js?v=20261006v2k';
-import {createPresentation} from './presentation.js?v=20261013teams3';
+import {rankingPosition,eventKind,normalizeTablePage,normalizeSafetyRow,paginationPages,serverSrRestriction} from './models.js?v=20261013delivery1';
+import {createPresentation} from './presentation.js?v=20261013delivery1';
 import {createRecentRaces} from './recent-races.js?v=20261011racelinks1';
-import {createHeader} from './header.js?v=20261011notifications1';
+import {createHeader} from './header.js?v=20261013delivery1';
 import {serverSessionLabel} from './server-session.js?v=20261008widgets1';
 import {createGuide} from './guide.js?v=20261006v2k';
 import {createHomeMotion} from './motion.js?v=20261006v2k';
@@ -89,7 +90,7 @@ function rating(row,kind,delta=null,withLabel=false){
 }
 const carImage=id=>`/assets/v2-light/car-icons/${Number(id)}.webp`;
 const trackImage=file=>`/assets/v2-light/tracks/${file.replace(/\.jpg$/i,'.webp')}`;
-function car(row){const name=row.car_name||row.car_name_raw||row.favorite_car||row.favorite_car_name||'—',id=row.car_model_id??row.winner_car_model_id;return `<span class="car-cell">${id!=null?`<img src="${carImage(id)}" alt="" loading="lazy" decoding="async" onerror="this.hidden=true">`:''}<span>${esc(name)}</span></span>`}
+function car(row){const name=row.car_name||row.car_name_raw||row.favorite_car||row.favorite_car_name||'—',id=row.car_model_id??row.winner_car_model_id;return `<span class="car-cell">${id!=null?`<img ${carThumbnailAttributes(id,66)} alt="" onerror="this.hidden=true">`:''}<span>${esc(name)}</span></span>`}
 function renderSupport(){
   const data=model.donations,goal=data?.goal;
   const money=(value,currency='RUB')=>{try{return new Intl.NumberFormat(ru?'ru-RU':'en-GB',{style:'currency',currency,maximumFractionDigits:0}).format(value)}catch{return number(value)}};
@@ -167,7 +168,7 @@ function renderServers(){
 }
 const cols={leaderboard:[['rank','#'],['driver','driver'],['elo','ELO'],['safety_rating','SR'],['points','points'],['wins','wins'],['podiums','podiums'],['races','racesCol'],['average_finish','finish'],['club','club'],['team','team']],safety:[['rank','№'],['driver','driver'],['safety_rating','SR'],['active_strikes',text('Страйки','Strikes')],['races_count','racesCol'],['total_laps',text('Всего кругов','Total laps')],['total_invalid_laps',text('Грязные круги','Invalid laps')],['total_counted_penalties',text('Автоштрафы','Auto penalties')],['total_incident_points',text('Инциденты','Incidents')]],bestlaps:[['rank','#'],['driver','driver'],['best_lap','lap'],['car_name','car'],['updated_at','date'],['session_type','session'],['elo','ELO'],['safety_rating','SR'],['club','club'],['team','team']],clubs:[['rank','#'],['display_name','teams'],['total_points','points'],['average_elo','ELO'],['average_sr','SR'],['race_count','racesCol']]};
 function tableCell(row,key,index){
-  if(key==='rank')return `<span class="${index<3?`rank-medal rank-${['gold','silver','bronze'][index]}`:''}">${index+1}</span>`;
+  if(key==='rank'){const rank=rankingPosition(row,tab,index);return `<span class="${rank&&rank<=3?`rank-medal rank-${['gold','silver','bronze'][rank-1]}`:''}">${rank??'—'}</span>`;}
   if(key==='driver')return row.public_id?`<a href="${driverHref(row.public_id)}">${esc(row.driver||row.name)}</a>`:esc(row.driver||row.name);
   if(key==='elo'||key==='safety_rating')return rating(row,key==='elo'?'elo':'sr');
   if(key==='active_strikes')return Number(row.active_strikes)>=3||row.global_banned||row.manually_banned||native().isBanned(row)?`<span class="banned-badge">${text('ЗАБАНЕН','BANNED')}</span>`:`${esc(row.active_strikes??'—')}/3`;
@@ -182,10 +183,10 @@ function tableCell(row,key,index){
 }
 function renderTable(){
   const columns=cols[tab];let rows=tableRows;
-  if(tab==='clubs'){rows=(clubSnapshot||model?.clubs)?.[type]||[];if(!Array.isArray(rows))rows=rows.items||[];rows=rows.filter(r=>String(r.display_name||r.name).toLocaleLowerCase().includes($('search').value.toLocaleLowerCase()));if(sortKey)rows=[...rows].sort((a,b)=>(typeof a[sortKey]==='number'?a[sortKey]-b[sortKey]:String(a[sortKey]??'').localeCompare(String(b[sortKey]??'')))*sortDirection);tableTotal=rows.length;rows=rows.slice((page-1)*10,page*10)}
+  if(tab==='clubs'){rows=(clubSnapshot||model?.clubs)?.[type]||[];if(!Array.isArray(rows))rows=rows.items||[];rows=rows.map((r,i)=>({...r,rank:rankingPosition(r,'clubs',i)}));rows=rows.filter(r=>String(r.display_name||r.name).toLocaleLowerCase().includes($('search').value.toLocaleLowerCase()));if(sortKey)rows=[...rows].sort((a,b)=>(typeof a[sortKey]==='number'?a[sortKey]-b[sortKey]:String(a[sortKey]??'').localeCompare(String(b[sortKey]??'')))*sortDirection);tableTotal=rows.length;rows=rows.slice((page-1)*10,page*10)}
   if(sortKey)rows=[...rows].sort((a,b)=>(typeof a[sortKey]==='number'?a[sortKey]-b[sortKey]:String(a[sortKey]??'').localeCompare(String(b[sortKey]??'')))*sortDirection);
   $('rating-table').dataset.view=tab;
-  $('rating-table').innerHTML=`<thead><tr>${columns.map(([key,title])=>`<th scope="col"${sortKey===key?` aria-sort="${sortDirection>0?'ascending':'descending'}"`:''}><button type="button" data-sort="${key}">${esc(words[title]||title)}</button></th>`).join('')}</tr></thead><tbody>${tableBusy?`<tr><td colspan="${columns.length}" class="empty">${text('Загрузка…','Loading…')}</td></tr>`:tableError?`<tr><td colspan="${columns.length}" class="empty">${text('Не удалось загрузить рейтинг.','Could not load rankings.')} <button type="button" data-table-retry>${text('Повторить','Retry')}</button></td></tr>`:rows.length?rows.map((r,i)=>`<tr data-row="${esc(r.public_id||'')}" tabindex="${tab==='clubs'?'-1':'0'}"${r.public_id&&r.public_id===model?.viewer?' class="current-user-row" aria-current="true"':''}>${columns.map(([key])=>`<td>${tableCell(r,key,(page-1)*10+i)}</td>`).join('')}</tr>`).join(''):`<tr><td colspan="${columns.length}" class="empty">${label('noResults')}</td></tr>`}</tbody>`;
+  $('rating-table').innerHTML=`<thead><tr>${columns.map(([key,title])=>`<th scope="col" class="col-${key}"${sortKey===key?` aria-sort="${sortDirection>0?'ascending':'descending'}"`:''}><button type="button" data-sort="${key}">${esc(words[title]||title)}</button></th>`).join('')}</tr></thead><tbody>${tableBusy?`<tr><td colspan="${columns.length}" class="empty">${text('Загрузка…','Loading…')}</td></tr>`:tableError?`<tr><td colspan="${columns.length}" class="empty">${text('Не удалось загрузить рейтинг.','Could not load rankings.')} <button type="button" data-table-retry>${text('Повторить','Retry')}</button></td></tr>`:rows.length?rows.map((r,i)=>`<tr data-row="${esc(r.public_id||'')}" tabindex="${tab==='clubs'?'-1':'0'}"${r.public_id&&r.public_id===model?.viewer?' class="current-user-row" aria-current="true"':''}>${columns.map(([key])=>`<td class="col-${key}">${tableCell(r,key,(page-1)*10+i)}</td>`).join('')}</tr>`).join(''):`<tr><td colspan="${columns.length}" class="empty">${label('noResults')}</td></tr>`}</tbody>`;
   const totalPages=Math.max(1,Math.ceil(tableTotal/10));
   page=Math.max(1,Math.min(page,totalPages));
   $('table-count').textContent=`${tableTotal?(page-1)*10+1:0}–${Math.min(page*10,tableTotal)} ${label('of')} ${number(tableTotal)}`;

@@ -2,6 +2,7 @@ import {eventKind} from './models.js?v=20261006v2k';
 import {resolveTrackBackgroundFile} from '/src/features/server-status/track-background.js';
 import {serverSessionLabel} from './server-session.js?v=20261008widgets1';
 import {safetyHistoryComponents} from './safety-history.js?v=20261010profile1';
+import {loadLeaderboardRank,profileWithLeaderboardRank} from '/src/shared/leaderboard-rank.js?v=20261013delivery1';
 
 // R24 views consume the canonical controllers. They never calculate ratings or
 // create a second auth/voting state.
@@ -46,8 +47,8 @@ export function createPresentation({$,native,getModel,esc,text,label,date,number
   async function loadProfile(row,kind,trigger){
     const ticket=++request;parent=kind==='driver'?null:profile;
     display(name(row),`<p role="status">${text('Загрузка профиля…','Loading profile…')}</p>`,kind,trigger);
-    try{const [p,title]=await Promise.all([native().profile(row.public_id),kind==='driver'?native().driverTitle(row.public_id).catch(()=>undefined):null,kind==='driver'?native().prepareAffiliations().catch(()=>{}):null]);if(ticket!==request||!$('modal').open)return;profile={...row,...p,public_id:row.public_id,achievementTitle:title};
-      if(kind==='driver'){const rank=native().driverRank(profile)?.rank||profile.summary?.championship_rank||profile.championship_rank||row.rank;$('modal-title').textContent=name(profile)+' · '+text('Позиция','Position')+' '+(rank?'#'+rank:'—');$('modal-body').innerHTML=driverHtml(profile)}
+    try{const [loaded,title,currentRank]=await Promise.all([native().profile(row.public_id),kind==='driver'?native().driverTitle(row.public_id).catch(()=>undefined):null,kind==='driver'?loadLeaderboardRank(row.public_id):null,kind==='driver'?native().prepareAffiliations().catch(()=>{}):null]);const p=currentRank?profileWithLeaderboardRank(loaded,currentRank):loaded;if(ticket!==request||!$('modal').open)return;profile={...row,...p,public_id:row.public_id,achievementTitle:title};
+      if(kind==='driver'){const rank=profile.leaderboard_rank?profile.summary?.championship_rank:native().driverRank(profile)?.rank||profile.summary?.championship_rank||profile.championship_rank||row.rank;$('modal-title').textContent=name(profile)+' · '+text('Позиция','Position')+' '+(rank?'#'+rank:'—');$('modal-body').innerHTML=driverHtml(profile)}
       else {historyView={kind:kind==='driver-elo'?'elo':'sr',period:'all',grid:'medium',offset:0};renderHistory()}
     }catch{if(ticket===request&&$('modal').open)$('modal-body').innerHTML=`<p class="v2-error">${text('Профиль временно недоступен.','Profile temporarily unavailable.')}</p><button class="button" data-profile-retry>${text('Повторить','Retry')}</button><a class="button" href="${driverHref(row.public_id)}">${text('Профиль пилота','Driver profile')} ↗</a>`}
     const retry=$('modal-body').querySelector('[data-profile-retry]');if(retry)retry.onclick=()=>loadProfile(row,kind,trigger);

@@ -1,4 +1,5 @@
 import {createHourlyVotesClient} from '/src/shared/hourly-votes-client.js';
+import {loadLeaderboardRank,profileWithLeaderboardRank} from '/src/shared/leaderboard-rank.js?v=20261013delivery1';
 import {filterRaces} from '/src/pages/races/model.js';
 import {normalizeChampionshipStatus} from '/src/pages/hourly/championship-status.js';
 import {loadPublicRatingSnapshot} from '/src/pages/clubs-teams/rating-model.js';
@@ -172,11 +173,12 @@ export function createPageData(native) {
   }
   async function driver(id) {
     if(!/^drv_[a-z0-9]+$/i.test(id||''))throw Object.assign(new Error('Missing driver'),{status:404});
-    const [profile,achievement,avatar,title]=await Promise.all([
+    const [loadedProfile,achievement,avatar,title,rank]=await Promise.all([
       native().profile(id),readJson(publicUrl(`achievements/v1/drivers/${encodeURIComponent(id)}.json`)).catch(()=>null),
       native().steamAvatar(id).catch(()=>null),native().driverTitle(id).catch(()=>undefined),
-      native().prepareAffiliations().catch(()=>{})
+      loadLeaderboardRank(id),native().prepareAffiliations().catch(()=>{})
     ]);
+    const profile=profileWithLeaderboardRank(loadedProfile,rank);
     const eloByRace=new Map(),eloByFile=new Map();
     const filename=value=>String(value||'').split(/[\\/]/).pop().toLowerCase();
     for(const entry of [...(profile.summary?.elo_history||[]),...(profile.elo_history||[])]){

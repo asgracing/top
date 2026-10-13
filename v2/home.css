@@ -359,3 +359,13 @@ body[data-v2] .mobile-menu-trigger {display:none;}
 
 /* Reserve the ranking rows while its data waits for the viewport. */
 body[data-v2="home"] #v2-ranking .table-scroll {min-height:380px;}
+
+/* Keep the place, name and points visible together on club/team rankings. */
+@media(max-width:760px){
+ #v2-rating-table[data-view="clubs"]{table-layout:fixed;width:calc(100vw + 160px);min-width:0}
+ #v2-rating-table[data-view="clubs"] .col-rank{width:34px;min-width:0;padding-left:5px;padding-right:5px}
+ #v2-rating-table[data-view="clubs"] .col-display_name{width:calc(100vw - 200px);min-width:0;max-width:none;left:34px;overflow:hidden}
+ #v2-rating-table[data-view="clubs"] .col-display_name a{display:block;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;max-width:100%;min-height:44px;line-height:44px}
+ #v2-rating-table[data-view="clubs"] .col-total_points{width:86px;min-width:0;padding-left:5px;padding-right:5px;white-space:nowrap}
+ #v2-rating-table[data-view="clubs"] :is(.col-average_elo,.col-average_sr,.col-race_count){width:80px;min-width:0}
+}

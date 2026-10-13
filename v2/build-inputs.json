@@ -48,7 +48,7 @@
     },
     {
       "path": "scripts/build-v2.mjs",
-      "sha256": "7c6f486c9c556df423f0eae233c2c16267b2ede90af7787c91c5a686847b74f1"
+      "sha256": "8e93870cf64f300d1275b3eaa3c1726a005b8f8fa81917c69008a047727ade82"
     },
     {
       "path": "scripts/generate-localized-pages.mjs",
@@ -245,6 +245,14 @@
     {
       "path": "src/shared/http-client.js",
       "sha256": "24d03fb7bb208d6d239598c370330c89d8702a17c08edfa2c0156a15b8c4daa5"
+    },
+    {
+      "path": "src/shared/image-thumbnails.js",
+      "sha256": "c604242e927195b9bcaac7f790a3384d2c584e8b0b30137a94f07b7a8f5c6b6e"
+    },
+    {
+      "path": "src/shared/leaderboard-rank.js",
+      "sha256": "495db8642282d09e535a6bae21cbb4ad823e8af7b614f25830b91d733ea42bff"
     },
     {
       "path": "src/shared/lifecycle.js",
@@ -528,7 +536,7 @@
     },
     {
       "path": "v2-source/pages/archive.js",
-      "sha256": "c56d50e61e8730452b46ed498144cadf3aea59019b9e0e83deef076eee7e8c80"
+      "sha256": "fceac2fb3bf3db81bb8a69fe74ecfd89029fda745221fbcc5ce7d03303ae9fb5"
     },
     {
       "path": "v2-source/pages/bans.js",
@@ -536,11 +544,11 @@
     },
     {
       "path": "v2-source/pages/cars.js",
-      "sha256": "351ead7c4730499ffe813f8a277a3eab501f18257d220c0943a3d38ba887b957"
+      "sha256": "be0a0ad548e665e942f2e0e92a3e5b3cfe165d8ac5fa70cd2f7782a3c585611f"
     },
     {
       "path": "v2-source/pages/championships.js",
-      "sha256": "b2026f08fa480770102b1c9222acd61a0bc7eca17a103eca67ac0b7faa02acb6"
+      "sha256": "605c2e27ae8de294df96f789a36f1bb38d99ccced550d55b5ccd3960204ed1c3"
     },
     {
       "path": "v2-source/pages/control-pages.css",
@@ -548,7 +556,7 @@
     },
     {
       "path": "v2-source/pages/core.js",
-      "sha256": "d30a338c11d12b22b0c58639cd6114ae8f5046e7c0f83a569a2f96b5b4d371df"
+      "sha256": "55e33e8049da51590ac8b6a725d5c5c171ccd974ab5d185b357f665859d58b05"
     },
     {
       "path": "v2-source/pages/editorial.js",
@@ -556,7 +564,7 @@
     },
     {
       "path": "v2-source/pages/entities.js",
-      "sha256": "eb530c9b2fd6bd907a7c1af15bf21099729a1d04486de701df753e187e07b786"
+      "sha256": "90c571b4f4ff7c4edd66b2f63f4d28ab9f6a84801e8d36f4702f53de41377448"
     },
     {
       "path": "v2-source/pages/fun.js",
@@ -592,11 +600,11 @@
     },
     {
       "path": "v2/header.js",
-      "sha256": "361febedc256b5c472e338d2a58d4d7b583b0deec410a93e39485698e1591ead"
+      "sha256": "9ce9d7143f39ce2d3689e5e014dbe9f17cebcd9e1a9752d6c28fb4c2a0dfa3a8"
     },
     {
       "path": "v2/home.js",
-      "sha256": "16dd12673f166f9d06870e4fe9a68f19a9fb0eba90f6d77e512dc356e85c5db7"
+      "sha256": "132d0883eb7224dfad2b2c5ab2a3ed399835cb9b51a9d40f57928f9d74537cc7"
     },
     {
       "path": "v2/mobile-navigation.js",
@@ -604,7 +612,7 @@
     },
     {
       "path": "v2/models.js",
-      "sha256": "8af9b69972fa15e330e05aef7a163d1764e3b36dda4bc9ef8acb77dddf3434cc"
+      "sha256": "641aef27fa2b023bca78456001205b2423d4d6fdd625c1c48848b1e38d0542c3"
     },
     {
       "path": "v2/motion.js",
@@ -640,7 +648,7 @@
     },
     {
       "path": "v2/pages/data.js",
-      "sha256": "fba4b1c7c999dcdaef92d2f7a7ef1073cbc7ce785f563997b8b3dfd1f3c09734"
+      "sha256": "a83a355a2aea45e887ea40d560106f51fc74482ac1a7b1232c6bc315fc6cffcf"
     },
     {
       "path": "v2/pages/editorial-model.js",
@@ -652,7 +660,7 @@
     },
     {
       "path": "v2/presentation.js",
-      "sha256": "83e4ce3bdd8d48a665c97fbf505e3541402682fe36a096f85d26c80af26615ae"
+      "sha256": "4dd9c2529b1850433157eeee6e52cd8c7bcd202ae1ec661bff14958959576bf2"
     },
     {
       "path": "v2/recent-races.js",

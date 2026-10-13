@@ -1,3 +1,4 @@
+import {carThumbnailAttributes,trackThumbnailAttributes} from '/src/shared/image-thumbnails.js?v=20261013delivery1';
 // Approved R24 car presentation. Published data and actions are injected.
 import {processCars, CARS_COLUMNS} from '/src/pages/cars/model.js';
 import {sortTableRows} from '/src/shared/table-model.js';
@@ -15,7 +16,7 @@ export function createCarsViews(api) {
   const seo=(title,text)=>`<section class="panel page-seo"><h2>${title} · ASG Racing ACC</h2><p>${text}</p></section>`;
   const carRoute=c=>{const u=new URL(route('cars'),location.origin);u.searchParams.set('car',c.car_name || c.car || c);if(state.carTrack)u.searchParams.set('track',state.carTrack);return u;};
   const carLink=c=>`<a data-r24-car="${label(c.car_name || c.car || c)}" href="${carRoute(c).pathname+carRoute(c).search}">${label(c.car_name || c.car || c)}</a>`;
-  const carImage=(c,css='')=>`<img class="r24-car-image ${css}" src="/assets/car-icons/${Number(c.car_model_id)}.png" alt="${label(c.car_name)}" loading="lazy" onerror="this.hidden=true">`;
+  const carImage=(c,css='')=>`<img class="r24-car-image ${css}" ${css==='large'?`src="/assets/v2-light/car-icons/${Number(c.car_model_id)}.webp" width="600" height="400" decoding="async"`:carThumbnailAttributes(c.car_model_id,56)} alt="${label(c.car_name)}" loading="lazy" onerror="this.hidden=true">`;
   const percent=n=>n==null?'—':decimal(n)+'%';
   function carSummary(c){return `<div class="r24-car-hero"><div><span class="eyebrow">${tx('Статистика модели','Model statistics')}</span><h2>${label(c.car_name)}</h2><p>${tx('Результаты всех опубликованных гонок на этой машине.','Results from all published races with this car.')}</p><div class="r24-car-stats">${metric(tx('Старты','Starts'),num(c.races))}${metric(tx('Победы','Wins'),num(c.wins))}${metric(tx('Подиумы','Podiums'),num(c.podiums))}${metric(tx('Пилоты','Drivers'),num(c.unique_drivers))}</div></div>${carImage(c,'large')}</div>`;}
   function lapCell(c){

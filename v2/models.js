@@ -34,3 +34,8 @@ export function serverSrRestriction(server,auth) {
   const actual=Number(raw),required=Number(minimum);
   return Number.isFinite(actual)&&Number.isFinite(required)&&required>=0&&actual<required?{actual,required}:null;
 }
+
+export function rankingPosition(row,kind,index=0) {
+  const value=kind==='clubs'?row.position??row.rank:row.rank;
+  return Number.isInteger(value)&&value>0?value:kind==='leaderboard'?null:index+1;
+}
