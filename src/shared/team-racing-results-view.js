@@ -1,13 +1,16 @@
 const escape = value => String(value ?? "—").replace(/[&<>"']/g, c => ({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c]));
 const lap = ms => Number.isFinite(ms) && ms > 0 && ms < 2147483647 ? `${Math.floor(ms/60000)}:${String(Math.floor(ms/1000)%60).padStart(2,"0")}.${String(ms%1000).padStart(3,"0")}` : "—";
-export function renderTeamResults(race, language = "ru") {
+export function renderTeamResults(race, language = "ru", {driverLink} = {}) {
   const en = language === "en", tx = (ru,english) => en ? english : ru;
   if (!Array.isArray(race?.team_results)) return `<p>${tx("Командные результаты обрабатываются.","Team results are being processed.")}</p>`;
-  return `<div class="table-wrap"><table class="race-results-grid"><thead><tr><th>#</th><th>${tx("Команда / экипаж","Team / crew")}</th><th>${tx("Машина","Car")}</th><th>${tx("Круги","Laps")}</th><th>${tx("Лучший круг","Best lap")}</th><th>${tx("Очки команды","Team points")}</th></tr></thead><tbody>${race.team_results.map(team=>`<tr><td>${escape(team.position ?? team.status)}</td><td><strong>${escape(team.team_name)}</strong> · #${escape(team.race_number)}${(team.drivers || []).map(pilot=>{
-    const p = pilot.personal_result;
+  if (!race.team_results.length) return `<p class="site-empty">${tx("Командных результатов пока нет.","No team results yet.")}</p>`;
+  const personal = new Map((race.results || []).map(p => [p.public_id, p]));
+  return `<div class="table-wrap page-table-scroll"><table class="race-results-grid page-table results-table team-results-table"><thead><tr><th>#</th><th>${tx("Команда / экипаж","Team / crew")}</th><th>${tx("Машина","Car")}</th><th>${tx("Круги","Laps")}</th><th>${tx("Лучший круг","Best lap")}</th><th>${tx("Очки команды","Team points")}</th></tr></thead><tbody>${race.team_results.map(team=>`<tr${team.status === 'classified' && team.position >= 1 && team.position <= 3 ? ` data-podium-place="${escape(team.position)}"` : ''}><td>${escape(team.position ?? team.status)}</td><td><strong>${escape(team.team_name)}</strong> · #${escape(team.race_number)}${(team.drivers || []).map(pilot=>{
+    const p = pilot.personal_result || personal.get(pilot.public_id);
     const name = p?.driver || pilot.display_name || pilot.public_id;
-    const details = p ? `${tx("Очки","Points")}: ${p.points ?? 0} · ΔElo ${p.elo_rating_delta ?? "—"} · SR ${p.safety_rating ?? p.safety_after ?? "—"}` : pilot.participated ? tx("Ехал","Drove") : tx("Не ехал","Did not drive");
-    return `<div class="race-note"><a class="driver-link" href="${en?"/driver/":"/ru/driver/"}?id=${encodeURIComponent(pilot.public_id)}">${escape(name)}</a> · ${escape(details)}</div>`;
+    const details = p ? `${tx("Очки","Points")}: ${p.points ?? "—"} · ΔElo ${p.elo_rating_delta ?? "—"} · SR ${p.safety_rating_after ?? p.safety_rating ?? p.safety_after ?? "—"}` : pilot.participated ? tx("Ехал","Drove") : tx("Не ехал","Did not drive");
+    const linkedName = driverLink ? driverLink({public_id:pilot.public_id,driver:name}) : `<a class="driver-link" href="${en?"/driver/":"/ru/driver/"}?id=${encodeURIComponent(pilot.public_id)}">${escape(name)}</a>`;
+    return `<div class="race-note">${linkedName} · ${escape(details)}</div>`;
   }).join("")}</td><td>${escape(team.car_name || `ACC #${team.car_model}`)}</td><td>${escape(team.lap_count)}</td><td>${escape(team.best_lap || lap(team.best_lap_ms))}</td><td>${escape(team.points ?? 0)}</td></tr>`).join("")}</tbody></table></div>`;
 }
 export function teamSeasonStandings(races) {

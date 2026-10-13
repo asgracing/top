@@ -1,7 +1,7 @@
 import { publish, installRuntime } from '/v2/bridge.js?v=20261006v2k';
 import { currentPageLanguageHref, initializeLocalizedPage, localizedPageHref, resolvePageLocale, setPageLocale } from "/src/shared/localized-page.js?v=20261007root1";
 import { isTeamRace, teamRaceUrl } from "/src/shared/team-racing-client.js?v=20261004teams1";
-import { renderTeamResults } from "/src/shared/team-racing-results-view.js?v=20261004teams1";
+import { renderTeamResults } from "/src/shared/team-racing-results-view.js?v=20261013teams3";
 import {decorateRaceHeading,renderResultTabs,installResultTabs,mergeResultContext} from '/src/shared/race-result-context.js?v=20261011racelinks1';
 // V2 has explicit static RU/EN entrypoints; do not reroute them through V1.
 ﻿import { readPageContext } from "/src/runtime/page-context.js?v=20261007root1";

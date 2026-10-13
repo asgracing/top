@@ -47,7 +47,7 @@ export function createPageViews(api) {
     return `<span class="page-participants" data-page-participants="${label(e.event_id)}">${tx('Участники','Participants')}: <b>${num(participation[e.event_id]?.count)}</b></span>`;
   }
   function joinControls(e,{count=true,disclosure=true}={}) {
-    const privacy=disclosure?`<span class="entry-disclosure">${votingPrivacy()}</span>`:'';
+    const privacy=disclosure?`<span class="entry-disclosure">${votingPrivacy(e)}</span>`:'';
     if(e.participation_mode==='team')return `<a class="button primary" href="${label(teamRaceUrl(e,lang))}">${tx('Заявка команды и составы','Team entry and crews')} ↗</a><span class="page-help">${tx('Закрытие заявок','Entries close')}: ${time(e.registration_closes_at || e.closes_at)}</span>`;
     const locked=entryLocked(e), joined=participation[e.event_id]?.voted===true,pending=participation[e.event_id]?.pending===true;
     return `<button class="button primary${joined?' is-voted':''}" type="button" data-page-join="${label(e.event_id)}" aria-pressed="${joined}"${locked?' disabled':''}>${pending?tx('Сохраняем…','Saving…'):locked?tx('Запись недоступна','Entry unavailable'):joined?tx('Ты в списке · отменить','You are in · cancel'):tx('Я хочу поехать!','I want to race!')}</button>${count?participantCount(e):''}${privacy}`;
@@ -63,7 +63,7 @@ export function createPageViews(api) {
       <div class="page-event-content"><h${hero?'2':'3'}>${label(e.track_name || trackName(e.track_code))}</h${hero?'2':'3'}><span class="page-points points-pulse">×${Number(e.points_multiplier)||1} ${tx('ОЧКОВ В РЕЙТИНГ','RANKING POINTS')}</span>${hero?`<div class="page-event-date">${label(start)} · ${label(e.timezone || 'UTC+3')}</div>`:carData}</div>
       ${hero?`<div class="event-car-rules">${carData}${raceData}</div><div class="event-prejoin"><div class="event-footer-links"><button class="text-link" type="button" data-page-weather="${label(e.event_id)}">${tx('Погода','Weather')} ↗</button>${links}</div>${participantCount(e)}</div>`:`<div class="page-event-facts">${raceData}${participantCount(e)}</div>`}
       <div class="page-event-actions">${joinControls(e,{count:false,disclosure:false})}<button type="button" class="button page-details" data-page-event="${label(e.event_id)}">${tx('Подробнее','Details')} ↗</button></div>
-      <div class="event-card-footer"><p class="entry-disclosure">${votingPrivacy()}</p></div>
+      <div class="event-card-footer"><p class="entry-disclosure">${votingPrivacy(e)}</p></div>
     </article>`;
   }
   function calendar() {

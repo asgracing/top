@@ -2088,4 +2088,4 @@ document.addEventListener("DOMContentLoaded", () => {
   init();
 });
 import { isTeamRace, teamRaceUrl } from "../../src/shared/team-racing-client.js?v=20261004teams1";
-import { renderTeamResults, teamSeasonStandings } from "../../src/shared/team-racing-results-view.js?v=20261004teams1";
+import { renderTeamResults, teamSeasonStandings } from "../../src/shared/team-racing-results-view.js?v=20261013teams3";

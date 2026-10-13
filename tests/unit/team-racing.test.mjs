@@ -30,3 +30,15 @@ test('season standings use one car award and replace an earlier occurrence',()=>
  const standings=teamSeasonStandings([race(25),race(20)]);
  assert.equal(standings.length,1);assert.equal(standings[0].points,20);assert.equal(standings[0].races,1);
 });
+
+test('team results merge personal rows and retain zero SR with the caller profile routes',()=>{
+ const html=renderTeamResults({results:[{public_id:'a',driver:'A <pilot>',points:100,elo_rating_delta:5,safety_rating_after:0}],team_results:[{position:1,status:'classified',team_name:'Crew',drivers:[{public_id:'a',participated:true},{public_id:'b',display_name:'B',participated:false}]}]},'en',{driverLink:p=>`<a href="/en/driver/?id=${p.public_id}">${p.driver.replaceAll('<','&lt;')}</a>`});
+ assert.match(html,/Team points/);assert.match(html,/data-podium-place="1"/);
+ assert.match(html,/\/en\/driver\/\?id=a/);assert.match(html,/Points: 100 · ΔElo 5 · SR 0/);
+ assert.match(html,/Did not drive/);assert.doesNotMatch(html,/<pilot>/);
+});
+
+test('missing and empty team protocols have distinct visible messages',()=>{
+ assert.match(renderTeamResults({},'ru'),/обрабатываются/);
+ assert.match(renderTeamResults({team_results:[]},'en'),/No team results yet/);
+});

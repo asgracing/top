@@ -35,7 +35,7 @@ const day=new Date(Date.now()+86400000).toISOString().slice(0,10);
 const event={event_id:'fixture-event',occurrence_id:'fixture',title:'Spa team race',date:day,start_time_local:'20:00',timezone:'UTC+3',launch_at:day+'T16:00:00Z',closes_at:day+'T15:00:00Z',participation_mode:'team',race_format:'endurance',competition_mode:'standalone',track_code:'spa',track_name:'Spa',max_drivers:2,max_cars:24,max_connections:48,allowed_car_models:[30,32],registration_closed:false,voting_disabled:true,registrations:[],server:{name:'ASG Fixture',password:'fixture',car_group:'GT3',safety_rating_requirement:50},session:{practice_duration_minutes:60,qualifying_duration_minutes:20,race_duration_minutes:60},rules:{max_drivers_count:2}};
 const teams=[{team_id:'tm_a',team_name:'Fixture Team A',members,club_id:null},{team_id:'tm_b',team_name:'Fixture Team B with a very long name',members:[members[0],members[2]],club_id:null}];
 let actor='drv_a',registrations=[],stale=false,noTeams=false,stateFailure=false,lostResponse=false,pollFailure=false,hold=false,postError=null;
-let publicFixture;
+let publicFixture,resultFixture,seasonFixture,noEvents=false;
 const mutations=[],keys=new Map(),commands=new Map();
 async function pageFixture(width,lang){
  const page=await browser.newPage({viewport:{width,height:1000},reducedMotion:'reduce'}),errors=[];
@@ -46,10 +46,14 @@ async function pageFixture(width,lang){
   if(url.origin===origin)return route.continue();
   if(request.resourceType()==='script')return route.fulfill({body:'',contentType:'text/javascript'});
   const item={...event,registrations};
+  if(resultFixture&&url.pathname.endsWith('/team-result.json'))return route.fulfill({json:resultFixture});
+  if(seasonFixture&&url.pathname==='/hourly-data/championships.json')return route.fulfill({json:{items:[{slug:'october-2026',title:seasonFixture.title,status:'active'}]}});
+  if(seasonFixture&&url.pathname==='/hourly-data/events/october-2026/index.json')return route.fulfill({json:seasonFixture});
+  if(url.pathname.endsWith('/rankings/teams.json'))return route.fulfill({json:{items:[]}});
   if(url.pathname==='/v1/me')return route.fulfill({json:actor?{authenticated:true,driver:members.find(m=>m.public_id===actor),csrf_token:'fixture-csrf'}:{authenticated:false}});
   if(url.pathname==='/v1/team-racing/events'){
    if(stateFailure)return route.fulfill({status:503,json:{detail:'team_racing_unavailable'}});
-   return route.fulfill({json:{events:[item],teams:actor&&!noTeams?teams.filter(t=>t.members.some(m=>m.public_id===actor)):[],stale}});
+   return route.fulfill({json:{events:noEvents?[]:[item],teams:actor&&!noTeams?teams.filter(t=>t.members.some(m=>m.public_id===actor)):[],stale,generated_at:new Date().toISOString()}});
   }
   if(url.pathname==='/v1/team-racing/commands'&&request.method()==='POST'){
    const body=request.postDataJSON();assert.equal(request.headers()['x-csrf-token'],'fixture-csrf');
@@ -91,6 +95,8 @@ try{
  await page.locator('input[value=drv_b]').check();await page.locator('#registration-captain').selectOption('drv_b');
  assert.match(await page.locator('#entry').innerText(),/#22/);
  assert.equal(await page.locator('input[value=drv_c]').isDisabled(),true);
+ assert.match(await page.locator('.entry-summary').innerText(),/Pilot B.*#22/);
+ assert.equal(await page.getByRole('link',{name:'Профиль капитана',exact:true}).getAttribute('href'),'/driver/?id=drv_b');
  await page.locator('#refresh').click();assert.equal(await page.locator('#registration-captain').inputValue(),'drv_b');
  await page.getByRole('button',{name:'Зарегистрировать команду',exact:true}).click();await accepted(page);
  assert.equal(registrations[0].captain_public_id,'drv_b');assert.equal(registrations[0].roster[1].confirmed,false);
@@ -167,6 +173,12 @@ try{
  await prototype.page.locator('#width').selectOption('390px');await prototype.page.frameLocator('#preview').getByRole('button',{name:'Confirm participation',exact:true}).waitFor();
  assert.equal(await prototype.page.locator('#preview').evaluate(node=>node.clientWidth),388);
  assert.deepEqual(prototype.errors,[]);await prototype.page.close();
+ noEvents=true;stale=true;
+ const empty=await pageFixture(390,'ru');await empty.page.goto(origin+'/hourly/team/?lang=ru');
+ await empty.page.waitForFunction(()=>document.getElementById('availability').textContent.includes('Последний снимок'));
+ assert.equal(await empty.page.locator('#availability').isVisible(),true);
+ stale=false;await empty.page.locator('#refresh').click();await empty.page.waitForFunction(()=>document.getElementById('availability').hidden);assert.equal(await empty.page.locator('#availability').isVisible(),false);
+ assert.deepEqual(empty.errors,[]);await empty.page.close();noEvents=false;
  // Exercise the actual V2 entry points with a distinct occurrence ID. These
  // reads/writes are intercepted just like the native registration workflow.
  process.env.ASG_V2_PREVIEW=origin;
@@ -181,10 +193,13 @@ try{
   assert.equal(await page.locator('.hero-event a[href*="/hourly/team/"]').getAttribute('href'),expected);
   assert.equal(await page.locator('.hero-event [data-page-join]').count(),0);
   assert.match(await page.locator('.hero-event .page-participants').innerText(),/Командная гонка|Team race/);
+  assert.match(await page.locator('.hero-event .entry-disclosure').innerText(),/Steam/);
+  assert.doesNotMatch(await page.locator('.hero-event .entry-disclosure').innerText(),/ID браузера|browser ID/);
   await page.locator('.hero-event [data-page-event]').click();
   await page.locator('#v2-modal a[href*="/hourly/team/"]').waitFor();
   assert.equal(await page.locator('#v2-modal a[href*="/hourly/team/"]').getAttribute('href'),expected);
   assert.equal(await page.locator('#v2-modal [data-page-join]').count(),0);
+  assert.match(await page.locator('#v2-modal .modal-voting-disclosure').innerText(),/Steam/);
   await page.keyboard.press('Escape');
   await page.locator('.calendar-entry[data-page-event="fixture-event"]').click();
   await page.locator('#v2-modal a[href*="/hourly/team/"]').waitFor();
@@ -197,6 +212,55 @@ try{
   assert.equal(new URL(page.url()).searchParams.get('event'),'fixture');assert.equal(new URL(page.url()).searchParams.get('lang'),lang);
   assert.deepEqual(errors,[]);await page.close();
  }
+ const crew=[{public_id:'drv_a',display_name:'Pilot A',participated:true},{public_id:'drv_b',display_name:'Pilot B',participated:false}];
+ for(const lang of ['ru','en'])for(const width of [1440,768,390,320])for(const withPersonal of [false,true]){
+  resultFixture={race_id:'team-result',participation_mode:'team',track_code:'spa',race_format:'endurance',finished_at:day+'T19:00:00Z',winner:'Fixture Team A',winner_team:'Fixture Team A',best_lap:'2:18.420',results:withPersonal?[{public_id:'drv_a',driver:'Pilot A',points:100,elo_rating_delta:12,safety_rating_after:0}]:[],team_results:[{team_id:'tm_a',team_name:'Fixture Team A',status:'classified',position:1,race_number:11,car_model:32,car_name:'Ferrari 296 GT3',lap_count:26,points:100,drivers:crew}],qualifying:{status:'not_applicable'}};
+  const {page,errors}=await pageFixture(width,lang),prefix=process.env.ASG_TEAM_SITE_ROOT?(lang==='en'?'/en/':'/'):'/v2/'+lang+'/';
+  await page.goto(origin+prefix+'race/?id=team-result');
+  await page.locator('#page-view .team-results-table').waitFor();
+  assert.match(await page.locator('#page-view .team-results-table').innerText(),/Fixture Team A/);
+  const expectedProfile=(process.env.ASG_TEAM_SITE_ROOT?(lang==='en'?'/en/':'/'):'/v2/'+lang+'/')+'driver/?id=drv_a';
+  assert.equal(await page.locator('#page-view .team-results-table a').first().getAttribute('href'),expectedProfile);
+  if(withPersonal)assert.match(await page.locator('#page-view .team-results-table').innerText(),/SR 0/);
+  assert.equal(await page.evaluate(()=>document.documentElement.scrollWidth<=innerWidth),true);
+  await page.getByRole('button',{name:lang==='ru'?'Открыть в модалке':'Open modal',exact:false}).click();
+  await page.locator('#v2-modal .team-results-table').waitFor();
+  assert.match(await page.locator('#v2-modal .team-results-table').innerText(),/Fixture Team A/);
+  assert.equal(await page.locator('#v2-modal .team-results-table a').first().getAttribute('href'),expectedProfile);
+  await page.locator('#v2-modal [data-result-tab="qualifying"]').click();
+  assert.match(await page.locator('#v2-modal [data-result-panel="qualifying"]').innerText(),/без квалификации|no qualifying/);
+  await page.locator('#v2-modal [data-result-tab="race"]').click();
+  if(withPersonal)await page.screenshot({path:path.join(out,'result-'+width+'-'+lang+'.png'),fullPage:true});
+  assert.deepEqual(errors,[]);await page.close();
+ }
+ resultFixture=null;
+ const seasons=JSON.parse(await fs.readFile(path.join(root,'tests/fixtures/v2-pages/championships.json'),'utf8'));
+ seasonFixture=structuredClone(seasons.seasons['october-2026']);
+ seasonFixture.standings=Array.from({length:12},(_,i)=>({team_id:'tm_season_'+i,public_id:'tm_season_'+i,driver:'Season Team '+i,rank:i+1,points:100-i,races:1,wins:0,podiums:0,best_laps:0,race_points:{}}));
+ seasonFixture.results_top3=seasonFixture.standings.slice(0,3);
+ for(const lang of ['ru','en'])for(const width of [1440,390]){
+  const {page,errors}=await pageFixture(width,lang),prefix=process.env.ASG_TEAM_SITE_ROOT?(lang==='en'?'/en/':'/'):'/v2/'+lang+'/';
+  await page.goto(origin+prefix+'hourly/championship/?slug=october-2026');
+  await page.locator('#r24-season-standings').waitFor();
+  assert.match(await page.locator('#r24-season-standings').innerText(),/Season Team 0/);
+  assert.equal(await page.locator('#r24-season-standings a[href*="driver/"]').count(),0);
+  assert.match(await page.locator('#r24-season-standings').evaluate(el=>el.closest('section').querySelector('h2').textContent),/Командный зачёт|Team standings/);
+  await page.locator('[data-r24-standing-step="1"]').click();
+  assert.match(await page.locator('#r24-season-standings').innerText(),/Season Team 10/);
+  assert.equal(await page.evaluate(()=>document.documentElement.scrollWidth<=innerWidth),true);
+  assert.deepEqual(errors,[]);await page.close();
+ }
+ delete seasonFixture.standings[1].team_id;seasonFixture.standings[1].public_id='drv_a';seasonFixture.standings[1].driver='Individual pilot';
+ for(const lang of ['ru','en']){
+  const {page,errors}=await pageFixture(390,lang),prefix=process.env.ASG_TEAM_SITE_ROOT?(lang==='en'?'/en/':'/'):'/v2/'+lang+'/';
+  await page.goto(origin+prefix+'hourly/championship/?slug=october-2026');
+  await page.locator('#r24-season-standings').waitFor();
+  assert.match(await page.locator('#r24-season-standings').evaluate(el=>el.closest('section').querySelector('h2').textContent),/Зачёт участников|Entrant standings/);
+  assert.equal(await page.locator('#r24-season-standings tbody tr').first().locator('a').count(),0);
+  assert.equal(await page.locator('#r24-season-standings tbody tr').nth(1).locator('a[href*="driver/"]').count(),1);
+  assert.deepEqual(errors,[]);await page.close();
+ }
+ seasonFixture=null;
  console.log('Team registration: create, captain, confirmation, update consent, withdraw confirmation, drafts, conflicts, uncertain requests/reload, stale/closed and RU/EN at 1440/768/390/320 passed.');
  console.log('Screenshots: '+out);
 }finally{await browser.close();await new Promise(resolve=>server.close(resolve))}

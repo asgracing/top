@@ -1,7 +1,7 @@
 import copy from './copy.js?v=20261006v2k';
 import { subscribe, getRuntime } from './bridge.js?v=20261006v2k';
 import {eventKind,normalizeTablePage,normalizeSafetyRow,paginationPages,serverSrRestriction} from './models.js?v=20261006v2k';
-import {createPresentation} from './presentation.js?v=20261011notifications1';
+import {createPresentation} from './presentation.js?v=20261013teams3';
 import {createRecentRaces} from './recent-races.js?v=20261011racelinks1';
 import {createHeader} from './header.js?v=20261011notifications1';
 import {serverSessionLabel} from './server-session.js?v=20261008widgets1';
@@ -65,7 +65,7 @@ document.querySelectorAll('#v2-site-shell a').forEach(a=>{
 document.querySelectorAll('.v2-language a').forEach(a=>{a.href=currentV2Path(a.dataset.language)});
 document.querySelector('[data-v1-home]').addEventListener('click',event=>{const a=event.currentTarget;if(siteContext().layout==='root'){a.href=versionHref('old',location,language);return;}if(document.documentElement.dataset.v2Page){const screen=document.documentElement.dataset.v2Page;if(['account','settings','moderation','ops'].includes(screen)){a.href='/'+({settings:'account/settings',ops:'portal-ops'}[screen]||screen)+'/'+(ru?'?lang=ru':'?lang=en');return;}if(['document','documents','notfound'].includes(screen)){const id=new URLSearchParams(location.search).get('id')|| (location.pathname.endsWith('/cookies/')?'cookies':'privacy');a.href=screen==='notfound'?(ru?'/ru/':'/'):'/'+(id==='cookies'?'cookies':'privacy')+'/';if(ru&&screen!=='notfound')a.href+='?lang=ru';return;}if(screen==='instructions'||screen==='guide'){a.href=(ru?'/ru/':'/')+(new URLSearchParams(location.search).get('id')==='about'?'about':'join')+'/';return;}if(['catalog','club','team'].includes(screen)){const u=new URL(location.href);u.pathname=screen==='catalog'?'/teams/':screen==='club'?'/clubs/':'/teams/detail/';if(ru)u.searchParams.set('lang','ru');a.href=u.pathname+u.search;return;}const path=['archive','race'].includes(screen)?'races':screen==='championships'?'hourly/championship/history':screen==='championship'?'hourly/championship':screen==='fun'?'fun-stats':screen==='seasons'?'hourly/championship/history':screen==='article'?'news':screen;a.href=(ru?'/ru/':'/')+path+'/'+location.search;return;}const hashes={leaderboard:'championship',bestlaps:'bestlaps',safety:'worst-safety',clubs:'clubs-teams-stats'};a.href=(ru?'/ru/':'/')+location.search+(location.hash||'#'+hashes[tab]);});
 document.querySelectorAll('.thanks-list span').forEach(node=>{node.textContent=node.textContent.trim()});
-const privacy=()=>`${text('Для голосования используется ID браузера. Участвуя, ты соглашаешься с','Voting uses a browser ID. By entering, you agree to the')} <a href="${classic('privacy/')}">${text('условиями обработки данных','data processing terms')}</a>`;
+const privacy=e=>`${e?.participation_mode==='team'?text('Командная заявка и подтверждения требуют входа через Steam. Участвуя, ты соглашаешься с','Team entries and confirmations require Steam sign-in. By entering, you agree to the'):text('Для голосования используется ID браузера. Участвуя, ты соглашаешься с','Voting uses a browser ID. By entering, you agree to the')} <a href="${classic('privacy/')}">${text('условиями обработки данных','data processing terms')}</a>`;
 const presentation=createPresentation({$,native,getModel:()=>model,esc,text,label,date,number,rating,car,driverHref,classic,affiliation,privacy,serverAdmission,showDialog});
 const dialogFrames=[];
 $('modal').addEventListener('close',()=>{if(!$('modal').open){dialogFrames.length=0;$('site-shell').inert=false;lastTrigger?.focus?.({preventScroll:true});}});
@@ -143,7 +143,7 @@ function renderEvent(){
   $('participants').textContent=text('Участники: ','Participants: ')+number(model.votes.count);
   button.textContent=model.votes.pending?text('Сохраняем…','Saving…'):model.votes.voted?text('Ты в списке · отменить','You are registered · cancel'):text('Я хочу поехать!','I want to race!');
   button.disabled=Boolean(model.votes.pending||model.voteDisabled);button.classList.toggle('participation-active',model.votes.voted);
-  $('participation-note').innerHTML=(model.votes.error?`<strong class="v2-error">${text('Не удалось обновить участие. Попробуй ещё раз.','Could not update participation. Try again.')}</strong> `:'')+privacy();
+  $('participation-note').innerHTML=(model.votes.error?`<strong class="v2-error">${text('Не удалось обновить участие. Попробуй ещё раз.','Could not update participation. Try again.')}</strong> `:'')+privacy(a);
   const file=resolveTrackBackgroundFile(a.track_code);document.querySelector('.upcoming-panel').style.setProperty('--event-image',file?`url('${trackImage(file)}')`:'none');
   updateClock();
   presentation.refreshEntry();
@@ -321,6 +321,6 @@ if(!isSubpage){
 }
 try{await import('./runtime/home.js?v=20261011racelinks1');applyHash();if(isSubpage)startBackground();}catch(error){console.error('V2 runtime unavailable',error);$('event-track').textContent=text('Не удалось загрузить данные','Could not load data');$('day-driver').textContent=text('Данные недоступны','Data unavailable');tableError=true;tableBusy=false;renderTable()}
 if(document.documentElement.dataset.v2Page){
-  const {startPage}=await import('./pages/controller.js?v=20261011profile2');
+  const {startPage}=await import('./pages/controller.js?v=20261013teams3');
   await startPage({native,presentation,showDialog,esc,text,date,number,rating,car,language,subscribe});
 }

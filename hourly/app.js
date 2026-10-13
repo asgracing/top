@@ -12,7 +12,7 @@ import { getSpecialEventPresentation, isSpecialEvent } from "../src/features/hou
 import { formatMoscowDateTime, moscowDateKey, parseAsgTimestamp } from "../src/shared/time.js?v=20260910msk1";
 import { createHourlyVotesClient } from "../src/shared/hourly-votes-client.js?v=20260910security1";
 import { isTeamRace, teamRaceUrl } from "../src/shared/team-racing-client.js?v=20261004teams1";
-import { renderTeamResults } from "../src/shared/team-racing-results-view.js?v=20261004teams1";
+import { renderTeamResults } from "../src/shared/team-racing-results-view.js?v=20261013teams3";
 import { safeImageUrl, safeLinkUrl } from "../src/shared/safe-dom.js";
 import { normalizeChampionshipStatus } from "../src/pages/hourly/championship-status.js?v=20261002status1";
 

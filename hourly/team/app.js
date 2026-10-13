@@ -145,13 +145,14 @@ function renderForm() {
     for (const { check, member } of checks) if (check.checked) captain.add(new Option(member.display_name || member.public_id, member.public_id));
     if ([...captain.options].some(option => option.value === previous)) captain.value = previous; draft.captain_public_id = captain.value;
     const member = team.members.find(p => p.public_id === captain.value);
-    number.replaceChildren(make('strong', tx('Номер машины: ', 'Car number: ') + (member?.race_number ? '#' + member.race_number : tx('не назначен', 'not assigned'))), link(tx('Проверить мой номер', 'Check my number'), route('account') + '#race-number-settings-heading'));
+    const ownCaptain = member?.public_id === auth.driver.public_id;
+    number.replaceChildren(make('strong', tx('Номер машины: ', 'Car number: ') + (member?.race_number ? '#' + member.race_number : tx('не назначен', 'not assigned'))), link(ownCaptain ? tx('Проверить мой номер', 'Check my number') : tx('Профиль капитана', 'Captain profile'), ownCaptain ? route('account') + '#race-number-settings-heading' : route('driver') + '?id=' + encodeURIComponent(member?.public_id || ''), 'number-link'));
     count.textContent = tx('Выбрано пилотов: ' + draft.roster.length + ' из ' + event.max_drivers, 'Drivers selected: ' + draft.roster.length + ' of ' + event.max_drivers);
     for (const { check, member: pilot } of checks) check.disabled = disabled() || (!check.checked && (pilot.eligible !== true || draft.roster.length >= event.max_drivers));
     car.disabled = captain.disabled = disabled();
     const error = validateEntry(event, team, draft, auth.driver.public_id, registration), conflict = (registration?.version ?? null) !== draft.version;
     validation.textContent = conflict ? errors.version_conflict : error ? errors[error] : registration && !entryChanged(draft, registration) ? tx('Заявка сохранена. Измените данные, чтобы сохранить новую версию.', 'Entry saved. Edit the details to save a new version.') : tx('Всё готово к отправке.', 'Ready to submit.'); validation.dataset.valid = String(!error && !conflict);
-    summary.replaceChildren(make('strong', team.team_name), make('span', (draft.car_model === null ? tx('Машина не выбрана', 'No car selected') : carName(draft.car_model)) + ' · ' + tx('Пилотов', 'Drivers') + ': ' + draft.roster.length));
+    summary.replaceChildren(make('strong', team.team_name), make('span', (draft.car_model === null ? tx('Машина не выбрана', 'No car selected') : carName(draft.car_model)) + ' · ' + tx('Пилотов', 'Drivers') + ': ' + draft.roster.length), make('span', tx('Капитан: ', 'Captain: ') + (member?.display_name || '—') + ' · #' + (member?.race_number || '—')), make('span', tx('Экипаж: ', 'Crew: ') + checks.filter(item => item.check.checked).map(item => item.member.display_name || item.member.public_id).join(', ')));
     submit.disabled = disabled() || Boolean(error) || conflict || !entryChanged(draft, registration);
   };
   car.onchange = () => { draft.car_model = car.value === '' ? null : Number(car.value); update(); }; captain.onchange = () => { draft.captain_public_id = captain.value; update(); };
@@ -188,13 +189,17 @@ function renderRegistration(root, reg, allowConfirm) {
 
 function render() {
   $('refresh').textContent = operation ? tx('Проверить заявку', 'Check entry') : tx('Обновить данные', 'Refresh data'); $('refresh').disabled = loading || checking;
+  $('viewer').hidden = !auth?.authenticated;
+  $('viewer').textContent = auth?.authenticated ? tx('Вы вошли как ', 'Signed in as ') + (auth.driver?.display_name || tx('пилот', 'driver')) : '';
+  $('crew-link').hidden = !event?.registrations?.some(reg => reg.status !== 'withdrawn' && reg.roster.some(p => p.public_id === auth?.driver?.public_id));
+  $('crew-link').textContent = tx('Перейти к своему составу ↓', 'Go to your crew ↓');
+  $('availability').hidden = !state?.stale && !loadFailed && (!event || teamRegistrationOpen(event));
+  $('availability').textContent = loadFailed ? tx('Не удалось обновить данные. Отправка заблокирована до успешного обновления.', 'Could not refresh data. Submission is blocked until refresh succeeds.') : state?.stale ? errors.team_racing_state_stale + (state.generated_at ? ' ' + tx('Последний снимок: ', 'Last snapshot: ') + date(state.generated_at) : '') : tx('Составы закрыты. Новые заявки, изменения, отзыв и подтверждения больше не принимаются.', 'Crews are closed. New entries, edits, withdrawal and confirmation are unavailable.');
   if (!event) return;
   $('event-title').textContent = event.title || tx('Регистрация на командную гонку', 'Team race registration');
   $('event-info').textContent = (event.track_name || event.track_code || '') + ' · ' + tx('Открытие сервера', 'Server opening') + ': ' + date(event.launch_at);
   $('deadline').textContent = tx('Все заявки и изменения закрываются', 'All entries and changes close') + ': ' + date(event.closes_at || event.registration_closes_at);
   $('registration-state').textContent = teamRegistrationOpen(event) ? tx('Регистрация открыта', 'Registration open') : tx('ЗАКРЫТО · регистрация закрыта', 'CLOSED · registration closed'); $('registration-state').dataset.open = String(teamRegistrationOpen(event));
-  $('availability').hidden = !state.stale && teamRegistrationOpen(event) && !loadFailed;
-  $('availability').textContent = loadFailed ? tx('Не удалось обновить данные. Отправка заблокирована до успешного обновления.', 'Could not refresh data. Submission is blocked until refresh succeeds.') : state.stale ? errors.team_racing_state_stale : tx('Составы закрыты. Новые заявки, изменения, отзыв и подтверждения больше не принимаются.', 'Crews are closed. New entries, edits, withdrawal and confirmation are unavailable.');
   renderForm(); const root = $('registrations'); root.replaceChildren(); const registrations = activeRegistrations(event);
   $('registration-count').textContent = registrations.length + (event.max_cars ? ' / ' + event.max_cars : '') + ' ' + tx('машин', 'cars') + ' · ' + registrations.reduce((sum, reg) => sum + reg.roster.length, 0) + ' ' + tx('пилотов', 'drivers');
   if (!registrations.length) root.append(make('p', tx('Пока никто не записался. Здесь появятся команды и подтверждения пилотов.', 'No entries yet. Teams and driver confirmations will appear here.'), 'note'));

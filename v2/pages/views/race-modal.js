@@ -1,10 +1,16 @@
 // Approved results layout; only the official fastest lap is highlighted.
 import {decorateRaceHeading, renderResultTabs, installResultTabs} from '/src/shared/race-result-context.js?v=20261011racelinks1';
+import {renderTeamResults} from '/src/shared/team-racing-results-view.js?v=20261013teams3';
 export function paintRace(r,api) {
  installResultTabs();
  decorateRaceHeading(document.getElementById('v2-modal-title'), r, api);
  const {fixture,tx,label,detail,time,eloNumber,pageDriver,raceRating,raceBestLapId,delta,num,carMarkup,viewer}=api;
  const rows=r.results || [];
+ if(r.participation_mode==='team') {
+  const summary=`<div class="detail-grid race-summary-grid">${detail(tx('Дата / время','Date / time'),time(r.finished_at))}${detail(tx('Команды','Teams'),r.team_results?.length ?? '—')}${detail(tx('Победитель','Winner'),r.winner_team || r.winner || '—')}${detail(tx('Лучший круг','Best lap'),r.best_lap || '—')}${detail(tx('Средний ELO','Average ELO'),eloNumber(r.average_elo))}</div>`;
+  document.getElementById('v2-modal-body').innerHTML=summary+renderResultTabs(r,renderTeamResults(r,tx('ru','en'),{driverLink:pageDriver}),api,'modal-results');
+  return;
+ }
       const bestId=r.best_lap_public_id || fixture.recent.find(item=>item.race_id===r.race_id)?.best_lap_public_id || rows.find(d=>d.driver===r.best_lap_driver)?.public_id;
       const bestDriver=rows.find(d=>d.public_id===bestId);
       const bestName=bestDriver?.driver || r.best_lap_driver || fixture.recent.find(item=>item.race_id===r.race_id)?.best_lap_driver;
