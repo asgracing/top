@@ -54,7 +54,9 @@ export function createHeader({$,esc,text,number,rating,driverHref,privacy,native
     const news=e.target.closest('[data-news-read]');if(news){native().markNews(currentModel.news[Number(news.dataset.newsRead)]);close('notification-popover')}
     const invitation=e.target.closest('[data-invitation]');if(invitation){native().markInvitation(currentModel.invitations[Number(invitation.dataset.invitation)]);close('notification-popover')}
     const exit=e.target.closest('[data-close-popover]');if(exit&&['profile-popover','notification-popover'].includes(exit.dataset.closePopover)){close(exit.dataset.closePopover);$(exit.dataset.closePopover.replace('-popover','-trigger')).focus({preventScroll:true})}
-    for(const [id,anchor] of [['profile-popover',trigger],['notification-popover',bell]])if($(id).matches(':popover-open')&&!$(id).contains(e.target)&&!anchor.contains(e.target))close(id);
+    // Opening can replace the clicked child while the event is still bubbling.
+    const clickPath=e.composedPath();
+    for(const [id,anchor] of [['profile-popover',trigger],['notification-popover',bell]])if($(id).matches(':popover-open')&&!clickPath.includes($(id))&&!clickPath.includes(anchor))close(id);
   });
   document.addEventListener('keydown',e=>{if(e.key==='Escape')for(const id of ['profile-popover','notification-popover'])close(id)});
   window.addEventListener('resize',()=>{for(const [id,anchor] of [['profile-popover',trigger],['notification-popover',bell]])if($(id).matches(':popover-open'))place($(id),anchor)});
