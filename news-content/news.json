@@ -1,6 +1,25 @@
 {
   "items": [
     {
+      "id": "hourly-sr-3-3-2026-10-15",
+      "slug": "hourly-sr-3-3-2026-10-15",
+      "title": "Часовые гонки — допуск от SR 3.3 / Hourly races — SR 3.3 required",
+      "summary": "Для подключения к серверу часовых гонок теперь нужен внутренний Safety Rating ASG Racing не ниже 3.3. / Joining the Hourly server now requires an ASG Racing Safety Rating of at least 3.3.",
+      "body": [
+        "РУССКИЙ",
+        "────────",
+        "Теперь для подключения к серверу часовых гонок ASG Racing нужен внутренний Safety Rating (SR) не ниже 3.3. Проверить свой SR можно в профиле на сайте — это рейтинг ASG Racing, а не игровой ACC SA.",
+        "ENGLISH",
+        "────────",
+        "Joining the ASG Racing Hourly server now requires an internal Safety Rating (SR) of at least 3.3. Check your SR in your website profile — this is your ASG Racing rating, not the in-game ACC SA."
+      ],
+      "published_at": "2026-10-14T21:27:46Z",
+      "expires_at": "",
+      "kind": "announcement",
+      "priority": 800,
+      "is_pinned": true
+    },
+    {
       "id": "safety-rating-server-access",
       "slug": "safety-rating-server-access",
       "title": "Допуск на серверы ASG Racing по Safety Rating / ASG Racing Server Access by Safety Rating",
