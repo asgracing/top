@@ -175,7 +175,7 @@ class Config:
             ).strip(),
             scope=str(source.get("DONATIONALERTS_SCOPE", "oauth-donation-index oauth-goal-subscribe")).strip(),
             widget_token=str(source.get("DONATIONALERTS_WIDGET_TOKEN", "")).strip(),
-            goal_id=str(source.get("DONATIONALERTS_GOAL_ID", "9940111")).strip(),
+            goal_id=str(source.get("DONATIONALERTS_GOAL_ID", "9985489")).strip(),
             donations_limit=integer("DONATIONS_LIMIT", 50, 1, 100),
             cache_ttl_seconds=integer("DONATIONS_CACHE_TTL_SECONDS", 120, 15, 600),
             min_timestamp=min_timestamp,
@@ -396,7 +396,7 @@ class DonationService:
     def goal(self, tokens: Mapping[str, Any] | None) -> dict[str, Any] | None:
         if tokens:
             result = self.oauth_goal(tokens)
-            if result:
+            if result and (not self.config.goal_id or result.get("id") == self.config.goal_id):
                 return result
         try:
             return self.widget_goal()

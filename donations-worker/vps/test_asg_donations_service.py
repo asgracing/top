@@ -4,6 +4,7 @@ import http.client
 import tempfile
 import threading
 import unittest
+from unittest.mock import patch
 from pathlib import Path
 
 import asg_donations_service as module
@@ -34,7 +35,23 @@ class DonationServiceTests(unittest.TestCase):
         self.store = module.StateStore(state_path)
 
     def test_default_goal_matches_public_widget(self) -> None:
-        self.assertEqual(self.config.goal_id, "9940111")
+        self.assertEqual(self.config.goal_id, "9985489")
+
+    def test_configured_goal_wins_over_other_still_active_goal(self) -> None:
+        service = module.DonationService(self.config, self.store)
+        selected = {"id": "9985489", "title": "New goal"}
+        with patch.object(service, "oauth_goal", return_value={"id": "9940111"}), \
+             patch.object(service, "widget_goal", return_value=selected) as widget:
+            self.assertEqual(service.goal({"access_token": "fixture"}), selected)
+            widget.assert_called_once_with()
+
+    def test_matching_oauth_goal_does_not_need_widget_request(self) -> None:
+        service = module.DonationService(self.config, self.store)
+        selected = {"id": "9985489", "title": "New goal"}
+        with patch.object(service, "oauth_goal", return_value=selected), \
+             patch.object(service, "widget_goal") as widget:
+            self.assertEqual(service.goal({"access_token": "fixture"}), selected)
+            widget.assert_not_called()
 
     def test_unknown_origin_is_not_granted_cors(self) -> None:
         service = module.DonationService(self.config, self.store)
