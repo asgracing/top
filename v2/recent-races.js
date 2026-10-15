@@ -1,6 +1,7 @@
+import {bindPagination} from './pages/pagination.js?v=20261015pagination1';
 import {createPageData,readJson,hourlyUrl,normalizeEvent} from './pages/data.js?v=20261011racelinks1';
 import {eventKind as resolveKind} from './models.js?v=20261006v2k';
-import {createPageViews} from './pages/views/core.js?v=20261007v2pages11';
+import {createPageViews} from './pages/views/core.js?v=20261015pagination1';
 import {paintRace} from './pages/views/race-modal.js?v=20261011racelinks1';
 
 // Use the same published list and protocol presentation as Hourly.
@@ -90,6 +91,7 @@ export function createRecentRaces({$,native,getModel,presentation,showDialog,pus
       if(current===ticket&&$('modal').open)$('modal-body').innerHTML=`<button type="button" class="text-link home-race-back" data-home-races-back>${raceBackLabel}</button><p>${text('Результаты временно недоступны.','Results temporarily unavailable.')}</p><button type="button" class="button" data-home-race-retry="${esc(id)}">${text('Повторить','Retry')}</button>`;
     }
   }
+  bindPagination($('modal-body'),(name,page)=>{if(name!=='recent'||!$('modal').classList.contains('home-races-mode'))return;state.recentPage=page;$('modal-body').innerHTML=listHtml();$('modal-body').scrollTop=0;});
   document.addEventListener('click',event=>{
     const target=event.target;if(!target.closest('#v2-modal.home-races-mode'))return;
     if(target.closest('[data-home-races-back]')){$('modal').querySelector('.modal-close').click();return;}

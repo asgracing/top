@@ -1,19 +1,20 @@
+import {bindPagination} from './pagination.js?v=20261015pagination1';
 import {createEntityThumbnails} from './entity-thumbnails.js?v=20261008thumbs1';
 import {createInformationViews} from './views/information.js?v=20261007v2pages14';
 import information from './information-content.js?v=20261007v2pages14';
-import {createEditorialViews} from './views/editorial.js?v=20261007v2pages14';
+import {createEditorialViews} from './views/editorial.js?v=20261015pagination1';
 import {createHistoryViews} from './views/history.js?v=20261007v2pages14';
 import {markNewsRead} from '/news-read-state.js';
 import {editorialImage} from './editorial-model.js?v=20261007v2pages14';
 import {getCommunityPostKey} from '/src/pages/community/feed-model.js';
-import {createPageViews} from './views/core.js?v=20261013teams3';
-import {createArchiveViews} from './views/archive.js?v=20261013teams3';
-import {createChampionshipViews} from './views/championships.js?v=20261013teams3';
-import {createEntityViews} from './views/entities.js?v=20261008thumbs1';
+import {createPageViews} from './views/core.js?v=20261015pagination1';
+import {createArchiveViews} from './views/archive.js?v=20261015pagination1';
+import {createChampionshipViews} from './views/championships.js?v=20261015pagination1';
+import {createEntityViews} from './views/entities.js?v=20261015pagination1';
 import {createFunViews} from './views/fun.js?v=20261007v2pages14';
-import {createBansViews} from './views/bans.js?v=20261007v2pages14';
+import {createBansViews} from './views/bans.js?v=20261015pagination1';
 import {formatMoscowDateTime} from '/src/shared/time.js';
-import {createCarsViews} from './views/cars.js?v=20261007v2pages14';
+import {createCarsViews} from './views/cars.js?v=20261015pagination1';
 import {createCarLapsLoader} from './cars-laps-model.js?v=20261007carlaps1';
 import {paintRace} from './views/race-modal.js?v=20261013teams3';
 import {createPageData} from './data.js?v=20261011racelinks1';
@@ -156,6 +157,16 @@ export async function startPage(api) {
     state.raceTab==='qualifying'?url.searchParams.set('tab','qualifying'):url.searchParams.delete('tab');
     history.replaceState(null,'',url);
     document.querySelectorAll('.v2-language a').forEach(a=>a.href=currentV2Path(a.dataset.language));
+  });
+  bindPagination(view,(name,page)=>{
+    if(name==='profile'){state.racePage=page;document.getElementById('profile-history-content').innerHTML=views.profileRaceTable(raw.profiles[state.id]);}
+    else if(name==='recent'){state.recentPage=page;views.updateSection('.page-recent',views.recent(),['.page-recent-list','.page-pagination']);}
+    else if(name==='archive'){state.archivePage=page;return loadArchive();}
+    else if(name==='standing'){state.standingPage=page;document.getElementById('r24-season-standings').innerHTML=championshipViews.standings(state.id);highlightResults();}
+    else if(name==='entity'){state.entityRacePage=page;document.getElementById('site-entity-races').innerHTML=entityViews.recentContent(currentEntity());}
+    else if(name==='cars'){state.carPage=page;updateCars();}
+    else if(name==='bans'){state.bansPage=page;updateBans();}
+    else if(name==='news'||name==='community'){state[name+'Page']=page;refreshEditorial();}
   });
   document.addEventListener('click',event=>{
     const target=event.target;if(target.closest('#v1-runtime-host'))return;

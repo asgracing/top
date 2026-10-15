@@ -1,3 +1,4 @@
+import {renderPagination} from '../pagination.js?v=20261015pagination1';
 import {carThumbnailAttributes,trackThumbnailAttributes} from '/src/shared/image-thumbnails.js?v=20261013delivery1';
 // Approved R20 club/team layout with validated public snapshot data.
 import {nameInitials} from '../entity-thumbnails.js?v=20261008thumbs1';
@@ -43,7 +44,7 @@ export function createEntityViews(api) {
  function recentContent(e) {
    const rows=e.recent_races || [],max=Math.max(1,Math.ceil(rows.length/10));state.entityRacePage=Math.max(1,Math.min(state.entityRacePage,max));
    if(!rows.length)return empty(tx('Зачтённых гонок пока нет.','No counted races yet.'));
-   return `<div class="site-linked-list">${rows.slice((state.entityRacePage-1)*10,state.entityRacePage*10).map(r=>`<button type="button" data-page-race="${label(r.race_uid)}"><span class="entity-result-track"><img class="entity-track-miniature" ${trackThumbnailAttributes(safeTrack(r))} alt=""><b>${label(trackName(r.track_code))}</b><small>${time(r.race_started_at)}</small></span><span><b>${num(r.points)}</b> ${tx('очков','points')} ↗</span></button>`).join('')}</div><p class="page-help">${tx('Опубликованные результаты зачтённых гонок.','Published results of counted races.')}</p>`+(max>1?`<div class="page-pagination"><span>${(state.entityRacePage-1)*10+1}–${Math.min(state.entityRacePage*10,rows.length)} / ${rows.length}</span><button type="button" data-entity-races-step="-1"${state.entityRacePage===1?' disabled':''}>‹</button><b>${state.entityRacePage} / ${max}</b><button type="button" data-entity-races-step="1"${state.entityRacePage===max?' disabled':''}>›</button></div>`:'');
+   return `<div class="site-linked-list">${rows.slice((state.entityRacePage-1)*10,state.entityRacePage*10).map(r=>`<button type="button" data-page-race="${label(r.race_uid)}"><span class="entity-result-track"><img class="entity-track-miniature" ${trackThumbnailAttributes(safeTrack(r))} alt=""><b>${label(trackName(r.track_code))}</b><small>${time(r.race_started_at)}</small></span><span><b>${num(r.points)}</b> ${tx('очков','points')} ↗</span></button>`).join('')}</div><p class="page-help">${tx('Опубликованные результаты зачтённых гонок.','Published results of counted races.')}</p>`+(max>1?`${renderPagination({name:'entity',page:state.entityRacePage,total:rows.length,size:10,tx,previous:'data-entity-races-step="-1"',next:'data-entity-races-step="1"'})}`:'');
  }
  return {catalogView,catalogContent,entityView,rosterContent,recentContent};
 }

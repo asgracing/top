@@ -1,3 +1,19 @@
+/* Shared numbered pagination, including dialogs opened from home. */
+body[data-v2] .page-pagination {flex-wrap:wrap;gap:10px;}
+body[data-v2] .page-pagination .pagination {flex-wrap:nowrap;gap:4px;}
+body[data-v2] .page-pagination .pagination-pages {display:flex;align-items:center;gap:4px;}
+body[data-v2] .page-pagination button {width:auto;min-width:28px;height:auto;min-height:32px;padding:4px 6px;font-size:12px;}
+body[data-v2] .page-pagination .page-gap {padding:0 2px;color:#a8b3c2;}
+body[data-v2] .page-pagination .is-current {background:#334f69;border-color:#78a9ce;color:#fff;}
+body[data-v2] .page-pagination .page-jump {margin-left:auto;}
+body[data-v2] .page-pagination .page-jump button {padding:4px 9px;}
+@media(max-width:600px){
+ body[data-v2] .page-pagination {gap:8px;padding:10px;}
+ body[data-v2] .page-pagination>span {flex-basis:100%;}
+ body[data-v2] .page-pagination .pagination,body[data-v2] .page-pagination .pagination-pages {gap:3px;}
+ body[data-v2] .page-pagination .pagination button {min-width:26px;padding:4px 3px;font-size:11px;}
+ body[data-v2] .page-pagination .page-jump {flex-basis:100%;justify-content:flex-end;}
+}
 /* Final R24 geometry with live-controller integration. */
 html[data-v2] { color-scheme:dark; }
 body[data-v2] { font-family:Inter,"Segoe UI",Arial,sans-serif; isolation:isolate; }

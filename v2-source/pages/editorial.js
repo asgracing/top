@@ -1,3 +1,4 @@
+import {renderPagination} from '../pagination.js?v=20261015pagination1';
 // Approved R20 news/article/community layout with existing public data/actions.
 import {prepareNews,localizedEditorial,editorialImage,editorialHref} from '../editorial-model.js?v=20261007v2pages10';
 import {sortCommunityPosts} from '/src/pages/community/feed-model.js';
@@ -15,7 +16,7 @@ export function createEditorialViews(api){
  const tools=html=>`<div class="site-tools">${html}</div>`;
  const search=(id,value,text)=>`<label class="page-search"><span aria-hidden="true">⌕</span><input type="search" id="${id}" value="${label(value)}" placeholder="${text}" aria-label="${text}"></label>`;
  const table=(heads,rows,css='')=>`<div class="page-table-scroll"><table class="page-table ${css}"><thead><tr>${heads.map(h=>`<th>${h}</th>`).join('')}</tr></thead><tbody>${rows}</tbody></table></div>`;
- const paginate=(name,page,total,size)=>{const max=Math.max(1,Math.ceil(total/size));return `<div class="page-pagination"><span>${total?(page-1)*size+1:0}–${Math.min(page*size,total)} / ${total}</span><button type="button" data-site-step="${name}" data-step="-1" aria-label="${tx('Предыдущая страница','Previous page')}"${page<=1?' disabled':''}>‹</button><b>${page} / ${max}</b><button type="button" data-site-step="${name}" data-step="1" aria-label="${tx('Следующая страница','Next page')}"${page>=max?' disabled':''}>›</button></div>`;};
+ const paginate=(name,page,total,size)=>renderPagination({name,page,total,size,tx,previous:`data-site-step="${name}" data-step="-1"`,next:`data-site-step="${name}" data-step="1"`});
 
  const news=()=>prepareNews(raw.news,language);
  const isRead=id=>{try{return Boolean(loadNewsReadState(localStorage)[id]);}catch{return false;}};

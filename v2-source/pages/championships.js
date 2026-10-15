@@ -1,3 +1,4 @@
+import {renderPagination} from '../pagination.js?v=20261015pagination1';
 import {carThumbnailAttributes,trackThumbnailAttributes} from '/src/shared/image-thumbnails.js?v=20261013delivery1';
 // Approved R20/R24 championship layout. Public data/actions are injected.
 export function createChampionshipViews(api) {
@@ -22,7 +23,7 @@ export function createChampionshipViews(api) {
  const activeSeason=()=>Object.values(data.seasons).find(s=>s.status==='active') || Object.values(data.seasons)[0];
  const startTime=e=>time(e.starts_at || `${e.date}T${e.start_time_local || '00:00'}:00+03:00`);
  const circuit=e=>e.track_name || trackName(e.track_code);
-  function standingsMarkup(slug){const saved=seasonTables.get(slug),total=saved.rows.length,max=Math.max(1,Math.ceil(total/10));saved.page=Math.min(saved.page,max);return `<div class="page-table-scroll"><table class="page-table">${saved.head}<tbody>${saved.rows.slice((saved.page-1)*10,saved.page*10).join('')}</tbody></table></div><div class="page-pagination"><span>${(saved.page-1)*10+1}–${Math.min(saved.page*10,total)} / ${total}</span><button type="button" data-r24-standing-step="-1" data-season="${label(slug)}"${saved.page===1?' disabled':''}>‹</button><b>${saved.page} / ${max}</b><button type="button" data-r24-standing-step="1" data-season="${label(slug)}"${saved.page===max?' disabled':''}>›</button></div>`;}
+  function standingsMarkup(slug){const saved=seasonTables.get(slug),total=saved.rows.length,max=Math.max(1,Math.ceil(total/10));saved.page=Math.min(saved.page,max);return `<div class="page-table-scroll"><table class="page-table">${saved.head}<tbody>${saved.rows.slice((saved.page-1)*10,saved.page*10).join('')}</tbody></table></div>${renderPagination({name:'standing',page:saved.page,total:total,size:10,tx,previous:'data-r24-standing-step="-1"',next:'data-r24-standing-step="1"'})}`;}
   function decorateSeason(markup,id){const s=data.seasons[id] || activeSeason(),template=document.createElement('template');template.innerHTML=markup;const heading=[...template.content.querySelectorAll('.panel-head h2')].find(h=>h.textContent===standingsTitle(s)),table=heading?.closest('.page-panel').querySelector('table');if(table){seasonTables.set(s.slug,{head:table.tHead.outerHTML,rows:[...table.tBodies[0].rows].map(r=>r.outerHTML),page:state.standingPage || 1});const wrapper=document.createElement('div');wrapper.id='r24-season-standings';wrapper.innerHTML=standingsMarkup(s.slug);table.closest('.page-table-scroll').replaceWith(wrapper);}return template.innerHTML;}
   function seasonCards(){
    const rows=Object.values(data.seasons).filter(s=>(!state.seasonStatus||s.status===state.seasonStatus)&&`${s.title} ${s.period}`.toLowerCase().includes(state.seasonQuery.toLowerCase()));
