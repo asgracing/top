@@ -135,7 +135,7 @@ export async function startControlPage({view,screen,text,esc,language,subscribe,
         const numbersOpen=button.dataset.modView==='numbers';sanctionCard.hidden=numbersOpen;numberCard.hidden=!numbersOpen;
         tabRow.querySelectorAll('button').forEach(node=>node.setAttribute('aria-pressed',String(node===button)));
       });
-      const {mountModerationWorkspace}=await import('/src/pages/moderation/moderation-page.js?v=20261007root1');
+      const {mountModerationWorkspace}=await import('/src/pages/moderation/moderation-page.js?v=20261016numberreject1');
       workspace=mountModerationWorkspace({confirmAction});
       const status=root.querySelector('#v2-moderation-status');
       const journal=root.querySelector('#v2-moderation-log');let lastMessage='';
