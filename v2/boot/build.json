@@ -3,8 +3,16 @@
   "entry": "/v2/boot/home.js",
   "files": [
     {
+      "path": "/v2/boot/chunks/account-GNL74XAC.js",
+      "bytes": 306
+    },
+    {
       "path": "/v2/boot/chunks/account-KCRHZNKW.js",
       "bytes": 17518
+    },
+    {
+      "path": "/v2/boot/chunks/chunk-ZUZ2QIDS.js",
+      "bytes": 112695
     },
     {
       "path": "/v2/boot/chunks/moderation-page-M7OHPTYT.js",
@@ -15,12 +23,16 @@
       "bytes": 36093
     },
     {
-      "path": "/v2/boot/chunks/control-A7DAQNED.js",
+      "path": "/v2/boot/chunks/control-X4BNUQCQ.js",
       "bytes": 45917
     },
     {
-      "path": "/v2/boot/chunks/controller-U57FSBAG.js",
+      "path": "/v2/boot/chunks/controller-XG2D3OR7.js",
       "bytes": 295907
+    },
+    {
+      "path": "/v2/boot/chunks/rules-view-OL2U7L3F.js",
+      "bytes": 88948
     },
     {
       "path": "/v2/boot/chunks/safe-dom-ONQYSOA6.js",
@@ -47,36 +59,28 @@
       "bytes": 2253
     },
     {
-      "path": "/v2/boot/chunks/home-2ZRWZCCK.js",
-      "bytes": 513713
-    },
-    {
-      "path": "/v2/boot/chunks/chunk-O36GHPJT.js",
-      "bytes": 5087
-    },
-    {
-      "path": "/v2/boot/chunks/chunk-2QHMEH4Q.js",
-      "bytes": 2820
-    },
-    {
-      "path": "/v2/boot/chunks/account-GNL74XAC.js",
-      "bytes": 306
-    },
-    {
-      "path": "/v2/boot/chunks/chunk-ZUZ2QIDS.js",
-      "bytes": 112695
+      "path": "/v2/boot/chunks/home-NO57M4QY.js",
+      "bytes": 491614
     },
     {
       "path": "/v2/boot/chunks/chunk-I3RABYAQ.js",
       "bytes": 7575
     },
     {
+      "path": "/v2/boot/chunks/chunk-O36GHPJT.js",
+      "bytes": 5087
+    },
+    {
       "path": "/v2/boot/chunks/chunk-UDXKFN7P.js",
       "bytes": 36127
     },
     {
+      "path": "/v2/boot/chunks/chunk-2QHMEH4Q.js",
+      "bytes": 2820
+    },
+    {
       "path": "/v2/boot/home.js",
-      "bytes": 191426
+      "bytes": 192307
     },
     {
       "path": "/v2/boot/chunks/chunk-RB3OODF6.js",
