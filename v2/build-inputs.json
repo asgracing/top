@@ -40,7 +40,7 @@
     },
     {
       "path": "package.json",
-      "sha256": "66d198a505e59d02b29cec00b3f4742e567831e34b152c113c8da92e45419934"
+      "sha256": "a398a45c17d5aa81e899659b49d14f8c24f7cfb46e6599a73738f8d4d75d8774"
     },
     {
       "path": "scripts/build-v2-boot.mjs",
@@ -48,7 +48,7 @@
     },
     {
       "path": "scripts/build-v2.mjs",
-      "sha256": "3be7148ea9ebc4ad4cad5304dc656cab12e304262fb933228e347d9d2f6a1358"
+      "sha256": "7ee17ca5a545a837348944f17653fa2e6ecca88010a96fc8c6fbf74a841683e6"
     },
     {
       "path": "scripts/generate-localized-pages.mjs",
@@ -196,11 +196,11 @@
     },
     {
       "path": "src/pages/moderation/moderation-page.js",
-      "sha256": "c76035be1d3f5164f2e3f16753dc892b8a3f0eeadc88afcb2586c82bf6333853"
+      "sha256": "10fde632e27a067b8303529f5721ab55e9a7806aa512454090e151fab091f9bd"
     },
     {
       "path": "src/pages/moderation/race-number-review.js",
-      "sha256": "95155642abd1aeb7d9d55ebfdfa18e76d12ca2c230d48b7f76102371d3c4ba24"
+      "sha256": "4045bb7ab9eaae8eb58fda27168828c77da499688522f46944d537b9e42c8f41"
     },
     {
       "path": "src/pages/portal-ops/portal-ops-model.js",
@@ -496,7 +496,7 @@
     },
     {
       "path": "v1-source/html/moderation/index.html",
-      "sha256": "a16986e3ef72fa786b0f6a5985ce98553395633dca5c1b94af3f768442fd7227"
+      "sha256": "85a64384717e3374f91b683d7d14f165efa853a64f841c3c17118abe420c5a2a"
     },
     {
       "path": "v1-source/html/news/index.html",
@@ -640,7 +640,7 @@
     },
     {
       "path": "v2/pages/control.js",
-      "sha256": "8ca267f25622ea70ecafd1f1c6377558b112e0918c0f8acee2a777c8a3a2d53c"
+      "sha256": "6b289dee5d4a2bc3eccfdc10fbd472fb1c9f7d9dcfef1fc5611c69b2c0b09d90"
     },
     {
       "path": "v2/pages/controller.js",

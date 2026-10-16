@@ -85,6 +85,7 @@ try {
       if (variant === 'classic') page.once('dialog', dialog => accept ? dialog.accept() : dialog.dismiss());
       await button.click();
       if (variant === 'v2') await page.locator(accept ? '[data-control-confirm]' : '[data-control-cancel]').click();
+      await page.waitForFunction(() => !document.getElementById('race-number-review-refresh').disabled);
     }
     await confirm(form.locator('[type=submit]'), false);
     assert.equal(writes.length, 0);
