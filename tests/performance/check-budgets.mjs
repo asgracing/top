@@ -40,6 +40,8 @@ const moderationJavaScriptBytes =
   + await textBytes("src/pages/moderation/moderation-page.js")
   + await textBytes("src/pages/moderation/race-number-review.js");
 const moderationStylesheetBytes = await textBytes("styles/components/moderation.css");
+const racingRulesJavaScriptBytes = await treeBytes("src/features/rules", new Set([".js"]));
+const racingRulesStylesheetBytes = await textBytes("styles/components/racing-rules.css");
 const portalOpsJavaScriptBytes =
   await textBytes("src/pages/portal-ops/portal-ops-model.js")
   + await textBytes("src/pages/portal-ops/portal-ops-page.js");
@@ -55,8 +57,10 @@ const personalNotificationsJavaScriptBytes = await textBytes("src/features/auth/
 const personalNotificationsStylesheetBytes = await textBytes("styles/components/personal-notifications.css");
 const metrics = {
   appJavaScriptBytes: await textBytes("app.js"),
-  sourceModulesBytes: await treeBytes("src", new Set([".js", ".mjs"])) - moderationJavaScriptBytes - portalOpsJavaScriptBytes - raceResultContextJavaScriptBytes - personalNotificationsJavaScriptBytes,
-  stylesheetsBytes: await treeBytes("styles", new Set([".css"])) + await textBytes("styles.css") + await textBytes("legal.css") - moderationStylesheetBytes - portalOpsStylesheetBytes - raceResultContextStylesheetBytes - personalNotificationsStylesheetBytes,
+  sourceModulesBytes: await treeBytes("src", new Set([".js", ".mjs"])) - moderationJavaScriptBytes - portalOpsJavaScriptBytes - raceResultContextJavaScriptBytes - personalNotificationsJavaScriptBytes - racingRulesJavaScriptBytes,
+  stylesheetsBytes: await treeBytes("styles", new Set([".css"])) + await textBytes("styles.css") + await textBytes("legal.css") - moderationStylesheetBytes - portalOpsStylesheetBytes - raceResultContextStylesheetBytes - personalNotificationsStylesheetBytes - racingRulesStylesheetBytes,
+  racingRulesJavaScriptBytes,
+  racingRulesStylesheetBytes,
   personalNotificationsJavaScriptBytes,
   personalNotificationsStylesheetBytes,
   raceResultContextJavaScriptBytes,

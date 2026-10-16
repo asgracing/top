@@ -232,8 +232,17 @@ function closeDialog(){
   $('modal').close();$('site-shell').inert=false;lastTrigger?.focus?.({preventScroll:true})
 }
 function rowById(id){return tableRows.find(r=>r.public_id===id)||[dayProfile,winnerExtra?.profile,model?.day,...(winnerExtra?.details?.results||[]),...(model?.servers||[]).flatMap(s=>s.drivers||[])].find(r=>r?.public_id===id)||{public_id:id,driver:id}}
+let rulesRequest=0;
 function showReference(key,trigger){
-  if(key==='rules')showDialog(label('rules'),native().rules()||editorial.rules,trigger);
+  if(key==='rules'){
+    const request=++rulesRequest;
+    showDialog(label('rules'),`<p role="status">${text('Загружаем правила…','Loading rules…')}</p>`,trigger);
+    import('/src/features/rules/rules-view.js?v=20261016rules1').then(({mountRules})=>{
+      if(request===rulesRequest&&$('modal').open&&$('modal').dataset.kind==='rules')mountRules($('modal-body'),language);
+    }).catch(()=>{
+      if(request===rulesRequest&&$('modal').open&&$('modal').dataset.kind==='rules')$('modal-body').textContent=text('Не удалось загрузить правила. Закройте окно и попробуйте ещё раз.','Rules could not be loaded. Close this window and try again.');
+    });
+  }
   if(key==='elo')showDialog(label('elo'),editorial.elo,trigger);
   if(key==='safety')showDialog('Safety Rating',editorial.safety,trigger);
   $('modal').dataset.kind=key;

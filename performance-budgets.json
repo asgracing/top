@@ -1,5 +1,7 @@
 {
   "appJavaScriptBytes": 500000,
+  "racingRulesJavaScriptBytes": 52000,
+  "racingRulesStylesheetBytes": 8500,
   "raceResultContextJavaScriptBytes": 13500,
   "raceResultContextStylesheetBytes": 3500,
   "personalNotificationsJavaScriptBytes": 18500,
