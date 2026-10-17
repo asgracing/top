@@ -22,6 +22,17 @@ export function isServerStatusStale(serverStatus, now = Date.now(), maxAgeMs = S
   return now - updatedAt > maxAgeMs;
 }
 
+export function isInstanceStatusStale(server, now = Date.now()) {
+  if (!server || typeof server !== "object") return true;
+  if (server.stale === true || ["stale", "unknown"].includes(server.status)) return true;
+  // Legacy rows have only aggregate freshness. Bot rows carry their own clock
+  // and must not become fresh because another machine published a newer file.
+  if (!server.producer_epoch) return false;
+  const observed = parseServerStatusUpdatedAt(server.observed_at || server.updated_at);
+  return !Number.isFinite(observed) || now - observed > 180_000 ||
+    server.bot_connected !== true || server.roster_complete !== true;
+}
+
 export function bindServerStatusFreshness({ windowRef, documentRef, lifecycle, refresh }) {
   const timerId = windowRef.setInterval(refresh, 30_000);
   lifecycle.timer(timerId, id => windowRef.clearInterval(id));

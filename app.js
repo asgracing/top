@@ -30,7 +30,7 @@ import {
 } from "./news-read-state.js?v=20260813newsread1";
 import { createAuthHeaderController, safeAvatarUrl } from "./src/features/auth/header-auth.js?v=20261011notifications1";
 import { applyRandomTrackBackground, normalizeTrackBackgroundCode, resolveTrackBackgroundFile } from "./src/features/server-status/track-background.js?v=20260726staticfallback1";
-import { bindServerStatusFreshness, isServerStatusStale } from "./src/features/server-status/freshness.js?v=20260825statusfreshness1";
+import { bindServerStatusFreshness, isServerStatusStale, isInstanceStatusStale } from "./src/features/server-status/freshness.js?v=20261017chatbot1";
 import { selectNextHourlyAnnouncement } from "./src/features/hourly/announcement-model.js?v=20260828hourlynext1";
 import { getSpecialEventPresentation, normalizeSingleModelRestriction } from "./src/features/hourly/special-event.js?v=20260903special1";
 import { safeImageUrl, safeLinkUrl } from "./src/shared/safe-dom.js";
@@ -927,6 +927,7 @@ const translations = {
     serverStatusOffline: "OFFLINE",
     serverStatusDegraded: "DEGRADED",
     serverStatusStale: "No current data for more than 10 minutes",
+    serverInstanceStatusStale: "Server data is stale",
     serverTotalPlayersLabel: "Total players",
     serverTotalPlayersNote: "Servers",
     serversWidgetTitle: "Server status",
@@ -1565,6 +1566,7 @@ const translations = {
     serverStatusOffline: "ОФФЛАЙН",
     serverStatusDegraded: "ЧАСТИЧНО",
     serverStatusStale: "Нет актуальных данных более 10 минут",
+    serverInstanceStatusStale: "Данные сервера устарели",
     serverTotalPlayersLabel: "Всего игроков",
     serverTotalPlayersNote: "Серверы",
     serversWidgetTitle: "Статус серверов",
@@ -8538,6 +8540,7 @@ function getLocalizedServerStatus(status, lang = currentLang) {
   const normalized = String(status || "offline").toLowerCase();
   if (normalized === "online") return tForLang(lang, "serverStatusOnline");
   if (normalized === "online_process_only") return tForLang(lang, "serverStatusDegraded");
+  if (normalized === "stale" || normalized === "unknown") return tForLang(lang, "serverInstanceStatusStale");
   return tForLang(lang, "serverStatusOffline");
 }
 
@@ -8679,7 +8682,7 @@ function serverStatusIsStale(serverStatus = serverStatusData) {
 }
 
 function getServerDrivers(server) {
-  if (serverStatusIsStale()) return [];
+  if (serverStatusIsStale() || isInstanceStatusStale(server)) return [];
   if (!server || typeof server !== "object") return [];
   const drivers = Array.isArray(server.drivers)
     ? server.drivers
@@ -8721,8 +8724,8 @@ function getServerStatusItems(serverStatus = serverStatusData) {
 }
 
 function serverPlayersOnline(server) {
-  if (serverStatusIsStale()) return 0;
-  if (!server || typeof server !== "object") return 0;
+  if (serverStatusIsStale() || isInstanceStatusStale(server)) return null;
+  if (!server || typeof server !== "object") return null;
   if (Number.isFinite(server.players_online)) return server.players_online;
   return getServerDrivers(server).length;
 }
@@ -8777,7 +8780,7 @@ function appendServerSessionLabel(label, server) {
 }
 
 function serverIsOnline(server) {
-  if (serverStatusIsStale()) return false;
+  if (serverStatusIsStale() || isInstanceStatusStale(server)) return false;
   const status = String(server?.status || "").toLowerCase();
   return status === "online" || status === "online_process_only" || serverPlayersOnline(server) > 0;
 }
@@ -8806,6 +8809,7 @@ function updateHeroServerSummary(serverStatus = serverStatusData) {
   const totalPlayersEl = document.getElementById("serverPlayersValue");
   const items = getServerStatusItems(serverStatus);
   const stale = serverStatusIsStale(serverStatus);
+  const partial = items.some(item => isInstanceStatusStale(item.server));
   const onlineCount = items.filter(item => serverIsOnline(item.server)).length;
   const totalPlayers = stale
     ? 0
@@ -8813,8 +8817,8 @@ function updateHeroServerSummary(serverStatus = serverStatusData) {
     ? serverStatus.players_online
     : items.reduce((sum, item) => sum + serverPlayersOnline(item.server), 0);
 
-  if (onlineCountEl) onlineCountEl.textContent = onlineCount;
-  if (totalPlayersEl) totalPlayersEl.textContent = totalPlayers;
+  if (onlineCountEl) onlineCountEl.textContent = stale || partial ? "—" : onlineCount;
+  if (totalPlayersEl) totalPlayersEl.textContent = stale || partial ? "—" : totalPlayers;
   if (onlineButtonEl) {
     onlineButtonEl.title = t("serversOnlineTooltip");
     onlineButtonEl.setAttribute("aria-label", t("serversOnlineTooltip"));
@@ -8870,7 +8874,7 @@ function renderServerStickyWidget(serverStatus = serverStatusData) {
           const track = humanizeTrackName(server?.track_code || server?.track || "") || "—";
           const saRequirement = getServerSaRequirement(server);
           const srRequirement = getServerSrRequirement(key, server);
-          const statusClass = online ? (rawStatus === "online_process_only" ? "degraded" : "online") : "offline";
+          const statusClass = isInstanceStatusStale(server) ? "degraded" : online ? (rawStatus === "online_process_only" ? "degraded" : "online") : "offline";
           return `
             <div
               class="server-sticky-card server-sticky-card-clickable is-${escapeHtml(statusClass)}"
@@ -8896,7 +8900,7 @@ function renderServerStickyWidget(serverStatus = serverStatusData) {
                   </div>
                   <div class="server-sticky-metric">
                     <span>${escapeHtml(t("serverMetricPlayers"))}</span>
-                    <strong>${escapeHtml(String(players))}</strong>
+                    <strong>${escapeHtml(String(players ?? "—"))}</strong>
                   </div>
                   <div class="server-sticky-metric server-sticky-metric-session">
                     <span>${escapeHtml(t("serverMetricSession"))}</span>
@@ -8931,7 +8935,7 @@ function renderServerStatusSummaryModal(titleEl, subtitleEl, listEl) {
 
   listEl.innerHTML = items.map(({ label, server }) => {
     const players = serverPlayersOnline(server);
-    const status = serverIsOnline(server)
+    const status = isInstanceStatusStale(server) ? "stale" : serverIsOnline(server)
       ? String(server?.status || "online").toLowerCase()
       : "offline";
     const serverLabel = appendServerSessionLabel(label, server);
@@ -8944,7 +8948,7 @@ function renderServerStatusSummaryModal(titleEl, subtitleEl, listEl) {
           </div>
         </div>
         <div class="server-status-row-count">
-          <strong>${escapeHtml(players)}</strong>
+          <strong>${escapeHtml(players ?? "—")}</strong>
           <span>${escapeHtml(t("serverPlayersCountLabel"))}</span>
         </div>
       </article>
@@ -8959,6 +8963,11 @@ function renderSelectedServerPlayersModal(titleEl, subtitleEl, listEl) {
   const drivers = getServerDrivers(server);
   titleEl.textContent = appendServerSessionLabel(selected?.label || t("playersOnlineTitle"), server);
   subtitleEl.textContent = formatServerStatusUpdatedSubtitle(server?.updated_at || serverStatusData?.updated_at);
+
+  if (isInstanceStatusStale(server)) {
+    replaceWithTextState(listEl, "empty", t("serverInstanceStatusStale"));
+    return;
+  }
 
   if (!drivers.length) {
     replaceWithTextState(listEl, "empty", t("playersOnlineEmpty"));

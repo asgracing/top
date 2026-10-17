@@ -2,7 +2,7 @@ import {carThumbnailAttributes} from '/src/shared/image-thumbnails.js?v=20261013
 import copy from './copy.js?v=20261006v2k';
 import { subscribe, getRuntime } from './bridge.js?v=20261006v2k';
 import {rankingPosition,eventKind,normalizeTablePage,normalizeSafetyRow,paginationPages,serverSrRestriction} from './models.js?v=20261013delivery1';
-import {createPresentation} from './presentation.js?v=20261013delivery1';
+import {createPresentation} from './presentation.js?v=20261017chatbot1';
 import {createRecentRaces} from './recent-races.js?v=20261011racelinks1';
 import {createHeader} from './header.js?v=20261014profile1';
 import {serverSessionLabel} from './server-session.js?v=20261008widgets1';
@@ -109,7 +109,7 @@ function renderStats(){
   $('day-ratings').innerHTML=d?rating(ratingSource,'elo',null,true)+rating(ratingSource,'sr',null,true):'';
   if(d?.public_id&&dayRequest!==d.public_id){dayRequest=d.public_id;dayProfile=null;native().profile(d.public_id).then(profile=>{if(dayRequest===d.public_id){dayProfile=profile;renderStats()}}).catch(()=>{})}
   const metric=(value,title)=>`<div class="metric"><span>${title}</span><b>${number(value)}</b></div>`;
-  $('metrics').innerHTML=metric(s?.drivers_total,label('pilots'))+metric(s?.races_total,label('racesCol'))+metric(model.serversStale?null:model.servers.reduce((n,s)=>n+s.players,0),text('Пилотов онлайн','Drivers online'));
+  $('metrics').innerHTML=metric(s?.drivers_total,label('pilots'))+metric(s?.races_total,label('racesCol'))+metric(model.serversStale||model.servers.some(s=>s.stale)?null:model.servers.reduce((n,s)=>n+s.players,0),text('Пилотов онлайн','Drivers online'));
   const online=model.online,max=Math.max(1,...online.map(d=>d.value));
   $('chart').innerHTML=online.length?online.map(d=>`<div class="chart-column"><b>${number(d.value)}</b><div class="bar-track"><span style="height:${Math.max(2,d.value/max*100)}%"></span></div><small>${esc(d.label)}</small></div>`).join(''):`<p class="empty">${label('noData')}</p>`;
   document.querySelector('.stats-panel .head-note').textContent=s?.updated_at?text('Данные: ','Updated: ')+date(s.updated_at):'';
@@ -156,12 +156,12 @@ function serverAdmission(server){
   return text(`Вашего SR недостаточно для входа: ваш SR ${actual}, требуется SR ${required}.`,`Your SR is too low to join: your SR ${actual}, required SR ${required}.`);
 }
 function renderServers(){
-  const order=['hourly','main','sunset'],rows=[...model.servers].sort((a,b)=>(order.includes(a.key)?order.indexOf(a.key):3)-(order.includes(b.key)?order.indexOf(b.key):3));$('servers-up').textContent=`${model.serversStale?'—':rows.filter(s=>s.online).length} / ${rows.length}`;
-  $('total-online').textContent=model.serversStale?text('Данные устарели','Stale data'):number(rows.reduce((n,s)=>n+s.players,0))+' '+label('players');
+  const order=['hourly','main','sunset'],rows=[...model.servers].sort((a,b)=>(order.includes(a.key)?order.indexOf(a.key):3)-(order.includes(b.key)?order.indexOf(b.key):3));$('servers-up').textContent=`${model.serversStale||rows.some(s=>s.stale)?'—':rows.filter(s=>s.online).length} / ${rows.length}`;
+  $('total-online').textContent=model.serversStale?text('Данные устарели','Stale data'):rows.some(s=>s.stale)?text('Часть данных устарела','Some server data is stale'):number(rows.reduce((n,s)=>n+s.players,0))+' '+label('players');
   const phase=s=>serverSessionLabel(s,label);
   $('servers').innerHTML=rows.map((s,i)=>{
-    const name=s.key==='hourly'?text('Часовые гонки / ASG Racing Race','Hourly / ASG Racing Race'):String(s.label).replace(/^ASG Racing\s+/i,''),session=phase(s),hint=serverAdmission(s);
-    const short=serverSessionLabel(s,label,{compact:true});
+    const name=s.key==='hourly'?text('Часовые гонки / ASG Racing Race','Hourly / ASG Racing Race'):String(s.label).replace(/^ASG Racing\s+/i,''),session=s.stale?text('Данные устарели','Stale data'):phase(s),hint=serverAdmission(s);
+    const short=s.stale?text('Нет данных','No data'):serverSessionLabel(s,label,{compact:true});
     const description=hint||`${s.label} · ${session} · ${number(s.players)} ${text('пилотов','drivers')}`;
     return `<button type="button" class="server-card${s.online?'':' offline'}${hint?' is-sr-blocked':''}" data-server="${esc(s.key)}" aria-label="${esc(description)}" title="${esc(description)}"><span class="server-top"><span class="server-id">${String(i+1).padStart(2,'0')}</span><span class="server-name">${esc(name)}</span><span class="server-compact-live">${esc(short)} · ${number(s.players)}</span><span class="status-dot" aria-hidden="true"></span></span><span class="server-facts"><span class="server-track">${esc(s.track||'—')}</span><span class="server-admission">SA ${esc(s.sa)} · ${hint?'&#128274; ':''}SR ${esc(s.sr)}</span><span class="server-live">${number(s.players)} ${text('пилотов','drivers')} · ${esc(session)}</span></span></button>`;
   }).join('')||`<p class="empty">${text('Статусы недоступны','Server status unavailable')}</p>`;
