@@ -1,8 +1,8 @@
 {
   "schemaVersion": 1,
-  "revision": "e5ab0231cb66a2d69f7ef948cf89397792ce11b3",
-  "files": 838,
-  "bytes": 124073506,
+  "revision": "472552f6f5af9b519fdfcc049ef509453a3b02ec",
+  "files": 843,
+  "bytes": 124933155,
   "assets": [
     {
       "path": "404.html",
@@ -11,13 +11,13 @@
     },
     {
       "path": "404/index.html",
-      "bytes": 83876,
-      "sha256": "e55cffe21e96f7543e097cfc728210cd97f58c689e246143ce202421f7aa9563"
+      "bytes": 83882,
+      "sha256": "4d13bb49746a792e0316267830cc634752ad977b914be1b345fd68c6a5ef9c37"
     },
     {
       "path": "about/index.html",
-      "bytes": 83953,
-      "sha256": "ff54f789a6756f0d630a6aa061c4341384c66eb67392f6180cca006074f6fc60"
+      "bytes": 83959,
+      "sha256": "ccb2f415e58b9cc651b9be4b063e49031e67e0ca849dffc04532acb44d95a73c"
     },
     {
       "path": "about/index.ru.html",
@@ -46,13 +46,13 @@
     },
     {
       "path": "account/index.html",
-      "bytes": 83991,
-      "sha256": "e2a91a93f2e2dd9df7f3c52f3c21fbef7802c1a1794b0a684e312a5f02553145"
+      "bytes": 83998,
+      "sha256": "cd61223608ca72e9ddd73ff1825cdfb424907bbda7503c4f0418e7e60a8272e0"
     },
     {
       "path": "account/settings/index.html",
-      "bytes": 84133,
-      "sha256": "dc058b712fb1a2429d51ba94568b76d5ef53b9ead6ab1fa486189d1817e8d77f"
+      "bytes": 84140,
+      "sha256": "3b607e7ef23a7a66197b7b5cbd95d5fde1da58a7b3836f6124f4bfdef24cca76"
     },
     {
       "path": "ads/desktop.jpeg",
@@ -76,8 +76,8 @@
     },
     {
       "path": "app.js",
-      "bytes": 500437,
-      "sha256": "45606cbee2f129bd627641c7ef4a8a42a2231212044e7e1777965b584adedcb1"
+      "bytes": 499717,
+      "sha256": "f2a26c82c95c85711e2be3aae07365debcfbdd4d5a1d5e76e5241733fbe403e6"
     },
     {
       "path": "apple-touch-icon.png",
@@ -1076,18 +1076,18 @@
     },
     {
       "path": "bans/index.html",
-      "bytes": 83862,
-      "sha256": "c650e6f517cb3610884b8ed453816dde5211dc82209d5bb3603603b2777943b4"
+      "bytes": 83868,
+      "sha256": "419dddaf7b2dfad30fde5debdcdbe1f1c8c3e17801f4ef1b177d704c545bbbdb"
     },
     {
       "path": "cars/index.html",
-      "bytes": 84063,
-      "sha256": "1755f21294db001ce94c4e010ffa03277a1701fe964b3246b5c03416d145ba27"
+      "bytes": 84069,
+      "sha256": "5d9cacb98ca198e76381df4f2f20c6f74564674716c1595f92ec18d64c21306b"
     },
     {
       "path": "championships/index.html",
-      "bytes": 84101,
-      "sha256": "c443e6e68ea30a32587aa8cd1c98e6238f6d1f4088e0ee12418d8e2473ca4e28"
+      "bytes": 84107,
+      "sha256": "737531b78a4540a42422c374e96e33d6e57aadf76631e476a3b41f6a26890f32"
     },
     {
       "path": "clubs/app.js",
@@ -1096,13 +1096,13 @@
     },
     {
       "path": "clubs/index.html",
-      "bytes": 83997,
-      "sha256": "07855bba19761fc756df1607afcc052cf400ffce9aedad02590cb473bb2cf89b"
+      "bytes": 84003,
+      "sha256": "ea0b8ad5fbe147b5656e104986fb28d9c4b5450b022d08d1382ff14c05163c55"
     },
     {
       "path": "community/index.html",
-      "bytes": 84070,
-      "sha256": "0dc41e139f4c144590f27b89823eb61f10d15594f2f1e571b658d3e3e021c476"
+      "bytes": 84076,
+      "sha256": "e6ae916d3db7a04e41ef9291dfa946c88acb82a75a09e9c2ecba4b30cbe43f9e"
     },
     {
       "path": "community/index.ru.html",
@@ -1146,88 +1146,88 @@
     },
     {
       "path": "cookies/index.html",
-      "bytes": 84019,
-      "sha256": "4f2902ea4ccffca5a9bda33952cd17a8c1c64e785f562ddb85bc1b228a3cc394"
+      "bytes": 84025,
+      "sha256": "0eb0679d9dd8c6784673371da25f9ffb4e8ea0e57f7a2f149f6b11a94eaafdf9"
     },
     {
       "path": "documents/index.html",
-      "bytes": 84036,
-      "sha256": "5b00e5bc30f741a1a973699a549f3f967646b54f97751152304e7d236ec9cd95"
+      "bytes": 84042,
+      "sha256": "8e6a28dc0da64321bad9705faf23d0f782b3fe8f8a0573fec9b955d939f9c230"
     },
     {
       "path": "documents/read/index.html",
-      "bytes": 83852,
-      "sha256": "f6eb8b20d394a126ba776e46ad7e6736db848c3db81f42d367fea2ad4abbe6e1"
+      "bytes": 83858,
+      "sha256": "681411bd02355fe4a6f82951ff94054ba4d476726220651f7370142659d2d54f"
     },
     {
       "path": "driver/index.html",
-      "bytes": 83841,
-      "sha256": "a2a09e3ba3058adbe560d249199b994ab6ba2365f4f34085401ba1a5dbb9e9c7"
+      "bytes": 83846,
+      "sha256": "cc729c5376099c159d2a4858718f46317dc9bce9a62f13c385122380c56ca1bf"
     },
     {
       "path": "en/404/index.html",
-      "bytes": 79032,
-      "sha256": "0bcf735b45c37d17e82a087cd56b28dd49111c57226949a6c8948aa830fa7874"
+      "bytes": 79038,
+      "sha256": "8a3cd7dc274f944ee8af40bf05532fc4f09d1ee79898d2c61dd04b0c75d5bde5"
     },
     {
       "path": "en/about/index.html",
-      "bytes": 79094,
-      "sha256": "1ebef680600fddcf15a5322045c6937dd9c283a86d9790446cf35279da48d4e2"
+      "bytes": 79100,
+      "sha256": "20d1d824d4c3310ea03dfd6da7af1e818d17dd03b842cb507f5a7bb91d6a67f4"
     },
     {
       "path": "en/account/index.html",
-      "bytes": 79156,
-      "sha256": "f8b686b4113ebe41552a9573fefa33f9ed9ac14d1c332a1aab19adc0d82a722d"
+      "bytes": 79163,
+      "sha256": "7e26a9b406e5cdb011cdb662124f5e985a8e02450afe2f2574385a31d292308d"
     },
     {
       "path": "en/account/settings/index.html",
-      "bytes": 79256,
-      "sha256": "c6b176bf26dd6d1b24d4d57883b0a93934df401fd7331400775ad7cda99c67c2"
+      "bytes": 79263,
+      "sha256": "86c4f110f9362137be50652f4195f12bf9ab6246b60aa1333f757c21501387b7"
     },
     {
       "path": "en/bans/index.html",
-      "bytes": 79000,
-      "sha256": "01a5f6c93c019b060c20d1fc49b866330d78d0aa50f80a6059f19bc8a99492ca"
+      "bytes": 79006,
+      "sha256": "f8555195cab1dea2e831f12d747b1801793838064dc5d8586c6a376976e68b80"
     },
     {
       "path": "en/cars/index.html",
-      "bytes": 79102,
-      "sha256": "a7b2aa6289519003ebd898e0c2edb0e23a5173b28ecb2057e4c7a7ec458b031c"
+      "bytes": 79108,
+      "sha256": "17a7c617b9f4bdd8d209a27ca169ee06e32757082482a7b7956a87b6aadeb491"
     },
     {
       "path": "en/championships/index.html",
-      "bytes": 79203,
-      "sha256": "c3b24a0f38b804e4c0d32ec5b35cb6f1e8764d77ddd8fd73e108ae64c70482bb"
+      "bytes": 79209,
+      "sha256": "f2a85cc84873a55e8446199a2c9e4e61cb3ebae54b399fbaa76622e9db397c86"
     },
     {
       "path": "en/clubs/index.html",
-      "bytes": 79075,
-      "sha256": "372e0a3364a6402648f05f7952c5d062a6c36d7834f08eae26ab23c896d66dec"
+      "bytes": 79081,
+      "sha256": "df254da2923292cc35c80d8f07b9fce79c4d8faa088ab50f933929727808d3b9"
     },
     {
       "path": "en/community/index.html",
-      "bytes": 79226,
-      "sha256": "09658b774b7ed359acf3a65f5688af82ac8c096e761b00c187ebae58e3cfe06a"
+      "bytes": 79232,
+      "sha256": "9d14acae1394f727cc2aae445aef4e6095e5adc46782468b95c1939fdcb34cea"
     },
     {
       "path": "en/cookies/index.html",
-      "bytes": 79109,
-      "sha256": "f803bc1a3a3a85659dfc1c958362f836c407776b4dc683014cde5d1d1a7ea92f"
+      "bytes": 79115,
+      "sha256": "56104fc4e19d75da47388dcbb44f42696038e87c27251c36e191176e5be7c131"
     },
     {
       "path": "en/documents/index.html",
-      "bytes": 79126,
-      "sha256": "e34e6fbb0f3ba5988301216e29836d68a1c4389f4a24adb9408c0ce34444e7d8"
+      "bytes": 79132,
+      "sha256": "afa147c6f4b6d1494649982dcbfb943232db224a207877bfc6c2eac38f61a788"
     },
     {
       "path": "en/documents/read/index.html",
-      "bytes": 79035,
-      "sha256": "3cc2777ae6c7be7760c318d269730cf59b0f06205ba6749081b645bc15bb272e"
+      "bytes": 79041,
+      "sha256": "219286994d3a06ae0869c627e4664f4c169bbf29bc47a85314a6fe5805868603"
     },
     {
       "path": "en/driver/index.html",
-      "bytes": 79000,
-      "sha256": "1efbf466cf3dfb288e460a63d9667d91c5b67517092ff1982ebe4d1ebdfa537c"
+      "bytes": 79005,
+      "sha256": "51023478cef08e2d8d82e8a6ba994924d96431f11cd0ad3b6109120d10949f0c"
     },
     {
       "path": "en/events/index.html",
@@ -1236,18 +1236,18 @@
     },
     {
       "path": "en/fun-stats/index.html",
-      "bytes": 79215,
-      "sha256": "ba0a6b7152c6c454f8880d3568bab376da2b2e52cbb74e83186a83d97557cc5b"
+      "bytes": 79221,
+      "sha256": "a3324beb9ce1a6f8af7348ea06af7af757f67e9cc3630443b729dceaa6a363e9"
     },
     {
       "path": "en/hourly/championship/history/index.html",
-      "bytes": 79267,
-      "sha256": "8aff9d914e7ed310ab0b5d0a2dcf955c3ebd5b9b0d96ea2ae73b2d7e33410946"
+      "bytes": 79273,
+      "sha256": "cc0f73b8d6095da9c3b7e6a85b715136278ff96c22cf42d4fa685a0446c46b39"
     },
     {
       "path": "en/hourly/championship/index.html",
-      "bytes": 79263,
-      "sha256": "b4879447d4cb1f850123b03e01fb76631bcda2dbe344c9b173442fb31b8b71b4"
+      "bytes": 79269,
+      "sha256": "d283b75e25d8f742140344af61fc267b415ff753d56723fd6d3798211f53fb68"
     },
     {
       "path": "en/hourly/cookies/index.html",
@@ -1256,8 +1256,8 @@
     },
     {
       "path": "en/hourly/index.html",
-      "bytes": 78937,
-      "sha256": "13f480a6df88b5f0e53f9f047fe93f99e21beb624693ea18634a5cf58559d990"
+      "bytes": 78942,
+      "sha256": "157947ee703a4a2953c0de114a9f353845fbcc4e1b700decb5a63d3babc7fb47"
     },
     {
       "path": "en/hourly/privacy/index.html",
@@ -1266,63 +1266,63 @@
     },
     {
       "path": "en/index.html",
-      "bytes": 79118,
-      "sha256": "6ece44ba85fb934610c8a01533e3edeaa608b7af409c7f05fe8ba73c3962799c"
+      "bytes": 79121,
+      "sha256": "eaff77da6a4b09f73eec015e5de5b7d87270b9c554763a09f084f3c4a3393619"
     },
     {
       "path": "en/instructions/index.html",
-      "bytes": 79192,
-      "sha256": "1b96f2c9e29ba7d08cbca289b01cc32dda54ee8cf6dea2df05ff83ae4cd797a6"
+      "bytes": 79198,
+      "sha256": "350253ebd12d9e52807a02d35f55ce41b49b52394d79d97adc09848e953b1d98"
     },
     {
       "path": "en/join/index.html",
-      "bytes": 79037,
-      "sha256": "3ccb2d2e69fac6f01a9247c70d2bdaafc1fe1293733f56f609c927a17d065d31"
+      "bytes": 79043,
+      "sha256": "4d99d9a4c033403d59486082b05bd6455cd3067b75899bed93f23ab76d585c9f"
     },
     {
       "path": "en/moderation/index.html",
-      "bytes": 79216,
-      "sha256": "410c602daa5c6a843814d26587a49faa179fdc819f66bd7b4a0866d0304e914e"
+      "bytes": 79223,
+      "sha256": "be709196e1111060c4971300de79c146c8835fc73ff55da26538d0fc041893d5"
     },
     {
       "path": "en/news/article/index.html",
-      "bytes": 79079,
-      "sha256": "edcf95fe3c2aad186c4d89011a3b7f890703532ee0f8ca155ede6e9282abe380"
+      "bytes": 79085,
+      "sha256": "c57f8bd55134893fb97e0af673f65c55a35d26099d3493b18c16880d5cea545b"
     },
     {
       "path": "en/news/index.html",
-      "bytes": 79084,
-      "sha256": "5eaf1d4c68bb2fcb4d754d670ec237b5842716ca7cc172a7b722602c3c40101f"
+      "bytes": 79090,
+      "sha256": "5eb85290cde0cba25b6a2b474473332afc83ac17510280ce6f2d0773a8325c64"
     },
     {
       "path": "en/portal-ops/index.html",
-      "bytes": 79221,
-      "sha256": "9cc0cac19dd80ec2b8bc80b2d2dca4fc3be889e5d2197a8a0ed53acab53d78c1"
+      "bytes": 79228,
+      "sha256": "85e92afdeeb1caa4e4293608c38ec4e9ae1cd1e6afcf53830501219f30a0975e"
     },
     {
       "path": "en/privacy/index.html",
-      "bytes": 79073,
-      "sha256": "6ea26d1004e04331106ef96bd5b25122684e0f198af6438e2497cd91af50eb75"
+      "bytes": 79079,
+      "sha256": "2cb022e6b0c31dca855456610e1113f12c107797cecdee0789e58a434b3ff967"
     },
     {
       "path": "en/race/index.html",
-      "bytes": 79133,
-      "sha256": "6388e03e9f4cf793cd7fab8be80e93fb4bffb85ac4ff491bd206be914896aa95"
+      "bytes": 79139,
+      "sha256": "cba63f8a8be3ad0cfba6882937401630d96b7d2a11a691075513db8c6c743527"
     },
     {
       "path": "en/races/index.html",
-      "bytes": 79156,
-      "sha256": "114ed597a16f0977631046fa5a722d8f19c02c4d23a864d52a5d5505f156e400"
+      "bytes": 79162,
+      "sha256": "7a347df0ae8074f113bf6186d98a0cb56b6741161c44ff601831748671d4bc73"
     },
     {
       "path": "en/teams/detail/index.html",
-      "bytes": 79111,
-      "sha256": "5bda8a5f24b44a8a1badd524cb60f3815fff35c269b5aba27dbcc7ca1374f9c7"
+      "bytes": 79117,
+      "sha256": "ad048b2761d8d3336c90de7e37ec22edc2c386699e6811059782d83b42e6a8f1"
     },
     {
       "path": "en/teams/index.html",
-      "bytes": 79123,
-      "sha256": "7bc8b2a64a85baa5b249d3d7a6dee1cf26986ad715b0a782e2a8070c3c90197a"
+      "bytes": 79129,
+      "sha256": "7b2aded5ecbdf3b4af73e60247cc9859aa177ffbbb9181990a9f6c01d9b9e7e7"
     },
     {
       "path": "events/app.js",
@@ -1356,8 +1356,8 @@
     },
     {
       "path": "fun-stats/index.html",
-      "bytes": 84143,
-      "sha256": "1ceed31d5297ee187a7b3bc40820711a0de8666b90af5b8bfcacb5796ccb0ecc"
+      "bytes": 84149,
+      "sha256": "f78e3a31a1fb56f9ab059f59aa99a2dc771cdbf2d4c15cb8227c7fdc7fd8f04a"
     },
     {
       "path": "fun-stats/monza.jpg",
@@ -1436,8 +1436,8 @@
     },
     {
       "path": "hourly/championship/history/index.html",
-      "bytes": 84198,
-      "sha256": "4da387bcd565bd36977dcc33b25f380c9c3d0064661df039f35375aedc29acc9"
+      "bytes": 84204,
+      "sha256": "47ad1df823c4f51ac4299b37d8211e9f24a94425f481469cacc0f70f933a395c"
     },
     {
       "path": "hourly/championship/history/index.ru.html",
@@ -1451,8 +1451,8 @@
     },
     {
       "path": "hourly/championship/index.html",
-      "bytes": 84182,
-      "sha256": "b3481d33e5a227148dc33a2879580ce6db725b23f526f6e3d53b41b79730fdde"
+      "bytes": 84188,
+      "sha256": "7e7e9969565576dab1c3a657ecc23b62ea306721e48a3a086a2917b5fb8aedb8"
     },
     {
       "path": "hourly/championship/index.ru.html",
@@ -1476,8 +1476,8 @@
     },
     {
       "path": "hourly/index.html",
-      "bytes": 83781,
-      "sha256": "809c2ebea460f2114ad896ec11169ba0a7f86f9c374cddea66b22ed042169b2e"
+      "bytes": 83786,
+      "sha256": "034a017a9b6f489a1ac148551c6372fb1245b2e1107cf2075fe0dd72503644b0"
     },
     {
       "path": "hourly/index.ru.html",
@@ -1536,8 +1536,8 @@
     },
     {
       "path": "index.html",
-      "bytes": 84160,
-      "sha256": "ed6218c8f970b05f98f72f26aacce34bcd23fae3296fee2f83ffebf44f4006d2"
+      "bytes": 84163,
+      "sha256": "a9c55ef7129fcce9198bcd9cb1a4fb91a5140e18de5727045fa5f94bb15f7a62"
     },
     {
       "path": "index.ru.html",
@@ -1546,13 +1546,13 @@
     },
     {
       "path": "instructions/index.html",
-      "bytes": 84012,
-      "sha256": "7d845097b7e313a803f164df2da3973134182531605935f8443739a8e0d4b1d6"
+      "bytes": 84018,
+      "sha256": "ecfaf207348ac092316ed60746b91122c584b7afd9471f88a3538fc44c539896"
     },
     {
       "path": "join/index.html",
-      "bytes": 83839,
-      "sha256": "13fbb66330f3459a1b4c3d2d8d1a2b003a5c8c79751bf49a7b3c81b61650e967"
+      "bytes": 83845,
+      "sha256": "e642ac88088e93ebc8ce89efec4c510aec344d4494131942614bddc32e8b9a83"
     },
     {
       "path": "join/index.ru.html",
@@ -1586,8 +1586,8 @@
     },
     {
       "path": "moderation/index.html",
-      "bytes": 84084,
-      "sha256": "763bddab651a632d99b331d6009dbc58711755dd6a6ad78bf6ebd091ba9f4f2c"
+      "bytes": 84091,
+      "sha256": "3a3ef64bc79d195bb0d880ff93c0b321be323a984d9ba1701d4193b4e116f9b3"
     },
     {
       "path": "news-content/images/ASGRacing_July2026/ASGRacing_July2026_Finishedv2.png",
@@ -1626,13 +1626,13 @@
     },
     {
       "path": "news/article/index.html",
-      "bytes": 83911,
-      "sha256": "72b73553391e8a15714ed398a45f47e6f43e1352ef2c4b9778ff3533eb36e834"
+      "bytes": 83917,
+      "sha256": "5f2510810be47b0e8b0870179033fa2d1df3e2a802327d8d6e24e50ca2a7db0f"
     },
     {
       "path": "news/index.html",
-      "bytes": 83931,
-      "sha256": "79eca01a1f2de25f7570b4544d56a67d3163e983c71c94e1fd81fc8290d501e3"
+      "bytes": 83937,
+      "sha256": "5c86576a25156c2f5cd3dc0b00fe531c2c1aa7d467514a661d09e613aabe954e"
     },
     {
       "path": "old/about/index.html",
@@ -1652,12 +1652,12 @@
     {
       "path": "old/bans/index.html",
       "bytes": 15877,
-      "sha256": "5c533015855e1ce66a3085e5f7fcf33db563f858e1fbe61921a23438d79d739a"
+      "sha256": "d5fd7f303be182bbdf016b0fdd13459795558eab7b285482387954924f03f04e"
     },
     {
       "path": "old/cars/index.html",
       "bytes": 17010,
-      "sha256": "535f31a570fdec50b89ccf2d673325c9bd6e0cf2b188fe4cc0e657d95e88c62f"
+      "sha256": "b660a2a1368895a0e56346e3d4bec0e5f19c9247f2353cdf3f656eb3ad42f180"
     },
     {
       "path": "old/clubs/index.html",
@@ -1667,7 +1667,7 @@
     {
       "path": "old/community/index.html",
       "bytes": 16372,
-      "sha256": "c49dc26980666d038a1d0cb02caa24ac93297a3bae12bd192552a720d0ccf3a8"
+      "sha256": "c6ff9a791c3d40f03f42dbb11ca1feb47f79a112df0c9de53201b058ca2a3b3f"
     },
     {
       "path": "old/cookies/index.html",
@@ -1676,8 +1676,8 @@
     },
     {
       "path": "old/driver/index.html",
-      "bytes": 22409,
-      "sha256": "429e1cf6d7c9617e81afe951d1cb712af1ea89efed10d4d51d2ca3ef1f72c417"
+      "bytes": 22405,
+      "sha256": "7284b6fb59c4ca7a9b59b0abe1870e33b3380dfc97f60b634e58f5a8f11efd5b"
     },
     {
       "path": "old/en/about/index.html",
@@ -1697,12 +1697,12 @@
     {
       "path": "old/en/bans/index.html",
       "bytes": 15240,
-      "sha256": "c5a384c7dad539df969969ed3d8338e5078dcdd1af21a25ee69f5ec99c2d5e5d"
+      "sha256": "48123b832f19330bbdd0b4f1b92e404b1b6a6becad8fe9a167974bb12d0b0fc7"
     },
     {
       "path": "old/en/cars/index.html",
       "bytes": 16255,
-      "sha256": "186cd1fcdbdcd99e69eacb2e584fb7475a84835d0d3a20e4b93393d5ae0af51e"
+      "sha256": "f53d19aaf0946832e6170767dd314495774f58b9abdf295099c468d86721d411"
     },
     {
       "path": "old/en/clubs/index.html",
@@ -1712,7 +1712,7 @@
     {
       "path": "old/en/community/index.html",
       "bytes": 15611,
-      "sha256": "c5d04bc7d535a111cc83543fff0d25b3fc2cc4b5e9248945d15251bd3b3d247a"
+      "sha256": "59328ac70963ed2a368972394306f66446d7e73e8734804436aa9902dbb9fd5f"
     },
     {
       "path": "old/en/cookies/index.html",
@@ -1721,8 +1721,8 @@
     },
     {
       "path": "old/en/driver/index.html",
-      "bytes": 21529,
-      "sha256": "d9faa1cf3c5cb98bb086873cf4ec8cc14d689867ab1c2969852a4292499a49ff"
+      "bytes": 21525,
+      "sha256": "b3b72508bfb9447870162acb3e7c21216dce43275a6af4cb7e3fcf2235d79ffa"
     },
     {
       "path": "old/en/events/index.html",
@@ -1732,7 +1732,7 @@
     {
       "path": "old/en/fun-stats/index.html",
       "bytes": 16144,
-      "sha256": "4581d3b320d60602bba36426efa6f7440c95dc1bc42e7e860c755ed0828eebea"
+      "sha256": "31d15c75c3cd54b01e00bbb4cd09aac3ac027e4c1371a84178a77fb5c034691f"
     },
     {
       "path": "old/en/hourly/championship/history/index.html",
@@ -1761,8 +1761,8 @@
     },
     {
       "path": "old/en/index.html",
-      "bytes": 62976,
-      "sha256": "4c5fdaf569e02fce0a0851a22dfff7973037ded98d695c4f7e929144a518bea9"
+      "bytes": 62971,
+      "sha256": "7543b4ec14051025f52293fdedaa9a2a6c41ad9907f4c5a4e75f1a7d4da5dfc0"
     },
     {
       "path": "old/en/join/index.html",
@@ -1777,7 +1777,7 @@
     {
       "path": "old/en/news/index.html",
       "bytes": 14794,
-      "sha256": "f9919e201b591980eec5659a364be87d0622ce14275cc22520c5bfc1272814f0"
+      "sha256": "c93f510bb9add380a340fb7dad8efffd092694c54f5c284d1ecbb7f4081a99f7"
     },
     {
       "path": "old/en/portal-ops/index.html",
@@ -1791,8 +1791,8 @@
     },
     {
       "path": "old/en/races/index.html",
-      "bytes": 19294,
-      "sha256": "d6d91e8fa36a32c4294eabafced7a299329787794de9bff0da92a8f8099d8377"
+      "bytes": 19289,
+      "sha256": "4f869dff7b4c18dd9acc50611c5c4a30726d653ce2c51ae9c3ee1fab38287f34"
     },
     {
       "path": "old/en/teams/detail/index.html",
@@ -1812,7 +1812,7 @@
     {
       "path": "old/fun-stats/index.html",
       "bytes": 17198,
-      "sha256": "7ab73f06a046b49d501a97c22296e14b9fe5d821521242ab7e12069f7bb12db4"
+      "sha256": "9a62afdbf69e44728f5ed9b0848971bdd70ae9e18300e18c7fe27c2ddd86c40b"
     },
     {
       "path": "old/hourly/championship/history/index.html",
@@ -1841,8 +1841,8 @@
     },
     {
       "path": "old/index.html",
-      "bytes": 67873,
-      "sha256": "ae3c818579146edf873cdd7855cd11d1e8a3e67ed39d9fa48b854d4b7faafa1d"
+      "bytes": 67868,
+      "sha256": "238663196b1d2cc1f0b0c52cd77e0a9de412fc8fe826c46994ce0e8a932f7513"
     },
     {
       "path": "old/join/index.html",
@@ -1857,7 +1857,7 @@
     {
       "path": "old/news/index.html",
       "bytes": 15280,
-      "sha256": "0927dfa7832789849204a3eb375183484b3136f8a0b515a1c063e5fb44dd4afc"
+      "sha256": "fb8e2f1bdc4828c5e8ab410aec209401ea7f9359030da3ee9c0ffdac8dce45b9"
     },
     {
       "path": "old/portal-ops/index.html",
@@ -1871,8 +1871,8 @@
     },
     {
       "path": "old/races/index.html",
-      "bytes": 20369,
-      "sha256": "31875808f97260832584a74c28ecd85da64f95c4f01c0c653b0623c5faa43d65"
+      "bytes": 20364,
+      "sha256": "555a292d39ba2b14ff5eb84728a3fb82fa47bbfbcf2705f218532df24b604c75"
     },
     {
       "path": "old/teams/detail/index.html",
@@ -1946,23 +1946,23 @@
     },
     {
       "path": "portal-ops/index.html",
-      "bytes": 84104,
-      "sha256": "224f68b430e1717aca746a53b79874533a54868b650a4346d20f62f6a4e669a7"
+      "bytes": 84111,
+      "sha256": "b4252107703a493b4187b3dbdea95703a19a4af5d0a02b1bfbb907feff55a12a"
     },
     {
       "path": "privacy/index.html",
-      "bytes": 84019,
-      "sha256": "1782680bd0f7b815b986394fed4a26c08232ab103bcb50de7295db881ab894d0"
+      "bytes": 84025,
+      "sha256": "63c36bc241b86d53332f0ca3873c6af188815724fdde06e6090f4e6585c4e51e"
     },
     {
       "path": "race/index.html",
-      "bytes": 84103,
-      "sha256": "004bd13f88741195358963868093e9a2174265a0ddddf54557fc6fdb5df67de0"
+      "bytes": 84109,
+      "sha256": "cbd65d304ea8c17439e65dbc42e24371ae8432b7110d14dc9c797c701b04f775"
     },
     {
       "path": "races/index.html",
-      "bytes": 84087,
-      "sha256": "e401728014d1574ce793bd3b6ee970bdcc997580b9cd2a6696deb50c84485d7e"
+      "bytes": 84093,
+      "sha256": "9b3c0e0ca01723350feca401c5650202366505bd527ad667405770abdf7551a6"
     },
     {
       "path": "robots.txt",
@@ -2186,48 +2186,48 @@
     },
     {
       "path": "src/entrypoints/bans.js",
-      "bytes": 116,
-      "sha256": "4588dc23063337d16ada471696e99013db915e3191f371f31cea930406ea54b1"
+      "bytes": 122,
+      "sha256": "b913cb1e829b25424282c22ea181fb03132110607ac90414375aa6ad29b09a8b"
     },
     {
       "path": "src/entrypoints/cars.js",
-      "bytes": 116,
-      "sha256": "76ec9631645e2552430c9802a98c4e9f142b2c4f4c27d2b44301c094a61d22c4"
+      "bytes": 122,
+      "sha256": "d774c59897907fd8d218863699a47cf06834235ef97801442e1437cdead59ced"
     },
     {
       "path": "src/entrypoints/community.js",
-      "bytes": 121,
-      "sha256": "aaf9a42a5a6320462e17ea13bd89f5d56a6e39e8655cab2cb99299ee6bd1874b"
+      "bytes": 127,
+      "sha256": "a62152ded8719a85d2195d7dce12c63c798e8fe4478b28d10b6c06e852c503ca"
     },
     {
       "path": "src/entrypoints/driver.js",
-      "bytes": 3409,
-      "sha256": "443b64b1cc6755d8c8072da1d468e6fb956ab82093bfe9f903aea7d68e3375be"
+      "bytes": 3410,
+      "sha256": "423b3baf0d82d2883eb1155c924ab19e2cb63627e988fc1ed1ebc2c02330c365"
     },
     {
       "path": "src/entrypoints/fun-stats.js",
-      "bytes": 121,
-      "sha256": "1c77f3ab750e3d83d4f21c1a8e81ea173a3ba19f75a0aa86b3eba55d7ba58054"
+      "bytes": 127,
+      "sha256": "d6634ec806daed3ad2d8298962054a3b25eb77c7a235a9443fd6a7094546cb1e"
     },
     {
       "path": "src/entrypoints/home.js",
-      "bytes": 179,
-      "sha256": "3888986c4c56b5da4d488c9a4b1d9fbcb0819715ecf850e0dfc0ecca7f409b4f"
+      "bytes": 180,
+      "sha256": "37652c5e9890e26b7e4e0cf75e88349981edf80177cfba1847696be620289173"
     },
     {
       "path": "src/entrypoints/legacy-bootstrap.js",
-      "bytes": 222,
-      "sha256": "8b5244ca4a55703c4540a7b92db4bf0ad594672c82732c6c2242f48c45bf01f4"
+      "bytes": 223,
+      "sha256": "90a967d44b4e64c5e8f1911cd6ee18232369b02fe1011de4d96b9226f83999dd"
     },
     {
       "path": "src/entrypoints/news.js",
-      "bytes": 116,
-      "sha256": "1b826e4403527e7084031a19556f89e0c883dca28bbc4218e919287972dc7538"
+      "bytes": 122,
+      "sha256": "7c0723f00d27c76fbdc1dac7e91e98ef8e90652ebde4d7d31ef642f6c75c5404"
     },
     {
       "path": "src/entrypoints/races.js",
-      "bytes": 282,
-      "sha256": "cc40af3150ba671c20a68ab5458867a689b9e2330992d4ed1399c20f67cb3ea2"
+      "bytes": 283,
+      "sha256": "53b0cd05863c9a9356940bb18182321b5576c71900f0379980cf9f6519a3589f"
     },
     {
       "path": "src/features/auth/clubs-teams-auth-model.js",
@@ -2295,9 +2295,14 @@
       "sha256": "fdb5eecbf4198d19a0d2c001a8b3acb8b8494d07418de631a357f2938a01254d"
     },
     {
+      "path": "src/features/server-status/roster.js",
+      "bytes": 2638,
+      "sha256": "b45b61d7e6e99c51265adbcece9b89bda340360ca3c50647bdef7895950942aa"
+    },
+    {
       "path": "src/features/server-status/telemetry.js",
-      "bytes": 2280,
-      "sha256": "edad9444954c736908f6e4641d4e4a207ad264ab2e4b309d878bf658e793a352"
+      "bytes": 3125,
+      "sha256": "ff3ee55e4869e533f5c82ebc9718f32633172dfd4f88f7540afdac35981dcb15"
     },
     {
       "path": "src/features/server-status/track-background.js",
@@ -2906,8 +2911,13 @@
     },
     {
       "path": "styles/components/server-players-modal.css",
-      "bytes": 1471,
-      "sha256": "92f92c0c68a7a0f57d11ae224c0a1d86fac640b7b09779c0c475e79b7f38bff2"
+      "bytes": 1532,
+      "sha256": "e189fd0cbd9e50af7a2d0934aef43e5027403195e9fdeddd5f6bdf082eeb096a"
+    },
+    {
+      "path": "styles/components/server-roster.css",
+      "bytes": 3486,
+      "sha256": "1b5f3abc1356bbec3e2e2f5b8646e5b5b5044c675c0d21635bbc66b06e1620c5"
     },
     {
       "path": "styles/components/server-sticky-layout.css",
@@ -2981,13 +2991,13 @@
     },
     {
       "path": "teams/detail/index.html",
-      "bytes": 84024,
-      "sha256": "284686437e2872ffab02c33682ab5b89d32933a9a9c5ba7e1134dbcd993f67a3"
+      "bytes": 84030,
+      "sha256": "82cba6262c4af49a08d14893351ee5e36a4eec4e5a638ee0b6e293166633e690"
     },
     {
       "path": "teams/index.html",
-      "bytes": 83988,
-      "sha256": "f184b1d1805cad2a587dcdce6c5177e8f0312e5fe0ef27346352d9d035458bfa"
+      "bytes": 83994,
+      "sha256": "4467535a674edc867128569036788329fd55364968036f196065257fd8960dc5"
     },
     {
       "path": "teams/index.ru.html",
@@ -3032,7 +3042,7 @@
     {
       "path": "v2/boot/build.json",
       "bytes": 3291,
-      "sha256": "31eb1b1de9f668637e4dfbddbf2b14ccb33668027ff5060994a1035fcaea7111"
+      "sha256": "18a1334f2d574bf4342ad7745371ad1e572a1bf40c41db64174188e4ac032323"
     },
     {
       "path": "v2/boot/chunks/account-3LBIY7IB.js",
@@ -3183,6 +3193,11 @@
       "path": "v2/boot/chunks/chunk-KBJDICRR.js",
       "bytes": 36127,
       "sha256": "4131e2dbcc818ab08ba804fb228ca67ed73695ef8d3c14f37cc98b41a3f041d0"
+    },
+    {
+      "path": "v2/boot/chunks/chunk-KCQU6JVE.js",
+      "bytes": 14973,
+      "sha256": "9fb79bcfa242c17b4cc3c4ddcbc62cc1516d7c880232fa2a3d74fe53a1cf052b"
     },
     {
       "path": "v2/boot/chunks/chunk-LKEH24X7.js",
@@ -3475,6 +3490,11 @@
       "sha256": "6c15e29bd8a6ad37ac139492a7862006d6819bbb716b5ec9ba12849db58d531c"
     },
     {
+      "path": "v2/boot/chunks/home-5WGGNUZM.js",
+      "bytes": 491458,
+      "sha256": "4d053c5536a3660a29753940bf89b8cd2970acf5d4941610e5e3f9461cc760ea"
+    },
+    {
       "path": "v2/boot/chunks/home-7BHZPZUJ.js",
       "bytes": 513713,
       "sha256": "d7376903a58ade9748548a9f52f287d206decda6fe84fda1f27ba4e438317840"
@@ -3636,8 +3656,8 @@
     },
     {
       "path": "v2/boot/home.js",
-      "bytes": 193923,
-      "sha256": "03dff51be8c6101abaa772a8589f3eabee8bd00cc6e9dc63d41a036b82acbf7c"
+      "bytes": 193907,
+      "sha256": "dc247a9d42b7659777e117ca0188d8e1fd11e5b5c3e452cdf0aa6d8c8daa8fb8"
     },
     {
       "path": "v2/bridge.js",
@@ -3646,8 +3666,8 @@
     },
     {
       "path": "v2/build-inputs.json",
-      "bytes": 25018,
-      "sha256": "5f70166e55542b4effd1524965b4456384e216c7951b0ef6d0593adc20890a94"
+      "bytes": 25317,
+      "sha256": "549948763a163a9d6732e765b31118161ed5db496762f50e9722deefc236bd38"
     },
     {
       "path": "v2/copy.js",
@@ -3811,13 +3831,13 @@
     },
     {
       "path": "v2/home.css",
-      "bytes": 36839,
-      "sha256": "d87b03c18c02e87102374c2b7317f7bb8b1703884dcce20d33c2566edde98367"
+      "bytes": 36917,
+      "sha256": "f1732c1788ee955e8948c0a7a462028aafcf2c90fcae77aa241cde2901ca2084"
     },
     {
       "path": "v2/home.js",
-      "bytes": 48325,
-      "sha256": "ff3f47fc5ec839bed8a2c45431baafbb5c111f7c778672f16c5fc963cf4fce7f"
+      "bytes": 48364,
+      "sha256": "e045934905b5791aa12ecc11a8922d37569bf8c49697f5edc5b6a54321a34170"
     },
     {
       "path": "v2/index.html",
@@ -3996,8 +4016,8 @@
     },
     {
       "path": "v2/presentation.js",
-      "bytes": 28477,
-      "sha256": "c90ebd989fa82651662ab6ed4a39d20dce461a38a96098bd2087963abdc6c6ee"
+      "bytes": 28564,
+      "sha256": "14404f4c01da5fc86ce524f76d4b00b4e676293606558b2d6133241b8c5ced55"
     },
     {
       "path": "v2/recent-races.js",
@@ -4157,12 +4177,12 @@
     {
       "path": "v2/runtime-source.json",
       "bytes": 334,
-      "sha256": "4c15ed11f4ea187a3267bf2f461656da5824bbe6556648b654953bb7ac85fad2"
+      "sha256": "e6a403b18813e9f5365adfa70d3e2a3ba10bb842ac0304b12e5c8e3faccb2583"
     },
     {
       "path": "v2/runtime/home.js",
-      "bytes": 498651,
-      "sha256": "3bb0cbe7801ddfbe0245f7d2a69fc07f5dda7a6313f8bb5193b32028658c8cf8"
+      "bytes": 497944,
+      "sha256": "69030ee6f8708079d0ee220a77e289b6077023ede05b7ebebdd499c98a215213"
     },
     {
       "path": "v2/safety-history.js",
@@ -4188,6 +4208,11 @@
       "path": "v2/styles/runtime-27ea09d7d8d014e9.css",
       "bytes": 343288,
       "sha256": "27ea09d7d8d014e9ed4af02219b3a3125c09aade65be3b3cbf4d742dd59ab954"
+    },
+    {
+      "path": "v2/styles/runtime-d20bb740f5ec82ad.css",
+      "bytes": 346776,
+      "sha256": "d20bb740f5ec82adfcee74e4e44b062c506df79bde45ca5439ac507cb509b0e2"
     },
     {
       "path": "yandex_c76adf2164af15e6.html",
