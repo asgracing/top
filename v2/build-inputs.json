@@ -8,7 +8,7 @@
     },
     {
       "path": "app.js",
-      "sha256": "facf6207f0b4ab40ec3300ee182ca1180f7d99010aa1dc01b36a791a34ceb3d5"
+      "sha256": "3ab8e33b820442c94d22c18447baa58251a7a9611fdf75b9c399908c89d4e7c7"
     },
     {
       "path": "community/posts.js",
@@ -48,7 +48,7 @@
     },
     {
       "path": "scripts/build-v2.mjs",
-      "sha256": "a7853cbb1473c4e9a634ec9a75228966b2d7247900bf232df56cdd07d46d438e"
+      "sha256": "dc54e8ddc7c388f3c578fa885636dd33e87c714da8b6f1a93a8bacaab7fe3d3a"
     },
     {
       "path": "scripts/generate-localized-pages.mjs",
@@ -108,7 +108,7 @@
     },
     {
       "path": "src/features/server-status/roster.js",
-      "sha256": "b45b61d7e6e99c51265adbcece9b89bda340360ca3c50647bdef7895950942aa"
+      "sha256": "4b2aef4f13ab5a4f189cfad3c3cd2155ead0df9787764e39411636255b8cca95"
     },
     {
       "path": "src/features/server-status/telemetry.js",
@@ -420,11 +420,11 @@
     },
     {
       "path": "styles/components/server-players-modal.css",
-      "sha256": "3d49c0176cb3af0c1c3e1cee548aec5e60777b277f890b1b2ace4af1f9864f4c"
+      "sha256": "81abc46274e745ce0c878153f306f31fc4121c00e6429e46044e685a223c453d"
     },
     {
       "path": "styles/components/server-roster.css",
-      "sha256": "1b5f3abc1356bbec3e2e2f5b8646e5b5b5044c675c0d21635bbc66b06e1620c5"
+      "sha256": "6be1efc3fa9037a314d6d86a571a7a4cdd8b5d13a687c0db1a40a18351f9ca73"
     },
     {
       "path": "styles/components/server-sticky-layout.css",
@@ -476,15 +476,15 @@
     },
     {
       "path": "v1-source/html/bans/index.html",
-      "sha256": "928d607e09c25073da35067d625d474e92bbc1d16f069a77a7cde381ec0d2cc7"
+      "sha256": "d743c7e81e1aae33f247d751327925599e8dd78461b3a678faa2e9d5b14d1d67"
     },
     {
       "path": "v1-source/html/cars/index.html",
-      "sha256": "675dba18686aef3cf97af3075beda7c81a96d08d4cb8a2a653f379cc19bdb871"
+      "sha256": "97331baac068f002b9e46272e91a3eb6c45a9e62e81a44bde9cbb5f7ba836cd8"
     },
     {
       "path": "v1-source/html/community/index.html",
-      "sha256": "2f748d24489f8441fce4cd9bed4e3a961bbfa06239e62111f27acc9dbea0c06d"
+      "sha256": "1a3ed203c88db8bd5f91c8296fa867558c74516350240f1e968ac47b0982fe16"
     },
     {
       "path": "v1-source/html/cookies/index.html",
@@ -492,11 +492,11 @@
     },
     {
       "path": "v1-source/html/driver/index.html",
-      "sha256": "d49d10e02324c75613974774d63a32dcde1c527025dd52119b6ee23582381875"
+      "sha256": "69e37e584c9c3b2deb74572f1709e0275c95a2f0eb435d64124479d725de8d76"
     },
     {
       "path": "v1-source/html/fun-stats/index.html",
-      "sha256": "e9b61e5801938a28798f359fbe008da5af864e5ac929006b1517daf00775969a"
+      "sha256": "412ba2e71342513e800ffb28fe22d67c53a717db942d982fabd83c95af40f6e9"
     },
     {
       "path": "v1-source/html/hourly/championship/history/index.html",
@@ -512,7 +512,7 @@
     },
     {
       "path": "v1-source/html/index.html",
-      "sha256": "a135f1bf0e26b8c6db270fda9a5264c7c8af2eea3405e399a3685bf4da0ecbf2"
+      "sha256": "daaaf3a408fcd2a06f4770803df4799ece641cd7870d2ae4157a0c448da62a4b"
     },
     {
       "path": "v1-source/html/moderation/index.html",
@@ -520,7 +520,7 @@
     },
     {
       "path": "v1-source/html/news/index.html",
-      "sha256": "4285852247fbbca0d34276e6f1dd0fcdba84b2dab4062b37892dbf1b224c288b"
+      "sha256": "6df7409d394a0aa47159356d17e6b185a1cb1dd04a218710105cfd307f0c54c7"
     },
     {
       "path": "v1-source/html/portal-ops/index.html",
@@ -532,7 +532,7 @@
     },
     {
       "path": "v1-source/html/races/index.html",
-      "sha256": "60b2ee632a7598087504c0f8b133b61e80ba3a76626b103b486f506071169df5"
+      "sha256": "c46ca859d684263214e4e23b7ab149ee650f817b372b87f1ae551261c5812d1d"
     },
     {
       "path": "v1-source/html/teams/index.html",
@@ -624,7 +624,7 @@
     },
     {
       "path": "v2/home.js",
-      "sha256": "d90e2cef7811319b273c0438b5b60cfd52e0a29c32305188a760f4819ec94b83"
+      "sha256": "3e86aa2d7a6c331373aaad9b87e46b72775ed72e53cb12729ec4d2bdf816a524"
     },
     {
       "path": "v2/mobile-navigation.js",
@@ -684,7 +684,7 @@
     },
     {
       "path": "v2/presentation.js",
-      "sha256": "c54ff3c920ef292dfdce45944097c0e43e3acc76850c8915901d0231a8ec80b7"
+      "sha256": "b39f4ad6f52c1e1eb405c8c5f3e4e9bd750d56f9615c49c2d4868c8e055df221"
     },
     {
       "path": "v2/recent-races.js",

@@ -95,7 +95,8 @@ try{
     assert.equal(await rows.first().locator('.pilot-position').isVisible(),true,'Current place remains visible on mobile');
     assert.equal(await rows.first().locator('.pilot-best-lap').textContent(),'1:55.132');
     assert.equal(await rows.first().locator('.pilot-last-lap').textContent(),'1:56.500');
-    assert.match(await rows.first().locator('.pilot-meta').textContent(),/#765/);
+    assert.equal(await rows.first().locator('.pilot-number').textContent(),'#765');
+    assert.equal(await rows.first().locator('.pilot-line> :first-child').getAttribute('class'),'pilot-number');
     assert.equal(await rows.first().locator('.roster-rating-pair>span').count(),2);
     const color=(index,cell)=>rows.nth(index).locator(cell).evaluate(el=>getComputedStyle(el).color);
     assert.equal(await color(0,'.pilot-best-lap'),'rgb(196, 154, 255)');
@@ -112,10 +113,18 @@ try{
     assert.equal(await page.evaluate(()=>document.documentElement.scrollWidth>innerWidth+1),false,'No horizontal page overflow');
     assert.equal(await page.locator(modal+' .server-roster-scroll').evaluate(el=>el.clientWidth<=el.parentElement.clientWidth+1),true,'Table scroll stays inside its parent');
     if(!legacy)assert.equal(await page.locator('#v2-modal .modal-body').evaluate(el=>el.scrollWidth<=el.clientWidth+1),true,'Modal body has no horizontal overflow');
-    assert.equal(await rows.last().locator('.pilot-name').evaluate(el=>el.scrollWidth<=el.clientWidth+1),true,'Long names wrap inside their column');
+    assert.equal(await rows.last().locator('.pilot-name').evaluate(el=>getComputedStyle(el).whiteSpace),'nowrap');
+    assert.equal(await rows.last().locator('.pilot-identity').getAttribute('title'),'Very long driver name for narrow viewport verification');
+    const lines=await rows.first().evaluate(row=>Array.from(row.querySelectorAll('.pilot-number,.pilot-name,.pilot-meta'),el=>Math.round(el.getBoundingClientRect().top)));
+    assert.ok(Math.max(...lines)-Math.min(...lines)<8,'Number, name and lap count share a single line');
+    assert.equal(await page.locator(modal+' thead th').nth(3).evaluate(el=>getComputedStyle(el).whiteSpace),'nowrap');
+    assert.equal(await rows.first().locator('.pilot-car').evaluate(el=>Math.round(el.getBoundingClientRect().width)),220);
+    assert.equal(await rows.first().locator('.pilot-car img').evaluate(el=>Math.round(el.getBoundingClientRect().width)),44);
+    const heights=await rows.evaluateAll(elements=>elements.map(el=>Math.round(el.getBoundingClientRect().height)));
+    assert.ok(Math.max(...heights)-Math.min(...heights)<=1,'Long names do not increase row height');
     await page.screenshot({path:path.join(output,language+'-'+width+'-'+variant+'.png'),fullPage:false});
     if(width<600){
-      await page.locator(modal+' .server-roster-scroll').evaluate(el=>{el.scrollLeft=175;});
+      await page.locator(modal+' .server-roster-scroll').evaluate(el=>{el.scrollLeft=275;});
       await page.screenshot({path:path.join(output,language+'-'+width+'-laps.png'),fullPage:false});
       assert.equal(await page.evaluate(()=>document.documentElement.scrollWidth>innerWidth+1),false,'Only the table scrolls');
     }
@@ -126,7 +135,7 @@ try{
     assert.equal(await color(1,'.pilot-best-lap'),'rgb(196, 154, 255)');
     assert.equal(await color(1,'.pilot-last-lap'),'rgb(196, 154, 255)');
     assert.equal(await color(0,'.pilot-best-lap'),legacy?'rgb(57, 217, 138)':'rgb(64, 229, 142)');
-    if(width<600)assert.equal(await page.locator(modal+' .server-roster-scroll').evaluate(el=>el.scrollLeft),175,'Snapshot refresh preserves table scroll');
+    if(width<600)assert.equal(await page.locator(modal+' .server-roster-scroll').evaluate(el=>el.scrollLeft),275,'Snapshot refresh preserves table scroll');
     assert.equal(requested.filter(p=>p.endsWith('/server_status.json')).length,0,'Legacy status must not override the live file');
     assert.deepEqual(errors,[]);assert.equal(remoteWrites,0);
     reports.push({language,width,variant,servers:9,columns:6,rows:5,position:3,countdown_advanced:!legacy,lap_colors_checked:true,live_recolor_checked:true,remote_writes:remoteWrites});

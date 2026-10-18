@@ -1,7 +1,7 @@
 import {eventKind} from './models.js?v=20261006v2k';
 import {resolveTrackBackgroundFile} from '/src/features/server-status/track-background.js';
 import {serverSessionLabel} from './server-session.js?v=20261018telemetry1';
-import {renderServerRoster} from '../src/features/server-status/roster.js?v=20261019servercols1';
+import {renderServerRoster} from '../src/features/server-status/roster.js?v=20261019serverrow2';
 import {safetyHistoryComponents} from './safety-history.js?v=20261010profile1';
 import {loadLeaderboardRank,profileWithLeaderboardRank} from '/src/shared/leaderboard-rank.js?v=20261013delivery1';
 

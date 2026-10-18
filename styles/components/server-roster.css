@@ -1,25 +1,28 @@
 .server-roster-scroll { min-width:0; max-width:100%; overflow:auto; overscroll-behavior-x:contain; margin:10px 0; border:1px solid #6583a63d; border-radius:3px; }
 .server-roster-scroll:focus-visible { outline:2px solid #8ed8f8; outline-offset:2px; }
-.server-roster-scroll .server-roster-table.server-driver-list { display:table; width:100%; min-width:850px; table-layout:fixed; border-collapse:separate; border-spacing:0; margin:0; color:#e8eef7; font-size:13px; }
+.server-roster-scroll .server-roster-table.server-driver-list { display:table; width:100%; min-width:960px; table-layout:fixed; border-collapse:separate; border-spacing:0; margin:0; color:#e8eef7; font-size:13px; }
 .server-roster-table .roster-col-position { width:52px; }
-.server-roster-table .roster-col-name { width:22%; }
-.server-roster-table .roster-col-best,.server-roster-table .roster-col-last { width:112px; }
+.server-roster-table .roster-col-best { width:112px; }
+.server-roster-table .roster-col-last { width:132px; }
 .server-roster-table .roster-col-ratings { width:166px; }
-.server-roster-scroll .server-roster-table.server-driver-list th,.server-roster-scroll .server-roster-table.server-driver-list td { position:static; inset:auto; z-index:auto; min-width:0; max-width:none; padding:12px 10px; vertical-align:middle; text-align:left; white-space:normal; overflow:hidden; border:0; border-bottom:1px solid #6583a63d; background:#142131; }
-.server-roster-scroll .server-roster-table th { background:#1a2b3f; color:#acbfd5; font-size:11px; font-weight:650; white-space:normal; }
+.server-roster-table .roster-col-car { width:220px; }
+.server-roster-scroll .server-roster-table.server-driver-list th,.server-roster-scroll .server-roster-table.server-driver-list td { position:static; inset:auto; z-index:auto; min-width:0; max-width:none; padding:8px 10px; vertical-align:middle; text-align:left; white-space:nowrap; overflow:hidden; border:0; border-bottom:1px solid #6583a63d; background:#142131; }
+.server-roster-scroll .server-roster-table th { background:#1a2b3f; color:#acbfd5; font-size:11px; font-weight:650; white-space:nowrap; }
 .server-roster-table tbody tr:last-child td { border-bottom:0; }
 .server-roster-scroll .server-roster-table.server-driver-list .pilot-position { text-align:center; color:#acbfd5; }
 .server-roster-scroll .server-roster-table.server-driver-list .pilot-identity { display:table-cell; min-width:0; }
-.server-roster-scroll .server-roster-table.server-driver-list .pilot-name { display:block; min-width:0; max-width:100%; white-space:normal; overflow-wrap:anywhere; color:#e8eef7; font-weight:700; font-size:13px; }
-.server-roster-table .pilot-meta { display:block; margin-top:4px; font-size:10px; color:#acbfd5; }
-.server-roster-scroll .server-roster-table.server-driver-list .pilot-ratings { display:table-cell; padding:12px 6px; }
+.server-roster-table .pilot-line { display:grid; grid-template-columns:auto minmax(0,1fr) auto; align-items:center; gap:6px; min-width:0; white-space:nowrap; }
+.server-roster-table .pilot-line .pilot-number { color:#fbd572; font-size:11px; white-space:nowrap; }
+.server-roster-scroll .server-roster-table.server-driver-list .pilot-name { display:block; min-width:0; max-width:100%; white-space:nowrap; overflow:hidden; text-overflow:ellipsis; color:#e8eef7; font-weight:700; font-size:13px; }
+.server-roster-table .pilot-meta { display:inline; margin:0; font-size:10px; color:#acbfd5; white-space:nowrap; }
+.server-roster-scroll .server-roster-table.server-driver-list .pilot-ratings { display:table-cell; padding:8px 6px; }
 .server-roster-table .roster-rating-pair { display:grid; grid-template-columns:1fr 1fr; align-items:center; gap:6px; text-align:center; }
 .server-roster-table .roster-rating-pair>span { min-width:0; }
 .server-roster-table .roster-rating-pair .rating-badge { font-size:10px; white-space:nowrap; }
-.server-roster-scroll .server-roster-table.server-driver-list .pilot-car { display:table-cell; min-width:0; padding:12px 10px; }
-.server-roster-table .pilot-car .car-cell { display:grid; grid-template-columns:60px minmax(0,1fr); align-items:center; gap:8px; }
-.server-roster-table .pilot-car img { width:60px; height:32px; object-fit:contain; }
-.server-roster-table .pilot-car .car-cell>span { overflow-wrap:anywhere; font-size:12px; }
+.server-roster-scroll .server-roster-table.server-driver-list .pilot-car { display:table-cell; min-width:0; padding:8px 10px; }
+.server-roster-scroll .server-roster-table.server-driver-list .pilot-car .car-cell { display:grid; grid-template-columns:44px minmax(0,1fr); align-items:center; gap:6px; min-width:0; }
+.server-roster-scroll .server-roster-table.server-driver-list .pilot-car img { width:44px; height:26px; object-fit:contain; }
+.server-roster-table .pilot-car .car-cell>span { min-width:0; white-space:nowrap; overflow:hidden; text-overflow:ellipsis; font-size:12px; }
 .server-roster-scroll .server-roster-table .server-lap { font-variant-numeric:tabular-nums; white-space:nowrap; font-weight:650; color:#fff; }
 .server-roster-scroll .server-roster-table .server-lap.is-personal-best { color:var(--green,#40e58e); }
 .server-roster-scroll .server-roster-table .server-lap.is-session-best { color:#c49aff; text-shadow:0 0 10px #a855f72b; }
