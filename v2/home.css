@@ -161,7 +161,6 @@ body[data-v2] .server-driver-list .pilot-car { min-width:0; display:flex; flex-d
 body[data-v2] .server-driver-list .pilot-car>small { color:#acbfd5; font-size:11px; overflow-wrap:anywhere; white-space:normal; }
 body[data-v2] .server-driver-list .pilot-identity .pilot-name { min-width:0; }
 body[data-v2] .server-driver-list .pilot-identity .pilot-position { display:inline; min-width:14px; }
-body[data-v2] .server-driver-list .pilot-identity .pilot-position { display:inline; min-width:14px; }
 body[data-v2] .server-summary-list { display:grid; gap:10px; }
 body[data-v2] .server-summary-item { display:flex; flex-direction:column; gap:5px; text-align:left; border-bottom:1px solid #53698055; padding:10px 0; }
 body[data-v2] .server-summary-item>b { font-size:15px; }

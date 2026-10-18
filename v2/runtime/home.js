@@ -31,7 +31,8 @@ import {
 } from "/news-read-state.js?v=20260813newsread1";
 import { createAuthHeaderController, safeAvatarUrl } from "/src/features/auth/header-auth.js?v=20261011notifications1";
 import { applyRandomTrackBackground, normalizeTrackBackgroundCode, resolveTrackBackgroundFile } from "/src/features/server-status/track-background.js?v=20260726staticfallback1";
-import { bindServerStatusFreshness, isServerStatusStale } from "/src/features/server-status/freshness.js?v=20260825statusfreshness1";
+import { bindServerStatusFreshness, isServerStatusStale, isInstanceStatusStale } from "/src/features/server-status/freshness.js?v=20261018telemetry1";
+import { telemetrySessionLabel, formatTelemetryLap, loadPreferredServerStatus } from "/src/features/server-status/telemetry.js?v=20261018telemetry1";
 import { selectNextHourlyAnnouncement } from "/src/features/hourly/announcement-model.js?v=20260828hourlynext1";
 import { getSpecialEventPresentation, normalizeSingleModelRestriction } from "/src/features/hourly/special-event.js?v=20260903special1";
 import { safeImageUrl, safeLinkUrl } from "/src/shared/safe-dom.js";
@@ -140,6 +141,7 @@ const AUTH_BASE_URL = "https://auth.asgracing.ru";
 const LOCAL_NEWS_DATA_URL = `${SITE_BASE_PATH}news-content/news.json`;
 const topDataV2ManifestUrl = `${TOP_DATA_V2_BASE_URL}/manifest.json`;
 const serverStatusUrl = getDevRuntimeParam("serverStatusUrl") || (TOP_API_ROOT_URL ? `${TOP_API_ROOT_URL}/server-status` : `${TOP_DATA_BASE_URL}/server_status.json`);
+const liveServerStatusUrl = getDevRuntimeParam("serverStatusUrl") || `${TOP_DATA_BASE_URL}/server_status_live.json`;
 const donationsApiUrl = "https://data.asgracing.ru/donations-api/recent";
 const hourlyAnnouncementUrl = `${HOURLY_DATA_BASE_URL}/announcement.json`;
 const hourlyScheduleUrl = `${HOURLY_DATA_BASE_URL}/schedule.json`;
@@ -928,6 +930,7 @@ const translations = {
     serverStatusOffline: "OFFLINE",
     serverStatusDegraded: "DEGRADED",
     serverStatusStale: "No current data for more than 10 minutes",
+    serverInstanceStatusStale: "Server data is stale",
     serverTotalPlayersLabel: "Total players",
     serverTotalPlayersNote: "Servers",
     serversWidgetTitle: "Server status",
@@ -1566,6 +1569,7 @@ const translations = {
     serverStatusOffline: "ОФФЛАЙН",
     serverStatusDegraded: "ЧАСТИЧНО",
     serverStatusStale: "Нет актуальных данных более 10 минут",
+    serverInstanceStatusStale: "Данные сервера устарели",
     serverTotalPlayersLabel: "Всего игроков",
     serverTotalPlayersNote: "Серверы",
     serversWidgetTitle: "Статус серверов",
@@ -6053,9 +6057,8 @@ function normalizeSnapshotPayload(snapshot) {
 
 async function loadStandaloneServerStatus({ bypassCache = false } = {}) {
   try {
-    const data = bypassCache
-      ? await requestJson(serverStatusUrl, { cache: "no-store", retries: 1 })
-      : await loadJson(serverStatusUrl);
+    const data = await loadPreferredServerStatus(liveServerStatusUrl, serverStatusUrl,
+      url => bypassCache ? requestJson(url, { cache: "no-store", retries: 1 }) : loadJson(url));
     const { normalizeServerStatus } = await dataSchemaModulePromise;
     return normalizeServerStatus(data);
   } catch (_error) {
@@ -8556,6 +8559,7 @@ function getLocalizedServerStatus(status, lang = currentLang) {
   const normalized = String(status || "offline").toLowerCase();
   if (normalized === "online") return tForLang(lang, "serverStatusOnline");
   if (normalized === "online_process_only") return tForLang(lang, "serverStatusDegraded");
+  if (normalized === "stale" || normalized === "unknown") return tForLang(lang, "serverInstanceStatusStale");
   return tForLang(lang, "serverStatusOffline");
 }
 
@@ -8697,7 +8701,7 @@ function serverStatusIsStale(serverStatus = serverStatusData) {
 }
 
 function getServerDrivers(server) {
-  if (serverStatusIsStale()) return [];
+  if (serverStatusIsStale() || isInstanceStatusStale(server)) return [];
   if (!server || typeof server !== "object") return [];
   const drivers = Array.isArray(server.drivers)
     ? server.drivers
@@ -8706,7 +8710,7 @@ function getServerDrivers(server) {
       : [];
   return drivers
     .filter(Boolean)
-    .map((driver, index) => ({ ...driver, position: driver.position || index + 1 }));
+    .map(driver => ({ ...driver, position: Number.isInteger(driver.position) && driver.position > 0 ? driver.position : null }));
 }
 
 function getServerStatusItems(serverStatus = serverStatusData) {
@@ -8739,8 +8743,8 @@ function getServerStatusItems(serverStatus = serverStatusData) {
 }
 
 function serverPlayersOnline(server) {
-  if (serverStatusIsStale()) return 0;
-  if (!server || typeof server !== "object") return 0;
+  if (serverStatusIsStale() || isInstanceStatusStale(server)) return null;
+  if (!server || typeof server !== "object") return null;
   if (Number.isFinite(server.players_online)) return server.players_online;
   return getServerDrivers(server).length;
 }
@@ -8748,6 +8752,8 @@ function serverPlayersOnline(server) {
 function getServerSessionShortLabel(server) {
   if (!server || typeof server !== "object") return "";
   if (!serverIsOnline(server)) return "";
+  const telemetry = telemetrySessionLabel(server, { lang: currentLang });
+  if (telemetry !== null) return telemetry;
   const explicit = server.session_label || server.session_status_label || server.session_short_label;
   if (explicit) return String(explicit).trim();
   const rawType = String(server.session_type || server.current_session || server.session || "").trim().toLowerCase();
@@ -8795,7 +8801,7 @@ function appendServerSessionLabel(label, server) {
 }
 
 function serverIsOnline(server) {
-  if (serverStatusIsStale()) return false;
+  if (serverStatusIsStale() || isInstanceStatusStale(server)) return false;
   const status = String(server?.status || "").toLowerCase();
   return status === "online" || status === "online_process_only" || serverPlayersOnline(server) > 0;
 }
@@ -8824,6 +8830,7 @@ function updateHeroServerSummary(serverStatus = serverStatusData) {
   const totalPlayersEl = document.getElementById("serverPlayersValue");
   const items = getServerStatusItems(serverStatus);
   const stale = serverStatusIsStale(serverStatus);
+  const partial = items.some(item => isInstanceStatusStale(item.server));
   const onlineCount = items.filter(item => serverIsOnline(item.server)).length;
   const totalPlayers = stale
     ? 0
@@ -8831,8 +8838,8 @@ function updateHeroServerSummary(serverStatus = serverStatusData) {
     ? serverStatus.players_online
     : items.reduce((sum, item) => sum + serverPlayersOnline(item.server), 0);
 
-  if (onlineCountEl) onlineCountEl.textContent = onlineCount;
-  if (totalPlayersEl) totalPlayersEl.textContent = totalPlayers;
+  if (onlineCountEl) onlineCountEl.textContent = stale || partial ? "—" : onlineCount;
+  if (totalPlayersEl) totalPlayersEl.textContent = stale || partial ? "—" : totalPlayers;
   if (onlineButtonEl) {
     onlineButtonEl.title = t("serversOnlineTooltip");
     onlineButtonEl.setAttribute("aria-label", t("serversOnlineTooltip"));
@@ -8889,7 +8896,7 @@ function renderServerStickyWidget(serverStatus = serverStatusData) {
           const track = humanizeTrackName(server?.track_code || server?.track || "") || "—";
           const saRequirement = getServerSaRequirement(server);
           const srRequirement = getServerSrRequirement(key, server);
-          const statusClass = online ? (rawStatus === "online_process_only" ? "degraded" : "online") : "offline";
+          const statusClass = isInstanceStatusStale(server) ? "degraded" : online ? (rawStatus === "online_process_only" ? "degraded" : "online") : "offline";
           return `
             <div
               class="server-sticky-card server-sticky-card-clickable is-${escapeHtml(statusClass)}"
@@ -8915,7 +8922,7 @@ function renderServerStickyWidget(serverStatus = serverStatusData) {
                   </div>
                   <div class="server-sticky-metric">
                     <span>${escapeHtml(t("serverMetricPlayers"))}</span>
-                    <strong>${escapeHtml(String(players))}</strong>
+                    <strong>${escapeHtml(String(players ?? "—"))}</strong>
                   </div>
                   <div class="server-sticky-metric server-sticky-metric-session">
                     <span>${escapeHtml(t("serverMetricSession"))}</span>
@@ -8950,7 +8957,7 @@ function renderServerStatusSummaryModal(titleEl, subtitleEl, listEl) {
 
   listEl.innerHTML = items.map(({ label, server }) => {
     const players = serverPlayersOnline(server);
-    const status = serverIsOnline(server)
+    const status = isInstanceStatusStale(server) ? "stale" : serverIsOnline(server)
       ? String(server?.status || "online").toLowerCase()
       : "offline";
     const serverLabel = appendServerSessionLabel(label, server);
@@ -8963,7 +8970,7 @@ function renderServerStatusSummaryModal(titleEl, subtitleEl, listEl) {
           </div>
         </div>
         <div class="server-status-row-count">
-          <strong>${escapeHtml(players)}</strong>
+          <strong>${escapeHtml(players ?? "—")}</strong>
           <span>${escapeHtml(t("serverPlayersCountLabel"))}</span>
         </div>
       </article>
@@ -8979,6 +8986,11 @@ function renderSelectedServerPlayersModal(titleEl, subtitleEl, listEl) {
   titleEl.textContent = appendServerSessionLabel(selected?.label || t("playersOnlineTitle"), server);
   subtitleEl.textContent = formatServerStatusUpdatedSubtitle(server?.updated_at || serverStatusData?.updated_at);
 
+  if (isInstanceStatusStale(server)) {
+    replaceWithTextState(listEl, "empty", t("serverInstanceStatusStale"));
+    return;
+  }
+
   if (!drivers.length) {
     replaceWithTextState(listEl, "empty", t("playersOnlineEmpty"));
     return;
@@ -8989,13 +9001,14 @@ function renderSelectedServerPlayersModal(titleEl, subtitleEl, listEl) {
     const carName = getResultCarName(driver);
     return `
       <article class="server-player-row">
-        <div class="server-player-position">${escapeHtml(driver.position || index + 1)}</div>
+        <div class="server-player-position">${escapeHtml(driver.position ?? '—')}</div>
         <div class="server-player-main">
           <div class="server-player-name">${renderDriverLink(driver.name || "-", driver.public_id, "driver-link")}</div>
           <div class="server-player-ratings">${renderEloBadge(driver,{compact:true})} ${renderSafetyBadge(driver,{compact:true})}</div>
           <div class="server-player-meta">
             ${raceNumber != null ? `<span>#${escapeHtml(raceNumber)}</span>` : ""}
             <span>${escapeHtml(carName)}</span>
+            ${server?.source === 'acc-local-telemetry' ? `<span>${currentLang === 'ru' ? 'Лучший' : 'Best'}: ${formatTelemetryLap(driver.best_lap_ms)} · ${currentLang === 'ru' ? 'Последний' : 'Last'}: ${formatTelemetryLap(driver.last_lap_ms)} · ${currentLang === 'ru' ? 'Круги' : 'Laps'}: ${escapeHtml(driver.lap_count ?? '—')}</span>` : ''}
           </div>
         </div>
         ${renderCarImage(driver, { className: "car-thumb car-thumb-inline server-player-car", alt: carName })}
@@ -11504,7 +11517,7 @@ function v2SchedulePublish() {
     onlineDays:buildRelativeActivityDays(raceActivityInsights?.length?raceActivityInsights:onlineData),news:getSortedNewsFeed(newsFeedData).slice(0,6),invitations:membershipInvitationNotifications,
     unreadNews:getUnreadNewsCount(newsFeedData),
     servers:getServerStatusItems().map(({key,label,server})=>({key,label,server,
-      online:!serverStatusIsStale()&&serverIsOnline(server),players:serverStatusIsStale()?0:serverPlayersOnline(server),
+      online:!serverStatusIsStale()&&serverIsOnline(server),players:serverPlayersOnline(server),stale:serverStatusIsStale()||isInstanceStatusStale(server),
       track:humanizeTrackName(server?.track_code||server?.track||''),sa:getServerSaRequirement(server),sr:getServerSrRequirement(key,server),session:getServerSessionShortLabel(server),drivers:getServerDrivers(server)})),
     serversStale:serverStatusIsStale(),updatedAt:serverStatusData?.updated_at
   })});

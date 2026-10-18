@@ -8,7 +8,7 @@
     },
     {
       "path": "app.js",
-      "sha256": "791cd50c1f6b56dfecbd98d7b5b4e3c8ce322dcec3a06d053139aee93a592c5c"
+      "sha256": "659367b3443cad0a1867983ea759c413d54e413de3f44a31557bc1290320f763"
     },
     {
       "path": "community/posts.js",
@@ -48,7 +48,7 @@
     },
     {
       "path": "scripts/build-v2.mjs",
-      "sha256": "9396ed96fd985fb1a25a4e7d9f72adb21cae5d8f77c66bfb06888c1371bd1b7e"
+      "sha256": "2e427fef9ee42c468aa152fff3dd91775ecb9c3ee394e9e291d1572869c04712"
     },
     {
       "path": "scripts/generate-localized-pages.mjs",
@@ -72,7 +72,7 @@
     },
     {
       "path": "scripts/v2-runtime-facade.txt",
-      "sha256": "61f0789cd8c4930d43230ad65b9670c01148051eceba08fbdf389b3cd328b6b3"
+      "sha256": "95f2feb420c4cc9a3614a03969694f741945230b82187f0b3c847a1099f351f5"
     },
     {
       "path": "src/features/auth/clubs-teams-auth-model.js",
@@ -104,7 +104,11 @@
     },
     {
       "path": "src/features/server-status/freshness.js",
-      "sha256": "f49c74ffe6a0928890041c9f453ef0a14d11f0692859b532ce938a9edb583bc7"
+      "sha256": "fdb5eecbf4198d19a0d2c001a8b3acb8b8494d07418de631a357f2938a01254d"
+    },
+    {
+      "path": "src/features/server-status/telemetry.js",
+      "sha256": "edad9444954c736908f6e4641d4e4a207ad264ab2e4b309d878bf658e793a352"
     },
     {
       "path": "src/features/server-status/track-background.js",
@@ -612,7 +616,7 @@
     },
     {
       "path": "v2/home.js",
-      "sha256": "dac1c1d94f2482ad42fa18e303a2d8cef45cf67e0be230f26e85bf0bcbf96a9d"
+      "sha256": "90f7d8f02e101f25b612f6a8e8a5abcaa357f23859ae07e28f63ea9cc5dd7345"
     },
     {
       "path": "v2/mobile-navigation.js",
@@ -672,7 +676,7 @@
     },
     {
       "path": "v2/presentation.js",
-      "sha256": "4dd9c2529b1850433157eeee6e52cd8c7bcd202ae1ec661bff14958959576bf2"
+      "sha256": "24469c05e813716c38abf8dbac09f89b5477e05cfcee9283d1a90e39e23e9933"
     },
     {
       "path": "v2/recent-races.js",
@@ -688,7 +692,7 @@
     },
     {
       "path": "v2/server-session.js",
-      "sha256": "bb9748cd57b7e96199655d06271a9310a34a3c451d560d9247f1a28884208c77"
+      "sha256": "b3f17b71a3a73ebbc49bb962a7ec02ace3ba2a464f08ac4e226f4bb4df1deaaa"
     },
     {
       "path": "v2/site-routing.js",

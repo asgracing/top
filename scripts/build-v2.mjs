@@ -17,7 +17,7 @@ if(outputRoot!==root)assertArchiveScratchPath(outputRoot);
 if (process.env.ASG_V2_PRESENTATION_ONLY === '1') throw Error('Presentation-only builds are retired: rebuild V2 with its canonical runtime.');
 const version = '20261006v2k';
 const runtimeVersion = '20261011racelinks1';
-const presentationVersion = '20261015pagination1';
+const presentationVersion = '20261018telemetry1';
 const bootVersion = '20261018telemetry1';
 const legalVersion = '20261008metrika2';
 const buildInputs = new Map();
