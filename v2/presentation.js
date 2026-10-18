@@ -1,14 +1,14 @@
 import {eventKind} from './models.js?v=20261006v2k';
 import {resolveTrackBackgroundFile} from '/src/features/server-status/track-background.js';
 import {serverSessionLabel} from './server-session.js?v=20261018telemetry1';
-import {formatTelemetryLap} from '../src/features/server-status/telemetry.js?v=20261018telemetry1';
+import {renderServerRoster} from '../src/features/server-status/roster.js?v=20261019servercols1';
 import {safetyHistoryComponents} from './safety-history.js?v=20261010profile1';
 import {loadLeaderboardRank,profileWithLeaderboardRank} from '/src/shared/leaderboard-rank.js?v=20261013delivery1';
 
 // R24 views consume the canonical controllers. They never calculate ratings or
 // create a second auth/voting state.
 export function createPresentation({$,native,getModel,esc,text,label,date,number,rating,car,driverHref,classic,affiliation,privacy,serverAdmission,showDialog}) {
-  let request=0,profile=null,parent=null,historyView=null,month='',day='',eventEntry=null,driverDaySignature='',inspectionRequest=0;
+  let request=0,profile=null,parent=null,historyView=null,month='',day='',eventEntry=null,driverDaySignature='',inspectionRequest=0,activeServerKey=null;
   const detail=(name,value)=>`<div><span>${esc(name)}</span><b>${esc(value??'—')}</b></div>`;
   const name=p=>p.driver||p.name||p.summary?.driver||'—';
   const flatten=p=>({...p?.summary,...p});
@@ -96,18 +96,25 @@ export function createPresentation({$,native,getModel,esc,text,label,date,number
     return `<div class="online-controls"><label>${text('Месяц','Month')} <select id="v2-online-month">${months.map(m=>`<option${m===month?' selected':''}>${esc(m)}</option>`).join('')}</select></label><label>${label('date')} <select id="v2-online-date">${visible.map(v=>`<option${v.date===day?' selected':''}>${esc(v.date)}</option>`).join('')}</select></label></div><div class="detail-grid">${detail(text('Пилоты','Drivers'),number(d.unique_players))}${detail(label('racesCol'),number(d.races))}${detail(text('Среднее пилотов на гонку','Average drivers per race'),d.avg_players_per_race)}${detail(text('Индекс активности','Activity score'),(d.activity_score??'—')+'/100')}${detail(text('Пик активности','Peak activity'),d.peak_hour?.label)}${detail(label('track'),(d.tracks||[]).map(t=>native().track(t)).join(', '))}</div><h3>${text('Онлайн по часам · уникальные пилоты','Hourly activity · unique drivers')}</h3><div class="hour-chart">${hours.map(h=>`<div title="${esc(h.label)} · ${number(h.races)} ${label('racesCol')}"><b>${number(h.unique_players)}</b><span style="--hour-height:${Math.max(2,h.unique_players/max*100)}px"></span><small>${esc(h.hour)}</small></div>`).join('')}</div>`;
   }
   function openOnline(trigger){++request;display(text('Онлайн по датам','Activity by date'),onlineHtml(),'online',trigger)}
-  function openServer(key,trigger){
+  function openServer(key,trigger,refresh=false){
     ++request;const m=getModel();if(!m)return;
+    const draw=(title,html,kind)=>{
+      if(!refresh){activeServerKey=key;display(title,html,kind,trigger);return;}
+      const body=$('modal-body'),scroll=body.querySelector('.server-roster-scroll'),left=scroll?.scrollLeft||0,top=body.scrollTop;
+      $('modal-title').textContent=title;body.innerHTML=html;body.scrollTop=top;
+      const updated=body.querySelector('.server-roster-scroll');if(updated)updated.scrollLeft=left;
+    };
     const phase=s=>s.stale?text('Данные устарели','Stale data'):serverSessionLabel(s,label);
     if(!key){
-      display(label('serverStatus'),`<div class="server-summary-list">${m.servers.map(s=>`<button type="button" class="server-summary-item${serverAdmission(s)?' is-sr-blocked':''}" title="${esc(serverAdmission(s)||s.label)}" aria-label="${esc(s.label)}${serverAdmission(s)?` · ${esc(serverAdmission(s))}`:''}" data-server="${esc(s.key)}"><b>${esc(s.label)}</b><span>${esc(s.track)} · <strong class="${s.online?'is-online':'is-offline'}">${m.serversStale||s.stale?text('Данные устарели','Stale data'):s.online?label('live'):label('offline')}</strong> · ${esc(phase(s))} · SA ${esc(s.sa)} · SR ${esc(s.sr)} · ${m.serversStale||s.stale?'—':number(s.players)} ${text('пилотов','drivers')}</span></button>`).join('')||`<p class="empty">${label('noData')}</p>`}</div>`,'servers',trigger);return;
+      draw(label('serverStatus'),`<div class="server-summary-list">${m.servers.map(s=>`<button type="button" class="server-summary-item${serverAdmission(s)?' is-sr-blocked':''}" title="${esc(serverAdmission(s)||s.label)}" aria-label="${esc(s.label)}${serverAdmission(s)?` · ${esc(serverAdmission(s))}`:''}" data-server="${esc(s.key)}"><b>${esc(s.label)}</b><span>${esc(s.track)} · <strong class="${s.online?'is-online':'is-offline'}">${m.serversStale||s.stale?text('Данные устарели','Stale data'):s.online?label('live'):label('offline')}</strong> · ${esc(phase(s))} · SA ${esc(s.sa)} · SR ${esc(s.sr)} · ${m.serversStale||s.stale?'—':number(s.players)} ${text('пилотов','drivers')}</span></button>`).join('')||`<p class="empty">${label('noData')}</p>`}</div>`,'servers',trigger);return;
     }
     const s=m.servers.find(server=>server.key===key);if(!s)return;
     const stale=m.serversStale||s.stale,drivers=stale?[]:s.drivers||[],empty=stale?text('Онлайн устарел; актуальный список недоступен.','Online status is stale; the current roster is unavailable.'):s.players>0?text('Список имён ещё не опубликован.','Driver names have not been published yet.'):text('Сейчас пилотов нет.','No drivers currently online.');
-    display(s.label,`<div class="server-parameter-row">${detail(label('track'),s.track||'—')}${detail(label('admission'),`SA ${s.sa??'—'} / SR ${s.sr??'—'}`)}${detail(label('session'),phase(s))}${detail(label('players'),stale?'—':number(s.players))}</div>${serverAdmission(s)?`<p class="server-sr-warning" role="note">${esc(serverAdmission(s))}</p>`:''}<p class="data-note server-search-note">${label('serverSearch')}</p><h3 class="server-roster-heading">${text('Пилоты на сервере','Drivers on server')} <span class="small-tag">${stale?'—':number(drivers.length)}</span></h3><ol class="server-driver-list">${drivers.length?drivers.map((p,i)=>{
-      const id=p.car_model_id??p.carModel??p.carModelId??p.car_model??null,modelName=native().car({...p,car_model_id:id}),carData={...p,car_model_id:id,car_name:p.car_name||(modelName==='-'?'—':modelName)},name=p.name||p.driver||p.driver_name||'—',raceNumber=p.raceNumber??p.car_number??p.race_number;
-      return `<li><span class="pilot-identity"><span class="pilot-position">${esc(p.position??'—')}</span><span class="pilot-number">#${esc(raceNumber??'—')}</span>${p.public_id?`<a class="pilot-name" href="${driverHref(p.public_id)}">${esc(name)}</a>`:`<span class="pilot-name">${esc(name)}</span>`}</span><span class="pilot-ratings"><span class="driver-ratings">${rating(p,'elo',null,true)}${rating(p,'sr',null,true)}</span></span><span class="pilot-car">${car(carData)}${s.server?.source==='acc-local-telemetry'?`<small>${text('Лучший','Best')}: ${formatTelemetryLap(p.best_lap_ms)} · ${text('Последний','Last')}: ${formatTelemetryLap(p.last_lap_ms)} · ${text('Круги','Laps')}: ${esc(p.lap_count??'—')}</small>`:''}</span></li>`;
-    }).join(''):`<li class="empty">${empty}</li>`}</ol><p class="data-note server-updated">${text('Последнее обновление','Last update')}: ${date(s.server?.updated_at||m.updatedAt)}</p>`,'server',trigger);
+    const roster=renderServerRoster({server:s.server,drivers,lang:text('ru','en'),esc,emptyMessage:empty,
+      renderName:p=>{const name=esc(p.display_name||p.name||p.driver||p.driver_name||'—');return p.public_id?`<a class="pilot-name" href="${driverHref(p.public_id)}">${name}</a>`:`<span class="pilot-name">${name}</span>`},
+      renderRatings:p=>`<span>${rating(p,'elo',null,true)}</span><span>${rating(p,'sr',null,true)}</span>`,
+      renderCar:p=>{const id=p.car_model_id??p.carModel??p.carModelId??p.car_model??null,modelName=native().car({...p,car_model_id:id});return car({...p,car_model_id:id,car_name:p.car_name||(modelName==='-'?'—':modelName)})}});
+    draw(s.label,`<div class="server-parameter-row">${detail(label('track'),s.track||'—')}${detail(label('admission'),`SA ${s.sa??'—'} / SR ${s.sr??'—'}`)}${detail(label('session'),phase(s))}${detail(label('players'),stale?'—':number(s.players))}</div>${serverAdmission(s)?`<p class="server-sr-warning" role="note">${esc(serverAdmission(s))}</p>`:''}<p class="data-note server-search-note">${label('serverSearch')}</p><h3 class="server-roster-heading">${text('Пилоты на сервере','Drivers on server')} <span class="small-tag">${stale?'—':number(drivers.length)}</span></h3>${roster}<p class="data-note server-updated">${text('Последнее обновление','Last update')}: ${date(s.server?.updated_at||m.updatedAt)}</p>`,'server',trigger);
   }
   $('modal-body').addEventListener('change',e=>{
     const id=e.target.id;
@@ -126,5 +133,5 @@ export function createPresentation({$,native,getModel,esc,text,label,date,number
   $('modal-body').addEventListener('keydown',e=>{const point=e.target.closest('[data-sr-history-index]');if(point&&['Enter',' '].includes(e.key)){e.preventDefault();e.stopPropagation();inspectSr(Number(point.dataset.srHistoryIndex))}});
   $('modal').addEventListener('close',()=>{++request;profile=null;parent=null;historyView=null;eventEntry=null});
   $('modal').addEventListener('v2-dialog-restore',()=>{++request;});
-  return {openDriver:(row,trigger)=>loadProfile(row,'driver',trigger),openDriverDay,refreshDriverDay,openRating:(row,kind,trigger)=>loadProfile(row,'driver-'+kind,trigger),openEvent,openOnline,openServer,refreshEntry(){if($('modal').open&&$('modal').dataset.kind==='event'){const node=$('modal-body').querySelector('.modal-participation');if(node)node.innerHTML=entryHtml()}}};
+  return {openDriver:(row,trigger)=>loadProfile(row,'driver',trigger),openDriverDay,refreshDriverDay,openRating:(row,kind,trigger)=>loadProfile(row,'driver-'+kind,trigger),openEvent,openOnline,openServer,refreshServer(){if($('modal').open&&['server','servers'].includes($('modal').dataset.kind))openServer(activeServerKey,null,true)},refreshEntry(){if($('modal').open&&$('modal').dataset.kind==='event'){const node=$('modal-body').querySelector('.modal-participation');if(node)node.innerHTML=entryHtml()}}};
 }

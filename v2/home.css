@@ -1,3 +1,5 @@
+@import url("../styles/components/server-roster.css?v=20261019servercols1");
+
 /* Shared numbered pagination, including dialogs opened from home. */
 body[data-v2] .page-pagination {flex-wrap:wrap;gap:10px;}
 body[data-v2] .page-pagination .pagination {flex-wrap:nowrap;gap:4px;}

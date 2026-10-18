@@ -1,6 +1,6 @@
 import test from 'node:test';
 import assert from 'node:assert/strict';
-import {telemetrySessionLabel, formatTelemetryLap, loadPreferredServerStatus} from '../../src/features/server-status/telemetry.js';
+import {telemetrySessionLabel, formatTelemetryLap, loadPreferredServerStatus, sessionBestLapMs, lapHighlight} from '../../src/features/server-status/telemetry.js';
 import {isInstanceStatusStale, isServerStatusStale} from '../../src/features/server-status/freshness.js';
 import {serverSessionLabel} from '../../v2/server-session.js';
 
@@ -29,7 +29,21 @@ test('telemetry freshness does not require a spectator and does not refresh old 
 
 test('lap times are nullable and precise to milliseconds', () => {
   assert.equal(formatTelemetryLap(115132), '1:55.132');
-  for(const value of [null,0,-1,Infinity,'115132'])assert.equal(formatTelemetryLap(value), '—');
+  for(const value of [null,0,-1,Infinity,2147483647,4294967295,'115132'])assert.equal(formatTelemetryLap(value), '—');
+});
+
+test('lap colors distinguish session records, personal bests, ties and missing times', () => {
+  const source='acc-local-telemetry';
+  const best=sessionBestLapMs({source,drivers:[{best_lap_ms:110123},{best_lap_ms:111000},{best_lap_ms:null},{best_lap_ms:0}]});
+  assert.equal(best,110123);
+  assert.deepEqual(lapHighlight({best_lap_ms:110123,last_lap_ms:110123},best),{best:'session-best',last:'session-best'});
+  assert.deepEqual(lapHighlight({best_lap_ms:111000,last_lap_ms:111000},best),{best:'personal-best',last:'personal-best'});
+  assert.deepEqual(lapHighlight({best_lap_ms:111000,last_lap_ms:112000},best),{best:'personal-best',last:'normal'});
+  assert.deepEqual(lapHighlight({best_lap_ms:110123,last_lap_ms:112000},best),{best:'session-best',last:'normal'});
+  assert.deepEqual(lapHighlight({best_lap_ms:null,last_lap_ms:null},null),{best:'missing',last:'missing'});
+  assert.equal(sessionBestLapMs({source,drivers:[{best_lap_ms:110123}],classification:[{connected:false,best_lap_ms:109999}]}),109999);
+  assert.equal(sessionBestLapMs({source,drivers:[{best_lap_ms:Infinity},{best_lap_ms:2147483647}]}),null);
+  assert.equal(sessionBestLapMs({source:'legacy-online-status',drivers:[{best_lap_ms:110123}]}),null);
 });
 
 test('new source wins even when stale; missing new file falls back before rollout', async () => {

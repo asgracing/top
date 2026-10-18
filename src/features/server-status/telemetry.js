@@ -18,9 +18,26 @@ export function telemetrySessionLabel(server, { lang = 'ru', compact = true, now
 }
 
 export function formatTelemetryLap(ms) {
-  if (!Number.isFinite(ms) || ms <= 0) return '—';
+  if (!Number.isFinite(ms) || ms <= 0 || ms >= 2147483647) return '—';
   const value = Math.floor(ms);
   return `${Math.floor(value/60000)}:${String(Math.floor(value/1000)%60).padStart(2,'0')}.${String(value%1000).padStart(3,'0')}`;
+}
+
+const lapMilliseconds = value => Number.isFinite(value) && value > 0 && value < 2147483647 ? Math.floor(value) : null;
+
+export function sessionBestLapMs(server) {
+  if (server?.source !== 'acc-local-telemetry') return null;
+  const laps = [...(server.classification || []), ...(server.drivers || [])]
+    .map(driver => lapMilliseconds(driver.best_lap_ms)).filter(value => value !== null);
+  return laps.length ? Math.min(...laps) : null;
+}
+
+export function lapHighlight(driver, sessionBest) {
+  const best = lapMilliseconds(driver.best_lap_ms), last = lapMilliseconds(driver.last_lap_ms);
+  return {
+    best: best === null ? 'missing' : best === sessionBest ? 'session-best' : 'personal-best',
+    last: last === null ? 'missing' : last === sessionBest ? 'session-best' : last === best ? 'personal-best' : 'normal'
+  };
 }
 
 export async function loadPreferredServerStatus(liveUrl, legacyUrl, read) {

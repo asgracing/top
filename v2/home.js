@@ -2,7 +2,7 @@ import {carThumbnailAttributes} from '/src/shared/image-thumbnails.js?v=20261013
 import copy from './copy.js?v=20261006v2k';
 import { subscribe, getRuntime } from './bridge.js?v=20261006v2k';
 import {rankingPosition,eventKind,normalizeTablePage,normalizeSafetyRow,paginationPages,serverSrRestriction} from './models.js?v=20261013delivery1';
-import {createPresentation} from './presentation.js?v=20261018telemetry1';
+import {createPresentation} from './presentation.js?v=20261019servercols1';
 import {createRecentRaces} from './recent-races.js?v=20261011racelinks1';
 import {createHeader} from './header.js?v=20261014profile1';
 import {serverSessionLabel} from './server-session.js?v=20261018telemetry1';
@@ -300,7 +300,7 @@ subscribe(next=>{
    if(!isSubpage){changed('stats',[next.day,next.stats,next.online,next.serversStale,next.servers.map(s=>s.players)],renderStats);
   changed('winner',next.winner,renderWinner);
    changed('event',[next.announcement,next.votes,next.voteDisabled],renderEvent);}
-  changed('servers',[next.servers,next.serversStale,next.auth?.authenticated,next.auth?.driver?.sr],renderServers);
+  changed('servers',[next.servers,next.serversStale,next.auth?.authenticated,next.auth?.driver?.sr],()=>{renderServers();presentation.refreshServer();});
    if(!isSubpage){
      changed('tracks',next.tracks,()=>{if(next.tracks.length)$('ranking-track').innerHTML=next.tracks.map(t=>`<option value="${esc(t.track_code||t.track)}"${(t.track_code||t.track)===track?' selected':''}>${esc(native().track(t.track_code||t.track))}</option>`).join('');});
      if(next.loading.homeError&&!rankingStarted){rankingStarted=true;tableBusy=false;tableError=true;renderTable();}

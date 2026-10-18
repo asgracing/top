@@ -1,3 +1,5 @@
+@import url("./server-roster.css?v=20261019servercols1");
+
 @layer components {
   .server-players-list {
     display: grid;

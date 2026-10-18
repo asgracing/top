@@ -131,10 +131,10 @@ try {
   const page=await browser.newPage({viewport:{width:1280,height:936},reducedMotion:'reduce'}),state=await mock(page);
   await page.goto(base+'/',{waitUntil:'networkidle'});await dismiss(page);
   await page.locator('[data-server]').first().click();await page.locator('.server-driver-list').waitFor();
-  const known=page.locator('.server-driver-list li').first();
+  const known=page.locator('.server-driver-list tbody tr').first();
   assert.match(await known.locator('.pilot-name').getAttribute('href'),new RegExp('id='+pilot.public_id));
   assert.match(await known.locator('.pilot-ratings').innerText(),/1234/);
-  assert.equal(await page.locator('.server-driver-list li').nth(1).locator('a').count(),0);
+  assert.equal(await page.locator('.server-driver-list tbody tr').nth(1).locator('a').count(),0);
   await page.locator('#v2-modal .modal-close').click();
   await page.locator('#v2-recent-races').click();await page.locator('#v2-modal [data-page-race]').first().click({position:{x:12,y:15}});
   await checkTabs(page,'#v2-modal',state.requests,'ru');

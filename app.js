@@ -31,7 +31,8 @@ import {
 import { createAuthHeaderController, safeAvatarUrl } from "./src/features/auth/header-auth.js?v=20261011notifications1";
 import { applyRandomTrackBackground, normalizeTrackBackgroundCode, resolveTrackBackgroundFile } from "./src/features/server-status/track-background.js?v=20260726staticfallback1";
 import { bindServerStatusFreshness, isServerStatusStale, isInstanceStatusStale } from "./src/features/server-status/freshness.js?v=20261018telemetry1";
-import { telemetrySessionLabel, formatTelemetryLap, loadPreferredServerStatus } from "./src/features/server-status/telemetry.js?v=20261018telemetry1";
+import { telemetrySessionLabel, loadPreferredServerStatus } from "./src/features/server-status/telemetry.js?v=20261019servercols1";
+import { renderServerRoster } from "./src/features/server-status/roster.js?v=20261019servercols1";
 import { selectNextHourlyAnnouncement } from "./src/features/hourly/announcement-model.js?v=20260828hourlynext1";
 import { getSpecialEventPresentation, normalizeSingleModelRestriction } from "./src/features/hourly/special-event.js?v=20260903special1";
 import { safeImageUrl, safeLinkUrl } from "./src/shared/safe-dom.js";
@@ -8977,25 +8978,10 @@ function renderSelectedServerPlayersModal(titleEl, subtitleEl, listEl) {
     return;
   }
 
-  listEl.innerHTML = drivers.map((driver, index) => {
-    const raceNumber = driver.raceNumber ?? driver.car_number ?? driver.race_number;
-    const carName = getResultCarName(driver);
-    return `
-      <article class="server-player-row">
-        <div class="server-player-position">${escapeHtml(driver.position ?? '—')}</div>
-        <div class="server-player-main">
-          <div class="server-player-name">${renderDriverLink(driver.name || "-", driver.public_id, "driver-link")}</div>
-          <div class="server-player-ratings">${renderEloBadge(driver,{compact:true})} ${renderSafetyBadge(driver,{compact:true})}</div>
-          <div class="server-player-meta">
-            ${raceNumber != null ? `<span>#${escapeHtml(raceNumber)}</span>` : ""}
-            <span>${escapeHtml(carName)}</span>
-            ${server?.source === 'acc-local-telemetry' ? `<span>${currentLang === 'ru' ? 'Лучший' : 'Best'}: ${formatTelemetryLap(driver.best_lap_ms)} · ${currentLang === 'ru' ? 'Последний' : 'Last'}: ${formatTelemetryLap(driver.last_lap_ms)} · ${currentLang === 'ru' ? 'Круги' : 'Laps'}: ${escapeHtml(driver.lap_count ?? '—')}</span>` : ''}
-          </div>
-        </div>
-        ${renderCarImage(driver, { className: "car-thumb car-thumb-inline server-player-car", alt: carName })}
-      </article>
-    `;
-  }).join("");
+  listEl.innerHTML = renderServerRoster({server, drivers, lang:currentLang, esc:escapeHtml,
+    renderName:driver=>renderDriverLink(driver.display_name || driver.name || "—", driver.public_id, "pilot-name driver-link"),
+    renderRatings:driver=>`<span>${renderEloBadge(driver,{compact:true})}</span><span>${renderSafetyBadge(driver,{compact:true})}</span>`,
+    renderCar:driver=>`<div class="car-cell">${renderCarImage(driver,{className:"car-thumb car-thumb-inline",alt:getResultCarName(driver)})}<span>${escapeHtml(getResultCarName(driver))}</span></div>`});
 }
 
 function renderServerPlayersModal() {

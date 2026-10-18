@@ -130,7 +130,7 @@ for (const [page, [htmlPath, entrySrc]] of Object.entries(pageEntrypoints)) {
   if (!pageHtml.includes(paginationHref)) failures.push(`${page} page is missing the shared pagination stylesheet`);
   const modalsHref = page === "home" ? "./styles/components/modals.css?v=20260920activityux1" : "../styles/components/modals.css?v=20260715r11modals1";
   if (!pageHtml.includes(modalsHref)) failures.push(`${page} page is missing the modal foundation stylesheet`);
-  const serverPlayersModalHref = page === "home" ? "./styles/components/server-players-modal.css?v=20260715r11serverplayers1" : "../styles/components/server-players-modal.css?v=20260715r11serverplayers1";
+  const serverPlayersModalHref = page === "home" ? "./styles/components/server-players-modal.css?v=20261019servercols1" : "../styles/components/server-players-modal.css?v=20261019servercols1";
   if (!pageHtml.includes(serverPlayersModalHref)) failures.push(`${page} page is missing the server players modal stylesheet`);
   const todayStatsModalHref = page === "home" ? "./styles/components/today-stats-modal.css?v=20260715r11todaystats1" : "../styles/components/today-stats-modal.css?v=20260715r11todaystats1";
   if (!pageHtml.includes(todayStatsModalHref)) failures.push(`${page} page is missing the today stats modal stylesheet`);

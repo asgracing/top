@@ -79,12 +79,12 @@ async function serverModal(page,language,width){
   await page.locator(`#v2-servers [data-server="${populatedServer}"]`).click();
   assert.equal(await page.locator('#v2-modal').getAttribute('data-kind'),'server');
   assert.equal(await page.locator('.server-parameter-row>div').count(),4);
-  assert.equal(await page.locator('.server-driver-list>li:not(.empty)').count(),3);
+  assert.equal(await page.locator('.server-driver-list tbody>tr:not(.empty)').count(),3);
   assert.equal(await page.locator('.server-driver-list .pilot-name[href*="/driver/"]').count(),3);
   assert.equal(await page.locator('.server-driver-list .pilot-car img').count(),3);
   assert.ok(await page.locator('.server-driver-list .pilot-car img').first().getAttribute('src').then(src=>src.endsWith('/32.png')));
   assert.ok((await page.locator('.server-driver-list .pilot-car').first().textContent()).includes('Ferrari 296 GT3'));
-  assert.ok(await page.locator('.server-driver-list').evaluate(n=>n.scrollWidth<=n.clientWidth+1),'Server roster fits horizontally');
+  assert.ok(await page.locator('.server-roster-scroll').evaluate(n=>n.clientWidth<=n.parentElement.clientWidth+1),'Roster scroll stays inside the modal');
   await dialogSnapshot(page,'server-roster',language,width);
   await page.locator('.server-driver-list [data-rating="elo"]').first().click();await page.waitForTimeout(250);assert.equal(await page.locator('#v2-modal').getAttribute('data-kind'),'driver-elo');assert.equal(await page.locator('#v2-modal .elo-chart').count(),1);await page.locator('#v2-modal .modal-close').click();
   await page.locator('#v2-site-shell [data-modal="servers"]').click();assert.equal(await page.locator('#v2-modal').getAttribute('data-kind'),'servers');assert.equal(await page.locator('.server-summary-item').count(),9);
