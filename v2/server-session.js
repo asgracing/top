@@ -1,8 +1,10 @@
-// Published ACC status reports minutes remaining; do not invent a countdown
-// between snapshots or display a timer for an offline/stale server.
+import {telemetrySessionLabel} from '../src/features/server-status/telemetry.js?v=20261018telemetry1';
+// Legacy minutes remain snapshot values; telemetry explicitly supplies a clock.
 export function serverSessionLabel(server, label, {compact=false}={}) {
   if(!server.online)return compact?'OFF':label('waiting');
   const source=server.server||{};
+  const telemetry=telemetrySessionLabel(source,{lang:label('race')==='Гонка'?'ru':'en',compact});
+  if(telemetry!==null)return telemetry;
   const raw=String(source.session_type||source.current_session||source.session||server.session||'').trim().toLowerCase();
   const key=raw.startsWith('r')?'race':raw.startsWith('q')?'qualifying':raw.startsWith('p')?'practice':null;
   const phase=compact?(key?{race:'R',qualifying:'Q',practice:'P'}[key]:'—'):(key?label(key):'—');

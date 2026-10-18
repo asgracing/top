@@ -30,7 +30,8 @@ import {
 } from "./news-read-state.js?v=20260813newsread1";
 import { createAuthHeaderController, safeAvatarUrl } from "./src/features/auth/header-auth.js?v=20261011notifications1";
 import { applyRandomTrackBackground, normalizeTrackBackgroundCode, resolveTrackBackgroundFile } from "./src/features/server-status/track-background.js?v=20260726staticfallback1";
-import { bindServerStatusFreshness, isServerStatusStale, isInstanceStatusStale } from "./src/features/server-status/freshness.js?v=20261017chatbot1";
+import { bindServerStatusFreshness, isServerStatusStale, isInstanceStatusStale } from "./src/features/server-status/freshness.js?v=20261018telemetry1";
+import { telemetrySessionLabel, formatTelemetryLap, loadPreferredServerStatus } from "./src/features/server-status/telemetry.js?v=20261018telemetry1";
 import { selectNextHourlyAnnouncement } from "./src/features/hourly/announcement-model.js?v=20260828hourlynext1";
 import { getSpecialEventPresentation, normalizeSingleModelRestriction } from "./src/features/hourly/special-event.js?v=20260903special1";
 import { safeImageUrl, safeLinkUrl } from "./src/shared/safe-dom.js";
@@ -139,6 +140,7 @@ const AUTH_BASE_URL = "https://auth.asgracing.ru";
 const LOCAL_NEWS_DATA_URL = `${SITE_BASE_PATH}news-content/news.json`;
 const topDataV2ManifestUrl = `${TOP_DATA_V2_BASE_URL}/manifest.json`;
 const serverStatusUrl = getDevRuntimeParam("serverStatusUrl") || (TOP_API_ROOT_URL ? `${TOP_API_ROOT_URL}/server-status` : `${TOP_DATA_BASE_URL}/server_status.json`);
+const liveServerStatusUrl = getDevRuntimeParam("serverStatusUrl") || `${TOP_DATA_BASE_URL}/server_status_live.json`;
 const donationsApiUrl = "https://data.asgracing.ru/donations-api/recent";
 const hourlyAnnouncementUrl = `${HOURLY_DATA_BASE_URL}/announcement.json`;
 const hourlyScheduleUrl = `${HOURLY_DATA_BASE_URL}/schedule.json`;
@@ -6045,9 +6047,8 @@ function normalizeSnapshotPayload(snapshot) {
 
 async function loadStandaloneServerStatus({ bypassCache = false } = {}) {
   try {
-    const data = bypassCache
-      ? await requestJson(serverStatusUrl, { cache: "no-store", retries: 1 })
-      : await loadJson(serverStatusUrl);
+    const data = await loadPreferredServerStatus(liveServerStatusUrl, serverStatusUrl,
+      url => bypassCache ? requestJson(url, { cache: "no-store", retries: 1 }) : loadJson(url));
     const { normalizeServerStatus } = await dataSchemaModulePromise;
     return normalizeServerStatus(data);
   } catch (_error) {
@@ -8691,7 +8692,7 @@ function getServerDrivers(server) {
       : [];
   return drivers
     .filter(Boolean)
-    .map((driver, index) => ({ ...driver, position: driver.position || index + 1 }));
+    .map(driver => ({ ...driver, position: Number.isInteger(driver.position) && driver.position > 0 ? driver.position : null }));
 }
 
 function getServerStatusItems(serverStatus = serverStatusData) {
@@ -8733,6 +8734,8 @@ function serverPlayersOnline(server) {
 function getServerSessionShortLabel(server) {
   if (!server || typeof server !== "object") return "";
   if (!serverIsOnline(server)) return "";
+  const telemetry = telemetrySessionLabel(server, { lang: currentLang });
+  if (telemetry !== null) return telemetry;
   const explicit = server.session_label || server.session_status_label || server.session_short_label;
   if (explicit) return String(explicit).trim();
   const rawType = String(server.session_type || server.current_session || server.session || "").trim().toLowerCase();
@@ -8979,13 +8982,14 @@ function renderSelectedServerPlayersModal(titleEl, subtitleEl, listEl) {
     const carName = getResultCarName(driver);
     return `
       <article class="server-player-row">
-        <div class="server-player-position">${escapeHtml(driver.position || index + 1)}</div>
+        <div class="server-player-position">${escapeHtml(driver.position ?? '—')}</div>
         <div class="server-player-main">
           <div class="server-player-name">${renderDriverLink(driver.name || "-", driver.public_id, "driver-link")}</div>
           <div class="server-player-ratings">${renderEloBadge(driver,{compact:true})} ${renderSafetyBadge(driver,{compact:true})}</div>
           <div class="server-player-meta">
             ${raceNumber != null ? `<span>#${escapeHtml(raceNumber)}</span>` : ""}
             <span>${escapeHtml(carName)}</span>
+            ${server?.source === 'acc-local-telemetry' ? `<span>${currentLang === 'ru' ? 'Лучший' : 'Best'}: ${formatTelemetryLap(driver.best_lap_ms)} · ${currentLang === 'ru' ? 'Последний' : 'Last'}: ${formatTelemetryLap(driver.last_lap_ms)} · ${currentLang === 'ru' ? 'Круги' : 'Laps'}: ${escapeHtml(driver.lap_count ?? '—')}</span>` : ''}
           </div>
         </div>
         ${renderCarImage(driver, { className: "car-thumb car-thumb-inline server-player-car", alt: carName })}

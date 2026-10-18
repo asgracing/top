@@ -1,6 +1,7 @@
 import {eventKind} from './models.js?v=20261006v2k';
 import {resolveTrackBackgroundFile} from '/src/features/server-status/track-background.js';
-import {serverSessionLabel} from './server-session.js?v=20261008widgets1';
+import {serverSessionLabel} from './server-session.js?v=20261018telemetry1';
+import {formatTelemetryLap} from '../src/features/server-status/telemetry.js?v=20261018telemetry1';
 import {safetyHistoryComponents} from './safety-history.js?v=20261010profile1';
 import {loadLeaderboardRank,profileWithLeaderboardRank} from '/src/shared/leaderboard-rank.js?v=20261013delivery1';
 
@@ -105,7 +106,7 @@ export function createPresentation({$,native,getModel,esc,text,label,date,number
     const stale=m.serversStale||s.stale,drivers=stale?[]:s.drivers||[],empty=stale?text('Онлайн устарел; актуальный список недоступен.','Online status is stale; the current roster is unavailable.'):s.players>0?text('Список имён ещё не опубликован.','Driver names have not been published yet.'):text('Сейчас пилотов нет.','No drivers currently online.');
     display(s.label,`<div class="server-parameter-row">${detail(label('track'),s.track||'—')}${detail(label('admission'),`SA ${s.sa??'—'} / SR ${s.sr??'—'}`)}${detail(label('session'),phase(s))}${detail(label('players'),stale?'—':number(s.players))}</div>${serverAdmission(s)?`<p class="server-sr-warning" role="note">${esc(serverAdmission(s))}</p>`:''}<p class="data-note server-search-note">${label('serverSearch')}</p><h3 class="server-roster-heading">${text('Пилоты на сервере','Drivers on server')} <span class="small-tag">${stale?'—':number(drivers.length)}</span></h3><ol class="server-driver-list">${drivers.length?drivers.map((p,i)=>{
       const id=p.car_model_id??p.carModel??p.carModelId??p.car_model??null,modelName=native().car({...p,car_model_id:id}),carData={...p,car_model_id:id,car_name:p.car_name||(modelName==='-'?'—':modelName)},name=p.name||p.driver||p.driver_name||'—',raceNumber=p.raceNumber??p.car_number??p.race_number;
-      return `<li><span class="pilot-identity"><span class="pilot-position">${esc(p.position??i+1)}</span><span class="pilot-number">#${esc(raceNumber??'—')}</span>${p.public_id?`<a class="pilot-name" href="${driverHref(p.public_id)}">${esc(name)}</a>`:`<span class="pilot-name">${esc(name)}</span>`}</span><span class="pilot-ratings"><span class="driver-ratings">${rating(p,'elo',null,true)}${rating(p,'sr',null,true)}</span></span><span class="pilot-car">${car(carData)}</span></li>`;
+      return `<li><span class="pilot-identity"><span class="pilot-position">${esc(p.position??'—')}</span><span class="pilot-number">#${esc(raceNumber??'—')}</span>${p.public_id?`<a class="pilot-name" href="${driverHref(p.public_id)}">${esc(name)}</a>`:`<span class="pilot-name">${esc(name)}</span>`}</span><span class="pilot-ratings"><span class="driver-ratings">${rating(p,'elo',null,true)}${rating(p,'sr',null,true)}</span></span><span class="pilot-car">${car(carData)}${s.server?.source==='acc-local-telemetry'?`<small>${text('Лучший','Best')}: ${formatTelemetryLap(p.best_lap_ms)} · ${text('Последний','Last')}: ${formatTelemetryLap(p.last_lap_ms)} · ${text('Круги','Laps')}: ${esc(p.lap_count??'—')}</small>`:''}</span></li>`;
     }).join(''):`<li class="empty">${empty}</li>`}</ol><p class="data-note server-updated">${text('Последнее обновление','Last update')}: ${date(s.server?.updated_at||m.updatedAt)}</p>`,'server',trigger);
   }
   $('modal-body').addEventListener('change',e=>{

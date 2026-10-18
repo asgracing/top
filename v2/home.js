@@ -2,10 +2,10 @@ import {carThumbnailAttributes} from '/src/shared/image-thumbnails.js?v=20261013
 import copy from './copy.js?v=20261006v2k';
 import { subscribe, getRuntime } from './bridge.js?v=20261006v2k';
 import {rankingPosition,eventKind,normalizeTablePage,normalizeSafetyRow,paginationPages,serverSrRestriction} from './models.js?v=20261013delivery1';
-import {createPresentation} from './presentation.js?v=20261017chatbot1';
+import {createPresentation} from './presentation.js?v=20261018telemetry1';
 import {createRecentRaces} from './recent-races.js?v=20261011racelinks1';
 import {createHeader} from './header.js?v=20261014profile1';
-import {serverSessionLabel} from './server-session.js?v=20261008widgets1';
+import {serverSessionLabel} from './server-session.js?v=20261018telemetry1';
 import {createGuide} from './guide.js?v=20261006v2k';
 import {createHomeMotion} from './motion.js?v=20261006v2k';
 import {v2Route,currentV2Path,v2EntityLinks} from './routes.js?v=20261008v2pages15';
@@ -163,9 +163,17 @@ function renderServers(){
     const name=s.key==='hourly'?text('Часовые гонки / ASG Racing Race','Hourly / ASG Racing Race'):String(s.label).replace(/^ASG Racing\s+/i,''),session=s.stale?text('Данные устарели','Stale data'):phase(s),hint=serverAdmission(s);
     const short=s.stale?text('Нет данных','No data'):serverSessionLabel(s,label,{compact:true});
     const description=hint||`${s.label} · ${session} · ${number(s.players)} ${text('пилотов','drivers')}`;
-    return `<button type="button" class="server-card${s.online?'':' offline'}${hint?' is-sr-blocked':''}" data-server="${esc(s.key)}" aria-label="${esc(description)}" title="${esc(description)}"><span class="server-top"><span class="server-id">${String(i+1).padStart(2,'0')}</span><span class="server-name">${esc(name)}</span><span class="server-compact-live">${esc(short)} · ${number(s.players)}</span><span class="status-dot" aria-hidden="true"></span></span><span class="server-facts"><span class="server-track">${esc(s.track||'—')}</span><span class="server-admission">SA ${esc(s.sa)} · ${hint?'&#128274; ':''}SR ${esc(s.sr)}</span><span class="server-live">${number(s.players)} ${text('пилотов','drivers')} · ${esc(session)}</span></span></button>`;
+    return `<button type="button" class="server-card${s.online?'':' offline'}${hint?' is-sr-blocked':''}" data-server="${esc(s.key)}" aria-label="${esc(description)}" title="${esc(description)}"><span class="server-top"><span class="server-id">${String(i+1).padStart(2,'0')}</span><span class="server-name">${esc(name)}</span><span class="server-compact-live"><span data-live-session="${esc(s.key)}" data-compact="true">${esc(short)}</span> · ${number(s.players)}</span><span class="status-dot" aria-hidden="true"></span></span><span class="server-facts"><span class="server-track">${esc(s.track||'—')}</span><span class="server-admission">SA ${esc(s.sa)} · ${hint?'&#128274; ':''}SR ${esc(s.sr)}</span><span class="server-live">${number(s.players)} ${text('пилотов','drivers')} · <span data-live-session="${esc(s.key)}">${esc(session)}</span></span></span></button>`;
   }).join('')||`<p class="empty">${text('Статусы недоступны','Server status unavailable')}</p>`;
 }
+// Update only clock text; do not rebuild cards or refetch positions each second.
+setInterval(()=>{
+  if(document.hidden||!model)return;
+  for(const node of document.querySelectorAll('[data-live-session]')){
+    const server=model.servers.find(s=>s.key===node.dataset.liveSession);
+    if(server?.server?.source==='acc-local-telemetry')node.textContent=serverSessionLabel(server,label,{compact:node.dataset.compact==='true'});
+  }
+},1000);
 const cols={leaderboard:[['rank','#'],['driver','driver'],['elo','ELO'],['safety_rating','SR'],['points','points'],['wins','wins'],['podiums','podiums'],['races','racesCol'],['average_finish','finish'],['club','club'],['team','team']],safety:[['rank','№'],['driver','driver'],['safety_rating','SR'],['active_strikes',text('Страйки','Strikes')],['races_count','racesCol'],['total_laps',text('Всего кругов','Total laps')],['total_invalid_laps',text('Грязные круги','Invalid laps')],['total_counted_penalties',text('Автоштрафы','Auto penalties')],['total_incident_points',text('Инциденты','Incidents')]],bestlaps:[['rank','#'],['driver','driver'],['best_lap','lap'],['car_name','car'],['updated_at','date'],['session_type','session'],['elo','ELO'],['safety_rating','SR'],['club','club'],['team','team']],clubs:[['rank','#'],['display_name','teams'],['total_points','points'],['average_elo','ELO'],['average_sr','SR'],['race_count','racesCol']]};
 function tableCell(row,key,index){
   if(key==='rank'){const rank=rankingPosition(row,tab,index);return `<span class="${rank&&rank<=3?`rank-medal rank-${['gold','silver','bronze'][rank-1]}`:''}">${rank??'—'}</span>`;}
