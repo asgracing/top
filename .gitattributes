@@ -570,3 +570,4 @@
 /v2/safety-history.js -text
 /assets/v2-light/** -text
 /src/shared/driver-directory.js -text
+/src/shared/race-result-context.js -text
