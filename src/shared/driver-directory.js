@@ -1,22 +1,23 @@
+const invalid=()=>new TypeError('Invalid driver directory');
 export async function loadDriverDirectory(request) {
+  const legacy=async()=>{
+    const rows=await request('drivers/drivers.json');
+    if(!Array.isArray(rows))throw invalid();
+    return rows;
+  };
   let payload;
   try {
-    payload = await request('drivers/search.json');
-  } catch (error) {
-    // Only a 404 permits the legacy fallback.
-    if (Number(error?.status) !== 404) throw error;
-    const legacy = await request('drivers/drivers.json');
-    if (!Array.isArray(legacy)) throw new TypeError('Invalid driver directory');
-    return legacy;
-  }
-  if (payload?.schema_version !== 1 || !Array.isArray(payload.items)
-      || payload.total_items !== payload.items.length) throw new TypeError('Invalid driver directory');
-  const seen = new Set();
-  return payload.items.map(row => {
-    if (!row || typeof row.public_id !== 'string' || !row.public_id
-        || typeof row.driver !== 'string' || typeof row.is_banned !== 'boolean'
-        || seen.has(row.public_id)) throw new TypeError('Invalid driver directory row');
+    const contract=(await request('manifest.json'))?.driver_search;
+    if(contract===undefined)return legacy();
+    if(contract?.schema_version!==1||contract.path!=='drivers/search.json')throw invalid();
+    payload=await request(contract.path);
+  }catch(error){if(Number(error?.status)!==404)throw error;return legacy();}
+  if(payload?.schema_version!==1||!Array.isArray(payload.items)||payload.total_items!==payload.items.length)throw invalid();
+  const seen=new Set();
+  return payload.items.map(row=>{
+    if(!row||typeof row.public_id!=='string'||!row.public_id||typeof row.driver!=='string'
+      ||typeof row.is_banned!=='boolean'||seen.has(row.public_id))throw invalid();
     seen.add(row.public_id);
-    return {public_id: row.public_id, driver: row.driver, is_banned: row.is_banned};
+    return {public_id:row.public_id,driver:row.driver,is_banned:row.is_banned};
   });
 }

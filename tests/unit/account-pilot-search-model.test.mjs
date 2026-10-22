@@ -58,7 +58,7 @@ test("loads the compact public driver directory", async () => {
   let requestedOptions = null;
   const pilots = await loadPilotIndex({
     dataBaseUrl: "https://data.asgracing.ru/top-data",
-    client: { async requestJson(url, options) { requested = String(url); requestedOptions = options; return {schema_version:1,total_items:1,items:[{ public_id: "pilot-1", driver: "Driver", is_banned:false }]}; } }
+    client: { async requestJson(url, options) { requested = String(url); requestedOptions = options; if(url.pathname.endsWith('/manifest.json'))return {driver_search:{schema_version:1,path:'drivers/search.json'}}; return {schema_version:1,total_items:1,items:[{ public_id: "pilot-1", driver: "Driver", is_banned:false }]}; } }
   });
   assert.equal(requested, "https://data.asgracing.ru/top-data/v2/drivers/search.json");
   assert.equal(requestedOptions.timeoutMs, 60_000);

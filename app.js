@@ -6351,7 +6351,7 @@ async function loadDriverProfileCached(publicId) {
 }
 
 async function loadDriverIndex() {
-  return loadDriverDirectory(path => loadTopDataV2Json(path));
+  return loadDriverDirectory(path => path === 'manifest.json' ? loadTopDataV2Manifest() : loadTopDataV2Json(path));
 }
 
 async function loadBansData() {
