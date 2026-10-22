@@ -1,4 +1,5 @@
 import {createHourlyVotesClient} from '/src/shared/hourly-votes-client.js';
+import {loadDriverDirectory} from '/src/shared/driver-directory.js?v=20261022compact1';
 import {loadLeaderboardRank,profileWithLeaderboardRank} from '/src/shared/leaderboard-rank.js?v=20261013delivery1';
 import {filterRaces} from '/src/pages/races/model.js';
 import {normalizeChampionshipStatus} from '/src/pages/hourly/championship-status.js';
@@ -267,10 +268,7 @@ export function createPageData(native) {
     if(!items.some(b=>!b.public_id))return items;
     // Load once on this page, after the list is visible. Retain only the resolved
     // ban records, not the large index's unrelated profiles/rating histories.
-    const response=await fetch(publicUrl('top-data/v2/drivers/drivers.json'),{cache:'no-store',signal:AbortSignal.timeout(20000)});
-    if(!response.ok)throw new Error('Driver index unavailable');
-    const index=await response.json();
-    if(!Array.isArray(index))throw new Error('Invalid driver index');
+    const index=await loadDriverDirectory(path=>readJson(topUrl(path)));
     return resolveBanProfiles(items,index);
   }
   return {hourly,driver,race,raceFromLink,archive,championships,season,catalog,entity,cars,fun,bans,bannedProfiles,news,community,history,loadVotes,toggle,participation};

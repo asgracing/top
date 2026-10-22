@@ -53,14 +53,14 @@ test("returns all matches and moves already invited pilots below available pilot
   assert.equal(filterPilots(pilots, "asg", { limit: 70 }).length, 70);
 });
 
-test("loads the canonical public driver index path", async () => {
+test("loads the compact public driver directory", async () => {
   let requested = "";
   let requestedOptions = null;
   const pilots = await loadPilotIndex({
     dataBaseUrl: "https://data.asgracing.ru/top-data",
-    client: { async requestJson(url, options) { requested = String(url); requestedOptions = options; return [{ public_id: "pilot-1", driver: "Driver" }]; } }
+    client: { async requestJson(url, options) { requested = String(url); requestedOptions = options; return {schema_version:1,total_items:1,items:[{ public_id: "pilot-1", driver: "Driver", is_banned:false }]}; } }
   });
-  assert.equal(requested, "https://data.asgracing.ru/top-data/v2/drivers/drivers.json");
+  assert.equal(requested, "https://data.asgracing.ru/top-data/v2/drivers/search.json");
   assert.equal(requestedOptions.timeoutMs, 60_000);
   assert.equal(pilots[0].publicId, "pilot-1");
 });

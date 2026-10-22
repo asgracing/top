@@ -1,3 +1,5 @@
+import {loadDriverDirectory} from '../../shared/driver-directory.js?v=20261022compact1';
+
 const ID_PATTERN = /^[A-Za-z0-9][A-Za-z0-9._:-]*$/;
 const MAX_PILOT_INDEX_SIZE = 50_000;
 
@@ -44,10 +46,10 @@ export function filterPilots(pilots, query, options = {}) {
 
 export async function loadPilotIndex({ client, dataBaseUrl }) {
   const base = `${String(dataBaseUrl || "").replace(/\/+$/, "")}/`;
-  const value = await client.requestJson(new URL("v2/drivers/drivers.json", base), {
+  const value = await loadDriverDirectory(path => client.requestJson(new URL(`v2/${path}`, base), {
     retries: 1,
     cache: "no-store",
     timeoutMs: 60_000
-  });
+  }));
   return normalizePilotIndex(value);
 }
