@@ -1,5 +1,6 @@
 import { publish, installRuntime } from '/v2/bridge.js?v=20261006v2k';
 import { currentPageLanguageHref, initializeLocalizedPage, localizedPageHref, resolvePageLocale, setPageLocale } from "/src/shared/localized-page.js?v=20261007root1";
+import {loadDriverDirectory} from '/src/shared/driver-directory.js?v=20261022compact1';
 import { isTeamRace, teamRaceUrl } from "/src/shared/team-racing-client.js?v=20261004teams1";
 import { renderTeamResults } from "/src/shared/team-racing-results-view.js?v=20261013teams3";
 import {decorateRaceHeading,renderResultTabs,installResultTabs,mergeResultContext} from '/src/shared/race-result-context.js?v=20261011racelinks1';
@@ -6360,8 +6361,7 @@ async function loadDriverProfileCached(publicId) {
 }
 
 async function loadDriverIndex() {
-  const data = await loadTopDataV2Json("drivers/drivers.json");
-  return Array.isArray(data) ? data : [];
+  return loadDriverDirectory(path => path === 'manifest.json' ? loadTopDataV2Manifest() : loadTopDataV2Json(path));
 }
 
 async function loadBansData() {

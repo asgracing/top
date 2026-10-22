@@ -1,8 +1,8 @@
 {
   "schemaVersion": 1,
-  "version": "20261011racelinks1",
+  "version": "20261022compact1",
   "source": "app.js",
-  "sha256": "3ab8e33b820442c94d22c18447baa58251a7a9611fdf75b9c399908c89d4e7c7",
-  "outputSha256": "4255fbe235a9e89b274d8ce1c79436fa4d2297648e638c19ee8c89477b36f314",
+  "sha256": "67489af4e10373d90a5e69df0b8016808d58b64cbdeffa9a9320d051c255db69",
+  "outputSha256": "762d8001a5a8bcc662e374d14c918e4ef1f8fd17ec3ef65e2bd3d11fcb41d737",
   "facadeSha256": "95f2feb420c4cc9a3614a03969694f741945230b82187f0b3c847a1099f351f5"
 }
