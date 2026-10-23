@@ -571,3 +571,7 @@
 /assets/v2-light/** -text
 /src/shared/driver-directory.js -text
 /src/shared/race-result-context.js -text
+/src/features/server-status/live-details.js -text
+/src/features/server-status/roster.js -text
+/styles/components/server-roster.css -text
+/v2/styles/runtime-3d593da5135ee2e9.css -text

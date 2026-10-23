@@ -16,9 +16,9 @@ const outputRoot = resolve(process.env.ASG_V2_OUTPUT_DIR || ((await readSiteRele
 if(outputRoot!==root)assertArchiveScratchPath(outputRoot);
 if (process.env.ASG_V2_PRESENTATION_ONLY === '1') throw Error('Presentation-only builds are retired: rebuild V2 with its canonical runtime.');
 const version = '20261006v2k';
-const runtimeVersion = '20261022compact1';
-const presentationVersion = '20261019serverrow2';
-const bootVersion = '20261022compact1';
+const runtimeVersion = '20261023serverdetails1';
+const presentationVersion = '20261023serverdetails1';
+const bootVersion = '20261023serverdetails1';
 const legalVersion = '20261008metrika2';
 const buildInputs = new Map();
 const hash = value => createHash('sha256').update(value.replace(/\r\n/g,'\n')).digest('hex');

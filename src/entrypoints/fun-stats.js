@@ -1,3 +1,3 @@
-import { bootstrapLegacyPage } from "./legacy-bootstrap.js?v=20261019serverrow2";
+import { bootstrapLegacyPage } from "./legacy-bootstrap.js?v=20261023serverdetails1";
 
 await bootstrapLegacyPage("fun-stats");

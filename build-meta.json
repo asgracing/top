@@ -1,9 +1,9 @@
 {
   "schemaVersion": 1,
-  "revision": "4debc7a444a0e5e09e6e0464c8bae5ef5bc678d1",
-  "builtAt": "2026-10-22T15:32:31.537Z",
-  "rollbackArtifact": "../v2-root-release-candidate.previous",
+  "revision": "8a339e851713c77744f08c6c75ff2dcd0e80896f",
+  "builtAt": "2026-10-23T04:40:15.976Z",
+  "rollbackArtifact": "../dist.previous",
   "worktreeDirty": true,
   "siteLayout": "root-release-candidate",
-  "sourceSnapshotSha256": "65d19bfc70cbe4f809117be0e64793e2a231532fccd0ba25976c4d1441ac3fcc"
+  "sourceSnapshotSha256": "04a45d9c4359ea6b711b28bcf65517eb7f00e7fb215872c771ac2df0835bed68"
 }
