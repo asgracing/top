@@ -3,10 +3,55 @@ import assert from "node:assert/strict";
 
 import {
   SERVER_STATUS_MAX_AGE_MS,
+  bindServerStatusFreshness,
+  serverDetailsAreOpen,
   isServerStatusStale,
   isInstanceStatusStale,
   parseServerStatusUpdatedAt
 } from "../../src/features/server-status/freshness.js";
+
+test("details refresh follows either maintained dialog, excluding other V2 modals", () => {
+  const nodes = {}, doc = {getElementById:id=>nodes[id]};
+  assert.equal(serverDetailsAreOpen(doc), false);
+  nodes['server-players-modal'] = {getAttribute:()=> 'false'};
+  assert.equal(serverDetailsAreOpen(doc), true);
+  delete nodes['server-players-modal'];
+  nodes['v2-modal'] = {open:true,dataset:{kind:'server'}};
+  assert.equal(serverDetailsAreOpen(doc), true);
+  nodes['v2-modal'].dataset.kind = 'servers';
+  assert.equal(serverDetailsAreOpen(doc), true);
+  nodes['v2-modal'].dataset.kind = 'driver';
+  assert.equal(serverDetailsAreOpen(doc), false);
+  nodes['v2-modal'].dataset.kind = 'server';nodes['v2-modal'].open = false;
+  assert.equal(serverDetailsAreOpen(doc), false);
+});
+
+test("open details stay within timing TTL, closed widgets poll slowly and hidden pages pause", () => {
+  let tick, interval, cleanup, visibility, detailsOpen = false, refreshes = 0;
+  const documentRef = {hidden:false};
+  const windowRef = {
+    setInterval(callback, ms) { tick = callback; interval = ms; return 42; },
+    clearInterval(id) { assert.equal(id, 42); }
+  };
+  const lifecycle = {
+    timer(id, callback) { cleanup = () => callback(id); },
+    listen(target, event, callback) { assert.equal(target, documentRef); assert.equal(event, 'visibilitychange'); visibility = callback; }
+  };
+  bindServerStatusFreshness({windowRef, documentRef, lifecycle, refresh:()=>refreshes++, isDetailsOpen:()=>detailsOpen});
+  assert.equal(interval, 5000);
+  for (let i=0;i<5;i++) tick();
+  assert.equal(refreshes, 0);
+  tick(); assert.equal(refreshes, 1);
+  detailsOpen = true;
+  for (let i=0;i<6;i++) tick();
+  assert.equal(refreshes, 7);
+  documentRef.hidden = true;
+  for (let i=0;i<6;i++) tick();
+  visibility(); assert.equal(refreshes, 7);
+  documentRef.hidden = false;
+  visibility(); assert.equal(refreshes, 8);
+  cleanup();
+});
 
 test("one fresh publisher cannot refresh another server's expired snapshot", () => {
   const now = Date.parse("2026-10-17T12:00:00Z");

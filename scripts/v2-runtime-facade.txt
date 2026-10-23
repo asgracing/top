@@ -82,6 +82,7 @@ installRuntime({
   openEvent:openHourlyHeroModal,openOnline:openOnlineActivityModal,
   openServer:(key,trigger)=>{selectedServerPlayersKey=key;serverPlayersModalMode='serverPlayers';serverPlayersModalController?.open(trigger)},
   openServers:trigger=>{serverPlayersModalMode='summary';serverPlayersModalController?.open(trigger)},
+  refreshServers:refreshServerStatusFreshness,
   vote:()=>{if(isTeamRace(hourlyAnnouncementData)){location.assign(teamRaceUrl(hourlyAnnouncementData,currentLang));return}return hourlyVoteAlreadyVoted?submitHourlyHeroUnvote():submitHourlyHeroVote()},
   loadClubs:context=>{
     if(!v2ClubSnapshots.has(context))v2ClubSnapshots.set(context,(async()=>{

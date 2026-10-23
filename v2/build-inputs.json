@@ -1,6 +1,6 @@
 {
   "schemaVersion": 1,
-  "runtimeVersion": "20261023serverdetails1",
+  "runtimeVersion": "20261023intervalrefresh1",
   "inputs": [
     {
       "path": "account/driver-overlay.js",
@@ -8,7 +8,7 @@
     },
     {
       "path": "app.js",
-      "sha256": "0fa607df40e80c973e9ff58a6dde010e7eb7397f214efd03cf19b607cb2fc2c7"
+      "sha256": "e6689c1d862c26635488fbc98405abe613b515a2ba4138eeade9c1a5f93c299a"
     },
     {
       "path": "community/posts.js",
@@ -48,7 +48,7 @@
     },
     {
       "path": "scripts/build-v2.mjs",
-      "sha256": "e1c09c1f3a2a76b34fd51ef807a607f5cbbf950eb9fbd4dae17efbb1a131e474"
+      "sha256": "c54f52cbea3dad78ce48db1da99f3d5de7a669628aed70d0d5896b6b6b07dda4"
     },
     {
       "path": "scripts/generate-localized-pages.mjs",
@@ -72,7 +72,7 @@
     },
     {
       "path": "scripts/v2-runtime-facade.txt",
-      "sha256": "95f2feb420c4cc9a3614a03969694f741945230b82187f0b3c847a1099f351f5"
+      "sha256": "88b786a944d11d3844dd23d42b0c680ea2b01e9d7f4fd2fe5b217f9ff4a025b4"
     },
     {
       "path": "src/features/auth/clubs-teams-auth-model.js",
@@ -104,7 +104,7 @@
     },
     {
       "path": "src/features/server-status/freshness.js",
-      "sha256": "fdb5eecbf4198d19a0d2c001a8b3acb8b8494d07418de631a357f2938a01254d"
+      "sha256": "615f922d52de605c4222d0c37cb83cc949d430c384fc82b64e3b15cd425e2f4d"
     },
     {
       "path": "src/features/server-status/live-details.js",
@@ -520,7 +520,7 @@
     },
     {
       "path": "v1-source/html/index.html",
-      "sha256": "159dbd3f0c4bdbda8504fbab2595d86a1b52878719ca6fdc39a17f3aa3c19e50"
+      "sha256": "c68439b0026fc4b68d44088ec3f78cb15594eb35087920aa1b92c4a3e97af3d1"
     },
     {
       "path": "v1-source/html/moderation/index.html",
@@ -632,7 +632,7 @@
     },
     {
       "path": "v2/home.js",
-      "sha256": "a90de841081599e55e9059843e2753eee7d9182ab2a4fecd2b00a44ce7f4cb1a"
+      "sha256": "55267e53c08b82c0abeb666b79425aa8c6e101b9eaa72758997b336f5d4d224a"
     },
     {
       "path": "v2/mobile-navigation.js",

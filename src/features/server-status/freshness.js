@@ -42,8 +42,24 @@ export function isInstanceStatusStale(server, now = Date.now()) {
     server.bot_connected !== true || server.roster_complete !== true;
 }
 
-export function bindServerStatusFreshness({ windowRef, documentRef, lifecycle, refresh }) {
-  const timerId = windowRef.setInterval(refresh, 30_000);
+export function serverDetailsAreOpen(documentRef) {
+  if (documentRef.getElementById("server-players-modal")?.getAttribute("aria-hidden") === "false") return true;
+  const modal = documentRef.getElementById("v2-modal");
+  return Boolean(modal?.open && ["server", "servers"].includes(modal.dataset.kind));
+}
+
+export function bindServerStatusFreshness({ windowRef, documentRef, lifecycle, refresh, isDetailsOpen = () => serverDetailsAreOpen(documentRef) }) {
+  // Fine timing expires after 15 seconds. Fetch every publication cycle while
+  // the dialog is open; keep the coarse widget cadence elsewhere.
+  let elapsedMs = 0;
+  const timerId = windowRef.setInterval(() => {
+    if (documentRef.hidden) return;
+    elapsedMs += 5_000;
+    if (isDetailsOpen() || elapsedMs >= 30_000) {
+      elapsedMs = 0;
+      refresh();
+    }
+  }, 5_000);
   lifecycle.timer(timerId, id => windowRef.clearInterval(id));
   lifecycle.listen(documentRef, "visibilitychange", () => {
     if (!documentRef.hidden) refresh();

@@ -31,7 +31,7 @@ import {
 } from "./news-read-state.js?v=20260813newsread1";
 import { createAuthHeaderController, safeAvatarUrl } from "./src/features/auth/header-auth.js?v=20261011notifications1";
 import { applyRandomTrackBackground, normalizeTrackBackgroundCode, resolveTrackBackgroundFile } from "./src/features/server-status/track-background.js?v=20260726staticfallback1";
-import { bindServerStatusFreshness, isServerStatusStale, isInstanceStatusStale } from "./src/features/server-status/freshness.js?v=20261018telemetry1";
+import { bindServerStatusFreshness, isServerStatusStale, isInstanceStatusStale } from "./src/features/server-status/freshness.js?v=20261023intervalrefresh1";
 import { telemetrySessionLabel, loadPreferredServerStatus } from "./src/features/server-status/telemetry.js?v=20261019serverrow2";
 import { renderServerRoster } from "./src/features/server-status/roster.js?v=20261023serverdetails1";
 import { serverPilotCount } from "./src/features/server-status/live-details.js?v=20261023serverdetails1";
@@ -9003,7 +9003,10 @@ function initServerPlayersModal() {
   serverPlayersModalController = createModalController({
     modalId: "server-players-modal",
     closeButtonId: "server-players-close",
-    onOpen: renderServerPlayersModal
+    onOpen: () => {
+      renderServerPlayersModal();
+      void refreshServerStatusFreshness();
+    }
   });
 
   const cardsEl = document.querySelector(".server-sticky-cards");
