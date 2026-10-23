@@ -1,4 +1,4 @@
-import { isInstanceStatusStale, parseServerStatusUpdatedAt } from './freshness.js?v=20261018telemetry1';
+import { isInstanceStatusStale, parseServerStatusUpdatedAt } from './freshness.js?v=20261023cadence1';
 
 export function telemetrySessionLabel(server, { lang = 'ru', compact = true, now = Date.now() } = {}) {
   if (server?.source !== 'acc-local-telemetry') return null;

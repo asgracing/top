@@ -1,5 +1,5 @@
-import {formatTelemetryLap, sessionBestLapMs, lapHighlight} from './telemetry.js?v=20261019servercols1';
-import {driverInterval, driverPitLabel} from './live-details.js?v=20261023serverdetails1';
+import {formatTelemetryLap, sessionBestLapMs, lapHighlight} from './telemetry.js?v=20261023cadence1';
+import {driverInterval, driverPitLabel} from './live-details.js?v=20261023cadence1';
 
 // Both maintained server dialogs share timing, lap-deficit and pit rendering.
 export function renderServerRoster({server, drivers, lang, esc, renderName, renderRatings, renderCar, emptyMessage}) {

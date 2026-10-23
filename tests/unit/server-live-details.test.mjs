@@ -45,3 +45,19 @@ test('shared roster escapes the new interval/pit display and retains old rows',(
   assert.match(html,/Interval/);assert.match(html,/\+1 lap/);assert.match(html,/aria-label="Pit box"/);
   assert.equal((html.match(/<th scope/g)||[]).length,7);
 });
+
+test('bounded cadence budget expires original observations and never revives stale sources',()=>{
+  const slow={...server(),detail_ttl_ms:45_000};
+  const row={position:2,laps_behind_ahead:0,gap_to_ahead_ms:1234,pit_state:'pit_lane'};
+  assert.equal(driverInterval(slow,row,'en',now+40_000),'+1.234');
+  assert.equal(driverPitLabel(slow,row,'en',now+40_000),'Pit lane');
+  assert.equal(driverInterval(slow,row,'ru',now+45_001),'—');
+  assert.equal(driverPitLabel({...slow,status:'stale'},row,'ru',now+10_000),null);
+  assert.equal(driverInterval({...slow,source_age_ms:5001},row,'ru',now+1000),'—');
+  for (const invalid of [true,'45000',NaN,Infinity,0,300_001]) {
+    assert.equal(driverInterval({...slow,detail_ttl_ms:invalid},row,'en',now+20_000),'—');
+  }
+  const ancient={...server(),detail_ttl_ms:239_000};
+  assert.equal(driverInterval(ancient,row,'en',now+200_000),'+1.234');
+  assert.equal(driverInterval(ancient,row,'en',now+239_001),'—');
+});

@@ -1,4 +1,4 @@
-import {isInstanceStatusStale, parseServerStatusUpdatedAt} from './freshness.js?v=20261018telemetry1';
+import {isInstanceStatusStale,parseServerStatusUpdatedAt,serverDetailMaxAgeMs} from './freshness.js?v=20261023cadence1';
 
 // Fine timing/pit observations must not remain "live" for the whole coarse
 // roster lifetime. A slow publisher will show unknown rather than old PIT.
@@ -16,7 +16,7 @@ function detailFresh(server, driver, kind, now) {
   if (server?.source !== 'acc-local-telemetry' || isInstanceStatusStale(server, now)) return false;
   const observed = parseServerStatusUpdatedAt(driver?.[`${kind}_observed_at`] || server.observed_at);
   const age = now - observed;
-  return Number.isFinite(age) && age >= -1000 && age <= DETAIL_MAX_AGE_MS;
+  return Number.isFinite(age) && age >= -1000 && age <= serverDetailMaxAgeMs(server);
 }
 
 export function driverInterval(server, driver, lang = 'ru', now = Date.now()) {

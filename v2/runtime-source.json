@@ -1,8 +1,8 @@
 {
   "schemaVersion": 1,
-  "version": "20261023intervalrefresh1",
+  "version": "20261023cadence1",
   "source": "app.js",
-  "sha256": "e6689c1d862c26635488fbc98405abe613b515a2ba4138eeade9c1a5f93c299a",
-  "outputSha256": "81b7e136c46f0526285b23c8cdeb1894d20b8dc7829f8720e80e548140b91311",
+  "sha256": "ed106a70525759108bffc912155f2973444afd124c263e55764cf6b6ac21e9f3",
+  "outputSha256": "1524ba7e5a61cb2881f3c90f1cfef1bad0a3e83634a69ead66ce5ea0a174f87e",
   "facadeSha256": "88b786a944d11d3844dd23d42b0c680ea2b01e9d7f4fd2fe5b217f9ff4a025b4"
 }

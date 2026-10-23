@@ -31,7 +31,9 @@ try {
       const url=new URL(route.request().url());
       if(url.hostname==='data.asgracing.ru'&&url.pathname==='/top-data/server_status_live.json') {
         reads++;
-        const observed=new Date(Date.now()-(reads===1?20000:0)).toISOString();
+        // A configured 45-second delivery budget must keep a 40-second source
+        // observation, without rewriting it to the time of this HTTP response.
+        const observed=new Date(Date.now()-(reads===1?20000:reads===2?40000:0)).toISOString();
         const drivers=[1,2,3].map((position)=>({position,race_number:position,
           name:'Interval Fixture '+position,connected:true,lap_count:position===3?2:3,
           best_lap_ms:108000,last_lap_ms:109000,car_model_id:35,
@@ -40,6 +42,7 @@ try {
           timing_source:position===1?null:'acc-native-checkpoint',timing_observed_at:observed}));
         const main={id:'main',name:'Main Interval Fixture',source:'acc-local-telemetry',
           status:'online',telemetry_state:'live',roster_complete:true,source_age_ms:0,
+          detail_ttl_ms:reads===2?45000:15000,
           observed_at:observed,updated_at:observed,players_online:3,drivers_connected:3,
           driver_capacity:34,track:'Monza',session:{type:'Race',phase:'session',remaining_ms:600000},
           drivers,classification:drivers};
@@ -48,7 +51,7 @@ try {
       }
       return tools.fixture(route,[]);
     });
-    await page.goto(tools.base+(lang==='en'?'/en/':'/'),{waitUntil:'networkidle'});
+    await page.goto(tools.base+(lang==='en'?'/en/':'/'),{waitUntil:'domcontentloaded'});
     await page.locator('#v2-servers [data-server="main"]').waitFor();
     if(await page.locator('.asg-legal-banner-btn-secondary').isVisible())await page.locator('.asg-legal-banner-btn-secondary').click();
     const before=reads;

@@ -3,6 +3,13 @@ export const SERVER_STATUS_MAX_AGE_MS = 10 * 60 * 1000;
 const TIMEZONE_SUFFIX_PATTERN = /(Z|[+-]\d{2}:?\d{2})$/i;
 const NAIVE_ISO_PATTERN = /^\d{4}-\d{2}-\d{2}T\d{2}:\d{2}(?::\d{2}(?:\.\d+)?)?$/;
 
+// Operator-selected slow telemetry remains bounded by the original observation.
+// Older producers retain the established 15-second detail lifetime.
+export function serverDetailMaxAgeMs(server) {
+  const value = server?.detail_ttl_ms;
+  return Number.isFinite(value) && value >= 15_000 && value <= 300_000 ? value : 15_000;
+}
+
 export function parseServerStatusUpdatedAt(value) {
   const normalized = String(value || "").trim();
   if (!normalized) return Number.NaN;
@@ -30,7 +37,7 @@ export function isInstanceStatusStale(server, now = Date.now()) {
   if (server.source === 'acc-local-telemetry') {
     const observed = parseServerStatusUpdatedAt(server.observed_at);
     const age = now - observed;
-    return !Number.isFinite(observed) || age < -30_000 || age > 180_000 ||
+    return !Number.isFinite(observed) || age < -30_000 || age > Math.max(180_000, serverDetailMaxAgeMs(server)) ||
       !['live', 'offline'].includes(server.telemetry_state) ||
       (server.telemetry_state === 'live' && (server.roster_complete !== true || server.source_age_ms > 5_000));
   }

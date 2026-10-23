@@ -1,6 +1,6 @@
 {
   "schemaVersion": 1,
-  "runtimeVersion": "20261023intervalrefresh1",
+  "runtimeVersion": "20261023cadence1",
   "inputs": [
     {
       "path": "account/driver-overlay.js",
@@ -8,7 +8,7 @@
     },
     {
       "path": "app.js",
-      "sha256": "e6689c1d862c26635488fbc98405abe613b515a2ba4138eeade9c1a5f93c299a"
+      "sha256": "ed106a70525759108bffc912155f2973444afd124c263e55764cf6b6ac21e9f3"
     },
     {
       "path": "community/posts.js",
@@ -48,7 +48,7 @@
     },
     {
       "path": "scripts/build-v2.mjs",
-      "sha256": "c54f52cbea3dad78ce48db1da99f3d5de7a669628aed70d0d5896b6b6b07dda4"
+      "sha256": "26f1fb166f8fa6bfd279d2d6847a226c29fe1cab0d9baefd68b8d8f5a95f4f63"
     },
     {
       "path": "scripts/generate-localized-pages.mjs",
@@ -104,19 +104,19 @@
     },
     {
       "path": "src/features/server-status/freshness.js",
-      "sha256": "615f922d52de605c4222d0c37cb83cc949d430c384fc82b64e3b15cd425e2f4d"
+      "sha256": "bced1af44590bbac1422e9dd7a8e009a5b48c4e089ea23004704249034d5d20b"
     },
     {
       "path": "src/features/server-status/live-details.js",
-      "sha256": "16d24b96a77a392150ce3eb5f3db3acaa7b2d995c63a8eea090c219db20e57f5"
+      "sha256": "d01083683bfef0c290d1921746cea1b202aedfcaf55ecd432e80a6a2f74a3bb1"
     },
     {
       "path": "src/features/server-status/roster.js",
-      "sha256": "d1a0b2d3321fe9523d981f90f41b4666e1c162d2a48e08a23353deaef3b18db6"
+      "sha256": "4768d12e8239c9223d0ba541c5702322391134085d20fae3af20520cc6094c51"
     },
     {
       "path": "src/features/server-status/telemetry.js",
-      "sha256": "ff3ee55e4869e533f5c82ebc9718f32633172dfd4f88f7540afdac35981dcb15"
+      "sha256": "05ffca5daf45aed278af72d79878fa9f959f8bef890c49121360c0915e17c7d7"
     },
     {
       "path": "src/features/server-status/track-background.js",
@@ -520,7 +520,7 @@
     },
     {
       "path": "v1-source/html/index.html",
-      "sha256": "c68439b0026fc4b68d44088ec3f78cb15594eb35087920aa1b92c4a3e97af3d1"
+      "sha256": "47398fe0b7da720e79d3cdf64849f08a4ea91767d411cc45cdeb458f8cfedce2"
     },
     {
       "path": "v1-source/html/moderation/index.html",
@@ -632,7 +632,7 @@
     },
     {
       "path": "v2/home.js",
-      "sha256": "55267e53c08b82c0abeb666b79425aa8c6e101b9eaa72758997b336f5d4d224a"
+      "sha256": "ef662c1bcb7538ec4b49db208d4ddd59595eafe36e12eb446727e98baca088b5"
     },
     {
       "path": "v2/mobile-navigation.js",
