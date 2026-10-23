@@ -13,6 +13,7 @@ test('pilot capacity is explicit, nullable and separate from lobby presentation'
   assert.equal(serverPilotCount({...server(),driver_capacity:undefined,max_players:30},now),'4 / —');
   assert.equal(serverPilotCount({...server(),stale:true},now),'— / 29');
   assert.equal(serverPilotCount({...server(),driver_capacity:true},now),'4 / —');
+  assert.equal(serverPilotCount({...server(),telemetry_state:'offline',status:'offline',roster_complete:false,players_online:0},now),'0 / 29');
 });
 
 test('race intervals use the previous classified car and require an explicit lap deficit',()=>{
@@ -33,6 +34,7 @@ test('qualifying best delta and pit states are not guessed from speed or race ga
   assert.equal(driverPitLabel(server(),{pit_state:'pit_lane'},'ru',now),'Пит-лейн');
   assert.equal(driverPitLabel(server(),{pit_state:'pit_box'},'en',now),'Pit box');
   assert.equal(driverPitLabel(server(),{speed:0},'en',now),null);
+  assert.equal(driverPitLabel(server(),{pit_state:'pit_box',connected:false},'en',now),null);
   assert.equal(driverPitLabel(server(),{pit_state:'pit_box'},'en',now+DETAIL_MAX_AGE_MS+1),null);
 });
 

@@ -8,7 +8,7 @@ const count = value => Number.isInteger(value) && value >= 0 && value <= 256 ? v
 export function serverPilotCount(server, now = Date.now()) {
   const capacity = count(server?.driver_capacity);
   const connected = isInstanceStatusStale(server, now) ? null : count(server?.drivers_connected)
-    ?? (server?.source === 'acc-local-telemetry' && server?.roster_complete === true ? count(server.players_online) : null);
+    ?? (server?.source === 'acc-local-telemetry' && (server?.roster_complete === true || server?.telemetry_state === 'offline') ? count(server.players_online) : null);
   return `${connected ?? '—'} / ${capacity ?? '—'}`;
 }
 
@@ -20,7 +20,7 @@ function detailFresh(server, driver, kind, now) {
 }
 
 export function driverInterval(server, driver, lang = 'ru', now = Date.now()) {
-  if (driver?.position === 1 || !detailFresh(server, driver, 'timing', now)) return '—';
+  if (driver?.connected === false || driver?.position === 1 || !detailFresh(server, driver, 'timing', now)) return '—';
   if (server.session?.type !== 'Race') {
     const ms = driver.qualifying_best_delta_ms;
     return ['Practice','Qualifying'].includes(server.session?.type) && Number.isFinite(ms) && ms >= 0
@@ -38,7 +38,7 @@ export function driverInterval(server, driver, lang = 'ru', now = Date.now()) {
 }
 
 export function driverPitLabel(server, driver, lang = 'ru', now = Date.now()) {
-  if (!detailFresh(server, driver, 'pit', now)) return null;
+  if (driver?.connected === false || !detailFresh(server, driver, 'pit', now)) return null;
   const labels = lang === 'ru' ? {pit_lane:'Пит-лейн',pit_box:'Пит-бокс',pit:'В пите'}
     : {pit_lane:'Pit lane',pit_box:'Pit box',pit:'In pit'};
   return labels[driver?.pit_state] || null;
