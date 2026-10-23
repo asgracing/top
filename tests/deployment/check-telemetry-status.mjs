@@ -50,13 +50,15 @@ try{
       drivers:id==='main'?[{name:'Telemetry pilot',position:3,race_number:765,car_model_id:36,
         best_lap_ms:115132,last_lap_ms:116500,lap_count:3,public_id:null,elo:1600,safety_rating:7}]:[]} ]));
     servers.main.drivers=[
-      {...servers.main.drivers[0]},
+      {...servers.main.drivers[0],laps_behind_ahead:0,gap_to_ahead_ms:1234,pit_state:'pit_box'},
       {...servers.main.drivers[0],name:'Personal best pilot',position:4,race_number:2,best_lap_ms:115400,last_lap_ms:115400},
       {...servers.main.drivers[0],name:'Session record pilot',position:5,race_number:3,best_lap_ms:115132,last_lap_ms:115132},
       {...servers.main.drivers[0],name:'No timed lap',position:6,race_number:4,best_lap_ms:null,last_lap_ms:null},
       {...servers.main.drivers[0],name:'Very long driver name for narrow viewport verification',position:7,race_number:5,best_lap_ms:115900,last_lap_ms:116100}
     ];
     servers.main.players_online=servers.main.drivers.length;
+    servers.main.drivers_connected=5;servers.main.driver_capacity=29;
+    servers.main.drivers[1].laps_behind_ahead=2;
     const live={schema_version:3,source:'asg-live-telemetry-status',updated_at:observed,players_online:5,servers};
     page.on('pageerror',e=>errors.push(String(e)));
     await page.route('**/*',async route=>{
@@ -88,9 +90,13 @@ try{
     await page.locator(legacy?'.server-sticky-card[data-server-key="main"]':'#v2-servers [data-server="main"]').click();
     const rows=page.locator(modal+' .server-driver-list tbody tr');
     await rows.first().waitFor();
-    assert.equal(await page.locator(modal+' .server-roster-table thead th').count(),6);
+    assert.equal(await page.locator(modal+' .server-roster-table thead th').count(),7);
     assert.equal(await rows.count(),5);
-    assert.equal(await rows.first().locator('td').count(),6);
+    assert.equal(await rows.first().locator('td').count(),7);
+    assert.equal(await rows.first().locator('.pilot-interval').textContent(),'+1.234');
+    assert.equal(await rows.nth(1).locator('.pilot-interval').textContent(),language==='ru'?'+2 круга':'+2 laps');
+    assert.equal(await rows.first().locator('.pilot-pit').getAttribute('title'),language==='ru'?'Пит-бокс':'Pit box');
+    assert.match(await page.locator(modal).innerText(),/5 \/ 29/);
     assert.equal(await rows.first().locator('.pilot-position').textContent(),'3');
     assert.equal(await rows.first().locator('.pilot-position').isVisible(),true,'Current place remains visible on mobile');
     assert.equal(await rows.first().locator('.pilot-best-lap').textContent(),'1:55.132');
@@ -129,16 +135,19 @@ try{
       assert.equal(await page.evaluate(()=>document.documentElement.scrollWidth>innerWidth+1),false,'Only the table scrolls');
     }
     servers.main.drivers[1].best_lap_ms=114000;servers.main.drivers[1].last_lap_ms=114000;
-    live.updated_at=new Date().toISOString();
+    live.updated_at=new Date().toISOString();servers.main.observed_at=live.updated_at;
+    servers.main.drivers[0].pit_state='on_track';servers.main.drivers[0].gap_to_ahead_ms=2345;
     await page.evaluate(()=>document.dispatchEvent(new Event('visibilitychange')));
     await page.waitForFunction(selector=>document.querySelectorAll(selector+' .pilot-best-lap')[1]?.textContent==='1:54.000',modal);
     assert.equal(await color(1,'.pilot-best-lap'),'rgb(196, 154, 255)');
+    assert.equal(await rows.first().locator('.pilot-pit').count(),0);
+    assert.equal(await rows.first().locator('.pilot-interval').textContent(),'+2.345');
     assert.equal(await color(1,'.pilot-last-lap'),'rgb(196, 154, 255)');
     assert.equal(await color(0,'.pilot-best-lap'),legacy?'rgb(57, 217, 138)':'rgb(64, 229, 142)');
     if(width<600)assert.equal(await page.locator(modal+' .server-roster-scroll').evaluate(el=>el.scrollLeft),275,'Snapshot refresh preserves table scroll');
     assert.equal(requested.filter(p=>p.endsWith('/server_status.json')).length,0,'Legacy status must not override the live file');
     assert.deepEqual(errors,[]);assert.equal(remoteWrites,0);
-    reports.push({language,width,variant,servers:9,columns:6,rows:5,position:3,countdown_advanced:!legacy,lap_colors_checked:true,live_recolor_checked:true,remote_writes:remoteWrites});
+    reports.push({language,width,variant,servers:9,columns:7,rows:5,position:3,countdown_advanced:!legacy,lap_colors_checked:true,live_recolor_checked:true,live_details_checked:true,remote_writes:remoteWrites});
     await page.close();
   }
   await fs.writeFile(path.join(output,'validation.json'),JSON.stringify(reports,null,2)+'\n');

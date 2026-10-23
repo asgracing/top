@@ -33,7 +33,8 @@ import { createAuthHeaderController, safeAvatarUrl } from "./src/features/auth/h
 import { applyRandomTrackBackground, normalizeTrackBackgroundCode, resolveTrackBackgroundFile } from "./src/features/server-status/track-background.js?v=20260726staticfallback1";
 import { bindServerStatusFreshness, isServerStatusStale, isInstanceStatusStale } from "./src/features/server-status/freshness.js?v=20261018telemetry1";
 import { telemetrySessionLabel, loadPreferredServerStatus } from "./src/features/server-status/telemetry.js?v=20261019serverrow2";
-import { renderServerRoster } from "./src/features/server-status/roster.js?v=20261019serverrow2";
+import { renderServerRoster } from "./src/features/server-status/roster.js?v=20261023serverdetails1";
+import { serverPilotCount } from "./src/features/server-status/live-details.js?v=20261023serverdetails1";
 import { selectNextHourlyAnnouncement } from "./src/features/hourly/announcement-model.js?v=20260828hourlynext1";
 import { getSpecialEventPresentation, normalizeSingleModelRestriction } from "./src/features/hourly/special-event.js?v=20260903special1";
 import { safeImageUrl, safeLinkUrl } from "./src/shared/safe-dom.js";
@@ -8904,7 +8905,7 @@ function renderServerStickyWidget(serverStatus = serverStatusData) {
                   </div>
                   <div class="server-sticky-metric">
                     <span>${escapeHtml(t("serverMetricPlayers"))}</span>
-                    <strong>${escapeHtml(String(players ?? "—"))}</strong>
+                    <strong>${escapeHtml(serverPilotCount(server))}</strong>
                   </div>
                   <div class="server-sticky-metric server-sticky-metric-session">
                     <span>${escapeHtml(t("serverMetricSession"))}</span>
@@ -8952,7 +8953,7 @@ function renderServerStatusSummaryModal(titleEl, subtitleEl, listEl) {
           </div>
         </div>
         <div class="server-status-row-count">
-          <strong>${escapeHtml(players ?? "—")}</strong>
+          <strong>${escapeHtml(serverPilotCount(server))}</strong>
           <span>${escapeHtml(t("serverPlayersCountLabel"))}</span>
         </div>
       </article>
@@ -8966,7 +8967,7 @@ function renderSelectedServerPlayersModal(titleEl, subtitleEl, listEl) {
   const server = selected?.server || null;
   const drivers = getServerDrivers(server);
   titleEl.textContent = appendServerSessionLabel(selected?.label || t("playersOnlineTitle"), server);
-  subtitleEl.textContent = formatServerStatusUpdatedSubtitle(server?.updated_at || serverStatusData?.updated_at);
+  subtitleEl.textContent = `${currentLang === 'ru' ? 'Пилоты' : 'Drivers'} ${serverPilotCount(server)} · ${formatServerStatusUpdatedSubtitle(server?.updated_at || serverStatusData?.updated_at)}`;
 
   if (isInstanceStatusStale(server)) {
     replaceWithTextState(listEl, "empty", t("serverInstanceStatusStale"));

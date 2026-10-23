@@ -1,7 +1,8 @@
 import {eventKind} from './models.js?v=20261006v2k';
 import {resolveTrackBackgroundFile} from '/src/features/server-status/track-background.js';
 import {serverSessionLabel} from './server-session.js?v=20261018telemetry1';
-import {renderServerRoster} from '../src/features/server-status/roster.js?v=20261019serverrow2';
+import {renderServerRoster} from '../src/features/server-status/roster.js?v=20261023serverdetails1';
+import {serverPilotCount} from '../src/features/server-status/live-details.js?v=20261023serverdetails1';
 import {safetyHistoryComponents} from './safety-history.js?v=20261010profile1';
 import {loadLeaderboardRank,profileWithLeaderboardRank} from '/src/shared/leaderboard-rank.js?v=20261013delivery1';
 
@@ -106,7 +107,7 @@ export function createPresentation({$,native,getModel,esc,text,label,date,number
     };
     const phase=s=>s.stale?text('Данные устарели','Stale data'):serverSessionLabel(s,label);
     if(!key){
-      draw(label('serverStatus'),`<div class="server-summary-list">${m.servers.map(s=>`<button type="button" class="server-summary-item${serverAdmission(s)?' is-sr-blocked':''}" title="${esc(serverAdmission(s)||s.label)}" aria-label="${esc(s.label)}${serverAdmission(s)?` · ${esc(serverAdmission(s))}`:''}" data-server="${esc(s.key)}"><b>${esc(s.label)}</b><span>${esc(s.track)} · <strong class="${s.online?'is-online':'is-offline'}">${m.serversStale||s.stale?text('Данные устарели','Stale data'):s.online?label('live'):label('offline')}</strong> · ${esc(phase(s))} · SA ${esc(s.sa)} · SR ${esc(s.sr)} · ${m.serversStale||s.stale?'—':number(s.players)} ${text('пилотов','drivers')}</span></button>`).join('')||`<p class="empty">${label('noData')}</p>`}</div>`,'servers',trigger);return;
+      draw(label('serverStatus'),`<div class="server-summary-list">${m.servers.map(s=>`<button type="button" class="server-summary-item${serverAdmission(s)?' is-sr-blocked':''}" title="${esc(serverAdmission(s)||s.label)}" aria-label="${esc(s.label)}${serverAdmission(s)?` · ${esc(serverAdmission(s))}`:''}" data-server="${esc(s.key)}"><b>${esc(s.label)}</b><span>${esc(s.track)} · <strong class="${s.online?'is-online':'is-offline'}">${m.serversStale||s.stale?text('Данные устарели','Stale data'):s.online?label('live'):label('offline')}</strong> · ${esc(phase(s))} · SA ${esc(s.sa)} · SR ${esc(s.sr)} · ${esc(serverPilotCount(s.server))} ${text('пилотов','drivers')}</span></button>`).join('')||`<p class="empty">${label('noData')}</p>`}</div>`,'servers',trigger);return;
     }
     const s=m.servers.find(server=>server.key===key);if(!s)return;
     const stale=m.serversStale||s.stale,drivers=stale?[]:s.drivers||[],empty=stale?text('Онлайн устарел; актуальный список недоступен.','Online status is stale; the current roster is unavailable.'):s.players>0?text('Список имён ещё не опубликован.','Driver names have not been published yet.'):text('Сейчас пилотов нет.','No drivers currently online.');
@@ -114,7 +115,7 @@ export function createPresentation({$,native,getModel,esc,text,label,date,number
       renderName:p=>{const name=esc(p.display_name||p.name||p.driver||p.driver_name||'—');return p.public_id?`<a class="pilot-name" href="${driverHref(p.public_id)}">${name}</a>`:`<span class="pilot-name">${name}</span>`},
       renderRatings:p=>`<span>${rating(p,'elo',null,true)}</span><span>${rating(p,'sr',null,true)}</span>`,
       renderCar:p=>{const id=p.car_model_id??p.carModel??p.carModelId??p.car_model??null,modelName=native().car({...p,car_model_id:id});return car({...p,car_model_id:id,car_name:p.car_name||(modelName==='-'?'—':modelName)})}});
-    draw(s.label,`<div class="server-parameter-row">${detail(label('track'),s.track||'—')}${detail(label('admission'),`SA ${s.sa??'—'} / SR ${s.sr??'—'}`)}${detail(label('session'),phase(s))}${detail(label('players'),stale?'—':number(s.players))}</div>${serverAdmission(s)?`<p class="server-sr-warning" role="note">${esc(serverAdmission(s))}</p>`:''}<p class="data-note server-search-note">${label('serverSearch')}</p><h3 class="server-roster-heading">${text('Пилоты на сервере','Drivers on server')} <span class="small-tag">${stale?'—':number(drivers.length)}</span></h3>${roster}<p class="data-note server-updated">${text('Последнее обновление','Last update')}: ${date(s.server?.updated_at||m.updatedAt)}</p>`,'server',trigger);
+    draw(s.label,`<div class="server-parameter-row">${detail(label('track'),s.track||'—')}${detail(label('admission'),`SA ${s.sa??'—'} / SR ${s.sr??'—'}`)}${detail(label('session'),phase(s))}${detail(label('players'),serverPilotCount(s.server))}</div>${serverAdmission(s)?`<p class="server-sr-warning" role="note">${esc(serverAdmission(s))}</p>`:''}<p class="data-note server-search-note">${label('serverSearch')}</p><h3 class="server-roster-heading">${text('Пилоты на сервере','Drivers on server')} <span class="small-tag">${esc(serverPilotCount(s.server))}</span></h3>${roster}<p class="data-note server-updated">${text('Последнее обновление','Last update')}: ${date(s.server?.updated_at||m.updatedAt)}</p>`,'server',trigger);
   }
   $('modal-body').addEventListener('change',e=>{
     const id=e.target.id;
