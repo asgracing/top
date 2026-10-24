@@ -1,0 +1,35 @@
+{
+  "schema_version": 1,
+  "track_code": "monza",
+  "layout": "GP, ACC",
+  "origin": [
+    9.281223,
+    45.618975
+  ],
+  "metric": [
+    77859.82250866288,
+    111319.49079327358
+  ],
+  "worldToGps": [
+    [
+      1.0011412008886678,
+      -0.001571781354376521
+    ],
+    [
+      -0.001571781354376706,
+      -1.0011412008886682
+    ]
+  ],
+  "worldOffset": [
+    357.45807360537236,
+    253.45733100760415
+  ],
+  "calibration": {
+    "method": "trimmed orthogonal similarity fit of complete ACC on-track lap to uniform metric GeoJSON samples",
+    "reference": "Public Sunset Monza acc-native-world-xz, 2026-10-24; 263 geometry points, no identities retained",
+    "mean_residual_metres": 3.249,
+    "p95_residual_metres": 6.525,
+    "max_residual_metres": 8.051,
+    "note": "Approximate alignment of circuit geometry and a driven racing line. Vehicles retain world X/Z; no snapping onto the centerline. Pit and finish anchors are not supplied by this GeoJSON."
+  }
+}

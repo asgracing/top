@@ -8,6 +8,18 @@
 .server-track-map .track-car circle { fill:#3183c9; stroke:#eef5ff; stroke-width:2; }
 .server-track-map .track-car.is-leader circle { fill:#dc3545; }
 .server-track-map .track-car text { fill:#fff; stroke:none; font-size:12px; font-weight:750; font-family:system-ui,sans-serif; }
+.server-track-map.has-fixed-map svg { height:clamp(250px,42vw,500px); max-height:500px; }
+.server-track-map.has-fixed-map .track-outline { stroke-width:5; }
+.server-track-map.has-fixed-map .track-car text { font-size:17px; }
+.server-track-map .track-label { fill:#acbfd5; font:19px system-ui,sans-serif; stroke:#101b29; stroke-width:5; stroke-linejoin:round; paint-order:stroke; pointer-events:none; }
+.server-track-map .track-map-credit { font-size:10px; }
+.server-track-map .track-map-credit a { color:inherit; }
+@media (max-width:600px) {
+  .server-track-map.has-fixed-map .track-car circle { r:28px; }
+  .server-track-map.has-fixed-map .track-car text { font-size:28px; }
+  .server-track-map .track-label { font-size:27px; }
+  .server-track-map .track-label.is-secondary { display:none; }
+}
 .server-roster-scroll .server-roster-table.server-driver-list { display:table; width:100%; min-width:960px; table-layout:fixed; border-collapse:separate; border-spacing:0; margin:0; color:#e8eef7; font-size:13px; }
 .server-roster-table .roster-col-position { width:52px; }
 .server-roster-table .roster-col-interval { width:100px; }
