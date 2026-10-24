@@ -1,4 +1,4 @@
-@import url("../styles/components/server-roster.css?v=20261023serverdetails1");
+@import url("../styles/components/server-roster.css?v=20261024pitmap1");
 
 /* Shared numbered pagination, including dialogs opened from home. */
 body[data-v2] .page-pagination {flex-wrap:wrap;gap:10px;}

@@ -55,9 +55,11 @@ const raceResultContextJavaScriptBytes = await textBytes("src/shared/race-result
 const raceResultContextStylesheetBytes = await textBytes("styles/components/race-result-context.css");
 const personalNotificationsJavaScriptBytes = await textBytes("src/features/auth/personal-notifications.js");
 const personalNotificationsStylesheetBytes = await textBytes("styles/components/personal-notifications.css");
+const serverTrackMapJavaScriptBytes = await textBytes("src/features/server-status/track-map.js");
 const metrics = {
   appJavaScriptBytes: await textBytes("app.js"),
-  sourceModulesBytes: await treeBytes("src", new Set([".js", ".mjs"])) - moderationJavaScriptBytes - portalOpsJavaScriptBytes - raceResultContextJavaScriptBytes - personalNotificationsJavaScriptBytes - racingRulesJavaScriptBytes,
+  sourceModulesBytes: await treeBytes("src", new Set([".js", ".mjs"])) - moderationJavaScriptBytes - portalOpsJavaScriptBytes - raceResultContextJavaScriptBytes - personalNotificationsJavaScriptBytes - racingRulesJavaScriptBytes - serverTrackMapJavaScriptBytes,
+  serverTrackMapJavaScriptBytes,
   stylesheetsBytes: await treeBytes("styles", new Set([".css"])) + await textBytes("styles.css") + await textBytes("legal.css") - moderationStylesheetBytes - portalOpsStylesheetBytes - raceResultContextStylesheetBytes - personalNotificationsStylesheetBytes - racingRulesStylesheetBytes,
   racingRulesJavaScriptBytes,
   racingRulesStylesheetBytes,

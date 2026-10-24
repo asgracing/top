@@ -1,6 +1,6 @@
 {
   "schemaVersion": 1,
-  "runtimeVersion": "20261023cadence1",
+  "runtimeVersion": "20261024pitmap1",
   "inputs": [
     {
       "path": "account/driver-overlay.js",
@@ -8,7 +8,7 @@
     },
     {
       "path": "app.js",
-      "sha256": "ed106a70525759108bffc912155f2973444afd124c263e55764cf6b6ac21e9f3"
+      "sha256": "89cac797cfd221dcc0f5bc90186b111f44f3737b818a3ce5f69fa85d6c0a81d2"
     },
     {
       "path": "community/posts.js",
@@ -48,7 +48,7 @@
     },
     {
       "path": "scripts/build-v2.mjs",
-      "sha256": "26f1fb166f8fa6bfd279d2d6847a226c29fe1cab0d9baefd68b8d8f5a95f4f63"
+      "sha256": "33dc3b995d95972ec18c49c1063ad8feac1b6a93c237d3a79f966b941397c8f1"
     },
     {
       "path": "scripts/generate-localized-pages.mjs",
@@ -108,11 +108,11 @@
     },
     {
       "path": "src/features/server-status/live-details.js",
-      "sha256": "d01083683bfef0c290d1921746cea1b202aedfcaf55ecd432e80a6a2f74a3bb1"
+      "sha256": "caacdd26ae804b7870206d57098b59388f9b3a00a9c327c5bbf0c1b35248bbb3"
     },
     {
       "path": "src/features/server-status/roster.js",
-      "sha256": "4768d12e8239c9223d0ba541c5702322391134085d20fae3af20520cc6094c51"
+      "sha256": "0b83f5ddeda49b52d058b96af8a4c591001e301677322b434d112b250eca10f1"
     },
     {
       "path": "src/features/server-status/telemetry.js",
@@ -121,6 +121,10 @@
     {
       "path": "src/features/server-status/track-background.js",
       "sha256": "398fc7d77d46c5fd6261f22b47a11fb4955437323d9f0f686aceb2a084e2263d"
+    },
+    {
+      "path": "src/features/server-status/track-map.js",
+      "sha256": "af455c58e67254a054991b72a67e962d374d59206c735e66775411ae8fe8f9ba"
     },
     {
       "path": "src/features/stats/table-engine.js",
@@ -428,11 +432,11 @@
     },
     {
       "path": "styles/components/server-players-modal.css",
-      "sha256": "c5e2824cc8e445195e30e305aa5ff93d08eb97af45046e65b90118dd55fbbaef"
+      "sha256": "df44a0db2d4c4d8fb4653ded97bb67765ead0a3871a50125964752300c6ae74b"
     },
     {
       "path": "styles/components/server-roster.css",
-      "sha256": "9933755cd618f541652420509280c3a114701f905fa1ce4ea4d408ed853141b2"
+      "sha256": "10b7b2f5b489a5f93087ba45f21696d6674430b40f599a14293a798c9438de9e"
     },
     {
       "path": "styles/components/server-sticky-layout.css",
@@ -520,7 +524,7 @@
     },
     {
       "path": "v1-source/html/index.html",
-      "sha256": "47398fe0b7da720e79d3cdf64849f08a4ea91767d411cc45cdeb458f8cfedce2"
+      "sha256": "d773aac7098b28e8f78038ef833e5a14ac449975f76492344e88d641264fec93"
     },
     {
       "path": "v1-source/html/moderation/index.html",
@@ -632,7 +636,7 @@
     },
     {
       "path": "v2/home.js",
-      "sha256": "ef662c1bcb7538ec4b49db208d4ddd59595eafe36e12eb446727e98baca088b5"
+      "sha256": "057a052ec819f7b98a25d66378b3a9076c4b2588e5f5bc4c3c228267176300d6"
     },
     {
       "path": "v2/mobile-navigation.js",

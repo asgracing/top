@@ -39,13 +39,17 @@ try {
           best_lap_ms:108000,last_lap_ms:109000,car_model_id:35,
           laps_behind_ahead:position===1?null:position===3?1:0,
           gap_to_ahead_ms:position===2?1234+reads*100:null,
-          timing_source:position===1?null:'acc-native-checkpoint',timing_observed_at:observed}));
+          timing_source:position===1?null:'acc-native-checkpoint',timing_observed_at:observed,
+          car_id:position,world_x:100+position*50+reads*10,world_z:50+position*20,
+          coordinates_source:'acc-native-world-xz',position_observed_at:observed,position_age_ms:20,
+          pit_state:position===2?'pit_entry':position===3?'pit_exit':'on_track',pit_observed_at:observed}));
         const main={id:'main',name:'Main Interval Fixture',source:'acc-local-telemetry',
           status:'online',telemetry_state:'live',roster_complete:true,source_age_ms:0,
           detail_ttl_ms:reads===2?45000:15000,
           observed_at:observed,updated_at:observed,players_online:3,drivers_connected:3,
           driver_capacity:34,track:'Monza',session:{type:'Race',phase:'session',remaining_ms:600000},
-          drivers,classification:drivers};
+          drivers,classification:drivers,
+          track_map:{source:'acc-native-complete-lap',points:Array.from({length:40},(_,n)=>[500*Math.cos(n*Math.PI/20),300*Math.sin(n*Math.PI/20)])}};
         return route.fulfill({status:200,json:{schema_version:3,source:'asg-live-telemetry-status',
           updated_at:observed,servers:{main}}});
       }
@@ -70,6 +74,14 @@ try {
       await page.waitForFunction(value=>document.querySelectorAll('#v2-modal .pilot-interval')[1]?.textContent===value,expected);
     }
     assert.ok(reads>=initial+4,'An open dialog must keep polling within the timing TTL');
+    assert.equal(await page.locator('#v2-modal .track-car').count(),3);
+    assert.equal(await page.locator('#v2-modal .track-car.is-leader text').textContent(),'1');
+    assert.equal(await page.locator('#v2-modal .track-car.is-leader circle').evaluate(el=>getComputedStyle(el).fill),'rgb(220, 53, 69)');
+    assert.equal(await page.locator('#v2-modal .pilot-pit').nth(0).textContent(),'PIT IN');
+    assert.equal(await page.locator('#v2-modal .pilot-pit').nth(1).textContent(),'PIT OUT');
+    assert.ok(await page.locator('#v2-modal .server-track-map svg').isVisible());
+    assert.ok((await page.locator('#v2-modal .server-track-map svg').boundingBox()).height>=200);
+    assert.ok(await page.locator('#v2-modal .server-track-map').evaluate(el=>el.scrollWidth<=el.clientWidth+1));
     assert.deepEqual(errors,[]);
     const dir=taskScratchPath('browser');await mkdir(dir,{recursive:true});
     await page.screenshot({path:path.join(dir,`interval-${lang}-${width}.png`)});

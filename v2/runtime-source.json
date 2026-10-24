@@ -1,8 +1,8 @@
 {
   "schemaVersion": 1,
-  "version": "20261023cadence1",
+  "version": "20261024pitmap1",
   "source": "app.js",
-  "sha256": "ed106a70525759108bffc912155f2973444afd124c263e55764cf6b6ac21e9f3",
-  "outputSha256": "1524ba7e5a61cb2881f3c90f1cfef1bad0a3e83634a69ead66ce5ea0a174f87e",
+  "sha256": "89cac797cfd221dcc0f5bc90186b111f44f3737b818a3ce5f69fa85d6c0a81d2",
+  "outputSha256": "2cba34bfa1fc4dfcf0b7a4a8a40ff807ce5cb04a27ae8ec630d4f7d252f3b2ab",
   "facadeSha256": "88b786a944d11d3844dd23d42b0c680ea2b01e9d7f4fd2fe5b217f9ff4a025b4"
 }

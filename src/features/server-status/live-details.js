@@ -39,7 +39,7 @@ export function driverInterval(server, driver, lang = 'ru', now = Date.now()) {
 
 export function driverPitLabel(server, driver, lang = 'ru', now = Date.now()) {
   if (driver?.connected === false || !detailFresh(server, driver, 'pit', now)) return null;
-  const labels = lang === 'ru' ? {pit_lane:'Пит-лейн',pit_box:'Пит-бокс',pit:'В пите'}
-    : {pit_lane:'Pit lane',pit_box:'Pit box',pit:'In pit'};
+  const labels = lang === 'ru' ? {pit_entry:'Въезд в пит',pit_lane:'Пит-лейн',pit_exit:'Выезд из пита',pit_box:'Пит-бокс',pit:'В пите'}
+    : {pit_entry:'Pit entry',pit_lane:'Pit lane',pit_exit:'Pit exit',pit_box:'Pit box',pit:'In pit'};
   return labels[driver?.pit_state] || null;
 }
