@@ -60,6 +60,7 @@ const metrics = {
   appJavaScriptBytes: await textBytes("app.js"),
   sourceModulesBytes: await treeBytes("src", new Set([".js", ".mjs"])) - moderationJavaScriptBytes - portalOpsJavaScriptBytes - raceResultContextJavaScriptBytes - personalNotificationsJavaScriptBytes - racingRulesJavaScriptBytes - serverTrackMapJavaScriptBytes,
   serverTrackMapJavaScriptBytes,
+  serverTrackMapAssetBytes: await treeBytes("assets/track-maps", new Set([".js"])),
   stylesheetsBytes: await treeBytes("styles", new Set([".css"])) + await textBytes("styles.css") + await textBytes("legal.css") - moderationStylesheetBytes - portalOpsStylesheetBytes - raceResultContextStylesheetBytes - personalNotificationsStylesheetBytes - racingRulesStylesheetBytes,
   racingRulesJavaScriptBytes,
   racingRulesStylesheetBytes,

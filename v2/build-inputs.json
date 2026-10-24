@@ -1,6 +1,6 @@
 {
   "schemaVersion": 1,
-  "runtimeVersion": "20261024pitmap1",
+  "runtimeVersion": "20261024monza1",
   "inputs": [
     {
       "path": "account/driver-overlay.js",
@@ -8,7 +8,11 @@
     },
     {
       "path": "app.js",
-      "sha256": "89cac797cfd221dcc0f5bc90186b111f44f3737b818a3ce5f69fa85d6c0a81d2"
+      "sha256": "c23e8219de2cb77243d85d711b4eb1751dde36160320f44dd0f8e137dece008b"
+    },
+    {
+      "path": "assets/track-maps/monza.js",
+      "sha256": "6e521b6cc38e89398491cf561472785157fc4462e29f8bde6fb2bea740cc6127"
     },
     {
       "path": "community/posts.js",
@@ -48,7 +52,7 @@
     },
     {
       "path": "scripts/build-v2.mjs",
-      "sha256": "33dc3b995d95972ec18c49c1063ad8feac1b6a93c237d3a79f966b941397c8f1"
+      "sha256": "729b146ba02c92ddb492159fc477f85dc214689c8e6fe4378c52a795c38904e0"
     },
     {
       "path": "scripts/generate-localized-pages.mjs",
@@ -112,7 +116,7 @@
     },
     {
       "path": "src/features/server-status/roster.js",
-      "sha256": "0b83f5ddeda49b52d058b96af8a4c591001e301677322b434d112b250eca10f1"
+      "sha256": "83712970b322bc945599b04d655eddd6b7d670756d987b39eb68eb18c62fd5bc"
     },
     {
       "path": "src/features/server-status/telemetry.js",
@@ -124,7 +128,7 @@
     },
     {
       "path": "src/features/server-status/track-map.js",
-      "sha256": "af455c58e67254a054991b72a67e962d374d59206c735e66775411ae8fe8f9ba"
+      "sha256": "9891ab61e8eafabbf575e6216fb7212710644d76684ae0c9d61cca0fd75d2a91"
     },
     {
       "path": "src/features/stats/table-engine.js",
@@ -436,7 +440,7 @@
     },
     {
       "path": "styles/components/server-roster.css",
-      "sha256": "10b7b2f5b489a5f93087ba45f21696d6674430b40f599a14293a798c9438de9e"
+      "sha256": "5bcd068b460b448a414c62d70ebd52fff7675781bbc28584e6a6ed0621ed67b3"
     },
     {
       "path": "styles/components/server-sticky-layout.css",
@@ -636,7 +640,7 @@
     },
     {
       "path": "v2/home.js",
-      "sha256": "057a052ec819f7b98a25d66378b3a9076c4b2588e5f5bc4c3c228267176300d6"
+      "sha256": "1bc0f2017bb4bd443b8e541db4d1e67acfc04d1a7e2e0af4aae872baf37f34d8"
     },
     {
       "path": "v2/mobile-navigation.js",

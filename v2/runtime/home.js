@@ -34,7 +34,7 @@ import { createAuthHeaderController, safeAvatarUrl } from "/src/features/auth/he
 import { applyRandomTrackBackground, normalizeTrackBackgroundCode, resolveTrackBackgroundFile } from "/src/features/server-status/track-background.js?v=20260726staticfallback1";
 import { bindServerStatusFreshness, isServerStatusStale, isInstanceStatusStale } from "/src/features/server-status/freshness.js?v=20261023cadence1";
 import { telemetrySessionLabel, loadPreferredServerStatus } from "/src/features/server-status/telemetry.js?v=20261023cadence1";
-import { renderServerRoster } from "/src/features/server-status/roster.js?v=20261024pitmap1";
+import { renderServerRoster } from "/src/features/server-status/roster.js?v=20261024monza1";
 import { serverPilotCount } from "/src/features/server-status/live-details.js?v=20261024pitmap1";
 import { selectNextHourlyAnnouncement } from "/src/features/hourly/announcement-model.js?v=20260828hourlynext1";
 import { getSpecialEventPresentation, normalizeSingleModelRestriction } from "/src/features/hourly/special-event.js?v=20260903special1";
