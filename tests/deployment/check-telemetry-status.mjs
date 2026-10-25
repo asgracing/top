@@ -8,6 +8,8 @@ import {taskScratchPath} from '../../scripts/workspace-scratch.mjs';
 
 const root=path.resolve(import.meta.dirname,'../..');
 const compiled=process.env.ASG_V2_OUTPUT_DIR;
+const secondCount=Number(process.env.ASG_TEST_SECOND_COUNT||6);
+assert.ok(Number.isInteger(secondCount)&&secondCount>=6&&secondCount<=125);
 assert.ok(compiled,'Build V2 into ASG_V2_OUTPUT_DIR first');
 const output=taskScratchPath('telemetry-browser');await fs.mkdir(output,{recursive:true});
 let pw;
@@ -42,7 +44,7 @@ try{
   for(const [language,width,height,variant] of [['ru',1280,800,'v2'],['en',390,844,'v2'],['en',1280,800,'legacy']]){
     const page=await browser.newPage({viewport:{width,height},reducedMotion:'reduce'});
     const errors=[];let remoteWrites=0;const requested=[];const observed=new Date().toISOString();
-    const ids=['main','sunset','hourly',...Array.from({length:6},(_,i)=>'assetto-corsa-competizione-dedic'+(i?'-'+(i+1):''))];
+    const ids=['main','sunset','hourly',...Array.from({length:secondCount},(_,i)=>'assetto-corsa-competizione-dedic'+(i?'-'+(i+1):''))];
     const servers=Object.fromEntries(ids.map(id=>[id,{id,name:'ASG '+id,source:'acc-local-telemetry',status:'online',server_online:true,
       telemetry_state:'live',observed_at:observed,updated_at:observed,source_age_ms:0,roster_complete:true,
       players_online:id==='main'?1:0,track_code:'monza',sa_requirement:0,sr_requirement:0,
@@ -59,6 +61,10 @@ try{
     servers.main.players_online=servers.main.drivers.length;
     servers.main.drivers_connected=5;servers.main.driver_capacity=29;
     servers.main.drivers[1].laps_behind_ahead=2;
+    if(secondCount>6){
+      const key='assetto-corsa-competizione-dedic-7';
+      servers[key]={...structuredClone(servers.main),id:key,name:'Dynamic Second 7'};
+    }
     const live={schema_version:3,source:'asg-live-telemetry-status',updated_at:observed,players_online:5,servers};
     page.on('pageerror',e=>errors.push(String(e)));
     await page.route('**/*',async route=>{
@@ -79,7 +85,7 @@ try{
     const legacy=variant==='legacy',modal=legacy?'#server-players-modal':'#v2-modal';
     await page.goto(base+(legacy?'/legacy-fixture/':'/v2/'+language+'/'),{waitUntil:'domcontentloaded'});
     const card=legacy?'.server-sticky-card[data-server-key]':'#v2-servers [data-server]';
-    await page.waitForFunction(selector=>document.querySelectorAll(selector).length===9,card);
+    await page.waitForFunction(({selector,count})=>document.querySelectorAll(selector).length===count,{selector:card,count:ids.length});
     if(!legacy){
       const clock=page.locator('#v2-servers [data-server="main"] [data-live-session]').last();
       const before=await clock.textContent();await page.waitForTimeout(1400);const after=await clock.textContent();
@@ -147,7 +153,15 @@ try{
     if(width<600)assert.equal(await page.locator(modal+' .server-roster-scroll').evaluate(el=>el.scrollLeft),275,'Snapshot refresh preserves table scroll');
     assert.equal(requested.filter(p=>p.endsWith('/server_status.json')).length,0,'Legacy status must not override the live file');
     assert.deepEqual(errors,[]);assert.equal(remoteWrites,0);
-    reports.push({language,width,variant,servers:9,columns:7,rows:5,position:3,countdown_advanced:!legacy,lap_colors_checked:true,live_recolor_checked:true,live_details_checked:true,remote_writes:remoteWrites});
+    if(secondCount>6){
+      await page.keyboard.press('Escape');
+      const added=page.locator(legacy?'.server-sticky-card[data-server-key="assetto-corsa-competizione-dedic-7"]':'#v2-servers [data-server="assetto-corsa-competizione-dedic-7"]');
+      if(legacy)await added.press('Enter');else await added.click();
+      await page.waitForFunction(selector=>document.querySelector(selector)?.textContent.includes('Dynamic Second 7'),modal);
+      assert.equal(await page.locator(modal+' .server-driver-list tbody tr').count(),5);
+      assert.equal(await page.locator(modal+' .pilot-interval').first().textContent(),'+1.234');
+    }
+    reports.push({language,width,variant,servers:ids.length,columns:7,rows:5,position:3,countdown_advanced:!legacy,lap_colors_checked:true,live_recolor_checked:true,live_details_checked:true,dynamic_second_checked:secondCount>6,remote_writes:remoteWrites});
     await page.close();
   }
   await fs.writeFile(path.join(output,'validation.json'),JSON.stringify(reports,null,2)+'\n');
