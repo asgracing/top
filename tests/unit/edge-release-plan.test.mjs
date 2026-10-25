@@ -26,7 +26,7 @@ test('assets, old interface, APIs, foreign hosts and writes are not redirected',
  for(const method of ['POST','PUT','DELETE'])assert.equal(edgeDecision('https://asgracing.ru/ru/',{method}),null);
 });
 test('edge configuration stays disabled, exact and query safe; no unsupported free-plan regex',()=>{
- const plan=edgePlan();assert.deepEqual(plan.counts,{single:8,lists:1,bulk:1,urls:574});
+ const plan=edgePlan();assert.deepEqual(plan.counts,{single:8,lists:1,bulk:1,urls:586});
  assert.ok(plan.single.rules.every(r=>!r.enabled));
  assert.ok(plan.bulk.rules.every(r=>!r.enabled));
  assert.ok(!JSON.stringify(plan).includes('regex_replace'));

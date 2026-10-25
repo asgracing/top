@@ -1,0 +1,72 @@
+/* A bounded widget body, independent of the number of registered servers. */
+body[data-v2] .servers-panel .server-list {
+  display:flex;
+  flex-direction:column;
+  flex:1 1 0;
+  min-height:0;
+  overflow-y:auto;
+  overflow-x:hidden;
+  overscroll-behavior:contain;
+  scrollbar-width:thin;
+  scrollbar-color:#7692a66b transparent;
+  scrollbar-gutter:stable;
+  padding-bottom:5px;
+}
+body[data-v2] .servers-panel .server-card {flex:0 0 auto;min-height:64px;}
+body[data-v2] .servers-panel .server-list:focus-visible {outline:1px solid #91afc9;outline-offset:-2px;}
+body[data-v2] .servers-foot a {color:inherit;white-space:nowrap;}
+@media(max-width:1000px) {
+  body[data-v2] .servers-panel .server-list {flex:0 1 auto;max-height:min(64dvh,620px);}
+  body[data-v2] .servers-panel .server-card {min-height:72px;}
+}
+
+/* The directory owns the full center column; keep both docks absent from view. */
+html[data-v2-page="servers"] .dashboard {grid-template-columns:minmax(0,1fr)!important;}
+html[data-v2-page="servers"] .dashboard>aside {display:none!important;}
+html[data-v2-page="servers"] .knowledge {display:none;}
+html[data-v2-page="servers"] .center-column {grid-column:1/-1;min-width:0;}
+.server-directory {display:flex;flex-direction:column;gap:17px;padding:5px 3px 18px;}
+.server-directory-head {display:flex;justify-content:space-between;align-items:flex-end;gap:20px;padding:15px 4px 17px;border-bottom:1px solid #839cb538;}
+.server-directory-head h1 {margin:5px 0 7px;color:#f7f9ff;font-size:clamp(23px,2.3vw,34px);line-height:1.1;letter-spacing:-.6px;}
+.server-directory-head p {margin:0;font-size:13px;color:#afc0d3;}
+.server-directory-summary {display:flex;flex-wrap:wrap;gap:9px 19px;align-items:center;color:#b6c8d9;font-size:12px;flex-shrink:0;}
+.server-directory-summary>span {display:flex;align-items:center;gap:6px;}
+.server-directory-summary b {color:#ecf4ff;font-variant-numeric:tabular-nums;}
+.server-directory-summary .status-dot {position:static;display:inline-block;}
+.server-directory-grid {display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:14px;min-width:0;}
+.server-directory-card {
+  position:relative;isolation:isolate;display:flex;flex-direction:column;align-items:stretch;
+  min-width:0;min-height:236px;padding:16px;text-align:left;color:#eaf0f9;
+  border:1px solid #c5a94680;border-radius:4px;
+  background:linear-gradient(110deg,#09141af2 0%,#0e1823b8 60%,#101b2878),var(--server-track-image,none) center/cover;
+  box-shadow:inset 0 0 25px #facc150a,0 6px 18px #0002;
+  transition:border-color .16s,box-shadow .16s;
+}
+.server-directory-card:hover,.server-directory-card:focus-visible {border-color:#ffe489;box-shadow:inset 0 0 26px #facc1515,0 0 0 2px #facc1520;outline:none;}
+.server-directory-card.is-offline {border-color:#697a8d80;}
+.server-directory-card.is-stale {border-color:#d5a752a3;}
+.server-directory-card.is-sr-blocked {border-color:#f37489;background-image:linear-gradient(110deg,#341321f0,#171a28b8),var(--server-track-image,none);}
+.server-directory-card-top {display:flex;justify-content:space-between;align-items:flex-start;gap:12px;margin-bottom:13px;font-size:10px;color:#c6d2df;}
+.server-directory-index {text-transform:uppercase;letter-spacing:.05em;overflow-wrap:anywhere;}
+.server-directory-state {display:flex;align-items:center;gap:5px;white-space:nowrap;font-size:10px;}
+.server-directory-state .status-dot {position:static;flex:0 0 auto;}
+.is-offline .server-directory-state .status-dot {background:#9aa8b8;box-shadow:none;}
+.is-stale .server-directory-state .status-dot {background:#ffc967;box-shadow:0 0 8px #ffc96760;}
+.server-directory-name {display:block;margin:0 0 9px;font-size:clamp(19px,1.8vw,25px);font-weight:850;line-height:1.15;color:#ffe5a5;overflow-wrap:anywhere;}
+.server-directory-session {display:block;color:#d3deec;font-size:12px;line-height:1.5;}
+.server-directory-card-bottom {display:flex;align-items:baseline;justify-content:space-between;flex-wrap:wrap;gap:8px;margin-top:auto;padding-top:19px;font-size:12px;}
+.server-directory-card-bottom b {color:#fff;font-size:17px;font-variant-numeric:tabular-nums;}
+.server-directory-access {color:#ffda83;white-space:nowrap;font-size:12px;}
+.server-directory-details {display:flex;justify-content:space-between;gap:12px;border-top:1px solid #b2c7dc45;margin-top:12px;padding-top:10px;font-size:12px;font-weight:700;color:#e5f0ff;}
+.server-directory-warning {font-size:11px;color:#ffc3cc;line-height:1.5;margin-top:9px;}
+.server-directory-updated {margin:0 4px;color:#93a7bc;font-size:11px;}
+@media(min-width:1800px) {.server-directory-grid {grid-template-columns:repeat(4,minmax(0,1fr));}}
+@media(max-width:1100px) {.server-directory-grid {grid-template-columns:repeat(2,minmax(0,1fr));}}
+@media(max-width:600px) {
+  .server-directory {padding:0 0 15px;gap:12px;}
+  .server-directory-head {align-items:flex-start;flex-direction:column;gap:14px;padding:10px 2px 14px;}
+  .server-directory-grid {grid-template-columns:minmax(0,1fr);gap:12px;}
+  .server-directory-card {min-height:224px;padding:15px;}
+  .server-directory-name {font-size:23px;}
+}
+@media(prefers-reduced-motion:reduce) {.server-directory-card {transition:none;}}

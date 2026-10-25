@@ -21,7 +21,8 @@ for(const page of map.pages){
   if(versionSwitch)assert.ok(url.pathname.startsWith(page.version==='v2'?'/old/':page.language==='en'?'/en/':'/'));
   else if(excludedRoute(path))assert.equal(url.pathname,'/'+path,'excluded flows retain native gates');
   else if(migratedRoutes.has(path)||legacyRoutes.has(path)){
-   if(page.version==='old')assert.ok(url.pathname.startsWith('/old/'),'old navigation escaped: '+page.path+' -> '+href);
+   if(page.version==='old' && /\sdata-server-nav(?:\s|=|>)/.test(html.slice(node.start,node.openEnd)))assert.equal(url.pathname,page.language==='en'?'/en/servers/':'/servers/','Server directory has one shared current-interface destination');
+   else if(page.version==='old')assert.ok(url.pathname.startsWith('/old/'),'old navigation escaped: '+page.path+' -> '+href);
    else assert.ok(!/^\/(?:old|v2|ru)\//.test(url.pathname),'new navigation escaped: '+page.path+' -> '+href);
   }
   if(!url.pathname.endsWith('/'))continue;

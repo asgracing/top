@@ -238,7 +238,7 @@ for (const [element, ru, en] of [
   ['captain-rule','Капитан входит на сервер и нажимает Drive первым. Остальные подключаются после него. Очки, SR и Elo учитываются у фактически ехавших пилотов.','The captain joins the server and presses Drive first. The other drivers join afterwards. Points, SR and Elo count for drivers who actually race.'],
   ['deadline-rule','Все действия закрываются за час до открытия сервера. Неподтверждённая команда не допускается целиком.','All actions close one hour before server opening. A crew with missing confirmations is excluded as a whole.'], ['skip-link','Перейти к заявке','Skip to entry']
 ]) $(element).textContent = tx(ru,en);
-for (const [element,name,label] of [['schedule-link','hourly',tx('Расписание','Schedule')],['teams-link','teams',tx('Команды','Teams')],['account-link','account',tx('Кабинет','Account')]]) { $(element).href = route(name); $(element).textContent = label; }
+for (const [element,name,label] of [['schedule-link','hourly',tx('Расписание','Schedule')],['teams-link','teams',tx('Команды','Teams')],['account-link','account',tx('Кабинет','Account')],['servers-link','servers',tx('Серверы','Servers')]]) { $(element).href = route(name); $(element).textContent = label; }
 $('home-link').href = english ? '/en/' : '/'; $('language-link').href = '?' + (id ? 'event=' + encodeURIComponent(id) + '&' : '') + 'lang=' + (english ? 'ru' : 'en'); $('language-link').textContent = english ? 'RU' : 'EN';
 $('refresh').onclick = () => void refresh(); message(tx('Загрузка…','Loading…')); void refresh();
 setInterval(() => { if (event && !teamRegistrationOpen(event) && !event.registration_closed) { event.registration_closed = true; render(); } },1000);

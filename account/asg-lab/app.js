@@ -146,6 +146,7 @@ async function reload() {
 }
 function translatePage() {
   document.documentElement.lang = lang;
+  document.querySelectorAll('[data-server-nav]').forEach(node => {node.href = lang === 'en' ? '/en/servers/' : '/servers/';});
   document.querySelectorAll("[data-ru]").forEach(node => {node.textContent = node.dataset[lang];});
   document.getElementById("lab-language").textContent = lang === "ru" ? "EN" : "RU";
   renderDocuments();render();

@@ -52,7 +52,7 @@
     },
     {
       "path": "scripts/build-v2.mjs",
-      "sha256": "729b146ba02c92ddb492159fc477f85dc214689c8e6fe4378c52a795c38904e0"
+      "sha256": "dffbd4a121f08f208521647115d28e37343475e44c82e615baa6cb5e19fa9f25"
     },
     {
       "path": "scripts/generate-localized-pages.mjs",
@@ -564,11 +564,11 @@
     },
     {
       "path": "v2-source/design.css",
-      "sha256": "189feeed5cd483bf66e21c07a9db7fde2524b1c3b859703e572943b88bbe600e"
+      "sha256": "39083c6284ade418969b6102c04c916c51adc52664ff8f9f3998febbc97d6a50"
     },
     {
       "path": "v2-source/home.html",
-      "sha256": "23dcdcd5c0be5fc7c807255aa3611c1a7df31c25f5c4ac84d1e62bfe009f563c"
+      "sha256": "a53c6d1c6b85039737f0d688b1362a5b68aaad44cbf1f54dc81bbe03114164fd"
     },
     {
       "path": "v2-source/pages/archive.js",
@@ -640,7 +640,7 @@
     },
     {
       "path": "v2/home.js",
-      "sha256": "1bc0f2017bb4bd443b8e541db4d1e67acfc04d1a7e2e0af4aae872baf37f34d8"
+      "sha256": "8d53b6669ed6d0489760067806040c63029b13150d5e20d8c71530614f3d819e"
     },
     {
       "path": "v2/mobile-navigation.js",
@@ -656,7 +656,7 @@
     },
     {
       "path": "v2/page-registry.js",
-      "sha256": "02e2b20df63853b73df39908d30fb42c83cc13077abfa29a7183e5501975f160"
+      "sha256": "ff64f2544e9928ecb78ea86511b359182f6a5dafdd49c1d490aa59cd8ebb7de0"
     },
     {
       "path": "v2/pages/account.js",
@@ -680,7 +680,7 @@
     },
     {
       "path": "v2/pages/controller.js",
-      "sha256": "1cd257ac6171d345004e140a0f8cc3bdb8cbfe9bdfcc19bbb3445ceb2ce071c2"
+      "sha256": "8ad4221bf778bc285deaf6d8bc4afe47c6299513455945b3111a136db523adcf"
     },
     {
       "path": "v2/pages/data.js",
@@ -713,6 +713,14 @@
     {
       "path": "v2/safety-history.js",
       "sha256": "64b1ea2cfa850972027acc8aa4fe84e4e4968a875640a5e089bcea57918f20ca"
+    },
+    {
+      "path": "v2/server-cards.js",
+      "sha256": "4e8159bd8be48e41328912a3cb183c6fffc1326bb469147efc1e39f6e3d307ad"
+    },
+    {
+      "path": "v2/server-directory.js",
+      "sha256": "c9785a8db4466425ea8e7aebcacb109e62b6462610d7a3cfcc1ee1769b580b77"
     },
     {
       "path": "v2/server-session.js",

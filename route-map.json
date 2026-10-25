@@ -16,6 +16,12 @@
       "screen": "hourly"
     },
     {
+      "path": "/servers/",
+      "version": "v2",
+      "language": "ru",
+      "screen": "servers"
+    },
+    {
       "path": "/driver/",
       "version": "v2",
       "language": "ru",
@@ -188,6 +194,12 @@
       "version": "v2",
       "language": "en",
       "screen": "hourly"
+    },
+    {
+      "path": "/en/servers/",
+      "version": "v2",
+      "language": "en",
+      "screen": "servers"
     },
     {
       "path": "/en/driver/",

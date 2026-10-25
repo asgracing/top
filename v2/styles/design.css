@@ -11,7 +11,7 @@
 :root{--side-height:1040px}
 .support-body>*{flex-shrink:0}
 .servers-panel{display:flex;flex-direction:column}
-.server-list{flex:1;grid-template-rows:repeat(9,minmax(0,1fr))}
+.server-list{flex:1;grid-template-rows:none}
 .server-card{display:flex;flex-direction:column;justify-content:center}
 .server-facts{width:100%}
 .server-summary,.servers-foot,.servers-panel>.panel-head{flex-shrink:0}
@@ -244,7 +244,7 @@ dialog[open] { animation:modal-deploy .35s cubic-bezier(.16,1,.3,1); }
   .center-column>.panel:nth-child(2) { animation-delay:.05s; }
   .center-column>.event-grid { animation:panel-arrive .6s .1s both; }
   .center-column>.ranking-panel { animation-delay:.15s; }
-  .server-list { min-height:0; grid-template-rows:repeat(9,minmax(0,1fr)); }
+  .server-list { min-height:0; grid-template-rows:none; }
   .support-body { min-height:0; }
   .compact-widget[open] .widget-body { position:absolute; left:0; right:0; bottom:46px; background:#142031f7; border:1px solid #6b829c; border-bottom:3px solid var(--red); padding:15px; z-index:8; box-shadow:0 -8px 28px #0009; max-height:calc(100dvh - 240px); overflow:auto; animation:widget-deploy .3s cubic-bezier(.16,1,.3,1); }
   .compact-widget { position:relative; overflow:visible; }
@@ -384,7 +384,7 @@ dialog[open] { animation:modal-deploy .35s cubic-bezier(.16,1,.3,1); }
   .tall-panel { height:830px; }
   .support-body { padding:14px 16px; }
   .server-card { min-height:69px; }
-  .server-list { grid-template-rows:repeat(9,minmax(0,1fr)); }
+  .server-list { grid-template-rows:none; }
   .knowledge { padding:10px 0; gap:7px; }
   .knowledge-card { min-height:67px; padding:10px 12px; }
   .knowledge-card svg { display:none; }

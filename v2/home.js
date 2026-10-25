@@ -6,6 +6,7 @@ import {createPresentation} from './presentation.js?v=20261023serverdetails1';
 import {createRecentRaces} from './recent-races.js?v=20261011racelinks1';
 import {createHeader} from './header.js?v=20261014profile1';
 import {serverSessionLabel} from './server-session.js?v=20261018telemetry1';
+import {orderedServers,replaceServerCards,serverDialogTrigger} from './server-cards.js?v=20261025servers1';
 import {createGuide} from './guide.js?v=20261006v2k';
 import {createHomeMotion} from './motion.js?v=20261006v2k';
 import {v2Route,currentV2Path,v2EntityLinks} from './routes.js?v=20261008v2pages15';
@@ -30,7 +31,8 @@ const seen=new Map();
 function changed(key,value,render){const signature=JSON.stringify(value);if(seen.get(key)===signature)return;seen.set(key,signature);render()}
 const icons={heart:'<path d="M20 5c-2-2-5-2-7 0l-1 1-1-1C5 0-2 8 4 14l8 7 8-7c3-3 3-7 0-9Z"/>',flag:'<path d="M4 22V3h15l-2 4 2 4H4M9 3v4h5v4M4 7h5v4M14 3v4h4"/>',chart:'<path d="M4 21V11h4v10M10 21V7h4v14M16 21V3h4v18M2 21h20"/>',calendar:'<rect x="3" y="5" width="18" height="16" rx="2"/><path d="M7 3v4m10-4v4M3 10h18M7 14h3m4 0h3M7 17h3"/>',trophy:'<path d="M7 3h10v6a5 5 0 0 1-10 0V3ZM7 5H3v3a4 4 0 0 0 5 4m9-7h4v3a4 4 0 0 1-5 4M12 14v6m-5 1h10"/>',server:'<rect x="3" y="3" width="18" height="7" rx="2"/><rect x="3" y="14" width="18" height="7" rx="2"/><path d="M7 6.5h.01M7 17.5h.01M12 6.5h5m-5 11h5"/>',compass:'<circle cx="12" cy="12" r="9"/><path d="m16 8-3 5-5 3 3-5 5-3Z"/>',play:'<circle cx="12" cy="12" r="9"/><path d="m10 8 6 4-6 4V8Z"/>',shield:'<path d="m12 2 8 3v7c0 5-8 10-8 10S4 17 4 12V5l8-3Z"/><path d="m9 12 2 2 4-5"/>',search:'<circle cx="10" cy="10" r="6"/><path d="m15 15 5 5"/>'};
 document.querySelectorAll('#v2-site-shell [data-icon]').forEach(node=>node.innerHTML=`<svg viewBox="0 0 24 24" aria-hidden="true">${icons[node.dataset.icon]||''}</svg>`);
-Object.assign(words,{title:text('ASG Racing — сообщество ACC','ASG Racing — ACC community'),today:'',hourlyNav:text('Часовые гонки','Hourly races'),teams:text('Клубы и команды','Clubs & teams'),bestlaps:text('Лучшие круги','Best laps'),fullStats:text('Полная статистика ↗','Full statistics ↗'),announcements:text('Анонсы','Announcements'),announce1:text('Скоро Анонс №1','Announcement #1 soon'),announce2:text('Скоро Анонс №2','Announcement #2 soon'),bans:text('Баны','Bans'),noResults:text('Ничего не найдено','No results'),snapshot:'V2',noData:text('Нет данных','No data')});
+Object.assign(words,{title:text('ASG Racing — сообщество ACC','ASG Racing — ACC community'),today:'',hourlyNav:text('Часовые гонки','Hourly races'),serversNav:text('Серверы','Servers'),teams:text('Клубы и команды','Clubs & teams'),bestlaps:text('Лучшие круги','Best laps'),fullStats:text('Полная статистика ↗','Full statistics ↗'),announcements:text('Анонсы','Announcements'),announce1:text('Скоро Анонс №1','Announcement #1 soon'),announce2:text('Скоро Анонс №2','Announcement #2 soon'),bans:text('Баны','Bans'),noResults:text('Ничего не найдено','No results'),snapshot:'V2',noData:text('Нет данных','No data')});
+$('servers')?.setAttribute('aria-label',text('Список серверов','Server list'));
 document.querySelectorAll('#v2-site-shell [data-copy]').forEach(node=>node.textContent=label(node.dataset.copy));
 $('intro-subtitle').textContent=editorial.subtitle;
 $('intro-note').innerHTML=editorial.introNote;
@@ -69,7 +71,7 @@ document.querySelectorAll('.thanks-list span').forEach(node=>{node.textContent=n
 const privacy=e=>`${e?.participation_mode==='team'?text('Командная заявка и подтверждения требуют входа через Steam. Участвуя, ты соглашаешься с','Team entries and confirmations require Steam sign-in. By entering, you agree to the'):text('Для голосования используется ID браузера. Участвуя, ты соглашаешься с','Voting uses a browser ID. By entering, you agree to the')} <a href="${classic('privacy/')}">${text('условиями обработки данных','data processing terms')}</a>`;
 const presentation=createPresentation({$,native,getModel:()=>model,esc,text,label,date,number,rating,car,driverHref,classic,affiliation,privacy,serverAdmission,showDialog});
 const dialogFrames=[];
-$('modal').addEventListener('close',()=>{if(!$('modal').open){dialogFrames.length=0;$('site-shell').inert=false;lastTrigger?.focus?.({preventScroll:true});}});
+$('modal').addEventListener('close',()=>{if(!$('modal').open){dialogFrames.length=0;$('site-shell').inert=false;lastTrigger=serverDialogTrigger(lastTrigger);lastTrigger?.focus?.({preventScroll:true});}});
 const recentRaces=isSubpage?null:createRecentRaces({$,native,getModel:()=>model,presentation,showDialog,pushDialog,esc,text,date,number,car,classic,language});
 if($('recent-races'))$('recent-races').textContent=text('Последние гонки','Recent races');
 if($('event-calendar'))$('event-calendar').textContent=text('Календарь','Calendar');
@@ -156,15 +158,15 @@ function serverAdmission(server){
   return text(`Вашего SR недостаточно для входа: ваш SR ${actual}, требуется SR ${required}.`,`Your SR is too low to join: your SR ${actual}, required SR ${required}.`);
 }
 function renderServers(){
-  const order=['hourly','main','sunset'],rows=[...model.servers].sort((a,b)=>(order.includes(a.key)?order.indexOf(a.key):3)-(order.includes(b.key)?order.indexOf(b.key):3));$('servers-up').textContent=`${model.serversStale||rows.some(s=>s.stale)?'—':rows.filter(s=>s.online).length} / ${rows.length}`;
+  const rows=orderedServers(model.servers);$('servers-up').textContent=`${model.serversStale||rows.some(s=>s.stale)?'—':rows.filter(s=>s.online).length} / ${rows.length}`;
   $('total-online').textContent=model.serversStale?text('Данные устарели','Stale data'):rows.some(s=>s.stale)?text('Часть данных устарела','Some server data is stale'):number(rows.reduce((n,s)=>n+s.players,0))+' '+label('players');
   const phase=s=>serverSessionLabel(s,label);
-  $('servers').innerHTML=rows.map((s,i)=>{
+  replaceServerCards($('servers'),rows.map((s,i)=>{
     const name=s.key==='hourly'?text('Часовые гонки / ASG Racing Race','Hourly / ASG Racing Race'):String(s.label).replace(/^ASG Racing\s+/i,''),session=s.stale?text('Данные устарели','Stale data'):phase(s),hint=serverAdmission(s);
     const short=s.stale?text('Нет данных','No data'):serverSessionLabel(s,label,{compact:true});
     const description=hint||`${s.label} · ${session} · ${number(s.players)} ${text('пилотов','drivers')}`;
     return `<button type="button" class="server-card${s.online?'':' offline'}${hint?' is-sr-blocked':''}" data-server="${esc(s.key)}" aria-label="${esc(description)}" title="${esc(description)}"><span class="server-top"><span class="server-id">${String(i+1).padStart(2,'0')}</span><span class="server-name">${esc(name)}</span><span class="server-compact-live"><span data-live-session="${esc(s.key)}" data-compact="true">${esc(short)}</span> · ${number(s.players)}</span><span class="status-dot" aria-hidden="true"></span></span><span class="server-facts"><span class="server-track">${esc(s.track||'—')}</span><span class="server-admission">SA ${esc(s.sa)} · ${hint?'&#128274; ':''}SR ${esc(s.sr)}</span><span class="server-live">${number(s.players)} ${text('пилотов','drivers')} · <span data-live-session="${esc(s.key)}">${esc(session)}</span></span></span></button>`;
-  }).join('')||`<p class="empty">${text('Статусы недоступны','Server status unavailable')}</p>`;
+  }).join('')||`<p class="empty">${text('Статусы недоступны','Server status unavailable')}</p>`);
 }
 // Update only clock text; do not rebuild cards or refetch positions each second.
 setInterval(()=>{
@@ -237,7 +239,7 @@ function pushDialog(trigger){
 function closeDialog(){
   const frame=dialogFrames.pop();
   if(frame){$('modal').dispatchEvent(new Event('v2-dialog-restore'));$('modal-body').innerHTML=frame.html;$('modal-title').innerHTML=frame.titleHTML;$('modal-eyebrow').textContent=frame.eyebrow;$('modal').dataset.kind=frame.kind;frame.track?$('modal').style.setProperty('--modal-track',frame.track):$('modal').style.removeProperty('--modal-track');$('modal-body').scrollTop=frame.scroll;const focus=$('modal-body').querySelectorAll('a,button,[tabindex]')[frame.focus];(focus||$('modal').querySelector('.modal-close')).focus({preventScroll:true});return;}
-  $('modal').close();$('site-shell').inert=false;lastTrigger?.focus?.({preventScroll:true})
+  $('modal').close();$('site-shell').inert=false;lastTrigger=serverDialogTrigger(lastTrigger);lastTrigger?.focus?.({preventScroll:true})
 }
 function rowById(id){return tableRows.find(r=>r.public_id===id)||[dayProfile,winnerExtra?.profile,model?.day,...(winnerExtra?.details?.results||[]),...(model?.servers||[]).flatMap(s=>s.drivers||[])].find(r=>r?.public_id===id)||{public_id:id,driver:id}}
 let rulesRequest=0;
@@ -341,5 +343,5 @@ if(!isSubpage){
 try{await import('./runtime/home.js?v=20261024monza1');applyHash();if(isSubpage)startBackground();}catch(error){console.error('V2 runtime unavailable',error);$('event-track').textContent=text('Не удалось загрузить данные','Could not load data');$('day-driver').textContent=text('Данные недоступны','Data unavailable');tableError=true;tableBusy=false;renderTable()}
 if(document.documentElement.dataset.v2Page){
   const {startPage}=await import('./pages/controller.js?v=20261013teams3');
-  await startPage({native,presentation,showDialog,esc,text,date,number,rating,car,language,subscribe});
+  await startPage({native,presentation,showDialog,esc,text,label,date,number,rating,car,language,subscribe,serverAdmission});
 }
