@@ -3,5 +3,6 @@
   "component": "site",
   "layout": "root",
   "delivery": "main-branch-pages",
-  "version": "2026-10-25T09-08-24-107Z-6f47f9a1faef"
+  "legacyEnabled": false,
+  "version": "2026-10-25T09-25-12-385Z-edfbc39e5c7d"
 }

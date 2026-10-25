@@ -28,7 +28,7 @@ export function versionHref(version,locationRef=globalThis.location,language,con
   const lang=language||(/^(?:\/en\/|\/old\/en\/|\/v2\/en\/)/.test(url.pathname)?'en':'ru');
   if(context.layout!=='root')return (version==='old'?(lang==='ru'?'/ru/':'/'):`/v2/${lang}/`)+url.search+url.hash;
   if(version!=='old'){
-    let current=path==='events/'?'hourly/championship/':path;
+    let current=({'events/':'hourly/championship/','hourly/privacy/':'privacy/','hourly/cookies/':'cookies/'})[path]||path;
     if(path==='races/'&&url.searchParams.has('race_id')){current='race/';url.searchParams.set('id',url.searchParams.get('race_id'));url.searchParams.delete('race_id');}
     if(path==='news/'&&url.searchParams.has('slug')){current='news/article/';url.searchParams.set('id',url.searchParams.get('slug'));url.searchParams.delete('slug');}
     url.searchParams.delete('lang');

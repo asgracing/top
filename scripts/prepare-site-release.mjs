@@ -23,7 +23,7 @@ const pagesConfig='plugins: []\nexclude:\n'+[...excluded].sort().map(p=>'  - '+J
 let deletions=[];try{deletions=(await tree(resolve(root,'preview'))).map(p=>'preview/'+p);}catch(e){if(e.code!=='ENOENT')throw e;}
 for(const [name,artifact,layout]of [['candidate',candidate,'root'],['fallback',fallback,'root-fallback']]){
  const payload=resolve(bundle,name);await cp(artifact,payload,{recursive:true});
- await writeFile(resolve(payload,'site-release.json'),JSON.stringify({schemaVersion:1,component:'site',layout,delivery:'main-branch-pages',version},null,2)+'\n');
+ await writeFile(resolve(payload,'site-release.json'),JSON.stringify({schemaVersion:1,component:'site',layout,delivery:'main-branch-pages',legacyEnabled:name==='fallback'?true:config.legacyEnabled!==false,version},null,2)+'\n');
  await writeFile(resolve(payload,'_config.yml'),pagesConfig);
  const target=name==='candidate'?root:resolve(bundle,'candidate');
  const entries=await planFiles(payload,target,name==='candidate'?deletions:[]);

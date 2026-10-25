@@ -12,13 +12,15 @@ import {pageRegistry} from '../v2/page-registry.js';
 import {readSiteRelease} from './site-release.mjs';
 import {buildV2Boot} from './build-v2-boot.mjs';
 const root = resolve(import.meta.dirname, '..');
-const outputRoot = resolve(process.env.ASG_V2_OUTPUT_DIR || ((await readSiteRelease()).layout==='parallel'?root:taskScratchPath('site-v2-compilation')));
+const siteRelease=await readSiteRelease();
+const legacyEnabled=process.env.ASG_ROOT_FALLBACK==='1'||siteRelease.legacyEnabled!==false;
+const outputRoot = resolve(process.env.ASG_V2_OUTPUT_DIR || (siteRelease.layout==='parallel'?root:taskScratchPath('site-v2-compilation')));
 if(outputRoot!==root)assertArchiveScratchPath(outputRoot);
 if (process.env.ASG_V2_PRESENTATION_ONLY === '1') throw Error('Presentation-only builds are retired: rebuild V2 with its canonical runtime.');
 const version = '20261006v2k';
 const runtimeVersion = '20261024monza1';
-const presentationVersion = '20261025servers1';
-const bootVersion = '20261025servers1';
+const presentationVersion = '20261025raceinfo1';
+const bootVersion = '20261025raceinfo1';
 const legalVersion = '20261008metrika2';
 const buildInputs = new Map();
 const hash = value => createHash('sha256').update(value.replace(/\r\n/g,'\n')).digest('hex');
@@ -166,7 +168,7 @@ for (const language of ['ru','en']) {
   const seo=seoNodes.map(n=>classic.slice(n.start,n.end).replaceAll('seo-intro-title','v2-seo-intro-title')).join('');
   let pageBody=localizedV2Links(body.replace('<div class="panel seo-panel" id="v2-seo-content"></div>',`<section class="panel seo-panel" id="v2-seo-content">${seo}</section>`),language);
   const text=language==='ru'?'Текущая версия':'Classic version';
-  pageBody=pageBody.replace('<div class="header-actions top-nav-actions">',`<div class="header-actions top-nav-actions"><a class="version-switch" data-v1-home href="${language==='ru'?'/ru/':'/'}">${text}</a>`);
+  pageBody=pageBody.replace('<div class="header-actions top-nav-actions">',`<div class="header-actions top-nav-actions"><a class="version-switch" data-v1-home${legacyEnabled?'':' hidden inert aria-hidden="true" tabindex="-1"'} href="${language==='ru'?'/ru/':'/'}">${text}</a>`);
   await emit(`v2/${language}/index.html`,`<!doctype html>\n<html lang="${language}" data-page="home" data-page-language="${language}" data-v2="home"><head>${head}</head><body data-v2="home">${pageBody}<div id="v1-runtime-host" hidden inert aria-hidden="true">${oldBody}</div>${modals}</body></html>\n`);
   for (const config of pageRegistry.filter(page => page.route)) {
     const page=config.route.slice(0,-1), screen=config.screen;

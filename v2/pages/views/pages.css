@@ -186,6 +186,10 @@ html[data-v2-page] .center-column>:not(#page-view):not(#home-view) {display:none
 .page-table a:hover {color:#83d4fa;text-decoration:underline;}
 .page-table .car-cell img {width:33px;height:24px;}
 .uncounted {display:block;color:#ffb379;font-size:9px;margin-top:3px;}
+.profile-race-date {display:flex;align-items:center;gap:8px;white-space:nowrap;}
+.profile-uncounted {display:inline-block;color:#ffbf8a;font-size:9px;white-space:nowrap;padding:2px 5px;border:1px solid #d592515c;border-radius:3px;line-height:1.2;}
+.page-table-tools .profile-show-uncounted {display:flex;align-items:center;gap:7px;white-space:nowrap;}
+.page-table-tools .profile-show-uncounted input {width:15px;min-height:15px;height:15px;padding:0;accent-color:#ed2847;}
 .penalty-groups {display:grid;grid-template-columns:1fr 1fr;gap:15px;padding:12px 16px;}
 .penalty-groups h3 {font-size:13px;color:#b8cedf;margin:0 0 9px;}
 .penalty-groups p {display:flex;justify-content:space-between;margin:5px 0;padding:0!important;}

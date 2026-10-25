@@ -4,5 +4,6 @@ export const siteRoot=resolve(import.meta.dirname,'..');
 export async function readSiteRelease(root=siteRoot){
  let config;try{config=JSON.parse(await readFile(resolve(root,'site-release.json'),'utf8'));}catch(e){if(e.code==='ENOENT')return {layout:'parallel'};throw e;}
  if(config.schemaVersion!==1||config.component!=='site'||!['parallel','root','root-fallback'].includes(config.layout)||config.delivery!=='main-branch-pages')throw Error('Invalid site-release configuration');
+ if(config.legacyEnabled!==undefined&&typeof config.legacyEnabled!=='boolean')throw Error('Invalid legacy interface setting');
  return config;
 }
