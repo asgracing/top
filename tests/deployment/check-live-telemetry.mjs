@@ -17,8 +17,8 @@ for(const folder of await fs.readdir('C:/Users/Andrew/AppData/Local/npm-cache/_n
 assert.ok(pw,'Use the existing Playwright installation');
 let mode='direct',paused=false,connections=0,active=0;
 const car=(n,at=Date.now())=>({car_id:n,connection_id:n+10,position:n,race_number:n,name:'Fixture '+n,
-  role:'driver',connected:true,world_x:100+n*20+(at%100000)/100,world_z:-50,
-  coordinates_source:'acc-native-world-xz',position_age_ms:0,position_observed_at:new Date(at).toISOString()});
+  role:'driver',connected:true,world_x:100+n*20+((at-150)%100000)/100,world_z:-50,
+  coordinates_source:'acc-native-world-xz',position_age_ms:150,position_observed_at:new Date(at-150-1109).toISOString()});
 function row(at=Date.now()) {
   const observed=new Date(at).toISOString();
   return {id:'main',name:'Monza fixture',track_code:'monza',source:'acc-local-telemetry',status:'online',telemetry_state:'live',
@@ -27,7 +27,8 @@ function row(at=Date.now()) {
     drivers:[car(1,at),car(2,at)],classification:[],spectators:[]};
 }
 const keyed=server=>({...server,drivers:Object.fromEntries(server.drivers.map(c=>[`${c.car_id}:${c.connection_id}`,c])),classification:{},spectators:{}});
-const pose=at=>({at_ms:at,boot_id:'fixture',session_id:'s',track_code:'monza',cars:[car(1,at),car(2,at)]});
+const pose=at=>({at_ms:at,boot_id:'fixture',session_id:'s',track_code:'monza',clock_epoch:1,clock_verified:true,
+  cars:[car(1,at),car(2,at)].map(c=>({...c,position_at_ms:at-150,clock_uncertainty_ms:7}))});
 const server=http.createServer(async(req,res)=>{
   const url=new URL(req.url,'http://fixture');
   if(url.pathname==='/fixture-stream') {
@@ -73,6 +74,7 @@ try {
       let data={};
       if(url.hostname==='data.asgracing.ru') {
         if(url.pathname==='/telemetry/v1/status')data={schema_version:3,source:'asg-live-telemetry-status',telemetry_stream:true,updated_at:new Date().toISOString(),servers:{main:row()}};
+        else if(url.pathname==='/telemetry/v1/clock'){const now=Date.now();data={received_ms:now,sent_ms:now};}
         else if(url.pathname.endsWith('/server_status_live.json'))return route.fulfill({status:503,body:'{}'});
         else if(url.pathname.endsWith('/server_status.json'))return route.fulfill({status:503,body:'{}'});
         else if(url.pathname.endsWith('/v2/manifest.json'))data=fixture.manifest;
