@@ -55,6 +55,19 @@ test('new source wins even when stale; missing new file falls back before rollou
   assert.equal(await loadPreferredServerStatus('live','legacy',async url=>{if(url==='live')throw Error('404');return legacy}), legacy);
 });
 
+test('independent directory wins without a Main publication and failures retain both relay paths',async()=>{
+  const direct={schema_version:3,source:'asg-live-telemetry-status',telemetry_stream:true,
+    servers:{'assetto-corsa-competizione-dedic-30':{players_online:2}}};
+  const relay={schema_version:3,source:'asg-live-telemetry-status',servers:{main:{}}};
+  const calls=[];
+  assert.equal(await loadPreferredServerStatus('live','legacy',async url=>{calls.push(url);return direct;},{directUrl:'direct'}),direct);
+  assert.deepEqual(calls,['direct']);
+  let failed=0;
+  assert.equal(await loadPreferredServerStatus('live','legacy',async url=>{if(url==='direct')throw Error('offline');return relay;},
+    {directUrl:'direct',onDirectError:()=>failed++}),relay);
+  assert.equal(failed,1);
+});
+
 test('V2 labels consume the same telemetry clock and retain legacy minute semantics', () => {
   const en=key=>({race:'Race',qualifying:'Qualifying',practice:'Practice',waiting:'Waiting',minute:'min'}[key]);
   const current={...row(),observed_at:new Date().toISOString()};

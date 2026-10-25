@@ -1,4 +1,4 @@
-import { isInstanceStatusStale, parseServerStatusUpdatedAt } from './freshness.js?v=20261023cadence1';
+import { isInstanceStatusStale, parseServerStatusUpdatedAt,serverObservationAgeMs } from './freshness.js?v=20261025direct1';
 
 export function telemetrySessionLabel(server, { lang = 'ru', compact = true, now = Date.now() } = {}) {
   if (server?.source !== 'acc-local-telemetry') return null;
@@ -13,7 +13,7 @@ export function telemetrySessionLabel(server, { lang = 'ru', compact = true, now
   if (!Number.isFinite(session.remaining_ms) || session.remaining_ms < 0) return type;
   const observed = parseServerStatusUpdatedAt(server.observed_at);
   if (!Number.isFinite(observed)) return type;
-  const seconds = Math.ceil(Math.max(0, session.remaining_ms - Math.max(0, now-observed)) / 1000);
+  const seconds = Math.ceil(Math.max(0, session.remaining_ms - Math.max(0,serverObservationAgeMs(server,server.observed_at,now))) / 1000);
   return `${type} ${Math.floor(seconds/60)}:${String(seconds%60).padStart(2,'0')}`;
 }
 
@@ -40,7 +40,15 @@ export function lapHighlight(driver, sessionBest) {
   };
 }
 
-export async function loadPreferredServerStatus(liveUrl, legacyUrl, read) {
+export async function loadPreferredServerStatus(liveUrl, legacyUrl, read, {directUrl,onDirectError}={}) {
+  if(directUrl) {
+    try {
+      const direct=await read(directUrl);
+      if(direct?.schema_version===3&&direct.source==='asg-live-telemetry-status'&&direct.telemetry_stream===true
+          && direct.servers&&typeof direct.servers==='object'&&Object.keys(direct.servers).length) return direct;
+    }catch { /* The new independent service may not be installed yet. */ }
+    onDirectError?.();
+  }
   try {
     const live = await read(liveUrl);
     if (live?.schema_version === 3 && live?.source === 'asg-live-telemetry-status' && live.servers && typeof live.servers === 'object') return live;

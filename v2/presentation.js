@@ -1,8 +1,10 @@
 import {eventKind} from './models.js?v=20261006v2k';
 import {resolveTrackBackgroundFile} from '/src/features/server-status/track-background.js';
 import {serverSessionLabel} from './server-session.js?v=20261018telemetry1';
-import {renderServerRoster} from '../src/features/server-status/roster.js?v=20261023serverdetails1';
-import {serverPilotCount} from '../src/features/server-status/live-details.js?v=20261023serverdetails1';
+import {renderServerRoster} from '../src/features/server-status/roster.js?v=20261025direct1';
+import {serverPilotCount} from '../src/features/server-status/live-details.js?v=20261025direct1';
+import {LiveServerStream} from '../src/features/server-status/live-stream.js?v=20261025direct1';
+import {animateLiveMap} from '../src/features/server-status/live-map.js?v=20261025direct1';
 import {safetyHistoryComponents} from './safety-history.js?v=20261010profile1';
 import {loadLeaderboardRank,profileWithLeaderboardRank} from '/src/shared/leaderboard-rank.js?v=20261013delivery1';
 
@@ -10,11 +12,27 @@ import {loadLeaderboardRank,profileWithLeaderboardRank} from '/src/shared/leader
 // create a second auth/voting state.
 export function createPresentation({$,native,getModel,esc,text,label,date,number,rating,car,driverHref,classic,affiliation,privacy,serverAdmission,showDialog}) {
   let request=0,profile=null,parent=null,historyView=null,month='',day='',eventEntry=null,driverDaySignature='',inspectionRequest=0,activeServerKey=null;
+  let serverStream=null,serverFrame=0,serverRefresh=0;
+  const reducedMotion=globalThis.matchMedia?.('(prefers-reduced-motion: reduce)');
+  function stopServerStream(){serverStream?.close();serverStream=null;cancelAnimationFrame(serverFrame);clearInterval(serverRefresh);}
+  function startServerStream(key){
+    stopServerStream();
+    if(!key||document.hidden)return;
+    try {serverStream=new LiveServerStream(key);}catch{return;}
+    const animate=()=>{
+      const stream=serverStream,server=stream?.latest();
+      if(!stream)return;
+      if(server&&stream.delivery==='direct')animateLiveMap($('modal-body'),server,stream.timeline.sample(performance.now(),reducedMotion?.matches),text('ru','en'));
+      serverFrame=requestAnimationFrame(animate);
+    };
+    serverFrame=requestAnimationFrame(animate);
+    serverRefresh=setInterval(()=>{if($('modal').open&&$('modal').dataset.kind==='server')openServer(key,null,true)},1000);
+  }
   const detail=(name,value)=>`<div><span>${esc(name)}</span><b>${esc(value??'—')}</b></div>`;
   const name=p=>p.driver||p.name||p.summary?.driver||'—';
   const flatten=p=>({...p?.summary,...p});
   const kinds={hourly:text('Часовая гонка','Hourly race'),championship:text('Гонка чемпионата','Championship race'),endurance:text('Эндюранс','Endurance'),mono:text('Монокласс','Single model')};
-  function display(title,html,kind,trigger){showDialog(title,html,trigger);$('modal').dataset.kind=kind;$('modal-eyebrow').textContent='ASG RACING / '+kind.toUpperCase();$('modal').style.removeProperty('--modal-track')}
+  function display(title,html,kind,trigger){stopServerStream();showDialog(title,html,trigger);$('modal').dataset.kind=kind;$('modal-eyebrow').textContent='ASG RACING / '+kind.toUpperCase();$('modal').style.removeProperty('--modal-track')}
   function lapsHtml(p){
     const laps=p.best_laps_by_track||[];
     return `<section class="lap-picker"><label for="v2-driver-track">${text('Лучший круг · выбери трассу','Best lap · choose track')}</label><select id="v2-driver-track">${laps.length?laps.map((l,i)=>`<option value="${i}">${esc(native().track(l.track_code||l.track))}</option>`).join(''):'<option>—</option>'}</select><div id="v2-driver-lap-value">${lapValue(laps[0])}</div></section>`;
@@ -100,22 +118,31 @@ export function createPresentation({$,native,getModel,esc,text,label,date,number
   function openServer(key,trigger,refresh=false){
     ++request;const m=getModel();if(!m)return;
     const draw=(title,html,kind)=>{
-      if(!refresh){activeServerKey=key;display(title,html,kind,trigger);return;}
+      if(!refresh){activeServerKey=key;display(title,html,kind,trigger);if(kind==='server')startServerStream(key);return;}
       const body=$('modal-body'),scroll=body.querySelector('.server-roster-scroll'),left=scroll?.scrollLeft||0,top=body.scrollTop;
+      const focused=body.contains(document.activeElement)?document.activeElement?.getAttribute('href'):null;
+      const oldMap=body.querySelector('.server-track-map svg'),oldPath=oldMap?.querySelector('.track-outline')?.getAttribute('d');
       $('modal-title').textContent=title;body.innerHTML=html;body.scrollTop=top;
       const updated=body.querySelector('.server-roster-scroll');if(updated)updated.scrollLeft=left;
+      const newMap=body.querySelector('.server-track-map svg');
+      if(serverStream?.latest()&&serverStream.delivery==='direct'&&oldPath&&newMap?.querySelector('.track-outline')?.getAttribute('d')===oldPath)newMap.replaceWith(oldMap);
+      if(focused)[...body.querySelectorAll('a[href]')].find(a=>a.getAttribute('href')===focused)?.focus({preventScroll:true});
     };
     const phase=s=>s.stale?text('Данные устарели','Stale data'):serverSessionLabel(s,label);
     if(!key){
       draw(label('serverStatus'),`<div class="server-summary-list">${m.servers.map(s=>`<button type="button" class="server-summary-item${serverAdmission(s)?' is-sr-blocked':''}" title="${esc(serverAdmission(s)||s.label)}" aria-label="${esc(s.label)}${serverAdmission(s)?` · ${esc(serverAdmission(s))}`:''}" data-server="${esc(s.key)}"><b>${esc(s.label)}</b><span>${esc(s.track)} · <strong class="${s.online?'is-online':'is-offline'}">${m.serversStale||s.stale?text('Данные устарели','Stale data'):s.online?label('live'):label('offline')}</strong> · ${esc(phase(s))} · SA ${esc(s.sa)} · SR ${esc(s.sr)} · ${esc(serverPilotCount(s.server))} ${text('пилотов','drivers')}</span></button>`).join('')||`<p class="empty">${label('noData')}</p>`}</div>`,'servers',trigger);return;
     }
-    const s=m.servers.find(server=>server.key===key);if(!s)return;
-    const stale=m.serversStale||s.stale,drivers=stale?[]:s.drivers||[],empty=stale?text('Онлайн устарел; актуальный список недоступен.','Online status is stale; the current roster is unavailable.'):s.players>0?text('Список имён ещё не опубликован.','Driver names have not been published yet.'):text('Сейчас пилотов нет.','No drivers currently online.');
+    const base=m.servers.find(server=>server.key===key);if(!base)return;
+    const live=serverStream?.key===key?serverStream.latest():null;
+    const s=live?{...base,server:live,track:native().track(live.track_code||live.track||''),
+      stale:serverStream.delivery==='stale',online:live.status==='online',players:live.players_online,drivers:live.drivers||[]}:base;
+    const stale=live?s.stale:m.serversStale||s.stale,drivers=stale?[]:s.drivers||[],empty=stale?text('Онлайн устарел; актуальный список недоступен.','Online status is stale; the current roster is unavailable.'):s.players>0?text('Список имён ещё не опубликован.','Driver names have not been published yet.'):text('Сейчас пилотов нет.','No drivers currently online.');
     const roster=renderServerRoster({server:s.server,drivers,lang:text('ru','en'),esc,emptyMessage:empty,
       renderName:p=>{const name=esc(p.display_name||p.name||p.driver||p.driver_name||'—');return p.public_id?`<a class="pilot-name" href="${driverHref(p.public_id)}">${name}</a>`:`<span class="pilot-name">${name}</span>`},
       renderRatings:p=>`<span>${rating(p,'elo',null,true)}</span><span>${rating(p,'sr',null,true)}</span>`,
       renderCar:p=>{const id=p.car_model_id??p.carModel??p.carModelId??p.car_model??null,modelName=native().car({...p,car_model_id:id});return car({...p,car_model_id:id,car_name:p.car_name||(modelName==='-'?'—':modelName)})}});
-    draw(s.label,`<div class="server-parameter-row">${detail(label('track'),s.track||'—')}${detail(label('admission'),`SA ${s.sa??'—'} / SR ${s.sr??'—'}`)}${detail(label('session'),phase(s))}${detail(label('players'),serverPilotCount(s.server))}</div>${serverAdmission(s)?`<p class="server-sr-warning" role="note">${esc(serverAdmission(s))}</p>`:''}<p class="data-note server-search-note">${label('serverSearch')}</p><h3 class="server-roster-heading">${text('Пилоты на сервере','Drivers on server')} <span class="small-tag">${esc(serverPilotCount(s.server))}</span></h3>${roster}<p class="data-note server-updated">${text('Последнее обновление','Last update')}: ${date(s.server?.updated_at||m.updatedAt)}</p>`,'server',trigger);
+    const delivery=live&&serverStream.delivery==='direct'?text('Прямой поток · буфер 0,5 с','Direct stream · 0.5 s buffer'):stale?text('Телеметрия устарела','Telemetry is stale'):text('Резервная публикация','Relay snapshot');
+    draw(s.label,`<div class="server-parameter-row">${detail(label('track'),s.track||'—')}${detail(label('admission'),`SA ${s.sa??'—'} / SR ${s.sr??'—'}`)}${detail(label('session'),phase(s))}${detail(label('players'),serverPilotCount(s.server))}</div>${serverAdmission(s)?`<p class="server-sr-warning" role="note">${esc(serverAdmission(s))}</p>`:''}<p class="data-note server-search-note">${label('serverSearch')}</p><p class="data-note server-delivery" role="status">${delivery}</p><h3 class="server-roster-heading">${text('Пилоты на сервере','Drivers on server')} <span class="small-tag">${esc(serverPilotCount(s.server))}</span></h3>${roster}<p class="data-note server-updated">${text('Последнее обновление','Last update')}: ${date(s.server?.updated_at||m.updatedAt)}</p>`,'server',trigger);
   }
   $('modal-body').addEventListener('change',e=>{
     const id=e.target.id;
@@ -132,7 +159,9 @@ export function createPresentation({$,native,getModel,esc,text,label,date,number
     if(e.target.closest('[data-event-vote]')){if(eventEntry)eventEntry.vote();else native().vote();}
   });
   $('modal-body').addEventListener('keydown',e=>{const point=e.target.closest('[data-sr-history-index]');if(point&&['Enter',' '].includes(e.key)){e.preventDefault();e.stopPropagation();inspectSr(Number(point.dataset.srHistoryIndex))}});
-  $('modal').addEventListener('close',()=>{++request;profile=null;parent=null;historyView=null;eventEntry=null});
+  $('modal').addEventListener('close',()=>{stopServerStream();++request;profile=null;parent=null;historyView=null;eventEntry=null});
   $('modal').addEventListener('v2-dialog-restore',()=>{++request;});
+  document.addEventListener('visibilitychange',()=>{if(document.hidden)stopServerStream();else if($('modal').open&&$('modal').dataset.kind==='server')startServerStream(activeServerKey)});
+  globalThis.addEventListener?.('pagehide',stopServerStream);
   return {openDriver:(row,trigger)=>loadProfile(row,'driver',trigger),openDriverDay,refreshDriverDay,openRating:(row,kind,trigger)=>loadProfile(row,'driver-'+kind,trigger),openEvent,openOnline,openServer,refreshServer(){if($('modal').open&&['server','servers'].includes($('modal').dataset.kind))openServer(activeServerKey,null,true)},refreshEntry(){if($('modal').open&&$('modal').dataset.kind==='event'){const node=$('modal-body').querySelector('.modal-participation');if(node)node.innerHTML=entryHtml()}}};
 }

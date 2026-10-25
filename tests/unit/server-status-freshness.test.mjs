@@ -38,12 +38,12 @@ test("open details stay within timing TTL, closed widgets poll slowly and hidden
     listen(target, event, callback) { assert.equal(target, documentRef); assert.equal(event, 'visibilitychange'); visibility = callback; }
   };
   bindServerStatusFreshness({windowRef, documentRef, lifecycle, refresh:()=>refreshes++, isDetailsOpen:()=>detailsOpen});
-  assert.equal(interval, 5000);
-  for (let i=0;i<5;i++) tick();
+  assert.equal(interval, 1000);
+  for (let i=0;i<29;i++) tick();
   assert.equal(refreshes, 0);
   tick(); assert.equal(refreshes, 1);
   detailsOpen = true;
-  for (let i=0;i<6;i++) tick();
+  for (let i=0;i<30;i++) tick();
   assert.equal(refreshes, 7);
   documentRef.hidden = true;
   for (let i=0;i<6;i++) tick();
@@ -62,6 +62,13 @@ test("one fresh publisher cannot refresh another server's expired snapshot", () 
   assert.equal(isInstanceStatusStale({...row,observed_at:"2026-10-17T11:59:00Z",bot_connected:false},now),true);
   assert.equal(isInstanceStatusStale({status:"stale",players_online:null},now),true);
   assert.equal(isInstanceStatusStale({status:"online",players_online:0},now),false);
+});
+
+test('independent hub metadata polls once per second without polling hidden pages',()=>{
+  let tick,refreshes=0;const documentRef={hidden:false};
+  bindServerStatusFreshness({windowRef:{setInterval(fn,ms){tick=fn;assert.equal(ms,1000);return 1;},clearInterval(){}},
+    documentRef,lifecycle:{timer(){},listen(){}},refresh:()=>refreshes++,isDirect:()=>true});
+  tick();tick();assert.equal(refreshes,2);documentRef.hidden=true;tick();assert.equal(refreshes,2);
 });
 
 test("treats status as stale only after ten minutes", () => {

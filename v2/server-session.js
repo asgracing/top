@@ -1,4 +1,4 @@
-import {telemetrySessionLabel} from '../src/features/server-status/telemetry.js?v=20261018telemetry1';
+import {telemetrySessionLabel} from '../src/features/server-status/telemetry.js?v=20261025direct1';
 // Legacy minutes remain snapshot values; telemetry explicitly supplies a clock.
 export function serverSessionLabel(server, label, {compact=false}={}) {
   if(!server.online)return compact?'OFF':label('waiting');

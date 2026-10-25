@@ -1,5 +1,12 @@
 export const SERVER_STATUS_MAX_AGE_MS = 10 * 60 * 1000;
 
+// Authenticated hub reports measured producer clock skew without rewriting the
+// original observation. Relay snapshots have no correction.
+export function serverObservationAgeMs(server, observed, now=Date.now()) {
+  const offset=server?.source_clock_offset_ms;
+  return now-parseServerStatusUpdatedAt(observed)-(Number.isFinite(offset)&&Math.abs(offset)<=30000?offset:0);
+}
+
 const TIMEZONE_SUFFIX_PATTERN = /(Z|[+-]\d{2}:?\d{2})$/i;
 const NAIVE_ISO_PATTERN = /^\d{4}-\d{2}-\d{2}T\d{2}:\d{2}(?::\d{2}(?:\.\d+)?)?$/;
 
@@ -36,7 +43,7 @@ export function isInstanceStatusStale(server, now = Date.now()) {
   if (server.stale === true || ["stale", "unknown"].includes(server.status)) return true;
   if (server.source === 'acc-local-telemetry') {
     const observed = parseServerStatusUpdatedAt(server.observed_at);
-    const age = now - observed;
+    const age = serverObservationAgeMs(server,server.observed_at,now);
     return !Number.isFinite(observed) || age < -30_000 || age > Math.max(180_000, serverDetailMaxAgeMs(server)) ||
       !['live', 'offline'].includes(server.telemetry_state) ||
       (server.telemetry_state === 'live' && (server.roster_complete !== true || server.source_age_ms > 5_000));
@@ -55,18 +62,18 @@ export function serverDetailsAreOpen(documentRef) {
   return Boolean(modal?.open && ["server", "servers"].includes(modal.dataset.kind));
 }
 
-export function bindServerStatusFreshness({ windowRef, documentRef, lifecycle, refresh, isDetailsOpen = () => serverDetailsAreOpen(documentRef) }) {
+export function bindServerStatusFreshness({ windowRef, documentRef, lifecycle, refresh, isDetailsOpen = () => serverDetailsAreOpen(documentRef),isDirect=()=>false }) {
   // Fine timing expires after 15 seconds. Fetch every publication cycle while
   // the dialog is open; keep the coarse widget cadence elsewhere.
   let elapsedMs = 0;
   const timerId = windowRef.setInterval(() => {
     if (documentRef.hidden) return;
-    elapsedMs += 5_000;
-    if (isDetailsOpen() || elapsedMs >= 30_000) {
+    elapsedMs += 1_000;
+    if (isDirect() || elapsedMs >= (isDetailsOpen()?5_000:30_000)) {
       elapsedMs = 0;
       refresh();
     }
-  }, 5_000);
+  }, 1_000);
   lifecycle.timer(timerId, id => windowRef.clearInterval(id));
   lifecycle.listen(documentRef, "visibilitychange", () => {
     if (!documentRef.hidden) refresh();
