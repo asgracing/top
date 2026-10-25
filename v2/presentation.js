@@ -1,6 +1,6 @@
 import {eventKind} from './models.js?v=20261006v2k';
 import {resolveTrackBackgroundFile} from '/src/features/server-status/track-background.js';
-import {serverSessionLabel} from './server-session.js?v=20261018telemetry1';
+import {serverSessionLabel} from './server-session.js?v=20261025direct1';
 import {renderServerRoster} from '../src/features/server-status/roster.js?v=20261025direct1';
 import {serverPilotCount} from '../src/features/server-status/live-details.js?v=20261025direct1';
 import {LiveServerStream} from '../src/features/server-status/live-stream.js?v=20261025direct1';

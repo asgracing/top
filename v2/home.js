@@ -5,7 +5,7 @@ import {rankingPosition,eventKind,normalizeTablePage,normalizeSafetyRow,paginati
 import {createPresentation} from './presentation.js?v=20261025direct1';
 import {createRecentRaces} from './recent-races.js?v=20261011racelinks1';
 import {createHeader} from './header.js?v=20261014profile1';
-import {serverSessionLabel} from './server-session.js?v=20261018telemetry1';
+import {serverSessionLabel} from './server-session.js?v=20261025direct1';
 import {orderedServers,replaceServerCards,serverDialogTrigger} from './server-cards.js?v=20261025servers1';
 import {createGuide} from './guide.js?v=20261006v2k';
 import {createHomeMotion} from './motion.js?v=20261006v2k';
