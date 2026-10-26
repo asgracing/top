@@ -1,6 +1,6 @@
 {
   "schemaVersion": 1,
-  "runtimeVersion": "20261026smooth2",
+  "runtimeVersion": "20261026spa2",
   "inputs": [
     {
       "path": "account/driver-overlay.js",
@@ -13,6 +13,10 @@
     {
       "path": "assets/track-maps/monza.js",
       "sha256": "6e521b6cc38e89398491cf561472785157fc4462e29f8bde6fb2bea740cc6127"
+    },
+    {
+      "path": "assets/track-maps/spa.js",
+      "sha256": "b378e85b7bc34510ca74ba265d48a81deaff0cc62290cf81093ece47b7008459"
     },
     {
       "path": "community/posts.js",
@@ -52,7 +56,7 @@
     },
     {
       "path": "scripts/build-v2.mjs",
-      "sha256": "a289734d31a9ec11bf7316146d005ac76db1929ec317e1baa7e7ad0fc1661715"
+      "sha256": "73debd6eb4a18dba0e3f1ba14c8c6f9765bc0e023a07d663100751fca000ce03"
     },
     {
       "path": "scripts/generate-localized-pages.mjs",
@@ -124,7 +128,7 @@
     },
     {
       "path": "src/features/server-status/live-map.js",
-      "sha256": "f5fbc5d2f251cf86eccd3a86415d5b02ae8b446733309295299a686e9d002d02"
+      "sha256": "36c636ac0dc627c422f9b72dc56e3f2356c9bb06e842640645d87b10e9323ed4"
     },
     {
       "path": "src/features/server-status/live-stream.js",
@@ -132,7 +136,7 @@
     },
     {
       "path": "src/features/server-status/roster.js",
-      "sha256": "f5582e6e2678a092f4730f3d829754cdc5c7001311e87a811d3e942e60026895"
+      "sha256": "154a68d67b6ed8510676453ff5106ee11784655baf8e21cf81d4d0ac524a9dc6"
     },
     {
       "path": "src/features/server-status/telemetry.js",
@@ -144,7 +148,7 @@
     },
     {
       "path": "src/features/server-status/track-map.js",
-      "sha256": "493019809a37390efd3e100716b6a6889a811a2c57c600101880260c262d16a2"
+      "sha256": "cd3702198b27c81edb3767b9b78931b16f6870e5a67d4054fda2e09a770c1f56"
     },
     {
       "path": "src/features/stats/table-engine.js",
@@ -452,11 +456,11 @@
     },
     {
       "path": "styles/components/server-players-modal.css",
-      "sha256": "df44a0db2d4c4d8fb4653ded97bb67765ead0a3871a50125964752300c6ae74b"
+      "sha256": "9c3857a79d9f74791571554b3b9207a0b224a809d972a80930d0e74c3d88d308"
     },
     {
       "path": "styles/components/server-roster.css",
-      "sha256": "5bcd068b460b448a414c62d70ebd52fff7675781bbc28584e6a6ed0621ed67b3"
+      "sha256": "de88edf3828cd243d41a4450c57291094bc671efcc1d21eee4eb5e5d0c9d8d0b"
     },
     {
       "path": "styles/components/server-sticky-layout.css",
@@ -656,7 +660,7 @@
     },
     {
       "path": "v2/home.js",
-      "sha256": "404fdc837480e6a92654d894fb454eb3f9e6d6fa723e83e920f1ca936a47564b"
+      "sha256": "0b4ead046bfebec88a769274a5346d738e4c5350f3bcab19d20e81259c3dfc04"
     },
     {
       "path": "v2/mobile-navigation.js",
@@ -716,7 +720,7 @@
     },
     {
       "path": "v2/presentation.js",
-      "sha256": "f55cf7e73fc56256cf814bacb166a012eadfb65a94cee9062021cee8aa5bd94c"
+      "sha256": "4d9d0a7867985ca948a7568ea8543c1e450aacb15ed784795d120a3ae2772687"
     },
     {
       "path": "v2/profile-races.js",
