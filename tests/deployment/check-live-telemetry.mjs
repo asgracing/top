@@ -94,12 +94,15 @@ try {
     await page.waitForFunction(()=>document.querySelector('.server-delivery')?.textContent.match(/Прямой|Direct/));
     await page.locator('#v2-modal .track-car').first().waitFor({state:'attached'});
     const read=()=>page.locator('#v2-modal .track-car').first().getAttribute('transform');
-    const first=await read();await page.waitForTimeout(80);const second=await read();
+    const first=await read();
+    await page.waitForFunction(value=>document.querySelector('#v2-modal .track-car')?.getAttribute('transform')!==value,first,{timeout:3000});
+    const second=await read();
     assert.notEqual(second,first,'Real SSE frames move map markers');
     await page.locator('#v2-modal .track-car').first().evaluate(n=>{window.fixtureMarker=n;});
     await page.waitForTimeout(1200);
     assert.equal(await page.evaluate(()=>window.fixtureMarker.isConnected),true,'One-second table update retains the SVG marker');
     assert.equal(await page.locator('#v2-modal .track-car.is-leader').count(),1);
+    assert.match(await page.locator('#v2-modal .server-track-map svg + p').innerText(),/Красный|Red/);
     assert.equal(await page.evaluate(()=>document.documentElement.scrollWidth>innerWidth+1),false);
     await page.screenshot({path:path.join(output,`stream-${lang}-${width}.png`)});
     mode='relay';

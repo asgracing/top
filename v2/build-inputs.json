@@ -120,7 +120,7 @@
     },
     {
       "path": "src/features/server-status/live-map.js",
-      "sha256": "51b5a48ae778c8dce9a2d81f732d52ae4f975e59b35b94f770e3ac204cc14e69"
+      "sha256": "f5fbc5d2f251cf86eccd3a86415d5b02ae8b446733309295299a686e9d002d02"
     },
     {
       "path": "src/features/server-status/live-stream.js",
@@ -652,7 +652,7 @@
     },
     {
       "path": "v2/home.js",
-      "sha256": "6d1a5f84ab9467bea0322bc8bede9f12737f4e5456849dd4e58ce615a8c6cd47"
+      "sha256": "ffc8c32bcc7ae85c188d3f459ec1a44db570e14b6cc3752fbdd99f0d63438cf0"
     },
     {
       "path": "v2/mobile-navigation.js",
@@ -712,7 +712,7 @@
     },
     {
       "path": "v2/presentation.js",
-      "sha256": "0ef41963e1a11748699a38d3e8988f0401c86c74a8730b77636dbca6ead52769"
+      "sha256": "8a89fde5860d746d5bf64e982627982cf27459f625d296f9fb397afed82cf91e"
     },
     {
       "path": "v2/profile-races.js",

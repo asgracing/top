@@ -24,4 +24,12 @@ export function animateLiveMap(root,server,cars,lang='ru') {
     svg.append(node);
   }
   for (const node of existing.values()) node.remove();
+  const caption=svg.nextElementSibling;
+  if(caption?.tagName==='P'){
+    const moving=svg.querySelector('.track-car');
+    const message=moving
+      ? (lang==='ru'?'Красный — лидер · номера обозначают позиции':'Red — leader · numbers show positions')
+      : (lang==='ru'?'Нет свежих координат машин':'No fresh car positions');
+    if(caption.textContent!==message)caption.textContent=message;
+  }
 }

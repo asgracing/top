@@ -1,8 +1,8 @@
 {
   "schemaVersion": 1,
-  "revision": "ca2c4fb8a466d58dc14c8ad597121bab6ced0070",
+  "revision": "da1ce2cd2ea1494ff51ffc755758ec246bcdda8d",
   "files": 926,
-  "bytes": 133283395,
+  "bytes": 133284524,
   "assets": [
     {
       "path": "404.html",
@@ -2341,8 +2341,8 @@
     },
     {
       "path": "src/features/server-status/live-map.js",
-      "bytes": 1652,
-      "sha256": "51b5a48ae778c8dce9a2d81f732d52ae4f975e59b35b94f770e3ac204cc14e69"
+      "bytes": 2116,
+      "sha256": "f5fbc5d2f251cf86eccd3a86415d5b02ae8b446733309295299a686e9d002d02"
     },
     {
       "path": "src/features/server-status/live-stream.js",
@@ -3107,7 +3107,7 @@
     {
       "path": "v2/boot/build.json",
       "bytes": 3722,
-      "sha256": "3b730c816cf2ca42f6ba68a96de5c83814bf5b9dc178e8ddb3462f986da78123"
+      "sha256": "06b7b8b56a4c441b9adb78eb57374bd99461d79ebf38bb0d4d13e7549779b92a"
     },
     {
       "path": "v2/boot/chunks/account-3LBIY7IB.js",
@@ -4016,8 +4016,8 @@
     },
     {
       "path": "v2/boot/home.js",
-      "bytes": 208079,
-      "sha256": "8adafd5b954f00109e4a9bc6655e3a02c6442436682690179f05e245d5f09eb7"
+      "bytes": 208741,
+      "sha256": "0ffa824c103f873c1778090b07379b5ce3984925faaa377aa76b1cd2a3f95603"
     },
     {
       "path": "v2/bridge.js",
@@ -4027,7 +4027,7 @@
     {
       "path": "v2/build-inputs.json",
       "bytes": 26769,
-      "sha256": "00814815484ceb09f9a951ab1779bcaba72459b31f0eea238b56f23cb9866409"
+      "sha256": "1c2f5d73f09655d47fbdd2d4844cf2ee7b9385ff736adce0377aaf7c49b5302a"
     },
     {
       "path": "v2/copy.js",
@@ -4201,8 +4201,8 @@
     },
     {
       "path": "v2/home.js",
-      "bytes": 48629,
-      "sha256": "ffe516b67807b4fa022f7234d1cd4eeae9df2413121f23351848ed5944a1b35c"
+      "bytes": 48631,
+      "sha256": "a8615dd758381b3cd23be7ab688055ff6a2e2dc05c8973aaa38fc147b965757b"
     },
     {
       "path": "v2/index.html",
@@ -4386,8 +4386,8 @@
     },
     {
       "path": "v2/presentation.js",
-      "bytes": 31743,
-      "sha256": "efe9c90216a36f56ca3f94d3a907f1224a4dcb4faf90bec0b1287729a48b1861"
+      "bytes": 31744,
+      "sha256": "09139bc4bdb86718ff4481bfc01c53b39f3d3730183889eb384b4d5ff52c0482"
     },
     {
       "path": "v2/profile-races.js",
