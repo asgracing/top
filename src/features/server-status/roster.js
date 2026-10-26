@@ -1,9 +1,10 @@
 import {formatTelemetryLap, sessionBestLapMs, lapHighlight} from './telemetry.js?v=20261025direct1';
-import {driverInterval, driverPitLabel} from './live-details.js?v=20261025direct1';
-import {renderTrackMap} from './track-map.js?v=20261025direct1';
+import {driverInterval, driverPitLabel, serverPilotCount} from './live-details.js?v=20261025direct1';
+import {renderTrackMap} from './track-map.js?v=20261026spa2';
 
 // Both maintained server dialogs share timing, lap-deficit and pit rendering.
-export function renderServerRoster({server, drivers, lang, esc, renderName, renderRatings, renderCar, emptyMessage}) {
+export function renderServerRoster({server, drivers, lang, esc, renderName, renderRatings, renderCar, emptyMessage,
+  showHeading=false,mapExpanded=true}) {
   const ru = lang === 'ru', native = server?.source === 'acc-local-telemetry';
   const intervalHeading = ['Practice','Qualifying'].includes(server?.session?.type) ? (ru ? 'К лучшему' : 'To best') : (ru ? 'Интервал' : 'Interval');
   const headings = ru ? ['Поз.', 'Пилот', intervalHeading, 'Лучший круг', 'Последний круг', 'Рейтинги', 'Машина']
@@ -26,8 +27,9 @@ export function renderServerRoster({server, drivers, lang, esc, renderName, rend
       <td class="pilot-ratings"><div class="roster-rating-pair">${renderRatings(driver)}</div></td>
       <td class="pilot-car" title="${esc(driver.car_name || driver.car_name_raw || '')}">${renderCar(driver)}</td></tr>`;
   }).join('');
-  return `<div class="server-roster-scroll" tabindex="0" role="region" aria-label="${ru ? 'Таблица пилотов, прокрутка по горизонтали' : 'Driver table, scroll horizontally'}">
+  const heading=showHeading ? `<h3 class="server-roster-heading">${ru ? 'Пилоты на сервере' : 'Drivers on server'} <span class="small-tag">${esc(serverPilotCount(server))}</span></h3>` : '';
+  return `${renderTrackMap(server,lang,Date.now(),{expanded:mapExpanded})}${heading}<div class="server-roster-scroll" tabindex="0" role="region" aria-label="${ru ? 'Таблица пилотов, прокрутка по горизонтали' : 'Driver table, scroll horizontally'}">
     <table class="server-driver-list server-roster-table"><colgroup>${['position','name','interval','best','last','ratings','car'].map(key=>`<col class="roster-col-${key}">`).join('')}</colgroup>
     <thead><tr>${headings.map((heading,index)=>`<th scope="col">${index === 5 ? '<div class="roster-rating-pair"><span>ELO</span><span>SR</span></div>' : esc(heading)}</th>`).join('')}</tr></thead>
-    <tbody>${rows || `<tr class="empty"><td colspan="7">${esc(emptyMessage)}</td></tr>`}</tbody></table></div>${renderTrackMap(server,lang)}`;
+    <tbody>${rows || `<tr class="empty"><td colspan="7">${esc(emptyMessage)}</td></tr>`}</tbody></table></div>`;
 }

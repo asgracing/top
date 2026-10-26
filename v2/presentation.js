@@ -1,10 +1,10 @@
 import {eventKind} from './models.js?v=20261006v2k';
 import {resolveTrackBackgroundFile} from '/src/features/server-status/track-background.js';
 import {serverSessionLabel} from './server-session.js?v=20261025direct1';
-import {renderServerRoster} from '../src/features/server-status/roster.js?v=20261025direct1';
+import {renderServerRoster} from '../src/features/server-status/roster.js?v=20261026spa2';
 import {serverPilotCount} from '../src/features/server-status/live-details.js?v=20261025direct1';
 import {LiveServerStream} from '../src/features/server-status/live-stream.js?v=20261026smooth2';
-import {animateLiveMap} from '../src/features/server-status/live-map.js?v=20261026caption1';
+import {animateLiveMap} from '../src/features/server-status/live-map.js?v=20261026spa2';
 import {safetyHistoryComponents} from './safety-history.js?v=20261010profile1';
 import {loadLeaderboardRank,profileWithLeaderboardRank} from '/src/shared/leaderboard-rank.js?v=20261013delivery1';
 
@@ -121,12 +121,14 @@ export function createPresentation({$,native,getModel,esc,text,label,date,number
       if(!refresh){activeServerKey=key;display(title,html,kind,trigger);if(kind==='server')startServerStream(key);return;}
       const body=$('modal-body'),scroll=body.querySelector('.server-roster-scroll'),left=scroll?.scrollLeft||0,top=body.scrollTop;
       const focused=body.contains(document.activeElement)?document.activeElement?.getAttribute('href'):null;
+      const mapToggleFocused=document.activeElement===body.querySelector('.track-map-summary');
       const oldMap=body.querySelector('.server-track-map svg'),oldPath=oldMap?.querySelector('.track-outline')?.getAttribute('d');
       $('modal-title').textContent=title;body.innerHTML=html;body.scrollTop=top;
       const updated=body.querySelector('.server-roster-scroll');if(updated)updated.scrollLeft=left;
       const newMap=body.querySelector('.server-track-map svg');
       if(serverStream?.latest()&&serverStream.delivery!=='relay'&&oldPath&&newMap?.querySelector('.track-outline')?.getAttribute('d')===oldPath)newMap.replaceWith(oldMap);
       if(focused)[...body.querySelectorAll('a[href]')].find(a=>a.getAttribute('href')===focused)?.focus({preventScroll:true});
+      if(mapToggleFocused)body.querySelector('.track-map-summary')?.focus({preventScroll:true});
     };
     const phase=s=>s.stale?text('Данные устарели','Stale data'):serverSessionLabel(s,label);
     if(!key){
@@ -137,12 +139,13 @@ export function createPresentation({$,native,getModel,esc,text,label,date,number
     const s=live?{...base,server:live,track:native().track(live.track_code||live.track||''),
       stale:serverStream.delivery==='stale',online:live.status==='online',players:live.players_online,drivers:live.drivers||[]}:base;
     const stale=live?s.stale:m.serversStale||s.stale,drivers=stale?[]:s.drivers||[],empty=stale?text('Онлайн устарел; актуальный список недоступен.','Online status is stale; the current roster is unavailable.'):s.players>0?text('Список имён ещё не опубликован.','Driver names have not been published yet.'):text('Сейчас пилотов нет.','No drivers currently online.');
-    const roster=renderServerRoster({server:s.server,drivers,lang:text('ru','en'),esc,emptyMessage:empty,
+    const roster=renderServerRoster({server:s.server,drivers,lang:text('ru','en'),esc,emptyMessage:empty,showHeading:true,
+      mapExpanded:refresh ? $('modal-body').querySelector('details.server-track-map')?.open ?? true : true,
       renderName:p=>{const name=esc(p.display_name||p.name||p.driver||p.driver_name||'—');return p.public_id?`<a class="pilot-name" href="${driverHref(p.public_id)}">${name}</a>`:`<span class="pilot-name">${name}</span>`},
       renderRatings:p=>`<span>${rating(p,'elo',null,true)}</span><span>${rating(p,'sr',null,true)}</span>`,
       renderCar:p=>{const id=p.car_model_id??p.carModel??p.carModelId??p.car_model??null,modelName=native().car({...p,car_model_id:id});return car({...p,car_model_id:id,car_name:p.car_name||(modelName==='-'?'—':modelName)})}});
     const delivery=live&&serverStream.delivery==='direct'?text('Прямой поток · плавное воспроизведение','Direct stream · smooth playback'):live&&serverStream.delivery==='recovering'?text('Восстанавливаем поток · последние данные','Reconnecting · last known data'):stale?text('Телеметрия устарела','Telemetry is stale'):text('Резервная публикация','Relay snapshot');
-    draw(s.label,`<div class="server-parameter-row">${detail(label('track'),s.track||'—')}${detail(label('admission'),`SA ${s.sa??'—'} / SR ${s.sr??'—'}`)}${detail(label('session'),phase(s))}${detail(label('players'),serverPilotCount(s.server))}</div>${serverAdmission(s)?`<p class="server-sr-warning" role="note">${esc(serverAdmission(s))}</p>`:''}<p class="data-note server-search-note">${label('serverSearch')}</p><p class="data-note server-delivery" role="status">${delivery}</p><h3 class="server-roster-heading">${text('Пилоты на сервере','Drivers on server')} <span class="small-tag">${esc(serverPilotCount(s.server))}</span></h3>${roster}<p class="data-note server-updated">${text('Последнее обновление','Last update')}: ${date(s.server?.updated_at||m.updatedAt)}</p>`,'server',trigger);
+    draw(s.label,`<div class="server-parameter-row">${detail(label('track'),s.track||'—')}${detail(label('admission'),`SA ${s.sa??'—'} / SR ${s.sr??'—'}`)}${detail(label('session'),phase(s))}${detail(label('players'),serverPilotCount(s.server))}</div>${serverAdmission(s)?`<p class="server-sr-warning" role="note">${esc(serverAdmission(s))}</p>`:''}<p class="data-note server-search-note">${label('serverSearch')}</p><p class="data-note server-delivery" role="status">${delivery}</p>${roster}<p class="data-note server-updated">${text('Последнее обновление','Last update')}: ${date(s.server?.updated_at||m.updatedAt)}</p>`,'server',trigger);
   }
   $('modal-body').addEventListener('change',e=>{
     const id=e.target.id;

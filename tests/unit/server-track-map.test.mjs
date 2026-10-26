@@ -2,6 +2,7 @@ import test from 'node:test';
 import assert from 'node:assert/strict';
 import {mapCars,renderTrackMap,trackMapGeometry} from '../../src/features/server-status/track-map.js';
 import {MONZA_MAP} from '../../assets/track-maps/monza.js';
+import {SPA_MAP} from '../../assets/track-maps/spa.js';
 import {driverPitLabel} from '../../src/features/server-status/live-details.js';
 
 const now = Date.now(), observed_at = new Date(now).toISOString();
@@ -18,6 +19,18 @@ test('car map uses live coordinates and classified positions, leader drawn last'
   assert.match(html,/track-outline/);assert.match(html,/is-leader/);
   assert.ok(html.indexOf('Position')<0);assert.match(html,/Позиция 1/);
   assert.ok(html.indexOf('Позиция 2')<html.indexOf('Позиция 1'));
+  assert.match(html,/<circle r="10\.4"/);
+});
+
+test('native map disclosure opens by default and can render collapsed without losing geometry',()=>{
+  const s={...server(),track_code:'spa'};
+  const open=renderTrackMap(s,'ru',now),closed=renderTrackMap(s,'en',now,{expanded:false});
+  assert.match(open,/<details[^>]* open>/);
+  assert.match(open,/<summary class="track-map-summary">/);
+  assert.match(open,/Свернуть/);assert.match(closed,/Expand/);
+  assert.doesNotMatch(closed,/<details[^>]* open>/);
+  assert.match(closed,/track-outline/);
+  assert.match(open,/<circle r="14\.4"/);
 });
 
 test('map excludes stale, departed, invalid, duplicate and unsupported coordinates',()=>{
@@ -96,8 +109,8 @@ test('Monza preserves all three chicanes and does not snap pit/off-track XZ to t
   assert.ok(distance>6&&distance<8,'20 m world offset remains a physical offset');
 });
 
-test('only exact Monza layout uses its asset; other track fallback and TTL stay unchanged',()=>{
-  for(const track_code of ['monzaTG','spa','monza_1966','unknown']) {
+test('only reviewed layouts use assets; other track fallback and TTL stay unchanged',()=>{
+  for(const track_code of ['monzaTG','spa_1966','spa_24h','monza_1966','unknown']) {
     assert.equal(trackMapGeometry({...server(),track_code}).fixed,false);
     assert.equal(trackMapGeometry({...server(),track_code,track_map:null}),null);
   }
@@ -105,4 +118,44 @@ test('only exact Monza layout uses its asset; other track fallback and TTL stay 
   const html=renderTrackMap(s,'ru',now);
   assert.match(html,/Нет свежих координат/);assert.doesNotMatch(html,/class="track-car/);
   assert.match(html,/Tomislav Bacinger · MIT/);
+});
+
+test('Spa shares one permanent route across servers and preserves labels without a learned lap or cars',()=>{
+  const a={...server(),id:'assetto-corsa-competizione-dedic',track_code:'spa',track_map:null};
+  const b={...server(),id:'assetto-corsa-competizione-dedic-5',track_code:'SPA',drivers:[]};
+  const path=html=>html.match(/class="track-outline" d="([^"]+)"/)[1];
+  assert.equal(path(renderTrackMap(a,'ru',now)),path(renderTrackMap(b,'en',now)));
+  assert.equal(trackMapGeometry(a).id,'spa-gp');
+  assert.equal(trackMapGeometry(a).fixed,true);
+  assert.equal(SPA_MAP.points.length,153);
+  assert.match(renderTrackMap(a,'ru',now),/Позиция 1/);
+  for(const label of ['La Source','Eau Rouge','Raidillon','Kemmel','Les Combes','Malmedy',
+    'Bruxelles','Double Gauche','Les Fagnes','Campus','Paul Frère','Blanchimont','Chicane']) {
+    assert.ok(renderTrackMap(b,'en',now).includes(label),label);
+  }
+  for(const status of ['stale','offline']) {
+    const html=renderTrackMap({...a,status},'en',now);
+    assert.match(html,/data-track-map="spa-gp"/);
+    assert.doesNotMatch(html,/class="track-car/);
+  }
+});
+
+test('Spa calibration agrees with a second independently recorded ACC lap and the reference orientation',()=>{
+  // Public geometry-only Second dedic-5 lap, not used for the fitted matrix.
+  const anchors=[
+    [[-1249.12,-2201.03],4],[[-670.45,-1765.92],16],[[-194.79,-609.41],32],
+    [[-506.74,-177.14],48],[[-631.23,-898.1],72],[[-1020.07,-465.74],88],
+    [[-1455.99,-460.88],112],[[-892.65,-1195.46],132],[[-971.69,-1712.24],148]
+  ];
+  const map=trackMapGeometry({track_code:'spa'});
+  for(const [world,index] of anchors) {
+    const actual=map.project(...world),expected=map.points[index];
+    assert.ok(Math.hypot(actual[0]-expected[0],actual[1]-expected[1])<15,`Spa anchor ${index}`);
+  }
+  const laSource=map.points[4],lesCombes=map.points[32],bruxelles=map.points[48];
+  assert.ok(laSource[0]<150&&laSource[1]>750,'La Source bottom left');
+  assert.ok(lesCombes[0]>700&&lesCombes[1]<110,'Les Combes top');
+  assert.ok(bruxelles[0]>1000&&bruxelles[1]>lesCombes[1],'Bruxelles right and below Les Combes');
+  const a=map.project(-670.45,-1765.92),b=map.project(-650.45,-1765.92);
+  assert.ok(Math.hypot(a[0]-b[0],a[1]-b[1])>5,'Off-track/pit offsets retain physical distance');
 });

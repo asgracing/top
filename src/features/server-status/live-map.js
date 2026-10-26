@@ -1,4 +1,4 @@
-import {trackMapGeometry} from './track-map.js?v=20261025direct1';
+import {trackMapGeometry} from './track-map.js?v=20261026spa2';
 
 // Update only markers at display refresh rate. The circuit is a stable asset.
 export function animateLiveMap(root,server,cars,lang='ru') {
@@ -11,7 +11,7 @@ export function animateLiveMap(root,server,cars,lang='ru') {
     if (!node) {
       node=document.createElementNS(ns,'g');node.dataset.carKey=key;
       for (const tag of ['title','circle','text']) node.append(document.createElementNS(ns,tag));
-      node.querySelector('circle').setAttribute('r',map.fixed?'18':'13');
+      node.querySelector('circle').setAttribute('r',map.fixed?'14.4':'10.4');
       const text=node.querySelector('text');text.setAttribute('text-anchor','middle');text.setAttribute('dominant-baseline','central');
     }
     const point=map.project(c.world_x,c.world_z);

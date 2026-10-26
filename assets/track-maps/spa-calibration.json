@@ -1,0 +1,49 @@
+{
+  "schema_version": 1,
+  "track_code": "spa",
+  "layout": "GP, ACC",
+  "origin": [
+    5.96502,
+    50.444251
+  ],
+  "metric": [
+    70891.44800486523,
+    111319.49079327358
+  ],
+  "worldToGps": [
+    [
+      0.9945528480872003,
+      -0.04557510196608287
+    ],
+    [
+      -0.04557510196608281,
+      -0.9945528480872003
+    ]
+  ],
+  "worldOffset": [
+    1047.7999581872189,
+    -2041.6042863514776
+  ],
+  "calibration": {
+    "method": "trimmed orthogonal similarity fit of complete ACC on-track lap to metric GeoJSON line segments",
+    "reference": "Public Second Spa acc-native-world-xz complete laps, 2026-10-26; geometry only, no driver identities",
+    "scale": 0.9955965335202713,
+    "checks": [
+      {
+        "server": "assetto-corsa-competizione-dedic",
+        "geometry_points": 412,
+        "mean_residual_metres": 2.966,
+        "p95_residual_metres": 7.123,
+        "max_residual_metres": 13.525
+      },
+      {
+        "server": "assetto-corsa-competizione-dedic-5",
+        "geometry_points": 406,
+        "mean_residual_metres": 2.97,
+        "p95_residual_metres": 7.13,
+        "max_residual_metres": 12.644
+      }
+    ],
+    "note": "Approximate alignment to driven racing lines; retain raw world X/Z without snapping."
+  }
+}

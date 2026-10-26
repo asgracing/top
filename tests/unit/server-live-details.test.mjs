@@ -46,6 +46,16 @@ test('shared roster escapes the new interval/pit display and retains old rows',(
   assert.equal((html.match(/<th scope/g)||[]).length,7);
 });
 
+test('shared server map precedes roster heading and rows with explicit collapsed state',()=>{
+  const html=renderServerRoster({server:{...server(),track_code:'spa'},drivers:[],lang:'en',
+    esc:v=>String(v),renderName:()=>'',renderRatings:()=>'',renderCar:()=>'',
+    showHeading:true,mapExpanded:false,emptyMessage:'Empty'});
+  assert.ok(html.indexOf('server-track-map')<html.indexOf('server-roster-heading'));
+  assert.ok(html.indexOf('server-roster-heading')<html.indexOf('server-roster-scroll'));
+  assert.doesNotMatch(html,/<details[^>]* open>/);
+  assert.match(html,/Drivers on server/);
+});
+
 test('bounded cadence budget expires original observations and never revives stale sources',()=>{
   const slow={...server(),detail_ttl_ms:45_000};
   const row={position:2,laps_behind_ahead:0,gap_to_ahead_ms:1234,pit_state:'pit_lane'};

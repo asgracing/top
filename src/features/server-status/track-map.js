@@ -1,5 +1,6 @@
 import {isInstanceStatusStale,serverObservationAgeMs,serverDetailMaxAgeMs} from './freshness.js?v=20261026smooth1';
 import {MONZA_MAP} from '../../../assets/track-maps/monza.js?v=20261024monza1';
+import {SPA_MAP} from '../../../assets/track-maps/spa.js?v=20261026spa1';
 
 const coordinate = v => typeof v === 'number' && Number.isFinite(v) && Math.abs(v) <= 1_000_000;
 
@@ -19,9 +20,10 @@ export function mapCars(server, now = Date.now()) {
 export function trackMapGeometry(server) {
   // A layout is selected by track identity, never by server name or its learned lap.
   const code = String(server?.track_code || server?.track || '').trim().toLowerCase();
-  if (code === 'monza') {
-    const {worldToMap:m,worldOffset:t}=MONZA_MAP;
-    return {...MONZA_MAP, fixed:true, project:(x,z)=>[
+  const asset = code === 'monza' ? MONZA_MAP : code === 'spa' ? SPA_MAP : null;
+  if (asset) {
+    const {worldToMap:m,worldOffset:t}=asset;
+    return {...asset, fixed:true, project:(x,z)=>[
       x*m[0][0]+z*m[1][0]+t[0],x*m[0][1]+z*m[1][1]+t[1]]};
   }
   const map=server?.track_map;
@@ -37,15 +39,16 @@ export function trackMapGeometry(server) {
   return {points:points.map(([x,z])=>project(x,z)),project,viewBox:[0,0,480,320],fixed:false};
 }
 
-export function renderTrackMap(server, lang = 'ru', now = Date.now()) {
+export function renderTrackMap(server, lang = 'ru', now = Date.now(), {expanded=true} = {}) {
   if (server?.source !== 'acc-local-telemetry') return '';
   const ru = lang === 'ru', title = ru ? 'Машины на трассе' : 'Cars on track';
   const cars = mapCars(server,now), map = trackMapGeometry(server);
   const empty = ru ? 'Нет свежих координат машин' : 'No fresh car positions';
+  const wrap = content => `<details class="server-track-map${map?.fixed ? ' has-fixed-map':''}"${map?.fixed ? ` data-track-map="${map.id}"`:''}${expanded ? ' open':''}><summary class="track-map-summary"><span class="track-map-title">${title}</span><span class="track-map-toggle"><span class="track-map-hide">${ru ? 'Свернуть' : 'Collapse'}</span><span class="track-map-show">${ru ? 'Развернуть' : 'Expand'}</span><span class="track-map-chevron" aria-hidden="true">⌃</span></span></summary><div class="track-map-content">${content}</div></details>`;
   if (!map || !map.fixed && !cars.length) {
     const message = !cars.length ? empty
       : (ru ? 'Собираем контур трассы — нужен полный круг' : 'Learning the circuit — one complete lap needed');
-    return `<section class="server-track-map"><h3>${title}</h3><p>${message}</p></section>`;
+    return wrap(`<p>${message}</p>`);
   }
   const format = point=>point.map(v=>v.toFixed(2)).join(' ');
   const path = map.points.map((p,i)=>`${i ? 'L':'M'}${format(p)}`).join(' ')+' Z';
@@ -55,9 +58,9 @@ export function renderTrackMap(server, lang = 'ru', now = Date.now()) {
     const position = Number.isInteger(d.position) && d.position > 0 && d.position <= 256 ? d.position : '—';
     const leader = d.position===1, label = `${ru ? 'Позиция':'Position'} ${position}`;
     const connection=Number.isInteger(d.connection_id)?d.connection_id:'';
-    return `<g class="track-car${leader ? ' is-leader':''}" data-car-key="${d.car_id}:${connection}" transform="translate(${point})"><title>${label}</title><circle r="${map.fixed ? 18:13}"/><text text-anchor="middle" dominant-baseline="central">${position}</text></g>`;
+    return `<g class="track-car${leader ? ' is-leader':''}" data-car-key="${d.car_id}:${connection}" transform="translate(${point})"><title>${label}</title><circle r="${map.fixed ? 14.4:10.4}"/><text text-anchor="middle" dominant-baseline="central">${position}</text></g>`;
   }).join('');
   const labels=(map.labels||[]).map(label=>`<text class="track-label${label.secondary ? ' is-secondary':''}" x="${label.x}" y="${label.y}" text-anchor="${label.anchor}">${label.lines ? label.lines.map((line,i)=>`<tspan x="${label.x}" dy="${i ? '1.2em':'0'}">${line}</tspan>`).join(''):label.text}</text>`).join('');
   const credit=map.fixed ? `<p class="track-map-credit">${ru ? 'Геометрия':'Geometry'}: <a href="https://github.com/bacinger/f1-circuits">Tomislav Bacinger · MIT</a></p>`:'';
-  return `<section class="server-track-map${map.fixed ? ' has-fixed-map':''}"${map.fixed ? ` data-track-map="${map.id}"`:''}><h3>${title}</h3><svg viewBox="${map.viewBox.join(' ')}" role="img" aria-label="${title}"><path class="track-outline" d="${path}"/>${labels}${markers}</svg><p>${cars.length ? (ru ? 'Красный — лидер · номера обозначают позиции' : 'Red — leader · numbers show positions'):empty}</p>${credit}</section>`;
+  return wrap(`<svg viewBox="${map.viewBox.join(' ')}" role="img" aria-label="${title}"><path class="track-outline" d="${path}"/>${labels}${markers}</svg><p>${cars.length ? (ru ? 'Красный — лидер · номера обозначают позиции' : 'Red — leader · numbers show positions'):empty}</p>${credit}`);
 }
