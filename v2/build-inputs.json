@@ -1,6 +1,6 @@
 {
   "schemaVersion": 1,
-  "runtimeVersion": "20261025direct1",
+  "runtimeVersion": "20261026smooth1",
   "inputs": [
     {
       "path": "account/driver-overlay.js",
@@ -8,7 +8,7 @@
     },
     {
       "path": "app.js",
-      "sha256": "d04d06aa9fda4a51bd7ef043e710b84ef30b57329dbe48b8ad94c30aa2686008"
+      "sha256": "47fd9e8c13254dae76b1b5b2efe9f24543e5b048e633ed3caeec2c276fc30e74"
     },
     {
       "path": "assets/track-maps/monza.js",
@@ -52,7 +52,7 @@
     },
     {
       "path": "scripts/build-v2.mjs",
-      "sha256": "13fd375de96cea1080fcacde981cac25f5f70135caa111e97c182f55c6c41eb2"
+      "sha256": "546f82a3ed0c1ebe695f6cda2d19041fc72428b9bfdefa577c5c382d8deb0516"
     },
     {
       "path": "scripts/generate-localized-pages.mjs",
@@ -107,8 +107,12 @@
       "sha256": "c2660b92396e784ed7515e8fc393ea3a9d0f5e29615b029860a3bf4cf7deac1d"
     },
     {
+      "path": "src/features/server-status/continuity.js",
+      "sha256": "4737f09f3ab46c59603b4680ab087b8f7eba8de88f649569659904c4702c01f9"
+    },
+    {
       "path": "src/features/server-status/freshness.js",
-      "sha256": "950bfbe275e5ad3010d7ae8c1207e1b4c2be7bcca133543e199f8eadf1b04247"
+      "sha256": "81b67f4453d5bd71379d34dcaa43995490f7a39a12ccffa258e800d6b13d3300"
     },
     {
       "path": "src/features/server-status/live-clock.js",
@@ -116,7 +120,7 @@
     },
     {
       "path": "src/features/server-status/live-details.js",
-      "sha256": "869c9599b36c833943261166961b8e688451add9cc18e86ea079e1ecbb366bfb"
+      "sha256": "39f0f3652c57bb115c9adc6548015d3b21e4cd877bddd37e90b5e7686fc25e19"
     },
     {
       "path": "src/features/server-status/live-map.js",
@@ -124,7 +128,7 @@
     },
     {
       "path": "src/features/server-status/live-stream.js",
-      "sha256": "989eef8244c734b5aaf57c9e1866a5d279e5825b69d012c97bbec27f5bebc95c"
+      "sha256": "817e38b03ffd66935366ee0c10e2af1169c7ae1ed0d7eeec4f1a66a2916e643b"
     },
     {
       "path": "src/features/server-status/roster.js",
@@ -132,7 +136,7 @@
     },
     {
       "path": "src/features/server-status/telemetry.js",
-      "sha256": "473e7b18dea3f503b60c1fa93a1df06d82119232d003a2b321282a3ab1b5b7dc"
+      "sha256": "7a8c778f19a2d6c432ff800c8967c920b83466b965472a465f47c9db2e3044ba"
     },
     {
       "path": "src/features/server-status/track-background.js",
@@ -140,7 +144,7 @@
     },
     {
       "path": "src/features/server-status/track-map.js",
-      "sha256": "66309d00dc72f07668248cdeea47f3da1f8ae0546c3d13533c71d4da4eaeed68"
+      "sha256": "493019809a37390efd3e100716b6a6889a811a2c57c600101880260c262d16a2"
     },
     {
       "path": "src/features/stats/table-engine.js",
@@ -652,7 +656,7 @@
     },
     {
       "path": "v2/home.js",
-      "sha256": "ffc8c32bcc7ae85c188d3f459ec1a44db570e14b6cc3752fbdd99f0d63438cf0"
+      "sha256": "4e7c14ab3fbadcd367ffb1b3b17571a689ca06cd3551b059f09f53dd5aaacc79"
     },
     {
       "path": "v2/mobile-navigation.js",
@@ -712,7 +716,7 @@
     },
     {
       "path": "v2/presentation.js",
-      "sha256": "8a89fde5860d746d5bf64e982627982cf27459f625d296f9fb397afed82cf91e"
+      "sha256": "0d467ce804d5e9a886c0301eb977ab1f4c2f99202ea9fd293b3149e38fe65885"
     },
     {
       "path": "v2/profile-races.js",

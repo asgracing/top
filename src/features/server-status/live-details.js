@@ -1,4 +1,4 @@
-import {isInstanceStatusStale,serverObservationAgeMs,serverDetailMaxAgeMs} from './freshness.js?v=20261025direct1';
+import {isInstanceStatusStale,serverObservationAgeMs,serverDetailMaxAgeMs} from './freshness.js?v=20261026smooth1';
 
 // Fine timing/pit observations must not remain "live" for the whole coarse
 // roster lifetime. A slow publisher will show unknown rather than old PIT.

@@ -1,4 +1,4 @@
-import {isInstanceStatusStale,serverObservationAgeMs,serverDetailMaxAgeMs} from './freshness.js?v=20261025direct1';
+import {isInstanceStatusStale,serverObservationAgeMs,serverDetailMaxAgeMs} from './freshness.js?v=20261026smooth1';
 import {MONZA_MAP} from '../../../assets/track-maps/monza.js?v=20261024monza1';
 
 const coordinate = v => typeof v === 'number' && Number.isFinite(v) && Math.abs(v) <= 1_000_000;

@@ -3,7 +3,7 @@
   "entry": "/v2/boot/home.js",
   "files": [
     {
-      "path": "/v2/boot/chunks/server-directory-ZESATCKN.js",
+      "path": "/v2/boot/chunks/server-directory-SEWH4TQX.js",
       "bytes": 5715
     },
     {
@@ -31,7 +31,7 @@
       "bytes": 45917
     },
     {
-      "path": "/v2/boot/chunks/controller-VDHCECUQ.js",
+      "path": "/v2/boot/chunks/controller-UWXKRS3S.js",
       "bytes": 296381
     },
     {
@@ -63,8 +63,8 @@
       "bytes": 2253
     },
     {
-      "path": "/v2/boot/chunks/home-TC4JEYGD.js",
-      "bytes": 492226
+      "path": "/v2/boot/chunks/home-RXJIXPES.js",
+      "bytes": 492337
     },
     {
       "path": "/v2/boot/chunks/chunk-CN67DDSU.js",
@@ -84,10 +84,10 @@
     },
     {
       "path": "/v2/boot/home.js",
-      "bytes": 208741
+      "bytes": 211876
     },
     {
-      "path": "/v2/boot/chunks/chunk-PV3U3KW5.js",
+      "path": "/v2/boot/chunks/chunk-CLDMV2OG.js",
       "bytes": 2356
     },
     {
@@ -99,12 +99,12 @@
       "bytes": 712
     },
     {
-      "path": "/v2/boot/chunks/chunk-DJNAVWVP.js",
-      "bytes": 19251
+      "path": "/v2/boot/chunks/chunk-PGELXJVV.js",
+      "bytes": 21279
     },
     {
-      "path": "/v2/boot/chunks/chunk-S7USDV5M.js",
-      "bytes": 8525
+      "path": "/v2/boot/chunks/chunk-K2DHBVLN.js",
+      "bytes": 8845
     },
     {
       "path": "/v2/boot/chunks/chunk-GIBMGPMQ.js",

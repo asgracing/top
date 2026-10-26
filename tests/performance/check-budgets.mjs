@@ -58,7 +58,7 @@ const personalNotificationsStylesheetBytes = await textBytes("styles/components/
 const serverTrackMapJavaScriptBytes = await textBytes("src/features/server-status/track-map.js");
 // The live transport/clock/animation is a separately capped feature, like the map.
 const serverLiveTelemetryJavaScriptBytes = (await Promise.all(
-  ['live-stream','live-clock','live-map'].map(name => textBytes(`src/features/server-status/${name}.js`))
+  ['live-stream','live-clock','live-map','continuity'].map(name => textBytes(`src/features/server-status/${name}.js`))
 )).reduce((sum,bytes) => sum+bytes,0);
 const metrics = {
   appJavaScriptBytes: await textBytes("app.js"),

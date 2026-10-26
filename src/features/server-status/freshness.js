@@ -4,7 +4,9 @@ export const SERVER_STATUS_MAX_AGE_MS = 10 * 60 * 1000;
 // original observation. Relay snapshots have no correction.
 export function serverObservationAgeMs(server, observed, now=Date.now()) {
   const offset=server?.source_clock_offset_ms;
-  return now-parseServerStatusUpdatedAt(observed)-(Number.isFinite(offset)&&Math.abs(offset)<=30000?offset:0);
+  const viewer=server?.viewer_clock_offset_ms;
+  return now-parseServerStatusUpdatedAt(observed)-(Number.isFinite(offset)&&Math.abs(offset)<=30000?offset:0)
+    -(Number.isFinite(viewer)&&Math.abs(viewer)<=86400000?viewer:0);
 }
 
 const TIMEZONE_SUFFIX_PATTERN = /(Z|[+-]\d{2}:?\d{2})$/i;

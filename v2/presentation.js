@@ -3,7 +3,7 @@ import {resolveTrackBackgroundFile} from '/src/features/server-status/track-back
 import {serverSessionLabel} from './server-session.js?v=20261025direct1';
 import {renderServerRoster} from '../src/features/server-status/roster.js?v=20261025direct1';
 import {serverPilotCount} from '../src/features/server-status/live-details.js?v=20261025direct1';
-import {LiveServerStream} from '../src/features/server-status/live-stream.js?v=20261026clock2';
+import {LiveServerStream} from '../src/features/server-status/live-stream.js?v=20261026smooth1';
 import {animateLiveMap} from '../src/features/server-status/live-map.js?v=20261026caption1';
 import {safetyHistoryComponents} from './safety-history.js?v=20261010profile1';
 import {loadLeaderboardRank,profileWithLeaderboardRank} from '/src/shared/leaderboard-rank.js?v=20261013delivery1';
@@ -22,7 +22,7 @@ export function createPresentation({$,native,getModel,esc,text,label,date,number
     const animate=()=>{
       const stream=serverStream,server=stream?.latest();
       if(!stream)return;
-      if(server&&stream.delivery==='direct')animateLiveMap($('modal-body'),server,stream.timeline.sample(performance.now(),reducedMotion?.matches),text('ru','en'));
+      if(server&&stream.delivery!=='stale')animateLiveMap($('modal-body'),server,stream.sample(performance.now(),reducedMotion?.matches),text('ru','en'));
       serverFrame=requestAnimationFrame(animate);
     };
     serverFrame=requestAnimationFrame(animate);
@@ -125,7 +125,7 @@ export function createPresentation({$,native,getModel,esc,text,label,date,number
       $('modal-title').textContent=title;body.innerHTML=html;body.scrollTop=top;
       const updated=body.querySelector('.server-roster-scroll');if(updated)updated.scrollLeft=left;
       const newMap=body.querySelector('.server-track-map svg');
-      if(serverStream?.latest()&&serverStream.delivery==='direct'&&oldPath&&newMap?.querySelector('.track-outline')?.getAttribute('d')===oldPath)newMap.replaceWith(oldMap);
+      if(serverStream?.latest()&&oldPath&&newMap?.querySelector('.track-outline')?.getAttribute('d')===oldPath)newMap.replaceWith(oldMap);
       if(focused)[...body.querySelectorAll('a[href]')].find(a=>a.getAttribute('href')===focused)?.focus({preventScroll:true});
     };
     const phase=s=>s.stale?text('Данные устарели','Stale data'):serverSessionLabel(s,label);
@@ -141,7 +141,7 @@ export function createPresentation({$,native,getModel,esc,text,label,date,number
       renderName:p=>{const name=esc(p.display_name||p.name||p.driver||p.driver_name||'—');return p.public_id?`<a class="pilot-name" href="${driverHref(p.public_id)}">${name}</a>`:`<span class="pilot-name">${name}</span>`},
       renderRatings:p=>`<span>${rating(p,'elo',null,true)}</span><span>${rating(p,'sr',null,true)}</span>`,
       renderCar:p=>{const id=p.car_model_id??p.carModel??p.carModelId??p.car_model??null,modelName=native().car({...p,car_model_id:id});return car({...p,car_model_id:id,car_name:p.car_name||(modelName==='-'?'—':modelName)})}});
-    const delivery=live&&serverStream.delivery==='direct'?text('Прямой поток · буфер 0,5 с','Direct stream · 0.5 s buffer'):stale?text('Телеметрия устарела','Telemetry is stale'):text('Резервная публикация','Relay snapshot');
+    const delivery=live&&serverStream.delivery==='direct'?text('Прямой поток · плавное воспроизведение','Direct stream · smooth playback'):live&&serverStream.delivery==='recovering'?text('Восстанавливаем поток · последние данные','Reconnecting · last known data'):stale?text('Телеметрия устарела','Telemetry is stale'):text('Резервная публикация','Relay snapshot');
     draw(s.label,`<div class="server-parameter-row">${detail(label('track'),s.track||'—')}${detail(label('admission'),`SA ${s.sa??'—'} / SR ${s.sr??'—'}`)}${detail(label('session'),phase(s))}${detail(label('players'),serverPilotCount(s.server))}</div>${serverAdmission(s)?`<p class="server-sr-warning" role="note">${esc(serverAdmission(s))}</p>`:''}<p class="data-note server-search-note">${label('serverSearch')}</p><p class="data-note server-delivery" role="status">${delivery}</p><h3 class="server-roster-heading">${text('Пилоты на сервере','Drivers on server')} <span class="small-tag">${esc(serverPilotCount(s.server))}</span></h3>${roster}<p class="data-note server-updated">${text('Последнее обновление','Last update')}: ${date(s.server?.updated_at||m.updatedAt)}</p>`,'server',trigger);
   }
   $('modal-body').addEventListener('change',e=>{

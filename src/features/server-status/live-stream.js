@@ -1,6 +1,8 @@
 // One selected server, one SSE connection. No browser-side ratings or admission logic.
 import {LiveClock,measureLiveClock,CLOCK_MAX_AGE_MS,CLOCK_MAX_UNCERTAINTY_MS} from './live-clock.js?v=20261026clock2';
-export const DISPLAY_BUFFER_MS = 500;
+import {withViewerClock} from './continuity.js?v=20261026smooth1';
+export const DISPLAY_BUFFER_MS = 1500;
+const WIRE_BUFFER_MS = 500, HISTORY_MS=8000, HOLD_MS=3000, STATUS_GRACE_MS=10000;
 const SOURCE_CLOCK_MAX_UNCERTAINTY_MS = 50;
 const own = (o,k) => Object.prototype.hasOwnProperty.call(o,k);
 const record = v => v !== null && typeof v === 'object' && !Array.isArray(v);
@@ -55,16 +57,18 @@ export function publicLiveServer(keyed) {
   return server;
 }
 
-// Times belong to the VPS clock. This is the ONLY intentional display buffer;
-// the VPS retains history but does not delay forwarding it by another 500 ms.
+// Times belong to the VPS clock. The wire's buffer_ms is a protocol field, not
+// a requirement to discard cars whenever a 500 ms display deadline is missed.
 export class PoseTimeline {
-  constructor() { this.clear(); }
-  clear() { this.frames=[];this.tracks=new Map();this.offset=null;this.clockSample=null;this.scope=null; }
+  constructor({bufferMs=DISPLAY_BUFFER_MS}={}) { this.bufferMs=bufferMs;this.clear(); }
+  clear() { this.frames=[];this.tracks=new Map();this.offset=null;this.clockSample=null;this.scope=null;
+    this.cursor=null;this.lastSample=null;this.targetOffset=null;this.removed=new Set();this.members=new Map();this.activeKeys=null;this.horizon=null; }
   synchronize(sample) {
     if (!sample || !finite(sample.offset_ms) || !finite(sample.measured_at) || !finite(sample.uncertainty_ms)
         || sample.uncertainty_ms<0 || sample.uncertainty_ms>CLOCK_MAX_UNCERTAINTY_MS) return;
-    if(this.offset!==null&&Math.abs(sample.offset_ms-this.offset)>100){this.frames=[];this.tracks.clear();this.scope=null;}
-    this.offset=sample.offset_ms;this.clockSample=sample;
+    if(this.offset!==null&&Math.abs(sample.offset_ms-this.offset)>1000)this.clear();
+    if(this.offset===null)this.offset=sample.offset_ms;
+    this.targetOffset=sample.offset_ms;this.clockSample=sample;
   }
   ingest(history, serverTime, receivedAt) {
     if(!finite(serverTime)||!finite(receivedAt))throw Error('Invalid pose clock');
@@ -73,9 +77,15 @@ export class PoseTimeline {
       if (!record(frame) || !finite(frame.at_ms) || frame.at_ms>serverTime+1000 || frame.at_ms<serverTime-10000
           || !Array.isArray(frame.cars) || frame.cars.length>256) throw Error('Invalid pose frame');
       const scope=JSON.stringify([frame.boot_id,frame.session_id,frame.track_code,frame.clock_epoch]);
-      if (scope!==this.scope) { this.frames=[];this.tracks.clear();this.scope=scope; }
+      if (scope!==this.scope) { this.frames=[];this.tracks.clear();this.removed.clear();this.members.clear();this.cursor=null;this.scope=scope; }
       if (this.frames.length && frame.at_ms<=this.frames.at(-1).at_ms) continue;
       const seen=new Set();
+      // Explicit departures are authoritative. Missing/invalid coordinates in
+      // one frame are not equivalent to a driver leaving the server.
+      for(const c of frame.cars)if(record(c)&&Number.isInteger(c.car_id)){
+        if(c.connected===false||c.role==='spectator')this.removed.add(identity(c));
+        else {this.removed.delete(identity(c));this.members.set(c.car_id,identity(c));}
+      }
       const cars=frame.cars.filter(c=>{
         if (!record(c) || !Number.isInteger(c.car_id) || c.car_id<0 || c.car_id>65535
             || c.connected===false || c.role==='spectator' || c.coordinates_source!=='acc-native-world-xz'
@@ -89,7 +99,7 @@ export class PoseTimeline {
         seen.add(c.car_id);return true;
       });
       this.frames.push({...frame,cars});
-      if (this.frames.length>20) this.frames.shift();
+      while(this.frames.length>100||this.frames.length>1&&frame.at_ms-this.frames[0].at_ms>HISTORY_MS)this.frames.shift();
     }
     // Rebuild once per incoming batch; animation samples only these bounded tracks.
     this.tracks=new Map();
@@ -98,28 +108,45 @@ export class PoseTimeline {
       if(!points.length||car.position_at_ms>points.at(-1).position_at_ms)points.push(car);
       this.tracks.set(key,points);
     }
+    this.horizon=this.tracks.size?Math.max(...[...this.tracks.values()].map(points=>points.at(-1).position_at_ms)):null;
+    for(const [id,key] of this.members)if(!this.tracks.has(key))this.members.delete(id);
+    for(const key of this.removed)if(!this.tracks.has(key))this.removed.delete(key);
+  }
+  reconcileRoster(server){
+    if(server.roster_complete===true&&Array.isArray(server.drivers))this.activeKeys=new Set(server.drivers
+      .filter(c=>c.connected!==false&&c.role!=='spectator').map(identity));
   }
   sample(now, reducedMotion=false) {
-    if (!this.frames.length || this.offset===null || now<this.clockSample.measured_at
-        || now-this.clockSample.measured_at>CLOCK_MAX_AGE_MS) return [];
-    const target=now+this.offset-DISPLAY_BUFFER_MS;
+    if (!this.frames.length || this.offset===null || now<this.clockSample.measured_at) return [];
+    const elapsed=this.lastSample===null?0:Math.max(0,now-this.lastSample);this.lastSample=now;
+    // Small new clock estimates must not rewind or jump the playback cursor.
+    this.offset+=Math.max(-elapsed*.02,Math.min(elapsed*.02,this.targetOffset-this.offset));
     const newest=this.frames.at(-1);
-    if (target<this.frames[0].at_ms || target-newest.at_ms>500) return [];
-    let left=newest;
-    for (let i=1;i<this.frames.length;i++) if (this.frames[i].at_ms>target) {
-      left=this.frames[i-1];break;
-    }
-    return left.cars.flatMap(member=>{
-      const points=this.tracks.get(identity(member))||[];
+    if(now-this.clockSample.measured_at>CLOCK_MAX_AGE_MS||now+this.offset-newest.at_ms>STATUS_GRACE_MS)return [];
+    const desired=now+this.offset-this.bufferMs;
+    // During a delivery pause consume the existing backlog, then stop at known
+    // observations. On recovery play forward, with at most 5% catch-up, rather
+    // than teleporting to the newest packet. Additional delay is intentional.
+    const horizon=this.horizon??newest.at_ms;
+    if(this.cursor===null)this.cursor=Math.min(desired,horizon);
+    else this.cursor+=Math.max(0,Math.min(desired-this.cursor,elapsed*1.05,horizon-this.cursor));
+    const target=this.cursor;
+    return [...(this.activeKeys||this.members.values())].flatMap(key=>{
+      const points=this.tracks.get(key);if(!points?.length)return [];
+      const member=points.at(-1);
+      if(this.removed.has(key)||this.activeKeys&&!this.activeKeys.has(key)||now+this.offset-member.position_at_ms>STATUS_GRACE_MS)return [];
+      // A new connection reusing an old car ID replaces it; never blend them.
+      if(this.members.get(member.car_id)!==key)return [];
       let previous=null,next=null;
       for(const point of points){if(point.position_at_ms<=target)previous=point;else{next=point;break;}}
-      if(!previous)return [];
-      const uncertainty=this.clockSample.uncertainty_ms+previous.clock_uncertainty_ms;
-      if(!next)return target-previous.position_at_ms<=uncertainty?[{...member,...previous}]:[];
+      // Warm-up and brief underruns retain an observed position, without
+      // extrapolating a racing line or manufacturing new observations.
+      if(!previous)return [{...member,...points[0]}];
+      if(!next)return now+this.offset-previous.position_at_ms<=this.bufferMs+HOLD_MS?[{...member,...previous}]:[];
       const elapsed=next.position_at_ms-previous.position_at_ms;
       const distance=Math.hypot(next.world_x-previous.world_x,next.world_z-previous.world_z);
-      if(elapsed>350||distance>10+120*elapsed/1000
-          ||(next.pit_state!==previous.pit_state&&[previous.pit_state,next.pit_state].includes('pit_box')))return [];
+      if(elapsed>1500||distance>10+120*elapsed/1000
+          ||(next.pit_state!==previous.pit_state&&[previous.pit_state,next.pit_state].includes('pit_box')))return [{...member,...previous}];
       if(reducedMotion)return [{...member,...next}];
       const t=(target-previous.position_at_ms)/elapsed;
       return [{...member,world_x:previous.world_x+(next.world_x-previous.world_x)*t,
@@ -132,7 +159,8 @@ export class LiveServerStream {
   constructor(key,{changed=()=>{},EventSourceClass=globalThis.EventSource,clock=()=>performance.now(),fetchImpl=globalThis.fetch}={}) {
     if (!/^(main|sunset|hourly|assetto-corsa-competizione-dedic(?:-[2-9]|-[1-9]\d{1,3})?)$/.test(key)) throw Error('Invalid server ID');
     this.key=key;this.changed=changed;this.clock=clock;this.timeline=new PoseTimeline();
-    this.source=null;this.server=null;this.received=-Infinity;this.sequence=0;this.epoch=null;this.delivery='stale';
+    this.source=null;this.server=null;this.received=-Infinity;this.sequence=0;this.epoch=null;
+    this.goodAt=-Infinity;this.directAt=-Infinity;this.goodDelivery='stale';
     this.EventSourceClass=EventSourceClass;this.fetchImpl=fetchImpl;this.clockSync=new LiveClock();this.connect();
     if(fetchImpl)this.synchronizeClock();
   }
@@ -145,7 +173,7 @@ export class LiveServerStream {
     }catch{/* Keep only still-valid earlier samples; otherwise motion stays unavailable. */}
     finally{
       clearTimeout(this.clockTimeout);
-      if(!this.closed)this.clockTimer=setTimeout(()=>this.synchronizeClock(),5000);
+      if(!this.closed)this.clockTimer=setTimeout(()=>this.synchronizeClock(),this.clockSync.current(this.clock())?5000:1000);
     }
   }
   connect() {
@@ -154,31 +182,49 @@ export class LiveServerStream {
     this.source.addEventListener('telemetry',e=>{
       if(this.closed)return;
       try { this.accept(e.data); } catch {
-        this.timeline.clear();this.server=null;this.source.close();this.source=null;
+        this.source.close();this.source=null;
         // Browser reconnect must request a full baseline, never apply a patch to lost state.
         clearTimeout(this.retry);this.retry=setTimeout(()=>{this.sequence=0;this.epoch=null;this.connect();},1000);
       }
     });
-    this.source.onerror=()=>{this.sequence=0;this.epoch=null;this.timeline.clear();};
+    this.source.onerror=()=>{this.sequence=0;this.epoch=null;};
   }
   accept(raw) {
     if (typeof raw!=='string' || raw.length>4*1024*1024) throw Error('Invalid telemetry event');
     const event=JSON.parse(raw);validate(event);
     if (!Number.isSafeInteger(event.sequence) || event.sequence<1 || !Number.isSafeInteger(event.base)
-        || typeof event.hub_epoch!=='string' || !finite(event.server_time_ms) || event.buffer_ms!==DISPLAY_BUFFER_MS
+        || typeof event.hub_epoch!=='string' || !finite(event.server_time_ms) || event.buffer_ms!==WIRE_BUFFER_MS
         || !['direct','relay','stale'].includes(event.delivery)) throw Error('Invalid telemetry header');
     const reset=event.base===0;
     if (!reset && (event.base!==this.sequence || event.hub_epoch!==this.epoch || event.sequence!==this.sequence+1)) throw Error('Telemetry requires full baseline');
     const state=mergeLivePatch(reset?null:this.keyed,event.patch);
     const server=publicLiveServer(state);
     if (state!==null && (!server || server.id!==this.key)) throw Error('Telemetry server mismatch');
-    if (reset || event.delivery!=='direct') this.timeline.clear();
+    if(server&&this.server&&JSON.stringify([this.server.boot_id,this.server.track_code,this.server.session?.id])!==
+        JSON.stringify([server.boot_id,server.track_code,server.session?.id])){
+      this.timeline.clear();this.server=null;this.goodAt=-Infinity;
+    }
     this.timeline.synchronize(this.clockSync.current(this.clock()));
     if (event.delivery==='direct') this.timeline.ingest(event.history,event.server_time_ms,this.clock());
-    this.keyed=state;this.server=server;this.delivery=event.delivery;this.received=this.clock();
+    const usable=server&&event.delivery!=='stale'&&server.stale!==true&&
+      !['stale','unknown'].includes(server.status)&&!['stale','unknown'].includes(server.telemetry_state)&&server.roster_complete!==false;
+    if(usable&&(event.delivery==='direct'||this.clock()-this.directAt>3000)){
+      this.server=withViewerClock(server,event.server_time_ms);this.goodAt=this.clock();this.goodDelivery=event.delivery;
+      if(event.delivery==='direct')this.directAt=this.clock();
+      if(event.delivery==='direct')this.timeline.reconcileRoster(server);
+    }
+    if(server?.status==='offline'){this.server=withViewerClock(server,event.server_time_ms);this.goodAt=this.clock();this.goodDelivery=event.delivery;this.timeline.clear();}
+    this.keyed=state;this.received=this.clock();
     this.sequence=event.sequence;this.epoch=event.hub_epoch;this.changed();
   }
-  latest() { return this.clock()-this.received<=2000 ? this.server : null; }
+  get delivery(){const age=this.clock()-this.goodAt;return age<=3000?this.goodDelivery:age<=STATUS_GRACE_MS?'recovering':'stale';}
+  sample(now=this.clock(),reducedMotion=false){
+    // A best clock sample can expire between packets. Select its newer valid
+    // replacement at render time, rather than blanking cars until the next SSE.
+    this.timeline.synchronize(this.clockSync.current(now));
+    return this.timeline.sample(now,reducedMotion);
+  }
+  latest() { return this.clock()-this.goodAt<=STATUS_GRACE_MS ? this.server : null; }
   close() { this.closed=true;clearTimeout(this.retry);clearTimeout(this.clockTimer);clearTimeout(this.clockTimeout);
     this.clockAbort?.abort();this.source?.close();this.source=null;this.timeline.clear(); }
 }

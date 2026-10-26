@@ -15,7 +15,7 @@ for(const folder of await fs.readdir('C:/Users/Andrew/AppData/Local/npm-cache/_n
   try{pw=await import(pathToFileURL(`C:/Users/Andrew/AppData/Local/npm-cache/_npx/${folder}/node_modules/playwright/index.mjs`).href);break}catch{}
 }
 assert.ok(pw,'Use the existing Playwright installation');
-let mode='direct',paused=false,connections=0,active=0;
+let mode='direct',paused=false,omitPoses=false,connections=0,active=0;
 const car=(n,at=Date.now())=>({car_id:n,connection_id:n+10,position:n,race_number:n,name:'Fixture '+n,
   role:'driver',connected:true,world_x:100+n*20+((at-150)%100000)/100,world_z:-50,
   coordinates_source:'acc-native-world-xz',position_age_ms:150,position_observed_at:new Date(at-150-1109).toISOString()});
@@ -24,11 +24,12 @@ function row(at=Date.now()) {
   return {id:'main',name:'Monza fixture',track_code:'monza',source:'acc-local-telemetry',status:'online',telemetry_state:'live',
     observed_at:observed,updated_at:observed,source_age_ms:0,players_online:2,drivers_connected:2,driver_capacity:34,
     roster_complete:true,boot_id:'fixture',session:{id:'s',type:'Race',phase:'session',remaining_ms:700000},
-    drivers:[car(1,at),car(2,at)],classification:[],spectators:[]};
+    drivers:[car(1,at),car(2,at)],classification:[],spectators:[],
+    ...(mode==='stale'?{stale:true,status:'stale',telemetry_state:'stale'}:{})};
 }
 const keyed=server=>({...server,drivers:Object.fromEntries(server.drivers.map(c=>[`${c.car_id}:${c.connection_id}`,c])),classification:{},spectators:{}});
 const pose=at=>({at_ms:at,boot_id:'fixture',session_id:'s',track_code:'monza',clock_epoch:1,clock_verified:true,
-  cars:[car(1,at),car(2,at)].map(c=>({...c,position_at_ms:at-150,clock_uncertainty_ms:7}))});
+  cars:(omitPoses?[]:[car(1,at),car(2,at)]).map(c=>({...c,position_at_ms:at-150,clock_uncertainty_ms:7}))});
 const server=http.createServer(async(req,res)=>{
   const url=new URL(req.url,'http://fixture');
   if(url.pathname==='/fixture-stream') {
@@ -61,7 +62,7 @@ const browser=await pw.chromium.launch({headless:true,executablePath:'C:/Program
 const reports=[];
 try {
   for(const [lang,width,reducedMotion] of [['ru',1280,'no-preference'],['en',390,'reduce']]) {
-    mode='direct';paused=false;
+    mode='direct';paused=false;omitPoses=false;
     const page=await browser.newPage({viewport:{width,height:900},reducedMotion}),errors=[];
     page.on('pageerror',e=>errors.push(String(e)));
     await page.addInitScript(()=>{
@@ -105,12 +106,25 @@ try {
     assert.match(await page.locator('#v2-modal .server-track-map svg + p').innerText(),/Красный|Red/);
     assert.equal(await page.evaluate(()=>document.documentElement.scrollWidth>innerWidth+1),false);
     await page.screenshot({path:path.join(output,`stream-${lang}-${width}.png`)});
+    for(const fault of ['stale','missing','pause']){
+      mode=fault==='stale'?'stale':'direct';omitPoses=fault==='missing';paused=fault==='pause';
+      const counts=await page.evaluate(async()=>{
+        const result=[];for(let i=0;i<24;i++){
+          result.push({count:document.querySelectorAll('#v2-modal .track-car').length,
+            stale:/Данные устарели|Stale data/.test(document.querySelector('#server-directory-grid')?.textContent||'')});
+          await new Promise(r=>setTimeout(r,50));
+        }return result;
+      });
+      assert.ok(counts.every(s=>s.count===2&&!s.stale),fault+' must not flash stale data or lose markers');
+      mode='direct';paused=false;omitPoses=false;await page.waitForTimeout(1700);
+    }
     mode='relay';
     await page.waitForFunction(()=>document.querySelector('.server-delivery')?.textContent.match(/Резервная|Relay/));
     mode='direct';
     await page.waitForFunction(()=>document.querySelector('.server-delivery')?.textContent.match(/Прямой|Direct/));
-    paused=true;await page.waitForTimeout(3200);
-    assert.match(await page.locator('.server-delivery').innerText(),/Резервная|Relay/);
+    paused=true;
+    await page.waitForFunction(()=>document.querySelector('.server-delivery')?.textContent.match(/Восстанавливаем|Reconnecting/));
+    assert.equal(await page.locator('#v2-modal .track-car').count(),2);
     paused=false;
     await page.waitForFunction(()=>document.querySelector('.server-delivery')?.textContent.match(/Прямой|Direct/));
     await page.evaluate(()=>document.getElementById('v2-modal').close());await page.waitForTimeout(200);

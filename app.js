@@ -31,8 +31,9 @@ import {
 } from "./news-read-state.js?v=20260813newsread1";
 import { createAuthHeaderController, safeAvatarUrl } from "./src/features/auth/header-auth.js?v=20261011notifications1";
 import { applyRandomTrackBackground, normalizeTrackBackgroundCode, resolveTrackBackgroundFile } from "./src/features/server-status/track-background.js?v=20260726staticfallback1";
-import { bindServerStatusFreshness, isServerStatusStale, isInstanceStatusStale } from "./src/features/server-status/freshness.js?v=20261025direct1";
-import { telemetrySessionLabel, loadPreferredServerStatus } from "./src/features/server-status/telemetry.js?v=20261025direct1";
+import { bindServerStatusFreshness, isServerStatusStale, isInstanceStatusStale } from "./src/features/server-status/freshness.js?v=20261026smooth1";
+import { telemetrySessionLabel, loadPreferredServerStatus } from "./src/features/server-status/telemetry.js?v=20261026smooth1";
+import {ServerStatusContinuity} from './src/features/server-status/continuity.js?v=20261026smooth1';
 import { renderServerRoster } from "./src/features/server-status/roster.js?v=20261025direct1";
 import { serverPilotCount } from "./src/features/server-status/live-details.js?v=20261024pitmap1";
 import { selectNextHourlyAnnouncement } from "./src/features/hourly/announcement-model.js?v=20260828hourlynext1";
@@ -146,6 +147,7 @@ const serverStatusUrl = getDevRuntimeParam("serverStatusUrl") || (TOP_API_ROOT_U
 const liveServerStatusUrl = getDevRuntimeParam("serverStatusUrl") || `${TOP_DATA_BASE_URL}/server_status_live.json`;
 const directServerStatusUrl = getDevRuntimeParam("serverStatusUrl") ? null : 'https://data.asgracing.ru/telemetry/v1/status';
 let directStatusRetryAt = 0;
+const serverStatusContinuity=new ServerStatusContinuity();
 const donationsApiUrl = "https://data.asgracing.ru/donations-api/recent";
 const hourlyAnnouncementUrl = `${HOURLY_DATA_BASE_URL}/announcement.json`;
 const hourlyScheduleUrl = `${HOURLY_DATA_BASE_URL}/schedule.json`;
@@ -6054,7 +6056,7 @@ async function loadStandaloneServerStatus({ bypassCache = false } = {}) {
   try {
     const data = await loadPreferredServerStatus(liveServerStatusUrl, serverStatusUrl,
       url => bypassCache ? requestJson(url, { cache: "no-store", retries: 1 }) : loadJson(url),
-      {directUrl:Date.now()>=directStatusRetryAt?directServerStatusUrl:null,onDirectError:()=>{directStatusRetryAt=Date.now()+30000;}});
+      {directUrl:Date.now()>=directStatusRetryAt?directServerStatusUrl:null,continuity:serverStatusContinuity,onDirectError:()=>{directStatusRetryAt=Date.now()+1000;}});
     const { normalizeServerStatus } = await dataSchemaModulePromise;
     return normalizeServerStatus(data);
   } catch (_error) {
