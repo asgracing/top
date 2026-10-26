@@ -1,7 +1,9 @@
 // NTP midpoint estimate against a public GET endpoint, on performance.now().
 const finite = value => typeof value === 'number' && Number.isFinite(value);
 export const CLOCK_MAX_AGE_MS = 15000;
-export const CLOCK_MAX_UNCERTAINTY_MS = 50;
+// Browser RTT includes the public Internet; a 50 ms bound rejected ordinary
+// 140–150 ms round trips and hid every marker despite a healthy source.
+export const CLOCK_MAX_UNCERTAINTY_MS = 150;
 
 export class LiveClock {
   constructor(){this.samples=[];}

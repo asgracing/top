@@ -6,6 +6,14 @@ import {LiveClock,measureLiveClock} from '../../src/features/server-status/live-
 
 const car=(x=0,extra={})=>({car_id:1,connection_id:7,position:1,world_x:x,world_z:10,
   connected:true,coordinates_source:'acc-native-world-xz',position_age_ms:0,...extra});
+
+test('keyed car identities do not reorder the live classification',()=>{
+  const rows={10:{car_id:10,position:3},20:{car_id:20,position:1},30:{car_id:30,position:2},40:{car_id:40,position:null}};
+  const server=publicLiveServer({drivers:rows,classification:rows,spectators:{}});
+  assert.deepEqual(server.classification.map(d=>d.position),[1,2,3,null]);
+  assert.deepEqual(server.drivers.map(d=>d.car_id),[20,30,10,40]);
+  assert.equal(rows[10].position,3);
+});
 const frame=(at,x,extra={})=>{
   const value={at_ms:at,boot_id:'b',session_id:'s',track_code:'monza',clock_verified:true,clock_epoch:1,cars:[car(x)],...extra};
   value.cars=value.cars.map(c=>({position_at_ms:at,clock_uncertainty_ms:0,...c}));return value;
@@ -115,6 +123,20 @@ test('clock midpoint is independent of event delivery latency and expires withou
   assert.deepEqual(t.sample(100),[],'SSE receipt cannot establish the source/display clock');
   t.synchronize({offset_ms:1500,uncertainty_ms:0,measured_at:100});
   assert.equal(t.sample(100)[0].world_x,20);
+});
+
+test('ordinary public RTT permits motion while source clock and browser limits remain bounded',()=>{
+  const clock=new LiveClock();
+  const sample=clock.observe(0,150,{received_ms:1075,sent_ms:1075});
+  assert.equal(sample.offset_ms,1000);
+  assert.equal(sample.uncertainty_ms,76);
+  assert.throws(()=>clock.observe(0,500,{received_ms:1250,sent_ms:1250}));
+  const t=new PoseTimeline();t.synchronize(sample);
+  t.ingest(history(),1600,150);
+  assert.ok(t.sample(600).length);
+  const unsafe=history().map(f=>({...f,cars:f.cars.map(c=>({...c,clock_uncertainty_ms:51}))}));
+  const invalid=new PoseTimeline();invalid.synchronize(sample);invalid.ingest(unsafe,1600,150);
+  assert.deepEqual(invalid.sample(600),[]);
 });
 
 test('per-car source time consumes native/network age within the single 500 ms budget',()=>{

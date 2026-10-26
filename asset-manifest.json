@@ -1,8 +1,8 @@
 {
   "schemaVersion": 1,
-  "revision": "db88dcc143e16979b8a8363ea3b127866a3f9c95",
+  "revision": "ca2c4fb8a466d58dc14c8ad597121bab6ced0070",
   "files": 926,
-  "bytes": 133282787,
+  "bytes": 133283395,
   "assets": [
     {
       "path": "404.html",
@@ -2331,8 +2331,8 @@
     },
     {
       "path": "src/features/server-status/live-clock.js",
-      "bytes": 1822,
-      "sha256": "7deb6c850a2fa7d69f0106f57a3161c74a360335f476022d2d7533432d7a6fcf"
+      "bytes": 1975,
+      "sha256": "746301e1b5635e6b214850cc56af56cfbbe4b086e2521edfbbc5f4e4386fa1d4"
     },
     {
       "path": "src/features/server-status/live-details.js",
@@ -2346,8 +2346,8 @@
     },
     {
       "path": "src/features/server-status/live-stream.js",
-      "bytes": 10342,
-      "sha256": "b9b3287253b2aff648b6ffe764046506e66802d701274235f2c633dc15a36b4e"
+      "bytes": 10592,
+      "sha256": "989eef8244c734b5aaf57c9e1866a5d279e5825b69d012c97bbec27f5bebc95c"
     },
     {
       "path": "src/features/server-status/roster.js",
@@ -3107,7 +3107,7 @@
     {
       "path": "v2/boot/build.json",
       "bytes": 3722,
-      "sha256": "e507e30655729902c2d2d16c90634e3fee9cadb4a98a94b894565aa991ceafb6"
+      "sha256": "3b730c816cf2ca42f6ba68a96de5c83814bf5b9dc178e8ddb3462f986da78123"
     },
     {
       "path": "v2/boot/chunks/account-3LBIY7IB.js",
@@ -4016,8 +4016,8 @@
     },
     {
       "path": "v2/boot/home.js",
-      "bytes": 207874,
-      "sha256": "d1b745c8557b84b5fcdd5d21089083cc3f421767a4857acd0040aa634a1548c1"
+      "bytes": 208079,
+      "sha256": "8adafd5b954f00109e4a9bc6655e3a02c6442436682690179f05e245d5f09eb7"
     },
     {
       "path": "v2/bridge.js",
@@ -4027,7 +4027,7 @@
     {
       "path": "v2/build-inputs.json",
       "bytes": 26769,
-      "sha256": "676f4a77f9ed9be84d65ab8772f116f3f71e0618978e9ca5d4601e966fa8a0ba"
+      "sha256": "00814815484ceb09f9a951ab1779bcaba72459b31f0eea238b56f23cb9866409"
     },
     {
       "path": "v2/copy.js",
@@ -4202,7 +4202,7 @@
     {
       "path": "v2/home.js",
       "bytes": 48629,
-      "sha256": "48d2042773abc4f8bdb5d3e019a8206f91f42bfae0073fccaab451c5800c2038"
+      "sha256": "ffe516b67807b4fa022f7234d1cd4eeae9df2413121f23351848ed5944a1b35c"
     },
     {
       "path": "v2/index.html",
@@ -4387,7 +4387,7 @@
     {
       "path": "v2/presentation.js",
       "bytes": 31743,
-      "sha256": "20d30d4ff2b7aa650c7b43f77b1f04515aefa580355755dc46bef8a03ef9a413"
+      "sha256": "efe9c90216a36f56ca3f94d3a907f1224a4dcb4faf90bec0b1287729a48b1861"
     },
     {
       "path": "v2/profile-races.js",

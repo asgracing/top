@@ -1,6 +1,7 @@
 // One selected server, one SSE connection. No browser-side ratings or admission logic.
-import {LiveClock,measureLiveClock,CLOCK_MAX_AGE_MS,CLOCK_MAX_UNCERTAINTY_MS} from './live-clock.js?v=20261025clock1';
+import {LiveClock,measureLiveClock,CLOCK_MAX_AGE_MS,CLOCK_MAX_UNCERTAINTY_MS} from './live-clock.js?v=20261026clock2';
 export const DISPLAY_BUFFER_MS = 500;
+const SOURCE_CLOCK_MAX_UNCERTAINTY_MS = 50;
 const own = (o,k) => Object.prototype.hasOwnProperty.call(o,k);
 const record = v => v !== null && typeof v === 'object' && !Array.isArray(v);
 const forbidden = new Set(['__proto__','prototype','constructor']);
@@ -45,6 +46,10 @@ export function publicLiveServer(keyed) {
   for (const key of ['drivers','classification','spectators']) {
     if (!record(server[key]) || Object.keys(server[key]).length > 256) return null;
     server[key] = Object.values(server[key]);
+    if (key !== 'spectators') server[key].sort((a,b)=>{
+      const rank = row => Number.isInteger(row?.position) && row.position > 0 ? row.position : Infinity;
+      return rank(a)-rank(b);
+    });
   }
   server.live_drivers = server.drivers;
   return server;
@@ -79,7 +84,7 @@ export class PoseTimeline {
             || c.position_at_ms>frame.at_ms || frame.at_ms-c.position_at_ms>5000
             || !finite(c.position_age_ms)||c.position_age_ms<0||c.position_age_ms>5000
             || c.position_age_ms>frame.at_ms-c.position_at_ms+50
-            || !finite(c.clock_uncertainty_ms) || c.clock_uncertainty_ms<0 || c.clock_uncertainty_ms>CLOCK_MAX_UNCERTAINTY_MS
+            || !finite(c.clock_uncertainty_ms) || c.clock_uncertainty_ms<0 || c.clock_uncertainty_ms>SOURCE_CLOCK_MAX_UNCERTAINTY_MS
             || seen.has(c.car_id)) return false;
         seen.add(c.car_id);return true;
       });

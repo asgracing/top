@@ -112,7 +112,7 @@
     },
     {
       "path": "src/features/server-status/live-clock.js",
-      "sha256": "7deb6c850a2fa7d69f0106f57a3161c74a360335f476022d2d7533432d7a6fcf"
+      "sha256": "746301e1b5635e6b214850cc56af56cfbbe4b086e2521edfbbc5f4e4386fa1d4"
     },
     {
       "path": "src/features/server-status/live-details.js",
@@ -124,7 +124,7 @@
     },
     {
       "path": "src/features/server-status/live-stream.js",
-      "sha256": "b9b3287253b2aff648b6ffe764046506e66802d701274235f2c633dc15a36b4e"
+      "sha256": "989eef8244c734b5aaf57c9e1866a5d279e5825b69d012c97bbec27f5bebc95c"
     },
     {
       "path": "src/features/server-status/roster.js",
@@ -652,7 +652,7 @@
     },
     {
       "path": "v2/home.js",
-      "sha256": "77289613e46a98ed1f8651e4bd0d37b7ce81c608accaf015f0cd65a3c16de9ba"
+      "sha256": "6d1a5f84ab9467bea0322bc8bede9f12737f4e5456849dd4e58ce615a8c6cd47"
     },
     {
       "path": "v2/mobile-navigation.js",
@@ -712,7 +712,7 @@
     },
     {
       "path": "v2/presentation.js",
-      "sha256": "ec650edb1a0ca2a6e81862ab472fe5e941509e1fe3d30b0f77e20f024efc8eb3"
+      "sha256": "0ef41963e1a11748699a38d3e8988f0401c86c74a8730b77636dbca6ead52769"
     },
     {
       "path": "v2/profile-races.js",

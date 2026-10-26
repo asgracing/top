@@ -74,7 +74,12 @@ try {
       let data={};
       if(url.hostname==='data.asgracing.ru') {
         if(url.pathname==='/telemetry/v1/status')data={schema_version:3,source:'asg-live-telemetry-status',telemetry_stream:true,updated_at:new Date().toISOString(),servers:{main:row()}};
-        else if(url.pathname==='/telemetry/v1/clock'){const now=Date.now();data={received_ms:now,sent_ms:now};}
+        else if(url.pathname==='/telemetry/v1/clock'){
+          // Exercise a public Internet RTT, rather than a zero-latency clock fixture.
+          await new Promise(r=>setTimeout(r,75));
+          const now=Date.now();data={received_ms:now,sent_ms:now};
+          await new Promise(r=>setTimeout(r,75));
+        }
         else if(url.pathname.endsWith('/server_status_live.json'))return route.fulfill({status:503,body:'{}'});
         else if(url.pathname.endsWith('/server_status.json'))return route.fulfill({status:503,body:'{}'});
         else if(url.pathname.endsWith('/v2/manifest.json'))data=fixture.manifest;
@@ -87,6 +92,7 @@ try {
     for(const selector of ['.asg-legal-banner-btn-secondary','.locale-suggestion-dismiss'])if(await page.locator(selector).isVisible())await page.locator(selector).click();
     await page.locator('#server-directory-grid [data-server="main"]').click();
     await page.waitForFunction(()=>document.querySelector('.server-delivery')?.textContent.match(/Прямой|Direct/));
+    await page.locator('#v2-modal .track-car').first().waitFor({state:'attached'});
     const read=()=>page.locator('#v2-modal .track-car').first().getAttribute('transform');
     const first=await read();await page.waitForTimeout(80);const second=await read();
     assert.notEqual(second,first,'Real SSE frames move map markers');
