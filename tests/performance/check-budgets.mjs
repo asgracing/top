@@ -56,9 +56,14 @@ const raceResultContextStylesheetBytes = await textBytes("styles/components/race
 const personalNotificationsJavaScriptBytes = await textBytes("src/features/auth/personal-notifications.js");
 const personalNotificationsStylesheetBytes = await textBytes("styles/components/personal-notifications.css");
 const serverTrackMapJavaScriptBytes = await textBytes("src/features/server-status/track-map.js");
+// The live transport/clock/animation is a separately capped feature, like the map.
+const serverLiveTelemetryJavaScriptBytes = (await Promise.all(
+  ['live-stream','live-clock','live-map'].map(name => textBytes(`src/features/server-status/${name}.js`))
+)).reduce((sum,bytes) => sum+bytes,0);
 const metrics = {
   appJavaScriptBytes: await textBytes("app.js"),
-  sourceModulesBytes: await treeBytes("src", new Set([".js", ".mjs"])) - moderationJavaScriptBytes - portalOpsJavaScriptBytes - raceResultContextJavaScriptBytes - personalNotificationsJavaScriptBytes - racingRulesJavaScriptBytes - serverTrackMapJavaScriptBytes,
+  sourceModulesBytes: await treeBytes("src", new Set([".js", ".mjs"])) - moderationJavaScriptBytes - portalOpsJavaScriptBytes - raceResultContextJavaScriptBytes - personalNotificationsJavaScriptBytes - racingRulesJavaScriptBytes - serverTrackMapJavaScriptBytes - serverLiveTelemetryJavaScriptBytes,
+  serverLiveTelemetryJavaScriptBytes,
   serverTrackMapJavaScriptBytes,
   serverTrackMapAssetBytes: await treeBytes("assets/track-maps", new Set([".js"])),
   stylesheetsBytes: await treeBytes("styles", new Set([".css"])) + await textBytes("styles.css") + await textBytes("legal.css") - moderationStylesheetBytes - portalOpsStylesheetBytes - raceResultContextStylesheetBytes - personalNotificationsStylesheetBytes - racingRulesStylesheetBytes,

@@ -32,9 +32,9 @@ import {
 } from "/news-read-state.js?v=20260813newsread1";
 import { createAuthHeaderController, safeAvatarUrl } from "/src/features/auth/header-auth.js?v=20261011notifications1";
 import { applyRandomTrackBackground, normalizeTrackBackgroundCode, resolveTrackBackgroundFile } from "/src/features/server-status/track-background.js?v=20260726staticfallback1";
-import { bindServerStatusFreshness, isServerStatusStale, isInstanceStatusStale } from "/src/features/server-status/freshness.js?v=20261023cadence1";
-import { telemetrySessionLabel, loadPreferredServerStatus } from "/src/features/server-status/telemetry.js?v=20261023cadence1";
-import { renderServerRoster } from "/src/features/server-status/roster.js?v=20261024monza1";
+import { bindServerStatusFreshness, isServerStatusStale, isInstanceStatusStale } from "/src/features/server-status/freshness.js?v=20261025direct1";
+import { telemetrySessionLabel, loadPreferredServerStatus } from "/src/features/server-status/telemetry.js?v=20261025direct1";
+import { renderServerRoster } from "/src/features/server-status/roster.js?v=20261025direct1";
 import { serverPilotCount } from "/src/features/server-status/live-details.js?v=20261024pitmap1";
 import { selectNextHourlyAnnouncement } from "/src/features/hourly/announcement-model.js?v=20260828hourlynext1";
 import { getSpecialEventPresentation, normalizeSingleModelRestriction } from "/src/features/hourly/special-event.js?v=20260903special1";
@@ -145,6 +145,8 @@ const LOCAL_NEWS_DATA_URL = `${SITE_BASE_PATH}news-content/news.json`;
 const topDataV2ManifestUrl = `${TOP_DATA_V2_BASE_URL}/manifest.json`;
 const serverStatusUrl = getDevRuntimeParam("serverStatusUrl") || (TOP_API_ROOT_URL ? `${TOP_API_ROOT_URL}/server-status` : `${TOP_DATA_BASE_URL}/server_status.json`);
 const liveServerStatusUrl = getDevRuntimeParam("serverStatusUrl") || `${TOP_DATA_BASE_URL}/server_status_live.json`;
+const directServerStatusUrl = getDevRuntimeParam("serverStatusUrl") ? null : 'https://data.asgracing.ru/telemetry/v1/status';
+let directStatusRetryAt = 0;
 const donationsApiUrl = "https://data.asgracing.ru/donations-api/recent";
 const hourlyAnnouncementUrl = `${HOURLY_DATA_BASE_URL}/announcement.json`;
 const hourlyScheduleUrl = `${HOURLY_DATA_BASE_URL}/schedule.json`;
@@ -6061,7 +6063,8 @@ function normalizeSnapshotPayload(snapshot) {
 async function loadStandaloneServerStatus({ bypassCache = false } = {}) {
   try {
     const data = await loadPreferredServerStatus(liveServerStatusUrl, serverStatusUrl,
-      url => bypassCache ? requestJson(url, { cache: "no-store", retries: 1 }) : loadJson(url));
+      url => bypassCache ? requestJson(url, { cache: "no-store", retries: 1 }) : loadJson(url),
+      {directUrl:Date.now()>=directStatusRetryAt?directServerStatusUrl:null,onDirectError:()=>{directStatusRetryAt=Date.now()+30000;}});
     const { normalizeServerStatus } = await dataSchemaModulePromise;
     return normalizeServerStatus(data);
   } catch (_error) {
@@ -8779,6 +8782,8 @@ function getServerSaRequirement(server) {
 }
 
 function getServerSrRequirement(key, server) {
+  if (server?.admission_ready === false) return null;
+  if (server?.admission_ready === false) return null;
   const value = Number(server?.sr_requirement ?? server?.internal_sr_requirement);
   if (Number.isFinite(value) && value >= 0) return value;
   if (key === "hourly") return 2.5;
@@ -11446,7 +11451,7 @@ async function init() {
   await initializeAppStorage().catch(error => console.warn("Preference storage is unavailable.", error));
   await initializeFeatureRuntime();
   initializeWindowLifecycle();
-  if (PAGE_CONTEXT.isHome) bindServerStatusFreshness({ windowRef: window, documentRef: document, lifecycle: appLifecycle, refresh: refreshServerStatusFreshness });
+  if (PAGE_CONTEXT.isHome) bindServerStatusFreshness({ windowRef: window, documentRef: document, lifecycle: appLifecycle, refresh: refreshServerStatusFreshness, isDirect:()=>serverStatusData?.telemetry_stream===true });
   document.body.classList.remove("background-audio-focus");
   applyInitialTopLoadingState();
   homePage.setupDeferred();

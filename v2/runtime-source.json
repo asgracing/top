@@ -1,8 +1,8 @@
 {
   "schemaVersion": 1,
-  "version": "20261024monza1",
+  "version": "20261025direct1",
   "source": "app.js",
-  "sha256": "c23e8219de2cb77243d85d711b4eb1751dde36160320f44dd0f8e137dece008b",
-  "outputSha256": "62fcfc6fad721c8165100f19ca982599d134665d4514d6604ab357bcd5c66630",
+  "sha256": "d04d06aa9fda4a51bd7ef043e710b84ef30b57329dbe48b8ad94c30aa2686008",
+  "outputSha256": "ff0ec966d903a1e1d716d669a0942386d1a9dc9308a677c24fa2fa8cd39c81a9",
   "facadeSha256": "88b786a944d11d3844dd23d42b0c680ea2b01e9d7f4fd2fe5b217f9ff4a025b4"
 }
