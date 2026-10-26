@@ -1,0 +1,49 @@
+{
+  "schema_version": 1,
+  "track_code": "kyalami",
+  "layout": "ACC GP",
+  "origin": [
+    28.069921,
+    -25.998779
+  ],
+  "metric": [
+    100054.33547435203,
+    111319.49079327358
+  ],
+  "worldToGps": [
+    [
+      0.9934428393126999,
+      0.011042781677254431
+    ],
+    [
+      0.011042781677254303,
+      -0.9934428393126999
+    ]
+  ],
+  "worldOffset": [
+    -197.415814034395,
+    197.25034182098045
+  ],
+  "calibration": {
+    "method": "trimmed orthogonal similarity to metric GeoJSON segments; every third raw lap point excluded from ICP fitting",
+    "reference": "Public assetto-corsa-competizione-dedic-9 complete ACC lap, 2026-10-26; geometry only",
+    "scale": 0.9935042113694589,
+    "checks": [
+      {
+        "sample": "whole_lap",
+        "points": 432,
+        "mean_metres": 3.248,
+        "p95_metres": 7.586,
+        "maximum_metres": 12.063
+      },
+      {
+        "sample": "same_lap_holdout",
+        "points": 144,
+        "mean_metres": 3.256,
+        "p95_metres": 7.522,
+        "maximum_metres": 10.85
+      }
+    ],
+    "note": "Single complete lap, with same-lap holdout; not an independent second-lap validation. Raw world X/Z retains pit and off-track offsets."
+  }
+}

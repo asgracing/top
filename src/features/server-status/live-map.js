@@ -1,4 +1,4 @@
-import {trackMapGeometry} from './track-map.js?v=20261026spa2';
+import {trackMapGeometry} from './track-map.js?v=20261026maps1';
 
 // Update only markers at display refresh rate. The circuit is a stable asset.
 export function animateLiveMap(root,server,cars,lang='ru') {

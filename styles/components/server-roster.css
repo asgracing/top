@@ -18,6 +18,7 @@
 .server-track-map .track-car text { fill:#fff; stroke:none; font-size:9.6px; font-weight:750; font-family:system-ui,sans-serif; }
 .server-track-map.has-fixed-map svg { height:clamp(250px,42vw,500px); max-height:500px; }
 .server-track-map[data-track-map="spa-gp"] svg { height:clamp(320px,65vw,680px); max-height:680px; }
+.server-track-map[data-track-map="barcelona-gp"] svg { height:auto; max-height:500px; aspect-ratio:24/11; }
 .server-track-map.has-fixed-map .track-outline { stroke-width:5; }
 .server-track-map.has-fixed-map .track-car text { font-size:13.6px; }
 .server-track-map .track-label { fill:#acbfd5; font:19px system-ui,sans-serif; stroke:#101b29; stroke-width:5; stroke-linejoin:round; paint-order:stroke; pointer-events:none; }

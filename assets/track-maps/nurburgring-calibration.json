@@ -1,0 +1,49 @@
+{
+  "schema_version": 1,
+  "track_code": "nurburgring",
+  "layout": "ACC GP",
+  "origin": [
+    6.947632,
+    50.335537
+  ],
+  "metric": [
+    71054.17166866265,
+    111319.49079327358
+  ],
+  "worldToGps": [
+    [
+      0.9999442806613976,
+      0.02560804611085025
+    ],
+    [
+      0.02560804611085027,
+      -0.9999442806613976
+    ]
+  ],
+  "worldOffset": [
+    -336.1698024265245,
+    -559.8844716311363
+  ],
+  "calibration": {
+    "method": "trimmed orthogonal similarity to metric GeoJSON segments; every third raw lap point excluded from ICP fitting",
+    "reference": "Public assetto-corsa-competizione-dedic-3 complete ACC lap, 2026-10-26; geometry only",
+    "scale": 1.000272131198833,
+    "checks": [
+      {
+        "sample": "whole_lap",
+        "points": 483,
+        "mean_metres": 3.328,
+        "p95_metres": 7.881,
+        "maximum_metres": 27.118
+      },
+      {
+        "sample": "same_lap_holdout",
+        "points": 161,
+        "mean_metres": 3.316,
+        "p95_metres": 7.978,
+        "maximum_metres": 22.277
+      }
+    ],
+    "note": "Single complete lap, with same-lap holdout; not an independent second-lap validation. Raw world X/Z retains pit and off-track offsets."
+  }
+}

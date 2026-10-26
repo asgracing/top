@@ -1,0 +1,49 @@
+{
+  "schema_version": 1,
+  "track_code": "barcelona",
+  "layout": "ACC GP",
+  "origin": [
+    2.261284,
+    41.570051
+  ],
+  "metric": [
+    83283.123590301,
+    111319.49079327358
+  ],
+  "worldToGps": [
+    [
+      0.9941402221007161,
+      0.011557468620946303
+    ],
+    [
+      0.011557468620946336,
+      -0.9941402221007164
+    ]
+  ],
+  "worldOffset": [
+    -288.7733156984334,
+    -78.6580196892476
+  ],
+  "calibration": {
+    "method": "trimmed orthogonal similarity to metric GeoJSON segments; every third raw lap point excluded from ICP fitting",
+    "reference": "Public assetto-corsa-competizione-dedic-8 complete ACC lap, 2026-10-26; geometry only",
+    "scale": 0.9942074010383274,
+    "checks": [
+      {
+        "sample": "whole_lap",
+        "points": 438,
+        "mean_metres": 2.983,
+        "p95_metres": 8.022,
+        "maximum_metres": 10.878
+      },
+      {
+        "sample": "same_lap_holdout",
+        "points": 146,
+        "mean_metres": 2.978,
+        "p95_metres": 7.463,
+        "maximum_metres": 10.639
+      }
+    ],
+    "note": "Single complete lap, with same-lap holdout; not an independent second-lap validation. Raw world X/Z retains pit and off-track offsets."
+  }
+}

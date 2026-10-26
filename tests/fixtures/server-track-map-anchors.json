@@ -1,0 +1,248 @@
+{
+  "nurburgring": [
+    {
+      "index": 0,
+      "world": [
+        343.88,
+        -541.68
+      ],
+      "distance_metres": 11.274
+    },
+    {
+      "index": 14,
+      "world": [
+        -86.9,
+        -303.15
+      ],
+      "distance_metres": 8.533
+    },
+    {
+      "index": 28,
+      "world": [
+        -290.04,
+        -270.28
+      ],
+      "distance_metres": 6.2
+    },
+    {
+      "index": 42,
+      "world": [
+        -269.61,
+        79.22
+      ],
+      "distance_metres": 16.129
+    },
+    {
+      "index": 56,
+      "world": [
+        -183.56,
+        323.18
+      ],
+      "distance_metres": 9.282
+    },
+    {
+      "index": 70,
+      "world": [
+        -570.34,
+        700.28
+      ],
+      "distance_metres": 3.149
+    },
+    {
+      "index": 84,
+      "world": [
+        -418.78,
+        439.47
+      ],
+      "distance_metres": 15.34
+    },
+    {
+      "index": 98,
+      "world": [
+        -312.75,
+        -137.82
+      ],
+      "distance_metres": 1.732
+    },
+    {
+      "index": 112,
+      "world": [
+        -74.34,
+        -605.84
+      ],
+      "distance_metres": 19.652
+    },
+    {
+      "index": 126,
+      "world": [
+        513.51,
+        -763.81
+      ],
+      "distance_metres": 10.508
+    }
+  ],
+  "barcelona": [
+    {
+      "index": 0,
+      "world": [
+        297.49,
+        -83.39
+      ],
+      "distance_metres": 9.753
+    },
+    {
+      "index": 15,
+      "world": [
+        -186.73,
+        497.37
+      ],
+      "distance_metres": 9.047
+    },
+    {
+      "index": 30,
+      "world": [
+        -433.61,
+        536.09
+      ],
+      "distance_metres": 8.116
+    },
+    {
+      "index": 45,
+      "world": [
+        -306.11,
+        116.43
+      ],
+      "distance_metres": 10.205
+    },
+    {
+      "index": 60,
+      "world": [
+        -317.02,
+        410.94
+      ],
+      "distance_metres": 12.042
+    },
+    {
+      "index": 75,
+      "world": [
+        -7.42,
+        208.4
+      ],
+      "distance_metres": 12.761
+    },
+    {
+      "index": 90,
+      "world": [
+        -137.33,
+        -100.81
+      ],
+      "distance_metres": 14.657
+    },
+    {
+      "index": 105,
+      "world": [
+        174.55,
+        -400.16
+      ],
+      "distance_metres": 6.143
+    },
+    {
+      "index": 120,
+      "world": [
+        258.24,
+        -582.97
+      ],
+      "distance_metres": 6.659
+    },
+    {
+      "index": 135,
+      "world": [
+        489.65,
+        -399.81
+      ],
+      "distance_metres": 9.823
+    }
+  ],
+  "kyalami": [
+    {
+      "index": 0,
+      "world": [
+        198.61,
+        200.17
+      ],
+      "distance_metres": 2.182
+    },
+    {
+      "index": 9,
+      "world": [
+        600.11,
+        -271.95
+      ],
+      "distance_metres": 8.544
+    },
+    {
+      "index": 18,
+      "world": [
+        330.44,
+        -305.21
+      ],
+      "distance_metres": 8.756
+    },
+    {
+      "index": 27,
+      "world": [
+        -65.02,
+        -43.68
+      ],
+      "distance_metres": 12.575
+    },
+    {
+      "index": 36,
+      "world": [
+        -372.56,
+        17.07
+      ],
+      "distance_metres": 5.929
+    },
+    {
+      "index": 45,
+      "world": [
+        -375.66,
+        182.98
+      ],
+      "distance_metres": 12.519
+    },
+    {
+      "index": 54,
+      "world": [
+        -766.95,
+        331.37
+      ],
+      "distance_metres": 11.986
+    },
+    {
+      "index": 63,
+      "world": [
+        -355.66,
+        237.05
+      ],
+      "distance_metres": 15.55
+    },
+    {
+      "index": 72,
+      "world": [
+        -190.81,
+        -66.0
+      ],
+      "distance_metres": 5.205
+    },
+    {
+      "index": 81,
+      "world": [
+        -5.34,
+        369.36
+      ],
+      "distance_metres": 11.156
+    }
+  ]
+}

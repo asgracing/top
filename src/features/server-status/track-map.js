@@ -1,6 +1,11 @@
 import {isInstanceStatusStale,serverObservationAgeMs,serverDetailMaxAgeMs} from './freshness.js?v=20261026smooth1';
 import {MONZA_MAP} from '../../../assets/track-maps/monza.js?v=20261024monza1';
 import {SPA_MAP} from '../../../assets/track-maps/spa.js?v=20261026spa1';
+import {NURBURGRING_MAP} from '../../../assets/track-maps/nurburgring.js?v=20261026maps1';
+import {BARCELONA_MAP} from '../../../assets/track-maps/barcelona.js?v=20261026maps1';
+import {KYALAMI_MAP} from '../../../assets/track-maps/kyalami.js?v=20261026maps1';
+
+const fixedMaps = new Map([['monza',MONZA_MAP],['spa',SPA_MAP],['nurburgring',NURBURGRING_MAP],['barcelona',BARCELONA_MAP],['kyalami',KYALAMI_MAP]]);
 
 const coordinate = v => typeof v === 'number' && Number.isFinite(v) && Math.abs(v) <= 1_000_000;
 
@@ -20,7 +25,7 @@ export function mapCars(server, now = Date.now()) {
 export function trackMapGeometry(server) {
   // A layout is selected by track identity, never by server name or its learned lap.
   const code = String(server?.track_code || server?.track || '').trim().toLowerCase();
-  const asset = code === 'monza' ? MONZA_MAP : code === 'spa' ? SPA_MAP : null;
+  const asset = fixedMaps.get(code);
   if (asset) {
     const {worldToMap:m,worldOffset:t}=asset;
     return {...asset, fixed:true, project:(x,z)=>[
