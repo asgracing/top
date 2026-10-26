@@ -32,7 +32,7 @@ export class ServerStatusContinuity {
         parseServerStatusUpdatedAt(row.observed_at||row.updated_at)>=parseServerStatusUpdatedAt(old.row.observed_at||old.row.updated_at));
       if(newer){this.rows.set(key,{row,acceptedAt:now});servers[key]=row;continue;}
       const oldAge=old?serverObservationAgeMs(old.row,old.row.observed_at||old.row.updated_at,now):Infinity;
-      const same=!row||scope(row)===scope(old?.row);
+      const same=!row||scope(row)===scope(old?.row)||row.delivery==='stale';
       if(old&&same&&now-old.acceptedAt<=STATUS_GRACE_MS&&oldAge<=STATUS_GRACE_MS){servers[key]=old.row;continue;}
       this.rows.delete(key);
       if(row)servers[key]={...row,stale:true};

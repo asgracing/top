@@ -3,7 +3,7 @@ import {resolveTrackBackgroundFile} from '/src/features/server-status/track-back
 import {serverSessionLabel} from './server-session.js?v=20261025direct1';
 import {renderServerRoster} from '../src/features/server-status/roster.js?v=20261025direct1';
 import {serverPilotCount} from '../src/features/server-status/live-details.js?v=20261025direct1';
-import {LiveServerStream} from '../src/features/server-status/live-stream.js?v=20261026smooth1';
+import {LiveServerStream} from '../src/features/server-status/live-stream.js?v=20261026smooth2';
 import {animateLiveMap} from '../src/features/server-status/live-map.js?v=20261026caption1';
 import {safetyHistoryComponents} from './safety-history.js?v=20261010profile1';
 import {loadLeaderboardRank,profileWithLeaderboardRank} from '/src/shared/leaderboard-rank.js?v=20261013delivery1';
@@ -22,7 +22,7 @@ export function createPresentation({$,native,getModel,esc,text,label,date,number
     const animate=()=>{
       const stream=serverStream,server=stream?.latest();
       if(!stream)return;
-      if(server&&stream.delivery!=='stale')animateLiveMap($('modal-body'),server,stream.sample(performance.now(),reducedMotion?.matches),text('ru','en'));
+      if(server&&(stream.delivery==='direct'||stream.delivery==='recovering'&&stream.goodDelivery==='direct'))animateLiveMap($('modal-body'),server,stream.sample(performance.now(),reducedMotion?.matches),text('ru','en'));
       serverFrame=requestAnimationFrame(animate);
     };
     serverFrame=requestAnimationFrame(animate);
@@ -125,7 +125,7 @@ export function createPresentation({$,native,getModel,esc,text,label,date,number
       $('modal-title').textContent=title;body.innerHTML=html;body.scrollTop=top;
       const updated=body.querySelector('.server-roster-scroll');if(updated)updated.scrollLeft=left;
       const newMap=body.querySelector('.server-track-map svg');
-      if(serverStream?.latest()&&oldPath&&newMap?.querySelector('.track-outline')?.getAttribute('d')===oldPath)newMap.replaceWith(oldMap);
+      if(serverStream?.latest()&&serverStream.delivery!=='relay'&&oldPath&&newMap?.querySelector('.track-outline')?.getAttribute('d')===oldPath)newMap.replaceWith(oldMap);
       if(focused)[...body.querySelectorAll('a[href]')].find(a=>a.getAttribute('href')===focused)?.focus({preventScroll:true});
     };
     const phase=s=>s.stale?text('Данные устарели','Stale data'):serverSessionLabel(s,label);

@@ -25,7 +25,7 @@ function row(at=Date.now()) {
     observed_at:observed,updated_at:observed,source_age_ms:0,players_online:2,drivers_connected:2,driver_capacity:34,
     roster_complete:true,boot_id:'fixture',session:{id:'s',type:'Race',phase:'session',remaining_ms:700000},
     drivers:[car(1,at),car(2,at)],classification:[],spectators:[],
-    ...(mode==='stale'?{stale:true,status:'stale',telemetry_state:'stale'}:{})};
+    delivery:mode,...(mode==='stale'?{stale:true,status:'stale',telemetry_state:'stale',boot_id:'old-relay',session:{id:'yesterday'}}:{})};
 }
 const keyed=server=>({...server,drivers:Object.fromEntries(server.drivers.map(c=>[`${c.car_id}:${c.connection_id}`,c])),classification:{},spectators:{}});
 const pose=at=>({at_ms:at,boot_id:'fixture',session_id:'s',track_code:'monza',clock_epoch:1,clock_verified:true,
@@ -120,6 +120,9 @@ try {
     }
     mode='relay';
     await page.waitForFunction(()=>document.querySelector('.server-delivery')?.textContent.match(/Резервная|Relay/));
+    assert.equal(await page.locator('#v2-modal .track-car').count(),2,'Fresh relay coordinates remain visible');
+    const relayPose=await read();
+    await page.waitForFunction(value=>document.querySelector('#v2-modal .track-car')?.getAttribute('transform')!==value,relayPose,{timeout:3000});
     mode='direct';
     await page.waitForFunction(()=>document.querySelector('.server-delivery')?.textContent.match(/Прямой|Direct/));
     paused=true;

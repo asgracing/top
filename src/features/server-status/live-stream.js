@@ -1,6 +1,6 @@
 // One selected server, one SSE connection. No browser-side ratings or admission logic.
 import {LiveClock,measureLiveClock,CLOCK_MAX_AGE_MS,CLOCK_MAX_UNCERTAINTY_MS} from './live-clock.js?v=20261026clock2';
-import {withViewerClock} from './continuity.js?v=20261026smooth1';
+import {withViewerClock} from './continuity.js?v=20261026smooth2';
 export const DISPLAY_BUFFER_MS = 1500;
 const WIRE_BUFFER_MS = 500, HISTORY_MS=8000, HOLD_MS=3000, STATUS_GRACE_MS=10000;
 const SOURCE_CLOCK_MAX_UNCERTAINTY_MS = 50;
@@ -200,7 +200,7 @@ export class LiveServerStream {
     const state=mergeLivePatch(reset?null:this.keyed,event.patch);
     const server=publicLiveServer(state);
     if (state!==null && (!server || server.id!==this.key)) throw Error('Telemetry server mismatch');
-    if(server&&this.server&&JSON.stringify([this.server.boot_id,this.server.track_code,this.server.session?.id])!==
+    if(server&&this.server&&event.delivery==='direct'&&JSON.stringify([this.server.boot_id,this.server.track_code,this.server.session?.id])!==
         JSON.stringify([server.boot_id,server.track_code,server.session?.id])){
       this.timeline.clear();this.server=null;this.goodAt=-Infinity;
     }
@@ -209,6 +209,7 @@ export class LiveServerStream {
     const usable=server&&event.delivery!=='stale'&&server.stale!==true&&
       !['stale','unknown'].includes(server.status)&&!['stale','unknown'].includes(server.telemetry_state)&&server.roster_complete!==false;
     if(usable&&(event.delivery==='direct'||this.clock()-this.directAt>3000)){
+      if(event.delivery==='relay'&&this.goodDelivery!=='relay')this.timeline.clear();
       this.server=withViewerClock(server,event.server_time_ms);this.goodAt=this.clock();this.goodDelivery=event.delivery;
       if(event.delivery==='direct')this.directAt=this.clock();
       if(event.delivery==='direct')this.timeline.reconcileRoster(server);

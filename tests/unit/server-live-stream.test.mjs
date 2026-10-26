@@ -210,7 +210,7 @@ test('short stale frames and SSE reconnects retain cars; actual departures/offli
   let now=0;
   const stream=new LiveServerStream('main',{EventSourceClass:FakeSource,clock:()=>now,fetchImpl:null});
   stream.accept(event());const initial=stream.latest();
-  now=100;stream.accept(event({sequence:2,base:1,delivery:'stale',history:[],patch:{stale:true,status:'stale'}}));
+  now=100;stream.accept(event({sequence:2,base:1,delivery:'stale',history:[],patch:{stale:true,status:'stale',boot_id:'old-relay',session:{id:'yesterday'}}}));
   assert.equal(stream.latest(),initial);assert.equal(stream.delivery,'direct');
   FakeSource.last.onerror();assert.equal(stream.timeline.frames.length,8);
   now=700;stream.accept(event());assert.equal(stream.timeline.frames.length,8);

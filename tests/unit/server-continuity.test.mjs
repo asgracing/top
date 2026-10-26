@@ -15,6 +15,8 @@ test('one incomplete/stale host sample cannot blank a healthy directory or exten
   for(const bad of [row({stale:true}),row({roster_complete:false}),row({status:'unknown'})]){
     assert.equal(c.accept(snapshot({main:bad}),start+600).servers.main,good);
   }
+  const previousSession=row({stale:true,delivery:'stale',boot_id:'old',session:{id:'yesterday'}});
+  assert.equal(c.accept(snapshot({main:previousSession}),start+900).servers.main,good,'A stale backup cannot confirm a new session');
   const held=c.accept(null,start+3000);
   assert.equal(held.servers.main.observed_at,good.observed_at);
   assert.equal(held.servers.main.players_online,12);
