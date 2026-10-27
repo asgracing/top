@@ -8788,9 +8788,9 @@ function getServerSaRequirement(server) {
 function getServerSrRequirement(key, server) {
   if (key === "hourly") return hourlySrRequirement(server);
   if (server?.admission_ready === false) return null;
+  if (key === "main") return 2.0;
   const value = Number(server?.sr_requirement ?? server?.internal_sr_requirement);
   if (Number.isFinite(value) && value >= 0) return value;
-  if (key === "main") return 2.0;
   return null;
 }
 
@@ -11516,7 +11516,7 @@ function v2SchedulePublish() {
     unreadNews:getUnreadNewsCount(newsFeedData),
     servers:getServerStatusItems().map(({key,label,server})=>({key,label,server,
       online:!serverStatusIsStale()&&serverIsOnline(server),players:serverPlayersOnline(server),stale:serverStatusIsStale()||isInstanceStatusStale(server),
-      track:humanizeTrackName(server?.track_code||server?.track||''),sa:getServerSaRequirement(server),sr:getServerSrRequirement(key,server),session:getServerSessionShortLabel(server),drivers:getServerDrivers(server)})),
+      track:humanizeTrackName(server?.track_code||server?.track||''),sa:getServerSaRequirement(server),sr:key==='main'?getServerSrRequirement(key,server)?.toFixed(1):getServerSrRequirement(key,server),session:getServerSessionShortLabel(server),drivers:getServerDrivers(server)})),
     serversStale:serverStatusIsStale(),updatedAt:serverStatusData?.updated_at
   })});
 }
