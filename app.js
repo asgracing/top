@@ -8770,9 +8770,9 @@ function getServerSaRequirement(server) {
 function getServerSrRequirement(key, server) {
   if (key === "hourly") return hourlySrRequirement(server);
   if (server?.admission_ready === false) return null;
+  if (key === "main") return 2.0;
   const value = Number(server?.sr_requirement ?? server?.internal_sr_requirement);
   if (Number.isFinite(value) && value >= 0) return value;
-  if (key === "main") return 2.0;
   return null;
 }
 
