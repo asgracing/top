@@ -36,7 +36,7 @@ import { applyRandomTrackBackground, normalizeTrackBackgroundCode, resolveTrackB
 import { bindServerStatusFreshness, isServerStatusStale, isInstanceStatusStale } from "/src/features/server-status/freshness.js?v=20261026smooth1";
 import { telemetrySessionLabel, loadPreferredServerStatus } from "/src/features/server-status/telemetry.js?v=20261026smooth1";
 import {ServerStatusContinuity} from '/src/features/server-status/continuity.js?v=20261026smooth2';
-import { renderServerRoster } from "/src/features/server-status/roster.js?v=20261025direct1";
+import { renderServerRoster } from "/src/features/server-status/roster.js?v=20261027nords1";
 import { serverPilotCount } from "/src/features/server-status/live-details.js?v=20261024pitmap1";
 import { selectNextHourlyAnnouncement } from "/src/features/hourly/announcement-model.js?v=20260828hourlynext1";
 import { getSpecialEventPresentation, normalizeSingleModelRestriction } from "/src/features/hourly/special-event.js?v=20260903special1";
