@@ -127,7 +127,7 @@ body[data-v2] .upcoming-panel[data-event-kind="hourly"] { border-color:#f7cc43; 
 body[data-v2] .event-kind { background:#508ead85; border:1px solid #8bd5fa; }
 body[data-v2] [data-event-kind="championship"] .event-kind { background:#7c30c1; border-color:#bd73ff; }
 body[data-v2] [data-event-kind="endurance"] .event-kind { background:#1d7e3b; border-color:#48e16d; }
-body[data-v2] [data-event-kind="hourly"] .event-kind { background:#826824; border-color:#f7cc43; }
+body[data-v2] [data-event-kind="hourly"] .event-kind { background:#f7cc43; border-color:#f7cc43; color:#000; }
 body[data-v2] .event-car-row { display:flex; gap:8px; align-items:center; }
 body[data-v2] .event-car-image { width:66px; height:26px; object-fit:contain; }
 body[data-v2] .winner-car { object-fit:contain; }
