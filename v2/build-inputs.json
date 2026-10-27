@@ -68,7 +68,7 @@
     },
     {
       "path": "scripts/build-v2.mjs",
-      "sha256": "53f8a6f59b957f49b7060aa08a798cc80d8a5f4cb0ec4c8cf64980b3b148b01e"
+      "sha256": "aeb3d13e9218e3eb198010b7f44cf475aff8e194ad42411ebbf6569278f474c8"
     },
     {
       "path": "scripts/generate-localized-pages.mjs",
