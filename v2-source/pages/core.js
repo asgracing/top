@@ -1,4 +1,5 @@
 import {profileRaces} from '/v2/profile-races.js?v=20261025raceinfo1';
+import {hourlySrRequirement} from '/src/features/hourly/entry-requirements.js?v=20261027sr33';
 import {renderPagination} from '../pagination.js?v=20261015pagination1';
 import {carThumbnailAttributes,trackThumbnailAttributes} from '/src/shared/image-thumbnails.js?v=20261013delivery1';
 // Approved R13-R19 presentation. Data and actions are injected by the live adapter.
@@ -59,7 +60,7 @@ export function createPageViews(api) {
     const kind=eventKind(e),car=e.car_restriction,start=time(new Date(eventStart(e)).toISOString());
     const carName=car?.mode==='single_model'?car.car_model_name:tx('Все машины класса','All cars in class')+' '+(e.server?.car_group || 'GT3');
     const carData=`<div class="page-car-name">${label(carName)}${car?.mode==='single_model'?`<img ${carThumbnailAttributes(car.car_model_id,80)} alt="">`:''}</div>`;
-    const raceData=`<span class="event-race-data"><b>${e.race_duration_minutes ?? e.session?.race_duration_minutes ?? '—'} ${tx('мин','min')}</b> · SA ${e.server?.safety_rating_requirement ?? '—'} · ${tx('Питстопы','Pitstops')}: ${e.rules?.mandatory_pitstop_count ?? e.event_rules_overrides?.mandatoryPitstopCount ?? '—'}</span>`;
+    const raceData=`<span class="event-race-data"><b>${e.race_duration_minutes ?? e.session?.race_duration_minutes ?? '—'} ${tx('мин','min')}</b> · SA ${e.server?.safety_rating_requirement ?? '—'} · SR ${hourlySrRequirement(e)} · ${tx('Питстопы','Pitstops')}: ${e.rules?.mandatory_pitstop_count ?? e.event_rules_overrides?.mandatoryPitstopCount ?? '—'}</span>`;
     const links=championship?`<a href="${route('championship',e.championship_slug||championship.slug)}">${tx('Чемпионат','Championship')} ↗</a><a href="${route('seasons')}">${tx('История','History')} ↗</a>`:'';
     return `<article class="page-event-card kind-${kind}${hero?' feature-event':''}${hero&&!championship?' hero-event':''}${championship?' page-championship':''}" style="--page-track:url('/assets/${safeTrack(e)}.jpg')">
       <div class="page-event-label"><div class="event-heading-copy"><span class="eyebrow">${championship?tx('Ближайший этап','Next round'):hero?tx('Ближайший старт','Next start'):label(start)}</span>${championship?`<span class="event-season" title="${label(championship.title)}">${label(championship.title)}</span>`:''}</div><div class="event-label-clock"><span class="event-kind kind-${kind}">${eventKindLabel(kind)}</span><span class="race-countdown" data-page-countdown="${label(e.event_id)}">${countdownText(e)}</span></div></div>

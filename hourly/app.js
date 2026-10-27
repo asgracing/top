@@ -1,4 +1,5 @@
 import {decorateRaceHeading,renderResultTabs,installResultTabs,mergeResultContext} from '../src/shared/race-result-context.js?v=20261011racelinks1';
+import {hourlySrRequirement} from '../src/features/hourly/entry-requirements.js?v=20261027sr33';
 import { initializeLocalizedPage, localizedPageHref, resolvePageLocale, setPageLocale } from "../src/shared/localized-page.js?v=20261007root1";
 initializeLocalizedPage();
 import {
@@ -1211,7 +1212,7 @@ function formatMandatoryPitstopCount(value) {
 }
 function buildEntryRules(server) {
   if (!server || typeof server !== "object") return t("unknownValue");
-  const parts = [];
+  const parts = [`SR ${hourlySrRequirement(server)}+`];
   if (server.car_group) parts.push(server.car_group);
   if (typeof server.max_car_slots === "number" && server.max_car_slots > 0) parts.push(tf("entrySlots", { value: server.max_car_slots }));
   if (typeof server.safety_rating_requirement === "number" && server.safety_rating_requirement > 0) parts.push(tf("entrySafety", { value: server.safety_rating_requirement }));
@@ -1252,7 +1253,7 @@ function setHeroTokenValue(id, groups) {
 }
 function buildEntryTokenGroups(server) {
   if (!server || typeof server !== "object") return [];
-  const tokens = [];
+  const tokens = [createHeroToken(`SR ${hourlySrRequirement(server)}+`, "muted")];
   if (server.car_group) tokens.push(createHeroToken(server.car_group, "primary"));
   if (typeof server.max_car_slots === "number" && server.max_car_slots > 0) tokens.push(createHeroToken(tf("entrySlots", { value: server.max_car_slots }), "default"));
   if (typeof server.safety_rating_requirement === "number" && server.safety_rating_requirement > 0) tokens.push(createHeroToken(tf("entrySafety", { value: server.safety_rating_requirement }), "muted"));

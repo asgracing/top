@@ -1,8 +1,9 @@
 import {carThumbnailAttributes} from '/src/shared/image-thumbnails.js?v=20261013delivery1';
+import {hourlySrRequirement} from '/src/features/hourly/entry-requirements.js?v=20261027sr33';
 import copy from './copy.js?v=20261006v2k';
 import { subscribe, getRuntime } from './bridge.js?v=20261006v2k';
 import {rankingPosition,eventKind,normalizeTablePage,normalizeSafetyRow,paginationPages,serverSrRestriction} from './models.js?v=20261013delivery1';
-import {createPresentation} from './presentation.js?v=20261026maps1';
+import {createPresentation} from './presentation.js?v=20261027sr33';
 import {createRecentRaces} from './recent-races.js?v=20261011racelinks1';
 import {createHeader} from './header.js?v=20261014profile1';
 import {serverSessionLabel} from './server-session.js?v=20261025direct1';
@@ -142,7 +143,7 @@ function renderEvent(){
   const restriction=a.car_restriction||a.rules?.car_model,carName=restriction?.mode==='single_model'?restriction.car_model_name:text('Все машины класса GT3','All GT3 cars');
   $('event-car').textContent=carName||'—';$('event-car-image').hidden=restriction?.mode!=='single_model'||restriction?.car_model_id==null;if(!$('event-car-image').hidden)$('event-car-image').src=carImage(restriction.car_model_id);
   const server=a.server||{},rules=a.rules||{};
-  $('event-facts').textContent=`${a.session?.race_duration_minutes??a.race_duration_minutes??'—'} ${text('мин','min')} · SA ${server.safety_rating_requirement??'—'} · SR ${server.sr_requirement??server.safety_rating_asg_requirement??server.asg_sr_requirement??native().eventSr()??'—'} · ${rules.mandatory_pitstop_count??rules.mandatory_pit_stop_count??'—'} PIT`;
+  $('event-facts').textContent=`${a.session?.race_duration_minutes??a.race_duration_minutes??'—'} ${text('мин','min')} · SA ${server.safety_rating_requirement??'—'} · SR ${hourlySrRequirement(a)} · ${rules.mandatory_pitstop_count??rules.mandatory_pit_stop_count??'—'} PIT`;
   $('participants').textContent=text('Участники: ','Participants: ')+number(model.votes.count);
   button.textContent=model.votes.pending?text('Сохраняем…','Saving…'):model.votes.voted?text('Ты в списке · отменить','You are registered · cancel'):text('Я хочу поехать!','I want to race!');
   button.disabled=Boolean(model.votes.pending||model.voteDisabled);button.classList.toggle('participation-active',model.votes.voted);
@@ -340,7 +341,7 @@ if(!isSubpage){
   if('IntersectionObserver' in window){const observer=new IntersectionObserver(entries=>{if(entries.some(entry=>entry.isIntersecting)){observer.disconnect();loadTable();}},{rootMargin:'240px 0px'});observer.observe($('ranking'));}
   else loadTable();
 }
-try{await import('./runtime/home.js?v=20261026maps1');applyHash();if(isSubpage)startBackground();}catch(error){console.error('V2 runtime unavailable',error);$('event-track').textContent=text('Не удалось загрузить данные','Could not load data');$('day-driver').textContent=text('Данные недоступны','Data unavailable');tableError=true;tableBusy=false;renderTable()}
+try{await import('./runtime/home.js?v=20261027sr33');applyHash();if(isSubpage)startBackground();}catch(error){console.error('V2 runtime unavailable',error);$('event-track').textContent=text('Не удалось загрузить данные','Could not load data');$('day-driver').textContent=text('Данные недоступны','Data unavailable');tableError=true;tableBusy=false;renderTable()}
 if(document.documentElement.dataset.v2Page){
   const {startPage}=await import('./pages/controller.js?v=20261013teams3');
   await startPage({native,presentation,showDialog,esc,text,label,date,number,rating,car,language,subscribe,serverAdmission});

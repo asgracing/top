@@ -23,8 +23,9 @@
       "id": "safety-rating-server-access",
       "slug": "safety-rating-server-access",
       "title": "Допуск на серверы ASG Racing по Safety Rating / ASG Racing Server Access by Safety Rating",
-      "summary": "На серверах ASG Racing включены требования к внутреннему Safety Rating: SR 2.00+ для главного сервера и SR 2.50+ для часового. / ASG Racing server access requirements are now active: SR 2.00+ for the Main server and SR 2.50+ for the Hourly server.",
+      "summary": "На серверах ASG Racing включены требования к внутреннему Safety Rating: SR 2.00+ для главного сервера и SR 3.30+ для часового. / ASG Racing server access requirements are now active: SR 2.00+ for the Main server and SR 3.30+ for the Hourly server.",
       "body": [
+        "Актуализировано 27.10.2026: допуск на Hourly — от ASG SR 3.30. / Updated 27 October 2026: Hourly admission requires ASG SR 3.30 or higher.",
         "РУССКИЙ",
         "────────",
         "На серверах ASG Racing включен допуск по внутреннему Safety Rating (SR). Это рейтинг ASG Racing, который отображается на нашем сайте, а не игровой рейтинг ACC SA.",
@@ -33,10 +34,10 @@
           "type": "list",
           "items": [
             "Главный сервер (Main) — SR 2.00 и выше",
-            "Сервер часовых гонок — SR 2.50 и выше"
+            "Сервер часовых гонок — SR 3.30 и выше"
           ]
         },
-        "При SR от 2.00 до 2.49 доступен только главный сервер. При SR 2.50 и выше доступны оба сервера.",
+        "При SR от 2.00 до 3.29 доступен только главный сервер. При SR 3.30 и выше доступны оба сервера.",
         "Если ваш SR ниже необходимого уровня, повысить его можно в зачтенных гонках на остальных серверах ASG Racing. После обработки результатов рейтинг и допуск обновятся автоматически.",
         "Следить за своим SR можно на сайте ASG Racing. Участвуйте в гонках чисто и сохраняйте доступ ко всем серверам!",
         "ENGLISH",
@@ -47,10 +48,10 @@
           "type": "list",
           "items": [
             "Main server — SR 2.00 or higher",
-            "Hourly server — SR 2.50 or higher"
+            "Hourly server — SR 3.30 or higher"
           ]
         },
-        "Drivers rated from 2.00 to 2.49 can access only the Main server. Drivers with SR 2.50 or higher can access both servers.",
+        "Drivers rated from 2.00 to 3.29 can access only the Main server. Drivers with SR 3.30 or higher can access both servers.",
         "If your SR is below the required level, you can raise it in counted races on other ASG Racing servers. Your rating and access will update automatically after the results are processed.",
         "Check your SR on the ASG Racing website, race cleanly, and keep access to every server!"
       ],

@@ -38,7 +38,7 @@ async function checkPagination(page){
 async function checkServerSrAccess(page,options){
   await page.locator('#v2-rating-table .current-user-row').waitFor({state:'visible'});
   await page.locator('.asg-legal-banner-btn-secondary').click();
-  const thresholds=options.thresholds||{main:2,hourly:2.5};
+  const thresholds=options.thresholds||{main:2,hourly:3.3};
   const blocked=Object.keys(thresholds).filter(key=>options.viewerSr!=null&&options.viewerSr<thresholds[key]).sort();
   assert.deepEqual((await page.locator('#v2-servers .is-sr-blocked').evaluateAll(nodes=>nodes.map(n=>n.dataset.server))).sort(),blocked);
   for(const key of blocked){
