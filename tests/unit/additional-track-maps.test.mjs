@@ -43,5 +43,5 @@ test('reference orientations: Nürburgring GP, old Barcelona chicane and modern 
  assert.ok(k.points[15][0]>850&&k.points[15][1]<100,'Kyalami T5 at top');
  assert.ok(k.points[57][0]<150&&k.points[57][1]>550,'T10/11 bottom left');
  assert.ok(k.points[82][0]>550&&k.points[82][1]>600,'T16 at bottom');
- for(const code of ['nurburgring_24h','nurburgring_1967','barcelona_2023','kyalami_1967'])assert.equal(trackMapGeometry({track_code:code}),null,'unreviewed layouts never inherit an unrelated map');
+ for(const code of ['nurburgring_1967','barcelona_2023','kyalami_1967'])assert.equal(trackMapGeometry({track_code:code}),null,'unreviewed layouts never inherit an unrelated map');
 });

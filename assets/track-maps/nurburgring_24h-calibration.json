@@ -1,0 +1,56 @@
+{
+  "schema_version": 1,
+  "track_code": "nurburgring_24h",
+  "layout": "ACC 24h combined GP / Nordschleife",
+  "origin": [
+    6.947632,
+    50.335537
+  ],
+  "metric": [
+    71054.17166866265,
+    111319.49079327358
+  ],
+  "worldToGps": [
+    [
+      0.9987799627928065,
+      0.04663589977060807
+    ],
+    [
+      0.04663589977060787,
+      -0.9987799627928066
+    ]
+  ],
+  "worldOffset": [
+    -325.4212737388877,
+    -562.4892436170417
+  ],
+  "calibration": {
+    "method": "Trimmed orthogonal similarity to GeoJSON line segments, initialized from independently calibrated GP coordinates; every third distinct native point held out",
+    "reference": "Public dedic-4 ACC native X/Z geometry-only snapshots, 2026-10-27",
+    "scale": 0.9998681519199488,
+    "checks": [
+      {
+        "sample": "all_live_points",
+        "points": 269,
+        "mean_metres": 7.807,
+        "p95_metres": 23.587,
+        "maximum_metres": 32.685
+      },
+      {
+        "sample": "held_out_live_points",
+        "points": 90,
+        "mean_metres": 7.976,
+        "p95_metres": 23.463,
+        "maximum_metres": 31.061
+      },
+      {
+        "sample": "later_independent_snapshot",
+        "points": 11,
+        "mean_metres": 5.211,
+        "p95_metres": 10.134,
+        "maximum_metres": 11.201
+      }
+    ],
+    "note": "Live multi-car samples, not a complete independent lap. Raw world X/Z preserves pit/off-track offsets."
+  }
+}

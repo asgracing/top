@@ -4,8 +4,9 @@ import {SPA_MAP} from '../../../assets/track-maps/spa.js?v=20261026spa1';
 import {NURBURGRING_MAP} from '../../../assets/track-maps/nurburgring.js?v=20261026maps1';
 import {BARCELONA_MAP} from '../../../assets/track-maps/barcelona.js?v=20261026maps1';
 import {KYALAMI_MAP} from '../../../assets/track-maps/kyalami.js?v=20261026maps1';
+import {NURBURGRING_24H_MAP} from '../../../assets/track-maps/nurburgring_24h.js?v=20261027nords1';
 
-const fixedMaps = new Map([['monza',MONZA_MAP],['spa',SPA_MAP],['nurburgring',NURBURGRING_MAP],['barcelona',BARCELONA_MAP],['kyalami',KYALAMI_MAP]]);
+const fixedMaps = new Map([['monza',MONZA_MAP],['spa',SPA_MAP],['nurburgring',NURBURGRING_MAP],['barcelona',BARCELONA_MAP],['kyalami',KYALAMI_MAP],['nurburgring_24h',NURBURGRING_24H_MAP],['nordschleife',NURBURGRING_24H_MAP]]);
 
 const coordinate = v => typeof v === 'number' && Number.isFinite(v) && Math.abs(v) <= 1_000_000;
 
@@ -23,7 +24,7 @@ export function mapCars(server, now = Date.now()) {
 }
 
 export function trackMapGeometry(server) {
-  // A layout is selected by track identity, never by server name or its learned lap.
+  // Match exact track codes.
   const code = String(server?.track_code || server?.track || '').trim().toLowerCase();
   const asset = fixedMaps.get(code);
   if (asset) {
@@ -66,6 +67,6 @@ export function renderTrackMap(server, lang = 'ru', now = Date.now(), {expanded=
     return `<g class="track-car${leader ? ' is-leader':''}" data-car-key="${d.car_id}:${connection}" transform="translate(${point})"><title>${label}</title><circle r="${map.fixed ? 14.4:10.4}"/><text text-anchor="middle" dominant-baseline="central">${position}</text></g>`;
   }).join('');
   const labels=(map.labels||[]).map(label=>`<text class="track-label${label.secondary ? ' is-secondary':''}" x="${label.x}" y="${label.y}" text-anchor="${label.anchor}">${label.lines ? label.lines.map((line,i)=>`<tspan x="${label.x}" dy="${i ? '1.2em':'0'}">${line}</tspan>`).join(''):label.text}</text>`).join('');
-  const credit=map.fixed ? `<p class="track-map-credit">${ru ? 'Геометрия':'Geometry'}: <a href="https://github.com/bacinger/f1-circuits">Tomislav Bacinger · MIT</a></p>`:'';
+  const credit=map.fixed ? `<p class="track-map-credit">${ru ? 'Геометрия':'Geometry'}: <a href="${map.source.url}">${map.source.credit||'Tomislav Bacinger · MIT'}</a></p>`:'';
   return wrap(`<svg viewBox="${map.viewBox.join(' ')}" role="img" aria-label="${title}"><path class="track-outline" d="${path}"/>${labels}${markers}</svg><p>${cars.length ? (ru ? 'Красный — лидер · номера обозначают позиции' : 'Red — leader · numbers show positions'):empty}</p>${credit}`);
 }
