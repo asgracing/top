@@ -1,6 +1,6 @@
 {
   "schemaVersion": 1,
-  "runtimeVersion": "20261026maps1",
+  "runtimeVersion": "20261027sr33",
   "inputs": [
     {
       "path": "account/driver-overlay.js",
@@ -8,7 +8,7 @@
     },
     {
       "path": "app.js",
-      "sha256": "0683d013b486ae712b23a2dc3aa1982afc0b5615c92a3c5309978679e305cbd0"
+      "sha256": "9e2673b92f9dcf147032830a864247e6bd7e6c71680f18f25cd136ba98fc61cc"
     },
     {
       "path": "assets/track-maps/barcelona.js",
@@ -36,11 +36,11 @@
     },
     {
       "path": "hourly/app.js",
-      "sha256": "b2840abc778313ab261e99c81e6471e923cd72204d6e037bd94dede4259a05fc"
+      "sha256": "13eb9e29191940c9b38695d63c08944b9bf4572c0bdbb7b01dd4a4c68d9a42f5"
     },
     {
       "path": "hourly/championship/app.js",
-      "sha256": "74b2e2259b05e292a025d286c3f685f581e0d3270db616be0f009b51f6493ada"
+      "sha256": "c9221383a9e17ef29176c23e469b0338bfc8d3aa999478a660e22a9819ffa7a5"
     },
     {
       "path": "hourly/championship/history/app.js",
@@ -68,7 +68,7 @@
     },
     {
       "path": "scripts/build-v2.mjs",
-      "sha256": "49dcc4362ced91f7642a9aa2b14e4b3ff242a529040c2ae062d4bafc4174b474"
+      "sha256": "53f8a6f59b957f49b7060aa08a798cc80d8a5f4cb0ec4c8cf64980b3b148b01e"
     },
     {
       "path": "scripts/generate-localized-pages.mjs",
@@ -109,6 +109,10 @@
     {
       "path": "src/features/hourly/announcement-model.js",
       "sha256": "cc02a6b4ae29fd50c9fa45e0c62dd6acde9f3b8af46475216194119c9fcd65d2"
+    },
+    {
+      "path": "src/features/hourly/entry-requirements.js",
+      "sha256": "61763d22b47dc6aee09900eb37846855d7b7e7b7c7218ff186ffd9c797a4f748"
     },
     {
       "path": "src/features/hourly/special-event.js",
@@ -624,7 +628,7 @@
     },
     {
       "path": "v2-source/pages/core.js",
-      "sha256": "3881a9de5b0b41188cf222cf5cc9383bffc960e99333b061e7ae0fbbc3bc10ba"
+      "sha256": "b755fcd9d01907afb850ba69a30f1e272638a7f1df36445a9741f8e3e230e744"
     },
     {
       "path": "v2-source/pages/editorial.js",
@@ -672,7 +676,7 @@
     },
     {
       "path": "v2/home.js",
-      "sha256": "c6d19b54a7f03751a4fb4eb465955a387d75f5d7ccd0d245950117c88538040b"
+      "sha256": "c727b0d3c759dfeaa8da3604545ce276447e7cd8899337ce712665b6d0e55041"
     },
     {
       "path": "v2/mobile-navigation.js",
@@ -732,7 +736,7 @@
     },
     {
       "path": "v2/presentation.js",
-      "sha256": "aec5f76b7c7c3c13a5f1b4b62ceaa5b6579614a633da171e93fa6acc38a85c99"
+      "sha256": "c3fc64b6e35e97ea197d6f7614fba9bad662062c64a46cb6cb703762b1445d77"
     },
     {
       "path": "v2/profile-races.js",

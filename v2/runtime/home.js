@@ -1,6 +1,7 @@
 import { publish, installRuntime } from '/v2/bridge.js?v=20261006v2k';
 import { currentPageLanguageHref, initializeLocalizedPage, localizedPageHref, resolvePageLocale, setPageLocale } from "/src/shared/localized-page.js?v=20261007root1";
 import {loadDriverDirectory} from '/src/shared/driver-directory.js?v=20261022compact1';
+import {hourlySrRequirement} from '/src/features/hourly/entry-requirements.js?v=20261027sr33';
 import { isTeamRace, teamRaceUrl } from "/src/shared/team-racing-client.js?v=20261004teams1";
 import { renderTeamResults } from "/src/shared/team-racing-results-view.js?v=20261013teams3";
 import {decorateRaceHeading,renderResultTabs,installResultTabs,mergeResultContext} from '/src/shared/race-result-context.js?v=20261011racelinks1';
@@ -2512,7 +2513,7 @@ function formatHourlyMandatoryPitstopCount(value) {
 function buildHourlyEntryTokens(server) {
   if (!server || typeof server !== "object") return [];
 
-  const tokens = [];
+  const tokens = [createHourlyModalToken(`SR ${hourlySrRequirement(server)}+`, "muted")];
   if (server.car_group) tokens.push(createHourlyModalToken(server.car_group, "primary"));
   if (typeof server.max_car_slots === "number" && server.max_car_slots > 0) {
     tokens.push(createHourlyModalToken(replaceTokens(t("hourlyEntrySlots"), { value: server.max_car_slots })));
@@ -2937,7 +2938,8 @@ function renderHourlyHeroModal() {
     ),
     buildHourlyEventDetailsV2Row(getHourlyEventDetailsV2Text("classLabel"), `<span class="event-details-v2-class-badge">${escapeHtml(server.car_group || getHourlyEventDetailsV2Text("notAvailable"))}</span>`, "flag"),
     buildHourlyEventDetailsV2Row(getHourlyEventDetailsV2Text("slotsLabel"), escapeHtml(getHourlyEventDetailsValue(slotCount)), "users"),
-    buildHourlyEventDetailsV2Row(getHourlyEventDetailsV2Text("safetyLabel"), escapeHtml(getHourlyEventDetailsValue(safetyRating)), "flag")
+    buildHourlyEventDetailsV2Row(getHourlyEventDetailsV2Text("safetyLabel"), escapeHtml(getHourlyEventDetailsValue(safetyRating)), "flag"),
+    buildHourlyEventDetailsV2Row("ASG SR", `${hourlySrRequirement(server)}+`, "flag")
   ].join("");
 
   const formatRows = [
@@ -8784,11 +8786,10 @@ function getServerSaRequirement(server) {
 }
 
 function getServerSrRequirement(key, server) {
-  if (server?.admission_ready === false) return null;
+  if (key === "hourly") return hourlySrRequirement(server);
   if (server?.admission_ready === false) return null;
   const value = Number(server?.sr_requirement ?? server?.internal_sr_requirement);
   if (Number.isFinite(value) && value >= 0) return value;
-  if (key === "hourly") return 2.5;
   if (key === "main") return 2.0;
   return null;
 }
