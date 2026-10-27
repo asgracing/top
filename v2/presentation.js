@@ -4,6 +4,7 @@ import {resolveTrackBackgroundFile} from '/src/features/server-status/track-back
 import {serverSessionLabel} from './server-session.js?v=20261025direct1';
 import {renderServerRoster} from '../src/features/server-status/roster.js?v=20261027nords1';
 import {serverPilotCount} from '../src/features/server-status/live-details.js?v=20261025direct1';
+import {serverConditions} from '../src/features/server-status/conditions.js?v=20261027weather1';
 import {LiveServerStream} from '../src/features/server-status/live-stream.js?v=20261026smooth2';
 import {animateLiveMap} from '../src/features/server-status/live-map.js?v=20261027nords1';
 import {safetyHistoryComponents} from './safety-history.js?v=20261010profile1';
@@ -146,7 +147,9 @@ export function createPresentation({$,native,getModel,esc,text,label,date,number
       renderRatings:p=>`<span>${rating(p,'elo',null,true)}</span><span>${rating(p,'sr',null,true)}</span>`,
       renderCar:p=>{const id=p.car_model_id??p.carModel??p.carModelId??p.car_model??null,modelName=native().car({...p,car_model_id:id});return car({...p,car_model_id:id,car_name:p.car_name||(modelName==='-'?'—':modelName)})}});
     const delivery=live&&serverStream.delivery==='direct'?text('Прямой поток · плавное воспроизведение','Direct stream · smooth playback'):live&&serverStream.delivery==='recovering'?text('Восстанавливаем поток · последние данные','Reconnecting · last known data'):stale?text('Телеметрия устарела','Telemetry is stale'):text('Резервная публикация','Relay snapshot');
-    draw(s.label,`<div class="server-parameter-row">${detail(label('track'),s.track||'—')}${detail(label('admission'),`SA ${s.sa??'—'} / SR ${s.sr??'—'}`)}${detail(label('session'),phase(s))}${detail(label('players'),serverPilotCount(s.server))}</div>${serverAdmission(s)?`<p class="server-sr-warning" role="note">${esc(serverAdmission(s))}</p>`:''}<p class="data-note server-search-note">${label('serverSearch')}</p><p class="data-note server-delivery" role="status">${delivery}</p>${roster}<p class="data-note server-updated">${text('Последнее обновление','Last update')}: ${date(s.server?.updated_at||m.updatedAt)}</p>`,'server',trigger);
+    const conditions=serverConditions(stale?{...s.server,stale:true}:s.server);
+    const conditionsHtml=`<div class="server-conditions"><span>${text('Условия','Conditions')}</span><b>${text('Воздух','Air')} ${esc(conditions.air)} · ${text('Трасса','Track')} ${esc(conditions.track)}</b><b><span aria-hidden="true">💧</span> ${text('Дождь','Rain')} ${esc(conditions.rain)} · <span aria-label="${text('Время в игре','In-game time')}">${esc(conditions.time)}</span></b></div>`;
+    draw(s.label,`<div class="server-parameter-row">${detail(label('track'),s.track||'—')}${detail(label('admission'),`SA ${s.sa??'—'} / SR ${s.sr??'—'}`)}${detail(label('session'),phase(s))}${detail(label('players'),serverPilotCount(s.server))}${conditionsHtml}</div>${serverAdmission(s)?`<p class="server-sr-warning" role="note">${esc(serverAdmission(s))}</p>`:''}<p class="data-note server-search-note">${label('serverSearch')}</p><p class="data-note server-delivery" role="status">${delivery}</p>${roster}<p class="data-note server-updated">${text('Последнее обновление','Last update')}: ${date(s.server?.updated_at||m.updatedAt)}</p>`,'server',trigger);
   }
   $('modal-body').addEventListener('change',e=>{
     const id=e.target.id;
