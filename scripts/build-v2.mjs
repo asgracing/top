@@ -18,10 +18,10 @@ const outputRoot = resolve(process.env.ASG_V2_OUTPUT_DIR || (siteRelease.layout=
 if(outputRoot!==root)assertArchiveScratchPath(outputRoot);
 if (process.env.ASG_V2_PRESENTATION_ONLY === '1') throw Error('Presentation-only builds are retired: rebuild V2 with its canonical runtime.');
 const version = '20261006v2k';
-const runtimeVersion = '20261027mainsr20';
-const presentationVersion = '20261027weather1';
-const homeStylesVersion = '20261028trackguide2';
-const bootVersion = '20261028trackguide1';
+const runtimeVersion = '20261028team10';
+const presentationVersion = '20261028team10';
+const homeStylesVersion = '20261028team10';
+const bootVersion = '20261028team10';
 const legalVersion = '20261008metrika2';
 const buildInputs = new Map();
 const hash = value => createHash('sha256').update(value.replace(/\r\n/g,'\n')).digest('hex');

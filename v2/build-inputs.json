@@ -1,6 +1,6 @@
 {
   "schemaVersion": 1,
-  "runtimeVersion": "20261027mainsr20",
+  "runtimeVersion": "20261028team10",
   "inputs": [
     {
       "path": "account/driver-overlay.js",
@@ -8,7 +8,7 @@
     },
     {
       "path": "app.js",
-      "sha256": "d7fdcffdfebf91802aa197af0fff47ebea0fbf48b9421797b833d3ea15e29a91"
+      "sha256": "a5f36634b14174fde63628545e111f8fe29b7987a141d5ae3acc419c87018268"
     },
     {
       "path": "assets/track-maps/barcelona.js",
@@ -40,7 +40,7 @@
     },
     {
       "path": "hourly/app.js",
-      "sha256": "13eb9e29191940c9b38695d63c08944b9bf4572c0bdbb7b01dd4a4c68d9a42f5"
+      "sha256": "9db3864456bce7e8d9aeafcfe759f9232213f12f36cdfc9b83c263341eef1b8f"
     },
     {
       "path": "hourly/championship/app.js",
@@ -72,7 +72,7 @@
     },
     {
       "path": "scripts/build-v2.mjs",
-      "sha256": "32080af91434e52f789fa80b8ca7b3404ccb16ec7d9f5208945c1f0a4d745be9"
+      "sha256": "852921b2a5eb534e83f5743d8ef2bce985f3c02f2a607f8d86a87244e38ac175"
     },
     {
       "path": "scripts/generate-localized-pages.mjs",
@@ -383,6 +383,10 @@
       "sha256": "5857929693c18372d2db6fa3f5f38ce2b6a6b59e344f72133b36dacd653ac01a"
     },
     {
+      "path": "src/shared/team-racing-discovery.js",
+      "sha256": "2f29f22a53f32e028735277ea521949d86483f57f929bfe728f2431bfaffaa30"
+    },
+    {
       "path": "src/shared/team-racing-results-view.js",
       "sha256": "e133255f4852d2603f00715373cea5664601fbe3c4873c12d059949dd636396d"
     },
@@ -392,7 +396,7 @@
     },
     {
       "path": "styles.css",
-      "sha256": "0a1c71662ca06c964b430964b54799f0b0c06e834e44bbb3d341ad03cc7770cc"
+      "sha256": "263d019f85e206d7a5498ea966c74f12322e2b944013cf958ab53a37b1e87edd"
     },
     {
       "path": "styles/base.css",
@@ -509,6 +513,10 @@
     {
       "path": "styles/components/tables.css",
       "sha256": "f36cbd7dff24c47b8ae493f4ea8ff3b13fd99fbe5b64e10fd582c0029b954ef5"
+    },
+    {
+      "path": "styles/components/team-racing.css",
+      "sha256": "84ca61854688995b563f8c873fd7c760cbb96497cf98ae1118ed5aeac79b0f20"
     },
     {
       "path": "styles/components/today-stats-modal.css",
@@ -636,7 +644,7 @@
     },
     {
       "path": "v2-source/pages/core.js",
-      "sha256": "b755fcd9d01907afb850ba69a30f1e272638a7f1df36445a9741f8e3e230e744"
+      "sha256": "d03aed11427c2359b34e474dd7cf4b7d3556e2886e255634e73d06af46f6c07e"
     },
     {
       "path": "v2-source/pages/editorial.js",
@@ -684,7 +692,7 @@
     },
     {
       "path": "v2/home.js",
-      "sha256": "dc7eb8e20620d46cb0bd46b1c12c4d1adf2036c8270f73c82902462bc750a259"
+      "sha256": "147042e59c8e5723be523e698c0f54fa093b600ff8ed681c4914e26a687da80f"
     },
     {
       "path": "v2/mobile-navigation.js",
@@ -692,7 +700,7 @@
     },
     {
       "path": "v2/models.js",
-      "sha256": "641aef27fa2b023bca78456001205b2423d4d6fdd625c1c48848b1e38d0542c3"
+      "sha256": "db6cf272d59ea9382f1a221b3bef55d1273e80f8ba0934f71600a1909bc0e59c"
     },
     {
       "path": "v2/motion.js",
@@ -724,7 +732,7 @@
     },
     {
       "path": "v2/pages/controller.js",
-      "sha256": "a0383a4cd4bc86ba0ddbf8e787b080d1ad4350863aae3646ffb708e1a7ac26da"
+      "sha256": "de41496a19ebd70675fb53d5e1f7501b0f6b893d77b63f74100dbb7884f18da9"
     },
     {
       "path": "v2/pages/data.js",
@@ -744,7 +752,7 @@
     },
     {
       "path": "v2/presentation.js",
-      "sha256": "3c34cd024b49a43f7b201e0a1624715dddfc84fa970ffee9558b1c1eebe7a3e7"
+      "sha256": "2a1baf772034c7728a14af209667ca9a7df51f56e6e724d8dbfaca31e20c457f"
     },
     {
       "path": "v2/profile-races.js",

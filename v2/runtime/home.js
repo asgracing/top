@@ -2,6 +2,7 @@ import { publish, installRuntime } from '/v2/bridge.js?v=20261006v2k';
 import { currentPageLanguageHref, initializeLocalizedPage, localizedPageHref, resolvePageLocale, setPageLocale } from "/src/shared/localized-page.js?v=20261007root1";
 import {loadDriverDirectory} from '/src/shared/driver-directory.js?v=20261022compact1';
 import {hourlySrRequirement} from '/src/features/hourly/entry-requirements.js?v=20261027sr33';
+import { renderTeamRaceSpotlight, teamEntryLabel } from "/src/shared/team-racing-discovery.js?v=20261028team10";
 import { isTeamRace, teamRaceUrl } from "/src/shared/team-racing-client.js?v=20261004teams1";
 import { renderTeamResults } from "/src/shared/team-racing-results-view.js?v=20261013teams3";
 import {decorateRaceHeading,renderResultTabs,installResultTabs,mergeResultContext} from '/src/shared/race-result-context.js?v=20261011racelinks1';
@@ -2980,7 +2981,7 @@ function renderHourlyHeroModal() {
     : "";
 
   contentEl.innerHTML = `
-    <div class="event-details-v2">
+    <div class="event-details-v2${isTeamRace(data) ? " is-team-event" : ""}">
       <div class="event-details-v2-background"></div>
       <div class="event-details-v2-shade"></div>
       <div class="event-details-v2-inner">
@@ -3030,7 +3031,7 @@ function renderHourlyHeroModal() {
   bindHourlyEventDetailsV2(contentEl);
   if (isTeamRace(data)) {
     contentEl.querySelector('.event-details-v2-eyebrow').textContent = currentLang === "ru" ? "КОМАНДНАЯ ГОНКА" : "TEAM RACE";
-    contentEl.querySelector('.event-details-v2-footer').innerHTML = `<a class="event-details-v2-details-link" href="${escapeHtml(teamRaceUrl(data,currentLang))}">${escapeHtml(currentLang === "ru" ? "Заявка команды и составы" : "Team entry and crews")}</a><span>${escapeHtml(currentLang === "ru" ? "Все изменения закрываются за час до открытия сервера. Капитан входит первым." : "All changes close one hour before server opening. The captain joins first.")}</span>`;
+    contentEl.querySelector('.event-details-v2-footer').innerHTML = `<a class="event-details-v2-details-link" href="${escapeHtml(teamRaceUrl(data,currentLang))}">${escapeHtml(currentLang === "ru" ? "Заявка команды и составы" : "Team entry and crews")}</a><span>${escapeHtml(currentLang === "ru" ? "Все изменения закрываются за 10 минут до открытия сервера. Капитан входит первым." : "All changes close 10 minutes before server opening. The captain joins first.")}</span>`;
   }
 }
 function renderHourlyHeroCard() {
@@ -3058,6 +3059,13 @@ function renderHourlyHeroCard() {
   }
 
   const data = hourlyAnnouncementData;
+  cardEl.classList.toggle("is-team-event", isTeamRace(data));
+  if (!document.body.hasAttribute("data-v2")) {
+    let teamSpotlight = document.getElementById("team-race-feature");
+    if(!teamSpotlight){teamSpotlight=document.createElement("div");teamSpotlight.id="team-race-feature";cardEl.before(teamSpotlight);}
+    teamSpotlight.innerHTML=renderTeamRaceSpotlight([data,...(hourlyScheduleData?.items||[])],currentLang);
+    teamSpotlight.hidden=!teamSpotlight.innerHTML;
+  }
   const isChampionship = isHourlyChampionshipEvent(data);
   const specialEvent = getSpecialEventPresentation(data, currentLang);
   const isSpecial = Boolean(specialEvent);
@@ -3157,9 +3165,9 @@ function renderHourlyHeroCard() {
   cardEl.setAttribute("aria-disabled", (!data?.event_id && !data?.track_name) ? "true" : "false");
   if (isTeamRace(data)) {
     votesEl.textContent = currentLang === "ru" ? "Одна команда — одна машина · соло разрешено" : "One team — one car · solo allowed";
-    voteBtn.textContent = currentLang === "ru" ? "Заявка команды" : "Team entry";
+    voteBtn.textContent = teamEntryLabel(data,currentLang);
     voteBtn.disabled = false; unvoteBtn.hidden = true;
-    legalNoteEl.textContent = currentLang === "ru" ? "Регистрация, подтверждения и изменения закрываются за час до открытия сервера." : "Entries, confirmations and changes close one hour before server opening.";
+    legalNoteEl.textContent = currentLang === "ru" ? "Регистрация, подтверждения и изменения закрываются за 10 минут до открытия сервера." : "Entries, confirmations and changes close 10 minutes before server opening.";
   }
   updateTopChampionshipLink();
 
