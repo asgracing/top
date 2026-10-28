@@ -72,7 +72,7 @@
     },
     {
       "path": "scripts/build-v2.mjs",
-      "sha256": "a9ae6e7c2c420c0b7a170bc3dcddee0cc17809a12e4671d9cb69a6f889035022"
+      "sha256": "32080af91434e52f789fa80b8ca7b3404ccb16ec7d9f5208945c1f0a4d745be9"
     },
     {
       "path": "scripts/generate-localized-pages.mjs",
@@ -612,7 +612,7 @@
     },
     {
       "path": "v2-source/home.html",
-      "sha256": "a53c6d1c6b85039737f0d688b1362a5b68aaad44cbf1f54dc81bbe03114164fd"
+      "sha256": "898a37e230772ab30415d918b04cb38b7a195f1ddc16c0cb27e47c05dfc95076"
     },
     {
       "path": "v2-source/pages/archive.js",
@@ -684,7 +684,7 @@
     },
     {
       "path": "v2/home.js",
-      "sha256": "e8197f6fd8772c3274ee1e8e0c0911b1d5c246d1352b5ea62582f56ee03d4e47"
+      "sha256": "dc7eb8e20620d46cb0bd46b1c12c4d1adf2036c8270f73c82902462bc750a259"
     },
     {
       "path": "v2/mobile-navigation.js",
