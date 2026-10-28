@@ -1,3 +1,5 @@
+import {isTeamRace,teamRaceUrl} from '/src/shared/team-racing-client.js?v=20261009teams2';
+import {teamEntryLabel} from '/src/shared/team-racing-discovery.js?v=20261028team10';
 import {eventKind} from './models.js?v=20261006v2k';
 import {hourlySrRequirement} from '/src/features/hourly/entry-requirements.js?v=20261027sr33';
 import {resolveTrackBackgroundFile} from '/src/features/server-status/track-background.js';
@@ -33,7 +35,7 @@ export function createPresentation({$,native,getModel,esc,text,label,date,number
   const detail=(name,value)=>`<div><span>${esc(name)}</span><b>${esc(value??'—')}</b></div>`;
   const name=p=>p.driver||p.name||p.summary?.driver||'—';
   const flatten=p=>({...p?.summary,...p});
-  const kinds={hourly:text('Часовая гонка','Hourly race'),championship:text('Гонка чемпионата','Championship race'),endurance:text('Эндюранс','Endurance'),mono:text('Монокласс','Single model')};
+  const kinds={team:text('Командная гонка','Team race'),hourly:text('Часовая гонка','Hourly race'),championship:text('Гонка чемпионата','Championship race'),endurance:text('Эндюранс','Endurance'),mono:text('Монокласс','Single model')};
   function display(title,html,kind,trigger){stopServerStream();showDialog(title,html,trigger);$('modal').dataset.kind=kind;$('modal-eyebrow').textContent='ASG RACING / '+kind.toUpperCase();$('modal').style.removeProperty('--modal-track')}
   function lapsHtml(p){
     const laps=p.best_laps_by_track||[];
@@ -100,7 +102,7 @@ export function createPresentation({$,native,getModel,esc,text,label,date,number
   }
   const minutes=v=>v==null||v<0?text('Без ограничения','Unlimited'):v+' '+text('мин','min');
   function boolDetail(title,value){return `<div><span>${esc(title)}</span><b class="rule-state ${value==null?'is-unknown':value?'is-yes':'is-no'}">${value==null?'—':`<svg viewBox="0 0 24 24" aria-hidden="true"><path d="${value?'m5 12 4 4L19 6':'m6 6 12 12M18 6 6 18'}"/></svg>${value?text('Да','Yes'):text('Нет','No')}`}</b></div>`}
-  function entryHtml(){if(eventEntry)return eventEntry.html();const m=getModel();return `<button type="button" class="button primary${m.votes.voted?' participation-active':''}" data-event-vote${m.votes.pending||m.voteDisabled?' disabled':''}>${m.votes.pending?text('Сохраняем…','Saving…'):m.votes.voted?text('Ты в списке · отменить','You are registered · cancel'):text('Я хочу поехать!','I want to race!')}</button><span class="participants">${text('Участники','Participants')}: <b>${number(m.votes.count)}</b></span>${m.votes.error?`<span class="v2-error">${text('Не удалось обновить участие. Попробуй ещё раз.','Could not update participation. Try again.')}</span>`:''}`}
+  function entryHtml(){if(eventEntry)return eventEntry.html();const m=getModel();if(isTeamRace(m.announcement))return `<a class="team-race-cta" data-team-cutoff="${esc(m.announcement.closes_at || m.announcement.registration_closes_at)}" data-team-closed="${m.announcement.registration_closed === true}" href="${esc(teamRaceUrl(m.announcement,text('ru','en')))}">${esc(teamEntryLabel(m.announcement,text('ru','en')))}</a><p>${text('Закрытие за 10 минут до открытия сервера. Админы могут участвовать.','Closes 10 minutes before server opening. Admins can participate.')}</p>`;return `<button type="button" class="button primary${m.votes.voted?' participation-active':''}" data-event-vote${m.votes.pending||m.voteDisabled?' disabled':''}>${m.votes.pending?text('Сохраняем…','Saving…'):m.votes.voted?text('Ты в списке · отменить','You are registered · cancel'):text('Я хочу поехать!','I want to race!')}</button><span class="participants">${text('Участники','Participants')}: <b>${number(m.votes.count)}</b></span>${m.votes.error?`<span class="v2-error">${text('Не удалось обновить участие. Попробуй ещё раз.','Could not update participation. Try again.')}</span>`:''}`}
   function openEvent(trigger,event=null,entry=null){
     ++request;const e=event || getModel().announcement;if(!e)return;eventEntry=entry;
     const r=e.rules||{},s=e.session||{},restriction=e.car_restriction||r.car_model||{},server=e.server||{},w=e.weather||{},kind=eventKind(e,restriction.mode==='single_model');

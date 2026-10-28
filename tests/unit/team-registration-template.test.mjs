@@ -6,5 +6,5 @@ test('root release native template includes the current registration form',async
   const template=await read('v1-source/html/hourly/team/index.html'),page=await read('hourly/team/index.html');
   assert.equal(template,page,'The root build must not replace the new app shell with old native markup');
   for(const id of ['workflow-title','registration-state','entry-section','availability','registration-count']) assert.ok(template.includes(`id="${id}"`));
-  assert.match(template,/app\.js\?v=20261025servers1/);
+  assert.match(template,/app\.js\?v=20261028team10/);
 });

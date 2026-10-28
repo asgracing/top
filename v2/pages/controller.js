@@ -1,4 +1,5 @@
 import {bindPagination} from './pagination.js?v=20261015pagination1';
+import {refreshTeamRaceLinks} from '/src/shared/team-racing-discovery.js?v=20261028team10';
 import {createEntityThumbnails} from './entity-thumbnails.js?v=20261008thumbs1';
 import {createInformationViews} from './views/information.js?v=20261007v2pages14';
 import information from './information-content.js?v=20261007v2pages14';
@@ -49,7 +50,7 @@ export async function startPage(api) {
   const route=(name='home',id=null)=>v2Route(paths[name]??name+'/',language)+(id?'?'+(['championship','club','team','article'].includes(name)?'slug':'id')+'='+encodeURIComponent(id):'');
   const eventStart=e=>Date.parse(e.starts_at || `${e.date}T${e.start_time_local || '20:00'}:00+03:00`);
   const eventKind=e=>{const k=resolveKind(e,e.car_restriction?.mode==='single_model');return k==='mono'?'monoclass':k;};
-  const eventKindLabel=k=>({hourly:text('Часовая гонка','Hourly race'),monoclass:text('Монокласс','Single model'),championship:text('Гонка чемпионата','Championship race'),endurance:text('Эндюранс','Endurance')})[k];
+  const eventKindLabel=k=>({hourly:text('Часовая гонка','Hourly race'),team:text('Командная гонка','Team race'),monoclass:text('Монокласс','Single model'),championship:text('Гонка чемпионата','Championship race'),endurance:text('Эндюранс','Endurance')})[k];
   const countdownText=e=>{const seconds=Math.max(0,Math.ceil((eventStart(e)-Date.now())/1000)),days=Math.floor(seconds/86400);return (days?days+text('д ','d '):'')+[Math.floor(seconds%86400/3600),Math.floor(seconds%3600/60),seconds%60].map(n=>String(n).padStart(2,'0')).join(':');};
   const privacy=e=>`${e?.participation_mode==='team'?text('Командная заявка и подтверждения требуют входа через Steam. Участвуя, ты соглашаешься с','Team entries and confirmations require Steam sign-in. By entering, you agree to the'):text('Для голосования используется ID браузера. Участвуя, ты соглашаешься с','Voting uses a browser ID. By entering, you agree to the')} <a href="${route('document','privacy')}">${text('условиями обработки данных','data processing terms')}</a>`;
   const informationViews=createInformationViews({raw,tx:text,label:esc,route,language,section:(title,html)=>`<section class="panel page-panel"><div class="panel-head"><h2>${esc(title)}</h2></div>${html}</section>`});
@@ -283,6 +284,6 @@ export async function startPage(api) {
   // Failed or missing records must not become indexable error pages. Reviews
   // retain their unconditional noindex policy, regardless of loaded data.
   if(siteContext().layout==='root'&&view.querySelector('.r24-error'))document.querySelector('meta[name="robots"]').content='noindex,follow';
-  const tick=()=>{if(document.hidden)return;for(const node of view.querySelectorAll('[data-page-countdown]')){const e=views.eventData(node.dataset.pageCountdown);if(e)node.textContent=countdownText(e);}};
+  const tick=()=>{if(document.hidden)return;refreshTeamRaceLinks(view,language);for(const node of view.querySelectorAll('[data-page-countdown]')){const e=views.eventData(node.dataset.pageCountdown);if(e)node.textContent=countdownText(e);}};
   tick();setInterval(tick,1000);
 }

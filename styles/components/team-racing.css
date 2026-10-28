@@ -1,0 +1,18 @@
+:root { --team-race-color: #ff7a59; }
+.team-race-spotlight {display:flex;align-items:center;justify-content:space-between;gap:24px;padding:22px 24px;margin:0 0 20px;border:1px solid #ff7a5980;border-left:4px solid var(--team-race-color);border-radius:6px;background:linear-gradient(120deg,#372020,#101924);color:#f1f6fc;grid-column:1/-1;min-width:0;}
+.team-race-spotlight h2 {font-size:clamp(24px,3vw,32px);line-height:1.2;margin:8px 0;color:#f1f6fc;}
+.team-race-spotlight p {margin:6px 0;font-size:13px;line-height:1.5;color:#dce3ec;}
+.team-race-spotlight .team-race-deadline,.team-race-eyebrow {color:#ffab94;}
+.team-race-eyebrow {font-size:11px;font-weight:800;letter-spacing:.12em;}
+.team-race-cta {display:inline-flex;align-items:center;justify-content:center;min-height:46px;padding:12px 18px;background:var(--team-race-color);color:#171016!important;border:1px solid var(--team-race-color);border-radius:4px;font-size:14px;font-weight:800;text-align:center;text-decoration:none;line-height:1.4;flex-shrink:0;}
+.team-race-cta:hover {background:#ff9c83;text-decoration:none;}
+.team-race-cta:focus-visible {outline:3px solid #fff;outline-offset:4px;}
+.event-kind.kind-team,.calendar-entry.kind-team,.calendar-legend .kind-team {--kind-color:var(--team-race-color);color:#ffb29e;border-color:var(--team-race-color);background:#ff7a591a;}
+.page-event-card.kind-team {--kind-color:var(--team-race-color);}
+.page-event-card.kind-team .button.primary {background:var(--team-race-color);border-color:var(--team-race-color);color:#171016;}
+body[data-v2] .upcoming-panel[data-event-kind="team"] {border-color:var(--team-race-color);box-shadow:inset 0 3px var(--team-race-color);}
+body[data-v2] .upcoming-panel[data-event-kind="team"] .event-badge {background:var(--team-race-color);color:#171016;border-color:var(--team-race-color);}
+body .hero-hourly-card.is-team-event,body .hourly-upcoming-v2.is-team-event,body .hourly-slot-card-v2.is-team-event,body .calendar-event.is-team-event,body .event-details-v2.is-team-event {border-color:var(--team-race-color);--event-accent:var(--team-race-color);}
+body .is-team-event .event-type-badge:first-child,body .is-team-event .hero-hourly-eyebrow,body .is-team-event .event-details-v2-eyebrow {color:#ffab94;border-color:#ff7a5980;}
+.is-team-event .hourly-v2-details-link,.is-team-event .event-details-v2-details-link {background:var(--team-race-color);color:#171016;border-color:var(--team-race-color);}
+@media(max-width:640px) {.team-race-spotlight {flex-direction:column;align-items:stretch;padding:18px;gap:14px;}.team-race-cta {width:100%;white-space:normal;}}

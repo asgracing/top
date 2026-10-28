@@ -3,8 +3,8 @@ import assert from 'node:assert/strict';
 import {createTeamRacingClient,teamRegistrationOpen,teamRaceUrl} from '../../src/shared/team-racing-client.js';
 import {renderTeamResults,teamSeasonStandings} from '../../src/shared/team-racing-results-view.js';
 
-test('all changes close at the exact hour-before-opening boundary',()=>{
- const event={participation_mode:'team',occurrence_id:'a&b',closes_at:'2099-10-10T15:00:00Z'};
+test('all changes close at the authoritative ten-minute deadline',()=>{
+ const event={participation_mode:'team',occurrence_id:'a&b',launch_at:'2099-10-10T16:00:00Z',closes_at:'2099-10-10T15:50:00Z'};
  const time=Date.parse(event.closes_at);
  assert.equal(teamRegistrationOpen(event,time-1),true);assert.equal(teamRegistrationOpen(event,time),false);
  assert.equal(teamRegistrationOpen({...event,registration_closed:true},time-1),false);

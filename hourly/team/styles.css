@@ -1,8 +1,8 @@
-:root{color-scheme:dark;--bg:#080e16;--line:#52677e66;--muted:#b7c6d8;--text:#f1f6fc;--red:#ff354e;--green:#65e3ad;--gold:#ffd17e;font-family:Inter,"Segoe UI",Arial,sans-serif;background:var(--bg);color:var(--text)}
+:root{color-scheme:dark;--bg:#080e16;--line:#52677e66;--muted:#b7c6d8;--text:#f1f6fc;--red:#ff7a59;--green:#65e3ad;--gold:#ffd17e;font-family:Inter,"Segoe UI",Arial,sans-serif;background:var(--bg);color:var(--text)}
 *{box-sizing:border-box}body{margin:0;background:radial-gradient(ellipse at 80% 0,#17314a66,transparent 65%),var(--bg);font-size:15px;line-height:1.55}
 header{display:flex;justify-content:space-between;align-items:center;gap:20px;flex-wrap:wrap;min-height:66px;padding:10px max(24px,calc((100% - 1440px)/2));border-bottom:1px solid var(--line);background:#0b1420}
 .brand{display:flex;width:208px;flex-shrink:0}.brand img{width:100%;height:40px;object-fit:contain}nav{display:flex;gap:6px;flex-wrap:wrap}nav a{padding:10px 12px;min-height:44px;color:var(--text);border-radius:3px}nav a:hover{background:#25374c}
-a{color:#a5d5ff;text-decoration:none}a:hover{text-decoration:underline}main{max-width:1440px;margin:28px auto;padding:0 24px 50px}.eyebrow{color:#ff8a96;letter-spacing:.14em;font-size:12px;font-weight:800;margin-bottom:8px}
+a{color:#a5d5ff;text-decoration:none}a:hover{text-decoration:underline}main{max-width:1440px;margin:28px auto;padding:0 24px 50px}.eyebrow{color:#ffab94;letter-spacing:.14em;font-size:12px;font-weight:800;margin-bottom:8px}
 h1{font-size:clamp(27px,3vw,40px);line-height:1.2;letter-spacing:-.6px;margin:0 0 20px}h2{font-size:19px;line-height:1.4;margin:0 0 20px}h2::after{content:"";display:block;width:52px;height:3px;background:var(--red);margin-top:10px}h3{font-size:16px;line-height:1.45;margin:0 0 8px}
 section{padding:24px;border:1px solid var(--line);border-radius:4px;background:linear-gradient(130deg,#182638ed,#0e1825f2);min-width:0;overflow-wrap:anywhere}
 .event-context{padding:18px 22px;background:linear-gradient(110deg,#20344be0,#101d2e);border:1px solid var(--line);border-left:3px solid var(--red);border-radius:4px;display:grid;grid-template-columns:minmax(0,1fr) auto;gap:10px 20px}

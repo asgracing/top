@@ -1,5 +1,7 @@
 import {carThumbnailAttributes} from '/src/shared/image-thumbnails.js?v=20261013delivery1';
 import {hourlySrRequirement} from '/src/features/hourly/entry-requirements.js?v=20261027nords1';
+import {renderTeamRaceSpotlight,teamEntryLabel,refreshTeamRaceLinks} from '/src/shared/team-racing-discovery.js?v=20261028team10';
+import {isTeamRace,teamRaceUrl} from '/src/shared/team-racing-client.js?v=20261009teams2';
 import copy from './copy.js?v=20261006v2k';
 import { subscribe, getRuntime } from './bridge.js?v=20261006v2k';
 import {rankingPosition,eventKind,normalizeTablePage,normalizeSafetyRow,paginationPages,serverSrRestriction} from './models.js?v=20261013delivery1';
@@ -131,11 +133,18 @@ function renderWinner(){
   if(race.race_id&&winnerRequest!==race.race_id){winnerRequest=race.race_id;winnerExtra=null;native().hydrateWinner(race).then(extra=>{if(winnerRequest===race.race_id){winnerExtra=extra;renderWinner()}}).catch(()=>{})}
 }
 function renderEvent(){
+  const anchor=document.querySelector('.event-grid');
+  if(anchor&&!isSubpage){
+    let spotlight=$('team-race-feature');
+    if(!spotlight){spotlight=document.createElement('div');spotlight.id='v2-team-race-feature';anchor.before(spotlight);}
+    spotlight.innerHTML=renderTeamRaceSpotlight([model.announcement,...(model.schedule?.items||[])],language);
+    spotlight.hidden=!spotlight.innerHTML;
+  }
   const a=model.announcement,button=$('race-vote');
   if(!a){$('event-track').textContent=model.loading.hourly?text('Загрузка…','Loading…'):text('Расписание обновляется','Schedule is being updated');button.disabled=true;return}
   const kind=eventKind(a,(a.car_restriction||a.rules?.car_model)?.mode==='single_model');
   document.querySelector('.upcoming-panel').dataset.eventKind=kind;
-  $('event-kind').textContent=kind==='mono'?text('Монокласс','Single model'):kind==='championship'?text('Чемпионат','Championship'):kind==='endurance'?text('Эндюранс','Endurance'):text('Часовая гонка','Hourly race');
+  $('event-kind').textContent=kind==='team'?text('Командная гонка','Team race'):kind==='mono'?text('Монокласс','Single model'):kind==='championship'?text('Чемпионат','Championship'):kind==='endurance'?text('Эндюранс','Endurance'):text('Часовая гонка','Hourly race');
   $('event-track').textContent=a.track_name||native().track(a.track_code)||'—';
   $('multiplier').textContent=`×${a.points_multiplier??1} ${text('ОЧКОВ В РЕЙТИНГ','RANKING POINTS')}`;
   motion.run('points',[a.event_id,a.date,a.start_time_local,a.points_multiplier??1]);
@@ -148,11 +157,16 @@ function renderEvent(){
   button.textContent=model.votes.pending?text('Сохраняем…','Saving…'):model.votes.voted?text('Ты в списке · отменить','You are registered · cancel'):text('Я хочу поехать!','I want to race!');
   button.disabled=Boolean(model.votes.pending||model.voteDisabled);button.classList.toggle('participation-active',model.votes.voted);
   $('participation-note').innerHTML=(model.votes.error?`<strong class="v2-error">${text('Не удалось обновить участие. Попробуй ещё раз.','Could not update participation. Try again.')}</strong> `:'')+privacy(a);
+  if(isTeamRace(a)){
+    $('participants').textContent=text('Одна команда — одна машина · админы допущены','One team — one car · admins welcome');
+    button.textContent=teamEntryLabel(a,language);button.disabled=false;button.classList.remove('participation-active');
+    $('participation-note').textContent=text('Регистрация и подтверждения закрываются за 10 минут до открытия сервера.','Entries and confirmations close 10 minutes before server opening.');
+  }
   const file=resolveTrackBackgroundFile(a.track_code);document.querySelector('.upcoming-panel').style.setProperty('--event-image',file?`url('${trackImage(file)}')`:'none');
   updateClock();
   presentation.refreshEntry();
 }
-function updateClock(){if(!model?.targetMs){$('race-countdown').textContent='';return}const seconds=Math.max(0,Math.floor((model.targetMs-Date.now())/1000)),days=Math.floor(seconds/86400);$('race-countdown').textContent=(days?days+text('д ','d '):'')+[Math.floor(seconds/3600)%24,Math.floor(seconds/60)%60,seconds%60].map(v=>String(v).padStart(2,'0')).join(':')}
+function updateClock(){refreshTeamRaceLinks(document,language);if(isTeamRace(model?.announcement))$('race-vote').textContent=teamEntryLabel(model.announcement,language);if(!model?.targetMs){$('race-countdown').textContent='';return}const seconds=Math.max(0,Math.floor((model.targetMs-Date.now())/1000)),days=Math.floor(seconds/86400);$('race-countdown').textContent=(days?days+text('д ','d '):'')+[Math.floor(seconds/3600)%24,Math.floor(seconds/60)%60,seconds%60].map(v=>String(v).padStart(2,'0')).join(':')}
 function serverAdmission(server){
   const restriction=serverSrRestriction(server,model?.auth);if(!restriction)return '';
   const actual=restriction.actual.toFixed(2),required=restriction.required.toFixed(2);
@@ -293,7 +307,7 @@ document.addEventListener('click',event=>{
   if(event.target.closest('[data-close-popover="stream-popover"]'))$('stream-popover').hidePopover();
 });
 $('rating-table').addEventListener('keydown',event=>{const row=event.target.closest('tr[data-row]');if(row&&event.target===row&&row.dataset.row&&['Enter',' '].includes(event.key)){event.preventDefault();presentation.openDriver(rowById(row.dataset.row),row)}});
-$('race-vote').onclick=()=>native().vote();$('prev').onclick=()=>goToPage(page-1);$('next').onclick=()=>goToPage(page+1);
+$('race-vote').onclick=()=>isTeamRace(model.announcement)?location.assign(teamRaceUrl(model.announcement,language)):native().vote();$('prev').onclick=()=>goToPage(page-1);$('next').onclick=()=>goToPage(page+1);
 $('page-jump').onsubmit=event=>{event.preventDefault();goToPage(Number($('page-input').value))};
 let searchTimer;$('search').oninput=()=>{clearTimeout(searchTimer);searchTimer=setTimeout(()=>{page=1;loadTable()},250)};
 $('ranking-track').onchange=event=>{track=event.target.value;page=1;loadTable()};$('ranking-club-type').onchange=event=>{type=event.target.value;page=1;loadTable()};

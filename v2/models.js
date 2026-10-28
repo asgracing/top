@@ -1,4 +1,5 @@
 export function eventKind(event, singleModel = false) {
+  if(event?.participation_mode==='team')return 'team';
   const kind=String(event?.event_type||'').toLowerCase();
   if(kind.includes('endurance')||event?.race_format==='endurance')return 'endurance';
   if(kind.includes('championship')||event?.competition_mode==='championship')return 'championship';

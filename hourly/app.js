@@ -12,6 +12,7 @@ import {
 import { getSpecialEventPresentation, isSpecialEvent } from "../src/features/hourly/special-event.js?v=20260903special1";
 import { formatMoscowDateTime, moscowDateKey, parseAsgTimestamp } from "../src/shared/time.js?v=20260910msk1";
 import { createHourlyVotesClient } from "../src/shared/hourly-votes-client.js?v=20260910security1";
+import { renderTeamRaceSpotlight, teamEntryLabel } from "../src/shared/team-racing-discovery.js?v=20261028team10";
 import { isTeamRace, teamRaceUrl } from "../src/shared/team-racing-client.js?v=20261004teams1";
 import { renderTeamResults } from "../src/shared/team-racing-results-view.js?v=20261013teams3";
 import { safeImageUrl, safeLinkUrl } from "../src/shared/safe-dom.js";
@@ -700,7 +701,7 @@ function eventBadgeLabel(item) {
 function eventBadgeLabels(item) {
   const specialEvent = getSpecialEventPresentation(item, currentLang, announcementData);
   const teamLabel = currentLang === "ru" ? "КОМАНДНАЯ ГОНКА" : "TEAM RACE";
-  if (specialEvent) return isTeamRace(item) ? [specialEvent.badge_label,teamLabel] : [specialEvent.badge_label];
+  if (specialEvent) return isTeamRace(item) ? [teamLabel,specialEvent.badge_label] : [specialEvent.badge_label];
   const labels = isTeamRace(item) ? [teamLabel] : [];
   if (item?.badge_label) labels.push(getLocalizedField(item, "badge_label", item.badge_label));
   else if (isEnduranceEvent(item)) labels.push(t("enduranceBadge"));
@@ -1987,7 +1988,7 @@ function buildScheduleModalDetailsV2(item) {
     buildEventDetailsV2Row(t("modalRandomnessLabel"), escapeHtml(viewModel.weatherRandomness ?? t("modalNotSpecified")), "wind")
   ].join("");
   return `
-    <div class="event-details-v2" data-testid="event-details-modal-v2">
+    <div class="event-details-v2${isTeamRace(item) ? " is-team-event" : ""}" data-testid="event-details-modal-v2">
       <div class="event-details-v2-background"></div>
       <div class="event-details-v2-shade"></div>
       <div class="event-details-v2-inner">
@@ -2425,7 +2426,7 @@ function getHourlyConnectHref(server = {}) {
 function buildParticipationControlsV2(item, options = {}) {
   if (isTeamRace(item)) {
     const cutoff = formatDateTimeLocal(item.registration_closes_at || item.closes_at);
-    return `<div class="hourly-v2-actions-main"><a class="hourly-v2-details-link" href="${escapeHtml(teamRaceUrl(item,currentLang))}">${escapeHtml(currentLang === "ru" ? "Заявка команды и составы" : "Team entry and crews")}</a><span class="hourly-v2-voting-note">${escapeHtml(currentLang === "ru" ? `Командная гонка · закрытие заявок: ${cutoff}` : `Team race · entries close: ${cutoff}`)}</span></div>`;
+    return `<div class="hourly-v2-actions-main"><a class="hourly-v2-details-link" href="${escapeHtml(teamRaceUrl(item,currentLang))}">${escapeHtml(teamEntryLabel(item,currentLang))}</a><span class="hourly-v2-voting-note">${escapeHtml(currentLang === "ru" ? `Командная гонка · закрытие заявок: ${cutoff}` : `Team race · entries close: ${cutoff}`)}</span></div>`;
   }
   const variant = options.variant === "compact" ? "compact" : "hero";
   const showDetails = options.showDetails !== false;
@@ -2545,6 +2546,11 @@ function renderUpcomingHeroV2(data) {
   const specialEvent = getSpecialEventPresentation(data, currentLang, announcementData);
 
   root.classList.toggle("is-special-event", Boolean(specialEvent));
+  root.classList.toggle("is-team-event", isTeamRace(voteItem));
+  let spotlight=document.getElementById("hourly-team-race-feature");
+  if(!spotlight){spotlight=document.createElement("div");spotlight.id="hourly-team-race-feature";root.before(spotlight);}
+  spotlight.innerHTML=renderTeamRaceSpotlight([data,...scheduleItems],currentLang);
+  spotlight.hidden=!spotlight.innerHTML;
   root.dataset.eventType = isEnduranceEvent(data) ? "endurance" : "hourly";
   const specialBadgeEl = document.getElementById("hourly-upcoming-v2-special-badge");
   if (specialBadgeEl) {
@@ -2576,7 +2582,7 @@ function renderUpcomingHeroV2(data) {
       <div class="hourly-v2-footer-side">
         ${buildParticipationControlsV2(voteItem, { showDetails: true })}
       </div>
-      <div class="hourly-v2-voting-note hourly-v2-legal-note">${buildCompactVoteLegalNoteHtml()}</div>
+      <div class="hourly-v2-voting-note hourly-v2-legal-note">${isTeamRace(voteItem) ? escapeHtml(currentLang === "ru" ? "Для заявки и подтверждений нужен вход через Steam." : "Team entries and confirmations require Steam sign-in.") : buildCompactVoteLegalNoteHtml()}</div>
     `;
   }
 
@@ -2684,7 +2690,7 @@ function buildScheduleCardV2(row, index) {
   const specialEvent = getSpecialEventPresentation(row, currentLang, announcementData);
   return `
     <article
-      class="hourly-slot-card-v2 is-interactive-row${isChampionshipEvent(row) ? " is-championship-event" : ""}${isEnduranceEvent(row) ? " is-endurance-event" : ""}${specialEvent ? " is-special-event" : ""}"
+      class="hourly-slot-card-v2 is-interactive-row${isChampionshipEvent(row) ? " is-championship-event" : ""}${isEnduranceEvent(row) ? " is-endurance-event" : ""}${specialEvent ? " is-special-event" : ""}${isTeamRace(row) ? " is-team-event" : ""}"
       data-event-type="${escapeHtml(isEnduranceEvent(row) ? "endurance" : "hourly")}"
       data-schedule-index="${index}"
       tabindex="0"
@@ -2974,7 +2980,7 @@ function renderCalendar(scheduleRows, raceRows = calendarRaceItems) {
       const specialEvent = getSpecialEventPresentation(row, currentLang, announcementData);
       return `
         <button
-          class="calendar-event${isFinished ? " is-finished" : ""}${isChampionshipEvent(row) ? " is-championship-event" : ""}${isEnduranceEvent(row) ? " is-endurance-event" : ""}${specialEvent ? " is-special-event" : ""}"
+          class="calendar-event${isFinished ? " is-finished" : ""}${isChampionshipEvent(row) ? " is-championship-event" : ""}${isEnduranceEvent(row) ? " is-endurance-event" : ""}${specialEvent ? " is-special-event" : ""}${isTeamRace(row) ? " is-team-event" : ""}"
           type="button"
           data-calendar-index="${index}"
           style="--calendar-track-photo: ${backgroundUrl ? `url('${escapeHtml(backgroundUrl)}')` : "none"};"
