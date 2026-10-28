@@ -20,7 +20,7 @@ if (process.env.ASG_V2_PRESENTATION_ONLY === '1') throw Error('Presentation-only
 const version = '20261006v2k';
 const runtimeVersion = '20261027mainsr20';
 const presentationVersion = '20261027weather1';
-const homeStylesVersion = '20261028trackguide1';
+const homeStylesVersion = '20261028trackguide2';
 const bootVersion = '20261028trackguide1';
 const legalVersion = '20261008metrika2';
 const buildInputs = new Map();
