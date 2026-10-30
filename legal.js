@@ -12,11 +12,16 @@
   const PRIVACY_URL = `${LEGAL_BASE_PATH}privacy/`;
   const COOKIES_URL = `${LEGAL_BASE_PATH}cookies/`;
   const METRIKA_SRC = "https://mc.yandex.ru/metrika/tag.js";
+  const pageRoute = location.pathname.replace(/^\/(?:v2\/)?(?:ru|en)(?=\/|$)/, "").replace(/\/index\.html$/, "/") || "/";
+  const privatePage = /^\/(?:account|moderation|portal-ops|asg-lab|overlay)(?:\/|$)/.test(pageRoute);
+  const rawSection = pageRoute.split("/").filter(Boolean)[0] || "home";
+  const analyticsSection = ["home", "hourly", "servers", "races", "race", "driver", "teams", "clubs", "championships", "cars", "fun-stats", "bans", "news", "community", "about", "instructions", "join", "documents", "privacy", "cookies"].includes(rawSection) ? rawSection : "other";
   const METRIKA_OPTIONS = {
-    clickmap: true,
-    trackLinks: true,
+    clickmap: !privatePage,
+    trackLinks: !privatePage,
     accurateTrackBounce: true,
-    webvisor: true
+    webvisor: !privatePage,
+    params: { asg: { schema: 1, section: analyticsSection, language: document.documentElement.lang.startsWith("en") ? "en" : "ru" } }
   };
   const LEGAL_PAGE_TEXTS = {
     cookies: {
@@ -105,7 +110,7 @@
     }
   };
 
-  let metrikaLoaded = false;
+  let metrikaInitQueued = false;
   let sessionConsent = null;
   const metrikaDebug = ["1", "2"].includes(new URLSearchParams(location.search).get("_ym_debug"));
   let metrikaScriptState = "idle";
@@ -403,14 +408,24 @@
   }
 
   function initMetrika() {
-    if (metrikaLoaded || !METRIKA_ID) return;
+    if (!METRIKA_ID || !readConsent()?.analytics) return;
 
-    window.ym =
-      window.ym ||
-      function () {
-        (window.ym.a = window.ym.a || []).push(arguments);
-      };
-    window.ym.l = Number(new Date());
+    if (!metrikaInitQueued) {
+      window.ym =
+        window.ym ||
+        function () {
+          (window.ym.a = window.ym.a || []).push(arguments);
+        };
+      window.ym.l = Number(new Date());
+      window.ym(METRIKA_ID, "init", { ...METRIKA_OPTIONS });
+      metrikaInitQueued = true;
+    }
+
+    // Retain the queued initialization when a blocked/failed request is retried.
+    // Repeated acceptance or clicks while loading must not create another tag.
+    if (metrikaScriptState === "error") {
+      [...document.scripts].filter(script => script.src === METRIKA_SRC).forEach(script => script.remove());
+    }
 
     if (![...document.scripts].some(script => script.src === METRIKA_SRC)) {
       const metrikaScript = document.createElement("script");
@@ -427,9 +442,6 @@
       });
       document.head.appendChild(metrikaScript);
     }
-
-    window.ym(METRIKA_ID, "init", { ...METRIKA_OPTIONS });
-    metrikaLoaded = true;
   }
 
   function updateMetrikaDiagnostic() {
@@ -441,12 +453,14 @@
       registered = Boolean(window.Ya?.Metrika2?.counters?.().some(counter => Number(counter.id) === METRIKA_ID));
     } catch { /* A failed vendor script is reported below. */ }
     const states = en
-      ? {idle: "not requested", loading: "loading", loaded: "loaded", error: "failed to load; check browser blocking"}
-      : {idle: "не запрошен", loading: "загружается", loaded: "загружен", error: "ошибка загрузки; проверь блокировку в браузере"};
+      ? {idle: "not requested", loading: "loading", loaded: "loaded", error: "failed to load: blocking or a network error"}
+      : {idle: "не запрошен", loading: "загружается", loaded: "загружен", error: "ошибка загрузки: блокировка или сбой сети"};
     const status = metrikaDiagnostic.querySelector("[data-metrika-status]");
     status.textContent = en
       ? `Counter: ${METRIKA_ID || "missing ID"}\nAnalytics consent: ${consent ? "allowed" : "not allowed"}\nYandex script: ${states[metrikaScriptState]}\nCounter registered: ${registered ? "yes" : "no"}`
       : `Счётчик: ${METRIKA_ID || "нет номера"}\nСогласие на аналитику: ${consent ? "есть" : "нет"}\nСкрипт Яндекса: ${states[metrikaScriptState]}\nСчётчик зарегистрирован: ${registered ? "да" : "нет"}`;
+    const retry = metrikaDiagnostic.querySelector("[data-metrika-retry]");
+    if (retry) retry.hidden = !consent || metrikaScriptState !== "error";
   }
 
   function showMetrikaDiagnostic() {
@@ -463,16 +477,26 @@
     status.dataset.metrikaStatus = "";
     status.style.cssText = "white-space:pre-line;margin:8px 0";
     status.setAttribute("role", "status");
-    panel.append(title, status);
-    for (const [label, action] of [
+    const help = document.createElement("p");
+    help.style.cssText = "margin:8px 0";
+    help.textContent = en
+      ? "ASG checks the script loading here. Check goals and Session Replay in the Yandex debugger using its button at the bottom right."
+      : "Здесь ASG проверяет загрузку скрипта. Цели и Вебвизор проверяются в отладчике Яндекса — его кнопка справа внизу.";
+    panel.append(title, status, help);
+    for (const [label, action, retry] of [
       [en ? "Cookie settings" : "Настройки cookies", () => showBanner(true)],
       [en ? "Refresh status" : "Обновить статус", updateMetrikaDiagnostic],
-      [en ? "Close" : "Закрыть", () => panel.remove()]
+      [en ? "Close" : "Закрыть", () => panel.remove()],
+      [en ? "Retry loading" : "Повторить загрузку", () => {
+        initMetrika();
+        updateMetrikaDiagnostic();
+      }, true]
     ]) {
       const button = document.createElement("button");
       button.type = "button";
       button.textContent = label;
       button.style.cssText = "padding:5px 8px;margin:4px 4px 0 0;background:#263f54;color:#eaf2fa;border:1px solid #69859c;border-radius:4px;font:inherit;cursor:pointer";
+      if (retry) button.dataset.metrikaRetry = "";
       button.addEventListener("click", action);
       panel.append(button);
     }
@@ -694,9 +718,56 @@
     }
   };
 
+  // Stable events shared by dynamically rendered RU/EN pages. Payloads contain
+  // categories only: never form values, pilot names/IDs, queries or auth data.
+  const analyticsGoals = new Set([
+    "asg_track_guide_open", "asg_tour_open", "asg_rules_open",
+    "asg_server_details_open", "asg_race_interest_click", "asg_stats_interaction",
+    "asg_profile_open", "asg_social_click", "asg_donation_click", "asg_setup_click"
+  ]);
+  function trackSiteGoal(goal, category = "general") {
+    if (privatePage || !analyticsGoals.has(goal) || !readConsent()?.analytics || !metrikaInitQueued) return;
+    // Drop events while blocked instead of building an unbounded offline queue.
+    if (metrikaScriptState !== "loaded") return;
+    const allowedCategory = /^[a-z][a-z0-9_-]{0,30}$/.test(category) ? category : "general";
+    try {
+      window.ym(METRIKA_ID, "reachGoal", goal, {
+        asg: { schema: 1, section: analyticsSection, language: getLanguage(), category: allowedCategory }
+      });
+    } catch { /* Analytics must never interrupt navigation or participation. */ }
+  }
+
+  document.addEventListener("click", event => {
+    const target = event.target.closest?.("a, button, summary, [role='button'], [role='tab'], [data-row]");
+    if (!target || target.matches(":disabled, [aria-disabled='true']")) return;
+    const modal = target.dataset.modal;
+    if (modal === "announce1") trackSiteGoal("asg_track_guide_open", "monza_mustang");
+    else if (modal === "rules" || target.matches("[data-rules-open]")) trackSiteGoal("asg_rules_open");
+    else if (target.matches("[data-tour-start]")) trackSiteGoal("asg_tour_open");
+    else if (target.matches("[data-server]")) trackSiteGoal("asg_server_details_open");
+    else if (target.matches("#v2-race-vote, [data-event-vote], [data-page-join]")) {
+      // This is an intent, not a successful registration. Exclude cancellation.
+      if (!target.matches(".participation-active, .is-voted, [aria-pressed='true']")) trackSiteGoal("asg_race_interest_click");
+    } else if (target.matches("[data-tab], [data-ranking-nav]")) {
+      const category = target.dataset.tab || target.dataset.rankingNav;
+      if (["leaderboard", "bestlaps", "safety", "clubs"].includes(category)) trackSiteGoal("asg_stats_interaction", category);
+    } else if (target.matches("[data-row]")) trackSiteGoal("asg_profile_open", "ranking");
+
+    if (target.tagName !== "A") return;
+    let url;
+    try { url = new URL(target.href, location.href); } catch { return; }
+    if (!/^https?:$/.test(url.protocol)) return;
+    const host = url.hostname.replace(/^www\./, "");
+    const networks = { "discord.gg": "discord", "discord.com": "discord", "t.me": "telegram", "youtube.com": "youtube", "youtu.be": "youtube", "twitch.tv": "twitch", "tiktok.com": "tiktok", "vk.com": "vk", "vk.ru": "vk" };
+    if (networks[host]) trackSiteGoal("asg_social_click", networks[host]);
+    else if (host === "donationalerts.com") trackSiteGoal("asg_donation_click");
+    else if (host === "drive.google.com" && target.closest(".track-guide-links")) trackSiteGoal("asg_setup_click", "monza_mustang");
+    else if (url.origin === location.origin && /^\/(?:en\/|ru\/)?driver\/$/.test(url.pathname)) trackSiteGoal("asg_profile_open", "link");
+  }, true);
+
   document.addEventListener("click", event => {
     const banner = event.target.closest?.("a.home-partner-banner, a[data-home-partner], a[data-home-ad]");
-    if (!banner || !readConsent()?.analytics || !metrikaLoaded) return;
+    if (!banner || !readConsent()?.analytics || !metrikaInitQueued) return;
     const destination = new URL(banner.href, location.href);
     if (destination.hostname !== "dudarevmotorsport.ru") return;
     window.ym(METRIKA_ID, "reachGoal", "dudarev_banner_click", {

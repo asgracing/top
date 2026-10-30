@@ -22,7 +22,7 @@ const runtimeVersion = '20261028team10';
 const presentationVersion = '20261028team10';
 const homeStylesVersion = '20261028team10';
 const bootVersion = '20261028team10';
-const legalVersion = '20261008metrika2';
+const legalVersion = '20261030analytics1';
 const buildInputs = new Map();
 const hash = value => createHash('sha256').update(value.replace(/\r\n/g,'\n')).digest('hex');
 const record = (path, value) => { buildInputs.set(path, hash(value)); return value; };
