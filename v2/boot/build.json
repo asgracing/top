@@ -7,32 +7,36 @@
       "bytes": 5715
     },
     {
-      "path": "/v2/boot/chunks/account-ROSGXPMU.js",
-      "bytes": 334
+      "path": "/v2/boot/chunks/account-UUX2FGO4.js",
+      "bytes": 362
     },
     {
-      "path": "/v2/boot/chunks/account-V2AN4RCF.js",
-      "bytes": 17546
+      "path": "/v2/boot/chunks/account-KQQXB7J2.js",
+      "bytes": 17707
     },
     {
-      "path": "/v2/boot/chunks/chunk-5HOBSLIT.js",
-      "bytes": 112762
+      "path": "/v2/boot/chunks/chunk-ZXMBZ5Z3.js",
+      "bytes": 123686
     },
     {
-      "path": "/v2/boot/chunks/moderation-page-57AJXVYF.js",
+      "path": "/v2/boot/chunks/moderation-page-3FYWIDLA.js",
       "bytes": 32156
     },
     {
-      "path": "/v2/boot/chunks/portal-ops-page-3MQNEAZU.js",
+      "path": "/v2/boot/chunks/portal-ops-page-DKUDVEBL.js",
       "bytes": 36093
     },
     {
-      "path": "/v2/boot/chunks/control-7ESVUEO5.js",
+      "path": "/v2/boot/chunks/control-PMXKZDQN.js",
       "bytes": 45917
     },
     {
-      "path": "/v2/boot/chunks/controller-WZRUDP2S.js",
-      "bytes": 328708
+      "path": "/v2/boot/chunks/controller-LRXMX4NP.js",
+      "bytes": 329657
+    },
+    {
+      "path": "/v2/boot/chunks/chunk-7X5AMYF3.js",
+      "bytes": 2527
     },
     {
       "path": "/v2/boot/chunks/rules-view-OL2U7L3F.js",
@@ -63,7 +67,7 @@
       "bytes": 2253
     },
     {
-      "path": "/v2/boot/chunks/home-BC4KHANK.js",
+      "path": "/v2/boot/chunks/home-3UVWJJM5.js",
       "bytes": 492945
     },
     {
@@ -75,8 +79,8 @@
       "bytes": 5087
     },
     {
-      "path": "/v2/boot/chunks/chunk-ARGRN2TY.js",
-      "bytes": 36127
+      "path": "/v2/boot/chunks/chunk-XEEMZYOS.js",
+      "bytes": 36248
     },
     {
       "path": "/v2/boot/chunks/chunk-2QHMEH4Q.js",
@@ -163,8 +167,8 @@
       "bytes": 108
     },
     {
-      "path": "/v2/boot/chunks/personal-notifications-2PIPKMFX.js",
-      "bytes": 17862
+      "path": "/v2/boot/chunks/personal-notifications-NB3F66O7.js",
+      "bytes": 20395
     },
     {
       "path": "/v2/boot/chunks/chunk-URQU4KFY.js",

@@ -72,7 +72,7 @@
     },
     {
       "path": "scripts/build-v2.mjs",
-      "sha256": "9c3422c2445f95e698d25376a16662ab6c6a61dd63539dc68ee78bd503ed3ac7"
+      "sha256": "8792a355cbb3da40800507397b2b9dfea428f0516c5e830f82abada7cb23def0"
     },
     {
       "path": "scripts/generate-localized-pages.mjs",
@@ -104,11 +104,11 @@
     },
     {
       "path": "src/features/auth/header-auth.js",
-      "sha256": "fe572fbe9b33a445745011a91bd4db8916254749b04308e10cd5bca92c0b000e"
+      "sha256": "4b9e998c0d54b4d10b364a44057da8a8c790e1ca0dcfa112215235608bf58497"
     },
     {
       "path": "src/features/auth/personal-notifications.js",
-      "sha256": "ef684506ea2812b2fba5384db33a6be7e6b01f3f9cad827205f425002c372b46"
+      "sha256": "8750a1471856969528f9b2542036a4d8ba55b9a2cd0b808a4f7c223da723202a"
     },
     {
       "path": "src/features/hourly/announcement-model.js",
@@ -180,7 +180,7 @@
     },
     {
       "path": "src/pages/account/account.js",
-      "sha256": "42a9774cd1d6f39ebc786c5f61b72e3a44d082cac64fc765546da6d0c69d2f64"
+      "sha256": "b215ac07b992bd172e4494673acd8dfd9d73fd3a29a60cf2dd36d16f99d5465c"
     },
     {
       "path": "src/pages/account/clubs-teams-command-model.js",
@@ -193,6 +193,10 @@
     {
       "path": "src/pages/account/pilot-search-model.js",
       "sha256": "7c201f0cda7b66f0f8ac7dbe28cc5fba258b2c3305a3b3880f95e6e0b8535c36"
+    },
+    {
+      "path": "src/pages/account/race-number-picker.js",
+      "sha256": "1e24be6e181a36054b8ad0cb1fa8e57978998b9b609c528c04d8d79267a53060"
     },
     {
       "path": "src/pages/cars/model.js",
@@ -349,6 +353,10 @@
     {
       "path": "src/shared/query-cache.js",
       "sha256": "bdf7cdab4436b15579a3aa9a30c30dacfd470071fb616916c9f70409b561729e"
+    },
+    {
+      "path": "src/shared/race-number-validity.js",
+      "sha256": "12bc3f6ae3ad0e02edac82379384c8810eb7d56169d53b6d4bf16bd944ee424c"
     },
     {
       "path": "src/shared/race-result-context.js",
@@ -692,7 +700,7 @@
     },
     {
       "path": "v2/header.js",
-      "sha256": "6ee8ebe7c6ef610355996fb9e44caad74385ea54c30df0add55bec3c4d665fc2"
+      "sha256": "9d32d92de8108d3ebc247251bfea708df2e72539942811a71ee5126231bbeb68"
     },
     {
       "path": "v2/home.js",
@@ -716,7 +724,7 @@
     },
     {
       "path": "v2/pages/account.js",
-      "sha256": "ed342f5b8966c3231cf28eba5d524ae270a65076b79c56220a1054b3102242f0"
+      "sha256": "5513dbe7f4947745d30e1ebdf51e27afd2e66959adf0a1e01f23624cf7dc3fe0"
     },
     {
       "path": "v2/pages/bans-model.js",
@@ -732,11 +740,11 @@
     },
     {
       "path": "v2/pages/control.js",
-      "sha256": "6b289dee5d4a2bc3eccfdc10fbd472fb1c9f7d9dcfef1fc5611c69b2c0b09d90"
+      "sha256": "0a831e7de7195acf8d972a1a3600def104013a27d8dd64c14b8e2121ddfa23a6"
     },
     {
       "path": "v2/pages/controller.js",
-      "sha256": "47a9a817c7b037f9a1125d4e766b5c8293ef30e8a4b05fb7206016c12e8bf4ca"
+      "sha256": "323425c34ffb47e7cbeb4015c92c4783c73c2d1d3a24d15ef877e38c4549f220"
     },
     {
       "path": "v2/pages/data.js",
