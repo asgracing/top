@@ -72,7 +72,7 @@
     },
     {
       "path": "scripts/build-v2.mjs",
-      "sha256": "50b2e2c20c37a7c734f7b183eb1f53aa88cb08987fcd1f0746c2305f5886a017"
+      "sha256": "9c3422c2445f95e698d25376a16662ab6c6a61dd63539dc68ee78bd503ed3ac7"
     },
     {
       "path": "scripts/generate-localized-pages.mjs",
@@ -644,7 +644,7 @@
     },
     {
       "path": "v2-source/pages/core.js",
-      "sha256": "d03aed11427c2359b34e474dd7cf4b7d3556e2886e255634e73d06af46f6c07e"
+      "sha256": "4558f2d68f35388ef5467f7dcadda4eab982a34f925de1ce92458cfeba50ec54"
     },
     {
       "path": "v2-source/pages/editorial.js",
@@ -668,7 +668,7 @@
     },
     {
       "path": "v2-source/pages/pages.css",
-      "sha256": "bcdd9f54714cf15936927d0e4621f6193cb41ef56221cf8831e528b1ffd255ca"
+      "sha256": "9d4a0f8170172bb81d325b67b58ecd7e010a9f1c379471f532c2dcc1ccb3f478"
     },
     {
       "path": "v2-source/pages/r24-pages.css",
@@ -683,6 +683,10 @@
       "sha256": "9748c3c55f9f88bd964f457ed0d5778049d9a7a008e063e6a2df842541e327db"
     },
     {
+      "path": "v2/driver-safety-model.js",
+      "sha256": "8dccd9d2dbee5ca5c96a80e68138d8cb11c0f5e94f545cda8b65416abf1f17ea"
+    },
+    {
       "path": "v2/guide.js",
       "sha256": "544744ce8e66b2f7c971e731c557e953879ec32164ca6ccb9f2a225f065546c2"
     },
@@ -692,7 +696,7 @@
     },
     {
       "path": "v2/home.js",
-      "sha256": "147042e59c8e5723be523e698c0f54fa093b600ff8ed681c4914e26a687da80f"
+      "sha256": "317878c62c67bd763e6d8c212dbb82d17371d59740510ee0cc5736417efe2108"
     },
     {
       "path": "v2/mobile-navigation.js",
@@ -732,11 +736,15 @@
     },
     {
       "path": "v2/pages/controller.js",
-      "sha256": "de41496a19ebd70675fb53d5e1f7501b0f6b893d77b63f74100dbb7884f18da9"
+      "sha256": "47a9a817c7b037f9a1125d4e766b5c8293ef30e8a4b05fb7206016c12e8bf4ca"
     },
     {
       "path": "v2/pages/data.js",
       "sha256": "8cd21fe66be9ba708342f58607a0deb51c76d863a2f0870ea675346c82e6d5d7"
+    },
+    {
+      "path": "v2/pages/driver-safety.js",
+      "sha256": "b0b4c89baea6101132cf67373d93215cb197f55ee571218080283197e8c0a599"
     },
     {
       "path": "v2/pages/editorial-model.js",
