@@ -1,6 +1,6 @@
 import { createHttpClient } from "../../shared/http-client.js";
 
-const TYPES = new Set(["strike.issued", "strike.revoked", "ban.issued", "ban.revoked", "race_number.approved", "race_number.rejected", "invitation.club", "invitation.team"]);
+const TYPES = new Set(["strike.issued", "strike.revoked", "ban.issued", "ban.revoked", "race_number.approved", "race_number.rejected", "race_number.expiring", "race_number.expired", "invitation.club", "invitation.team"]);
 const COPY = {
   ru: {
     title: "Уведомления", personal: "Личные", news: "Новости", close: "Закрыть", empty: "Личных уведомлений пока нет.",
@@ -10,6 +10,10 @@ const COPY = {
     expires: "Действует до", sender: "Пригласил", strikes: "Активных страйков", number: "Номер", details: "Подробнее",
     "strike.issued": "Вам выдан страйк", "strike.revoked": "Ваш страйк снят", "ban.issued": "Вам выдан бан", "ban.revoked": "Ваш бан снят",
     "race_number.approved": "Ваш гоночный номер одобрен", "race_number.rejected": "Заявка на номер отклонена",
+    "race_number.expiring": "Гоночный номер скоро освободится", "race_number.expired": "Гоночный номер освобождён",
+    numberKeep: "Зайдите на игровой сервер ASG до указанной даты, чтобы сохранить номер. Вход на сайт срок не продлевает.",
+    numberRelease: "Дата отвязки", numberInactive: "Это предупреждение больше не действует.",
+    numberReleased: "Номер отвязан после 60 дней без захода на игровой сервер. Теперь можно выбрать свободный номер.",
     "invitation.club": "Приглашение в клуб", "invitation.team": "Приглашение в команду",
     rule_violation: "Нарушение правил", unsportsmanlike: "Неспортивное поведение", intentional_crash: "Преднамеренное столкновение",
     dangerous_driving: "Опасное вождение", disrespect: "Неуважительное поведение", strike_limit: "Три активных страйка",
@@ -23,6 +27,10 @@ const COPY = {
     expires: "Available until", sender: "Invited by", strikes: "Active strikes", number: "Number", details: "Details",
     "strike.issued": "You received a strike", "strike.revoked": "Your strike was removed", "ban.issued": "You were banned", "ban.revoked": "Your ban was removed",
     "race_number.approved": "Your race number was approved", "race_number.rejected": "Your number request was rejected",
+    "race_number.expiring": "Your race number will be released soon", "race_number.expired": "Your race number was released",
+    numberKeep: "Join an ASG game server before the date below to keep your number. Signing into the website does not extend it.",
+    numberRelease: "Release date", numberInactive: "This warning is no longer active.",
+    numberReleased: "Your number was released after 60 days without visiting a game server. You can now choose a free number.",
     "invitation.club": "Club invitation", "invitation.team": "Team invitation",
     rule_violation: "Rule violation", unsportsmanlike: "Unsportsmanlike conduct", intentional_crash: "Intentional collision",
     dangerous_driving: "Dangerous driving", disrespect: "Disrespectful conduct", strike_limit: "Three active strikes",
@@ -45,13 +53,14 @@ export function normalizeNotifications(raw) {
 
 export function notificationTarget(item, driverId, lang = "ru") {
   if (item.type.startsWith("strike.") || item.type.startsWith("ban.")) return `/${lang}/driver/?id=${encodeURIComponent(publicId(driverId))}`;
+  if (item.type === 'race_number.expiring' || item.type === 'race_number.expired') return `${lang === 'en' ? '/en' : ''}/account/settings/`;
   return "/account/";
 }
 
 export function createPersonalNotifications({ documentRef, windowRef, fetchImpl, authBaseUrl, buttonRef = null, newsProvider = null }) {
   if (!documentRef.querySelector("link[data-personal-notifications-style]")) {
     const style = documentRef.createElement("link"); style.rel = "stylesheet";
-    style.href = new URL("../../../styles/components/personal-notifications.css?v=20261011notifications1", import.meta.url).href;
+    style.href = "/styles/components/personal-notifications.css?v=20261011notifications1";
     style.dataset.personalNotificationsStyle = "true"; documentRef.head.append(style);
   }
   const client = createHttpClient({ fetchImpl, defaultTimeoutMs: 8000 });
@@ -121,12 +130,14 @@ export function createPersonalNotifications({ documentRef, windowRef, fetchImpl,
       const d = item.details;
       if (d.name) card.append(element("p", "", d.name));
       if (d.number !== null) card.append(element("p", "", `${t("number")} #${d.number}`));
+      if (item.type === 'race_number.expiring') card.append(element('p', '', t(item.actionable ? 'numberKeep' : 'numberInactive')));
+      if (item.type === 'race_number.expired') card.append(element('p', '', t('numberReleased')));
       if (d.reasonCode) card.append(element("p", "personal-notification-reason", t(d.reasonCode)));
       const reason = d.removalComment || d.comment || d.reason;
       if (reason) card.append(element("p", "personal-notification-reason", reason));
       if (d.strikes !== null) card.append(element("p", "", `${t("strikes")}: ${d.strikes}`));
       if (d.senderId) { const sender = element("a", "personal-notification-sender", `${t("sender")}: ${d.sender || d.senderId}`); sender.href = profileLink(d.senderId); card.append(sender); }
-      if (d.expires) card.append(element("p", "personal-notification-time", `${t("expires")}: ${date(d.expires)}`));
+      if (d.expires) card.append(element("p", "personal-notification-time", `${t(item.type === 'race_number.expiring' ? 'numberRelease' : 'expires')}: ${date(d.expires)}`));
       if (item.type.startsWith("invitation.") && !item.actionable) card.append(element("p", "personal-notification-inactive", t("inactive")));
       const actions = element("div", "personal-notification-actions");
       const readButton = element("button", "personal-notifications-text-button", t("readOne")); readButton.type = "button"; readButton.disabled = busy;

@@ -1,0 +1,13 @@
+.race-number-picker { margin-top: 24px; min-width: 0; }
+.race-number-picker h3 { margin: 0 0 8px; }
+.race-number-picker-tools, .race-number-picker-filters { display: flex; flex-wrap: wrap; gap: 8px; margin: 12px 0; }
+.race-number-picker-tools input { flex: 1 1 180px; width: 100%; min-width: 0; box-sizing: border-box; padding: 10px 12px; color: inherit; background: rgba(255,255,255,.04); border: 1px solid rgba(255,255,255,.2); border-radius: 8px; font: inherit; }
+#race-number-picker .race-number-picker-filters [aria-pressed="true"] { border-color: #dfed5a; color: #dfed5a; }
+.race-number-picker-grid { display: grid; grid-template-columns: repeat(auto-fill,minmax(76px,1fr)); gap: 8px; max-height: 310px; overflow-y: auto; padding: 3px; margin: 12px 0; }
+#race-number-picker .race-number-choice { min-height: 56px; min-width: 0; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 4px; padding: 7px 3px; border-radius: 8px; border: 1px solid #42866b; background: rgba(66,134,107,.12); color: #c0f0d9; font: inherit; cursor: pointer; }
+.race-number-choice small { font-size: 10px; line-height: 1.2; }
+#race-number-picker .race-number-choice:disabled { cursor: default; opacity: .8; }
+#race-number-picker .race-number-choice[data-number-status="assigned"] { border-color: #656b78; background: rgba(101,107,120,.1); color: #b2b8c5; }
+#race-number-picker .race-number-choice[data-number-status="pending"], #race-number-picker .race-number-choice[data-number-status="ownPending"] { border-color: #a48142; background: rgba(164,129,66,.12); color: #f0ce94; }
+#race-number-picker .race-number-choice[data-number-status="own"], #race-number-picker .race-number-choice[aria-pressed="true"] { border-color: #dfed5a; color: #dfed5a; background: rgba(223,237,90,.1); }
+.race-number-choice:focus-visible, .race-number-picker button:focus-visible, .race-number-picker input:focus-visible { outline: 2px solid #dfed5a; outline-offset: 2px; }

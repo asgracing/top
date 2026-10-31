@@ -215,6 +215,8 @@ export function normalizeAuthPayload(payload) {
         }
       : null,
     canChange: rawPreferences.can_change === true,
+    expiresAt: rawPreferences.retention?.activity_verified === true
+      ? safeText(rawPreferences.retention.expires_at, 64) || null : null,
     nextChangeAt: safeText(rawPreferences.next_change_at, 64) || null,
     blockedReason: ["driver_banned", "driver_profile_required"].includes(rawPreferences.blocked_reason)
       ? rawPreferences.blocked_reason
@@ -326,7 +328,7 @@ export function createAuthHeaderController({
     if (personalNotifications) personalNotifications.update(auth, root);
     else if (auth?.authenticated && !inboxLoading) {
       inboxLoading = true;
-      void import("./personal-notifications.js?v=20261011notifications1").then(({ createPersonalNotifications }) => {
+      void import("./personal-notifications.js?v=20261031numbers1").then(({ createPersonalNotifications }) => {
         if (destroyed) return;
         personalNotifications = createPersonalNotifications({ documentRef, windowRef, fetchImpl, authBaseUrl: baseUrl });
         personalNotifications.update(state.status === "ready" ? state.auth : null, root);

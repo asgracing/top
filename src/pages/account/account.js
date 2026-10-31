@@ -1,4 +1,4 @@
-import { createAuthHeaderController } from "../../features/auth/header-auth.js?v=20261011notifications1";
+import { createAuthHeaderController } from "../../features/auth/header-auth.js?v=20261031numbers1";
 import { createHttpClient } from "../../shared/http-client.js";
 import { applyLocalizedNavigation, currentPageLanguageHref, resolvePageLocale, setPageLocale } from "../../shared/localized-page.js?v=20261007root1";
 import { resolveRuntimeOverride } from "../../shared/runtime-config.js";
@@ -22,6 +22,7 @@ import {
 import { loadPilotIndex, searchPilots } from "./pilot-search-model.js?v=20261022compact1";
 import { canUploadEntityLogo, inspectLogoFile, LogoUploadError, normalizeAssetResponse } from "./logo-upload-model.js?v=20260813logo2";
 import { mountDriverOverlayManager } from "../../../account/driver-overlay.js?v=20260927overlay1";
+import { mountRaceNumberPicker } from "./race-number-picker.js?v=20261031retention1";
 
 const AUTH_BASE_URL = "https://auth.asgracing.ru";
 const COPY = {
@@ -186,6 +187,8 @@ const COPY = {
     titleSaved: "Driver title updated.",
     titleFailed: "The selected title is no longer available. Refresh achievements and try again.",
     numberHelp: "Choose a globally unique number from 1 to 999. A new assignment must be approved.",
+    numberRetention: "Your number is released after 60 days without visiting an ASG game server. Checks run daily at 00:00 MSK. A bell notification warns you at least 3 days before release. Join a server to keep your number; signing into the website does not extend it.",
+    numberExpires: value => `Without another server visit, your number will be released on ${value}.`,
     numberLabel: "New number (1–999)",
     submit: "Submit request",
     cancel: "Cancel request",
@@ -371,6 +374,8 @@ const COPY = {
     titleSaved: "Звание пилота обновлено.",
     titleFailed: "Выбранное звание больше недоступно. Обновите достижения и попробуйте снова.",
     numberHelp: "Выберите глобально уникальный номер от 1 до 999. Новое назначение подтверждается вручную.",
+    numberRetention: "Номер освобождается после 60 дней без захода на игровой сервер ASG. Проверка — ежедневно в 00:00 МСК. Минимум за 3 дня до отвязки придёт уведомление в колокольчик. Зайдите на сервер, чтобы сохранить номер; вход на сайт срок не продлевает.",
+    numberExpires: value => `Если не зайти на сервер, номер освободится ${value}.`,
     numberLabel: "Новый номер (1–999)",
     submit: "Отправить заявку",
     cancel: "Отменить заявку",
@@ -434,6 +439,7 @@ function hasActiveAccountWorkspace() {
   const overlayPanel = document.getElementById("driver-overlay-manager");
   if (overlayPanel && !overlayPanel.hidden) return true;
   const raceNumberInput = document.getElementById("race-number-input");
+  if (document.querySelector('.race-number-picker')?.contains(document.activeElement)) return true;
   const titleSelect = document.getElementById("driver-title-select");
   return Boolean(
     (raceNumberInput
@@ -1362,12 +1368,14 @@ function renderSettings(root, auth) {
       <section class="account-number-settings" aria-labelledby="race-number-settings-heading">
       <h2 id="race-number-settings-heading">${t("numberSettings")}</h2>
       <p class="account-muted">${t("numberHelp")}</p>
+      <p class="account-muted" id="race-number-retention">${t("numberRetention")}</p>
+      ${preferences.expiresAt ? `<p class="account-status">${t("numberExpires", formatMoscowDateTime(preferences.expiresAt, language() === 'en' ? 'en-GB' : 'ru-RU'))} ${language() === 'en' ? 'MSK' : 'МСК'}</p>` : ""}
       ${pending ? `<p class="account-status">${t("pending", pending.raceNumber)}</p>` : ""}
       ${blocked ? `<p class="account-message" data-kind="error">${t("blocked")}</p>` : ""}
       ${preferences.nextChangeAt ? `<p class="account-status">${t("cooldown", preferences.nextChangeAt)}</p>` : ""}
       <div class="account-field">
         <label for="race-number-input">${t("numberLabel")}</label>
-        <input id="race-number-input" type="number" min="1" max="999" step="1" inputmode="numeric" aria-describedby="race-number-message"
+        <input id="race-number-input" type="number" min="1" max="999" step="1" inputmode="numeric" aria-describedby="race-number-message race-number-retention"
           ${blocked || pending || preferences.nextChangeAt ? "disabled" : ""}>
       </div>
       <p class="account-message" id="race-number-message" role="status" aria-live="polite" aria-atomic="true"></p>
@@ -1378,6 +1386,7 @@ function renderSettings(root, auth) {
         ${preferences.raceNumber ? `<button class="account-action account-action--danger" id="race-number-release" ${blocked || preferences.nextChangeAt ? "disabled" : ""}>${t("release")}</button>` : ""}
         <a class="account-action" href="/account/">${t("overview")}</a>
       </div>
+      <div class="race-number-picker" id="race-number-picker"></div>
       </section>
       <div class="account-message" id="account-message" role="status" aria-live="polite"></div>
     </div>`;
@@ -1391,6 +1400,9 @@ function renderSettings(root, auth) {
       setMessage("", "", "race-number-message");
     }
   });
+  mountRaceNumberPicker({ host: document.getElementById('race-number-picker'),
+    input: document.getElementById('race-number-input'), message: document.getElementById('race-number-message'),
+    authBaseUrl: AUTH_BASE_URL, preferences, language: document.documentElement.lang.startsWith('en') ? 'en' : 'ru' });
 }
 
 async function mutation(path, csrfToken, body) {
@@ -1430,6 +1442,7 @@ async function runAction(button, action, successText, requestedNumber) {
       race_number_cooldown: "numberCooldown", driver_banned: "blocked"
     };
     setMessage(t(keys[error?.code] || "failed", requestedNumber), "error", "race-number-message");
+    if (error?.code === 'race_number_taken') document.getElementById('race-number-picker')?.dispatchEvent(new Event('race-number-refresh'));
     if (["race_number_taken", "invalid_race_number", "race_number_already_assigned"].includes(error?.code)) {
       document.getElementById("race-number-input")?.setAttribute("aria-invalid", "true");
     }

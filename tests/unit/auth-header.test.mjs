@@ -109,6 +109,7 @@ test("normalizes linked auth data without exposing unexpected identity fields", 
     raceNumber: 77,
     pendingRequest: null,
     canChange: true,
+    expiresAt: null,
     nextChangeAt: null,
     blockedReason: null
   });

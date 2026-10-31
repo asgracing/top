@@ -1,5 +1,5 @@
 ﻿import markup from './control-content.js?v=20261007v2pages14';
-import {normalizeAuthPayload} from '/src/features/auth/header-auth.js?v=20261011notifications1';
+import {normalizeAuthPayload} from '/src/features/auth/header-auth.js?v=20261031numbers1';
 import {v2Route} from '../routes.js?v=20261007v2pages14';
 
 // Approved control-page composition over the existing authenticated controllers.
@@ -57,7 +57,7 @@ export async function startControlPage({view,screen,text,esc,language,subscribe,
   const desc=screen==='settings'?text('Титул пилота, уникальный гоночный номер и отображение виджета.','Driver title, unique race number and widget appearance.'):screen==='moderation'?text('Баны, страйки и рассмотрение заявок на гоночные номера.','Bans, strikes and race-number requests.'):text('Клубы, команды и будущие часовые события.','Clubs, teams and upcoming hourly events.');
 
   if(screen==='settings'){
-    const {mountAccountWorkspace}=await import('/src/pages/account/account.js?v=20261011numberfeedback1');
+    const {mountAccountWorkspace}=await import('/src/pages/account/account.js?v=20261031numbers1');
     document.body.dataset.accountPage='settings';
     root.innerHTML='<div id="account-content" class="v2-account"></div>';
     function decorate(nativeRoot,auth){

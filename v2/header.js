@@ -17,7 +17,7 @@ export function createHeader({$,esc,text,number,rating,driverHref,privacy,native
     if(inbox){inbox.update(auth,host);return}
     if(!auth?.authenticated||inboxLoading)return;
     inboxLoading=true;
-    import('/src/features/auth/personal-notifications.js?v=20261011notifications1').then(({createPersonalNotifications})=>{
+    import('/src/features/auth/personal-notifications.js?v=20261031numbers1').then(({createPersonalNotifications})=>{
       inbox=createPersonalNotifications({documentRef:document,windowRef:window,fetchImpl:globalThis.fetch,authBaseUrl:'https://auth.asgracing.ru',buttonRef:bell,newsProvider:()=>{
         const lang=document.documentElement.lang,title=value=>typeof value==='string'?value:value?.[lang]||value?.ru||value?.en||'';
         return {unread:native().unreadNews(),markAll:()=>native().markAllNotifications(),items:(currentModel?.news||[]).map(item=>({title:title(item.title),summary:title(item.summary),at:item.published_at||item.date,href:newsHref(item),read:native().isNewsRead(item),mark:()=>native().markNews(item)}))};
