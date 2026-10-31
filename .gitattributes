@@ -581,3 +581,14 @@
 /servers/index.html -text
 /en/servers/index.html -text
 /v2/styles/runtime-a14a4ff9d8eeae1a.css -text
+# Preserve newly published runtime bytes across Windows and Linux.
+/src/features/auth/personal-notifications.js -text
+/src/features/hourly/entry-requirements.js -text
+/src/pages/account/race-number-picker.js -text
+/src/shared/race-number-validity.js -text
+/src/shared/team-racing-discovery.js -text
+/styles/components/race-number-picker.css -text
+/styles/components/race-number-validity.css -text
+/v2/driver-safety-model.js -text
+/v2/driver-safety.css -text
+/v2/pages/driver-safety.js -text
