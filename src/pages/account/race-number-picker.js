@@ -55,7 +55,7 @@ export function mountRaceNumberPicker({ host, input, message, authBaseUrl, prefe
       const state = status(number), button = node("button", "", "race-number-choice"); button.type = "button";
       button.dataset.number = String(number); button.dataset.numberStatus = state;
       button.setAttribute("aria-label", `#${number} — ${copy[state]}`);
-      button.setAttribute("aria-pressed", String(Number(input.value) === number));
+      button.setAttribute("aria-pressed", String(state === "free" && Number(input.value) === number));
       button.disabled = state !== "free" || input.disabled;
       button.append(node("span", `#${number}`), node("small", copy[state]));
       button.addEventListener("click", () => {

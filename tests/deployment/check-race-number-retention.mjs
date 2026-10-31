@@ -70,6 +70,7 @@ try {
   fail=false;await picker.locator('.race-number-picker-tools button').click();
   await picker.locator('[data-number="17"]').waitFor();
   await search.fill('');await picker.locator('[data-number-filter="all"]').click();
+  assert.equal(await picker.locator('[data-number="7"]').getAttribute('aria-pressed'),'false');
   assert.equal(await page.evaluate(()=>document.documentElement.scrollWidth<=innerWidth+1),true);
   await picker.scrollIntoViewIfNeeded();await page.screenshot({path:path.join(output,`numbers-${lang}-${width}.png`)});
   const bell=page.locator('.personal-notifications-bell');await bell.click();
