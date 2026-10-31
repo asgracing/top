@@ -1,8 +1,8 @@
 {
   "schemaVersion": 1,
-  "revision": "1e4ddbc7c505013da229014873a7ec9ca3f27fa9",
+  "revision": "8c3e5fcbc5cae03af3b3dda9dc7de388f6030921",
   "files": 992,
-  "bytes": 141666258,
+  "bytes": 141665599,
   "assets": [
     {
       "path": "404.html",
@@ -2356,8 +2356,8 @@
     },
     {
       "path": "src/features/auth/personal-notifications.js",
-      "bytes": 19326,
-      "sha256": "8924348eefdea3e0a57ab5db62faed0e9fb57276d45dad2798790d19918cf573"
+      "bytes": 19123,
+      "sha256": "8750a1471856969528f9b2542036a4d8ba55b9a2cd0b808a4f7c223da723202a"
     },
     {
       "path": "src/features/home-ad-banner.js",
@@ -2381,8 +2381,8 @@
     },
     {
       "path": "src/features/hourly/entry-requirements.js",
-      "bytes": 622,
-      "sha256": "8bf439f5215b94e2f9435188c7a0ccda822cec3d27141f11cbe192dc7cfa2e1d"
+      "bytes": 609,
+      "sha256": "61763d22b47dc6aee09900eb37846855d7b7e7b7c7218ff186ffd9c797a4f748"
     },
     {
       "path": "src/features/hourly/special-event.js",
@@ -2486,8 +2486,8 @@
     },
     {
       "path": "src/pages/account/race-number-picker.js",
-      "bytes": 7318,
-      "sha256": "4301383253d014f09641a62162fd430d95a4ac6915550069ce8aaf8b8aa0d9be"
+      "bytes": 7229,
+      "sha256": "1e24be6e181a36054b8ad0cb1fa8e57978998b9b609c528c04d8d79267a53060"
     },
     {
       "path": "src/pages/bans/index.js",
@@ -2851,8 +2851,8 @@
     },
     {
       "path": "src/shared/race-number-validity.js",
-      "bytes": 2240,
-      "sha256": "71fb73e4c6926e67eb0ba926e38695d397f36380b49842c612c85d93cafb5195"
+      "bytes": 2212,
+      "sha256": "12bc3f6ae3ad0e02edac82379384c8810eb7d56169d53b6d4bf16bd944ee424c"
     },
     {
       "path": "src/shared/race-result-context.js",
@@ -2896,8 +2896,8 @@
     },
     {
       "path": "src/shared/team-racing-discovery.js",
-      "bytes": 3712,
-      "sha256": "ebb750049d5b389436b908411d37b8aa4522100d4353d72d16d1bb875196d644"
+      "bytes": 3663,
+      "sha256": "2f29f22a53f32e028735277ea521949d86483f57f929bfe728f2431bfaffaa30"
     },
     {
       "path": "src/shared/team-racing-results-view.js",
@@ -3051,13 +3051,13 @@
     },
     {
       "path": "styles/components/race-number-picker.css",
-      "bytes": 1982,
-      "sha256": "2185fba5db169e6c1cd713183bfbcb75b05b2ea7cbc3f9a195369d294b588b61"
+      "bytes": 1969,
+      "sha256": "149e9174ba3abae3dc0f6c370db8906a7a3c1e2dfebbd7ee46cf0485c4129100"
     },
     {
       "path": "styles/components/race-number-validity.css",
-      "bytes": 1064,
-      "sha256": "548d19101a4b01c0616b1f6bf9c814f47bae71cb2f56dc8708a81e710b3b1d63"
+      "bytes": 1054,
+      "sha256": "158779cf8adb6189c981daa7c57d0b807deda5583c41c8aff69feb27acc9a581"
     },
     {
       "path": "styles/components/race-result-context.css",
@@ -4336,13 +4336,13 @@
     },
     {
       "path": "v2/driver-safety-model.js",
-      "bytes": 5533,
-      "sha256": "e04a1773a5034715697d186cd11ebcf772e1eae4d7a6a61aa8b54c5f749ceb03"
+      "bytes": 5448,
+      "sha256": "8dccd9d2dbee5ca5c96a80e68138d8cb11c0f5e94f545cda8b65416abf1f17ea"
     },
     {
       "path": "v2/driver-safety.css",
-      "bytes": 11713,
-      "sha256": "0ba26a64d5d527aaac7a772aca444876a8848c999729ebe0830e3ee72833db67"
+      "bytes": 11664,
+      "sha256": "23d578915de7b0c66d982a7d4ac355ec5ef10728c00c2cce6cdd3c69f44e4129"
     },
     {
       "path": "v2/en/404/index.html",
@@ -4601,8 +4601,8 @@
     },
     {
       "path": "v2/pages/driver-safety.js",
-      "bytes": 20914,
-      "sha256": "740136639d5414be2daf97985f9cba68812464f0f82fbbdc4762a626a68ac077"
+      "bytes": 20794,
+      "sha256": "b0b4c89baea6101132cf67373d93215cb197f55ee571218080283197e8c0a599"
     },
     {
       "path": "v2/pages/editorial-model.js",
