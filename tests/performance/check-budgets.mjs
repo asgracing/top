@@ -57,6 +57,8 @@ const personalNotificationsJavaScriptBytes = await textBytes("src/features/auth/
 const personalNotificationsStylesheetBytes = await textBytes("styles/components/personal-notifications.css");
 const raceNumberPickerJavaScriptBytes = await textBytes('src/pages/account/race-number-picker.js');
 const raceNumberPickerStylesheetBytes = await textBytes('styles/components/race-number-picker.css');
+const raceNumberValidityJavaScriptBytes = await textBytes('src/shared/race-number-validity.js');
+const raceNumberValidityStylesheetBytes = await textBytes('styles/components/race-number-validity.css');
 const serverTrackMapJavaScriptBytes = await textBytes("src/features/server-status/track-map.js");
 // The live transport/clock/animation is a separately capped feature, like the map.
 const serverLiveTelemetryJavaScriptBytes = (await Promise.all(
@@ -64,17 +66,19 @@ const serverLiveTelemetryJavaScriptBytes = (await Promise.all(
 )).reduce((sum,bytes) => sum+bytes,0);
 const metrics = {
   appJavaScriptBytes: await textBytes("app.js"),
-  sourceModulesBytes: await treeBytes("src", new Set([".js", ".mjs"])) - moderationJavaScriptBytes - portalOpsJavaScriptBytes - raceResultContextJavaScriptBytes - personalNotificationsJavaScriptBytes - racingRulesJavaScriptBytes - serverTrackMapJavaScriptBytes - serverLiveTelemetryJavaScriptBytes - raceNumberPickerJavaScriptBytes,
+  sourceModulesBytes: await treeBytes("src", new Set([".js", ".mjs"])) - moderationJavaScriptBytes - portalOpsJavaScriptBytes - raceResultContextJavaScriptBytes - personalNotificationsJavaScriptBytes - racingRulesJavaScriptBytes - serverTrackMapJavaScriptBytes - serverLiveTelemetryJavaScriptBytes - raceNumberPickerJavaScriptBytes - raceNumberValidityJavaScriptBytes,
   serverLiveTelemetryJavaScriptBytes,
   serverTrackMapJavaScriptBytes,
   serverTrackMapAssetBytes: await treeBytes("assets/track-maps", new Set([".js"])),
-  stylesheetsBytes: await treeBytes("styles", new Set([".css"])) + await textBytes("styles.css") + await textBytes("legal.css") - moderationStylesheetBytes - portalOpsStylesheetBytes - raceResultContextStylesheetBytes - personalNotificationsStylesheetBytes - racingRulesStylesheetBytes - raceNumberPickerStylesheetBytes,
+  stylesheetsBytes: await treeBytes("styles", new Set([".css"])) + await textBytes("styles.css") + await textBytes("legal.css") - moderationStylesheetBytes - portalOpsStylesheetBytes - raceResultContextStylesheetBytes - personalNotificationsStylesheetBytes - racingRulesStylesheetBytes - raceNumberPickerStylesheetBytes - raceNumberValidityStylesheetBytes,
   racingRulesJavaScriptBytes,
   racingRulesStylesheetBytes,
   personalNotificationsJavaScriptBytes,
   personalNotificationsStylesheetBytes,
   raceNumberPickerJavaScriptBytes,
   raceNumberPickerStylesheetBytes,
+  raceNumberValidityJavaScriptBytes,
+  raceNumberValidityStylesheetBytes,
   raceResultContextJavaScriptBytes,
   raceResultContextStylesheetBytes,
   moderationJavaScriptBytes,

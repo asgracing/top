@@ -1,0 +1,10 @@
+.race-number-validity { min-width:0; margin-top:10px; padding:10px 12px; border:1px solid #41596b; border-radius:5px; background:#0b1725a6; font-size:12px; line-height:1.5; overflow-wrap:anywhere; }
+.race-number-validity p { margin:0; color:#d4e2ed; font-size:inherit; line-height:inherit; }
+.race-number-validity p+p { margin-top:5px; }
+.race-number-validity b { color:#eff5ff; }
+.race-number-validity .race-number-validity-remaining { color:#8ee1bc; font-weight:600; }
+.race-number-validity .race-number-validity-help { color:#a9baca; }
+.race-number-validity[data-number-validity="warning"],.race-number-validity[data-number-validity="pending"] { border-color:#d5a84d; background:#4c381a40; }
+.race-number-validity[data-number-validity="warning"] .race-number-validity-remaining,.race-number-validity[data-number-validity="pending"] .race-number-validity-remaining { color:#f5ca77; }
+.profile-heading .race-number-validity { max-width:510px; }
+@media(max-width:650px){.v2-account .control-summary>article:has(.race-number-validity){grid-column:1/-1;}}

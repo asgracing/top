@@ -1,4 +1,5 @@
 import {mountDriverSafety} from './driver-safety.js?v=20261031sr1';
+import {renderRaceNumberValidity,ensureRaceNumberValidityStyle} from '/src/shared/race-number-validity.js?v=20261031profile1';
 import {bindPagination} from './pagination.js?v=20261015pagination1';
 import {refreshTeamRaceLinks} from '/src/shared/team-racing-discovery.js?v=20261028team10';
 import {createEntityThumbnails} from './entity-thumbnails.js?v=20261008thumbs1';
@@ -233,7 +234,20 @@ export async function startPage(api) {
   });
   view.addEventListener('input',event=>{if(event.target.id==='site-news-search'){state.newsQuery=event.target.value;state.newsPage=1;refreshEditorial();return;}if(event.target.id==='site-history-search'){state.historyQuery=event.target.value;refreshEditorial();return;}if(event.target.id==='site-bans-search'){state.bansQuery=event.target.value;state.bansPage=1;updateBans();return;}if(event.target.id==='r24-car-search'){state.carQuery=event.target.value;state.carPage=1;updateCars();return;}if(event.target.id==='site-catalog-search'){state.catalogQuery=event.target.value;document.getElementById('site-catalog-content').innerHTML=entityViews.catalogContent();syncCatalogUrl();return;}if(event.target.id==='site-roster-search'){state.rosterQuery=event.target.value;document.getElementById('site-roster-content').innerHTML=entityViews.rosterContent(currentEntity());highlightResults();entityThumbnails?.scan();return;}if(event.target.id==='r24-season-search'){state.seasonQuery=event.target.value;document.getElementById('r24-season-content').innerHTML=championshipViews.seasonCards();return;}if(event.target.id==='site-archive-search'){state.archiveQuery=event.target.value;state.archivePage=1;++archiveTicket;clearTimeout(searchTimer);searchTimer=setTimeout(()=>loadArchive(),300);return;}if(event.target.id!=='profile-race-search')return;state.query=event.target.value;state.racePage=1;const template=document.createElement('template');template.innerHTML=views.profileRaceTable(raw.profiles[state.id]);for(const selector of ['.page-table-scroll','.page-pagination'])document.getElementById('profile-history-content').querySelector(selector).replaceWith(template.content.querySelector(selector));});
   window.addEventListener('pagehide',event=>{if(!event.persisted)driverSafety?.destroy();},{once:true});
-  subscribe(next=>{model=next;highlightResults();});
+  function updateNumberValidity(){
+    if(screen!=='driver')return;
+    const heading=view.querySelector('.profile-heading');if(!heading)return;
+    const auth=model?.auth,own=auth?.authenticated&&auth.driver?.publicId===state.id;
+    const current=heading.querySelector('[data-profile-number-validity]');
+    if(!own||!auth.preferences?.raceNumber){current?.remove();return;}
+    const key=JSON.stringify([auth.preferences.raceNumber,auth.preferences.expiresAt,Math.floor(Date.now()/60000)]);
+    if(current?.dataset.validityKey===key)return;
+    ensureRaceNumberValidityStyle(document);
+    const host=current||document.createElement('div');host.dataset.profileNumberValidity='true';host.dataset.validityKey=key;
+    host.innerHTML=renderRaceNumberValidity(auth.preferences,language);
+    if(!current)heading.append(host);
+  }
+  subscribe(next=>{model=next;highlightResults();updateNumberValidity();});
   const wide=['driver','archive','race','club','team','cars','fun','article','document','notfound'].includes(screen);document.querySelector('.dashboard').classList.toggle('page-wide',wide);for(const side of document.querySelectorAll('.dashboard>aside'))side.hidden=wide;
   document.body.dataset.prototypePage=screen;
   new ResizeObserver(()=>views.sizeProfileRail()).observe(center);
@@ -290,5 +304,5 @@ export async function startPage(api) {
   // retain their unconditional noindex policy, regardless of loaded data.
   if(siteContext().layout==='root'&&view.querySelector('.r24-error'))document.querySelector('meta[name="robots"]').content='noindex,follow';
   const tick=()=>{if(document.hidden)return;refreshTeamRaceLinks(view,language);for(const node of view.querySelectorAll('[data-page-countdown]')){const e=views.eventData(node.dataset.pageCountdown);if(e)node.textContent=countdownText(e);}};
-  tick();setInterval(tick,1000);
+  updateNumberValidity();tick();setInterval(()=>{tick();if(!document.hidden)updateNumberValidity();},1000);
 }

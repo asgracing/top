@@ -23,6 +23,7 @@ import { loadPilotIndex, searchPilots } from "./pilot-search-model.js?v=20261022
 import { canUploadEntityLogo, inspectLogoFile, LogoUploadError, normalizeAssetResponse } from "./logo-upload-model.js?v=20260813logo2";
 import { mountDriverOverlayManager } from "../../../account/driver-overlay.js?v=20260927overlay1";
 import { mountRaceNumberPicker } from "./race-number-picker.js?v=20261031retention1";
+import { renderRaceNumberValidity, ensureRaceNumberValidityStyle } from "../../shared/race-number-validity.js?v=20261031profile1";
 
 const AUTH_BASE_URL = "https://auth.asgracing.ru";
 const COPY = {
@@ -1258,6 +1259,7 @@ function renderSignedOut(root) {
 }
 
 function renderOverview(root, auth) {
+  if (auth.preferences?.raceNumber) ensureRaceNumberValidityStyle(document);
   const name = auth.driver?.displayName || auth.steam?.personaName || t("title");
   const avatar = auth.steam?.avatarUrl || "/social/asg.png";
   const pending = auth.preferences?.pendingRequest;
@@ -1282,6 +1284,7 @@ function renderOverview(root, auth) {
                   ? `#${auth.preferences.raceNumber}`
                   : t("noNumber")
             }</div>
+            ${renderRaceNumberValidity(auth.preferences, language())}
           </div>
           <div class="account-panel">
             <h2>${t("discord")}</h2>
