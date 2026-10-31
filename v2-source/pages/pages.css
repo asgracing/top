@@ -1,3 +1,4 @@
+@import url("../../driver-safety.css?v=20261031sr1");
 /* R13: Hourly and driver layouts built on the homepage's shared cockpit. */
 html[data-v2-page] .center-column>:not(#page-view):not(#home-view) {display:none;}
 #home-view[hidden],#page-view[hidden],.dashboard>aside[hidden] {display:none!important;}
