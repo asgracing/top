@@ -1,4 +1,4 @@
-// Owner-only private expiry on the real built account and driver profile.
+// Expiry stays in the private account, never on the public driver profile.
 import assert from 'node:assert/strict';
 import fs from 'node:fs/promises';
 import path from 'node:path';
@@ -33,15 +33,14 @@ async function create(lang,width,screen,auth=payload){
  return {page,errors};
 }
 try{
- for(const screen of ['driver','account'])for(const lang of ['ru','en'])for(const width of [1280,390,320]){
+ for(const screen of ['account'])for(const lang of ['ru','en'])for(const width of [1280,390,320]){
   const {page,errors}=await create(lang,width,screen),card=page.locator('.race-number-validity');
   await card.waitFor();assert.equal(await card.count(),1);
   assert.equal(await card.getAttribute('data-number-validity'),'warning');
   assert.match(await card.textContent(),/#77/);assert.match(await card.textContent(),lang==='ru'?/2 дня/:/2 days/);
   assert.match(await card.textContent(),lang==='ru'?/МСК/:/MSK/);
   assert.ok(await card.evaluate(el=>getComputedStyle(el).borderTopWidth!=='0px'));
-  if(screen==='driver')assert.equal(await card.evaluate(el=>Boolean(el.closest('.profile-heading'))),true);
-  else assert.equal(await card.evaluate(el=>Boolean(el.closest('.control-summary>article'))),true);
+  assert.equal(await card.evaluate(el=>Boolean(el.closest('.control-summary>article'))),true);
   await card.scrollIntoViewIfNeeded();await page.screenshot({path:path.join(output,`${screen}-${lang}-${width}.png`)});
   assert.ok(await page.evaluate(()=>document.documentElement.scrollWidth<=innerWidth+1));
   await publish(page,{...payload,preferences:{...payload.preferences,retention:{activity_verified:true,expires_at:new Date(now+60*day).toISOString()}}});
@@ -56,12 +55,21 @@ try{
   await publish(page,{authenticated:false});await page.waitForFunction(()=>!document.querySelector('.race-number-validity'));
   assert.deepEqual(errors,[]);reports.push({screen,lang,width,errors});await page.close();
  }
- for(const auth of [{authenticated:false},{...payload,driver:{...payload.driver,public_id:'drv_other'}}]){
-  const {page,errors}=await create('ru',390,'driver',auth);await page.locator('.profile-heading').waitFor();
+ for(const lang of ['ru','en'])for(const width of [1280,390,320])for(const auth of [payload,{authenticated:false},{...payload,driver:{...payload.driver,public_id:'drv_other'}}]){
+  const {page,errors}=await create(lang,width,'driver',auth);await page.locator('.profile-heading').waitFor();
   assert.equal(await page.locator('.race-number-validity').count(),0);
+  assert.equal(await page.locator('[data-profile-number-validity]').count(),0);
   assert.equal(await page.locator('[data-number-validity-style]').count(),0);
-  assert.deepEqual(errors,[]);reports.push({audience:auth.authenticated?'other':'guest',errors});await page.close();
+  await publish(page,payload);
+  await publish(page,{...payload,preferences:{...payload.preferences,retention:{activity_verified:true,expires_at:new Date(now+60*day).toISOString()}}});
+  await page.waitForTimeout(1100);
+  assert.equal(await page.locator('.race-number-validity,[data-profile-number-validity]').count(),0,'Owner auth/renewal must never add an expiry to the public profile');
+  assert.equal(await page.locator('[data-number-validity-style]').count(),0);
+  assert.ok(await page.evaluate(()=>document.documentElement.scrollWidth<=innerWidth+1));
+  const audience=auth.authenticated?(auth.driver.public_id===profile.public_id?'owner':'other'):'guest';
+  if(audience==='owner'&&width===390)await page.screenshot({path:path.join(output,`public-driver-${lang}-${width}.png`)});
+  assert.deepEqual(errors,[]);reports.push({screen:'driver',audience,lang,width,errors});await page.close();
  }
  await fs.writeFile(path.join(output,'report.json'),JSON.stringify(reports,null,2));
- console.log(`Race number profile validity: ${reports.length} built UI scenarios passed; owners, guests, renewal, unknown date, release and logout.`);
+ console.log(`Private number validity: ${reports.length} built UI scenarios passed; account renewal/unknown/release/logout and public owner/guest/other privacy.`);
 }finally{await browser.close();}

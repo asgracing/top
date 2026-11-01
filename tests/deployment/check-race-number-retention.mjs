@@ -46,6 +46,9 @@ try {
   });
   assert.match(await page.locator('#race-number-retention').textContent(),/60/);
   assert.match(await page.locator('#race-number-retention').textContent(),/00:00/);
+  const deadline=page.locator('.account-number-settings>.account-status').filter({hasText:lang==='ru'?'номер освободится':'your number will be released'});
+  assert.equal(await deadline.count(),1,'The deadline remains available in private number management');
+  assert.match(await deadline.textContent(),lang==='ru'?/МСК/:/MSK/);
   assert.match(await picker.locator('[role="status"]').textContent(),/996/);
   const search=picker.locator('input[type="search"]');
   await search.fill('7');await picker.locator('[data-number="7"]').click();
