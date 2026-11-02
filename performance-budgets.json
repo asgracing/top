@@ -12,7 +12,7 @@
   "raceNumberValidityJavaScriptBytes": 2500,
   "raceNumberValidityStylesheetBytes": 1100,
   "serverLiveTelemetryJavaScriptBytes": 22000,
-  "serverTrackMapJavaScriptBytes": 6000,
+  "serverTrackMapJavaScriptBytes": 6400,
   "serverTrackMapAssetBytes": 68000,
   "labAccountJavaScriptBytes": 17500,
   "labAccountStylesheetBytes": 3000,

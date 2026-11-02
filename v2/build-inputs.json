@@ -8,7 +8,7 @@
     },
     {
       "path": "app.js",
-      "sha256": "a5f36634b14174fde63628545e111f8fe29b7987a141d5ae3acc419c87018268"
+      "sha256": "f1eee9a805999451b534b43c231fc81296f3268e46f851ecb1c88e5bda77aa70"
     },
     {
       "path": "assets/track-maps/barcelona.js",
@@ -72,7 +72,7 @@
     },
     {
       "path": "scripts/build-v2.mjs",
-      "sha256": "b31b551dc4a2ebceb12b4261731b6676c67f25476b473cd5065b86acb4a39839"
+      "sha256": "ceee4e88e9dfbf6d550f9e9322e0e920bde99b52a87d7daaa26372bfe40a8eb9"
     },
     {
       "path": "scripts/generate-localized-pages.mjs",
@@ -152,7 +152,7 @@
     },
     {
       "path": "src/features/server-status/live-map.js",
-      "sha256": "06adeff46a1faad36c3f65f2ae7eeb501d340c0e3176ff37f3f80503e66654de"
+      "sha256": "41a464cb927171ce655d0f159a4bfe2cf04265716bd3fc6e4ddef27e062a0c99"
     },
     {
       "path": "src/features/server-status/live-stream.js",
@@ -160,7 +160,7 @@
     },
     {
       "path": "src/features/server-status/roster.js",
-      "sha256": "49d57994bb893504520c087f11f0701482c11cfe64ad0ea7d06acaf301435f22"
+      "sha256": "42b7c2a31e60a0e31af940734280aac6dd29e74c3879bd51f4c1f87ca3c88f0b"
     },
     {
       "path": "src/features/server-status/telemetry.js",
@@ -172,7 +172,7 @@
     },
     {
       "path": "src/features/server-status/track-map.js",
-      "sha256": "775805e9dbdc2621b28159f3985364d3f4166136d07f72bd6d6c6a4e43c7bfc9"
+      "sha256": "0719e38526d4c1d4f23595f4bff1f2b8ebfc1e9d9946136b244291db88efdf0b"
     },
     {
       "path": "src/features/stats/table-engine.js",
@@ -492,11 +492,11 @@
     },
     {
       "path": "styles/components/server-players-modal.css",
-      "sha256": "8f7ed7c5d43fa32a81bbbec2c364ec45f0340638df40f0cb25938a3bc8f259d8"
+      "sha256": "65677f0901c9de8b9ac926aa736890816211e8cf6d640d103ceb2b100800e748"
     },
     {
       "path": "styles/components/server-roster.css",
-      "sha256": "217c9ab132998695aae54f7b8991dda3aa3c77808b805accaa59fa96878f6cf2"
+      "sha256": "01c2c6a8699850e0ae0c630cfb7f18c12f9598ef65a1b15f23765b901b166605"
     },
     {
       "path": "styles/components/server-sticky-layout.css",
@@ -704,7 +704,7 @@
     },
     {
       "path": "v2/home.js",
-      "sha256": "dadc5a59c42c76fcf19cbeac7317a4f5d67325d3b810b41017276bb61da0d375"
+      "sha256": "2720a477e9840bfa96e7bf0ceca0ba5977a693d52153f61711e08e4364bd1f6e"
     },
     {
       "path": "v2/mobile-navigation.js",
@@ -776,7 +776,7 @@
     },
     {
       "path": "v2/presentation.js",
-      "sha256": "ce437e4b94a8a3484d3741bf66a6e0878d798c15662d27bbd7c48380e70d2446"
+      "sha256": "d6cb1200afc10e9af9779c1dc34b6eb324714dbf14f50f9fb8b039d9381f0520"
     },
     {
       "path": "v2/profile-races.js",
