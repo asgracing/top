@@ -37,7 +37,7 @@ test('administrators see an indefinite private reservation without a countdown',
     const html=renderRaceNumberValidity({raceNumber:77,permanent:true,expiresAt:prefs(now).expiresAt},lang,now);
     assert.match(html,/data-number-validity="permanent"/);
     assert.match(html,lang==='ru'?/Закреплён бессрочно/:/Reserved indefinitely/);
-    assert.match(html,lang==='ru'?/Пока вы в списке администраторов/:/While you are on the ASG administrator list/);
+    assert.match(html,lang==='ru'?/Пока вы в списке администраторов/:/While on the ASG administrator list/);
     assert.doesNotMatch(html,/<time|До освобождения|Time remaining|уточняется/);
   }
 });
