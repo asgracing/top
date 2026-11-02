@@ -11,11 +11,27 @@ import {LiveServerStream} from '../src/features/server-status/live-stream.js?v=2
 import {animateLiveMap} from '../src/features/server-status/live-map.js?v=20261027nords1';
 import {safetyHistoryComponents} from './safety-history.js?v=20261010profile1';
 import {loadLeaderboardRank,profileWithLeaderboardRank} from '/src/shared/leaderboard-rank.js?v=20261013delivery1';
+import {createOnlineActivity} from './online-activity.js?v=20261102history1';
 
 // R24 views consume the canonical controllers. They never calculate ratings or
 // create a second auth/voting state.
 export function createPresentation({$,native,getModel,esc,text,label,date,number,rating,car,driverHref,classic,affiliation,privacy,serverAdmission,showDialog}) {
-  let request=0,profile=null,parent=null,historyView=null,month='',day='',eventEntry=null,driverDaySignature='',inspectionRequest=0,activeServerKey=null;
+  let request=0,profile=null,parent=null,historyView=null,eventEntry=null,driverDaySignature='',inspectionRequest=0,activeServerKey=null;
+  const onlineActivity=createOnlineActivity({getDays:()=>getModel()?.onlineDays||[],esc,text,number,track:value=>native().track(value)});
+  function revealOnlineSelection(){
+    const chart=$('modal-body').querySelector('.online-history-scroll'),selected=chart?.querySelector('[aria-pressed="true"]');
+    if(!selected)return;
+    const left=selected.offsetLeft,right=left+selected.offsetWidth;
+    if(left<chart.scrollLeft)chart.scrollLeft=left;
+    else if(right>chart.scrollLeft+chart.clientWidth)chart.scrollLeft=right-chart.clientWidth+4;
+  }
+  function refreshOnline(focus){
+    const body=$('modal-body'),scroll=body.querySelector('.online-history-scroll')?.scrollLeft||0;
+    body.innerHTML=onlineActivity.render();
+    const chart=body.querySelector('.online-history-scroll');if(chart)chart.scrollLeft=scroll;
+    if(focus)body.querySelector(focus)?.focus({preventScroll:true});
+    revealOnlineSelection();
+  }
   let serverStream=null,serverFrame=0,serverRefresh=0;
   const reducedMotion=globalThis.matchMedia?.('(prefers-reduced-motion: reduce)');
   function stopServerStream(){serverStream?.close();serverStream=null;cancelAnimationFrame(serverFrame);clearInterval(serverRefresh);}
@@ -111,14 +127,7 @@ export function createPresentation({$,native,getModel,esc,text,label,date,number
     const f=resolveTrackBackgroundFile(e.track_code);if(f)$('modal').style.setProperty('--modal-track',`url('/assets/${f}')`);
     $('modal-eyebrow').innerHTML=`<span class="event-kind kind-${kind==='mono'?'monoclass':kind}">${kinds[kind]}</span>`;
   }
-  function onlineHtml(){
-    const days=[...(getModel().onlineDays||[])].sort((a,b)=>String(b.date).localeCompare(String(a.date))),months=[...new Set(days.map(d=>String(d.date).slice(0,7)))];
-    if(!months.length)return `<p class="empty">${label('noData')}</p>`;
-    if(!months.includes(month))month=months[0];const visible=days.filter(d=>d.date.startsWith(month));
-    if(!visible.some(d=>d.date===day))day=visible[0]?.date;const d=visible.find(d=>d.date===day),hours=d.hours||[],max=Math.max(1,...hours.map(h=>h.unique_players));
-    return `<div class="online-controls"><label>${text('Месяц','Month')} <select id="v2-online-month">${months.map(m=>`<option${m===month?' selected':''}>${esc(m)}</option>`).join('')}</select></label><label>${label('date')} <select id="v2-online-date">${visible.map(v=>`<option${v.date===day?' selected':''}>${esc(v.date)}</option>`).join('')}</select></label></div><div class="detail-grid">${detail(text('Пилоты','Drivers'),number(d.unique_players))}${detail(label('racesCol'),number(d.races))}${detail(text('Среднее пилотов на гонку','Average drivers per race'),d.avg_players_per_race)}${detail(text('Индекс активности','Activity score'),(d.activity_score??'—')+'/100')}${detail(text('Пик активности','Peak activity'),d.peak_hour?.label)}${detail(label('track'),(d.tracks||[]).map(t=>native().track(t)).join(', '))}</div><h3>${text('Онлайн по часам · уникальные пилоты','Hourly activity · unique drivers')}</h3><div class="hour-chart">${hours.map(h=>`<div title="${esc(h.label)} · ${number(h.races)} ${label('racesCol')}"><b>${number(h.unique_players)}</b><span style="--hour-height:${Math.max(2,h.unique_players/max*100)}px"></span><small>${esc(h.hour)}</small></div>`).join('')}</div>`;
-  }
-  function openOnline(trigger){++request;display(text('Онлайн по датам','Activity by date'),onlineHtml(),'online',trigger)}
+  function openOnline(trigger){++request;display(text('История активности пилотов','Driver activity history'),onlineActivity.render(),'online',trigger);revealOnlineSelection()}
   function openServer(key,trigger,refresh=false){
     ++request;const m=getModel();if(!m)return;
     const draw=(title,html,kind)=>{
@@ -156,10 +165,15 @@ export function createPresentation({$,native,getModel,esc,text,label,date,number
   $('modal-body').addEventListener('change',e=>{
     const id=e.target.id;
     if(id==='v2-driver-track')$('driver-lap-value').innerHTML=lapValue(profile?.best_laps_by_track?.[Number(e.target.value)]);
-    if(id==='v2-online-month'||id==='v2-online-date'){if(id==='v2-online-month'){month=e.target.value;day=''}else day=e.target.value;$('modal-body').innerHTML=onlineHtml();document.getElementById(id).focus()}
+    if($('modal').dataset.kind==='online'&&onlineActivity.change(e.target))refreshOnline('#'+id);
     if(id==='v2-history-grid'){historyView.grid=e.target.value;renderHistory();$('history-grid').focus()}
   });
   $('modal-body').addEventListener('click',e=>{
+    if($('modal').dataset.kind==='online'&&onlineActivity.click(e.target)){
+      const target=e.target.closest('[data-activity-scale],[data-activity-page],[data-activity-date],[data-activity-drill]');
+      const attribute=['data-activity-scale','data-activity-page','data-activity-date'].find(name=>target?.hasAttribute(name));
+      refreshOnline(attribute?`[${attribute}="${target.getAttribute(attribute)}"]`:'[data-activity-scale="days"]');return;
+    }
     const period=e.target.closest('[data-history-period]'),step=e.target.closest('[data-history-step]'),point=e.target.closest('[data-sr-history-index]');
     if(period){historyView.period=period.dataset.historyPeriod;historyView.offset=0;renderHistory();$('modal-body').querySelector(`[data-history-period="${historyView.period}"]`).focus()}
     if(step){historyView.offset=Math.max(0,historyView.offset+(step.dataset.historyStep==='older'?1:-1));renderHistory()}

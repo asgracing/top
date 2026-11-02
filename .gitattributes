@@ -591,4 +591,6 @@
 /styles/components/race-number-validity.css -text
 /v2/driver-safety-model.js -text
 /v2/driver-safety.css -text
+/v2/online-activity.js -text
+/v2/online-activity-model.js -text
 /v2/pages/driver-safety.js -text
