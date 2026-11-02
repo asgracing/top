@@ -11,7 +11,7 @@ import {LiveServerStream} from '../src/features/server-status/live-stream.js?v=2
 import {animateLiveMap} from '../src/features/server-status/live-map.js?v=20261027nords1';
 import {safetyHistoryComponents} from './safety-history.js?v=20261010profile1';
 import {loadLeaderboardRank,profileWithLeaderboardRank} from '/src/shared/leaderboard-rank.js?v=20261013delivery1';
-import {createOnlineActivity} from './online-activity.js?v=20261102history1';
+import {createOnlineActivity} from './online-activity.js?v=20261102activity2';
 
 // R24 views consume the canonical controllers. They never calculate ratings or
 // create a second auth/voting state.
@@ -127,7 +127,7 @@ export function createPresentation({$,native,getModel,esc,text,label,date,number
     const f=resolveTrackBackgroundFile(e.track_code);if(f)$('modal').style.setProperty('--modal-track',`url('/assets/${f}')`);
     $('modal-eyebrow').innerHTML=`<span class="event-kind kind-${kind==='mono'?'monoclass':kind}">${kinds[kind]}</span>`;
   }
-  function openOnline(trigger){++request;display(text('История активности пилотов','Driver activity history'),onlineActivity.render(),'online',trigger);revealOnlineSelection()}
+  function openOnline(trigger){++request;onlineActivity.open();display(text('Активность пилотов','Driver activity'),onlineActivity.render(),'online',trigger);$('modal-body').scrollTop=0;revealOnlineSelection()}
   function openServer(key,trigger,refresh=false){
     ++request;const m=getModel();if(!m)return;
     const draw=(title,html,kind)=>{
@@ -170,8 +170,8 @@ export function createPresentation({$,native,getModel,esc,text,label,date,number
   });
   $('modal-body').addEventListener('click',e=>{
     if($('modal').dataset.kind==='online'&&onlineActivity.click(e.target)){
-      const target=e.target.closest('[data-activity-scale],[data-activity-page],[data-activity-date],[data-activity-drill]');
-      const attribute=['data-activity-scale','data-activity-page','data-activity-date'].find(name=>target?.hasAttribute(name));
+      const target=e.target.closest('[data-activity-tab],[data-activity-scale],[data-activity-page],[data-activity-date],[data-activity-drill],[data-activity-overview-date]');
+      const attribute=['data-activity-tab','data-activity-scale','data-activity-page','data-activity-date'].find(name=>target?.hasAttribute(name));
       refreshOnline(attribute?`[${attribute}="${target.getAttribute(attribute)}"]`:'[data-activity-scale="days"]');return;
     }
     const period=e.target.closest('[data-history-period]'),step=e.target.closest('[data-history-step]'),point=e.target.closest('[data-sr-history-index]');
@@ -181,7 +181,7 @@ export function createPresentation({$,native,getModel,esc,text,label,date,number
     if(e.target.closest('[data-profile-return]')&&parent)loadProfile(parent,'driver',document.activeElement);
     if(e.target.closest('[data-event-vote]')){if(eventEntry)eventEntry.vote();else native().vote();}
   });
-  $('modal-body').addEventListener('keydown',e=>{const point=e.target.closest('[data-sr-history-index]');if(point&&['Enter',' '].includes(e.key)){e.preventDefault();e.stopPropagation();inspectSr(Number(point.dataset.srHistoryIndex))}});
+  $('modal-body').addEventListener('keydown',e=>{if($('modal').dataset.kind==='online'){const focus=onlineActivity.keydown(e);if(focus){e.preventDefault();refreshOnline(focus);return}}const point=e.target.closest('[data-sr-history-index]');if(point&&['Enter',' '].includes(e.key)){e.preventDefault();e.stopPropagation();inspectSr(Number(point.dataset.srHistoryIndex))}});
   $('modal').addEventListener('close',()=>{stopServerStream();++request;profile=null;parent=null;historyView=null;eventEntry=null});
   $('modal').addEventListener('v2-dialog-restore',()=>{++request;});
   document.addEventListener('visibilitychange',()=>{if(document.hidden)stopServerStream();else if($('modal').open&&$('modal').dataset.kind==='server')startServerStream(activeServerKey)});

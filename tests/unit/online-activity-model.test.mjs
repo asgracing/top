@@ -1,20 +1,20 @@
 import test from 'node:test';
 import assert from 'node:assert/strict';
-import { activityPage, activityPageForDate, buildActivityHistory } from '../../v2/online-activity-model.js';
+import { activityPage, activityPageForDate, buildActivityHistory, buildActivityComparison } from '../../v2/online-activity-model.js';
 
-test('Weekly history uses Monday to Sunday across year boundaries', () => {
+test('Monthly history keeps year boundaries and exact daily averages', () => {
   const periods = buildActivityHistory([
     {date:'2025-12-28',unique_players:20},
     {date:'2025-12-29',unique_players:30},
     {date:'2026-01-04',unique_players:50},
     {date:'2026-01-05',unique_players:70}
-  ],'weeks');
+  ],'months');
   assert.deepEqual(periods.map(p=>[p.start,p.end]),[
-    ['2025-12-22','2025-12-28'],['2025-12-29','2026-01-04'],['2026-01-05','2026-01-11']
+    ['2025-12-01','2025-12-31'],['2026-01-01','2026-01-31']
   ]);
-  assert.equal(periods[1].average,40);
-  assert.equal(periods[1].maximum,50);
-  assert.equal(periods[1].peakDate,'2026-01-04');
+  assert.equal(periods[1].average,60);
+  assert.equal(periods[1].maximum,70);
+  assert.equal(periods[1].peakDate,'2026-01-05');
 });
 
 test('Missing days stay unknown while published zeroes count toward the average', () => {
@@ -30,14 +30,53 @@ test('Missing days stay unknown while published zeroes count toward the average'
   assert.equal(month.partial,true);
 });
 
-test('No weekly or monthly unique total is invented from daily counts', () => {
+test('No monthly unique total is invented from daily counts', () => {
   const days=Array.from({length:7},(_,i)=>({date:`2026-11-${String(i+2).padStart(2,'0')}`,unique_players:100}));
-  const [week]=buildActivityHistory(days,'weeks');
+  const [week]=buildActivityHistory(days,'months');
   assert.equal(week.average,100);
   assert.equal(week.maximum,100);
   assert.equal(week.observedDays,7);
-  assert.equal(week.partial,false);
-  assert.equal(week.calendarDays,7);
+  assert.equal(week.partial,true);
+  assert.equal(week.calendarDays,30);
+  assert.throws(()=>buildActivityHistory(days,'weeks'),/Unknown activity scale/);
+});
+
+test('Daily overview compares with previous calendar days and never includes today in the baseline',()=>{
+  const days=Array.from({length:8},(_,i)=>({date:`2026-11-${String(i+1).padStart(2,'0')}`,unique_players:i===7?200:100}));
+  const stats=buildActivityComparison(days,7,'2026-11-08');
+  assert.equal(stats.average,100);
+  assert.equal(stats.averageDifference.percent,100);
+  assert.equal(stats.averageDifference.absolute,100);
+  assert.equal(stats.yesterdayDifference.percent,100);
+  assert.equal(stats.strongerThan,7);
+  assert.equal(stats.measuredDays,7);
+  assert.equal(stats.isToday,true);
+});
+
+test('Missing yesterday is unknown and gaps reduce comparison coverage without becoming zeroes',()=>{
+  const stats=buildActivityComparison([{date:'2026-11-01',unique_players:0},{date:'2026-11-03',unique_players:60},{date:'2026-11-05',unique_players:90}],7,'2026-11-05');
+  assert.equal(stats.average,30);
+  assert.equal(stats.measuredDays,2);
+  assert.equal(stats.yesterday,null);
+  assert.equal(stats.yesterdayDifference,null);
+  assert.equal(stats.averageDifference.percent,200);
+  assert.equal(stats.strongerThan,2);
+});
+
+test('A zero baseline produces an absolute increase instead of an infinite percentage',()=>{
+  const stats=buildActivityComparison([{date:'2026-11-01',unique_players:0},{date:'2026-11-02',unique_players:40}],7,'2026-11-02');
+  assert.deepEqual(stats.averageDifference,{absolute:40,percent:null});
+  assert.equal(stats.yesterdayDifference.percent,null);
+});
+
+test('Overview changes its calendar window, excludes future data and marks stale publication dates',()=>{
+  const days=Array.from({length:31},(_,i)=>({date:`2026-10-${String(i+1).padStart(2,'0')}`,unique_players:i}));
+  assert.equal(buildActivityComparison(days,7,'2026-11-02').average,26);
+  assert.equal(buildActivityComparison(days,14,'2026-11-02').average,22.5);
+  assert.equal(buildActivityComparison(days,30,'2026-11-02').average,14.5);
+  assert.equal(buildActivityComparison(days,30,'2026-11-02').isToday,false);
+  assert.equal(buildActivityComparison(days,7,'2026-10-20').current.start,'2026-10-20');
+  assert.equal(buildActivityComparison([],7,'2026-11-02'),null);
 });
 
 test('Calendar months include leap day and daylight-saving dates without shifting date keys', () => {

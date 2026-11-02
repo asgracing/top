@@ -11,10 +11,7 @@ const count = value => value !== null && value !== '' && Number.isFinite(Number(
 // those date keys intact in every visitor's timezone, including DST boundaries.
 function bounds(date, scale) {
   const start = new Date(date), end = new Date(date);
-  if (scale === 'weeks') {
-    start.setUTCDate(start.getUTCDate() - (start.getUTCDay() + 6) % 7);
-    end.setTime(start.getTime() + 6 * DAY);
-  } else if (scale === 'months') {
+  if (scale === 'months') {
     start.setUTCDate(1);
     end.setUTCMonth(end.getUTCMonth() + 1, 0);
   }
@@ -22,7 +19,7 @@ function bounds(date, scale) {
 }
 
 export function buildActivityHistory(rawDays = [], scale = 'days') {
-  if (!['days', 'weeks', 'months'].includes(scale)) throw new Error('Unknown activity scale');
+  if (!['days', 'months'].includes(scale)) throw new Error('Unknown activity scale');
   const days = new Map();
   for (const day of rawDays) {
     if (parsedDate(day?.date)) days.set(day.date, { ...day, unique_players: count(day.unique_players) });
@@ -62,4 +59,27 @@ export function activityPage(periods, page = 0, size = 14) {
 export function activityPageForDate(periods, date, size = 14) {
   const index = periods.findIndex(period => period.start <= date && period.end >= date);
   return index < 0 ? 0 : Math.floor((periods.length - 1 - index) / size);
+}
+
+export function buildActivityComparison(rawDays, previousDays = 7, today = '') {
+  previousDays = [7, 14, 30].includes(Number(previousDays)) ? Number(previousDays) : 7;
+  const history = buildActivityHistory(rawDays).filter(period => !today || period.start <= today);
+  const current = history.at(-1);
+  if (!current) return null;
+  const end = parsedDate(current.start), first = key(new Date(end.getTime() - previousDays * DAY));
+  const previous = history.filter(period => period.start >= first && period.start < current.start);
+  const measured = previous.filter(period => period.average !== null);
+  const average = measured.length ? measured.reduce((sum, period) => sum + period.average, 0) / measured.length : null;
+  const maximum = measured.length ? Math.max(...measured.map(period => period.average)) : null;
+  const yesterdayDate = key(new Date(end.getTime() - DAY));
+  const yesterday = previous.find(period => period.start === yesterdayDate)?.average ?? null;
+  const difference = baseline => current.average === null || baseline === null ? null : {
+    absolute: current.average - baseline,
+    percent: baseline === 0 ? current.average === 0 ? 0 : null : (current.average - baseline) / baseline * 100
+  };
+  return {current,previous,previousDays,measuredDays:measured.length,average,maximum,yesterday,
+    peakDate:measured.find(period => period.average === maximum)?.start || null,
+    averageDifference:difference(average),yesterdayDifference:difference(yesterday),
+    strongerThan:current.average === null ? null : measured.filter(period => period.average < current.average).length,
+    isToday:current.start === today};
 }

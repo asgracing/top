@@ -437,6 +437,110 @@ body[data-v2] #v2-modal[data-kind="online"] .hour-chart>div>span {min-height:0;}
  .online-history-details h3 {font-size:19px!important;}
 }
 
+/* Pilot activity: daily comparison first, calendar exploration on its own tab. */
+body[data-v2] #v2-modal[data-kind="online"] {width:min(1040px,calc(100vw - 32px));}
+.pilot-activity {--activity-line:#49617966;--activity-muted:#a3b5c7;}
+.pilot-activity-tabs {display:grid;grid-template-columns:1fr 1fr;gap:8px;padding:0 0 20px;margin-bottom:20px;border-bottom:1px solid var(--activity-line);}
+.pilot-activity-tabs button {position:relative;min-height:68px;padding:12px 18px;text-align:left;border:1px solid #49617966;background:#172635;border-radius:6px;color:#aebfce;font-size:15px;font-weight:600;}
+.pilot-activity-tabs button>span {display:block;font-size:11px;font-weight:400;margin-top:3px;color:#91a8bb;}
+.pilot-activity-tabs button[aria-selected="true"] {color:#f3f7fb;border-color:#89a8c699;background:linear-gradient(110deg,#29445b,#1c3042);box-shadow:inset 0 -3px #f4656c;}
+.pilot-activity-tabs button:hover {border-color:#a9c1d5;}
+.pilot-activity-hero {padding:23px 26px 0;margin-bottom:20px;border:1px solid #6a8baa99;border-radius:8px;background:radial-gradient(ellipse at 85% 0,#355b7455,transparent 65%),linear-gradient(125deg,#22384b,#162736 75%);position:relative;overflow:hidden;box-shadow:0 10px 28px #030b1520;}
+.pilot-activity-hero::before {content:"";position:absolute;left:0;top:0;bottom:0;width:3px;background:#f4656c;}
+.pilot-activity-hero-top {display:flex;justify-content:space-between;align-items:center;gap:16px;flex-wrap:wrap;font-size:12px;color:#c0d0de;}
+.pilot-activity-kicker {display:inline-flex;align-items:center;gap:8px;letter-spacing:1px;text-transform:uppercase;font-size:11px;font-weight:600;}
+.pilot-activity-kicker svg {width:20px;height:20px;color:#fc9198;}
+.pilot-activity-hero-main {display:flex;justify-content:space-between;gap:24px;align-items:center;padding:22px 0 26px;}
+.pilot-activity-main-value {display:flex;align-items:baseline;gap:16px;flex-wrap:wrap;}
+.pilot-activity-main-value>b {font-size:76px;line-height:1;letter-spacing:-3px;color:#f2f7fc;font-variant-numeric:tabular-nums;font-weight:700;}
+.pilot-activity-main-value>span {font-size:14px;color:#d0dfec;}
+.pilot-activity-hero-main p {font-size:12px;color:var(--activity-muted);margin-top:10px;}
+.pilot-activity-hero-change {text-align:right;max-width:330px;}
+.pilot-activity-hero-change>span:last-child {display:block;font-size:12px;color:#afc2d3;margin-top:10px;}
+.pilot-activity-hero-change strong {color:#e3edf7;font-weight:600;}
+.pilot-activity-trend {display:block;font-size:12px;font-variant-numeric:tabular-nums;}
+.pilot-activity-trend.is-up {color:#6de0ba;}
+.pilot-activity-trend.is-down {color:#ff9ba3;}
+.pilot-activity-trend.is-neutral {color:#b8c9d9;}
+.pilot-activity-trend small {font-size:11px;color:#a5b9ca;font-weight:400;}
+.pilot-activity-hero-change .pilot-activity-trend {font-size:32px;line-height:1.25;font-weight:600;}
+.pilot-activity-hero-change .pilot-activity-trend small {display:block;margin-top:5px;}
+.pilot-activity-hero-foot {display:flex;justify-content:space-between;gap:12px;flex-wrap:wrap;padding:12px 0;border-top:1px solid #6f8ea247;color:#9db2c4;font-size:10px;}
+.pilot-activity-panel {padding:20px;margin:0 0 18px;background:linear-gradient(130deg,#17273588,#14223055);border:1px solid var(--activity-line);border-radius:7px;}
+.pilot-activity-section-head {display:flex;align-items:center;justify-content:space-between;gap:16px;padding-bottom:15px;margin-bottom:18px;border-bottom:1px solid var(--activity-line);}
+.pilot-activity-section-head>div {display:flex;align-items:center;gap:10px;min-width:0;}
+.pilot-activity-section-index {display:grid;place-items:center;flex-shrink:0;width:26px;height:26px;border:1px solid #52748e77;background:#28455d66;border-radius:4px;font-size:10px;color:#a4bfd6;font-variant-numeric:tabular-nums;}
+.pilot-activity-section-head h3 {margin:0;font-size:17px;line-height:1.3;font-weight:600;color:#e6eef7;}
+.pilot-activity-section-note {font-size:11px;color:var(--activity-muted);text-align:right;}
+.pilot-activity-window {display:flex;align-items:center;gap:8px;white-space:nowrap;}
+.pilot-activity-window select {min-height:36px;padding:4px 10px;border:1px solid #5a7891;background:#1e3549;color:#e2eaf3;border-radius:4px;font:inherit;font-size:12px;}
+.pilot-activity-comparisons {display:grid;grid-template-columns:repeat(3,minmax(0,1fr));padding:3px 0 18px;border-bottom:1px solid var(--activity-line);margin-bottom:16px;}
+.pilot-activity-comparison {min-width:0;padding:0 20px;border-right:1px solid var(--activity-line);}
+.pilot-activity-comparison:first-child {padding-left:0;}
+.pilot-activity-comparison:last-child {border:0;}
+.pilot-activity-comparison>span:first-child {display:block;font-size:12px;color:var(--activity-muted);}
+.pilot-activity-comparison>b {display:block;font-size:30px;line-height:1.4;margin:4px 0;color:#e2edf7;font-variant-numeric:tabular-nums;}
+.pilot-activity-comparison>small {display:block;font-size:11px;color:#91a9bd;}
+.pilot-activity-timeline {margin:0 -4px;}
+.pilot-activity-timeline-chart {background:repeating-linear-gradient(to top,transparent 0 31px,#5a78910d 31px 32px);}
+.pilot-activity-timeline .online-history-period {flex-basis:54px;min-width:54px;max-width:120px;}
+.pilot-activity-timeline .online-history-period[aria-pressed="true"] {background:#64323d33;border-color:#ee7e8799;}
+.pilot-activity-timeline .online-history-bar {height:100px;width:28px;}
+.pilot-activity-timeline .online-history-average {left:3px;width:22px;background:linear-gradient(#89afcf,#476b8b);}
+.pilot-activity-timeline [aria-pressed="true"] .online-history-average {background:linear-gradient(#ff9ca3,#ce5a65);}
+.pilot-activity-timeline [aria-pressed="true"]>b,.pilot-activity-timeline [aria-pressed="true"]>small {color:#ffc0c5;}
+.pilot-activity-timeline .online-history-date {min-height:20px;}
+.pilot-activity-footnote {font-size:11px;color:#91a6b9;margin:12px 0 0;line-height:1.6;}
+.pilot-activity-facts {display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:16px;}
+.pilot-activity-facts>div {padding:12px 14px;border:1px solid #4d697e55;background:#23384b33;border-radius:5px;min-width:0;}
+.pilot-activity-facts>div>span {display:block;color:#a0b4c6;font-size:11px;}
+.pilot-activity-facts>div>b {display:block;margin-top:5px;font-size:18px;line-height:1.5;color:#e1ecf6;overflow-wrap:anywhere;font-variant-numeric:tabular-nums;}
+.pilot-activity-hour-chart {display:grid;grid-template-columns:repeat(24,minmax(0,1fr));gap:5px;}
+.pilot-activity-hour-chart>div {display:flex;flex-direction:column;gap:6px;align-items:center;min-width:0;}
+.pilot-activity-hour-chart b {font-size:11px;color:#c6d8e7;font-weight:500;font-variant-numeric:tabular-nums;}
+.pilot-activity-hour-track {display:block;position:relative;width:16px;height:72px;border-radius:3px;background:#42617a17;border-bottom:1px solid #6d89a54d;}
+.pilot-activity-hour-track i {position:absolute;bottom:0;width:100%;border-radius:3px 3px 0 0;background:linear-gradient(#8aafcf,#466681);}
+.pilot-activity-hour-chart small {font-size:10px;color:#91a9bf;font-variant-numeric:tabular-nums;}
+.pilot-activity-hour-chart .is-peak b,.pilot-activity-hour-chart .is-peak small {color:#efd09b;}
+.pilot-activity-hour-chart .is-peak i {background:linear-gradient(#edcf9c,#ab8752);}
+.pilot-activity-hours-footer {display:flex;gap:10px;justify-content:space-between;margin-top:16px;padding-top:12px;border-top:1px solid var(--activity-line);font-size:11px;color:#94a9bc;flex-wrap:wrap;}
+.pilot-activity-hours-footer b {font-weight:500;color:#d3c1a6;}
+.pilot-activity .online-history {margin-bottom:18px;}
+.pilot-activity .online-history-details h3 {margin:0;}
+.pilot-activity .online-controls {padding:4px 0 16px;margin:0 0 16px;border-bottom:1px solid var(--activity-line);font-size:12px;flex-wrap:wrap;}
+.pilot-activity .online-controls select {min-height:38px;background:#1e3549;border:1px solid #5a7891;border-radius:4px;}
+.pilot-activity .online-history-navigation {background:#263f542e;border:1px solid #53718a33;border-radius:5px;padding:7px;margin:14px 0 18px;}
+.pilot-activity .online-history-chart {background-image:repeating-linear-gradient(to top,transparent 0 31px,#5a78910d 31px 32px);}
+.pilot-activity .online-history-drill {background:#2c4960;border-color:#7b9bb5;font-size:12px;}
+@media(max-width:680px){
+ .pilot-activity-hero {padding:18px 18px 0;}
+ .pilot-activity-hero-main {align-items:flex-start;flex-direction:column;gap:16px;padding:22px 0;}
+ .pilot-activity-main-value>b {font-size:64px;}
+ .pilot-activity-main-value {gap:12px;}
+ .pilot-activity-main-value>span {font-size:12px;}
+ .pilot-activity-hero-change {text-align:left;max-width:none;}
+ .pilot-activity-hero-change .pilot-activity-trend {font-size:26px;display:flex;gap:8px;align-items:baseline;flex-wrap:wrap;}
+ .pilot-activity-hero-change .pilot-activity-trend small {display:inline;}
+ .pilot-activity-hero-top {gap:8px;}
+ .pilot-activity-hero-foot {gap:4px;}
+ .pilot-activity-panel {padding:16px;}
+ .pilot-activity-section-head {align-items:flex-start;flex-wrap:wrap;gap:10px;}
+ .pilot-activity-section-head h3 {font-size:15px!important;}
+ .pilot-activity-section-note {text-align:left;}
+ .pilot-activity-comparison {padding:0 10px;}
+ .pilot-activity-comparison>b {font-size:23px;}
+ .pilot-activity-comparison>span:first-child,.pilot-activity-comparison>small {font-size:10px;}
+ .pilot-activity-comparison .pilot-activity-trend {font-size:10px;}
+ .pilot-activity-comparison .pilot-activity-trend small {display:block;font-size:9px;}
+ .pilot-activity-facts {grid-template-columns:repeat(2,minmax(0,1fr));gap:10px;}
+ .pilot-activity-facts>div {padding:10px;}
+ .pilot-activity-facts>div>b {font-size:16px;}
+ .pilot-activity-hour-chart {grid-template-columns:repeat(12,minmax(0,1fr));gap:12px 4px;}
+ .pilot-activity-hour-track {height:58px;width:14px;}
+ .pilot-activity-tabs button {padding:10px 12px;font-size:13px;}
+ .pilot-activity-tabs button>span {font-size:10px;}
+}
+
 /* Reserve the ranking rows while its data waits for the viewport. */
 body[data-v2="home"] #v2-ranking .table-scroll {min-height:380px;}
 

@@ -72,7 +72,7 @@
     },
     {
       "path": "scripts/build-v2.mjs",
-      "sha256": "2c5aaaa267906f86c71e8bf13b32d5cc4eddd06fc9a181f307bebe1e6beab7ff"
+      "sha256": "a57521e8bfa3eeb30414547b9c29f6eb084448d9e5ae382615b8b816976475cb"
     },
     {
       "path": "scripts/generate-localized-pages.mjs",
@@ -704,7 +704,7 @@
     },
     {
       "path": "v2/home.js",
-      "sha256": "8343a749743953ab860ceff46eec55ae4440af5b6fb7eda7d4085b93a804ba5f"
+      "sha256": "5c4230852e1300229914fb4b30f1885ba74435c28f24a8482c43c4fcd8195252"
     },
     {
       "path": "v2/mobile-navigation.js",
@@ -720,11 +720,11 @@
     },
     {
       "path": "v2/online-activity-model.js",
-      "sha256": "918020cd58ab9f33c6e816e216c4acad69b3c920a3676db101250efae69445f9"
+      "sha256": "bba99238d54ed74453fb3e73dfd0b069dba681ba809fe8354cd4869056bfe5e7"
     },
     {
       "path": "v2/online-activity.js",
-      "sha256": "20eea1aed4a44fc6ae54c94215a14de25f1b9b72a2bfd4be6ebb76119d0afa87"
+      "sha256": "c36830aab9fcb418a63783274e7849625a689f49c66d85a08ee2ca9d7edd7dec"
     },
     {
       "path": "v2/page-registry.js",
@@ -776,7 +776,7 @@
     },
     {
       "path": "v2/presentation.js",
-      "sha256": "4fd5a2d4d45bce4731a097e3c50aafab0a5fedbd7e95c8bd576d3dde7d81f69d"
+      "sha256": "1561955fc88291bc8de4a9a0e8be5f65a8042c8e2bbd16a3c6e769ff670538b7"
     },
     {
       "path": "v2/profile-races.js",
