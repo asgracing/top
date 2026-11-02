@@ -32,3 +32,12 @@ test('no assigned number means no reservation information',()=>{
   for(const raceNumber of [null,undefined,0,1000,'77',true])
     assert.equal(renderRaceNumberValidity({raceNumber,expiresAt:prefs(now+day).expiresAt},'ru',now),'');
 });
+test('administrators see an indefinite private reservation without a countdown',()=>{
+  for(const lang of ['ru','en']){
+    const html=renderRaceNumberValidity({raceNumber:77,permanent:true,expiresAt:prefs(now).expiresAt},lang,now);
+    assert.match(html,/data-number-validity="permanent"/);
+    assert.match(html,lang==='ru'?/Закреплён бессрочно/:/Reserved indefinitely/);
+    assert.match(html,lang==='ru'?/Пока вы в списке администраторов/:/While you are on the ASG administrator list/);
+    assert.doesNotMatch(html,/<time|До освобождения|Time remaining|уточняется/);
+  }
+});

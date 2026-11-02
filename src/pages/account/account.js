@@ -1,4 +1,4 @@
-import { createAuthHeaderController } from "../../features/auth/header-auth.js?v=20261031numbers1";
+import { createAuthHeaderController } from "../../features/auth/header-auth.js?v=20261102adminnumbers1";
 import { createHttpClient } from "../../shared/http-client.js";
 import { applyLocalizedNavigation, currentPageLanguageHref, resolvePageLocale, setPageLocale } from "../../shared/localized-page.js?v=20261007root1";
 import { resolveRuntimeOverride } from "../../shared/runtime-config.js";
@@ -23,7 +23,7 @@ import { loadPilotIndex, searchPilots } from "./pilot-search-model.js?v=20261022
 import { canUploadEntityLogo, inspectLogoFile, LogoUploadError, normalizeAssetResponse } from "./logo-upload-model.js?v=20260813logo2";
 import { mountDriverOverlayManager } from "../../../account/driver-overlay.js?v=20260927overlay1";
 import { mountRaceNumberPicker } from "./race-number-picker.js?v=20261031retention1";
-import { renderRaceNumberValidity, ensureRaceNumberValidityStyle } from "../../shared/race-number-validity.js?v=20261031profile1";
+import { renderRaceNumberValidity, ensureRaceNumberValidityStyle } from "../../shared/race-number-validity.js?v=20261102adminnumbers1";
 
 const AUTH_BASE_URL = "https://auth.asgracing.ru";
 const COPY = {

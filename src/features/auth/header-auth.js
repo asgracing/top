@@ -215,6 +215,7 @@ export function normalizeAuthPayload(payload) {
         }
       : null,
     canChange: rawPreferences.can_change === true,
+      permanent: rawPreferences.retention?.permanent === true,
     expiresAt: rawPreferences.retention?.activity_verified === true
       ? safeText(rawPreferences.retention.expires_at, 64) || null : null,
     nextChangeAt: safeText(rawPreferences.next_change_at, 64) || null,

@@ -9,6 +9,13 @@ export function renderRaceNumberValidity(preferences, language = 'ru', now = Dat
   const number = preferences?.raceNumber;
   if (!Number.isInteger(number) || number < 1 || number > 999) return '';
   const lang = language === 'en' ? 'en' : 'ru', copy = COPY[lang];
+  if (preferences.permanent === true) {
+    const title = lang === 'ru' ? 'Закреплён бессрочно' : 'Reserved indefinitely';
+    const help = lang === 'ru'
+      ? 'Пока вы в списке администраторов ASG. После удаления действует правило 60 дней и предупреждение минимум за 3 дня.'
+      : 'While you are on the ASG administrator list. After removal, the 60-day rule applies with at least 3 days’ notice.';
+    return `<div class="race-number-validity" data-number-validity="permanent"><p><b>#${number}</b> · ${title}</p><p class="race-number-validity-help">${help}</p></div>`;
+  }
   const date = parseAsgTimestamp(preferences.expiresAt), delta = date ? date.getTime() - now : null;
   const state = delta === null ? 'unknown' : delta <= 0 ? 'pending' : delta <= 3 * 86400000 ? 'warning' : 'active';
   const title = date

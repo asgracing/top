@@ -12,7 +12,7 @@ const payload={authenticated:true,linked:true,driver:{public_id:profile.public_i
  titles:{enabled:true,available:[],active:null},clubs_teams:{enabled:false}};
 async function publish(page,auth){
  await page.evaluate(async raw=>{
-  const {normalizeAuthPayload}=await import('/src/features/auth/header-auth.js?v=20261031numbers1');
+  const {normalizeAuthPayload}=await import('/src/features/auth/header-auth.js?v=20261102adminnumbers1');
   const bridge=await import('/v2/bridge.js?v=20261006v2k');let model;bridge.subscribe(next=>model=next)();
   bridge.publish({...model,auth:normalizeAuthPayload(raw)});
  },auth);
@@ -46,6 +46,12 @@ try{
   await publish(page,{...payload,preferences:{...payload.preferences,retention:{activity_verified:true,expires_at:new Date(now+60*day).toISOString()}}});
   await page.waitForFunction(()=>document.querySelector('.race-number-validity')?.dataset.numberValidity==='active');
   assert.match(await card.textContent(),lang==='ru'?/60 дней/:/60 days/);
+  await publish(page,{...payload,preferences:{...payload.preferences,retention:{activity_verified:true,expires_at:null,permanent:true}}});
+  await page.waitForFunction(()=>document.querySelector('.race-number-validity')?.dataset.numberValidity==='permanent');
+  assert.match(await card.textContent(),lang==='ru'?/Закреплён бессрочно/:/Reserved indefinitely/);
+  assert.equal(await card.locator('time').count(),0);
+  assert.ok(await page.evaluate(()=>document.documentElement.scrollWidth<=innerWidth+1));
+  await card.scrollIntoViewIfNeeded();await page.screenshot({path:path.join(output,`admin-${screen}-${lang}-${width}.png`)});
   await publish(page,{...payload,preferences:{...payload.preferences,retention:{activity_verified:false,expires_at:null}}});
   await page.waitForFunction(()=>document.querySelector('.race-number-validity')?.dataset.numberValidity==='unknown');
   assert.equal(await card.locator('time').count(),0);
