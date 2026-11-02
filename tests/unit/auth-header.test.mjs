@@ -21,6 +21,15 @@ test("maps ELO thresholds to the shared C1-C6 categories", () => {
   assert.equal(eloCategoryId(null), null);
 });
 
+test("only the server boolean enables an indefinite private number",()=>{
+  for(const value of [true,false,'true',1,null]){
+    const normalized=normalizeAuthPayload({authenticated:true,linked:true,
+      driver:{public_id:'drv_abc',display_name:'Pilot',profile_url:'/driver/?id=drv_abc'},
+      preferences:{race_number:77,retention:{permanent:value,activity_verified:true,expires_at:null}}});
+    assert.equal(normalized.preferences.permanent,value===true);
+  }
+});
+
 test("maps SR thresholds to A, B and C badges", () => {
   assert.equal(srCategory(5), "A");
   assert.equal(srCategory(4.93), "B");
@@ -109,6 +118,7 @@ test("normalizes linked auth data without exposing unexpected identity fields", 
     raceNumber: 77,
     pendingRequest: null,
     canChange: true,
+    permanent: false,
     expiresAt: null,
     nextChangeAt: null,
     blockedReason: null
