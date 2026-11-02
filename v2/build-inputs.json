@@ -104,7 +104,7 @@
     },
     {
       "path": "src/features/auth/header-auth.js",
-      "sha256": "4b9e998c0d54b4d10b364a44057da8a8c790e1ca0dcfa112215235608bf58497"
+      "sha256": "6c43abadbc9899fe675056547b080d6dc5371c6474647141c00e78a37a51acd4"
     },
     {
       "path": "src/features/auth/personal-notifications.js",
@@ -180,7 +180,7 @@
     },
     {
       "path": "src/pages/account/account.js",
-      "sha256": "b215ac07b992bd172e4494673acd8dfd9d73fd3a29a60cf2dd36d16f99d5465c"
+      "sha256": "0ba47ed5a1ecc3ab6c73e91c8b7c66ac7ba8e5ce963a174f160fcb28b1467e2f"
     },
     {
       "path": "src/pages/account/clubs-teams-command-model.js",
@@ -356,7 +356,7 @@
     },
     {
       "path": "src/shared/race-number-validity.js",
-      "sha256": "12bc3f6ae3ad0e02edac82379384c8810eb7d56169d53b6d4bf16bd944ee424c"
+      "sha256": "ed6a5420e51d606c48d9f9118b3f23c4391288544d6bf02917bc541b68e165dc"
     },
     {
       "path": "src/shared/race-result-context.js",
