@@ -1,4 +1,5 @@
-import {trackMapGeometry} from './track-map.js?v=20261027nords1';
+import {trackMapGeometry} from './track-map.js?v=20261102pit1';
+import {driverPitLabel} from './live-details.js?v=20261025direct1';
 
 // Update only markers at display refresh rate. The circuit is a stable asset.
 export function animateLiveMap(root,server,cars,lang='ru') {
@@ -16,11 +17,12 @@ export function animateLiveMap(root,server,cars,lang='ru') {
     }
     const point=map.project(c.world_x,c.world_z);
     if (!point.every(Number.isFinite)) continue;
-    node.setAttribute('class','track-car'+(c.position===1?' is-leader':''));
+    const pit=driverPitLabel(server,c,lang);
+    node.setAttribute('class','track-car'+(c.position===1?' is-leader':'')+(pit?' is-pit':''));
     node.setAttribute('transform',`translate(${point[0].toFixed(2)} ${point[1].toFixed(2)})`);
     const position=Number.isInteger(c.position)&&c.position>0&&c.position<=256?c.position:'—';
     node.querySelector('text').textContent=String(position);
-    node.querySelector('title').textContent=(lang==='ru'?'Позиция ':'Position ')+position;
+    node.querySelector('title').textContent=(lang==='ru'?'Позиция ':'Position ')+position+(pit?' · '+pit:'');
     svg.append(node);
   }
   for (const node of existing.values()) node.remove();
@@ -28,7 +30,7 @@ export function animateLiveMap(root,server,cars,lang='ru') {
   if(caption?.tagName==='P'){
     const moving=svg.querySelector('.track-car');
     const message=moving
-      ? (lang==='ru'?'Красный — лидер · номера обозначают позиции':'Red — leader · numbers show positions')
+      ? (lang==='ru'?'Красный — лидер · жёлтый — в питах · номера обозначают позиции':'Red — leader · yellow — in pits · numbers show positions')
       : (lang==='ru'?'Нет свежих координат машин':'No fresh car positions');
     if(caption.textContent!==message)caption.textContent=message;
   }

@@ -22,6 +22,17 @@ test('car map uses live coordinates and classified positions, leader drawn last'
   assert.match(html,/<circle r="10\.4"/);
 });
 
+test('pit markers follow fresh pit observations including the leader and clear on track or stale',()=>{
+  for(const pit_state of ['pit_entry','pit_lane','pit_box','pit_exit','pit']) {
+    const s=server();s.drivers[1]={...s.drivers[1],pit_state,pit_observed_at:observed_at};
+    assert.match(renderTrackMap(s,'ru',now),/class="track-car is-leader is-pit"/);
+    s.drivers[1].pit_state='on_track';
+    assert.doesNotMatch(renderTrackMap(s,'en',now),/is-pit/);
+    s.drivers[1].pit_state=pit_state;s.drivers[1].pit_observed_at=new Date(now-60000).toISOString();
+    assert.doesNotMatch(renderTrackMap(s,'ru',now),/is-pit/);
+  }
+});
+
 test('native map disclosure opens by default and can render collapsed without losing geometry',()=>{
   const s={...server(),track_code:'spa'};
   const open=renderTrackMap(s,'ru',now),closed=renderTrackMap(s,'en',now,{expanded:false});

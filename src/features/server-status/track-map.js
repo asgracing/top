@@ -1,4 +1,5 @@
 import {isInstanceStatusStale,serverObservationAgeMs,serverDetailMaxAgeMs} from './freshness.js?v=20261026smooth1';
+import {driverPitLabel} from './live-details.js?v=20261025direct1';
 import {MONZA_MAP} from '../../../assets/track-maps/monza.js?v=20261024monza1';
 import {SPA_MAP} from '../../../assets/track-maps/spa.js?v=20261026spa1';
 import {NURBURGRING_MAP} from '../../../assets/track-maps/nurburgring.js?v=20261026maps1';
@@ -64,9 +65,10 @@ export function renderTrackMap(server, lang = 'ru', now = Date.now(), {expanded=
     const position = Number.isInteger(d.position) && d.position > 0 && d.position <= 256 ? d.position : '—';
     const leader = d.position===1, label = `${ru ? 'Позиция':'Position'} ${position}`;
     const connection=Number.isInteger(d.connection_id)?d.connection_id:'';
-    return `<g class="track-car${leader ? ' is-leader':''}" data-car-key="${d.car_id}:${connection}" transform="translate(${point})"><title>${label}</title><circle r="${map.fixed ? 14.4:10.4}"/><text text-anchor="middle" dominant-baseline="central">${position}</text></g>`;
+    const pit = driverPitLabel(server,d,lang,now);
+    return `<g class="track-car${leader ? ' is-leader':''}${pit ? ' is-pit':''}" data-car-key="${d.car_id}:${connection}" transform="translate(${point})"><title>${label}${pit ? ' · '+pit:''}</title><circle r="${map.fixed ? 14.4:10.4}"/><text text-anchor="middle" dominant-baseline="central">${position}</text></g>`;
   }).join('');
   const labels=(map.labels||[]).map(label=>`<text class="track-label${label.secondary ? ' is-secondary':''}" x="${label.x}" y="${label.y}" text-anchor="${label.anchor}">${label.lines ? label.lines.map((line,i)=>`<tspan x="${label.x}" dy="${i ? '1.2em':'0'}">${line}</tspan>`).join(''):label.text}</text>`).join('');
   const credit=map.fixed ? `<p class="track-map-credit">${ru ? 'Геометрия':'Geometry'}: <a href="${map.source.url}">${map.source.credit||'Tomislav Bacinger · MIT'}</a></p>`:'';
-  return wrap(`<svg viewBox="${map.viewBox.join(' ')}" role="img" aria-label="${title}"><path class="track-outline" d="${path}"/>${labels}${markers}</svg><p>${cars.length ? (ru ? 'Красный — лидер · номера обозначают позиции' : 'Red — leader · numbers show positions'):empty}</p>${credit}`);
+  return wrap(`<svg viewBox="${map.viewBox.join(' ')}" role="img" aria-label="${title}"><path class="track-outline" d="${path}"/>${labels}${markers}</svg><p>${cars.length ? (ru ? 'Красный — лидер · жёлтый — в питах · номера обозначают позиции' : 'Red — leader · yellow — in pits · numbers show positions'):empty}</p>${credit}`);
 }

@@ -15,6 +15,8 @@
 .server-track-map .track-outline { fill:none; stroke:#7891a9; stroke-width:7; stroke-linecap:round; stroke-linejoin:round; }
 .server-track-map .track-car circle { fill:#3183c9; stroke:#eef5ff; stroke-width:1.6; }
 .server-track-map .track-car.is-leader circle { fill:#dc3545; }
+.server-track-map .track-car.is-pit circle { fill:#ffda91; }
+.server-track-map .track-car.is-pit text { fill:#101b29; }
 .server-track-map .track-car text { fill:#fff; stroke:none; font-size:9.6px; font-weight:750; font-family:system-ui,sans-serif; }
 .server-track-map.has-fixed-map svg { height:clamp(250px,42vw,500px); max-height:500px; }
 .server-track-map[data-track-map="spa-gp"] svg { height:clamp(320px,65vw,680px); max-height:680px; }
@@ -36,15 +38,17 @@
 }
 .server-roster-scroll .server-roster-table.server-driver-list { display:table; width:100%; min-width:960px; table-layout:fixed; border-collapse:separate; border-spacing:0; margin:0; color:#e8eef7; font-size:13px; }
 .server-roster-table .roster-col-position { width:52px; }
-.server-roster-table .roster-col-interval { width:100px; }
+.server-roster-table .roster-col-interval { width:76px; }
 .server-roster-table .pilot-interval { font-variant-numeric:tabular-nums; }
 .server-roster-table .pilot-pit { display:inline-block; padding:1px 4px; border:1px solid #efbb5c; border-radius:3px; color:#ffda91; font-weight:700; }
-.server-roster-table .roster-col-best { width:112px; }
-.server-roster-table .roster-col-last { width:132px; }
+.server-roster-table .roster-col-best { width:90px; }
+.server-roster-table .roster-col-last { width:112px; }
 .server-roster-table .roster-col-ratings { width:166px; }
 .server-roster-table .roster-col-car { width:220px; }
 .server-roster-scroll .server-roster-table.server-driver-list th,.server-roster-scroll .server-roster-table.server-driver-list td { position:static; inset:auto; z-index:auto; min-width:0; max-width:none; padding:8px 10px; vertical-align:middle; text-align:left; white-space:nowrap; overflow:hidden; border:0; border-bottom:1px solid #6583a63d; background:#142131; }
 .server-roster-scroll .server-roster-table th { background:#1a2b3f; color:#acbfd5; font-size:11px; font-weight:650; white-space:nowrap; }
+.server-roster-scroll .server-roster-table.server-driver-list :is(th,td):is(:nth-child(3),:nth-child(4),:nth-child(5)) { padding-inline:6px; font-size:12px; }
+.server-roster-scroll .server-roster-table.server-driver-list th:is(:nth-child(3),:nth-child(4),:nth-child(5)) { font-size:10px; }
 .server-roster-table tbody tr:last-child td { border-bottom:0; }
 .server-roster-scroll .server-roster-table.server-driver-list .pilot-position { text-align:center; color:#acbfd5; }
 .server-roster-scroll .server-roster-table.server-driver-list .pilot-identity { display:table-cell; min-width:0; }
