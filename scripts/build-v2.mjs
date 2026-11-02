@@ -20,8 +20,8 @@ if (process.env.ASG_V2_PRESENTATION_ONLY === '1') throw Error('Presentation-only
 const version = '20261006v2k';
 const runtimeVersion = '20261028team10';
 const presentationVersion = '20261028team10';
-const homeStylesVersion = '20261102activity2';
-const bootVersion = '20261102activity2';
+const homeStylesVersion = '20261102activity3';
+const bootVersion = '20261102activity3';
 const profileStylesVersion = '20261031sr1';
 const legalVersion = '20261030analytics1';
 const buildInputs = new Map();

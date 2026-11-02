@@ -61,6 +61,13 @@ export function activityPageForDate(periods, date, size = 14) {
   return index < 0 ? 0 : Math.floor((periods.length - 1 - index) / size);
 }
 
+export function activityHourPeak(day) {
+  const hours=(Array.isArray(day?.hours)?day.hours:[]).map(item=>({hour:Number(item?.hour),value:count(item?.unique_players),hasHour:item?.hour!=null})).filter(item=>item.hasHour&&Number.isInteger(item.hour)&&item.hour>=0&&item.hour<24&&item.value!==null);
+  if(!hours.length)return null;
+  const value=Math.max(...hours.map(item=>item.value));
+  return {value,hours:[...new Set(hours.filter(item=>item.value===value).map(item=>item.hour))].sort((a,b)=>a-b).map(hour=>String(hour).padStart(2,'0'))};
+}
+
 export function buildActivityComparison(rawDays, previousDays = 7, today = '') {
   previousDays = [7, 14, 30].includes(Number(previousDays)) ? Number(previousDays) : 7;
   const history = buildActivityHistory(rawDays).filter(period => !today || period.start <= today);

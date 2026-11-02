@@ -541,6 +541,17 @@ body[data-v2] #v2-modal[data-kind="online"] {width:min(1040px,calc(100vw - 32px)
  .pilot-activity-tabs button>span {font-size:10px;}
 }
 
+.pilot-activity-overview-facts {grid-template-columns:repeat(3,minmax(0,1fr));}
+.pilot-activity-overview-facts>div>span {line-height:1.5;min-height:18px;}
+.pilot-activity-overview-facts>[data-activity-stat="tracks"] {grid-column:1/-1;}
+.pilot-activity-overview-facts small {display:block;margin-top:4px;font-size:10px;color:#a0b4c6;}
+@media(max-width:680px){
+ .pilot-activity-overview-facts {gap:8px;}
+ .pilot-activity-overview-facts>div {padding:10px 8px;}
+ .pilot-activity-overview-facts>div>span {font-size:10px;}
+ .pilot-activity-overview-facts>div:not([data-activity-stat="tracks"])>span {min-height:45px;}
+}
+
 /* Reserve the ranking rows while its data waits for the viewport. */
 body[data-v2="home"] #v2-ranking .table-scroll {min-height:380px;}
 

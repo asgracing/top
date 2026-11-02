@@ -8,7 +8,7 @@ const days=Array.from({length:235},(_,index)=>{
   const date=new Date(Date.UTC(2026,2,13+index)).toISOString().slice(0,10);
   const unique=index===234?48:20+index%40;
   return {date,unique_players:unique,races:3,avg_players_per_race:12.5,activity_score:60,tracks:['monza'],
-    peak_hour:{label:'19:00'},hours:Array.from({length:24},(_,hour)=>({hour:String(hour).padStart(2,'0'),unique_players:hour===19?unique:0,races:hour===19?3:0}))};
+    peak_hour:{label:'19:00'},hours:Array.from({length:24},(_,hour)=>({hour:String(hour).padStart(2,'0'),unique_players:hour===19?Math.floor(unique/2):hour===20?unique-5:0,races:hour===19?3:0}))};
 }).filter(day=>day.date!=='2026-10-28');
 snapshot.home.race_activity=days;
 const reports=[];
@@ -34,13 +34,13 @@ try {
     assert.equal(await modal.getAttribute('data-kind'),'online');
     assert.equal(await page.locator('[data-activity-tab="overview"]').getAttribute('aria-selected'),'true');
     assert.equal(await page.locator('[data-activity-scale]').count(),0,'Calendar exploration lives on its own tab');
-    assert.equal(await page.locator('[data-activity-stat="daily"] b').textContent(),'48');
+    assert.equal(await page.locator('.pilot-activity-hero,.pilot-activity-comparison-panel,#v2-activity-comparison-window').count(),0);
+    assert.equal(await page.locator('[data-activity-stat="races"] b').textContent(),'3');
+    assert.equal(await page.locator('[data-activity-stat="average_per_race"] b').textContent(),language==='ru'?'12,5':'12.5');
+    assert.equal(await page.locator('[data-activity-stat="hourly_peak"] b').textContent(),'43');
+    assert.match(await page.locator('[data-activity-stat="hourly_peak"] small').textContent(),/20:00/);
+    assert.ok(await page.locator('.pilot-activity-overview-facts').evaluate(node=>{const cells=[...node.children].map(cell=>cell.getBoundingClientRect()),values=[...node.querySelectorAll('div>b')].slice(0,3).map(value=>value.getBoundingClientRect()),box=node.getBoundingClientRect();return cells.slice(0,3).every(cell=>Math.abs(cell.top-cells[0].top)<1)&&values.every(value=>Math.abs(value.top-values[0].top)<1)&&cells[3].top>=cells[0].bottom&&Math.abs(cells[3].width-box.width)<2}),'Three summary values stay aligned on one row and tracks fill the next row');
     assert.equal(await page.locator('.pilot-activity-hour-chart>div').count(),24);
-    assert.equal(await page.locator('#v2-activity-comparison-window').inputValue(),'7');
-    await page.locator('#v2-activity-comparison-window').selectOption('14');
-    const baseline=days.filter(day=>day.date>='2026-10-19'&&day.date<'2026-11-02');
-    assert.equal(await page.locator('[data-comparison="average"]>b').textContent(),new Intl.NumberFormat(language==='ru'?'ru-RU':'en-GB',{maximumFractionDigits:1}).format(baseline.reduce((sum,day)=>sum+day.unique_players,0)/baseline.length));
-    await page.locator('#v2-activity-comparison-window').selectOption('7');
     assert.ok(await modal.evaluate(node=>node.scrollWidth<=node.clientWidth+1));
     await modal.screenshot({path:taskScratchPath(`online-activity/overview-${language}-${width}.png`)});
     await page.locator('[data-activity-tab="history"]').click();
@@ -78,8 +78,6 @@ try {
     await page.keyboard.press('ArrowLeft');
     assert.equal(await page.locator('[data-activity-tab="overview"]').getAttribute('aria-selected'),'true');
     assert.equal(await page.evaluate(()=>document.activeElement?.getAttribute('data-activity-tab')),'overview');
-    await page.locator('[data-activity-overview-date="2026-11-01"]').click();
-    assert.equal(await page.locator('#v2-online-date').inputValue(),'2026-11-01');
     await page.locator('#v2-modal .modal-close').click();
     await page.locator('.online').click();
     assert.equal(await page.locator('[data-activity-tab="overview"]').getAttribute('aria-selected'),'true','Each opening starts with current daily information');

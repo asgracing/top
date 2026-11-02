@@ -1,6 +1,6 @@
 import test from 'node:test';
 import assert from 'node:assert/strict';
-import { activityPage, activityPageForDate, buildActivityHistory, buildActivityComparison } from '../../v2/online-activity-model.js';
+import { activityPage, activityPageForDate, buildActivityHistory, buildActivityComparison, activityHourPeak } from '../../v2/online-activity-model.js';
 
 test('Monthly history keeps year boundaries and exact daily averages', () => {
   const periods = buildActivityHistory([
@@ -77,6 +77,13 @@ test('Overview changes its calendar window, excludes future data and marks stale
   assert.equal(buildActivityComparison(days,30,'2026-11-02').isToday,false);
   assert.equal(buildActivityComparison(days,7,'2026-10-20').current.start,'2026-10-20');
   assert.equal(buildActivityComparison([],7,'2026-11-02'),null);
+});
+
+test('Hourly peak comes from the largest hourly unique count rather than the weighted activity peak',()=>{
+  const day={unique_players:100,peak_hour:{hour:'19',unique_players:30},hours:[{hour:'19',unique_players:30},{hour:'20',unique_players:60},{hour:'21',unique_players:60},{hour:'25',unique_players:999},{hour:'22',unique_players:null}]};
+  assert.deepEqual(activityHourPeak(day),{value:60,hours:['20','21']});
+  assert.deepEqual(activityHourPeak({hours:[{hour:'00',unique_players:0}]}),{value:0,hours:['00']});
+  assert.equal(activityHourPeak({hours:[{hour:'00',unique_players:null}]}),null);
 });
 
 test('Calendar months include leap day and daylight-saving dates without shifting date keys', () => {

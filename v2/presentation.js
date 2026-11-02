@@ -11,7 +11,7 @@ import {LiveServerStream} from '../src/features/server-status/live-stream.js?v=2
 import {animateLiveMap} from '../src/features/server-status/live-map.js?v=20261027nords1';
 import {safetyHistoryComponents} from './safety-history.js?v=20261010profile1';
 import {loadLeaderboardRank,profileWithLeaderboardRank} from '/src/shared/leaderboard-rank.js?v=20261013delivery1';
-import {createOnlineActivity} from './online-activity.js?v=20261102activity2';
+import {createOnlineActivity} from './online-activity.js?v=20261102activity3';
 
 // R24 views consume the canonical controllers. They never calculate ratings or
 // create a second auth/voting state.
