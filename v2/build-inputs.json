@@ -64,7 +64,7 @@
     },
     {
       "path": "package.json",
-      "sha256": "139b923c14100d1ae838d96bde86b655a5a6dcf135a473722d5d98de1c94a468"
+      "sha256": "64fdc005b3003f5eeaaecf9f90a9f9d2329cc2bbc89f985a44f47ecaed096483"
     },
     {
       "path": "scripts/build-v2-boot.mjs",
@@ -72,7 +72,7 @@
     },
     {
       "path": "scripts/build-v2.mjs",
-      "sha256": "ceee4e88e9dfbf6d550f9e9322e0e920bde99b52a87d7daaa26372bfe40a8eb9"
+      "sha256": "3ee0dfde46a4e989a07741eed9201f46b5c699bf3a8cc9d84d9664589f29fb18"
     },
     {
       "path": "scripts/generate-localized-pages.mjs",
@@ -100,11 +100,11 @@
     },
     {
       "path": "src/features/auth/clubs-teams-auth-model.js",
-      "sha256": "a25e52a365514f354e6034c50a96278d9c685556164ff685dd3ff4f78262d2fb"
+      "sha256": "72bbf897bf4d8fe2a0071569b07e020a7ccfd3b63af525980b9f82874ba2aa81"
     },
     {
       "path": "src/features/auth/header-auth.js",
-      "sha256": "6c43abadbc9899fe675056547b080d6dc5371c6474647141c00e78a37a51acd4"
+      "sha256": "5b74df471384566df0833bd0da99ded93483b4c1773493fbe97a0b549e18dadc"
     },
     {
       "path": "src/features/auth/personal-notifications.js",
@@ -180,11 +180,11 @@
     },
     {
       "path": "src/pages/account/account.js",
-      "sha256": "0ba47ed5a1ecc3ab6c73e91c8b7c66ac7ba8e5ce963a174f160fcb28b1467e2f"
+      "sha256": "387247a1303a8343420478e4fd111ce130b5d9f92e3942e6b2f9f26e6e77a3c2"
     },
     {
       "path": "src/pages/account/clubs-teams-command-model.js",
-      "sha256": "b0fbd80bbd7a55f2792487067338b4eb28a8b94923c9f98192724794039f618f"
+      "sha256": "75af749ee7a1eb45befad5047de32345de67912dba25c9882ece2772e52d9bd3"
     },
     {
       "path": "src/pages/account/logo-upload-model.js",
@@ -279,12 +279,20 @@
       "sha256": "4045bb7ab9eaae8eb58fda27168828c77da499688522f46944d537b9e42c8f41"
     },
     {
+      "path": "src/pages/portal-ops/portal-clubs-model.js",
+      "sha256": "55313fc1d06dc0aa98c271b1e60495bc983a9153f1ce3738e7ae8ea8bc739188"
+    },
+    {
+      "path": "src/pages/portal-ops/portal-clubs-workspace.js",
+      "sha256": "5918663a1c74e0f5a909b708a8f859bbb05164b743495f47039ee2232fbdc5ce"
+    },
+    {
       "path": "src/pages/portal-ops/portal-ops-model.js",
       "sha256": "400b44c14fcc6c83a4d57964ef1013aae1cca39c5b7b4267d7dbc4ba3cead047"
     },
     {
       "path": "src/pages/portal-ops/portal-ops-page.js",
-      "sha256": "f8870d45bd323c7793be6562383c188aa4a85bb0c3abcda663cdbfae88d5722a"
+      "sha256": "4f6128b15f6704a85625097169e663276179950078497af5cb26f73ed8d306ea"
     },
     {
       "path": "src/pages/races/model.js",
@@ -600,7 +608,7 @@
     },
     {
       "path": "v1-source/html/portal-ops/index.html",
-      "sha256": "29cc9541d9874d0f78822e2f1d746307e476cbb2dfb184c0f63a028303253cd2"
+      "sha256": "646a4b286cb974be4edb026d9a27e13321ac781b7dd1dc9cc5bfceb98d0626da"
     },
     {
       "path": "v1-source/html/privacy/index.html",
@@ -748,7 +756,7 @@
     },
     {
       "path": "v2/pages/control.js",
-      "sha256": "0a831e7de7195acf8d972a1a3600def104013a27d8dd64c14b8e2121ddfa23a6"
+      "sha256": "4fa992f75c7fbdc958d4735c279d5a0e58292fa20875296ec55a0d56eece3644"
     },
     {
       "path": "v2/pages/controller.js",
