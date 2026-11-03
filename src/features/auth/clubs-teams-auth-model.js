@@ -74,7 +74,8 @@ function normalizeLogoModeration(value) {
 
 function normalizeEntity(value, type) {
   const source = plainObject(value);
-  if (!source || (!hasExactKeys(source, ENTITY_KEYS) && !hasExactKeys(source, LEGACY_ENTITY_KEYS))) return null;
+  const base = source && Object.fromEntries(Object.entries(source).filter(([key]) => !['editable_fields','revision_rejection_reason'].includes(key)));
+  if (!source || (!hasExactKeys(base, ENTITY_KEYS) && !hasExactKeys(base, LEGACY_ENTITY_KEYS))) return null;
   const publicId = safeIdentifier(source.public_id);
   const slug = safeSlug(source.slug);
   const displayName = boundedText(source.display_name, 160);
@@ -84,6 +85,14 @@ function normalizeEntity(value, type) {
   const logoModeration = normalizeLogoModeration(source.logo_moderation);
   if (!publicId || !slug || !displayName || !status || !role || rowVersion === null || logoModeration === false) return null;
   const entity = { type, publicId, slug, displayName, status, role, rowVersion, pendingRevision: source.pending_revision === true, logoModeration };
+  if ('editable_fields' in source || 'revision_rejection_reason' in source) {
+    const fields = plainObject(source.editable_fields);
+    if (!['head','captain'].includes(role) || !fields || !hasExactKeys(fields,new Set(['display_name','short_name','description_ru','description_en','website_url']))
+        || Object.values(fields).some(value => value !== null && (typeof value !== 'string' || value.length > 4000))
+        || (source.revision_rejection_reason !== null && (typeof source.revision_rejection_reason !== 'string' || source.revision_rejection_reason.length > 1000))) return null;
+    entity.editableFields = { displayName: fields.display_name, shortName: fields.short_name || '', descriptionRu: fields.description_ru || '', descriptionEn: fields.description_en || '', websiteUrl: fields.website_url || '' };
+    entity.revisionRejectionReason = source.revision_rejection_reason;
+  }
   const managementId = safeIdentifier(source.id);
   if (managementId) MANAGEMENT_IDS.set(entity, managementId);
   return entity;

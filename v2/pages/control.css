@@ -1,3 +1,4 @@
+@import url('/styles/components/portal-ops-clubs.css?v=20261103clubs1');
 /* Native private-page controls arranged in the approved R21/R22 grids. */
 .v2-control {display:grid;gap:10px;min-width:0;}
 .v2-control [hidden] {display:none!important;}

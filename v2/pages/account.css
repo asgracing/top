@@ -1,4 +1,4 @@
-@import url('/styles/components/driver-account.css?v=20261007accountv2') layer(v1Runtime);
+@import url('/styles/components/driver-account.css?v=20261103clubs1') layer(v1Runtime);
 .v2-account {display:grid;gap:9px;min-width:0;}
 .v2-account [hidden] {display:none!important;}
 .v2-account .panel {min-width:0;}

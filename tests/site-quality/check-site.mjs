@@ -50,7 +50,9 @@ const css = `${tokensCss}\n${baseCss}\n${siteBackgroundCss}\n${topNavigationCss}
 const failures = [];
 if (!/#account-site-header\s*\{[^}]*z-index:\s*var\(--layer-nav\)/s.test(driverAccountCss)) failures.push("Account header must stay above account content so its dropdowns remain visible");
 for (const [page, source] of [["account", accountHtml], ["account settings", accountSettingsHtml]]) {
-  if (!source.includes("driver-account.css?v=20260813accountdropdown1")) failures.push(`${page} page is missing the account dropdown stacking fix`);
+  // The stacking rule is checked in the stylesheet above; its cache version
+  // changes as account features evolve.
+  if (!/driver-account\.css\?v=[A-Za-z0-9]+/.test(source)) failures.push(`${page} page must load the versioned account stylesheet`);
 }
 const sharedControlsSource = js.slice(js.indexOf("function initializeSharedControls()"), js.indexOf("function initializeHomeControllers()"));
 const pageControllersSource = js.slice(js.indexOf("function initializePageControllers()"), js.indexOf("function applyHomeSiteData("));

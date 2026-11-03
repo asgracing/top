@@ -403,6 +403,43 @@ const COPY = {
   }
 };
 
+Object.assign(COPY.ru, {
+  ctWorkspaceHint: 'Профиль, логотип, участники и заявки — всё управление вашим сообществом здесь.',
+  ctCreateHint: 'Клуб объединяет пилотов и команды. Команда — гоночный состав до четырёх пилотов.',
+  ctNoClub: 'Вы пока не состоите в клубе', ctNoTeam: 'Вы пока не состоите в команде',
+  ctCreateClubHint: 'Создайте свой клуб и станьте его главой или выберите клуб в каталоге.',
+  ctCreateTeamHint: 'Соберите команду и станьте капитаном. В клубе команда создаётся внутри вашего клуба.',
+  ctStepProfile: '1. Профиль', ctStepReview: '2. Проверка', ctStepManage: '3. Логотип и состав',
+  ctFormHint: 'Название и описание появятся в каталоге после одобрения. Вы станете главой клуба или капитаном команды.',
+  ctEditHint: 'Одобренный профиль остаётся виден, пока администратор проверяет изменения.',
+  ctPreview: 'Так будет выглядеть карточка', ctPreviewEmpty: 'Название сообщества',
+  ctFormTips: 'Название — от 2 до 80 символов. Короткий тег — до 24. Сайт указывается с https://. Логотип можно добавить после одобрения.',
+  ctReviewHint: 'Изменения на проверке. После решения администратора здесь появится результат.',
+  ctReadyHint: 'Данные подтверждены. Вы можете менять профиль, логотип и управлять составом.',
+  ctMemberHint: 'Вы участник. Профилем и составом управляет глава клуба или капитан команды.',
+  ctSuspendedHint: 'Работа сообщества приостановлена. Для возобновления обратитесь к администратору.',
+  ctProfileSubmitted: 'Профиль отправлен на проверку. Решение администратора появится в карточке сообщества.',
+  ctCreateClubBlocked: 'Для нового клуба сначала завершите участие в независимой команде. Капитану потребуется помощь администратора с передачей руководства.',
+});
+Object.assign(COPY.en, {
+  ctWorkspaceHint: 'Manage your community profile, logo, members and requests here.',
+  ctCreateHint: 'Clubs bring drivers and teams together. A team is a racing roster of up to four drivers.',
+  ctNoClub: 'You are not in a club yet', ctNoTeam: 'You are not in a team yet',
+  ctCreateClubHint: 'Create a club as its head, or find a club in the catalog.',
+  ctCreateTeamHint: 'Create a team as its captain. If you belong to a club, the team joins that club.',
+  ctStepProfile: '1. Profile', ctStepReview: '2. Review', ctStepManage: '3. Logo & roster',
+  ctFormHint: 'Your name and description appear in the catalog after approval. You become the club head or team captain.',
+  ctEditHint: 'The approved profile remains visible while an administrator reviews changes.',
+  ctPreview: 'Card preview', ctPreviewEmpty: 'Community name',
+  ctFormTips: 'Name: 2–80 characters. Short tag: up to 24. Use https:// for your website. Add a logo after approval.',
+  ctReviewHint: 'Changes are under review. The administrator’s decision will appear here.',
+  ctReadyHint: 'Profile approved. You can edit the profile, logo and roster.',
+  ctMemberHint: 'You are a member. The club head or team captain manages the profile and roster.',
+  ctSuspendedHint: 'This community is suspended. Contact an administrator to resume it.',
+  ctProfileSubmitted: 'Profile submitted for review. The administrator’s decision will appear on the community card.',
+  ctCreateClubBlocked: 'Leave your independent team before creating a club. Captains need an administrator to transfer leadership first.',
+});
+
 function language() {
   return resolvePageLocale({ documentRef: document, windowRef: window }).language;
 }
@@ -524,7 +561,8 @@ function renderMembershipEntity(entity, canEdit = false, canManage = false, canL
         ${entity.pendingRevision ? `<em>${t("pendingRevision")}</em>` : ""}
         ${entity.logoModeration ? `<em class="account-logo-status" data-status="${entity.logoModeration.status}">${escapeHtml(t(`logoStatus_${entity.logoModeration.status}`))}${entity.logoModeration.reason ? `<small>${escapeHtml(t("logoRejectedReason", entity.logoModeration.reason))}</small>` : ""}</em>` : ""}
       </a>
-      ${canEdit ? `<button class="account-entity-action" type="button" data-ct-mode="revise" data-ct-type="${entity.type}">${t(entity.type === "club" ? "editClub" : "editTeam")}</button>` : ""}
+      <p class="account-membership-hint">${entity.status==='rejected' ? escapeHtml(entity.revisionRejectionReason || t('ctStatus_rejected')) : t(entity.status === 'suspended' ? 'ctSuspendedHint' : entity.pendingRevision ? 'ctReviewHint' : entity.role === 'member' ? 'ctMemberHint' : 'ctReadyHint')}</p>
+      ${['head','captain'].includes(entity.role) ? `<button class="account-entity-action" type="button" data-ct-mode="revise" data-ct-type="${entity.type}"${canEdit?'':' disabled'}>${t(entity.type === "club" ? "editClub" : "editTeam")}</button>` : ""}
       ${canUploadLogo ? `<button class="account-entity-action" type="button" data-ct-upload-logo="${entity.type}">${t("uploadLogo")}</button>` : ""}
       ${canManage ? `<button class="account-entity-action" type="button" data-ct-manage-members="${entity.type}">${t("manageMembers")}</button>` : ""}
       ${canLeave ? `<button class="account-entity-action account-entity-action--danger" type="button" data-ct-leave="${entity.type}">${t("leaveMembership")}</button>` : ""}
@@ -605,23 +643,23 @@ function renderClubsTeams(auth) {
     ))
   );
   const affiliationReady = mutationReady && affiliationEligible;
-  const canEditClub = mutationReady && state.club?.role === "head" && state.club.status === "approved" && !state.club.pendingRevision;
-  const canEditTeam = mutationReady && state.team?.role === "captain" && state.team.status === "approved" && !state.team.pendingRevision;
+  const canEditClub = mutationReady && state.club?.role === "head" && ['approved','rejected'].includes(state.club.status) && !state.club.pendingRevision;
+  const canEditTeam = mutationReady && state.team?.role === "captain" && ['approved','rejected'].includes(state.team.status) && !state.team.pendingRevision;
   const canManageClub = managementReady && state.club?.role === "head" && state.club.status === "approved";
   const canManageTeam = managementReady && state.team?.role === "captain" && state.team.status === "approved";
   const canUploadClubLogo = canUploadEntityLogo(state.club, mutationReady);
   const canUploadTeamLogo = canUploadEntityLogo(state.team, mutationReady);
+  const emptyEntity = type => `<article class="account-membership account-membership--empty"><span class="account-membership-kind">${t(type)}</span><strong>${t(type === 'club'?'ctNoClub':'ctNoTeam')}</strong><p class="account-membership-hint">${t(type === 'club'?(state.team?'ctCreateClubBlocked':'ctCreateClubHint'):'ctCreateTeamHint')}</p><button class="account-action account-action--primary" type="button" data-ct-mode="create" data-ct-type="${type}"${mutationReady&&!(type==='club'&&state.team)?'':' disabled'}>${t(type === 'club'?'createClub':'createTeam')}</button></article>`;
   return `
     <section class="account-clubs-teams">
       <div class="account-section-heading">
         <h2>${t("clubsTeams")}</h2>
         ${pending ? `<span class="account-operation-count">${t("pendingOperations")}: ${pending}</span>` : ""}
       </div>
+      <p class="account-muted">${t('ctWorkspaceHint')}</p>
       ${clubsTeamsFlash.text ? `<p class="account-command-summary" data-kind="${escapeHtml(clubsTeamsFlash.kind)}" role="status">${escapeHtml(clubsTeamsFlash.text)}</p>` : ""}
       ${stale ? `<p class="account-snapshot-warning" role="status">${t("clubsTeamsStale")}</p>` : ""}
-      ${state.club || state.team
-        ? `<div class="account-memberships">${renderMembershipEntity(state.club, canEditClub, canManageClub, mutationReady && state.club?.role === "member", canUploadClubLogo)}${renderMembershipEntity(state.team, canEditTeam, canManageTeam, mutationReady && state.team?.role === "member", canUploadTeamLogo)}</div>`
-        : `<p class="account-muted">${t("clubsTeamsEmpty")}</p>`}
+      <div class="account-memberships">${state.club?renderMembershipEntity(state.club, canEditClub, canManageClub, mutationReady && state.club?.role === "member", canUploadClubLogo):emptyEntity('club')}${state.team?renderMembershipEntity(state.team, canEditTeam, canManageTeam, mutationReady && state.team?.role === "member", canUploadTeamLogo):emptyEntity('team')}</div>
       ${renderMembershipActions(state.membershipActions, mutationReady)}
       ${renderTeamClubActions(state.teamClubActions, mutationReady)}
       ${requestedMembership ? `<div class="account-membership-request">
@@ -646,8 +684,6 @@ function renderClubsTeams(auth) {
       ${!auth.discord?.linked ? `<p class="account-muted">${t("discordRequired")}</p>` : ""}
       ${pending ? `<p class="account-muted">${t("managementBlocked")}</p>` : ""}
       <div class="account-actions">
-        ${mutationReady && !state.club ? `<button class="account-action account-action--primary" type="button" data-ct-mode="create" data-ct-type="club">${t("createClub")}</button>` : ""}
-        ${mutationReady && !state.team ? `<button class="account-action account-action--primary" type="button" data-ct-mode="create" data-ct-type="team">${t("createTeam")}</button>` : ""}
         <a class="account-action" href="/teams/">${t("clubsTeamsCatalog")}</a>
       </div>
     </section>`;
@@ -690,6 +726,7 @@ export async function loadApprovedEntityProfile(entity) {
 }
 
 async function loadApprovedEntityFields(entity) {
+  if (entity.editableFields) return entity.editableFields;
   const detail = await loadApprovedEntityDetail(entity);
   return {
     displayName: detail.display_name,
@@ -706,8 +743,10 @@ function entityFormMarkup({ mode, entityType, fields, hasClub }) {
   return `
     <div class="account-entity-form-shell">
       <h2>${escapeHtml(title)}</h2>
+      <ol class="account-community-steps"><li aria-current="step">${t('ctStepProfile')}</li><li>${t('ctStepReview')}</li><li>${t('ctStepManage')}</li></ol>
+      <p class="account-muted">${t(mode==='create'?'ctFormHint':'ctEditHint')}</p>
       ${mode === "create" && entityType === "team" && hasClub ? `<p class="account-muted">${t("teamAffiliation")}</p>` : ""}
-      <form class="account-entity-form" id="account-entity-form" novalidate>
+      <div class="account-community-editor"><form class="account-entity-form" id="account-entity-form" novalidate>
         <label>${t("displayName")}<input name="displayName" required minlength="2" maxlength="80" value="${escapeHtml(fields.displayName || "")}"></label>
         <label>${t("shortName")}<input name="shortName" maxlength="24" value="${escapeHtml(fields.shortName || "")}"></label>
         <label>${t("descriptionRu")}<textarea name="descriptionRu" maxlength="4000" rows="5">${escapeHtml(fields.descriptionRu || "")}</textarea></label>
@@ -719,7 +758,7 @@ function entityFormMarkup({ mode, entityType, fields, hasClub }) {
         </div>
         <p class="account-command-message" role="status" aria-live="polite"></p>
         <a class="account-action account-command-reauth" href="${accountLoginUrl()}" hidden>${t("reauth")}</a>
-      </form>
+      </form><details class="account-community-preview" open><summary>${t('ctPreview')}</summary><div class="account-community-emblem" aria-hidden="true">${entityType==='club'?'C':'T'}</div><small>${escapeHtml(entityLabel)}</small><strong data-community-preview-name>${escapeHtml(fields.displayName||t('ctPreviewEmpty'))}</strong><b data-community-preview-tag>${escapeHtml(fields.shortName||'')}</b><p data-community-preview-description>${escapeHtml((language()==='ru'?fields.descriptionRu:fields.descriptionEn)||'')}</p><span class="account-community-review-badge">${t('pendingRevision')}</span><p class="account-muted">${t('ctFormTips')}</p></details></div>
     </div>`;
 }
 
@@ -747,6 +786,7 @@ async function pollClubsTeamsCommand(commandId) {
 }
 
 async function submitEntityForm({ auth, mode, entityType, fieldsSource, form }) {
+  if (!form.reportValidity()) return;
   const submit = form.querySelector('button[type="submit"]');
   const message = form.querySelector(".account-command-message");
   const reauth = form.querySelector(".account-command-reauth");
@@ -770,7 +810,7 @@ async function submitEntityForm({ auth, mode, entityType, fieldsSource, form }) 
     const queued = normalizeCommandResponse(queuedPayload);
     const completed = await pollClubsTeamsCommand(queued.id);
     if (completed.status === "applied") {
-      clubsTeamsFlash = { text: t("commandApplied"), kind: "success" };
+      clubsTeamsFlash = { text: t("ctProfileSubmitted"), kind: "success" };
       await refreshAccountState();
       return;
     }
@@ -813,6 +853,14 @@ async function openEntityForm(auth, mode, entityType) {
   }
   section.innerHTML = entityFormMarkup({ mode, entityType, fields, hasClub: Boolean(auth.clubsTeams.club) });
   const form = section.querySelector("#account-entity-form");
+  if (window.matchMedia('(max-width:760px)').matches) section.querySelector('.account-community-preview').open = false;
+  const updatePreview = () => {
+    const values = Object.fromEntries(new FormData(form));
+    section.querySelector('[data-community-preview-name]').textContent = values.displayName || t('ctPreviewEmpty');
+    section.querySelector('[data-community-preview-tag]').textContent = values.shortName || '';
+    section.querySelector('[data-community-preview-description]').textContent = (language()==='ru'?values.descriptionRu:values.descriptionEn) || '';
+  };
+  form.addEventListener('input', updatePreview);
   form.addEventListener("submit", event => {
     event.preventDefault();
     void submitEntityForm({ auth, mode, entityType, fieldsSource: fields, form });

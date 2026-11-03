@@ -866,3 +866,18 @@
     }
   }
 }
+.account-membership-hint{color:var(--muted,#aab3c2);font-size:.85rem;line-height:1.6;margin:10px 0;flex-basis:100%}
+.account-membership--empty{border-style:dashed;align-content:start;gap:8px}
+.account-membership--empty>strong{display:block;font-size:1rem}
+.account-community-steps{display:flex;flex-wrap:wrap;gap:8px;list-style:none;padding:0;margin:16px 0}
+.account-community-steps li{font-size:.82rem;padding:7px 11px;border:1px solid var(--line,rgba(255,255,255,.15));border-radius:20px;color:var(--muted,#aab3c2)}
+.account-community-steps li[aria-current=step]{color:var(--text,#fff);background:rgba(231,43,58,.12);border-color:var(--accent,#d52631)}
+.account-community-editor{display:grid;grid-template-columns:minmax(0,1.6fr) minmax(220px,1fr);gap:24px;align-items:start}
+.account-community-preview{min-width:0;display:grid;gap:10px;border:1px solid var(--line,rgba(255,255,255,.12));border-radius:12px;background:rgba(255,255,255,.025);padding:20px;overflow-wrap:anywhere}
+.account-community-preview>summary{color:var(--muted,#aab3c2);font-size:.85rem;cursor:pointer;padding:6px 0}
+.account-community-preview:not([open])>:not(summary){display:none}
+.account-community-preview>strong{font-size:1.25rem}.account-community-preview>small{color:var(--muted,#aab3c2)}.account-community-preview>p{white-space:pre-wrap;max-height:280px;overflow:auto;line-height:1.6}
+.account-community-emblem{display:grid;place-items:center;width:72px;height:72px;border-radius:18px;background:linear-gradient(135deg,#34394a,#141823);color:#e66d76;font-weight:800;font-size:1.7rem}
+.account-community-review-badge{justify-self:start;font-size:.75rem;border-radius:20px;padding:5px 10px;background:rgba(243,192,95,.1);color:#f3c05f}
+.account-membership button:disabled{opacity:.5;cursor:default}
+@media(max-width:760px){.account-community-editor{grid-template-columns:1fr}.account-community-preview{order:-1;padding:14px}.account-community-preview>p{max-height:120px}.account-community-emblem{width:48px;height:48px;font-size:1.2rem}}

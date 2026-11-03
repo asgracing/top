@@ -1,4 +1,4 @@
-﻿import markup from './control-content.js?v=20261007v2pages14';
+import markup from './control-content.js?v=20261007v2pages14';
 import {normalizeAuthPayload} from '/src/features/auth/header-auth.js?v=20261031numbers1';
 import {v2Route} from '../routes.js?v=20261007v2pages14';
 
@@ -57,7 +57,7 @@ export async function startControlPage({view,screen,text,esc,language,subscribe,
   const desc=screen==='settings'?text('Титул пилота, уникальный гоночный номер и отображение виджета.','Driver title, unique race number and widget appearance.'):screen==='moderation'?text('Баны, страйки и рассмотрение заявок на гоночные номера.','Bans, strikes and race-number requests.'):text('Клубы, команды и будущие часовые события.','Clubs, teams and upcoming hourly events.');
 
   if(screen==='settings'){
-    const {mountAccountWorkspace}=await import('/src/pages/account/account.js?v=20261031numbers1');
+    const {mountAccountWorkspace}=await import('/src/pages/account/account.js?v=20261103clubs1');
     document.body.dataset.accountPage='settings';
     root.innerHTML='<div id="account-content" class="v2-account"></div>';
     function decorate(nativeRoot,auth){
@@ -148,7 +148,7 @@ export async function startControlPage({view,screen,text,esc,language,subscribe,
       const workspaceNode=root.querySelector('#portal-ops-workspace'),tabs=root.querySelector('.portal-ops-tabs');tabs.classList.add('panel','control-ops-toolbar');
       const hourlyTab=tabs.querySelector('[data-panel="hourly"]');tabs.prepend(hourlyTab);
       workspaceNode.prepend(tabs);
-      for(const [kind,listSelector,formSelector] of [['hourly','#portal-hourly-events','#portal-hourly-form'],['clubs','#portal-clubs-list','#portal-clubs-form']]){
+      for(const [kind,listSelector,formSelector] of [['hourly','#portal-hourly-events','#portal-hourly-form']]){
         const section=root.querySelector('#portal-panel-'+kind),list=root.querySelector(listSelector),form=root.querySelector(formSelector),layout=document.createElement('div');layout.className='control-ops-layout';
         const selector=document.createElement('aside');selector.className='panel control-selector';
         selector.innerHTML=`<h2>${kind==='hourly'?text('Будущие события','Upcoming events'):text('Сущности','Entities')}</h2><label class="control-field">${text('Поиск','Search')}<input type="search" data-ops-filter="${kind}"></label>`;
@@ -187,18 +187,15 @@ export async function startControlPage({view,screen,text,esc,language,subscribe,
         }).observe(list,{childList:true});
       }
       localizeOps();
-      const {mountPortalOpsWorkspace}=await import('/src/pages/portal-ops/portal-ops-page.js?v=20261011hourlyru1');
+      const {mountPortalOpsWorkspace}=await import('/src/pages/portal-ops/portal-ops-page.js?v=20261103clubs1');
       workspace=mountPortalOpsWorkspace({confirmAction});
       root.querySelector('[data-panel="hourly"]').click();
       const journal=makePanel(text('Журнал операций','Operation log'));journal.hidden=true;
-      journal.querySelector('.control-panel-body').innerHTML=`<h3>${text('История выбранного клуба или команды','Selected club or team history')}</h3><div data-ops-audit></div><h3>${text('Операции текущего сеанса','Current session operations')}</h3><div class="control-ledger" data-ops-session></div>`;
+      journal.querySelector('.control-panel-body').innerHTML=`<h3>${text('Операции текущего сеанса','Current session operations')}</h3><div class="control-ledger" data-ops-session></div>`;
       workspaceNode.append(journal);
       const journalTab=document.createElement('button');journalTab.type='button';journalTab.textContent=text('Журнал операций','Operation log');journalTab.setAttribute('aria-selected','false');tabs.append(journalTab);
       journalTab.onclick=()=>{tabs.querySelectorAll('button').forEach(button=>button.setAttribute('aria-selected',String(button===journalTab)));root.querySelectorAll('.portal-ops-panel').forEach(node=>node.hidden=true);journal.hidden=false;};
       tabs.querySelectorAll('[data-panel]').forEach(button=>button.addEventListener('click',()=>{journal.hidden=true;journalTab.setAttribute('aria-selected','false');}));
-      const audit=root.querySelector('#portal-clubs-audit');
-      const mirrorAudit=()=>journal.querySelector('[data-ops-audit]').replaceChildren(...[...audit.children].map(node=>node.cloneNode(true)));
-      mirrorAudit();new MutationObserver(mirrorAudit).observe(audit,{subtree:true,childList:true,characterData:true});
       for(const message of root.querySelectorAll('.portal-ops-message')){
         let previous='';
         new MutationObserver(()=>{if(!message.textContent||message.textContent===previous)return;previous=message.textContent;const entry=document.createElement('article');entry.textContent=previous;entry.dataset.kind=message.dataset.kind;journal.querySelector('[data-ops-session]').prepend(entry);}).observe(message,{subtree:true,childList:true,characterData:true,attributes:true,attributeFilter:['data-kind']});

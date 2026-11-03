@@ -42,9 +42,9 @@ const moderationJavaScriptBytes =
 const moderationStylesheetBytes = await textBytes("styles/components/moderation.css");
 const racingRulesJavaScriptBytes = await treeBytes("src/features/rules", new Set([".js"]));
 const racingRulesStylesheetBytes = await textBytes("styles/components/racing-rules.css");
-const portalOpsJavaScriptBytes =
-  await textBytes("src/pages/portal-ops/portal-ops-model.js")
-  + await textBytes("src/pages/portal-ops/portal-ops-page.js");
+// Portal Operations is loaded only on its private route. Include every module
+// in its own cap so new management views cannot escape the feature budget.
+const portalOpsJavaScriptBytes = await treeBytes("src/pages/portal-ops", new Set([".js"]));
 const portalOpsStylesheetBytes = await textBytes("styles/components/portal-ops.css")
   + await textBytes("styles/components/portal-ops-clubs.css");
 const driverOverlayJavaScriptBytes = await textBytes("account/driver-overlay.js")

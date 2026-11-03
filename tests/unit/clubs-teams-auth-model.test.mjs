@@ -3,6 +3,17 @@ import assert from "node:assert/strict";
 
 import { membershipActionId, normalizeClubsTeamsAuthState, teamClubActionId } from "../../src/features/auth/clubs-teams-auth-model.js";
 
+test('private manager fields support editing rejected unpublished profiles', () => {
+  const club={id:'private_id',public_id:'clb_fixture',slug:'rejected-club',display_name:'Rejected Club',status:'rejected',row_version:2,role:'head',pending_revision:false,
+    editable_fields:{display_name:'Rejected Club',short_name:null,description_ru:'Исправьте описание',description_en:null,website_url:null},revision_rejection_reason:'Please clarify the name'};
+  const value={enabled:true,applied_state:{public_id:'drv_head',club,team:null},snapshot:{available:true,stale:false}};
+  const normalized=normalizeClubsTeamsAuthState(value);
+  assert.equal(normalized.integrityValid,true);
+  assert.equal(normalized.club.editableFields.displayName,'Rejected Club');
+  assert.equal(normalized.club.revisionRejectionReason,'Please clarify the name');
+  assert.equal(normalizeClubsTeamsAuthState({...value,applied_state:{...value.applied_state,club:{...club,role:'member'}}}).integrityValid,false);
+});
+
 test("normalizes the bounded public cabinet state", () => {
   const normalized = normalizeClubsTeamsAuthState({
     enabled: true,
