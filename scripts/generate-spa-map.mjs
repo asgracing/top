@@ -2,12 +2,14 @@
 import {readFile,writeFile} from 'node:fs/promises';
 import {resolve} from 'node:path';
 import {createHash} from 'node:crypto';
+import {timingMarksForSegments} from './track-map-timing.mjs';
 const dir=resolve(import.meta.dirname,'../assets/track-maps');
 const raw=await readFile(resolve(dir,'spa-source.json'));
 if(createHash('sha256').update(raw).digest('hex')!=='b867de9cc8364cc9b545a044377a56a697b8db77823c849c1a1c03760a943381')throw Error('Unreviewed Spa source');
 const geo=JSON.parse(raw).features[0];
 if(geo.properties.id!=='be-1925'||geo.geometry.type!=='LineString')throw Error('Unexpected circuit');
 const {origin,metric,worldToGps,worldOffset}=JSON.parse(await readFile(resolve(dir,'spa-calibration.json'),'utf8'));
+const timing=JSON.parse(await readFile(resolve(dir,'geojson-timing.json'),'utf8')).spa;
 const gps=geo.geometry.coordinates.map(([lon,lat])=>[(lon-origin[0])*metric[0],(lat-origin[1])*metric[1]]);
 // User reference: La Source bottom left; Les Combes top; Bruxelles top right.
 // GPS north is reflected with the same transform applied to the ACC positions.
@@ -21,9 +23,10 @@ const scale=Math.min(960/(hi[0]-lo[0]),760/(hi[1]-lo[1]));
 const offset=[100,70];
 const project=p=>p.map((v,i)=>offset[i]+(v-lo[i])*scale);
 const round=v=>Number(v.toFixed(7));
+const points=oriented.map(p=>project(p).map(round));
 const map={id:'spa-gp',version:'20261026-geojson-r1',viewBox:[0,0,1200,900],
  source:{url:'https://github.com/bacinger/f1-circuits',revision:'8094e957b8d6aa8b9f4510c93968556cccd30e02',file:'circuits/be-1925.geojson',license:'MIT',copyright:'2019–2025 Tomislav Bacinger'},
- points:oriented.map(p=>project(p).map(round)),
+ points,timingMarks:timingMarksForSegments(points,timing.segments),timingLabelOffsets:timing.labelOffsets,
  worldToMap:worldToGps.map(row=>multiply(row,display).map(v=>round(v*scale))),
  worldOffset:project(multiply(worldOffset,display)).map(round),
  labels:[

@@ -1,0 +1,160 @@
+{
+  "spa": {
+    "labelOffsets": [null, 1.9, null],
+    "raceControlEntry": "trackdata/Circuit de Spa-Francorchamps.trackData",
+    "raceControlEntrySha256": "de37ee4d481540b924ed48c1330fb244b04d91c1da2c1eef565c5348b622600d",
+    "sectorSplines": [
+      0.33399999141693115,
+      0.7195000052452087,
+      1.0
+    ],
+    "segments": [
+      [
+        151,
+        0.34814799
+      ],
+      [
+        30,
+        0.40124421
+      ],
+      [
+        103,
+        0.68014094
+      ]
+    ],
+    "markResidualMetres": [
+      1.68,
+      7.38,
+      8.26
+    ],
+    "shapeP95Metres": 8.57
+  },
+  "nurburgring": {
+    "labelOffsets": [null, null, 1.9],
+    "raceControlEntry": "trackdata/Nürburgring.trackData",
+    "raceControlEntrySha256": "0399a5529f17098f06920c9ecbab5a151490d617409276fba55ada780ee2ae9c",
+    "sectorSplines": [
+      0.45500001311302185,
+      0.8629999756813049,
+      1.0
+    ],
+    "segments": [
+      [
+        129,
+        0.96808438
+      ],
+      [
+        69,
+        0.01876631
+      ],
+      [
+        112,
+        0.70991264
+      ]
+    ],
+    "markResidualMetres": [
+      3.24,
+      4.77,
+      0.9
+    ],
+    "shapeP95Metres": 7.54
+  },
+  "barcelona": {
+    "labelOffsets": [-3.5, -2.65, null],
+    "raceControlEntry": "trackdata/Circuit de Barcelona-Catalunya.trackData",
+    "raceControlEntrySha256": "c4169502d8d5a8b44e914383b8e55bed781b2359b007867c2a5c5e57ada95545",
+    "sectorSplines": [
+      0.3499999940395355,
+      0.7350000143051147,
+      1.0
+    ],
+    "segments": [
+      [
+        136,
+        0.57490432
+      ],
+      [
+        42,
+        0.57452884
+      ],
+      [
+        93,
+        0.78895022
+      ]
+    ],
+    "markResidualMetres": [
+      1.76,
+      6.53,
+      0.54
+    ],
+    "shapeP95Metres": 8.91
+  },
+  "kyalami": {
+    "raceControlEntry": "trackdata/Kyalami Grand Prix Circuit.trackData",
+    "raceControlEntrySha256": "a00926192c370a670d3f0b786d3f8ac8e3cabeca5ecc8b0f5d03789222dad747",
+    "sectorSplines": [
+      0.32249999046325684,
+      0.718500018119812,
+      1.0
+    ],
+    "segments": [
+      [
+        84,
+        0.95669666
+      ],
+      [
+        18,
+        0.7705399
+      ],
+      [
+        60,
+        0.75022262
+      ]
+    ],
+    "markResidualMetres": [
+      3.93,
+      4.12,
+      5.14
+    ],
+    "shapeP95Metres": 6.26
+  },
+  "nurburgring_24h": {
+    "segments": [
+      [
+        25,
+        0.28423495
+      ],
+      [
+        186,
+        0.28515539
+      ],
+      [
+        371,
+        0.6294434
+      ]
+    ],
+    "approximateSectors": true,
+    "finishReference": "GP start/finish projected onto the 24h GeoJSON, checked against the Kunos layout diagram.",
+    "finishSource": "https://assettocorsa.gg/wp-content/uploads/NBR24h-ok.svg",
+    "sectorReference": "Aremberg Postbrücke and entry to Caracciola-Karussell. Exact ACC timing loop coordinates are unverified.",
+    "sectorSource": "https://www.reddit.com/r/ACCompetizione/comments/1c32o6e/n%C3%BCrburgring_24h_sectors/",
+    "landmarks": [
+      "https://www.openstreetmap.org/way/41795617",
+      "https://www.openstreetmap.org/way/414785755"
+    ],
+    "anchorsLonLat": [
+      [
+        6.94773949,
+        50.33560663
+      ],
+      [
+        6.92129106,
+        50.35858245
+      ],
+      [
+        6.9859301,
+        50.3722687
+      ]
+    ]
+  }
+}

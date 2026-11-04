@@ -1,0 +1,20 @@
+{
+  "mount_panorama": {
+    "worldToLocal": [
+      [-0.000367787491854116, -1.0124535916738482],
+      [1.0124535916738484, -0.00036778749185407424]
+    ],
+    "localOffset": [563.9178407093967, 282.961324475715],
+    "reference": {
+      "source": "acc-native-complete-lap",
+      "endpoint": "/top-data/server_status_live.json",
+      "server": "assetto-corsa-competizione-dedic-7",
+      "snapshotObservedAt": "2026-10-26T07:26:09.033+00:00",
+      "geometrySha256": "53402f8c5d313c2b6a9077059152bf3e2c67fd7f5b3cc91c7dd517c0d9ef0479",
+      "points": 383,
+      "withheldPoints": 128,
+      "withheldP95Metres": 6.446,
+      "maxMetres": 10.569
+    }
+  }
+}

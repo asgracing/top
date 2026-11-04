@@ -1,4 +1,4 @@
-import {trackMapGeometry} from './track-map.js?v=20261104rc1';
+import {trackMapGeometry} from './track-map.js?v=20261104rc3';
 import {driverPitLabel} from './live-details.js?v=20261025direct1';
 
 // Update only markers at display refresh rate. The circuit is a stable asset.

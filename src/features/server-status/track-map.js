@@ -1,12 +1,12 @@
 import {isInstanceStatusStale,serverObservationAgeMs,serverDetailMaxAgeMs} from './freshness.js?v=20261026smooth1';
 import {driverPitLabel} from './live-details.js?v=20261025direct1';
 import {MONZA_MAP} from '../../../assets/track-maps/monza.js?v=20261104rc1';
-import {RACE_CONTROL_MAPS} from '../../../assets/track-maps/race-control.js?v=20261104rc1';
-import {SPA_MAP} from '../../../assets/track-maps/spa.js?v=20261026spa1';
-import {NURBURGRING_MAP} from '../../../assets/track-maps/nurburgring.js?v=20261026maps1';
-import {BARCELONA_MAP} from '../../../assets/track-maps/barcelona.js?v=20261026maps1';
-import {KYALAMI_MAP} from '../../../assets/track-maps/kyalami.js?v=20261026maps1';
-import {NURBURGRING_24H_MAP} from '../../../assets/track-maps/nurburgring_24h.js?v=20261027nords1';
+import {RACE_CONTROL_MAPS} from '../../../assets/track-maps/race-control.js?v=20261104rc2';
+import {SPA_MAP} from '../../../assets/track-maps/spa.js?v=20261104rc3';
+import {NURBURGRING_MAP} from '../../../assets/track-maps/nurburgring.js?v=20261104rc3';
+import {BARCELONA_MAP} from '../../../assets/track-maps/barcelona.js?v=20261104rc3';
+import {KYALAMI_MAP} from '../../../assets/track-maps/kyalami.js?v=20261104rc3';
+import {NURBURGRING_24H_MAP} from '../../../assets/track-maps/nurburgring_24h.js?v=20261104rc3';
 
 const fixedMaps = new Map([
   ...Object.entries(RACE_CONTROL_MAPS),
@@ -56,11 +56,14 @@ function renderTimingMarks(map, ru) {
   const [,,width,height] = map.viewBox;
   return (map.timingMarks || []).map(([x,y,dx,dy], index) => {
     const finish = index === 0;
+    const approximate = !finish && map.approximateSectors;
     const caption = finish ? (ru ? 'Старт / финиш' : 'Start / finish')
+      : approximate ? (ru ? `Примерная граница сектора ${index}` : `Approximate end of sector ${index}`)
       : (ru ? `Конец сектора ${index}` : `End of sector ${index}`);
-    const label = finish ? (ru ? 'С/Ф' : 'S/F') : `S${index}`;
+    const label = finish ? (ru ? 'С/Ф' : 'S/F') : `${approximate ? '≈' : ''}S${index}`;
     const side = (x-width/2)*dx+(y-height/2)*dy < 0 ? -1 : 1;
-    return `<g class="track-timing-mark${finish ? ' is-finish' : ''}"><title>${caption}</title><line x1="${x-dx}" y1="${y-dy}" x2="${x+dx}" y2="${y+dy}"/><text x="${x+dx*side*1.9}" y="${y+dy*side*1.9}" text-anchor="middle" dominant-baseline="central">${label}</text></g>`;
+    const offset = map.timingLabelOffsets?.[index] ?? side*1.9;
+    return `<g class="track-timing-mark${finish ? ' is-finish' : ''}"><title>${caption}</title><line x1="${x-dx}" y1="${y-dy}" x2="${x+dx}" y2="${y+dy}"/><text x="${x+dx*offset}" y="${y+dy*offset}" text-anchor="middle" dominant-baseline="central">${label}</text></g>`;
   }).join('');
 }
 

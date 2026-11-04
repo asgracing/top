@@ -13,6 +13,16 @@ const server = ()=>({source:'acc-local-telemetry',status:'online',telemetry_stat
   source_age_ms:0,observed_at,drivers:[car(2),car(1)],
   track_map:{source:'acc-native-complete-lap',points:Array.from({length:20},(_,n)=>[500*Math.cos(n/20*Math.PI*2),500*Math.sin(n/20*Math.PI*2)])}});
 
+function distanceToOutline([x,y],points) {
+  const distances=points.map(([x1,y1],index)=>{
+    const [x2,y2]=points[(index+1)%points.length], dx=x2-x1, dy=y2-y1;
+    const lengthSquared=dx*dx+dy*dy;
+    const t=lengthSquared ? Math.max(0,Math.min(1,((x-x1)*dx+(y-y1)*dy)/lengthSquared)) : 0;
+    return Math.hypot(x-x1-t*dx,y-y1-t*dy);
+  });
+  return Math.min(...distances);
+}
+
 test('car map uses live coordinates and classified positions, leader drawn last',()=>{
   const html=renderTrackMap(server(),'ru',now);
   assert.equal(mapCars(server(),now).length,2);
@@ -100,13 +110,7 @@ test('Monza calibration matches independently recorded ACC corner coordinates',(
   ];
   const map=trackMapGeometry({track_code:'monza'});
   for(const world of anchors) {
-    const [x,y]=map.project(...world);
-    const distances=map.points.slice(1).map(([x2,y2],index)=>{
-      const [x1,y1]=map.points[index], dx=x2-x1, dy=y2-y1;
-      const t=Math.max(0,Math.min(1,((x-x1)*dx+(y-y1)*dy)/(dx*dx+dy*dy)));
-      return Math.hypot(x-x1-t*dx,y-y1-t*dy);
-    });
-    assert.ok(Math.min(...distances)<2,`ACC point ${world} is close to the RC line`);
+    assert.ok(distanceToOutline(map.project(...world),map.points)<2,`ACC point ${world} is close to the RC line`);
   }
   const lesmo=map.project(843.7,-795.15),parabolica=map.project(-252.92,1041.05);
   assert.ok(lesmo[0]<300&&lesmo[1]<140,'Lesmo is top left');
@@ -139,6 +143,7 @@ test('only reviewed layouts use assets; other track fallback and TTL stay unchan
 
 test('all Race Control outlines draw sector ends and finish, including uncalibrated tracks',async()=>{
   const {tracks}=JSON.parse(await readFile(new URL('../../assets/track-maps/race-control-source.json',import.meta.url)));
+  const calibrations=JSON.parse(await readFile(new URL('../../assets/track-maps/race-control-calibration.json',import.meta.url)));
   assert.equal(Object.keys(tracks).length,19);
   for(const [code,track] of Object.entries(tracks)) {
     const input={...server(),track_code:code};
@@ -156,10 +161,61 @@ test('all Race Control outlines draw sector ends and finish, including uncalibra
     assert.match(html,/Start \/ finish/);
     assert.match(html,/End of sector 1/);
     assert.match(html,/End of sector 2/);
-    if(code!=='monza') {
+    if(code==='monza'||Object.hasOwn(calibrations,code)) {
+      assert.match(html,/class="track-car/,code);
+    } else {
       assert.equal(map.project,null,code);
       assert.doesNotMatch(html,/class="track-car/,code);
       assert.match(renderTrackMap({...input,track_map:null,drivers:[]},'ru',now),/Схема трассы/);
+    }
+  }
+});
+
+test('Mount Panorama projects withheld lap points and renders fresh markers without a learned lap',()=>{
+  // Dedic-7 ACC complete lap, 26 October. Every third sample was excluded from the fit.
+  const anchors=[
+    [253.47,-564.29], [-126.26,-579.17], [-216.38,-107.16], [-370.52,484.58],
+    [-787.86,375.96], [-816.06,703.48], [-860.01,1171.26], [-381.89,1275.77],
+    [-50.62,1513.48], [121.53,973.34], [272.55,215.06], [327.84,-204.17]
+  ];
+  const input={...server(),track_code:'mount_panorama',track_map:null};
+  const map=trackMapGeometry(input);
+  const scale=Math.hypot(...map.worldToMap[0]);
+  for(const world of anchors) {
+    assert.ok(distanceToOutline(map.project(...world),map.points)/scale<10,`Bathurst point ${world}`);
+  }
+  const [world_x,world_z]=anchors[0];
+  const point=map.project(world_x,world_z).map(value=>value.toFixed(2)).join(' ');
+  input.drivers=[{...car(),world_x,world_z}];
+  const html=renderTrackMap(input,'ru',now);
+  assert.ok(html.includes(`transform="translate(${point})"`));
+  assert.match(html,/track-car is-leader/);
+  assert.doesNotMatch(renderTrackMap({...input,status:'offline'},'ru',now),/class="track-car/);
+});
+
+test('all GeoJSON maps render timing marks on their existing outline',async()=>{
+  const timing=JSON.parse(await readFile(new URL('../../assets/track-maps/geojson-timing.json',import.meta.url)));
+  for(const code of ['spa','nurburgring','barcelona','kyalami','nurburgring_24h','nordschleife']) {
+    const input={...server(),track_code:code,track_map:null};
+    const map=trackMapGeometry(input);
+    const reference=timing[code==='nordschleife'?'nurburgring_24h':code];
+    assert.equal(map.timingMarks.length,3,code);
+    for(const [index,[segment,fraction]] of reference.segments.entries()) {
+      const [x,y,dx,dy]=map.timingMarks[index];
+      const [px,py]=map.points[segment], [qx,qy]=map.points[(segment+1)%map.points.length];
+      assert.ok(Math.hypot(x-px-(qx-px)*fraction,y-py-(qy-py)*fraction)<.01,code);
+      assert.ok(Math.abs((qx-px)*dx+(qy-py)*dy)/Math.hypot(qx-px,qy-py)<.01,code);
+    }
+    const html=renderTrackMap(input,'en',now);
+    assert.match(html,/Start \/ finish/);
+    assert.match(html,/class="track-car/);
+    if(reference.approximateSectors) {
+      assert.match(html,/Approximate end of sector 1/);
+      assert.match(html,/>≈S2</);
+      assert.match(renderTrackMap(input,'ru',now),/Примерная граница сектора 2/);
+    } else {
+      assert.match(html,/End of sector 1/);
+      assert.match(html,/>S2</);
     }
   }
 });
