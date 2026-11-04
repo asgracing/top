@@ -8,7 +8,7 @@
     },
     {
       "path": "app.js",
-      "sha256": "f1eee9a805999451b534b43c231fc81296f3268e46f851ecb1c88e5bda77aa70"
+      "sha256": "b8b882009f9bd44acb226ad6906da079763192dee85ebb8643c2174782f2bc8f"
     },
     {
       "path": "assets/track-maps/barcelona.js",
@@ -20,7 +20,7 @@
     },
     {
       "path": "assets/track-maps/monza.js",
-      "sha256": "6e521b6cc38e89398491cf561472785157fc4462e29f8bde6fb2bea740cc6127"
+      "sha256": "03c6cf0168e7ebad9d40a6fade57253de9b484951e7f912e808878a9b926c0e2"
     },
     {
       "path": "assets/track-maps/nurburgring_24h.js",
@@ -29,6 +29,10 @@
     {
       "path": "assets/track-maps/nurburgring.js",
       "sha256": "fdd72b963db48abff5d8bdaaad5ea8553d7bb8826cb694234c5abf9fb1ec115a"
+    },
+    {
+      "path": "assets/track-maps/race-control.js",
+      "sha256": "2337888c061d410436da214058b4427ec5c8323ed9707e06374d7640cc2e497a"
     },
     {
       "path": "assets/track-maps/spa.js",
@@ -72,7 +76,7 @@
     },
     {
       "path": "scripts/build-v2.mjs",
-      "sha256": "3ee0dfde46a4e989a07741eed9201f46b5c699bf3a8cc9d84d9664589f29fb18"
+      "sha256": "5ea710c776ffe5247718646b9e25381866f26aeae0246972880b5ead2cdff784"
     },
     {
       "path": "scripts/generate-localized-pages.mjs",
@@ -152,7 +156,7 @@
     },
     {
       "path": "src/features/server-status/live-map.js",
-      "sha256": "41a464cb927171ce655d0f159a4bfe2cf04265716bd3fc6e4ddef27e062a0c99"
+      "sha256": "8d974a11b8482562af71a5b3531f71d49d5ed705c13f849d4ee3dc8a64f64c64"
     },
     {
       "path": "src/features/server-status/live-stream.js",
@@ -160,7 +164,7 @@
     },
     {
       "path": "src/features/server-status/roster.js",
-      "sha256": "42b7c2a31e60a0e31af940734280aac6dd29e74c3879bd51f4c1f87ca3c88f0b"
+      "sha256": "1375124c69273f877148b5a0a794a677e957090c48dc37086acbd6c13ea78cc3"
     },
     {
       "path": "src/features/server-status/telemetry.js",
@@ -172,7 +176,7 @@
     },
     {
       "path": "src/features/server-status/track-map.js",
-      "sha256": "0719e38526d4c1d4f23595f4bff1f2b8ebfc1e9d9946136b244291db88efdf0b"
+      "sha256": "dd0fb0e52186116beb3ea42daea32a993cb5c9901aa20b20cd4b0cb28d51acc6"
     },
     {
       "path": "src/features/stats/table-engine.js",
@@ -504,7 +508,7 @@
     },
     {
       "path": "styles/components/server-roster.css",
-      "sha256": "01c2c6a8699850e0ae0c630cfb7f18c12f9598ef65a1b15f23765b901b166605"
+      "sha256": "b4defd3de5795eb5e37da573cd47b76dd8dfff9f9c2bb457796258c84484ba19"
     },
     {
       "path": "styles/components/server-sticky-layout.css",
@@ -712,7 +716,7 @@
     },
     {
       "path": "v2/home.js",
-      "sha256": "2720a477e9840bfa96e7bf0ceca0ba5977a693d52153f61711e08e4364bd1f6e"
+      "sha256": "5f88e2bf2f337374a35d09a89960a0ca9b80651f67749afceb6746d0583c3d29"
     },
     {
       "path": "v2/mobile-navigation.js",
@@ -784,7 +788,7 @@
     },
     {
       "path": "v2/presentation.js",
-      "sha256": "d6cb1200afc10e9af9779c1dc34b6eb324714dbf14f50f9fb8b039d9381f0520"
+      "sha256": "6a09aa8760a07ca07ee41a90ef08313e2772ee68488beedbee6e4657279b8e59"
     },
     {
       "path": "v2/profile-races.js",
