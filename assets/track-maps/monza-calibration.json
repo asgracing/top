@@ -31,5 +31,22 @@
     "p95_residual_metres": 6.525,
     "max_residual_metres": 8.051,
     "note": "Approximate alignment of circuit geometry and a driven racing line. Vehicles retain world X/Z; no snapping onto the centerline. Pit and finish anchors are not supplied by this GeoJSON."
+  },
+  "raceControlDisplay": {
+    "reference": "Similarity fit of the Race Control line to the previous GeoJSON SVG, retaining the calibrated ACC projection and corner labels.",
+    "localToMap": [
+      [
+        0.3505988355214864,
+        -0.029733641730566307
+      ],
+      [
+        0.029733641730566317,
+        0.35059883552148635
+      ]
+    ],
+    "localOffset": [
+      739.4114667811778,
+      478.2660355344342
+    ]
   }
 }

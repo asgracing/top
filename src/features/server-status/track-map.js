@@ -1,13 +1,18 @@
 import {isInstanceStatusStale,serverObservationAgeMs,serverDetailMaxAgeMs} from './freshness.js?v=20261026smooth1';
 import {driverPitLabel} from './live-details.js?v=20261025direct1';
-import {MONZA_MAP} from '../../../assets/track-maps/monza.js?v=20261024monza1';
+import {MONZA_MAP} from '../../../assets/track-maps/monza.js?v=20261104rc1';
+import {RACE_CONTROL_MAPS} from '../../../assets/track-maps/race-control.js?v=20261104rc1';
 import {SPA_MAP} from '../../../assets/track-maps/spa.js?v=20261026spa1';
 import {NURBURGRING_MAP} from '../../../assets/track-maps/nurburgring.js?v=20261026maps1';
 import {BARCELONA_MAP} from '../../../assets/track-maps/barcelona.js?v=20261026maps1';
 import {KYALAMI_MAP} from '../../../assets/track-maps/kyalami.js?v=20261026maps1';
 import {NURBURGRING_24H_MAP} from '../../../assets/track-maps/nurburgring_24h.js?v=20261027nords1';
 
-const fixedMaps = new Map([['monza',MONZA_MAP],['spa',SPA_MAP],['nurburgring',NURBURGRING_MAP],['barcelona',BARCELONA_MAP],['kyalami',KYALAMI_MAP],['nurburgring_24h',NURBURGRING_24H_MAP],['nordschleife',NURBURGRING_24H_MAP]]);
+const fixedMaps = new Map([
+  ...Object.entries(RACE_CONTROL_MAPS),
+  ['monza',MONZA_MAP],['spa',SPA_MAP],['nurburgring',NURBURGRING_MAP],['barcelona',BARCELONA_MAP],
+  ['kyalami',KYALAMI_MAP],['nurburgring_24h',NURBURGRING_24H_MAP],['nordschleife',NURBURGRING_24H_MAP]
+]);
 
 const coordinate = v => typeof v === 'number' && Number.isFinite(v) && Math.abs(v) <= 1_000_000;
 
@@ -30,8 +35,9 @@ export function trackMapGeometry(server) {
   const asset = fixedMaps.get(code);
   if (asset) {
     const {worldToMap:m,worldOffset:t}=asset;
-    return {...asset, fixed:true, project:(x,z)=>[
-      x*m[0][0]+z*m[1][0]+t[0],x*m[0][1]+z*m[1][1]+t[1]]};
+    const project = m && t ? (x,z) => [
+      x*m[0][0]+z*m[1][0]+t[0],x*m[0][1]+z*m[1][1]+t[1]] : null;
+    return {...asset, fixed:true, project};
   }
   const map=server?.track_map;
   const points = map?.source === 'acc-native-complete-lap' && Array.isArray(map.points)
@@ -46,10 +52,24 @@ export function trackMapGeometry(server) {
   return {points:points.map(([x,z])=>project(x,z)),project,viewBox:[0,0,480,320],fixed:false};
 }
 
+function renderTimingMarks(map, ru) {
+  const [,,width,height] = map.viewBox;
+  return (map.timingMarks || []).map(([x,y,dx,dy], index) => {
+    const finish = index === 0;
+    const caption = finish ? (ru ? 'Старт / финиш' : 'Start / finish')
+      : (ru ? `Конец сектора ${index}` : `End of sector ${index}`);
+    const label = finish ? (ru ? 'С/Ф' : 'S/F') : `S${index}`;
+    const side = (x-width/2)*dx+(y-height/2)*dy < 0 ? -1 : 1;
+    return `<g class="track-timing-mark${finish ? ' is-finish' : ''}"><title>${caption}</title><line x1="${x-dx}" y1="${y-dy}" x2="${x+dx}" y2="${y+dy}"/><text x="${x+dx*side*1.9}" y="${y+dy*side*1.9}" text-anchor="middle" dominant-baseline="central">${label}</text></g>`;
+  }).join('');
+}
+
 export function renderTrackMap(server, lang = 'ru', now = Date.now(), {expanded=true} = {}) {
   if (server?.source !== 'acc-local-telemetry') return '';
-  const ru = lang === 'ru', title = ru ? 'Машины на трассе' : 'Cars on track';
-  const cars = mapCars(server,now), map = trackMapGeometry(server);
+  const ru = lang === 'ru', map = trackMapGeometry(server);
+  const staticOnly = map?.fixed && !map.project;
+  const title = staticOnly ? (ru ? 'Схема трассы' : 'Circuit map') : (ru ? 'Машины на трассе' : 'Cars on track');
+  const cars = staticOnly ? [] : mapCars(server,now);
   const empty = ru ? 'Нет свежих координат машин' : 'No fresh car positions';
   const wrap = content => `<details class="server-track-map${map?.fixed ? ' has-fixed-map':''}"${map?.fixed ? ` data-track-map="${map.id}"`:''}${expanded ? ' open':''}><summary class="track-map-summary"><span class="track-map-title">${title}</span><span class="track-map-toggle"><span class="track-map-hide">${ru ? 'Свернуть' : 'Collapse'}</span><span class="track-map-show">${ru ? 'Развернуть' : 'Expand'}</span><span class="track-map-chevron" aria-hidden="true">⌃</span></span></summary><div class="track-map-content">${content}</div></details>`;
   if (!map || !map.fixed && !cars.length) {
@@ -70,5 +90,7 @@ export function renderTrackMap(server, lang = 'ru', now = Date.now(), {expanded=
   }).join('');
   const labels=(map.labels||[]).map(label=>`<text class="track-label${label.secondary ? ' is-secondary':''}" x="${label.x}" y="${label.y}" text-anchor="${label.anchor}">${label.lines ? label.lines.map((line,i)=>`<tspan x="${label.x}" dy="${i ? '1.2em':'0'}">${line}</tspan>`).join(''):label.text}</text>`).join('');
   const credit=map.fixed ? `<p class="track-map-credit">${ru ? 'Геометрия':'Geometry'}: <a href="${map.source.url}">${map.source.credit||'Tomislav Bacinger · MIT'}</a></p>`:'';
-  return wrap(`<svg viewBox="${map.viewBox.join(' ')}" role="img" aria-label="${title}"><path class="track-outline" d="${path}"/>${labels}${markers}</svg><p>${cars.length ? (ru ? 'Красный — лидер · жёлтый — в питах · номера обозначают позиции' : 'Red — leader · yellow — in pits · numbers show positions'):empty}</p>${credit}`);
+  const caption = staticOnly ? (ru ? 'Координаты машин пока не привязаны к схеме' : 'Live car positions are not yet calibrated for this map')
+    : cars.length ? (ru ? 'Красный — лидер · жёлтый — в питах · номера обозначают позиции' : 'Red — leader · yellow — in pits · numbers show positions') : empty;
+  return wrap(`<svg viewBox="${map.viewBox.join(' ')}" role="img" aria-label="${title}"><path class="track-outline" d="${path}"/>${labels}${renderTimingMarks(map,ru)}${markers}</svg><p>${caption}</p>${credit}`);
 }

@@ -1,10 +1,10 @@
-import {trackMapGeometry} from './track-map.js?v=20261102pit1';
+import {trackMapGeometry} from './track-map.js?v=20261104rc1';
 import {driverPitLabel} from './live-details.js?v=20261025direct1';
 
 // Update only markers at display refresh rate. The circuit is a stable asset.
 export function animateLiveMap(root,server,cars,lang='ru') {
   const svg=root.querySelector('.server-track-map svg'),map=trackMapGeometry(server);
-  if (!svg || !map) return;
+  if (!svg || !map?.project) return;
   const ns='http://www.w3.org/2000/svg',existing=new Map([...svg.querySelectorAll('.track-car')].map(node=>[node.dataset.carKey,node]));
   for (const c of [...cars].sort((a,b)=>(a.position===1)-(b.position===1))) {
     const key=`${c.car_id}:${c.connection_id??''}`;

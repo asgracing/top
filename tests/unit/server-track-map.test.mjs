@@ -1,5 +1,6 @@
 import test from 'node:test';
 import assert from 'node:assert/strict';
+import {readFile} from 'node:fs/promises';
 import {mapCars,renderTrackMap,trackMapGeometry} from '../../src/features/server-status/track-map.js';
 import {MONZA_MAP} from '../../assets/track-maps/monza.js';
 import {SPA_MAP} from '../../assets/track-maps/spa.js';
@@ -94,27 +95,32 @@ test('Monza remains visible without cars; stale and offline cars never reappear'
 test('Monza calibration matches independently recorded ACC corner coordinates',()=>{
   // Public Sunset lap, 24 October: physical locations, without pilot identities.
   const anchors=[
-    [[-286.22,-366.06],6], [[-163.7,-885.25],26], [[444.65,-1019.09],39],
-    [[795.01,-1113.93],50], [[843.7,-795.15],61], [[-18.52,-32.36],85],
-    [[-252.92,1041.05],103]
+    [-286.22,-366.06], [-163.7,-885.25], [444.65,-1019.09], [795.01,-1113.93],
+    [843.7,-795.15], [-18.52,-32.36], [-252.92,1041.05]
   ];
   const map=trackMapGeometry({track_code:'monza'});
-  for(const [world,index] of anchors) {
-    const actual=map.project(...world),expected=map.points[index];
-    assert.ok(Math.hypot(actual[0]-expected[0],actual[1]-expected[1])<8,`corner ${index}`);
+  for(const world of anchors) {
+    const [x,y]=map.project(...world);
+    const distances=map.points.slice(1).map(([x2,y2],index)=>{
+      const [x1,y1]=map.points[index], dx=x2-x1, dy=y2-y1;
+      const t=Math.max(0,Math.min(1,((x-x1)*dx+(y-y1)*dy)/(dx*dx+dy*dy)));
+      return Math.hypot(x-x1-t*dx,y-y1-t*dy);
+    });
+    assert.ok(Math.min(...distances)<2,`ACC point ${world} is close to the RC line`);
   }
   const lesmo=map.project(843.7,-795.15),parabolica=map.project(-252.92,1041.05);
   assert.ok(lesmo[0]<300&&lesmo[1]<140,'Lesmo is top left');
   assert.ok(parabolica[0]>850&&parabolica[1]>350,'Parabolica is right');
-  assert.ok(Math.abs(map.points[0][1]-map.points[1][1])<.01,'main straight is horizontal');
+  assert.ok(Math.abs(map.points[0][1]-map.points[8][1])<2,'main straight is horizontal');
   assert.ok(map.points[0][1]>450,'main straight is at bottom');
 });
 
-test('Monza preserves all three chicanes and does not snap pit/off-track XZ to the route',()=>{
+test('Monza preserves the reconstructed RC line and physical offsets from it',async()=>{
   const map=trackMapGeometry({track_code:'monza'});
-  assert.ok(map.points[2][1]-map.points[11][1]>12,'Rettifilo is retained');
-  assert.ok(map.points[36][0]-map.points[41][0]>12,'Roggia is retained');
-  assert.ok(map.points[91][1]-map.points[81][1]>20,'Ascari is retained');
+  const {tracks:{monza}}=JSON.parse(await readFile(new URL('../../assets/track-maps/race-control-source.json',import.meta.url)));
+  const {raceControlDisplay:{localToMap,localOffset}}=JSON.parse(await readFile(new URL('../../assets/track-maps/monza-calibration.json',import.meta.url)));
+  assert.deepEqual(map.points,monza.points.map(([x,y])=>localOffset.map((value,axis)=>
+    Number((x*localToMap[0][axis]+y*localToMap[1][axis]+value).toFixed(2)))));
   const a=map.project(-286.22,-366.06),b=map.project(-266.22,-366.06);
   const distance=Math.hypot(a[0]-b[0],a[1]-b[1]);
   assert.ok(distance>6&&distance<8,'20 m world offset remains a physical offset');
@@ -128,7 +134,34 @@ test('only reviewed layouts use assets; other track fallback and TTL stay unchan
   const s={...server(),track_code:'monza',drivers:[{...car(),position_age_ms:5001}]};
   const html=renderTrackMap(s,'ru',now);
   assert.match(html,/Нет свежих координат/);assert.doesNotMatch(html,/class="track-car/);
-  assert.match(html,/Tomislav Bacinger · MIT/);
+  assert.match(html,/ACC Race Control · MIT/);
+});
+
+test('all Race Control outlines draw sector ends and finish, including uncalibrated tracks',async()=>{
+  const {tracks}=JSON.parse(await readFile(new URL('../../assets/track-maps/race-control-source.json',import.meta.url)));
+  assert.equal(Object.keys(tracks).length,19);
+  for(const [code,track] of Object.entries(tracks)) {
+    const input={...server(),track_code:code};
+    const map=trackMapGeometry(input);
+    assert.equal(map.fixed,true,code);
+    assert.equal(map.points.length,201,code);
+    for(const [index,spline] of [0,...track.sectorSplines.slice(0,2)].entries()) {
+      const sample=spline*200, lower=Math.floor(sample), t=sample-lower;
+      const [x,y,dx,dy]=map.timingMarks[index];
+      const [px,py]=map.points[lower], [qx,qy]=map.points[lower+1];
+      assert.ok(Math.hypot(x-(px+(qx-px)*t),y-(py+(qy-py)*t))<.02,`${code} timing mark ${index}`);
+      assert.ok(Math.abs((qx-px)*dx+(qy-py)*dy)/Math.hypot(qx-px,qy-py)<.12,code);
+    }
+    const html=renderTrackMap(input,'en',now);
+    assert.match(html,/Start \/ finish/);
+    assert.match(html,/End of sector 1/);
+    assert.match(html,/End of sector 2/);
+    if(code!=='monza') {
+      assert.equal(map.project,null,code);
+      assert.doesNotMatch(html,/class="track-car/,code);
+      assert.match(renderTrackMap({...input,track_map:null,drivers:[]},'ru',now),/Схема трассы/);
+    }
+  }
 });
 
 test('Spa shares one permanent route across servers and preserves labels without a learned lap or cars',()=>{

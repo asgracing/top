@@ -20,8 +20,8 @@ if (process.env.ASG_V2_PRESENTATION_ONLY === '1') throw Error('Presentation-only
 const version = '20261006v2k';
 const runtimeVersion = '20261028team10';
 const presentationVersion = '20261028team10';
-const homeStylesVersion = '20261102roster1';
-const bootVersion = '20261103clubs1';
+const homeStylesVersion = '20261104rc1';
+const bootVersion = '20261104rc1';
 const controlStylesVersion = '20261103clubs1';
 const profileStylesVersion = '20261031sr1';
 const legalVersion = '20261030analytics1';

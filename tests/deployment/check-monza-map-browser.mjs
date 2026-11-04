@@ -46,7 +46,8 @@ try {
           session:{type:'Race',phase:'session',remaining_ms:600000},drivers,classification:drivers};
         return route.fulfill({status:200,json:{schema_version:3,source:'asg-live-telemetry-status',updated_at:observed,
           servers:{main:{...row,id:'main',name:'Monza Main'},sunset:{...row,id:'sunset',name:'Monza Sunset',
-            track_map:{source:'acc-native-complete-lap',points:Array.from({length:20},(_,n)=>[100*Math.cos(n),100*Math.sin(n)])}}}}});
+            track_map:{source:'acc-native-complete-lap',points:Array.from({length:20},(_,n)=>[100*Math.cos(n),100*Math.sin(n)])}},
+            hourly:{...row,id:'hourly',name:'Silverstone Hourly',track:'silverstone',track_code:'silverstone'}}}});
       }
       return tools.fixture(route,[]);
     });
@@ -65,6 +66,8 @@ try {
       assert.equal(await map.locator('.track-car.is-leader text').textContent(),'1');
       assert.equal(await map.locator('.track-car.is-leader circle').evaluate(el=>getComputedStyle(el).fill),'rgb(220, 53, 69)');
       assert.match(await map.textContent(),/Curve di Lesmo/);assert.match(await map.textContent(),/Curva Parabolica/);
+      assert.equal(await map.locator('.track-timing-mark').count(),3);
+      assert.equal(await map.locator('.track-timing-mark.is-finish text').textContent(),lang==='ru'?'С/Ф':'S/F');
       assert.ok(await map.evaluate(el=>el.scrollWidth<=el.clientWidth+1),'no horizontal overflow');
       const box=await map.locator('svg').boundingBox();assert.ok(box.height>=250&&box.width>250);
       const before=await map.locator('.track-car.is-leader').getAttribute('transform');
@@ -77,9 +80,17 @@ try {
       await page.keyboard.press('Escape');
       await page.waitForFunction(()=>!document.querySelector('#v2-modal')?.open);
     }
+    await page.locator('#v2-servers [data-server="hourly"]').click();
+    const staticMap=page.locator('#v2-modal .server-track-map[data-track-map="silverstone"]');
+    await staticMap.waitFor();
+    assert.equal(await staticMap.locator('.track-timing-mark').count(),3);
+    assert.equal(await staticMap.locator('.track-car').count(),0);
+    assert.match(await staticMap.textContent(),lang==='ru'?/Схема трассы/:/Circuit map/);
+    await page.screenshot({path:path.join(taskScratchPath('browser'),`silverstone-${lang}-${width}.png`)});
+    reports.push({lang,width,key:'hourly',fixedMap:true,markers:0,timingMarks:3});
     assert.deepEqual(errors,[]);await page.close();
   }
-  assert.equal(trackMapGeometry({track_code:'monza'}).points.length,125);
+  assert.equal(trackMapGeometry({track_code:'monza'}).points.length,201);
   await writeFile(taskScratchPath('browser-results.json'),JSON.stringify(reports,null,2)+'\n');
   console.log(JSON.stringify({monzaMaps:reports}));
 } finally {
