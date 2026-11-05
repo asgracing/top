@@ -1,7 +1,13 @@
 import {esc,STATUS,OUTCOME,SANCTION,REASON,actionsFor,reportHref} from './model.js?v=20261102reports1';
 import {subscribe} from '/v2/bridge.js?v=20261006v2k';
 const BASE='https://auth.asgracing.ru',lang=()=>document.documentElement.lang==='en'?'en':'ru';
-const tx=(ru,en)=>lang()==='en'?en:ru,word=(map,key)=>map[key]?.[lang()==='en'?1:0]||key;
+const tx=(ru,en)=>lang()==='en'?en:ru;
+const word=(map,key)=>{
+ const pair=map[key];
+ if(!pair)return key;
+ if(map===STATUS||map===OUTCOME||map===SANCTION)return pair.join(' / ');
+ return tx(...pair);
+};
 const date=t=>new Date(t*1000).toLocaleString(lang()==='en'?'en-GB':'ru-RU');
 const labels={claim:['Принять','Accept'],release:['Освободить назначение','Release assignment'],escalate:['Передать главному судье','Escalate'],decide:['Вынести решение','Issue decision'],appeal:['Подать апелляцию','Appeal'],comment:['Добавить пояснение','Add comment'],evidence:['Добавить доказательства','Add evidence'],internal_note:['Внутренняя заметка','Internal note'],request_evidence:['Запросить доказательства','Request evidence'],extend_evidence:['Продлить ожидание','Extend deadline'],exception:['Решить вопрос просрочки','Resolve deadline exception'],appoint_reviewer:['Назначить независимого судью','Appoint independent reviewer']};
 labels.retry_execution=['Повторить исполнение','Retry execution'];
@@ -62,7 +68,39 @@ export async function mountList(root,{driverId=null,direction=null,judicial=fals
 export async function mountReportsPage(root){
  style();await identity();const id=new URLSearchParams(location.search).get('id');
  if(id)return mountCase(root,id);
- return mountList(root,{judicial:!!(me?.judge||me?.chief||me?.owner)});
+ await mountList(root,{judicial:!!(me?.judge||me?.chief||me?.owner)});
+ if(me?.global_unban===true){
+  const button=document.createElement('button');
+  button.type='button';button.textContent=tx('Полный разбан','Full unban');
+  button.onclick=openGlobalUnban;root.prepend(button);
+ }
+}
+
+function openGlobalUnban(){
+ const modal=dialog(tx('Полный разбан','Full unban'));
+ const body=modal.querySelector('.report-body');
+ body.innerHTML=`<p>${tx('Действие снимет все основания блокировки и действующие страйки, восстановит SR и сохранит историю.','This clears all ban grounds and active strikes, restores SR and keeps the audit history.')}</p><form>${field(tx('Публичный ID пилота','Pilot public ID'),'target','text','required maxlength="160"')}${area(tx('Причина разбана','Reason for unban'),'reason','required minlength="20" maxlength="500"')}<label><input type="checkbox" required>${tx('Подтверждаю снятие всех оснований блокировки','I confirm removal of all ban grounds')}</label><button>${tx('Отправить на Main','Send to Main')}</button></form><p role="status" aria-live="polite"></p>`;
+ const form=body.querySelector('form'),notice=body.querySelector('[role=status]');
+ const key=crypto.randomUUID();
+ let command;
+ form.onsubmit=async event=>{
+  event.preventDefault();
+  const button=form.querySelector('button'),data=new FormData(form);button.disabled=true;
+  try{
+   if(!command){
+    const payload={target_public_id:data.get('target').trim(),reason:data.get('reason').trim()};
+    command=(await request('/v1/reports/global-unbans',{payload},key)).command_id;
+    form.querySelectorAll('input,textarea').forEach(input=>input.disabled=true);
+    button.textContent=tx('Проверить квитанцию','Check receipt');
+   }
+   const result=await request('/v1/reports/global-unbans/'+encodeURIComponent(command));
+   notice.textContent=result.status==='applied'&&result.result?.global_banned
+    ?tx('Команда применена. Действует более новое основание блокировки.','Applied. A newer ban ground is active.')
+    :word(STATUS,result.status==='leased'?'pending':result.status);
+   if(result.status==='applied'||result.status==='rejected')return;
+  }catch(error){notice.textContent=errorText(error);}
+  button.disabled=false;
+ };
 }
 export async function mountCase(root,id){
  style();root.textContent=tx('Загрузка…','Loading…');

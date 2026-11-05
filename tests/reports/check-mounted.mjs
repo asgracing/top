@@ -18,5 +18,36 @@ try{
   await page.goto(origin+'/reports/');await page.locator('[data-status]').waitFor();
   assert.deepEqual(errors,[]);await page.close();cases++;
  }
+ for(const chief of [false,true]){
+  const page=await browser.newPage();let submitted;
+  await page.route('**/*',async route=>{
+   const req=route.request(),url=new URL(req.url());
+   if(url.hostname!=='auth.asgracing.ru'||!url.pathname.startsWith('/v1/reports'))return fixture(route,[],{signed:true,admin:true});
+   let data={items:[],next_before:null};
+   if(url.pathname==='/v1/reports/status')data={enabled:true};
+   else if(url.pathname==='/v1/reports/me')data={public_id:signedDriver,judge:true,chief,global_unban:chief};
+   else if(url.pathname==='/v1/reports/global-unbans'&&req.method()==='POST'){
+    submitted=req.postDataJSON();data={command_id:'ucmd_fixture'};
+   }else if(url.pathname==='/v1/reports/global-unbans/ucmd_fixture'){
+    data={status:'applied',result:{global_banned:false}};
+   }
+   return route.fulfill({status:200,contentType:'application/json',body:JSON.stringify(data)});
+  });
+  await page.goto(origin+'/en/reports/');await page.locator('[data-status]').waitFor();
+  const launch=page.getByRole('button',{name:'Full unban',exact:true});
+  if(chief){
+   await launch.click();const form=page.getByRole('dialog');
+   await form.getByLabel('Pilot public ID').fill('drv_fixture');
+   await form.getByLabel('Reason for unban').fill('Approved removal of every active ban ground.');
+   await form.getByRole('checkbox').check();
+   await form.getByRole('button',{name:'Send to Main'}).click();
+   await form.getByText('Применено на Main / Applied on Main',{exact:true}).waitFor();
+   assert.equal(submitted.payload.target_public_id,'drv_fixture');
+  }else{
+   assert.equal(await launch.count(),0);assert.equal(submitted,undefined);
+  }
+  await page.close();
+ }
  console.log(`Mounted reports: ${cases} mobile/desktop paths passed: race trigger, profile, judge registry, reports page.`);
+ console.log('Chief-only global unban UI and bilingual execution receipt passed.');
 }finally{await browser.close();await new Promise(r=>server.close(r));}

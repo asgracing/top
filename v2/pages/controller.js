@@ -36,7 +36,7 @@ export async function startPage(api) {
   const entityThumbnails=['club','team'].includes(screen)?createEntityThumbnails({root:center,loadAvatar:id=>native().steamAvatar(id)}):null;
   window.addEventListener('pagehide',()=>entityThumbnails?.destroy(),{once:true});
   home.id='home-view';home.hidden=true;home.append(...center.childNodes);view.id='page-view';center.append(home,view);
-  if(screen==='reports'){const {mountReportsPage}=await import('../reports/index.js?v=20261102reports1');view.className='panel report-section';await mountReportsPage(view);return;}
+  if(screen==='reports'){const {mountReportsPage}=await import('../reports/index.js?v=20261105reports2');view.className='panel report-section';await mountReportsPage(view);return;}
   if(screen==='servers'){const {startServerDirectory}=await import('../server-directory.js?v=20261025servers1');return startServerDirectory({...api,view,center});}
   if(screen==='account'){const {startAccountPage}=await import('./account.js?v=20261031numbers1');return startAccountPage({...api,view,center});}
   if(['settings','moderation','ops'].includes(screen)){const {startControlPage}=await import('./control.js?v=20261031numbers1');return startControlPage({...api,view,center,screen});}
