@@ -8,7 +8,7 @@ export function reportButton(r,d){
  if(!/^drv_[\w-]+$/.test(d?.public_id||'')||!r?.race_id)return '';
  const lang=typeof document!=='undefined'&&document.documentElement.lang==='en'?'en':'ru';
  const race=r._published_race?.race_id||r.race_id;
- return `<button type="button" hidden class="text-link report-start" data-report-race="${esc(race)}" data-report-driver="${esc(d.public_id)}" data-report-namespace="${r._data_namespace==='hourly'||r._data_namespace==='season'?'hourly':'top'}">${lang==='en'?'Report':'Репорт'}</button>`;
+ return `<button type="button" hidden class="report-start" data-report-race="${esc(race)}" data-report-driver="${esc(d.public_id)}" data-report-namespace="${r._data_namespace==='hourly'||r._data_namespace==='season'?'hourly':'top'}"><span class="report-start-icon" aria-hidden="true">!</span>${lang==='en'?'Report':'Репорт'}</button>`;
 }
 export const reportHref=(id,lang='ru')=>`${lang==='en'?'/en':''}/reports/?id=${encodeURIComponent(id)}`;
 export function actionsFor(c,me){

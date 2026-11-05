@@ -1,4 +1,4 @@
-import {esc,STATUS,OUTCOME,SANCTION,REASON,actionsFor,reportHref} from './model.js?v=20261102reports1';
+import {esc,STATUS,OUTCOME,SANCTION,REASON,actionsFor,reportHref} from './model.js?v=20261105reportbutton1';
 import {subscribe} from '/v2/bridge.js?v=20261006v2k';
 const BASE='https://auth.asgracing.ru',lang=()=>document.documentElement.lang==='en'?'en':'ru';
 const tx=(ru,en)=>lang()==='en'?en:ru;
@@ -12,7 +12,7 @@ const date=t=>new Date(t*1000).toLocaleString(lang()==='en'?'en-GB':'ru-RU');
 const labels={claim:['Принять','Accept'],release:['Освободить назначение','Release assignment'],escalate:['Передать главному судье','Escalate'],decide:['Вынести решение','Issue decision'],appeal:['Подать апелляцию','Appeal'],comment:['Добавить пояснение','Add comment'],evidence:['Добавить доказательства','Add evidence'],internal_note:['Внутренняя заметка','Internal note'],request_evidence:['Запросить доказательства','Request evidence'],extend_evidence:['Продлить ожидание','Extend deadline'],exception:['Решить вопрос просрочки','Resolve deadline exception'],appoint_reviewer:['Назначить независимого судью','Appoint independent reviewer']};
 labels.retry_execution=['Повторить исполнение','Retry execution'];
 let auth=null,me=null,styles=false,sessionRevision=0;
-function style(){if(styles)return;styles=true;const link=document.createElement('link');link.rel='stylesheet';link.href='/v2/reports/reports.css?v=20261102reports1';document.head.append(link);}
+function style(){if(styles)return;styles=true;const link=document.createElement('link');link.rel='stylesheet';link.href='/v2/reports/reports.css?v=20261105reportbutton1';document.head.append(link);}
 async function identity(){const revision=sessionRevision,payload=await fetch(BASE+'/v1/me',{credentials:'include',cache:'no-store'}).then(r=>r.ok?r.json():{});if(revision!==sessionRevision)return null;auth=payload;me=await request('/v1/reports/me').catch(()=>null);return me;}
 export async function request(path,body,key){
  const revision=sessionRevision;
@@ -131,7 +131,9 @@ export function installReports(){
  document.addEventListener('click',event=>{const b=event.target.closest?.('[data-report-race]');if(!b)return;event.preventDefault();event.stopPropagation();startReport({race_id:b.dataset.reportRace,namespace:b.dataset.reportNamespace,accused_id:b.dataset.reportDriver});},true);
  let queued=false;const scan=()=>{queued=false;const screen=document.documentElement.dataset.v2Page,root=document.getElementById('page-view');
   if(!available)return;
-  document.querySelectorAll('[data-report-race][hidden]').forEach(b=>b.hidden=false);
+  const triggers=document.querySelectorAll('[data-report-race][hidden]');
+  if(triggers.length)style();
+  triggers.forEach(b=>b.hidden=false);
   if(!root)return;
   const profile=screen==='driver'?root.querySelector('.profile-main'):null,control=screen==='moderation'?root.querySelector('.control-workspace')||root:null;
   const nav=document.querySelector('.control-navigation');if(nav&&!nav.querySelector('[data-report-navigation]')){const a=document.createElement('a');a.className='button';a.dataset.reportNavigation='true';a.href=lang()==='en'?'/en/reports/':'/reports/';a.textContent=tx('Репорты','Reports');nav.append(a);}
