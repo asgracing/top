@@ -4,6 +4,12 @@
   "status": "release-candidate-awaiting-approval",
   "pages": [
     {
+      "path": "/reports/",
+      "version": "v2",
+      "language": "ru",
+      "screen": "reports"
+    },
+    {
       "path": "/",
       "version": "v2",
       "language": "ru",
@@ -182,6 +188,12 @@
       "version": "v2",
       "language": "ru",
       "screen": "ops"
+    },
+    {
+      "path": "/en/reports/",
+      "version": "v2",
+      "language": "en",
+      "screen": "reports"
     },
     {
       "path": "/en/",
