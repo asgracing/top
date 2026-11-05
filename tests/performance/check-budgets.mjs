@@ -75,6 +75,8 @@ const metrics = {
   racingRulesStylesheetBytes,
   personalNotificationsJavaScriptBytes,
   personalNotificationsStylesheetBytes,
+  reportsJavaScriptBytes: await treeBytes('v2/reports',new Set(['.js'])),
+  reportsStylesheetBytes: await textBytes('v2/reports/reports.css'),
   raceNumberPickerJavaScriptBytes,
   raceNumberPickerStylesheetBytes,
   raceNumberValidityJavaScriptBytes,

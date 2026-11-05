@@ -364,3 +364,5 @@ if(document.documentElement.dataset.v2Page){
   const {startPage}=await import('./pages/controller.js?v=20261101privateexpiry1');
   await startPage({native,presentation,showDialog,esc,text,label,date,number,rating,car,language,subscribe,serverAdmission});
 }
+import {installReports} from './reports/index.js?v=20261102reports1';
+if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',installReports,{once:true});else installReports();

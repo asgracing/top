@@ -1,4 +1,5 @@
 import { createHttpClient } from "../../shared/http-client.js";
+import {install,reportId,reportLink} from '../../../v2/reports/notification-copy.js?v=20261102reports1';
 
 const TYPES = new Set(["strike.issued", "strike.revoked", "ban.issued", "ban.revoked", "race_number.approved", "race_number.rejected", "race_number.expiring", "race_number.expired", "invitation.club", "invitation.team"]);
 const COPY = {
@@ -38,12 +39,13 @@ const COPY = {
   },
 };
 const clean = value => typeof value === "string" ? value.slice(0, 2000) : "";
+install(TYPES,COPY);
 const publicId = value => /^drv_[a-zA-Z0-9_]+$/.test(String(value || "")) ? String(value) : "";
 export function normalizeNotifications(raw) {
   const items = (Array.isArray(raw?.items) ? raw.items : []).filter(item => Number.isSafeInteger(item?.id) && item.id > 0 && TYPES.has(item.event_type)).map(item => {
     const d = item.details || {};
     return { id: item.id, type: item.event_type, at: clean(item.occurred_at), read: item.read === true, actionable: item.actionable === true,
-      details: { reason: clean(d.reason), reasonCode: clean(d.reason_code), comment: clean(d.comment), removalComment: clean(d.removal_comment),
+      details: { reportId: reportId(d), reason: clean(d.reason), reasonCode: clean(d.reason_code), comment: clean(d.comment), removalComment: clean(d.removal_comment),
         strikes: Number.isInteger(d.active_strikes) ? d.active_strikes : null, number: Number.isInteger(d.number) && d.number > 0 && d.number <= 999 ? d.number : null,
         name: clean(d.target_display_name), sender: clean(d.sender_display_name), senderId: publicId(d.initiated_by_public_id), expires: clean(d.expires_at) } };
   });
@@ -52,6 +54,7 @@ export function normalizeNotifications(raw) {
 }
 
 export function notificationTarget(item, driverId, lang = "ru") {
+  const reportTarget=reportLink(item,lang);if(reportTarget)return reportTarget;
   if (item.type.startsWith("strike.") || item.type.startsWith("ban.")) return `/${lang}/driver/?id=${encodeURIComponent(publicId(driverId))}`;
   if (item.type === 'race_number.expiring' || item.type === 'race_number.expired') return `${lang === 'en' ? '/en' : ''}/account/settings/`;
   return "/account/";

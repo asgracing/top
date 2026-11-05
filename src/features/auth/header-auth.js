@@ -329,7 +329,7 @@ export function createAuthHeaderController({
     if (personalNotifications) personalNotifications.update(auth, root);
     else if (auth?.authenticated && !inboxLoading) {
       inboxLoading = true;
-      void import("./personal-notifications.js?v=20261031numbers1").then(({ createPersonalNotifications }) => {
+      void import("./personal-notifications.js?v=20261102reports1").then(({ createPersonalNotifications }) => {
         if (destroyed) return;
         personalNotifications = createPersonalNotifications({ documentRef, windowRef, fetchImpl, authBaseUrl: baseUrl });
         personalNotifications.update(state.status === "ready" ? state.auth : null, root);

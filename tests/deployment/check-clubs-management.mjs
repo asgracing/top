@@ -78,7 +78,7 @@ try{
  await ctx.shot('admin-create');
  await page.locator('[data-profile-form] [type=submit]').click();
  await page.locator('[data-control-confirm]').click();
- await page.waitForFunction(()=>document.querySelector('[data-feedback]')?.dataset.kind==='success');
+ await page.waitForFunction(()=>document.querySelector('[data-feedback]')?.dataset.kind==='success' && document.querySelector('[data-feedback]')?.closest('[aria-busy]')?.getAttribute('aria-busy')==='false');
  assert.equal(ctx.writes[0].body.payload.leader_public_id,'drv_selected');assert.equal(ctx.writes[0].body.expected_entity_version,0);
  assert.equal(ctx.writes[0].headers['x-csrf-token'],'fixture-csrf');
  await page.locator('[data-editor] [name=displayName]').fill('Edited Fixture Club');
@@ -88,14 +88,14 @@ try{
  await page.locator('[data-clubs-tab=roster]').click();
  await page.locator('[data-reason]').fill('Transfer fixture leadership');
  await page.locator('[data-action="portal.leadership.transfer"]').click();await page.locator('[data-control-confirm]').click();
- await page.waitForFunction(()=>document.querySelector('[data-feedback]')?.dataset.kind==='success');
+ await page.waitForFunction(()=>document.querySelector('[data-feedback]')?.dataset.kind==='success' && document.querySelector('[data-feedback]')?.closest('[aria-busy]')?.getAttribute('aria-busy')==='false');
  assert.equal(ctx.writes.at(-1).body.command_type,'portal.leadership.transfer');
  await page.locator('[data-clubs-tab=logo]').click();
  assert.equal(await page.locator('[data-action=upload]').isDisabled(),true);
  await page.locator('[data-logo-file]').setInputFiles({name:'fixture-logo.png',mimeType:'image/png',buffer:await fs.readFile(path.join(site,'favicon-32x32.png'))});
  await page.locator('[data-logo-preview]:not([hidden])').waitFor();
  await page.locator('[data-action=upload]').click();await page.locator('[data-control-confirm]').click();
- await page.waitForFunction(()=>document.querySelector('[data-feedback]')?.dataset.kind==='success');
+ await page.waitForFunction(()=>document.querySelector('[data-feedback]')?.dataset.kind==='success' && document.querySelector('[data-feedback]')?.closest('[aria-busy]')?.getAttribute('aria-busy')==='false');
  assert.match(ctx.writes.at(-1).path,/\/portal-ops\/clubs-teams\/assets\//);
  await page.locator('[data-entity="clb_fixture"]').click();
  ctx.setStale(true);await page.locator('[data-refresh]').click();await page.waitForFunction(()=>document.querySelector('[data-create=club]')?.disabled);
@@ -110,7 +110,7 @@ try{
  await waiting.page.reload({waitUntil:'networkidle'});await waiting.page.locator('[data-panel=clubs]').click();
  assert.equal(await waiting.page.locator('[data-create=club]').isDisabled(),true);
  waiting.setHold(false);await waiting.page.locator('[data-resume]').click();
- await waiting.page.waitForFunction(()=>document.querySelector('[data-feedback]')?.dataset.kind==='success');
+ await waiting.page.waitForFunction(()=>document.querySelector('[data-feedback]')?.dataset.kind==='success' && document.querySelector('[data-feedback]')?.closest('[aria-busy]')?.getAttribute('aria-busy')==='false');
  assert.equal(waiting.writes.length,1);assert.equal(await waiting.page.locator('[data-pending]').isVisible(),false);
  waiting.setFail(true);await waiting.page.locator('[data-reason]').fill('Check explicit version conflict');await waiting.page.locator('[data-profile-form] [type=submit]').click();await waiting.page.locator('[data-control-confirm]').click();
  await waiting.page.waitForFunction(()=>document.querySelector('[data-feedback]')?.dataset.kind==='error');

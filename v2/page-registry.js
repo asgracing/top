@@ -1,6 +1,7 @@
 // Maintained screen registry. Target URLs describe the next release; live routes remain /v2/{ru,en}/.
 // Query-based details retain legacy indexing; sitemap excludes empty entity URLs.
 export const pageRegistry = [
+  {route:'reports/',screen:'reports',title:{ru:'Репорты',en:'Reports'},description:{ru:'Рассмотрение гоночных инцидентов и апелляций ASG Racing.',en:'ASG Racing incident reports and appeals.'},access:'public',indexable:false,sitemap:false,query:['id'],target:{ru:'/reports/',en:'/en/reports/'},legacy:{ru:null,en:null}},
   {"route":"","screen":"home","title":null,"description":null,"access":"public","indexable":true,"query":[],"target":{"ru":"/","en":"/en/"},"legacy":{"ru":"/ru/","en":"/"}},
   {"route":"hourly/","screen":"hourly","title":{"ru":"Часовые гонки","en":"Hourly races"},"description":{"ru":"Расписание часовых гонок ASG Racing в ACC.","en":"ASG Racing ACC hourly race schedule."},"access":"public","indexable":true,"query":[],"target":{"ru":"/hourly/","en":"/en/hourly/"},"legacy":{"ru":"/ru/hourly/","en":"/hourly/"}},
   {"route":"servers/","screen":"servers","title":{"ru":"Серверы","en":"Servers"},"description":{"ru":"Все серверы ASG Racing в ACC: трассы, допуски, пилоты онлайн и live-карта.","en":"All ASG Racing ACC servers: tracks, entry requirements, online drivers and live track maps."},"access":"public","indexable":true,"query":[],"target":{"ru":"/servers/","en":"/en/servers/"},"legacy":{"ru":null,"en":null}},
