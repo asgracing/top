@@ -644,7 +644,7 @@
     },
     {
       "path": "v2-source/pages/archive.js",
-      "sha256": "6a44ee99cce1ea988b6618f526b3557b6f63668e91ae56756b293481f716c11f"
+      "sha256": "ccea31a4f56d5d77fa4e40b5146eff24a668be8931f5ab4b754e9d1cca3acae9"
     },
     {
       "path": "v2-source/pages/bans.js",
@@ -696,7 +696,7 @@
     },
     {
       "path": "v2-source/pages/race-modal.js",
-      "sha256": "379f2c7b305cf2f503dba6fafdd2e98396b68cd7b75b497243160c5dc7f94be9"
+      "sha256": "86c28e32c574c1382698518824ae90a25dbcf5c98d7c7126a1eacf6f0f4683c4"
     },
     {
       "path": "v2-source/pages/site-pages.css",
@@ -716,7 +716,7 @@
     },
     {
       "path": "v2/home.js",
-      "sha256": "4fdca596214330767b107054d41d4134506db251af2aa9cd08405db6d8133c89"
+      "sha256": "69b1d86a911c56515c9e5e6813f5000036af4d14ec93e8eef8cc9b405d33ecf9"
     },
     {
       "path": "v2/mobile-navigation.js",
@@ -764,7 +764,7 @@
     },
     {
       "path": "v2/pages/controller.js",
-      "sha256": "6e4e8da462ec42f52c7dec0824a9365202b6e4f8733a9a4d91405a6b12c6882f"
+      "sha256": "52f3f1340590e9cad69b86adebfe5b294d252022b5a9487b4176fa657f903241"
     },
     {
       "path": "v2/pages/data.js",
@@ -800,11 +800,11 @@
     },
     {
       "path": "v2/reports/index.js",
-      "sha256": "b614372953bc26f4cba26bd337d9e5f0142e26ff205817110317b9021031a8c7"
+      "sha256": "98efe7b336ebce066edd824fe5c7bd5812adff60596e7ee0515c9bde282bba0a"
     },
     {
       "path": "v2/reports/model.js",
-      "sha256": "26ab31392e424eb2c8e292c462a63151e2ed654bcbb967bbc9d4eea75617cde2"
+      "sha256": "e32c30651e0f47367083ee0f2a5b21e8100ce2182bc03019acd1f4d14c2ea98f"
     },
     {
       "path": "v2/reports/notification-copy.js",
