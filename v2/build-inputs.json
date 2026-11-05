@@ -716,7 +716,7 @@
     },
     {
       "path": "v2/home.js",
-      "sha256": "e7598add88dd194192a4b2532dcfd1e99aad2d0b1ea39ed93f768240b5c3b677"
+      "sha256": "4fdca596214330767b107054d41d4134506db251af2aa9cd08405db6d8133c89"
     },
     {
       "path": "v2/mobile-navigation.js",
@@ -764,7 +764,7 @@
     },
     {
       "path": "v2/pages/controller.js",
-      "sha256": "d1dd84e30d5c0c8dc147d40a18ac778436e299898ee01f1ad75b630e22e398a8"
+      "sha256": "6e4e8da462ec42f52c7dec0824a9365202b6e4f8733a9a4d91405a6b12c6882f"
     },
     {
       "path": "v2/pages/data.js",
@@ -800,7 +800,7 @@
     },
     {
       "path": "v2/reports/index.js",
-      "sha256": "10abb05bd144b37afb81ad9998ab9af3f51dc4c2fadc8b0d516b4ee05532ebf4"
+      "sha256": "b614372953bc26f4cba26bd337d9e5f0142e26ff205817110317b9021031a8c7"
     },
     {
       "path": "v2/reports/model.js",
