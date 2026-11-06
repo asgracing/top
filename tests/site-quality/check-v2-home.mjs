@@ -3,6 +3,8 @@ import {readFile} from 'node:fs/promises';
 import {createHash} from 'node:crypto';
 import {resolve} from 'node:path';
 import {readClassicQuality} from '../../scripts/classic-quality-source.mjs';
+import {readSiteRelease} from '../../scripts/site-release.mjs';
+const legacyEnabled=process.env.ASG_ROOT_FALLBACK==='1'||(await readSiteRelease()).legacyEnabled!==false;
 const root=resolve(import.meta.dirname,'../..');
 const read=async path=>{if(path.startsWith('v2/')&&process.env.ASG_V2_OUTPUT_DIR){try{return await readFile(resolve(process.env.ASG_V2_OUTPUT_DIR,path),'utf8');}catch(e){if(e.code!=='ENOENT')throw e;}}return readFile(resolve(root,path),'utf8');};
 const source=await read('app.js'),build=JSON.parse(await read('v2/runtime-source.json'));
@@ -31,7 +33,8 @@ for(const language of ['ru','en']){
   assert.match(html,/<meta name="robots" content="noindex,follow">/);
   assert.doesNotMatch(html,/<link[^>]*rel="canonical"/);
   assert.match(html,new RegExp(`<html lang="${language}"`));
-  assert.match(html,/data-v1-home/);
+  if(legacyEnabled)assert.match(html,/data-v1-home/);
+  else assert.doesNotMatch(html,/data-v1-home/);
   assert.match(html,/v2-seo-intro-title/);
   assert.doesNotMatch(html,/<video\b|public-snapshot|preview-avatar/);
   assert.equal((html.match(/src="\/legal.js[^\"]*"/g)||[]).length,1);

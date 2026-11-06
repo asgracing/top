@@ -16,5 +16,10 @@ test('release plan refuses changed source, altered payload and unrelated deletio
   await writeFile(resolve(target,'index.html'),'other work');await assert.rejects(validatePlan(plan,payload,target),/Target changed/);
   await writeFile(resolve(target,'index.html'),'before');await writeFile(resolve(payload,'index.html'),'corrupt');await assert.rejects(validatePlan(plan,payload,target),/Payload changed/);
   await assert.rejects(validatePlan([{path:'index.html',action:'delete',before:plan[0].before,after:null}],payload,target),/restricted/);
+  await mkdir(resolve(target,'old/en/driver'),{recursive:true});
+  await writeFile(resolve(target,'old/en/driver/index.html'),'classic');
+  const retired=await planFiles(payload,target,['old/en/driver/index.html']);
+  await validatePlan(retired,payload,target);
+  await assert.rejects(validatePlan([{path:'old/en/driver/notes.json',action:'delete',before:null,after:null}],payload,target),/restricted/);
  }finally{await rm(work,{recursive:true,force:true});}
 });

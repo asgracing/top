@@ -1,4 +1,4 @@
-// Scope only newly rendered anchors; never observe style/class updates or poll.
+// Published to v2 only when building the classic fallback.
 import {scopeSiteHref,siteContext,versionHref,languageHref} from './site-routing.js?v=20261007root1';
 import {ensureHomeVersionSwitch} from '../src/features/home-version-switch.js?v=20261007root1';
 const language=document.documentElement.dataset.pageLanguage==='en'?'en':'ru';

@@ -30,6 +30,9 @@ assert.equal((sitemap.match(/<loc>/g)||[]).length,pageRegistry.filter(p=>p.index
 assert.ok(!/\/(?:v2|ru|old|preview)\//.test(sitemap));
 await assert.rejects(stat(resolve(dist,'preview')),e=>e.code==='ENOENT');
 const map=JSON.parse(await readFile(resolve(dist,'route-map.json'),'utf8'));
+if(process.env.ASG_ROOT_FALLBACK!=='1'&&!(map.pages.some(p=>p.version==='old'))){
+ await assert.rejects(stat(resolve(dist,'old')),e=>e.code==='ENOENT');
+}
 for(const p of map.pages.filter(p=>p.version==='old'))assert.match(await readFile(resolve(dist,p.path.slice(1),'index.html'),'utf8'),/name="robots" content="noindex,follow"/);
 for(const r of redirects){await stat(resolve(dist,r.target.slice(1),'index.html'));assert.equal(redirectFor(r.target),null);}
 const manifest=JSON.parse(await readFile(resolve(dist,'asset-manifest.json'),'utf8'));

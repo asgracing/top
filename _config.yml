@@ -29,6 +29,7 @@ exclude:
   - "docs"
   - "donations-worker"
   - "node_modules"
+  - "old"
   - "package-lock.json"
   - "package.json"
   - "performance-budgets.json"

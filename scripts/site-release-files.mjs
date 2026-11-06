@@ -1,6 +1,8 @@
 import {lstat,readFile,readdir} from 'node:fs/promises';
 import {resolve,relative,isAbsolute,sep} from 'node:path';
 import {createHash} from 'node:crypto';
+import {legacyRoutes} from '../v2/site-routing.js';
+const retiredClassicPages=new Set(['old/','old/en/'].flatMap(prefix=>[...legacyRoutes].map(route=>prefix+route+'index.html')));
 export const digest=value=>createHash('sha256').update(value).digest('hex');
 export function safeTarget(base,path){
  if(!/^[\w.-]+(?:\/[\w.-]+)*$/.test(path)||path.split('/').some(p=>p==='.'||p==='..')||/(^|\/)(?:\.git|portal-secrets|private-cache|\.env)(\/|$)/i.test(path))throw Error('Unsafe release path '+path);
@@ -42,6 +44,6 @@ export async function validatePlan(plan,payload,target){
   if(!['write','delete'].includes(item.action)||!/^(?:[a-f0-9]{64})?$/.test(item.before||'')||!/^(?:[a-f0-9]{64})?$/.test(item.after||''))throw Error('Invalid plan item');
   if(await fileHash(target,item.path)!==item.before)throw Error('Target changed since preparation: '+item.path);
   if(item.action==='write'&&await fileHash(payload,item.path)!==item.after)throw Error('Payload changed since preparation: '+item.path);
-  if(item.action==='delete'&&(!item.path.startsWith('preview/')||item.after!==null))throw Error('Deletion is restricted to retired public Preview');
+  if(item.action==='delete'&&((!item.path.startsWith('preview/')&&!retiredClassicPages.has(item.path))||item.after!==null))throw Error('Deletion is restricted to retired public pages');
  }
 }

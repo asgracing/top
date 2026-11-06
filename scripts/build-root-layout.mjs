@@ -1,5 +1,5 @@
 // Writes the root/en/old layout ONLY inside an explicitly selected local artifact.
-import {readFile,writeFile,mkdir} from 'node:fs/promises';
+import {copyFile,readFile,writeFile,mkdir} from 'node:fs/promises';
 import {resolve} from 'node:path';
 import {dist,root} from './dist-paths.mjs';
 import {readV1Html,v1SourceManifest} from './v1-source.mjs';
@@ -8,7 +8,6 @@ import {nodes,edit,setAttribute} from './seo/html-source.mjs';
 import {pageRegistry} from '../v2/page-registry.js';
 import {addServerNavigation} from './server-navigation.mjs';
 import {readSiteRelease} from './site-release.mjs';
-import {disabledLegacyPage} from './legacy-site.mjs';
 import {scopeSiteHref,routeHref,legacyRoutes,versionHref,excludedRoute} from '../v2/site-routing.js';
 if(process.env.ASG_SITE_RELEASE_BUILD!=='1'&&(!process.env.ASG_DIST_OUTPUT_DIR||dist===resolve(root,'dist')))throw Error('Root layout requires an isolated artifact or an explicit site-release build');
 const origin='https://asgracing.ru',context={layout:'root',version:'v2'};
@@ -52,7 +51,8 @@ for(const language of ['ru','en'])for(const page of pageRegistry){
   html=html.replace(/content="https:\/\/asgracing\.ru\/v2\/(?:ru|en)\/[^\"]*"/g,`content="${origin+path}"`);
   await emit(path.slice(1)+'index.html',html);written.push({path,version:'v2',language,screen:page.screen});
 }
-for(const language of ['ru','en'])for(const path of legacyRoutes){
+if(legacyEnabled)await copyFile(resolve(root,'v1-source/legacy-navigation.js'),resolve(dist,'v2/legacy-navigation.js'));
+if(legacyEnabled)for(const language of ['ru','en'])for(const path of legacyRoutes){
   const original=(language==='ru'&&localized.has('ru/'+path+'index.html')?'ru/':'')+path+'index.html';
   if(!localized.has(original)&&!v1SourceManifest.templates.includes(original))throw Error('Missing legacy owner: '+original);
   const target=`/old/${language==='en'?'en/':''}${path}`;
@@ -68,7 +68,7 @@ for(const language of ['ru','en'])for(const path of legacyRoutes){
   const canonical=pageRegistry.some(page=>page.target[language]===current)?`<link rel="canonical" href="${origin+current}">`:'';
   html=html.replace('</head>',`<meta name="robots" content="noindex,follow">${canonical}</head>`)
     .replace('</body>','<script type="module" src="/v2/legacy-navigation.js?v=20261007root2"></script></body>');
-  await emit(target.slice(1)+'index.html',legacyEnabled?html:disabledLegacyPage(target,language));written.push({path:target,version:'old',language});
+  await emit(target.slice(1)+'index.html',html);written.push({path:target,version:'old',language});
 }
 // The excluded flows stay at their real native locations with original auth gates.
 for(const path of v1SourceManifest.templates.filter(path=>excludedRoute(path)))await emit(path,await readV1Html(path));

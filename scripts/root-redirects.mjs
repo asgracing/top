@@ -1,7 +1,7 @@
 import {pageRegistry} from '../v2/page-registry.js';
 import {readFileSync} from 'node:fs';
 import {v1SourceManifest} from './v1-source.mjs';
-import {screenPath,excludedRoute,routeHref} from '../v2/site-routing.js';
+import {screenPath,excludedRoute,routeHref,legacyRoutes} from '../v2/site-routing.js';
 // Exact page paths only: no prefix rule can intercept V2 scripts, images or API.
 const aliases={'events/':'hourly/championship/','hourly/privacy/':'privacy/','hourly/cookies/':'cookies/'};
 const previewRoutes=JSON.parse(readFileSync(new URL('../v1-source/retired-preview-routes.json',import.meta.url),'utf8'));
@@ -25,6 +25,12 @@ for(const path of previewRoutes){
  add('/preview'+path,target,'preview');
 }
 add('/preview','/','preview');
+for(const lang of ['ru','en'])for(const route of legacyRoutes){
+ const source=(lang==='en'?'/old/en/':'/old/')+route;
+ const target=routeHref(aliases[route]||route,lang,{layout:'root',version:'v2'});
+ add(source,target,'old');
+ add(source+'index.html',target,'old');
+}
 for(const path of v1SourceManifest.templates.filter(p=>p.endsWith('index.ru.html'))){
  const route=screenPath(path);add('/'+path,routeHref(aliases[route]||route,'ru',{layout:'root',version:'v2'}),'language');
 }

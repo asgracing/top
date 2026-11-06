@@ -92,11 +92,11 @@ http {
   cases.push({path,method,host,status:answer?301:host.startsWith('www.')?301:204,location:answer?.location||(host.startsWith('www.')?'https://asgracing.ru'+path:null)});
  }
  for(const r of redirects){add(r.source);add(r.source+'?utm_source=asg&utm_campaign=x%26y');}
- for(const [path,key]of [['/races/','race_id'],['/ru/races/','race_id'],['/preview/ru/races/','race_id'],['/v2/en/races','race_id'],['/news/','slug'],['/preview/ru/news/','slug'],['/en/news/','slug']]){
+ for(const [path,key]of [['/races/','race_id'],['/ru/races/','race_id'],['/preview/ru/races/','race_id'],['/v2/en/races','race_id'],['/old/en/races/index.html','race_id'],['/news/','slug'],['/preview/ru/news/','slug'],['/en/news/','slug'],['/old/news/','slug']]){
   for(const args of [`${key}=a%2Fb&utm_source=one&utm_source=two`,`utm_campaign=a%26b&${key}=a+b`,`x=1&${key}=first&${key}=second`,`${key}=&${key}=later`,`${key}=a&id=b`,`%69d=b&${key}=a`,`i%64=b&${key}=a`,`${key.toUpperCase()}=a`,`other=${key}=a`])add(path+'?'+args);
  }
  for(const path of ['/','/en/','/old/','/old/news/?slug=a','/v2/runtime/home.js','/hourly-votes-api/vote','/asg-lab/','/hourly/team/','/unknown/'])add(path);
- for(const method of ['HEAD','POST','PUT','DELETE'])for(const path of ['/ru/','/races/?race_id=a','/news/?slug=a'])add(path,method);
+ for(const method of ['HEAD','POST','PUT','DELETE'])for(const path of ['/ru/','/races/?race_id=a','/news/?slug=a','/old/races/?race_id=a'])add(path,method);
  for(const path of ['/ru/?utm_source=asg','/v2/en/races/?race_id=a%2Fb&x=1','/unknown/?x=1'])add(path,'GET','www.asgracing.ru');
  return {version,remote,maps,site,acceptance,cases,redirectCount:redirects.length};
 }

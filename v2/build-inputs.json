@@ -76,7 +76,7 @@
     },
     {
       "path": "scripts/build-v2.mjs",
-      "sha256": "23b9f485e299f303c99e987d45535514d48b725ac530aafef1bdc3240d754b2a"
+      "sha256": "34443fde1a62a6674325c8b8032173d4bc67781365dc2bca613e6300e70d1c8e"
     },
     {
       "path": "scripts/generate-localized-pages.mjs",
@@ -716,7 +716,7 @@
     },
     {
       "path": "v2/home.js",
-      "sha256": "69b1d86a911c56515c9e5e6813f5000036af4d14ec93e8eef8cc9b405d33ecf9"
+      "sha256": "6dddab6cbb6e3ecc08151aca6144982ef0d389b97c898231066a4e852f8b7cb4"
     },
     {
       "path": "v2/mobile-navigation.js",

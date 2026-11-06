@@ -34,7 +34,7 @@ const sitemap=pageRegistry.filter(p=>p.indexable&&p.sitemap!==false).flatMap(p=>
 await emit('sitemap.xml',`<?xml version="1.0" encoding="UTF-8"?>\n<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9" xmlns:xhtml="http://www.w3.org/1999/xhtml">\n${sitemap.join('\n')}\n</urlset>\n`);
 await emit('robots.txt','User-agent: *\nAllow: /\n\nSitemap: https://asgracing.ru/sitemap.xml\n');
 // Client-side fallbacks are useful locally, but do not replace real edge 301s.
-for(const item of redirects.filter(r=>r.kind!=='preview'&&(r.source.endsWith('/')||r.source.endsWith('.html')))){
+for(const item of redirects.filter(r=>!['preview','old'].includes(r.kind)&&(r.source.endsWith('/')||r.source.endsWith('.html')))){
  const file=item.source.slice(1)+(item.source.endsWith('/')?'index.html':'');
  await emit(file,`<!doctype html><html lang="${item.target.startsWith('/en/')?'en':'ru'}"><head><meta charset="utf-8"><meta name="robots" content="noindex,follow"><link rel="canonical" href="${origin+item.target}"><title>ASG Racing</title></head><body><a href="${item.target}">ASG Racing</a><script>location.replace(${JSON.stringify(item.target)}+location.search+location.hash)</script></body></html>`);
 }

@@ -20,11 +20,14 @@ const excluded=new Set(['preview','v1-source','v2-source','scripts','tests','des
 for(const first of await readdir(root))if(!publicRoots.has(first))excluded.add(first);
 excluded.delete('_config.yml');
 const pagesConfig='plugins: []\nexclude:\n'+[...excluded].sort().map(p=>'  - '+JSON.stringify(p)).join('\n')+'\n';
-let deletions=[];try{deletions=(await tree(resolve(root,'preview'))).map(p=>'preview/'+p);}catch(e){if(e.code!=='ENOENT')throw e;}
+const deletions=[];
+for(const directory of config.legacyEnabled===false?['preview','old']:['preview']){
+ try{deletions.push(...(await tree(resolve(root,directory))).map(p=>directory+'/'+p));}catch(e){if(e.code!=='ENOENT')throw e;}
+}
 for(const [name,artifact,layout]of [['candidate',candidate,'root'],['fallback',fallback,'root-fallback']]){
  const payload=resolve(bundle,name);await cp(artifact,payload,{recursive:true});
  await writeFile(resolve(payload,'site-release.json'),JSON.stringify({schemaVersion:1,component:'site',layout,delivery:'main-branch-pages',legacyEnabled:name==='fallback'?true:config.legacyEnabled!==false,version},null,2)+'\n');
- await writeFile(resolve(payload,'_config.yml'),pagesConfig);
+ await writeFile(resolve(payload,'_config.yml'),name==='fallback'?pagesConfig.replace('  - "old"\n',''):pagesConfig);
  const target=name==='candidate'?root:resolve(bundle,'candidate');
  const entries=await planFiles(payload,target,name==='candidate'?deletions:[]);
  const baseline=[];for(const path of await tree(payload))baseline.push({path,sha256:await fileHash(target,path)});

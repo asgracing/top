@@ -11,7 +11,7 @@ test('all exact migration sources reach final targets without a redirect loop',(
  }
 });
 test('query redirects keep argument order, encoded values, repeated UTM and real key boundaries',()=>{
- for(const [path,key,target]of [['/ru/races/','race_id','/race/'],['/v2/en/races','race_id','/en/race/'],['/preview/ru/news/','slug','/news/article/'],['/en/news/','slug','/en/news/article/']]){
+ for(const [path,key,target]of [['/ru/races/','race_id','/race/'],['/v2/en/races','race_id','/en/race/'],['/old/en/races/index.html','race_id','/en/race/'],['/preview/ru/news/','slug','/news/article/'],['/en/news/','slug','/en/news/article/'],['/old/news/','slug','/news/article/']]){
   for(const query of [`${key}=abc%2Fdef&utm_source=partner&utm_source=asg`,`utm_campaign=x%26${key}%3Dfoo&${key}=abc%2Fdef&utm_term=a+b`]){
    const next=edgeDecision('https://www.asgracing.ru'+path+'?'+query);
    assert.equal(next.location,'https://asgracing.ru'+target+'?'+query.replace(new RegExp('(^|&)'+key+'='),'$1id='));
@@ -19,14 +19,14 @@ test('query redirects keep argument order, encoded values, repeated UTM and real
   }
  }
 });
-test('assets, old interface, APIs, foreign hosts and writes are not redirected',()=>{
- for(const path of ['/old/news/?slug=a','/v2/runtime/home.js','/v2/assets/logo.svg','/hourly-votes-api/vote','/top-data/v2/home.json','/asg-lab/','/hourly/team/','/unknown/'])assert.equal(edgeDecision('https://asgracing.ru'+path),null);
+test('assets, unrecognized old paths, APIs, foreign hosts and writes are not redirected',()=>{
+ for(const path of ['/old/unknown/','/v2/runtime/home.js','/v2/assets/logo.svg','/hourly-votes-api/vote','/top-data/v2/home.json','/asg-lab/','/hourly/team/','/unknown/'])assert.equal(edgeDecision('https://asgracing.ru'+path),null);
  assert.equal(edgeDecision('https://data.asgracing.ru/ru/'),null);
  assert.equal(edgeDecision('https://evil.example/ru/'),null);
  for(const method of ['POST','PUT','DELETE'])assert.equal(edgeDecision('https://asgracing.ru/ru/',{method}),null);
 });
 test('edge configuration stays disabled, exact and query safe; no unsupported free-plan regex',()=>{
- const plan=edgePlan();assert.deepEqual(plan.counts,{single:8,lists:1,bulk:1,urls:598});
+ const plan=edgePlan();assert.deepEqual(plan.counts,{single:8,lists:1,bulk:1,urls:redirects.length*2});
  assert.ok(plan.single.rules.every(r=>!r.enabled));
  assert.ok(plan.bulk.rules.every(r=>!r.enabled));
  assert.ok(!JSON.stringify(plan).includes('regex_replace'));

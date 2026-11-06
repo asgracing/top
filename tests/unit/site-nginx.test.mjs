@@ -6,7 +6,7 @@ import {redirects} from '../../scripts/root-redirects.mjs';
 test('nginx migration covers the current redirect registry and preserves independent origin TLS',()=>{
  const b=nginxBundle('site-redirects-20261008-r1');
  for(const r of redirects)assert.ok(b.maps.includes(` "${r.source}" "${r.target}";`));
- assert.equal(b.redirectCount,299);
+ assert.equal(b.redirectCount,449);
  assert.ok(b.site.includes('proxy_pass https://asgracing.github.io;'));
  assert.ok(b.site.includes('proxy_ssl_verify on;'));
  assert.ok(b.site.includes('proxy_set_header Cookie "";'));
@@ -15,5 +15,6 @@ test('nginx migration covers the current redirect registry and preserves indepen
  assert.ok(b.acceptance.includes('listen 127.0.0.1:8842;'));
  assert.ok(b.cases.some(r=>r.path==='/races/?race_id=&race_id=later'&&r.status===204));
  assert.ok(b.cases.some(r=>r.path==='/races/?%69d=b&race_id=a'&&r.status===204));
+ assert.ok(b.cases.some(r=>r.path==='/old/races/?race_id=a'&&r.method==='HEAD'&&r.location==='https://asgracing.ru/race/?id=a'));
  assert.throws(()=>nginxBundle('../../etc/nginx'));
 });
