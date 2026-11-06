@@ -76,7 +76,7 @@
     },
     {
       "path": "scripts/build-v2.mjs",
-      "sha256": "8c918cb98c3a585bd5fd753a88275faf19dd63f9f2a8b54e6abe90c5d0700391"
+      "sha256": "bb8dba25f29930d4f37771abced457462b6980d7de99bcd6be60a5f7bdf091f4"
     },
     {
       "path": "scripts/generate-localized-pages.mjs",
@@ -768,11 +768,11 @@
     },
     {
       "path": "v2/pages/controller.js",
-      "sha256": "0e6361397076be7ddacbd3c3f084a19d5f3023eae29ff6ae3ce388234970c6ac"
+      "sha256": "0d94446201ebc0abf9c2991213b5fe512204d7519e09fbc3bb812d2b68414cb9"
     },
     {
       "path": "v2/pages/data.js",
-      "sha256": "41433dd2ef1321b53610a1b9cf8d25ecfd4ce5990488dcd09e49cb154b753b1c"
+      "sha256": "a0faaf130fd6ccb0641f9460679b0c477f4b5584188e07db62deb3f5a40ed0e6"
     },
     {
       "path": "v2/pages/driver-safety.js",
