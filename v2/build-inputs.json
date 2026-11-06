@@ -8,7 +8,7 @@
     },
     {
       "path": "app.js",
-      "sha256": "af4abb6a3ca6c2ad100c566d8b3b292b97737aaab4b8f72acf924b32d3167fc7"
+      "sha256": "eabcf0f21159cbc1a18ec56572c1d410efd2ae0f9c066b98722d9e866e966d7d"
     },
     {
       "path": "assets/track-maps/barcelona.js",
@@ -76,7 +76,7 @@
     },
     {
       "path": "scripts/build-v2.mjs",
-      "sha256": "74e79ceacb0ca0d66bd317c25ca1fbd2a5d9127fbaab9e4e43251679e1f6c855"
+      "sha256": "0a3eaf2262a2baaecc4ddc0033871140bece3654796d9663df3776b55c13c6ef"
     },
     {
       "path": "scripts/generate-localized-pages.mjs",
@@ -100,7 +100,7 @@
     },
     {
       "path": "scripts/v2-runtime-facade.txt",
-      "sha256": "075344844bd78fd99ab5b01de5c4f86abde1e76f7506edef6db5b023772c3f63"
+      "sha256": "2f7fa7f3fd9bd952eebab35e39c6970e96759a158558ee6e7f506836759c965f"
     },
     {
       "path": "src/features/auth/clubs-teams-auth-model.js",
@@ -716,11 +716,11 @@
     },
     {
       "path": "v2/home.js",
-      "sha256": "cb1d492fc8675f96a731dfe81b1915e4b263cb8d4ff77a6c134d53993503f113"
+      "sha256": "de3ccc05c2857e3400bf4cb0eb8803929dcea2e3855a4f940d0e218c847c0a19"
     },
     {
       "path": "v2/live-stats.js",
-      "sha256": "d71ed6c04c03c0baac3b8645915e90060b00ec0dea6c60628eaf235f9a3d4480"
+      "sha256": "ad814572bbda74d8255b4ddac2cec8afad27cb393bec0b19730b14f066223065"
     },
     {
       "path": "v2/mobile-navigation.js",

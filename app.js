@@ -6353,9 +6353,11 @@ function getRequestedDriverId() {
   return params.get("id");
 }
 
-async function loadDriverProfile(publicId) {
+async function loadDriverProfile(publicId, options) {
   if (!publicId) return null;
-  const data = await loadTopDataV2Json(`drivers/${encodeURIComponent(publicId)}.json`);
+  const { liveDriverProfile } = await import('/v2/live-stats.js');
+  const live = await liveDriverProfile(publicId, options);
+  const data = live ?? await loadTopDataV2Json(`drivers/${encodeURIComponent(publicId)}.json`);
   const { normalizeDriverProfile } = await dataSchemaModulePromise;
   return normalizeDriverProfile(data);
 }

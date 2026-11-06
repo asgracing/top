@@ -9,59 +9,85 @@ export function publicStatsEnabled() {
 async function read(route, params, request = globalThis.fetch, signal) {
   const url = new URL(route, ROOT);
   url.search = new URLSearchParams(params);
-  const timeout = AbortSignal.timeout(3000);
-  try {
-    const response = await request(url.href, {cache: 'no-cache', credentials: 'omit',
-      signal: signal ? AbortSignal.any([signal, timeout]) : timeout});
-    if (response.ok) {
-      const payload = await response.json();
-      if (Number.isSafeInteger(payload?.revision) && payload.revision > 0) return payload;
-    }
-  } catch (error) {
-    if (signal?.aborted) throw error;
+  const timeout = AbortSignal.timeout(8000);
+  const response = await request(url.href, {cache: 'no-cache', credentials: 'omit',
+    signal: signal ? AbortSignal.any([signal, timeout]) : timeout});
+  if (!response.ok) {
+    if (response.status === 503 && (await response.json().catch(() => null))?.error === 'stats_legacy') return null;
+    throw Object.assign(new Error(`Statistics HTTP ${response.status}`), {status: response.status});
   }
-  return null;
+  const payload = await response.json();
+  if (!Number.isSafeInteger(payload?.revision) || payload.revision < 1) throw new Error('Invalid statistics revision');
+  return payload;
 }
 
-export async function liveRanking(kind, page, track) {
+export async function liveRanking(kind, page, track, {query = '', sort = '', direction = 1, signal} = {}) {
   if (!publicStatsEnabled() || !['leaderboard', 'safety', 'bestlaps'].includes(kind)) return null;
   const params = {page, limit: 10};
   if (kind === 'bestlaps') params.track = track;
   else params.kind = kind;
-  const result = await read(kind === 'bestlaps' ? kind : 'rankings', params);
-  if (!Array.isArray(result?.items) || result.page !== page || !Number.isSafeInteger(result.total_items)
-      || result.items.length !== Math.min(10, result.total_items - (page - 1) * 10)
-      || result.items.some(row => !/^drv_[0-9a-f]{12}$/.test(row?.public_id))) return null;
+  if (query) params.q = query;
+  if (sort) Object.assign(params, {sort, order: direction < 0 ? 'desc' : 'asc'});
+  const result = await read(kind === 'bestlaps' ? kind : 'rankings', params, globalThis.fetch, signal);
+  if (result === null) return null;
+  if (!Array.isArray(result.items) || !Number.isSafeInteger(result.total_items) || result.total_items < 0
+      || result.page !== Math.min(page, Math.max(1, Math.ceil(result.total_items / 10)))
+      || result.items.length !== Math.min(10, result.total_items - (result.page - 1) * 10)
+      || result.items.some(row => !/^drv_[0-9a-f]{12}$/.test(row?.public_id))) throw new Error('Invalid statistics page');
   return result;
 }
 
 export async function liveCarLaps(track, request, signal) {
   if (!publicStatsEnabled()) return null;
   const result = await read('cars', {track, limit: 100}, request, signal);
-  if (!Array.isArray(result?.items) || result.items.length !== result.total_items
+  if (result === null) return null;
+  if (!Array.isArray(result.items) || result.items.length !== result.total_items
       || result.items.some(row => !Number.isSafeInteger(row?.car_model_id) || row.best_lap_track !== track
-        || !Number.isFinite(row.best_lap_ms) || row.best_lap_ms <= 0)) return null;
+        || !Number.isFinite(row.best_lap_ms) || row.best_lap_ms <= 0)) throw new Error('Invalid car records');
   return new Map(result.items.map(({car_model_id, ...row}) => [car_model_id, row]));
 }
 
-export async function liveDriverProfile(id) {
+async function loadHistory(root, kind, total, revision, signal) {
+  const limit = 500;
+  const pages = Math.ceil(total / limit);
+  const items = [];
+  async function readPage(page) {
+    const result = await read(root + '/history', {kind, page, limit, revision}, globalThis.fetch, signal);
+    if (result === null) throw Object.assign(new Error('Statistics rollback during history read'), {status: 409});
+    if (result.revision !== revision || result.kind !== kind || result.total_items !== total
+        || result.page !== page || !Array.isArray(result.items)
+        || result.items.length !== Math.min(limit, total - (page - 1) * limit)) throw new Error('Invalid statistics history');
+    return result.items;
+  }
+  for (let page = 1; page <= pages; page += 2) {
+    const batch = Array.from({length: Math.min(2, pages - page + 1)}, (_, offset) => readPage(page + offset));
+    for (const rows of await Promise.all(batch)) items.push(...rows);
+  }
+  return items;
+}
+
+export async function liveDriverProfile(id, {withHistory = true, signal} = {}) {
   if (!publicStatsEnabled() || !/^drv_[0-9a-f]{12}$/.test(id)) return null;
   const root = 'drivers/' + id;
-  const data = await read(root, {});
-  if (data?.profile?.public_id !== id || !data.profile.summary || !data.histories) return null;
-  const streams = Object.entries(data.histories);
-  if (streams.some(([kind, value]) => !HISTORIES.has(kind) || !Number.isSafeInteger(value?.total)
-      || value.total < 0 || value.total > 100)) return null;
-  const histories = await Promise.all(streams.map(async ([kind, {total}]) => {
-    if (!total) return [];
-    const result = await read(root + '/history', {kind, limit: total, revision: data.revision});
-    return result?.revision === data.revision && result.kind === kind && result.total_items === total
-      && result.items?.length === total ? result.items : null;
-  }));
-  if (histories.some(items => !Array.isArray(items))) return null;
-  for (const [index, [kind]] of streams.entries()) {
-    if (kind.startsWith('summary.')) data.profile.summary[kind.slice(8)] = histories[index];
-    else data.profile[kind] = histories[index];
+  for (let attempt = 0; ; attempt++) {
+    const data = await read(root, {}, globalThis.fetch, signal);
+    if (data === null) return null;
+    if (data.profile?.public_id !== id || !data.profile.summary || !data.histories) throw new Error('Invalid statistics profile');
+    if (!withHistory) return data.profile;
+    const streams = Object.entries(data.histories);
+    if (streams.some(([kind, value]) => !HISTORIES.has(kind) || !Number.isSafeInteger(value?.total)
+        || value.total < 0 || value.total > 200000)) throw new Error('Invalid statistics histories');
+    try {
+      const loaded = new Map();
+      for (const [kind, {total, stream, reverse}] of streams) {
+        const key = JSON.stringify([stream ?? kind, reverse, total]);
+        if (!loaded.has(key)) loaded.set(key, await loadHistory(root, kind, total, data.revision, signal));
+        if (kind.startsWith('summary.')) data.profile.summary[kind.slice(8)] = loaded.get(key);
+        else data.profile[kind] = loaded.get(key);
+      }
+      return data.profile;
+    } catch (error) {
+      if (error.status !== 409 || attempt > 0) throw error;
+    }
   }
-  return data.profile;
 }

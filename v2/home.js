@@ -30,6 +30,7 @@ const classic=path=>v2Route(path,language);
 const affiliation=(row,kind)=>v2EntityLinks(native().affiliation(row,kind),language);
 const driverHref=id=>classic('driver/')+'?id='+encodeURIComponent(id);
 let model=null,tab='leaderboard',page=1,track='monza',type='teams',context='general',tableRows=[],tableTotal=0,tableRequest=0,tableBusy=!isSubpage,tableError=false,sortKey='',sortDirection=1,rankingRequested=false,rankingStarted=false;
+let tableAbort;
 let winnerExtra=null,winnerRequest='',dayProfile=null,dayRequest='',clubSnapshot=null,lastTrigger=null;
 const seen=new Map();
 function changed(key,value,render){const signature=JSON.stringify(value);if(seen.get(key)===signature)return;seen.set(key,signature);render()}
@@ -113,7 +114,7 @@ function renderStats(){
   const d=model.day,s=model.stats;$('day-driver').textContent=d?.driver||text('Нет пилота дня','No driver of the day');$('day-driver').dataset.driver=d?.public_id||'';
   const ratingSource=dayProfile||model.leaderboard.find(row=>row.public_id===d?.public_id)||d;
   $('day-ratings').innerHTML=d?rating(ratingSource,'elo',null,true)+rating(ratingSource,'sr',null,true):'';
-  if(d?.public_id&&dayRequest!==d.public_id){dayRequest=d.public_id;dayProfile=null;native().profile(d.public_id).then(profile=>{if(dayRequest===d.public_id){dayProfile=profile;renderStats()}}).catch(()=>{})}
+  if(d?.public_id&&dayRequest!==d.public_id){dayRequest=d.public_id;dayProfile=null;native().profileSummary(d.public_id).then(profile=>{if(dayRequest===d.public_id){dayProfile=profile;renderStats()}}).catch(()=>{})}
   const metric=(value,title)=>`<div class="metric"><span>${title}</span><b>${number(value)}</b></div>`;
   $('metrics').innerHTML=metric(s?.drivers_total,label('pilots'))+metric(s?.races_total,label('racesCol'))+metric(model.serversStale||model.servers.some(s=>s.stale)?null:model.servers.reduce((n,s)=>n+s.players,0),text('Пилотов онлайн','Drivers online'));
   const online=model.online,max=Math.max(1,...online.map(d=>d.value));
@@ -210,7 +211,6 @@ function tableCell(row,key,index){
 function renderTable(){
   const columns=cols[tab];let rows=tableRows;
   if(tab==='clubs'){rows=(clubSnapshot||model?.clubs)?.[type]||[];if(!Array.isArray(rows))rows=rows.items||[];rows=rows.map((r,i)=>({...r,rank:rankingPosition(r,'clubs',i)}));rows=rows.filter(r=>String(r.display_name||r.name).toLocaleLowerCase().includes($('search').value.toLocaleLowerCase()));if(sortKey)rows=[...rows].sort((a,b)=>(typeof a[sortKey]==='number'?a[sortKey]-b[sortKey]:String(a[sortKey]??'').localeCompare(String(b[sortKey]??'')))*sortDirection);tableTotal=rows.length;rows=rows.slice((page-1)*10,page*10)}
-  if(sortKey)rows=[...rows].sort((a,b)=>(typeof a[sortKey]==='number'?a[sortKey]-b[sortKey]:String(a[sortKey]??'').localeCompare(String(b[sortKey]??'')))*sortDirection);
   $('rating-table').dataset.view=tab;
   $('rating-table').innerHTML=`<thead><tr>${columns.map(([key,title])=>`<th scope="col" class="col-${key}"${sortKey===key?` aria-sort="${sortDirection>0?'ascending':'descending'}"`:''}><button type="button" data-sort="${key}">${esc(words[title]||title)}</button></th>`).join('')}</tr></thead><tbody>${tableBusy?`<tr><td colspan="${columns.length}" class="empty">${text('Загрузка…','Loading…')}</td></tr>`:tableError?`<tr><td colspan="${columns.length}" class="empty">${text('Не удалось загрузить рейтинг.','Could not load rankings.')} <button type="button" data-table-retry>${text('Повторить','Retry')}</button></td></tr>`:rows.length?rows.map((r,i)=>`<tr data-row="${esc(r.public_id||'')}" tabindex="${tab==='clubs'?'-1':'0'}"${r.public_id&&r.public_id===model?.viewer?' class="current-user-row" aria-current="true"':''}>${columns.map(([key])=>`<td class="col-${key}">${tableCell(r,key,(page-1)*10+i)}</td>`).join('')}</tr>`).join(''):`<tr><td colspan="${columns.length}" class="empty">${label('noResults')}</td></tr>`}</tbody>`;
   const totalPages=Math.max(1,Math.ceil(tableTotal/10));
@@ -226,6 +226,8 @@ async function loadTable(){
   if(!model||model.loading.home){tableBusy=true;renderTable();return;}
   rankingStarted=true;
   const request=++tableRequest;
+  tableAbort?.abort();
+  tableAbort=new AbortController();
   if(tab==='clubs'){
     const selected=context;tableBusy=true;tableError=false;renderTable();
     try{const data=await native().loadClubs(selected);if(request!==tableRequest)return;clubSnapshot=data;tableError=false;}catch{if(request===tableRequest)tableError=true;}
@@ -233,10 +235,11 @@ async function loadTable(){
   }
   tableBusy=true;tableError=false;renderTable();
   try{const query=$('search').value.trim();
-    const live=!query&&!sortKey?await liveRanking(tab,page,track):null;
+    const live=await liveRanking(tab,page,track,{query,sort:sortKey,direction:sortDirection,signal:tableAbort.signal});
     if(request!==tableRequest)return;
     const result=normalizeTablePage(live??await native().loadTable(tab,page,track,query,sortKey));if(request!==tableRequest)return;let rows=(result?.items||[]).map(row=>tab==='safety'?normalizeSafetyRow(row):row);
     if(result?.full){const q=$('search').value.toLocaleLowerCase();rows=rows.filter(r=>String(r.driver||r.name||'').toLocaleLowerCase().includes(q));if(sortKey)rows.sort((a,b)=>(typeof a[sortKey]==='number'?a[sortKey]-b[sortKey]:String(a[sortKey]??'').localeCompare(String(b[sortKey]??'')))*sortDirection);tableTotal=rows.length;page=Math.min(page,Math.max(1,Math.ceil(tableTotal/10)));rows=rows.slice((page-1)*10,page*10)}else tableTotal=result?.total_items??rows.length;
+    if(live)page=live.page;
     tableRows=rows;
     if(tab==='leaderboard')void native().prepareAffiliations().catch(()=>{});
   }catch{if(request===tableRequest){tableRows=[];tableTotal=0;tableError=true}}finally{if(request===tableRequest){tableBusy=false;renderTable()}}
