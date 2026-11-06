@@ -28,7 +28,7 @@ try {
         }
         if(u.pathname==='/top-data/v2/drivers/drivers.json'){
           reads.legacy++;
-          return route.fulfill({contentType:'application/json',body:JSON.stringify(captured.drivers)});
+          return route.fulfill({status:410,body:'{}'});
         }
       }
       return fixture(route,[]);
@@ -36,10 +36,10 @@ try {
     await page.goto(base+(language==='en'?'/en':'')+'/bans/',{waitUntil:'networkidle'});
     try { await page.locator('.bans-table tbody tr').first().waitFor({timeout:10000}); }
     catch(error){ console.log(JSON.stringify({url:page.url(),reads,errors,view:(await page.locator('body').innerText()).slice(0,500)}));throw error; }
-    assert.equal(reads.compact,mode==='legacy'?0:1);
-    assert.equal(reads.legacy,['legacy','missing'].includes(mode)?1:0);
+    assert.equal(reads.compact,1);
+    assert.equal(reads.legacy,0);
     const links=await page.locator('.bans-table a').count();
-    assert.ok(mode==='failed'?links===0:links>0,`${mode}: identity links`);
+    assert.ok(['missing','failed'].includes(mode)?links===0:links>0,`${mode}: identity links`);
     assert.equal(await page.locator('html').getAttribute('lang'),language);
     assert.ok(await page.evaluate(()=>document.documentElement.scrollWidth<=innerWidth+1));
     assert.deepEqual(errors,[]);

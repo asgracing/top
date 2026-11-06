@@ -14,12 +14,14 @@ async function create(screen,language='ru',width=1920,options={}){
   const request=route.request();let u=new URL(request.url());
   if(request.method()!=='GET')return route.fulfill({status:403,contentType:'application/json',body:'{}'});
   if(u.origin===base&&u.pathname.startsWith('/__asg_public__/'))u=new URL('https://data.asgracing.ru'+u.pathname.slice('/__asg_public__'.length)+u.search);
-  const key={'/top-data/v2/fun-stats.json':'fun','/top-data/bans.json':'bans','/top-data/v2/drivers/drivers.json':'drivers'}[u.pathname];
+  const key={'/top-data/v2/fun-stats.json':'fun','/top-data/bans.json':'bans','/top-data/v2/drivers/search.json':'drivers'}[u.pathname];
   if(u.hostname==='data.asgracing.ru'&&key){
    reads[key]++;
    if(options.offline||(key==='drivers'&&options.indexOffline))return route.fulfill({status:503,body:'{}'});
    if(key==='drivers'&&options.delayIndex)await new Promise(resolve=>setTimeout(resolve,options.delayIndex));
-   const payload=key==='fun'?(options.fun||captured.fun):key==='bans'?(options.bans||captured.bans):captured.drivers;
+   const payload=key==='fun'?(options.fun||captured.fun):key==='bans'?(options.bans||captured.bans):{
+    schema_version:1,total_items:captured.drivers.length,
+    items:captured.drivers.map(row=>({...row,is_banned:row.is_banned===true}))};
    return route.fulfill({contentType:'application/json',body:JSON.stringify(payload)});
   }
   return fixture(route,[]);

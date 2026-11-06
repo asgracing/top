@@ -1,17 +1,6 @@
 const invalid=()=>new TypeError('Invalid driver directory');
 export async function loadDriverDirectory(request) {
-  const legacy=async()=>{
-    const rows=await request('drivers/drivers.json');
-    if(!Array.isArray(rows))throw invalid();
-    return rows;
-  };
-  let payload;
-  try {
-    const contract=(await request('manifest.json'))?.driver_search;
-    if(contract===undefined)return legacy();
-    if(contract?.schema_version!==1||contract.path!=='drivers/search.json')throw invalid();
-    payload=await request(contract.path);
-  }catch(error){if(Number(error?.status)!==404)throw error;return legacy();}
+  const payload=await request('drivers/search.json');
   if(payload?.schema_version!==1||!Array.isArray(payload.items)||payload.total_items!==payload.items.length)throw invalid();
   const seen=new Set();
   return payload.items.map(row=>{

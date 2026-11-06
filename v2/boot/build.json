@@ -3,11 +3,11 @@
   "entry": "/v2/boot/home.js",
   "files": [
     {
-      "path": "/v2/boot/chunks/control-3AJCM5SK.js",
+      "path": "/v2/boot/chunks/control-WPDLKQNO.js",
       "bytes": 45289
     },
     {
-      "path": "/v2/boot/chunks/controller-KO3CSMGQ.js",
+      "path": "/v2/boot/chunks/controller-I6XFVY7L.js",
       "bytes": 329113
     },
     {
@@ -19,7 +19,7 @@
       "bytes": 2253
     },
     {
-      "path": "/v2/boot/chunks/home-6B5PIT6X.js",
+      "path": "/v2/boot/chunks/home-VIQFOKQA.js",
       "bytes": 494634
     },
     {
@@ -31,15 +31,15 @@
       "bytes": 5715
     },
     {
-      "path": "/v2/boot/chunks/account-RZZ6BLVQ.js",
+      "path": "/v2/boot/chunks/account-BV2AG3O3.js",
       "bytes": 390
     },
     {
-      "path": "/v2/boot/chunks/account-FFQWWJW5.js",
+      "path": "/v2/boot/chunks/account-EVEYY3H3.js",
       "bytes": 17735
     },
     {
-      "path": "/v2/boot/chunks/chunk-BIZ6LNJY.js",
+      "path": "/v2/boot/chunks/chunk-T72EIUQA.js",
       "bytes": 124207
     },
     {
@@ -47,11 +47,11 @@
       "bytes": 32156
     },
     {
-      "path": "/v2/boot/chunks/portal-ops-page-UPN64D7P.js",
+      "path": "/v2/boot/chunks/portal-ops-page-YF26XGD6.js",
       "bytes": 82086
     },
     {
-      "path": "/v2/boot/chunks/chunk-DG772FBY.js",
+      "path": "/v2/boot/chunks/chunk-WZX7QNIY.js",
       "bytes": 13786
     },
     {
@@ -107,7 +107,7 @@
       "bytes": 236717
     },
     {
-      "path": "/v2/boot/chunks/chunk-T6YFHGEZ.js",
+      "path": "/v2/boot/chunks/chunk-QJKWL3K3.js",
       "bytes": 92916
     },
     {
@@ -135,8 +135,8 @@
       "bytes": 712
     },
     {
-      "path": "/v2/boot/chunks/chunk-FSJDUHR2.js",
-      "bytes": 1002
+      "path": "/v2/boot/chunks/chunk-NP37FAMX.js",
+      "bytes": 616
     },
     {
       "path": "/v2/boot/chunks/chunk-OTDETSHF.js",

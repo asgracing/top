@@ -1,5 +1,5 @@
 import {createHourlyVotesClient} from '/src/shared/hourly-votes-client.js';
-import {loadDriverDirectory} from '/src/shared/driver-directory.js?v=20261022compact1';
+import {loadDriverDirectory} from '/src/shared/driver-directory.js?v=20261107compact2';
 import {loadLeaderboardRank,profileWithLeaderboardRank} from '/src/shared/leaderboard-rank.js?v=20261013delivery1';
 import {filterRaces} from '/src/pages/races/model.js';
 import {normalizeChampionshipStatus} from '/src/pages/hourly/championship-status.js';

@@ -1,4 +1,4 @@
-import {loadDriverDirectory} from '../../shared/driver-directory.js?v=20261022compact1';
+import {loadDriverDirectory} from '../../shared/driver-directory.js?v=20261107compact2';
 
 const ID_PATTERN = /^[A-Za-z0-9][A-Za-z0-9._:-]*$/;
 const MAX_PILOT_INDEX_SIZE = 50_000;

@@ -19,7 +19,7 @@ import {
   buildReviseEntityCommand,
   normalizeCommandResponse
 } from "./clubs-teams-command-model.js?v=20260910msk1";
-import { loadPilotIndex, searchPilots } from "./pilot-search-model.js?v=20261022compact1";
+import { loadPilotIndex, searchPilots } from "./pilot-search-model.js?v=20261107compact2";
 import { canUploadEntityLogo, inspectLogoFile, LogoUploadError, normalizeAssetResponse } from "./logo-upload-model.js?v=20260813logo2";
 import { mountDriverOverlayManager } from "../../../account/driver-overlay.js?v=20260927overlay1";
 import { mountRaceNumberPicker } from "./race-number-picker.js?v=20261031retention1";

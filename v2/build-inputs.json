@@ -76,7 +76,7 @@
     },
     {
       "path": "scripts/build-v2.mjs",
-      "sha256": "0a3eaf2262a2baaecc4ddc0033871140bece3654796d9663df3776b55c13c6ef"
+      "sha256": "1df6c17a2b79a69680f1d657fd7125f8f7ed000a37fd7fb811ffbc564aa7a571"
     },
     {
       "path": "scripts/generate-localized-pages.mjs",
@@ -184,7 +184,7 @@
     },
     {
       "path": "src/pages/account/account.js",
-      "sha256": "387247a1303a8343420478e4fd111ce130b5d9f92e3942e6b2f9f26e6e77a3c2"
+      "sha256": "2334bb8fca9a0017e9859dad519b46aa9dc551e1391aa165a62a5bc7f30b5ff6"
     },
     {
       "path": "src/pages/account/clubs-teams-command-model.js",
@@ -196,7 +196,7 @@
     },
     {
       "path": "src/pages/account/pilot-search-model.js",
-      "sha256": "7c201f0cda7b66f0f8ac7dbe28cc5fba258b2c3305a3b3880f95e6e0b8535c36"
+      "sha256": "629760eebea9155d49fdb04fc3dbd580936464a76059a840799ce80d6787cb03"
     },
     {
       "path": "src/pages/account/race-number-picker.js",
@@ -288,7 +288,7 @@
     },
     {
       "path": "src/pages/portal-ops/portal-clubs-workspace.js",
-      "sha256": "5918663a1c74e0f5a909b708a8f859bbb05164b743495f47039ee2232fbdc5ce"
+      "sha256": "c4b1fc689e8e77463b81c63d9e4258c1bdbf3e91ec5669451ecceab06423e7e6"
     },
     {
       "path": "src/pages/portal-ops/portal-ops-model.js",
@@ -324,7 +324,7 @@
     },
     {
       "path": "src/shared/driver-directory.js",
-      "sha256": "19201d02d06da286e913092643e5fe8f779981f475d47a8649451a0ca308f610"
+      "sha256": "e0999e7d0202002ad8ca240d7f83fe092760ebedd414573775cf069175c750a9"
     },
     {
       "path": "src/shared/feature-store.js",
@@ -772,7 +772,7 @@
     },
     {
       "path": "v2/pages/data.js",
-      "sha256": "6ac5e84f3f72c85914eac7efc51aea652f6a1553adb16b8d2fe123b51a5e204f"
+      "sha256": "07c10a3d17a9be7297cfcbdcea43203adaea4f8c59dd7ba64179d576c9e80c1c"
     },
     {
       "path": "v2/pages/driver-safety.js",

@@ -2,7 +2,7 @@
 import assert from 'node:assert/strict';
 import fs from 'node:fs/promises';
 import path from 'node:path';
-import {browser,base,fixture} from './v2-browser-fixtures.mjs';
+import {browser,base,fixture,site as publishedFixture} from './v2-browser-fixtures.mjs';
 import {taskScratchPath} from '../../scripts/workspace-scratch.mjs';
 
 const out=taskScratchPath('clubs-browser');await fs.mkdir(out,{recursive:true});
@@ -46,8 +46,10 @@ async function create({language='ru',width=1440,screen='portal-ops',admin=true,e
      if(url.pathname==='/v1/portal-ops/hourly/events')return respond({available:true,tracks:[],events:[],schedule_revision:'a'.repeat(64)});
      return respond({});
    }
-   if(url.hostname==='data.asgracing.ru'&&url.pathname.endsWith('/drivers/drivers.json'))return respond([{public_id:'drv_selected',driver:'Selected Leader',is_banned:false}]);
+   if(url.hostname==='data.asgracing.ru'&&url.pathname.endsWith('/drivers/drivers.json'))return respond({},410);
    if(url.hostname==='data.asgracing.ru'&&url.pathname.endsWith('/drivers/search.json'))return respond({schema_version:1,total_items:1,items:[{public_id:'drv_selected',driver:'Selected Leader',is_banned:false}]});
+   if(url.hostname==='data.asgracing.ru'&&url.pathname.endsWith('/details/clubs/apex-racing.json'))return respond({
+     ...publishedFixture.entity_details['clubs/asg-racing'],public_id:club.public_id,slug:club.slug,asset:null});
    return fixture(route,[],{});
  });
  await page.goto(`${base}/${language==='en'?'en/':''}${screen}/`,{waitUntil:'networkidle'});
@@ -126,6 +128,14 @@ try{
    await ctx.shot('user-create');
    assert.equal(await page.evaluate(()=>document.documentElement.scrollWidth>innerWidth),false);assert.deepEqual(ctx.errors,[]);
    reports.push({language,width,screen:'account',errors:ctx.errors});await page.close();
+ }
+ for(const language of ['ru','en']){
+   const ctx=await create({screen:'account',admin:false,language}),{page}=ctx;
+   await page.locator('[data-ct-manage-members="club"]').click();
+   await page.locator('[data-ct-pilot-search]').fill('Selected');
+   await page.getByText('Selected Leader',{exact:true}).waitFor();
+   assert.deepEqual(ctx.errors,[]);assert.equal(ctx.writes.length,0);
+   await page.close();
  }
  const denied=await create({admin:false});assert.equal(await denied.page.locator('[data-create]').count(),2);assert.equal(await denied.page.locator('#portal-ops-workspace').isVisible(),false);assert.equal(denied.writes.length,0);await denied.page.close();
  await fs.writeFile(path.join(out,'report.json'),JSON.stringify({reports,mutations:ctx.writes.length},null,2));

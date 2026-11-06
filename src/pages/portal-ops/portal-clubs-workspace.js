@@ -1,7 +1,7 @@
 import { createIdempotencyKey, isSafeLogoPreview } from './portal-ops-model.js?v=20261004teams1';
 import { managementCommand, filterManagedEntities } from './portal-clubs-model.js?v=20261103clubs1';
 import { inspectLogoFile } from '../account/logo-upload-model.js?v=20260813logo2';
-import { loadPilotIndex, filterPilots } from '../account/pilot-search-model.js?v=20261022compact1';
+import { loadPilotIndex, filterPilots } from '../account/pilot-search-model.js?v=20261107compact2';
 import { createHttpClient } from '../../shared/http-client.js';
 import { formatMoscowDateTime } from '../../shared/time.js?v=20260910msk1';
 
