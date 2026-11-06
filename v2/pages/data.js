@@ -12,6 +12,7 @@ import {raceLinkSummary} from '/src/shared/race-result-links.js?v=20261011raceli
 import {createCommunityClient} from './community-client.js?v=20261007v2pages11';
 import {resolveBanProfiles,sortBans} from './bans-model.js?v=20261007v2pages11';
 import {archiveApiSource,isArchiveRaceId,readArchivePage,readRaceProtocol} from './race-archive-api.js';
+import {liveDriverProfile} from '../live-stats.js';
 const DATA = 'https://data.asgracing.ru/';
 const reads = new Map();
 export async function readJson(url) {
@@ -186,12 +187,17 @@ export function createPageData(native,{raceArchive=false}={}) {
   }
   async function driver(id) {
     if(!/^drv_[a-z0-9]+$/i.test(id||''))throw Object.assign(new Error('Missing driver'),{status:404});
-    const [loadedProfile,achievement,avatar,title,rank]=await Promise.all([
-      native().profile(id),readJson(publicUrl(`achievements/v1/drivers/${encodeURIComponent(id)}.json`)).catch(()=>null),
+    const loadProfile=async()=>{
+      const live=await liveDriverProfile(id);
+      if(live)return live;
+      const [profile,rank]=await Promise.all([native().profile(id),loadLeaderboardRank(id)]);
+      return profileWithLeaderboardRank(profile,rank);
+    };
+    const [profile,achievement,avatar,title]=await Promise.all([
+      loadProfile(),readJson(publicUrl(`achievements/v1/drivers/${encodeURIComponent(id)}.json`)).catch(()=>null),
       native().steamAvatar(id).catch(()=>null),native().driverTitle(id).catch(()=>undefined),
-      loadLeaderboardRank(id),native().prepareAffiliations().catch(()=>{})
+      native().prepareAffiliations().catch(()=>{})
     ]);
-    const profile=profileWithLeaderboardRank(loadedProfile,rank);
     const eloByRace=new Map(),eloByFile=new Map();
     const filename=value=>String(value||'').split(/[\\/]/).pop().toLowerCase();
     for(const entry of [...(profile.summary?.elo_history||[]),...(profile.elo_history||[])]){

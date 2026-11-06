@@ -1,3 +1,5 @@
+import {liveCarLaps} from '../live-stats.js';
+
 // Published track rankings contain each driver's personal best, not every lap.
 export function carLapsForTrack(payload,track) {
   if(!Array.isArray(payload?.items))throw new Error('Invalid track records');
@@ -27,10 +29,13 @@ export function createCarLapsLoader({request=globalThis.fetch,base='https://data
     if(cache.has(track))return Promise.resolve(cache.get(track));
     const controller=new AbortController(),job={track,controller};active=job;
     job.promise=(async()=>{
-      // Do not retain large rankings in the shared JSON cache. Keep only model records.
-      const response=await request(new URL(`tables/bestlaps-${track}.json`,base).href,{cache:'no-store',signal:AbortSignal.any([controller.signal,AbortSignal.timeout(60000)])});
-      if(!response.ok)throw new Error(`HTTP ${response.status}`);
-      const result=carLapsForTrack(await response.json(),track);
+      let result=await liveCarLaps(track,request,controller.signal);
+      if(!result){
+        // Keep only model records when the public API is unavailable.
+        const response=await request(new URL(`tables/bestlaps-${track}.json`,base).href,{cache:'no-store',signal:AbortSignal.any([controller.signal,AbortSignal.timeout(60000)])});
+        if(!response.ok)throw new Error(`HTTP ${response.status}`);
+        result=carLapsForTrack(await response.json(),track);
+      }
       controller.signal.throwIfAborted();
       cache.set(track,result);if(cache.size>4)cache.delete(cache.keys().next().value);
       return result;

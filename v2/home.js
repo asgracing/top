@@ -8,6 +8,7 @@ import {rankingPosition,eventKind,normalizeTablePage,normalizeSafetyRow,paginati
 import {createPresentation} from './presentation.js?v=20261104rc3';
 import {createRecentRaces} from './recent-races.js?v=20261011racelinks1';
 import {createHeader} from './header.js?v=20261014profile1';
+import {liveRanking} from './live-stats.js';
 import {serverSessionLabel} from './server-session.js?v=20261025direct1';
 import {orderedServers,replaceServerCards,serverDialogTrigger} from './server-cards.js?v=20261025servers1';
 import {createGuide} from './guide.js?v=20261006v2k';
@@ -231,7 +232,10 @@ async function loadTable(){
     finally{if(request===tableRequest){tableBusy=false;renderTable();}}return;
   }
   tableBusy=true;tableError=false;renderTable();
-  try{const result=normalizeTablePage(await native().loadTable(tab,page,track,$('search').value.trim(),sortKey));if(request!==tableRequest)return;let rows=(result?.items||[]).map(row=>tab==='safety'?normalizeSafetyRow(row):row);
+  try{const query=$('search').value.trim();
+    const live=!query&&!sortKey?await liveRanking(tab,page,track):null;
+    if(request!==tableRequest)return;
+    const result=normalizeTablePage(live??await native().loadTable(tab,page,track,query,sortKey));if(request!==tableRequest)return;let rows=(result?.items||[]).map(row=>tab==='safety'?normalizeSafetyRow(row):row);
     if(result?.full){const q=$('search').value.toLocaleLowerCase();rows=rows.filter(r=>String(r.driver||r.name||'').toLocaleLowerCase().includes(q));if(sortKey)rows.sort((a,b)=>(typeof a[sortKey]==='number'?a[sortKey]-b[sortKey]:String(a[sortKey]??'').localeCompare(String(b[sortKey]??'')))*sortDirection);tableTotal=rows.length;page=Math.min(page,Math.max(1,Math.ceil(tableTotal/10)));rows=rows.slice((page-1)*10,page*10)}else tableTotal=result?.total_items??rows.length;
     tableRows=rows;
     if(tab==='leaderboard')void native().prepareAffiliations().catch(()=>{});
