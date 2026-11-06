@@ -76,7 +76,7 @@
     },
     {
       "path": "scripts/build-v2.mjs",
-      "sha256": "34443fde1a62a6674325c8b8032173d4bc67781365dc2bca613e6300e70d1c8e"
+      "sha256": "c4be5e6b8ded4dbecd2c189098f5c12946440d9129904729e8433551c8257116"
     },
     {
       "path": "scripts/generate-localized-pages.mjs",
@@ -764,11 +764,11 @@
     },
     {
       "path": "v2/pages/controller.js",
-      "sha256": "0893301e82c92c769798f6bb07b6535a0a6a9460156470f5ec507ae387b439a6"
+      "sha256": "0e6361397076be7ddacbd3c3f084a19d5f3023eae29ff6ae3ce388234970c6ac"
     },
     {
       "path": "v2/pages/data.js",
-      "sha256": "8cd21fe66be9ba708342f58607a0deb51c76d863a2f0870ea675346c82e6d5d7"
+      "sha256": "9026bc4b09dd72d5b66e98b683f4c7b6ca4b5afd33f5a7a53f099d78e3a6753f"
     },
     {
       "path": "v2/pages/driver-safety.js",
@@ -785,6 +785,10 @@
     {
       "path": "v2/pages/pagination.js",
       "sha256": "adb6007974e845a39a5d0a6a253256365fe1814eb3dfae30c46c6545ae831408"
+    },
+    {
+      "path": "v2/pages/race-archive-api.js",
+      "sha256": "aae75565502403e4805d2241ffe9eb2327e8d941f5cd550b09acdc03ec3898f1"
     },
     {
       "path": "v2/presentation.js",
