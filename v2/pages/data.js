@@ -116,8 +116,9 @@ export function createArchiveData({apiSource=null}={}) {
   }
   return {page};
 }
-export function createPageData(native,{raceArchive=false}={}) {
-  const apiSource=raceArchive?archiveApiSource():null,archive=createArchiveData({apiSource});
+export function createPageData(native,{raceArchive=false,raceProtocol=false}={}) {
+  const apiSource=(raceArchive||raceProtocol)?archiveApiSource():null;
+  const archive=createArchiveData({apiSource:raceArchive?apiSource:null});
   async function cars() {
     const [rows,manifest]=await Promise.all([readJson(topUrl('cars/cars.json')),readJson(topUrl('manifest.json')).catch(()=>null)]);
     if(!Array.isArray(rows)||rows.some(c=>!c||typeof c.car_name!=='string'||!c.car_name.trim()||!Number.isInteger(c.car_model_id)||c.car_model_id<0))throw new Error('Invalid car catalog');
@@ -217,8 +218,10 @@ export function createPageData(native,{raceArchive=false}={}) {
   async function race(id,summary) {
     if(!/^[a-z0-9_.-]+$/i.test(id||''))throw Object.assign(new Error('Missing race'),{status:404});
     const path=summary?.details_path;
-    if(apiSource&&isArchiveRaceId(id)&&(!summary?._data_namespace||summary._data_namespace==='top')
-      &&(!path||path===`races/details/${id}.json`)) {
+    const canonicalPath=path===`races/details/${id}.json`;
+    const namespace=summary?._data_namespace;
+    const publicProtocol=!namespace||namespace==='top'||(namespace==='entity'&&canonicalPath);
+    if(apiSource&&isArchiveRaceId(id)&&publicProtocol&&(!path||canonicalPath)) {
       try {
         return formatRace(id,{...summary,...await readRaceProtocol(id,apiSource)});
       }catch(error){

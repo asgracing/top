@@ -24,6 +24,7 @@ const homeStylesVersion = '20261104rc1';
 const bootVersion = '20261104rc3';
 const archiveBootVersion = '20261106raceapi1';
 const statsBootVersion = '20261106statsapi1';
+const raceModalBootVersion = '20261106racemodal1';
 const controlStylesVersion = '20261103clubs1';
 const profileStylesVersion = '20261031sr1';
 const legalVersion = '20261030analytics1';
@@ -183,7 +184,8 @@ for (const language of ['ru','en']) {
     const accountHead=['account','account/settings','moderation','portal-ops'].includes(page)?pageHead+`<link rel="stylesheet" href="/v2/pages/views/control-pages.css?v=${presentationVersion}"><link rel="stylesheet" href="/v2/pages/account.css?v=${controlStylesVersion}"><link rel="stylesheet" href="/v2/pages/control.css?v=${controlStylesVersion}">`:pageHead;
     let owningHead=page==='community'?pageHead+`<meta name="community-likes-api" content="${(await readClassic('community/index.html')).match(/<meta name="community-likes-api" content="([^"]+)"/)[1]}">`:accountHead;
     if(screen==='archive'||screen==='race')owningHead=owningHead.replace(`/v2/boot/home.js?v=${bootVersion}`,`/v2/boot/home.js?v=${archiveBootVersion}`);
-    if(screen==='driver'||screen==='cars')owningHead=statsHead(owningHead);
+    if(screen==='cars')owningHead=statsHead(owningHead);
+    if(['driver','club','team'].includes(screen))owningHead=owningHead.replace(`/v2/boot/home.js?v=${bootVersion}`,`/v2/boot/home.js?v=${raceModalBootVersion}`);
     await emit(`v2/${language}/${page}/index.html`,`<!doctype html>\n<html lang="${language}" data-page="home" data-page-language="${language}" data-v2="home" data-v2-page="${screen}"><head>${owningHead}</head><body data-v2="page">${pageBody}<div id="v1-runtime-host" hidden inert aria-hidden="true">${oldBody}</div>${modals}</body></html>\n`);
   }
 }
