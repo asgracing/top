@@ -22,6 +22,7 @@ const runtimeVersion = '20261028team10';
 const presentationVersion = '20261028team10';
 const homeStylesVersion = '20261104rc1';
 const bootVersion = '20261104rc3';
+const archiveBootVersion = '20261106raceapi1';
 const controlStylesVersion = '20261103clubs1';
 const profileStylesVersion = '20261031sr1';
 const legalVersion = '20261030analytics1';
@@ -178,7 +179,8 @@ for (const language of ['ru','en']) {
     const title=config.title[language], description=config.description[language];
     const pageHead=head.replace(/<title>[\s\S]*?<\/title>/,`<title>${title} · ASG Racing</title>`).replace(/(<meta name="description" content=")[^"]+/,`$1${description}`).replace(/(<meta property="og:url" content=")[^"]+/,`$1https://asgracing.ru/v2/${language}/${page}/`) + `\n<link rel="stylesheet" href="/v2/pages/views/pages.css?v=${profileStylesVersion}">`+(['races','race','championships','hourly/championship','teams','clubs','teams/detail','cars','fun-stats','bans','hourly/championship/history','news','news/article','community','about','instructions','join','documents','documents/read','privacy','cookies','404'].includes(page)?`\n<link rel="stylesheet" href="/v2/pages/views/site-pages.css?v=${presentationVersion}">`:'')+`\n<link rel="stylesheet" href="/v2/pages/views/r24-pages.css?v=${presentationVersion}">`;
     const accountHead=['account','account/settings','moderation','portal-ops'].includes(page)?pageHead+`<link rel="stylesheet" href="/v2/pages/views/control-pages.css?v=${presentationVersion}"><link rel="stylesheet" href="/v2/pages/account.css?v=${controlStylesVersion}"><link rel="stylesheet" href="/v2/pages/control.css?v=${controlStylesVersion}">`:pageHead;
-    const owningHead=page==='community'?pageHead+`<meta name="community-likes-api" content="${(await readClassic('community/index.html')).match(/<meta name="community-likes-api" content="([^"]+)"/)[1]}">`:accountHead;
+    let owningHead=page==='community'?pageHead+`<meta name="community-likes-api" content="${(await readClassic('community/index.html')).match(/<meta name="community-likes-api" content="([^"]+)"/)[1]}">`:accountHead;
+    if(screen==='archive'||screen==='race')owningHead=owningHead.replace(`/v2/boot/home.js?v=${bootVersion}`,`/v2/boot/home.js?v=${archiveBootVersion}`);
     await emit(`v2/${language}/${page}/index.html`,`<!doctype html>\n<html lang="${language}" data-page="home" data-page-language="${language}" data-v2="home" data-v2-page="${screen}"><head>${owningHead}</head><body data-v2="page">${pageBody}<div id="v1-runtime-host" hidden inert aria-hidden="true">${oldBody}</div>${modals}</body></html>\n`);
   }
 }

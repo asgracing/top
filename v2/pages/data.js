@@ -11,7 +11,7 @@ import {mergeResultContext} from '/src/shared/race-result-context.js?v=20261011r
 import {raceLinkSummary} from '/src/shared/race-result-links.js?v=20261011racelinks1';
 import {createCommunityClient} from './community-client.js?v=20261007v2pages11';
 import {resolveBanProfiles,sortBans} from './bans-model.js?v=20261007v2pages11';
-import {archiveApiPreview,isArchiveRaceId,readArchivePage,readRaceProtocol} from './race-archive-api.js';
+import {archiveApiSource,isArchiveRaceId,readArchivePage,readRaceProtocol} from './race-archive-api.js';
 const DATA = 'https://data.asgracing.ru/';
 const reads = new Map();
 export async function readJson(url) {
@@ -67,17 +67,18 @@ function topUrl(path) {
   if(!/^[a-z0-9_/{.}-]+$/i.test(path)||path.split('/').includes('..'))throw new Error('Invalid public data path');
   return publicUrl('top-data/v2/'+path);
 }
-export function createArchiveData({useApi=false}={}) {
+export function createArchiveData({apiSource=null}={}) {
   let manifest;
   const metadata=async()=>manifest ||= await readJson(publicUrl('top-data/v2/manifest.json'));
   async function page(request={},isCurrent=()=>true,onProgress=()=>{}) {
-    if(useApi) {
+    if(apiSource) {
       if(!isCurrent())return null;
       try {
-        const result=await readArchivePage(request);
+        const result=await readArchivePage(request,apiSource);
         return isCurrent()?result:null;
-      }catch{
+      }catch(error){
         if(!isCurrent())return null;
+        if(error.status===401||error.status===403)throw error;
       }
     }
     const meta=(await metadata()).races || {},size=10,total=Number(meta.total_items)||0;
@@ -114,8 +115,8 @@ export function createArchiveData({useApi=false}={}) {
   }
   return {page};
 }
-export function createPageData(native) {
-  const useArchiveApi=archiveApiPreview(),archive=createArchiveData({useApi:useArchiveApi});
+export function createPageData(native,{raceArchive=false}={}) {
+  const apiSource=raceArchive?archiveApiSource():null,archive=createArchiveData({apiSource});
   async function cars() {
     const [rows,manifest]=await Promise.all([readJson(topUrl('cars/cars.json')),readJson(topUrl('manifest.json')).catch(()=>null)]);
     if(!Array.isArray(rows)||rows.some(c=>!c||typeof c.car_name!=='string'||!c.car_name.trim()||!Number.isInteger(c.car_model_id)||c.car_model_id<0))throw new Error('Invalid car catalog');
@@ -210,12 +211,12 @@ export function createPageData(native) {
   async function race(id,summary) {
     if(!/^[a-z0-9_.-]+$/i.test(id||''))throw Object.assign(new Error('Missing race'),{status:404});
     const path=summary?.details_path;
-    if(useArchiveApi&&isArchiveRaceId(id)&&(!summary?._data_namespace||summary._data_namespace==='top')
+    if(apiSource&&isArchiveRaceId(id)&&(!summary?._data_namespace||summary._data_namespace==='top')
       &&(!path||path===`races/details/${id}.json`)) {
       try {
-        return formatRace(id,{...summary,...await readRaceProtocol(id)});
+        return formatRace(id,{...summary,...await readRaceProtocol(id,apiSource)});
       }catch(error){
-        if(error.missing)throw Object.assign(error,{status:404});
+        if(error.missing||error.status===401||error.status===403)throw error;
       }
     }
     let result;

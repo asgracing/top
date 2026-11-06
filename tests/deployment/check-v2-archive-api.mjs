@@ -10,7 +10,7 @@ const card=cards[0],id=card.race_id;
 const protocol={...sample.race,track_code:card.track_code,kind:card.kind,result_context_version:1,
   race_conditions:{ambient_temp_c:24,rain:0},qualifying:{status:'available',results:[sample.race.results[0]]}};
 const detail={race_id:id,archive_revision:2,card,protocol};
-const prefix='/race-archive-shadow/v1/direct/', proxy='/__asg_public__',reports=[];
+const prefix='/race-archive-shadow/v1/direct/', sitePrefix='/race-archive-shadow/v1/site/', proxy='/__asg_public__',reports=[];
 
 async function setup(options={}) {
   const page=await browser.newPage({viewport:{width:options.width||1280,height:936},reducedMotion:'reduce'});
@@ -23,14 +23,15 @@ async function setup(options={}) {
     if(proxied)url=new URL('https://data.asgracing.ru'+url.pathname.slice(proxy.length)+url.search);
     const name=url.pathname;
     const json=(body,status=200)=>route.fulfill({status,contentType:'application/json',body:JSON.stringify(body)});
-    if(url.hostname==='data.asgracing.ru'&&name.startsWith(prefix)) {
+    const reader=name.startsWith(sitePrefix)?sitePrefix:prefix;
+    if(url.hostname==='data.asgracing.ru'&&name.startsWith(reader)) {
       assert.equal(request.method(),'GET');
       api.push(url);
       if(options.live) {
         assert.ok(proxied,'Live verification must use the read-only local proxy');
         return route.continue();
       }
-      if(name===prefix+'archive') {
+      if(name===reader+'archive') {
         if(options.archiveError)return json({error:'archive_unavailable'},503);
         const q=url.searchParams;
         const rows=cards.filter(row=>(!q.get('track')||row.track_code===q.get('track'))
@@ -42,7 +43,7 @@ async function setup(options={}) {
       }
       if(options.protocolError)return json({error:options.protocolError===404?'not_found':'archive_unavailable'},options.protocolError);
       if(options.invalidProtocol)return json({...detail,race_id:cards[1].race_id});
-      assert.equal(name,prefix+'races/'+id);
+      assert.equal(name,reader+'races/'+id);
       return json(detail);
     }
     if(url.hostname==='data.asgracing.ru') {
@@ -119,8 +120,9 @@ try {
   }
   {
     const test=await setup({archiveError:true,protocolError:503}),{page,api,legacy}=test;
-    await page.goto(base+'/races/?raceData=api');await firstRace(page).waitFor();
-    assert.equal(api.length,1);assert.equal(legacy.filter(name=>name.includes('chunk-')).length,1);
+    await page.goto(base+'/races/?raceData=site');await firstRace(page).waitFor();
+    assert.equal(api.length,1);assert.equal(api[0].pathname,sitePrefix+'archive');
+    assert.equal(legacy.filter(name=>name.includes('chunk-')).length,1);
     await page.goto(`${base}/race/?id=${id}&source=top&file=races/details/${id}.json`);
     await page.locator('#page-view .results-table').first().waitFor();
     assert.equal(api.length,2);assert.ok(legacy.some(name=>name.includes('/races/details/')));
@@ -129,19 +131,23 @@ try {
     assert.equal(api.length,2);
     await close(test,{states:'503 archive, 503 protocol, explicit JSON rollback'});
   }
-  for(const options of [{protocolError:404},{invalidProtocol:true},{}]) {
+  for(const options of [{protocolError:404},{protocolError:403},{invalidProtocol:true},{}]) {
     const test=await setup(options),{page,api,legacy}=test;
     const enabled=options.protocolError||options.invalidProtocol;
     await page.goto(`${base}/race/?id=${id}${enabled?'&raceData=api':''}`);
     if(options.protocolError===404) {
       await page.waitForFunction(()=>document.querySelector('#page-view h1')?.textContent==='Гонка не найдена');
       assert.deepEqual(legacy,[]);
+    }else if(options.protocolError===403) {
+      await page.waitForFunction(()=>document.querySelector('#page-view h1')?.textContent==='Данные временно недоступны');
+      assert.deepEqual(legacy,[]);
     }else {
       await page.locator('#page-view .results-table').first().waitFor();
       assert.ok(legacy.some(name=>name.includes('/races/details/')));
     }
     assert.equal(api.length,enabled?1:0);
-    await close(test,{state:options.protocolError?'deleted stays missing':options.invalidProtocol?'invalid protocol falls back':'JSON remains default'});
+    const state={403:'access denial stays denied',404:'deleted stays missing'}[options.protocolError];
+    await close(test,{state:state||(options.invalidProtocol?'invalid protocol falls back':'JSON remains default')});
   }
   {
     const test=await setup(),{page,api,legacy}=test;
