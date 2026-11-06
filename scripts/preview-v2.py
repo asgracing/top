@@ -16,7 +16,7 @@ import requests
 ROOT = Path(__file__).resolve().parent.parent
 ROOT_LAYOUT = False
 PREFIX = '/__asg_public__'
-PUBLIC_PATHS = ('/top-data/', '/hourly-data/', '/public-cache-clubs-teams/', '/achievements/')
+PUBLIC_PATHS = ('/top-data/', '/hourly-data/', '/public-cache-clubs-teams/', '/achievements/', '/race-archive-shadow/v1/direct/')
 FETCH_SHIM = b'''<script data-local-public-preview>
 (()=>{const originalFetch=window.fetch.bind(window);window.fetch=(input,options={})=>{
  const method=String(options.method||input?.method||'GET').toUpperCase();
@@ -24,7 +24,7 @@ FETCH_SHIM = b'''<script data-local-public-preview>
  if(window.ASG_LOCAL_READ_ONLY_TRANSPORT&&method!=='GET'&&url.origin!==location.origin)
    return Promise.resolve(new Response('{"error":"read_only_preview"}',{status:403,headers:{'Content-Type':'application/json'}}));
  if(method==='GET'&&url.origin==='https://community-likes.asgracing.workers.dev'&&url.pathname==='/likes')return originalFetch('/__asg_community_likes__/likes'+url.search,options);
- if(method==='GET'&&url.origin==='https://data.asgracing.ru'&&(url.pathname==='/donations-api/recent'||['/top-data/','/hourly-data/','/public-cache-clubs-teams/','/achievements/'].some(prefix=>url.pathname.startsWith(prefix))))
+ if(method==='GET'&&url.origin==='https://data.asgracing.ru'&&(url.pathname==='/donations-api/recent'||['/top-data/','/hourly-data/','/public-cache-clubs-teams/','/achievements/','/race-archive-shadow/v1/direct/'].some(prefix=>url.pathname.startsWith(prefix))))
    return originalFetch('/__asg_public__'+url.pathname+url.search,options);
  return originalFetch(input,options);
 };

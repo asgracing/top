@@ -11,6 +11,7 @@ import {mergeResultContext} from '/src/shared/race-result-context.js?v=20261011r
 import {raceLinkSummary} from '/src/shared/race-result-links.js?v=20261011racelinks1';
 import {createCommunityClient} from './community-client.js?v=20261007v2pages11';
 import {resolveBanProfiles,sortBans} from './bans-model.js?v=20261007v2pages11';
+import {archiveApiPreview,isArchiveRaceId,readArchivePage,readRaceProtocol} from './race-archive-api.js';
 const DATA = 'https://data.asgracing.ru/';
 const reads = new Map();
 export async function readJson(url) {
@@ -38,6 +39,7 @@ function prizeItems(prizes,slug) {
   });
 }
 export function archiveKind(row) {
+  if(row._archive_kind)return row._archive_kind;
   const slot=row.slot || {},type=String(row.event_type || slot.event_type || '').toLowerCase();
   const competition=row.competition_mode || slot.competition_mode,format=row.race_format || slot.race_format;
   if(competition==='championship'||type==='championship')return 'championship';
@@ -65,10 +67,19 @@ function topUrl(path) {
   if(!/^[a-z0-9_/{.}-]+$/i.test(path)||path.split('/').includes('..'))throw new Error('Invalid public data path');
   return publicUrl('top-data/v2/'+path);
 }
-export function createArchiveData() {
+export function createArchiveData({useApi=false}={}) {
   let manifest;
   const metadata=async()=>manifest ||= await readJson(publicUrl('top-data/v2/manifest.json'));
   async function page(request={},isCurrent=()=>true,onProgress=()=>{}) {
+    if(useApi) {
+      if(!isCurrent())return null;
+      try {
+        const result=await readArchivePage(request);
+        return isCurrent()?result:null;
+      }catch{
+        if(!isCurrent())return null;
+      }
+    }
     const meta=(await metadata()).races || {},size=10,total=Number(meta.total_items)||0;
     const storage=Math.max(1,Number(meta.storage_page_size)||Number(meta.page_size)||10);
     const chunked=Boolean(meta.chunk_path&&meta.storage_page_size),blockSize=chunked?storage:Number(meta.page_size)||10;
@@ -104,7 +115,7 @@ export function createArchiveData() {
   return {page};
 }
 export function createPageData(native) {
-  const archive=createArchiveData();
+  const useArchiveApi=archiveApiPreview(),archive=createArchiveData({useApi:useArchiveApi});
   async function cars() {
     const [rows,manifest]=await Promise.all([readJson(topUrl('cars/cars.json')),readJson(topUrl('manifest.json')).catch(()=>null)]);
     if(!Array.isArray(rows)||rows.some(c=>!c||typeof c.car_name!=='string'||!c.car_name.trim()||!Number.isInteger(c.car_model_id)||c.car_model_id<0))throw new Error('Invalid car catalog');
@@ -199,6 +210,14 @@ export function createPageData(native) {
   async function race(id,summary) {
     if(!/^[a-z0-9_.-]+$/i.test(id||''))throw Object.assign(new Error('Missing race'),{status:404});
     const path=summary?.details_path;
+    if(useArchiveApi&&isArchiveRaceId(id)&&(!summary?._data_namespace||summary._data_namespace==='top')
+      &&(!path||path===`races/details/${id}.json`)) {
+      try {
+        return formatRace(id,{...summary,...await readRaceProtocol(id)});
+      }catch(error){
+        if(error.missing)throw Object.assign(error,{status:404});
+      }
+    }
     let result;
     if(summary?._data_namespace==='season') {
       const seasonal=await readJson(seasonPath(summary._season_slug,path||`races/${id}.json`));
@@ -224,8 +243,11 @@ export function createPageData(native) {
       const context=await readJson(contextUrl).catch(error => { if(error.status===404)return null; throw error; });
       if(context?.result_context_version===1) result=mergeResultContext(result,context);
     }
+    return formatRace(id,await enrichRaceType({...summary,...result}));
+  }
+  function formatRace(id,race) {
     // Match V1's displayed ELO fallback; old published races can have elo:null.
-    return mergeResultContext({...await enrichRaceType({...summary,...result}),race_id:id,results:result.results.map(row=>({...row,elo:row.elo??row.summary?.elo??row.elo_internal_rating??row.summary?.elo_internal_rating}))});
+    return mergeResultContext({...race,race_id:id,results:race.results.map(row=>({...row,elo:row.elo??row.summary?.elo??row.elo_internal_rating??row.summary?.elo_internal_rating}))});
   }
   async function raceFromLink(params) {
     let summary=raceLinkSummary(params);
