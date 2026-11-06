@@ -6153,6 +6153,23 @@ async function loadFullRacesData() {
 async function ensureRacesSearchData() {
   if (Array.isArray(racesSearchData)) return racesSearchData;
   racesSearchDataPromise ||= (async () => {
+    const { archiveApiSource, readArchivePage } = await import('/v2/pages/race-archive-api.js');
+    const source = archiveApiSource();
+    if (source) {
+      try {
+        const first = await readArchivePage({page: 1}, source, 100);
+        const items = [...first.items];
+        for (let page = 2; page <= first.total_pages; page++) {
+          const next = await readArchivePage({page}, source, 100);
+          if (next.revision !== first.revision || next.page !== page) throw new Error('Race archive revision changed');
+          items.push(...next.items);
+        }
+        racesSearchData = items;
+        return items;
+      } catch (error) {
+        if (!error.legacy) throw error;
+      }
+    }
     const manifest = await loadTopDataV2Manifest();
     const meta = manifest?.races || {};
     const totalItems = Number(meta.total_items) || 0;
@@ -6188,6 +6205,23 @@ async function loadFunStatsData() {
 }
 
 async function loadRacesPageData(page = 1) {
+  const { archiveApiSource, readArchivePage } = await import('/v2/pages/race-archive-api.js');
+  const source = archiveApiSource();
+  if (source) {
+    try {
+      const [pageResult, summary] = await Promise.allSettled([
+        readArchivePage({page}, source),
+        loadTopDataV2Json('races/summary.json')
+      ]);
+      if (pageResult.status === 'rejected') throw pageResult.reason;
+      const payload = pageResult.value;
+      racesArchiveMeta = {...payload, page_size: PAGE_SIZE};
+      racesArchiveSummary = summary.value?.summary || null;
+      return payload.items;
+    } catch (error) {
+      if (!error.legacy) throw error;
+    }
+  }
   const manifest = await loadTopDataV2Manifest();
   const racesMeta = manifest?.races || {};
   const uiPageSize = Number(racesMeta.page_size) || PAGE_SIZE;
@@ -6286,6 +6320,18 @@ async function loadRaceDetailsCached(race) {
   const detailsPaths = [race.details_path, fallbackDetailsPath].filter(Boolean)
     .filter((path, index, list) => list.indexOf(path) === index);
   const promise = (async () => {
+    if ((!race.details_path || race.details_path === fallbackDetailsPath)
+        && (!race._data_namespace || race._data_namespace === 'top')) {
+      const { archiveApiSource, isArchiveRaceId, readRaceProtocol } = await import('/v2/pages/race-archive-api.js');
+      const source = archiveApiSource();
+      if (source && isArchiveRaceId(raceId)) {
+        try {
+          return mergeResultContext(mergeRaceDetails(race, await readRaceProtocol(raceId, source)));
+        } catch (error) {
+          if (!error.legacy) throw error;
+        }
+      }
+    }
     let lastError = null;
     for (const detailsPath of detailsPaths) {
       try {

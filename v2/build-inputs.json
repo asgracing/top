@@ -8,7 +8,7 @@
     },
     {
       "path": "app.js",
-      "sha256": "a59b43721312dcebd6b333555e9b401ccc0afe560f3143169990400162ef4402"
+      "sha256": "af4abb6a3ca6c2ad100c566d8b3b292b97737aaab4b8f72acf924b32d3167fc7"
     },
     {
       "path": "assets/track-maps/barcelona.js",
@@ -76,7 +76,7 @@
     },
     {
       "path": "scripts/build-v2.mjs",
-      "sha256": "bb8dba25f29930d4f37771abced457462b6980d7de99bcd6be60a5f7bdf091f4"
+      "sha256": "74e79ceacb0ca0d66bd317c25ca1fbd2a5d9127fbaab9e4e43251679e1f6c855"
     },
     {
       "path": "scripts/generate-localized-pages.mjs",
@@ -772,7 +772,7 @@
     },
     {
       "path": "v2/pages/data.js",
-      "sha256": "a0faaf130fd6ccb0641f9460679b0c477f4b5584188e07db62deb3f5a40ed0e6"
+      "sha256": "6ac5e84f3f72c85914eac7efc51aea652f6a1553adb16b8d2fe123b51a5e204f"
     },
     {
       "path": "v2/pages/driver-safety.js",
@@ -792,7 +792,7 @@
     },
     {
       "path": "v2/pages/race-archive-api.js",
-      "sha256": "aae75565502403e4805d2241ffe9eb2327e8d941f5cd550b09acdc03ec3898f1"
+      "sha256": "78a61477434ccceb45adb29a76b1f89d5d57bde74220edb145e9ab03769fd77e"
     },
     {
       "path": "v2/presentation.js",

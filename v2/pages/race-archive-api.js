@@ -25,15 +25,17 @@ async function read(source, path) {
     cache: 'no-cache', credentials: 'omit', signal: AbortSignal.timeout(4500)
   });
   if (!response.ok) {
-    const missing = response.status === 404 && (await response.json().catch(() => null))?.error === 'not_found';
-    throw Object.assign(new Error(`Race archive HTTP ${response.status}`), {missing, status: response.status});
+    const code = (await response.json().catch(() => null))?.error;
+    const missing = response.status === 404 && code === 'not_found';
+    const legacy = response.status === 503 && code === 'archive_legacy';
+    throw Object.assign(new Error(`Race archive HTTP ${response.status}`), {missing, legacy, status: response.status});
   }
   return response.json();
 }
 
-export async function readArchivePage(request, source) {
+export async function readArchivePage(request, source, pageSize = PAGE_SIZE) {
   const page = Math.min(5000, Math.max(1, Math.floor(Number(request.page)) || 1));
-  const params = new URLSearchParams({page, limit: PAGE_SIZE, order: request.order === 'asc' ? 'asc' : 'desc'});
+  const params = new URLSearchParams({page, limit: pageSize, order: request.order === 'asc' ? 'asc' : 'desc'});
   const query = String(request.query || '').trim();
   if (query) params.set('q', query);
   if (request.track) params.set('track', request.track);
@@ -42,8 +44,8 @@ export async function readArchivePage(request, source) {
   if (data?.schema !== 1 || !positive(data.revision) || typeof data.generated_at !== 'string'
       || !positive(data.page) || !Number.isSafeInteger(data.total_items) || data.total_items < 0
       || !Number.isSafeInteger(data.archive_total) || data.archive_total < data.total_items
-      || data.total_pages !== (Math.ceil(data.total_items / PAGE_SIZE) || 1) || data.page > data.total_pages
-      || !Array.isArray(data.items) || data.items.length !== Math.min(PAGE_SIZE, data.total_items - (data.page - 1) * PAGE_SIZE)
+      || data.total_pages !== (Math.ceil(data.total_items / pageSize) || 1) || data.page > data.total_pages
+      || !Array.isArray(data.items) || data.items.length !== Math.min(pageSize, data.total_items - (data.page - 1) * pageSize)
       || data.items.some(row => !isArchiveRaceId(row?.race_id) || !KINDS.has(row.kind))
       || new Set(data.items.map(row => row.race_id)).size !== data.items.length) {
     throw new Error('Invalid race archive page');

@@ -79,7 +79,7 @@ export function createArchiveData({apiSource=null}={}) {
         return isCurrent()?result:null;
       }catch(error){
         if(!isCurrent())return null;
-        if(error.status===401||error.status===403)throw error;
+        if(!error.legacy)throw error;
       }
     }
     const meta=(await metadata()).races || {},size=10,total=Number(meta.total_items)||0;
@@ -225,7 +225,7 @@ export function createPageData(native,{raceArchive=false,raceProtocol=false}={})
       try {
         return formatRace(id,{...summary,...await readRaceProtocol(id,apiSource)});
       }catch(error){
-        if(error.missing||error.status===401||error.status===403)throw error;
+        if(!error.legacy)throw error;
       }
     }
     let result;
