@@ -76,7 +76,7 @@
     },
     {
       "path": "scripts/build-v2.mjs",
-      "sha256": "c4be5e6b8ded4dbecd2c189098f5c12946440d9129904729e8433551c8257116"
+      "sha256": "8c918cb98c3a585bd5fd753a88275faf19dd63f9f2a8b54e6abe90c5d0700391"
     },
     {
       "path": "scripts/generate-localized-pages.mjs",
@@ -716,7 +716,11 @@
     },
     {
       "path": "v2/home.js",
-      "sha256": "6dddab6cbb6e3ecc08151aca6144982ef0d389b97c898231066a4e852f8b7cb4"
+      "sha256": "cb1d492fc8675f96a731dfe81b1915e4b263cb8d4ff77a6c134d53993503f113"
+    },
+    {
+      "path": "v2/live-stats.js",
+      "sha256": "d71ed6c04c03c0baac3b8645915e90060b00ec0dea6c60628eaf235f9a3d4480"
     },
     {
       "path": "v2/mobile-navigation.js",
@@ -752,7 +756,7 @@
     },
     {
       "path": "v2/pages/cars-laps-model.js",
-      "sha256": "e86eeed51c2d288a05e35ce2f72da7f1a79671a1fdd4f5b7c4ab92cb14219c06"
+      "sha256": "7de254fe8f80794d2bc283108512045982acacae5c64f5a4ce11b22806a37b68"
     },
     {
       "path": "v2/pages/community-client.js",
@@ -768,7 +772,7 @@
     },
     {
       "path": "v2/pages/data.js",
-      "sha256": "9026bc4b09dd72d5b66e98b683f4c7b6ca4b5afd33f5a7a53f099d78e3a6753f"
+      "sha256": "41433dd2ef1321b53610a1b9cf8d25ecfd4ce5990488dcd09e49cb154b753b1c"
     },
     {
       "path": "v2/pages/driver-safety.js",
