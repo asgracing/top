@@ -1,8 +1,14 @@
-// A profile loads one compact prefix shard, never the full driver table.
-export async function loadLeaderboardRank(publicId, {fetchImpl=globalThis.fetch,base='https://data.asgracing.ru/top-data/v2/'}={}) {
+import {liveDriverProfile} from '../../v2/live-stats.js?v=20261111rank1';
+
+export async function loadLeaderboardRank(publicId, {fetchImpl=globalThis.fetch,base='https://data.asgracing.ru/top-data/v2/',legacyOnly=false}={}) {
   if(!/^drv_[0-9a-f]{2,64}$/.test(publicId || ''))return {status:'legacy'};
   const read=async path=>{const res=await fetchImpl(base+path,{cache:'no-store',signal:AbortSignal.timeout(10000)});if(!res.ok)throw Error('Rank unavailable');return res.json();};
   try {
+    if(!legacyOnly) {
+      const profile=await liveDriverProfile(publicId,{withHistory:false,request:fetchImpl});
+      if(profile)return profile.leaderboard_rank;
+    }
+    // The compact shard is used only in the legacy view.
     for(let attempt=0;attempt<2;attempt++) {
       const manifest=await read('manifest.json'),contract=manifest.rankings?.leaderboard;
       if(!contract)return {status:'legacy'};

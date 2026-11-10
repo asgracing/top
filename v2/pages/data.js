@@ -1,6 +1,6 @@
 import {createHourlyVotesClient} from '/src/shared/hourly-votes-client.js';
 import {loadDriverDirectory} from '/src/shared/driver-directory.js?v=20261107compact2';
-import {loadLeaderboardRank,profileWithLeaderboardRank} from '/src/shared/leaderboard-rank.js?v=20261013delivery1';
+import {loadLeaderboardRank,profileWithLeaderboardRank} from '/src/shared/leaderboard-rank.js?v=20261111rank1';
 import {filterRaces} from '/src/pages/races/model.js';
 import {normalizeChampionshipStatus} from '/src/pages/hourly/championship-status.js';
 import {loadPublicRatingSnapshot} from '/src/pages/clubs-teams/rating-model.js';
@@ -212,7 +212,7 @@ export function createPageData(native,{raceArchive=false,raceProtocol=false}={})
     const loadProfile=async()=>{
       const live=await liveDriverProfile(id);
       if(live)return live;
-      const [profile,rank]=await Promise.all([native().profile(id),loadLeaderboardRank(id)]);
+      const [profile,rank]=await Promise.all([native().profile(id),loadLeaderboardRank(id,{legacyOnly:true})]);
       return profileWithLeaderboardRank(profile,rank);
     };
     const [profile,achievement,avatar,title]=await Promise.all([

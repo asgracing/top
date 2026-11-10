@@ -63,12 +63,12 @@ export async function liveCarLaps(track, request, signal) {
   return new Map(result.items.map(({car_model_id, ...row}) => [car_model_id, row]));
 }
 
-async function loadHistory(root, kind, total, revision, signal) {
+async function loadHistory(root, kind, total, revision, request, signal) {
   const limit = 500;
   const pages = Math.ceil(total / limit);
   const items = [];
   async function readPage(page) {
-    const result = await read(root + '/history', {kind, page, limit, revision}, globalThis.fetch, signal);
+    const result = await read(root + '/history', {kind, page, limit, revision}, request, signal);
     if (result === null) throw Object.assign(new Error('Statistics rollback during history read'), {status: 409});
     if (result.revision !== revision || result.kind !== kind || result.total_items !== total
         || result.page !== page || !Array.isArray(result.items)
@@ -82,13 +82,17 @@ async function loadHistory(root, kind, total, revision, signal) {
   return items;
 }
 
-export async function liveDriverProfile(id, {withHistory = true, signal} = {}) {
+export async function liveDriverProfile(id, {withHistory = true, request = globalThis.fetch, signal} = {}) {
   if (!publicStatsEnabled() || !/^drv_[0-9a-f]{12}$/.test(id)) return null;
   const root = 'drivers/' + id;
   for (let attempt = 0; ; attempt++) {
-    const data = await read(root, {}, globalThis.fetch, signal);
+    const data = await read(root, {}, request, signal);
     if (data === null) return null;
     if (data.profile?.public_id !== id || !data.profile.summary || !data.histories) throw new Error('Invalid statistics profile');
+    const rank = data.profile.championship_rank ?? null;
+    data.profile.leaderboard_rank = rank === null || (Number.isSafeInteger(rank) && rank > 0)
+      ? {status: 'current', rank, revision: data.revision, generated_at: data.generated_at}
+      : {status: 'unavailable'};
     if (!withHistory) return data.profile;
     const streams = Object.entries(data.histories);
     if (streams.some(([kind, value]) => !HISTORIES.has(kind) || !Number.isSafeInteger(value?.total)
@@ -97,7 +101,7 @@ export async function liveDriverProfile(id, {withHistory = true, signal} = {}) {
       const loaded = new Map();
       for (const [kind, {total, stream, reverse}] of streams) {
         const key = JSON.stringify([stream ?? kind, reverse, total]);
-        if (!loaded.has(key)) loaded.set(key, await loadHistory(root, kind, total, data.revision, signal));
+        if (!loaded.has(key)) loaded.set(key, await loadHistory(root, kind, total, data.revision, request, signal));
         if (kind.startsWith('summary.')) data.profile.summary[kind.slice(8)] = loaded.get(key);
         else data.profile[kind] = loaded.get(key);
       }

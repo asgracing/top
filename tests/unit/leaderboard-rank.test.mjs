@@ -27,6 +27,34 @@ test('old manifests preserve legacy behavior',async()=>{
  const p={summary:{championship_rank:3}},result=await loadLeaderboardRank(id,fetchSequence([{}]));
  assert.equal(result.status,'legacy');assert.equal(profileWithLeaderboardRank(p,result),p);
 });
+test('published rank comes from one profile API request, including an unranked driver',async t=>{
+ t.mock.method(globalThis,'fetch',()=>assert.fail('the injected request must be used'));
+ globalThis.location={origin:'https://asgracing.ru'};
+ t.after(()=>delete globalThis.location);
+ const paths=[];
+ const fetchImpl=async url=>{
+  paths.push(new URL(url).pathname);
+  return Response.json({revision:95,generated_at:'2026-11-10T21:16:00Z',
+   profile:{public_id:id,championship_rank:null,summary:{championship_rank:null}},histories:{}});
+ };
+ assert.deepEqual(await loadLeaderboardRank(id,{fetchImpl}),{status:'current',rank:null,revision:95,generated_at:'2026-11-10T21:16:00Z'});
+ assert.deepEqual(paths,['/race-archive-shadow/v1/site/stats/drivers/'+id]);
+});
+test('the current site only reads compact JSON after the API signals rollback',async t=>{
+ globalThis.location={origin:'https://asgracing.ru'};
+ t.after(()=>delete globalThis.location);
+ for(const code of ['stats_legacy','not_ready']){
+  const requests=[];
+  const fetchImpl=async url=>{
+   requests.push(new URL(url).pathname);
+   if(requests.length===1)return Response.json({error:code},{status:503});
+   return Response.json(requests.length===2?descriptor(revision):shard(revision));
+  };
+  const result=await loadLeaderboardRank(id,{fetchImpl});
+  assert.equal(result.status,code==='stats_legacy'?'current':'unavailable');
+  assert.equal(requests.length,code==='stats_legacy'?3:1);
+ }
+});
 test('search and sort preserve global places and medal eligibility',()=>{
  const rows=[{rank:21},{rank:4},{rank:1}];
  assert.deepEqual(rows.map((r,i)=>rankingPosition(r,'leaderboard',i)),[21,4,1]);

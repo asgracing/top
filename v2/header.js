@@ -1,4 +1,4 @@
-import {loadLeaderboardRank} from '/src/shared/leaderboard-rank.js?v=20261013delivery1';
+import {loadLeaderboardRank} from '/src/shared/leaderboard-rank.js?v=20261111rank1';
 import {routeHref} from './site-routing.js?v=20261007root1';
 import {createMobileNavigation} from './mobile-navigation.js?v=20261008mobile1';
 export function createHeader({$,esc,text,number,rating,driverHref,privacy,native,newsHref}){
