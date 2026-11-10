@@ -13,6 +13,7 @@ import {createCommunityClient} from './community-client.js?v=20261007v2pages11';
 import {resolveBanProfiles,sortBans} from './bans-model.js?v=20261007v2pages11';
 import {archiveApiSource,isArchiveRaceId,readArchivePage,readRaceProtocol} from './race-archive-api.js';
 import {liveDriverProfile} from '../live-stats.js';
+import {selectNextHourlyAnnouncement,upcomingHourlySlots} from '/src/features/hourly/announcement-model.js?v=20261110hourlynext2';
 const DATA = 'https://data.asgracing.ru/';
 const reads = new Map();
 export async function readJson(url) {
@@ -142,7 +143,7 @@ export function createPageData(native,{raceArchive=false,raceProtocol=false}={})
     getLegacyVoterId:()=>{try {const value=JSON.parse(localStorage.getItem('hourlyVoteVoterId')||'null');return value?.value || '';}catch{return '';}}});
   const participation = Object.create(null);
   async function loadVotes(events) {
-    const ids=events.map(e=>e.event_id).filter(Boolean);
+    const ids=events.map(e=>e?.event_id).filter(Boolean);
     if (!ids.length) return;
     const response=await votes.load(ids);
     if (!response.ok) throw new Error(`HTTP ${response.status}`);
@@ -163,11 +164,18 @@ export function createPageData(native,{raceArchive=false,raceProtocol=false}={})
     } catch(error) {participation[id]={...previous,pending:false,error:true};throw error;}
   }
   async function hourly() {
-    const [event,schedule,recent]=await Promise.all([
-      readJson(hourlyUrl('announcement.json')),readJson(hourlyUrl('schedule.json')),readJson(hourlyUrl('races/races.json'))
+    const [announcement,schedule,recent]=await Promise.all([
+      readJson(hourlyUrl('announcement.json')).catch(()=>null),
+      readJson(hourlyUrl('schedule.json')).catch(()=>null),
+      readJson(hourlyUrl('races/races.json'))
     ]);
+    const now=Date.now();
+    const event=selectNextHourlyAnnouncement(announcement,schedule,now);
+    const upcoming=upcomingHourlySlots(schedule,now).map(normalizeEvent);
     // Match the existing Hourly page: championship entries remain open.
-    return {event:normalizeEvent(event),schedule:{...schedule,items:(schedule.items||[]).map(normalizeEvent)},recent:recent.items || recent.races || []};
+    return {event:event?normalizeEvent(event):null,upcoming,
+      schedule:{...schedule,items:Array.isArray(schedule?.items)?schedule.items.map(normalizeEvent):[]},
+      recent:recent.items || recent.races || []};
   }
   async function championships() {
     const index=await readJson(hourlyUrl('championships.json'));

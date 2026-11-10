@@ -8,7 +8,7 @@
     },
     {
       "path": "app.js",
-      "sha256": "eabcf0f21159cbc1a18ec56572c1d410efd2ae0f9c066b98722d9e866e966d7d"
+      "sha256": "a88d970b23dacdf943aef1fa9c2306d8542694134d6773e3a7bdb88285e87998"
     },
     {
       "path": "assets/track-maps/barcelona.js",
@@ -76,7 +76,7 @@
     },
     {
       "path": "scripts/build-v2.mjs",
-      "sha256": "1df6c17a2b79a69680f1d657fd7125f8f7ed000a37fd7fb811ffbc564aa7a571"
+      "sha256": "347b65f119a1763974ded236fa3e3fcd701fb8cddd75be3981209772ed04704a"
     },
     {
       "path": "scripts/generate-localized-pages.mjs",
@@ -116,7 +116,7 @@
     },
     {
       "path": "src/features/hourly/announcement-model.js",
-      "sha256": "cc02a6b4ae29fd50c9fa45e0c62dd6acde9f3b8af46475216194119c9fcd65d2"
+      "sha256": "a76aedeabba167aaeb3e7f43a93a29263ea6b18cf8e7c183d13c4fd6fef4140b"
     },
     {
       "path": "src/features/hourly/entry-requirements.js",
@@ -664,7 +664,7 @@
     },
     {
       "path": "v2-source/pages/core.js",
-      "sha256": "ad03ed3cdc1c9ea33ff3aa22da222ac1e01658564170e86f28b84c65de2fd00a"
+      "sha256": "46dd1c8510c28fd9ae74e6d78cf7432703d1bf15e5f73b5d0de0fd96ab8932b4"
     },
     {
       "path": "v2-source/pages/editorial.js",
@@ -768,11 +768,11 @@
     },
     {
       "path": "v2/pages/controller.js",
-      "sha256": "0d94446201ebc0abf9c2991213b5fe512204d7519e09fbc3bb812d2b68414cb9"
+      "sha256": "040c22d492a0fc4208857613fd163c4db6aa6efe1886fb1cf88597a5d7693ffa"
     },
     {
       "path": "v2/pages/data.js",
-      "sha256": "07c10a3d17a9be7297cfcbdcea43203adaea4f8c59dd7ba64179d576c9e80c1c"
+      "sha256": "dadfdebd5cbfb93e7789383e527d725c0127374c010f063ba5141ad07f076d6a"
     },
     {
       "path": "v2/pages/driver-safety.js",

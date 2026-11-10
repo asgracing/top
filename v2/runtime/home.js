@@ -39,7 +39,7 @@ import { telemetrySessionLabel, loadPreferredServerStatus } from "/src/features/
 import {ServerStatusContinuity} from '/src/features/server-status/continuity.js?v=20261026smooth2';
 import { renderServerRoster } from "/src/features/server-status/roster.js?v=20261104rc3";
 import { serverPilotCount } from "/src/features/server-status/live-details.js?v=20261024pitmap1";
-import { selectNextHourlyAnnouncement } from "/src/features/hourly/announcement-model.js?v=20260828hourlynext1";
+import { selectNextHourlyAnnouncement } from "/src/features/hourly/announcement-model.js?v=20261110hourlynext2";
 import { getSpecialEventPresentation, normalizeSingleModelRestriction } from "/src/features/hourly/special-event.js?v=20260903special1";
 import { safeImageUrl, safeLinkUrl } from "/src/shared/safe-dom.js";
 import { createHourlyVotesClient } from "/src/shared/hourly-votes-client.js?v=20261007runtime1";

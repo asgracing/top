@@ -9,23 +9,24 @@ import {createHistoryViews} from './views/history.js?v=20261007v2pages14';
 import {markNewsRead} from '/news-read-state.js';
 import {editorialImage} from './editorial-model.js?v=20261007v2pages14';
 import {getCommunityPostKey} from '/src/pages/community/feed-model.js';
-import {createPageViews} from './views/core.js?v=20261105moderation1';
+import {createPageViews} from './views/core.js?v=20261110hourlynext2';
 import {createArchiveViews} from './views/archive.js?v=20261015pagination1';
 import {createChampionshipViews} from './views/championships.js?v=20261015pagination1';
 import {createEntityViews} from './views/entities.js?v=20261015pagination1';
 import {createFunViews} from './views/fun.js?v=20261007v2pages14';
 import {createBansViews} from './views/bans.js?v=20261105moderation1';
-import {formatMoscowDateTime} from '/src/shared/time.js';
+import {formatMoscowDateTime,moscowDateKey} from '/src/shared/time.js';
 import {createCarsViews} from './views/cars.js?v=20261015pagination1';
 import {createCarLapsLoader} from './cars-laps-model.js?v=20261007carlaps1';
 import {paintRace} from './views/race-modal.js?v=20261013teams3';
-import {createPageData} from './data.js?v=20261011racelinks1';
+import {createPageData} from './data.js?v=20261110hourlynext2';
 import {createDriverAchievementsController} from '/src/pages/driver/achievements-widget.js?v=20261011hourlyru1';
 import {v2Route,v2EntityLinks,currentV2Path,migratedPaths} from '../routes.js?v=20261007v2pages14';
 import {screenPath,scopeSiteHref,siteContext} from '../site-routing.js?v=20261007root1';
 import {eventKind as resolveKind} from '../models.js?v=20261006v2k';
 
 export async function startPage(api) {
+  const currentMonth=()=>moscowDateKey(new Date().toISOString()).slice(0,7);
   const {native,presentation,showDialog,esc,text,date,number,rating,car,language,subscribe}=api;
   let achievementCollection=null;
   const closeCollection=()=>{achievementCollection?.destroy();achievementCollection=null;};
@@ -213,7 +214,7 @@ export async function startPage(api) {
     const prize=target.closest('[data-r24-prize]');if(prize){const item=raw.seasons[prize.dataset.r24Prize]?.local_prizes.find(p=>p.place===Number(prize.dataset.place));if(item)showDialog(text('Награда чемпионата','Championship prize')+' · P'+item.place,`<img class="site-zoom-image" src="${esc(item.src)}" alt="${esc(item.title||'P'+item.place)}">`,prize);return;}
     const archivePage=target.closest('[data-site-step="archive"]');if(archivePage){state.archivePage+=Number(archivePage.dataset.step);loadArchive();return;}
     if(target.closest('[data-archive-retry]')){loadArchive();return;}
-    const month=target.closest('[data-month-step],[data-month-reset]');if(month){const d=new Date(state.month+'-01T00:00:00Z');d.setUTCMonth(d.getUTCMonth()+Number(month.dataset.monthStep||0));state.month=month.hasAttribute('data-month-reset')?raw.event.date.slice(0,7):d.toISOString().slice(0,7);views.updateSection('.page-calendar',views.calendar(),['.calendar-controls','.calendar-grid']);return;}
+    const month=target.closest('[data-month-step],[data-month-reset]');if(month){const d=new Date(state.month+'-01T00:00:00Z');d.setUTCMonth(d.getUTCMonth()+Number(month.dataset.monthStep||0));state.month=month.hasAttribute('data-month-reset')?currentMonth():d.toISOString().slice(0,7);views.updateSection('.page-calendar',views.calendar(),['.calendar-controls','.calendar-grid']);return;}
     const recent=target.closest('[data-recent-page]');if(recent){state.recentPage+=Number(recent.dataset.recentPage);views.updateSection('.page-recent',views.recent(),['.page-recent-list','.page-pagination']);return;}
     const page=target.closest('[data-profile-page]');if(page){state.racePage+=Number(page.dataset.profilePage);document.getElementById('profile-history-content').innerHTML=views.profileRaceTable(raw.profiles[state.id]);return;}
     const club=target.closest('[data-club-type]');if(club){state.clubType=club.dataset.clubType;views.updateSection('.hourly-clubs',views.hourlyClubs(),['.club-switch','.page-rank-clubs']);}
@@ -256,9 +257,9 @@ export async function startPage(api) {
       if(!raw.carTracks.some(t=>t.code===state.carTrack))state.carTrack='';
       paint();if(raw.cars.length&&view.querySelector('#r24-car-content'))loadCarLaps();
     }else if(screen==='hourly'){
-      const result=await data.hourly();Object.assign(raw,result);fixture.recent=result.recent.map(r=>({...r,_data_namespace:'hourly'}));fixture.captured_at=raw.schedule.updated_at;state.month=raw.event.date.slice(0,7);
+      const result=await data.hourly();Object.assign(raw,result);fixture.recent=result.recent.map(r=>({...r,_data_namespace:'hourly'}));fixture.captured_at=raw.schedule.updated_at;state.month=raw.event?.date.slice(0,7)||currentMonth();
       paint();
-      const tasks=await Promise.allSettled([data.loadVotes([raw.event,...raw.schedule.items]),native().loadClubs('hourly')]);
+      const tasks=await Promise.allSettled([data.loadVotes([raw.event,...raw.upcoming]),native().loadClubs('hourly')]);
       if(tasks[1].status==='fulfilled'){raw.club_rankings.hourly=tasks[1].value;views.updateSection('.hourly-clubs',views.hourlyClubs(),['.page-rank-clubs']);}applyVotes();
     }else if(['championships','championship'].includes(screen)) {
       const index=await data.championships();raw.seasonsUpdated=index.updated_at;for(const s of index.items)raw.seasons[s.slug]=s;

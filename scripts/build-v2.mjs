@@ -22,6 +22,7 @@ const runtimeVersion = '20261028team10';
 const presentationVersion = '20261028team10';
 const homeStylesVersion = '20261104rc1';
 const bootVersion = '20261107compactdirectory1';
+const hourlyBootVersion = '20261110hourlynext2';
 const archiveBootVersion = '20261106raceapi3';
 const statsBootVersion = '20261106statsapi3';
 const raceModalBootVersion = '20261106racemodal3';
@@ -176,7 +177,8 @@ for (const language of ['ru','en']) {
   const text=language==='ru'?'Текущая версия':'Classic version';
   if(legacyEnabled)pageBody=pageBody.replace('<div class="header-actions top-nav-actions">',`<div class="header-actions top-nav-actions"><a class="version-switch" data-v1-home href="${language==='ru'?'/ru/':'/'}">${text}</a>`);
   const statsHead=value=>value.replace(`/v2/boot/home.js?v=${bootVersion}`,`/v2/boot/home.js?v=${statsBootVersion}`);
-  await emit(`v2/${language}/index.html`,`<!doctype html>\n<html lang="${language}" data-page="home" data-page-language="${language}" data-v2="home"><head>${statsHead(head)}</head><body data-v2="home">${pageBody}<div id="v1-runtime-host" hidden inert aria-hidden="true">${oldBody}</div>${modals}</body></html>\n`);
+  const hourlyHead=value=>value.replace(`/v2/boot/home.js?v=${bootVersion}`,`/v2/boot/home.js?v=${hourlyBootVersion}`);
+  await emit(`v2/${language}/index.html`,`<!doctype html>\n<html lang="${language}" data-page="home" data-page-language="${language}" data-v2="home"><head>${hourlyHead(head)}</head><body data-v2="home">${pageBody}<div id="v1-runtime-host" hidden inert aria-hidden="true">${oldBody}</div>${modals}</body></html>\n`);
   for (const config of pageRegistry.filter(page => page.route)) {
     const page=config.route.slice(0,-1), screen=config.screen;
     const title=config.title[language], description=config.description[language];
@@ -185,6 +187,7 @@ for (const language of ['ru','en']) {
     let owningHead=page==='community'?pageHead+`<meta name="community-likes-api" content="${(await readClassic('community/index.html')).match(/<meta name="community-likes-api" content="([^"]+)"/)[1]}">`:accountHead;
     if(screen==='archive'||screen==='race')owningHead=owningHead.replace(`/v2/boot/home.js?v=${bootVersion}`,`/v2/boot/home.js?v=${archiveBootVersion}`);
     if(screen==='cars')owningHead=statsHead(owningHead);
+    if(screen==='hourly')owningHead=hourlyHead(owningHead);
     if(['driver','club','team'].includes(screen))owningHead=owningHead.replace(`/v2/boot/home.js?v=${bootVersion}`,`/v2/boot/home.js?v=${raceModalBootVersion}`);
     await emit(`v2/${language}/${page}/index.html`,`<!doctype html>\n<html lang="${language}" data-page="home" data-page-language="${language}" data-v2="home" data-v2-page="${screen}"><head>${owningHead}</head><body data-v2="page">${pageBody}<div id="v1-runtime-host" hidden inert aria-hidden="true">${oldBody}</div>${modals}</body></html>\n`);
   }
