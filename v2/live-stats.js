@@ -1,6 +1,11 @@
 const ROOT = 'https://data.asgracing.ru/race-archive-shadow/v1/site/stats/';
 const HISTORIES = new Set(['race_history', 'elo_history', 'safety_history',
   'summary.elo_history', 'summary.safety_history']);
+const PRIVATE_QUERY = /(?:^|\D)s?[0-9]{17}(?![0-9])|steam_[0-9]+:[0-9]+:[0-9]+|\[u:[0-9]+:[0-9]+\]|steamcommunity\.com\/(?:profiles|id)\/\S+|steam:\/\/\S+/iu;
+
+function invalidQuery() {
+  return Object.assign(new Error('Invalid statistics search'), {status: 400, code: 'invalid_query'});
+}
 
 export function publicStatsEnabled() {
   return globalThis.location?.origin === 'https://asgracing.ru';
@@ -9,11 +14,20 @@ export function publicStatsEnabled() {
 async function read(route, params, request = globalThis.fetch, signal) {
   const url = new URL(route, ROOT);
   url.search = new URLSearchParams(params);
-  const timeout = AbortSignal.timeout(8000);
-  const response = await request(url.href, {cache: 'no-cache', credentials: 'omit',
-    signal: signal ? AbortSignal.any([signal, timeout]) : timeout});
+  const ranking = route === 'rankings' || route === 'bestlaps';
+  const timeout = AbortSignal.timeout(ranking ? 12000 : 8000);
+  const requestSignal = signal ? AbortSignal.any([signal, timeout]) : timeout;
+  const options = {cache: 'no-cache', credentials: 'omit', signal: requestSignal};
+  let response = await request(url.href, options);
+  if (ranking && [502, 504].includes(response.status) && !requestSignal.aborted) {
+    await new Promise(resolve => setTimeout(resolve, 200));
+    requestSignal.throwIfAborted();
+    response = await request(url.href, options);
+  }
   if (!response.ok) {
-    if (response.status === 503 && (await response.json().catch(() => null))?.error === 'stats_legacy') return null;
+    const code = (await response.json().catch(() => null))?.error;
+    if (response.status === 503 && code === 'stats_legacy') return null;
+    if (response.status === 400 && code === 'invalid_query') throw invalidQuery();
     throw Object.assign(new Error(`Statistics HTTP ${response.status}`), {status: response.status});
   }
   const payload = await response.json();
@@ -26,7 +40,9 @@ export async function liveRanking(kind, page, track, {query = '', sort = '', dir
   const params = {page, limit: 10};
   if (kind === 'bestlaps') params.track = track;
   else params.kind = kind;
-  if (query) params.q = query;
+  const search = query.normalize('NFKC').trim().replace(/\s+/gu, ' ');
+  if ([...search].length > 100 || PRIVATE_QUERY.test(search)) throw invalidQuery();
+  if (search) params.q = search;
   if (sort) Object.assign(params, {sort, order: direction < 0 ? 'desc' : 'asc'});
   const result = await read(kind === 'bestlaps' ? kind : 'rankings', params, globalThis.fetch, signal);
   if (result === null) return null;

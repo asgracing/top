@@ -11,7 +11,7 @@ import {mergeResultContext} from '/src/shared/race-result-context.js?v=20261011r
 import {raceLinkSummary} from '/src/shared/race-result-links.js?v=20261011racelinks1';
 import {createCommunityClient} from './community-client.js?v=20261007v2pages11';
 import {resolveBanProfiles,sortBans} from './bans-model.js?v=20261007v2pages11';
-import {archiveApiSource,isArchiveRaceId,readArchivePage,readRaceProtocol} from './race-archive-api.js';
+import {archiveApiSource,isArchiveRaceId,readArchivePage,readRaceProtocol,readRecentHourlyRaces} from './race-archive-api.js';
 import {liveDriverProfile} from '../live-stats.js';
 import {selectNextHourlyAnnouncement,upcomingHourlySlots} from '/src/features/hourly/announcement-model.js?v=20261110hourlynext2';
 const DATA = 'https://data.asgracing.ru/';
@@ -163,11 +163,24 @@ export function createPageData(native,{raceArchive=false,raceProtocol=false}={})
       await loadVotes([event]);
     } catch(error) {participation[id]={...previous,pending:false,error:true};throw error;}
   }
+  async function recentHourly() {
+    if (apiSource) {
+      try {
+        const items = await readRecentHourlyRaces(apiSource);
+        return items.map(item => ({...item, _data_namespace:'top', date:new Date(
+          Date.parse(item.finished_at) + 3 * 60 * 60 * 1000).toISOString().slice(0, 10)}));
+      } catch (error) {
+        if (!error.legacy) throw error;
+      }
+    }
+    const index = await readJson(hourlyUrl('races/races.json'));
+    return (index.items || index.races || []).map(item => ({...item,_data_namespace:'hourly'}));
+  }
   async function hourly() {
     const [announcement,schedule,recent]=await Promise.all([
       readJson(hourlyUrl('announcement.json')).catch(()=>null),
       readJson(hourlyUrl('schedule.json')).catch(()=>null),
-      readJson(hourlyUrl('races/races.json'))
+      recentHourly().then(items=>({items,unavailable:false})).catch(()=>({items:[],unavailable:true}))
     ]);
     const now=Date.now();
     const event=selectNextHourlyAnnouncement(announcement,schedule,now);
@@ -175,7 +188,7 @@ export function createPageData(native,{raceArchive=false,raceProtocol=false}={})
     // Match the existing Hourly page: championship entries remain open.
     return {event:event?normalizeEvent(event):null,upcoming,
       schedule:{...schedule,items:Array.isArray(schedule?.items)?schedule.items.map(normalizeEvent):[]},
-      recent:recent.items || recent.races || []};
+      recent:recent.items,recentUnavailable:recent.unavailable};
   }
   async function championships() {
     const index=await readJson(hourlyUrl('championships.json'));

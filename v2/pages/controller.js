@@ -44,7 +44,7 @@ export async function startPage(api) {
   const state={screen,raceTab:params.get('tab')==='qualifying'?'qualifying':'race',id:params.get('id')||params.get('slug')||(screen==='document'?(location.pathname.endsWith('/privacy/')?'privacy':location.pathname.endsWith('/cookies/')?'cookies':null):null),month:'',racePage:1,showUncounted:false,query:'',track:'',paceTrack:'',raceSort:'date',recentPage:1,clubType:'teams',archivePage:Math.max(1,Number(params.get('page'))||1),archiveQuery:params.get('q')||'',archiveTrack:params.get('track')||'',archiveKind:params.get('kind')||'',archiveOrder:params.get('order')==='asc'?'asc':'desc',seasonQuery:'',seasonStatus:'',communityType:'clubs',standingPage:1,catalogType:(params.get('tab')||params.get('type'))==='teams'?'teams':'clubs',catalogContext:['hourly','championship'].includes(params.get('context'))?params.get('context'):'general',catalogQuery:params.get('q')||'',rosterQuery:'',entityRacePage:1};
   state.driverProfileTab=params.get('profileTab')==='sr'?'sr':'races';
   let driverSafety=null;const driverSafetyCache=new Map();
-  const data=createPageData(native,{raceArchive:screen==='archive'||screen==='race',raceProtocol:['driver','club','team'].includes(screen)}),raw={profiles:{},car_models:{},schedule:{items:[]},club_rankings:{},seasons:{},entities:{},entity_details:{}},fixture={profiles:raw.profiles,achievements:{},results:{},recent:[],captured_at:null};
+  const data=createPageData(native,{raceArchive:screen==='archive'||screen==='race',raceProtocol:['driver','club','team','hourly'].includes(screen)}),raw={profiles:{},car_models:{},schedule:{items:[]},club_rankings:{},seasons:{},entities:{},entity_details:{}},fixture={profiles:raw.profiles,achievements:{},results:{},recent:[],captured_at:null};
   Object.assign(state,{selectedCar:params.get('car'),carQuery:params.get('q')||'',brand:params.get('brand')||'',carPage:Math.max(1,Number(params.get('page'))||1),carSort:params.get('sort')||'races',carDirection:params.get('direction')==='asc'?'asc':'desc',compare:[]});
   Object.assign(state,{period:params.get('period')==='month'?'month':'week',bansQuery:params.get('q')||'',bansPage:Math.max(1,Number(params.get('page'))||1)});
   Object.assign(state,{newsQuery:params.get('q')||'',newsKind:params.get('kind')||'',newsPage:Math.max(1,Number(params.get('page'))||1),communityPage:Math.max(1,Number(params.get('page'))||1),historyQuery:params.get('q')||'',historyStatus:params.get('status')||''});
@@ -257,7 +257,7 @@ export async function startPage(api) {
       if(!raw.carTracks.some(t=>t.code===state.carTrack))state.carTrack='';
       paint();if(raw.cars.length&&view.querySelector('#r24-car-content'))loadCarLaps();
     }else if(screen==='hourly'){
-      const result=await data.hourly();Object.assign(raw,result);fixture.recent=result.recent.map(r=>({...r,_data_namespace:'hourly'}));fixture.captured_at=raw.schedule.updated_at;state.month=raw.event?.date.slice(0,7)||currentMonth();
+      const result=await data.hourly();Object.assign(raw,result);fixture.recent=result.recent;fixture.captured_at=raw.schedule.updated_at;state.month=raw.event?.date.slice(0,7)||currentMonth();
       paint();
       const tasks=await Promise.allSettled([data.loadVotes([raw.event,...raw.upcoming]),native().loadClubs('hourly')]);
       if(tasks[1].status==='fulfilled'){raw.club_rankings.hourly=tasks[1].value;views.updateSection('.hourly-clubs',views.hourlyClubs(),['.page-rank-clubs']);}applyVotes();

@@ -1,6 +1,7 @@
 import assert from 'node:assert/strict';
 import test from 'node:test';
 import {liveDriverProfile, liveRanking} from '../../v2/live-stats.js';
+import {readRecentHourlyRaces} from '../../v2/pages/race-archive-api.js';
 
 const id = 'drv_123456789abc';
 const json = (body, status = 200) => Response.json(body, {status});
@@ -19,6 +20,23 @@ test('searches and sorts server-side and accepts a clamped page', async t => {
   });
   const page = await liveRanking('leaderboard', 2, '', {query: 'Алексей', sort: 'team', direction: -1});
   assert.equal(page.page, 1);
+});
+
+test('rejects a private identifier or oversized search before contacting the API', async t => {
+  mockSite(t, async () => assert.fail('invalid search left the browser'));
+  for (const query of ['11111111111111111', 'Ｓ１１１１１１１１１１１１１１１１１',
+                      'steam://example', 'a'.repeat(101)]) {
+    await assert.rejects(liveRanking('leaderboard', 1, '', {query}), {code: 'invalid_query'});
+  }
+});
+
+test('retries a gateway timeout once for ranking searches', async t => {
+  let attempts = 0;
+  mockSite(t, async () => ++attempts === 1 ? json({},504) :
+    json({revision:5,page:1,total_items:1,items:[{public_id:id}]}));
+  const result = await liveRanking('leaderboard',1,'',{query:'Alex'});
+  assert.equal(result.items[0].public_id,id);
+  assert.equal(attempts,2);
 });
 
 test('a profile restarts a revision change and reads multiple history pages', async t => {
@@ -49,4 +67,23 @@ test('legacy snapshots are selected only on an explicit rollback response', asyn
   t.mock.restoreAll();
   t.mock.method(globalThis, 'fetch', async () => json({error: 'not_ready'}, 503));
   await assert.rejects(liveRanking('safety', 1, ''), {status: 503});
+});
+
+test('recent Hourly results use one archive revision across the race formats', async t => {
+  let reads = 0;
+  const kinds = ['hourly', 'monoclass', 'endurance', 'championship'];
+  mockSite(t, async raw => {
+    const kind = new URL(raw).searchParams.get('kind');
+    const number = kinds.indexOf(kind) + 1;
+    assert.ok(number > 0);
+    reads++;
+    return json({schema:1, revision:reads===1?3:4, generated_at:'2026-11-10T20:00:00Z',
+      page:1, total_pages:1, total_items:1, archive_total:14, items:[
+        {race_id:String(number).padStart(16,'0'), kind, source:number===2?'main':'hourly',
+          finished_at:`2026-11-0${number}T20:00:00Z`},
+      ]});
+  });
+  const rows = await readRecentHourlyRaces('site');
+  assert.deepEqual(rows.map(row=>row.kind), ['championship','endurance','hourly']);
+  assert.equal(reads, 8);
 });

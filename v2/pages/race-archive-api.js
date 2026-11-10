@@ -63,3 +63,15 @@ export async function readRaceProtocol(id, source) {
   }
   return {...card, ...protocol, _archive_kind: card.kind};
 }
+
+export async function readRecentHourlyRaces(source) {
+  const kinds = ['hourly', 'monoclass', 'endurance', 'championship'];
+  for (let attempt = 0; attempt < 2; attempt++) {
+    const pages = await Promise.all(kinds.map(kind => readArchivePage({kind}, source, 15)));
+    if (new Set(pages.map(page => page.revision)).size !== 1) continue;
+    const rows = pages.flatMap(page => page.items).filter(row => row.source === 'hourly');
+    return rows.sort((a, b) => Date.parse(b.finished_at) - Date.parse(a.finished_at) ||
+      a.race_id.localeCompare(b.race_id)).slice(0, 15);
+  }
+  throw new Error('Hourly archive revision changed during read');
+}

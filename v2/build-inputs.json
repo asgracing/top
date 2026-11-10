@@ -76,7 +76,7 @@
     },
     {
       "path": "scripts/build-v2.mjs",
-      "sha256": "347b65f119a1763974ded236fa3e3fcd701fb8cddd75be3981209772ed04704a"
+      "sha256": "ab5666db0a0858b8d8af9d848278cd63907c2650f87f5b561d0f710a7f3ee8fc"
     },
     {
       "path": "scripts/generate-localized-pages.mjs",
@@ -664,7 +664,7 @@
     },
     {
       "path": "v2-source/pages/core.js",
-      "sha256": "46dd1c8510c28fd9ae74e6d78cf7432703d1bf15e5f73b5d0de0fd96ab8932b4"
+      "sha256": "530fae8fb862ef7107841dab7ca33e166d94a21d96f9e856a8791eab2fcf60b3"
     },
     {
       "path": "v2-source/pages/editorial.js",
@@ -716,11 +716,11 @@
     },
     {
       "path": "v2/home.js",
-      "sha256": "de3ccc05c2857e3400bf4cb0eb8803929dcea2e3855a4f940d0e218c847c0a19"
+      "sha256": "44b68ed83e49ec53735cabbaafa0e2415b42dd7bcbbc59585bf12471bc3d7e61"
     },
     {
       "path": "v2/live-stats.js",
-      "sha256": "ad814572bbda74d8255b4ddac2cec8afad27cb393bec0b19730b14f066223065"
+      "sha256": "602e57a4635e96234f20b44b6c82fe2315fb5817b553449b340a0720c49da807"
     },
     {
       "path": "v2/mobile-navigation.js",
@@ -768,11 +768,11 @@
     },
     {
       "path": "v2/pages/controller.js",
-      "sha256": "040c22d492a0fc4208857613fd163c4db6aa6efe1886fb1cf88597a5d7693ffa"
+      "sha256": "848acdd3b21aa405d6417d8c67c937a700e6b75adf976e4dd136909e845f1de0"
     },
     {
       "path": "v2/pages/data.js",
-      "sha256": "dadfdebd5cbfb93e7789383e527d725c0127374c010f063ba5141ad07f076d6a"
+      "sha256": "16c04b6ea70623671cc0c4a73c43e5cd0dc9e79c182fe9e3f82bde9e8134dc50"
     },
     {
       "path": "v2/pages/driver-safety.js",
@@ -792,7 +792,7 @@
     },
     {
       "path": "v2/pages/race-archive-api.js",
-      "sha256": "78a61477434ccceb45adb29a76b1f89d5d57bde74220edb145e9ab03769fd77e"
+      "sha256": "72c31f6384d5e3d089cc8bc9e63544402761354d9bf78df6b07b82278808a170"
     },
     {
       "path": "v2/presentation.js",
