@@ -1,6 +1,6 @@
 {
   "schemaVersion": 1,
-  "runtimeVersion": "20261028team10",
+  "runtimeVersion": "20261111names1",
   "inputs": [
     {
       "path": "account/driver-overlay.js",
@@ -8,7 +8,7 @@
     },
     {
       "path": "app.js",
-      "sha256": "a88d970b23dacdf943aef1fa9c2306d8542694134d6773e3a7bdb88285e87998"
+      "sha256": "e05515dff32dbcab2028d7bc27fa20c0ff93c6893c6c8cc04ad510fb7cb463f4"
     },
     {
       "path": "assets/track-maps/barcelona.js",
@@ -76,7 +76,7 @@
     },
     {
       "path": "scripts/build-v2.mjs",
-      "sha256": "ab5666db0a0858b8d8af9d848278cd63907c2650f87f5b561d0f710a7f3ee8fc"
+      "sha256": "906f9c890ba56d0d9bcf3236bafbbe00314f268b2ebc515ba15ca928d8e5e651"
     },
     {
       "path": "scripts/generate-localized-pages.mjs",
@@ -391,6 +391,10 @@
       "sha256": "427f3825881d5d09754cea49fb779dffbc2dbf4be354aa2de8817555d15e87c6"
     },
     {
+      "path": "src/shared/server-display-name.js",
+      "sha256": "c6541084763a859cea111f832fe6835092ae46504b0d0eb03db4aef6e8638250"
+    },
+    {
       "path": "src/shared/storage.js",
       "sha256": "7e371b9c7e07e3e65e65cecac62dffb8a1dc900288c7f4b43ca4cc99a8996d26"
     },
@@ -644,7 +648,7 @@
     },
     {
       "path": "v2-source/pages/archive.js",
-      "sha256": "ccea31a4f56d5d77fa4e40b5146eff24a668be8931f5ab4b754e9d1cca3acae9"
+      "sha256": "3b4b2f9fed6c3eb55e5440730fda86645aa5f15c342644a0ac2a6966e366b1e5"
     },
     {
       "path": "v2-source/pages/bans.js",
@@ -716,7 +720,7 @@
     },
     {
       "path": "v2/home.js",
-      "sha256": "44b68ed83e49ec53735cabbaafa0e2415b42dd7bcbbc59585bf12471bc3d7e61"
+      "sha256": "8993bc5e29244d1787aeda9b7f76011a0d365bd0ab2787625f631a7b7ad4059b"
     },
     {
       "path": "v2/live-stats.js",

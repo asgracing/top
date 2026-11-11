@@ -1,6 +1,7 @@
 import { publish, installRuntime } from '/v2/bridge.js?v=20261006v2k';
 import { currentPageLanguageHref, initializeLocalizedPage, localizedPageHref, resolvePageLocale, setPageLocale } from "/src/shared/localized-page.js?v=20261007root1";
 import {loadDriverDirectory} from '/src/shared/driver-directory.js?v=20261022compact1';
+import {trimServerNameAffixes} from '/src/shared/server-display-name.js?v=20261111names1';
 import {hourlySrRequirement} from '/src/features/hourly/entry-requirements.js?v=20261027sr33';
 import { renderTeamRaceSpotlight, teamEntryLabel } from "/src/shared/team-racing-discovery.js?v=20261028team10";
 import { isTeamRace, teamRaceUrl } from "/src/shared/team-racing-client.js?v=20261004teams1";
@@ -8629,7 +8630,7 @@ function getLocalizedServerStatus(status, lang = currentLang) {
 }
 
 function cleanServerDisplayName(value, fallback = "") {
-  const raw = String(value || fallback || "").trim();
+  const raw = trimServerNameAffixes(value || fallback);
   if (!raw) return fallback || "-";
   if (/^ASG Racing Monza RUS #2 Sunset - Leaderboard$/i.test(raw)) {
     return "ASG Racing Monza - SA Gainer";
