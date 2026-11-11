@@ -1,12 +1,12 @@
 import {bindPagination} from './pages/pagination.js?v=20261015pagination1';
-import {createPageData,readJson,hourlyUrl,normalizeEvent} from './pages/data.js?v=20261011racelinks1';
+import {createPageData} from './pages/data.js?v=20261111recent1';
 import {eventKind as resolveKind} from './models.js?v=20261006v2k';
 import {createPageViews} from './pages/views/core.js?v=20261015pagination1';
 import {paintRace} from './pages/views/race-modal.js?v=20261011racelinks1';
 
 // Use the same published list and protocol presentation as Hourly.
 export function createRecentRaces({$,native,getModel,presentation,showDialog,pushDialog,esc,text,date,number,car,classic,language}) {
-  const state={recentPage:1,month:''},fixture={recent:[]},raw={event:null,schedule:{items:[]}},data=createPageData(native);
+  const state={recentPage:1,month:''},fixture={recent:[]},raw={event:null,schedule:{items:[]}},data=createPageData(native,{raceProtocol:true});
   let ticket=0,raceBackLabel='';
   const eventKind=e=>{const kind=resolveKind(e,e.car_restriction?.mode==='single_model');return kind==='mono'?'monoclass':kind;};
   const eventKindLabel=kind=>({hourly:text('Часовая гонка','Hourly race'),monoclass:text('Монокласс','Single model'),championship:text('Гонка чемпионата','Championship race'),endurance:text('Эндюранс','Endurance')})[kind];
@@ -65,9 +65,8 @@ export function createRecentRaces({$,native,getModel,presentation,showDialog,pus
     const current=++ticket;state.recentPage=1;
     showDialog(text('Последние гонки','Recent races'),`<p role="status">${text('Загрузка…','Loading…')}</p>`,trigger);setKind('home-recent');
     try{
-      const payload=await readJson(hourlyUrl('races/races.json'));
+      const rows=await data.recentHourly();
       if(current!==ticket||!$('modal').open||$('modal').dataset.kind!=='home-recent')return;
-      const rows=payload.items??payload.races;
       if(!Array.isArray(rows))throw new Error('Invalid recent race list');
       fixture.recent=rows;$('modal-body').innerHTML=listHtml();
     }catch{
@@ -80,7 +79,7 @@ export function createRecentRaces({$,native,getModel,presentation,showDialog,pus
     showDialog(text('Результаты гонки','Race results'),`<p role="status">${text('Загрузка…','Loading…')}</p>`,trigger);setKind('home-race');
     try{
       const summary=fixture.recent.find(r=>r.race_id===id);
-      const race=await data.race(id,{...summary,_data_namespace:'hourly'});
+      const race=await data.race(id,{...summary,_data_namespace:summary?._data_namespace||'hourly'});
       if(current!==ticket||!$('modal').open||$('modal').dataset.kind!=='home-race')return;
       $('modal-title').textContent=views.trackName(views.trackCode(race))+' · '+text('Результаты гонки','Race results');
       $('modal').style.setProperty('--modal-track',`url('/assets/${views.safeTrack(race)}.jpg')`);

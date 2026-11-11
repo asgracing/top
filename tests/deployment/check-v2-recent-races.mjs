@@ -68,5 +68,64 @@ try{
   }
   assert.deepEqual(errors,[]);reports.push({language,width,nestedReturn:true});await page.close();
  }
+ for(const language of ['ru','en'])for(const mode of ['api','rollback']){
+  const width=language==='ru'?1280:390,page=await browser.newPage({viewport:{width,height:936}}),api=[],legacy=[],errors=[];
+  const kinds=['hourly','monoclass','endurance','championship'];
+  const rows=data.recent.items.slice(0,6).map((row,i)=>({...row,
+   race_id:i===0?'2c3baa03bc2cc33b':i===1?'497805e147ef2082':row.race_id,
+   kind:kinds[i%4],source:'hourly',finished_at:`2026-11-${String([10,8,7,6,5,4][i]).padStart(2,'0')}T18:30:00Z`,
+   average_elo:1400-i*100,details_path:`races/details/${i===0?'2c3baa03bc2cc33b':i===1?'497805e147ef2082':row.race_id}.json`}));
+  page.on('pageerror',error=>errors.push(error.message));
+  await page.route('**/*',async route=>{
+   const url=new URL(route.request().url()),prefix='/race-archive-shadow/v1/direct/';
+   if(url.hostname==='data.asgracing.ru'&&url.pathname.startsWith(prefix)){
+    api.push(url.pathname+url.search);
+    if(mode==='rollback')return route.fulfill({status:503,json:{error:'archive_legacy'}});
+    if(url.pathname===prefix+'archive'){
+     const items=rows.filter(row=>row.kind===url.searchParams.get('kind'));
+     return route.fulfill({json:{schema:1,revision:42,generated_at:'2026-11-11T09:00:00Z',page:1,
+      total_items:items.length,total_pages:1,archive_total:rows.length,items}});
+    }
+    const card=rows.find(row=>url.pathname===prefix+'races/'+row.race_id);
+    if(card)return route.fulfill({json:{race_id:card.race_id,archive_revision:42,card,
+     protocol:{...data.race,...card,results:data.race.results}}});
+   }
+   if(url.hostname==='data.asgracing.ru'&&url.pathname.startsWith('/hourly-data/races/')){
+    legacy.push(url.pathname);
+    if(url.pathname.endsWith('/races.json'))return route.fulfill({json:data.recent});
+    if(data.recent.items.some(row=>url.pathname==='/hourly-data/'+row.details_path))return route.fulfill({json:data.race});
+   }
+   return fixture(route,[]);
+  });
+  try{
+   await page.goto(`${base}/v2/${language}/?raceData=api`,{waitUntil:'networkidle'});
+   if(await page.locator('.asg-legal-banner-btn-secondary').isVisible())await page.locator('.asg-legal-banner-btn-secondary').click();
+   await page.locator('#v2-recent-races').click();
+   const modal=page.locator('#v2-modal');await modal.locator('.page-recent-race').first().waitFor();
+   if(mode==='api'){
+    assert.equal(await modal.locator('.page-recent-race').first().getAttribute('data-page-race'),rows[0].race_id);
+    assert.equal(await modal.locator('.page-recent-race').nth(1).getAttribute('data-page-race'),rows[1].race_id);
+    const colors=await modal.locator('.recent-average-elo').evaluateAll(nodes=>nodes.map(n=>{
+     const style=getComputedStyle(n);return {classes:n.className,color:style.color,background:style.backgroundColor,numberColor:getComputedStyle(n.querySelector('b')).color};
+    }));
+    assert.equal(new Set(colors.map(row=>row.color)).size,5);
+    colors.forEach((row,i)=>{assert.ok(row.classes.includes('elo-'+(i+1)));assert.equal(row.color,row.numberColor);assert.notEqual(row.background,'rgba(0, 0, 0, 0)');});
+    await modal.locator('[data-recent-page="1"]').click();
+    assert.equal(await modal.locator('.recent-average-elo.elo-6').count(),1);
+    await modal.locator('[data-recent-page="-1"]').click();
+   }
+   await modal.locator('.page-recent-race').first().click({position:{x:12,y:15}});
+   await modal.locator('.results-table').first().waitFor();
+   if(mode==='api'){
+    assert.ok(api.some(url=>url===prefixForTest('races/'+rows[0].race_id)));
+    assert.deepEqual(legacy,[],'Current list and protocol must use the archive API');
+    await page.keyboard.press('Escape');await page.keyboard.press('Escape');
+    const before=api.length;await page.locator('#v2-recent-races').click();await modal.locator('.page-recent-race').first().waitFor();
+    assert.equal(api.length,before+4,'Reopening reads a fresh archive revision');
+   }else assert.ok(legacy.includes('/hourly-data/races/races.json'));
+   assert.deepEqual(errors,[]);reports.push({language,width,mode,protocol:true,coloredAverage:mode==='api'});
+  }finally{await page.close();}
+ }
  console.log(JSON.stringify(reports));
 }finally{await browser.close();}
+function prefixForTest(path){return '/race-archive-shadow/v1/direct/'+path;}

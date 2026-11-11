@@ -452,8 +452,8 @@ body .page-table.results-table tbody tr[data-podium-place="3"] td:first-child {c
 .recent-titleline .recent-winner>span {display:none;}
 .recent-titleline .recent-winner::before {content:'·';color:#8ea5b9;flex-shrink:0;}
 .recent-titleline .recent-winner a {overflow:hidden;text-overflow:ellipsis;min-width:0;}
-.recent-average-elo {color:#91a7bc;font-size:9px;flex-shrink:0;margin-left:auto;}
-.recent-average-elo b {font-weight:600;color:#b5c9dd;}
+.recent-average-elo {font-size:9px;flex-shrink:0;margin-left:auto;}
+.recent-average-elo b {font-weight:600;color:inherit;}
 .recent-metaline {font-size:10px;color:#a5b7c9;gap:4px;}
 .recent-metaline>span:not(.recent-best-lap) {flex-shrink:0;}
 .recent-best-lap {display:flex;align-items:center;gap:4px;min-width:0;}

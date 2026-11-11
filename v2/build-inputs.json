@@ -1,6 +1,6 @@
 {
   "schemaVersion": 1,
-  "runtimeVersion": "20261111sidebars1",
+  "runtimeVersion": "20261111recent1",
   "inputs": [
     {
       "path": "account/driver-overlay.js",
@@ -76,7 +76,7 @@
     },
     {
       "path": "scripts/build-v2.mjs",
-      "sha256": "612f242ec31de234a44db7caf46b37241c217272297c33778d78293eba283730"
+      "sha256": "ae08630d3382449f42b88238fd4483b4821d5866c63189565cade3c3ce4a74f4"
     },
     {
       "path": "scripts/generate-localized-pages.mjs",
@@ -672,7 +672,7 @@
     },
     {
       "path": "v2-source/pages/core.js",
-      "sha256": "530fae8fb862ef7107841dab7ca33e166d94a21d96f9e856a8791eab2fcf60b3"
+      "sha256": "bdc5732b2f7cc7d870297dec08029e6691210b56fb13701bd8e48f28bed06b3d"
     },
     {
       "path": "v2-source/pages/editorial.js",
@@ -696,7 +696,7 @@
     },
     {
       "path": "v2-source/pages/pages.css",
-      "sha256": "9d4a0f8170172bb81d325b67b58ecd7e010a9f1c379471f532c2dcc1ccb3f478"
+      "sha256": "cafc4600768f91db40da2322cbf76bcd05b0cee953fd85e033da675e1d28ac02"
     },
     {
       "path": "v2-source/pages/r24-pages.css",
@@ -724,7 +724,7 @@
     },
     {
       "path": "v2/home.js",
-      "sha256": "020e140f4ea16df66ee7d11264e540f880896d23ae9da8d87d228caa23a43b8a"
+      "sha256": "d1bb75454149a4a846567cc70311a6f1f6f6bc8beacd79a9ed6892ec480f7d2a"
     },
     {
       "path": "v2/live-stats.js",
@@ -784,7 +784,7 @@
     },
     {
       "path": "v2/pages/data.js",
-      "sha256": "09b084e3dd456b49869abd2ec031db1847f2987da9142d98759a5198b91b675c"
+      "sha256": "097c8f647fde9a9c9d8914ecf7c462f2d617ed3fed5618f0df9612f326b06c48"
     },
     {
       "path": "v2/pages/driver-safety.js",
@@ -816,7 +816,7 @@
     },
     {
       "path": "v2/recent-races.js",
-      "sha256": "0c872ef13fd9952e3cb895779b3f9bafa5737b1b7c7178f1381fa98850d95d29"
+      "sha256": "3e0d617be99acdb968389c52e99e3df89085eddf707adb28ce9c117555867096"
     },
     {
       "path": "v2/reports/index.js",

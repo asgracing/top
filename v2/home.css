@@ -302,7 +302,8 @@ body[data-v2] .upcoming-panel .event-calendar-link:hover {color:#fff;background:
 .home-races-mode .recent-winner::before {content:'·';color:#8ea5b9;}
 .home-races-mode .recent-profile-link {display:inline-block;min-width:0;overflow:hidden;text-overflow:ellipsis;padding:2px 4px;border-radius:2px;color:#bce4ff;background:#529bc51c;text-decoration:underline;text-underline-offset:3px;}
 .home-races-mode .recent-profile-link:hover,.home-races-mode .recent-profile-link:focus-visible {color:#fff;background:#3286b966;outline:1px solid #8dd9ff;}
-.home-races-mode .recent-average-elo {color:#a5b7c9;font-size:12px;margin-left:auto;flex-shrink:0;}
+.home-races-mode .recent-average-elo {font-size:12px;margin-left:auto;flex-shrink:0;}
+.home-races-mode .recent-average-elo b {color:inherit;}
 .home-races-mode .recent-metaline {font-size:12px;color:#a5b7c9;overflow-x:auto;scrollbar-width:none;}
 .home-races-mode .recent-metaline>span:not(.recent-best-lap) {flex-shrink:0;}
 .home-races-mode .recent-best-lap {display:flex;align-items:center;gap:4px;min-width:110px;flex:1;}

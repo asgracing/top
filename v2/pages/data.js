@@ -324,5 +324,5 @@ export function createPageData(native,{raceArchive=false,raceProtocol=false}={})
     const index=await loadDriverDirectory(path=>readJson(topUrl(path)));
     return resolveBanProfiles(items,index);
   }
-  return {hourly,driver,race,raceFromLink,archive,championships,season,catalog,entity,cars,fun,bans,bannedProfiles,news,community,history,loadVotes,toggle,participation};
+  return {hourly,recentHourly,driver,race,raceFromLink,archive,championships,season,catalog,entity,cars,fun,bans,bannedProfiles,news,community,history,loadVotes,toggle,participation};
 }
