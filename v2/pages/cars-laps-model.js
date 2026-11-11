@@ -19,17 +19,19 @@ export function carLapsForTrack(payload,track) {
   return records;
 }
 
-export function createCarLapsLoader({request=globalThis.fetch,base='https://data.asgracing.ru/top-data/v2/'}={}) {
+export function createCarLapsLoader({request=globalThis.fetch,base='https://data.asgracing.ru/top-data/v2/',getRevision=()=>undefined}={}) {
   const cache=new Map();let active=null;
   function cancel(){active?.controller.abort();active=null;}
   function load(track){
     if(!/^[a-z0-9_-]+$/.test(track||''))return Promise.reject(new Error('Invalid track'));
-    if(active?.track===track)return active.promise;
+    const revision=getRevision(),key=`${revision||''}:${track}`;
+    if(active?.key===key)return active.promise;
     cancel();
-    if(cache.has(track))return Promise.resolve(cache.get(track));
-    const controller=new AbortController(),job={track,controller};active=job;
+    if(cache.has(key))return Promise.resolve(cache.get(key));
+    const controller=new AbortController(),job={track,key,controller};active=job;
     job.promise=(async()=>{
-      let result=await liveCarLaps(track,request,controller.signal);
+      let result=await liveCarLaps(track,request,controller.signal,revision);
+      if(result===null&&revision)throw Object.assign(new Error('Statistics rollback during record read'),{status:409});
       if(!result){
         // Keep only model records when the public API is unavailable.
         const response=await request(new URL(`tables/bestlaps-${track}.json`,base).href,{cache:'no-store',signal:AbortSignal.any([controller.signal,AbortSignal.timeout(60000)])});
@@ -37,7 +39,7 @@ export function createCarLapsLoader({request=globalThis.fetch,base='https://data
         result=carLapsForTrack(await response.json(),track);
       }
       controller.signal.throwIfAborted();
-      cache.set(track,result);if(cache.size>4)cache.delete(cache.keys().next().value);
+      cache.set(key,result);if(cache.size>4)cache.delete(cache.keys().next().value);
       return result;
     })().finally(()=>{if(active===job)active=null;});
     return job.promise;

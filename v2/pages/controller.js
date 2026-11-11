@@ -17,9 +17,9 @@ import {createFunViews} from './views/fun.js?v=20261007v2pages14';
 import {createBansViews} from './views/bans.js?v=20261105moderation1';
 import {formatMoscowDateTime,moscowDateKey} from '/src/shared/time.js';
 import {createCarsViews} from './views/cars.js?v=20261015pagination1';
-import {createCarLapsLoader} from './cars-laps-model.js?v=20261007carlaps1';
+import {createCarLapsLoader} from './cars-laps-model.js?v=20261111siteviews1';
 import {paintRace} from './views/race-modal.js?v=20261013teams3';
-import {createPageData} from './data.js?v=20261111readers1';
+import {createPageData} from './data.js?v=20261111siteviews1';
 import {createDriverAchievementsController} from '/src/pages/driver/achievements-widget.js?v=20261011hourlyru1';
 import {v2Route,v2EntityLinks,currentV2Path,migratedPaths} from '../routes.js?v=20261007v2pages14';
 import {screenPath,scopeSiteHref,siteContext} from '../site-routing.js?v=20261007root1';
@@ -51,7 +51,7 @@ export async function startPage(api) {
   Object.assign(state,{newsQuery:params.get('q')||'',newsKind:params.get('kind')||'',newsPage:Math.max(1,Number(params.get('page'))||1),communityPage:Math.max(1,Number(params.get('page'))||1),historyQuery:params.get('q')||'',historyStatus:params.get('status')||''});
   let model=null,loadTicket=0,archiveTicket=0,catalogTicket=0,searchTimer,carLapsTicket=0;
   state.carTrack=params.get('track')||'';
-  const carLapsLoader=createCarLapsLoader();
+  const carLapsLoader=createCarLapsLoader({getRevision:()=>raw.carsRevision});
   const paths={home:'',account:'account/',article:'news/article/',instructions:'instructions/',guide:'join/',document:'documents/read/',notfound:'404/',archive:'races/',championship:'hourly/championship/',seasons:'hourly/championship/history/',fun:'fun-stats/',catalog:'teams/',club:'clubs/',team:'teams/detail/'};
   const route=(name='home',id=null)=>v2Route(paths[name]??name+'/',language)+(id?'?'+(['championship','club','team','article'].includes(name)?'slug':'id')+'='+encodeURIComponent(id):'');
   const eventStart=e=>Date.parse(e.starts_at || `${e.date}T${e.start_time_local || '20:00'}:00+03:00`);
@@ -93,12 +93,22 @@ export async function startPage(api) {
   if(!carsViews.sortKeys.includes(state.carSort))state.carSort='races';
   function syncCarsUrl(){const url=new URL(location.href);for(const [key,value] of Object.entries({car:state.selectedCar,q:state.carQuery,brand:state.brand,track:state.carTrack,page:state.carPage>1?state.carPage:'',sort:state.carSort!=='races'?state.carSort:'',direction:state.carDirection==='asc'?'asc':''}))value?url.searchParams.set(key,value):url.searchParams.delete(key);history.replaceState(null,'',url);document.querySelectorAll('.v2-language a').forEach(a=>a.href=currentV2Path(a.dataset.language));}
   function updateCars(){const content=document.getElementById('r24-car-content');content.innerHTML=carsViews.carRows();content.setAttribute('aria-busy',String(Boolean(raw.carLapsLoading)));syncCarsUrl();}
-  async function loadCarLaps(){
+  async function loadCarLaps(refresh=true){
     const ticket=++carLapsTicket,track=state.carTrack;
     raw.carLaps=null;raw.carLapsError=false;raw.carLapsLoading=Boolean(track);updateCars();
     if(!track){carLapsLoader.cancel();return;}
     try{const result=await carLapsLoader.load(track);if(ticket!==carLapsTicket)return;raw.carLaps=result;}
-    catch{if(ticket!==carLapsTicket)return;raw.carLapsError=true;}
+    catch(error){
+      if(ticket!==carLapsTicket)return;
+      if(error.status===409&&refresh){
+        try{
+          const result=await data.cars();if(ticket!==carLapsTicket)return;
+          raw.cars=result.items;raw.carTracks=result.tracks;raw.carsUpdated=result.updated_at;raw.carsRevision=result.revision;
+          paint();return loadCarLaps(false);
+        }catch{if(ticket!==carLapsTicket)return;}
+      }
+      raw.carLapsError=true;
+    }
     if(ticket===carLapsTicket){raw.carLapsLoading=false;updateCars();}
   }
   function highlightResults(){for(const row of document.querySelectorAll('.results-table tbody tr,#r24-season-standings tbody tr,#site-roster-content tbody tr')){const link=row.querySelector('.result-driver-identity a')||row.querySelector('a[href*="/driver/"]'),id=link?new URL(link.href).searchParams.get('id'):null,active=Boolean(id&&model?.auth?.authenticated&&model.auth.driver?.publicId===id);row.classList.toggle('current-user-row',active);active?row.setAttribute('aria-current','true'):row.removeAttribute('aria-current');}}
@@ -263,7 +273,7 @@ export async function startPage(api) {
     }else if(screen==='bans'){raw.bans=await data.bans();paint();syncStatsUrl();
       void resolveVisibleBans();
     }else if(screen==='cars'){
-      const result=await data.cars();raw.cars=result.items;raw.carTracks=result.tracks;raw.carsUpdated=result.updated_at;
+      const result=await data.cars();raw.cars=result.items;raw.carTracks=result.tracks;raw.carsUpdated=result.updated_at;raw.carsRevision=result.revision;
       if(!raw.carTracks.some(t=>t.code===state.carTrack))state.carTrack='';
       paint();if(raw.cars.length&&view.querySelector('#r24-car-content'))loadCarLaps();
     }else if(screen==='hourly'){

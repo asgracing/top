@@ -12,7 +12,7 @@ import {raceLinkSummary} from '/src/shared/race-result-links.js?v=20261011raceli
 import {createCommunityClient} from './community-client.js?v=20261007v2pages11';
 import {resolveBanProfiles,sortBans} from './bans-model.js?v=20261007v2pages11';
 import {archiveApiSource,isArchiveRaceId,readArchivePage,readRaceProtocol,readRecentHourlyRaces} from './race-archive-api.js';
-import {liveDriverProfile,liveBestlapTracks,liveDirectoryPage} from '../live-stats.js';
+import {liveDriverProfile,liveBestlapTracks,liveDirectoryPage,liveSiteView} from '../live-stats.js';
 import {selectNextHourlyAnnouncement,upcomingHourlySlots} from '/src/features/hourly/announcement-model.js?v=20261110hourlynext2';
 const DATA = 'https://data.asgracing.ru/';
 const reads = new Map();
@@ -121,6 +121,16 @@ export function createPageData(native,{raceArchive=false,raceProtocol=false}={})
   const apiSource=(raceArchive||raceProtocol)?archiveApiSource():null;
   const archive=createArchiveData({apiSource:raceArchive?apiSource:null});
   async function cars() {
+    for(let attempt=0;attempt<2;attempt++){
+      try{
+        const live=await liveSiteView('cars');
+        if(live===null)break;
+        const tracks=await liveBestlapTracks({revision:live.revision});
+        if(tracks===null)throw Object.assign(new Error('Statistics rollback during catalog read'),{status:409});
+        return {items:live.payload.items,tracks:tracks.map(t=>({code:t.track_code})),
+          updated_at:live.payload.generated_at,revision:live.revision};
+      }catch(error){if(error.status!==409||attempt===1)throw error;}
+    }
     const [rows,manifest,liveTracks]=await Promise.all([readJson(topUrl('cars/cars.json')),readJson(topUrl('manifest.json')).catch(()=>null),liveBestlapTracks()]);
     if(!Array.isArray(rows)||rows.some(c=>!c||typeof c.car_name!=='string'||!c.car_name.trim()||!Number.isInteger(c.car_model_id)||c.car_model_id<0))throw new Error('Invalid car catalog');
     const tracks=liveTracks===null?await readJson(topUrl(manifest?.tables?.bestlaps?.tracks||'tracks/bestlaps.json')):{items:liveTracks};
@@ -312,7 +322,8 @@ export function createPageData(native,{raceArchive=false,raceProtocol=false}={})
     return {items:result,updated_at:index.updated_at};
   }
   async function fun() {
-    const payload=await readJson(publicUrl('top-data/v2/fun-stats.json'));
+    const live=await liveSiteView('fun');
+    const payload=live===null?await readJson(publicUrl('top-data/v2/fun-stats.json')):live.payload;
     if(!payload||typeof payload!=='object'||Array.isArray(payload))throw new Error('Invalid fun statistics');
     for(const period of ['week','month'])if(payload[period]!=null&&(!payload[period].summary||typeof payload[period].summary!=='object'))throw new Error('Invalid period summary');
     return payload;

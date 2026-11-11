@@ -6205,7 +6205,9 @@ async function ensureRacesSearchData() {
 }
 
 async function loadFunStatsData() {
-  const payload = await loadTopDataV2Json("fun-stats.json");
+  const {liveSiteView} = await import('/v2/live-stats.js');
+  const live = await liveSiteView('fun');
+  const payload = live===null?await loadTopDataV2Json("fun-stats.json"):live.payload;
   return payload && typeof payload === "object" ? payload : null;
 }
 
@@ -6359,7 +6361,9 @@ async function loadRaceDetailsCached(race) {
 }
 
 async function loadCarsData() {
-  const data = await loadTopDataV2Json("cars/cars.json");
+  const {liveSiteView} = await import('/v2/live-stats.js');
+  const live = await liveSiteView('cars');
+  const data = live===null?await loadTopDataV2Json("cars/cars.json"):live.payload.items;
   return Array.isArray(data) ? data : [];
 }
 

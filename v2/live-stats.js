@@ -53,10 +53,11 @@ export async function liveRanking(kind, page, track, {query = '', sort = '', dir
   return result;
 }
 
-export async function liveBestlapTracks({request = globalThis.fetch, signal} = {}) {
+export async function liveBestlapTracks({request = globalThis.fetch, signal, revision} = {}) {
   if (!publicStatsEnabled()) return null;
-  const result = await read('tracks', {page: 1, limit: 100}, request, signal);
+  const result = await read('tracks', {page: 1, limit: 100, ...(revision?{revision}:{})}, request, signal);
   if (result === null) return null;
+  if(revision&&result.revision!==revision)throw Object.assign(new Error('Statistics revision changed'),{status:409});
   if (result.page !== 1 || !Number.isSafeInteger(result.total_items) || result.total_items < 0
       || result.total_items > 100 || !Array.isArray(result.items) || result.items.length !== result.total_items
       || result.items.some(row => !/^[a-z0-9_-]+$/.test(row?.track_code || ''))
@@ -66,14 +67,38 @@ export async function liveBestlapTracks({request = globalThis.fetch, signal} = {
   return result.items;
 }
 
-export async function liveCarLaps(track, request, signal) {
+export async function liveCarLaps(track, request, signal, revision) {
   if (!publicStatsEnabled()) return null;
-  const result = await read('cars', {track, limit: 100}, request, signal);
+  const result = await read('cars', {track, limit: 100, ...(revision?{revision}:{})}, request, signal);
   if (result === null) return null;
+  if(revision&&result.revision!==revision)throw Object.assign(new Error('Statistics revision changed'),{status:409});
   if (!Array.isArray(result.items) || result.items.length !== result.total_items
       || result.items.some(row => !Number.isSafeInteger(row?.car_model_id) || row.best_lap_track !== track
         || !Number.isFinite(row.best_lap_ms) || row.best_lap_ms <= 0)) throw new Error('Invalid car records');
   return new Map(result.items.map(({car_model_id, ...row}) => [car_model_id, row]));
+}
+
+export async function liveSiteView(name,{request=globalThis.fetch,signal,revision}={}) {
+  if(!['cars','fun'].includes(name))throw new Error('Invalid public view');
+  if(!publicStatsEnabled())return null;
+  const result=await read('../views/'+name,revision?{revision}:{},request,signal);
+  if(result===null)return null;
+  if(revision&&result.revision!==revision)throw Object.assign(new Error('Statistics revision changed'),{status:409});
+  const payload=result.payload;
+  if(!Number.isSafeInteger(result.archive_revision)||result.archive_revision<1||payload?.schema_version!==1
+      ||!Number.isFinite(Date.parse(payload.generated_at)))throw new Error('Invalid public view');
+  if(name==='cars'){
+    if(!Array.isArray(payload.items)||payload.items.some(row=>!Number.isInteger(row?.car_model_id)
+        ||typeof row.car_name!=='string'||!Number.isSafeInteger(row.races)||row.races<0)
+        ||new Set(payload.items.map(row=>row.car_model_id)).size!==payload.items.length)throw new Error('Invalid car catalog');
+  }else{
+    for(const period of ['week','month']){
+      const value=payload[period];
+      if(!value?.summary||!value.awards||!value.lists
+          ||!['active','movers','clean','stable','fastest','cars'].every(key=>Array.isArray(value.lists[key])))throw new Error('Invalid period summary');
+    }
+  }
+  return result;
 }
 
 export async function liveDirectoryPage(query,{page=1,limit=100,revision,request=globalThis.fetch,signal}={}) {

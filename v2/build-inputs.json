@@ -1,6 +1,6 @@
 {
   "schemaVersion": 1,
-  "runtimeVersion": "20261111readers2",
+  "runtimeVersion": "20261111siteviews1",
   "inputs": [
     {
       "path": "account/driver-overlay.js",
@@ -8,7 +8,7 @@
     },
     {
       "path": "app.js",
-      "sha256": "25a3fcbe4714dbefab6f1767b6aceeb726c264737bedf8654d1088253037c310"
+      "sha256": "32d9726284973b4a8735230943cb0a242137601b3ae3ab3cbe7d045a989fce6b"
     },
     {
       "path": "assets/track-maps/barcelona.js",
@@ -76,7 +76,7 @@
     },
     {
       "path": "scripts/build-v2.mjs",
-      "sha256": "955f202e78e56298a6c85d06c8f67f36d39fba6aafb0c1d0102a98e9320f6c2c"
+      "sha256": "e55c0c874da4992d449024b738062627726537424ff957f37078d40d035c3dc3"
     },
     {
       "path": "scripts/generate-localized-pages.mjs",
@@ -724,11 +724,11 @@
     },
     {
       "path": "v2/home.js",
-      "sha256": "869e7336ff49f827ef9537e807fb787c1a066cec87f6903e72827f0e93ccbebf"
+      "sha256": "5302f2bf844d2d01132a09c010292fc0cbaca5346c109fc2e59d0ca471ddbdea"
     },
     {
       "path": "v2/live-stats.js",
-      "sha256": "d64d1370d16084e6289e5314ed0c2829d5247e398af4894e50fdbb3e619397d1"
+      "sha256": "267278aba5c85a0277ccd462b94f7c729153869645c67513c06d7ee60832d6e9"
     },
     {
       "path": "v2/mobile-navigation.js",
@@ -768,7 +768,7 @@
     },
     {
       "path": "v2/pages/cars-laps-model.js",
-      "sha256": "7de254fe8f80794d2bc283108512045982acacae5c64f5a4ce11b22806a37b68"
+      "sha256": "f0d39c1693cf61743360ecabf02c13aaabccd9e70ea2c189177beec4320defc7"
     },
     {
       "path": "v2/pages/community-client.js",
@@ -780,11 +780,11 @@
     },
     {
       "path": "v2/pages/controller.js",
-      "sha256": "54203dc9474b1d8771f8679c5d9a72cb5175d9913d4f698d1c978ad0525f5fa5"
+      "sha256": "97e510a9f32edcb4d3b52b281e66fc5e20f2e313a02fcb591362c2e43da21ea7"
     },
     {
       "path": "v2/pages/data.js",
-      "sha256": "7ac3803b190198f51adfd5c86ec8aa8ec2f001ef4fcc959f6d957015e269b5de"
+      "sha256": "5aa65269cceb521c8efdf9c82ac3f73d83ebaa6e60db7c90dadee25c8c606081"
     },
     {
       "path": "v2/pages/driver-safety.js",
