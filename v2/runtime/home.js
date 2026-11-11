@@ -11582,6 +11582,7 @@ installRuntime({
   affiliation:(row,type)=>renderDriverAffiliation(row,type).replace(/href="([^"]+)"/g,(_,href)=>'href="'+localizedPageHref(href,currentLang)+'"'),elo:renderEloBadge,sr:renderSafetyBadge,car:getResultCarName,
   special:data=>getSpecialEventPresentation(data,currentLang),
   prepareAffiliations:v2LoadAffiliations,
+  prepareBestlapMetadata:v2LoadBestlapMetadata,
   eventSr:()=>getServerSrRequirement('hourly',resolveNamedServerStatus(serverStatusData,'hourly')),
   winner:race=>getRaceWinnerResult(race),profile:loadDriverProfileCached,
   profileSummary:publicId=>loadDriverProfile(publicId,{withHistory:false}),

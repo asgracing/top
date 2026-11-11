@@ -8,7 +8,7 @@ import {rankingPosition,eventKind,normalizeTablePage,normalizeSafetyRow,paginati
 import {createPresentation} from './presentation.js?v=20261104rc3';
 import {createRecentRaces} from './recent-races.js?v=20261011racelinks1';
 import {createHeader} from './header.js?v=20261014profile1';
-import {liveRanking} from './live-stats.js';
+import {liveRanking,liveBestlapTracks} from './live-stats.js';
 import {serverSessionLabel} from './server-session.js?v=20261025direct1';
 import {orderedServers,replaceServerCards,serverDialogTrigger} from './server-cards.js?v=20261025servers1';
 import {createGuide} from './guide.js?v=20261006v2k';
@@ -31,6 +31,7 @@ const affiliation=(row,kind)=>v2EntityLinks(native().affiliation(row,kind),langu
 const driverHref=id=>classic('driver/')+'?id='+encodeURIComponent(id);
 let model=null,tab='leaderboard',page=1,track='monza',type='teams',context='general',tableRows=[],tableTotal=0,tableRequest=0,tableBusy=!isSubpage,tableError=false,sortKey='',sortDirection=1,rankingRequested=false,rankingStarted=false;
 let tableAbort;
+let bestlapTrackCatalog=null,bestlapTrackRequest=null;
 let winnerExtra=null,winnerRequest='',dayProfile=null,dayRequest='',clubSnapshot=null,lastTrigger=null;
 const seen=new Map();
 function changed(key,value,render){const signature=JSON.stringify(value);if(seen.get(key)===signature)return;seen.set(key,signature);render()}
@@ -223,10 +224,20 @@ function renderTable(){
   $('page-input').max=totalPages;$('page-input').value=page;$('page-input').disabled=tableBusy||!tableTotal;$('page-total').textContent=`${label('of')} ${number(totalPages)}`;$('page-jump').querySelector('button').disabled=tableBusy||!tableTotal;
   $('ranking-filters').hidden=!['bestlaps','clubs'].includes(tab);$('track-filter-label').hidden=tab!=='bestlaps';$('club-type-label').hidden=tab!=='clubs';$('club-context-label').hidden=tab!=='clubs';
 }
+function renderBestlapTracks(tracks){
+  if(tracks.length)$('ranking-track').innerHTML=tracks.map(t=>`<option value="${esc(t.track_code||t.track)}"${(t.track_code||t.track)===track?' selected':''}>${esc(native().track(t.track_code||t.track))}</option>`).join('');
+}
+function loadBestlapTracks(){
+  return bestlapTrackRequest ||= liveBestlapTracks().then(tracks=>{
+    if(tracks===null)return native().prepareBestlapMetadata();
+    bestlapTrackCatalog=tracks;renderBestlapTracks(tracks);
+  }).catch(()=>{bestlapTrackRequest=null;return native().prepareBestlapMetadata();});
+}
 async function loadTable(){
   rankingRequested=true;
   if(!model||model.loading.home){tableBusy=true;renderTable();return;}
   rankingStarted=true;
+  if(tab==='bestlaps')void loadBestlapTracks().catch(()=>{});
   const request=++tableRequest;
   tableAbort?.abort();
   tableAbort=new AbortController();
@@ -333,7 +344,7 @@ subscribe(next=>{
    changed('event',[next.announcement,next.votes,next.voteDisabled],renderEvent);}
   changed('servers',[next.servers,next.serversStale,next.auth?.authenticated,next.auth?.driver?.sr],()=>{renderServers();presentation.refreshServer();});
    if(!isSubpage){
-     changed('tracks',next.tracks,()=>{if(next.tracks.length)$('ranking-track').innerHTML=next.tracks.map(t=>`<option value="${esc(t.track_code||t.track)}"${(t.track_code||t.track)===track?' selected':''}>${esc(native().track(t.track_code||t.track))}</option>`).join('');});
+     changed('tracks',bestlapTrackCatalog??next.tracks,()=>renderBestlapTracks(bestlapTrackCatalog??next.tracks));
      if(next.loading.homeError&&!rankingStarted){rankingStarted=true;tableBusy=false;tableError=true;renderTable();}
      else if(rankingRequested&&!rankingStarted&&!next.loading.home)loadTable();
      if(!next.loading.home)startBackground();
@@ -368,7 +379,7 @@ if(!isSubpage){
   if('IntersectionObserver' in window){const observer=new IntersectionObserver(entries=>{if(entries.some(entry=>entry.isIntersecting)){observer.disconnect();loadTable();}},{rootMargin:'240px 0px'});observer.observe($('ranking'));}
   else loadTable();
 }
-try{await import('./runtime/home.js?v=20261111names1');applyHash();if(isSubpage)startBackground();}catch(error){console.error('V2 runtime unavailable',error);$('event-track').textContent=text('Не удалось загрузить данные','Could not load data');$('day-driver').textContent=text('Данные недоступны','Data unavailable');tableError=true;tableBusy=false;renderTable()}
+try{await import('./runtime/home.js?v=20261111tracks1');applyHash();if(isSubpage)startBackground();}catch(error){console.error('V2 runtime unavailable',error);$('event-track').textContent=text('Не удалось загрузить данные','Could not load data');$('day-driver').textContent=text('Данные недоступны','Data unavailable');tableError=true;tableBusy=false;renderTable()}
 if(document.documentElement.dataset.v2Page){
   const {startPage}=await import('./pages/controller.js?v=20261101privateexpiry1');
   await startPage({native,presentation,showDialog,esc,text,label,date,number,rating,car,language,subscribe,serverAdmission});

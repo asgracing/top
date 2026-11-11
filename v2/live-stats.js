@@ -53,6 +53,19 @@ export async function liveRanking(kind, page, track, {query = '', sort = '', dir
   return result;
 }
 
+export async function liveBestlapTracks({request = globalThis.fetch, signal} = {}) {
+  if (!publicStatsEnabled()) return null;
+  const result = await read('tracks', {page: 1, limit: 100}, request, signal);
+  if (result === null) return null;
+  if (result.page !== 1 || !Number.isSafeInteger(result.total_items) || result.total_items < 0
+      || result.total_items > 100 || !Array.isArray(result.items) || result.items.length !== result.total_items
+      || result.items.some(row => !/^[a-z0-9_-]+$/.test(row?.track_code || ''))
+      || new Set(result.items.map(row => row.track_code)).size !== result.items.length) {
+    throw new Error('Invalid statistics track catalog');
+  }
+  return result.items;
+}
+
 export async function liveCarLaps(track, request, signal) {
   if (!publicStatsEnabled()) return null;
   const result = await read('cars', {track, limit: 100}, request, signal);

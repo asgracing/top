@@ -1,6 +1,6 @@
 import assert from 'node:assert/strict';
 import test from 'node:test';
-import {liveDriverProfile, liveRanking} from '../../v2/live-stats.js';
+import {liveDriverProfile, liveRanking, liveBestlapTracks} from '../../v2/live-stats.js';
 import {readRecentHourlyRaces} from '../../v2/pages/race-archive-api.js';
 
 const id = 'drv_123456789abc';
@@ -37,6 +37,26 @@ test('retries a gateway timeout once for ranking searches', async t => {
   const result = await liveRanking('leaderboard',1,'',{query:'Alex'});
   assert.equal(result.items[0].public_id,id);
   assert.equal(attempts,2);
+});
+
+test('best-lap track catalog requests every track independently of ranking pages', async t => {
+  const tracks = ['monza', 'spa', 'nurburgring_24h'].map(track_code => ({track_code}));
+  mockSite(t, async raw => {
+    const url = new URL(raw);
+    assert.ok(url.pathname.endsWith('/stats/tracks'));
+    assert.deepEqual(Object.fromEntries(url.searchParams), {page: '1', limit: '100'});
+    return json({revision: 110, page: 1, total_items: tracks.length, items: tracks});
+  });
+  assert.deepEqual(await liveBestlapTracks(), tracks);
+});
+
+test('track catalog rejects partial pages and duplicate codes and honors rollback', async t => {
+  let payload = {revision: 110, page: 1, total_items: 14, items: [{track_code: 'monza'}]};
+  mockSite(t, async () => json(payload));
+  await assert.rejects(liveBestlapTracks(), /track catalog/);
+  payload = {revision: 110, page: 1, total_items: 2, items: [{track_code: 'spa'}, {track_code: 'spa'}]};
+  await assert.rejects(liveBestlapTracks(), /track catalog/);
+  assert.equal(await liveBestlapTracks({request: async () => json({error: 'stats_legacy'}, 503)}), null);
 });
 
 test('a profile restarts a revision change and reads multiple history pages', async t => {
