@@ -11,6 +11,8 @@ import {readV1Html} from './v1-source.mjs';
 import {pageRegistry} from '../v2/page-registry.js';
 import {readSiteRelease} from './site-release.mjs';
 import {buildV2Boot} from './build-v2-boot.mjs';
+import {pageShell} from './v2-page-shell.mjs';
+import {pageHasSidebarWidgets} from '../v2/page-layout.js';
 const root = resolve(import.meta.dirname, '..');
 const siteRelease=await readSiteRelease();
 const legacyEnabled=process.env.ASG_ROOT_FALLBACK==='1'||siteRelease.legacyEnabled!==false;
@@ -18,14 +20,14 @@ const outputRoot = resolve(process.env.ASG_V2_OUTPUT_DIR || (siteRelease.layout=
 if(outputRoot!==root)assertArchiveScratchPath(outputRoot);
 if (process.env.ASG_V2_PRESENTATION_ONLY === '1') throw Error('Presentation-only builds are retired: rebuild V2 with its canonical runtime.');
 const version = '20261006v2k';
-const runtimeVersion = '20261111tracks1';
+const runtimeVersion = '20261111sidebars1';
 const presentationVersion = '20261028team10';
 const homeStylesVersion = '20261104rc1';
-const bootVersion = '20261111tracks1';
-const hourlyBootVersion = '20261111tracks1';
-const archiveBootVersion = '20261111tracks1';
-const statsBootVersion = '20261111tracks1';
-const raceModalBootVersion = '20261111tracks1';
+const bootVersion = '20261111sidebars1';
+const hourlyBootVersion = '20261111sidebars1';
+const archiveBootVersion = '20261111sidebars1';
+const statsBootVersion = '20261111sidebars1';
+const raceModalBootVersion = '20261111sidebars1';
 const controlStylesVersion = '20261103clubs1';
 const profileStylesVersion = '20261031sr1';
 const legalVersion = '20261030analytics1';
@@ -189,7 +191,7 @@ for (const language of ['ru','en']) {
     if(screen==='cars')owningHead=statsHead(owningHead);
     if(screen==='hourly')owningHead=hourlyHead(owningHead);
     if(['driver','club','team'].includes(screen))owningHead=owningHead.replace(`/v2/boot/home.js?v=${bootVersion}`,`/v2/boot/home.js?v=${raceModalBootVersion}`);
-    await emit(`v2/${language}/${page}/index.html`,`<!doctype html>\n<html lang="${language}" data-page="home" data-page-language="${language}" data-v2="home" data-v2-page="${screen}"><head>${owningHead}</head><body data-v2="page">${pageBody}<div id="v1-runtime-host" hidden inert aria-hidden="true">${oldBody}</div>${modals}</body></html>\n`);
+    await emit(`v2/${language}/${page}/index.html`,`<!doctype html>\n<html lang="${language}" data-page="home" data-page-language="${language}" data-v2="home" data-v2-page="${screen}" data-v2-sidebars="${pageHasSidebarWidgets(screen)?'visible':'hidden'}"><head>${owningHead}</head><body data-v2="page">${pageShell(pageBody,screen)}<div id="v1-runtime-host" hidden inert aria-hidden="true">${oldBody}</div>${modals}</body></html>\n`);
   }
 }
 await emit('v2/index.html',`<!doctype html><html lang="ru"><head><meta charset="utf-8"><meta name="robots" content="noindex,follow"><title>ASG Racing V2</title><script>let language='ru';try{if(localStorage.getItem('asgV2Language')==='en')language='en'}catch{}location.replace('/v2/'+language+'/'+location.search+location.hash)</script></head><body><a href="/v2/ru/">ASG Racing — русский</a> · <a href="/v2/en/">English</a></body></html>`);
@@ -201,6 +203,6 @@ for (const [screen,path] of [['moderation','moderation/index.html'],['ops','port
 }
 await emit('v2/pages/control-content.js',`export default ${JSON.stringify(controlMarkup)};\n`);
 await buildV2Boot({root,outputRoot,read,emit});
-for (const path of ['scripts/build-v2.mjs','scripts/build-v2-boot.mjs','package.json','package-lock.json','scripts/generate-localized-pages.mjs','scripts/v1-source.mjs','scripts/seo/pages.mjs','scripts/seo/html-source.mjs','scripts/v2-information-content.mjs','v1-source/manifest.json','v2/page-registry.js']) await read(path);
+for (const path of ['scripts/build-v2.mjs','scripts/build-v2-boot.mjs','scripts/v2-page-shell.mjs','v2/page-layout.js','package.json','package-lock.json','scripts/generate-localized-pages.mjs','scripts/v1-source.mjs','scripts/seo/pages.mjs','scripts/seo/html-source.mjs','scripts/v2-information-content.mjs','v1-source/manifest.json','v2/page-registry.js']) await read(path);
 await emit('v2/build-inputs.json',JSON.stringify({schemaVersion:1,runtimeVersion,inputs:[...buildInputs].sort(([a],[b])=>a.localeCompare(b)).map(([path,sha256])=>({path,sha256}))},null,2)+'\n');
 console.log('Built complete V2 RU/EN over canonical runtime and maintained V1 inputs; fixture datasets excluded.');

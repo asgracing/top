@@ -24,6 +24,7 @@ import {createDriverAchievementsController} from '/src/pages/driver/achievements
 import {v2Route,v2EntityLinks,currentV2Path,migratedPaths} from '../routes.js?v=20261007v2pages14';
 import {screenPath,scopeSiteHref,siteContext} from '../site-routing.js?v=20261007root1';
 import {eventKind as resolveKind} from '../models.js?v=20261006v2k';
+import {pageHasSidebarWidgets} from '../page-layout.js?v=20261111sidebars1';
 
 export async function startPage(api) {
   const currentMonth=()=>moscowDateKey(new Date().toISOString()).slice(0,7);
@@ -236,7 +237,7 @@ export async function startPage(api) {
   view.addEventListener('input',event=>{if(event.target.id==='site-news-search'){state.newsQuery=event.target.value;state.newsPage=1;refreshEditorial();return;}if(event.target.id==='site-history-search'){state.historyQuery=event.target.value;refreshEditorial();return;}if(event.target.id==='site-bans-search'){state.bansQuery=event.target.value;state.bansPage=1;updateBans();return;}if(event.target.id==='r24-car-search'){state.carQuery=event.target.value;state.carPage=1;updateCars();return;}if(event.target.id==='site-catalog-search'){state.catalogQuery=event.target.value;document.getElementById('site-catalog-content').innerHTML=entityViews.catalogContent();syncCatalogUrl();return;}if(event.target.id==='site-roster-search'){state.rosterQuery=event.target.value;document.getElementById('site-roster-content').innerHTML=entityViews.rosterContent(currentEntity());highlightResults();entityThumbnails?.scan();return;}if(event.target.id==='r24-season-search'){state.seasonQuery=event.target.value;document.getElementById('r24-season-content').innerHTML=championshipViews.seasonCards();return;}if(event.target.id==='site-archive-search'){state.archiveQuery=event.target.value;state.archivePage=1;++archiveTicket;clearTimeout(searchTimer);searchTimer=setTimeout(()=>loadArchive(),300);return;}if(event.target.id!=='profile-race-search')return;state.query=event.target.value;state.racePage=1;const template=document.createElement('template');template.innerHTML=views.profileRaceTable(raw.profiles[state.id]);for(const selector of ['.page-table-scroll','.page-pagination'])document.getElementById('profile-history-content').querySelector(selector).replaceWith(template.content.querySelector(selector));});
   window.addEventListener('pagehide',event=>{if(!event.persisted)driverSafety?.destroy();},{once:true});
   subscribe(next=>{model=next;highlightResults();});
-  const wide=['driver','archive','race','club','team','cars','fun','article','document','notfound'].includes(screen);document.querySelector('.dashboard').classList.toggle('page-wide',wide);for(const side of document.querySelectorAll('.dashboard>aside'))side.hidden=wide;
+  const wide=!pageHasSidebarWidgets(screen);document.querySelector('.dashboard').classList.toggle('page-wide',wide);for(const side of document.querySelectorAll('.dashboard>aside'))side.hidden=wide;
   document.body.dataset.prototypePage=screen;
   new ResizeObserver(()=>views.sizeProfileRail()).observe(center);
   view.innerHTML=`<section class="panel page-panel"><p role="status">${text('Загрузка…','Loading…')}</p></section>`;

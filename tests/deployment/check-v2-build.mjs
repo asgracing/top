@@ -8,6 +8,8 @@ import {promisify} from 'node:util';
 import {createHash} from 'node:crypto';
 import {pageRegistry} from '../../v2/page-registry.js';
 import {migratedPaths} from '../../v2/routes.js';
+import {pageHasSidebarWidgets} from '../../v2/page-layout.js';
+import {nodes} from '../../scripts/seo/html-source.mjs';
 const exec=promisify(execFile),root=resolve(import.meta.dirname,'../..');
 assert.equal(pageRegistry.length,migratedPaths.size,'No duplicated routes');
 assert.deepEqual([...migratedPaths],[...pageRegistry.map(page=>page.route)]);
@@ -45,6 +47,18 @@ try{
   for(const language of ['ru','en'])for(const page of pageRegistry){
     const html=await readFile(join(second,`v2/${language}/${page.route}index.html`),'utf8');
     assert.ok(html.includes(`lang="${language}"`));assert.ok(!html.includes('POISONED_PUBLIC_OUTPUT'));
+    const elements=nodes(html),hasClass=(node,name)=>(node.attrs.class||'').split(/\s+/).includes(name);
+    const dashboard=elements.find(node=>hasClass(node,'dashboard'));
+    const sidebars=elements.filter(node=>node.name==='aside'&&(hasClass(node,'left-column')||hasClass(node,'right-column')));
+    assert.equal(sidebars.length,2,'Keep controller nodes for '+page.route);
+    const visible=pageHasSidebarWidgets(page.screen);
+    assert.equal(hasClass(dashboard,'page-wide'),!visible,'Initial width for '+page.route);
+    for(const sidebar of sidebars){
+      assert.equal(sidebar.attrs.hidden==='hidden',!visible,'Initial sidebar visibility for '+page.route);
+      if(!visible)for(const image of elements.filter(node=>node.name==='img'&&node.start>sidebar.start&&node.end<sidebar.end)){
+        assert.ok(!image.attrs.src&&!image.attrs.srcset,'Hidden sidebars cannot download images for '+page.route);
+      }
+    }
   }
   const generation=await exec(process.execPath,['scripts/generate-localized-pages.mjs','--output-dir',join(work,'localized')],{cwd:workspace,maxBuffer:1024*1024});
   assert.match(generation.stdout,/Localized HTML generated/);

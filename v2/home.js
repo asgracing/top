@@ -18,6 +18,8 @@ import {siteContext,scopeSiteHref,versionHref,canonicalEntityHref} from './site-
 import { resolveTrackBackgroundFile, selectRandomTrackBackgroundFile } from '/src/features/server-status/track-background.js';
 const language=document.documentElement.dataset.pageLanguage==='en'?'en':'ru';
 const isSubpage=Boolean(document.documentElement.dataset.v2Page);
+const showSidebarWidgets=document.documentElement.dataset.v2Sidebars!=='hidden';
+const needsServerStatus=showSidebarWidgets||document.documentElement.dataset.v2Page==='servers';
 const ru=language==='ru', words=copy[language].labels, editorial=copy[language].editorial;
 const legacyEntity=canonicalEntityHref(location,language);if(legacyEntity)location.replace(legacyEntity);
 const $=id=>document.getElementById('v2-'+id), esc=value=>String(value??'—').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
@@ -187,7 +189,7 @@ function renderServers(){
   }).join('')||`<p class="empty">${text('Статусы недоступны','Server status unavailable')}</p>`);
 }
 // Update only clock text; do not rebuild cards or refetch positions each second.
-setInterval(()=>{
+if(needsServerStatus)setInterval(()=>{
   if(document.hidden||!model)return;
   for(const node of document.querySelectorAll('[data-live-session]')){
     const server=model.servers.find(s=>s.key===node.dataset.liveSession);
@@ -338,11 +340,11 @@ subscribe(next=>{
   model=next;
   presentation.refreshDriverDay();
   changed('header',[next.auth,next.news,next.invitations,next.unreadNews],()=>header.update(next));
-  changed('support',[next.donations,next.donationsLoading,next.donationsError],renderSupport);
+  if(showSidebarWidgets)changed('support',[next.donations,next.donationsLoading,next.donationsError],renderSupport);
    if(!isSubpage){changed('stats',[next.day,next.stats,next.online,next.serversStale,next.servers.map(s=>s.players)],renderStats);
   changed('winner',next.winner,renderWinner);
    changed('event',[next.announcement,next.votes,next.voteDisabled],renderEvent);}
-  changed('servers',[next.servers,next.serversStale,next.auth?.authenticated,next.auth?.driver?.sr],()=>{renderServers();presentation.refreshServer();});
+  if(needsServerStatus)changed('servers',[next.servers,next.serversStale,next.auth?.authenticated,next.auth?.driver?.sr],()=>{if(showSidebarWidgets)renderServers();presentation.refreshServer();});
    if(!isSubpage){
      changed('tracks',bestlapTrackCatalog??next.tracks,()=>renderBestlapTracks(bestlapTrackCatalog??next.tracks));
      if(next.loading.homeError&&!rankingStarted){rankingStarted=true;tableBusy=false;tableError=true;renderTable();}
@@ -356,6 +358,7 @@ subscribe(next=>{
   if(!$('about-content').innerHTML)$('about-content').innerHTML=editorial.about.slice(1).join('').replace(/(<li[^>]*>[^<]*[\s\S]*?<\/li>)/g,'<ul>$1</ul>');
 });
 function initialiseDocks(){
+  if(!showSidebarWidgets)return;
   let saved={};try{saved=JSON.parse(localStorage.getItem('asgV2WidgetDocks'))||{}}catch{}
   const dashboard=document.querySelector('.dashboard');
   for(const [i,selector] of ['.left-column','.right-column'].entries()){
@@ -379,7 +382,7 @@ if(!isSubpage){
   if('IntersectionObserver' in window){const observer=new IntersectionObserver(entries=>{if(entries.some(entry=>entry.isIntersecting)){observer.disconnect();loadTable();}},{rootMargin:'240px 0px'});observer.observe($('ranking'));}
   else loadTable();
 }
-try{await import('./runtime/home.js?v=20261111tracks1');applyHash();if(isSubpage)startBackground();}catch(error){console.error('V2 runtime unavailable',error);$('event-track').textContent=text('Не удалось загрузить данные','Could not load data');$('day-driver').textContent=text('Данные недоступны','Data unavailable');tableError=true;tableBusy=false;renderTable()}
+try{await import('./runtime/home.js?v=20261111sidebars1');applyHash();if(isSubpage)startBackground();}catch(error){console.error('V2 runtime unavailable',error);$('event-track').textContent=text('Не удалось загрузить данные','Could not load data');$('day-driver').textContent=text('Данные недоступны','Data unavailable');tableError=true;tableBusy=false;renderTable()}
 if(document.documentElement.dataset.v2Page){
   const {startPage}=await import('./pages/controller.js?v=20261101privateexpiry1');
   await startPage({native,presentation,showDialog,esc,text,label,date,number,rating,car,language,subscribe,serverAdmission});

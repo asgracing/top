@@ -1,6 +1,6 @@
 {
   "schemaVersion": 1,
-  "runtimeVersion": "20261111tracks1",
+  "runtimeVersion": "20261111sidebars1",
   "inputs": [
     {
       "path": "account/driver-overlay.js",
@@ -8,7 +8,7 @@
     },
     {
       "path": "app.js",
-      "sha256": "e05515dff32dbcab2028d7bc27fa20c0ff93c6893c6c8cc04ad510fb7cb463f4"
+      "sha256": "0c119736589318c4f8bd353d1ba15b3a92ca5261d00e369a07b74af1c61e39af"
     },
     {
       "path": "assets/track-maps/barcelona.js",
@@ -76,7 +76,7 @@
     },
     {
       "path": "scripts/build-v2.mjs",
-      "sha256": "8886603d38466c972140986969d71007503eb7f6cdcbf95fd41a5655f49241f5"
+      "sha256": "612f242ec31de234a44db7caf46b37241c217272297c33778d78293eba283730"
     },
     {
       "path": "scripts/generate-localized-pages.mjs",
@@ -99,8 +99,12 @@
       "sha256": "adcd7a16e4abfd5e787a7b20c2ca8ac935c0c086f562c0b36367b084f92b21ce"
     },
     {
+      "path": "scripts/v2-page-shell.mjs",
+      "sha256": "c191b983900afb6a242ab4584f5d4ceb45b03dc8e4f0deb1bd015b0066cf19f3"
+    },
+    {
       "path": "scripts/v2-runtime-facade.txt",
-      "sha256": "186ce35e51461f4ee513ee88b8f76165cd8a0ac1ffe81dde7a4f0de7b4cb47b1"
+      "sha256": "a74cb9eda9423f7700c81f85b85dd7c5f34ec0f3487a809be46504c0c0b944e1"
     },
     {
       "path": "src/features/auth/clubs-teams-auth-model.js",
@@ -720,7 +724,7 @@
     },
     {
       "path": "v2/home.js",
-      "sha256": "26f2fb7e93a8b08222672ffb2798b2f37e760438359fa5c7d0d068c24bce0fb8"
+      "sha256": "020e140f4ea16df66ee7d11264e540f880896d23ae9da8d87d228caa23a43b8a"
     },
     {
       "path": "v2/live-stats.js",
@@ -745,6 +749,10 @@
     {
       "path": "v2/online-activity.js",
       "sha256": "7cd5772f150a7e5120756654eca4eb93ab6f49fc88550c02ccee81b17e567e4f"
+    },
+    {
+      "path": "v2/page-layout.js",
+      "sha256": "febd667390ad6f89c7604c4a4f6a7b58ba2dee97eebe342de4d972728933361b"
     },
     {
       "path": "v2/page-registry.js",
@@ -772,7 +780,7 @@
     },
     {
       "path": "v2/pages/controller.js",
-      "sha256": "848acdd3b21aa405d6417d8c67c937a700e6b75adf976e4dd136909e845f1de0"
+      "sha256": "5df88c4a85d1073828501abf7f090a6378a2be78e7579a0e9a1f6d768ec3ce3c"
     },
     {
       "path": "v2/pages/data.js",

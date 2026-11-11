@@ -35,7 +35,7 @@ function v2SchedulePublish() {
     clubs:homeClubsTeamsSnapshot,clubsError:homeClubsTeamsError,affiliationsSize:driverAffiliations.size,viewer:authenticatedDriverPublicId,auth:v2Auth,
     onlineDays:buildRelativeActivityDays(raceActivityInsights?.length?raceActivityInsights:onlineData),news:getSortedNewsFeed(newsFeedData).slice(0,6),invitations:membershipInvitationNotifications,
     unreadNews:getUnreadNewsCount(newsFeedData),
-    servers:getServerStatusItems().map(({key,label,server})=>({key,label,server,
+    servers:(V2_NEEDS_SERVER_STATUS?getServerStatusItems():[]).map(({key,label,server})=>({key,label,server,
       online:!serverStatusIsStale()&&serverIsOnline(server),players:serverPlayersOnline(server),stale:serverStatusIsStale()||isInstanceStatusStale(server),
       track:humanizeTrackName(server?.track_code||server?.track||''),sa:getServerSaRequirement(server),sr:key==='main'?getServerSrRequirement(key,server)?.toFixed(1):getServerSrRequirement(key,server),session:getServerSessionShortLabel(server),drivers:getServerDrivers(server)})),
     serversStale:serverStatusIsStale(),updatedAt:serverStatusData?.updated_at

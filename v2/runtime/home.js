@@ -47,6 +47,8 @@ import { createHourlyVotesClient } from "/src/shared/hourly-votes-client.js?v=20
 
 const PAGE_CONTEXT = readPageContext(document);
 const IS_V2_HOME = PAGE_CONTEXT.isHome && document.documentElement.dataset.v2 === "home" && !document.documentElement.dataset.v2Page;
+const V2_SIDEBARS_HIDDEN = document.documentElement.dataset.v2Sidebars === "hidden";
+const V2_NEEDS_SERVER_STATUS = !V2_SIDEBARS_HIDDEN || document.documentElement.dataset.v2Page === "servers";
 const PAGE_FEATURES = await loadPageFeatures(PAGE_CONTEXT.page);
 const {
   buildDriverRaceTableState, buildDriverTrackTableState, DRIVER_RACE_COLUMNS, DRIVER_TRACK_COLUMNS,
@@ -3570,6 +3572,7 @@ function renderDonationAlertsWidget() {
 }
 
 async function initDonationAlertsWidget() {
+  if (V2_SIDEBARS_HIDDEN) return;
   const listEl = document.getElementById("donation-alerts-list");
   if (!listEl || listEl.dataset.bound === "true") return;
 
@@ -6074,6 +6077,7 @@ function normalizeSnapshotPayload(snapshot) {
 }
 
 async function loadStandaloneServerStatus({ bypassCache = false } = {}) {
+  if (!V2_NEEDS_SERVER_STATUS) return null;
   try {
     const data = await loadPreferredServerStatus(liveServerStatusUrl, serverStatusUrl,
       url => bypassCache ? requestJson(url, { cache: "no-store", retries: 1 }) : loadJson(url),
@@ -11511,7 +11515,7 @@ async function init() {
   await initializeAppStorage().catch(error => console.warn("Preference storage is unavailable.", error));
   await initializeFeatureRuntime();
   initializeWindowLifecycle();
-  if (PAGE_CONTEXT.isHome) bindServerStatusFreshness({ windowRef: window, documentRef: document, lifecycle: appLifecycle, refresh: refreshServerStatusFreshness, isDirect:()=>serverStatusData?.telemetry_stream===true });
+  if (PAGE_CONTEXT.isHome && V2_NEEDS_SERVER_STATUS) bindServerStatusFreshness({ windowRef: window, documentRef: document, lifecycle: appLifecycle, refresh: refreshServerStatusFreshness, isDirect:()=>serverStatusData?.telemetry_stream===true });
   document.body.classList.remove("background-audio-focus");
   applyInitialTopLoadingState();
   homePage.setupDeferred();
@@ -11571,7 +11575,7 @@ function v2SchedulePublish() {
     clubs:homeClubsTeamsSnapshot,clubsError:homeClubsTeamsError,affiliationsSize:driverAffiliations.size,viewer:authenticatedDriverPublicId,auth:v2Auth,
     onlineDays:buildRelativeActivityDays(raceActivityInsights?.length?raceActivityInsights:onlineData),news:getSortedNewsFeed(newsFeedData).slice(0,6),invitations:membershipInvitationNotifications,
     unreadNews:getUnreadNewsCount(newsFeedData),
-    servers:getServerStatusItems().map(({key,label,server})=>({key,label,server,
+    servers:(V2_NEEDS_SERVER_STATUS?getServerStatusItems():[]).map(({key,label,server})=>({key,label,server,
       online:!serverStatusIsStale()&&serverIsOnline(server),players:serverPlayersOnline(server),stale:serverStatusIsStale()||isInstanceStatusStale(server),
       track:humanizeTrackName(server?.track_code||server?.track||''),sa:getServerSaRequirement(server),sr:key==='main'?getServerSrRequirement(key,server)?.toFixed(1):getServerSrRequirement(key,server),session:getServerSessionShortLabel(server),drivers:getServerDrivers(server)})),
     serversStale:serverStatusIsStale(),updatedAt:serverStatusData?.updated_at

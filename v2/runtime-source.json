@@ -1,8 +1,8 @@
 {
   "schemaVersion": 1,
-  "version": "20261111tracks1",
+  "version": "20261111sidebars1",
   "source": "app.js",
-  "sha256": "e05515dff32dbcab2028d7bc27fa20c0ff93c6893c6c8cc04ad510fb7cb463f4",
-  "outputSha256": "e9ecdf898411a111d2d76a9a95022b7f43c4beb586e720da5e3055de95230173",
-  "facadeSha256": "186ce35e51461f4ee513ee88b8f76165cd8a0ac1ffe81dde7a4f0de7b4cb47b1"
+  "sha256": "0c119736589318c4f8bd353d1ba15b3a92ca5261d00e369a07b74af1c61e39af",
+  "outputSha256": "505e0223c270b4f9283582ac0598fbe29ea8261a68883eb459f0d283c9cf7301",
+  "facadeSha256": "a74cb9eda9423f7700c81f85b85dd7c5f34ec0f3487a809be46504c0c0b944e1"
 }
