@@ -1,6 +1,6 @@
 {
   "schemaVersion": 1,
-  "runtimeVersion": "20261111readers1",
+  "runtimeVersion": "20261111readers2",
   "inputs": [
     {
       "path": "account/driver-overlay.js",
@@ -76,7 +76,7 @@
     },
     {
       "path": "scripts/build-v2.mjs",
-      "sha256": "2c4b87b26d75ed189b424f8552c1d6ab40c7b9954cf44b718512765e6b6fff27"
+      "sha256": "955f202e78e56298a6c85d06c8f67f36d39fba6aafb0c1d0102a98e9320f6c2c"
     },
     {
       "path": "scripts/generate-localized-pages.mjs",
@@ -200,7 +200,7 @@
     },
     {
       "path": "src/pages/account/pilot-search-model.js",
-      "sha256": "a54751860c63f7ba21c89042bab50cf48750d534cb5cbd8c12f1e0211fbaf6b5"
+      "sha256": "ca959385830b681df6cfbdefccc1a09bf3e89cc8ecbe6d4c3172fa31928d3822"
     },
     {
       "path": "src/pages/account/race-number-picker.js",
@@ -724,11 +724,11 @@
     },
     {
       "path": "v2/home.js",
-      "sha256": "1e2c937b0a666eb77c9975e1304afd8f4bcc5e86df71999a265fe78830e2a34a"
+      "sha256": "869e7336ff49f827ef9537e807fb787c1a066cec87f6903e72827f0e93ccbebf"
     },
     {
       "path": "v2/live-stats.js",
-      "sha256": "04585a9aff573e26daf69c40729e86a73665f150f5df8debe7cdc289e6dc5322"
+      "sha256": "d64d1370d16084e6289e5314ed0c2829d5247e398af4894e50fdbb3e619397d1"
     },
     {
       "path": "v2/mobile-navigation.js",

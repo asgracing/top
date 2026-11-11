@@ -39,6 +39,7 @@ async function create(language,width=1280){
     const rows=name==='rankings'?snapshot.leaderboard.items:[{...driver(1),best_lap:'1:48.123',best_lap_ms:108123,track_code:'monza',best_lap_car_name:'Fixture Car'}];
     const limit=Number(u.searchParams.get('limit'));return json(pageData(rows.slice(0,limit),rows.length,1,limit));
    }
+   if(pathname.endsWith('/drivers/'+directory[0].public_id))return json({revision:7,profile:directory[0]});
    return json({error:'stats_legacy'},503);
   }
   if(pathname==='/race-archive-shadow/v1/site/archive')return json({schema:1,revision:9,generated_at:'2026-11-11T09:00:00Z',archive_total:1,total_items:1,total_pages:1,page:1,items:[{race_id:id,kind:'hourly',source:'hourly',track_code:'monza',finished_at:'2026-11-10T19:00:00Z',participants_count:29,winner:'Fixture Winner',average_elo:1100}]});
@@ -79,6 +80,9 @@ try{
     await c.page.locator('[data-ct-show-more]').click();await c.page.waitForFunction(()=>document.querySelectorAll('[data-ct-select-pilot]').length===100);
     assert.ok(c.reads.some(u=>u.includes('/stats/directory?')&&u.includes('revision=7')&&u.includes('page=2')));
     await input.fill('x');await c.page.waitForFunction(()=>document.querySelectorAll('[data-ct-select-pilot]').length===0);
+    await input.fill(directory[0].public_id);
+    await c.page.waitForFunction(()=>document.querySelectorAll('[data-ct-select-pilot]').length===1);
+    assert.ok(c.reads.some(u=>u.includes('/stats/drivers/'+directory[0].public_id)));
     assert.equal(c.reads.some(u=>u.includes('/drivers/search.json')),false);
    }
    assert.deepEqual(c.errors,[]);assert.equal(c.reads.some(u=>u.includes('/public-cache-clubs-teams/')&&u.includes('/details/')),route==='account/'||route.startsWith('driver/'));

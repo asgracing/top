@@ -80,6 +80,19 @@ export async function liveDirectoryPage(query,{page=1,limit=100,revision,request
   if(!publicStatsEnabled())return null;
   const q=query.normalize('NFKC').trim().replace(/\s+/gu,' ');
   if(q.length<2||[...q].length>100||PRIVATE_QUERY.test(q))throw invalidQuery();
+  // Directory's index contains names. Resolve a complete public ID directly.
+  if(/^drv_[0-9a-f]{12}$/i.test(q)){
+    let data;
+    try{data=await read('drivers/'+q.toLowerCase(),{},request,signal);}
+    catch(error){if(error.status!==404)throw error;}
+    if(data===null)return null;
+    if(data){
+      const profile=data.profile,name=profile?.driver??profile?.summary?.driver;
+      if(profile?.public_id!==q.toLowerCase()||typeof name!=='string')throw new Error('Invalid driver identity');
+      return {revision:data.revision,generated_at:data.generated_at,page:1,total_pages:1,total_items:1,
+        items:[{public_id:profile.public_id,driver:name,is_banned:profile.is_banned===true||profile.summary?.is_banned===true}]};
+    }
+  }
   const params={q,page,limit,sort:'driver',order:'asc',...(revision?{revision}:{})};
   const result=await read('directory',params,request,signal);
   if(result===null)return null;

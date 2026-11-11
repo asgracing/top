@@ -1,5 +1,5 @@
 import {loadDriverDirectory} from '../../shared/driver-directory.js?v=20261107compact2';
-import {liveDirectoryPage} from '../../../v2/live-stats.js?v=20261111readers1';
+import {liveDirectoryPage} from '../../../v2/live-stats.js?v=20261111readers2';
 
 const ID_PATTERN = /^[A-Za-z0-9][A-Za-z0-9._:-]*$/;
 const MAX_PILOT_INDEX_SIZE = 50_000;

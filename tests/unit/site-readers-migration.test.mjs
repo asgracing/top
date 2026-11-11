@@ -38,6 +38,14 @@ test('directory rejects private searches and malformed or mixed revision pages',
  await assert.rejects(liveDirectoryPage('Pilot',{request:async()=>json(page([{...driver(1),is_banned:'false'}]))}),/Invalid driver directory/);
 });
 
+test('a complete public ID resolves through its profile without searching the name-only index',async t=>{
+ site(t);const id=driver(1).public_id,urls=[];
+ const search=createPilotSearch({request:async url=>{urls.push(url);return json({revision:9,profile:{public_id:id,driver:'Pilot One',is_banned:true}});}});
+ assert.deepEqual(await search.search(id),{items:[{publicId:id,displayName:'Pilot One'}],more:false});
+ assert.equal(urls.length,1);assert.ok(new URL(urls[0]).pathname.endsWith('/stats/drivers/'+id));
+ assert.equal(new URL(urls[0]).search,'');
+});
+
 test('overlay reads top 100 and Monza record at a coherent revision',async()=>{
  const urls=[];let turn=0;
  const data=await loadOverlayApi({request:async url=>{const u=new URL(url);urls.push(u);const rank=u.pathname.endsWith('/rankings');turn++;return json(page([driver(1)],{revision:turn<=2?(rank?5:6):7}));}});
