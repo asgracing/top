@@ -19,7 +19,7 @@ import {formatMoscowDateTime,moscowDateKey} from '/src/shared/time.js';
 import {createCarsViews} from './views/cars.js?v=20261015pagination1';
 import {createCarLapsLoader} from './cars-laps-model.js?v=20261007carlaps1';
 import {paintRace} from './views/race-modal.js?v=20261013teams3';
-import {createPageData} from './data.js?v=20261110hourlynext2';
+import {createPageData} from './data.js?v=20261111readers1';
 import {createDriverAchievementsController} from '/src/pages/driver/achievements-widget.js?v=20261011hourlyru1';
 import {v2Route,v2EntityLinks,currentV2Path,migratedPaths} from '../routes.js?v=20261007v2pages14';
 import {screenPath,scopeSiteHref,siteContext} from '../site-routing.js?v=20261007root1';
@@ -45,7 +45,7 @@ export async function startPage(api) {
   const state={screen,raceTab:params.get('tab')==='qualifying'?'qualifying':'race',id:params.get('id')||params.get('slug')||(screen==='document'?(location.pathname.endsWith('/privacy/')?'privacy':location.pathname.endsWith('/cookies/')?'cookies':null):null),month:'',racePage:1,showUncounted:false,query:'',track:'',paceTrack:'',raceSort:'date',recentPage:1,clubType:'teams',archivePage:Math.max(1,Number(params.get('page'))||1),archiveQuery:params.get('q')||'',archiveTrack:params.get('track')||'',archiveKind:params.get('kind')||'',archiveOrder:params.get('order')==='asc'?'asc':'desc',seasonQuery:'',seasonStatus:'',communityType:'clubs',standingPage:1,catalogType:(params.get('tab')||params.get('type'))==='teams'?'teams':'clubs',catalogContext:['hourly','championship'].includes(params.get('context'))?params.get('context'):'general',catalogQuery:params.get('q')||'',rosterQuery:'',entityRacePage:1};
   state.driverProfileTab=params.get('profileTab')==='sr'?'sr':'races';
   let driverSafety=null;const driverSafetyCache=new Map();
-  const data=createPageData(native,{raceArchive:screen==='archive'||screen==='race',raceProtocol:['driver','club','team','hourly'].includes(screen)}),raw={profiles:{},car_models:{},schedule:{items:[]},club_rankings:{},seasons:{},entities:{},entity_details:{}},fixture={profiles:raw.profiles,achievements:{},results:{},recent:[],captured_at:null};
+  const data=createPageData(native,{raceArchive:screen==='archive'||screen==='race',raceProtocol:['driver','club','team','hourly','championships','championship','seasons'].includes(screen)}),raw={profiles:{},car_models:{},schedule:{items:[]},club_rankings:{},seasons:{},entities:{},entity_details:{}},fixture={profiles:raw.profiles,achievements:{},results:{},recent:[],captured_at:null};
   Object.assign(state,{selectedCar:params.get('car'),carQuery:params.get('q')||'',brand:params.get('brand')||'',carPage:Math.max(1,Number(params.get('page'))||1),carSort:params.get('sort')||'races',carDirection:params.get('direction')==='asc'?'asc':'desc',compare:[]});
   Object.assign(state,{period:params.get('period')==='month'?'month':'week',bansQuery:params.get('q')||'',bansPage:Math.max(1,Number(params.get('page'))||1)});
   Object.assign(state,{newsQuery:params.get('q')||'',newsKind:params.get('kind')||'',newsPage:Math.max(1,Number(params.get('page'))||1),communityPage:Math.max(1,Number(params.get('page'))||1),historyQuery:params.get('q')||'',historyStatus:params.get('status')||''});
@@ -80,7 +80,16 @@ export async function startPage(api) {
   function refreshReactions(){view.querySelectorAll('[data-reaction]').forEach(node=>{const t=document.createElement('template');t.innerHTML=editorialViews.reaction(node.dataset.reaction);node.replaceWith(t.content.firstElementChild);});}
   async function loadLikes(){const pending=raw.likes.load(raw.community.map(getCommunityPostKey).filter(Boolean));refreshReactions();await pending;refreshReactions();}
   function syncStatsUrl(){const url=new URL(location.href);const values=screen==='fun'?{period:state.period==='month'?'month':''}:{q:state.bansQuery,page:state.bansPage>1?state.bansPage:''};for(const [key,value] of Object.entries(values))value?url.searchParams.set(key,value):url.searchParams.delete(key);history.replaceState(null,'',url);document.querySelectorAll('.v2-language a').forEach(a=>a.href=currentV2Path(a.dataset.language));}
-  function updateBans(){document.getElementById('site-bans-content').innerHTML=bansViews.bansContent();syncStatsUrl();}
+  async function resolveVisibleBans(){
+    const visible=bansViews.visibleItems().filter(b=>!b.public_id);
+    if(!visible.length)return;
+    try{
+      const resolved=await data.bannedProfiles(visible),replacements=new Map(visible.map((b,i)=>[b,resolved[i]]));
+      raw.bans.items=raw.bans.items.map(b=>replacements.get(b)||b);
+      if(document.getElementById('site-bans-content'))updateBans(false);
+    }catch{}
+  }
+  function updateBans(resolve=true){document.getElementById('site-bans-content').innerHTML=bansViews.bansContent();syncStatsUrl();if(resolve)void resolveVisibleBans();}
   if(!carsViews.sortKeys.includes(state.carSort))state.carSort='races';
   function syncCarsUrl(){const url=new URL(location.href);for(const [key,value] of Object.entries({car:state.selectedCar,q:state.carQuery,brand:state.brand,track:state.carTrack,page:state.carPage>1?state.carPage:'',sort:state.carSort!=='races'?state.carSort:'',direction:state.carDirection==='asc'?'asc':''}))value?url.searchParams.set(key,value):url.searchParams.delete(key);history.replaceState(null,'',url);document.querySelectorAll('.v2-language a').forEach(a=>a.href=currentV2Path(a.dataset.language));}
   function updateCars(){const content=document.getElementById('r24-car-content');content.innerHTML=carsViews.carRows();content.setAttribute('aria-busy',String(Boolean(raw.carLapsLoading)));syncCarsUrl();}
@@ -252,7 +261,7 @@ export async function startPage(api) {
     }else if(screen==='community'){const result=await data.community();raw.community=result.posts;raw.likes=result.likes;raw.editorialUpdated=raw.community[0]?.date;paint();syncEditorialUrl();void loadLikes();
     }else if(screen==='fun'){raw.fun=await data.fun();paint();syncStatsUrl();
     }else if(screen==='bans'){raw.bans=await data.bans();paint();syncStatsUrl();
-      data.bannedProfiles(raw.bans.items).then(items=>{raw.bans.items=items;updateBans();}).catch(()=>{});
+      void resolveVisibleBans();
     }else if(screen==='cars'){
       const result=await data.cars();raw.cars=result.items;raw.carTracks=result.tracks;raw.carsUpdated=result.updated_at;
       if(!raw.carTracks.some(t=>t.code===state.carTrack))state.carTrack='';

@@ -19,7 +19,7 @@ import {
   buildReviseEntityCommand,
   normalizeCommandResponse
 } from "./clubs-teams-command-model.js?v=20260910msk1";
-import { loadPilotIndex, searchPilots } from "./pilot-search-model.js?v=20261107compact2";
+import { createPilotSearch } from "./pilot-search-model.js?v=20261111readers1";
 import { canUploadEntityLogo, inspectLogoFile, LogoUploadError, normalizeAssetResponse } from "./logo-upload-model.js?v=20260813logo2";
 import { mountDriverOverlayManager } from "../../../account/driver-overlay.js?v=20260927overlay1";
 import { mountRaceNumberPicker } from "./race-number-picker.js?v=20261031retention1";
@@ -1041,10 +1041,9 @@ async function openMemberManager(auth, entityType) {
   section.innerHTML = `<p class="account-muted" role="status">${t("loadingEntity")}</p>`;
   try {
     const client = createHttpClient({ fetchImpl: globalThis.fetch, defaultTimeoutMs: 8000 });
-    const [detail, pilots] = await Promise.all([
-      loadApprovedEntityDetail(entity),
-      loadPilotIndex({ client, dataBaseUrl: topDataBaseUrl() })
-    ]);
+    const detail = await loadApprovedEntityDetail(entity);
+    const pilotSearch = createPilotSearch({client,dataBaseUrl:topDataBaseUrl()});
+    let pilots=[],morePilots=false,searchTicket=0,searchTimer;
     const rosterIds = detail.roster.map(member => member.public_id);
     const pendingInviteIds = new Set([
       ...auth.clubsTeams.pendingInvites
@@ -1091,9 +1090,7 @@ async function openMemberManager(auth, entityType) {
     };
     const renderResults = () => {
       const queryReady = input.value.normalize("NFKC").trim().length >= 2;
-      const matches = searchPilots(pilots, input.value, {
-        excludedPublicIds: [...rosterIds, ...pendingInviteIds]
-      });
+      const matches = pilots;
       const visibleMatches = matches.slice(0, visibleLimit);
       const teamCapacityReached = batchLimit === 0;
       results.innerHTML = visibleMatches.length ? visibleMatches.map(pilot => `<div class="account-pilot-result" role="listitem">
@@ -1106,8 +1103,8 @@ async function openMemberManager(auth, entityType) {
       resultCount.hidden = !queryReady;
       resultCount.textContent = queryReady ? t("pilotSearchCount", matches.length) : "";
       const remaining = Math.max(0, matches.length - visibleMatches.length);
-      showMore.hidden = remaining === 0;
-      showMore.textContent = remaining ? t("showMorePilots", Math.min(pageSize, remaining)) : "";
+      showMore.hidden = remaining === 0 && !morePilots;
+      showMore.textContent = morePilots ? t("showMorePilots",pageSize) : remaining ? t("showMorePilots", Math.min(pageSize, remaining)) : "";
       if (inviteStatus && teamCapacityReached) inviteStatus.textContent = t("teamInviteFull");
       results.querySelectorAll("[data-ct-select-pilot]").forEach(checkbox => {
         checkbox.addEventListener("change", () => {
@@ -1128,13 +1125,26 @@ async function openMemberManager(auth, entityType) {
         });
       });
     };
+    const searchResults = async () => {
+      const ticket=++searchTicket,query=input.value;
+      pilotSearch.cancel();
+      if(query.normalize('NFKC').trim().length<2){pilots=[];morePilots=false;renderResults();return;}
+      showMore.disabled=true;
+      try {
+        const result=await pilotSearch.search(query,{limit:visibleLimit,excludedPublicIds:[...rosterIds,...pendingInviteIds]});
+        if(ticket!==searchTicket||!input.isConnected||input.value!==query)return;
+        pilots=result.items;morePilots=result.more;renderResults();
+      }catch(error){if(ticket===searchTicket&&input.isConnected&&error.name!=='AbortError')results.textContent=t('rosterUnavailable');}
+      finally{if(ticket===searchTicket)showMore.disabled=false;}
+    };
     input.addEventListener("input", () => {
-      visibleLimit = pageSize;
-      renderResults();
+      visibleLimit = pageSize;clearTimeout(searchTimer);++searchTicket;pilotSearch.cancel();
+      pilots=[];morePilots=false;renderResults();
+      searchTimer=setTimeout(()=>void searchResults(),250);
     });
     showMore.addEventListener("click", () => {
       visibleLimit += pageSize;
-      renderResults();
+      void searchResults();
     });
     sendInvites.addEventListener("click", async () => {
       const recipients = [...selectedPilots.entries()].map(([publicId, displayName]) => ({ publicId, displayName }));

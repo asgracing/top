@@ -1,3 +1,4 @@
+import {loadOverlayApi} from './data.js?v=20261111readers1';
 const pageParams = new URLSearchParams(window.location.search);
 function normalizeBaseUrl(value) {
   return String(value || "").replace(/\/+$/, "");
@@ -75,6 +76,10 @@ function normalizeSnapshotPayload(snapshot) {
 }
 
 async function loadOverlayData() {
+  if(IS_ASG_PUBLIC_SITE&&!pageParams.has('topDataBase')){
+    const current=await loadOverlayApi();
+    if(current)return current;
+  }
   try {
     const overlay = await loadJson(`${overlayV2Url}?t=${Date.now()}`);
     return normalizeSnapshotPayload(overlay);
@@ -243,7 +248,7 @@ function renderBestLapCard(items) {
 
   bestLapTimeEl.textContent = topLap.best_lap || topLap.bestLap || "--:--.---";
   bestLapDriverEl.textContent = resolveDriverName(topLap);
-  bestLapMetaEl.textContent = [topLap.track || "", topLap.car_name || topLap.car || ""]
+  bestLapMetaEl.textContent = [topLap.track || topLap.track_code || "", topLap.car_name || topLap.best_lap_car_name || topLap.car || ""]
     .filter(Boolean)
     .join(" / ") || "ASG Racing";
 }

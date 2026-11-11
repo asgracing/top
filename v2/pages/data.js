@@ -12,7 +12,7 @@ import {raceLinkSummary} from '/src/shared/race-result-links.js?v=20261011raceli
 import {createCommunityClient} from './community-client.js?v=20261007v2pages11';
 import {resolveBanProfiles,sortBans} from './bans-model.js?v=20261007v2pages11';
 import {archiveApiSource,isArchiveRaceId,readArchivePage,readRaceProtocol,readRecentHourlyRaces} from './race-archive-api.js';
-import {liveDriverProfile} from '../live-stats.js';
+import {liveDriverProfile,liveBestlapTracks,liveDirectoryPage} from '../live-stats.js';
 import {selectNextHourlyAnnouncement,upcomingHourlySlots} from '/src/features/hourly/announcement-model.js?v=20261110hourlynext2';
 const DATA = 'https://data.asgracing.ru/';
 const reads = new Map();
@@ -121,9 +121,9 @@ export function createPageData(native,{raceArchive=false,raceProtocol=false}={})
   const apiSource=(raceArchive||raceProtocol)?archiveApiSource():null;
   const archive=createArchiveData({apiSource:raceArchive?apiSource:null});
   async function cars() {
-    const [rows,manifest]=await Promise.all([readJson(topUrl('cars/cars.json')),readJson(topUrl('manifest.json')).catch(()=>null)]);
+    const [rows,manifest,liveTracks]=await Promise.all([readJson(topUrl('cars/cars.json')),readJson(topUrl('manifest.json')).catch(()=>null),liveBestlapTracks()]);
     if(!Array.isArray(rows)||rows.some(c=>!c||typeof c.car_name!=='string'||!c.car_name.trim()||!Number.isInteger(c.car_model_id)||c.car_model_id<0))throw new Error('Invalid car catalog');
-    const tracks=await readJson(topUrl(manifest?.tables?.bestlaps?.tracks||'tracks/bestlaps.json'));
+    const tracks=liveTracks===null?await readJson(topUrl(manifest?.tables?.bestlaps?.tracks||'tracks/bestlaps.json')):{items:liveTracks};
     if(!Array.isArray(tracks?.items))throw new Error('Invalid track catalog');
     return {items:rows,tracks:tracks.items.map(t=>({code:t.track_code||t.track})).filter(t=>/^[a-z0-9_-]+$/.test(t.code||'')),updated_at:manifest?.generated_at||manifest?.updated_at||null};
   }
@@ -249,11 +249,15 @@ export function createPageData(native,{raceArchive=false,raceProtocol=false}={})
         if(!error.legacy)throw error;
       }
     }
-    let result;
+    let result,currentSeasonContext=false;
     if(summary?._data_namespace==='season') {
       const seasonal=await readJson(seasonPath(summary._season_slug,path||`races/${id}.json`));
       const published=summary._published_race;
-      const official=published?.details_path?await readJson(hourlyUrl(published.details_path)).catch(()=>null):null;
+      let official=null;
+      if(apiSource&&isArchiveRaceId(published?.race_id)){
+        try{official=await readRaceProtocol(published.race_id,apiSource);currentSeasonContext=true;}
+        catch(error){if(error.legacy)official=published?.details_path?await readJson(hourlyUrl(published.details_path)).catch(()=>null):null;else if(!error.missing)throw error;}
+      }else if(published?.details_path)official=await readJson(hourlyUrl(published.details_path)).catch(()=>null);
       const ratings=new Map((official?.results||[]).map(r=>[r.public_id,r]));
       const fields=['elo','elo_internal_rating','elo_category_id','elo_rating_delta','safety_rating_after','safety_rating','safety_delta','safety_category','race_number'];
       result={...seasonal,race_id:id,average_elo:official?.average_elo??seasonal.average_elo,qualifying:official?.qualifying??seasonal.qualifying,race_conditions:official?.race_conditions??seasonal.race_conditions,results:(seasonal.results||[]).map(r=>({...r,...Object.fromEntries(fields.filter(key=>ratings.get(r.public_id)?.[key]!=null).map(key=>[key,ratings.get(r.public_id)[key]]))}))};
@@ -267,6 +271,7 @@ export function createPageData(native,{raceArchive=false,raceProtocol=false}={})
       result=await readJson(url);
     }
     if(!result||!Array.isArray(result.results))throw new Error('Invalid race result');
+    if(currentSeasonContext)return formatRace(id,result);
     const published=summary?._data_namespace==='season'?summary._published_race:summary;
     const contextId=published?.race_id||id;
     if(/^[a-z0-9_.-]+$/i.test(contextId)) {
@@ -317,12 +322,25 @@ export function createPageData(native,{raceArchive=false,raceProtocol=false}={})
     if(!Array.isArray(payload?.items))throw new Error('Invalid ban list');
     return {...payload,items:sortBans(payload.items.filter(b=>typeof b?.name==='string').map(b=>({...b,public_id:/^drv_[a-z0-9]+$/i.test(b.public_id||'')?b.public_id:null})))};
   }
+  const banProfileReads=new Map();
+  const banProfilePage=name=>{
+    if(!banProfileReads.has(name))banProfileReads.set(name,liveDirectoryPage(name).catch(error=>{banProfileReads.delete(name);throw error;}));
+    return banProfileReads.get(name);
+  };
   async function bannedProfiles(items) {
     if(!items.some(b=>!b.public_id))return items;
-    // Load once on this page, after the list is visible. Retain only the resolved
-    // ban records, not the large index's unrelated profiles/rating histories.
-    const index=await loadDriverDirectory(path=>readJson(topUrl(path)));
-    return resolveBanProfiles(items,index);
+    const missing=[...new Set(items.filter(b=>!b.public_id).map(b=>b.name.trim()).filter(name=>name.length>=2))];
+    const drivers=[];
+    // Only resolve unambiguous, complete API matches. Never download the entire directory.
+    for(let offset=0;offset<missing.length;offset+=3){
+      const pages=await Promise.all(missing.slice(offset,offset+3).map(name=>banProfilePage(name).catch(()=>undefined)));
+      if(pages.some(page=>page===null)){
+        const index=await loadDriverDirectory(path=>readJson(topUrl(path)));
+        return resolveBanProfiles(items,index);
+      }
+      for(const page of pages)if(page&&page.total_pages===1)drivers.push(...page.items);
+    }
+    return resolveBanProfiles(items,drivers);
   }
   return {hourly,recentHourly,driver,race,raceFromLink,archive,championships,season,catalog,entity,cars,fun,bans,bannedProfiles,news,community,history,loadVotes,toggle,participation};
 }

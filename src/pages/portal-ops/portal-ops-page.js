@@ -1,4 +1,4 @@
-import { mountClubsManagement } from './portal-clubs-workspace.js?v=20261103clubs1';
+import { mountClubsManagement } from './portal-clubs-workspace.js?v=20261111readers1';
 import { createAuthHeaderController, buildAuthReturnPath } from "../../features/auth/header-auth.js?v=20261011notifications1";
 import { createIdempotencyKey, hourlyDraftEquals, normalizeHourlyState, snapshotHourlyDraft, validateHourlyDraft } from "./portal-ops-model.js?v=20261004teams1";
 import { applyLocalizedNavigation, resolvePageLocale, setPageLocale } from "../../shared/localized-page.js?v=20261007root1";

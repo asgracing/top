@@ -76,6 +76,23 @@ export async function liveCarLaps(track, request, signal) {
   return new Map(result.items.map(({car_model_id, ...row}) => [car_model_id, row]));
 }
 
+export async function liveDirectoryPage(query,{page=1,limit=100,revision,request=globalThis.fetch,signal}={}) {
+  if(!publicStatsEnabled())return null;
+  const q=query.normalize('NFKC').trim().replace(/\s+/gu,' ');
+  if(q.length<2||[...q].length>100||PRIVATE_QUERY.test(q))throw invalidQuery();
+  const params={q,page,limit,sort:'driver',order:'asc',...(revision?{revision}:{})};
+  const result=await read('directory',params,request,signal);
+  if(result===null)return null;
+  if(!Array.isArray(result.items)||!Number.isSafeInteger(result.total_items)||result.total_items<0
+    ||result.page!==Math.min(page,Math.max(1,Math.ceil(result.total_items/limit)))
+    ||result.total_pages!==Math.max(1,Math.ceil(result.total_items/limit))
+    ||result.items.length!==Math.min(limit,result.total_items-(result.page-1)*limit)
+    ||result.items.some(row=>!/^drv_[0-9a-f]{12}$/.test(row?.public_id)||typeof row.driver!=='string'||typeof row.is_banned!=='boolean')
+    ||new Set(result.items.map(row=>row.public_id)).size!==result.items.length
+    ||revision&&result.revision!==revision)throw new Error('Invalid driver directory page');
+  return result;
+}
+
 async function loadHistory(root, kind, total, revision, request, signal) {
   const limit = 500;
   const pages = Math.ceil(total / limit);

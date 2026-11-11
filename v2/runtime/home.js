@@ -11223,6 +11223,22 @@ function applyHomeSiteData(data) {
 }
 
 async function initializeHomeData() {
+  if (document.documentElement.dataset.v2 === 'home' && document.documentElement.dataset.v2Page) {
+    // Internal V2 pages own their data. Keep only the shared header and visible servers.
+    topLoadState.home = false;
+    void loadNewsFeed().catch(() => []).then(() => {
+      renderNewsBell();
+      renderNewsNotificationsModal();
+    });
+    if (V2_NEEDS_SERVER_STATUS) void loadStandaloneServerStatus().then(status => {
+      if (!status) return;
+      serverStatusData = status;
+      updateHeroServerSummary(status);
+      renderServerStickyWidget(status);
+    });
+    rerenderUI();
+    return;
+  }
   const hourlyDataPromise = Promise.allSettled([loadHourlyAnnouncementData(), loadHourlyScheduleData()]);
   if (IS_V2_HOME) {
     // Each first-screen block owns its completion/error state. A slow ranking

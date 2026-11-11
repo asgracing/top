@@ -1,7 +1,7 @@
 import { createIdempotencyKey, isSafeLogoPreview } from './portal-ops-model.js?v=20261004teams1';
 import { managementCommand, filterManagedEntities } from './portal-clubs-model.js?v=20261103clubs1';
 import { inspectLogoFile } from '../account/logo-upload-model.js?v=20260813logo2';
-import { loadPilotIndex, filterPilots } from '../account/pilot-search-model.js?v=20261107compact2';
+import { createPilotSearch } from '../account/pilot-search-model.js?v=20261111readers1';
 import { createHttpClient } from '../../shared/http-client.js';
 import { formatMoscowDateTime } from '../../shared/time.js?v=20260910msk1';
 
@@ -153,14 +153,17 @@ export function mountClubsManagement({ root, api, auth, confirmAction, onError, 
   }
   async function searchPilot() {
     const input=$('[data-pilot-search]'),query=input.value;chosenPilot=null;$('[data-pilot-selected]').textContent='';
-    const results=$('[data-pilot-results]'); results.replaceChildren();if(query.trim().length<2)return;
+    const results=$('[data-pilot-results]'); results.replaceChildren();pilots?.cancel();if(query.trim().length<2)return;
+    await new Promise(resolve=>setTimeout(resolve,250));
+    if(input!==$('[data-pilot-search]')||input.value!==query)return;
     try {
-      if(!pilots)pilots=await loadPilotIndex({client:createHttpClient(),dataBaseUrl:'https://data.asgracing.ru/top-data'});
+      if(!pilots)pilots=createPilotSearch({client:createHttpClient(),dataBaseUrl:'https://data.asgracing.ru/top-data'});
+      const response=await pilots.search(query,{excludedPublicIds:creating?[]:(selected?.members||[]).map(member=>member.public_id),limit:12});
       if(input!==$('[data-pilot-search]')||input.value!==query)return;
-      const matches=filterPilots(pilots,query,{excludedPublicIds:creating?[]:(selected?.members||[]).map(member=>member.public_id),limit:12});
+      const matches=response.items;
       results.innerHTML=matches.map(pilot=>`<button type="button" data-pilot="${esc(pilot.publicId)}">${esc(pilot.displayName)} <small>${esc(pilot.publicId)}</small></button>`).join('')||`<p>${t('noPilots')}</p>`;
       results.querySelectorAll('[data-pilot]').forEach(button=>button.onclick=()=>{chosenPilot=matches.find(pilot=>pilot.publicId===button.dataset.pilot);$('[data-pilot-selected]').textContent=`${t('selected')}: ${chosenPilot.displayName}`;results.replaceChildren();});
-    } catch {if(input===$('[data-pilot-search]'))results.textContent=t('pilotUnavailable');}
+    } catch(error) {if(input===$('[data-pilot-search]')&&input.value===query&&error.name!=='AbortError')results.textContent=t('pilotUnavailable');}
   }
   function clearLogo(){if(logoUrl)URL.revokeObjectURL(logoUrl);logoUrl='';logoFile=null;}
   async function inspectLogo(){clearLogo();const input=$('[data-logo-file]'),file=input.files[0];$('[data-logo-preview]').hidden=true;try{const meta=await inspectLogoFile(file);if(input!==$('[data-logo-file]')||input.files[0]!==file)return;logoFile=file;logoUrl=URL.createObjectURL(file);$('[data-logo-preview]').src=logoUrl;$('[data-logo-preview]').hidden=false;$('[data-logo-info]').textContent=`${meta.width}×${meta.height} · ${Math.ceil(meta.byteSize/1024)} KB`;}catch(e){error(e);}finally{controls();}}
