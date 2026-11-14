@@ -20,10 +20,10 @@ const outputRoot = resolve(process.env.ASG_V2_OUTPUT_DIR || (siteRelease.layout=
 if(outputRoot!==root)assertArchiveScratchPath(outputRoot);
 if (process.env.ASG_V2_PRESENTATION_ONLY === '1') throw Error('Presentation-only builds are retired: rebuild V2 with its canonical runtime.');
 const version = '20261006v2k';
-const runtimeVersion = '20261111siteviews1';
+const runtimeVersion = '20261114affiliations1';
 const presentationVersion = '20261028team10';
 const homeStylesVersion = '20261111readers2';
-const bootVersion = '20261111siteviews1';
+const bootVersion = '20261114affiliations1';
 const hourlyBootVersion = '20261111siteviews1';
 const archiveBootVersion = '20261111siteviews1';
 const statsBootVersion = '20261111siteviews1';

@@ -1,12 +1,12 @@
 // Build-only facade: lexical access to the canonical controllers/read models.
 let v2Auth=null;
 let v2PublishPending=false;
-let v2AffiliationsPromise=null,v2BestlapMetadataPromise=null;
+let v2BestlapMetadataPromise=null;
 const v2ClubSnapshots=new Map();
 function v2LoadAffiliations() {
-  return v2AffiliationsPromise ||= loadDriverAffiliations().then(({affiliations,entities})=>{
+  return loadDriverAffiliations().then(({affiliations,entities})=>{
     driverAffiliations=affiliations;clubsTeamsEntityDetails=entities;v2SchedulePublish();
-  }).catch(error=>{v2AffiliationsPromise=null;throw error;});
+  });
 }
 function v2LoadBestlapMetadata() {
   return v2BestlapMetadataPromise ||= (async()=>{

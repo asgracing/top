@@ -91,10 +91,7 @@ const featureStoreModulePromise = import("./src/shared/feature-store.js");
 const lifecycleModulePromise = import("./src/shared/lifecycle.js");
 const tableEngineModulePromise = import("./src/features/stats/table-engine.js");
 const safeDomModulePromise = import("./src/shared/safe-dom.js");
-const clubsTeamsModelsPromise = Promise.all([
-  import("./src/pages/clubs-teams/catalog-model.js"),
-  import("./src/pages/clubs-teams/detail-model.js")
-]);
+const driverAffiliationsModulePromise = import("./src/pages/clubs-teams/affiliation-index.js?v=20261114affiliations1");
 const clubsTeamsRatingModelPromise = import("./src/pages/clubs-teams/rating-model.js?v=20260811hometable1");
 let appStorage = null;
 let jsonQueryCache = null;
@@ -144,7 +141,6 @@ const TOP_API_ROOT_URL = TOP_API_BASE_URL.replace(/\/top-data\/v2$/i, "");
 const HOURLY_DATA_BASE_URL = normalizeBaseUrl(getDevRuntimeParam("hourlyApiBase")) || DEFAULT_HOURLY_DATA_BASE_URL;
 const TOP_BANS_DATA_URL = `${TOP_DATA_BASE_URL}/bans.json`;
 const CLUBS_TEAMS_DATA_BASE_URL = getDevRuntimeParam("clubsTeamsDataBase") || "https://data.asgracing.ru/public-cache-clubs-teams";
-const CLUBS_TEAMS_DETAIL_PATH_PATTERN = /^details\/(clubs|teams)\/([a-z0-9][a-z0-9-]{0,127})\.json$/;
 const AUTH_BASE_URL = "https://auth.asgracing.ru";
 const LOCAL_NEWS_DATA_URL = `${SITE_BASE_PATH}news-content/news.json`;
 const topDataV2ManifestUrl = `${TOP_DATA_V2_BASE_URL}/manifest.json`;
@@ -7781,47 +7777,11 @@ function renderLeaderboardHeaders() {
   return renderSortableHeaders(leaderboardColumns, t("leaderboardCols"), leaderboardSort);
 }
 
-function buildDriverAffiliationIndex(details) {
-  const index = new Map();
-  for (const detail of details) {
-    if (!detail || !["club", "team"].includes(detail.entity_type)) continue;
-    const entity = Object.freeze({ display_name: detail.display_name, slug: detail.slug });
-    for (const member of detail.roster || []) {
-      const publicId = String(member?.public_id || "").trim();
-      if (!publicId) continue;
-      index.set(publicId, Object.freeze({
-        ...(index.get(publicId) || {}),
-        [detail.entity_type]: entity
-      }));
-    }
-  }
-  return index;
-}
-
+let driverAffiliationsLoader = null;
 async function loadDriverAffiliations() {
-  const [{ validateCurrentPointer }, { validateEntityDetail }] = await clubsTeamsModelsPromise;
-  const base = `${CLUBS_TEAMS_DATA_BASE_URL.replace(/\/+$/, "")}/`;
-  const pointer = validateCurrentPointer(await requestJson(new URL("current.json", base), { retries: 1, cache: "no-store" }));
-  const snapshotRoot = new URL(`snapshots/${pointer.snapshot_id}/`, base);
-  const manifest = await requestJson(new URL("manifest.json", snapshotRoot), { retries: 1, cache: "no-store" });
-  const files = Array.isArray(manifest?.files)
-    ? manifest.files.map(file => String(file?.path || "").trim()).filter(path => CLUBS_TEAMS_DETAIL_PATH_PATTERN.test(path))
-    : [];
-  const loaded = await Promise.allSettled(files.map(async path => {
-    const match = path.match(CLUBS_TEAMS_DETAIL_PATH_PATTERN);
-    const entityType = match[1] === "clubs" ? "club" : "team";
-    const slug = match[2];
-    return validateEntityDetail(await requestJson(new URL(path, snapshotRoot), { retries: 1 }), {
-      entityType,
-      slug,
-      ratingRunId: pointer.rating_run_id
-    });
-  }));
-  const details = loaded.filter(result => result.status === "fulfilled").map(result => result.value);
-  return {
-    affiliations: buildDriverAffiliationIndex(details),
-    entities: new Map(details.map(detail => [detail.public_id, detail]))
-  };
+  const { createDriverAffiliationsLoader } = await driverAffiliationsModulePromise;
+  driverAffiliationsLoader ||= createDriverAffiliationsLoader({ requestJson, dataBaseUrl: CLUBS_TEAMS_DATA_BASE_URL });
+  return driverAffiliationsLoader();
 }
 
 function renderDriverAffiliation(row, entityType) {
