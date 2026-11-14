@@ -91,7 +91,11 @@ const featureStoreModulePromise = import("./src/shared/feature-store.js");
 const lifecycleModulePromise = import("./src/shared/lifecycle.js");
 const tableEngineModulePromise = import("./src/features/stats/table-engine.js");
 const safeDomModulePromise = import("./src/shared/safe-dom.js");
-const driverAffiliationsModulePromise = import("./src/pages/clubs-teams/affiliation-index.js?v=20261114affiliations1");
+const driverAffiliationsModulePromise = Promise.all([
+  import("./src/pages/clubs-teams/affiliation-index-cache.js?v=20261114affiliations2"),
+  import("./src/pages/clubs-teams/catalog-model.js"),
+  import("./src/pages/clubs-teams/detail-model.js")
+]);
 const clubsTeamsRatingModelPromise = import("./src/pages/clubs-teams/rating-model.js?v=20260811hometable1");
 let appStorage = null;
 let jsonQueryCache = null;
@@ -7777,10 +7781,81 @@ function renderLeaderboardHeaders() {
   return renderSortableHeaders(leaderboardColumns, t("leaderboardCols"), leaderboardSort);
 }
 
+const DRIVER_AFFILIATION_DETAIL_PATH = /^details\/(clubs|teams)\/([a-z0-9][a-z0-9-]{0,127})\.json$/;
+const DRIVER_AFFILIATION_OTHER_PATH = /^(?:catalog\/(?:clubs|teams)\/page-[1-9][0-9]*\.json|ratings\/(?:general|hourly|championship|seasons\/[A-Za-z0-9][A-Za-z0-9_.-]{0,127})\/(?:clubs|teams)\/page-[1-9][0-9]*\.json|assets\/[0-9a-f]{64}\.(?:png|jpg))$/;
+
+function completeDriverAffiliationManifest(manifest, pointer) {
+  if (manifest?.schema_version !== 1 || manifest.kind !== "clubs_teams_public_snapshot"
+      || manifest.rating_run_id !== pointer.rating_run_id || manifest.completed_at !== pointer.completed_at
+      || manifest.content_sha256 !== pointer.content_sha256
+      || (manifest.snapshot_id !== undefined && manifest.snapshot_id !== pointer.snapshot_id)
+      || !Array.isArray(manifest.files) || manifest.files.length > 2048) return false;
+  const seen = new Set();
+  return manifest.files.every(file => {
+    const path = file?.path;
+    if (typeof path !== "string" || (!DRIVER_AFFILIATION_DETAIL_PATH.test(path) && !DRIVER_AFFILIATION_OTHER_PATH.test(path))
+        || seen.has(path) || !Number.isSafeInteger(file.bytes) || file.bytes < 0
+        || typeof file.sha256 !== "string" || !/^[0-9a-f]{64}$/.test(file.sha256)) return false;
+    seen.add(path);
+    return true;
+  });
+}
+
+function buildDriverAffiliationIndex(details) {
+  const index = new Map();
+  for (const detail of details) {
+    if (!detail || !["club", "team"].includes(detail.entity_type)) continue;
+    const entity = Object.freeze({ display_name: detail.display_name, slug: detail.slug });
+    for (const member of detail.roster || []) {
+      const publicId = String(member?.public_id || "").trim();
+      if (!publicId) continue;
+      index.set(publicId, Object.freeze({
+        ...(index.get(publicId) || {}),
+        [detail.entity_type]: entity
+      }));
+    }
+  }
+  return index;
+}
+
+function driverAffiliationSource(requestJson, dataBaseUrl, validateCurrentPointer, validateEntityDetail) {
+  const base = `${dataBaseUrl.replace(/\/+$/, "")}/`;
+  return {
+    readPointer: async () => validateCurrentPointer(await requestJson(new URL("current.json", base), {
+      retries: 1, cache: "no-store"
+    })),
+    readSnapshot: async pointer => {
+      const snapshotRoot = new URL(`snapshots/${pointer.snapshot_id}/`, base);
+      const manifest = await requestJson(new URL("manifest.json", snapshotRoot), { retries: 1, cache: "no-store" });
+      if (Array.isArray(manifest?.files) && manifest.files.length > 2048) throw new Error("affiliation_manifest_budget");
+      const files = Array.isArray(manifest?.files)
+        ? manifest.files.map(file => String(file?.path || "").trim()).filter(path => DRIVER_AFFILIATION_DETAIL_PATH.test(path))
+        : [];
+      const loaded = await Promise.allSettled(files.map(async path => {
+        const match = path.match(DRIVER_AFFILIATION_DETAIL_PATH);
+        return validateEntityDetail(await requestJson(new URL(path, snapshotRoot), { retries: 1 }), {
+          entityType: match[1] === "clubs" ? "club" : "team",
+          slug: match[2], ratingRunId: pointer.rating_run_id
+        });
+      }));
+      const details = loaded.filter(result => result.status === "fulfilled").map(result => result.value);
+      return {
+        cacheable: completeDriverAffiliationManifest(manifest, pointer) && loaded.every(result => result.status === "fulfilled"),
+        value: {
+          affiliations: buildDriverAffiliationIndex(details),
+          entities: new Map(details.map(detail => [detail.public_id, detail]))
+        }
+      };
+    }
+  };
+}
+
 let driverAffiliationsLoader = null;
 async function loadDriverAffiliations() {
-  const { createDriverAffiliationsLoader } = await driverAffiliationsModulePromise;
-  driverAffiliationsLoader ||= createDriverAffiliationsLoader({ requestJson, dataBaseUrl: CLUBS_TEAMS_DATA_BASE_URL });
+  const [{ createDriverAffiliationsLoader }, { validateCurrentPointer }, { validateEntityDetail }] = await driverAffiliationsModulePromise;
+  driverAffiliationsLoader ||= createDriverAffiliationsLoader(driverAffiliationSource(
+    requestJson, CLUBS_TEAMS_DATA_BASE_URL, validateCurrentPointer, validateEntityDetail
+  ));
   return driverAffiliationsLoader();
 }
 

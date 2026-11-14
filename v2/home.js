@@ -352,7 +352,7 @@ subscribe(next=>{
      if(!next.loading.home)startBackground();
    }
   changed('viewer',next.viewer,renderTable);
-  changed('affiliations',next.affiliationsSize,renderTable);
+  changed('affiliations',[next.affiliationsSize,next.affiliationsRevision??0],renderTable);
   if(tab==='clubs'&&!tableBusy)changed('clubs',[next.clubs,next.clubsError],renderTable);
   $('about-lead').innerHTML=editorial.about[0]||'';
   if(!$('about-content').innerHTML)$('about-content').innerHTML=editorial.about.slice(1).join('').replace(/(<li[^>]*>[^<]*[\s\S]*?<\/li>)/g,'<ul>$1</ul>');
@@ -382,7 +382,7 @@ if(!isSubpage){
   if('IntersectionObserver' in window){const observer=new IntersectionObserver(entries=>{if(entries.some(entry=>entry.isIntersecting)){observer.disconnect();loadTable();}},{rootMargin:'240px 0px'});observer.observe($('ranking'));}
   else loadTable();
 }
-try{await import('./runtime/home.js?v=20261111siteviews1');applyHash();if(isSubpage)startBackground();}catch(error){console.error('V2 runtime unavailable',error);$('event-track').textContent=text('Не удалось загрузить данные','Could not load data');$('day-driver').textContent=text('Данные недоступны','Data unavailable');tableError=true;tableBusy=false;renderTable()}
+try{await import('./runtime/home.js?v=20261114affiliations2');applyHash();if(isSubpage)startBackground();}catch(error){console.error('V2 runtime unavailable',error);$('event-track').textContent=text('Не удалось загрузить данные','Could not load data');$('day-driver').textContent=text('Данные недоступны','Data unavailable');tableError=true;tableBusy=false;renderTable()}
 if(document.documentElement.dataset.v2Page){
   const {startPage}=await import('./pages/controller.js?v=20261111siteviews1');
   await startPage({native,presentation,showDialog,esc,text,label,date,number,rating,car,language,subscribe,serverAdmission});

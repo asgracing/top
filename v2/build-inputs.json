@@ -1,6 +1,6 @@
 {
   "schemaVersion": 1,
-  "runtimeVersion": "20261111siteviews1",
+  "runtimeVersion": "20261114affiliations2",
   "inputs": [
     {
       "path": "account/driver-overlay.js",
@@ -8,7 +8,7 @@
     },
     {
       "path": "app.js",
-      "sha256": "32d9726284973b4a8735230943cb0a242137601b3ae3ab3cbe7d045a989fce6b"
+      "sha256": "f7732c0992d53cfddbdd8deb62d08bdba0ec32fbaca062f38a559dbd2c099a35"
     },
     {
       "path": "assets/track-maps/barcelona.js",
@@ -76,7 +76,7 @@
     },
     {
       "path": "scripts/build-v2.mjs",
-      "sha256": "e55c0c874da4992d449024b738062627726537424ff957f37078d40d035c3dc3"
+      "sha256": "d754afb07505ff9b8a271e1a11612b03544516c3bb8eee6b3215b1975cfde4f7"
     },
     {
       "path": "scripts/generate-localized-pages.mjs",
@@ -104,7 +104,7 @@
     },
     {
       "path": "scripts/v2-runtime-facade.txt",
-      "sha256": "a74cb9eda9423f7700c81f85b85dd7c5f34ec0f3487a809be46504c0c0b944e1"
+      "sha256": "912e51840db4971f39502dd77c8dec883517bf62543028376a98679747486f5b"
     },
     {
       "path": "src/features/auth/clubs-teams-auth-model.js",
@@ -209,6 +209,10 @@
     {
       "path": "src/pages/cars/model.js",
       "sha256": "c1b40b7654fe38255982c26fc3b180b5cbdb68de3ce086fef58472a2a6ccfef3"
+    },
+    {
+      "path": "src/pages/clubs-teams/affiliation-index-cache.js",
+      "sha256": "9329a3667f22a33cd8119f903bdea27e8f98be937350d11ce451c3f92d2f6d28"
     },
     {
       "path": "src/pages/clubs-teams/catalog-model.js",
@@ -724,7 +728,7 @@
     },
     {
       "path": "v2/home.js",
-      "sha256": "5302f2bf844d2d01132a09c010292fc0cbaca5346c109fc2e59d0ca471ddbdea"
+      "sha256": "ad4aec55bd10ed0bf6469a34ead4fc52618f8c4ef59a8236e8d5c3095c499358"
     },
     {
       "path": "v2/live-stats.js",

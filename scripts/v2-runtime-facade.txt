@@ -1,11 +1,16 @@
 // Build-only facade: lexical access to the canonical controllers/read models.
 let v2Auth=null;
 let v2PublishPending=false;
+let v2AffiliationsRevision=0;
+let lastPublishedAffiliationsRef=null;
 let v2BestlapMetadataPromise=null;
 const v2ClubSnapshots=new Map();
 function v2LoadAffiliations() {
   return loadDriverAffiliations().then(({affiliations,entities})=>{
-    driverAffiliations=affiliations;clubsTeamsEntityDetails=entities;v2SchedulePublish();
+    driverAffiliations=affiliations;clubsTeamsEntityDetails=entities;
+    if(lastPublishedAffiliationsRef!==affiliations){
+      lastPublishedAffiliationsRef=affiliations;v2AffiliationsRevision+=1;v2SchedulePublish();
+    }
   });
 }
 function v2LoadBestlapMetadata() {
@@ -32,7 +37,7 @@ function v2SchedulePublish() {
     voteDisabled:document.getElementById(hourlyVoteAlreadyVoted?'hourly-unvote-btn':'hourly-vote-btn')?.disabled,
     votes:{count:hourlyVotesCount,voted:hourlyVoteAlreadyVoted,pending:hourlyVotePending,error:hourlyVoteFailed},
     donations:donationAlertsData,donationsLoading:donationAlertsLoading,donationsError:donationAlertsFailed,
-    clubs:homeClubsTeamsSnapshot,clubsError:homeClubsTeamsError,affiliationsSize:driverAffiliations.size,viewer:authenticatedDriverPublicId,auth:v2Auth,
+    clubs:homeClubsTeamsSnapshot,clubsError:homeClubsTeamsError,affiliationsSize:driverAffiliations.size,affiliationsRevision:v2AffiliationsRevision,viewer:authenticatedDriverPublicId,auth:v2Auth,
     onlineDays:buildRelativeActivityDays(raceActivityInsights?.length?raceActivityInsights:onlineData),news:getSortedNewsFeed(newsFeedData).slice(0,6),invitations:membershipInvitationNotifications,
     unreadNews:getUnreadNewsCount(newsFeedData),
     servers:(V2_NEEDS_SERVER_STATUS?getServerStatusItems():[]).map(({key,label,server})=>({key,label,server,

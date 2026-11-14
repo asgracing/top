@@ -1,7 +1,20 @@
 import assert from "node:assert/strict";
 import test from "node:test";
 import fs from "node:fs/promises";
-import { buildDriverAffiliationIndex, createDriverAffiliationsLoader } from "../../src/pages/clubs-teams/affiliation-index.js";
+import { createDriverAffiliationsLoader as createSnapshotLoader } from "../../src/pages/clubs-teams/affiliation-index-cache.js";
+import * as legacyFacade from "../../src/pages/clubs-teams/affiliation-index.js";
+import * as frozenLegacy from "../../v2/boot/chunks/affiliation-index-ARRNG442.js";
+import { validateCurrentPointer } from "../../src/pages/clubs-teams/catalog-model.js";
+import { validateEntityDetail } from "../../src/pages/clubs-teams/detail-model.js";
+
+// Exercise the actual canonical callbacks without importing the DOM application.
+const appSource = await fs.readFile(new URL("../../app.js", import.meta.url), "utf8");
+const callbackSource = appSource.slice(appSource.indexOf("const DRIVER_AFFILIATION_DETAIL_PATH"), appSource.indexOf("let driverAffiliationsLoader = null;"));
+assert.ok(callbackSource.startsWith("const DRIVER_AFFILIATION_DETAIL_PATH"));
+const { buildDriverAffiliationIndex, driverAffiliationSource } = Function(callbackSource + "\nreturn { buildDriverAffiliationIndex, driverAffiliationSource };")();
+const createDriverAffiliationsLoader = ({ requestJson, dataBaseUrl }) => createSnapshotLoader(
+  driverAffiliationSource(requestJson, dataBaseUrl, validateCurrentPointer, validateEntityDetail)
+);
 
 const fixture = new URL("../fixtures/clubs-teams-public/", import.meta.url);
 const read = async path => JSON.parse(await fs.readFile(new URL(path, fixture), "utf8"));
@@ -103,6 +116,15 @@ test("malformed manifest fallback is retried and paths outside existing detail n
   assert.equal(state.calls.some(path => path.includes("outside") || path.includes("not..safe")), false);
 });
 
+test("oversized manifest rejects before fetching any entity and remains retryable", async () => {
+  const state = source();
+  state.manifest = manifestFor(state.pointer, Array.from({ length: 2049 }, (_, i) => `details/clubs/entity-${i}.json`));
+  await assert.rejects(state.loader(), /affiliation_manifest_budget/);
+  assert.equal(state.calls.length, 2);
+  assert.equal(state.calls.some(path => path.includes("/details/")), false);
+  state.manifest = null;assert.equal((await state.loader()).entities.size, 2);
+});
+
 test("explicit invalidation refreshes the same public revision after a known mutation", async () => {
   const state = source();const initial = await state.loader();
   state.loader.invalidate();
@@ -152,4 +174,26 @@ test("invalidation during an old load cannot populate or clear a newer snapshot 
   await reached;loader.invalidate();const current = await loader();
   release();await refused;
   assert.equal(await loader(), current);
+});
+
+test("breaking helper interface uses a new query key and synchronized runtime versions", async () => {
+  assert.ok(appSource.includes("affiliation-index-cache.js?v=20261114affiliations2"));
+  const build = await fs.readFile(new URL("../../scripts/build-v2.mjs", import.meta.url), "utf8");
+  const home = await fs.readFile(new URL("../../v2/home.js", import.meta.url), "utf8");
+  assert.match(build, /const runtimeVersion = '20261114affiliations2'/);
+  assert.match(build, /const bootVersion = '20261114affiliations2'/);
+  assert.ok(home.includes("runtime/home.js?v=20261114affiliations2"));
+});
+test("old cached helper and late old-URL facade preserve the published requestJson/base API", async () => {
+  assert.equal(legacyFacade.createDriverAffiliationsLoader, frozenLegacy.createDriverAffiliationsLoader);
+  assert.equal(legacyFacade.buildDriverAffiliationIndex, frozenLegacy.buildDriverAffiliationIndex);
+  for (const factory of [frozenLegacy.createDriverAffiliationsLoader, legacyFacade.createDriverAffiliationsLoader]) {
+    const state = source();
+    const load = factory({ requestJson: state.requestJson, dataBaseUrl: "https://fixture.test" });
+    const result = await load();
+    assert.equal(result.entities.size, 2);assert.equal(state.calls.length, 4);
+    for (const detail of state.details) for (const member of detail.roster) {
+      assert.equal(result.affiliations.get(member.public_id)[detail.entity_type].slug, detail.slug);
+    }
+  }
 });
