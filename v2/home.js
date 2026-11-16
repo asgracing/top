@@ -6,7 +6,8 @@ import copy from './copy.js?v=20261006v2k';
 import { subscribe, getRuntime } from './bridge.js?v=20261006v2k';
 import {rankingPosition,eventKind,normalizeTablePage,normalizeSafetyRow,paginationPages,serverSrRestriction} from './models.js?v=20261013delivery1';
 import {createPresentation} from './presentation.js?v=20261104rc3';
-import {createRecentRaces} from './recent-races.js?v=20261111readers2';
+import {createRecentRaces} from './recent-races.js?v=20261117home1';
+import {createDonationSupport} from './donations.js?v=20261117home1';
 import {createHeader} from './header.js?v=20261116profilereports1';
 import {liveRanking,liveBestlapTracks} from './live-stats.js';
 import {serverSessionLabel} from './server-session.js?v=20261025direct1';
@@ -81,6 +82,7 @@ const presentation=createPresentation({$,native,getModel:()=>model,esc,text,labe
 const dialogFrames=[];
 $('modal').addEventListener('close',()=>{if(!$('modal').open){if($('modal').dataset.kind==='track-guide')$('modal-body').replaceChildren();dialogFrames.length=0;$('site-shell').inert=false;lastTrigger=serverDialogTrigger(lastTrigger);lastTrigger?.focus?.({preventScroll:true});}});
 const recentRaces=isSubpage?null:createRecentRaces({$,native,getModel:()=>model,presentation,showDialog,pushDialog,esc,text,date,number,car,classic,language});
+const donationSupport=$('donations-all')?createDonationSupport({$,esc,text,language,showDialog}):null;
 if($('recent-races'))$('recent-races').textContent=text('Последние гонки','Recent races');
 if($('event-calendar'))$('event-calendar').textContent=text('Календарь','Calendar');
 const header=createHeader({$,native,esc,text,number,rating,driverHref,privacy,newsHref:item=>classic('news/article/')+'?slug='+encodeURIComponent(item.slug||item.id)});
@@ -102,6 +104,7 @@ const carImage=id=>`/assets/v2-light/car-icons/${Number(id)}.webp`;
 const trackImage=file=>`/assets/v2-light/tracks/${file.replace(/\.jpg$/i,'.webp')}`;
 function car(row){const name=row.car_name||row.car_name_raw||row.favorite_car||row.favorite_car_name||'—',id=row.car_model_id??row.winner_car_model_id;return `<span class="car-cell">${id!=null?`<img ${carThumbnailAttributes(id,66)} alt="" onerror="this.hidden=true">`:''}<span>${esc(name)}</span></span>`}
 function renderSupport(){
+  void donationSupport?.load();
   const data=model.donations,goal=data?.goal;
   const money=(value,currency='RUB')=>{try{return new Intl.NumberFormat(ru?'ru-RU':'en-GB',{style:'currency',currency,maximumFractionDigits:0}).format(value)}catch{return number(value)}};
   if(goal&&Number(goal.goal_amount)>0){

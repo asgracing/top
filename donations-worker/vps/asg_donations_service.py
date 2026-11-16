@@ -22,6 +22,7 @@ from typing import Any, Callable, Mapping
 from urllib.error import HTTPError, URLError
 from urllib.parse import parse_qs, urlencode, urlparse
 from urllib.request import Request, urlopen
+from donation_history import DonationHistory
 
 
 TOKEN_KEY = "donationalerts:oauth-tokens"
@@ -260,6 +261,7 @@ class DonationService:
         self.clock = clock
         self.refresh_lock = threading.RLock()
         self.recent_lock = threading.Lock()
+        self.history = DonationHistory(self, sanitize_donation)
 
     def require(self, value: str, name: str) -> str:
         if not value:
@@ -541,6 +543,19 @@ class Handler(BaseHTTPRequestHandler):
                 return
             if parsed.path == "/recent":
                 self.send_json(self.service.recent(), cache_control="public, max-age=60")
+                return
+            if parsed.path == "/history":
+                query = parse_qs(parsed.query)
+                try:
+                    offset = int(query.get('offset', ['0'])[0])
+                    limit = int(query.get('limit', ['50'])[0])
+                    if not 0 <= offset <= 300000 or not 1 <= limit <= 100:
+                        raise ValueError()
+                except ValueError:
+                    self.send_json({'ok': False, 'error': 'invalid_pagination'}, 400)
+                    return
+                result = self.service.history.read(offset, limit, query.get('revision', [None])[0])
+                self.send_json(result, 200 if result['ok'] else 409, cache_control='no-store')
                 return
             if parsed.path == "/oauth/start":
                 if not self.is_direct_request():

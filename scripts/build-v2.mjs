@@ -22,8 +22,8 @@ if (process.env.ASG_V2_PRESENTATION_ONLY === '1') throw Error('Presentation-only
 const version = '20261006v2k';
 const runtimeVersion = '20261117reports1';
 const presentationVersion = '20261028team10';
-const homeStylesVersion = '20261111readers2';
-const bootVersion = '20261117reports1';
+const homeStylesVersion = '20261117home1';
+const bootVersion = '20261117home1';
 const hourlyBootVersion = '20261117reports1';
 const archiveBootVersion = '20261117reports1';
 const statsBootVersion = '20261117reports1';

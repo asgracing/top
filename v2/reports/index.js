@@ -32,10 +32,12 @@ export async function startReport(context={}){const {openIntake}=await import('.
 
 export async function mountList(root,options={}){const module=await import('./registry.js?v=20261117reports1');return module.mountList(root,options,{style,tx,lang,request,me,errorText});}
 export async function mountReportsPage(root){
+ const banQuery=new URLSearchParams(location.search);if(banQuery.has('ban-stats')){style();await identity();const module=await import('./ban-statistics.js?v=20261117home1');await module.mountBanStatistics(root,{request,tx,lang,date});return;}
  style();const query=new URLSearchParams(location.search);if(query.has('help')){const module=await import('./help.js?v=20261117reports1');module.mountHelp(root,{tx,lang});return;}await identity();if(query.has('stats')){const module=await import('./statistics.js?v=20261117reports1');await module.mountStatistics(root,{tx,lang,request,errorText});return;}const id=query.get('id');
  if(id)return mountCase(root,id);
  await mountList(root,{judicial:!!(me?.judge||me?.chief||me?.owner),heading:false});
  const entry=document.createElement('section');entry.className='report-intro';entry.innerHTML=`<div><h1>${tx('Репорты ASG','ASG incident reports')}</h1><p>${tx('Сообщите о гоночном инциденте. Подготовьте ссылку на гонку, доступные доказательства и момент эпизода.','Report a racing incident. Prepare the race link, accessible evidence and the incident timestamp.')}</p></div><nav class="report-entry-actions" aria-label="${tx('Подача и помощь','Submit and help')}"><button data-new-report>${tx('Подать репорт','Submit report')}</button><a class="report-help" href="?help=1"><svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="1.8" aria-hidden="true"><circle cx="12" cy="12" r="9"/><path d="M9.5 9a2.5 2.5 0 0 1 5 0c0 2-2.5 2-2.5 4M12 16v1"/></svg>${tx('Как подать репорт','How to submit a report')}</a>${me?.judge||me?.chief||me?.owner?`<a href="?stats=1">${tx('Статистика судей','Judge statistics')}</a>`:''}</nav>`;root.prepend(entry);entry.querySelector('button').onclick=()=>startReport();
+ if(me?.judge||me?.chief||me?.owner){const link=document.createElement('a');link.href='?ban-stats=1';link.textContent=tx('Баны администраторов','Administrator bans');entry.querySelector('.report-entry-actions').append(link);}
  if(me?.global_unban===true){
   const button=document.createElement('button');
   button.type='button';button.textContent=tx('Полный разбан','Full unban');

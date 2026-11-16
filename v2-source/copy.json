@@ -16,7 +16,7 @@
       "snapshot": "Дизайн-превью · снимок 05.10.2026",
       "support": "Поддержка проекта",
       "goal": "Цель сбора",
-      "thanks": "Особая благодарность",
+      "thanks": "Благодарность",
       "donations": "Последние донаты",
       "supportCta": "Поддержать ASG Racing",
       "every": "Каждый вклад\nимеет значение.",
@@ -101,7 +101,9 @@
       "minute": "мин",
       "clean": "чисто",
       "stable": "стабильно",
-      "risk": "риск"
+      "risk": "риск",
+      "topDonors": "Топ-3 донатеров",
+      "allDonations": "Смотреть все"
     },
     "editorial": {
       "subtitle": "Monza 24/7, ежедневные заезды, помощь новичкам",
@@ -182,7 +184,7 @@
       "snapshot": "Design preview · snapshot 05 Oct 2026",
       "support": "Support the project",
       "goal": "Fundraising goal",
-      "thanks": "Special thanks",
+      "thanks": "Thanks",
       "donations": "Recent donations",
       "supportCta": "Support ASG Racing",
       "every": "Every contribution\nmakes a difference.",
@@ -267,7 +269,9 @@
       "minute": "min",
       "clean": "clean",
       "stable": "steady",
-      "risk": "risk"
+      "risk": "risk",
+      "topDonors": "Top 3 donors",
+      "allDonations": "View all"
     },
     "editorial": {
       "subtitle": "Monza 24/7, daily events, beginner-friendly help",

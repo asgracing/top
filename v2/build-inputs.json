@@ -76,7 +76,7 @@
     },
     {
       "path": "scripts/build-v2.mjs",
-      "sha256": "58e3d7bd250a5c46a96fbe4d4722c6ee7c452861481f5304d370d392d580494f"
+      "sha256": "fd049c4d1507ab721a61c773e12d23f185a49c73fdf02e401b181b338b9ed37c"
     },
     {
       "path": "scripts/generate-localized-pages.mjs",
@@ -644,7 +644,7 @@
     },
     {
       "path": "v2-source/copy.json",
-      "sha256": "f222fc31ddcc887bc5ffe6512ae249588c2e9d0118e673446f29b8bc5df71298"
+      "sha256": "69403c10fad78904de13df4571f8abb555e704330196e4151bd3aa14aa7da961"
     },
     {
       "path": "v2-source/design.css",
@@ -652,7 +652,7 @@
     },
     {
       "path": "v2-source/home.html",
-      "sha256": "898a37e230772ab30415d918b04cb38b7a195f1ddc16c0cb27e47c05dfc95076"
+      "sha256": "b22e934cf9ceff78e28bda94c4229b6745e7062296927b323190c0898130c6b6"
     },
     {
       "path": "v2-source/pages/archive.js",
@@ -715,6 +715,10 @@
       "sha256": "9748c3c55f9f88bd964f457ed0d5778049d9a7a008e063e6a2df842541e327db"
     },
     {
+      "path": "v2/donations.js",
+      "sha256": "d072d49cd76c878d5ccc04dce6e85dfbd5c0c0459171ba81410f93857ef8ec71"
+    },
+    {
       "path": "v2/driver-safety-model.js",
       "sha256": "8dccd9d2dbee5ca5c96a80e68138d8cb11c0f5e94f545cda8b65416abf1f17ea"
     },
@@ -728,7 +732,7 @@
     },
     {
       "path": "v2/home.js",
-      "sha256": "52e80c331ccd09504e162917f54b49ef4a80fdd29e2e7f8030bf1091251d9081"
+      "sha256": "2c3ed5bab9c5297b79748a39fe086edbe33c9c3826a4c4ee2c9c1368aae707d6"
     },
     {
       "path": "v2/live-stats.js",
@@ -788,7 +792,7 @@
     },
     {
       "path": "v2/pages/data.js",
-      "sha256": "5aa65269cceb521c8efdf9c82ac3f73d83ebaa6e60db7c90dadee25c8c606081"
+      "sha256": "9578250998dad27c34fa5f6c842facdd9b70b4948dd9cb6aee785a543b15cfa8"
     },
     {
       "path": "v2/pages/driver-safety.js",
@@ -820,7 +824,11 @@
     },
     {
       "path": "v2/recent-races.js",
-      "sha256": "3e0d617be99acdb968389c52e99e3df89085eddf707adb28ce9c117555867096"
+      "sha256": "7afb286d127e53f6f6649b394df1644095d9be8ef72a9f10c1d3321039379c95"
+    },
+    {
+      "path": "v2/reports/ban-statistics.js",
+      "sha256": "c38016c677645fddb602b48a558c53dfc28b23d25462b27a79f0a0877191e589"
     },
     {
       "path": "v2/reports/case.js",
@@ -832,7 +840,7 @@
     },
     {
       "path": "v2/reports/index.js",
-      "sha256": "530d325516c1566ace0e16efe1a41c12d3ac73eafb842a1ffb77a356f51cb80c"
+      "sha256": "ca510518e23fa10fd073822196fdbccfd5f124ec0dcc2b90871dfde591b01ff8"
     },
     {
       "path": "v2/reports/intake.js",
@@ -856,7 +864,7 @@
     },
     {
       "path": "v2/reports/registry.js",
-      "sha256": "142346e1c3d321be4814200be617a1fd20b218dfa8f2ec203ade3fb2588ce76f"
+      "sha256": "e9980e8ca0fe0117b9aa2fcb372ac6cd0f62c97604062e29f07fa21274c210bf"
     },
     {
       "path": "v2/reports/statistics.js",

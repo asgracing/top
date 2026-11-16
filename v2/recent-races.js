@@ -1,5 +1,5 @@
 import {bindPagination} from './pages/pagination.js?v=20261015pagination1';
-import {createPageData} from './pages/data.js?v=20261111recent1';
+import {createPageData,normalizeEvent} from './pages/data.js?v=20261117home1';
 import {eventKind as resolveKind} from './models.js?v=20261006v2k';
 import {createPageViews} from './pages/views/core.js?v=20261015pagination1';
 import {paintRace} from './pages/views/race-modal.js?v=20261011racelinks1';
@@ -9,7 +9,7 @@ export function createRecentRaces({$,native,getModel,presentation,showDialog,pus
   const state={recentPage:1,month:''},fixture={recent:[]},raw={event:null,schedule:{items:[]}},data=createPageData(native,{raceProtocol:true});
   let ticket=0,raceBackLabel='';
   const eventKind=e=>{const kind=resolveKind(e,e.car_restriction?.mode==='single_model');return kind==='mono'?'monoclass':kind;};
-  const eventKindLabel=kind=>({hourly:text('Часовая гонка','Hourly race'),monoclass:text('Монокласс','Single model'),championship:text('Гонка чемпионата','Championship race'),endurance:text('Эндюранс','Endurance')})[kind];
+  const eventKindLabel=kind=>({team:text('Командная гонка','Team race'),hourly:text('Часовая гонка','Hourly race'),monoclass:text('Монокласс','Single model'),championship:text('Гонка чемпионата','Championship race'),endurance:text('Эндюранс','Endurance')})[kind];
   const views=createPageViews({raw,fixture,state,lang:language,participation:data.participation,eventKind,eventKindLabel,
     tracks:new Proxy({}, {get:(_,code)=>native().track(code)}),
     route:(name,id)=>classic(name==='home'?'':name+'/')+(id?'?id='+encodeURIComponent(id):''),
@@ -29,7 +29,7 @@ export function createRecentRaces({$,native,getModel,presentation,showDialog,pus
     try{
       const result=await data.hourly();
       if(current!==ticket||!$('modal').open||$('modal').dataset.kind!=='home-calendar')return;
-      if(!/^\d{4}-\d{2}-\d{2}$/.test(result.event?.date)||!Array.isArray(result.schedule?.items)||!Array.isArray(result.recent))throw new Error('Invalid calendar');
+      if(result.scheduleUnavailable||!/^\d{4}-\d{2}-\d{2}$/.test(result.event?.date)||!Array.isArray(result.schedule?.items)||!Array.isArray(result.recent))throw new Error('Invalid calendar');
       Object.assign(raw,result);fixture.recent=result.recent;state.month=raw.event.date.slice(0,7);
       $('modal-body').innerHTML=calendarHtml();
     }catch{
@@ -54,8 +54,8 @@ export function createRecentRaces({$,native,getModel,presentation,showDialog,pus
     if($('modal').open&&$('modal').dataset.kind==='event')presentation.refreshEntry();
   }
   function openEvent(e,trigger){
-    ++ticket;pushDialog(trigger);
     const hero=isHero(e);
+    ++ticket;pushDialog(trigger);
     if(!hero&&e.participation_mode!=='team')delete data.participation[e.event_id];
     presentation.openEvent(trigger,e,hero?null:{html:()=>entryHtml(e),vote:()=>toggle(e)});
     $('modal-body').insertAdjacentHTML('afterbegin',`<button type="button" class="text-link home-race-back" data-home-races-back>${text('← Календарь гонок','← Race calendar')}</button>`);

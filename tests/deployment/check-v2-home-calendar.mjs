@@ -10,6 +10,8 @@ const reports=[];
 try{
  for(const language of ['ru','en'])for(const width of [1920,1280,768,390,320]){
   const page=await browser.newPage({viewport:{width,height:936},reducedMotion:'reduce'}),errors=[],log=[],votes=new Map(),writes=[];
+  // This fixture's October/November calendar must not drift with the wall clock.
+  await page.clock.setFixedTime(new Date('2026-10-07T12:00:00Z'));
   let calendarFailure=false,entryFailure=false,voteFailure=false,voteDelay=0;
   page.on('pageerror',e=>errors.push(e.message));
   await page.route('**/*',async route=>{
@@ -50,7 +52,8 @@ try{
   await trigger.focus();await page.waitForFunction(()=>document.activeElement===document.getElementById('v2-event-calendar'));await page.keyboard.press('Enter');
   try{await modal.locator('.calendar-grid').waitFor({timeout:10000});}catch(error){console.log(JSON.stringify({language,width,errors,state:await modal.evaluate(n=>({open:n.open,kind:n.dataset.kind,body:document.getElementById('v2-modal-body').innerText,active:document.activeElement.id})),log:log.filter(r=>r.url.includes('hourly'))}));throw error;}
   assert.equal(await modal.getAttribute('data-kind'),'home-calendar');
-  assert.equal(await modal.locator('.calendar-day').count(),42);assert.equal(await modal.locator('.legend-kind').count(),4);
+  assert.equal(await modal.locator('.calendar-day').count(),42);assert.equal(await modal.locator('.legend-kind').count(),5);
+  assert.equal(await modal.locator('.legend-kind.kind-team').innerText(),language==='ru'?'Командная гонка':'Team race');
   if(width<=600)assert.ok(await modal.locator('.calendar-grid').evaluate(n=>n.scrollWidth<=n.clientWidth+1),'All seven weekdays fit on mobile');
   const month=await modal.locator('.calendar-controls>b').innerText();
   await modal.locator('[data-month-step="1"]').click();assert.notEqual(await modal.locator('.calendar-controls>b').innerText(),month);
@@ -96,7 +99,7 @@ try{
    voteFailure=false;await modal.locator('[data-page-join]').click();await page.waitForFunction(()=>document.querySelector('#v2-modal [data-page-join]')?.getAttribute('aria-pressed')==='true');
    await page.keyboard.press('Escape');await page.keyboard.press('Escape');
    // Remove the module read cache by reloading; test calendar-level retry.
-   await page.reload({waitUntil:'networkidle'});calendarFailure=true;
+   calendarFailure=true;await page.reload({waitUntil:'networkidle'});
    await trigger.click();await modal.locator('[data-home-calendar-retry]').waitFor();calendarFailure=false;
    await modal.locator('[data-home-calendar-retry]').click();await modal.locator('.calendar-grid').waitFor();await page.keyboard.press('Escape');
   }

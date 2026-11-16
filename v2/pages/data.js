@@ -198,7 +198,7 @@ export function createPageData(native,{raceArchive=false,raceProtocol=false}={})
     // Match the existing Hourly page: championship entries remain open.
     return {event:event?normalizeEvent(event):null,upcoming,
       schedule:{...schedule,items:Array.isArray(schedule?.items)?schedule.items.map(normalizeEvent):[]},
-      recent:recent.items,recentUnavailable:recent.unavailable};
+        recent:recent.items,recentUnavailable:recent.unavailable,scheduleUnavailable:!Array.isArray(schedule?.items)};
   }
   async function championships() {
     const index=await readJson(hourlyUrl('championships.json'));
