@@ -17,6 +17,7 @@ try{
   function rows(offset,count){return Array.from({length:count},(_,i)=>({id:String(offset+i),username:'Donor '+(offset+i),amount:offset+i===1?10:100,currency:offset+i===1?'USD':'RUB',amount_rub:800,fx_rate:'80',fx_date:'2020-01-01',message:offset+i===0?'<img src=x onerror=alert(1)>':'',created_at:'2020-01-01 12:00:00'}));}
   await page.route('**/*',async route=>{
    const req=route.request(),url=new URL(req.url());
+   if(!baseline&&url.origin===base&&url.pathname==='/v2/boot/home.js'&&url.searchParams.get('v')==='20261117reports1')return route.fulfill({status:200,contentType:'application/javascript',body:execFileSync('git',['show','e8448b26:v2/boot/home.js'],{cwd:root})});
    if(baseline&&url.origin===base&&url.pathname==='/v2/boot/home.js')return route.fulfill({status:200,contentType:'application/javascript',body:execFileSync('git',['show','33f76b3f:v2/boot/home.js'],{cwd:root})});
    const pathname=url.pathname.replace(/^\/__asg_public__/,'');
    if(pathname==='/donations-api/history'){
