@@ -1,6 +1,6 @@
-import {esc,REASON,OUTCOME,SANCTION,actionsFor} from './model.js?v=20261116reportsux2';
-import {EVENT_LABELS,ACTION_LABELS,nextStep} from './ux.js?v=20261116reportsux2';
-import {badge,person,raceAnchor,closureSummary} from './presentation.js?v=20261116reportsux2';
+import {esc,REASON,OUTCOME,SANCTION,actionsFor} from './model.js?v=20261117reports1';
+import {EVENT_LABELS,ACTION_LABELS,nextStep} from './ux.js?v=20261117reports1';
+import {badge,person,raceAnchor,closureSummary} from './presentation.js?v=20261117reports1';
 
 export async function mountCase(root,id,{identity,request,style,tx,lang,date,errorText,login,actionForm}){
  style();root.textContent=tx('Загрузка…','Loading…');

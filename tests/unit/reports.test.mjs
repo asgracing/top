@@ -2,7 +2,7 @@ import test from 'node:test';
 import assert from 'node:assert/strict';
 import {actionsFor,reportButton} from '../../v2/reports/model.js';
 import {normalizeNotifications,notificationTarget} from '../../src/features/auth/personal-notifications.js';
-import {parseRaceLink,profileId,raceLink,resolveRace} from '../../v2/reports/ux.js';
+import {parseRaceLink,profileId,raceLink,resolveRace,driverLabel} from '../../v2/reports/ux.js';
 test('report notifications link only to validated case IDs',()=>{
  const id='rpt_'+'a'.repeat(24);
  const n=normalizeNotifications({items:[{id:1,event_type:'report.submitted',details:{report_id:id,url:'javascript:alert(1)',steam_id:'private'}}]}).items[0];
@@ -40,4 +40,12 @@ test('race links preserve archive and published team-race identity',()=>{
 test('bare-ID resolution refuses ambiguity and service errors',async()=>{
  await assert.rejects(resolveRace('race1',null,async()=>({race_id:'race1'})),/ambiguous_race/);
  await assert.rejects(resolveRace('race1',null,async()=>{throw Error('race_catalog_unavailable');}),/race_catalog_unavailable/);
+});
+
+test('pilot choices use numbers from the selected race and preserve duplicate-name identities',()=>{
+ const race={drivers:{drv_a:'Same Name',drv_b:'Same Name',drv_c:'No number'},driver_numbers:{drv_a:[72],drv_b:[73,74]}};
+ assert.equal(driverLabel(race,'drv_a'),'#72 · Same Name');
+ assert.equal(driverLabel(race,'drv_b'),'#73 / #74 · Same Name');
+ assert.equal(driverLabel(race,'drv_c'),'#— · No number');
+ assert.equal(driverLabel({...race,driver_numbers:{drv_a:[true,-1,1000,'<script>']}},'drv_a'),'#— · Same Name');
 });

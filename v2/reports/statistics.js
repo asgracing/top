@@ -1,5 +1,5 @@
-import {esc} from './model.js?v=20261116reportsux2';
-import {person} from './presentation.js?v=20261116reportsux2';
+import {esc} from './model.js?v=20261117reports1';
+import {person} from './presentation.js?v=20261117reports1';
 
 export async function mountStatistics(root,{request,tx,lang,errorText}){
  root.innerHTML=`<a href="${lang()==='en'?'/en':''}/reports/">${tx('← Репорты','← Reports')}</a><h2>${tx('Статистика судей','Judge statistics')}</h2><label>${tx('Период','Period')}<select data-days>${[7,30,90,365].map(days=>`<option value="${days}"${days===30?' selected':''}>${days} ${tx('дней','days')}</option>`).join('')}</select></label><div data-statistics role="status" aria-live="polite"></div>`;

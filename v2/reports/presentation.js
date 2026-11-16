@@ -1,4 +1,4 @@
-import {esc,STATUS,SANCTION} from './model.js?v=20261116reportsux2';
+import {esc,STATUS,SANCTION} from './model.js?v=20261117reports1';
 
 const paths={circle:'M12 3a9 9 0 1 0 0 18a9 9 0 0 0 0-18',work:'M12 3a9 9 0 1 0 0 18a9 9 0 0 0 0-18 M12 9v6 M9 12h6',clock:'M12 3a9 9 0 1 0 0 18a9 9 0 0 0 0-18 M12 7v5l3 2',check:'M5 12l4 4L19 6',appeal:'M9 5L4 10l5 5 M5 10h9a5 5 0 0 1 0 10',scales:'M12 3v18 M5 21h14 M4 7h16 M6 7l-3 7h6L6 7 M18 7l-3 7h6l-3-7',warning:'M12 3L2 21h20L12 3 M12 9v5 M12 17v1',cross:'M6 6l12 12 M18 6L6 18'};
 const states={submitted:['circle','new'],review:['work','review'],awaiting_evidence:['clock','waiting'],decided:['scales','decided'],closed:['check','closed'],late_rejected:['cross','muted'],appealed:['appeal','appeal'],appeal_review:['scales','appeal'],appeal_late_pending:['clock','appeal'],late_pending:['clock','waiting'],escalated:['appeal','waiting']};

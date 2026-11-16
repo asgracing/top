@@ -1,5 +1,5 @@
-import {esc,OUTCOME,SANCTION,REASON} from './model.js?v=20261116reportsux2';
-import {ACTION_LABELS as labels,REQUEST_PRESETS,profileId} from './ux.js?v=20261116reportsux2';
+import {esc,OUTCOME,SANCTION,REASON} from './model.js?v=20261117reports1';
+import {ACTION_LABELS as labels,REQUEST_PRESETS,profileId} from './ux.js?v=20261117reports1';
 export function actionForm(root,c,action,{tx,word,select,area,field,options,request,mountCase,errorText}){
  const host=root.querySelector('[data-action-form]');let fields='';
  const named=Object.fromEntries([...new Set([c.author_id,...(c.participants||[])])].map(id=>[id,[c.race.drivers[id]||tx('Автор репорта','Report author'),c.race.drivers[id]||'Report author']]));

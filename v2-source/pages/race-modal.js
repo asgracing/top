@@ -1,5 +1,5 @@
-import {copyRaceButton} from '/v2/reports/ux.js?v=20261116reportsux2';
-import {reportButton} from '/v2/reports/model.js?v=20261116reportsux2';
+import {copyRaceButton} from '/v2/reports/ux.js?v=20261117reports1';
+import {reportButton} from '/v2/reports/model.js?v=20261117reports1';
 // Approved results layout; only the official fastest lap is highlighted.
 import {decorateRaceHeading, renderResultTabs, installResultTabs} from '/src/shared/race-result-context.js?v=20261011racelinks1';
 import {renderTeamResults} from '/src/shared/team-racing-results-view.js?v=20261116teamsreports2';

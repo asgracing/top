@@ -1,5 +1,5 @@
-import {copyRaceButton} from '/v2/reports/ux.js?v=20261116reportsux2';
-import {reportButton} from '/v2/reports/model.js?v=20261116reportsux2';
+import {copyRaceButton} from '/v2/reports/ux.js?v=20261117reports1';
+import {reportButton} from '/v2/reports/model.js?v=20261117reports1';
 import {renderPagination} from '../pagination.js?v=20261015pagination1';
 import {trimServerNameAffixes} from '/src/shared/server-display-name.js?v=20261111names1';
 import {carThumbnailAttributes,trackThumbnailAttributes} from '/src/shared/image-thumbnails.js?v=20261013delivery1';

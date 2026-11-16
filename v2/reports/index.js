@@ -1,5 +1,5 @@
-import {esc,STATUS,OUTCOME,SANCTION,REASON,actionsFor,reportHref} from './model.js?v=20261116reportmenu1';
-import {ACTION_LABELS,EVENT_LABELS,nextStep} from './ux.js?v=20261116reportmenu1';
+import {esc,STATUS,OUTCOME,SANCTION,REASON,actionsFor,reportHref} from './model.js?v=20261117reports1';
+import {ACTION_LABELS,EVENT_LABELS,nextStep} from './ux.js?v=20261117reports1';
 import {subscribe} from '/v2/bridge.js?v=20261006v2k';
 const BASE='https://auth.asgracing.ru',lang=()=>document.documentElement.lang==='en'?'en':'ru';
 const tx=(ru,en)=>lang()==='en'?en:ru;
@@ -11,7 +11,7 @@ const word=(map,key)=>{
 const date=t=>new Date(t*1000).toLocaleString(lang()==='en'?'en-GB':'ru-RU');
 const labels=ACTION_LABELS;
 let auth=null,me=null,styles=false,sessionRevision=0;
-function style(){if(styles)return;styles=true;const link=document.createElement('link');link.rel='stylesheet';link.href='/v2/reports/reports.css?v=20261116reportmenu1';document.head.append(link);}
+function style(){if(styles)return;styles=true;const link=document.createElement('link');link.rel='stylesheet';link.href='/v2/reports/reports.css?v=20261117reports1';document.head.append(link);}
 async function identity(){const revision=sessionRevision,payload=await fetch(BASE+'/v1/me',{credentials:'include',cache:'no-store'}).then(r=>r.ok?r.json():{});if(revision!==sessionRevision)return identity();auth=payload;const result=await request('/v1/reports/me').catch(()=>null);if(revision!==sessionRevision)return identity();me=result;return me;}
 export async function request(path,body,key){
  const revision=sessionRevision;
@@ -28,11 +28,11 @@ const driver=(id,names={})=>/^drv_[\w-]+$/.test(id||'')?`<a href="${lang()==='en
 const login=()=>`<a class="button" href="${BASE}/v1/auth/steam/start?return_path=${encodeURIComponent(location.pathname+location.search)}">${tx('Войти через Steam','Sign in with Steam')}</a>`;
 function dialog(title){style();const d=document.createElement('dialog'),trigger=document.activeElement;d.className='report-dialog';d.innerHTML=`<header><h2>${esc(title)}</h2><button type="button" data-close aria-label="${tx('Закрыть','Close')}">×</button></header><div class="report-body"></div>`;document.body.append(d);d.querySelector('[data-close]').onclick=()=>d.close();d.addEventListener('close',()=>{d.remove();trigger?.focus();},{once:true});d.showModal();return d;}
 
-export async function startReport(context={}){const {openIntake}=await import('./intake.js?v=20261116reportmenu1');return openIntake(context,{identity,request,dialog,tx,date,language:lang});}
+export async function startReport(context={}){const {openIntake}=await import('./intake.js?v=20261117reports1');return openIntake(context,{identity,request,dialog,tx,date,language:lang});}
 
-export async function mountList(root,options={}){const module=await import('./registry.js?v=20261116reportmenu1');return module.mountList(root,options,{style,tx,lang,request,me,errorText});}
+export async function mountList(root,options={}){const module=await import('./registry.js?v=20261117reports1');return module.mountList(root,options,{style,tx,lang,request,me,errorText});}
 export async function mountReportsPage(root){
- style();const query=new URLSearchParams(location.search);if(query.has('help')){const module=await import('./help.js?v=20261116reportmenu1');module.mountHelp(root,{tx,lang});return;}await identity();if(query.has('stats')){const module=await import('./statistics.js?v=20261116reportmenu1');await module.mountStatistics(root,{tx,lang,request,errorText});return;}const id=query.get('id');
+ style();const query=new URLSearchParams(location.search);if(query.has('help')){const module=await import('./help.js?v=20261117reports1');module.mountHelp(root,{tx,lang});return;}await identity();if(query.has('stats')){const module=await import('./statistics.js?v=20261117reports1');await module.mountStatistics(root,{tx,lang,request,errorText});return;}const id=query.get('id');
  if(id)return mountCase(root,id);
  await mountList(root,{judicial:!!(me?.judge||me?.chief||me?.owner),heading:false});
  const entry=document.createElement('section');entry.className='report-intro';entry.innerHTML=`<div><h1>${tx('Репорты ASG','ASG incident reports')}</h1><p>${tx('Сообщите о гоночном инциденте. Подготовьте ссылку на гонку, доступные доказательства и момент эпизода.','Report a racing incident. Prepare the race link, accessible evidence and the incident timestamp.')}</p></div><nav class="report-entry-actions" aria-label="${tx('Подача и помощь','Submit and help')}"><button data-new-report>${tx('Подать репорт','Submit report')}</button><a class="report-help" href="?help=1"><svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="1.8" aria-hidden="true"><circle cx="12" cy="12" r="9"/><path d="M9.5 9a2.5 2.5 0 0 1 5 0c0 2-2.5 2-2.5 4M12 16v1"/></svg>${tx('Как подать репорт','How to submit a report')}</a>${me?.judge||me?.chief||me?.owner?`<a href="?stats=1">${tx('Статистика судей','Judge statistics')}</a>`:''}</nav>`;root.prepend(entry);entry.querySelector('button').onclick=()=>startReport();
@@ -69,8 +69,8 @@ function openGlobalUnban(){
   button.disabled=false;
  };
 }
-export async function mountCase(root,id){const module=await import('./case.js?v=20261116reportmenu1');return module.mountCase(root,id,{identity,request,style,tx,lang,date,errorText,login,actionForm});}
-async function actionForm(root,c,action){try{const module=await import('./judicial.js?v=20261116reportmenu1');module.actionForm(root,c,action,{tx,word,select,area,field,options,request,mountCase,errorText});}catch(error){root.querySelector('[data-action-form]').textContent=errorText(error);}}
+export async function mountCase(root,id){const module=await import('./case.js?v=20261117reports1');return module.mountCase(root,id,{identity,request,style,tx,lang,date,errorText,login,actionForm});}
+async function actionForm(root,c,action){try{const module=await import('./judicial.js?v=20261117reports1');module.actionForm(root,c,action,{tx,word,select,area,field,options,request,mountCase,errorText});}catch(error){root.querySelector('[data-action-form]').textContent=errorText(error);}}
 export function installReports(){
  let available=false;
  request('/v1/reports/status').then(result=>{available=result.enabled===true;if(available)scan();}).catch(()=>{});

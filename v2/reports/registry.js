@@ -1,6 +1,6 @@
-import {esc,STATUS,reportHref} from './model.js?v=20261116reportmenu1';
-import {badge,person,raceTitle,decisionSummary,closureSummary,icon} from './presentation.js?v=20261116reportmenu1';
-import {parseRaceLink,profileId} from './ux.js?v=20261116reportmenu1';
+import {esc,STATUS,reportHref} from './model.js?v=20261117reports1';
+import {badge,person,raceTitle,decisionSummary,closureSummary,icon} from './presentation.js?v=20261117reports1';
+import {parseRaceLink,profileId} from './ux.js?v=20261117reports1';
 
 export async function mountList(root,{driverId=null,direction=null,judicial=false,heading=true}={},ctx){
  const {style,tx,lang,request,me,errorText}=ctx;style();
