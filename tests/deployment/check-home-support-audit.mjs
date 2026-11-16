@@ -13,7 +13,7 @@ try{
   let historyFail=false,revisionFail=false;
   page.on('pageerror',e=>errors.push(e.message));
   const history={ok:true,complete:true,updated_at:Date.now()/1000,revision:'fixture-revision',total_items:101,
-   currencies:[{currency:'RUB',count:100,total:10000,average:100,largest:1000,top:[{username:'Pilot <One>',amount:1500,count:2},{username:'Second',amount:500,count:1},{username:'Third',amount:400,count:1}]}]};
+   currencies:[{currency:'RUB',count:100,total:10000,average:100,largest:1000,top:[{username:'Pilot <One>',amount:1500.47,count:2},{username:'Second',amount:500,count:1},{username:'Third',amount:400,count:1}]}]};
   function rows(offset,count){return Array.from({length:count},(_,i)=>({id:String(offset+i),username:'Donor '+(offset+i),amount:offset+i===1?10:100,currency:offset+i===1?'USD':'RUB',amount_rub:800,fx_rate:'80',fx_date:'2020-01-01',message:offset+i===0?'<img src=x onerror=alert(1)>':'',created_at:'2020-01-01 12:00:00'}));}
   await page.route('**/*',async route=>{
    const req=route.request(),url=new URL(req.url());
@@ -54,6 +54,8 @@ try{
   await page.locator('#v2-donation-top li').first().waitFor();assert.equal(await page.locator('#v2-donation-top li').count(),3);
   if(width!==320)await page.locator('.support-panel').screenshot({path:taskScratchPath(`support-panel-${language}-${width}.png`)});
   assert.equal(await page.locator('#v2-donation-top img').count(),0);
+  assert.doesNotMatch(await page.locator('#v2-donation-top strong').first().innerText(),/[.,]47/);
+  const leaders=await page.locator('#v2-donation-top .donation-top').boundingBox();assert(leaders.height<110,'compact leaders');
   await page.locator('#v2-donations-all').click();await modal.locator('.donation-history-row').first().waitFor();
   assert.equal(await modal.locator('.donation-top li').count(),3);
   assert.equal(await modal.locator('.donation-history-row').count(),50);
@@ -81,12 +83,12 @@ try{
   // Role-specific report menu and read-only statistics screen.
   await page.route('https://auth.asgracing.ru/**',route=>{
    const path=new URL(route.request().url()).pathname;
-   const payload=path==='/v1/reports/me'?{public_id:'drv_judge',judge:true}:path==='/v1/reports/moderation-statistics'?{total:7,available_since:1700000000,items:[{public_id:'drv_judge',display_name:'Judge name',bans:7,first_at:1700000000,last_at:1710000000}]}:{authenticated:true,driver:{public_id:'drv_judge'},permissions:{},csrf_token:'fixture'};
+   const payload=path==='/v1/reports/me'?{public_id:'drv_judge',judge:true}:path==='/v1/reports/moderation-statistics'?{total:7,available_since:1700000000,items:[{public_id:'drv_judge',display_name:'Judge name',bans:4},{public_id:null,kind:'system',display_name:'Управление системой',bans:2},{public_id:null,kind:'unknown',display_name:'',bans:1}]}:{authenticated:true,driver:{public_id:'drv_judge'},permissions:{},csrf_token:'fixture'};
    return route.fulfill({status:200,contentType:'application/json',body:JSON.stringify(payload)});
   });
   await page.goto(base+(language==='en'?'/en':'')+'/reports/?ban-stats=1',{waitUntil:'networkidle'});
   await page.locator('[data-ban-statistics] table').waitFor();assert.match(await page.locator('[data-ban-statistics]').innerText(),/Judge name/);
-  assert.match(await page.locator('[data-ban-statistics]').innerText(),/7/);
+  assert.match(await page.locator('[data-ban-statistics]').innerText(),/7/);assert.match(await page.locator('[data-ban-statistics]').innerText(),language==='ru'?/Система/:/System/);assert.match(await page.locator('[data-ban-statistics]').innerText(),language==='ru'?/Автор не установлен/:/Unknown issuer/);
   assert.equal(await page.locator('[data-ban-days]').inputValue(),'0');
   assert.deepEqual(errors,[]);result.push({language,width,calendar:true,donations:101,banStatistics:true});await page.close();
  }

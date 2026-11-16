@@ -1,11 +1,11 @@
 // Donation history is a separate complete snapshot; recent items never determine all-time ranks.
 export function createDonationSupport({$,esc,text,language,showDialog}){
  let snapshot=null,busy=null,currency='RUB',next=null,rows=[],error=false,retryTimer=null,retries=0;
- const money=(value,code=currency)=>{try{return new Intl.NumberFormat(language==='ru'?'ru-RU':'en-GB',{style:'currency',currency:code,maximumFractionDigits:2}).format(value)}catch{return String(value)+' '+code}};
+ const money=(value,code=currency,digits=2)=>{try{return new Intl.NumberFormat(language==='ru'?'ru-RU':'en-GB',{style:'currency',currency:code,maximumFractionDigits:digits,minimumFractionDigits:digits===0?0:undefined}).format(value)}catch{return String(value)+' '+code}};
  const when=value=>{const raw=String(value||'').replace(' ','T'),date=new Date(raw+(/[Zz]|[+-]\d{2}:?\d{2}$/.test(raw)?'':'+03:00'));return Number.isNaN(date.getTime())?'—':new Intl.DateTimeFormat(language==='ru'?'ru-RU':'en-GB',{day:'2-digit',month:'2-digit',year:'numeric',timeZone:'Europe/Moscow'}).format(date)};
  const group=()=>snapshot?.currencies?.find(c=>c.currency===currency)||snapshot?.currencies?.[0];
  const choices=()=>'';
- const top=()=>`<ol class="donation-top">${(group()?.top||[]).map((d,i)=>`<li><span class="donation-place">${i+1}</span><span><b>${esc(d.username)}</b><strong>${esc(money(d.amount,group().currency))}</strong></span></li>`).join('')}</ol>`;
+ const top=()=>`<ol class="donation-top">${(group()?.top||[]).map((d,i)=>`<li><span class="donation-place">${i+1}</span><span><b title="${esc(d.username)}">${esc(d.username)}</b><strong>${esc(money(d.amount,group().currency,0))}</strong></span></li>`).join('')}</ol>`;
  const unavailable=()=>`<p class="empty">${text('Полная история пока недоступна. Попробуйте позже.','Full history is not available yet. Please try again later.')}</p>`;
  function paintTop(){const node=$('donation-top');if(node)node.innerHTML=snapshot?.complete?choices()+top()+(group()?'':`<p class="empty">${text('Донатов пока нет','No donations yet')}</p>`):error?unavailable():`<p class="empty">${text('Загрузка…','Loading…')}</p>`;}
  const isOpen=()=>$('modal').open&&$('modal').dataset.kind==='donations';
