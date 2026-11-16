@@ -188,11 +188,11 @@
     },
     {
       "path": "src/pages/account/account.js",
-      "sha256": "045cd31f6c19c22361848e62473e5f126c168d54862538517a5553610fe24abd"
+      "sha256": "9e4d9c782713705a232e9b030bbf5674f1c4245d175c8021b3d3f6c90e1b65c9"
     },
     {
       "path": "src/pages/account/clubs-teams-command-model.js",
-      "sha256": "75af749ee7a1eb45befad5047de32345de67912dba25c9882ece2772e52d9bd3"
+      "sha256": "b73d919f377b0d2ee2e77f7242d7e38bbc160a939defda9f7adbbc87698dc2ac"
     },
     {
       "path": "src/pages/account/logo-upload-model.js",
@@ -764,7 +764,7 @@
     },
     {
       "path": "v2/pages/account.js",
-      "sha256": "5b86bbd69701aae0dfab3d118e3b0c83322844a8862d35e73f68a3016e89ade4"
+      "sha256": "6e3aa848a696b4db44cd4d54a26ff9998e0aac91d4a48a74b83c9770f26c5745"
     },
     {
       "path": "v2/pages/bans-model.js",

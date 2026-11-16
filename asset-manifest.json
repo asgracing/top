@@ -1,8 +1,8 @@
 {
   "schemaVersion": 1,
-  "revision": "92839e93ce7559dfd1388c5971f981b4e20112b3",
-  "files": 1151,
-  "bytes": 166217795,
+  "revision": "e0b21785aea2e0e3343186cc9608f379ca71436c",
+  "files": 1158,
+  "bytes": 166834765,
   "assets": [
     {
       "path": "404.html",
@@ -2261,13 +2261,13 @@
     },
     {
       "path": "src/pages/account/account.js",
-      "bytes": 96351,
-      "sha256": "e4ae3fe53f5d6c5030f47f092653d854baa11087b782279a0f52d1a10749d3f2"
+      "bytes": 96358,
+      "sha256": "11698ee2d4c733d8d9b06df29135d785f9d72a30733657431c8dea68d689c100"
     },
     {
       "path": "src/pages/account/clubs-teams-command-model.js",
-      "bytes": 10498,
-      "sha256": "e8119d2e24c1ad82630f5ffb1b7ac839e1060d7d988e9cbc431de37794ab7df2"
+      "bytes": 10688,
+      "sha256": "e4d26cff012024c0d7ff9d4794dea104323ff2e05d23272570002d5c6f55ffd4"
     },
     {
       "path": "src/pages/account/logo-upload-model.js",
@@ -3047,7 +3047,7 @@
     {
       "path": "v2/boot/build.json",
       "bytes": 4595,
-      "sha256": "1ef5d4e7a8f1330f6bba6d659c9dc090ca6ba91c4d591bbf40cdc2658abcd924"
+      "sha256": "be04ff6256a640838c54d57338a9d22c3a1f1a4ea9a1ba50c2ee9c633a60d256"
     },
     {
       "path": "v2/boot/chunks/account-2NDTNJRL.js",
@@ -3180,6 +3180,11 @@
       "sha256": "546ebf37b5de19a278f910fb8c33f1c9fee5314dc667e05b733699dee13a01f1"
     },
     {
+      "path": "v2/boot/chunks/account-MGJ3W5CZ.js",
+      "bytes": 418,
+      "sha256": "ba1d01da3c586a2c66566b8446b68b7ee0ecf1d63dba670ac55ac46f15da10cf"
+    },
+    {
       "path": "v2/boot/chunks/account-NAUCBRA6.js",
       "bytes": 334,
       "sha256": "3644745ee0613e5fd2319b51304e99fc0fc00e46481bc44059d7a3123fa71cab"
@@ -3260,6 +3265,11 @@
       "sha256": "11099d777119ec07434d620b8e19983a13a0f223bae537209298f2daac0b0c05"
     },
     {
+      "path": "v2/boot/chunks/account-XSNKTAHS.js",
+      "bytes": 17763,
+      "sha256": "6d14e0344cd1b859576a7b847ecab49ab53cbd455750cf7198cd03deb0a3fbae"
+    },
+    {
       "path": "v2/boot/chunks/affiliation-index-ARRNG442.js",
       "bytes": 3509,
       "sha256": "cedda792f150881d3da09cccef6bc495afa698c766a14cd1bc7e7c5e40e0cf65"
@@ -3303,6 +3313,11 @@
       "path": "v2/boot/chunks/chunk-2QHMEH4Q.js",
       "bytes": 2820,
       "sha256": "3754686a5454dfb1901cd48e4e85dd8ac45995cae5b59f8c9d81e68a22b56a5d"
+    },
+    {
+      "path": "v2/boot/chunks/chunk-2SZS2VFX.js",
+      "bytes": 15476,
+      "sha256": "f0dd5383bdce8b3010ad20a75eb8028d4d34edfb2d388d717d806d06c65f26b3"
     },
     {
       "path": "v2/boot/chunks/chunk-37TQVESO.js",
@@ -3528,6 +3543,11 @@
       "path": "v2/boot/chunks/chunk-ETTLPBUR.js",
       "bytes": 21303,
       "sha256": "26aeba56274cccded8753f550741af6e39079d2d683e346f49859715c38c820d"
+    },
+    {
+      "path": "v2/boot/chunks/chunk-F7GNEYUY.js",
+      "bytes": 125027,
+      "sha256": "3ffb234f177a9c907bfea6fb4b96d02e47d148c4366c92e7cb88a419a4c2cad5"
     },
     {
       "path": "v2/boot/chunks/chunk-FSJDUHR2.js",
@@ -4190,6 +4210,11 @@
       "sha256": "ffb69b713841ad3c28a78bba1ca46b62f58d6ff4293b7c676a3e909fc6a67e57"
     },
     {
+      "path": "v2/boot/chunks/control-NHLRTS3X.js",
+      "bytes": 45289,
+      "sha256": "51718ee14464f2033e46098262b0470898ed2849543d3f7c997212b8227f9b71"
+    },
+    {
       "path": "v2/boot/chunks/control-PMXKZDQN.js",
       "bytes": 45917,
       "sha256": "64c8aab643a7036715ec565e29668e962dacc53f27b8f06d90413becdb259b65"
@@ -4268,6 +4293,11 @@
       "path": "v2/boot/chunks/controller-CLDJ5LSO.js",
       "bytes": 329168,
       "sha256": "4509b41282254ad4fdbec36642d713dcef8eda3a65efb989ab553a6ace89765c"
+    },
+    {
+      "path": "v2/boot/chunks/controller-COGV7B4P.js",
+      "bytes": 330475,
+      "sha256": "36957072ba669931c0a4d5f6d2653abee62793e22fb646c6274bf2d2b9e78115"
     },
     {
       "path": "v2/boot/chunks/controller-CPBNNVJE.js",
@@ -4960,6 +4990,11 @@
       "sha256": "a24ff9d178a9f37dac7573f87d88e5249b07901776fe8cb00aa74980b2542ecc"
     },
     {
+      "path": "v2/boot/chunks/portal-ops-page-XH7C7T5U.js",
+      "bytes": 82322,
+      "sha256": "8f04775ac8c49db80429983015722dad89b7cff9ee2fa1a85662aab9550a82dd"
+    },
+    {
       "path": "v2/boot/chunks/portal-ops-page-XLDOWEVK.js",
       "bytes": 82322,
       "sha256": "786e8c1e5c7aec06713c0858041bad1d38c2319d18a9908546871b893a62ef7d"
@@ -5057,7 +5092,7 @@
     {
       "path": "v2/boot/home.js",
       "bytes": 237865,
-      "sha256": "5a17eaafd2da45ceff91697e93c808f8f9080b604e43fd082b375cd64e432e8f"
+      "sha256": "2d92b27c139121cd0ec454959c6b1ab7e304df349adabbf5c783bde4036105e8"
     },
     {
       "path": "v2/bridge.js",
@@ -5067,7 +5102,7 @@
     {
       "path": "v2/build-inputs.json",
       "bytes": 30834,
-      "sha256": "1a567de4d7de874eb3aa96b63c4840fe4db6f46ee2ed0387efaac7c66f5ee9f0"
+      "sha256": "ef2ff592ca6b10a7e5effcd0c9d253df2b2559c3db559f9faea69e1f3d36e8cd"
     },
     {
       "path": "v2/copy.js",
@@ -5311,8 +5346,8 @@
     },
     {
       "path": "v2/pages/account.js",
-      "bytes": 15462,
-      "sha256": "4a41cc6e43e2f105dc6f34d1323db47f7d906a1438259020ff97e12876f74b28"
+      "bytes": 15465,
+      "sha256": "585f54c486cf4ad0d06ef0b56a95e3ebe6fd6fe70ee932f97fb3c2446758585a"
     },
     {
       "path": "v2/pages/bans-model.js",

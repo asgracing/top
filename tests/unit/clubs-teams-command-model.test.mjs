@@ -30,6 +30,35 @@ function stateWithEntities() {
   });
 }
 
+test("club and team creation accept description paragraphs with an empty website", () => {
+  const fields = {
+    displayName: "Pikmi Team", shortName: "PT",
+    descriptionRu: "PIKMI TEAM\n\nГоночная команда, где скорость встречается со стилем!",
+    descriptionEn: "PIKMIN TEAM\r\n\r\nA racing team where speed meets style!",
+    websiteUrl: ""
+  };
+  for (const entityType of ["club", "team"]) {
+    const command = buildCreateEntityCommand({ entityType, fields });
+    assert.equal(command.payload.description_ru, fields.descriptionRu);
+    assert.equal(command.payload.description_en, fields.descriptionEn.replaceAll("\r\n", "\n"));
+    assert.equal(command.payload.website_url, null);
+  }
+  const state = stateWithEntities();
+  const revision = buildReviseEntityCommand({ entityType: "team", entity: state.team, fields });
+  assert.equal(revision.payload.fields.description_ru, fields.descriptionRu);
+});
+
+test("paragraph support retains field limits and rejects other control characters", () => {
+  assert.equal(normalizeRevisionFields({ displayName: "Valid", descriptionRu: "a".repeat(3998) + "\nb" }).description_ru.length, 4000);
+  for (const fields of [
+    { descriptionRu: "a".repeat(4000) + "\nb" },
+    { descriptionEn: "hidden\u0000text" },
+    { descriptionRu: "hidden\u202Etext" },
+    { shortName: "P\nT" },
+    { displayName: "Pikmi\nTeam" }
+  ]) assert.throws(() => normalizeRevisionFields({ displayName: "Valid", ...fields }), /invalid_fields/);
+});
+
 test("normalizes only the complete public revision field allowlist", () => {
   assert.deepEqual(normalizeRevisionFields({
     displayName: "  ASG   Racing  ", shortName: " ASG ", descriptionRu: " Текст ",

@@ -21,9 +21,11 @@ export class ClubsTeamsCommandError extends Error {
   }
 }
 
-function normalizedText(value, maximum, { required = false } = {}) {
-  const text = typeof value === "string" ? value.normalize("NFKC").trim() : "";
-  if ((!text && required) || text.length > maximum || /\p{C}/u.test(text)) {
+function normalizedText(value, maximum, { required = false, multiline = false } = {}) {
+  let text = typeof value === "string" ? value.normalize("NFKC").trim() : "";
+  if (multiline) text = text.replace(/\r\n?/g, "\n");
+  const controlCheck = multiline ? text.replace(/\n/g, "") : text;
+  if ((!text && required) || text.length > maximum || /\p{C}/u.test(controlCheck)) {
     throw new ClubsTeamsCommandError("invalid_fields");
   }
   return text || null;
@@ -52,8 +54,8 @@ export function normalizeRevisionFields(value) {
   return {
     display_name: normalizedName(source.displayName),
     short_name: normalizedText(source.shortName, 24),
-    description_ru: normalizedText(source.descriptionRu, 4000),
-    description_en: normalizedText(source.descriptionEn, 4000),
+    description_ru: normalizedText(source.descriptionRu, 4000, { multiline: true }),
+    description_en: normalizedText(source.descriptionEn, 4000, { multiline: true }),
     website_url: normalizedWebsite(source.websiteUrl)
   };
 }
