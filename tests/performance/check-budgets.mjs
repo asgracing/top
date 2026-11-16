@@ -64,6 +64,13 @@ const serverTrackMapJavaScriptBytes = await textBytes("src/features/server-statu
 const serverLiveTelemetryJavaScriptBytes = (await Promise.all(
   ['live-stream','live-clock','live-map','continuity'].map(name => textBytes(`src/features/server-status/${name}.js`))
 )).reduce((sum,bytes) => sum+bytes,0);
+// The guided intake and judicial editor load only after a user opens them.
+// Keep the original 32KB cap for the common report code and cap both lazy
+// modules AND the full feature so splitting cannot hide additional payload.
+const reportsIntakeJavaScriptBytes=await textBytes('v2/reports/intake.js');
+const reportsJudicialJavaScriptBytes=await textBytes('v2/reports/judicial.js');
+const reportsScreensJavaScriptBytes=(await Promise.all(['case','registry','statistics','help','presentation'].map(name=>textBytes('v2/reports/'+name+'.js')))).reduce((a,b)=>a+b,0);
+const reportsTotalJavaScriptBytes=await treeBytes('v2/reports',new Set(['.js']));
 const metrics = {
   appJavaScriptBytes: await textBytes("app.js"),
   sourceModulesBytes: await treeBytes("src", new Set([".js", ".mjs"])) - moderationJavaScriptBytes - portalOpsJavaScriptBytes - raceResultContextJavaScriptBytes - personalNotificationsJavaScriptBytes - racingRulesJavaScriptBytes - serverTrackMapJavaScriptBytes - serverLiveTelemetryJavaScriptBytes - raceNumberPickerJavaScriptBytes - raceNumberValidityJavaScriptBytes,
@@ -75,7 +82,11 @@ const metrics = {
   racingRulesStylesheetBytes,
   personalNotificationsJavaScriptBytes,
   personalNotificationsStylesheetBytes,
-  reportsJavaScriptBytes: await treeBytes('v2/reports',new Set(['.js'])),
+  reportsJavaScriptBytes: reportsTotalJavaScriptBytes-reportsIntakeJavaScriptBytes-reportsJudicialJavaScriptBytes-reportsScreensJavaScriptBytes,
+  reportsScreensJavaScriptBytes,
+  reportsIntakeJavaScriptBytes,
+  reportsJudicialJavaScriptBytes,
+  reportsTotalJavaScriptBytes,
   reportsStylesheetBytes: await textBytes('v2/reports/reports.css'),
   raceNumberPickerJavaScriptBytes,
   raceNumberPickerStylesheetBytes,

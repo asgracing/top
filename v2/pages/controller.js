@@ -18,7 +18,7 @@ import {createBansViews} from './views/bans.js?v=20261105moderation1';
 import {formatMoscowDateTime,moscowDateKey} from '/src/shared/time.js';
 import {createCarsViews} from './views/cars.js?v=20261015pagination1';
 import {createCarLapsLoader} from './cars-laps-model.js?v=20261111siteviews1';
-import {paintRace} from './views/race-modal.js?v=20261013teams3';
+import {paintRace} from './views/race-modal.js?v=20261116teamsreports2';
 import {createPageData} from './data.js?v=20261111siteviews1';
 import {createDriverAchievementsController} from '/src/pages/driver/achievements-widget.js?v=20261011hourlyru1';
 import {v2Route,v2EntityLinks,currentV2Path,migratedPaths} from '../routes.js?v=20261007v2pages14';
@@ -38,7 +38,7 @@ export async function startPage(api) {
   const entityThumbnails=['club','team'].includes(screen)?createEntityThumbnails({root:center,loadAvatar:id=>native().steamAvatar(id)}):null;
   window.addEventListener('pagehide',()=>entityThumbnails?.destroy(),{once:true});
   home.id='home-view';home.hidden=true;home.append(...center.childNodes);view.id='page-view';center.append(home,view);
-  if(screen==='reports'){const {mountReportsPage}=await import('../reports/index.js?v=20261105reportbutton1');view.className='panel report-section';await mountReportsPage(view);return;}
+  if(screen==='reports'){const {mountReportsPage}=await import('../reports/index.js?v=20261116reportmenu1');view.className='panel report-section';await mountReportsPage(view);return;}
   if(screen==='servers'){const {startServerDirectory}=await import('../server-directory.js?v=20261025servers1');return startServerDirectory({...api,view,center});}
   if(screen==='account'){const {startAccountPage}=await import('./account.js?v=20261031numbers1');return startAccountPage({...api,view,center});}
   if(['settings','moderation','ops'].includes(screen)){const {startControlPage}=await import('./control.js?v=20261031numbers1');return startControlPage({...api,view,center,screen});}

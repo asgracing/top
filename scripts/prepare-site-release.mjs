@@ -16,7 +16,7 @@ const meta=JSON.parse(await readFile(resolve(candidate,'build-meta.json'),'utf8'
 const version=new Date().toISOString().replace(/[:.]/g,'-')+'-'+meta.sourceSnapshotSha256.slice(0,12);
 const bundle=resolve(tmp,'site-releases',version);await mkdir(bundle,{recursive:true});
 const publicRoots=new Set((await tree(candidate)).map(p=>p.split('/')[0]));
-const excluded=new Set(['preview','v1-source','v2-source','scripts','tests','design-research']);
+const excluded=new Set(['preview','v1-source','v2-source','scripts','tests','design-research',...(config.legacyEnabled===false?['old']:[])]);
 for(const first of await readdir(root))if(!publicRoots.has(first))excluded.add(first);
 excluded.delete('_config.yml');
 const pagesConfig='plugins: []\nexclude:\n'+[...excluded].sort().map(p=>'  - '+JSON.stringify(p)).join('\n')+'\n';

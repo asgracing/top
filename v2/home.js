@@ -7,7 +7,7 @@ import { subscribe, getRuntime } from './bridge.js?v=20261006v2k';
 import {rankingPosition,eventKind,normalizeTablePage,normalizeSafetyRow,paginationPages,serverSrRestriction} from './models.js?v=20261013delivery1';
 import {createPresentation} from './presentation.js?v=20261104rc3';
 import {createRecentRaces} from './recent-races.js?v=20261111readers2';
-import {createHeader} from './header.js?v=20261014profile1';
+import {createHeader} from './header.js?v=20261116profilereports1';
 import {liveRanking,liveBestlapTracks} from './live-stats.js';
 import {serverSessionLabel} from './server-session.js?v=20261025direct1';
 import {orderedServers,replaceServerCards,serverDialogTrigger} from './server-cards.js?v=20261025servers1';
@@ -382,10 +382,10 @@ if(!isSubpage){
   if('IntersectionObserver' in window){const observer=new IntersectionObserver(entries=>{if(entries.some(entry=>entry.isIntersecting)){observer.disconnect();loadTable();}},{rootMargin:'240px 0px'});observer.observe($('ranking'));}
   else loadTable();
 }
-try{await import('./runtime/home.js?v=20261114affiliations2');applyHash();if(isSubpage)startBackground();}catch(error){console.error('V2 runtime unavailable',error);$('event-track').textContent=text('Не удалось загрузить данные','Could not load data');$('day-driver').textContent=text('Данные недоступны','Data unavailable');tableError=true;tableBusy=false;renderTable()}
+try{await import('./runtime/home.js?v=20261116reportsux1');applyHash();if(isSubpage)startBackground();}catch(error){console.error('V2 runtime unavailable',error);$('event-track').textContent=text('Не удалось загрузить данные','Could not load data');$('day-driver').textContent=text('Данные недоступны','Data unavailable');tableError=true;tableBusy=false;renderTable()}
 if(document.documentElement.dataset.v2Page){
   const {startPage}=await import('./pages/controller.js?v=20261111siteviews1');
   await startPage({native,presentation,showDialog,esc,text,label,date,number,rating,car,language,subscribe,serverAdmission});
 }
-import {installReports} from './reports/index.js?v=20261105reportbutton1';
+import {installReports} from './reports/index.js?v=20261116reportmenu1';
 if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',installReports,{once:true});else installReports();

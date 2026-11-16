@@ -599,3 +599,15 @@
 /v2/styles/runtime-be8a73640a395600.css -text
 /src/pages/clubs-teams/affiliation-index.js -text
 /src/pages/clubs-teams/affiliation-index-cache.js -text
+
+/v2/reports/case.js -text
+/v2/reports/help.js -text
+/v2/reports/index.js -text
+/v2/reports/intake.js -text
+/v2/reports/judicial.js -text
+/v2/reports/model.js -text
+/v2/reports/presentation.js -text
+/v2/reports/registry.js -text
+/v2/reports/reports.css -text
+/v2/reports/statistics.js -text
+/v2/reports/ux.js -text

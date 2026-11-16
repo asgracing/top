@@ -2,6 +2,7 @@ import test from 'node:test';
 import assert from 'node:assert/strict';
 import {actionsFor,reportButton} from '../../v2/reports/model.js';
 import {normalizeNotifications,notificationTarget} from '../../src/features/auth/personal-notifications.js';
+import {parseRaceLink,profileId,raceLink,resolveRace} from '../../v2/reports/ux.js';
 test('report notifications link only to validated case IDs',()=>{
  const id='rpt_'+'a'.repeat(24);
  const n=normalizeNotifications({items:[{id:1,event_type:'report.submitted',details:{report_id:id,url:'javascript:alert(1)',steam_id:'private'}}]}).items[0];
@@ -24,4 +25,19 @@ test('race report trigger escapes untrusted display attributes',()=>{
  assert.equal(reportButton({race_id:'race1'},{public_id:'invalid'}),'');
  assert(reportButton({race_id:'race1',source:'hourly'},{public_id:'drv_target'}).includes('data-report-namespace="top"'));
  assert(reportButton({race_id:'race1',_data_namespace:'hourly'},{public_id:'drv_target'}).includes('data-report-namespace="hourly"'));
+  assert(reportButton({race_id:'race1'},{public_id:'drv_target'}).includes('Подать репорт'));
+  assert(!reportButton({race_id:'race1'},{public_id:'drv_target'}).includes('>!</span>'));
+});
+
+test('race links preserve archive and published team-race identity',()=>{
+ assert.deepEqual(parseRaceLink('https://asgracing.ru/en/race/?id=source&source=season&published=actual'),{race_id:'actual',namespace:'hourly'});
+ assert.deepEqual(parseRaceLink(raceLink({race_id:'old',_data_namespace:'season',_published_race:{race_id:'actual'}})),{race_id:'actual',namespace:'hourly'});
+ for(const value of ['https://evil.example/race/?id=aa','https://asgracing.ru/races/','https://asgracing.ru@evil.example/race/?id=aa','../private'])assert.throws(()=>parseRaceLink(value));
+ assert.equal(profileId('https://asgracing.ru/en/driver/?id=drv_judge'),'drv_judge');
+ assert.throws(()=>profileId('https://evil.example/driver/?id=drv_judge'));
+});
+
+test('bare-ID resolution refuses ambiguity and service errors',async()=>{
+ await assert.rejects(resolveRace('race1',null,async()=>({race_id:'race1'})),/ambiguous_race/);
+ await assert.rejects(resolveRace('race1',null,async()=>{throw Error('race_catalog_unavailable');}),/race_catalog_unavailable/);
 });

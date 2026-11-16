@@ -1,6 +1,6 @@
 {
   "schemaVersion": 1,
-  "runtimeVersion": "20261114affiliations2",
+  "runtimeVersion": "20261116reportsux1",
   "inputs": [
     {
       "path": "account/driver-overlay.js",
@@ -76,7 +76,7 @@
     },
     {
       "path": "scripts/build-v2.mjs",
-      "sha256": "d754afb07505ff9b8a271e1a11612b03544516c3bb8eee6b3215b1975cfde4f7"
+      "sha256": "bf9642765f0cc066bd237c6412ac046a9a569c0ba88c0d0bb5fe4ea06b40048e"
     },
     {
       "path": "scripts/generate-localized-pages.mjs",
@@ -420,7 +420,7 @@
     },
     {
       "path": "src/shared/team-racing-results-view.js",
-      "sha256": "e133255f4852d2603f00715373cea5664601fbe3c4873c12d059949dd636396d"
+      "sha256": "4e9bcf3f168395726213639dbee6197e1857456b01fd0d32663492e9f98c6ead"
     },
     {
       "path": "src/shared/time.js",
@@ -656,7 +656,7 @@
     },
     {
       "path": "v2-source/pages/archive.js",
-      "sha256": "3b4b2f9fed6c3eb55e5440730fda86645aa5f15c342644a0ac2a6966e366b1e5"
+      "sha256": "3284fc6a3bb1d00143dc0d5b7ebc141b43c387ac2a2a0fe671f2874b04fd5953"
     },
     {
       "path": "v2-source/pages/bans.js",
@@ -708,7 +708,7 @@
     },
     {
       "path": "v2-source/pages/race-modal.js",
-      "sha256": "86c28e32c574c1382698518824ae90a25dbcf5c98d7c7126a1eacf6f0f4683c4"
+      "sha256": "9d02532b9340390db5d10249c4f0570b51031b57cfaa1e77d161fe6df8018f6d"
     },
     {
       "path": "v2-source/pages/site-pages.css",
@@ -724,11 +724,11 @@
     },
     {
       "path": "v2/header.js",
-      "sha256": "accd12f992ff21c49ac1139aedfb0b93885b1067318e0cfc19ee92e971672394"
+      "sha256": "e4e780608ffa627c555dda8f7a83885c10444de29a560f82786cdb0376668258"
     },
     {
       "path": "v2/home.js",
-      "sha256": "ad4aec55bd10ed0bf6469a34ead4fc52618f8c4ef59a8236e8d5c3095c499358"
+      "sha256": "289594e9cf3fb1c2a4a54b2139dcfcb269e9e9e26ebbb4d534e6cc90b5eefa42"
     },
     {
       "path": "v2/live-stats.js",
@@ -784,7 +784,7 @@
     },
     {
       "path": "v2/pages/controller.js",
-      "sha256": "97e510a9f32edcb4d3b52b281e66fc5e20f2e313a02fcb591362c2e43da21ea7"
+      "sha256": "783c7bb9c4a58e36c98424d498405d13f69419ee89ef6e1ef61a0ff746d0363e"
     },
     {
       "path": "v2/pages/data.js",
@@ -823,16 +823,48 @@
       "sha256": "3e0d617be99acdb968389c52e99e3df89085eddf707adb28ce9c117555867096"
     },
     {
+      "path": "v2/reports/case.js",
+      "sha256": "4c9a1f7d5c90b1c1ff8bec9c7336e076d0d25118d4bbc7bfb50f0014aaec915a"
+    },
+    {
+      "path": "v2/reports/help.js",
+      "sha256": "fc7ba773027306b0cc8c89245f3251949be8170379935b439a84ab9f08074d9a"
+    },
+    {
       "path": "v2/reports/index.js",
-      "sha256": "98efe7b336ebce066edd824fe5c7bd5812adff60596e7ee0515c9bde282bba0a"
+      "sha256": "44993bc8f3b3930bb23d530febdf9b02aaf5a2a528a010e9b1d6b7cf06471b37"
+    },
+    {
+      "path": "v2/reports/intake.js",
+      "sha256": "331c55b34e414ea84e22a289d06d8d3b1a28aae870f6765abd495d6a416b2574"
+    },
+    {
+      "path": "v2/reports/judicial.js",
+      "sha256": "bad51dc964a60f600b7f4e31e4fe19239ffd80a7db6be54397a100b547f0ea3d"
     },
     {
       "path": "v2/reports/model.js",
-      "sha256": "e32c30651e0f47367083ee0f2a5b21e8100ce2182bc03019acd1f4d14c2ea98f"
+      "sha256": "885aaf9d9e1578a82641ec621863e2248024804ec8989cdec818f1a19ad8d3cd"
     },
     {
       "path": "v2/reports/notification-copy.js",
       "sha256": "004fdb48ef948fb0474c9c94ac0adfa59df0bdbc03ab54438d727e982c3e1a30"
+    },
+    {
+      "path": "v2/reports/presentation.js",
+      "sha256": "b962726cea44ea260c6fcdd4a1908f93cb5b306a4c683e4a055e28277cdf91f0"
+    },
+    {
+      "path": "v2/reports/registry.js",
+      "sha256": "5c627b12c31873e769a029f5f00728cc906ca057db8bb2f0e8b5c18872ce3973"
+    },
+    {
+      "path": "v2/reports/statistics.js",
+      "sha256": "a0270289a40732195dfd159fac88e5fba171314bbf155fea44abbacc22debc87"
+    },
+    {
+      "path": "v2/reports/ux.js",
+      "sha256": "c64a20e824e4796d688c1200a1001214481cf711ea9ecb0277306f74f8305bcf"
     },
     {
       "path": "v2/routes.js",

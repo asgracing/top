@@ -30,10 +30,16 @@ try{
   });
   await page.goto(origin+'/fixture');await page.evaluate(language=>document.documentElement.lang=language,language);
   await page.evaluate(async()=>{window.reports=await import('/v2/reports/index.js');await reports.startReport({race_id:'race1',namespace:'top',accused_id:'drv_target'});});
-  await page.locator('[data-people] form').waitFor();await page.locator('[data-people] form button').click();
+  await page.locator('[data-people] fieldset').waitFor();await page.locator('[data-people] button').click();
   await page.locator('[name=moment]').fill('Lap 3, 00:40');await page.locator('[name=description]').fill('Unsafe rejoin caused an avoidable collision.');await page.locator('[name=evidence]').fill('https://example.com/video');
+  await page.locator('[name=video_moment]').fill('02:14');
+  await page.locator('[data-step="0"]').click();await page.locator('[data-people] button').click();
+  assert.equal(await page.locator('[name=video_moment]').inputValue(),'02:14');
+  assert.equal(await page.locator('[name=description]').inputValue(),'Unsafe rejoin caused an avoidable collision.');
+  await page.screenshot({path:path.join(output,`details-${language}-${width}.png`)});
   await page.locator('dialog form button:not([type=button])').click();await page.locator('[data-submit]').click();await page.locator('dialog a.button').waitFor();
   assert.equal(writes.length,1);assert.deepEqual(writes[0].payload.accused,['drv_target']);assert.equal(writes[0].payload.race_id,'race1');
+  assert(writes[0].payload.moment.includes('02:14'));assert(!('_ux' in writes[0].payload));
   await page.screenshot({path:path.join(output,`submitted-${language}-${width}.png`)});
   await page.locator('[data-close]').click();await page.evaluate(async id=>reports.mountCase(document.getElementById('root'),id),c.report_id);
   assert.equal(await page.locator('[data-action=claim]').count(),0);assert.equal(await page.locator('[data-action=comment]').count(),1);
@@ -45,5 +51,36 @@ try{
   involved:actionsFor({access:'private',author_id:'drv_a',participants:['drv_a'],accused:['drv_t'],status:'submitted'}, {public_id:'drv_a',judge:true}),
   markup:reportButton({race_id:'"><script>',source:'hourly'},{public_id:'drv_target'})};});
  assert(!model.involved.includes('claim'));assert(!model.markup.includes('<script>'));await page.close();
- console.log(`Reports browser: ${scenarios} RU/EN mobile/desktop flows passed; all API writes intercepted.`);
+ // Judicial decision must be named, deliberate, reviewed, then published once.
+ for(const language of ['ru','en']){
+  const page=await browser.newPage({viewport:{width:390,height:900}}),writes=[];
+  let c={...structuredClone(base),version:2,status:'review',assigned_id:'drv_judge',available_actions:['decide','request_evidence','internal_note'],display_names:{drv_judge:'Named judge'}};
+  await page.route('**/*',async route=>{
+   const req=route.request(),url=new URL(req.url());if(url.origin===origin)return route.continue();if(url.origin!=='https://auth.asgracing.ru')return route.abort();let data={};
+   if(url.pathname==='/v1/me')data={authenticated:true,csrf_token:'fixture_csrf'};
+   else if(url.pathname==='/v1/reports/me')data={public_id:'drv_judge',judge:true};
+   else if(url.pathname.endsWith('/actions')){writes.push(req.postDataJSON());data=c;}
+   else if(url.pathname.endsWith(c.report_id))data=c;
+   else throw Error('Unexpected judicial request '+url.pathname);
+   await route.fulfill({status:200,contentType:'application/json',body:JSON.stringify(data)});
+  });
+  await page.goto(origin+'/fixture');await page.evaluate(language=>document.documentElement.lang=language,language);
+  await page.evaluate(async id=>{window.reports=await import('/v2/reports/index.js');await reports.mountCase(document.getElementById('root'),id);},c.report_id);
+  await page.locator('[data-action=decide]').click();
+  assert.equal(await page.locator('[name=outcome_0]').inputValue(),'');
+  await page.locator('[name=outcome_0]').selectOption('rejected');
+  assert.equal(await page.locator('[name=sanction_0]').isDisabled(),true);
+  await page.locator('[name=summary]').fill('The available evidence does not establish a violation.');
+  await page.locator('[data-action-form] form > button').click();assert.equal(writes.length,0);
+  await page.screenshot({path:path.join(output,`decision-review-${language}-390.png`)});
+  const applied=page.waitForResponse(response=>response.url().endsWith('/actions'));
+  await page.locator('[data-publish]').click();await applied;assert.equal(writes.length,1);
+  assert.equal(writes[0].payload.findings[0].sanction,'none');assert.equal(writes[0].version,2);
+  await page.locator('[data-action=request_evidence]').click();await page.locator('[data-preset="0"]').click();
+  assert.equal(await page.locator('[name=recipient_id] option').first().textContent(),'Reporter');
+  assert((await page.locator('[name=reason]').inputValue()).includes(language==='ru'?'приватном окне':'private window'));
+  assert.equal(await page.evaluate(()=>document.documentElement.scrollWidth>innerWidth),false);
+  await page.close();
+ }
+ console.log(`Reports browser: ${scenarios} RU/EN mobile/desktop intake flows + 2 judicial flows passed; all API writes intercepted.`);
 }finally{await browser.close();await new Promise(r=>server.close(r));}
