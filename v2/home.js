@@ -83,6 +83,7 @@ const dialogFrames=[];
 $('modal').addEventListener('close',()=>{if(!$('modal').open){if($('modal').dataset.kind==='track-guide')$('modal-body').replaceChildren();dialogFrames.length=0;$('site-shell').inert=false;lastTrigger=serverDialogTrigger(lastTrigger);lastTrigger?.focus?.({preventScroll:true});}});
 const recentRaces=isSubpage?null:createRecentRaces({$,native,getModel:()=>model,presentation,showDialog,pushDialog,esc,text,date,number,car,classic,language});
 const donationSupport=$('donations-all')?createDonationSupport({$,esc,text,language,showDialog}):null;
+$('donations').tabIndex=0;$('donations').setAttribute('role','region');$('donations').setAttribute('aria-label',text('Последние донаты','Recent donations'));
 if($('recent-races'))$('recent-races').textContent=text('Последние гонки','Recent races');
 if($('event-calendar'))$('event-calendar').textContent=text('Календарь','Calendar');
 const header=createHeader({$,native,esc,text,number,rating,driverHref,privacy,newsHref:item=>classic('news/article/')+'?slug='+encodeURIComponent(item.slug||item.id)});
@@ -114,7 +115,7 @@ function renderSupport(){
     motion.run('fund',[goal.raised_amount,goal.goal_amount,goal.currency]);
   }else{$('goal-name').textContent=model.donationsError?text('Сбор временно недоступен','Fundraising data unavailable'):label('goal');$('fund-value').textContent='—';$('fund-total').textContent='';$('fund-percent').textContent='';$('fund-progress').firstElementChild.style.width='0%'}
   const items=data?.items||[];
-  $('donations').innerHTML=items.slice(0,5).map(d=>{const value=String(d.created_at||'').replace(' ','T');return `<div class="donation-row"><b>${esc(d.username||d.name)}</b><strong>${esc(money(d.amount,d.currency))}</strong><time>${date(value+(/[Zz]|[+-]\d{2}:?\d{2}$/.test(value)?'':'+03:00'))}</time></div>`}).join('')||`<p class="empty">${model.donationsLoading?text('Загрузка…','Loading…'):model.donationsError?text('Донаты временно недоступны','Donations unavailable'):label('noData')}</p>`;
+  $('donations').innerHTML=items.slice(0,10).map(d=>{const value=String(d.created_at||'').replace(' ','T');return `<div class="donation-row"><b>${esc(d.username||d.name)}</b><strong>${esc(money(d.amount,d.currency))}</strong><time>${date(value+(/[Zz]|[+-]\d{2}:?\d{2}$/.test(value)?'':'+03:00'))}</time></div>`}).join('')||`<p class="empty">${model.donationsLoading?text('Загрузка…','Loading…'):model.donationsError?text('Донаты временно недоступны','Donations unavailable'):label('noData')}</p>`;
 }
 function renderStats(){
   const d=model.day,s=model.stats;$('day-driver').textContent=d?.driver||text('Нет пилота дня','No driver of the day');$('day-driver').dataset.driver=d?.public_id||'';

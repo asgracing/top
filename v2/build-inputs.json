@@ -76,7 +76,7 @@
     },
     {
       "path": "scripts/build-v2.mjs",
-      "sha256": "cb87d9f6886fe4e107008e6872ce75f8ee3ea1324f36d250ee97b659bf5914aa"
+      "sha256": "2102ef78fc77a24d35dfa9334b0040f0ecef986f23c534f9559069cc9c028c5e"
     },
     {
       "path": "scripts/generate-localized-pages.mjs",
@@ -732,7 +732,7 @@
     },
     {
       "path": "v2/home.js",
-      "sha256": "2c3ed5bab9c5297b79748a39fe086edbe33c9c3826a4c4ee2c9c1368aae707d6"
+      "sha256": "c2185338a0d76b677ad12caf2740eef3b02253c3436deecf6341c214455bd28f"
     },
     {
       "path": "v2/live-stats.js",

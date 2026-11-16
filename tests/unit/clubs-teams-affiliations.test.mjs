@@ -181,7 +181,7 @@ test("breaking helper interface uses a new query key and synchronized runtime ve
   const build = await fs.readFile(new URL("../../scripts/build-v2.mjs", import.meta.url), "utf8");
   const home = await fs.readFile(new URL("../../v2/home.js", import.meta.url), "utf8");
   assert.match(build, /const runtimeVersion = '20261117reports1'/);
-  assert.match(build, /const bootVersion = '20261117home3'/);
+  assert.match(build, /const bootVersion = '20261117home6'/);
   assert.ok(home.includes("runtime/home.js?v=20261117reports1"));
 });
 test("old cached helper and late old-URL facade preserve the published requestJson/base API", async () => {
