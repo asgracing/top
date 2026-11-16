@@ -568,23 +568,24 @@ body[data-v2="home"] #v2-ranking .table-scroll {min-height:380px;}
 /* Complete donation history and all-time supporters. */
 .support-thanks-columns{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1fr);gap:16px}.support-thanks-columns section{min-width:0}.support-thanks-columns .eyebrow{font-size:10px;letter-spacing:.08em}.support-thanks-columns .thanks-list{margin-top:12px;font-size:12px;overflow-wrap:anywhere}.donation-top{list-style:none;margin:12px 0 0;padding:0;display:grid;gap:12px}.donation-top li{display:flex;gap:8px;min-width:0;align-items:start}.donation-place{color:#f3c07c;font-weight:700}.donation-top li>span:last-child{display:grid;gap:4px;min-width:0;overflow-wrap:anywhere}.donation-top b{font-size:12px}.donation-top strong{font-size:11px;color:#f3c07c}.donation-currency{display:flex;align-items:center;gap:8px;font-size:12px;margin:12px 0}.donation-currency select{min-height:36px;max-width:100%;background:#152331;color:#fff;border:1px solid #637084;border-radius:4px;padding:4px}.support-panel #v2-donations-all{min-height:36px;white-space:nowrap;font-size:12px}.donation-history-scroll{overflow:auto;max-height:48vh;border-block:1px solid #3b4857;overscroll-behavior:contain}.donation-history-row{padding:16px 4px;border-bottom:1px solid #3b4857}.donation-history-row>div{display:flex;gap:12px;align-items:baseline;flex-wrap:wrap}.donation-history-row b{flex:1;overflow-wrap:anywhere;min-width:0}.donation-history-row time{font-size:12px;color:#bdcbd8}.donation-history-row p{margin-bottom:0;white-space:pre-wrap;overflow-wrap:anywhere}#v2-modal[data-kind=donations] .donation-top{grid-template-columns:repeat(3,minmax(0,1fr));margin-bottom:24px}#v2-modal[data-kind=donations] .donation-top b{font-size:15px}#v2-modal[data-kind=donations] .donation-top strong{font-size:14px}.donation-history-scroll [data-donations-more]{margin:16px 0}@media(max-width:600px){#v2-modal[data-kind=donations] .donation-top{grid-template-columns:1fr}.donation-statistics{grid-template-columns:repeat(2,minmax(0,1fr))}}@media(pointer:coarse){.support-panel #v2-donations-all,.donation-currency select{min-height:44px}}
 /* Compact support sidebar: retain all five recent donations and the QR. */
+.sidebar-content>.support-panel{flex:0 0 auto}
 .support-panel .support-body{padding:8px 10px;height:auto}
 .support-panel .support-body h3{font-size:12px;line-height:1.3;margin:3px 0 5px;min-height:0}
 .support-panel .fund-value{font-size:28px;line-height:1.1}
 .support-panel .progress{height:5px;margin-top:6px}
 .support-panel .fund-caption{font-size:10px;margin-top:4px}
 .support-panel .support-divider{margin:8px 0}
-.support-panel .support-thanks-columns{grid-template-columns:minmax(0,.34fr) minmax(0,.66fr);gap:0}
+.support-panel .support-thanks-columns{grid-template-columns:minmax(0,.37fr) minmax(0,.63fr);gap:0}
 .support-thanks-columns>section+section{border-left:1px solid #8495a044;padding-left:8px}
-.support-panel .support-thanks-columns .eyebrow{font-size:8px;letter-spacing:.04em;white-space:nowrap}
+.support-panel .support-thanks-columns .eyebrow{font-size:10px;letter-spacing:0;white-space:nowrap}
 .support-panel .support-thanks-columns .thanks-list{margin-top:7px;gap:4px}
-.support-panel .thanks-list>span{font-size:10px;line-height:14px;white-space:nowrap}
+.support-panel .thanks-list>span{font-size:11px;line-height:16px;white-space:nowrap}
 #v2-donation-top .donation-top{margin:7px 0 0;padding:0;gap:4px}
 #v2-donation-top .donation-top li{padding:0;line-height:14px;display:block}
 #v2-donation-top .donation-place{display:none}
-#v2-donation-top .donation-top li>span:last-child{display:flex;align-items:baseline;gap:5px;min-width:0}
-#v2-donation-top .donation-top b{font-size:10px;font-weight:600;line-height:14px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;min-width:0}
-#v2-donation-top .donation-top strong{font-size:10px;line-height:14px;white-space:nowrap;flex-shrink:0}
+#v2-donation-top .donation-top li>span:last-child{display:flex;align-items:baseline;gap:4px;min-width:0}
+#v2-donation-top .donation-top b{font-size:11px;font-weight:600;line-height:16px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;min-width:0}
+#v2-donation-top .donation-top strong{font-size:11px;line-height:16px;white-space:nowrap;flex-shrink:0}
 .support-panel .subhead{min-height:28px}
 .support-panel .subhead .eyebrow{font-size:9px;letter-spacing:.04em}
 .support-panel #v2-donations-all{font-size:10px;min-height:28px}
@@ -604,7 +605,7 @@ body[data-v2="home"] #v2-ranking .table-scroll {min-height:380px;}
  .support-panel .fund-value{font-size:24px}
  .support-panel .fund-caption{line-height:12px}
  .support-panel .support-thanks-columns .eyebrow{display:block;line-height:12px}
- .support-panel .thanks-list>span,#v2-donation-top .donation-top b,#v2-donation-top .donation-top strong{line-height:12px}
+ .support-panel .thanks-list>span,#v2-donation-top .donation-top b,#v2-donation-top .donation-top strong{line-height:14px}
  .support-panel .support-divider{margin:4px 0}
  .support-panel .donation-row:nth-child(n){grid-template-columns:minmax(0,1fr) auto auto;align-items:baseline;padding:2px 0}
  .support-panel .donation-row b{white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
@@ -614,9 +615,9 @@ body[data-v2="home"] #v2-ranking .table-scroll {min-height:380px;}
 }
 @media(max-width:1000px){
  .support-panel .support-body{padding:10px 12px}
- .support-panel .support-thanks-columns{grid-template-columns:minmax(0,.36fr) minmax(0,.64fr)}
- .support-panel .support-thanks-columns .eyebrow{font-size:9px}
- .support-panel .thanks-list>span,#v2-donation-top .donation-top b,#v2-donation-top .donation-top strong{font-size:11px;line-height:16px}
+ .support-panel .support-thanks-columns{grid-template-columns:minmax(0,.37fr) minmax(0,.63fr)}
+ .support-panel .support-thanks-columns .eyebrow{font-size:11px}
+ .support-panel .thanks-list>span,#v2-donation-top .donation-top b,#v2-donation-top .donation-top strong{font-size:12px;line-height:17px}
  .support-panel .subhead,.support-panel #v2-donations-all{min-height:44px}
  .support-panel .support-cta{min-height:44px}
  .support-panel .qr-section img{width:90px;height:90px}
@@ -627,4 +628,11 @@ body[data-v2="home"] #v2-ranking .table-scroll {min-height:380px;}
  .support-panel .donation-row:nth-child(n){padding:1px 0}
  .support-panel .qr-section img{width:64px;height:64px}
  .support-panel .support-cta{margin:5px 0}
+}
+@media(min-width:1001px) and (max-width:1150px){
+ .support-panel .support-body{padding-inline:8px}
+ .support-panel .support-thanks-columns .eyebrow{font-size:9px}
+ .support-thanks-columns>section+section{padding-left:5px}
+ #v2-donation-top .donation-top li>span:last-child{gap:2px}
+ #v2-donation-top .donation-top b,#v2-donation-top .donation-top strong{letter-spacing:-.2px}
 }

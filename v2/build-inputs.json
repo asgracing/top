@@ -76,7 +76,7 @@
     },
     {
       "path": "scripts/build-v2.mjs",
-      "sha256": "9ec9f7e404e7d261248b8e105fbfe2cd348f31c6866cec3d675ddba00881457e"
+      "sha256": "cb87d9f6886fe4e107008e6872ce75f8ee3ea1324f36d250ee97b659bf5914aa"
     },
     {
       "path": "scripts/generate-localized-pages.mjs",

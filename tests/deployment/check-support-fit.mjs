@@ -19,13 +19,13 @@ try{
   const metrics=await page.locator('.support-panel').evaluate(panel=>{
    const box=n=>{const r=n.getBoundingClientRect();return {x:r.x,y:r.y,width:r.width,height:r.height,bottom:r.bottom}};
    const qr=panel.querySelector('.qr-section'),dock=panel.closest('.sidebar-content');
-   return {panel:box(panel),qr:box(qr),image:box(qr.querySelector('img')),dock:dock?box(dock):null,rows:[...panel.querySelectorAll('#v2-donation-top li')].map(n=>{const b=n.querySelector('b'),s=n.querySelector('strong');return {name:box(b),amount:box(s),nameFits:b.scrollWidth<=b.clientWidth+1,rankVisible:getComputedStyle(n.querySelector('.donation-place')).display!=='none'}}),recent:[...panel.querySelectorAll('.donation-row')].filter(n=>getComputedStyle(n).display!=='none').length,cta:box(panel.querySelector('.support-cta')),all:box(panel.querySelector('#v2-donations-all')),overflow:document.documentElement.scrollWidth>innerWidth+1};
+   return {panel:box(panel),qr:box(qr),image:box(qr.querySelector('img')),dock:dock?box(dock):null,rows:[...panel.querySelectorAll('#v2-donation-top li')].map(n=>{const b=n.querySelector('b'),s=n.querySelector('strong');return {name:box(b),amount:box(s),nameFits:b.scrollWidth<=b.clientWidth+1,rankVisible:getComputedStyle(n.querySelector('.donation-place')).display!=='none'}}),recent:[...panel.querySelectorAll('.donation-row')].filter(n=>getComputedStyle(n).display!=='none').length,cta:box(panel.querySelector('.support-cta')),all:box(panel.querySelector('#v2-donations-all')),thanks:[...panel.querySelectorAll('.thanks-list>span,.support-thanks-columns .eyebrow')].map(n=>({fits:n.scrollWidth<=n.clientWidth+1,display:getComputedStyle(n).display})),overflow:document.documentElement.scrollWidth>innerWidth+1};
   });
   try{
-   assert.equal(metrics.recent,5);assert.equal(metrics.overflow,false);
+   assert.equal(metrics.recent,5);for(const item of metrics.thanks)if(item.display!=='inline')assert(item.fits,'thanks names/headings fit');assert.equal(metrics.overflow,false);
    for(const row of metrics.rows){assert(!row.rankVisible);assert(row.nameFits,'full current leader name fits');assert(Math.abs(row.name.y-row.amount.y)<2,'name and amount share one line');}
    assert(metrics.rows[2].amount.bottom-metrics.rows[0].name.y<60,'three compact single-line leaders');
-   if(width>1000){assert(metrics.dock);assert(metrics.qr.bottom<=Math.min(metrics.dock.bottom,metrics.panel.bottom)+1,'entire QR section fits without sidebar scrolling');}
+   if(width>1000){assert(metrics.dock);assert(metrics.qr.bottom<=Math.min(metrics.dock.bottom,metrics.panel.bottom)+1,'entire QR section fits without sidebar scrolling');assert(metrics.panel.bottom-metrics.qr.bottom<=12,'no unused space below QR');}
    else{assert(metrics.image.width>=90);assert(metrics.cta.height>=44);assert(metrics.all.height>=44);}
    assert.deepEqual(errors,[]);
   }catch(error){console.log(JSON.stringify({language,width,height,metrics}));throw error;}
