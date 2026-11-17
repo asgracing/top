@@ -13,7 +13,10 @@ export function findWorkspaceRoot(sourceRoot=siteRoot,markerExists=existsSync){
 }
 export const workspaceRoot=findWorkspaceRoot();
 export const archiveScratchRoot=resolve(workspaceRoot,'_archive/tmp');
-export const taskDate=(now=new Date())=>new Intl.DateTimeFormat('en-CA',{timeZone:'Europe/Moscow',year:'numeric',month:'2-digit',day:'2-digit'}).format(now);
+export function taskDate(now=new Date()){
+ const parts=new Intl.DateTimeFormat('en',{timeZone:'Europe/Moscow',year:'numeric',month:'2-digit',day:'2-digit'}).formatToParts(now);
+ return ['year','month','day'].map(type=>parts.find(part=>part.type===type).value).join('-');
+}
 
 function childOf(parent,child){
  const part=relative(parent,child);
