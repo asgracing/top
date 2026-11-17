@@ -2,7 +2,12 @@ import test from 'node:test';
 import assert from 'node:assert/strict';
 import {mkdtemp,mkdir,symlink,rm} from 'node:fs/promises';
 import {resolve} from 'node:path';
-import {archiveScratchRoot,workspaceRoot,findWorkspaceRoot,assertChildPath,assertArchiveScratchPath,taskScratchPath} from '../../scripts/workspace-scratch.mjs';
+import {archiveScratchRoot,workspaceRoot,findWorkspaceRoot,assertChildPath,assertArchiveScratchPath,taskScratchPath,taskDate} from '../../scripts/workspace-scratch.mjs';
+
+test('default task dates use Moscow across UTC midnight',()=>{
+ assert.equal(taskDate(new Date('2026-11-16T20:59:59Z')),'2026-11-16');
+ assert.equal(taskDate(new Date('2026-11-16T21:00:00Z')),'2026-11-17');
+});
 
 test('copied CI fixtures retain the shared scratch root without a WORKSPACE.md marker',()=>{
  const copied=resolve(workspaceRoot,'_archive/tmp/2026-10-12/source-check/candidate/source');

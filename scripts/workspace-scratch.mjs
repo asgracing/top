@@ -13,6 +13,7 @@ export function findWorkspaceRoot(sourceRoot=siteRoot,markerExists=existsSync){
 }
 export const workspaceRoot=findWorkspaceRoot();
 export const archiveScratchRoot=resolve(workspaceRoot,'_archive/tmp');
+export const taskDate=(now=new Date())=>new Intl.DateTimeFormat('en-CA',{timeZone:'Europe/Moscow',year:'numeric',month:'2-digit',day:'2-digit'}).format(now);
 
 function childOf(parent,child){
  const part=relative(parent,child);
@@ -37,7 +38,7 @@ export function assertArchiveScratchPath(value){
  return assertChildPath(archiveScratchRoot,value);
 }
 export function taskScratchPath(...parts){
- const task=assertArchiveScratchPath(process.env.ASG_TASK_OUTPUT_DIR||resolve(archiveScratchRoot,new Date().toISOString().slice(0,10),'site-local'));
+ const task=assertArchiveScratchPath(process.env.ASG_TASK_OUTPUT_DIR||resolve(archiveScratchRoot,taskDate(),'site-local'));
  const output=parts.length?assertChildPath(task,resolve(task,...parts)):task;
  mkdirSync(parts.length?dirname(output):task,{recursive:true});
  return output;
