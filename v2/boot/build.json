@@ -3,12 +3,16 @@
   "entry": "/v2/boot/home.js",
   "files": [
     {
-      "path": "/v2/boot/chunks/control-XX2VY4MN.js",
-      "bytes": 45289
+      "path": "/v2/boot/chunks/portal-ops-page-AC6F22DR.js",
+      "bytes": 82350
     },
     {
-      "path": "/v2/boot/chunks/controller-A2VC7KME.js",
-      "bytes": 330689
+      "path": "/v2/boot/chunks/control-UTELTG6Q.js",
+      "bytes": 45317
+    },
+    {
+      "path": "/v2/boot/chunks/controller-PDZMBH64.js",
+      "bytes": 330896
     },
     {
       "path": "/v2/boot/chunks/table-engine-CVJLSIY2.js",
@@ -19,48 +23,48 @@
       "bytes": 880
     },
     {
-      "path": "/v2/boot/chunks/home-2IV7D6BA.js",
-      "bytes": 496985
+      "path": "/v2/boot/chunks/home-CLSNKEEZ.js",
+      "bytes": 497013
     },
     {
-      "path": "/v2/boot/chunks/chunk-RKS4ZTMY.js",
+      "path": "/v2/boot/chunks/chunk-V6JMH27T.js",
       "bytes": 5289
+    },
+    {
+      "path": "/v2/boot/chunks/site-appearance-admin-57PRZOBF.js",
+      "bytes": 9928
     },
     {
       "path": "/v2/boot/chunks/server-directory-SEWH4TQX.js",
       "bytes": 5715
     },
     {
-      "path": "/v2/boot/chunks/account-MGJ3W5CZ.js",
-      "bytes": 418
+      "path": "/v2/boot/chunks/account-YODZH7EX.js",
+      "bytes": 446
     },
     {
-      "path": "/v2/boot/chunks/account-XSNKTAHS.js",
-      "bytes": 17763
+      "path": "/v2/boot/chunks/account-65NUJA7O.js",
+      "bytes": 17791
     },
     {
-      "path": "/v2/boot/chunks/chunk-F7GNEYUY.js",
+      "path": "/v2/boot/chunks/chunk-X6QGM5BM.js",
       "bytes": 125027
     },
     {
-      "path": "/v2/boot/chunks/moderation-page-YDW3467E.js",
-      "bytes": 32156
-    },
-    {
-      "path": "/v2/boot/chunks/portal-ops-page-XH7C7T5U.js",
-      "bytes": 82322
-    },
-    {
-      "path": "/v2/boot/chunks/chunk-2SZS2VFX.js",
+      "path": "/v2/boot/chunks/chunk-OTHCOYYJ.js",
       "bytes": 15476
     },
     {
-      "path": "/v2/boot/chunks/chunk-GPJB7NSS.js",
+      "path": "/v2/boot/chunks/moderation-page-NYX6RDIM.js",
+      "bytes": 32184
+    },
+    {
+      "path": "/v2/boot/chunks/chunk-AN3UFNKK.js",
       "bytes": 7575
     },
     {
-      "path": "/v2/boot/chunks/chunk-HFPSUOCK.js",
-      "bytes": 37230
+      "path": "/v2/boot/chunks/chunk-XP237YLK.js",
+      "bytes": 37302
     },
     {
       "path": "/v2/boot/chunks/judicial-FX5RDNHW.js",
@@ -140,10 +144,10 @@
     },
     {
       "path": "/v2/boot/home.js",
-      "bytes": 247629
+      "bytes": 247874
     },
     {
-      "path": "/v2/boot/chunks/chunk-GW32S5MI.js",
+      "path": "/v2/boot/chunks/chunk-FAREWYBQ.js",
       "bytes": 96899
     },
     {
@@ -151,7 +155,7 @@
       "bytes": 117657
     },
     {
-      "path": "/v2/boot/chunks/chunk-U6OZ2D7P.js",
+      "path": "/v2/boot/chunks/chunk-E6CIF76F.js",
       "bytes": 26285
     },
     {
@@ -167,7 +171,7 @@
       "bytes": 2655
     },
     {
-      "path": "/v2/boot/chunks/chunk-BBXVNRMQ.js",
+      "path": "/v2/boot/chunks/chunk-OKEFZXP5.js",
       "bytes": 712
     },
     {
@@ -175,8 +179,12 @@
       "bytes": 616
     },
     {
-      "path": "/v2/boot/chunks/chunk-IIPXR6N5.js",
-      "bytes": 26051
+      "path": "/v2/boot/chunks/chunk-757VSIYX.js",
+      "bytes": 1613
+    },
+    {
+      "path": "/v2/boot/chunks/chunk-QFFNL765.js",
+      "bytes": 24935
     },
     {
       "path": "/v2/boot/chunks/chunk-4RTQ6S5A.js",

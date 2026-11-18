@@ -1,7 +1,6 @@
 plugins: []
 exclude:
   - ".editorconfig"
-  - ".git"
   - ".gitattributes"
   - ".github"
   - ".gitignore"
@@ -24,8 +23,6 @@ exclude:
   - "README.md"
   - "community-likes-worker"
   - "design-research"
-  - "dist"
-  - "dist.previous"
   - "docs"
   - "donations-worker"
   - "node_modules"

@@ -76,7 +76,7 @@
     },
     {
       "path": "scripts/build-v2.mjs",
-      "sha256": "2102ef78fc77a24d35dfa9334b0040f0ecef986f23c534f9559069cc9c028c5e"
+      "sha256": "ac5b890da4e41adb6343791732502d20244f5de857ab2d5437a9421fe3d62180"
     },
     {
       "path": "scripts/generate-localized-pages.mjs",
@@ -100,7 +100,7 @@
     },
     {
       "path": "scripts/v2-page-shell.mjs",
-      "sha256": "c191b983900afb6a242ab4584f5d4ceb45b03dc8e4f0deb1bd015b0066cf19f3"
+      "sha256": "c9b3397fed0a16630d4f32a5f131d4bdc2ef926fa0236fcee4393d06edad9649"
     },
     {
       "path": "scripts/v2-runtime-facade.txt",
@@ -112,7 +112,7 @@
     },
     {
       "path": "src/features/auth/header-auth.js",
-      "sha256": "f071c11ec53f714e27698d9241bcc2c24daec9f3387bfbc713f5d1ceb6434e38"
+      "sha256": "8a5b29b7e3b3123f185ea9f3fcab8643bc2cc4ee8ebc30c982967f82cafd62c8"
     },
     {
       "path": "src/features/auth/personal-notifications.js",
@@ -728,11 +728,11 @@
     },
     {
       "path": "v2/header.js",
-      "sha256": "e4e780608ffa627c555dda8f7a83885c10444de29a560f82786cdb0376668258"
+      "sha256": "cb7c21e91c815ef77a38d02e51c1d8a8102bf14a36329d92577263fe7bf19d25"
     },
     {
       "path": "v2/home.js",
-      "sha256": "c2185338a0d76b677ad12caf2740eef3b02253c3436deecf6341c214455bd28f"
+      "sha256": "eb7e71b9391db620797f7d98d0cbf8072fc6a81ad4787782443c9ff5ebf38172"
     },
     {
       "path": "v2/live-stats.js",
@@ -760,11 +760,11 @@
     },
     {
       "path": "v2/page-layout.js",
-      "sha256": "febd667390ad6f89c7604c4a4f6a7b58ba2dee97eebe342de4d972728933361b"
+      "sha256": "fc1a0790e7c6679a7d684e0d2503ee3e92e48ad36c53d505697514ae7d2a0e55"
     },
     {
       "path": "v2/page-registry.js",
-      "sha256": "1cbbc38d72ec74d9422dd2d5002d9681e2afd6fb3cc9f6009733c63f6e95d132"
+      "sha256": "fbd0836895815ecd890f7261bd4b46d2cd157c1b6b59315ccc5c2ae8b65864af"
     },
     {
       "path": "v2/pages/account.js",
@@ -788,7 +788,7 @@
     },
     {
       "path": "v2/pages/controller.js",
-      "sha256": "a643532e0b49a5895c68a2385d5b8b08b427a2fe1e96d64b512da2468d300cf2"
+      "sha256": "4399054c7818b06e17c0a683cfa179ef462300bd28454601a1603160e08bfbae"
     },
     {
       "path": "v2/pages/data.js",
@@ -813,6 +813,10 @@
     {
       "path": "v2/pages/race-archive-api.js",
       "sha256": "72c31f6384d5e3d089cc8bc9e63544402761354d9bf78df6b07b82278808a170"
+    },
+    {
+      "path": "v2/pages/site-appearance-admin.js",
+      "sha256": "4cab6f5db2467b5efc4b8f214f4b187073a00e0384ab23c3e1df5a1c30e7aaec"
     },
     {
       "path": "v2/presentation.js",

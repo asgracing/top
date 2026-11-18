@@ -620,3 +620,5 @@
 /v2/pages/site-appearance-admin.css -text
 /v2/pages/site-appearance-admin.js -text
 /src/features/site-appearance/** -text
+/reports/index.html -text
+/en/reports/index.html -text
