@@ -71,9 +71,18 @@ const reportsIntakeJavaScriptBytes=await textBytes('v2/reports/intake.js');
 const reportsJudicialJavaScriptBytes=await textBytes('v2/reports/judicial.js');
 const reportsScreensJavaScriptBytes=(await Promise.all(['case','registry','statistics','help','presentation'].map(name=>textBytes('v2/reports/'+name+'.js')))).reduce((a,b)=>a+b,0);
 const reportsTotalJavaScriptBytes=await treeBytes('v2/reports',new Set(['.js']));
+const siteAppearanceBootstrapBytes = await textBytes('src/features/site-appearance/site-appearance.js');
+const newYearJavaScriptBytes = await treeBytes('src/features/site-appearance', new Set(['.js'])) - siteAppearanceBootstrapBytes;
+const siteAppearanceAdminJavaScriptBytes = await textBytes('v2/pages/site-appearance-admin.js');
 const metrics = {
   appJavaScriptBytes: await textBytes("app.js"),
-  sourceModulesBytes: await treeBytes("src", new Set([".js", ".mjs"])) - moderationJavaScriptBytes - portalOpsJavaScriptBytes - raceResultContextJavaScriptBytes - personalNotificationsJavaScriptBytes - racingRulesJavaScriptBytes - serverTrackMapJavaScriptBytes - serverLiveTelemetryJavaScriptBytes - raceNumberPickerJavaScriptBytes - raceNumberValidityJavaScriptBytes,
+  sourceModulesBytes: await treeBytes("src", new Set([".js", ".mjs"])) - moderationJavaScriptBytes - portalOpsJavaScriptBytes - raceResultContextJavaScriptBytes - personalNotificationsJavaScriptBytes - racingRulesJavaScriptBytes - serverTrackMapJavaScriptBytes - serverLiveTelemetryJavaScriptBytes - raceNumberPickerJavaScriptBytes - raceNumberValidityJavaScriptBytes - siteAppearanceBootstrapBytes - newYearJavaScriptBytes,
+  siteAppearanceBootstrapBytes,
+  siteAppearanceOptionalJavaScriptBytes: newYearJavaScriptBytes + siteAppearanceAdminJavaScriptBytes,
+  siteAppearanceStylesheetBytes: await textBytes('src/features/site-appearance/new-year.css')
+    + await textBytes('v2/pages/site-appearance-admin.css'),
+  siteAppearanceArtworkBytes: (await Promise.all(['garland', 'snowbank', 'ornaments', 'crystals']
+    .map(name => fileBytes(`src/features/site-appearance/assets/${name}.webp`)))).reduce((sum, bytes) => sum + bytes, 0),
   serverLiveTelemetryJavaScriptBytes,
   serverTrackMapJavaScriptBytes,
   serverTrackMapAssetBytes: await treeBytes("assets/track-maps", new Set([".js"])),

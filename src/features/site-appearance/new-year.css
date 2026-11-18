@@ -1,0 +1,157 @@
+/* Paint the art above the container background and below its interactive content. */
+:where(:is(header, .top-nav, footer):has(> :is(.asg-new-year-lights, .asg-new-year-frost))) {
+  position: relative;
+  isolation: isolate;
+}
+
+.asg-new-year-snow,
+.asg-new-year-lights,
+.asg-new-year-frost {
+  pointer-events: none;
+  user-select: none;
+}
+
+.asg-new-year-lights {
+  position: absolute;
+  z-index: -1;
+  inset: -2px 0 auto;
+  display: flex;
+  max-inline-size: 2160px;
+  margin-inline: auto;
+  opacity: .8;
+  mask-image: linear-gradient(#000 75%, #000a);
+}
+
+.asg-new-year-wire {
+  position: relative;
+  flex: 1 1 0;
+  aspect-ratio: 1500 / 107;
+}
+
+.asg-new-year-wire::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background: url("./assets/garland.webp") center / contain no-repeat;
+  clip-path: var(--wire-mask);
+}
+
+.asg-new-year-bulb {
+  position: absolute;
+}
+
+.asg-new-year-bulb-glass {
+  position: relative;
+  display: block;
+  width: 100%;
+  height: 100%;
+  background-image: url("./assets/garland.webp");
+  background-repeat: no-repeat;
+}
+
+.asg-new-year-bulb-glass::after {
+  content: "";
+  position: absolute;
+  inset: 24% 14% 6%;
+  background: radial-gradient(circle, var(--bulb-color), transparent 67%);
+  opacity: .18;
+  animation: asg-new-year-glow var(--bulb-period) ease-in-out var(--bulb-phase) infinite alternate;
+}
+
+.asg-new-year-frost {
+  position: absolute;
+  z-index: -1;
+  inset: -5px 0 auto;
+  height: 17px;
+  background: url("./assets/snowbank.webp") center / 100% 100% no-repeat;
+  opacity: .89;
+}
+
+.asg-new-year-frost::before,
+.asg-new-year-frost::after {
+  content: "";
+  position: absolute;
+  bottom: -3px;
+  width: clamp(62px, 7vw, 78px);
+  aspect-ratio: 3.03;
+  background: url("./assets/ornaments.webp") center / contain no-repeat;
+  filter: drop-shadow(0 2px 2px #07102199);
+}
+
+.asg-new-year-frost::before { left: clamp(5px, 2vw, 24px); }
+.asg-new-year-frost::after { right: clamp(5px, 2vw, 24px); transform: scaleX(-1); }
+body > .asg-new-year-lights { z-index: 0; inset-block-start: 0; }
+body > .asg-new-year-frost { z-index: 0; inset: auto 0 0; }
+
+.asg-new-year-snow {
+  position: fixed;
+  z-index: 12;
+  inset: 0;
+  overflow: hidden;
+  contain: strict;
+}
+
+.asg-new-year-snow > span {
+  position: absolute;
+  inset: -24px auto auto var(--x);
+  width: var(--size);
+  height: var(--size);
+  opacity: var(--alpha);
+  animation: asg-new-year-fall var(--fall) linear var(--fall-phase) infinite;
+}
+
+.asg-new-year-snow i {
+  display: block;
+  width: 100%;
+  height: 100%;
+  background: url("./assets/crystals.webp") var(--crystal) center / 300% 100% no-repeat;
+  animation: asg-new-year-sway var(--sway-period) ease-in-out var(--sway-phase) infinite;
+}
+
+.asg-new-year-grain i {
+  background: radial-gradient(ellipse at 46% 48%, #f8fcff 10%, #d1e8fc 36%, #b0d4f490 55%, transparent 72%);
+}
+
+@keyframes asg-new-year-fall {
+  from { transform: translate3d(0, 0, 0); }
+  to { transform: translate3d(var(--wind), calc(100vh + 50px), 0); }
+}
+
+@keyframes asg-new-year-sway {
+  0%, 100% { transform: perspective(96px) translateX(calc(-1 * var(--sway))) rotateZ(-27deg) rotateY(-37deg); }
+  50% { transform: perspective(96px) translateX(var(--sway)) rotateZ(39deg) rotateY(33deg); }
+}
+
+@keyframes asg-new-year-glow {
+  from { opacity: .08; }
+  to { opacity: .48; }
+}
+
+[data-asg-new-year-paused] :is(.asg-new-year-snow span, .asg-new-year-snow i),
+[data-asg-new-year-paused] .asg-new-year-bulb-glass::after {
+  animation-play-state: paused;
+}
+
+@media (max-width: 1620px) {
+  .asg-new-year-wire:nth-child(n+4) { display: none; }
+}
+
+@media (max-width: 1080px) {
+  .asg-new-year-wire:nth-child(n+3) { display: none; }
+}
+
+@media (max-width: 540px) {
+  .asg-new-year-wire:nth-child(n+2) { display: none; }
+}
+
+@media (max-width: 640px) {
+  .asg-new-year-snow > span:nth-child(2n) { display: none; }
+  .asg-new-year-frost { inset-block-start: -4px; height: 14px; }
+  .asg-new-year-frost::before,
+  .asg-new-year-frost::after { width: 62px; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .asg-new-year-snow { display: none; }
+  .asg-new-year-bulb-glass::after { animation: none; }
+}

@@ -8,7 +8,7 @@ import {rankingPosition,eventKind,normalizeTablePage,normalizeSafetyRow,paginati
 import {createPresentation} from './presentation.js?v=20261104rc3';
 import {createRecentRaces} from './recent-races.js?v=20261117home1';
 import {createDonationSupport} from './donations.js?v=20261117home1';
-import {createHeader} from './header.js?v=20261116profilereports1';
+import {createHeader} from './header.js?v=20261118newyear1';
 import {liveRanking,liveBestlapTracks} from './live-stats.js';
 import {serverSessionLabel} from './server-session.js?v=20261025direct1';
 import {orderedServers,replaceServerCards,serverDialogTrigger} from './server-cards.js?v=20261025servers1';
@@ -388,7 +388,7 @@ if(!isSubpage){
 }
 try{await import('./runtime/home.js?v=20261117reports1');applyHash();if(isSubpage)startBackground();}catch(error){console.error('V2 runtime unavailable',error);$('event-track').textContent=text('Не удалось загрузить данные','Could not load data');$('day-driver').textContent=text('Данные недоступны','Data unavailable');tableError=true;tableBusy=false;renderTable()}
 if(document.documentElement.dataset.v2Page){
-  const {startPage}=await import('./pages/controller.js?v=20261111siteviews1');
+  const {startPage}=await import('./pages/controller.js?v=20261118newyear2');
   await startPage({native,presentation,showDialog,esc,text,label,date,number,rating,car,language,subscribe,serverAdmission});
 }
 import {installReports} from './reports/index.js?v=20261117reports1';

@@ -13,6 +13,8 @@ function add(source,target,kind){
  if(source.endsWith('/')&&source!=='/')map.set(source.slice(0,-1),{source:source.slice(0,-1),target,status:301,preserveQuery:true,kind});
 }
 for(const page of pageRegistry){
+ // This private page launches at its root URLs and has no legacy origins.
+ if(page.route==='site-admin/')continue;
  add('/ru/'+page.route,page.target.ru,'language');
  for(const lang of ['ru','en'])add('/v2/'+lang+'/'+page.route,page.target[lang],'v2');
 }

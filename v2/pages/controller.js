@@ -24,7 +24,7 @@ import {createDriverAchievementsController} from '/src/pages/driver/achievements
 import {v2Route,v2EntityLinks,currentV2Path,migratedPaths} from '../routes.js?v=20261007v2pages14';
 import {screenPath,scopeSiteHref,siteContext} from '../site-routing.js?v=20261007root1';
 import {eventKind as resolveKind} from '../models.js?v=20261006v2k';
-import {pageHasSidebarWidgets} from '../page-layout.js?v=20261111sidebars1';
+import {pageHasSidebarWidgets} from '../page-layout.js?v=20261118newyear1';
 
 export async function startPage(api) {
   const currentMonth=()=>moscowDateKey(new Date().toISOString()).slice(0,7);
@@ -38,6 +38,12 @@ export async function startPage(api) {
   const entityThumbnails=['club','team'].includes(screen)?createEntityThumbnails({root:center,loadAvatar:id=>native().steamAvatar(id)}):null;
   window.addEventListener('pagehide',()=>entityThumbnails?.destroy(),{once:true});
   home.id='home-view';home.hidden=true;home.append(...center.childNodes);view.id='page-view';center.append(home,view);
+
+  if (screen === 'site-admin') {
+    const { mountAppearanceAdmin } = await import('./site-appearance-admin.js?v=20261118newyear2');
+    mountAppearanceAdmin({ view, language, subscribe });
+    return;
+  }
   if(screen==='reports'){const {mountReportsPage}=await import('../reports/index.js?v=20261117reports1');view.className='panel report-section';await mountReportsPage(view);return;}
   if(screen==='servers'){const {startServerDirectory}=await import('../server-directory.js?v=20261025servers1');return startServerDirectory({...api,view,center});}
   if(screen==='account'){const {startAccountPage}=await import('./account.js?v=20261031numbers1');return startAccountPage({...api,view,center});}

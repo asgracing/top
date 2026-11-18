@@ -48,6 +48,7 @@ try{
     const html=await readFile(join(second,`v2/${language}/${page.route}index.html`),'utf8');
     assert.ok(html.includes(`lang="${language}"`));assert.ok(!html.includes('POISONED_PUBLIC_OUTPUT'));
     const elements=nodes(html),hasClass=(node,name)=>(node.attrs.class||'').split(/\s+/).includes(name);
+    assert.equal(elements.filter(node=>node.name==='script'&&node.attrs.src?.startsWith('/src/features/site-appearance/site-appearance.js?')).length,1,'Shared seasonal loader for '+page.route);
     const dashboard=elements.find(node=>hasClass(node,'dashboard'));
     const sidebars=elements.filter(node=>node.name==='aside'&&(hasClass(node,'left-column')||hasClass(node,'right-column')));
     assert.equal(sidebars.length,2,'Keep controller nodes for '+page.route);
@@ -63,5 +64,5 @@ try{
   const generation=await exec(process.execPath,['scripts/generate-localized-pages.mjs','--output-dir',join(work,'localized')],{cwd:workspace,maxBuffer:1024*1024});
   assert.match(generation.stdout,/Localized HTML generated/);
   await assert.rejects(exec(process.execPath,['scripts/build-v2.mjs'],{cwd:workspace,env:{...process.env,ASG_V2_PRESENTATION_ONLY:'1'},maxBuffer:1024*1024}),/Presentation-only builds are retired/);
-  console.log('V2 build regression passed: source-only build, 58 RU/EN pages, poisoned public HTML, deterministic output, full runtime required.');
+  console.log(`V2 build regression passed: source-only build, ${pageRegistry.length*2} RU/EN pages, poisoned public HTML, deterministic output, full runtime required.`);
 }finally{await rm(work,{recursive:true,force:true});}

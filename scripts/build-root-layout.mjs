@@ -8,6 +8,7 @@ import {nodes,edit,setAttribute} from './seo/html-source.mjs';
 import {pageRegistry} from '../v2/page-registry.js';
 import {addServerNavigation} from './server-navigation.mjs';
 import {readSiteRelease} from './site-release.mjs';
+import {siteAppearanceScript} from './v2-page-shell.mjs';
 import {scopeSiteHref,routeHref,legacyRoutes,versionHref,excludedRoute} from '../v2/site-routing.js';
 if(process.env.ASG_SITE_RELEASE_BUILD!=='1'&&(!process.env.ASG_DIST_OUTPUT_DIR||dist===resolve(root,'dist')))throw Error('Root layout requires an isolated artifact or an explicit site-release build');
 const origin='https://asgracing.ru',context={layout:'root',version:'v2'};
@@ -66,7 +67,7 @@ if(legacyEnabled)for(const language of ['ru','en'])for(const path of legacyRoute
   html=html.replace(/(src="[^"<>]*\blegal\.js)(?:\?[^"<>]*)?"/g,'$1?v=20261030analytics1"');
   const current=routeHref(path==='events/'?'hourly/championship/':path,language,context);
   const canonical=pageRegistry.some(page=>page.target[language]===current)?`<link rel="canonical" href="${origin+current}">`:'';
-  html=html.replace('</head>',`<meta name="robots" content="noindex,follow">${canonical}</head>`)
+  html=html.replace('</head>',`<meta name="robots" content="noindex,follow">${canonical}${siteAppearanceScript}</head>`)
     .replace('</body>','<script type="module" src="/v2/legacy-navigation.js?v=20261007root2"></script></body>');
   await emit(target.slice(1)+'index.html',html);written.push({path:target,version:'old',language});
 }

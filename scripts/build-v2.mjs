@@ -11,7 +11,7 @@ import {readV1Html} from './v1-source.mjs';
 import {pageRegistry} from '../v2/page-registry.js';
 import {readSiteRelease} from './site-release.mjs';
 import {buildV2Boot} from './build-v2-boot.mjs';
-import {pageShell} from './v2-page-shell.mjs';
+import {pageShell,siteAppearanceScript} from './v2-page-shell.mjs';
 import {pageHasSidebarWidgets} from '../v2/page-layout.js';
 const root = resolve(import.meta.dirname, '..');
 const siteRelease=await readSiteRelease();
@@ -21,13 +21,13 @@ if(outputRoot!==root)assertArchiveScratchPath(outputRoot);
 if (process.env.ASG_V2_PRESENTATION_ONLY === '1') throw Error('Presentation-only builds are retired: rebuild V2 with its canonical runtime.');
 const version = '20261006v2k';
 const runtimeVersion = '20261117reports1';
-const presentationVersion = '20261028team10';
+const presentationVersion = '20261118winter3';
 const homeStylesVersion = '20261117home6';
-const bootVersion = '20261117home6';
-const hourlyBootVersion = '20261117home6';
-const archiveBootVersion = '20261117home6';
-const statsBootVersion = '20261117home6';
-const raceModalBootVersion = '20261117home6';
+const bootVersion = '20261118newyear2';
+const hourlyBootVersion = '20261118newyear2';
+const archiveBootVersion = '20261118newyear2';
+const statsBootVersion = '20261118newyear2';
+const raceModalBootVersion = '20261118newyear2';
 const controlStylesVersion = '20261103clubs1';
 const profileStylesVersion = '20261111readers2';
 const legalVersion = '20261030analytics1';
@@ -159,7 +159,7 @@ for (const language of ['ru','en']) {
     .replace(/<link\b[^>]*rel="(?:canonical|alternate)"[^>]*>/g,'')
     .replace(/(<meta property="og:url" content=")[^"]+/,`$1https://asgracing.ru/v2/${language}/`)
     ;
-  head += `\n<link rel="stylesheet" href="/v2/styles/design.css?v=${presentationVersion}">\n<link rel="stylesheet" href="/v2/home.css?v=${homeStylesVersion}">\n<script src="/legal.js?v=${legalVersion}" defer></script>\n<script type="module" src="/v2/boot/home.js?v=${bootVersion}"></script>\n`;
+  head += `\n<link rel="stylesheet" href="/v2/styles/design.css?v=${presentationVersion}">\n<link rel="stylesheet" href="/v2/home.css?v=${homeStylesVersion}">\n<script src="/legal.js?v=${legalVersion}" defer></script>\n${siteAppearanceScript}\n<script type="module" src="/v2/boot/home.js?v=${bootVersion}"></script>\n`;
   // Preserve required legacy modal/controller nodes, outside the hidden source
   // host so real dialogs remain visible and accessible. No duplicate IDs.
   let oldBody = classic.match(/<body[^>]*>([\s\S]*)<\/body>/i)[1];
@@ -187,6 +187,7 @@ for (const language of ['ru','en']) {
     const pageHead=head.replace(/<title>[\s\S]*?<\/title>/,`<title>${title} · ASG Racing</title>`).replace(/(<meta name="description" content=")[^"]+/,`$1${description}`).replace(/(<meta property="og:url" content=")[^"]+/,`$1https://asgracing.ru/v2/${language}/${page}/`) + `\n<link rel="stylesheet" href="/v2/pages/views/pages.css?v=${profileStylesVersion}">`+(['races','race','championships','hourly/championship','teams','clubs','teams/detail','cars','fun-stats','bans','hourly/championship/history','news','news/article','community','about','instructions','join','documents','documents/read','privacy','cookies','404'].includes(page)?`\n<link rel="stylesheet" href="/v2/pages/views/site-pages.css?v=${presentationVersion}">`:'')+`\n<link rel="stylesheet" href="/v2/pages/views/r24-pages.css?v=${presentationVersion}">`;
     const accountHead=['account','account/settings','moderation','portal-ops'].includes(page)?pageHead+`<link rel="stylesheet" href="/v2/pages/views/control-pages.css?v=${presentationVersion}"><link rel="stylesheet" href="/v2/pages/account.css?v=${controlStylesVersion}"><link rel="stylesheet" href="/v2/pages/control.css?v=${controlStylesVersion}">`:pageHead;
     let owningHead=page==='community'?pageHead+`<meta name="community-likes-api" content="${(await readClassic('community/index.html')).match(/<meta name="community-likes-api" content="([^"]+)"/)[1]}">`:accountHead;
+    if (screen === 'site-admin') owningHead += '<link rel="stylesheet" href="/v2/pages/site-appearance-admin.css?v=20261118newyear4">';
     if(screen==='archive'||screen==='race')owningHead=owningHead.replace(`/v2/boot/home.js?v=${bootVersion}`,`/v2/boot/home.js?v=${archiveBootVersion}`);
     if(screen==='cars')owningHead=statsHead(owningHead);
     if(screen==='hourly')owningHead=hourlyHead(owningHead);

@@ -7,10 +7,10 @@ import {versionHref} from '../v2/site-routing.js';
 import {nodes,edit} from './seo/html-source.mjs';
 import {links} from './build-root-layout.mjs';
 const origin='https://asgracing.ru';
+const classicPages=pageRegistry.filter(page=>!['404/','site-admin/'].includes(page.route));
 const verification=nodes(await readFile(resolve(dist,'v2/ru/index.html'),'utf8')).filter(n=>['google-site-verification','yandex-verification','yandex-metrika-id'].includes(n.attrs.name));
 const verificationSource=await readFile(resolve(dist,'v2/ru/index.html'),'utf8');
-for(const page of pageRegistry)for(const lang of ['ru','en']){
- if(page.route==='404/')continue;
+for(const page of classicPages)for(const lang of ['ru','en']){
  const target=page.target[lang];
  const classic=new URL(versionHref('old',{href:origin+target,origin,pathname:target},lang,{layout:'root',version:'v2'}),origin);
  let html=await readFile(resolve(dist,classic.pathname.slice(1),'index.html'),'utf8');
@@ -36,4 +36,4 @@ await import('./build-root-seo.mjs');
 const file=resolve(dist,'route-map.json'),map=JSON.parse(await readFile(file,'utf8'));
 map.status='root-fallback-ready';map.fallback=true;
 await writeFile(file,JSON.stringify(map,null,2)+'\n');
-console.log('Prepared legacy fallback at all 58 new RU/EN addresses.');
+console.log(`Prepared legacy fallback at ${classicPages.length*2} RU/EN addresses.`);

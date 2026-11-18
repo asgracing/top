@@ -611,3 +611,12 @@
 /v2/reports/reports.css -text
 /v2/reports/statistics.js -text
 /v2/reports/ux.js -text
+
+# Preserve published seasonal assets across Windows and Linux checkouts.
+/site-admin/index.html -text
+/en/site-admin/index.html -text
+/v2/ru/site-admin/index.html -text
+/v2/en/site-admin/index.html -text
+/v2/pages/site-appearance-admin.css -text
+/v2/pages/site-appearance-admin.js -text
+/src/features/site-appearance/** -text

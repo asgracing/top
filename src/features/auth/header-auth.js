@@ -244,7 +244,8 @@ export function normalizeAuthPayload(payload) {
   };
   const permissions = {
     moderationIssue: payload.permissions?.moderation_issue === true,
-    portalManage: payload.permissions?.portal_manage === true
+    portalManage: payload.permissions?.portal_manage === true,
+    siteAppearanceManage: payload.permissions?.site_appearance_manage === true
   };
   return {
     authenticated: true,
