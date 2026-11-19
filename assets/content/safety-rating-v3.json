@@ -4,15 +4,15 @@
     "safetyAboutP2": "SRv4 applies when an eligible result is first rated and the original ACC filename is timestamped from 19 November 2026, 09:00 UTC (12:00 MSK). Previous scores are preserved.",
     "summary": [
       "Valid laps add SR. Red laps subtract SR. Unfinished laps are excluded.",
-      "Full incident coverage earns a distance bonus. Verified incidents and counted ACC penalties reduce SR."
+      "Verified incidents and counted ACC penalties reduce SR."
     ],
     "detailsLabel": "Formulas, incidents and exceptions",
     "sections": [
       {
-        "title": "Laps and bonus",
+        "title": "Laps and distance",
         "paragraphs": [
           "Laps = 0.10 × (valid − red) ÷ leader laps. Laps of unknown validity contribute zero. Each team driver uses their own laps and incidents.",
-          "Bonus = 0.10 × your share of the leader’s laps, up to +0.10. With partial coverage, the bonus is zero and verified incidents still count."
+          "Below 50% distance, your personal lap contribution is scaled by your share of the leader’s laps. The final result is rounded to two decimal places."
         ]
       },
       {
@@ -36,10 +36,10 @@
     "profileGuide": {
       "title": "How SRv4 is calculated",
       "intro": "Retired before 50%? On standard circuits, your completed laps still count from lap one.",
-      "formula": "SR change = laps + distance bonus − incidents − counted ACC penalties.",
+      "formula": "SR change = lap contribution − incidents − counted ACC penalties.",
       "exampleTitle": "Example · 10-lap race",
-      "example": "The leader completes 10 laps. You retire after 4 laps (3 valid, 1 red). Full incident coverage, no verified incidents or penalties.",
-      "exampleCalculation": "+0.02 for laps + 0.04 for distance = +0.06 SR",
+      "example": "The leader completes 10 laps. You retire after 4 (2 valid, 2 red). No verified incidents or penalties.",
+      "exampleCalculation": "0.10 × (2 − 2) ÷ 10 = 0.00 SR",
       "note": "Nürburgring 24h has a separate 30% minimum.",
       "rulesLabel": "Full SRv4 rules"
     }
@@ -49,15 +49,15 @@
     "safetyAboutP2": "SRv4 применяется при первом расчёте зачётного результата с меткой от 19 ноября 2026, 12:00 МСК включительно в исходном имени файла ACC. Прежние начисления сохраняются.",
     "summary": [
       "Валидные круги прибавляют SR, красные уменьшают. Незавершённый круг исключается.",
-      "При полных данных об инцидентах начисляется бонус за дистанцию. Подтверждённые эпизоды и учтённые автоштрафы ACC уменьшают SR."
+      "Подтверждённые эпизоды и учтённые автоштрафы ACC уменьшают SR."
     ],
     "detailsLabel": "Формулы, инциденты и исключения",
     "sections": [
       {
-        "title": "Круги и бонус",
+        "title": "Круги и дистанция",
         "paragraphs": [
           "Вклад кругов = 0,10 × (валидные − красные) ÷ круги лидера. При неизвестной валидности вклад круга равен нулю. В экипаже у каждого пилота свои круги и инциденты.",
-          "Бонус = 0,10 × доля кругов лидера, до +0,10. При неполной телеметрии бонус равен нулю, подтверждённые эпизоды учитываются."
+          "При дистанции меньше 50% сначала оцениваются личные круги, затем вклад умножается на долю кругов лидера. Итог округляется до сотых."
         ]
       },
       {
@@ -81,10 +81,10 @@
     "profileGuide": {
       "title": "Как считается SRv4",
       "intro": "Сошли до 50% дистанции лидера? На обычных трассах ваши завершённые круги считаются с первого.",
-      "formula": "Изменение SR = вклад кругов + бонус дистанции − инциденты − учтённые автоштрафы ACC.",
+      "formula": "Изменение SR = вклад кругов − инциденты − учтённые автоштрафы ACC.",
       "exampleTitle": "Пример · гонка на 10 кругов",
-      "example": "Лидер проехал 10 кругов. Вы сошли после 4 (3 валидных и 1 красный). Данные полные, подтверждённых инцидентов и штрафов нет.",
-      "exampleCalculation": "+0,02 за круги + 0,04 за дистанцию = +0,06 SR",
+      "example": "Лидер проехал 10 кругов. Вы сошли после 4 (2 валидных, 2 красных). Подтверждённых инцидентов и штрафов нет.",
+      "exampleCalculation": "0,10 × (2 − 2) ÷ 10 = 0,00 SR",
       "note": "На Nürburgring 24h действует отдельный порог 30%.",
       "rulesLabel": "Полные правила SRv4"
     }

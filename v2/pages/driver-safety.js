@@ -132,7 +132,7 @@ export function mountDriverSafety({root,profile,state,native,esc,text,date,track
     }
     const components=[
       [text('Чистота кругов','Lap cleanliness'),b.clean,lapEvidence,'✓'],
-      ...(splitIncidents?[[text('Бонус дистанции','Distance bonus'),b.distanceBonus,'','＋']]:[]),
+      ...(splitIncidents&&b.distanceBonus>0?[[text('Бонус дистанции','Distance bonus'),b.distanceBonus,'','＋']]:[]),
       [b.variantA&&!splitIncidents?text('Инциденты и бонус дистанции','Incidents and distance bonus'):text('Инциденты','Incidents'),
         splitIncidents?-b.incidentDeduction:b.incidentDelta,incidentEvidence+incidentRule,'◇',incidentDetails],
       [text('Автоматические штрафы','Automatic penalties'),b.penaltyDelta,esc(penaltyEvidence),'⚑']

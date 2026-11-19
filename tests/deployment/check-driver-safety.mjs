@@ -41,7 +41,7 @@ try {
     await guide.locator('summary').focus();
     await page.keyboard.press('Enter');
     assert.equal(await example.isVisible(),true);
-    assert.match(await example.textContent(),language==='ru'?/10 кругов.*сошли после 4.*\+0,06 SR/s:/10-lap.*retire after 4.*\+0\.06 SR/s);
+    assert.match(await example.textContent(),language==='ru'?/10 кругов.*сошли после 4.*0,00 SR/s:/10-lap.*retire after 4.*0\.00 SR/s);
     assert.match(await guide.textContent(),/SRv4[\s\S]*50%/);
     assert.doesNotMatch(await guide.textContent(),/SR (?:A|v3)\b/);
     const rulesHref=language==='ru'?'/#safety-about':'/en/#safety-about';
@@ -108,7 +108,7 @@ try {
       await rules.waitFor();
       assert.match(await modal.locator('h2').textContent(),/SRv4/);
       assert.match(await rules.locator('.safety-rules-lead').innerText(),/50%/);
-      assert.match(await rules.locator('.safety-rules-example').innerText(),language==='ru'?/\+0,06 SR/:/\+0\.06 SR/);
+      assert.match(await rules.locator('.safety-rules-example').innerText(),language==='ru'?/0,00 SR/:/0\.00 SR/);
       assert.match(await rules.locator('.safety-rules-date').innerText(),language==='ru'?/12:00 МСК/:/09:00 UTC/);
       const details=rules.locator('.safety-rules-details');
       assert.equal(await details.evaluate(el=>el.open),false);
