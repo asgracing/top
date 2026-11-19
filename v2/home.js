@@ -7,7 +7,7 @@ import { subscribe, getRuntime } from './bridge.js?v=20261006v2k';
 import {rankingPosition,eventKind,normalizeTablePage,normalizeSafetyRow,paginationPages,serverSrRestriction} from './models.js?v=20261013delivery1';
 import {createPresentation} from './presentation.js?v=20261104rc3';
 import {createRecentRaces} from './recent-races.js?v=20261117home1';
-import {createDonationSupport} from './donations.js?v=20261117home1';
+import {createDonationSupport} from './donations.js?v=20261119donations1';
 import {createHeader} from './header.js?v=20261118newyear1';
 import {liveRanking,liveBestlapTracks} from './live-stats.js';
 import {serverSessionLabel} from './server-session.js?v=20261025direct1';

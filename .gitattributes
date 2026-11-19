@@ -622,3 +622,6 @@
 /src/features/site-appearance/** -text
 /reports/index.html -text
 /en/reports/index.html -text
+/faq/index.html -text
+/en/faq/index.html -text
+/v2/donations.js -text
