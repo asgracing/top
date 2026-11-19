@@ -70,7 +70,9 @@ try {
     assert.match(await page.locator('.driver-sr-verdict').textContent(),/9.99/);
     assert.match(await page.locator('.driver-sr-adjustment').textContent(),/0.07/);
     await page.locator('.driver-sr-race[data-sr-race="sr-integration-34"]').click();
-    assert.match(await page.locator('#profile-sr-breakdown').textContent(),language==='ru'?/Бонус безопасности\s*\+0\.10/:/Safety bonus\s*\+0\.10/);
+    const bonusCard=page.locator('.driver-sr-components > div').filter({has:page.locator('h4',{hasText:language==='ru'?'Бонус безопасности':'Safety bonus'})});
+    assert.equal(await bonusCard.locator(':scope > strong').textContent(),'+0.10');
+    assert.match(await bonusCard.locator('p').textContent(),/50%/);
     assert.match(await incidentRule.textContent(),language==='ru'?/0,01 SR.*0,07/s:/0\.01 SR.*0\.07/s);
     const episodeDetails=page.locator('.driver-sr-episodes');
     assert.equal(await episodeDetails.locator('ol').isVisible(),false);
