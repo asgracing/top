@@ -12,7 +12,7 @@
     },
     {
       "path": "assets/content/safety-rating-v3.json",
-      "sha256": "2e2e9ba9141b53f3d2a2b606149eb25f07b63e98269b7bfe8dd4bb2013e3fc89"
+      "sha256": "0cb162a2dd936a1ec35f2420d93561a0a6942275eaa9c96bfad76e75aad9e2e3"
     },
     {
       "path": "assets/track-maps/barcelona.js",
@@ -80,7 +80,7 @@
     },
     {
       "path": "scripts/build-v2.mjs",
-      "sha256": "45e4a2b106a4597dbad87648defd2e4a926da289de8a1641c6425b7097935977"
+      "sha256": "1946b8960b9a67ebdd90c477e563c7dfe2ac1cebbfbe53d8ba11ee1f7fce09e0"
     },
     {
       "path": "scripts/faq-page.mjs",
@@ -808,7 +808,7 @@
     },
     {
       "path": "v2/pages/driver-safety.js",
-      "sha256": "dd3274424d0d0080813ea1baa44a0517b3eff316e660901cf2ce8ab170bdfe46"
+      "sha256": "e28804124bac619fd59d8c32c17eaac8ada54c007a29895421f8e1af5a5bfe55"
     },
     {
       "path": "v2/pages/editorial-model.js",
