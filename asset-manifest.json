@@ -1,8 +1,8 @@
 {
   "schemaVersion": 1,
-  "revision": "34a9f5d38288df271f860cb3d26a46421dbc6241",
-  "files": 1283,
-  "bytes": 176709437,
+  "revision": "c1056e8d87866325af7991041b2e65bb756fa0e7",
+  "files": 1285,
+  "bytes": 177226512,
   "assets": [
     {
       "path": "404.html",
@@ -251,8 +251,8 @@
     },
     {
       "path": "assets/content/safety-rating-v3.json",
-      "bytes": 7586,
-      "sha256": "9a3ea0c480642d86d09d9b6a115dbed872487d5edf2fcbd04c3b598c7210b701"
+      "bytes": 7447,
+      "sha256": "2e2e9ba9141b53f3d2a2b606149eb25f07b63e98269b7bfe8dd4bb2013e3fc89"
     },
     {
       "path": "assets/crown.png",
@@ -3132,7 +3132,7 @@
     {
       "path": "v2/boot/build.json",
       "bytes": 5648,
-      "sha256": "7184062cacf2e46bca34bbfc5b76d6fe2535b441594ab42c68369e16ec93b785"
+      "sha256": "a8dc79dfe9a35453d365500e0a024fe55cfc78608d6994512c5a91b8839312c7"
     },
     {
       "path": "v2/boot/chunks/account-2NDTNJRL.js",
@@ -3918,6 +3918,11 @@
       "path": "v2/boot/chunks/chunk-L2L6YHK6.js",
       "bytes": 7509,
       "sha256": "e83530822cc3d0e1c857ef16778ba01014e086ab2b2736c89937a7da7151fd38"
+    },
+    {
+      "path": "v2/boot/chunks/chunk-L74ATENO.js",
+      "bytes": 178016,
+      "sha256": "fbcef4dd1e6dc2eaecb563bd55ae5dc194cc14cfcd7cc76714dc2fe169c562bf"
     },
     {
       "path": "v2/boot/chunks/chunk-LKEH24X7.js",
@@ -4773,6 +4778,11 @@
       "path": "v2/boot/chunks/controller-PDZMBH64.js",
       "bytes": 330896,
       "sha256": "634397af5b73ab8bfe42920f082367536ea3579d1462207129b1179b253997cc"
+    },
+    {
+      "path": "v2/boot/chunks/controller-PNV7NGQX.js",
+      "bytes": 339337,
+      "sha256": "1d9062277c5570f96095f12cf0433feeff4209f8019e5eba4255f48c276f9767"
     },
     {
       "path": "v2/boot/chunks/controller-Q3IIXVZQ.js",
@@ -5632,7 +5642,7 @@
     {
       "path": "v2/boot/home.js",
       "bytes": 177224,
-      "sha256": "782905330fe50a0c5790b2c6a8eddb46354bca40f21b14b56a6efacfbad51176"
+      "sha256": "a149a678077bc171a00543676570abef02da586617475b991454b8c10c4fe13a"
     },
     {
       "path": "v2/bridge.js",
@@ -5642,12 +5652,12 @@
     {
       "path": "v2/build-inputs.json",
       "bytes": 32879,
-      "sha256": "25c37388036cbb6afe387e3b7d8f071aa7ae2935c4147b0fede94e9df33b43b7"
+      "sha256": "3a4fa57b492a75797e86c6a9b97894d46b4539f19b8791fc176b8af2995a64a1"
     },
     {
       "path": "v2/copy.js",
-      "bytes": 47308,
-      "sha256": "ac0d32e30ffd461975007d6374e18e2045a086ada7cbb3883d067e33db989a01"
+      "bytes": 47169,
+      "sha256": "11d1ddfb679ac30438b3b3058a3af3222d76c496dbcba3bfb274d36d682dd6cc"
     },
     {
       "path": "v2/donations.js",
