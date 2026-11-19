@@ -56,6 +56,7 @@ server {
  ssl_protocols TLSv1.2 TLSv1.3;
  access_log off;
  ${redirect}
+ include /etc/nginx/asg-web-assistant.d/*.conf;
  location / {
   # Origin name resolves independently of the website DNS and certificate.
   proxy_pass https://asgracing.github.io;
