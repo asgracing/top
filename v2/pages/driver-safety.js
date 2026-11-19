@@ -1,4 +1,4 @@
-import {driverSafetyRaces,safetyPeriodRaces,safetyListRaces,driverSafetyBreakdown,srNumber} from '../driver-safety-model.js?v=20261119srvepisodes';
+import {driverSafetyRaces,safetyPeriodRaces,safetyListRaces,driverSafetyBreakdown,srNumber} from '../driver-safety-model.js?v=20261120srv4cent';
 import {renderPagination} from './pagination.js?v=20261015pagination1';
 import copy from '../copy.js?v=20261119srvepisodes';
 import {renderProfileSafetyGuide} from '../safety-guide.js?v=20261119srv4';

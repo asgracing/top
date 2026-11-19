@@ -41,6 +41,15 @@ test('shows published incident episodes only when they reconcile with the ledger
   assert.equal(driverSafetyBreakdown(record(ledger)).incidentEpisodes,null);
   assert.equal(driverSafetyBreakdown(record({...ledger,incident_deduction:.07,incident_episodes:episodes})).incidentEpisodes,null);
 });
+test('preserves calibrated incident cents and rejects values outside the published contract',()=>{
+  const ledger={calculation_version:'sr_variant_a_v1',incident_points:1,incident_deduction:.20};
+  const episodes=[{kind:'damage',damage_growth:38,deduction:.20}];
+  assert.deepEqual(driverSafetyBreakdown(record({...ledger,incident_episodes:episodes})).incidentEpisodes,episodes);
+  for(const deduction of [.205,.26,0,'0.20']){
+    const row={...episodes[0],deduction};
+    assert.equal(driverSafetyBreakdown(record({...ledger,incident_deduction:deduction,incident_episodes:[row]})).incidentEpisodes,null);
+  }
+});
 test('stale protocols cannot replace ledger components or supply explanations',()=>{
   const b=driverSafetyBreakdown(record({old_sr:4,new_sr:3.9,delta_sr:-.1,incident_penalty_delta:-.1},{safety_rating_after:4.2,safety_delta:.2,safety_base_delta:.1,safety_incident_penalty_delta:.1,safety_penalty_delta:0}));
   assert.equal(b.stale,true);assert.equal(b.clean,null);assert.equal(b.incidentDelta,-.1);assert.equal(b.penaltyDelta,null);assert.deepEqual(b.context,{});
