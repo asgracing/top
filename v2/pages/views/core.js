@@ -34,7 +34,9 @@ export function createPageViews(api) {
     const value=kind==='elo'?d.elo:(d.safety_rating_after ?? d.safety_rating), category=kind==='elo'?eloCategory(d):(d.safety_category || (value>=5?'A':value>=2.5?'B':'C'));
     if(value==null)return '—';
     const tag=d.public_id?'button':'span',action=d.public_id?` type="button" data-rating-kind="${kind}" data-rating-driver="${label(d.public_id)}"`:'';
-    return `<${tag}${action} class="rating-badge ${kind==='elo'?'elo-'+category:'sr sr-'+category.toLowerCase()}">${kind==='elo'?'C'+category+' '+eloNumber(value):category+' '+decimal(value)}${kind==='sr'&&d.safety_delta!=null?`<small class="race-rating-delta">${delta(d.safety_delta,2)}</small>`:''}</${tag}>`;
+    const srPolicy=kind==='sr'&&d.safety_calculation_version==='sr_variant_a_v1'
+      ?tx('SRv4 · круги, дистанция и подтверждённые эпизоды','SRv4 · laps, distance and verified episodes'):'';
+    return `<${tag}${action}${srPolicy?` title="${label(srPolicy)}"`:''} class="rating-badge ${kind==='elo'?'elo-'+category:'sr sr-'+category.toLowerCase()}">${kind==='elo'?'C'+category+' '+eloNumber(value):category+' '+decimal(value)}${kind==='sr'&&d.safety_delta!=null?`<small class="race-rating-delta">${delta(d.safety_delta,2)}</small>`:''}</${tag}>`;
   }
   function championshipTeaser(e) {
     const next=(raw.upcoming||raw.schedule.items).filter(item=>item.competition_mode==='championship'&&eventStart(item)>=eventStart(e)).sort((a,b)=>eventStart(a)-eventStart(b))[0];
