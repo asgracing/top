@@ -57,7 +57,7 @@
 .faq-context-link { border: 1px solid #47665f; border-radius: 8px; background: #14272b; }
 [data-faq-nav][aria-current] { color: #b0e5cc; }
 
-.faq-page { width: min(100%,940px); margin: 0 auto; padding: 4px 2px 30px; color: var(--faq-ink); }
+.faq-page { width: 100%; padding-bottom: 24px; color: var(--faq-ink); }
 .faq-hero,.faq-next { padding: clamp(20px,4vw,40px); border-radius: 10px; }
 .faq-hero {
   background: linear-gradient(95deg,#101c2af9 5%,#101c2af2 49%,#111d2bcb),url('/assets/v2-light/tracks/monza.webp') center 62% / cover;
@@ -120,6 +120,57 @@
 .faq-answer p { margin: 0; max-width: 75ch; }
 .faq-answer a { display: inline-block; margin-top: 5px; color: var(--faq-highlight); text-decoration: underline; text-underline-offset: 3px; }
 .faq-next { margin-top: 24px; background: #172733; border-color: #47675f; }
+
+.faq-dock {
+  position: relative;
+  display: flex;
+  align-items: center;
+  align-self: center;
+  justify-self: end;
+  gap: 3px;
+  padding: 2px 4px;
+  background: #152733;
+  border: 1px solid #577c73;
+  border-radius: 10px;
+}
+.faq-dock[hidden],.faq-dock [hidden] { display: none; }
+.faq-dock-open,.faq-dock-toggle {
+  display: grid;
+  align-items: center;
+  justify-items: center;
+  padding: 0;
+  border: 0;
+  border-radius: 7px;
+  color: #cbebdd;
+}
+.faq-dock-open { width: 42px; min-height: 42px; }
+.faq-dock-open img { display: block; border-radius: 50%; }
+.faq-dock-toggle { width: 30px; min-height: 38px; font-size: 1.16rem; line-height: 1; }
+.faq-dock-open:hover,.faq-dock-toggle:hover { background: #294452; }
+.faq-dock-error {
+  position: absolute;
+  right: 0;
+  bottom: calc(100% + 8px);
+  width: min(230px,calc(100vw - 30px));
+  padding: 9px;
+  border: 1px solid #577c73;
+  border-radius: 6px;
+  background: #152733;
+  color: #edf4fb;
+}
+@media (min-width: 1001px) {
+  .knowledge:has(> .faq-dock:not([hidden])) { grid-template-columns: repeat(3,minmax(0,1fr)) auto; }
+}
+@media (max-width: 1000px) {
+  .faq-dock {
+    position: fixed;
+    z-index: 6;
+    right: max(10px,env(safe-area-inset-right));
+    bottom: max(12px,env(safe-area-inset-bottom));
+    box-shadow: 0 6px 22px #0009;
+  }
+  .faq-dock-toggle { width: 38px; min-height: 42px; }
+}
 
 .faq-chat {
   width: min(430px,calc(100vw - 24px));

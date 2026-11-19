@@ -1,4 +1,5 @@
 import {escape, nodes, setAttribute} from './seo/html-source.mjs';
+import {pageHasSidebarWidgets} from '../v2/page-layout.js';
 
 const communities = {
   telegram: 'https://t.me/+JUymrENgddcyMTdi',
@@ -14,6 +15,7 @@ const labels = {
     bannerText: 'Подключение, Alpine GT4, SR и SA — короткие ответы в одном месте.', open: 'Открыть FAQ',
     serverHint: 'Не пускает на сервер? Проверьте допуск в FAQ',
     launchError: 'Не удалось открыть чат. Попробуйте ещё раз или напишите в сообщество.',
+    hide: 'Скрыть иконку помощника', restore: 'Показать иконку помощника',
   },
   en: {
     title: 'Frequently asked questions', intro: 'Find out how to join a server, check entry requirements and get help from ASG Racing.',
@@ -23,6 +25,7 @@ const labels = {
     bannerText: 'Quick answers on joining, Alpine GT4, SR and SA.', open: 'Open the FAQ',
     serverHint: 'Can’t join a server? Check entry requirements in the FAQ',
     launchError: 'Could not open the chat. Please try again or ask the community.',
+    hide: 'Hide assistant icon', restore: 'Show assistant icon',
   },
 };
 
@@ -77,7 +80,15 @@ function faqMarkup(language, {groups, questions}) {
 export function addFaqToShell(html, language, screen, content) {
   const copy = labels[language];
   const nav = '<a href="/faq/" data-faq-nav'+(screen === 'faq' ? ' aria-current="page"' : '')+'>FAQ</a>';
-  html = html.replace('<!-- faq-nav -->', nav);
+  const dock = `<div class="faq-dock" data-faq-dock hidden>
+    <button class="faq-dock-open" type="button" data-faq-open title="${copy.ask}" aria-label="${copy.ask}" hidden>
+      <img src="/src/pages/faq/assistant-avatar.jpg" width="36" height="36" alt="">
+    </button>
+    <button class="faq-dock-toggle" type="button" data-faq-hide title="${copy.hide}" aria-label="${copy.hide}">×</button>
+    <button class="faq-dock-toggle" type="button" data-faq-restore title="${copy.restore}" aria-label="${copy.restore}" hidden>‹</button>
+    <p class="faq-dock-error" data-faq-launch-error role="status" hidden>${copy.launchError}</p>
+  </div>`;
+  html = html.replace('<!-- faq-nav -->', nav).replace('<!-- faq-dock -->', pageHasSidebarWidgets(screen) ? dock : '');
   if (screen === 'home') return html
     .replace('<!-- faq-about -->', faqPromo(language))
     .replace('<!-- faq-welcome -->', `<a class="faq-welcome-link" href="/faq/">${copy.title} <span aria-hidden="true">↗</span></a>`);

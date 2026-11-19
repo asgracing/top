@@ -24,17 +24,17 @@ const version = '20261006v2k';
 const runtimeVersion = '20261117reports1';
 const presentationVersion = '20261118winter3';
 const homeStylesVersion = '20261117home6';
-const bootVersion = '20261119faq1';
-const hourlyBootVersion = '20261119faq1';
-const archiveBootVersion = '20261119faq1';
-const statsBootVersion = '20261119faq1';
-const raceModalBootVersion = '20261119faq1';
+const bootVersion = '20261119faq2';
+const hourlyBootVersion = '20261119faq2';
+const archiveBootVersion = '20261119faq2';
+const statsBootVersion = '20261119faq2';
+const raceModalBootVersion = '20261119faq2';
 const controlStylesVersion = '20261103clubs1';
 const profileStylesVersion = '20261111readers2';
 const legalVersion = '20261030analytics1';
 const buildInputs = new Map();
-const faqStyles = '<link rel="stylesheet" href="/src/pages/faq/faq.css?v=20261119faq1">';
-const faqScript = '<script type="module" src="/src/pages/faq/faq.js?v=20261119faq1"></script>';
+const faqStyles = '<link rel="stylesheet" href="/src/pages/faq/faq.css?v=20261119faq2">';
+const faqScript = '<script type="module" src="/src/pages/faq/faq.js?v=20261119faq2"></script>';
 const hash = value => createHash('sha256').update(value.replace(/\r\n/g,'\n')).digest('hex');
 const record = (path, value) => { buildInputs.set(path, hash(value)); return value; };
 const read = async path => record(path, (await readFile(resolve(root, path), 'utf8')).replace(/\r\n/g,'\n'));
@@ -186,7 +186,7 @@ for (const language of ['ru','en']) {
   const statsHead=value=>value.replace(`/v2/boot/home.js?v=${bootVersion}`,`/v2/boot/home.js?v=${statsBootVersion}`);
   const hourlyHead=value=>value.replace(`/v2/boot/home.js?v=${bootVersion}`,`/v2/boot/home.js?v=${hourlyBootVersion}`);
   const homeBody = localizedV2Links(addFaqToShell(pageBody, language, 'home', faqContent), language);
-  await emit(`v2/${language}/index.html`,`<!doctype html>\n<html lang="${language}" data-page="home" data-page-language="${language}" data-v2="home"><head>${hourlyHead(head)}${faqStyles}</head><body data-v2="home">${homeBody}<div id="v1-runtime-host" hidden inert aria-hidden="true">${oldBody}</div>${modals}</body></html>\n`);
+  await emit(`v2/${language}/index.html`,`<!doctype html>\n<html lang="${language}" data-page="home" data-page-language="${language}" data-v2="home"><head>${hourlyHead(head)}${faqStyles}${faqScript}</head><body data-v2="home">${homeBody}<div id="v1-runtime-host" hidden inert aria-hidden="true">${oldBody}</div>${modals}</body></html>\n`);
   for (const config of pageRegistry.filter(page => page.route)) {
     const page=config.route.slice(0,-1), screen=config.screen;
     const title=config.title[language], description=config.description[language];
@@ -198,8 +198,8 @@ for (const language of ['ru','en']) {
     if(screen==='cars')owningHead=statsHead(owningHead);
     if(screen==='hourly')owningHead=hourlyHead(owningHead);
     if(['driver','club','team'].includes(screen))owningHead=owningHead.replace(`/v2/boot/home.js?v=${bootVersion}`,`/v2/boot/home.js?v=${raceModalBootVersion}`);
-    if (['faq','about','instructions','servers'].includes(screen)) owningHead += faqStyles;
-    if (screen === 'faq') owningHead += faqScript;
+    if (pageHasSidebarWidgets(screen)) owningHead += faqStyles + faqScript;
+    else if (screen === 'servers') owningHead += faqStyles;
     const screenBody = localizedV2Links(addFaqToShell(pageBody, language, screen, faqContent), language);
     await emit(`v2/${language}/${page}/index.html`,`<!doctype html>\n<html lang="${language}" data-page="home" data-page-language="${language}" data-v2="home" data-v2-page="${screen}" data-v2-sidebars="${pageHasSidebarWidgets(screen)?'visible':'hidden'}"><head>${owningHead}</head><body data-v2="page">${pageShell(screenBody,screen)}<div id="v1-runtime-host" hidden inert aria-hidden="true">${oldBody}</div>${modals}</body></html>\n`);
   }
