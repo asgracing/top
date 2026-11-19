@@ -31,14 +31,14 @@
     },
     {
       "id":"what-is-sr","group":"ratings","intents":["asg_sr","profile_find"],
-      "ru":{"question":"Что такое ASG SR и где его посмотреть?","answer":"ASG SR — рейтинг безопасности ASG Racing. Найдите себя по игровому имени в таблице пилотов и откройте профиль. Значение и история появятся после обработки результатов. ACC рассчитывает отдельный рейтинг SA.","action":"Таблица пилотов"},
-      "en":{"question":"What is ASG SR and where can I see it?","answer":"ASG SR is ASG Racing’s safety rating. Search the driver standings for your in-game name and open your profile. Your rating and history appear after your results are processed. ACC calculates a separate SA rating.","action":"Driver standings"},
+      "ru":{"question":"Что такое ASG SR и где его посмотреть?","answer":"ASG SR — рейтинг безопасности ASG Racing. Найдите себя по игровому имени в таблице пилотов. В профиле откройте «Обзор и SR», чтобы увидеть историю, формулу SRv4 и пример на 10 кругов. ACC рассчитывает отдельный игровой рейтинг SA.","action":"Таблица пилотов"},
+      "en":{"question":"What is ASG SR and where can I see it?","answer":"ASG SR is ASG Racing’s safety rating. Find your in-game name in the driver standings. Open Overview & SR in your profile for your history, the SRv4 formula and a 10-lap example. ACC calculates the separate in-game SA rating.","action":"Driver standings"},
       "link":"#worst-safety"
     },
     {
       "id":"raise-sr","group":"ratings","intents":["sr_recovery"],
-      "ru":{"question":"Где и как поднять ASG SR?","answer":"Выберите доступный сервер ASG и финишируйте в зачтённой гонке, избегая контактов, невалидных кругов и штрафов. В ASG SR учитываются только зачтённые гонки ASG Racing.","action":"Посмотреть серверы"},
-      "en":{"question":"Where and how can I improve my ASG SR?","answer":"Choose an ASG server you can join and finish an eligible race while avoiding contact, invalid laps and penalties. Only eligible ASG Racing results count toward ASG SR.","action":"See servers"},
+      "ru":{"question":"Где и как поднять ASG SR?","answer":"Выберите доступный сервер ASG и проезжайте валидные круги, избегая контактов и штрафов. На обычных трассах завершённые круги зачётной гонки учитываются с первого круга, даже если вы сошли до 50% дистанции лидера.","action":"Посмотреть серверы"},
+      "en":{"question":"Where and how can I improve my ASG SR?","answer":"Choose an ASG server you can join and complete valid laps while avoiding contact and penalties. On standard circuits, your completed laps count from lap one in an eligible race, even if you retire before 50% of the leader’s distance.","action":"See servers"},
       "link":"servers/"
     },
     {

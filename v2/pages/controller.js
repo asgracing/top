@@ -1,4 +1,4 @@
-import {mountDriverSafety} from './driver-safety.js?v=20261031sr1';
+import {mountDriverSafety} from './driver-safety.js?v=20261119srvepisodes';
 import {bindPagination} from './pagination.js?v=20261015pagination1';
 import {refreshTeamRaceLinks} from '/src/shared/team-racing-discovery.js?v=20261028team10';
 import {createEntityThumbnails} from './entity-thumbnails.js?v=20261008thumbs1';
@@ -9,7 +9,7 @@ import {createHistoryViews} from './views/history.js?v=20261007v2pages14';
 import {markNewsRead} from '/news-read-state.js';
 import {editorialImage} from './editorial-model.js?v=20261007v2pages14';
 import {getCommunityPostKey} from '/src/pages/community/feed-model.js';
-import {createPageViews} from './views/core.js?v=20261110hourlynext2';
+import {createPageViews} from './views/core.js?v=20261119sra2';
 import {createArchiveViews} from './views/archive.js?v=20261015pagination1';
 import {createChampionshipViews} from './views/championships.js?v=20261015pagination1';
 import {createEntityViews} from './views/entities.js?v=20261015pagination1';

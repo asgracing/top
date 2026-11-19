@@ -618,6 +618,7 @@ const averagePaceTrackSelection = new Map();
 let eloModalState = null;
 let safetyModalState = null;
 let safetyAboutCopyPromise = null;
+const safetyAboutMarkup = {};
 let eloModalRequestId = 0;
 let safetyModalRequestId = 0;
 let srBreakdownPopoverState = null;
@@ -2033,9 +2034,9 @@ Object.assign(translations.en, {
   safetyCategoryA: "Category A",
   safetyCategoryB: "Category B",
   safetyCategoryC: "Category C",
-  safetyAboutTitle: "Safety Rating",
-  safetyAboutP1: "SR is recalculated from counted race finishes.",
-  safetyAboutP2: "Clean races increase SR; invalid laps, incidents and automatic penalties can reduce it.",
+  safetyAboutTitle: "Safety Rating · SRv4",
+  safetyAboutP1: "On standard circuits, your completed laps count from lap one in an eligible race, even if you retire before 50% of the leader’s distance.",
+  safetyAboutP2: "The total combines valid and red laps, the distance bonus, verified incidents and counted ACC penalties.",
   safetyCategoryRangeA: "A - clean",
   safetyCategoryRangeB: "B - stable",
   safetyCategoryRangeC: "C - risky",
@@ -2090,9 +2091,9 @@ Object.assign(translations.ru, {
   safetyCategoryA: "Категория A",
   safetyCategoryB: "Категория B",
   safetyCategoryC: "Категория C",
-  safetyAboutTitle: "Safety Rating",
-  safetyAboutP1: "SR пересчитывается по зачтённым финишам гонок.",
-  safetyAboutP2: "Чистые гонки повышают SR; невалидные круги, инциденты и автоштрафы могут его снизить.",
+  safetyAboutTitle: "Safety Rating · SRv4",
+  safetyAboutP1: "На обычных трассах завершённые круги зачётной гонки учитываются с первого круга, даже если вы сошли до 50% дистанции лидера.",
+  safetyAboutP2: "Итог складывается из вклада валидных и красных кругов, бонуса дистанции, списаний за подтверждённые инциденты и автоштрафы ACC.",
   safetyCategoryRangeA: "A - чисто",
   safetyCategoryRangeB: "B - стабильно",
   safetyCategoryRangeC: "C - риск",
@@ -5720,12 +5721,15 @@ async function loadJson(url,{force=false,...options}={}) {
 }
 
 function hydrateSafetyAboutCopy() {
-  safetyAboutCopyPromise ||= loadJson(`${SITE_BASE_PATH}assets/content/safety-rating-v3.json?v=20260823sr3copy1`)
-    .then(copy => {
+  safetyAboutCopyPromise ||= Promise.all([
+    loadJson(`${SITE_BASE_PATH}assets/content/safety-rating-v3.json?v=20261119srvepisodes`),
+    import("/v2/safety-guide.js?v=20261119srv4")
+  ]).then(([copy, {renderSafetyAbout}]) => {
       for (const lang of ["en", "ru"]) {
         for (const key of ["safetyAboutP1", "safetyAboutP2"]) {
           if (typeof copy?.[lang]?.[key] === "string") translations[lang][key] = copy[lang][key];
         }
+        if (copy?.[lang]) safetyAboutMarkup[lang] = renderSafetyAbout(copy[lang], escapeHtml);
       }
       applyStaticTranslations();
       if (safetyModalState) renderSafetyModal();
@@ -7330,8 +7334,7 @@ function renderSafetyModal() {
     <div class="elo-about-block safety-about-block">
       <div class="elo-about-copy">
         <h3>${escapeHtml(t("safetyAboutTitle"))}</h3>
-        <p>${escapeHtml(t("safetyAboutP1"))}</p>
-        <p>${escapeHtml(t("safetyAboutP2"))}</p>
+        ${safetyAboutMarkup[currentLang] || `<p>${escapeHtml(t("safetyAboutP1"))}</p><p>${escapeHtml(t("safetyAboutP2"))}</p>`}
       </div>
       <div class="elo-category-grid safety-category-grid" aria-label="${escapeAttribute(t("safetyAboutTitle"))}">
         <div class="elo-category-card">

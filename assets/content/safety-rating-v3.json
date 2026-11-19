@@ -1,10 +1,92 @@
 {
   "en": {
-    "safetyAboutP1": "SR v3 starts from 3.00 and is recalculated only from counted race finishes. A race changes SR only if the driver covers at least 50% of the leader's distance. The scale is capped to 1.00-9.99: A is 5.00+, B is 2.50-4.99, C is below 2.50.",
-    "safetyAboutP2": "Invalid laps are measured as a percentage of the leader's distance: 0% = +0.10 SR, up to 30% = +0.05, over 30% through 60% = 0.00, over 60% through 80% = -0.02, and over 80% = -0.04. Incidents are normalized to a base distance of 10 leader laps. Automatic Cutting, PitSpeeding and Trolling penalties use x0.5 weight; manual/admin penalties are ignored. In Hourly, Endurance and Championship races, a positive result is multiplied by K = max(1, leader laps / 10), while a neutral or negative result is not multiplied; the gain cap is +0.20 × K and the loss cap is -0.80 per race. On Nurburgring 24h, one physical lap counts as 4.125 standard laps for loss exposure, incident normalization and the distance bonus, including Public races; a positive clean-lap bonus still requires no more than 30% invalid physical laps. Final SR values are rounded to two decimal places."
+    "safetyAboutP1": "On standard circuits, your completed laps count from lap one in an eligible race, even if you retire before 50% of the leader’s distance.",
+    "safetyAboutP2": "SRv4 applies when an eligible result is first rated and the original ACC filename is timestamped from 19 November 2026, 09:00 UTC (12:00 MSK). Previous scores are preserved.",
+    "summary": [
+      "Valid laps add SR. Red laps subtract SR. Unfinished laps are excluded.",
+      "Full incident coverage earns a distance bonus. Verified incidents and counted ACC penalties reduce SR."
+    ],
+    "detailsLabel": "Formulas, incidents and exceptions",
+    "sections": [
+      {
+        "title": "Laps and bonus",
+        "paragraphs": [
+          "Laps = 0.10 × (valid − red) ÷ leader laps. Laps of unknown validity contribute zero. Each team driver uses their own laps and incidents.",
+          "Bonus = 0.10 × your share of the leader’s laps, up to +0.10. With partial coverage, the bonus is zero and verified incidents still count."
+        ]
+      },
+      {
+        "title": "Incidents",
+        "paragraphs": [
+          "A light touch confirmed by both cars costs 0.01 SR with less than 2 units of new damage, including zero.",
+          "The largest increase in one ACC damage field costs 0.02 from 2 units, 0.07 from 8 or 0.25 from 20. Solo impacts count too. Each episode uses the highest deduction once.",
+          "One-sided reports alone, repairs and events after your own finish carry zero incident deduction.",
+          "Open Incident details in the driver profile’s race breakdown to see each published episode, its type, verified damage increase and SR deduction."
+        ]
+      },
+      {
+        "title": "Total and exceptions",
+        "paragraphs": [
+          "Qualifying Cutting, PitSpeeding and Trolling penalties carry half weight. Hourly, Endurance and Championship multiply positive totals by max(1, equivalent leader laps ÷ 10).",
+          "New drivers start at 3.00. The range is 1.00–9.99. The maximum race loss is 0.80 SR.",
+          "Nürburgring 24h uses its own scale and requires 30% of the leader’s physical laps. One physical lap equals 4.125 for the distance multiplier. Positive lap and incident components scale by min(1, 2 × your laps ÷ leader laps)."
+        ]
+      }
+    ],
+    "profileGuide": {
+      "title": "How SRv4 is calculated",
+      "intro": "Retired before 50%? On standard circuits, your completed laps still count from lap one.",
+      "formula": "SR change = laps + distance bonus − incidents − counted ACC penalties.",
+      "exampleTitle": "Example · 10-lap race",
+      "example": "The leader completes 10 laps. You retire after 4 laps (3 valid, 1 red). Full incident coverage, no verified incidents or penalties.",
+      "exampleCalculation": "+0.02 for laps + 0.04 for distance = +0.06 SR",
+      "note": "Nürburgring 24h has a separate 30% minimum.",
+      "rulesLabel": "Full SRv4 rules"
+    }
   },
   "ru": {
-    "safetyAboutP1": "SR v3 стартует с 3.00 и считается только по зачтённым финишам гонок. Гонка влияет на SR, только если пилот проехал не меньше 50% дистанции лидера. Диапазон рейтинга ограничен 1.00-9.99: A — 5.00+, B — 2.50-4.99, C — ниже 2.50.",
-    "safetyAboutP2": "Невалидные круги считаются как доля дистанции лидера: 0% = +0.10 SR, до 30% = +0.05, свыше 30% до 60% = 0.00, свыше 60% до 80% = -0.02, свыше 80% = -0.04. Инциденты нормализуются к базовой дистанции 10 кругов лидера. Автоштрафы за Cutting, PitSpeeding и Trolling учитываются с весом x0.5; ручные штрафы админов не учитываются. В часовых гонках, Endurance и Championship положительный результат умножается на K = max(1, круги лидера / 10), а нулевой или отрицательный результат не умножается; максимум начисления за гонку равен +0.20 × K, максимум списания — -0.80. На Nurburgring 24h один физический круг считается как 4.125 стандартного круга для расчёта штрафной доли, нормализации инцидентов и дистанционного бонуса, в том числе в Public; при этом положительный бонус за чистоту возможен, только если невалидны не более 30% физических кругов. Итоговые значения SR округляются до двух знаков."
+    "safetyAboutP1": "На обычных трассах завершённые круги зачётной гонки учитываются с первого круга, даже если вы сошли до 50% дистанции лидера.",
+    "safetyAboutP2": "SRv4 применяется при первом расчёте зачётного результата с меткой от 19 ноября 2026, 12:00 МСК включительно в исходном имени файла ACC. Прежние начисления сохраняются.",
+    "summary": [
+      "Валидные круги прибавляют SR, красные уменьшают. Незавершённый круг исключается.",
+      "При полных данных об инцидентах начисляется бонус за дистанцию. Подтверждённые эпизоды и учтённые автоштрафы ACC уменьшают SR."
+    ],
+    "detailsLabel": "Формулы, инциденты и исключения",
+    "sections": [
+      {
+        "title": "Круги и бонус",
+        "paragraphs": [
+          "Вклад кругов = 0,10 × (валидные − красные) ÷ круги лидера. При неизвестной валидности вклад круга равен нулю. В экипаже у каждого пилота свои круги и инциденты.",
+          "Бонус = 0,10 × доля кругов лидера, до +0,10. При неполной телеметрии бонус равен нулю, подтверждённые эпизоды учитываются."
+        ]
+      },
+      {
+        "title": "Инциденты",
+        "paragraphs": [
+          "За лёгкое касание, подтверждённое обеими машинами, снимается 0,01 SR при росте повреждений меньше 2 единиц, включая нулевой рост.",
+          "Размер списания зависит от наибольшего прироста среди полей телеметрии ACC. От 2 единиц снимается 0,02 SR, от 8 — 0,07, от 20 — 0,25. Одиночные удары тоже учитываются. За эпизод берётся один наибольший вычет.",
+          "Одностороннее сообщение само по себе, ремонт и события после личного финиша дают нулевое списание.",
+          "Откройте «Детали инцидентов» в разборе гонки в профиле. Для каждого опубликованного эпизода видны тип события, подтверждённый прирост повреждений и списание SR."
+        ]
+      },
+      {
+        "title": "Итог и исключения",
+        "paragraphs": [
+          "Учтённые штрафы Cutting, PitSpeeding и Trolling имеют половинный вес. В Hourly, Endurance и Championship положительный итог умножается на max(1, эквивалентные круги лидера ÷ 10).",
+          "Стартовый SR — 3,00. Шкала — 1,00–9,99. За гонку снимается максимум 0,80 SR.",
+          "На Nürburgring 24h действует отдельная шкала и порог 30% физических кругов лидера. Для множителя дистанции один физический круг равен 4,125. Положительный вклад кругов и инцидентов умножается на min(1, 2 × ваши круги ÷ круги лидера)."
+        ]
+      }
+    ],
+    "profileGuide": {
+      "title": "Как считается SRv4",
+      "intro": "Сошли до 50% дистанции лидера? На обычных трассах ваши завершённые круги считаются с первого.",
+      "formula": "Изменение SR = вклад кругов + бонус дистанции − инциденты − учтённые автоштрафы ACC.",
+      "exampleTitle": "Пример · гонка на 10 кругов",
+      "example": "Лидер проехал 10 кругов. Вы сошли после 4 (3 валидных и 1 красный). Данные полные, подтверждённых инцидентов и штрафов нет.",
+      "exampleCalculation": "+0,02 за круги + 0,04 за дистанцию = +0,06 SR",
+      "note": "На Nürburgring 24h действует отдельный порог 30%.",
+      "rulesLabel": "Полные правила SRv4"
+    }
   }
 }

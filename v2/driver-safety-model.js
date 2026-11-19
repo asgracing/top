@@ -53,9 +53,20 @@ function boundedProtocol(record,protocol) {
   return protocol;
 }
 
+function publishedIncidentEpisodes(ledger) {
+  const {incident_episodes: episodes, incident_points: count, incident_deduction: total}=ledger;
+  if(!Array.isArray(episodes)||episodes.length!==count||!Number.isFinite(total))return null;
+  if(!episodes.every(row=>row&&['contact','damage'].includes(row.kind)
+    &&[.01,.02,.07,.25].includes(row.deduction)
+    &&(row.damage_growth===null||(Number.isFinite(row.damage_growth)&&row.damage_growth>=0))))return null;
+  return rounded(episodes.reduce((sum,row)=>sum+row.deduction,0))===rounded(total)?episodes:null;
+}
+
 export function driverSafetyBreakdown(record,extra=null) {
   const ledger={...record.ledger,new_sr:record.after,delta_sr:record.delta};
-  const local=boundedProtocol(record,protocolFromRace(record.race));
+  const versionConflict=Boolean(ledger.calculation_version&&record.race.safety_calculation_version&&
+    ledger.calculation_version!==record.race.safety_calculation_version);
+  const local=versionConflict?null:boundedProtocol(record,protocolFromRace(record.race));
   const localValues=safetyHistoryComponents(ledger,local);
   const remote=boundedProtocol(record,extra);
   const remoteValues=remote?safetyHistoryComponents(ledger,remote):null;
@@ -64,19 +75,29 @@ export function driverSafetyBreakdown(record,extra=null) {
   const combined=source?{...source,clean:first(source.clean,safeRemote?.clean),
     incidents:first(source.incidents,safeRemote?.incidents),penalties:first(source.penalties,safeRemote?.penalties)}:null;
   const values=safetyHistoryComponents(ledger,combined);
-  const stale=localValues.stale||Boolean(remoteValues?.stale);
-  const context=localValues.stale?{}:record.race;
+  const stale=versionConflict||localValues.stale||Boolean(remoteValues?.stale);
+  const context=versionConflict||localValues.stale?{}:record.race;
+  const version=ledger.calculation_version||context.safety_calculation_version||null;
+  const variantA=version==='sr_variant_a_v1';
   const completed=first(record.ledger.completed_laps,context.safety_completed_laps);
-  const leader=srNumber(context.safety_leader_laps);
+  const leader=first(context.safety_leader_laps,ledger.leader_laps);
   const invalid=first(record.ledger.invalid_laps,context.safety_invalid_laps);
-  const enough=context.safety_enough_distance??(completed!==null&&leader>0?completed/leader>=.5:null);
-  const raw=[values.clean,values.incidents,values.penalties].every(v=>v!==null)
+  const valid=first(ledger.valid_laps,context.safety_valid_laps);
+  const unknown=variantA?first(ledger.unknown_laps,context.safety_unknown_laps):null;
+  const coverage=ledger.incident_coverage||context.safety_incident_coverage||null;
+  const distanceBonus=variantA?first(ledger.distance_bonus,context.safety_distance_bonus):null;
+  const incidentDeduction=variantA?first(ledger.incident_deduction,context.safety_incident_deduction):null;
+  const enough=context.safety_enough_distance??(variantA?null:(completed!==null&&leader>0?completed/leader>=.5:null));
+  const componentSum=[values.clean,values.incidents,values.penalties].every(v=>v!==null)
     ?rounded(values.clean+values.incidents+values.penalties):null;
+  const raw=first(variantA?context.safety_raw_delta:null,componentSum);
   const computed=first(context.safety_final_delta,raw);
   const bounded=record.before!==null&&computed!==null&&record.delta!==null&&
     Math.abs(rounded(Math.min(9.99,Math.max(1,record.before+computed)))-record.after)<.00001;
   const cap=bounded&&((record.after===9.99&&computed>record.delta+.005)||(record.after===1&&computed<record.delta-.005));
-  return {...values,stale,context,completed,leader,invalid,enough,raw,computed,cap,
+  return {...values,stale,context,completed,leader,invalid,valid,unknown,enough,version,variantA,coverage,
+    distanceBonus,incidentDeduction,raw,computed,cap,
+    incidentEpisodes:variantA?publishedIncidentEpisodes(ledger):null,
     incidents:first(record.ledger.incident_points,context.safety_incident_points),
     penalties:first(record.ledger.counted_penalties_count,context.safety_counted_penalties),
     ignored:first(record.ledger.ignored_penalties_count,context.safety_ignored_penalties),

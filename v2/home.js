@@ -2,7 +2,7 @@ import {carThumbnailAttributes} from '/src/shared/image-thumbnails.js?v=20261013
 import {hourlySrRequirement} from '/src/features/hourly/entry-requirements.js?v=20261027nords1';
 import {renderTeamRaceSpotlight,teamEntryLabel,refreshTeamRaceLinks} from '/src/shared/team-racing-discovery.js?v=20261028team10';
 import {isTeamRace,teamRaceUrl} from '/src/shared/team-racing-client.js?v=20261009teams2';
-import copy from './copy.js?v=20261006v2k';
+import copy from './copy.js?v=20261119srvepisodes';
 import { subscribe, getRuntime } from './bridge.js?v=20261006v2k';
 import {rankingPosition,eventKind,normalizeTablePage,normalizeSafetyRow,paginationPages,serverSrRestriction} from './models.js?v=20261013delivery1';
 import {createPresentation} from './presentation.js?v=20261104rc3';
@@ -299,7 +299,7 @@ function showReference(key,trigger){
     });
   }
   if(key==='elo')showDialog(label('elo'),editorial.elo,trigger);
-  if(key==='safety')showDialog('Safety Rating',editorial.safety,trigger);
+  if(key==='safety')showDialog('Safety Rating · SRv4',editorial.safety,trigger);
   $('modal').dataset.kind=key;
   $('modal-eyebrow').textContent='ASG RACING / '+key.toUpperCase();
 }
@@ -373,7 +373,15 @@ function initialiseDocks(){
   dashboard.classList.add('widgets-enhanced');
 }
 initialiseDocks();
-function applyHash(){const aliases={championship:'leaderboard',bestlaps:'bestlaps','worst-safety':'safety','clubs-teams-stats':'clubs'};const id=decodeURIComponent(location.hash.slice(1));if(aliases[id]){chooseTab(aliases[id]);$('ranking').scrollIntoView({block:'start'})}else if(['rules','elo-about','safety-about'].includes(id)&&model){showReference(id==='elo-about'?'elo':id==='safety-about'?'safety':'rules')}else if(id==='tour'){guide.open()}else if(id==='about-server'){document.querySelector('.about-more').open=true;$('about-server').scrollIntoView({block:'start'})}}
+function applyHash(){
+  const aliases={championship:'leaderboard',bestlaps:'bestlaps','worst-safety':'safety','clubs-teams-stats':'clubs'};
+  const id=decodeURIComponent(location.hash.slice(1));
+  if(aliases[id]){chooseTab(aliases[id]);$('ranking').scrollIntoView({block:'start'})}
+  else if(id==='safety-about'){showReference('safety')}
+  else if(model&&['rules','elo-about'].includes(id)){showReference(id==='elo-about'?'elo':'rules')}
+  else if(id==='tour'){guide.open()}
+  else if(id==='about-server'){document.querySelector('.about-more').open=true;$('about-server').scrollIntoView({block:'start'})}
+}
 window.addEventListener('hashchange',applyHash);
 const reduced=matchMedia('(prefers-reduced-motion: reduce)'),layers=document.querySelectorAll('.track-layer');let background=0,previousBackground='',backgroundStarted=false;
 async function nextBackground(){if(document.hidden||reduced.matches&&background>0)return;const file=selectRandomTrackBackgroundFile(Math.random,previousBackground),layer=layers[background%2],url=trackImage(file),image=new Image();image.fetchPriority='low';image.src=url;try{await image.decode();}catch{return;}previousBackground=file;layer.style.backgroundImage=`url('${url}')`;layers.forEach(other=>other.classList.toggle('is-active',other===layer));background++}
@@ -388,7 +396,7 @@ if(!isSubpage){
 }
 try{await import('./runtime/home.js?v=20261117reports1');applyHash();if(isSubpage)startBackground();}catch(error){console.error('V2 runtime unavailable',error);$('event-track').textContent=text('Не удалось загрузить данные','Could not load data');$('day-driver').textContent=text('Данные недоступны','Data unavailable');tableError=true;tableBusy=false;renderTable()}
 if(document.documentElement.dataset.v2Page){
-  const {startPage}=await import('./pages/controller.js?v=20261118newyear2');
+  const {startPage}=await import('./pages/controller.js?v=20261119srvepisodes');
   await startPage({native,presentation,showDialog,esc,text,label,date,number,rating,car,language,subscribe,serverAdmission});
 }
 import {installReports} from './reports/index.js?v=20261117reports1';

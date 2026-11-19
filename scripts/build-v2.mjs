@@ -14,6 +14,7 @@ import {buildV2Boot} from './build-v2-boot.mjs';
 import {pageShell,siteAppearanceScript} from './v2-page-shell.mjs';
 import {pageHasSidebarWidgets} from '../v2/page-layout.js';
 import {addFaqToShell} from './faq-page.mjs';
+import {renderSafetyAbout} from '../v2/safety-guide.js';
 const root = resolve(import.meta.dirname, '..');
 const siteRelease=await readSiteRelease();
 const legacyEnabled=process.env.ASG_ROOT_FALLBACK==='1'||siteRelease.legacyEnabled!==false;
@@ -23,14 +24,14 @@ if (process.env.ASG_V2_PRESENTATION_ONLY === '1') throw Error('Presentation-only
 const version = '20261006v2k';
 const runtimeVersion = '20261117reports1';
 const presentationVersion = '20261118winter3';
-const homeStylesVersion = '20261119donations1';
-const bootVersion = '20261119donations1';
-const hourlyBootVersion = '20261119donations1';
-const archiveBootVersion = '20261119donations1';
-const statsBootVersion = '20261119donations1';
-const raceModalBootVersion = '20261119donations1';
+const homeStylesVersion = '20261119srvepisodes';
+const bootVersion = '20261119srvepisodes';
+const hourlyBootVersion = '20261119srvepisodes';
+const archiveBootVersion = '20261119srvepisodes';
+const statsBootVersion = '20261119srvepisodes';
+const raceModalBootVersion = '20261119srvepisodes';
 const controlStylesVersion = '20261103clubs1';
-const profileStylesVersion = '20261111readers2';
+const profileStylesVersion = '20261119srvepisodes';
 const legalVersion = '20261030analytics1';
 const buildInputs = new Map();
 const faqStyles = '<link rel="stylesheet" href="/src/pages/faq/faq.css?v=20261119faq4">';
@@ -103,6 +104,15 @@ body = body.replace('href="championships/"','href="/championships/"')
   .replace('href="about/"','href="/about/"').replace('href="instructions/"','href="/join/"').replace('href="documents/"','href="/privacy/"');
 // Frozen R24 presentation inputs, independent of research fixtures.
 const copy = JSON.parse(await read('v2-source/copy.json'));
+const safetyCopy = JSON.parse(await read('assets/content/safety-rating-v3.json'));
+const safetyCopySlot = '<!-- safety-rating-copy -->';
+const escapeSafetyText = text => String(text).replace(/[&<>]/g, char => ({'&':'&amp;', '<':'&lt;', '>':'&gt;'}[char]));
+for (const language of ['ru', 'en']) {
+  const locale = copy[language];
+  if (!locale.editorial.safety.includes(safetyCopySlot)) throw Error(`Missing safety article slot for ${language}`);
+  locale.editorial.safety = locale.editorial.safety.replace(safetyCopySlot, renderSafetyAbout(safetyCopy[language], escapeSafetyText));
+  locale.safetyGuide = safetyCopy[language].profileGuide;
+}
 await emit('v2/copy.js',`export default ${JSON.stringify(copy)};\n`);
 {
   let css = await read('v2-source/design.css');

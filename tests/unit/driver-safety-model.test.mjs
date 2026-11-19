@@ -14,6 +14,33 @@ test('insufficient distance is distinguished from rating caps and neutral races'
   const b=driverSafetyBreakdown(record({old_sr:9.99,new_sr:9.99,delta_sr:0,incident_penalty_delta:-.05},{safety_delta:0,safety_base_delta:.05,safety_incident_penalty_delta:-.05,safety_final_delta:0,safety_completed_laps:3,safety_leader_laps:12,safety_enough_distance:false}));
   assert.equal(b.enough,false);assert.equal(b.completed,3);assert.equal(b.leader,12);assert.equal(b.cap,false);
 });
+test('SR A uses the published version and does not fabricate a 50% distance gate',()=>{
+  const detail={safety_completed_laps:3,safety_leader_laps:12,safety_invalid_laps:1};
+  const legacy=driverSafetyBreakdown(record({},detail));
+  const current=driverSafetyBreakdown(record({
+    calculation_version:'sr_variant_a_v1',valid_laps:1,incident_coverage:'partial',
+  },detail));
+  assert.equal(legacy.enough,false);
+  assert.equal(current.enough,null);
+  assert.equal(current.variantA,true);
+  assert.equal(current.coverage,'partial');
+  assert.equal(current.valid,1);
+});
+test('the published ledger version prevails over a stale protocol version',()=>{
+  const breakdown=driverSafetyBreakdown(record({calculation_version:'sr_variant_a_v1'},
+    {safety_calculation_version:'sr_v3',safety_enough_distance:false}));
+  assert.equal(breakdown.stale,true);
+  assert.equal(breakdown.clean,null);
+  assert.equal(breakdown.enough,null);
+  assert.equal(breakdown.variantA,true);
+});
+test('shows published incident episodes only when they reconcile with the ledger',()=>{
+  const episodes=[{kind:'contact',damage_growth:9,deduction:.07},{kind:'contact',damage_growth:null,deduction:.01}];
+  const ledger={calculation_version:'sr_variant_a_v1',incident_points:2,incident_deduction:.08};
+  assert.deepEqual(driverSafetyBreakdown(record({...ledger,incident_episodes:episodes})).incidentEpisodes,episodes);
+  assert.equal(driverSafetyBreakdown(record(ledger)).incidentEpisodes,null);
+  assert.equal(driverSafetyBreakdown(record({...ledger,incident_deduction:.07,incident_episodes:episodes})).incidentEpisodes,null);
+});
 test('stale protocols cannot replace ledger components or supply explanations',()=>{
   const b=driverSafetyBreakdown(record({old_sr:4,new_sr:3.9,delta_sr:-.1,incident_penalty_delta:-.1},{safety_rating_after:4.2,safety_delta:.2,safety_base_delta:.1,safety_incident_penalty_delta:.1,safety_penalty_delta:0}));
   assert.equal(b.stale,true);assert.equal(b.clean,null);assert.equal(b.incidentDelta,-.1);assert.equal(b.penaltyDelta,null);assert.deepEqual(b.context,{});
