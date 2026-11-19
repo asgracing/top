@@ -1,4 +1,4 @@
-import {driverSafetyRaces,safetyPeriodRaces,safetyListRaces,driverSafetyBreakdown,srNumber} from '../driver-safety-model.js?v=20261119srvepisodes';
+import {driverSafetyRaces,safetyPeriodRaces,safetyListRaces,driverSafetyBreakdown,srNumber} from '../driver-safety-model.js?v=20261120srv4cent';
 import {renderPagination} from './pagination.js?v=20261015pagination1';
 import copy from '../copy.js?v=20261119srvepisodes';
 import {renderProfileSafetyGuide} from '../safety-guide.js?v=20261119srv4';
@@ -107,8 +107,8 @@ export function mountDriverSafety({root,profile,state,native,esc,text,date,track
     const splitIncidents=b.variantA&&b.distanceBonus!==null&&b.incidentDeduction!==null;
     const incidentRule=splitIncidents&&!isN24&&b.incidentDeduction>0
       ? `<br><span class="driver-sr-incident-rule">${esc(text(
-          'За эпизод берётся одно наибольшее списание. Взаимное касание при росте повреждений меньше 2 ед. стоит 0,01 SR. При росте от 2, 8 и 20 ед. списывается 0,02, 0,07 и 0,25 SR соответственно.',
-          'Each episode uses its highest deduction once. A two-way touch with under 2 units of new damage costs 0.01 SR. Damage increases of at least 2, 8 and 20 units cost 0.02, 0.07 and 0.25 SR, respectively.'
+          'За эпизод применяется одно списание. Взаимное касание при росте меньше 2 ед. стоит 0,01 SR. По шкале повреждений 8 ед. дают 0,07, 20 ед. — 0,12, от 50 ед. — 0,25 SR.',
+          'Each episode is deducted once. A two-way touch below 2 damage units costs 0.01 SR. On the damage scale, 8 units cost 0.07, 20 cost 0.12, and 50 or more cost 0.25 SR.'
         ))}</span>`
       : '';
     const incidentsOpen=box.querySelector('.driver-sr-episodes[open]')?.dataset.race===r.key;

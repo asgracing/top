@@ -5732,7 +5732,7 @@ async function loadJson(url,{force=false,...options}={}) {
 
 function hydrateSafetyAboutCopy() {
   safetyAboutCopyPromise ||= Promise.all([
-    loadJson(`${SITE_BASE_PATH}assets/content/safety-rating-v3.json?v=20261119srv4clean`),
+    loadJson(`${SITE_BASE_PATH}assets/content/safety-rating-v3.json?v=20261120srv4calibrated`),
     import("/v2/safety-guide.js?v=20261119srv4")
   ]).then(([copy, {renderSafetyAbout}]) => {
       for (const lang of ["en", "ru"]) {

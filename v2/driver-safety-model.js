@@ -57,7 +57,7 @@ function publishedIncidentEpisodes(ledger) {
   const {incident_episodes: episodes, incident_points: count, incident_deduction: total}=ledger;
   if(!Array.isArray(episodes)||episodes.length!==count||!Number.isFinite(total))return null;
   if(!episodes.every(row=>row&&['contact','damage'].includes(row.kind)
-    &&[.01,.02,.07,.25].includes(row.deduction)
+    &&Number.isFinite(row.deduction)&&row.deduction>=.01&&row.deduction<=.25&&rounded(row.deduction)===row.deduction
     &&(row.damage_growth===null||(Number.isFinite(row.damage_growth)&&row.damage_growth>=0))))return null;
   return rounded(episodes.reduce((sum,row)=>sum+row.deduction,0))===rounded(total)?episodes:null;
 }
