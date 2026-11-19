@@ -8,11 +8,11 @@
     },
     {
       "path": "app.js",
-      "sha256": "c1e713743a393888e1b4a07c612ae5b78344d16a265244b9b2ca1d41518c9c6e"
+      "sha256": "b9006a92049305f0d8d39ed6a1e0b0cbb3aab85a557cc4f1c06750442fdaf093"
     },
     {
       "path": "assets/content/safety-rating-v3.json",
-      "sha256": "0cb162a2dd936a1ec35f2420d93561a0a6942275eaa9c96bfad76e75aad9e2e3"
+      "sha256": "b30ce9593ec2e1d1401067c0b9b2eace1836be119c03e79fdcbbf4389b16bfcc"
     },
     {
       "path": "assets/track-maps/barcelona.js",
@@ -80,7 +80,7 @@
     },
     {
       "path": "scripts/build-v2.mjs",
-      "sha256": "1946b8960b9a67ebdd90c477e563c7dfe2ac1cebbfbe53d8ba11ee1f7fce09e0"
+      "sha256": "985efc0396a751aeb977ee3b69bb73af7b5fb0613e87ea4d90444e6f2714ff2a"
     },
     {
       "path": "scripts/faq-page.mjs",
@@ -744,7 +744,7 @@
     },
     {
       "path": "v2/home.js",
-      "sha256": "636e16920ffe18607c2a27c6487a0c8e93e7831f6d10030801a5b678c259e400"
+      "sha256": "2b7b7131e46fb82aa70d5e99a1d98a69dd9874c7b9d5dcc9ab37db4ff6113a20"
     },
     {
       "path": "v2/live-stats.js",
@@ -800,7 +800,7 @@
     },
     {
       "path": "v2/pages/controller.js",
-      "sha256": "6e3d42c68d49a480f967dfa4f4ffe8af35982a4836d1c0e847e25d8592cf6a0a"
+      "sha256": "b177777dfa93975fac26d37141b1bcc536ae542e4ec4c93a2d7f62a4f6ab0da2"
     },
     {
       "path": "v2/pages/data.js",
@@ -808,7 +808,7 @@
     },
     {
       "path": "v2/pages/driver-safety.js",
-      "sha256": "e28804124bac619fd59d8c32c17eaac8ada54c007a29895421f8e1af5a5bfe55"
+      "sha256": "7cc1cc787a9dad4d3cfa0c1a21137cb877b222c2a04ef9b0ee324632629bdb3d"
     },
     {
       "path": "v2/pages/editorial-model.js",
