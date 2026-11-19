@@ -7,6 +7,9 @@ import {browser,base,fixture,root} from './v2-browser-fixtures.mjs';
 const publicData=JSON.parse(await fs.readFile(path.join(root,'tests/fixtures/v2-pages/public.json'),'utf8'));
 const profile=structuredClone(publicData.driver),seed=profile.race_history[0];
 const history=Array.from({length:37},(_,i)=>({race_id:'sr-integration-'+i,finished_at:new Date(Date.now()-(38-i)*86400000).toISOString(),track:'monza',old_sr:4+i*.1,new_sr:4+(i+1)*.1,delta_sr:.1,completed_laps:12,invalid_laps:1,incident_points:1,incident_penalty_delta:.05,counted_penalties_count:0}));
+Object.assign(history[32],{completed_laps:4,leader_laps:10,valid_laps:2,invalid_laps:2,base_delta:0,
+  calculation_version:'sr_variant_a_v1',incident_coverage:'verified',distance_bonus:.1,incident_deduction:0,
+  incident_episodes:[],incident_points:0,incident_penalty_delta:.1});
 Object.assign(history[33],{track:'nurburgring_24h',calculation_version:'sr_variant_a_v1',distance_bonus:0,incident_deduction:.10});
 Object.assign(history[34],{old_sr:7.4,new_sr:7.54,delta_sr:.14,completed_laps:10,leader_laps:10,valid_laps:8,invalid_laps:2,
   calculation_version:'sr_variant_a_v1',incident_coverage:'verified',distance_bonus:.1,incident_deduction:.02,incident_points:2,
@@ -41,7 +44,7 @@ try {
     await guide.locator('summary').focus();
     await page.keyboard.press('Enter');
     assert.equal(await example.isVisible(),true);
-    assert.match(await example.textContent(),language==='ru'?/10 кругов.*сошли после 4.*0,04 SR/s:/10-lap.*retire after 4.*0\.04 SR/s);
+    assert.match(await example.textContent(),language==='ru'?/10 кругов.*сошли после 4.*0,10 SR/s:/10-lap.*retire after 4.*0\.10 SR/s);
     assert.match(await guide.textContent(),/SRv4[\s\S]*50%/);
     assert.doesNotMatch(await guide.textContent(),/SR (?:A|v3)\b/);
     const rulesHref=language==='ru'?'/#safety-about':'/en/#safety-about';
@@ -63,17 +66,20 @@ try {
     assert.equal(await page.locator('.driver-sr-race').count(),1);
     await page.locator('.driver-sr-race').click();
     assert.match(await page.locator('#profile-sr-breakdown').textContent(),language==='ru'?/Недостаточно дистанции/:/Not enough distance/);
-    const incidentRule=page.locator('.driver-sr-incident-rule');
-    assert.equal(await incidentRule.count(),0);
     await page.locator('[data-sr-filter="gain"]').click();
     await page.locator('.driver-sr-race[data-sr-race="sr-integration-35"]').click();
     assert.match(await page.locator('.driver-sr-verdict').textContent(),/9.99/);
     assert.match(await page.locator('.driver-sr-adjustment').textContent(),/0.07/);
     await page.locator('.driver-sr-race[data-sr-race="sr-integration-34"]').click();
-    const bonusCard=page.locator('.driver-sr-components > div').filter({has:page.locator('h4',{hasText:language==='ru'?'Бонус безопасности':'Safety bonus'})});
-    assert.equal(await bonusCard.locator(':scope > strong').textContent(),'+0.10');
-    assert.match(await bonusCard.locator('p').textContent(),/50%/);
-    assert.match(await incidentRule.textContent(),language==='ru'?/0,01 SR.*0,07/s:/0\.01 SR.*0\.07/s);
+    const component=title=>page.locator('.driver-sr-components > div').filter({has:page.getByRole('heading',{name:title,exact:true})});
+    const bonusCard=component(language==='ru'?'Бонус безопасности':'Safety bonus');
+    const lapsCard=component(language==='ru'?'Чистота езды':'Lap cleanliness');
+    const incidentsCard=component(language==='ru'?'Инциденты':'Incidents');
+    assert.equal(await bonusCard.count(),0);
+    assert.equal(await lapsCard.locator(':scope > strong').textContent(),'+0.06');
+    assert.match(await lapsCard.innerText(),/80\s*%.*100\s*%/s);
+    assert.equal(await incidentsCard.locator(':scope > strong').textContent(),'+0.08');
+    assert.match(await incidentsCard.innerText(),/\+0\.10 − 0\.02/);
     const episodeDetails=page.locator('.driver-sr-episodes');
     assert.equal(await episodeDetails.locator('ol').isVisible(),false);
     await episodeDetails.locator('summary').focus();
@@ -82,9 +88,14 @@ try {
     assert.match(await episodeDetails.locator('li').first().innerText(),language==='ru'?/касание.*\+1 ед\..*−0\.01 SR/s:/contact.*\+1 units.*−0\.01 SR/s);
     assert.match(await episodeDetails.locator('li').last().innerText(),language==='ru'?/Рост повреждений не подтверждён/:/Damage increase unverified/);
     await page.locator('.driver-sr-race[data-sr-race="sr-integration-33"]').click();
-    assert.equal(await incidentRule.count(),0);
     assert.equal(await episodeDetails.count(),0);
     assert.match(await page.locator('.driver-sr-verdict').textContent(),/Nürburgring 24h/);
+    await page.locator('.driver-sr-race[data-sr-race="sr-integration-32"]').click();
+    assert.match(await lapsCard.innerText(),/50\s*%.*40\s*%/s);
+    assert.equal(await lapsCard.locator(':scope > strong').textContent(),'0.00');
+    assert.equal(await incidentsCard.locator(':scope > strong').textContent(),'+0.10');
+    assert.equal(await bonusCard.count(),0);
+    assert.equal(await episodeDetails.count(),0);
     await page.locator('#profile-tab-races').click();
     assert.equal(await page.locator('#profile-history-content tbody tr').count(),10);
     const racePager=page.locator('[data-pagination="profile"]');
@@ -101,7 +112,7 @@ try {
     assert.equal(await page.locator('#profile-races-panel').isVisible(),false);
     assert.ok(await page.evaluate(()=>document.documentElement.scrollWidth<=innerWidth+1),'page must fit the viewport');
     assert.deepEqual(errors,[]);
-    reports.push({language,width,srPages:8,racePages:9,checks:'SRv4, retirement at 4 of 10 laps, incident rules, distance bonus, pagination, filters, cap, tab state, viewport'});
+    reports.push({language,width,srPages:8,racePages:9,checks:'SRv4, lap cleanliness, leader distance, incident net and details, short-distance base, pagination, filters, cap, tab state, viewport'});
     if(width===1440)await page.screenshot({path:taskScratchPath(`driver-safety-${language}.png`),fullPage:true});
     {
       await page.goto(base+rulesHref);
@@ -110,14 +121,14 @@ try {
       await rules.waitFor();
       assert.match(await modal.locator('h2').textContent(),/SRv4/);
       assert.match(await rules.locator('.safety-rules-lead').innerText(),/50%/);
-      assert.match(await rules.locator('.safety-rules-example').innerText(),language==='ru'?/0,04 SR/:/0\.04 SR/);
+      assert.match(await rules.locator('.safety-rules-example').innerText(),language==='ru'?/0,10 SR/:/0\.10 SR/);
       assert.match(await rules.locator('.safety-rules-date').innerText(),language==='ru'?/12:00 МСК/:/09:00 UTC/);
       const details=rules.locator('.safety-rules-details');
       assert.equal(await details.evaluate(el=>el.open),false);
       await details.locator('summary').focus();
       await page.keyboard.press('Enter');
       assert.equal(await details.evaluate(el=>el.open),true);
-      assert.match(await details.innerText(),language==='ru'?/Одиночные удары.*30%/s:/Solo impacts.*30%/s);
+      assert.match(await details.innerText(),language==='ru'?/Подтверждённый ущерб без связанного контакта.*30%/s:/Verified damage without a linked contact.*30%/s);
       assert.ok(await modal.locator('.modal-body').evaluate(el=>el.scrollWidth<=el.clientWidth+1),'SR rules must fit the modal');
     }
     await page.close();
