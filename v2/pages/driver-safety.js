@@ -132,7 +132,7 @@ export function mountDriverSafety({root,profile,state,native,esc,text,date,track
     }
     const components=[
       [text('Чистота кругов','Lap cleanliness'),b.clean,lapEvidence,'✓'],
-      ...(splitIncidents&&b.distanceBonus>0?[[text('Бонус дистанции','Distance bonus'),b.distanceBonus,'','＋']]:[]),
+      ...(splitIncidents&&(!isN24||b.distanceBonus>0)?[[text('Бонус безопасности','Safety bonus'),b.distanceBonus,isN24?'':b.coverage==='verified'?text('Полные +0,10 от 50% дистанции. Ниже — пропорционально. Эпизоды списываются отдельно.','Full +0.10 from 50% distance. Proportional below it. Episodes are deducted separately.'):text('Бонус не начислен — нет полного подтверждённого покрытия данных.','No bonus — complete verified data is unavailable.'),'＋']]:[]),
       [b.variantA&&!splitIncidents?text('Инциденты и бонус дистанции','Incidents and distance bonus'):text('Инциденты','Incidents'),
         splitIncidents?-b.incidentDeduction:b.incidentDelta,incidentEvidence+incidentRule,'◇',incidentDetails],
       [text('Автоматические штрафы','Automatic penalties'),b.penaltyDelta,esc(penaltyEvidence),'⚑']

@@ -41,7 +41,7 @@ try {
     await guide.locator('summary').focus();
     await page.keyboard.press('Enter');
     assert.equal(await example.isVisible(),true);
-    assert.match(await example.textContent(),language==='ru'?/10 кругов.*сошли после 4.*0,00 SR/s:/10-lap.*retire after 4.*0\.00 SR/s);
+    assert.match(await example.textContent(),language==='ru'?/10 кругов.*сошли после 4.*0,04 SR/s:/10-lap.*retire after 4.*0\.04 SR/s);
     assert.match(await guide.textContent(),/SRv4[\s\S]*50%/);
     assert.doesNotMatch(await guide.textContent(),/SR (?:A|v3)\b/);
     const rulesHref=language==='ru'?'/#safety-about':'/en/#safety-about';
@@ -70,7 +70,7 @@ try {
     assert.match(await page.locator('.driver-sr-verdict').textContent(),/9.99/);
     assert.match(await page.locator('.driver-sr-adjustment').textContent(),/0.07/);
     await page.locator('.driver-sr-race[data-sr-race="sr-integration-34"]').click();
-    assert.match(await page.locator('#profile-sr-breakdown').textContent(),language==='ru'?/Бонус дистанции\s*\+0\.10/:/Distance bonus\s*\+0\.10/);
+    assert.match(await page.locator('#profile-sr-breakdown').textContent(),language==='ru'?/Бонус безопасности\s*\+0\.10/:/Safety bonus\s*\+0\.10/);
     assert.match(await incidentRule.textContent(),language==='ru'?/0,01 SR.*0,07/s:/0\.01 SR.*0\.07/s);
     const episodeDetails=page.locator('.driver-sr-episodes');
     assert.equal(await episodeDetails.locator('ol').isVisible(),false);
@@ -108,7 +108,7 @@ try {
       await rules.waitFor();
       assert.match(await modal.locator('h2').textContent(),/SRv4/);
       assert.match(await rules.locator('.safety-rules-lead').innerText(),/50%/);
-      assert.match(await rules.locator('.safety-rules-example').innerText(),language==='ru'?/0,00 SR/:/0\.00 SR/);
+      assert.match(await rules.locator('.safety-rules-example').innerText(),language==='ru'?/0,04 SR/:/0\.04 SR/);
       assert.match(await rules.locator('.safety-rules-date').innerText(),language==='ru'?/12:00 МСК/:/09:00 UTC/);
       const details=rules.locator('.safety-rules-details');
       assert.equal(await details.evaluate(el=>el.open),false);
