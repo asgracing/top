@@ -82,7 +82,7 @@ export function addFaqToShell(html, language, screen, content) {
   const nav = '<a href="/faq/" data-faq-nav'+(screen === 'faq' ? ' aria-current="page"' : '')+'>FAQ</a>';
   const dock = `<div class="faq-dock" data-faq-dock hidden>
     <button class="faq-dock-open" type="button" data-faq-open title="${copy.ask}" aria-label="${copy.ask}" hidden>
-      <img src="/src/pages/faq/assistant-avatar.jpg" width="36" height="36" alt="">
+      <span class="faq-dock-icon" aria-hidden="true"></span>
     </button>
     <button class="faq-dock-toggle" type="button" data-faq-hide title="${copy.hide}" aria-label="${copy.hide}">×</button>
     <button class="faq-dock-toggle" type="button" data-faq-restore title="${copy.restore}" aria-label="${copy.restore}" hidden>‹</button>
