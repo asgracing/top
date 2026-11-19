@@ -8,7 +8,7 @@
     },
     {
       "path": "app.js",
-      "sha256": "0af37fc90fc5adac56a4470d96ebc7e36aac1bf38195df7e74592c7da642f318"
+      "sha256": "c1e713743a393888e1b4a07c612ae5b78344d16a265244b9b2ca1d41518c9c6e"
     },
     {
       "path": "assets/content/safety-rating-v3.json",
@@ -744,7 +744,7 @@
     },
     {
       "path": "v2/home.js",
-      "sha256": "24c88a57b2524c6019f20d3188652f6cacb65a6691ee757fbd8d7e0a657c9655"
+      "sha256": "636e16920ffe18607c2a27c6487a0c8e93e7831f6d10030801a5b678c259e400"
     },
     {
       "path": "v2/live-stats.js",
@@ -800,7 +800,7 @@
     },
     {
       "path": "v2/pages/controller.js",
-      "sha256": "5632361181ac73c899e4a4846503b9714f1b4880c1b5824b4e376ae587806cd3"
+      "sha256": "6e3d42c68d49a480f967dfa4f4ffe8af35982a4836d1c0e847e25d8592cf6a0a"
     },
     {
       "path": "v2/pages/data.js",

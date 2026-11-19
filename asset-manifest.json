@@ -1,8 +1,8 @@
 {
   "schemaVersion": 1,
-  "revision": "c849f65332c06d38e97d50de7cac42386d044c19",
-  "files": 1287,
-  "bytes": 177749436,
+  "revision": "6fff65dc979fe8cee3203493a78c23fe84a28949",
+  "files": 1288,
+  "bytes": 178247364,
   "assets": [
     {
       "path": "404.html",
@@ -76,8 +76,8 @@
     },
     {
       "path": "app.js",
-      "bytes": 507668,
-      "sha256": "e153573df001611488b10742c5759a17f3cdf8e26317508bb75c79a0399f3c54"
+      "bytes": 507666,
+      "sha256": "ced5dc082166de3ac663387dd593e4b40139514cb566447e2c74ac00bc5a4ddc"
     },
     {
       "path": "apple-touch-icon.png",
@@ -3132,7 +3132,7 @@
     {
       "path": "v2/boot/build.json",
       "bytes": 5648,
-      "sha256": "efd53822b83cb22b27fda506b75b3533068d5216fc6f177cab287fd0ffc9e48e"
+      "sha256": "fec490f01b9059f15cf35931b554a4bf5f8be5795483a1408be082f65099a8f6"
     },
     {
       "path": "v2/boot/chunks/account-2NDTNJRL.js",
@@ -5045,6 +5045,11 @@
       "sha256": "0808e0fcf37dc828c4f00fe0c87ed68ec37be1e001279da262ae52e5961059ae"
     },
     {
+      "path": "v2/boot/chunks/home-BDPNFVCB.js",
+      "bytes": 497938,
+      "sha256": "0f13c6279668dbb5fba77411dec97d97feba2cb06aa82a47163793cd9cfb0267"
+    },
+    {
       "path": "v2/boot/chunks/home-C2OFLCTG.js",
       "bytes": 492945,
       "sha256": "122f4a54f680db7d28ef3f504651dd6b4cf42311941d1b7aa915aea1475ac261"
@@ -5652,7 +5657,7 @@
     {
       "path": "v2/boot/home.js",
       "bytes": 177224,
-      "sha256": "2c190839d9925d42e5be03cbebe741c95b98364a09d62b63b2a7ae4ee8156fc3"
+      "sha256": "1ed0b031349e934574b884591008d7355317b6b9cc8184dd054a7917caaddd4c"
     },
     {
       "path": "v2/bridge.js",
@@ -5662,7 +5667,7 @@
     {
       "path": "v2/build-inputs.json",
       "bytes": 32879,
-      "sha256": "afdcbc29e1b32ab310c8a6d1295caa80b9ef7cd6e4e69072a8a5ae375405c6df"
+      "sha256": "ee7ec72c9f497a50536be1cf664eb32740ffef2a94853289cdbb18ee026fee13"
     },
     {
       "path": "v2/copy.js",
@@ -5866,8 +5871,8 @@
     },
     {
       "path": "v2/home.js",
-      "bytes": 52705,
-      "sha256": "24c88a57b2524c6019f20d3188652f6cacb65a6691ee757fbd8d7e0a657c9655"
+      "bytes": 52701,
+      "sha256": "636e16920ffe18607c2a27c6487a0c8e93e7831f6d10030801a5b678c259e400"
     },
     {
       "path": "v2/index.html",
@@ -5956,8 +5961,8 @@
     },
     {
       "path": "v2/pages/controller.js",
-      "bytes": 45868,
-      "sha256": "2cfcea4036f7b3a8d4150ea90cde16012e8bd56a806aeb52bdfebad6d846a4c9"
+      "bytes": 45866,
+      "sha256": "29d1dd17c2e7f19126c793008bc22b483c5758d09e12192de225d1ee9af589a7"
     },
     {
       "path": "v2/pages/data.js",
@@ -6332,12 +6337,12 @@
     {
       "path": "v2/runtime-source.json",
       "bytes": 332,
-      "sha256": "453c60c42d10830c3dacba424300eb82048d8f2dea719a5147ee6e547211a280"
+      "sha256": "1fa0584d89f1b386381ace58a681fec7b42ae6aa7105afa15d56cd76e2bb3b08"
     },
     {
       "path": "v2/runtime/home.js",
-      "bytes": 506168,
-      "sha256": "f92eca9c2d33e6af3358bcb6d29339cccf5e833f901e4dd9de1c52eba451d72c"
+      "bytes": 506166,
+      "sha256": "87bbd8182b1a08b9cb23a543baba6cfe9a1de8879b143bc1364951d4d9c949e8"
     },
     {
       "path": "v2/safety-guide.js",
