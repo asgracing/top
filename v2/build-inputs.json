@@ -76,7 +76,7 @@
     },
     {
       "path": "scripts/build-v2.mjs",
-      "sha256": "5a45bae2ccbc49021b5e8240a857d7b2d23b1941b86a57808fb2792300013b7a"
+      "sha256": "c68d1a0b5c64e8b9bf925818254b9b4ff640082b8445d5525c354b36950d1f3b"
     },
     {
       "path": "scripts/faq-page.mjs",
@@ -724,7 +724,7 @@
     },
     {
       "path": "v2/donations.js",
-      "sha256": "b319f71f173285beb55d2a1b331e0ee294aa9ea67d54f86f5f81e3ea5f220a25"
+      "sha256": "43a64199b00a39ed27f42cecf3d39ce91b84d796744b168c7d5d444492f93b4e"
     },
     {
       "path": "v2/driver-safety-model.js",
@@ -740,7 +740,7 @@
     },
     {
       "path": "v2/home.js",
-      "sha256": "eb7e71b9391db620797f7d98d0cbf8072fc6a81ad4787782443c9ff5ebf38172"
+      "sha256": "b5f4ad110772a0c2c61819bb014e6ae69ee05be771275f261f810ae1a75d73d8"
     },
     {
       "path": "v2/live-stats.js",
