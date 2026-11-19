@@ -82,10 +82,10 @@ export function addFaqToShell(html, language, screen, content) {
   const nav = '<a href="/faq/" data-faq-nav'+(screen === 'faq' ? ' aria-current="page"' : '')+'>FAQ</a>';
   const dock = `<div class="faq-dock" data-faq-dock hidden>
     <button class="faq-dock-open" type="button" data-faq-open title="${copy.ask}" aria-label="${copy.ask}" hidden>
-      <span class="faq-dock-icon" aria-hidden="true"></span>
+      <svg class="faq-dock-icon" viewBox="0 0 24 24" aria-hidden="true"><path d="M5 4h14a2 2 0 0 1 2 2v9a2 2 0 0 1-2 2h-5l-4 3v-3H5a2 2 0 0 1-2-2V6a2 2 0 0 1 2-2Z"/><path d="M8 10h8"/></svg>
     </button>
-    <button class="faq-dock-toggle" type="button" data-faq-hide title="${copy.hide}" aria-label="${copy.hide}">×</button>
-    <button class="faq-dock-toggle" type="button" data-faq-restore title="${copy.restore}" aria-label="${copy.restore}" hidden>‹</button>
+    <button class="faq-dock-toggle" type="button" data-faq-hide title="${copy.hide}" aria-label="${copy.hide}"><svg viewBox="0 0 16 16" aria-hidden="true"><path d="m5 5 6 6m0-6-6 6"/></svg></button>
+    <button class="faq-dock-toggle" type="button" data-faq-restore title="${copy.restore}" aria-label="${copy.restore}" hidden><svg viewBox="0 0 16 16" aria-hidden="true"><path d="m10 4-4 4 4 4"/></svg></button>
     <p class="faq-dock-error" data-faq-launch-error role="status" hidden>${copy.launchError}</p>
   </div>`;
   html = html.replace('<!-- faq-nav -->', nav).replace('<!-- faq-dock -->', pageHasSidebarWidgets(screen) ? dock : '');

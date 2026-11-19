@@ -33,7 +33,7 @@ const controlStylesVersion = '20261103clubs1';
 const profileStylesVersion = '20261111readers2';
 const legalVersion = '20261030analytics1';
 const buildInputs = new Map();
-const faqStyles = '<link rel="stylesheet" href="/src/pages/faq/faq.css?v=20261119faq3">';
+const faqStyles = '<link rel="stylesheet" href="/src/pages/faq/faq.css?v=20261119faq4">';
 const faqScript = '<script type="module" src="/src/pages/faq/faq.js?v=20261119faq2"></script>';
 const hash = value => createHash('sha256').update(value.replace(/\r\n/g,'\n')).digest('hex');
 const record = (path, value) => { buildInputs.set(path, hash(value)); return value; };

@@ -145,30 +145,10 @@
 }
 .faq-dock-open:hover { --launcher-bg: #c5f3db; color: #14342d; }
 .faq-dock-icon {
-  position: relative;
+  display: block;
   width: 22px;
-  height: 17px;
-  border: 2px solid currentColor;
-  border-radius: 5px;
-}
-.faq-dock-icon::before {
-  content: '';
-  position: absolute;
-  inset: 4px 4px auto;
-  height: 2px;
-  background: currentColor;
-}
-.faq-dock-icon::after {
-  content: '';
-  position: absolute;
-  left: 2px;
-  bottom: -4px;
-  width: 5px;
-  height: 5px;
-  border-bottom: 2px solid currentColor;
-  border-left: 2px solid currentColor;
-  background: var(--launcher-bg);
-  transform: skewY(-35deg);
+  height: 22px;
+  stroke-width: 1.8;
 }
 .faq-dock-toggle {
   width: 26px;
@@ -176,9 +156,8 @@
   border: 1px solid #52716d;
   color: #edf4fb;
   background: #192836;
-  font-size: 1.08rem;
-  line-height: 1;
 }
+.faq-dock-toggle svg { display: block; width: 14px; height: 14px; stroke-width: 1.8; }
 .faq-dock-toggle:hover { background: #304c56; }
 .faq-dock [data-faq-hide] { position: absolute; top: -6px; right: -6px; }
 .faq-dock-error {
