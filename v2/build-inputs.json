@@ -76,7 +76,11 @@
     },
     {
       "path": "scripts/build-v2.mjs",
-      "sha256": "ac5b890da4e41adb6343791732502d20244f5de857ab2d5437a9421fe3d62180"
+      "sha256": "5a45bae2ccbc49021b5e8240a857d7b2d23b1941b86a57808fb2792300013b7a"
+    },
+    {
+      "path": "scripts/faq-page.mjs",
+      "sha256": "f2140bad5b1664bc3cdc945788b0da63e5b614a890469dd90b867f49a1085183"
     },
     {
       "path": "scripts/generate-localized-pages.mjs",
@@ -652,7 +656,7 @@
     },
     {
       "path": "v2-source/home.html",
-      "sha256": "b22e934cf9ceff78e28bda94c4229b6745e7062296927b323190c0898130c6b6"
+      "sha256": "9dae2adcc2810660be9b519ecb69e51b5377ad23036959882d99a2f13eb3b1a1"
     },
     {
       "path": "v2-source/pages/archive.js",
@@ -685,6 +689,10 @@
     {
       "path": "v2-source/pages/entities.js",
       "sha256": "5f7a096ea0030cb443f5525847d15b87ff6de6d0ad491d7abe3651032c662bdb"
+    },
+    {
+      "path": "v2-source/pages/faq.json",
+      "sha256": "bb72e7e839408c1e961f6c78a0e37185914f83d0c583a6c4f113d8c9ee6b7478"
     },
     {
       "path": "v2-source/pages/fun.js",
@@ -764,7 +772,7 @@
     },
     {
       "path": "v2/page-registry.js",
-      "sha256": "fbd0836895815ecd890f7261bd4b46d2cd157c1b6b59315ccc5c2ae8b65864af"
+      "sha256": "fce1401c0b66daca2588b4a2cbd883a3b0ade4d4da3fb31f1c007c4909e70c9a"
     },
     {
       "path": "v2/pages/account.js",
@@ -788,7 +796,7 @@
     },
     {
       "path": "v2/pages/controller.js",
-      "sha256": "4399054c7818b06e17c0a683cfa179ef462300bd28454601a1603160e08bfbae"
+      "sha256": "1e84626a315faa2aa7ecb9212ff05d6a29d97e52a21470d9fd3039cbaccbbff5"
     },
     {
       "path": "v2/pages/data.js",

@@ -1,6 +1,7 @@
 plugins: []
 exclude:
   - ".editorconfig"
+  - ".git"
   - ".gitattributes"
   - ".github"
   - ".gitignore"
