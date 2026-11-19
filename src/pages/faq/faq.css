@@ -1,0 +1,205 @@
+.faq-promo,.faq-page {
+  --faq-ink: #f6f8fb;
+  --faq-muted: #aebed0;
+  --faq-line: #354558;
+  --faq-highlight: #9edfbe;
+}
+
+.faq-promo {
+  grid-column: 1 / -1;
+  display: grid;
+  grid-template-columns: auto minmax(0,1fr) auto;
+  align-items: center;
+  gap: clamp(14px,2.4vw,34px);
+  padding: clamp(17px,2.4vw,34px);
+  color: var(--faq-ink);
+  background: linear-gradient(100deg,#152f39 10%,#10222cee 60%,#17252a90),url('/assets/v2-light/tracks/monza.webp') center 57% / cover;
+  border: 1px solid #527870;
+  border-inline-start: 5px solid var(--faq-highlight);
+  border-radius: 10px;
+  text-decoration: none;
+}
+.faq-promo:hover,.faq-promo:focus-visible { border-color: var(--faq-highlight); color: white; }
+.faq-promo-mark {
+  color: var(--faq-highlight);
+  font: 800 clamp(2rem,5.6vw,4.5rem)/.92 var(--display,system-ui);
+  letter-spacing: -.07em;
+}
+.faq-promo-copy { display: grid; gap: 6px; }
+.faq-promo-copy strong { font-size: clamp(1.15rem,2.15vw,1.9rem); line-height: 1.15; }
+.faq-promo-copy > span { color: #d9e8e8; font-size: .95rem; }
+.faq-promo-action,.faq-primary {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 9px;
+  min-height: 44px;
+  padding: 9px 14px;
+  border: 1px solid transparent;
+  border-radius: 7px;
+  background: #a1e5c4;
+  color: #0e241f;
+  font: inherit;
+  font-weight: 750;
+  cursor: pointer;
+}
+.faq-primary[hidden] { display: none; }
+.faq-primary:hover,.faq-promo:hover .faq-promo-action { background: #c5f3db; }
+.faq-welcome-link,.faq-context-link {
+  display: block;
+  color: #b0e5cc;
+  font-weight: 700;
+  padding: 13px 15px;
+  text-decoration: underline;
+  text-underline-offset: 3px;
+}
+[data-faq-context] { margin-block: 13px; }
+.faq-context-link { border: 1px solid #47665f; border-radius: 8px; background: #14272b; }
+[data-faq-nav][aria-current] { color: #b0e5cc; }
+
+.faq-page { width: min(100%,940px); margin: 0 auto; padding: 4px 2px 30px; color: var(--faq-ink); }
+.faq-hero,.faq-next { padding: clamp(20px,4vw,40px); border-radius: 10px; }
+.faq-hero {
+  background: linear-gradient(95deg,#101c2af9 5%,#101c2af2 49%,#111d2bcb),url('/assets/v2-light/tracks/monza.webp') center 62% / cover;
+  border-color: #506c78;
+}
+.faq-kicker { color: var(--faq-highlight); font-weight: 750; letter-spacing: .09em; text-transform: uppercase; font-size: .75rem; }
+.faq-hero h1 { margin: 10px 0 8px; font-size: clamp(2rem,5.3vw,3.8rem); letter-spacing: -.045em; line-height: 1.02; }
+.faq-hero p,.faq-next p { color: #d7e3ef; max-width: 55ch; margin: 0 0 16px; font-size: 1rem; line-height: 1.5; }
+.faq-community-links { display: flex; flex-wrap: wrap; gap: 9px; margin-top: 16px; }
+.faq-community-link {
+  display: grid;
+  grid-template-columns: auto 1fr auto;
+  align-items: center;
+  gap: 9px;
+  min-height: 51px;
+  padding: 7px 10px;
+  border: 1px solid #557186;
+  border-radius: 7px;
+  background: #172635;
+  color: var(--faq-ink);
+  text-decoration: none;
+}
+.faq-community-link:hover { border-color: var(--faq-highlight); color: var(--faq-ink); }
+.faq-community-link img { display: block; }
+.faq-community-link strong,.faq-community-link small { display: block; }
+.faq-community-link small { color: var(--faq-muted); margin-top: 2px; font-size: .76rem; }
+.faq-topics { display: flex; flex-wrap: wrap; gap: 7px; margin: 16px 0 20px; }
+.faq-topics a {
+  display: inline-flex;
+  align-items: center;
+  min-height: 42px;
+  border: 1px solid var(--faq-line);
+  border-radius: 6px;
+  padding: 6px 11px;
+  color: var(--faq-ink);
+  background: #151f2c;
+}
+.faq-topics a:hover { border-color: var(--faq-highlight); color: var(--faq-highlight); }
+.faq-group { margin-block: 20px; scroll-margin-block-start: 12px; }
+.faq-group h2,.faq-next h2 { margin: 0 0 9px; font-size: clamp(1.18rem,2.4vw,1.55rem); }
+.faq-question { border: 1px solid var(--faq-line); border-radius: 7px; background: #151f2c; scroll-margin-block-start: 12px; }
+.faq-question + .faq-question { margin-top: 6px; }
+.faq-question summary {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 10px;
+  min-height: 47px;
+  cursor: pointer;
+  padding: 9px 14px;
+  font-size: .97rem;
+  font-weight: 700;
+  list-style: none;
+}
+.faq-question summary::-webkit-details-marker { display: none; }
+.faq-question summary::after { content: '+' / ''; color: var(--faq-highlight); font-size: 1.2rem; }
+.faq-question[open] summary::after { content: '−' / ''; }
+.faq-question[open],.faq-question:hover { border-color: #607d87; }
+.faq-answer { padding: 0 14px 13px; line-height: 1.55; color: #d5e2ed; }
+.faq-answer p { margin: 0; max-width: 75ch; }
+.faq-answer a { display: inline-block; margin-top: 5px; color: var(--faq-highlight); text-decoration: underline; text-underline-offset: 3px; }
+.faq-next { margin-top: 24px; background: #172733; border-color: #47675f; }
+
+.faq-chat {
+  width: min(430px,calc(100vw - 24px));
+  height: min(610px,calc(var(--faq-chat-viewport,100dvh) - 34px));
+  max-width: none;
+  max-height: none;
+  position: fixed;
+  inset: auto max(12px,env(safe-area-inset-right)) max(var(--faq-chat-bottom,0px),12px,env(safe-area-inset-bottom)) auto;
+  margin: 0;
+  padding: 0;
+  color: #f6f8fb;
+  background: #111b26;
+  border: 1px solid #52716d;
+  border-radius: 12px;
+  box-shadow: 0 16px 60px #0009;
+  overflow: hidden;
+}
+.faq-chat[open] { display: grid; grid-template-rows: auto minmax(0,1fr) auto; }
+.faq-chat::backdrop { background: #0509118c; }
+.faq-chat-head,.faq-chat-form { display: flex; align-items: center; gap: 8px; padding: 11px; }
+.faq-chat-head { background: #1a2935; border-bottom: 1px solid #3a4d60; }
+.faq-chat-head img { width: 35px; height: 35px; object-fit: cover; border-radius: 50%; background: #101a25; }
+.faq-chat-head h2 { flex: 1; font-size: 1rem; line-height: 1.15; margin: 0; }
+.faq-chat-locale { display: flex; border: 1px solid #557186; border-radius: 6px; }
+.faq-chat-locale button,.faq-chat-close,.faq-chat-suggestions button {
+  border: 0;
+  border-radius: 5px;
+  color: #edf4fb;
+  background: #1a2935;
+  cursor: pointer;
+  min-height: 42px;
+  padding: 0 8px;
+  font: inherit;
+}
+.faq-chat-locale button[aria-pressed="true"] { background: #a1e5c4; color: #0e241f; font-weight: 750; }
+.faq-chat-close { width: 42px; font-size: 1.4rem; }
+.faq-chat-body { overflow: auto; overscroll-behavior: contain; padding: 11px; }
+.faq-chat-intro { margin: 0 0 9px; color: #c2d2de; line-height: 1.4; }
+.faq-chat-suggestions { display: flex; flex-wrap: wrap; gap: 6px; margin-bottom: 11px; }
+.faq-chat-suggestions button { border: 1px solid #526d7d; }
+.faq-chat-message {
+  width: fit-content;
+  max-width: 95%;
+  margin: 8px 0;
+  background: #213142;
+  border-radius: 8px;
+  padding: 9px 11px;
+  white-space: pre-wrap;
+  overflow-wrap: anywhere;
+  line-height: 1.44;
+}
+.faq-chat-message.is-user { margin-inline-start: auto; background: #24463f; }
+.faq-chat-message a,.faq-chat-links a { color: #b2ebd2; text-decoration: underline; text-underline-offset: 3px; }
+.faq-chat-message a { display: block; margin-top: 4px; }
+.faq-chat-compose { border-top: 1px solid #3a4d60; background: #182534; }
+.faq-chat-form input {
+  min-width: 0;
+  flex: 1;
+  min-height: 44px;
+  padding: 8px;
+  background: #0f1924;
+  border: 1px solid #557186;
+  border-radius: 6px;
+  color: white;
+  font: inherit;
+  font-size: 16px;
+}
+.faq-chat-form button:disabled { opacity: .55; cursor: wait; }
+.faq-chat-status { color: #c2d2de; margin: 0 0 8px; }
+.faq-chat-status:empty { display: none; }
+.faq-chat-links { display: flex; flex-wrap: wrap; gap: 4px 11px; padding: 0 11px 9px; font-size: .84rem; }
+.faq-chat-links a { display: inline-flex; align-items: center; min-height: 32px; }
+.faq-page :focus-visible,.faq-promo:focus-visible,.faq-chat :focus-visible { outline: 2px solid #c8f3dd; outline-offset: 2px; }
+
+@media (max-width: 600px) {
+  .faq-promo { grid-template-columns: auto minmax(0,1fr); }
+  .faq-promo-action { grid-column: 1 / -1; justify-self: start; }
+  .faq-chat { width: calc(100vw - 20px); inset-inline-end: 10px; }
+}
+@media (max-width: 380px) {
+  .faq-community-link { flex: 1 1 100%; }
+  .faq-chat-head h2 { font-size: .89rem; }
+}

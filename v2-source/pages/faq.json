@@ -1,0 +1,79 @@
+{
+  "groups": [
+    {"id":"connection","title":{"ru":"Подключение и допуск","en":"Joining and entry requirements"}},
+    {"id":"ratings","title":{"ru":"Рейтинги ACC и ASG","en":"ACC and ASG ratings"}},
+    {"id":"community-help","title":{"ru":"Помощь и сообщество","en":"Help and community"}}
+  ],
+  "questions": [
+    {
+      "id":"join-server","group":"connection","intents":["server_join"],
+      "ru":{"question":"Как найти серверы ASG Racing?","answer":"В Assetto Corsa Competizione откройте «Сетевая игра» → «Список серверов» и введите ASG Racing. Если нужного сервера нет, сбросьте лишние фильтры и выберите класс «Все».","action":"Серверы ASG"},
+      "en":{"question":"How do I find the ASG Racing servers?","answer":"In Assetto Corsa Competizione, open Multiplayer → Server List and search for ASG Racing. If you cannot see the server, clear any extra filters and select All under car class.","action":"ASG servers"},
+      "link":"servers/"
+    },
+    {
+      "id":"alpine","group":"connection","intents":["alpine_access"],
+      "ru":{"question":"Почему на сервере GT3 игра просит Alpine GT4?","answer":"На GT3-сервере ASG это сообщение может означать, что доступ ограничен из-за SR или бана. Проверьте свой SR и условия сервера. Если рейтинг недавно вырос, сервер может получить обновлённый допуск позже. Покупка GT4 такое ограничение не снимет.","action":"Проверить условия сервера"},
+      "en":{"question":"Why does a GT3 server ask for an Alpine GT4?","answer":"On an ASG GT3 server, this message can indicate an access restriction due to SR or a ban. Check your SR and the server requirements. If your rating recently increased, the server may take time to update. Buying GT4 will not lift this restriction.","action":"Check server requirements"},
+      "link":"servers/"
+    },
+    {
+      "id":"cant-join","group":"connection","intents":["server_access","sr_access"],
+      "ru":{"question":"SR хватает, почему сервер всё равно не пускает?","answer":"Проверьте игровой SA, медали текущей трассы, класс машины, наличие нужного контента и свободные места. Если ошибка повторяется, пришлите в чат название сервера, игровой ник или ссылку на профиль, время и скриншот ошибки.","action":"Спросить в Discord"},
+      "en":{"question":"My SR is high enough. Why can’t I join?","answer":"Check your in-game SA, medals for the current track, car class, required content and available slots. If the error persists, share the server name, your in-game name or profile link, the time and a screenshot in the community chat.","action":"Ask in Discord"},
+      "link":"discord"
+    },
+    {
+      "id":"hourly","group":"connection","intents":["hourly_registration"],
+      "ru":{"question":"Где расписание и как поехать часовую гонку?","answer":"Откройте «Часовые гонки», выберите событие и проверьте время, допуск и условия регистрации. Если есть кнопка регистрации, используйте её. Анонсы и напоминания приходят в Telegram.","action":"Часовые гонки"},
+      "en":{"question":"Where is the schedule and how do I enter an hourly race?","answer":"Open Hourly Races, select an event and check its start time, entry requirements and registration instructions. Use the registration button if available. Join Telegram for announcements and reminders.","action":"Hourly races"},
+      "link":"hourly/"
+    },
+    {
+      "id":"what-is-sr","group":"ratings","intents":["asg_sr","profile_find"],
+      "ru":{"question":"Что такое ASG SR и где его посмотреть?","answer":"ASG SR — рейтинг безопасности ASG Racing. Найдите себя по игровому имени в таблице пилотов и откройте профиль. Значение и история появятся после обработки результатов. ACC рассчитывает отдельный рейтинг SA.","action":"Таблица пилотов"},
+      "en":{"question":"What is ASG SR and where can I see it?","answer":"ASG SR is ASG Racing’s safety rating. Search the driver standings for your in-game name and open your profile. Your rating and history appear after your results are processed. ACC calculates a separate SA rating.","action":"Driver standings"},
+      "link":"#worst-safety"
+    },
+    {
+      "id":"raise-sr","group":"ratings","intents":["sr_recovery"],
+      "ru":{"question":"Где и как поднять ASG SR?","answer":"Выберите доступный сервер ASG и финишируйте в зачтённой гонке, избегая контактов, невалидных кругов и штрафов. В ASG SR учитываются только зачтённые гонки ASG Racing.","action":"Посмотреть серверы"},
+      "en":{"question":"Where and how can I improve my ASG SR?","answer":"Choose an ASG server you can join and finish an eligible race while avoiding contact, invalid laps and penalties. Only eligible ASG Racing results count toward ASG SR.","action":"See servers"},
+      "link":"servers/"
+    },
+    {
+      "id":"track-medals","group":"ratings","intents":[],
+      "ru":{"question":"Как получить медали трассы?","answer":"Для трёх медалей в сухих дневных условиях пройдите четыре чистых круга подряд на нужной трассе. Можно начать в одиночной тренировке с включённым прогрессом рейтинга. Следите за подсказками Track Competence (TR)."},
+      "en":{"question":"How do I earn track medals?","answer":"To earn all three medals in dry daytime conditions, complete four clean laps in a row on that track. You can start in single-player practice with ratings enabled. Follow the in-game Track Competence (TR) prompts."}
+    },
+    {
+      "id":"acc-ratings","group":"ratings","intents":["acc_sa"],
+      "ru":{"question":"Как повысить игровой SA и что означают буквы в HUD?","answer":"Чтобы повысить SA, гоняйтесь рядом с соперниками в контролируемом темпе и избегайте контактов. Описания SA, TR и других показателей есть в профиле пилота ACC, в разделе рейтингов."},
+      "en":{"question":"How do I raise my in-game SA, and what do the HUD abbreviations mean?","answer":"To raise SA, race close to other cars at a controlled pace and avoid contact. The Ratings section of your ACC driver profile explains SA, TR and the other HUD ratings."}
+    },
+    {
+      "id":"ask-for-help","group":"community-help","intents":["contacts"],
+      "ru":{"question":"Что делать, если ответа нет?","answer":"Спросите помощника здесь или используйте команду /ask в Discord. Если нужен человек, напишите в чат сообщества в Discord или Telegram.","action":"Открыть Discord"},
+      "en":{"question":"What if I still need help?","answer":"Ask the assistant here or use /ask in Discord. If you need a person, ask in the Discord or Telegram community chat.","action":"Open Discord"},
+      "link":"discord"
+    },
+    {
+      "id":"partnership","group":"community-help","intents":[],
+      "ru":{"question":"Куда обратиться по рекламе и сотрудничеству?","answer":"Напишите Андрею из команды ASG Racing через Discord или Telegram. Укажите, кто вы и что предлагаете. В чате сообщества подскажут, как связаться с ним напрямую.","action":"Перейти в Discord"},
+      "en":{"question":"Who can I contact about sponsorship or partnerships?","answer":"Contact Andrei from ASG Racing via Discord or Telegram. Tell him who you are and what you have in mind. The community can point you to the right profile.","action":"Go to Discord"},
+      "link":"discord"
+    },
+    {
+      "id":"suggestions","group":"community-help","intents":[],
+      "ru":{"question":"Как предложить идею или помочь проекту?","answer":"В Discord откройте раздел «Предложения» и коротко опишите идею или расскажите, чем готовы помочь.","action":"Вступить в Discord"},
+      "en":{"question":"How can I suggest an idea or help the project?","answer":"Open the Suggestions section on Discord and briefly describe your idea or tell us how you would like to help.","action":"Join Discord"},
+      "link":"discord"
+    },
+    {
+      "id":"reports","group":"community-help","intents":["protest"],
+      "ru":{"question":"Как подать репорт или оспорить решение по нему?","answer":"Откройте «Репорты» на сайте. Для гоночного инцидента подготовьте ссылку на гонку, имена участников, время эпизода и видео.","action":"Открыть репорты"},
+      "en":{"question":"How do I file a report or appeal a decision?","answer":"Open Reports on the site. For a racing incident, have the race link, driver names, incident timestamp and video ready.","action":"Open Reports"},
+      "link":"reports/"
+    }
+  ]
+}

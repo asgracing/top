@@ -74,9 +74,12 @@ const reportsTotalJavaScriptBytes=await treeBytes('v2/reports',new Set(['.js']))
 const siteAppearanceBootstrapBytes = await textBytes('src/features/site-appearance/site-appearance.js');
 const newYearJavaScriptBytes = await treeBytes('src/features/site-appearance', new Set(['.js'])) - siteAppearanceBootstrapBytes;
 const siteAppearanceAdminJavaScriptBytes = await textBytes('v2/pages/site-appearance-admin.js');
+const faqJavaScriptBytes = await treeBytes('src/pages/faq', new Set(['.js']));
 const metrics = {
   appJavaScriptBytes: await textBytes("app.js"),
-  sourceModulesBytes: await treeBytes("src", new Set([".js", ".mjs"])) - moderationJavaScriptBytes - portalOpsJavaScriptBytes - raceResultContextJavaScriptBytes - personalNotificationsJavaScriptBytes - racingRulesJavaScriptBytes - serverTrackMapJavaScriptBytes - serverLiveTelemetryJavaScriptBytes - raceNumberPickerJavaScriptBytes - raceNumberValidityJavaScriptBytes - siteAppearanceBootstrapBytes - newYearJavaScriptBytes,
+  sourceModulesBytes: await treeBytes("src", new Set([".js", ".mjs"])) - moderationJavaScriptBytes - portalOpsJavaScriptBytes - raceResultContextJavaScriptBytes - personalNotificationsJavaScriptBytes - racingRulesJavaScriptBytes - serverTrackMapJavaScriptBytes - serverLiveTelemetryJavaScriptBytes - raceNumberPickerJavaScriptBytes - raceNumberValidityJavaScriptBytes - siteAppearanceBootstrapBytes - newYearJavaScriptBytes - faqJavaScriptBytes,
+  faqJavaScriptBytes,
+  faqStylesheetBytes: await treeBytes('src/pages/faq', new Set(['.css'])),
   siteAppearanceBootstrapBytes,
   siteAppearanceOptionalJavaScriptBytes: newYearJavaScriptBytes + siteAppearanceAdminJavaScriptBytes,
   siteAppearanceStylesheetBytes: await textBytes('src/features/site-appearance/new-year.css')

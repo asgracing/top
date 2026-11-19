@@ -13,6 +13,8 @@
   "reportsTotalJavaScriptBytes": 78000,
   "reportsStylesheetBytes": 8200,
   "sourceModulesBytes": 478500,
+  "faqJavaScriptBytes": 10500,
+  "faqStylesheetBytes": 10500,
   "siteAppearanceBootstrapBytes": 2300,
   "siteAppearanceOptionalJavaScriptBytes": 20000,
   "siteAppearanceStylesheetBytes": 9000,

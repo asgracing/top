@@ -7,6 +7,7 @@ import {renderLocalizedPages} from './generate-localized-pages.mjs';
 import {nodes,edit,setAttribute} from './seo/html-source.mjs';
 import {pageRegistry} from '../v2/page-registry.js';
 import {addServerNavigation} from './server-navigation.mjs';
+import {addClassicFaqNavigation} from './faq-page.mjs';
 import {readSiteRelease} from './site-release.mjs';
 import {siteAppearanceScript} from './v2-page-shell.mjs';
 import {scopeSiteHref,routeHref,legacyRoutes,versionHref,excludedRoute} from '../v2/site-routing.js';
@@ -17,7 +18,10 @@ const {outputs:localized}=await renderLocalizedPages();
 const readClassic=path=>localized.get(path)??readV1Html(path);
 async function emit(path,html){await mkdir(resolve(dist,path,'..'),{recursive:true});await writeFile(resolve(dist,path),html.replace(/[\t ]+$/gm,''));}
 export function links(html,language,owner,version,sourcePath=owner){
-  if(version==='old')html=addServerNavigation(html,language,routeHref('servers/',language,context));
+  if(version==='old'){
+    html=addServerNavigation(html,language,routeHref('servers/',language,context));
+    html=addClassicFaqNavigation(html,routeHref('faq/',language,context));
+  }
   const changes=[],location={href:origin+owner,origin,pathname:owner};
   for(const node of nodes(html)){
     let tag=html.slice(node.start,node.openEnd);

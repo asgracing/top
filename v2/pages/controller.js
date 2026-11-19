@@ -27,6 +27,7 @@ import {eventKind as resolveKind} from '../models.js?v=20261006v2k';
 import {pageHasSidebarWidgets} from '../page-layout.js?v=20261118newyear1';
 
 export async function startPage(api) {
+  if (document.documentElement.dataset.v2Page === 'faq') return;
   const currentMonth=()=>moscowDateKey(new Date().toISOString()).slice(0,7);
   const {native,presentation,showDialog,esc,text,date,number,rating,car,language,subscribe}=api;
   let achievementCollection=null;
@@ -35,6 +36,8 @@ export async function startPage(api) {
   window.addEventListener('pagehide',closeCollection,{once:true});
   const params=new URLSearchParams(location.search),screen=document.documentElement.dataset.v2Page==='news'&&params.has('slug')?'article':document.documentElement.dataset.v2Page;document.documentElement.dataset.v2Page=screen;
   const center=document.querySelector('.center-column'),home=document.createElement('div'),view=document.createElement('div');
+  const faqContext = center.querySelector('[data-faq-context]');
+  faqContext?.remove();
   const entityThumbnails=['club','team'].includes(screen)?createEntityThumbnails({root:center,loadAvatar:id=>native().steamAvatar(id)}):null;
   window.addEventListener('pagehide',()=>entityThumbnails?.destroy(),{once:true});
   home.id='home-view';home.hidden=true;home.append(...center.childNodes);view.id='page-view';center.append(home,view);
@@ -45,7 +48,12 @@ export async function startPage(api) {
     return;
   }
   if(screen==='reports'){const {mountReportsPage}=await import('../reports/index.js?v=20261117reports1');view.className='panel report-section';await mountReportsPage(view);return;}
-  if(screen==='servers'){const {startServerDirectory}=await import('../server-directory.js?v=20261025servers1');return startServerDirectory({...api,view,center});}
+  if(screen==='servers'){
+    const {startServerDirectory}=await import('../server-directory.js?v=20261025servers1');
+    startServerDirectory({...api,view,center});
+    if (faqContext) view.querySelector('.server-directory-head')?.after(faqContext);
+    return;
+  }
   if(screen==='account'){const {startAccountPage}=await import('./account.js?v=20261031numbers1');return startAccountPage({...api,view,center});}
   if(['settings','moderation','ops'].includes(screen)){const {startControlPage}=await import('./control.js?v=20261031numbers1');return startControlPage({...api,view,center,screen});}
   const state={screen,raceTab:params.get('tab')==='qualifying'?'qualifying':'race',id:params.get('id')||params.get('slug')||(screen==='document'?(location.pathname.endsWith('/privacy/')?'privacy':location.pathname.endsWith('/cookies/')?'cookies':null):null),month:'',racePage:1,showUncounted:false,query:'',track:'',paceTrack:'',raceSort:'date',recentPage:1,clubType:'teams',archivePage:Math.max(1,Number(params.get('page'))||1),archiveQuery:params.get('q')||'',archiveTrack:params.get('track')||'',archiveKind:params.get('kind')||'',archiveOrder:params.get('order')==='asc'?'asc':'desc',seasonQuery:'',seasonStatus:'',communityType:'clubs',standingPage:1,catalogType:(params.get('tab')||params.get('type'))==='teams'?'teams':'clubs',catalogContext:['hourly','championship'].includes(params.get('context'))?params.get('context'):'general',catalogQuery:params.get('q')||'',rosterQuery:'',entityRacePage:1};
@@ -268,6 +276,7 @@ export async function startPage(api) {
   view.innerHTML=`<section class="panel page-panel"><p role="status">${text('Загрузка…','Loading…')}</p></section>`;
   try {
     if(['about','instructions','guide','documents','document','notfound'].includes(screen)){raw.information=information;paint();
+      if (faqContext) view.querySelector('.site-intro')?.after(faqContext);
       const heading=view.querySelector('h1');if(heading)document.title=heading.textContent+' · ASG Racing';
     }else if(screen==='seasons'){const result=await data.history();raw.historySeasons=result.items;raw.editorialUpdated=result.updated_at;paint();syncEditorialUrl();
     }else if(['news','article'].includes(screen)){

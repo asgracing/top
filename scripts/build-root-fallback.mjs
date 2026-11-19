@@ -7,7 +7,7 @@ import {versionHref} from '../v2/site-routing.js';
 import {nodes,edit} from './seo/html-source.mjs';
 import {links} from './build-root-layout.mjs';
 const origin='https://asgracing.ru';
-const classicPages=pageRegistry.filter(page=>!['404/','site-admin/'].includes(page.route));
+const classicPages=pageRegistry.filter(page=>!['404/','site-admin/','faq/'].includes(page.route));
 const verification=nodes(await readFile(resolve(dist,'v2/ru/index.html'),'utf8')).filter(n=>['google-site-verification','yandex-verification','yandex-metrika-id'].includes(n.attrs.name));
 const verificationSource=await readFile(resolve(dist,'v2/ru/index.html'),'utf8');
 for(const page of classicPages)for(const lang of ['ru','en']){

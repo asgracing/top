@@ -6,7 +6,8 @@ import {redirects} from '../../scripts/root-redirects.mjs';
 test('nginx migration covers the current redirect registry and preserves independent origin TLS',()=>{
  const b=nginxBundle('site-redirects-20261008-r1');
  for(const r of redirects)assert.ok(b.maps.includes(` "${r.source}" "${r.target}";`));
- assert.equal(b.redirectCount,449);
+ assert.equal(b.redirectCount,455);
+ assert.ok(b.cases.some(r=>r.path==='/v2/en/faq/'&&r.location==='https://asgracing.ru/en/faq/'));
  assert.ok(b.site.includes('proxy_pass https://asgracing.github.io;'));
  assert.ok(b.site.includes('proxy_ssl_verify on;'));
  assert.ok(b.site.includes('proxy_set_header Cookie "";'));

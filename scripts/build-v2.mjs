@@ -13,6 +13,7 @@ import {readSiteRelease} from './site-release.mjs';
 import {buildV2Boot} from './build-v2-boot.mjs';
 import {pageShell,siteAppearanceScript} from './v2-page-shell.mjs';
 import {pageHasSidebarWidgets} from '../v2/page-layout.js';
+import {addFaqToShell} from './faq-page.mjs';
 const root = resolve(import.meta.dirname, '..');
 const siteRelease=await readSiteRelease();
 const legacyEnabled=process.env.ASG_ROOT_FALLBACK==='1'||siteRelease.legacyEnabled!==false;
@@ -23,15 +24,17 @@ const version = '20261006v2k';
 const runtimeVersion = '20261117reports1';
 const presentationVersion = '20261118winter3';
 const homeStylesVersion = '20261117home6';
-const bootVersion = '20261118newyear2';
-const hourlyBootVersion = '20261118newyear2';
-const archiveBootVersion = '20261118newyear2';
-const statsBootVersion = '20261118newyear2';
-const raceModalBootVersion = '20261118newyear2';
+const bootVersion = '20261119faq1';
+const hourlyBootVersion = '20261119faq1';
+const archiveBootVersion = '20261119faq1';
+const statsBootVersion = '20261119faq1';
+const raceModalBootVersion = '20261119faq1';
 const controlStylesVersion = '20261103clubs1';
 const profileStylesVersion = '20261111readers2';
 const legalVersion = '20261030analytics1';
 const buildInputs = new Map();
+const faqStyles = '<link rel="stylesheet" href="/src/pages/faq/faq.css?v=20261119faq1">';
+const faqScript = '<script type="module" src="/src/pages/faq/faq.js?v=20261119faq1"></script>';
 const hash = value => createHash('sha256').update(value.replace(/\r\n/g,'\n')).digest('hex');
 const record = (path, value) => { buildInputs.set(path, hash(value)); return value; };
 const read = async path => record(path, (await readFile(resolve(root, path), 'utf8')).replace(/\r\n/g,'\n'));
@@ -66,6 +69,8 @@ await emit('v2/pages/information-content.js',`// Generated from maintained V1 HT
 export default ${JSON.stringify(await compileInformation(readClassic))};
 `);
 const prototype = await read('v2-source/home.html');
+const faqContent = JSON.parse(await read('v2-source/pages/faq.json'));
+await read('scripts/faq-page.mjs');
 const prototypeBody = prototype.match(/<body[^>]*>([\s\S]*)<\/body>/i)[1];
 const ids = [...prototypeBody.matchAll(/\bid="([^"]+)"/g)].map(m => m[1]);
 const prefix = source => source.replace(/\b(id|aria-labelledby|aria-controls)="([^"]+)"/g, (_, attr, id) => `${attr}="${id.split(' ').map(v=>ids.includes(v)?`v2-${v}`:v).join(' ')}"`).replace(/href="#([^"]+)"/g,(_,id)=>`href="#v2-${id}"`);
@@ -175,12 +180,13 @@ for (const language of ['ru','en']) {
   // Searchable SEO content is static and visible before JavaScript/data loads.
   const seoNodes=nodes(classic).filter(n=>n.attrs.class?.split(' ').includes('seo-intro'));
   const seo=seoNodes.map(n=>classic.slice(n.start,n.end).replaceAll('seo-intro-title','v2-seo-intro-title')).join('');
-  let pageBody=localizedV2Links(body.replace('<div class="panel seo-panel" id="v2-seo-content"></div>',`<section class="panel seo-panel" id="v2-seo-content">${seo}</section>`),language);
+  let pageBody=body.replace('<div class="panel seo-panel" id="v2-seo-content"></div>',`<section class="panel seo-panel" id="v2-seo-content">${seo}</section>`);
   const text=language==='ru'?'Текущая версия':'Classic version';
   if(legacyEnabled)pageBody=pageBody.replace('<div class="header-actions top-nav-actions">',`<div class="header-actions top-nav-actions"><a class="version-switch" data-v1-home href="${language==='ru'?'/ru/':'/'}">${text}</a>`);
   const statsHead=value=>value.replace(`/v2/boot/home.js?v=${bootVersion}`,`/v2/boot/home.js?v=${statsBootVersion}`);
   const hourlyHead=value=>value.replace(`/v2/boot/home.js?v=${bootVersion}`,`/v2/boot/home.js?v=${hourlyBootVersion}`);
-  await emit(`v2/${language}/index.html`,`<!doctype html>\n<html lang="${language}" data-page="home" data-page-language="${language}" data-v2="home"><head>${hourlyHead(head)}</head><body data-v2="home">${pageBody}<div id="v1-runtime-host" hidden inert aria-hidden="true">${oldBody}</div>${modals}</body></html>\n`);
+  const homeBody = localizedV2Links(addFaqToShell(pageBody, language, 'home', faqContent), language);
+  await emit(`v2/${language}/index.html`,`<!doctype html>\n<html lang="${language}" data-page="home" data-page-language="${language}" data-v2="home"><head>${hourlyHead(head)}${faqStyles}</head><body data-v2="home">${homeBody}<div id="v1-runtime-host" hidden inert aria-hidden="true">${oldBody}</div>${modals}</body></html>\n`);
   for (const config of pageRegistry.filter(page => page.route)) {
     const page=config.route.slice(0,-1), screen=config.screen;
     const title=config.title[language], description=config.description[language];
@@ -192,7 +198,10 @@ for (const language of ['ru','en']) {
     if(screen==='cars')owningHead=statsHead(owningHead);
     if(screen==='hourly')owningHead=hourlyHead(owningHead);
     if(['driver','club','team'].includes(screen))owningHead=owningHead.replace(`/v2/boot/home.js?v=${bootVersion}`,`/v2/boot/home.js?v=${raceModalBootVersion}`);
-    await emit(`v2/${language}/${page}/index.html`,`<!doctype html>\n<html lang="${language}" data-page="home" data-page-language="${language}" data-v2="home" data-v2-page="${screen}" data-v2-sidebars="${pageHasSidebarWidgets(screen)?'visible':'hidden'}"><head>${owningHead}</head><body data-v2="page">${pageShell(pageBody,screen)}<div id="v1-runtime-host" hidden inert aria-hidden="true">${oldBody}</div>${modals}</body></html>\n`);
+    if (['faq','about','instructions','servers'].includes(screen)) owningHead += faqStyles;
+    if (screen === 'faq') owningHead += faqScript;
+    const screenBody = localizedV2Links(addFaqToShell(pageBody, language, screen, faqContent), language);
+    await emit(`v2/${language}/${page}/index.html`,`<!doctype html>\n<html lang="${language}" data-page="home" data-page-language="${language}" data-v2="home" data-v2-page="${screen}" data-v2-sidebars="${pageHasSidebarWidgets(screen)?'visible':'hidden'}"><head>${owningHead}</head><body data-v2="page">${pageShell(screenBody,screen)}<div id="v1-runtime-host" hidden inert aria-hidden="true">${oldBody}</div>${modals}</body></html>\n`);
   }
 }
 await emit('v2/index.html',`<!doctype html><html lang="ru"><head><meta charset="utf-8"><meta name="robots" content="noindex,follow"><title>ASG Racing V2</title><script>let language='ru';try{if(localStorage.getItem('asgV2Language')==='en')language='en'}catch{}location.replace('/v2/'+language+'/'+location.search+location.hash)</script></head><body><a href="/v2/ru/">ASG Racing — русский</a> · <a href="/v2/en/">English</a></body></html>`);
