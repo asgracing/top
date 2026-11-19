@@ -5,7 +5,7 @@ import {isTeamRace,teamRaceUrl} from '/src/shared/team-racing-client.js?v=202610
 import copy from './copy.js?v=20261119srvepisodes';
 import { subscribe, getRuntime } from './bridge.js?v=20261006v2k';
 import {rankingPosition,eventKind,normalizeTablePage,normalizeSafetyRow,paginationPages,serverSrRestriction} from './models.js?v=20261013delivery1';
-import {createPresentation} from './presentation.js?v=20261119telemetry';
+import {createPresentation} from './presentation.js?v=20261119steamgate';
 import {createRecentRaces} from './recent-races.js?v=20261117home1';
 import {createDonationSupport} from './donations.js?v=20261119donations1';
 import {createHeader} from './header.js?v=20261118newyear1';
@@ -305,7 +305,7 @@ function showReference(key,trigger){
 }
 function openServers(key,trigger){
   presentation.openServer(key,trigger);
-  void native().refreshServers();
+  if(!key||model?.auth?.authenticated===true)void native().refreshServers();
 }
 function startStream(trigger){
   const pop=$('stream-popover');if(pop.matches(':popover-open')){pop.hidePopover();return}

@@ -12,6 +12,7 @@ import {animateLiveMap} from '../src/features/server-status/live-map.js?v=202611
 import {safetyHistoryComponents} from './safety-history.js?v=20261010profile1';
 import {loadLeaderboardRank,profileWithLeaderboardRank} from '/src/shared/leaderboard-rank.js?v=20261111rank1';
 import {createOnlineActivity} from './online-activity.js?v=20261102activity3';
+import {buildAuthReturnPath} from '../src/features/auth/header-auth.js';
 
 // R24 views consume the canonical controllers. They never calculate ratings or
 // create a second auth/voting state.
@@ -37,7 +38,7 @@ export function createPresentation({$,native,getModel,esc,text,label,date,number
   function stopServerStream(){serverStream?.close();serverStream=null;cancelAnimationFrame(serverFrame);clearInterval(serverRefresh);}
   function startServerStream(key){
     stopServerStream();
-    if(!key||document.hidden)return;
+    if(!key||document.hidden||getModel()?.auth?.authenticated!==true)return;
     try {serverStream=new LiveServerStream(key);}catch{return;}
     const animate=()=>{
       const stream=serverStream,server=stream?.latest();
@@ -131,7 +132,17 @@ export function createPresentation({$,native,getModel,esc,text,label,date,number
   function openServer(key,trigger,refresh=false){
     ++request;const m=getModel();if(!m)return;
     const draw=(title,html,kind)=>{
-      if(!refresh){activeServerKey=key;display(title,html,kind,trigger);if(kind==='server')startServerStream(key);return;}
+      if(!refresh||$('modal').dataset.kind!==kind){
+        activeServerKey=key;
+        display(title,html,kind,trigger);
+        $('modal-body').scrollTop=0;
+        if(kind==='server')startServerStream(key);
+        if(kind==='server-signin'){
+          $('modal-eyebrow').textContent=text('ТЕЛЕМЕТРИЯ СЕРВЕРА','SERVER TELEMETRY');
+          $('modal-body').querySelector('.server-signin-link').focus({preventScroll:true});
+        }
+        return;
+      }
       const body=$('modal-body'),scroll=body.querySelector('.server-roster-scroll'),left=scroll?.scrollLeft||0,top=body.scrollTop;
       const focused=body.contains(document.activeElement)?document.activeElement?.getAttribute('href'):null;
       const mapToggleFocused=document.activeElement===body.querySelector('.track-map-summary');
@@ -147,7 +158,19 @@ export function createPresentation({$,native,getModel,esc,text,label,date,number
     if(!key){
       draw(label('serverStatus'),`<div class="server-summary-list">${m.servers.map(s=>`<button type="button" class="server-summary-item${serverAdmission(s)?' is-sr-blocked':''}" title="${esc(serverAdmission(s)||s.label)}" aria-label="${esc(s.label)}${serverAdmission(s)?` · ${esc(serverAdmission(s))}`:''}" data-server="${esc(s.key)}"><b>${esc(s.label)}</b><span>${esc(s.track)} · <strong class="${s.online?'is-online':'is-offline'}">${m.serversStale||s.stale?text('Данные устарели','Stale data'):s.online?label('live'):label('offline')}</strong> · ${esc(phase(s))} · SA ${esc(s.sa)} · SR ${esc(s.sr)} · ${esc(serverPilotCount(s.server))} ${text('пилотов','drivers')}</span></button>`).join('')||`<p class="empty">${label('noData')}</p>`}</div>`,'servers',trigger);return;
     }
-    const base=m.servers.find(server=>server.key===key);if(!base)return;
+    const base=m.servers.find(server=>server.key===key);
+    if(m.auth?.authenticated!==true){
+      if(!refresh||$('modal').dataset.kind!=='server-signin'){
+        const loginUrl=`https://auth.asgracing.ru/v1/auth/steam/start?return_path=${encodeURIComponent(buildAuthReturnPath())}`;
+        draw(base?.label||label('serverStatus'),`<section class="server-signin-card" aria-labelledby="server-signin-title">
+          <h3 id="server-signin-title">${text('Карта трассы и данные гонки','Track map and race details')}</h3>
+          <p>${text('Войди через Steam, чтобы следить за позициями пилотов и текущей сессией.','Sign in with Steam to follow driver positions and the current session.')}</p>
+          <a class="button primary server-signin-link" href="${esc(loginUrl)}">${text('Войти через Steam','Sign in with Steam')} <span aria-hidden="true">↗</span></a>
+        </section>`,'server-signin',trigger);
+      }
+      return;
+    }
+    if(!base)return;
     const live=serverStream?.key===key?serverStream.latest():null;
     const s=live?{...base,server:live,track:native().track(live.track_code||live.track||''),
       stale:serverStream.delivery==='stale',online:live.status==='online',players:live.players_online,drivers:live.drivers||[]}:base;
@@ -186,5 +209,5 @@ export function createPresentation({$,native,getModel,esc,text,label,date,number
   $('modal').addEventListener('v2-dialog-restore',()=>{++request;});
   document.addEventListener('visibilitychange',()=>{if(document.hidden)stopServerStream();else if($('modal').open&&$('modal').dataset.kind==='server')startServerStream(activeServerKey)});
   globalThis.addEventListener?.('pagehide',stopServerStream);
-  return {openDriver:(row,trigger)=>loadProfile(row,'driver',trigger),openDriverDay,refreshDriverDay,openRating:(row,kind,trigger)=>loadProfile(row,'driver-'+kind,trigger),openEvent,openOnline,openServer,refreshServer(){if($('modal').open&&['server','servers'].includes($('modal').dataset.kind))openServer(activeServerKey,null,true)},refreshEntry(){if($('modal').open&&$('modal').dataset.kind==='event'){const node=$('modal-body').querySelector('.modal-participation');if(node)node.innerHTML=entryHtml()}}};
+  return {openDriver:(row,trigger)=>loadProfile(row,'driver',trigger),openDriverDay,refreshDriverDay,openRating:(row,kind,trigger)=>loadProfile(row,'driver-'+kind,trigger),openEvent,openOnline,openServer,refreshServer(){if($('modal').open&&['server','server-signin','servers'].includes($('modal').dataset.kind))openServer(activeServerKey,null,true)},refreshEntry(){if($('modal').open&&$('modal').dataset.kind==='event'){const node=$('modal-body').querySelector('.modal-participation');if(node)node.innerHTML=entryHtml()}}};
 }

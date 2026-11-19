@@ -61,25 +61,30 @@ try{
     {count:30,language:'en',width:390,height:844,screen:'home'},
     {count:30,language:'ru',width:768,height:1024,screen:'home'},
     ...[['ru',1280,800],['en',1920,1080],['ru',390,844],['en',320,760]].map(([language,width,height])=>({count:30,language,width,height,screen:'servers'})),
+    {count:3,language:'ru',width:1280,height:800,screen:'home',guest:true},
+    {count:3,language:'en',width:320,height:760,screen:'servers',guest:true},
     {count:30,language:'en',width:1280,height:800,screen:'servers',stale:true},
     {count:0,language:'ru',width:390,height:844,screen:'servers',unavailable:true}];
   for(const test of cases){
     console.log('Checking server layout',JSON.stringify(test));
     const {count,language,width,height,screen}=test;
     const page=await browser.newPage({viewport:{width,height},reducedMotion:'reduce'}),errors=[];
-    let writes=0,reads=0,live=status(count,test.stale);
+    let writes=0,reads=0,streamRequests=0,live=status(count,test.stale);
     page.on('pageerror',e=>errors.push(String(e)));
     await page.route('**/*',async route=>{
       const req=route.request(),url=new URL(req.url());if(url.origin===base)return route.continue();
       if(req.method()!=='GET')writes++;
       let data={};
       if(url.hostname==='data.asgracing.ru'){
+        if(url.pathname.startsWith('/telemetry/v1/stream/'))streamRequests++;
         if(url.pathname.endsWith('/server_status_live.json')){reads++;if(test.unavailable)return route.fulfill({status:503,body:'{}'});data=live;}
         else if(url.pathname.endsWith('/server_status.json'))return route.fulfill({status:503,body:'{}'});
         else if(url.pathname.endsWith('/v2/manifest.json'))data=fixture.manifest;
         else if(url.pathname.endsWith('/v2/home.json'))data=fixture.home;
         else if(url.pathname.includes('/v2/tables/'))data={items:[],total_items:0,total_pages:1,page:1,page_size:10};
-      }else if(url.hostname==='auth.asgracing.ru')data={authenticated:false};
+      }else if(url.hostname==='auth.asgracing.ru'&&url.pathname==='/v1/me'){
+        data=test.guest?{authenticated:false}:{authenticated:true,steam:{persona_name:'Fixture viewer'}};
+      }
       return route.fulfill({contentType:url.pathname.endsWith('.js')?'text/javascript':'application/json',body:url.pathname.endsWith('.js')?'':JSON.stringify(data)});
     });
     await page.goto(base+'/v2/'+language+'/'+(screen==='servers'?'servers/':''),{waitUntil:'domcontentloaded'});
@@ -118,7 +123,24 @@ try{
         await page.waitForFunction(()=>document.querySelectorAll('#server-directory-grid [data-server]').length===15);
         assert.equal(await page.locator('.dashboard>aside').first().isVisible(),false);
       }
-      if(test.stale){
+      if(test.guest){
+        const card=cards.first(),key=await card.getAttribute('data-server');
+        await card.click();
+        const modal=page.locator('#v2-modal[data-kind="server-signin"]'),cta=modal.locator('.server-signin-link');
+        await cta.waitFor();
+        assert.equal((await cta.innerText()).replace(/\s+/g,' '),language==='ru'?'Войти через Steam ↗':'Sign in with Steam ↗');
+        assert.equal(await cta.evaluate(node=>document.activeElement===node),true);
+        const login=new URL(await cta.getAttribute('href'));
+        assert.equal(login.origin,'https://auth.asgracing.ru');
+        assert.equal(login.pathname,'/v1/auth/steam/start');
+        assert.equal(login.searchParams.get('return_path'),new URL(page.url()).pathname);
+        assert.equal(await modal.locator('.server-track-map,.server-driver-list,.server-parameter-row').count(),0);
+        assert.equal(streamRequests,0);
+        assert.ok(await modal.evaluate(node=>node.scrollWidth<=node.clientWidth+1),'Guest prompt fits the dialog');
+        await modal.screenshot({path:path.join(output,`server-signin-${screen}-${language}-${width}.png`)});
+        await page.keyboard.press('Escape');
+        assert.equal(await page.evaluate(()=>document.activeElement?.dataset?.server),key);
+      }else if(test.stale){
         assert.equal(await container.locator('.is-stale').count(),count);
         assert.match(await page.locator('#server-directory-summary').innerText(),/—/);
       }else if(count===30){
