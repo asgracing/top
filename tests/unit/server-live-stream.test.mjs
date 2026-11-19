@@ -206,6 +206,19 @@ test('default playback survives 600 ms holes, per-car gaps and jitter with a mon
   assert.ok(count>400);assert.ok(holds<20,'The buffered stream should mostly move, rather than freeze');
 });
 
+test('5 Hz with three seconds of history starts at the two-second playback cursor',()=>{
+  const timeline=new PoseTimeline();
+  timeline.synchronize({offset_ms:10000,uncertainty_ms:5,measured_at:0});
+  const baseline=Array.from({length:16},(_,i)=>frame(6900+i*200,i*10));
+  timeline.ingest(baseline,10000,0);
+  assert.equal(timeline.sample(0)[0].world_x,55);
+  assert.equal(timeline.sample(20)[0].world_x,56);
+  for(let index=2;index<=40;index++){
+    const car=timeline.sample(index*20)[0];
+    assert.equal(car.world_x,55+index);
+  }
+});
+
 test('short stale frames and SSE reconnects retain cars; actual departures/offline clear them',()=>{
   let now=0;
   const stream=new LiveServerStream('main',{EventSourceClass:FakeSource,clock:()=>now,fetchImpl:null});

@@ -1,7 +1,7 @@
 // One selected server, one SSE connection. No browser-side ratings or admission logic.
 import {LiveClock,measureLiveClock,CLOCK_MAX_AGE_MS,CLOCK_MAX_UNCERTAINTY_MS} from './live-clock.js?v=20261026clock2';
 import {withViewerClock} from './continuity.js?v=20261026smooth2';
-export const DISPLAY_BUFFER_MS = 1500;
+export const DISPLAY_BUFFER_MS = 2000;
 const WIRE_BUFFER_MS = 500, HISTORY_MS=8000, HOLD_MS=3000, STATUS_GRACE_MS=10000;
 const SOURCE_CLOCK_MAX_UNCERTAINTY_MS = 50;
 const own = (o,k) => Object.prototype.hasOwnProperty.call(o,k);
