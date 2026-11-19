@@ -1,7 +1,7 @@
 {
   "en": {
     "safetyAboutP1": "On standard circuits, your completed laps count from lap one in an eligible race, even if you retire before 50% of the leader’s distance.",
-    "safetyAboutP2": "SRv4 applies when an eligible result is first rated and the original ACC filename is timestamped from 19 November 2026, 09:00 UTC (12:00 MSK). Previous scores are preserved.",
+    "safetyAboutP2": "SRv4 applies to eligible results timestamped on or after 19 November 2026, 09:00 UTC (12:00 MSK) in the original ACC filename.",
     "summary": [
       "Valid laps add SR. Red laps subtract SR. Unfinished laps are excluded.",
       "Verified incidents and counted ACC penalties reduce SR."
@@ -46,7 +46,7 @@
   },
   "ru": {
     "safetyAboutP1": "На обычных трассах завершённые круги зачётной гонки учитываются с первого круга, даже если вы сошли до 50% дистанции лидера.",
-    "safetyAboutP2": "SRv4 применяется при первом расчёте зачётного результата с меткой от 19 ноября 2026, 12:00 МСК включительно в исходном имени файла ACC. Прежние начисления сохраняются.",
+    "safetyAboutP2": "SRv4 применяется к зачётным результатам с меткой от 19 ноября 2026, 12:00 МСК включительно в исходном имени файла ACC.",
     "summary": [
       "Валидные круги прибавляют SR, красные уменьшают. Незавершённый круг исключается.",
       "Подтверждённые эпизоды и учтённые автоштрафы ACC уменьшают SR."
