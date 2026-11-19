@@ -2,7 +2,7 @@ import {carThumbnailAttributes} from '/src/shared/image-thumbnails.js?v=20261013
 import {hourlySrRequirement} from '/src/features/hourly/entry-requirements.js?v=20261027nords1';
 import {renderTeamRaceSpotlight,teamEntryLabel,refreshTeamRaceLinks} from '/src/shared/team-racing-discovery.js?v=20261028team10';
 import {isTeamRace,teamRaceUrl} from '/src/shared/team-racing-client.js?v=20261009teams2';
-import copy from './copy.js?v=20261119srvepisodes';
+import copy from './copy.js?v=20261119srv4clean';
 import { subscribe, getRuntime } from './bridge.js?v=20261006v2k';
 import {rankingPosition,eventKind,normalizeTablePage,normalizeSafetyRow,paginationPages,serverSrRestriction} from './models.js?v=20261013delivery1';
 import {createPresentation} from './presentation.js?v=20261119steamgate';
@@ -396,7 +396,7 @@ if(!isSubpage){
 }
 try{await import('./runtime/home.js?v=20261117reports1');applyHash();if(isSubpage)startBackground();}catch(error){console.error('V2 runtime unavailable',error);$('event-track').textContent=text('Не удалось загрузить данные','Could not load data');$('day-driver').textContent=text('Данные недоступны','Data unavailable');tableError=true;tableBusy=false;renderTable()}
 if(document.documentElement.dataset.v2Page){
-  const {startPage}=await import('./pages/controller.js?v=20261119srvepisodes');
+  const {startPage}=await import('./pages/controller.js?v=20261119srv4clean');
   await startPage({native,presentation,showDialog,esc,text,label,date,number,rating,car,language,subscribe,serverAdmission});
 }
 import {installReports} from './reports/index.js?v=20261117reports1';
