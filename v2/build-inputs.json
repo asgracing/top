@@ -1,6 +1,6 @@
 {
   "schemaVersion": 1,
-  "runtimeVersion": "20261117reports1",
+  "runtimeVersion": "20261120spabasemap",
   "inputs": [
     {
       "path": "account/driver-overlay.js",
@@ -8,7 +8,7 @@
     },
     {
       "path": "app.js",
-      "sha256": "d06be5cb24ec0d4aee3f10659cdcdab309fe665a43d061fbc20eda04707c4a25"
+      "sha256": "7ba3b93dd45f24b597b7cf3c1b2e0a10f6802d5a23aaaac016929d20e661e753"
     },
     {
       "path": "assets/content/safety-rating-v3.json",
@@ -80,7 +80,7 @@
     },
     {
       "path": "scripts/build-v2.mjs",
-      "sha256": "655af3e857332772baafba600ac58bb12a69f85267d72fad719395822dcac2c3"
+      "sha256": "4a3d5995f14ef65dc004f6debf921844f26ecf287b4bfd7a58057367c434bcc5"
     },
     {
       "path": "scripts/faq-page.mjs",
@@ -168,7 +168,7 @@
     },
     {
       "path": "src/features/server-status/live-map.js",
-      "sha256": "fe07f9525d347b7b32fb14d079158fdd700710189d040d5a05a5dda3262a91b3"
+      "sha256": "e04f5400560b41f8fac4d5e3f763cd25f82748541f3e8faff6412055b5ebd504"
     },
     {
       "path": "src/features/server-status/live-stream.js",
@@ -176,7 +176,7 @@
     },
     {
       "path": "src/features/server-status/roster.js",
-      "sha256": "434caf20a3af57e4bc34594b9854390018b5a9dabdb78d8505e16e6afccf097d"
+      "sha256": "d7c99a5eadb50ea88b78fa834cb890b773376fe83213292905f221c77473b21b"
     },
     {
       "path": "src/features/server-status/telemetry.js",
@@ -188,7 +188,7 @@
     },
     {
       "path": "src/features/server-status/track-map.js",
-      "sha256": "9b5d9ae60abba79a35698d49dd93ebabb00bd8ea36d46e8d5ae6b72609d5a71b"
+      "sha256": "d4fe3d028a5559fa6cfd0ea103aaf004647e1ce3260327cbdb81dd31d9ec84d0"
     },
     {
       "path": "src/features/stats/table-engine.js",
@@ -528,7 +528,7 @@
     },
     {
       "path": "styles/components/server-roster.css",
-      "sha256": "b4defd3de5795eb5e37da573cd47b76dd8dfff9f9c2bb457796258c84484ba19"
+      "sha256": "fd749b4b1e3be4e0e8761429864db2330cf31b224d140919d254d8a0aa18eb99"
     },
     {
       "path": "styles/components/server-sticky-layout.css",
@@ -832,7 +832,7 @@
     },
     {
       "path": "v2/presentation.js",
-      "sha256": "ce31901a3597c51507262270e7bb6ca78a8a67f243b30460f0bb5c85aac40396"
+      "sha256": "512d7d3a22fe4bd1d4cd594e2c5640a21270e71bc82c01d35905141e97a8b23b"
     },
     {
       "path": "v2/profile-races.js",
