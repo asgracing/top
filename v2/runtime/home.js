@@ -33,7 +33,7 @@ import {
   markNewsRead,
   saveNewsReadState as saveSharedNewsReadState
 } from "/news-read-state.js?v=20260813newsread1";
-import { createAuthHeaderController, safeAvatarUrl } from "/src/features/auth/header-auth.js?v=20261011notifications1";
+import { createAuthHeaderController, safeAvatarUrl } from "/src/features/auth/header-auth.js?v=20261120grantpermission1";
 import { applyRandomTrackBackground, normalizeTrackBackgroundCode, resolveTrackBackgroundFile } from "/src/features/server-status/track-background.js?v=20260726staticfallback1";
 import { bindServerStatusFreshness, isServerStatusStale, isInstanceStatusStale } from "/src/features/server-status/freshness.js?v=20261026smooth1";
 import { telemetrySessionLabel, loadPreferredServerStatus } from "/src/features/server-status/telemetry.js?v=20261026smooth1";
