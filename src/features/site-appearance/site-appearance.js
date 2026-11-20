@@ -1,7 +1,7 @@
 const authOrigin = "https://auth.asgracing.ru";
 const refreshDelay = 60_000;
 const previewAttribute = "data-asg-new-year-preview";
-const assetVersion = "20261120winterhover1";
+const assetVersion = "20261120wintercanvas1";
 let activeTheme;
 let themeRequest;
 let wanted = false;
