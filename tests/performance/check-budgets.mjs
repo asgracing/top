@@ -44,7 +44,12 @@ const racingRulesJavaScriptBytes = await treeBytes("src/features/rules", new Set
 const racingRulesStylesheetBytes = await textBytes("styles/components/racing-rules.css");
 // Portal Operations is loaded only on its private route. Include every module
 // in its own cap so new management views cannot escape the feature budget.
-const portalOpsJavaScriptBytes = await treeBytes("src/pages/portal-ops", new Set([".js"]));
+const portalSupportModules = (await Promise.all(
+  ['support-budget','support-members','support-grants'].map(name=>textBytes('src/pages/portal-ops/'+name+'.js')),
+)).reduce((sum,bytes)=>sum+bytes,0);
+const portalOpsJavaScriptBytes = await treeBytes("src/pages/portal-ops", new Set([".js"])) - portalSupportModules;
+const portalSupportJavaScriptBytes = portalSupportModules + await textBytes("v2/pages/support-funding.js");
+const portalSupportStylesheetBytes = await textBytes("styles/components/project-support.css");
 const portalOpsStylesheetBytes = await textBytes("styles/components/portal-ops.css")
   + await textBytes("styles/components/portal-ops-clubs.css");
 const driverOverlayJavaScriptBytes = await textBytes("account/driver-overlay.js")
@@ -77,7 +82,7 @@ const siteAppearanceAdminJavaScriptBytes = await textBytes('v2/pages/site-appear
 const faqJavaScriptBytes = await treeBytes('src/pages/faq', new Set(['.js']));
 const metrics = {
   appJavaScriptBytes: await textBytes("app.js"),
-  sourceModulesBytes: await treeBytes("src", new Set([".js", ".mjs"])) - moderationJavaScriptBytes - portalOpsJavaScriptBytes - raceResultContextJavaScriptBytes - personalNotificationsJavaScriptBytes - racingRulesJavaScriptBytes - serverTrackMapJavaScriptBytes - serverLiveTelemetryJavaScriptBytes - raceNumberPickerJavaScriptBytes - raceNumberValidityJavaScriptBytes - siteAppearanceBootstrapBytes - newYearJavaScriptBytes - faqJavaScriptBytes,
+  sourceModulesBytes: await treeBytes("src", new Set([".js", ".mjs"])) - moderationJavaScriptBytes - portalOpsJavaScriptBytes - portalSupportModules - raceResultContextJavaScriptBytes - personalNotificationsJavaScriptBytes - racingRulesJavaScriptBytes - serverTrackMapJavaScriptBytes - serverLiveTelemetryJavaScriptBytes - raceNumberPickerJavaScriptBytes - raceNumberValidityJavaScriptBytes - siteAppearanceBootstrapBytes - newYearJavaScriptBytes - faqJavaScriptBytes,
   faqJavaScriptBytes,
   faqStylesheetBytes: await treeBytes('src/pages/faq', new Set(['.css'])),
   siteAppearanceBootstrapBytes,
@@ -89,7 +94,7 @@ const metrics = {
   serverLiveTelemetryJavaScriptBytes,
   serverTrackMapJavaScriptBytes,
   serverTrackMapAssetBytes: await treeBytes("assets/track-maps", new Set([".js"])),
-  stylesheetsBytes: await treeBytes("styles", new Set([".css"])) + await textBytes("styles.css") + await textBytes("legal.css") - moderationStylesheetBytes - portalOpsStylesheetBytes - raceResultContextStylesheetBytes - personalNotificationsStylesheetBytes - racingRulesStylesheetBytes - raceNumberPickerStylesheetBytes - raceNumberValidityStylesheetBytes,
+  stylesheetsBytes: await treeBytes("styles", new Set([".css"])) + await textBytes("styles.css") + await textBytes("legal.css") - moderationStylesheetBytes - portalOpsStylesheetBytes - raceResultContextStylesheetBytes - personalNotificationsStylesheetBytes - racingRulesStylesheetBytes - raceNumberPickerStylesheetBytes - raceNumberValidityStylesheetBytes - portalSupportStylesheetBytes,
   racingRulesJavaScriptBytes,
   racingRulesStylesheetBytes,
   personalNotificationsJavaScriptBytes,
@@ -110,6 +115,8 @@ const metrics = {
   moderationStylesheetBytes,
   portalOpsJavaScriptBytes,
   portalOpsStylesheetBytes,
+  portalSupportJavaScriptBytes,
+  portalSupportStylesheetBytes,
   driverAchievementsJavaScriptBytes:
     await textBytes("src/pages/driver/achievements-model.js")
     + await textBytes("src/pages/driver/achievements-widget.js"),
