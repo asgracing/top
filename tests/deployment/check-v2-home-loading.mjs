@@ -54,6 +54,36 @@ try {
    reports.push({language,width,independentCards:true,offscreenDeferred:width===375,manifestStorage:true,optionalTabs:true});
   } finally {releaseHome();await page.close();}
  }
+ // Early reads can start even if the heavy runtime is stalled.
+ {
+  const page=await browser.newPage({viewport:{width:390,height:844},reducedMotion:'reduce'});
+  const requests=[], errors=[];
+  const paths=['/top-data/v2/manifest.json','/top-data/v2/home.json','/hourly-data/announcement.json','/hourly-data/schedule.json'];
+  let releaseRuntime, runtimeRequested, ready;
+  const runtimeGate=new Promise(resolve=>releaseRuntime=resolve);
+  const runtimeSeen=new Promise(resolve=>runtimeRequested=resolve);
+  const readsSeen=new Promise(resolve=>ready=resolve);
+  page.on('pageerror',error=>errors.push(error.message));
+  await page.route('**/*',async route=>{
+   const url=new URL(route.request().url());
+   const path=url.pathname.startsWith('/__asg_public__/')?url.pathname.slice('/__asg_public__'.length):url.pathname;
+   if(path.startsWith('/v2/boot/chunks/home-')&&path.endsWith('.js')){runtimeRequested();await runtimeGate;}
+   if(paths.includes(path)){requests.push(path);if(paths.every(item=>requests.includes(item)))ready();}
+   return fixture(route,[],{normalEvent:true});
+  });
+  try{
+   await page.goto(base+'/',{waitUntil:'commit'});
+   let deadline;
+   try{
+    await Promise.race([Promise.all([runtimeSeen,readsSeen]),new Promise((_,reject)=>deadline=setTimeout(()=>reject(new Error('Home reads waited for the blocked runtime')),6000))]);
+   }finally{clearTimeout(deadline);}
+   releaseRuntime();
+   await page.waitForFunction(()=>Boolean(document.querySelector('#v2-day-driver')?.dataset.driver));
+   await page.waitForFunction(track=>document.querySelector('#v2-event-track')?.textContent===track,snapshot.event.track_name);
+   for(const path of paths)assert.equal(requests.filter(item=>item===path).length,1,path);
+   assert.deepEqual(errors,[]);
+  }finally{releaseRuntime();await page.close();}
+ }
  // Direct SR anchors must work without scrolling, and empty/missing metadata
  // cannot leave the observer or table controls waiting for another update.
  for(const hash of ['#worst-safety','#bestlaps']) {
