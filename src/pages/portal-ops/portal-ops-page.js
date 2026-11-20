@@ -1,5 +1,7 @@
+import {mountSupportBudget} from "./support-budget.js?v=20261120grantpermission1";
+import {canManageSupportGrants} from "./support-grants.js?v=20261120grantpermission1";
 import { mountClubsManagement } from './portal-clubs-workspace.js?v=20261111readers1';
-import { createAuthHeaderController, buildAuthReturnPath } from "../../features/auth/header-auth.js?v=20261011notifications1";
+import { createAuthHeaderController, buildAuthReturnPath } from "../../features/auth/header-auth.js?v=20261120grantpermission1";
 import { createIdempotencyKey, hourlyDraftEquals, normalizeHourlyState, snapshotHourlyDraft, validateHourlyDraft } from "./portal-ops-model.js?v=20261004teams1";
 import { applyLocalizedNavigation, resolvePageLocale, setPageLocale } from "../../shared/localized-page.js?v=20261007root1";
 
@@ -13,6 +15,8 @@ Object.assign(COPY.ru,{eventType:"Тип события",hourlyFormat:"Часо�
 Object.assign(COPY.en,{eventType:"Event type",hourlyFormat:"Hourly",pointsMultiplier:"Points multiplier",championshipLocked:"Championship race — read only",championshipReadOnly:"Championship races cannot be changed from the portal.",invalid_event_type:"Select Hourly or Endurance."});
 Object.assign(COPY.ru,{participationMode:"Участие",individualRace:"Личная гонка",teamRace:"Командная гонка",teamMaxDrivers:"Максимум пилотов в экипаже (соло разрешено)",invalid_participation_mode:"Выберите режим участия.",event_has_team_registrations:"У события есть командные заявки. Сначала снимите их, чтобы изменить событие."});
 Object.assign(COPY.en,{participationMode:"Participation",individualRace:"Individual race",teamRace:"Team race",teamMaxDrivers:"Maximum crew size (solo allowed)",invalid_participation_mode:"Select the participation mode.",event_has_team_registrations:"This event has team entries. Withdraw them before changing the event."});
+Object.assign(COPY.ru,{supportTab:"Поддержка"});
+Object.assign(COPY.en,{supportTab:"Support"});
 const localText=(ru,en)=>lang()==="ru"?ru:en;
 let authState=null,hourlyState=null,selected=null,previewResult=null,previewDraft=null,hourlyLoadGeneration=0,authGateIdentity="";
 const HOURLY_INPUTS={participation_mode:"hourly-participation-mode",team_max_drivers:"hourly-team-max-drivers",occurrence_id:"hourly-occurrence-id",race_format:"hourly-race-format",points_multiplier:"hourly-points-multiplier",race_start_local:"hourly-race-start",server_open_local:"hourly-server-open",track_code:"hourly-track",practice_minutes:"hourly-practice",qualifying_minutes:"hourly-qualifying",race_minutes:"hourly-race",pre_race_wait_seconds:"hourly-wait",session_overtime_seconds:"hourly-overtime",server_window_minutes:"hourly-window",hour_of_day:"hourly-game-hour",ambient_temp_c:"hourly-temp",cloud_level:"hourly-cloud",rain_level:"hourly-rain",weather_randomness:"hourly-randomness"};
@@ -27,7 +31,18 @@ function copy(){document.documentElement.lang=lang();document.title=lang()==="ru
 function hideReauth(){$("portal-ops-reauth").hidden=true}
 function message(value,kind=""){hideReauth();const node=$("portal-hourly-message");node.textContent=value;node.dataset.kind=kind}
 function portalError(error,node=$("portal-hourly-message")){const code=String(error?.message||error);if(code==="recent_auth_required"){node.textContent=t(code);node.dataset.kind="error";const link=$("portal-ops-reauth");link.href=`${AUTH}/v1/auth/steam/start?return_path=${$u(buildAuthReturnPath(window.location))}`;link.hidden=false;return}node.textContent=t(code);node.dataset.kind="error"}
-function setPanel(name){$a("[data-panel]").forEach(button=>button.setAttribute("aria-selected",String(button.dataset.panel===name)));$("portal-panel-clubs").hidden=name!=="clubs";$("portal-panel-hourly").hidden=name!=="hourly"}
+function setPanel(name,{link=false}={}){
+  if(name==='support'&&!canManageSupportGrants(authState))return;
+  $a("[data-panel]").forEach(button=>button.setAttribute("aria-selected",String(button.dataset.panel===name)));
+  for(const key of ['clubs','hourly','support'])$("portal-panel-"+key).hidden=name!==key;
+  if(link){
+    const url=new URL(window.location.href);
+    if(name==='support')url.searchParams.set('tab','support');
+    else if(url.searchParams.get('tab')==='support')url.searchParams.delete('tab');
+    if(url.href!==window.location.href)history.replaceState(null,'',url);
+  }
+  if(name==='support')supportBudget.open();
+}
 function invalidatePreview(){previewResult=null;previewDraft=null;$("hourly-preview-card").hidden=true}
 function previewDisplay(value){return{operation:value?.operation,occurrence_id:value?.occurrence_id,before_revision:value?.before_revision,after_revision:value?.after_revision,expires_at:value?.expires_at,changes:value?.changes||[]}}
 function draft(){return Object.fromEntries($e(HOURLY_INPUTS).map(([field,id])=>[field,$(id).value]))}
@@ -39,13 +54,28 @@ async function queue(commandType,payload,expectedRevision=hourlyState?.revision)
 async function previewChange(event){event.preventDefault();if(!hourlyState?.revision||hourlyState.stale){message(t("stale"),"error");return}const valid=validate();if(!valid.ok){message(t(valid.code).replace("{min}",valid.minimumWindow||""),"error");return}const approvedDraft=snapshotHourlyDraft(valid.value);try{const result=await queue("portal.hourly.preview_change",approvedDraft);previewResult=result;previewDraft=approvedDraft;$("hourly-preview-details").textContent=JSON.stringify(previewDisplay(result),null,2);$("hourly-preview-card").hidden=false;message("")}catch(error){invalidatePreview();portalError(error)}}
 async function applyChange(){if(!previewResult||!previewDraft||!await confirmPortalAction(t("confirmApply")))return;const current=validate();if(!current.ok||!hourlyDraftEquals(previewDraft,current.value)){invalidatePreview();message(t("preview_changed"),"error");return}const applyButton=$("hourly-apply");applyButton.disabled=true;try{await queue("portal.hourly.apply_change",{change:previewDraft,confirm_token:previewResult.confirm_token,preview_sha256:previewResult.preview_sha256},previewResult.schedule_revision||hourlyState?.revision);message(t("applied"),"success");invalidatePreview();setTimeout(()=>void loadHourly(),2500)}catch(error){portalError(error)}finally{applyButton.disabled=false}}
 async function restore(){if(!selected?.has_override)return;if(!hourlyState?.revision||hourlyState.stale){message(t("stale"),"error");return}if(!await confirmPortalAction(t("confirmRestore")))return;try{const preview=await queue("portal.hourly.preview_restore",{occurrence_id:selected.occurrence_id});await queue("portal.hourly.apply_restore",{confirm_token:preview.confirm_token,preview_sha256:preview.preview_sha256});message(t("applied"),"success");setTimeout(()=>void loadHourly(),2500)}catch(error){portalError(error)}}
-function gate(auth){authState=auth;const gateNode=$("portal-ops-gate"),workspace=$("portal-ops-workspace"),identity=`${auth?.authenticated===true}:${auth?.permissions?.portalManage===true}:${auth?.driver?.publicId||""}`;if(!auth?.authenticated){authGateIdentity=identity;workspace.hidden=true;clubsWorkspace?.reset();gateNode.hidden=false;gateNode.textContent=t("signIn");return}if(!auth.permissions?.portalManage){authGateIdentity=identity;workspace.hidden=true;clubsWorkspace?.reset();gateNode.hidden=false;gateNode.textContent=t("denied");return}gateNode.hidden=true;workspace.hidden=false;if(identity!==authGateIdentity){authGateIdentity=identity;void Promise.all([loadClubs(),loadHourly()])}}
-let clubsWorkspace=null;
+function gate(auth){
+  const prior=authState;
+  authState=auth;
+  const canOpenSupport=canManageSupportGrants(auth);
+  const tab=document.querySelector('[data-panel="support"]');
+  const supportWasOpen=!$("portal-panel-support").hidden;
+  tab.hidden=!canOpenSupport;
+  if(!canOpenSupport||prior?.driver?.publicId!==auth?.driver?.publicId||
+     prior?.permissions?.supportManage!==auth?.permissions?.supportManage||
+     prior?.permissions?.supportGrantsManage!==auth?.permissions?.supportGrantsManage){
+    supportBudget.reset();
+  }
+  if(!canOpenSupport&&supportWasOpen)setPanel("hourly");
+  if(canOpenSupport&&(supportWasOpen||new URLSearchParams(location.search).get('tab')==='support'))setPanel('support');
+  const gateNode=$("portal-ops-gate"),workspace=$("portal-ops-workspace"),identity=`${auth?.authenticated===true}:${auth?.permissions?.portalManage===true}:${auth?.driver?.publicId||""}`;if(!auth?.authenticated){authGateIdentity=identity;workspace.hidden=true;clubsWorkspace?.reset();gateNode.hidden=false;gateNode.textContent=t("signIn");return}if(!auth.permissions?.portalManage){authGateIdentity=identity;workspace.hidden=true;clubsWorkspace?.reset();gateNode.hidden=false;gateNode.textContent=t("denied");return}gateNode.hidden=true;workspace.hidden=false;if(identity!==authGateIdentity){authGateIdentity=identity;void Promise.all([loadClubs(),loadHourly()])}}
+let clubsWorkspace=null,supportBudget=null;
 function loadClubs(){return clubsWorkspace?.load()}
 export function mountPortalOpsWorkspace({ confirmAction, standalone = false } = {}) {
 if(confirmAction)confirmPortalAction=confirmAction;
+supportBudget=mountSupportBudget({root:$("portal-panel-support"),api,auth:()=>authState,text:localText,confirmAction:message=>confirmPortalAction(message)});
 clubsWorkspace=mountClubsManagement({root:$("portal-panel-clubs"),api,auth:()=>authState,confirmAction:message=>confirmPortalAction(message),onError:portalError,language:lang});
-if(standalone)applyLocalizedNavigation(lang(),document,window);copy();$("portal-ops-gate").textContent=t("checking");$a("[data-panel]").forEach(button=>button.onclick=()=>setPanel(button.dataset.panel));$("portal-hourly-refresh").onclick=()=>void loadHourly();$("portal-hourly-form").onsubmit=event=>void previewChange(event);$("hourly-apply").onclick=()=>void applyChange();$("hourly-restore").onclick=()=>void restore();$a("#portal-hourly-form input,#portal-hourly-form select").forEach(node=>node.addEventListener("input",()=>{invalidatePreview();validate()}));if(standalone)createAuthHeaderController({onAuthChange:gate});
+if(standalone)applyLocalizedNavigation(lang(),document,window);copy();$("portal-ops-gate").textContent=t("checking");$a("[data-panel]").forEach(button=>button.onclick=event=>setPanel(button.dataset.panel,{link:event.isTrusted}));$("portal-hourly-refresh").onclick=()=>void loadHourly();$("portal-hourly-form").onsubmit=event=>void previewChange(event);$("hourly-apply").onclick=()=>void applyChange();$("hourly-restore").onclick=()=>void restore();$a("#portal-hourly-form input,#portal-hourly-form select").forEach(node=>node.addEventListener("input",()=>{invalidatePreview();validate()}));if(standalone)createAuthHeaderController({onAuthChange:gate});
 
 
 return { update: gate };

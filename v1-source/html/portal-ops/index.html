@@ -38,9 +38,11 @@
       <div id="portal-ops-workspace" hidden>
         <div class="portal-ops-actions"><a id="portal-ops-reauth" class="portal-ops-primary" href="https://auth.asgracing.ru/v1/auth/steam/start?return_path=%2Fportal-ops%2F" data-copy="reauthAction" hidden>Sign in with Steam again</a></div>
         <div class="portal-ops-tabs" role="tablist" aria-label="Раздел">
+          <button type="button" role="tab" aria-selected="false" aria-controls="portal-panel-support" data-panel="support" data-copy="supportTab" hidden>Поддержка</button>
           <button type="button" role="tab" aria-selected="true" data-panel="clubs" data-copy="clubsTab">Клубы и команды</button>
           <button type="button" role="tab" aria-selected="false" data-panel="hourly" data-copy="hourlyTab">Часовые события</button>
         </div>
+        <section id="portal-panel-support" class="portal-ops-panel" role="tabpanel" hidden></section>
         <section id="portal-panel-clubs" class="portal-ops-panel">
           <div class="portal-ops-section-heading"><div><h2 data-copy="clubsTitle">Клубы и команды</h2><p data-copy="clubsIntro">Актуальные сущности и ожидающие изменения основного backend.</p></div><button id="portal-clubs-refresh" type="button" data-copy="refresh">Обновить</button></div>
           <div id="portal-clubs-summary" class="portal-ops-summary"></div>
@@ -109,6 +111,6 @@
     </section>
     <section class="portal-ops-card"><h2>ASG Lab</h2><p><a href="/portal-ops/asg-lab/">Реквизиты, проекты документов и тестовые коды / Seller details, document drafts and test codes ↗</a></p></section>
   </main>
-  <script type="module" src="../src/pages/portal-ops/portal-ops-page.js?v=20261103clubs1"></script>
+  <script type="module" src="../src/pages/portal-ops/portal-ops-page.js?v=20261120grantpermission1"></script>
 </body>
 </html>
