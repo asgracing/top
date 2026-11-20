@@ -1,8 +1,8 @@
 {
   "schemaVersion": 1,
-  "version": "20261120spabasemap",
+  "version": "20261120circuitatlas",
   "source": "app.js",
-  "sha256": "7ba3b93dd45f24b597b7cf3c1b2e0a10f6802d5a23aaaac016929d20e661e753",
-  "outputSha256": "d86a45a083bfd7f91e9c4fc0da040c80a4bfa2ea1b6f05bf4e446a6f0f0efede",
+  "sha256": "2e7e7a93314e8521478629fb14c5aa0686cc713f1606dfdd6c9c58dce00a6430",
+  "outputSha256": "1ec950cc28be5df7b04831aba383a6a132d419053e9c2d7e5e800a2eb2d061b2",
   "facadeSha256": "912e51840db4971f39502dd77c8dec883517bf62543028376a98679747486f5b"
 }

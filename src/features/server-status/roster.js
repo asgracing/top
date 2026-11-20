@@ -1,6 +1,6 @@
 import {formatTelemetryLap, sessionBestLapMs, lapHighlight} from './telemetry.js?v=20261025direct1';
 import {driverInterval, driverPitLabel, serverPilotCount} from './live-details.js?v=20261025direct1';
-import {renderTrackMap} from './track-map.js?v=20261120spabasemap';
+import {renderTrackMap} from './track-map.js?v=20261120circuitatlas';
 
 // Both maintained server dialogs share timing, lap-deficit and pit rendering.
 export function renderServerRoster({server, drivers, lang, esc, renderName, renderRatings, renderCar, emptyMessage,

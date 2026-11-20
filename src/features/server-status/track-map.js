@@ -52,19 +52,25 @@ export function trackMapGeometry(server) {
   return {points:points.map(([x,z])=>project(x,z)),project,viewBox:[0,0,480,320],fixed:false};
 }
 
-function renderTimingMarks(map, ru, showLabels) {
-  const [,,width,height] = map.viewBox;
+function renderBasemap(map, path) {
+  const [x,y,width,height] = map.viewBox;
+  // Match half-to-even rounding in the SVG generator.
+  const round = value => value%1===.5 ? Math.round(value/2)*2 : Math.round(value);
+  const wide = Math.max(width,round(height*3.55));
+  const high = round(height*1.22);
+  const [left,top,w,h] = map.id === 'spa-gp' ? [-1000,-100,3200,1100]
+    : [x-Math.floor((wide-width)/2),y-Math.floor((high-height)/2),wide,high];
+  return `<image href="/assets/track-maps/basemaps/${map.id}.svg" x="${left}" y="${top}" width="${w}" height="${h}"/><path class="track-outline-edge" fill="none" d="${path}"/>`;
+}
+
+function renderTimingMarks(map, ru) {
   return (map.timingMarks || []).map(([x,y,dx,dy], index) => {
     const finish = index === 0;
     const approximate = !finish && map.approximateSectors;
     const caption = finish ? (ru ? 'Старт / финиш' : 'Start / finish')
       : approximate ? (ru ? `Примерная граница сектора ${index}` : `Approximate end of sector ${index}`)
       : (ru ? `Конец сектора ${index}` : `End of sector ${index}`);
-    const label = finish ? (ru ? 'С/Ф' : 'S/F') : `${approximate ? '≈' : ''}S${index}`;
-    const side = (x-width/2)*dx+(y-height/2)*dy < 0 ? -1 : 1;
-    const offset = map.timingLabelOffsets?.[index] ?? side*1.9;
-    const text = showLabels ? `<text x="${x+dx*offset}" y="${y+dy*offset}" text-anchor="middle" dominant-baseline="central">${label}</text>` : '';
-    return `<g class="track-timing-mark${finish ? ' is-finish' : ''}"><title>${caption}</title><line x1="${x-dx}" y1="${y-dy}" x2="${x+dx}" y2="${y+dy}"/>${text}</g>`;
+    return `<g class="track-timing-mark${finish ? ' is-finish' : ''}"><title>${caption}</title><line x1="${x-dx}" y1="${y-dy}" x2="${x+dx}" y2="${y+dy}"/></g>`;
   }).join('');
 }
 
@@ -83,10 +89,7 @@ export function renderTrackMap(server, lang = 'ru', now = Date.now(), {expanded=
   }
   const format = point=>point.map(v=>v.toFixed(2)).join(' ');
   const path = map.points.map((p,i)=>`${i ? 'L':'M'}${format(p)}`).join(' ')+' Z';
-  const spaBasemap = map.id === 'spa-gp';
-  const background = spaBasemap
-    ? `<image href="/assets/track-maps/spa-basemap.svg" width="1200" height="900"/><path class="track-outline-edge" fill="none" d="${path}"/>`
-    : '';
+  const background = map.fixed ? renderBasemap(map,path) : '';
   // Leader is drawn last, keeping its red marker visible in a close group.
   const markers = [...cars].sort((a,b)=>(a.position===1)-(b.position===1)).map(d=>{
     const point=format(map.project(d.world_x,d.world_z));
@@ -96,9 +99,8 @@ export function renderTrackMap(server, lang = 'ru', now = Date.now(), {expanded=
     const pit = driverPitLabel(server,d,lang,now);
     return `<g class="track-car${leader ? ' is-leader':''}${pit ? ' is-pit':''}" data-car-key="${d.car_id}:${connection}" transform="translate(${point})"><title>${label}${pit ? ' · '+pit:''}</title><circle r="${map.fixed ? 14.4:10.4}"/><text text-anchor="middle" dominant-baseline="central">${position}</text></g>`;
   }).join('');
-  const labels=(spaBasemap ? [] : map.labels||[]).map(label=>`<text class="track-label${label.secondary ? ' is-secondary':''}" x="${label.x}" y="${label.y}" text-anchor="${label.anchor}">${label.lines ? label.lines.map((line,i)=>`<tspan x="${label.x}" dy="${i ? '1.2em':'0'}">${line}</tspan>`).join(''):label.text}</text>`).join('');
-  const credit=map.fixed ? `<p class="track-map-credit">${ru ? 'Геометрия':'Geometry'}: <a href="${map.source.url}">${map.source.credit||'Tomislav Bacinger · MIT'}</a>${spaBasemap ? ' · © <a href="https://www.openstreetmap.org/copyright">OpenStreetMap contributors</a>' : ''}</p>`:'';
+  const credit=map.fixed ? `<p class="track-map-credit">${ru ? 'Геометрия':'Geometry'}: <a href="${map.source.url}">${map.source.credit||'Tomislav Bacinger · MIT'}</a> · © <a href="https://www.openstreetmap.org/copyright">OpenStreetMap contributors</a></p>`:'';
   const caption = staticOnly ? (ru ? 'Координаты машин пока не привязаны к схеме' : 'Live car positions are not yet calibrated for this map')
     : cars.length ? (ru ? 'Красный — лидер · жёлтый — в питах · номера обозначают позиции' : 'Red — leader · yellow — in pits · numbers show positions') : empty;
-  return wrap(`<svg viewBox="${map.viewBox.join(' ')}" role="img" aria-label="${title}">${background}<path class="track-outline" d="${path}"/>${labels}${renderTimingMarks(map,ru,!spaBasemap)}${markers}</svg><p>${caption}</p>${credit}`);
+  return wrap(`<svg viewBox="${map.viewBox.join(' ')}" role="img" aria-label="${title}">${background}<path class="track-outline" d="${path}"/>${renderTimingMarks(map,ru)}${markers}</svg><p>${caption}</p>${credit}`);
 }

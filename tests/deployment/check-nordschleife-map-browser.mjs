@@ -83,16 +83,9 @@ try {
       assert.equal(await map.locator('.track-car.is-leader text').textContent(),'1');
       assert.equal(await map.locator('.track-car.is-leader circle').evaluate(el=>getComputedStyle(el).fill),'rgb(220, 53, 69)');
       assert.match(await map.locator('.track-map-credit').textContent(),/R1naldinho/);
+      assert.equal(await map.locator('image[href$="/basemaps/nurburgring-24h.svg"]').count(),1);
+      assert.equal(await map.locator('.track-label,.track-timing-mark text').count(),0);
       assert.ok(await map.evaluate(el=>el.scrollWidth<=el.clientWidth+1),'no horizontal overflow');
-      assert.ok(await map.locator('svg').evaluate(svg=>{
-        const bounds=svg.getBoundingClientRect();
-        return [...svg.querySelectorAll('.track-label')].every(label=>{
-          if(getComputedStyle(label).display==='none')return true;
-          const box=label.getBoundingClientRect();
-          return box.left>=bounds.left-1&&box.right<=bounds.right+1
-            &&box.top>=bounds.top-1&&box.bottom<=bounds.bottom+1;
-        });
-      }),'corner names fit inside the map on desktop and mobile');
       const box=await map.locator('svg').boundingBox();assert.ok(box.height>(code==='barcelona'?120:200)&&box.width>250);
       const before=await map.locator('.track-car.is-leader').getAttribute('transform');
       await page.waitForResponse(r=>new URL(r.url()).pathname==='/top-data/server_status_live.json',{timeout:8000});
