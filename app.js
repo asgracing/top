@@ -616,6 +616,9 @@ let hourlyVoteAlreadyVoted = false;
 let hourlyVotePending = false;
 let hourlyVoteFailed = false;
 let raceActivityInsights = null;
+let fullHomeActivityUrl = null;
+let raceActivityRequest = null;
+let raceActivityLoadError = false;
 let selectedRace = null;
 let driverIndexData = [];
 let driverProfileData = null;
@@ -5780,8 +5783,23 @@ async function loadTopDataV2Json(path){await loadTopDataV2Manifest();return load
 async function loadSiteDataV2({ deferTables = false } = {}) {
   const manifest = await loadTopDataV2Manifest();
   const homePath = manifest?.home || "home.json";
-  const rawData = await loadJson(withTopDataV2Version(topDataV2Path(homePath)), { initialHome: deferTables });
+  const fullHomeUrl = withTopDataV2Version(topDataV2Path(homePath));
   const { normalizeHomePayload } = await dataSchemaModulePromise;
+  if (deferTables && manifest?.home_overview) {
+    try {
+      const { homeOverviewDescriptor, normalizeHomeOverview } = await import("/v2/home-overview.js");
+      const overview = homeOverviewDescriptor(manifest);
+      if (overview) {
+        const url = topDataV2Path(overview.path) + "?v=" + overview.revision;
+        const payload = await loadJson(url, { initialHome: true, retries: 0, timeoutMs: 2500 });
+        const data = normalizeHomeOverview(payload, overview.revision);
+        return { ...normalizeSnapshotPayload(data), fullHomeActivityUrl: fullHomeUrl };
+      }
+    } catch {
+      // A mixed or partially deployed publication can still serve the full snapshot.
+    }
+  }
+  const rawData = await loadJson(fullHomeUrl, { initialHome: deferTables });
   const data = normalizeHomePayload(rawData);
   const normalized = normalizeSnapshotPayload(data);
   // V2 publishes the visible cards before optional ranking read models finish.
@@ -10273,6 +10291,18 @@ function renderOnlineActivityModal() {
     if (button) button.onclick = () => daysEl.scrollBy({ left: direction * Math.max(180, daysEl.clientWidth * 0.72), behavior: "smooth" });
   });
 
+  if (fullHomeActivityUrl && raceActivityInsights === null) {
+    const message = t(raceActivityLoadError ? "errorLoading" : "loading");
+    subtitleEl.textContent = message;
+    daysEl.replaceChildren();
+    monthsEl.replaceChildren();
+    monthOverviewEl.replaceChildren();
+    primeTimeEl.textContent = "";
+    hoursEl.replaceChildren();
+    replaceWithTextState(summaryEl, raceActivityLoadError ? "error" : "loading", message);
+    return;
+  }
+
   const days = buildRelativeActivityDays(Array.isArray(raceActivityInsights) ? raceActivityInsights : []);
   if (!days.length) {
     subtitleEl.textContent = t("onlineActivityEmpty");
@@ -10533,11 +10563,26 @@ function openOnlineActivityModal() {
   onlineActivityModalController.open(document.getElementById("hero-online-card"));
 }
 
+function loadOnlineActivity() {
+  if (!fullHomeActivityUrl || raceActivityInsights !== null) return Promise.resolve();
+  raceActivityRequest ||= loadJson(fullHomeActivityUrl, { force: true }).then(payload => {
+    if (!Array.isArray(payload?.race_activity)) throw new Error("Invalid race activity");
+    raceActivityInsights = payload.race_activity;
+  }).finally(() => { raceActivityRequest = null; });
+  return raceActivityRequest;
+}
+
+function loadOnlineActivityModal() {
+  raceActivityLoadError = false;
+  renderOnlineActivityModal();
+  void loadOnlineActivity().catch(() => { raceActivityLoadError = true; }).then(renderOnlineActivityModal);
+}
+
 function initOnlineActivityModal() {
   onlineActivityModalController = createModalController({
     modalId: "online-activity-modal",
     closeButtonId: "online-activity-close",
-    onOpen: renderOnlineActivityModal
+    onOpen: loadOnlineActivityModal
   });
 
   const cardEl = document.getElementById("hero-online-card");
@@ -11242,7 +11287,8 @@ function applyHomeSiteData(data) {
   racesArchiveSummary = data.racesSummary;
   topDataV2TableMeta = data.tables;
   serverStatusData = data.serverStatus;
-  raceActivityInsights = Array.isArray(data.raceActivity) ? data.raceActivity : [];
+  fullHomeActivityUrl = data.fullHomeActivityUrl || null;
+  raceActivityInsights = fullHomeActivityUrl ? null : (data.raceActivity || []);
   racesData = [];
   topLoadState.home = false;
 
@@ -11299,6 +11345,7 @@ async function initializeHomeData() {
       throw error;
     });
     applyHomeSiteData(mergeStandaloneServerStatus(data, serverStatusData));
+    if (document.getElementById("online-activity-modal")?.classList.contains("is-open")) loadOnlineActivityModal();
     return;
   }
   const affiliationsPromise = loadDriverAffiliations().catch((error) => {

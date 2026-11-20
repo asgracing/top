@@ -3,22 +3,12 @@ import {bindPagination} from './pagination.js?v=20261015pagination1';
 import {refreshTeamRaceLinks} from '/src/shared/team-racing-discovery.js?v=20261028team10';
 import {createEntityThumbnails} from './entity-thumbnails.js?v=20261008thumbs1';
 import {createInformationViews} from './views/information.js?v=20261007v2pages14';
-import information from './information-content.js?v=20261007v2pages14';
-import {createEditorialViews} from './views/editorial.js?v=20261015pagination1';
-import {createHistoryViews} from './views/history.js?v=20261007v2pages14';
 import {markNewsRead} from '/news-read-state.js';
 import {editorialImage} from './editorial-model.js?v=20261007v2pages14';
 import {getCommunityPostKey} from '/src/pages/community/feed-model.js';
 import {createPageViews} from './views/core.js?v=20261120siteperf2';
-import {createArchiveViews} from './views/archive.js?v=20261015pagination1';
-import {createChampionshipViews} from './views/championships.js?v=20261015pagination1';
-import {createEntityViews} from './views/entities.js?v=20261015pagination1';
-import {createFunViews} from './views/fun.js?v=20261007v2pages14';
-import {createBansViews} from './views/bans.js?v=20261105moderation1';
-import {formatMoscowDateTime,moscowDateKey} from '/src/shared/time.js';
-import {createCarsViews} from './views/cars.js?v=20261015pagination1';
+import {moscowDateKey} from '/src/shared/time.js';
 import {createCarLapsLoader} from './cars-laps-model.js?v=20261111siteviews1';
-import {paintRace} from './views/race-modal.js?v=20261116teamsreports2';
 import {createPageData} from './data.js?v=20261120hourlydata1';
 import {createDriverAchievementsController} from '/src/pages/driver/achievements-widget.js?v=20261011hourlyru1';
 import {v2Route,v2EntityLinks,currentV2Path,migratedPaths} from '../routes.js?v=20261007v2pages14';
@@ -82,13 +72,13 @@ export async function startPage(api) {
     ratingDetail:p=>`<div class="driver-ratings">${rating(p,'elo',null,true)}${rating(p,'sr',null,true)}</div>`,extraPages});
   const modalApi={...views,fixture,missing:informationViews.missing,tx:text,time:date,eloNumber:v=>v==null?'—':String(Math.round(Number(v))),
     detail:(name,value)=>`<div><span>${esc(name)}</span><b>${esc(value)}</b></div>`,carMarkup:(name,id)=>car({car_name:name,car_model_id:id}),viewer:{}};
-  const archiveViews=createArchiveViews({...modalApi,raw,state,route,trackName:views.trackName,eloCategory:p=>p.elo_category_id??(p.elo>=1350?1:p.elo>=1250?2:p.elo>=1150?3:p.elo>=1050?4:p.elo>=950?5:6),viewer:()=>({publicId:model?.auth?.driver?.publicId,authenticated:model?.auth?.authenticated})});
-  const championshipViews=createChampionshipViews({...modalApi,raw,state,route,eloCategory:p=>p.elo_category_id??(p.elo>=1350?1:p.elo>=1250?2:p.elo>=1150?3:p.elo>=1050?4:p.elo>=950?5:6),viewer:()=>({publicId:model?.auth?.driver?.publicId,authenticated:model?.auth?.authenticated})});
-  const entityViews=createEntityViews({...modalApi,raw,state,route,lang:language,eloCategory:p=>p.elo_category_id??(p.elo>=1350?1:p.elo>=1250?2:p.elo>=1150?3:p.elo>=1050?4:p.elo>=950?5:6),viewer:()=>({publicId:model?.auth?.driver?.publicId,authenticated:model?.auth?.authenticated})});
-  const carsViews=createCarsViews({...modalApi,raw,state,route,language});
-  const statsApi={...modalApi,raw,state,route,time:value=>formatMoscowDateTime(value,language==='ru'?'ru-RU':'en-GB')||'—'};
-  const funViews=createFunViews(statsApi),bansViews=createBansViews(statsApi);
-  const editorialViews=createEditorialViews({...statsApi,language}),historyViews=createHistoryViews(statsApi);
+  let archiveViews, championshipViews, entityViews, carsViews, funViews, bansViews, editorialViews, historyViews;
+  async function loadSecondaryViews() {
+    const {createSecondaryViews} = await import('./secondary-views.js');
+    ({archiveViews, championshipViews, entityViews, carsViews, funViews, bansViews, editorialViews, historyViews} =
+      createSecondaryViews({modalApi,raw,state,route,views,language,
+        viewer:()=>({publicId:model?.auth?.driver?.publicId,authenticated:model?.auth?.authenticated})}));
+  }
   function syncEditorialUrl(){const url=new URL(location.href);const values=screen==='seasons'?{q:state.historyQuery,status:state.historyStatus}:screen==='news'?{q:state.newsQuery,kind:state.newsKind,page:state.newsPage>1?state.newsPage:''}:{page:state.communityPage>1?state.communityPage:''};for(const [key,value] of Object.entries(values))value?url.searchParams.set(key,value):url.searchParams.delete(key);history.replaceState(null,'',url);document.querySelectorAll('.v2-language a').forEach(a=>a.href=currentV2Path(a.dataset.language));}
   function refreshEditorial(){const id=screen==='news'?'site-news-content':screen==='seasons'?'site-history-content':'site-community-content';document.getElementById(id).innerHTML=screen==='news'?editorialViews.newsContent():screen==='seasons'?historyViews.historyCards():editorialViews.communityContent();syncEditorialUrl();}
   function refreshReactions(){view.querySelectorAll('[data-reaction]').forEach(node=>{const t=document.createElement('template');t.innerHTML=editorialViews.reaction(node.dataset.reaction);node.replaceWith(t.content.firstElementChild);});}
@@ -104,7 +94,6 @@ export async function startPage(api) {
     }catch{}
   }
   function updateBans(resolve=true){document.getElementById('site-bans-content').innerHTML=bansViews.bansContent();syncStatsUrl();if(resolve)void resolveVisibleBans();}
-  if(!carsViews.sortKeys.includes(state.carSort))state.carSort='races';
   function syncCarsUrl(){const url=new URL(location.href);for(const [key,value] of Object.entries({car:state.selectedCar,q:state.carQuery,brand:state.brand,track:state.carTrack,page:state.carPage>1?state.carPage:'',sort:state.carSort!=='races'?state.carSort:'',direction:state.carDirection==='asc'?'asc':''}))value?url.searchParams.set(key,value):url.searchParams.delete(key);history.replaceState(null,'',url);document.querySelectorAll('.v2-language a').forEach(a=>a.href=currentV2Path(a.dataset.language));}
   function updateCars(){const content=document.getElementById('r24-car-content');content.innerHTML=carsViews.carRows();content.setAttribute('aria-busy',String(Boolean(raw.carLapsLoading)));syncCarsUrl();}
   async function loadCarLaps(refresh=true){
@@ -209,7 +198,10 @@ export async function startPage(api) {
   async function toggle(e){if(raw.hourlyVotesLoading)return;const promise=data.toggle(e);applyVotes();try{await promise;}catch{showDialog(text('Участие не сохранено','Entry not saved'),`<p>${text('Не удалось сохранить участие. Попробуй ещё раз.','Could not save your entry. Try again.')}</p>`);}finally{applyVotes();}}
   async function openRace(id,trigger){
     const ticket=++loadTicket;showDialog(text('Результаты гонки','Race results'),`<p role="status">${text('Загрузка…','Loading…')}</p>`,trigger);
-    try{const r=await data.race(id,fixture.results[id] || fixture.recent.find(r=>r.race_id===id));if(ticket!==loadTicket||!document.getElementById('v2-modal').open)return;fixture.results[id]=r;
+    try{const [r,{paintRace}]=await Promise.all([
+        data.race(id,fixture.results[id] || fixture.recent.find(r=>r.race_id===id)),
+        import('./views/race-modal.js?v=20261116teamsreports2')
+      ]);if(ticket!==loadTicket||!document.getElementById('v2-modal').open)return;fixture.results[id]=r;
       const modal=document.getElementById('v2-modal');modal.dataset.kind='page-race';modal.style.setProperty('--modal-track',`url('/assets/${views.safeTrack(r)}.jpg')`);
       document.getElementById('v2-modal-title').textContent=native().track(r.track_code||r.track)+' · '+text('Результаты гонки','Race results');modalApi.viewer={publicId:model?.auth?.driver?.publicId,authenticated:model?.auth?.authenticated};paintRace(r,{...modalApi,resultTab:screen==='race'?state.raceTab:'race'});highlightResults();
     }catch{if(ticket===loadTicket)document.getElementById('v2-modal-body').innerHTML=`<p>${text('Результаты временно недоступны.','Results temporarily unavailable.')}</p><button class="button" data-page-race="${esc(id)}">${text('Повторить','Retry')}</button>`;}
@@ -301,7 +293,13 @@ export async function startPage(api) {
   new ResizeObserver(()=>views.sizeProfileRail()).observe(center);
   view.innerHTML=`<section class="panel page-panel"><p role="status">${text('Загрузка…','Loading…')}</p></section>`;
   try {
-    if(['about','instructions','guide','documents','document','notfound'].includes(screen)){raw.information=information;paint();
+    if(!['hourly','driver','about','instructions','guide','documents','document','notfound'].includes(screen)){
+      await loadSecondaryViews();
+      if(!carsViews.sortKeys.includes(state.carSort))state.carSort='races';
+    }
+    if(['about','instructions','guide','documents','document','notfound'].includes(screen)){
+      const {default:information} = await import('./information-content.js?v=20261007v2pages14');
+      raw.information=information;paint();
       if (faqContext) view.querySelector('.site-intro')?.after(faqContext);
       const heading=view.querySelector('h1');if(heading)document.title=heading.textContent+' · ASG Racing';
     }else if(screen==='seasons'){const result=await data.history();raw.historySeasons=result.items;raw.editorialUpdated=result.updated_at;paint();syncEditorialUrl();
