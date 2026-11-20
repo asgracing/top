@@ -1,24 +1,34 @@
 export function renderSafetyAbout(copy, escape) {
-  const paragraph = text => `<p>${escape(text)}</p>`;
-  const summary = (copy.summary ?? []).map(text => `<li>${escape(text)}</li>`).join('');
-  const sections = (copy.sections ?? []).map(({title, paragraphs}) =>
+  const renderAmounts = text => text.split(/([+−-]\d+[.,]\d+)/).map((part, index) => {
+    if (index % 2 === 0) return escape(part);
+    const direction = part.startsWith('+') ? 'gain' : 'loss';
+    return `<span class="safety-rules-${direction}">${escape(part)}</span>`;
+  }).join('');
+  const paragraph = text => `<p>${renderAmounts(text)}</p>`;
+  const sections = copy.sections.map(({title, paragraphs}) =>
     `<h4>${escape(title)}</h4>${paragraphs.map(paragraph).join('')}`
   ).join('');
-  const guide = copy.profileGuide;
-  const example = guide ? `<div class="safety-rules-example">
-    <h4>${escape(guide.exampleTitle)}</h4>${paragraph(guide.example)}
-    <strong>${escape(guide.exampleCalculation)}</strong>
-  </div>` : '';
-  const details = copy.detailsLabel ? `<details class="safety-rules-details">
-    <summary>${escape(copy.detailsLabel)}</summary>${sections}
-  </details>` : sections;
+  const examples = copy.examples.map(({title, description, breakdown, result}) =>
+    `<article class="safety-rules-example">
+      <h4>${escape(title)}</h4>${paragraph(description)}
+      <dl class="safety-rules-example-breakdown">
+        ${breakdown.map(({label, amount}) => `<dt>${renderAmounts(label)}</dt><dd>${renderAmounts(amount)}</dd>`).join('')}
+      </dl>
+      <p class="safety-rules-example-total"><span>${escape(copy.exampleTotalLabel)}</span><strong>${renderAmounts(result)}</strong></p>
+    </article>`
+  ).join('');
   return `<div class="safety-rules">
     <p class="safety-rules-lead"><strong>${escape(copy.safetyAboutP1)}</strong></p>
-    ${summary ? `<ul>${summary}</ul>` : ''}
-    ${example}
-    ${guide ? paragraph(guide.note) : ''}
+    ${paragraph(copy.overview)}
+    ${sections}
+    <details class="safety-rules-details safety-rules-examples">
+      <summary>${escape(copy.examplesLabel)}</summary>
+      ${paragraph(copy.examplesIntro)}${examples}
+    </details>
+    <details class="safety-rules-details safety-rules-notes">
+      <summary>${escape(copy.detailsLabel)}</summary>${copy.notes.map(paragraph).join('')}
+    </details>
     <p class="safety-rules-date">${escape(copy.safetyAboutP2)}</p>
-    ${details}
   </div>`;
 }
 

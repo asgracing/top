@@ -1,37 +1,176 @@
 {
   "en": {
-    "safetyAboutP1": "On standard circuits, your completed laps count from lap one in an eligible race, even if you retire before 50% of the leader’s distance.",
+    "safetyAboutP1": "Retired before 50% of the leader’s distance? On standard circuits, SR counts from your first completed lap.",
     "safetyAboutP2": "SRv4 applies to eligible results timestamped on or after 19 November 2026, 09:00 UTC (12:00 MSK) in the original ACC filename.",
-    "summary": [
-      "Valid laps add SR. Red laps subtract SR. Unfinished laps are excluded.",
-      "Incidents contribute a single amount: +0.10 with complete evidence, minus deductions for verified episodes."
-    ],
-    "detailsLabel": "Formulas, incidents and exceptions",
+    "overview": "Your race SR combines the lap contribution and the base for complete telemetry, minus incident deductions and automatic ACC penalties.",
     "sections": [
       {
-        "title": "Laps and distance",
+        "title": "Valid and red laps",
         "paragraphs": [
-          "Laps = 0.10 × (valid − red) ÷ leader laps. Laps of unknown validity contribute zero. Each team driver uses their own laps and incidents."
+          "Valid laps add SR, and red laps reduce it. If the leader completes 10 laps, each valid lap adds +0.01 SR and each red lap costs −0.01.",
+          "Formula: 0.10 × (valid − red) ÷ leader laps. Only completed laps of known validity contribute. In a team entry, each driver has their own laps and incidents."
         ]
       },
       {
-        "title": "Incidents",
+        "title": "Contact and damage",
         "paragraphs": [
-          "The incident component starts at +0.10 with complete verified data and at 0.00 when data is incomplete. All verified episode deductions apply in full regardless of distance.",
-          "A light touch confirmed by both cars costs 0.01 SR with less than 2 units of new damage, including zero.",
-          "The largest increase in one ACC damage zone sets the deduction. The scale rises smoothly: 2 units cost 0.02 SR, 8 cost 0.07, 20 cost 0.12, and 50 or more cost 0.25. Verified damage without a linked contact counts on the same scale.",
-          "One-sided reports alone, repairs and events after your own finish carry zero incident deduction.",
-          "A confirmed chain of contacts counts once per car. A disputed measurement adds no separate deduction and can only withhold the affected driver’s base. If the whole race recording has a gap that cannot be attributed, coverage remains incomplete for the race.",
-          "Open Incident details in the driver profile’s race breakdown to see each published episode, its type, verified damage increase and SR deduction."
+          "Complete telemetry earns a +0.10 SR base. With incomplete data the base is zero. Verified incidents are deducted in both cases.",
+          "A light touch confirmed by both cars costs −0.01 SR if damage increases by less than 2 units. For greater damage, the largest verified increase in one zone determines the deduction, including for solo impacts.",
+          "On the gradual scale, 2 units cost −0.02 SR, 8 cost −0.07, 20 cost −0.12 and 50 or more cost −0.25. In records using the stepped scale, the thresholds of 2, 8 and 20 cost −0.02, −0.07 and −0.25 respectively. A verified chain of contacts counts as one episode per car."
         ]
       },
       {
-        "title": "Total and exceptions",
+        "title": "Automatic ACC penalties",
         "paragraphs": [
-          "Qualifying Cutting, PitSpeeding and Trolling penalties carry half weight. Hourly, Endurance and Championship multiply positive totals by max(1, equivalent leader laps ÷ 10).",
-          "New drivers start at 3.00. The range is 1.00–9.99. The maximum race loss is 0.80 SR.",
-          "Nürburgring 24h uses its own scale and requires 30% of the leader’s physical laps. One physical lap equals 4.125 for the distance multiplier. Positive lap and incident components scale by min(1, 2 × your laps ÷ leader laps)."
+          "ACC penalties for cutting, pit-lane speeding and trolling reduce SR. A Drive Through costs −0.10 SR, or −0.15 for pit-lane speeding. Stop & Go costs −0.10 to −0.20. Automatic disqualification costs −0.30, or −0.40 for trolling."
         ]
+      },
+      {
+        "title": "If you complete less than half the race",
+        "paragraphs": [
+          "The lap formula still uses the leader’s distance. With complete telemetry, the full +0.10 base applies. Incident and penalty deductions also apply in full."
+        ]
+      },
+      {
+        "title": "The 10-lap reference",
+        "paragraphs": [
+          "In Hourly, Endurance and Championship races, multiply a positive total by the leader’s laps divided by 10. The multiplier starts at 1. If the leader completes 20 laps, the gain doubles. A negative total stays the same."
+        ]
+      }
+    ],
+    "detailsLabel": "Additional rules and exceptions",
+    "notes": [
+      "A one-sided report alone, repairs and events after your own finish carry zero deduction. A disputed measurement can remove the affected driver’s base. An unassigned telemetry gap affects coverage for the whole race.",
+      "Open Incident details in the driver profile for the published episodes, damage increases and deductions.",
+      "Drivers start at 3.00 SR. The range is 1.00–9.99. The maximum loss per race is 0.80 SR.",
+      "Nürburgring 24h uses its own scale and requires at least 30% of the leader’s physical laps. Between 30% and half distance, multiply positive lap and incident contributions by twice your share of the leader’s distance. One physical lap counts as 4.125 standard laps for the 10-lap reference."
+    ],
+    "examplesLabel": "Examples",
+    "examplesIntro": "Each amount is shown to two decimal places. The total uses the full amounts and may differ by 0.01 SR from the sum of the displayed lines.",
+    "examples": [
+      {
+        "title": "8 valid out of 12 · no incidents",
+        "description": "The leader completed 12 laps. You finished after 12 laps.",
+        "breakdown": [
+          {
+            "label": "Valid laps · 8",
+            "amount": "+0.07"
+          },
+          {
+            "label": "Red laps · 4",
+            "amount": "−0.03"
+          },
+          {
+            "label": "Complete telemetry",
+            "amount": "+0.10"
+          },
+          {
+            "label": "Damage · none",
+            "amount": "0.00"
+          },
+          {
+            "label": "Contact · none",
+            "amount": "0.00"
+          },
+          {
+            "label": "Automatic ACC penalties · none",
+            "amount": "0.00"
+          }
+        ],
+        "result": "+0.13 SR"
+      },
+      {
+        "title": "8 valid out of 12 · damage and contact",
+        "description": "The leader completed 12 laps. You finished after 12 laps.",
+        "breakdown": [
+          {
+            "label": "Valid laps · 8",
+            "amount": "+0.07"
+          },
+          {
+            "label": "Red laps · 4",
+            "amount": "−0.03"
+          },
+          {
+            "label": "Complete telemetry",
+            "amount": "+0.10"
+          },
+          {
+            "label": "Damage · one impact, +8 units",
+            "amount": "−0.07"
+          },
+          {
+            "label": "Contact · 2 light touches at −0.01 each",
+            "amount": "−0.02"
+          },
+          {
+            "label": "Automatic ACC penalties · none",
+            "amount": "0.00"
+          }
+        ],
+        "result": "+0.04 SR"
+      },
+      {
+        "title": "2 valid out of 4 · no incidents",
+        "description": "The leader completed 12 laps. You retired after 4 laps.",
+        "breakdown": [
+          {
+            "label": "Valid laps · 2",
+            "amount": "+0.02"
+          },
+          {
+            "label": "Red laps · 2",
+            "amount": "−0.02"
+          },
+          {
+            "label": "Complete telemetry",
+            "amount": "+0.10"
+          },
+          {
+            "label": "Damage · none",
+            "amount": "0.00"
+          },
+          {
+            "label": "Contact · none",
+            "amount": "0.00"
+          },
+          {
+            "label": "Automatic ACC penalties · none",
+            "amount": "0.00"
+          }
+        ],
+        "result": "+0.10 SR"
+      },
+      {
+        "title": "2 valid out of 4 · damage and contact",
+        "description": "The leader completed 12 laps. You retired after 4 laps.",
+        "breakdown": [
+          {
+            "label": "Valid laps · 2",
+            "amount": "+0.02"
+          },
+          {
+            "label": "Red laps · 2",
+            "amount": "−0.02"
+          },
+          {
+            "label": "Complete telemetry",
+            "amount": "+0.10"
+          },
+          {
+            "label": "Damage · one impact, +8 units",
+            "amount": "−0.07"
+          },
+          {
+            "label": "Contact · 2 light touches at −0.01 each",
+            "amount": "−0.02"
+          },
+          {
+            "label": "Automatic ACC penalties · none",
+            "amount": "0.00"
+          }
+        ],
+        "result": "+0.01 SR"
       }
     ],
     "profileGuide": {
@@ -43,41 +182,181 @@
       "exampleCalculation": "Laps 0.10 × (2 − 2) ÷ 10 = 0.00. Incidents +0.10. Total +0.10 SR.",
       "note": "Distance affects the lap contribution. On standard circuits, the incident base and deductions are independent of your distance. Nürburgring 24h uses a separate scale and a 30% minimum.",
       "rulesLabel": "Full SRv4 rules"
-    }
+    },
+    "exampleTotalLabel": "Race total"
   },
   "ru": {
-    "safetyAboutP1": "На обычных трассах завершённые круги зачётной гонки учитываются с первого круга, даже если вы сошли до 50% дистанции лидера.",
+    "safetyAboutP1": "Сошли до 50% дистанции лидера? На обычных трассах SR считается с первого завершённого круга.",
     "safetyAboutP2": "SRv4 применяется к зачётным результатам с меткой от 19 ноября 2026, 12:00 МСК включительно в исходном имени файла ACC.",
-    "summary": [
-      "Валидные круги прибавляют SR, красные уменьшают. Незавершённый круг исключается.",
-      "Итог по инцидентам — база +0,10 при полных данных за вычетом подтверждённых эпизодов."
-    ],
-    "detailsLabel": "Формулы, инциденты и исключения",
+    "overview": "За гонку складываются вклад кругов и прибавка за полную телеметрию. Из суммы вычитаются списания за инциденты и автоштрафы ACC.",
     "sections": [
       {
-        "title": "Круги и дистанция",
+        "title": "Чистые и красные круги",
         "paragraphs": [
-          "Вклад кругов = 0,10 × (валидные − красные) ÷ круги лидера. При неизвестной валидности вклад круга равен нулю. В экипаже у каждого пилота свои круги и инциденты."
+          "Валидные круги прибавляют SR, красные уменьшают. Если лидер проехал 10 кругов, каждый валидный даёт +0,01 SR, а каждый красный — −0,01.",
+          "Формула: 0,10 × (валидные − красные) ÷ круги лидера. Считаются только завершённые круги с известной валидностью. В экипаже у каждого пилота свои круги и инциденты."
         ]
       },
       {
-        "title": "Инциденты",
+        "title": "Контакты и повреждения",
         "paragraphs": [
-          "База по инцидентам — +0,10 при полных подтверждённых данных и 0,00 при неполных. Списания за подтверждённые эпизоды применяются полностью при любой дистанции.",
-          "За лёгкое касание, подтверждённое обеими машинами, снимается 0,01 SR при росте повреждений меньше 2 единиц, включая нулевой рост.",
-          "Списание плавно растёт по наибольшему приросту в одной зоне: 2 ед. — 0,02 SR, 8 — 0,07, 20 — 0,12, от 50 — 0,25. Подтверждённый ущерб без связанного контакта считается по той же шкале.",
-          "Одностороннее сообщение само по себе, ремонт и события после личного финиша дают нулевое списание.",
-          "Подтверждённая цепочка контактов считается один раз для каждой машины. Спорный замер не даёт отдельного списания и может обнулить базу только затронутому пилоту. Пропуск, который нельзя привязать к пилоту, влияет на покрытие всей гонки.",
-          "Откройте «Детали инцидентов» в разборе гонки в профиле. Для каждого опубликованного эпизода видны тип события, подтверждённый прирост повреждений и списание SR."
+          "При полной телеметрии начисляется +0,10 SR. При неполных данных прибавка равна нулю. Подтверждённые эпизоды списываются в обоих случаях.",
+          "Лёгкое касание, подтверждённое обеими машинами, стоит −0,01 SR, если повреждения выросли меньше чем на 2 единицы. При бо́льших повреждениях учитывается наибольший прирост в одной зоне, в том числе при одиночном ударе.",
+          "На плавной шкале 2 единицы повреждений стоят −0,02 SR, 8 — −0,07, 20 — −0,12, от 50 — −0,25. В записях со ступенчатой шкалой пороги 2, 8 и 20 дают −0,02, −0,07 и −0,25 соответственно. Подтверждённая цепочка контактов считается одним эпизодом для каждой машины."
         ]
       },
       {
-        "title": "Итог и исключения",
+        "title": "Автоштрафы ACC",
         "paragraphs": [
-          "Учтённые штрафы Cutting, PitSpeeding и Trolling имеют половинный вес. В Hourly, Endurance и Championship положительный итог умножается на max(1, эквивалентные круги лидера ÷ 10).",
-          "Стартовый SR — 3,00. Шкала — 1,00–9,99. За гонку снимается максимум 0,80 SR.",
-          "На Nürburgring 24h действует отдельная шкала и порог 30% физических кругов лидера. Для множителя дистанции один физический круг равен 4,125. Положительный вклад кругов и инцидентов умножается на min(1, 2 × ваши круги ÷ круги лидера)."
+          "SR уменьшают автоштрафы за срезки, превышение скорости на пит-лейне и троллинг. Drive Through стоит −0,10 SR, за скорость на пит-лейне — −0,15. Stop & Go стоит от −0,10 до −0,20. Автодисквалификация стоит −0,30, за троллинг — −0,40."
         ]
+      },
+      {
+        "title": "Если вы проехали меньше половины гонки",
+        "paragraphs": [
+          "Круги по-прежнему делятся на дистанцию лидера. При полной телеметрии сохраняется вся прибавка +0,10 SR. Списания за эпизоды и штрафы применяются целиком."
+        ]
+      },
+      {
+        "title": "Пересчёт к 10 кругам",
+        "paragraphs": [
+          "В Hourly, Endurance и Championship положительный итог умножается на число кругов лидера, делённое на 10. Множитель начинается с 1. Если лидер проехал 20 кругов, прибавка удвоится. Отрицательный итог сохраняется."
+        ]
+      }
+    ],
+    "detailsLabel": "Уточнения и особые случаи",
+    "notes": [
+      "Одностороннее сообщение само по себе, ремонт и события после личного финиша дают нулевое списание. Спорный замер может убрать прибавку у затронутого пилота. Пропуск, который нельзя привязать к пилоту, влияет на полноту данных всей гонки.",
+      "В «Деталях инцидентов» в профиле видны опубликованные эпизоды, прирост повреждений и списание.",
+      "Стартовый SR — 3,00. Шкала — 1,00–9,99. За гонку снимается максимум 0,80 SR.",
+      "На Nürburgring 24h своя шкала и минимум 30% физических кругов лидера. При дистанции от 30% до половины положительный вклад кругов и инцидентов умножается на удвоенную долю дистанции лидера. Для пересчёта к 10 кругам один физический круг равен 4,125 обычного."
+    ],
+    "examplesLabel": "Примеры",
+    "examplesIntro": "Все суммы показаны до сотых. Итог считается по точным значениям, поэтому может отличаться от суммы строк на 0,01 SR.",
+    "examples": [
+      {
+        "title": "8 чистых из 12 · без инцидентов",
+        "description": "Лидер проехал 12 кругов. Вы финишировали после 12 кругов.",
+        "breakdown": [
+          {
+            "label": "Чистые круги · 8",
+            "amount": "+0,07"
+          },
+          {
+            "label": "Красные круги · 4",
+            "amount": "−0,03"
+          },
+          {
+            "label": "Полная телеметрия",
+            "amount": "+0,10"
+          },
+          {
+            "label": "Повреждения · нет",
+            "amount": "0,00"
+          },
+          {
+            "label": "Контакты · нет",
+            "amount": "0,00"
+          },
+          {
+            "label": "Автоштрафы ACC · нет",
+            "amount": "0,00"
+          }
+        ],
+        "result": "+0,13 SR"
+      },
+      {
+        "title": "8 чистых из 12 · повреждения и контакты",
+        "description": "Лидер проехал 12 кругов. Вы финишировали после 12 кругов.",
+        "breakdown": [
+          {
+            "label": "Чистые круги · 8",
+            "amount": "+0,07"
+          },
+          {
+            "label": "Красные круги · 4",
+            "amount": "−0,03"
+          },
+          {
+            "label": "Полная телеметрия",
+            "amount": "+0,10"
+          },
+          {
+            "label": "Повреждения · один удар, +8 ед.",
+            "amount": "−0,07"
+          },
+          {
+            "label": "Контакты · 2 лёгких касания по −0,01",
+            "amount": "−0,02"
+          },
+          {
+            "label": "Автоштрафы ACC · нет",
+            "amount": "0,00"
+          }
+        ],
+        "result": "+0,04 SR"
+      },
+      {
+        "title": "2 чистых из 4 · без инцидентов",
+        "description": "Лидер проехал 12 кругов. Вы сошли после 4 кругов.",
+        "breakdown": [
+          {
+            "label": "Чистые круги · 2",
+            "amount": "+0,02"
+          },
+          {
+            "label": "Красные круги · 2",
+            "amount": "−0,02"
+          },
+          {
+            "label": "Полная телеметрия",
+            "amount": "+0,10"
+          },
+          {
+            "label": "Повреждения · нет",
+            "amount": "0,00"
+          },
+          {
+            "label": "Контакты · нет",
+            "amount": "0,00"
+          },
+          {
+            "label": "Автоштрафы ACC · нет",
+            "amount": "0,00"
+          }
+        ],
+        "result": "+0,10 SR"
+      },
+      {
+        "title": "2 чистых из 4 · повреждения и контакты",
+        "description": "Лидер проехал 12 кругов. Вы сошли после 4 кругов.",
+        "breakdown": [
+          {
+            "label": "Чистые круги · 2",
+            "amount": "+0,02"
+          },
+          {
+            "label": "Красные круги · 2",
+            "amount": "−0,02"
+          },
+          {
+            "label": "Полная телеметрия",
+            "amount": "+0,10"
+          },
+          {
+            "label": "Повреждения · один удар, +8 ед.",
+            "amount": "−0,07"
+          },
+          {
+            "label": "Контакты · 2 лёгких касания по −0,01",
+            "amount": "−0,02"
+          },
+          {
+            "label": "Автоштрафы ACC · нет",
+            "amount": "0,00"
+          }
+        ],
+        "result": "+0,01 SR"
       }
     ],
     "profileGuide": {
@@ -89,6 +368,7 @@
       "exampleCalculation": "Круги 0,10 × (2 − 2) ÷ 10 = 0,00. Инциденты +0,10. Итого +0,10 SR.",
       "note": "Дистанция учитывается в расчёте кругов. На обычных трассах база и списания по инцидентам от вашей дистанции не зависят. Для Nürburgring 24h действует отдельная шкала и порог 30%.",
       "rulesLabel": "Полные правила SRv4"
-    }
+    },
+    "exampleTotalLabel": "Итого за гонку"
   }
 }
