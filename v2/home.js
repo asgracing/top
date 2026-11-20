@@ -396,7 +396,7 @@ if(!isSubpage){
 }
 try{await import('./runtime/home.js?v=20261117reports1');applyHash();if(isSubpage)startBackground();}catch(error){console.error('V2 runtime unavailable',error);$('event-track').textContent=text('Не удалось загрузить данные','Could not load data');$('day-driver').textContent=text('Данные недоступны','Data unavailable');tableError=true;tableBusy=false;renderTable()}
 if(document.documentElement.dataset.v2Page){
-  const {startPage}=await import('./pages/controller.js?v=20261120srv4calibrated');
+  const {startPage}=await import('./pages/controller.js?v=20261120sr4breakdown');
   await startPage({native,presentation,showDialog,esc,text,label,date,number,rating,car,language,subscribe,serverAdmission});
 }
 import {installReports} from './reports/index.js?v=20261117reports1';

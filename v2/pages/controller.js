@@ -1,4 +1,4 @@
-import {mountDriverSafety} from './driver-safety.js?v=20261120srv4calibrated';
+import {mountDriverSafety} from './driver-safety.js?v=20261120sr4breakdown';
 import {bindPagination} from './pagination.js?v=20261015pagination1';
 import {refreshTeamRaceLinks} from '/src/shared/team-racing-discovery.js?v=20261028team10';
 import {createEntityThumbnails} from './entity-thumbnails.js?v=20261008thumbs1';

@@ -8,11 +8,11 @@
     },
     {
       "path": "app.js",
-      "sha256": "b9006a92049305f0d8d39ed6a1e0b0cbb3aab85a557cc4f1c06750442fdaf093"
+      "sha256": "d06be5cb24ec0d4aee3f10659cdcdab309fe665a43d061fbc20eda04707c4a25"
     },
     {
       "path": "assets/content/safety-rating-v3.json",
-      "sha256": "b30ce9593ec2e1d1401067c0b9b2eace1836be119c03e79fdcbbf4389b16bfcc"
+      "sha256": "c68e582db355f5b5613ce2e90bb3f488e406df4b7a0f114f68e25d7866dad278"
     },
     {
       "path": "assets/track-maps/barcelona.js",
@@ -80,7 +80,7 @@
     },
     {
       "path": "scripts/build-v2.mjs",
-      "sha256": "985efc0396a751aeb977ee3b69bb73af7b5fb0613e87ea4d90444e6f2714ff2a"
+      "sha256": "655af3e857332772baafba600ac58bb12a69f85267d72fad719395822dcac2c3"
     },
     {
       "path": "scripts/faq-page.mjs",
@@ -744,7 +744,7 @@
     },
     {
       "path": "v2/home.js",
-      "sha256": "2b7b7131e46fb82aa70d5e99a1d98a69dd9874c7b9d5dcc9ab37db4ff6113a20"
+      "sha256": "00019e59a4b51edd58f698dbecec8eaff9a8eb61e7416dc58ce86e8a1911bcc9"
     },
     {
       "path": "v2/live-stats.js",
@@ -800,7 +800,7 @@
     },
     {
       "path": "v2/pages/controller.js",
-      "sha256": "b177777dfa93975fac26d37141b1bcc536ae542e4ec4c93a2d7f62a4f6ab0da2"
+      "sha256": "8f83292aaa324269f51f2e66f7163dd2ab04015a4c229ac9e6a102b3a040c845"
     },
     {
       "path": "v2/pages/data.js",
@@ -808,7 +808,7 @@
     },
     {
       "path": "v2/pages/driver-safety.js",
-      "sha256": "a328455ea1ca985e981c5a8b8ea75a948f7124bc843a4db87274ad13abff295c"
+      "sha256": "e5020a9c5daaf2ba5cdc39df3a1aa86a00ec101da453e67951ba4b64f9694c10"
     },
     {
       "path": "v2/pages/editorial-model.js",

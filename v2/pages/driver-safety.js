@@ -11,6 +11,7 @@ export function mountDriverSafety({root,profile,state,native,esc,text,date,track
   const f=value=>srNumber(value)===null?'—':Number(value).toFixed(2);
   const change=value=>srNumber(value)===null?'—':(value>0?'+':value<0?'−':'')+Math.abs(value).toFixed(2);
   const damageNumber=new Intl.NumberFormat(text('ru-RU','en-US'),{maximumSignificantDigits:17,useGrouping:false});
+  const percent=new Intl.NumberFormat(text('ru-RU','en-US'),{style:'percent',maximumFractionDigits:1});
   const color=value=>value>0?'positive':value<0?'negative':'';
   const category=value=>value>=5?'a':value>=2.5?'b':'c';
   const periodRows=()=>safetyPeriodRaces(records,state.srPeriod,referenceTime);
@@ -95,22 +96,28 @@ export function mountDriverSafety({root,profile,state,native,esc,text,date,track
     const penaltyNames={Cutting:text('Срезка трассы','Track cutting'),PitSpeeding:text('Скорость в питлейне','Pit speeding'),Trolling:text('Опасное поведение','Trolling')};
     const penaltyEvidence=Array.isArray(items)&&items.length?items.map(item=>`${penaltyNames[item.reason]||item.reason||'—'} · ${item.penalty||'—'}${item.violationInLap!=null?' · '+text('круг ','lap ')+item.violationInLap:''}`).join('; '):b.penalties===null?text('Данные о штрафах не опубликованы','Penalty data is not published'):text('Учтённых автоштрафов: ','Counted auto penalties: ')+b.penalties;
     const valid=b.valid??(!b.variantA&&b.completed!==null&&b.invalid!==null?Math.max(0,b.completed-b.invalid):null);
-    const lapEvidence=(valid!==null&&b.completed!==null&&b.invalid!==null
-      ?text(`${valid} из ${b.completed} кругов валидны, ${b.invalid} невалидны.`,`${valid} of ${b.completed} laps valid, ${b.invalid} invalid.`)
-      :text('Данные о кругах не опубликованы','Lap data is not published'))
-      +(b.unknown>0?text(` Кругов без подтверждённого статуса ${b.unknown}.`,` Laps with unverified validity ${b.unknown}.`):'');
-    const incidentEvidence=b.variantA
-      ?b.coverage==='verified'?text('Подтверждённых эпизодов: ','Verified episodes: ')+count(b.incidents)
-        :b.coverage==='partial'?text('Покрытие неполное. Учтены подтверждённые эпизоды.','Coverage is partial. Verified episodes were counted.')
-          :text('Подтверждённые данные об инцидентах недоступны.','Verified incident data is unavailable.')
-      :text('Зафиксировано баллов: ','Recorded points: ')+count(b.incidents);
+    const cleanliness=valid!==null&&b.completed>0?percent.format(valid/b.completed):null;
+    const distance=b.completed!==null&&b.leader>0?percent.format(b.completed/b.leader):null;
+    const lapEvidence=(cleanliness!==null
+      ?text(`${valid} из ${b.completed} чистых (${cleanliness}).`,`${valid} of ${b.completed} clean (${cleanliness}).`)
+      :text('Данные о кругах не опубликованы.','Lap data is not published.'))
+      +(distance!==null?text(` Дистанция: ${b.completed} из ${b.leader} кругов лидера (${distance}).`,` Distance: ${b.completed} of the leader’s ${b.leader} laps (${distance}).`):'')
+      +(b.invalid>0?text(` Красных: ${b.invalid}.`,` Red laps: ${b.invalid}.`):'')
+      +(b.unknown>0?text(` Без статуса: ${b.unknown}.`,` Unverified laps: ${b.unknown}.`):'');
     const splitIncidents=b.variantA&&b.distanceBonus!==null&&b.incidentDeduction!==null;
-    const incidentRule=splitIncidents&&!isN24&&b.incidentDeduction>0
-      ? `<br><span class="driver-sr-incident-rule">${esc(text(
-          'За эпизод применяется одно списание. Взаимное касание при росте меньше 2 ед. стоит 0,01 SR. По шкале повреждений 8 ед. дают 0,07, 20 ед. — 0,12, от 50 ед. — 0,25 SR.',
-          'Each episode is deducted once. A two-way touch below 2 damage units costs 0.01 SR. On the damage scale, 8 units cost 0.07, 20 cost 0.12, and 50 or more cost 0.25 SR.'
-        ))}</span>`
-      : '';
+    const incidentTotal=splitIncidents&&!isN24
+      ?b.incidentDelta??Math.round(100*(b.distanceBonus-b.incidentDeduction))/100
+      :splitIncidents?-b.incidentDeduction:b.incidentDelta;
+    let incidentEvidence=b.variantA?text('Подтверждённых эпизодов: ','Verified episodes: ')+count(b.incidents)
+      :text('Зафиксировано баллов: ','Recorded points: ')+count(b.incidents);
+    if(splitIncidents&&!isN24){
+      if(b.incidents===0)incidentEvidence=text('Подтверждённых эпизодов нет.','No verified episodes.');
+      if(b.incidentDeduction>0)incidentEvidence+=text(
+        ` · База ${change(b.distanceBonus)} − ${f(b.incidentDeduction)} за эпизоды.`,
+        ` · Base ${change(b.distanceBonus)} − ${f(b.incidentDeduction)} for episodes.`);
+      if(b.coverage==='partial'||b.coverage==='unavailable')incidentEvidence+=' '+text(
+        'База не начислена из-за неполных данных.','Incomplete data makes the base zero.');
+    }
     const incidentsOpen=box.querySelector('.driver-sr-episodes[open]')?.dataset.race===r.key;
     let incidentDetails='';
     if(!isN24&&b.incidentEpisodes?.length){
@@ -127,14 +134,14 @@ export function mountDriverSafety({root,profile,state,native,esc,text,date,track
         <summary>${text('Детали инцидентов','Incident details')} (${b.incidentEpisodes.length})</summary>
         <ol>${episodes}</ol>
       </details>`;
-    }else if(incidentRule&&b.incidentEpisodes===null){
+    }else if(splitIncidents&&!isN24&&b.incidentDeduction>0&&b.incidentEpisodes===null){
       incidentDetails=`<p>${text('Детали эпизодов недоступны для этой гонки.','Episode details are unavailable for this race.')}</p>`;
     }
     const components=[
-      [text('Чистота кругов','Lap cleanliness'),b.clean,lapEvidence,'✓'],
-      ...(splitIncidents&&(!isN24||b.distanceBonus>0)?[[text('Бонус безопасности','Safety bonus'),b.distanceBonus,isN24?'':b.coverage==='verified'?text('Полные +0,10 от 50% дистанции. Ниже — пропорционально. Эпизоды списываются отдельно.','Full +0.10 from 50% distance. Proportional below it. Episodes are deducted separately.'):text('Бонус не начислен — нет полного подтверждённого покрытия данных.','No bonus — complete verified data is unavailable.'),'＋']]:[]),
-      [b.variantA&&!splitIncidents?text('Инциденты и бонус дистанции','Incidents and distance bonus'):text('Инциденты','Incidents'),
-        splitIncidents?-b.incidentDeduction:b.incidentDelta,incidentEvidence+incidentRule,'◇',incidentDetails],
+      [text('Чистота езды','Lap cleanliness'),b.clean,lapEvidence,'✓'],
+      ...(splitIncidents&&isN24&&b.distanceBonus>0
+        ?[[text('Бонус безопасности','Safety bonus'),b.distanceBonus,'','＋']]:[]),
+      [text('Инциденты','Incidents'),incidentTotal,incidentEvidence,'◇',incidentDetails],
       [text('Автоматические штрафы','Automatic penalties'),b.penaltyDelta,esc(penaltyEvidence),'⚑']
     ];
     const missing=text('Не опубликовано','Not published');
