@@ -1,7 +1,7 @@
 import assert from 'node:assert/strict';
 import test from 'node:test';
 
-import {orderedServers} from '../../v2/server-cards.js';
+import {countReportedPlayers, orderedServers} from '../../v2/server-cards.js';
 
 test('server cards pin Hourly and Main, then use player count and the existing track order', () => {
   // The runtime has already sorted the input by track and name.
@@ -21,4 +21,19 @@ test('server cards pin Hourly and Main, then use player count and the existing t
   assert.deepEqual(orderedServers(servers.map(row =>
     row.key === 'sunset' ? {...row, players: 18} : row)).map(row => row.key).slice(0, 4),
     ['hourly', 'main', 'sunset', 'nurburgring']);
+});
+
+test('player totals include available counts when other server data is stale or missing', () => {
+  const servers = [
+    {players: 5, stale: false},
+    {players: 99, stale: true},
+    {players: null, stale: false},
+    {players: 3, stale: false}
+  ];
+
+  assert.equal(countReportedPlayers(servers, false), 8);
+  assert.equal(countReportedPlayers(servers, true), null);
+  assert.equal(countReportedPlayers([{players: 0}, {players: 99, stale: true}], false), 0);
+  assert.equal(countReportedPlayers([{players: null}, {players: 99, stale: true}], false), null);
+  assert.equal(countReportedPlayers([], false), null);
 });
