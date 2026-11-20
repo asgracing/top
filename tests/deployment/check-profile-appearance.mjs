@@ -66,7 +66,12 @@ async function open({lang='ru',route='account',tier='vip',signed=true,reduced='r
       await editor.getByRole('heading',{name:lang==='en'?'Profile appearance':'Оформление профиля',exact:true}).waitFor({timeout:8000});
     }catch(error){
       if(artifacts) await page.screenshot({path:path.join(artifacts,'editor-error.png')});
-      throw new Error('Editor missing on '+page.url()+': '+JSON.stringify(errors)+' / '+
+      const diagnostic = await page.evaluate(()=>{
+        const section=document.querySelector('.profile-appearance-editor');
+        const center=[...document.querySelector('.center-column').children].map(child=>[child.id,child.className,getComputedStyle(child).display]);
+        return {section:section?.outerHTML.slice(0,390),center};
+      });
+      throw new Error('Editor missing on '+page.url()+': '+JSON.stringify({privateReads,errors,diagnostic})+' / '+
         (await page.locator('#page-view').innerText()).slice(0,300),{cause:error});
     }
   }
