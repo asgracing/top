@@ -48,7 +48,7 @@ try {
           servers:{main:{...row,id:'main',name:'Spa Main'},sunset:{...row,id:'sunset',name:'Spa Sunset',
             track_map:{source:'acc-native-complete-lap',points:Array.from({length:20},(_,n)=>[100*Math.cos(n),100*Math.sin(n)])}}}}});
       }
-      return tools.fixture(route,[]);
+      return tools.fixture(route,[],{signed:true});
     });
     await page.goto(tools.base+(lang==='en'?'/en/':'/')+(screen==='servers'?'servers/':''),{waitUntil:'domcontentloaded'});
     const container=screen==='servers'?'#server-directory-grid':'#v2-servers';
