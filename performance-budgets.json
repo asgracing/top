@@ -33,6 +33,8 @@
   "moderationStylesheetBytes": 5000,
   "portalOpsJavaScriptBytes": 74000,
   "portalOpsStylesheetBytes": 12000,
+  "portalSupportJavaScriptBytes": 30000,
+  "portalSupportStylesheetBytes": 3400,
   "driverAchievementsJavaScriptBytes": 50000,
   "driverAchievementsStylesheetBytes": 16500,
   "driverOverlayJavaScriptBytes": 12000,

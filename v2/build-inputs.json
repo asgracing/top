@@ -1,6 +1,6 @@
 {
   "schemaVersion": 1,
-  "runtimeVersion": "20261120servercards",
+  "runtimeVersion": "20261120portalgrants4",
   "inputs": [
     {
       "path": "account/driver-overlay.js",
@@ -8,7 +8,7 @@
     },
     {
       "path": "app.js",
-      "sha256": "6673251c466d36976aa6559e74c04c417d11454e1e10855b9f59e8e34ea8768f"
+      "sha256": "8eae7846a157c2fc426a4ba1c3ff6b1c20f20cb4aa91d9ec2ec9cf129aca7bca"
     },
     {
       "path": "assets/content/safety-rating-v3.json",
@@ -80,7 +80,7 @@
     },
     {
       "path": "scripts/build-v2.mjs",
-      "sha256": "44ad2f7a7cd08318cd0df5df04c5ee761efd20746d26552a97bca54dbfa1f866"
+      "sha256": "7d8f08fb8973babf304c0743ab6a1e96c818460109479e31d3c2e76a56bced83"
     },
     {
       "path": "scripts/faq-page.mjs",
@@ -120,7 +120,7 @@
     },
     {
       "path": "src/features/auth/header-auth.js",
-      "sha256": "8a5b29b7e3b3123f185ea9f3fcab8643bc2cc4ee8ebc30c982967f82cafd62c8"
+      "sha256": "a25a5c6fb2ea90e62225c8892b983836b95f3e4122d77bef0ca129612da518d3"
     },
     {
       "path": "src/features/auth/personal-notifications.js",
@@ -312,7 +312,19 @@
     },
     {
       "path": "src/pages/portal-ops/portal-ops-page.js",
-      "sha256": "decd7074087458a39adef6a1e5bd80efc8ae3d410b97fc21484e6c1e7d54eac6"
+      "sha256": "30d70215b47d9db3bf0f75f304372f1e4734aa251c17763735dd69d65767df71"
+    },
+    {
+      "path": "src/pages/portal-ops/support-budget.js",
+      "sha256": "e8f7bc08a2cf85b4d0f1fc971b5287d9ba3f03bd0d9c3de6a9d5e2e7e68aac9d"
+    },
+    {
+      "path": "src/pages/portal-ops/support-grants.js",
+      "sha256": "5b882069c84f81a9e7aca6be63617105325ae4b12ba24709041d41c3605cb19c"
+    },
+    {
+      "path": "src/pages/portal-ops/support-members.js",
+      "sha256": "025c07e5aff4eee0eebe443720e9e295613e50cbdb3ab4103b4d36a9e2418be8"
     },
     {
       "path": "src/pages/races/model.js",
@@ -632,7 +644,7 @@
     },
     {
       "path": "v1-source/html/portal-ops/index.html",
-      "sha256": "646a4b286cb974be4edb026d9a27e13321ac781b7dd1dc9cc5bfceb98d0626da"
+      "sha256": "9c10e2d1582b915170905a5954bf0c03d964c9a930d323c8ed2c9865f17f6a23"
     },
     {
       "path": "v1-source/html/privacy/index.html",
@@ -744,7 +756,7 @@
     },
     {
       "path": "v2/home.js",
-      "sha256": "396f9b7a86683c2f7fe5e311e68d6e9136459d48fdcdfa488aba2e29b6dd129c"
+      "sha256": "ce08b4ab7eebfe32a37587756a0e062497d8bd1397b2a38e07818117fb3c8f98"
     },
     {
       "path": "v2/live-stats.js",
@@ -796,11 +808,11 @@
     },
     {
       "path": "v2/pages/control.js",
-      "sha256": "e9f2d4d8b2389563d9a61a8591ce5707a4fb34ad497507cbd23f35a2e54f8d1e"
+      "sha256": "fca280ea5a7361b35acffa0f429059a0611ec56576ed53633199fd6a2754e9cf"
     },
     {
       "path": "v2/pages/controller.js",
-      "sha256": "8b326b853792cc3e9e630d2a832d7d24334bcceff971b2f42973771691378c1f"
+      "sha256": "24047189dba878cd98dc88172dbf28ab8d188861b6af4ecade2e677d4b20536e"
     },
     {
       "path": "v2/pages/data.js",
@@ -829,6 +841,10 @@
     {
       "path": "v2/pages/site-appearance-admin.js",
       "sha256": "4cab6f5db2467b5efc4b8f214f4b187073a00e0384ab23c3e1df5a1c30e7aaec"
+    },
+    {
+      "path": "v2/pages/support-funding.js",
+      "sha256": "2ff4d8ad0942709537fd88a9b0b7279859c86dd9f62130314d3420d55f8e6b76"
     },
     {
       "path": "v2/presentation.js",

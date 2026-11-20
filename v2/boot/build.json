@@ -3,19 +3,19 @@
   "entry": "/v2/boot/home.js",
   "files": [
     {
-      "path": "/v2/boot/chunks/moderation-page-2HSII5OV.js",
+      "path": "/v2/boot/chunks/moderation-page-MKJEPLSX.js",
       "bytes": 32156
     },
     {
-      "path": "/v2/boot/chunks/portal-ops-page-QGDF43OU.js",
-      "bytes": 82317
+      "path": "/v2/boot/chunks/portal-ops-page-R7VAH22Q.js",
+      "bytes": 116474
     },
     {
-      "path": "/v2/boot/chunks/control-PQNGYDAU.js",
-      "bytes": 45289
+      "path": "/v2/boot/chunks/control-DWVJRMMM.js",
+      "bytes": 45610
     },
     {
-      "path": "/v2/boot/chunks/controller-XZCD4N2W.js",
+      "path": "/v2/boot/chunks/controller-7XTL277D.js",
       "bytes": 339949
     },
     {
@@ -35,11 +35,11 @@
       "bytes": 2339
     },
     {
-      "path": "/v2/boot/chunks/home-LLQ6NQ64.js",
+      "path": "/v2/boot/chunks/home-MT6Z5YTZ.js",
       "bytes": 498785
     },
     {
-      "path": "/v2/boot/chunks/chunk-AXMDTTFO.js",
+      "path": "/v2/boot/chunks/chunk-XVRPA2YL.js",
       "bytes": 5289
     },
     {
@@ -51,19 +51,19 @@
       "bytes": 10618
     },
     {
-      "path": "/v2/boot/chunks/account-7WYD5OFZ.js",
+      "path": "/v2/boot/chunks/account-TLA5G6WN.js",
       "bytes": 418
     },
     {
-      "path": "/v2/boot/chunks/account-UETIELQV.js",
+      "path": "/v2/boot/chunks/account-MQQUS3JN.js",
       "bytes": 17763
     },
     {
-      "path": "/v2/boot/chunks/chunk-GTYQVHZF.js",
+      "path": "/v2/boot/chunks/chunk-NUBHIURL.js",
       "bytes": 124994
     },
     {
-      "path": "/v2/boot/chunks/chunk-AQUAWPXZ.js",
+      "path": "/v2/boot/chunks/chunk-PGUKO5LO.js",
       "bytes": 15476
     },
     {
@@ -147,7 +147,7 @@
       "bytes": 176864
     },
     {
-      "path": "/v2/boot/chunks/chunk-XG4WXZHN.js",
+      "path": "/v2/boot/chunks/chunk-PXHKOSWZ.js",
       "bytes": 196853
     },
     {
@@ -155,7 +155,7 @@
       "bytes": 117693
     },
     {
-      "path": "/v2/boot/chunks/chunk-NMVJHK3W.js",
+      "path": "/v2/boot/chunks/chunk-AI56GLUZ.js",
       "bytes": 26285
     },
     {
@@ -179,8 +179,8 @@
       "bytes": 616
     },
     {
-      "path": "/v2/boot/chunks/chunk-CTRJ4DZD.js",
-      "bytes": 38855
+      "path": "/v2/boot/chunks/chunk-SJSZALT3.js",
+      "bytes": 39008
     },
     {
       "path": "/v2/boot/chunks/chunk-KCHVVMGW.js",
