@@ -158,6 +158,12 @@ try{
             return i<columns||Math.abs(card.getBoundingClientRect().top-cards[i-columns].getBoundingClientRect().bottom-gap)<1;
           });
         }),'Directory cards have equal gaps and 4px vertical detail spacing');
+        assert.ok(await cards.locator('.server-directory-name').evaluateAll(names=>names.every(name=>{
+          const style=getComputedStyle(name);
+          return parseFloat(style.fontSize)<=16&&style.whiteSpace==='nowrap'&&style.textOverflow==='ellipsis'&&
+            name.getBoundingClientRect().height<=parseFloat(style.lineHeight)+1;
+        })),'Every server name remains one compact line');
+        if(width>=1440)assert.ok(await cards.first().locator('.server-directory-name').evaluate(name=>name.scrollWidth<=name.clientWidth),'Hourly name fits on desktop');
         await page.screenshot({path:path.join(output,`directory-top-${language}-${width}.png`)});
       }
       if(screen==='home'&&count===15){

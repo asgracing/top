@@ -145,7 +145,10 @@ html[data-v2-page="servers"] .center-column {grid-column:1/-1;min-width:0;}
   grid-template-areas:"name count arrow" "session access arrow";align-items:center;
   gap:4px 10px;padding:4px 14px;border-top:1px solid #394955;
 }
-.server-directory-name {grid-area:name;font-size:clamp(19px,1.8vw,25px);font-weight:850;line-height:1.15;overflow-wrap:anywhere;}
+.server-directory-name {
+  grid-area:name;min-width:0;font-size:clamp(14px,1.12vw,16px);font-weight:850;line-height:1.2;
+  overflow:hidden;text-overflow:ellipsis;white-space:nowrap;
+}
 .server-directory-session {grid-area:session;display:flex;align-items:center;gap:6px;color:#b8c7d2;font-size:12px;line-height:1.5;overflow-wrap:anywhere;}
 .server-directory-session .status-dot {position:static;flex:none;}
 .is-offline .server-directory-session .status-dot {background:#a5b3c3;box-shadow:none;}
@@ -162,6 +165,5 @@ html[data-v2-page="servers"] .center-column {grid-column:1/-1;min-width:0;}
   .server-directory {padding-inline:0;}
   .server-directory-head {padding-inline:2px;}
   .server-directory-grid {grid-template-columns:minmax(0,1fr);gap:12px;}
-  .server-directory-name {font-size:23px;}
 }
 @media(prefers-reduced-motion:reduce) {.server-directory-card {transition:none;}}
