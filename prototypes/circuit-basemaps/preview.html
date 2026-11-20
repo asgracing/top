@@ -1,0 +1,116 @@
+<!doctype html>
+<html lang="ru">
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Карты трасс · ASG Racing</title>
+<style>
+  :root{color-scheme:dark;--panel:#121c29;--text:#e8eef6;--muted:#adbed0;--line:#334459;--red:#e33e49}
+  *{box-sizing:border-box}
+  body{margin:0;background:#0b1119;color:var(--text);font:14px/1.5 system-ui,sans-serif}
+  dialog{width:min(1080px,calc(100vw - 30px));height:min(850px,calc(100dvh - 36px));max-width:none;max-height:none;padding:0;border:1px solid #64778e;border-radius:6px;color:inherit;background:var(--panel)}
+  dialog[open]{display:flex;flex-direction:column}
+  dialog::backdrop{background:#080d14}
+  .head{display:flex;justify-content:space-between;align-items:center;gap:14px;padding:17px 22px;border-bottom:1px solid var(--line)}
+  .heading{margin:0;font-size:clamp(19px,3vw,29px);line-height:1.2;letter-spacing:-.025em}
+  .brand{color:var(--muted);font-size:11px;font-weight:700;letter-spacing:.065em}
+  .map-body{flex:1;min-height:0;overflow:auto;container-type:size;padding:16px 22px}
+  .picker{display:flex;gap:6px;align-items:center}
+  button,select{font:inherit;color:var(--text);background:#19283a;border:1px solid var(--line);border-radius:5px;padding:7px;cursor:pointer;min-height:34px}
+  select{max-width:235px}
+  :focus-visible{outline:2px solid #95d4ef;outline-offset:2px}
+  .map-panel{border:1px solid var(--line);border-radius:5px;padding:14px}
+  summary{display:flex;align-items:center;justify-content:space-between;min-height:32px;gap:8px;cursor:pointer;list-style:none;font-weight:750}
+  summary::-webkit-details-marker{display:none}
+  summary small{color:var(--muted);font-weight:500;border:1px solid var(--line);border-radius:4px;padding:3px 8px}
+  .content{display:flex;flex-direction:column;margin-top:8px;max-height:max(0px,calc(100cqh - 74px))}
+  svg.map{display:block;width:100%;height:min(75cqw,62dvh,560px);min-height:0;background:#101b29;border-radius:4px}
+  svg.has-background{background:#e9ede3}
+  .course,.edge{fill:none;stroke-linecap:round;stroke-linejoin:round;vector-effect:non-scaling-stroke}
+  .edge{stroke:#f8faf5;stroke-width:9}
+  .course{stroke:#2f404a;stroke-width:5.5}
+  .no-background .course{stroke:#8da5bc}
+  .no-background .edge{display:none}
+  .sector,.finish{vector-effect:non-scaling-stroke;stroke:var(--red);stroke-width:2.5}
+  .finish{stroke:#fff}
+  .notes{flex:none;display:flex;justify-content:space-between;flex-wrap:wrap;column-gap:12px;color:var(--muted);font-size:12px;margin:7px 0 0}
+  .credit{flex:none;font-size:10px;color:var(--muted);margin:6px 0 0}
+  a{color:inherit;text-underline-offset:2px}
+  .sector-key::before,.finish-key::before{display:inline-block;content:"";width:11px;border-top:2px solid var(--red);margin-right:5px;vertical-align:middle}
+  .finish-key::before{border-color:#fff;margin-left:10px}
+  #warning{color:#ffc783;overflow-wrap:anywhere}
+  @media(max-width:630px){.head{flex-wrap:wrap;padding:12px}.map-body{padding:9px}.map-panel{padding:9px}.picker{width:100%}select{min-width:0;max-width:none;flex:1}.course{stroke-width:3.8}.edge{stroke-width:6}}
+</style>
+<dialog aria-labelledby="circuit">
+  <header class="head">
+    <div><div class="brand">ASG RACING · ЛОКАЛЬНОЕ ПРЕВЬЮ</div><h1 class="heading" id="circuit"></h1></div>
+    <div class="picker">
+      <button id="previous" aria-label="Предыдущая трасса">‹</button>
+      <select id="track" aria-label="Трасса"></select>
+      <button id="next" aria-label="Следующая трасса">›</button>
+    </div>
+  </header>
+  <div class="map-body">
+    <details class="map-panel" open>
+      <summary>Карта трассы <small id="toggle">Свернуть</small></summary>
+      <div class="content">
+        <svg class="map" role="img" aria-labelledby="circuit"></svg>
+        <p class="notes"><span><span class="sector-key">Секторы</span><span class="finish-key">Старт / финиш</span></span><span id="warning"></span></p>
+        <p class="credit">Геометрия · <a id="track-credit">источник контура</a> · © <a href="https://www.openstreetmap.org/copyright">OpenStreetMap contributors</a></p>
+      </div>
+    </details>
+  </div>
+</dialog>
+<script src="maps.js"></script>
+<script>
+  const dialog = document.querySelector('dialog');
+  const picker = document.querySelector('#track');
+  const mapSvg = document.querySelector('svg');
+  const maps = window.circuitMaps;
+  const codes = Object.keys(maps);
+  const ns = 'http://www.w3.org/2000/svg';
+  for (const code of codes) picker.append(new Option(maps[code].name,code));
+  function add(tag, attributes) {
+    const node = document.createElementNS(ns,tag);
+    for (const [key,value] of Object.entries(attributes)) node.setAttribute(key,value);
+    mapSvg.append(node);
+    return node;
+  }
+  function draw() {
+    const code = picker.value, map = maps[code];
+    document.querySelector('#circuit').textContent = map.name;
+    document.querySelector('#warning').textContent = map.backgroundError || '';
+    document.querySelector('#track-credit').href = map.source.url;
+    document.querySelector('#track-credit').textContent = map.source.credit || 'Tomislav Bacinger · MIT';
+    mapSvg.setAttribute('viewBox',map.viewBox.join(' '));
+    mapSvg.setAttribute('class','map '+(map.background ? 'has-background' : 'no-background'));
+    mapSvg.replaceChildren();
+    if (map.background) {
+      const [x,y,width,height] = map.background;
+      add('image',{x,y,width,height,href:`basemaps/${code}.svg`});
+    }
+    const d = map.points.map((point,index)=>(index?'L':'M')+point.join(' ')).join(' ')+ 'Z';
+    add('path',{class:'edge',d});
+    add('path',{class:'course',d});
+    map.timing.forEach(([x,y,dx,dy],index)=>{
+      const line=add('line',{class:index?'sector':'finish',x1:x-dx,x2:x+dx,y1:y-dy,y2:y+dy});
+      const title=document.createElementNS(ns,'title');
+      title.textContent=index?(map.approximate?'Приблизительная граница сектора ':'Конец сектора ')+index:'Старт / финиш';
+      line.append(title);
+    });
+    history.replaceState(null,'','#'+code);
+  }
+  function step(delta) {
+    picker.selectedIndex=(picker.selectedIndex+delta+codes.length)%codes.length;
+    draw();
+  }
+  picker.addEventListener('change',draw);
+  document.querySelector('#previous').addEventListener('click',()=>step(-1));
+  document.querySelector('#next').addEventListener('click',()=>step(1));
+  const details=document.querySelector('details');
+  details.addEventListener('toggle',()=>document.querySelector('#toggle').textContent=details.open?'Свернуть':'Развернуть');
+  if (codes.includes(location.hash.slice(1))) picker.value=location.hash.slice(1);
+  dialog.addEventListener('cancel',event=>event.preventDefault());
+  dialog.showModal();
+  draw();
+</script>
+</html>

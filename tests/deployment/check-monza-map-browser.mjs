@@ -65,9 +65,10 @@ try {
       if(key==='main')mainPath=routePath;else assert.equal(routePath,mainPath,'same contour despite unrelated learned lap');
       assert.equal(await map.locator('.track-car.is-leader text').textContent(),'1');
       assert.equal(await map.locator('.track-car.is-leader circle').evaluate(el=>getComputedStyle(el).fill),'rgb(220, 53, 69)');
-      assert.match(await map.textContent(),/Curve di Lesmo/);assert.match(await map.textContent(),/Curva Parabolica/);
+      assert.equal(await map.locator('image[href$="/basemaps/monza-gp.svg"]').count(),1);
+      assert.equal(await map.locator('.track-label,.track-timing-mark text').count(),0);
       assert.equal(await map.locator('.track-timing-mark').count(),3);
-      assert.equal(await map.locator('.track-timing-mark.is-finish text').textContent(),lang==='ru'?'С/Ф':'S/F');
+      assert.equal(await map.locator('.track-timing-mark.is-finish title').textContent(),lang==='ru'?'Старт / финиш':'Start / finish');
       assert.ok(await map.evaluate(el=>el.scrollWidth<=el.clientWidth+1),'no horizontal overflow');
       const box=await map.locator('svg').boundingBox();assert.ok(box.height>=250&&box.width>250);
       const before=await map.locator('.track-car.is-leader').getAttribute('transform');

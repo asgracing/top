@@ -1,0 +1,298 @@
+{
+  "spa": {
+    "method": "existing GeoJSON alignment",
+    "p95Metres": null,
+    "extractSha256": "59b2204454a96b8ab2fec438a21dd98bf1f70bc853ae427c38c8e5aa7634f853",
+    "extent": [
+      -1000,
+      -100,
+      3200,
+      1100
+    ],
+    "publicPath": "assets/track-maps/basemaps/spa-gp.svg"
+  },
+  "monza": {
+    "method": "published Monza reference",
+    "p95Metres": null,
+    "extractSha256": "215d46b4ee2b7a32a244a55715cc6f0cd329b24a1068234aa3bdb904941cbca8",
+    "extent": [
+      -565,
+      -66,
+      2130,
+      732
+    ],
+    "publicPath": "assets/track-maps/basemaps/monza-gp.svg"
+  },
+  "nurburgring": {
+    "method": "existing GeoJSON alignment",
+    "p95Metres": null,
+    "extractSha256": "11f1c4db244ea6896f6f89c13e5530d6f719238f664a2b78a781232eba2857f4",
+    "extent": [
+      -909,
+      -93,
+      3018,
+      1037
+    ],
+    "publicPath": "assets/track-maps/basemaps/nurburgring-gp.svg"
+  },
+  "barcelona": {
+    "method": "existing GeoJSON alignment",
+    "p95Metres": null,
+    "extractSha256": "d74ddd9d34c4b5afa386a82184eb96ba720d81ec66f687e00712092479cbb1f6",
+    "extent": [
+      -376,
+      -60,
+      1952,
+      671
+    ],
+    "publicPath": "assets/track-maps/basemaps/barcelona-gp.svg"
+  },
+  "kyalami": {
+    "method": "existing GeoJSON alignment",
+    "p95Metres": null,
+    "extractSha256": "aa2c443032c687860c5a59fd68ece4113cba3e7d788c5711923c5efa00ed0f30",
+    "extent": [
+      -909,
+      -93,
+      3018,
+      1037
+    ],
+    "publicPath": "assets/track-maps/basemaps/kyalami-gp.svg"
+  },
+  "nurburgring_24h": {
+    "method": "existing GeoJSON alignment",
+    "p95Metres": null,
+    "extractSha256": "b669723ee1e2ba1b500e480e5ad78b0224f03a909ab73e64658c52e8b98fe669",
+    "extent": [
+      -1264,
+      -115,
+      3728,
+      1281
+    ],
+    "publicPath": "assets/track-maps/basemaps/nurburgring-24h.svg"
+  },
+  "imola": {
+    "method": "Race Control aligned to OSM raceway",
+    "p95Metres": 6.1,
+    "extractSha256": "1ab8cec69a8220f03cc4ab4cdc57579cb04e1f6ec2cff382dfa6f737ac2c1923",
+    "extent": [
+      -565,
+      -66,
+      2130,
+      732
+    ],
+    "publicPath": "assets/track-maps/basemaps/imola.svg"
+  },
+  "brands_hatch": {
+    "method": "Race Control aligned to OSM raceway",
+    "p95Metres": 5.4,
+    "extractSha256": "1d54d7d107fec5376192f14dc9aeba4406f9b89b9a3b5b97d958bb6361404db3",
+    "extent": [
+      -565,
+      -66,
+      2130,
+      732
+    ],
+    "publicPath": "assets/track-maps/basemaps/brands_hatch.svg"
+  },
+  "paul_ricard": {
+    "method": "Race Control aligned to pinned geographic circuit",
+    "p95Metres": 9.8,
+    "extractSha256": "1689b92afce948563dcd54f5704e76986f8555ba76994da2179f360e920241a7",
+    "extent": [
+      -565,
+      -66,
+      2130,
+      732
+    ],
+    "reference": "fr-1969",
+    "referenceSha256": "7dcd3b9a5fe25b46c7ea276ea513475854a4187cebcf4384f9cd9a3465deee55",
+    "publicPath": "assets/track-maps/basemaps/paul_ricard.svg"
+  },
+  "valencia": {
+    "method": "Race Control aligned to OSM raceway",
+    "p95Metres": 9.1,
+    "extractSha256": "26a867daf6b3f9456d1c18df66d480f44ea252666c8015d5770e941fd6aba811",
+    "extent": [
+      -565,
+      -66,
+      2130,
+      732
+    ],
+    "publicPath": "assets/track-maps/basemaps/valencia.svg"
+  },
+  "zandvoort": {
+    "method": "Race Control aligned to OSM raceway",
+    "p95Metres": 6.6,
+    "extractSha256": "be36d2f17e0cbb29ee14eb95924ae075d0a8cfd860aaa410b6eed774ebc859e0",
+    "extent": [
+      -565,
+      -66,
+      2130,
+      732
+    ],
+    "publicPath": "assets/track-maps/basemaps/zandvoort.svg"
+  },
+  "zolder": {
+    "method": "Race Control aligned to OSM raceway",
+    "p95Metres": 6.1,
+    "extractSha256": "2a58176cf2bbe34aadb0636d85bf76e1c0963d09830d28757ae92641293715e8",
+    "extent": [
+      -565,
+      -66,
+      2130,
+      732
+    ],
+    "publicPath": "assets/track-maps/basemaps/zolder.svg"
+  },
+  "cota": {
+    "method": "Race Control aligned to pinned geographic circuit",
+    "p95Metres": 8.1,
+    "extractSha256": "f23bde41830e6551735279b037a155ce6c47ad9d0582dcd0eaff3a1d29482519",
+    "extent": [
+      -565,
+      -66,
+      2130,
+      732
+    ],
+    "reference": "us-2012",
+    "referenceSha256": "7dcd3b9a5fe25b46c7ea276ea513475854a4187cebcf4384f9cd9a3465deee55",
+    "publicPath": "assets/track-maps/basemaps/cota.svg"
+  },
+  "donington": {
+    "method": "Race Control aligned to OSM raceway",
+    "p95Metres": 7.2,
+    "extractSha256": "67b5324e7eb1bc2d2131cab0baceab63739bd1ac3b24e92d38991162d1e0e114",
+    "extent": [
+      -565,
+      -66,
+      2130,
+      732
+    ],
+    "publicPath": "assets/track-maps/basemaps/donington.svg"
+  },
+  "hungaroring": {
+    "method": "Race Control aligned to OSM raceway",
+    "p95Metres": 6.1,
+    "extractSha256": "510c742d5efed25c07aaf8eceb565926d421d1c33871718f2daa9e212fcdbc1c",
+    "extent": [
+      -565,
+      -66,
+      2130,
+      732
+    ],
+    "publicPath": "assets/track-maps/basemaps/hungaroring.svg"
+  },
+  "indianapolis": {
+    "method": "Race Control aligned to OSM raceway",
+    "p95Metres": 9.9,
+    "extractSha256": "b9980d1415d63da78f4bbf9e92125d0304110f38b7c8c744184d104377129ff6",
+    "extent": [
+      -565,
+      -66,
+      2130,
+      732
+    ],
+    "publicPath": "assets/track-maps/basemaps/indianapolis.svg"
+  },
+  "misano": {
+    "method": "Race Control aligned to OSM raceway",
+    "p95Metres": 15.2,
+    "extractSha256": "1f8be96e23d030d0da26d10fcb58ff4b573321782617437d0fc29ae5b8bc8399",
+    "extent": [
+      -565,
+      -66,
+      2130,
+      732
+    ],
+    "publicPath": "assets/track-maps/basemaps/misano.svg"
+  },
+  "mount_panorama": {
+    "method": "Race Control aligned to OSM raceway",
+    "p95Metres": 8.1,
+    "extractSha256": "b8e62f40874340123a7a7e212d59d1052772bdab0f8c37ac08886449b5a86d4f",
+    "extent": [
+      -565,
+      -66,
+      2130,
+      732
+    ],
+    "publicPath": "assets/track-maps/basemaps/mount_panorama.svg"
+  },
+  "oulton_park": {
+    "method": "Race Control aligned to OSM raceway",
+    "p95Metres": 5.2,
+    "extractSha256": "5a7f8c8d77ed363d3b020243093d212b8ceaff33cec351a55d74ceac19987c0a",
+    "extent": [
+      -565,
+      -66,
+      2130,
+      732
+    ],
+    "publicPath": "assets/track-maps/basemaps/oulton_park.svg"
+  },
+  "silverstone": {
+    "method": "Race Control aligned to pinned geographic circuit",
+    "p95Metres": 9.9,
+    "extractSha256": "5dbb9df37aedba7733ff9d048cc07a63ba2c790107c4cf34c1916e8207dd2dc5",
+    "extent": [
+      -565,
+      -66,
+      2130,
+      732
+    ],
+    "reference": "gb-1948",
+    "referenceSha256": "7dcd3b9a5fe25b46c7ea276ea513475854a4187cebcf4384f9cd9a3465deee55",
+    "publicPath": "assets/track-maps/basemaps/silverstone.svg"
+  },
+  "snetterton": {
+    "method": "Race Control aligned to OSM raceway",
+    "p95Metres": 8.1,
+    "extractSha256": "54255a86644c7be6774c50bacb9a8314f43f76b1d39353b0299890a1ba56b25f",
+    "extent": [
+      -565,
+      -66,
+      2130,
+      732
+    ],
+    "publicPath": "assets/track-maps/basemaps/snetterton.svg"
+  },
+  "watkins_glen": {
+    "method": "Race Control aligned to OSM raceway",
+    "p95Metres": 7.8,
+    "extractSha256": "16d6d4548d1ffcefa13c0b2a929bc993142d0b44675a2e142ff8aaa14415c280",
+    "extent": [
+      -565,
+      -66,
+      2130,
+      732
+    ],
+    "publicPath": "assets/track-maps/basemaps/watkins_glen.svg"
+  },
+  "laguna_seca": {
+    "method": "Race Control aligned to OSM raceway",
+    "p95Metres": 5.9,
+    "extractSha256": "da745c3e162c82865d8d6d491d71118e7bef5e0fd781d8addc69b6a42aecb12b",
+    "extent": [
+      -565,
+      -66,
+      2130,
+      732
+    ],
+    "publicPath": "assets/track-maps/basemaps/laguna_seca.svg"
+  },
+  "suzuka": {
+    "method": "Race Control aligned to pinned geographic circuit",
+    "p95Metres": 7.2,
+    "extractSha256": "50cab207290e438d796e30b0735bc322652fa983dbd0071455bcd8223744b12b",
+    "extent": [
+      -565,
+      -66,
+      2130,
+      732
+    ],
+    "reference": "jp-1962",
+    "referenceSha256": "7dcd3b9a5fe25b46c7ea276ea513475854a4187cebcf4384f9cd9a3465deee55",
+    "publicPath": "assets/track-maps/basemaps/suzuka.svg"
+  }
+}

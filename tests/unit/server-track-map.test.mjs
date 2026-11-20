@@ -211,17 +211,16 @@ test('all GeoJSON maps render timing marks on their existing outline',async()=>{
     assert.match(html,/class="track-car/);
     if(reference.approximateSectors) {
       assert.match(html,/Approximate end of sector 1/);
-      assert.match(html,/>≈S2</);
+      assert.match(html,/<title>Approximate end of sector 2<\/title><line/);
       assert.match(renderTrackMap(input,'ru',now),/Примерная граница сектора 2/);
     } else {
       assert.match(html,/End of sector 1/);
-      if(code==='spa')assert.match(html,/<title>End of sector 2<\/title><line/);
-      else assert.match(html,/>S2</);
+      assert.match(html,/<title>End of sector 2<\/title><line/);
     }
   }
 });
 
-test('Spa shares the same geographic basemap and permanent route without a learned lap or cars',()=>{
+test('Spa shares the same geographic basemap and permanent route without a learned lap or cars',async()=>{
   const a={...server(),id:'assetto-corsa-competizione-dedic',track_code:'spa',track_map:null};
   const b={...server(),id:'assetto-corsa-competizione-dedic-5',track_code:'SPA',drivers:[]};
   const path=html=>html.match(/class="track-outline" d="([^"]+)"/)[1];
@@ -231,17 +230,37 @@ test('Spa shares the same geographic basemap and permanent route without a learn
   assert.equal(SPA_MAP.points.length,153);
   assert.match(renderTrackMap(a,'ru',now),/Позиция 1/);
   const emptyMap=renderTrackMap(b,'en',now);
-  assert.match(emptyMap,/<image href="\/assets\/track-maps\/spa-basemap.svg" width="1200" height="900"/);
+  assert.match(emptyMap,/<image href="\/assets\/track-maps\/basemaps\/spa-gp.svg" x="-1000" y="-100" width="3200" height="1100"/);
+  const basemap=await readFile(new URL('../../assets/track-maps/basemaps/spa-gp.svg',import.meta.url),'utf8');
+  assert.match(basemap,/<svg[^>]+viewBox="-1000 -100 3200 1100"/);
   assert.match(emptyMap,/<path class="track-outline-edge" fill="none"/);
   assert.match(emptyMap,/OpenStreetMap contributors/);
   assert.match(emptyMap,/Start \/ finish/);
   assert.doesNotMatch(emptyMap,/class="track-label|<text/);
-  assert.doesNotMatch(renderTrackMap({...a,track_code:'monza'},'en',now),/spa-basemap/);
+  assert.match(renderTrackMap({...a,track_code:'monza'},'en',now),/basemaps\/monza-gp\.svg/);
   for(const status of ['stale','offline']) {
     const html=renderTrackMap({...a,status},'en',now);
     assert.match(html,/data-track-map="spa-gp"/);
     assert.doesNotMatch(html,/class="track-car/);
   }
+});
+
+test('every fixed configuration serves its matching basemap bounds and credit',async()=>{
+  const {tracks}=JSON.parse(await readFile(new URL('../../assets/track-maps/race-control-source.json',import.meta.url)));
+  const codes=[...Object.keys(tracks),'spa','nurburgring','barcelona','kyalami','nurburgring_24h','nordschleife'];
+  const references=new Set();
+  for(const track_code of codes) {
+    const html=renderTrackMap({...server(),track_code,drivers:[]},'en',now);
+    const [match,asset,...bounds]=html.match(/<image href="\/(assets\/track-maps\/basemaps\/[a-z0-9_-]+\.svg)" x="(-?\d+)" y="(-?\d+)" width="(\d+)" height="(\d+)"/)||[];
+    assert.ok(match,track_code);
+    const svg=await readFile(new URL('../../'+asset,import.meta.url),'utf8');
+    assert.ok(svg.includes(`viewBox="${bounds.join(' ')}"`),track_code);
+    assert.match(html,/OpenStreetMap contributors/);
+    assert.doesNotMatch(html,/class="track-label|<text/);
+    references.add(asset);
+  }
+  assert.equal(references.size,24);
+  assert.doesNotMatch(renderTrackMap(server(),'en',now),/track-maps\/basemaps/);
 });
 
 test('Spa calibration agrees with a second independently recorded ACC lap and the reference orientation',()=>{

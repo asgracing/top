@@ -24,23 +24,23 @@
 .server-track-map.has-fixed-map .track-outline { stroke-width:5; }
 .server-track-map.has-fixed-map .track-car text { font-size:13.6px; }
 .server-track-map .track-label { fill:#acbfd5; font:19px system-ui,sans-serif; stroke:#101b29; stroke-width:5; stroke-linejoin:round; paint-order:stroke; pointer-events:none; }
-.server-track-map .track-timing-mark { color:#ffda91; }
+.server-track-map .track-timing-mark { color:#e33e49; }
 .server-track-map .track-timing-mark.is-finish { color:#fff; }
 .server-track-map .track-timing-mark line { stroke:currentColor; stroke-width:2; vector-effect:non-scaling-stroke; }
 .server-track-map .track-timing-mark text { fill:currentColor; font:700 23px system-ui,sans-serif; stroke:#101b29; stroke-width:5; paint-order:stroke; }
 .server-track-map .track-map-credit { font-size:10px; }
 .server-track-map .track-map-credit a { color:inherit; }
-[data-track-map=spa-gp] .track-outline-edge { stroke:#f8faf5; stroke-width:9; vector-effect:non-scaling-stroke; }
-.has-fixed-map[data-track-map=spa-gp] .track-outline { stroke:#2f404a; stroke-width:5.5; vector-effect:non-scaling-stroke; }
-[data-track-map=spa-gp] .track-timing-mark:not(.is-finish) { color:#f6edd0; }
+.server-track-map svg:has(>image) { background:#e9ede3; }
+.server-track-map .track-outline-edge { stroke:#f8faf5; stroke-width:9; vector-effect:non-scaling-stroke; }
+.server-track-map svg:has(>image) .track-outline { stroke:#2f404a; stroke-width:5.5; vector-effect:non-scaling-stroke; }
 @media (max-width:600px) {
   .server-track-map.has-fixed-map .track-car circle { r:22.4px; }
   .server-track-map.has-fixed-map .track-car text { font-size:22.4px; }
   .server-track-map .track-label { font-size:27px; }
   .server-track-map .track-timing-mark text { font-size:32px; }
   .server-track-map .track-label.is-secondary { display:none; }
-  [data-track-map=spa-gp] .track-outline-edge { stroke-width:6; }
-  .has-fixed-map[data-track-map=spa-gp] .track-outline { stroke-width:3.8; }
+  .server-track-map .track-outline-edge { stroke-width:6; }
+  .server-track-map svg:has(>image) .track-outline { stroke-width:3.8; }
   .has-fixed-map[data-track-map=spa-gp] .track-car circle { r:27.2px; }
   .has-fixed-map[data-track-map=spa-gp] .track-car text { font-size:28.8px; }
 }

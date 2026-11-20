@@ -1,8 +1,8 @@
 """Generate Spa's basemap in the canonical track SVG coordinate space.
 
-Input: https://api.openstreetmap.org/api/0.6/map?bbox=5.954,50.422,5.994,50.455
+Input: https://api.openstreetmap.org/api/0.6/map?bbox=5.940,50.404,5.998,50.468
 The 2026-11-20 extract SHA-256 is
-8d4232a4694c211d123abeb74eab7a12e0d69963289e922de675d985441c5531.
+59b2204454a96b8ab2fec438a21dd98bf1f70bc853ae427c38c8e5aa7634f853.
 """
 import argparse
 import json
@@ -95,7 +95,7 @@ def spa_projection(asset_dir):
 
     for coordinate, point in zip(circuit, spa["points"], strict=True):
         assert all(abs(a - b) < 0.000001 for a, b in zip(project(*coordinate), point))
-    return spa, project
+    return project
 
 
 def render_osm(xml, project, viewbox):
@@ -108,7 +108,7 @@ def render_osm(xml, project, viewbox):
         way.get("id"): ([ref.get("ref") for ref in way.findall("nd")], tags(way))
         for way in root.findall("way")
     }
-    width, height = viewbox[2:]
+    left, top, width, height = viewbox
     layers = defaultdict(list)
 
     def path(refs, closed=False):
@@ -116,7 +116,8 @@ def render_osm(xml, project, viewbox):
             return ""
         points = [nodes[ref] for ref in refs]
         xs, ys = zip(*points)
-        if max(xs) < -8 or min(xs) > width + 8 or max(ys) < -8 or min(ys) > height + 8:
+        if (max(xs) < left - 8 or min(xs) > left + width + 8
+                or max(ys) < top - 8 or min(ys) > top + height + 8):
             return ""
         return "M" + " ".join(f"{x:.1f},{y:.1f}" for x, y in points) + ("Z" if closed else "")
 
@@ -174,20 +175,14 @@ g { stroke-linejoin:round; stroke-linecap:round; fill-rule:evenodd }
 '''.strip()
 
 
-def main():
-    root = Path(__file__).resolve().parents[1]
-    parser = argparse.ArgumentParser(description=__doc__)
-    parser.add_argument("osm", type=Path)
-    parser.add_argument("--output", type=Path, default=root / "assets/track-maps/spa-basemap.svg")
-    args = parser.parse_args()
-    spa, project = spa_projection(root / "assets/track-maps")
-    layers = render_osm(args.osm, project, spa["viewBox"])
-    width, height = spa["viewBox"][2:]
+def write_basemap(osm, project, bounds, output):
+    left, top, width, height = bounds
+    layers = render_osm(osm, project, bounds)
     elements = [
-        f'<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 {width} {height}">',
-        '<desc>Map data © OpenStreetMap contributors, ODbL. https://www.openstreetmap.org/copyright</desc>',
+        f'<svg xmlns="http://www.w3.org/2000/svg" viewBox="{left} {top} {width} {height}">',
+        '<desc>© OpenStreetMap contributors · ODbL · https://www.openstreetmap.org/copyright</desc>',
         f'<style>{STYLE}</style>',
-        f'<rect width="{width}" height="{height}" fill="#e9ede3"/>',
+        f'<rect x="{left}" y="{top}" width="{width}" height="{height}" fill="#e9ede3"/>',
     ]
     for layer in LAYERS:
         if layers[layer]:
@@ -195,7 +190,18 @@ def main():
             elements.extend(f'<path d="{geometry}"/>' for geometry in layers[layer])
             elements.append("</g>")
     elements.append("</svg>")
-    args.output.write_text("\n".join(elements) + "\n", encoding="utf-8", newline="\n")
+    output.write_text("\n".join(elements) + "\n", encoding="utf-8", newline="\n")
+
+
+def main():
+    root = Path(__file__).resolve().parents[1]
+    parser = argparse.ArgumentParser(description=__doc__)
+    parser.add_argument("osm", type=Path)
+    parser.add_argument("--output", type=Path, required=True)
+    args = parser.parse_args()
+    project = spa_projection(root / "assets/track-maps")
+    # The added area uses the same scale and origin as the existing track and cars.
+    write_basemap(args.osm, project, (-1000, -100, 3200, 1100), args.output)
 
 
 if __name__ == "__main__":

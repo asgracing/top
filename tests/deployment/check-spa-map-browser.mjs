@@ -56,7 +56,7 @@ try {
     if(await page.locator('.asg-legal-banner-btn-secondary').isVisible())await page.locator('.asg-legal-banner-btn-secondary').click();
     let mainPath;
     for(const key of ['main','sunset']) {
-      const basemapResponse=key==='main'?page.waitForResponse(r=>new URL(r.url()).pathname==='/assets/track-maps/spa-basemap.svg'):null;
+      const basemapResponse=key==='main'?page.waitForResponse(r=>new URL(r.url()).pathname==='/assets/track-maps/basemaps/spa-gp.svg'):null;
       await page.locator(`${container} [data-server="${key}"]`).click();
       const map=page.locator('#v2-modal .server-track-map[data-track-map="spa-gp"]');
       await map.waitFor();
@@ -87,9 +87,16 @@ try {
       if(key==='main')mainPath=routePath;else assert.equal(routePath,mainPath,'same contour despite unrelated learned lap');
       assert.equal(await map.locator('.track-car.is-leader text').textContent(),'1');
       assert.equal(await map.locator('.track-car.is-leader circle').evaluate(el=>getComputedStyle(el).fill),'rgb(220, 53, 69)');
-      assert.equal(await map.locator('image[href$="/spa-basemap.svg"]').count(),1);
+      assert.equal(await map.locator('image[href$="/basemaps/spa-gp.svg"]').count(),1);
+      assert.ok(await map.locator('svg').evaluate(svg=>{
+        const panel=svg.getBoundingClientRect(),image=svg.querySelector('image').getBoundingClientRect();
+        return image.left<=panel.left+1&&image.right>=panel.right-1
+          &&image.top<=panel.top+1&&image.bottom>=panel.bottom-1;
+      }), 'geographic background covers the map viewport');
       assert.equal(await map.locator('.track-label,.track-timing-mark text').count(),0);
       assert.equal(await map.locator('.track-timing-mark line').count(),3);
+      assert.deepEqual(await map.locator('.track-timing-mark line').evaluateAll(lines=>lines.map(line=>getComputedStyle(line).stroke)),
+        ['rgb(255, 255, 255)','rgb(227, 62, 73)','rgb(227, 62, 73)']);
       assert.equal(await map.locator('.track-outline').evaluate(el=>getComputedStyle(el).stroke),'rgb(47, 64, 74)');
       assert.match(await map.textContent(),/OpenStreetMap contributors/);
       assert.ok(await map.evaluate(el=>el.scrollWidth<=el.clientWidth+1),'no horizontal overflow');
