@@ -83,9 +83,9 @@ export function renderTrackMap(server, lang = 'ru', now = Date.now(), {expanded=
   }
   const format = point=>point.map(v=>v.toFixed(2)).join(' ');
   const path = map.points.map((p,i)=>`${i ? 'L':'M'}${format(p)}`).join(' ')+' Z';
-  const spaBasemap = map.id === SPA_MAP.id;
+  const spaBasemap = map.id === 'spa-gp';
   const background = spaBasemap
-    ? `<image href="/assets/track-maps/spa-basemap.svg" width="1200" height="900"/><path class="track-outline-edge" d="${path}"/>`
+    ? `<image href="/assets/track-maps/spa-basemap.svg" width="1200" height="900"/><path class="track-outline-edge" fill="none" d="${path}"/>`
     : '';
   // Leader is drawn last, keeping its red marker visible in a close group.
   const markers = [...cars].sort((a,b)=>(a.position===1)-(b.position===1)).map(d=>{

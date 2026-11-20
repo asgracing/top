@@ -232,6 +232,7 @@ test('Spa shares the same geographic basemap and permanent route without a learn
   assert.match(renderTrackMap(a,'ru',now),/Позиция 1/);
   const emptyMap=renderTrackMap(b,'en',now);
   assert.match(emptyMap,/<image href="\/assets\/track-maps\/spa-basemap.svg" width="1200" height="900"/);
+  assert.match(emptyMap,/<path class="track-outline-edge" fill="none"/);
   assert.match(emptyMap,/OpenStreetMap contributors/);
   assert.match(emptyMap,/Start \/ finish/);
   assert.doesNotMatch(emptyMap,/class="track-label|<text/);
