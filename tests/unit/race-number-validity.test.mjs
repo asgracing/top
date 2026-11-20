@@ -32,9 +32,32 @@ test('no assigned number means no reservation information',()=>{
   for(const raceNumber of [null,undefined,0,1000,'77',true])
     assert.equal(renderRaceNumberValidity({raceNumber,expiresAt:prefs(now+day).expiresAt},'ru',now),'');
 });
+test('active support shows its own Moscow end instead of an inactivity countdown',()=>{
+  for(const lang of ['ru','en']){
+    const html=renderRaceNumberValidity({...prefs(now+day),supportProtection:prefs(now+2*day).expiresAt},lang,now);
+    assert.match(html,/data-number-validity="support"/);
+    assert.match(html,lang==='ru'?/Защищён подпиской до/:/Protected by your subscription until/);
+    assert.match(html,lang==='ru'?/02\.11\.2026, 00:00 МСК/:/02\/11\/2026, 00:00 MSK/);
+    assert.doesNotMatch(html,/До освобождения|Time remaining/);
+  }
+});
+test('expired or malformed support never replaces the server inactivity deadline',()=>{
+  for(const supportProtection of [null,'invalid',prefs(now).expiresAt]){
+    const html=renderRaceNumberValidity({...prefs(now+60*day),supportProtection},'ru',now);
+    assert.match(html,/data-number-validity="active"/);
+    assert.match(html,/60 дней/);
+  }
+  assert.match(renderRaceNumberValidity({raceNumber:77,supportProtection:prefs(now).expiresAt},'en',now),/data-number-validity="unknown"/);
+});
+test('an open-ended support grant remains distinct from a staff exemption',()=>{
+  const html=renderRaceNumberValidity({...prefs(now+60*day),supportProtection:true},'en',now);
+  assert.match(html,/data-number-validity="support"/);
+  assert.match(html,/Protected while support is active/);
+  assert.doesNotMatch(html,/<time|administrator list|Time remaining/);
+});
 test('administrators see an indefinite private reservation without a countdown',()=>{
   for(const lang of ['ru','en']){
-    const html=renderRaceNumberValidity({raceNumber:77,permanent:true,expiresAt:prefs(now).expiresAt},lang,now);
+    const html=renderRaceNumberValidity({raceNumber:77,permanent:true,expiresAt:prefs(now).expiresAt,supportProtection:prefs(now+day).expiresAt},lang,now);
     assert.match(html,/data-number-validity="permanent"/);
     assert.match(html,lang==='ru'?/Закреплён бессрочно/:/Reserved indefinitely/);
     assert.match(html,lang==='ru'?/Пока вы в списке администраторов/:/While on the ASG administrator list/);

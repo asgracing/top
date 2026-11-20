@@ -21,7 +21,7 @@
   "siteAppearanceArtworkBytes": 185000,
   "raceNumberPickerJavaScriptBytes": 7500,
   "raceNumberPickerStylesheetBytes": 2200,
-  "raceNumberValidityJavaScriptBytes": 2500,
+  "raceNumberValidityJavaScriptBytes": 3400,
   "raceNumberValidityStylesheetBytes": 1100,
   "serverLiveTelemetryJavaScriptBytes": 22000,
   "serverTrackMapJavaScriptBytes": 8200,

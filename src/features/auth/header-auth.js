@@ -80,6 +80,10 @@ function safeText(value, maxLength = 160) {
   return String(value ?? "").trim().slice(0, maxLength);
 }
 
+function objectValue(value) {
+  return value && typeof value === "object" ? value : null;
+}
+
 function safeMetric(value) {
   if (value === null || value === undefined || value === "") return null;
   const number = Number(value);
@@ -165,7 +169,7 @@ export function safeDiscordAuthorizationUrl(value) {
 
 export function normalizeAuthPayload(payload) {
   if (!payload || payload.authenticated !== true) return { authenticated: false };
-  const rawDriver = payload.linked === true && payload.driver && typeof payload.driver === "object"
+  const rawDriver = payload.linked === true && objectValue(payload.driver)
     ? {
         publicId: safeText(payload.driver.public_id, 160),
         displayName: safeText(payload.driver.display_name, 160),
@@ -177,15 +181,13 @@ export function normalizeAuthPayload(payload) {
       }
     : null;
   const driver = rawDriver?.publicId && rawDriver.displayName && rawDriver.profileUrl ? rawDriver : null;
-  const steam = payload.steam && typeof payload.steam === "object"
+  const steam = objectValue(payload.steam)
     ? {
         personaName: safeText(payload.steam.persona_name, 128),
         avatarUrl: safeAvatarUrl(payload.steam.avatar_url)
       }
     : { personaName: "", avatarUrl: null };
-  const rawDiscord = payload.discord && typeof payload.discord === "object"
-    ? payload.discord
-    : null;
+  const rawDiscord = objectValue(payload.discord);
   const syncStatus = ["pending", "synced", "error", "unlink_pending"].includes(rawDiscord?.sync_status)
     ? rawDiscord.sync_status
     : null;
@@ -193,17 +195,16 @@ export function normalizeAuthPayload(payload) {
     linked: rawDiscord?.linked === true,
     syncStatus
   };
-  const rawPreferences = payload.preferences && typeof payload.preferences === "object"
-    ? payload.preferences
-    : {};
+  const rawPreferences = objectValue(payload.preferences) ?? {};
   const rawRaceNumber = safeMetric(rawPreferences.race_number);
   const raceNumber = Number.isInteger(rawRaceNumber) && rawRaceNumber >= 1 && rawRaceNumber <= 999
     ? rawRaceNumber
     : null;
-  const rawPending = rawPreferences.pending_request && typeof rawPreferences.pending_request === "object"
-    ? rawPreferences.pending_request
-    : null;
+  const rawPending = objectValue(rawPreferences.pending_request);
   const pendingNumber = safeMetric(rawPending?.race_number);
+  const retention = rawPreferences.retention ?? {};
+  const supportProtection = retention.support_protected_indefinitely === true
+    || safeText(retention.support_protected_until, 64);
   const preferences = {
     raceNumber,
     pendingRequest: rawPending && Number.isInteger(pendingNumber) && pendingNumber >= 1 && pendingNumber <= 999
@@ -215,15 +216,15 @@ export function normalizeAuthPayload(payload) {
         }
       : null,
     canChange: rawPreferences.can_change === true,
-      permanent: rawPreferences.retention?.permanent === true,
-    expiresAt: rawPreferences.retention?.activity_verified === true
-      ? safeText(rawPreferences.retention.expires_at, 64) || null : null,
+    permanent: retention.permanent === true,
+    ...(supportProtection && {supportProtection}),
+    expiresAt: retention.activity_verified === true ? safeText(retention.expires_at, 64) || null : null,
     nextChangeAt: safeText(rawPreferences.next_change_at, 64) || null,
     blockedReason: ["driver_banned", "driver_profile_required"].includes(rawPreferences.blocked_reason)
       ? rawPreferences.blocked_reason
       : null
   };
-  const rawTitles = payload.titles && typeof payload.titles === "object" ? payload.titles : {};
+  const rawTitles = objectValue(payload.titles) ?? {};
   const definitionsVersion = safeMetric(rawTitles.definitions_version);
   const currentTitleCatalog = definitionsVersion !== null
     && definitionsVersion >= MIN_TITLE_DEFINITIONS_VERSION;
