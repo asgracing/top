@@ -80,7 +80,7 @@
     },
     {
       "path": "scripts/build-v2.mjs",
-      "sha256": "7d8f08fb8973babf304c0743ab6a1e96c818460109479e31d3c2e76a56bced83"
+      "sha256": "aaf261bd2856e0cacabad8de0fc52675719419351c5387fdb4fa982c3c97de83"
     },
     {
       "path": "scripts/faq-page.mjs",
@@ -120,7 +120,7 @@
     },
     {
       "path": "src/features/auth/header-auth.js",
-      "sha256": "a25a5c6fb2ea90e62225c8892b983836b95f3e4122d77bef0ca129612da518d3"
+      "sha256": "4bccdb30438f155a032da871e02893bfe34f6d452d5174b12e3a322b2809ec64"
     },
     {
       "path": "src/features/auth/personal-notifications.js",
@@ -196,7 +196,7 @@
     },
     {
       "path": "src/pages/account/account.js",
-      "sha256": "9e4d9c782713705a232e9b030bbf5674f1c4245d175c8021b3d3f6c90e1b65c9"
+      "sha256": "9e50c336d4e2952054c46cfecab9437ed78852cc2b6e7fc591e5dfe73980282d"
     },
     {
       "path": "src/pages/account/clubs-teams-command-model.js",
@@ -396,7 +396,7 @@
     },
     {
       "path": "src/shared/race-number-validity.js",
-      "sha256": "ed6a5420e51d606c48d9f9118b3f23c4391288544d6bf02917bc541b68e165dc"
+      "sha256": "cea36a04a33adfda2812107d9e6fd45d6d146ff79ccf57cfaf7b54d35b1f24ef"
     },
     {
       "path": "src/shared/race-result-context.js",
@@ -756,7 +756,7 @@
     },
     {
       "path": "v2/home.js",
-      "sha256": "ce08b4ab7eebfe32a37587756a0e062497d8bd1397b2a38e07818117fb3c8f98"
+      "sha256": "41c1ad16a0a16f998801dadaac491e9efae4e4d267f98c87753d58aa25d4feac"
     },
     {
       "path": "v2/live-stats.js",
@@ -791,8 +791,12 @@
       "sha256": "fce1401c0b66daca2588b4a2cbd883a3b0ade4d4da3fb31f1c007c4909e70c9a"
     },
     {
+      "path": "v2/pages/account-support.js",
+      "sha256": "76b71ff9695fef8df701605d80898e1b641b674704a6eb58cbf975f7ab6db206"
+    },
+    {
       "path": "v2/pages/account.js",
-      "sha256": "6e3aa848a696b4db44cd4d54a26ff9998e0aac91d4a48a74b83c9770f26c5745"
+      "sha256": "f4266aef07c72c02fdc40dc6cb2357a67a5eb0d32403a3127a2ac3a445a61792"
     },
     {
       "path": "v2/pages/bans-model.js",
@@ -812,7 +816,7 @@
     },
     {
       "path": "v2/pages/controller.js",
-      "sha256": "24047189dba878cd98dc88172dbf28ab8d188861b6af4ecade2e677d4b20536e"
+      "sha256": "ab4c62b2b4805850b8b7d45a53aed2948dad100d4981c576465f49478b9ab735"
     },
     {
       "path": "v2/pages/data.js",

@@ -6,23 +6,29 @@ import {browser,base,fixture,root} from './v2-browser-fixtures.mjs';
 const output=process.env.ASG_QA_OUTPUT_DIR;assert.ok(output,'Set the task QA output directory');
 await fs.mkdir(output,{recursive:true});
 const profile=JSON.parse(await fs.readFile(path.join(root,'tests/fixtures/v2-pages/public.json'),'utf8')).driver;
-const now=Date.now(),day=86400000,expires=new Date(now+2*day).toISOString(),reports=[];
+const now=Date.now(),day=86400000,expires=new Date(now+2*day).toISOString(),supportEnd=new Date(now+7*day).toISOString(),reports=[];
 const payload={authenticated:true,linked:true,driver:{public_id:profile.public_id,display_name:'Fixture Pilot',profile_url:'/driver/?id='+profile.public_id},
  steam:{persona_name:'Fixture Pilot'},csrf_token:'fixture-csrf',preferences:{race_number:77,can_change:true,retention:{activity_verified:true,expires_at:expires}},
  titles:{enabled:true,available:[],active:null},clubs_teams:{enabled:false}};
 async function publish(page,auth){
  await page.evaluate(async raw=>{
-  const {normalizeAuthPayload}=await import('/src/features/auth/header-auth.js?v=20261102adminnumbers1');
+  const {normalizeAuthPayload}=await import('/src/features/auth/header-auth.js?v=20261120supportnumber1');
   const bridge=await import('/v2/bridge.js?v=20261006v2k');let model;bridge.subscribe(next=>model=next)();
   bridge.publish({...model,auth:normalizeAuthPayload(raw)});
  },auth);
 }
-async function create(lang,width,screen,auth=payload){
+async function create(lang,width,screen,auth=payload,support={sync:{status:'current'},effective:null}){
+ let supportReads=0;
  const page=await browser.newPage({viewport:{width,height:940},reducedMotion:'reduce'}),errors=[];
  await page.addInitScript(value=>Date.now=()=>value,now);
  page.on('pageerror',error=>errors.push(error.message));
  await page.route('**/*',async route=>{
   const request=route.request(),url=new URL(request.url());
+  if(url.hostname==='auth.asgracing.ru'&&url.pathname==='/v1/me/support'){
+   supportReads++;
+   assert.equal(request.method(),'GET');
+   return route.fulfill({contentType:'application/json',body:JSON.stringify(support)});
+  }
   if(url.hostname==='auth.asgracing.ru'&&url.pathname==='/v1/me')return route.fulfill({contentType:'application/json',body:JSON.stringify(auth)});
   if(url.hostname==='data.asgracing.ru'&&url.pathname==='/top-data/v2/drivers/'+profile.public_id+'.json')return route.fulfill({contentType:'application/json',body:JSON.stringify({...profile,race_number:77})});
   if(url.hostname==='data.asgracing.ru'&&url.pathname==='/hourly-votes-api/voter-token')return fixture(route,[],{signed:true});
@@ -30,9 +36,56 @@ async function create(lang,width,screen,auth=payload){
  });
  await page.goto(base+(lang==='en'?'/en':'')+(screen==='account'?'/account/':'/driver/?id='+profile.public_id),{waitUntil:'networkidle'});
  const consent=page.locator('.asg-legal-banner-btn-secondary');if(await consent.isVisible())await consent.click();
- return {page,errors};
+ return {page,errors,supportReads:()=>supportReads};
 }
 try{
+ const scenarios=[
+  {name:'manual-dated',tier:'supporter',source:'manual',ends_at:supportEnd,label:'Supporter'},
+  {name:'manual-indefinite',tier:'vip',source:'manual',ends_at:null,label:'VIP'},
+  {name:'paid-legacy',tier:'pro',source:'sponsr',ends_at:supportEnd,label:'PRO',legacy:true},
+  {name:'expired',tier:'pro',source:'manual',ends_at:expires,label:null,expired:true},
+ ];
+ const labels={ru:{none:'Нет активного уровня',manual:'Ручное назначение',open:'До отзыва'},
+  en:{none:'No active tier',manual:'Manual access',open:'Until revoked'}};
+ for(const lang of ['ru','en'])for(const scenario of scenarios){
+  const width=scenario.name==='manual-indefinite'?320:390;
+  const ends=scenario.expired?new Date(now).toISOString():scenario.ends_at;
+  const raw=scenario.legacy?{sync:{status:'current'},paid:{tier:scenario.tier,paid_until:ends}}:
+   {sync:{status:'current'},effective:{tier:scenario.tier,source:scenario.source,ends_at:ends}};
+  const auth=scenario.ends_at===null?{...payload,preferences:{...payload.preferences,
+   retention:{support_protected_indefinitely:true}}}:payload;
+  const {page,errors,supportReads}=await create(lang,width,'account',auth,raw);
+  const support=page.locator('.control-summary>.project-support-account');
+  await support.getByRole('status').getByText(scenario.label||labels[lang].none,{exact:true}).waitFor();
+  assert.equal(supportReads(),1);
+  if(scenario.label){
+   const source=scenario.source==='manual'?labels[lang].manual:'Sponsr';
+   assert.ok((await support.textContent()).includes(source));
+  }
+  if(scenario.label&&ends){
+   assert.equal(await support.locator('time').getAttribute('datetime'),ends);
+  }else{
+   assert.equal(await support.locator('time').count(),0);
+  }
+  if(ends===null){
+   assert.ok((await support.textContent()).includes(labels[lang].open));
+   await page.locator('.race-number-validity[data-number-validity="support"]').waitFor();
+   await support.scrollIntoViewIfNeeded();
+   await page.screenshot({path:path.join(output,'account-indefinite-'+lang+'.png')});
+  }
+  assert.ok(await page.evaluate(()=>document.documentElement.scrollWidth<=innerWidth+1));
+  assert.deepEqual(errors,[]);
+  reports.push({screen:'account',scenario:scenario.name,lang,width,errors});
+  await page.close();
+ }
+ for(const lang of ['ru','en']){
+  const auth={...payload,preferences:{...payload.preferences,retention:{activity_verified:false,support_protected_until:supportEnd}}};
+  const {page,errors}=await create(lang,390,'account',auth);
+  const card=page.locator('.race-number-validity[data-number-validity="support"]');
+  await card.waitFor();
+  assert.equal(await card.locator('time').getAttribute('datetime'),supportEnd);
+  assert.deepEqual(errors,[]);reports.push({screen:'account',scenario:'support-on-first-load',lang,width:390,errors});await page.close();
+ }
  for(const screen of ['account'])for(const lang of ['ru','en'])for(const width of [1280,390,320]){
   const {page,errors}=await create(lang,width,screen),card=page.locator('.race-number-validity');
   await card.waitFor();assert.equal(await card.count(),1);
@@ -43,7 +96,14 @@ try{
   assert.equal(await card.evaluate(el=>Boolean(el.closest('.control-summary>article'))),true);
   await card.scrollIntoViewIfNeeded();await page.screenshot({path:path.join(output,`${screen}-${lang}-${width}.png`)});
   assert.ok(await page.evaluate(()=>document.documentElement.scrollWidth<=innerWidth+1));
-  await publish(page,{...payload,preferences:{...payload.preferences,retention:{activity_verified:true,expires_at:new Date(now+60*day).toISOString()}}});
+  await publish(page,{...payload,preferences:{...payload.preferences,retention:{activity_verified:false,expires_at:null,support_protected_until:supportEnd}}});
+  await page.waitForFunction(()=>document.querySelector('.race-number-validity')?.dataset.numberValidity==='support');
+  assert.match(await card.textContent(),lang==='ru'?/Защищён подпиской до/:/Protected by your subscription until/);
+  assert.equal(await card.locator('time').getAttribute('datetime'),supportEnd);
+  assert.equal(await card.locator('.race-number-validity-remaining').count(),0);
+  await card.scrollIntoViewIfNeeded();await page.screenshot({path:path.join(output,`support-${screen}-${lang}-${width}.png`)});
+  assert.ok(await page.evaluate(()=>document.documentElement.scrollWidth<=innerWidth+1));
+  await publish(page,{...payload,preferences:{...payload.preferences,retention:{activity_verified:true,expires_at:new Date(now+60*day).toISOString(),support_protected_until:new Date(now).toISOString()}}});
   await page.waitForFunction(()=>document.querySelector('.race-number-validity')?.dataset.numberValidity==='active');
   assert.match(await card.textContent(),lang==='ru'?/60 дней/:/60 days/);
   await publish(page,{...payload,preferences:{...payload.preferences,retention:{activity_verified:true,expires_at:null,permanent:true}}});
@@ -62,12 +122,13 @@ try{
   assert.deepEqual(errors,[]);reports.push({screen,lang,width,errors});await page.close();
  }
  for(const lang of ['ru','en'])for(const width of [1280,390,320])for(const auth of [payload,{authenticated:false},{...payload,driver:{...payload.driver,public_id:'drv_other'}}]){
-  const {page,errors}=await create(lang,width,'driver',auth);await page.locator('.profile-heading').waitFor();
+  const {page,errors,supportReads}=await create(lang,width,'driver',auth);await page.locator('.profile-heading').waitFor();
+  assert.equal(supportReads(),0,'Public profiles never access the private status API');
   assert.equal(await page.locator('.race-number-validity').count(),0);
   assert.equal(await page.locator('[data-profile-number-validity]').count(),0);
   assert.equal(await page.locator('[data-number-validity-style]').count(),0);
   await publish(page,payload);
-  await publish(page,{...payload,preferences:{...payload.preferences,retention:{activity_verified:true,expires_at:new Date(now+60*day).toISOString()}}});
+  await publish(page,{...payload,preferences:{...payload.preferences,retention:{activity_verified:false,support_protected_until:supportEnd}}});
   await page.waitForTimeout(1100);
   assert.equal(await page.locator('.race-number-validity,[data-profile-number-validity]').count(),0,'Owner auth/renewal must never add an expiry to the public profile');
   assert.equal(await page.locator('[data-number-validity-style]').count(),0);

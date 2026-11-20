@@ -1,7 +1,8 @@
-import {mountAccountWorkspace,loadApprovedEntityProfile} from '/src/pages/account/account.js?v=20261116paragraphs1';
-import {normalizeAuthPayload} from '/src/features/auth/header-auth.js?v=20261011notifications1';
+import {mountAccountWorkspace,loadApprovedEntityProfile} from '/src/pages/account/account.js?v=20261120supportnumber1';
+import {normalizeAuthPayload} from '/src/features/auth/header-auth.js?v=20261120supportnumber1';
 import {createHttpClient} from '/src/shared/http-client.js';
 import {v2Route} from '../routes.js?v=20261007v2pages14';
+import {mountAccountSupport} from './account-support.js?v=20261120supportaccount1';
 
 // Presentation only: normalized Steam identity and the existing account commands.
 export function startAccountPage({view,text,esc,rating,language,subscribe,showDialog}) {
@@ -12,6 +13,7 @@ export function startAccountPage({view,text,esc,rating,language,subscribe,showDi
   view.innerHTML=`<div class="page-breadcrumb"><a href="${v2Route('',language)}">${text('Главная','Home')}</a><span>/</span><b>${text('Личный кабинет','My account')}</b></div><div id="account-content" class="v2-account"><section class="panel page-panel"><p role="status">${text('Загрузка аккаунта…','Loading account…')}</p></section></div>`;
   const root=document.getElementById('account-content'),client=createHttpClient({fetchImpl:globalThis.fetch,defaultTimeoutMs:8000});
   let authKey='',currentAuth=null,confirmation=false,refreshPending=null;
+  let supportView;
   const profiles=new Map();
   const panel=(title,content)=>`<section class="panel"><div class="panel-head"><h2>${esc(title)}</h2></div><div class="control-panel-body">${content}</div></section>`;
   const empty=message=>`<p class="page-help">${esc(message)}</p>`;
@@ -32,6 +34,7 @@ export function startAccountPage({view,text,esc,rating,language,subscribe,showDi
     });
   }
   function decorate(nativeRoot,auth){
+    supportView?.abort();
     currentAuth=auth;
     if(!auth?.authenticated){
       const failed=document.querySelector('.auth-header')?.dataset.authState==='error';
@@ -56,6 +59,10 @@ export function startAccountPage({view,text,esc,rating,language,subscribe,showDi
     const discordActions=document.createElement('div');discordActions.className='control-actions';summary.children[2].querySelectorAll('button').forEach(b=>discordActions.append(b));summary.children[2].append(discordActions);
     const validity=body.querySelector('.race-number-validity');
     if(validity)summary.firstElementChild.querySelector('a').before(validity);
+    const support=document.createElement('article');
+    summary.append(support);
+    supportView=new AbortController();
+    mountAccountSupport(support,{client,text,language,linked:auth.linked,signal:supportView.signal});
     const columns=document.createElement('div');columns.className='control-columns';
     const left=document.createElement('div'),right=document.createElement('aside');columns.append(left,right);
     const clubs=body.querySelector('.account-clubs-teams');
