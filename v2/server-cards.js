@@ -1,9 +1,10 @@
 // Shared presentation helpers; no server registry or rating policy lives here.
 export function orderedServers(servers = []) {
-  const pinned = ['hourly', 'main', 'sunset'];
+  const priority = new Map([['hourly', 0], ['main', 1]]);
+  // Stable sort retains the runtime's track and name order when player counts tie.
   return [...servers].sort((a, b) =>
-    (pinned.includes(a.key) ? pinned.indexOf(a.key) : 3) -
-    (pinned.includes(b.key) ? pinned.indexOf(b.key) : 3));
+    (priority.get(a.key) ?? 2) - (priority.get(b.key) ?? 2) ||
+    (b.players ?? 0) - (a.players ?? 0));
 }
 
 export function replaceServerCards(container, html, scrollContainers = []) {

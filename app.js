@@ -8854,6 +8854,7 @@ function getServerStatusItems(serverStatus = serverStatusData) {
 function serverPlayersOnline(server) {
   if (serverStatusIsStale() || isInstanceStatusStale(server)) return null;
   if (!server || typeof server !== "object") return null;
+  if (Number.isInteger(server.drivers_connected) && server.drivers_connected >= 0) return server.drivers_connected;
   if (Number.isFinite(server.players_online)) return server.players_online;
   return getServerDrivers(server).length;
 }
