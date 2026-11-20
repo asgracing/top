@@ -80,7 +80,7 @@ try {
       if(key==='main')mainPath=routePath;else assert.equal(routePath,mainPath,'same contour despite unrelated learned lap');
       assert.equal(await map.locator('.track-car.is-leader text').textContent(),'1');
       assert.equal(await map.locator('.track-car.is-leader circle').evaluate(el=>getComputedStyle(el).fill),'rgb(220, 53, 69)');
-      assert.equal(await map.locator('.track-basemap').count(),1);
+      assert.equal(await map.locator('image[href$="/spa-basemap.svg"]').count(),1);
       assert.equal(await map.locator('.track-label,.track-timing-mark text').count(),0);
       assert.equal(await map.locator('.track-timing-mark line').count(),3);
       assert.equal(await map.locator('.track-outline').evaluate(el=>getComputedStyle(el).stroke),'rgb(47, 64, 74)');

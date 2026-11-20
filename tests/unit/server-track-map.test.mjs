@@ -231,11 +231,11 @@ test('Spa shares the same geographic basemap and permanent route without a learn
   assert.equal(SPA_MAP.points.length,153);
   assert.match(renderTrackMap(a,'ru',now),/Позиция 1/);
   const emptyMap=renderTrackMap(b,'en',now);
-  assert.match(emptyMap,/class="track-basemap" href="\/assets\/track-maps\/spa-basemap.svg" width="1200" height="900"/);
+  assert.match(emptyMap,/<image href="\/assets\/track-maps\/spa-basemap.svg" width="1200" height="900"/);
   assert.match(emptyMap,/OpenStreetMap contributors/);
   assert.match(emptyMap,/Start \/ finish/);
   assert.doesNotMatch(emptyMap,/class="track-label|<text/);
-  assert.doesNotMatch(renderTrackMap({...a,track_code:'monza'},'en',now),/class="track-basemap"/);
+  assert.doesNotMatch(renderTrackMap({...a,track_code:'monza'},'en',now),/spa-basemap/);
   for(const status of ['stale','offline']) {
     const html=renderTrackMap({...a,status},'en',now);
     assert.match(html,/data-track-map="spa-gp"/);
