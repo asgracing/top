@@ -150,7 +150,10 @@ const LOCAL_NEWS_DATA_URL = `${SITE_BASE_PATH}news-content/news.json`;
 const topDataV2ManifestUrl = `${TOP_DATA_V2_BASE_URL}/manifest.json`;
 const serverStatusUrl = getDevRuntimeParam("serverStatusUrl") || (TOP_API_ROOT_URL ? `${TOP_API_ROOT_URL}/server-status` : `${TOP_DATA_BASE_URL}/server_status.json`);
 const initialHomeScript = IS_V2_HOME && document.querySelector("script[data-home-initial][src]");
-const initialHomeModule = initialHomeScript ? import(initialHomeScript.src).catch(() => null) : null;
+const initialHomeModule = initialHomeScript ? import(initialHomeScript.src).catch(error => {
+  console.warn("Early home reads are unavailable.", error);
+  return null;
+}) : null;
 async function requestHomeJson(url, options) {
   const initial = initialHomeModule && await initialHomeModule;
   return initial?.takeHomeRead?.(url) || requestJson(url, options);

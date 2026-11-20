@@ -38,7 +38,8 @@ try {
       return fixture(route,log);
     });
     await page.goto(`${base}/v2/${language}/${screen}/`+(screen==='driver'?'?id='+id:''),{waitUntil:'networkidle'});
-    await page.locator('.v2-language a[data-language="en"]').waitFor();
+    // Mobile uses its own language menu; this shared anchor still defines the route.
+    await page.locator('.v2-language a[data-language="en"]').waitFor({state:"attached"});
     await page.waitForTimeout(250);
     assert.deepEqual(errors,[]);
     assert.equal(await page.locator('#home-view').isVisible(),false);
