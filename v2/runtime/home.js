@@ -150,6 +150,12 @@ const AUTH_BASE_URL = "https://auth.asgracing.ru";
 const LOCAL_NEWS_DATA_URL = `${SITE_BASE_PATH}news-content/news.json`;
 const topDataV2ManifestUrl = `${TOP_DATA_V2_BASE_URL}/manifest.json`;
 const serverStatusUrl = getDevRuntimeParam("serverStatusUrl") || (TOP_API_ROOT_URL ? `${TOP_API_ROOT_URL}/server-status` : `${TOP_DATA_BASE_URL}/server_status.json`);
+const initialHomeScript = IS_V2_HOME && document.querySelector("script[data-home-initial][src]");
+const initialHomeModule = initialHomeScript ? import(initialHomeScript.src).catch(() => null) : null;
+async function requestHomeJson(url, options) {
+  const initial = initialHomeModule && await initialHomeModule;
+  return initial?.takeHomeRead?.(url) || requestJson(url, options);
+}
 const liveServerStatusUrl = getDevRuntimeParam("serverStatusUrl") || `${TOP_DATA_BASE_URL}/server_status_live.json`;
 const directServerStatusUrl = getDevRuntimeParam("serverStatusUrl") ? null : 'https://data.asgracing.ru/telemetry/v1/status';
 let directStatusRetryAt = 0;
@@ -5724,10 +5730,11 @@ function getFastestLapMs(items = [], key = "best_lap_ms") {
   return values.length ? Math.min(...values) : null;
 }
 
-async function loadJson(url,{force=false,...options}={}) {
+async function loadJson(url,{force=false,initialHome=false,...options}={}) {
   await initializeQueryRuntime();
   const key = `json:${String(url)}`;
-  return jsonQueryCache.query(key,()=>requestJson(url,{cache:"default",retries:1,...options}),{ttlMs:15000,force});
+  const read = initialHome ? requestHomeJson : requestJson;
+  return jsonQueryCache.query(key,()=>read(url,{cache:"default",retries:1,...options}),{ttlMs:15000,force});
 }
 
 function hydrateSafetyAboutCopy() {
@@ -5758,16 +5765,21 @@ function withTopDataV2Version(url) {
   return `${url}${separator}v=${encodeURIComponent(topDataV2Version)}`;
 }
 
+let topDataV2ManifestRequest;
 async function loadTopDataV2Manifest() {
   if (topDataV2Manifest) return topDataV2Manifest;
 
-  const url = `${topDataV2ManifestUrl}?t=${Date.now()}`;
-  const manifestPayload = await requestJson(url, { cache: "no-store", retries: 1 });
-  const { normalizeManifest } = await dataSchemaModulePromise;
-  const manifest = normalizeManifest(manifestPayload);
-  topDataV2Manifest = manifest && typeof manifest === "object" ? manifest : null;
-  topDataV2Version = String(topDataV2Manifest?.version || topDataV2Manifest?.generated_at || "");
-  return topDataV2Manifest;
+  topDataV2ManifestRequest ||= (async () => {
+    const manifestUrl = `${topDataV2ManifestUrl}?t=${Date.now()}`;
+    const initial = initialHomeModule && await initialHomeModule;
+    const manifestPayload = await (initial?.takeHomeRead?.(topDataV2ManifestUrl)
+      || requestJson(manifestUrl, { cache: "no-store", retries: 1 }));
+    const { normalizeManifest } = await dataSchemaModulePromise;
+    topDataV2Manifest = normalizeManifest(manifestPayload);
+    topDataV2Version = String(topDataV2Manifest?.version || topDataV2Manifest?.generated_at || "");
+    return topDataV2Manifest;
+  })().finally(() => { topDataV2ManifestRequest = null; });
+  return topDataV2ManifestRequest;
 }
 
 async function loadTopDataV2Json(path){await loadTopDataV2Manifest();return loadJson(withTopDataV2Version(topDataV2Path(path)))}
@@ -5775,7 +5787,7 @@ async function loadTopDataV2Json(path){await loadTopDataV2Manifest();return load
 async function loadSiteDataV2({ deferTables = false } = {}) {
   const manifest = await loadTopDataV2Manifest();
   const homePath = manifest?.home || "home.json";
-  const rawData = await loadTopDataV2Json(homePath);
+  const rawData = await loadJson(withTopDataV2Version(topDataV2Path(homePath)), { initialHome: deferTables });
   const { normalizeHomePayload } = await dataSchemaModulePromise;
   const data = normalizeHomePayload(rawData);
   const normalized = normalizeSnapshotPayload(data);
@@ -6114,7 +6126,7 @@ async function loadSiteData() {
 
 async function loadHourlyAnnouncementData() {
   try {
-    const data = await requestJson(hourlyAnnouncementUrl, { cache: "no-store", retries: 1 });
+    const data = await requestHomeJson(hourlyAnnouncementUrl, { cache: "no-store", retries: 1 });
     const { normalizeHourlyAnnouncement } = await dataSchemaModulePromise;
     return normalizeHourlyAnnouncement(data);
   } catch (error) {
@@ -6125,7 +6137,7 @@ async function loadHourlyAnnouncementData() {
 
 async function loadHourlyScheduleData() {
   try {
-    const data = await requestJson(hourlyScheduleUrl, { cache: "no-store", retries: 1 });
+    const data = await requestHomeJson(hourlyScheduleUrl, { cache: "no-store", retries: 1 });
     return data && typeof data === "object" ? data : null;
   } catch (error) {
     console.warn("hourly schedule is unavailable.", error);
