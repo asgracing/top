@@ -24,8 +24,8 @@ let browser;
 const reports=[];
 try {
   const tools=await import('./v2-browser-fixtures.mjs');browser=tools.browser;
-  for(const [lang,width,screen] of [['ru',1440,'home'],['en',414,'home'],['ru',1440,'servers'],['en',414,'servers']]) {
-    const page=await browser.newPage({viewport:{width,height:1000},reducedMotion:'reduce'});
+  for(const [lang,width,screen,height=1000] of [['ru',1440,'home'],['en',414,'home'],['ru',1218,'servers',887],['en',414,'servers'],['ru',1280,'servers',650]]) {
+    const page=await browser.newPage({viewport:{width,height},reducedMotion:'reduce'});
     const errors=[];let reads=0;
     page.on('pageerror',error=>errors.push(error.message));
     await page.route('**/*',async route=>{
@@ -62,7 +62,14 @@ try {
       await map.waitFor();
       if(basemapResponse)assert.ok((await basemapResponse).ok(),'the bundled view serves the Spa basemap');
       await page.waitForFunction(()=>document.querySelectorAll('#v2-modal .track-car').length===7);
-      await map.evaluate(el=>el.scrollIntoView({block:'start',behavior:'instant'}));
+      const fit=await map.evaluate(el=>{
+        el.scrollIntoView({block:'center',behavior:'instant'});
+        const body=el.closest('.modal-body').getBoundingClientRect(),panel=el.getBoundingClientRect();
+        const credit=el.querySelector('.track-map-credit').getBoundingClientRect();
+        return {above:body.top-panel.top,below:panel.bottom-body.bottom,credit:credit.bottom-panel.bottom};
+      });
+      assert.ok(fit.above<=1&&fit.below<=1&&fit.credit<=0,
+        `map and attribution fit in ${screen}, ${lang} ${width}×${height}: ${JSON.stringify(fit)}`);
       assert.ok(await map.evaluate(el=>Boolean(el.compareDocumentPosition(document.querySelector('#v2-modal .server-roster-heading'))&Node.DOCUMENT_POSITION_FOLLOWING)),'map precedes roster title and table');
       const dimensions=await map.locator('.track-car circle').first().evaluate(el=>({radius:parseFloat(getComputedStyle(el).r||el.getAttribute('r')),
         font:parseFloat(getComputedStyle(el.nextElementSibling).fontSize)}));

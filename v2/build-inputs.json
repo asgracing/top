@@ -80,7 +80,7 @@
     },
     {
       "path": "scripts/build-v2.mjs",
-      "sha256": "539a36786244e3719709c896f09e87d22eed4977777900c339abfc6a85a3e656"
+      "sha256": "56575e94e071378f6113e5a2bc4f0a24914efa060a72abc0e4fe41faa8ad0103"
     },
     {
       "path": "scripts/faq-page.mjs",
@@ -528,7 +528,7 @@
     },
     {
       "path": "styles/components/server-roster.css",
-      "sha256": "06632a16dab8981587b054062cfa4461385de9486bda4a731b2eb65c5c6ace34"
+      "sha256": "138d08cc921808d3ff4ff5dbe0bec8452fcc052b8c5257e7f70bcccdc8d19825"
     },
     {
       "path": "styles/components/server-sticky-layout.css",
