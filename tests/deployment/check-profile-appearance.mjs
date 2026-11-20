@@ -16,7 +16,7 @@ async function open({lang='ru',route='account',tier='vip',signed=true,reduced='r
   settings=saved,plain=false,editable=true,conflict=false,owns=true}={}) {
   const page=await browser.newPage({viewport:{width,height:900},reducedMotion:reduced});
   const requests=[],errors=[];
-  let privateReads=0;
+  let privateReads=0,publicTier=tier;
   let current=settings, revision=3;
   page.on('pageerror',error=>errors.push(error.message));
   await page.route('**/*',async request=>{
@@ -48,7 +48,7 @@ async function open({lang='ru',route='account',tier='vip',signed=true,reduced='r
     }
     if(url.pathname==='/v1/drivers/'+id+'/appearance'){
       assert.ok(!req.headers().cookie,'Public appearance uses no session');
-      return json(request,{tier,effect:current});
+      return json(request,{tier:publicTier,effect:current});
     }
     return fixture(request,[],{signed});
   });
@@ -75,7 +75,8 @@ async function open({lang='ru',route='account',tier='vip',signed=true,reduced='r
         (await page.locator('#page-view').innerText()).slice(0,300),{cause:error});
     }
   }
-  return {page,editor,requests,errors,prefix,privateReads:()=>privateReads};
+  return {page,editor,requests,errors,prefix,privateReads:()=>privateReads,
+    setPublicTier(value){publicTier=value;}};
 }
 try{
   for(const [tier,lang,width] of [['vip','ru',390],['pro','en',1280],['admin','ru',320]]){
@@ -121,7 +122,7 @@ try{
     await page.close();
   }
   for(const plain of [false,true]){
-    const {page,errors}=await open({route:'driver',signed:false,plain,reduced:'no-preference',width:1280});
+    const {page,errors,setPublicTier}=await open({route:'driver',signed:false,plain,reduced:'no-preference',width:1280});
     await page.locator('.profile-heading .project-support-badge[data-tier="vip"]').waitFor();
     if(plain){
       assert.equal(await page.locator('.vip-fx').count(),0);
@@ -137,6 +138,20 @@ try{
         const hero=page.locator('.profile-hero');
         await hero.screenshot({path:path.join(artifacts,'public-profile.png')});
       }
+      const publicView=page.locator('#page-view');
+      async function nextTier(tier){
+        setPublicTier(tier);
+        await page.evaluate(()=>{
+          const now=Date.now;
+          Date.now=()=>now()+62000;
+        });
+        await publicView.locator('.project-support-badge[data-tier="'+tier+'"]').waitFor({timeout:8000});
+      }
+
+      await nextTier('supporter');
+      assert.equal(await publicView.locator('.vip-fx,.profile-motion-toggle').count(),0);
+      await nextTier('vip');
+      await page.locator('#page-view[data-vip-theme="night"] .vip-hero-fx').waitFor({timeout:8000});
     }
     assert.deepEqual(errors,[]);
     await page.close();
@@ -156,7 +171,7 @@ try{
   await editor.getByRole('status').getByText('Оформление сохранено.').waitFor();
   assert.deepEqual(requests.map(write=>write.expected_revision),[3,4]);
   await page.close();
-  console.log('Profile appearance: VIP/PRO/ADMIN, eight presets, private save, public replay, reduced motion, mobile, read-only tiers and concurrent update passed.');
+  console.log('Profile appearance: VIP/PRO/ADMIN, eight presets, private save, public replay, reduced motion, mobile, read-only tiers, tier downgrade/restoration and concurrent update passed.');
 }finally{
   await browser.close();
 }
