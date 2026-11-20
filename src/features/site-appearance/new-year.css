@@ -75,6 +75,7 @@ body > .asg-new-year-lights { z-index: 0; inset-block-start: 0; }
 body > .asg-new-year-frost { z-index: 0; inset: auto 0 0; }
 
 .asg-new-year-snow {
+  --asg-new-year-crystals: url("./assets/crystals.webp");
   position: fixed;
   z-index: 12;
   inset: 0;

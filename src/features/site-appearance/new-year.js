@@ -7,45 +7,15 @@ function decoration(className) {
   return element;
 }
 
-const flakeCount = 36;
-
-function makeSnow() {
-  const snow = decoration("asg-new-year-snow");
-  for (let index = 0; index < flakeCount; index++) {
-    const flake = document.createElement("span");
-    const depth = index % 5;
-    const distant = depth < 2;
-    const duration = 28 - depth * 3 + Math.random() * 7;
-    const sway = (16 + Math.random() * 20) * (index % 2 === 0 ? 1 : -1);
-    flake.style.setProperty("--x", `${(index + Math.random()) / flakeCount * 100}%`);
-    flake.style.setProperty("--size", `${distant ? 2 + depth + Math.random() * 2 : 5 + depth * 3 + Math.random() * 4}px`);
-    flake.style.setProperty("--alpha", String(0.24 + depth * 0.09 + Math.random() * 0.15));
-    flake.style.setProperty("--fall", `${duration}s`);
-    flake.style.setProperty("--fall-phase", `-${Math.random() * duration}s`);
-    flake.style.setProperty("--sway", `${sway}px`);
-    // The old stylesheet still uses this property and the inner sprite on cached pages.
-    flake.style.setProperty("--wind", "0px");
-    flake.style.setProperty("--crystal", `${index % 3 * 50}%`);
-    if (distant) flake.className = "asg-new-year-grain";
-    flake.append(document.createElement("i"));
-    snow.append(flake);
-  }
-  return snow;
-}
-
 export function mountNewYear(stylesheetUrl) {
   const stylesheet = document.createElement("link");
   stylesheet.rel = "stylesheet";
   stylesheet.href = stylesheetUrl;
   const root = document.documentElement;
-  let snow;
+  let removeSnow;
   let frost;
   let removeGarland;
   let disposed = false;
-
-  const syncVisibility = () => {
-    root.toggleAttribute("data-asg-new-year-paused", document.hidden);
-  };
 
   const ready = new Promise((resolve, reject) => {
     stylesheet.onload = () => {
@@ -56,10 +26,9 @@ export function mountNewYear(stylesheetUrl) {
         frost = decoration("asg-new-year-frost");
         (footer || document.body).append(frost);
         root.setAttribute("data-asg-new-year", "");
-        snow = makeSnow();
-        document.body.append(snow);
-        document.addEventListener("visibilitychange", syncVisibility);
-        syncVisibility();
+        import("./new-year-snow.js?v=20261120wintercanvas1").then(({ mountSnow }) => {
+          if (!disposed) removeSnow = mountSnow(stylesheet.href);
+        }).catch(() => {});
       }
       resolve();
     };
@@ -74,12 +43,10 @@ export function mountNewYear(stylesheetUrl) {
     ready,
     destroy() {
       disposed = true;
-      document.removeEventListener("visibilitychange", syncVisibility);
-      snow?.remove();
+      removeSnow?.();
       frost?.remove();
       removeGarland?.();
       root.removeAttribute("data-asg-new-year");
-      root.removeAttribute("data-asg-new-year-paused");
       stylesheet.remove();
     }
   };
