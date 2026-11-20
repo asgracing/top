@@ -9,7 +9,7 @@ import {createHistoryViews} from './views/history.js?v=20261007v2pages14';
 import {markNewsRead} from '/news-read-state.js';
 import {editorialImage} from './editorial-model.js?v=20261007v2pages14';
 import {getCommunityPostKey} from '/src/pages/community/feed-model.js';
-import {createPageViews} from './views/core.js?v=20261119sra2';
+import {createPageViews} from './views/core.js?v=20261120hourlydata1';
 import {createArchiveViews} from './views/archive.js?v=20261015pagination1';
 import {createChampionshipViews} from './views/championships.js?v=20261015pagination1';
 import {createEntityViews} from './views/entities.js?v=20261015pagination1';
@@ -19,7 +19,7 @@ import {formatMoscowDateTime,moscowDateKey} from '/src/shared/time.js';
 import {createCarsViews} from './views/cars.js?v=20261015pagination1';
 import {createCarLapsLoader} from './cars-laps-model.js?v=20261111siteviews1';
 import {paintRace} from './views/race-modal.js?v=20261116teamsreports2';
-import {createPageData} from './data.js?v=20261111siteviews1';
+import {createPageData} from './data.js?v=20261120hourlydata1';
 import {createDriverAchievementsController} from '/src/pages/driver/achievements-widget.js?v=20261011hourlyru1';
 import {v2Route,v2EntityLinks,currentV2Path,migratedPaths} from '../routes.js?v=20261007v2pages14';
 import {screenPath,scopeSiteHref,siteContext} from '../site-routing.js?v=20261007root1';
@@ -172,16 +172,41 @@ export async function startPage(api) {
     }catch(error){if(ticket!==catalogTicket)return;raw.catalogLoading=false;raw.catalogError=true;if(initial)throw error;content.innerHTML=entityViews.catalogContent();}
     finally{if(ticket===catalogTicket&&content){content.inert=false;content.removeAttribute('aria-busy');content.style.minHeight='';}}
   }
+  function renderHourlyResults() {
+    const panel=view.querySelector('.page-recent');
+    if(!panel)return;
+    const restoreFocus=panel.contains(document.activeElement);
+    panel.outerHTML=views.recent();
+    if(restoreFocus){
+      const retry=view.querySelector('.page-recent [data-hourly-recent-retry]');
+      const target=retry||view.querySelector('.page-recent h2');
+      if(!retry)target.tabIndex=-1;
+      target.focus({preventScroll:true});
+    }
+  }
+  function applyHourlyResults(result) {
+    raw.recentLoading=false;
+    raw.recentUnavailable=result.recentUnavailable;
+    fixture.recent=result.recent;
+    renderHourlyResults();
+    views.updateCompletedRaces();
+  }
+  function retryHourlyResults() {
+    if(raw.recentLoading)return;
+    raw.recentLoading=true;
+    renderHourlyResults();
+    void data.hourlyResults().then(applyHourlyResults);
+  }
   function applyVotes(){
     for(const button of document.querySelectorAll('[data-page-join]')){
       const id=button.dataset.pageJoin,e=views.eventData(id),v=data.participation[id]||{};
-      button.disabled=Boolean(e?.voting_disabled||v.pending);button.classList.toggle('is-voted',Boolean(v.voted));button.setAttribute('aria-pressed',String(Boolean(v.voted)));
-      button.textContent=v.pending?text('Сохраняем…','Saving…'):e?.voting_disabled?text('Запись недоступна','Entry unavailable'):v.voted?text('Ты в списке · отменить','You are in · cancel'):text('Я хочу поехать!','I want to race!');
+      button.disabled=Boolean(e?.voting_disabled||v.pending||raw.hourlyVotesLoading);button.classList.toggle('is-voted',Boolean(v.voted));button.setAttribute('aria-pressed',String(Boolean(v.voted)));
+      button.textContent=v.pending?text('Сохраняем…','Saving…'):e?.voting_disabled?text('Запись недоступна','Entry unavailable'):raw.hourlyVotesLoading?text('Проверяем участие…','Checking entry…'):v.voted?text('Ты в списке · отменить','You are in · cancel'):text('Я хочу поехать!','I want to race!');
     }
     for(const node of document.querySelectorAll('[data-page-participants]'))node.querySelector('b').textContent=number(data.participation[node.dataset.pageParticipants]?.count);
     presentation.refreshEntry();
   }
-  async function toggle(e){const promise=data.toggle(e);applyVotes();try{await promise;}catch{showDialog(text('Участие не сохранено','Entry not saved'),`<p>${text('Не удалось сохранить участие. Попробуй ещё раз.','Could not save your entry. Try again.')}</p>`);}finally{applyVotes();}}
+  async function toggle(e){if(raw.hourlyVotesLoading)return;const promise=data.toggle(e);applyVotes();try{await promise;}catch{showDialog(text('Участие не сохранено','Entry not saved'),`<p>${text('Не удалось сохранить участие. Попробуй ещё раз.','Could not save your entry. Try again.')}</p>`);}finally{applyVotes();}}
   async function openRace(id,trigger){
     const ticket=++loadTicket;showDialog(text('Результаты гонки','Race results'),`<p role="status">${text('Загрузка…','Loading…')}</p>`,trigger);
     try{const r=await data.race(id,fixture.results[id] || fixture.recent.find(r=>r.race_id===id));if(ticket!==loadTicket||!document.getElementById('v2-modal').open)return;fixture.results[id]=r;
@@ -249,6 +274,7 @@ export async function startPage(api) {
     const archivePage=target.closest('[data-site-step="archive"]');if(archivePage){state.archivePage+=Number(archivePage.dataset.step);loadArchive();return;}
     if(target.closest('[data-archive-retry]')){loadArchive();return;}
     const month=target.closest('[data-month-step],[data-month-reset]');if(month){const d=new Date(state.month+'-01T00:00:00Z');d.setUTCMonth(d.getUTCMonth()+Number(month.dataset.monthStep||0));state.month=month.hasAttribute('data-month-reset')?currentMonth():d.toISOString().slice(0,7);views.updateSection('.page-calendar',views.calendar(),['.calendar-controls','.calendar-grid']);return;}
+    if(target.closest('[data-hourly-recent-retry]')){retryHourlyResults();return;}
     const recent=target.closest('[data-recent-page]');if(recent){state.recentPage+=Number(recent.dataset.recentPage);views.updateSection('.page-recent',views.recent(),['.page-recent-list','.page-pagination']);return;}
     const page=target.closest('[data-profile-page]');if(page){state.racePage+=Number(page.dataset.profilePage);document.getElementById('profile-history-content').innerHTML=views.profileRaceTable(raw.profiles[state.id]);return;}
     const club=target.closest('[data-club-type]');if(club){state.clubType=club.dataset.clubType;views.updateSection('.hourly-clubs',views.hourlyClubs(),['.club-switch','.page-rank-clubs']);}
@@ -292,10 +318,20 @@ export async function startPage(api) {
       if(!raw.carTracks.some(t=>t.code===state.carTrack))state.carTrack='';
       paint();if(raw.cars.length&&view.querySelector('#r24-car-content'))loadCarLaps();
     }else if(screen==='hourly'){
-      const result=await data.hourly();Object.assign(raw,result);fixture.recent=result.recent;fixture.captured_at=raw.schedule.updated_at;state.month=raw.event?.date.slice(0,7)||currentMonth();
+      const results = data.hourlyResults();
+      Object.assign(raw,await data.hourlySchedule());
+      fixture.captured_at=raw.schedule.updated_at;
+      state.month=raw.event?.date.slice(0,7)||currentMonth();
+      raw.recentLoading=true;
+      raw.hourlyVotesLoading=true;
       paint();
-      const tasks=await Promise.allSettled([data.loadVotes([raw.event,...raw.upcoming]),native().loadClubs('hourly')]);
-      if(tasks[1].status==='fulfilled'){raw.club_rankings.hourly=tasks[1].value;views.updateSection('.hourly-clubs',views.hourlyClubs(),['.page-rank-clubs']);}applyVotes();
+      void results.then(applyHourlyResults);
+      const finishVotes=()=>{raw.hourlyVotesLoading=false;applyVotes();};
+      void data.loadVotes([raw.event,...raw.upcoming]).then(finishVotes,finishVotes);
+      void native().loadClubs('hourly').then(result=>{
+        raw.club_rankings.hourly=result;
+        views.updateSection('.hourly-clubs',views.hourlyClubs(),['.page-rank-clubs']);
+      },()=>{});
     }else if(['championships','championship'].includes(screen)) {
       const index=await data.championships();raw.seasonsUpdated=index.updated_at;for(const s of index.items)raw.seasons[s.slug]=s;
       if(screen==='championships') {
