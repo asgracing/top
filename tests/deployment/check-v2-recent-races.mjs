@@ -33,6 +33,8 @@ try{
    const join=hero.locator('[data-page-join]');
    await hero.locator('[data-page-event]').waitFor({timeout:10000});
    assert.equal(await join.isDisabled(),true);
+   const cover=await hero.evaluate(node=>node.style.getPropertyValue('--page-track'));
+   assert.ok(cover.startsWith("url('/assets/v2-light/tracks/")&&cover.includes('.webp'),cover);
    await page.locator('.page-recent [role="status"]').waitFor();
    let controls=calendar.locator('[data-month-step="1"]');
    await controls.focus();

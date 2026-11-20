@@ -26,7 +26,7 @@ const runtimeVersion = '20261120circuitatlas';
 const presentationVersion = '20261118winter3';
 const homeStylesVersion = '20261120circuitatlas';
 const bootVersion = '20261120circuitatlas';
-const hourlyBootVersion = '20261120hourlydata1';
+const hourlyBootVersion = '20261120siteperf2';
 const archiveBootVersion = '20261120circuitatlas';
 const statsBootVersion = '20261120circuitatlas';
 const raceModalBootVersion = '20261120circuitatlas';
@@ -224,7 +224,16 @@ for (const [screen,path] of [['moderation','moderation/index.html'],['ops','port
   controlMarkup[screen]=html.match(/<main\b[^>]*>([\s\S]*?)<\/main>/i)[1];
 }
 await emit('v2/pages/control-content.js',`export default ${JSON.stringify(controlMarkup)};\n`);
-await buildV2Boot({root,outputRoot,read,emit});
+const critical = await buildV2Boot({root,outputRoot,read,emit});
+for (const language of ['ru','en']) {
+  for (const page of ['','hourly/']) {
+    const target = `v2/${language}/${page}index.html`;
+    const hrefs = page ? [critical.runtime,critical.controller] : [critical.runtime];
+    const preloads = hrefs.map(href=>`<link rel="modulepreload" href="${href}">`).join('');
+    const html = await readFile(resolve(outputRoot,target),'utf8');
+    await emit(target,html.replace('<head>','<head>'+preloads));
+  }
+}
 for (const path of ['scripts/build-v2.mjs','scripts/build-v2-boot.mjs','scripts/v2-page-shell.mjs','v2/page-layout.js','package.json','package-lock.json','scripts/generate-localized-pages.mjs','scripts/v1-source.mjs','scripts/seo/pages.mjs','scripts/seo/html-source.mjs','scripts/v2-information-content.mjs','v1-source/manifest.json','v2/page-registry.js']) await read(path);
 await emit('v2/build-inputs.json',JSON.stringify({schemaVersion:1,runtimeVersion,inputs:[...buildInputs].sort(([a],[b])=>a.localeCompare(b)).map(([path,sha256])=>({path,sha256}))},null,2)+'\n');
 console.log('Built complete V2 RU/EN over canonical runtime and maintained V1 inputs; fixture datasets excluded.');

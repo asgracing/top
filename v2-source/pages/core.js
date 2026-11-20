@@ -1,3 +1,4 @@
+import {resolveTrackBackgroundFile} from "/src/features/server-status/track-background.js";
 import {profileRaces} from '/v2/profile-races.js?v=20261025raceinfo1';
 import {hourlySrRequirement} from '/src/features/hourly/entry-requirements.js?v=20261027sr33';
 import {renderPagination} from '../pagination.js?v=20261015pagination1';
@@ -61,12 +62,16 @@ export function createPageViews(api) {
     return `<button class="button primary${joined?' is-voted':''}" type="button" data-page-join="${label(e.event_id)}" aria-pressed="${joined}"${locked?' disabled':''}>${pending?tx('Сохраняем…','Saving…'):e.voting_disabled===true?tx('Запись недоступна','Entry unavailable'):raw.hourlyVotesLoading?tx('Проверяем участие…','Checking entry…'):joined?tx('Ты в списке · отменить','You are in · cancel'):tx('Я хочу поехать!','I want to race!')}</button>${count?participantCount(e):''}${privacy}`;
   }
   function card(e,hero=false,{championship=null}={}) {
+    const trackFile = resolveTrackBackgroundFile(trackCode(e));
+    const trackImage = trackFile
+      ? `/assets/v2-light/tracks/${trackFile.replace(/\.jpg$/i,'.webp')}`
+      : `/assets/${safeTrack(e)}.jpg`;
     const kind=eventKind(e),car=e.car_restriction,start=time(new Date(eventStart(e)).toISOString());
     const carName=car?.mode==='single_model'?car.car_model_name:tx('Все машины класса','All cars in class')+' '+(e.server?.car_group || 'GT3');
     const carData=`<div class="page-car-name">${label(carName)}${car?.mode==='single_model'?`<img ${carThumbnailAttributes(car.car_model_id,80)} alt="">`:''}</div>`;
     const raceData=`<span class="event-race-data"><b>${e.race_duration_minutes ?? e.session?.race_duration_minutes ?? '—'} ${tx('мин','min')}</b> · SA ${e.server?.safety_rating_requirement ?? '—'} · SR ${hourlySrRequirement(e)} · ${tx('Питстопы','Pitstops')}: ${e.rules?.mandatory_pitstop_count ?? e.event_rules_overrides?.mandatoryPitstopCount ?? '—'}</span>`;
     const links=championship?`<a href="${route('championship',e.championship_slug||championship.slug)}">${tx('Чемпионат','Championship')} ↗</a><a href="${route('seasons')}">${tx('История','History')} ↗</a>`:'';
-    return `<article class="page-event-card kind-${kind}${hero?' feature-event':''}${hero&&!championship?' hero-event':''}${championship?' page-championship':''}" style="--page-track:url('/assets/${safeTrack(e)}.jpg')">
+    return `<article class="page-event-card kind-${kind}${hero?' feature-event':''}${hero&&!championship?' hero-event':''}${championship?' page-championship':''}" style="--page-track:url('${trackImage}')">
       <div class="page-event-label"><div class="event-heading-copy"><span class="eyebrow">${championship?tx('Ближайший этап','Next round'):hero?tx('Ближайший старт','Next start'):label(start)}</span>${championship?`<span class="event-season" title="${label(championship.title)}">${label(championship.title)}</span>`:''}</div><div class="event-label-clock"><span class="event-kind kind-${kind}">${eventKindLabel(kind)}</span><span class="race-countdown" data-page-countdown="${label(e.event_id)}">${countdownText(e)}</span></div></div>
       <div class="page-event-content"><h${hero?'2':'3'}>${label(e.track_name || trackName(e.track_code))}</h${hero?'2':'3'}><span class="page-points points-pulse">×${Number(e.points_multiplier)||1} ${tx('ОЧКОВ В РЕЙТИНГ','RANKING POINTS')}</span>${hero?`<div class="page-event-date">${label(start)} · ${label(e.timezone || 'UTC+3')}</div>`:carData}</div>
       ${hero?`<div class="event-car-rules">${carData}${raceData}</div><div class="event-prejoin"><div class="event-footer-links"><button class="text-link" type="button" data-page-weather="${label(e.event_id)}">${tx('Погода','Weather')} ↗</button>${links}</div>${participantCount(e)}</div>`:`<div class="page-event-facts">${raceData}${participantCount(e)}</div>`}
