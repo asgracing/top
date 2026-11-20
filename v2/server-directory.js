@@ -8,15 +8,30 @@ export function startServerDirectory({view, center, subscribe, esc, text, label,
   for (const side of document.querySelectorAll('.dashboard>aside')) side.hidden = true;
   document.body.dataset.prototypePage = 'servers';
   view.innerHTML = `<section class="server-directory" aria-labelledby="server-directory-title">
-    <header class="server-directory-head"><div><span class="eyebrow">ASG RACING / ACC</span>
+    <header class="server-directory-head"><div>
       <h1 id="server-directory-title">${text('Серверы ASG Racing', 'ASG Racing servers')}</h1>
       <p>${text('Выбери сервер, чтобы посмотреть пилотов и карту трассы.', 'Choose a server to see its drivers and live track map.')}</p></div>
-      <div class="server-directory-summary" id="server-directory-summary" role="status"></div></header>
+      <div class="server-directory-summary" id="server-directory-summary" role="status">
+        <div class="server-directory-metric server-directory-metric-servers">
+          <span class="server-directory-metric-icon" aria-hidden="true">
+            <svg viewBox="0 0 24 24"><rect x="3" y="3" width="18" height="7" rx="2"/><rect x="3" y="14" width="18" height="7" rx="2"/><path d="M7 6.5h.01M7 17.5h.01M12 6.5h5m-5 11h5"/></svg>
+          </span>
+          <div><b id="server-directory-online">—</b><span>${text('Серверы в работе', 'Servers running')}</span></div>
+        </div>
+        <div class="server-directory-metric server-directory-metric-drivers">
+          <span class="server-directory-metric-icon" aria-hidden="true">
+            <svg viewBox="0 0 24 24"><circle cx="9" cy="7" r="3"/><path d="M3 20v-2a4 4 0 0 1 4-4h4a4 4 0 0 1 4 4v2m2-16a3 3 0 0 1 0 6m1 4a4 4 0 0 1 3 4v2"/></svg>
+          </span>
+          <div><b id="server-directory-drivers">—</b><span>${text('Пилотов онлайн', 'Drivers online')}</span></div>
+        </div>
+      </div></header>
     <div class="server-directory-grid" id="server-directory-grid" tabindex="-1" aria-label="${text('Все игровые серверы', 'All game servers')}">
       <p class="page-empty" role="status">${text('Загрузка серверов…', 'Loading servers…')}</p></div>
     <p class="data-note server-directory-updated" id="server-directory-updated"></p>
   </section>`;
   const grid = view.querySelector('#server-directory-grid');
+  const online = view.querySelector('#server-directory-online');
+  const drivers = view.querySelector('#server-directory-drivers');
   let signature = '';
   const unsubscribe = subscribe(model => {
     const rows = orderedServers(model.servers);
@@ -24,9 +39,10 @@ export function startServerDirectory({view, center, subscribe, esc, text, label,
     if (current === signature) return;
     signature = current;
     const incomplete = model.serversStale || rows.some(row => row.stale);
-    view.querySelector('#server-directory-summary').innerHTML = `<span><i class="status-dot" aria-hidden="true"></i>
-      <b>${incomplete ? '—' : number(rows.filter(row => row.online).length)} / ${number(rows.length)}</b> ${text('работают', 'running')}</span>
-      <span><b>${number(countReportedPlayers(rows, model.serversStale))}</b> ${text('пилотов онлайн', 'drivers online')}</span>`;
+    const onlineCount = `${incomplete ? '—' : number(rows.filter(row => row.online).length)} / ${number(rows.length)}`;
+    const driversCount = String(number(countReportedPlayers(rows, model.serversStale)));
+    if (online.textContent !== onlineCount) online.textContent = onlineCount;
+    if (drivers.textContent !== driversCount) drivers.textContent = driversCount;
     replaceServerCards(grid, rows.map((row, index) => {
       const stale = model.serversStale || row.stale;
       const file = resolveTrackBackgroundFile(row.server?.track_code || row.server?.track);

@@ -60,7 +60,7 @@ try{
     {count:30,language:'ru',width:1366,height:650,screen:'home'},
     {count:30,language:'en',width:390,height:844,screen:'home'},
     {count:30,language:'ru',width:768,height:1024,screen:'home'},
-    ...[['ru',1280,800],['en',1920,1080],['ru',390,844],['en',320,760]].map(([language,width,height])=>({count:30,language,width,height,screen:'servers'})),
+    ...[['ru',1440,900],['ru',1280,800],['en',1920,1080],['ru',390,844],['en',320,760]].map(([language,width,height])=>({count:30,language,width,height,screen:'servers'})),
     {count:3,language:'ru',width:1280,height:800,screen:'home',guest:true},
     {count:3,language:'en',width:320,height:760,screen:'servers',guest:true},
     {count:30,language:'en',width:1280,height:800,screen:'servers',stale:true},
@@ -91,6 +91,16 @@ try{
     const dismiss=page.locator('.asg-legal-banner-btn-secondary');if(await dismiss.isVisible())await dismiss.click();
     const locale=page.locator('.locale-suggestion-dismiss');if(await locale.isVisible())await locale.click();
     const container=page.locator(screen==='home'?'#v2-servers':'#server-directory-grid');
+    if(screen==='servers'){
+      const summary=page.locator('#server-directory-summary');
+      await summary.waitFor();
+      assert.equal(await page.locator('.server-directory-head .eyebrow').count(),0);
+      const metrics=await summary.locator('.server-directory-metric').evaluateAll(nodes=>nodes.map(node=>{
+        const number=node.querySelector('b'),card=node.getBoundingClientRect(),value=number.getBoundingClientRect();
+        return {font:getComputedStyle(number).fontSize,fits:value.right<=card.right+1&&number.scrollWidth<=number.clientWidth+1,icon:!!node.querySelector('svg')};
+      }));
+      assert.deepEqual(metrics,Array.from({length:2},()=>({font:'36px',fits:true,icon:true})));
+    }
     if(test.unavailable){
       await page.waitForFunction(()=>document.querySelector('#server-directory-grid .page-empty')?.textContent.includes('недоступны'));
       assert.equal(await container.locator('[data-server]').count(),0);

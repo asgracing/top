@@ -49,7 +49,7 @@ export async function startPage(api) {
   }
   if(screen==='reports'){const {mountReportsPage}=await import('../reports/index.js?v=20261117reports1');view.className='panel report-section';await mountReportsPage(view);return;}
   if(screen==='servers'){
-    const {startServerDirectory}=await import('../server-directory.js?v=20261025servers1');
+    const {startServerDirectory}=await import('../server-directory.js?v=20261120serversummary');
     startServerDirectory({...api,view,center});
     if (faqContext) view.querySelector('.server-directory-head')?.after(faqContext);
     return;
