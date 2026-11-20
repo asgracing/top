@@ -32,15 +32,16 @@ try{
     servers.sunset={...(servers.sunset||{}),name:'Sunset Stale Fixture',status:'stale',stale:true,players_online:null,drivers:[{name:'MUST NOT APPEAR',player_id:'private'}],observed_at:new Date(Date.now()-600000).toISOString()};
     return route.fulfill({status:200,json:{updated_at:new Date().toISOString(),servers}});
    }
-   return tools.fixture(route,[]);
+   return tools.fixture(route,[],{signed:true});
   });
   await page.goto(tools.base+(lang==='en'?'/en/':'/'),{waitUntil:'networkidle'});
   const stale=page.locator('#v2-servers [data-server="sunset"]');await stale.waitFor();
   await page.waitForFunction(()=>document.querySelector('#v2-servers [data-server="sunset"]')?.textContent.includes('—'));
-  assert.match(await stale.textContent(),lang==='ru'?/Нет данных/:/No data/);
-  const fresh=await page.locator('#v2-servers [data-server="main"]').textContent();
-  assert.ok(!/Нет данных|No data/.test(fresh),'Fresh zero-player Main must remain available');
-  assert.match(await page.locator('#v2-servers [data-server="main"] .server-live').textContent(),/^0\s/);
+  assert.equal(await stale.getAttribute('data-state'),'stale');
+  assert.match(await stale.textContent(),lang==='ru'?/Данные устарели/:/Stale data/);
+  const fresh=page.locator('#v2-servers [data-server="main"]');
+  assert.equal(await fresh.getAttribute('data-state'),'online','Fresh zero-player Main must remain available');
+  assert.match(await page.locator('#v2-servers [data-server="main"] .server-card-count').textContent(),/^0\s/);
   if(await page.locator('.asg-legal-banner-btn-secondary').isVisible())await page.locator('.asg-legal-banner-btn-secondary').click();
   await stale.click();
   await page.waitForFunction(()=>document.querySelector('#v2-modal')?.open);

@@ -1,6 +1,6 @@
 {
   "schemaVersion": 1,
-  "runtimeVersion": "20261120partialonline1",
+  "runtimeVersion": "20261120servercards",
   "inputs": [
     {
       "path": "account/driver-overlay.js",
@@ -80,7 +80,7 @@
     },
     {
       "path": "scripts/build-v2.mjs",
-      "sha256": "ec0608011a3bf49a070f976540c7330f9e138a3959b1a20ce254f769255e9b05"
+      "sha256": "518beed139039d1dd87840120f29407b981f54d2928f1a4d736e718f6983a553"
     },
     {
       "path": "scripts/faq-page.mjs",
@@ -744,7 +744,7 @@
     },
     {
       "path": "v2/home.js",
-      "sha256": "4d4bead2f4e1a9a977f0b5d46d657cd33212791611708e6b55e01df0b6b9ad4c"
+      "sha256": "396f9b7a86683c2f7fe5e311e68d6e9136459d48fdcdfa488aba2e29b6dd129c"
     },
     {
       "path": "v2/live-stats.js",
@@ -800,7 +800,7 @@
     },
     {
       "path": "v2/pages/controller.js",
-      "sha256": "441269983e9e43572d325d56c14e9baaffc19746f9eb03881b5840c3716bbdf8"
+      "sha256": "8b326b853792cc3e9e630d2a832d7d24334bcceff971b2f42973771691378c1f"
     },
     {
       "path": "v2/pages/data.js",
@@ -904,15 +904,19 @@
     },
     {
       "path": "v2/server-cards.js",
-      "sha256": "de088054f14606595f7f80512857c7173068069a8f753878cdb09340da5883e8"
+      "sha256": "bedde5286b7e6fb4e3fb937349e1d28fee3d71375f4b60741e0e48580d64ff24"
     },
     {
       "path": "v2/server-directory.js",
-      "sha256": "c8796d5d82f72dd2c80aad019dcf831a80ff726dd3e758cc7e6834f20fb18482"
+      "sha256": "136a549ba6eec3622f6999d3d0d3c8df724d6aa0fd613e99deaa83ab1308bdc4"
     },
     {
       "path": "v2/server-session.js",
       "sha256": "2bc1cf9382097eb28ebc457b726e78fbc795268e7de5edc5786c46b4020af51c"
+    },
+    {
+      "path": "v2/server-track-flags.js",
+      "sha256": "c89df4601aec22b5eaeddf52b1b2f8736c0d901f464eeb26f5d5e98d8e2eefea"
     },
     {
       "path": "v2/site-routing.js",
