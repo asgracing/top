@@ -121,14 +121,23 @@ try {
       await rules.waitFor();
       assert.match(await modal.locator('h2').textContent(),/SRv4/);
       assert.match(await rules.locator('.safety-rules-lead').innerText(),/50%/);
-      assert.match(await rules.locator('.safety-rules-example').innerText(),language==='ru'?/0,10 SR/:/0\.10 SR/);
       assert.match(await rules.locator('.safety-rules-date').innerText(),language==='ru'?/12:00 МСК/:/09:00 UTC/);
-      const details=rules.locator('.safety-rules-details');
-      assert.equal(await details.evaluate(el=>el.open),false);
-      await details.locator('summary').focus();
+      assert.match(await rules.innerText(),language==='ru'?/Чистые и красные круги[\s\S]*Автоштрафы ACC[\s\S]*Пересчёт к 10 кругам/:/Valid and red laps[\s\S]*Automatic ACC penalties[\s\S]*10-lap reference/);
+      const examples=rules.locator('.safety-rules-examples');
+      const cards=examples.locator('.safety-rules-example');
+      const notes=rules.locator('.safety-rules-notes');
+      assert.equal(await cards.first().isVisible(),false);
+      await examples.locator('summary').focus();
       await page.keyboard.press('Enter');
-      assert.equal(await details.evaluate(el=>el.open),true);
-      assert.match(await details.innerText(),language==='ru'?/Подтверждённый ущерб без связанного контакта.*30%/s:/Verified damage without a linked contact.*30%/s);
+      assert.equal(await cards.first().isVisible(),true);
+      assert.deepEqual(await cards.locator('strong').allTextContents(),
+        ['13','04','10','01'].map(cents=>language==='ru'?`+0,${cents} SR`:`+0.${cents} SR`));
+      assert.equal(await notes.evaluate(el=>el.open),false);
+      await examples.locator('summary').click();
+      assert.equal(await cards.first().isVisible(),false);
+      await notes.locator('summary').click();
+      assert.match(await notes.innerText(),/Nürburgring 24h.*30%/s);
+      await examples.locator('summary').click();
       assert.ok(await modal.locator('.modal-body').evaluate(el=>el.scrollWidth<=el.clientWidth+1),'SR rules must fit the modal');
     }
     await page.close();

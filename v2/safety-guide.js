@@ -1,24 +1,26 @@
 export function renderSafetyAbout(copy, escape) {
   const paragraph = text => `<p>${escape(text)}</p>`;
-  const summary = (copy.summary ?? []).map(text => `<li>${escape(text)}</li>`).join('');
-  const sections = (copy.sections ?? []).map(({title, paragraphs}) =>
+  const sections = copy.sections.map(({title, paragraphs}) =>
     `<h4>${escape(title)}</h4>${paragraphs.map(paragraph).join('')}`
   ).join('');
-  const guide = copy.profileGuide;
-  const example = guide ? `<div class="safety-rules-example">
-    <h4>${escape(guide.exampleTitle)}</h4>${paragraph(guide.example)}
-    <strong>${escape(guide.exampleCalculation)}</strong>
-  </div>` : '';
-  const details = copy.detailsLabel ? `<details class="safety-rules-details">
-    <summary>${escape(copy.detailsLabel)}</summary>${sections}
-  </details>` : sections;
+  const examples = copy.examples.map(({title, description, calculation, result}) =>
+    `<div class="safety-rules-example">
+      <h4>${escape(title)}</h4>${paragraph(description)}
+      ${paragraph(calculation)}<strong>${escape(result)}</strong>
+    </div>`
+  ).join('');
   return `<div class="safety-rules">
     <p class="safety-rules-lead"><strong>${escape(copy.safetyAboutP1)}</strong></p>
-    ${summary ? `<ul>${summary}</ul>` : ''}
-    ${example}
-    ${guide ? paragraph(guide.note) : ''}
+    ${paragraph(copy.overview)}
+    ${sections}
+    <details class="safety-rules-details safety-rules-examples">
+      <summary>${escape(copy.examplesLabel)}</summary>
+      ${paragraph(copy.examplesIntro)}${examples}
+    </details>
+    <details class="safety-rules-details safety-rules-notes">
+      <summary>${escape(copy.detailsLabel)}</summary>${copy.notes.map(paragraph).join('')}
+    </details>
     <p class="safety-rules-date">${escape(copy.safetyAboutP2)}</p>
-    ${details}
   </div>`;
 }
 
