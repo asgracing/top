@@ -56,9 +56,11 @@ try {
     if(await page.locator('.asg-legal-banner-btn-secondary').isVisible())await page.locator('.asg-legal-banner-btn-secondary').click();
     let mainPath;
     for(const key of ['main','sunset']) {
+      const basemapResponse=key==='main'?page.waitForResponse(r=>new URL(r.url()).pathname==='/assets/track-maps/spa-basemap.svg'):null;
       await page.locator(`${container} [data-server="${key}"]`).click();
       const map=page.locator('#v2-modal .server-track-map[data-track-map="spa-gp"]');
       await map.waitFor();
+      if(basemapResponse)assert.ok((await basemapResponse).ok(),'the bundled view serves the Spa basemap');
       await page.waitForFunction(()=>document.querySelectorAll('#v2-modal .track-car').length===7);
       await map.evaluate(el=>el.scrollIntoView({block:'start',behavior:'instant'}));
       assert.ok(await map.evaluate(el=>Boolean(el.compareDocumentPosition(document.querySelector('#v2-modal .server-roster-heading'))&Node.DOCUMENT_POSITION_FOLLOWING)),'map precedes roster title and table');
@@ -78,17 +80,12 @@ try {
       if(key==='main')mainPath=routePath;else assert.equal(routePath,mainPath,'same contour despite unrelated learned lap');
       assert.equal(await map.locator('.track-car.is-leader text').textContent(),'1');
       assert.equal(await map.locator('.track-car.is-leader circle').evaluate(el=>getComputedStyle(el).fill),'rgb(220, 53, 69)');
-      assert.match(await map.textContent(),/Les Combes/);assert.match(await map.textContent(),/La Source/);
+      assert.equal(await map.locator('.track-basemap').count(),1);
+      assert.equal(await map.locator('.track-label,.track-timing-mark text').count(),0);
+      assert.equal(await map.locator('.track-timing-mark line').count(),3);
+      assert.equal(await map.locator('.track-outline').evaluate(el=>getComputedStyle(el).stroke),'rgb(47, 64, 74)');
+      assert.match(await map.textContent(),/OpenStreetMap contributors/);
       assert.ok(await map.evaluate(el=>el.scrollWidth<=el.clientWidth+1),'no horizontal overflow');
-      assert.ok(await map.locator('svg').evaluate(svg=>{
-        const bounds=svg.getBoundingClientRect();
-        return [...svg.querySelectorAll('.track-label')].every(label=>{
-          if(getComputedStyle(label).display==='none')return true;
-          const box=label.getBoundingClientRect();
-          return box.left>=bounds.left-1&&box.right<=bounds.right+1
-            &&box.top>=bounds.top-1&&box.bottom<=bounds.bottom+1;
-        });
-      }),'corner names fit inside the map on desktop and mobile');
       const box=await map.locator('svg').boundingBox();assert.ok(box.height>200&&box.width>250);
       const before=await map.locator('.track-car.is-leader').getAttribute('transform');
       await page.waitForResponse(r=>new URL(r.url()).pathname==='/top-data/server_status_live.json',{timeout:8000});

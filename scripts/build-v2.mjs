@@ -22,10 +22,10 @@ const outputRoot = resolve(process.env.ASG_V2_OUTPUT_DIR || (siteRelease.layout=
 if(outputRoot!==root)assertArchiveScratchPath(outputRoot);
 if (process.env.ASG_V2_PRESENTATION_ONLY === '1') throw Error('Presentation-only builds are retired: rebuild V2 with its canonical runtime.');
 const version = '20261006v2k';
-const runtimeVersion = '20261117reports1';
+const runtimeVersion = '20261120spabasemap';
 const presentationVersion = '20261118winter3';
 const homeStylesVersion = '20261119steamgate';
-const bootVersion = '20261120sr4breakdown';
+const bootVersion = '20261120spabasemap';
 const hourlyBootVersion = '20261120sr4breakdown';
 const archiveBootVersion = '20261120sr4breakdown';
 const statsBootVersion = '20261120sr4breakdown';

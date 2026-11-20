@@ -30,6 +30,9 @@
 .server-track-map .track-timing-mark text { fill:currentColor; font:700 23px system-ui,sans-serif; stroke:#101b29; stroke-width:5; paint-order:stroke; }
 .server-track-map .track-map-credit { font-size:10px; }
 .server-track-map .track-map-credit a { color:inherit; }
+.server-track-map[data-track-map="spa-gp"] .track-outline-edge { fill:none; stroke:#f8faf5; stroke-width:9; stroke-linecap:round; stroke-linejoin:round; vector-effect:non-scaling-stroke; }
+.server-track-map[data-track-map="spa-gp"] .track-outline { stroke:#2f404a; stroke-width:5.5; vector-effect:non-scaling-stroke; }
+.server-track-map[data-track-map="spa-gp"] .track-timing-mark:not(.is-finish) { color:#f6edd0; }
 @media (max-width:600px) {
   .server-track-map.has-fixed-map .track-car circle { r:22.4px; }
   .server-track-map.has-fixed-map .track-car text { font-size:22.4px; }
@@ -37,7 +40,8 @@
   .server-track-map .track-timing-mark text { font-size:32px; }
   .server-track-map .track-label.is-secondary { display:none; }
   .server-track-map[data-track-map="spa-gp"] svg { height:auto; max-height:none; aspect-ratio:4/3; }
-  .server-track-map[data-track-map="spa-gp"] .track-label { font-size:38px; }
+  .server-track-map[data-track-map="spa-gp"] .track-outline-edge { stroke-width:6; }
+  .server-track-map[data-track-map="spa-gp"] .track-outline { stroke-width:3.8; }
   .server-track-map[data-track-map="spa-gp"] .track-car circle { r:27.2px; }
   .server-track-map[data-track-map="spa-gp"] .track-car text { font-size:28.8px; }
 }
