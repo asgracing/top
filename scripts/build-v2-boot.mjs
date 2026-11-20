@@ -27,6 +27,14 @@ export async function buildV2Boot({root,outputRoot,read,emit}) {
       }));
     }}]
   });
+  const critical = {};
+  for (const [file,meta] of Object.entries(result.metafile.outputs)) {
+    const source = meta.entryPoint;
+    const route = source === 'asg-v2-source:v2/runtime/home.js' ? 'runtime'
+      : source === 'asg-v2-source:v2/pages/controller.js' ? 'controller' : null;
+    if (route) critical[route] = '/v2/boot/chunks/' + posix.basename(file.replaceAll('\\','/'));
+  }
+  if (!critical.runtime || !critical.controller) throw Error('Missing V2 boot entry');
   // Remove only obsolete compilation outputs in the isolated build directory.
   // Previously published chunks in the source checkout remain available.
   const bootRoot=resolve(outputRoot,'v2/boot');
@@ -36,4 +44,5 @@ export async function buildV2Boot({root,outputRoot,read,emit}) {
     await emit(path,file.text);
   }
   await emit('v2/boot/build.json',JSON.stringify({schemaVersion:1,entry:'/v2/boot/home.js',files:result.outputFiles.map(file=>({path:'/v2/boot/'+file.path.slice(resolve(outputRoot,'v2/boot').length+1).replaceAll('\\','/'),bytes:file.contents.length}))},null,2)+'\n');
+  return critical;
 }

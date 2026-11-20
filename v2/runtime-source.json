@@ -1,8 +1,8 @@
 {
   "schemaVersion": 1,
-  "version": "20261120circuitatlas",
+  "version": "20261120siteperf2",
   "source": "app.js",
-  "sha256": "2e7e7a93314e8521478629fb14c5aa0686cc713f1606dfdd6c9c58dce00a6430",
-  "outputSha256": "1ec950cc28be5df7b04831aba383a6a132d419053e9c2d7e5e800a2eb2d061b2",
+  "sha256": "20707ba98e69f5667d8870d6779e718e64bafb39caf5354ee8d547b1947a43e5",
+  "outputSha256": "61a0939b33c58c8149ef058620c6be1f74c4c72b7f6fed399760aae1ff1055f9",
   "facadeSha256": "912e51840db4971f39502dd77c8dec883517bf62543028376a98679747486f5b"
 }

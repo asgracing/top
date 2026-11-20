@@ -22,14 +22,14 @@ const outputRoot = resolve(process.env.ASG_V2_OUTPUT_DIR || (siteRelease.layout=
 if(outputRoot!==root)assertArchiveScratchPath(outputRoot);
 if (process.env.ASG_V2_PRESENTATION_ONLY === '1') throw Error('Presentation-only builds are retired: rebuild V2 with its canonical runtime.');
 const version = '20261006v2k';
-const runtimeVersion = '20261120circuitatlas';
+const runtimeVersion = '20261120siteperf2';
 const presentationVersion = '20261118winter3';
 const homeStylesVersion = '20261120circuitatlas';
-const bootVersion = '20261120circuitatlas';
-const hourlyBootVersion = '20261120circuitatlas';
-const archiveBootVersion = '20261120circuitatlas';
-const statsBootVersion = '20261120circuitatlas';
-const raceModalBootVersion = '20261120circuitatlas';
+const bootVersion = '20261120siteperf2';
+const hourlyBootVersion = '20261120siteperf2';
+const archiveBootVersion = '20261120siteperf2';
+const statsBootVersion = '20261120siteperf2';
+const raceModalBootVersion = '20261120siteperf2';
 const controlStylesVersion = '20261103clubs1';
 const profileStylesVersion = '20261119srvepisodes';
 const legalVersion = '20261030analytics1';
@@ -195,8 +195,9 @@ for (const language of ['ru','en']) {
   if(legacyEnabled)pageBody=pageBody.replace('<div class="header-actions top-nav-actions">',`<div class="header-actions top-nav-actions"><a class="version-switch" data-v1-home href="${language==='ru'?'/ru/':'/'}">${text}</a>`);
   const statsHead=value=>value.replace(`/v2/boot/home.js?v=${bootVersion}`,`/v2/boot/home.js?v=${statsBootVersion}`);
   const hourlyHead=value=>value.replace(`/v2/boot/home.js?v=${bootVersion}`,`/v2/boot/home.js?v=${hourlyBootVersion}`);
+  const initialHomeScript = '<script async type="module" data-home-initial src="/v2/home-initial-data-v1.js"></script>';
   const homeBody = localizedV2Links(addFaqToShell(pageBody, language, 'home', faqContent), language);
-  await emit(`v2/${language}/index.html`,`<!doctype html>\n<html lang="${language}" data-page="home" data-page-language="${language}" data-v2="home"><head>${hourlyHead(head)}${faqStyles}${faqScript}</head><body data-v2="home">${homeBody}<div id="v1-runtime-host" hidden inert aria-hidden="true">${oldBody}</div>${modals}</body></html>\n`);
+  await emit(`v2/${language}/index.html`,`<!doctype html>\n<html lang="${language}" data-page="home" data-page-language="${language}" data-v2="home"><head>${initialHomeScript}${hourlyHead(head)}${faqStyles}${faqScript}</head><body data-v2="home">${homeBody}<div id="v1-runtime-host" hidden inert aria-hidden="true">${oldBody}</div>${modals}</body></html>\n`);
   for (const config of pageRegistry.filter(page => page.route)) {
     const page=config.route.slice(0,-1), screen=config.screen;
     const title=config.title[language], description=config.description[language];
@@ -222,7 +223,16 @@ for (const [screen,path] of [['moderation','moderation/index.html'],['ops','port
   controlMarkup[screen]=html.match(/<main\b[^>]*>([\s\S]*?)<\/main>/i)[1];
 }
 await emit('v2/pages/control-content.js',`export default ${JSON.stringify(controlMarkup)};\n`);
-await buildV2Boot({root,outputRoot,read,emit});
+const critical = await buildV2Boot({root,outputRoot,read,emit});
+for (const language of ['ru','en']) {
+  for (const page of ['','hourly/']) {
+    const target = `v2/${language}/${page}index.html`;
+    const hrefs = page ? [critical.runtime,critical.controller] : [critical.runtime];
+    const preloads = hrefs.map(href=>`<link rel="modulepreload" href="${href}">`).join('');
+    const html = await readFile(resolve(outputRoot,target),'utf8');
+    await emit(target,html.replace('<head>','<head>'+preloads));
+  }
+}
 for (const path of ['scripts/build-v2.mjs','scripts/build-v2-boot.mjs','scripts/v2-page-shell.mjs','v2/page-layout.js','package.json','package-lock.json','scripts/generate-localized-pages.mjs','scripts/v1-source.mjs','scripts/seo/pages.mjs','scripts/seo/html-source.mjs','scripts/v2-information-content.mjs','v1-source/manifest.json','v2/page-registry.js']) await read(path);
 await emit('v2/build-inputs.json',JSON.stringify({schemaVersion:1,runtimeVersion,inputs:[...buildInputs].sort(([a],[b])=>a.localeCompare(b)).map(([path,sha256])=>({path,sha256}))},null,2)+'\n');
 console.log('Built complete V2 RU/EN over canonical runtime and maintained V1 inputs; fixture datasets excluded.');

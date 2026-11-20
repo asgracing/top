@@ -149,7 +149,14 @@ export function createPageData(native,{raceArchive=false,raceProtocol=false}={})
     const teams=result.detail.teams?.length?(await catalog().catch(()=>null))?.teams:[];
     return {...result,detail:{...result.detail,local_asset:result.assetUrl,teams:result.detail.teams?.map(team=>({...team,local_asset:teams?.find(item=>item.public_id===team.public_id)?.local_asset||null}))??result.detail.teams,recent_races:result.detail.recent_races.map(r=>({...r,race_uid:String(r.race_uid).trim().toLowerCase().replace(/\.json$/i,'').replace(/[^a-z0-9._-]+/g,'_').replace(/^[._-]+|[._-]+$/g,'')}))}};
   }
-  const votes = createHourlyVotesClient({apiBase:publicUrl('hourly-votes-api'), request:fetch,
+  const requestEntry = (url, options) => {
+    // A stalled status/token read must eventually unblock the controls.
+    const path = new URL(url).pathname;
+    return fetch(url, /(?:votes|voter-token)$/.test(path)
+      ? {...options,signal:AbortSignal.timeout(12000)}
+      : options);
+  };
+  const votes = createHourlyVotesClient({apiBase:publicUrl('hourly-votes-api'), request:requestEntry,
     getLegacyVoterId:()=>{try {const value=JSON.parse(localStorage.getItem('hourlyVoteVoterId')||'null');return value?.value || '';}catch{return '';}}});
   const participation = Object.create(null);
   async function loadVotes(events) {
@@ -186,11 +193,10 @@ export function createPageData(native,{raceArchive=false,raceProtocol=false}={})
     const index = await readJson(hourlyUrl('races/races.json'));
     return (index.items || index.races || []).map(item => ({...item,_data_namespace:'hourly'}));
   }
-  async function hourly() {
-    const [announcement,schedule,recent]=await Promise.all([
+  async function hourlySchedule() {
+    const [announcement,schedule]=await Promise.all([
       readJson(hourlyUrl('announcement.json')).catch(()=>null),
-      readJson(hourlyUrl('schedule.json')).catch(()=>null),
-      recentHourly().then(items=>({items,unavailable:false})).catch(()=>({items:[],unavailable:true}))
+      readJson(hourlyUrl('schedule.json')).catch(()=>null)
     ]);
     const now=Date.now();
     const event=selectNextHourlyAnnouncement(announcement,schedule,now);
@@ -198,7 +204,15 @@ export function createPageData(native,{raceArchive=false,raceProtocol=false}={})
     // Match the existing Hourly page: championship entries remain open.
     return {event:event?normalizeEvent(event):null,upcoming,
       schedule:{...schedule,items:Array.isArray(schedule?.items)?schedule.items.map(normalizeEvent):[]},
-        recent:recent.items,recentUnavailable:recent.unavailable,scheduleUnavailable:!Array.isArray(schedule?.items)};
+      scheduleUnavailable:!Array.isArray(schedule?.items)};
+  }
+  async function hourlyResults() {
+    try { return {recent:await recentHourly(),recentUnavailable:false}; }
+    catch { return {recent:[],recentUnavailable:true}; }
+  }
+  async function hourly() {
+    const [schedule,results]=await Promise.all([hourlySchedule(),hourlyResults()]);
+    return {...schedule,...results};
   }
   async function championships() {
     const index=await readJson(hourlyUrl('championships.json'));
@@ -353,5 +367,5 @@ export function createPageData(native,{raceArchive=false,raceProtocol=false}={})
     }
     return resolveBanProfiles(items,drivers);
   }
-  return {hourly,recentHourly,driver,race,raceFromLink,archive,championships,season,catalog,entity,cars,fun,bans,bannedProfiles,news,community,history,loadVotes,toggle,participation};
+  return {hourly,hourlySchedule,hourlyResults,recentHourly,driver,race,raceFromLink,archive,championships,season,catalog,entity,cars,fun,bans,bannedProfiles,news,community,history,loadVotes,toggle,participation};
 }

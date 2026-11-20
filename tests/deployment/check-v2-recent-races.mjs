@@ -7,6 +7,52 @@ import {browser,base,fixture,root} from './v2-browser-fixtures.mjs';
 const data=JSON.parse(await fs.readFile(path.join(root,'tests/fixtures/v2-pages/public.json'),'utf8'));
 const reports=[];
 try{
+ for(const language of ['ru','en']) {
+  const page=await browser.newPage({viewport:{width:390,height:844},reducedMotion:'reduce'});
+  let releaseArchive,releaseVotes,archiveAttempts=0;
+  const archiveGate=new Promise(resolve=>releaseArchive=resolve);
+  const voteGate=new Promise(resolve=>releaseVotes=resolve);
+  const errors=[];
+  page.on('pageerror',error=>errors.push(error.message));
+  await page.route('**/*',async route=>{
+   const url=new URL(route.request().url());
+   const pathname=url.pathname.startsWith('/__asg_public__/')?url.pathname.slice('/__asg_public__'.length):url.pathname;
+   if(pathname.startsWith('/race-archive-shadow/'))return route.fulfill({status:503,json:{error:'archive_legacy'}});
+   if(pathname==='/hourly-votes-api/votes')await voteGate;
+   if(pathname==='/hourly-data/races/races.json'){
+    archiveAttempts++;
+    if(archiveAttempts===1){await archiveGate;return route.fulfill({status:503,json:{}});}
+    return route.fulfill({json:data.recent});
+   }
+   return fixture(route,[],{normalEvent:true});
+  });
+  try{
+   await page.goto(base+(language==='ru'?'/hourly/':'/en/hourly/'),{waitUntil:'commit'});
+   const calendar=page.locator('.page-calendar');
+   const hero=page.locator('.hero-event');
+   const join=hero.locator('[data-page-join]');
+   await hero.locator('[data-page-event]').waitFor({timeout:10000});
+   assert.equal(await join.isDisabled(),true);
+   const cover=await hero.evaluate(node=>node.style.getPropertyValue('--page-track'));
+   assert.ok(cover.startsWith("url('/assets/v2-light/tracks/")&&cover.includes('.webp'),cover);
+   await page.locator('.page-recent [role="status"]').waitFor();
+   let controls=calendar.locator('[data-month-step="1"]');
+   await controls.focus();
+   const month=await calendar.locator('.calendar-controls b').textContent();
+   releaseVotes();
+   await page.waitForFunction(()=>document.querySelector('.hero-event [data-page-join]')?.disabled===false);
+   releaseArchive();
+   const retry=page.locator('[data-hourly-recent-retry]');
+   await retry.waitFor();
+   assert.equal(await controls.evaluate(node=>document.activeElement===node),true);
+   await retry.focus();
+   await page.keyboard.press('Enter');
+   await page.locator('.page-recent .page-recent-race').first().waitFor();
+   assert.equal(await calendar.locator('.calendar-controls b').textContent(),month);
+   assert.equal(await hero.locator('[data-page-event]').count(),1);
+   assert.deepEqual(errors,[]);
+  }finally{releaseVotes();releaseArchive();await page.close();}
+ }
  for(const language of ['ru','en'])for(const width of [1920,1280,768,390,320]){
   const page=await browser.newPage({viewport:{width,height:936},reducedMotion:'reduce'}),errors=[],log=[];
   let listFailure=false,detailFailure=false,detailDelay=0,emptyList=false;
