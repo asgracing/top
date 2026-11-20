@@ -215,12 +215,13 @@ test('all GeoJSON maps render timing marks on their existing outline',async()=>{
       assert.match(renderTrackMap(input,'ru',now),/Примерная граница сектора 2/);
     } else {
       assert.match(html,/End of sector 1/);
-      assert.match(html,/>S2</);
+      if(code==='spa')assert.match(html,/<title>End of sector 2<\/title><line/);
+      else assert.match(html,/>S2</);
     }
   }
 });
 
-test('Spa shares one permanent route across servers and preserves labels without a learned lap or cars',()=>{
+test('Spa shares the same geographic basemap and permanent route without a learned lap or cars',()=>{
   const a={...server(),id:'assetto-corsa-competizione-dedic',track_code:'spa',track_map:null};
   const b={...server(),id:'assetto-corsa-competizione-dedic-5',track_code:'SPA',drivers:[]};
   const path=html=>html.match(/class="track-outline" d="([^"]+)"/)[1];
@@ -229,10 +230,13 @@ test('Spa shares one permanent route across servers and preserves labels without
   assert.equal(trackMapGeometry(a).fixed,true);
   assert.equal(SPA_MAP.points.length,153);
   assert.match(renderTrackMap(a,'ru',now),/Позиция 1/);
-  for(const label of ['La Source','Eau Rouge','Raidillon','Kemmel','Les Combes','Malmedy',
-    'Bruxelles','Double Gauche','Les Fagnes','Campus','Paul Frère','Blanchimont','Chicane']) {
-    assert.ok(renderTrackMap(b,'en',now).includes(label),label);
-  }
+  const emptyMap=renderTrackMap(b,'en',now);
+  assert.match(emptyMap,/<image href="\/assets\/track-maps\/spa-basemap.svg" width="1200" height="900"/);
+  assert.match(emptyMap,/<path class="track-outline-edge" fill="none"/);
+  assert.match(emptyMap,/OpenStreetMap contributors/);
+  assert.match(emptyMap,/Start \/ finish/);
+  assert.doesNotMatch(emptyMap,/class="track-label|<text/);
+  assert.doesNotMatch(renderTrackMap({...a,track_code:'monza'},'en',now),/spa-basemap/);
   for(const status of ['stale','offline']) {
     const html=renderTrackMap({...a,status},'en',now);
     assert.match(html,/data-track-map="spa-gp"/);

@@ -180,13 +180,13 @@ test("breaking helper interface uses a new query key and synchronized runtime ve
   assert.ok(appSource.includes("affiliation-index-cache.js?v=20261114affiliations2"));
   const build = await fs.readFile(new URL("../../scripts/build-v2.mjs", import.meta.url), "utf8");
   const home = await fs.readFile(new URL("../../v2/home.js", import.meta.url), "utf8");
-  assert.match(build, /const runtimeVersion = '20261117reports1'/);
+  assert.match(build, /const runtimeVersion = '20261120spabasemap'/);
   const bootVersion = build.match(/const bootVersion = '([^']+)'/)?.[1];
   assert.match(bootVersion, /^\d{8}\w+$/);
   for (const variant of ['hourly', 'archive', 'stats', 'raceModal']) {
     assert.equal(build.match(new RegExp(`const ${variant}BootVersion = '([^']+)'`))?.[1], bootVersion);
   }
-  assert.ok(home.includes("runtime/home.js?v=20261117reports1"));
+  assert.ok(home.includes("runtime/home.js?v=20261120spabasemap"));
 });
 test("old cached helper and late old-URL facade preserve the published requestJson/base API", async () => {
   assert.equal(legacyFacade.createDriverAffiliationsLoader, frozenLegacy.createDriverAffiliationsLoader);

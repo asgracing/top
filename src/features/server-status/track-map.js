@@ -52,7 +52,7 @@ export function trackMapGeometry(server) {
   return {points:points.map(([x,z])=>project(x,z)),project,viewBox:[0,0,480,320],fixed:false};
 }
 
-function renderTimingMarks(map, ru) {
+function renderTimingMarks(map, ru, showLabels) {
   const [,,width,height] = map.viewBox;
   return (map.timingMarks || []).map(([x,y,dx,dy], index) => {
     const finish = index === 0;
@@ -63,7 +63,8 @@ function renderTimingMarks(map, ru) {
     const label = finish ? (ru ? 'С/Ф' : 'S/F') : `${approximate ? '≈' : ''}S${index}`;
     const side = (x-width/2)*dx+(y-height/2)*dy < 0 ? -1 : 1;
     const offset = map.timingLabelOffsets?.[index] ?? side*1.9;
-    return `<g class="track-timing-mark${finish ? ' is-finish' : ''}"><title>${caption}</title><line x1="${x-dx}" y1="${y-dy}" x2="${x+dx}" y2="${y+dy}"/><text x="${x+dx*offset}" y="${y+dy*offset}" text-anchor="middle" dominant-baseline="central">${label}</text></g>`;
+    const text = showLabels ? `<text x="${x+dx*offset}" y="${y+dy*offset}" text-anchor="middle" dominant-baseline="central">${label}</text>` : '';
+    return `<g class="track-timing-mark${finish ? ' is-finish' : ''}"><title>${caption}</title><line x1="${x-dx}" y1="${y-dy}" x2="${x+dx}" y2="${y+dy}"/>${text}</g>`;
   }).join('');
 }
 
@@ -82,6 +83,10 @@ export function renderTrackMap(server, lang = 'ru', now = Date.now(), {expanded=
   }
   const format = point=>point.map(v=>v.toFixed(2)).join(' ');
   const path = map.points.map((p,i)=>`${i ? 'L':'M'}${format(p)}`).join(' ')+' Z';
+  const spaBasemap = map.id === 'spa-gp';
+  const background = spaBasemap
+    ? `<image href="/assets/track-maps/spa-basemap.svg" width="1200" height="900"/><path class="track-outline-edge" fill="none" d="${path}"/>`
+    : '';
   // Leader is drawn last, keeping its red marker visible in a close group.
   const markers = [...cars].sort((a,b)=>(a.position===1)-(b.position===1)).map(d=>{
     const point=format(map.project(d.world_x,d.world_z));
@@ -91,9 +96,9 @@ export function renderTrackMap(server, lang = 'ru', now = Date.now(), {expanded=
     const pit = driverPitLabel(server,d,lang,now);
     return `<g class="track-car${leader ? ' is-leader':''}${pit ? ' is-pit':''}" data-car-key="${d.car_id}:${connection}" transform="translate(${point})"><title>${label}${pit ? ' · '+pit:''}</title><circle r="${map.fixed ? 14.4:10.4}"/><text text-anchor="middle" dominant-baseline="central">${position}</text></g>`;
   }).join('');
-  const labels=(map.labels||[]).map(label=>`<text class="track-label${label.secondary ? ' is-secondary':''}" x="${label.x}" y="${label.y}" text-anchor="${label.anchor}">${label.lines ? label.lines.map((line,i)=>`<tspan x="${label.x}" dy="${i ? '1.2em':'0'}">${line}</tspan>`).join(''):label.text}</text>`).join('');
-  const credit=map.fixed ? `<p class="track-map-credit">${ru ? 'Геометрия':'Geometry'}: <a href="${map.source.url}">${map.source.credit||'Tomislav Bacinger · MIT'}</a></p>`:'';
+  const labels=(spaBasemap ? [] : map.labels||[]).map(label=>`<text class="track-label${label.secondary ? ' is-secondary':''}" x="${label.x}" y="${label.y}" text-anchor="${label.anchor}">${label.lines ? label.lines.map((line,i)=>`<tspan x="${label.x}" dy="${i ? '1.2em':'0'}">${line}</tspan>`).join(''):label.text}</text>`).join('');
+  const credit=map.fixed ? `<p class="track-map-credit">${ru ? 'Геометрия':'Geometry'}: <a href="${map.source.url}">${map.source.credit||'Tomislav Bacinger · MIT'}</a>${spaBasemap ? ' · © <a href="https://www.openstreetmap.org/copyright">OpenStreetMap contributors</a>' : ''}</p>`:'';
   const caption = staticOnly ? (ru ? 'Координаты машин пока не привязаны к схеме' : 'Live car positions are not yet calibrated for this map')
     : cars.length ? (ru ? 'Красный — лидер · жёлтый — в питах · номера обозначают позиции' : 'Red — leader · yellow — in pits · numbers show positions') : empty;
-  return wrap(`<svg viewBox="${map.viewBox.join(' ')}" role="img" aria-label="${title}"><path class="track-outline" d="${path}"/>${labels}${renderTimingMarks(map,ru)}${markers}</svg><p>${caption}</p>${credit}`);
+  return wrap(`<svg viewBox="${map.viewBox.join(' ')}" role="img" aria-label="${title}">${background}<path class="track-outline" d="${path}"/>${labels}${renderTimingMarks(map,ru,!spaBasemap)}${markers}</svg><p>${caption}</p>${credit}`);
 }

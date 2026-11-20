@@ -12,14 +12,14 @@
 .server-track-map:not([open]) > .track-map-content { display:none; }
 .server-track-map p { margin:6px 0 0; font-size:12px; color:#acbfd5; }
 .server-track-map svg { display:block; width:100%; height:clamp(220px,32vw,360px); max-height:360px; background:#101b29; border-radius:4px; }
-.server-track-map .track-outline { fill:none; stroke:#7891a9; stroke-width:7; stroke-linecap:round; stroke-linejoin:round; }
+.server-track-map :is(.track-outline,.track-outline-edge) { fill:none; stroke:#7891a9; stroke-width:7; stroke-linecap:round; stroke-linejoin:round; }
 .server-track-map .track-car circle { fill:#3183c9; stroke:#eef5ff; stroke-width:1.6; }
 .server-track-map .track-car.is-leader circle { fill:#dc3545; }
 .server-track-map .track-car.is-pit circle { fill:#ffda91; }
 .server-track-map .track-car.is-pit text { fill:#101b29; }
 .server-track-map .track-car text { fill:#fff; stroke:none; font-size:9.6px; font-weight:750; font-family:system-ui,sans-serif; }
 .server-track-map.has-fixed-map svg { height:clamp(250px,42vw,500px); max-height:500px; }
-.server-track-map[data-track-map="spa-gp"] svg { height:clamp(320px,65vw,680px); max-height:680px; }
+.server-track-map[data-track-map=spa-gp] svg { height:clamp(320px,65vw,680px); max-height:680px; }
 .server-track-map[data-track-map="barcelona-gp"] svg { height:auto; max-height:500px; aspect-ratio:24/11; }
 .server-track-map.has-fixed-map .track-outline { stroke-width:5; }
 .server-track-map.has-fixed-map .track-car text { font-size:13.6px; }
@@ -30,16 +30,20 @@
 .server-track-map .track-timing-mark text { fill:currentColor; font:700 23px system-ui,sans-serif; stroke:#101b29; stroke-width:5; paint-order:stroke; }
 .server-track-map .track-map-credit { font-size:10px; }
 .server-track-map .track-map-credit a { color:inherit; }
+[data-track-map=spa-gp] .track-outline-edge { stroke:#f8faf5; stroke-width:9; vector-effect:non-scaling-stroke; }
+.has-fixed-map[data-track-map=spa-gp] .track-outline { stroke:#2f404a; stroke-width:5.5; vector-effect:non-scaling-stroke; }
+[data-track-map=spa-gp] .track-timing-mark:not(.is-finish) { color:#f6edd0; }
 @media (max-width:600px) {
   .server-track-map.has-fixed-map .track-car circle { r:22.4px; }
   .server-track-map.has-fixed-map .track-car text { font-size:22.4px; }
   .server-track-map .track-label { font-size:27px; }
   .server-track-map .track-timing-mark text { font-size:32px; }
   .server-track-map .track-label.is-secondary { display:none; }
-  .server-track-map[data-track-map="spa-gp"] svg { height:auto; max-height:none; aspect-ratio:4/3; }
-  .server-track-map[data-track-map="spa-gp"] .track-label { font-size:38px; }
-  .server-track-map[data-track-map="spa-gp"] .track-car circle { r:27.2px; }
-  .server-track-map[data-track-map="spa-gp"] .track-car text { font-size:28.8px; }
+  .server-track-map[data-track-map=spa-gp] svg { height:auto; max-height:none; aspect-ratio:4/3; }
+  [data-track-map=spa-gp] .track-outline-edge { stroke-width:6; }
+  .has-fixed-map[data-track-map=spa-gp] .track-outline { stroke-width:3.8; }
+  .has-fixed-map[data-track-map=spa-gp] .track-car circle { r:27.2px; }
+  .has-fixed-map[data-track-map=spa-gp] .track-car text { font-size:28.8px; }
 }
 .server-roster-scroll .server-roster-table.server-driver-list { display:table; width:100%; min-width:960px; table-layout:fixed; border-collapse:separate; border-spacing:0; margin:0; color:#e8eef7; font-size:13px; }
 .server-roster-table .roster-col-position { width:52px; }
