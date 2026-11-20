@@ -1,4 +1,3 @@
-import {resolveTrackBackgroundFile} from "/src/features/server-status/track-background.js";
 import {profileRaces} from '/v2/profile-races.js?v=20261025raceinfo1';
 import {hourlySrRequirement} from '/src/features/hourly/entry-requirements.js?v=20261027sr33';
 import {renderPagination} from '../pagination.js?v=20261015pagination1';
@@ -47,7 +46,7 @@ export function createPageViews(api) {
     return card(next,true,{championship});
   }
   function eventData(id) {return [raw.event,...raw.schedule.items].find(e=>e?.event_id===id);}
-  function entryLocked(e) {return e.voting_disabled===true || participation[e.event_id]?.pending===true || raw.hourlyVotesLoading===true;}
+  function entryLocked(e) {return e.voting_disabled===true || participation[e.event_id]?.pending===true;}
   function participantCount(e) {
     if(e.participation_mode==='team') {
       const maximum=e.max_drivers || e.rules?.max_drivers_count;
@@ -59,19 +58,15 @@ export function createPageViews(api) {
     const privacy=disclosure?`<span class="entry-disclosure">${votingPrivacy(e)}</span>`:'';
     if(e.participation_mode==='team')return `<a class="button primary" data-team-cutoff="${label(e.closes_at || e.registration_closes_at)}" data-team-closed="${e.registration_closed === true}" href="${label(teamRaceUrl(e,lang))}">${label(teamEntryLabel(e,lang))} ↗</a><span class="page-help">${tx('Закрытие заявок','Entries close')}: ${time(e.closes_at || e.registration_closes_at)} · ${tx('за 10 минут до открытия сервера','10 minutes before server opening')}</span>`;
     const locked=entryLocked(e), joined=participation[e.event_id]?.voted===true,pending=participation[e.event_id]?.pending===true;
-    return `<button class="button primary${joined?' is-voted':''}" type="button" data-page-join="${label(e.event_id)}" aria-pressed="${joined}"${locked?' disabled':''}>${pending?tx('Сохраняем…','Saving…'):e.voting_disabled===true?tx('Запись недоступна','Entry unavailable'):raw.hourlyVotesLoading?tx('Проверяем участие…','Checking entry…'):joined?tx('Ты в списке · отменить','You are in · cancel'):tx('Я хочу поехать!','I want to race!')}</button>${count?participantCount(e):''}${privacy}`;
+    return `<button class="button primary${joined?' is-voted':''}" type="button" data-page-join="${label(e.event_id)}" aria-pressed="${joined}"${locked?' disabled':''}>${pending?tx('Сохраняем…','Saving…'):locked?tx('Запись недоступна','Entry unavailable'):joined?tx('Ты в списке · отменить','You are in · cancel'):tx('Я хочу поехать!','I want to race!')}</button>${count?participantCount(e):''}${privacy}`;
   }
   function card(e,hero=false,{championship=null}={}) {
-    const trackFile = resolveTrackBackgroundFile(trackCode(e));
-    const trackImage = trackFile
-      ? `/assets/v2-light/tracks/${trackFile.replace(/\.jpg$/i,'.webp')}`
-      : `/assets/${safeTrack(e)}.jpg`;
     const kind=eventKind(e),car=e.car_restriction,start=time(new Date(eventStart(e)).toISOString());
     const carName=car?.mode==='single_model'?car.car_model_name:tx('Все машины класса','All cars in class')+' '+(e.server?.car_group || 'GT3');
     const carData=`<div class="page-car-name">${label(carName)}${car?.mode==='single_model'?`<img ${carThumbnailAttributes(car.car_model_id,80)} alt="">`:''}</div>`;
     const raceData=`<span class="event-race-data"><b>${e.race_duration_minutes ?? e.session?.race_duration_minutes ?? '—'} ${tx('мин','min')}</b> · SA ${e.server?.safety_rating_requirement ?? '—'} · SR ${hourlySrRequirement(e)} · ${tx('Питстопы','Pitstops')}: ${e.rules?.mandatory_pitstop_count ?? e.event_rules_overrides?.mandatoryPitstopCount ?? '—'}</span>`;
     const links=championship?`<a href="${route('championship',e.championship_slug||championship.slug)}">${tx('Чемпионат','Championship')} ↗</a><a href="${route('seasons')}">${tx('История','History')} ↗</a>`:'';
-    return `<article class="page-event-card kind-${kind}${hero?' feature-event':''}${hero&&!championship?' hero-event':''}${championship?' page-championship':''}" style="--page-track:url('${trackImage}')">
+    return `<article class="page-event-card kind-${kind}${hero?' feature-event':''}${hero&&!championship?' hero-event':''}${championship?' page-championship':''}" style="--page-track:url('/assets/${safeTrack(e)}.jpg')">
       <div class="page-event-label"><div class="event-heading-copy"><span class="eyebrow">${championship?tx('Ближайший этап','Next round'):hero?tx('Ближайший старт','Next start'):label(start)}</span>${championship?`<span class="event-season" title="${label(championship.title)}">${label(championship.title)}</span>`:''}</div><div class="event-label-clock"><span class="event-kind kind-${kind}">${eventKindLabel(kind)}</span><span class="race-countdown" data-page-countdown="${label(e.event_id)}">${countdownText(e)}</span></div></div>
       <div class="page-event-content"><h${hero?'2':'3'}>${label(e.track_name || trackName(e.track_code))}</h${hero?'2':'3'}><span class="page-points points-pulse">×${Number(e.points_multiplier)||1} ${tx('ОЧКОВ В РЕЙТИНГ','RANKING POINTS')}</span>${hero?`<div class="page-event-date">${label(start)} · ${label(e.timezone || 'UTC+3')}</div>`:carData}</div>
       ${hero?`<div class="event-car-rules">${carData}${raceData}</div><div class="event-prejoin"><div class="event-footer-links"><button class="text-link" type="button" data-page-weather="${label(e.event_id)}">${tx('Погода','Weather')} ↗</button>${links}</div>${participantCount(e)}</div>`:`<div class="page-event-facts">${raceData}${participantCount(e)}</div>`}
@@ -92,21 +87,9 @@ export function createPageViews(api) {
     while(cells.length<42)cells.push('<div class="calendar-day is-outside" aria-hidden="true"></div>');
     return section(tx('Календарь гонок','Race calendar'),`<div class="calendar-controls"><button type="button" data-month-step="-1" aria-label="${tx('Предыдущий месяц','Previous month')}">‹</button><b>${monthLabel}</b><button type="button" data-month-step="1" aria-label="${tx('Следующий месяц','Next month')}">›</button><button type="button" data-month-reset>${tx('Текущий месяц','Current month')}</button></div><div class="calendar-grid">${tx('Пн Вт Ср Чт Пт Сб Вс','Mon Tue Wed Thu Fri Sat Sun').split(' ').map(v=>`<span class="calendar-weekday">${v}</span>`).join('')}${cells.join('')}</div><p class="page-help calendar-legend">${['hourly','monoclass','championship','endurance','team'].map(kind=>`<span class="legend-kind kind-${kind}"><i></i>${eventKindLabel(kind)}</span>`).join('')}<span>✓ ${tx('Завершённая гонка','Completed race')}</span><span>${tx('Даты из опубликованного расписания','Dates from the published schedule')}</span></p>`,'','page-calendar');
   }
-  function updateCompletedRaces() {
-    const days=view.querySelectorAll('.page-calendar .calendar-day');
-    const template=document.createElement('template');
-    template.innerHTML=calendar();
-    const replacements=template.content.querySelectorAll('.calendar-day');
-    for(const [index,day] of days.entries()){
-      day.querySelectorAll('.calendar-entry.is-finished').forEach(entry=>entry.remove());
-      day.append(...replacements[index].querySelectorAll('.calendar-entry.is-finished'));
-    }
-  }
   function recent() {
-    if(raw.recentLoading)return section(tx('Последние гонки','Recent races'),
-      `<p class="page-help" role="status">${tx('Загрузка результатов…','Loading results…')}</p>`,'','page-recent');
     if(raw.recentUnavailable)return section(tx('Последние гонки','Recent races'),
-      `<p class="page-help">${tx('Архив временно недоступен.','The archive is temporarily unavailable.')}</p><button type="button" class="button" data-hourly-recent-retry>${tx('Повторить','Retry')}</button>`,'','page-recent');
+      `<p class="page-help">${tx('Архив временно недоступен.','The archive is temporarily unavailable.')}</p>`,'','page-recent');
     state.recentPage=Math.max(1,Math.min(state.recentPage,Math.ceil(fixture.recent.length/5)||1));
     const races=fixture.recent.slice((state.recentPage-1)*5,state.recentPage*5);
     return section(tx('Последние гонки','Recent races'),`<div class="page-recent-list">${races.map(r=>`<article class="page-recent-race" data-page-race="${label(r.race_id)}" tabindex="0" role="button" aria-label="${label(trackName(trackCode(r)))} · ${tx('Открыть результаты','Open results')}"><img class="recent-track-image" ${trackThumbnailAttributes(safeTrack(r))} alt=""><div class="recent-content"><div class="recent-titleline"><b class="recent-circuit" title="${label(trackName(trackCode(r)))}">${label(trackName(trackCode(r)))}</b><span class="recent-winner"><span>${tx('Победитель','Winner')}</span> ${pageDriver({public_id:r.winner_public_id,driver:r.winner},'recent-profile-link')}</span><span class="recent-average-elo rating-badge${r.average_elo==null?'':' elo-'+eloCategory({elo:r.average_elo})}" title="${tx('Средний ELO заезда','Average race ELO')}">ELO <b>${eloNumber(r.average_elo)}</b></span></div><div class="recent-metaline"><span>${time(r.finished_at)}</span><span>· ${r.participants_count} ${tx('пилотов','drivers')}</span><span class="recent-best-lap">· <b class="best-lap-value">${label(r.best_lap)}</b>${r.best_lap_public_id?` ${pageDriver({public_id:r.best_lap_public_id,driver:r.best_lap_driver},'recent-lap-author recent-profile-link')}`:''}</span></div></div><span class="recent-open" aria-hidden="true">↗</span></article>`).join('')}</div>${renderPagination({name:'recent',page:state.recentPage,total:fixture.recent.length,size:5,tx,previous:'data-recent-page="-1"',next:'data-recent-page="1"'})}`,'','page-recent');
@@ -209,5 +192,5 @@ export function createPageViews(api) {
       if(existing&&replacement)existing.replaceChildren(...replacement.childNodes);
     }
   }
- return {hourlyView,driverView,layoutDriver,sizeProfileRail,updateSection,calendar,updateCompletedRaces,recent,picker,profileRaceTable,hourlyClubs,eventData,card,joinControls,raceRating,raceBestLapId,pageDriver,section,metric,num,decimal,delta,trackName,trackCode,safeTrack,label};
+ return {hourlyView,driverView,layoutDriver,sizeProfileRail,updateSection,calendar,recent,picker,profileRaceTable,hourlyClubs,eventData,card,joinControls,raceRating,raceBestLapId,pageDriver,section,metric,num,decimal,delta,trackName,trackCode,safeTrack,label};
 }
