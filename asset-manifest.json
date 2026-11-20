@@ -1,8 +1,8 @@
 {
   "schemaVersion": 1,
-  "revision": "3daf9b4d18f37f00004f38cdea545f66282d13aa",
+  "revision": "a9c2f77e65d04fa960c05d3997b112da8dce5428",
   "files": 1343,
-  "bytes": 196816164,
+  "bytes": 196816242,
   "assets": [
     {
       "path": "404.html",
@@ -6611,8 +6611,8 @@
     },
     {
       "path": "v2/server-cards.css",
-      "bytes": 10179,
-      "sha256": "8a69f460b615f8f084ca25dc49a877cdf21afac242bc91204e92a12fd1a09f2d"
+      "bytes": 10257,
+      "sha256": "d372ab661971023f2e729428c2c3f1b2b802fefbc9599b7c5e115a1cf9f1bdf3"
     },
     {
       "path": "v2/server-cards.js",
