@@ -1,7 +1,7 @@
 import {nodes, edit, setAttribute} from './seo/html-source.mjs';
 import {pageHasSidebarWidgets} from '../v2/page-layout.js';
 
-export const siteAppearanceScript = '<script type="module" src="/src/features/site-appearance/site-appearance.js?v=20261118newyear7"></script>';
+export const siteAppearanceScript = '<script type="module" src="/src/features/site-appearance/site-appearance.js?v=20261120winterhover1"></script>';
 
 export function pageShell(html, screen) {
   if (pageHasSidebarWidgets(screen)) return html;

@@ -108,7 +108,7 @@
     },
     {
       "path": "scripts/v2-page-shell.mjs",
-      "sha256": "c9b3397fed0a16630d4f32a5f131d4bdc2ef926fa0236fcee4393d06edad9649"
+      "sha256": "e5c4ece69de6131b1f6319fe1c65be1a2ead68f751d0f16e05ca62837f831b9f"
     },
     {
       "path": "scripts/v2-runtime-facade.txt",
