@@ -56,6 +56,7 @@ try{
     assert.match(html,/<a[^>]*data-copy="serverDetails"/);
   }
   const cases=[...([9,10,15,30].map(count=>({count,language:'ru',width:1280,height:800,screen:'home'}))),
+    {count:30,language:'ru',width:1440,height:900,screen:'home'},
     {count:30,language:'en',width:1920,height:1080,screen:'home'},
     {count:30,language:'ru',width:1366,height:650,screen:'home'},
     {count:30,language:'en',width:390,height:844,screen:'home'},
@@ -114,17 +115,35 @@ try{
       }
       assert.equal(await page.locator('[data-server-nav]').first().getAttribute('href'),'/v2/'+language+'/servers/');
       const cards=container.locator('[data-server]');
-      const heights=await cards.evaluateAll(nodes=>nodes.map(n=>n.getBoundingClientRect().height));
-      assert.ok(Math.min(...heights)>=(screen==='home'?63:220),'Every card retains readable height');
       assert.equal(await page.evaluate(()=>document.documentElement.scrollWidth>innerWidth+1),false,'No horizontal page overflow');
       if(screen==='home'){
+        assert.equal(await cards.locator('.status-dot').count(),0,'Widget indicates status on the left border');
+        assert.ok(await cards.evaluateAll(nodes=>nodes.every(card=>{
+          const rect=card.getBoundingClientRect();
+          const name=card.querySelector('.server-name').getBoundingClientRect();
+          const session=card.querySelector('.server-widget-session').getBoundingClientRect();
+          const count=card.querySelector('.server-card-count').getBoundingClientRect();
+          return rect.height>=58&&Math.abs(name.left-session.left)<1&&name.right<count.left&&
+            Math.abs(name.top-count.top)<4&&getComputedStyle(card).borderLeftWidth==='2px';
+        })),'Widget name and session align left, count aligns with the name');
         assert.equal(await container.evaluate(e=>getComputedStyle(e).overflowY),'auto');
         if(count===30)assert.equal(await container.evaluate(e=>e.scrollHeight>e.clientHeight+100),true,'Thirty cards have a bounded scroll area');
         assert.equal(await page.locator('.servers-foot a').getAttribute('href'),'/v2/'+language+'/servers/');
+        if(width===1440||width===390)await page.locator('.servers-panel').screenshot({path:path.join(output,`widget-top-${language}-${width}.png`)});
       }else{
         for(const aside of await page.locator('.dashboard>aside').all())assert.equal(await aside.isVisible(),false,'Directory has no side widgets');
         assert.equal(await page.locator('.knowledge').isVisible(),false,'Directory contains only server content');
-        assert.match(await cards.first().getAttribute('style'),/\/assets\/v2-light\/tracks\/.*\.webp/);
+        assert.match(await cards.first().locator('.server-directory-cover img').getAttribute('src'),/\/assets\/v2-light\/tracks\/.*\.webp/);
+        assert.equal(await cards.locator('.server-directory-flag').count(),count);
+        assert.ok(await container.evaluate(grid=>{
+          const style=getComputedStyle(grid),columns=style.gridTemplateColumns.split(' ').length;
+          const gap=parseFloat(style.columnGap),cards=[...grid.querySelectorAll('.server-directory-card')];
+          return cards.every((card,i)=>{
+            const bodyStyle=getComputedStyle(card.querySelector('.server-directory-card-body'));
+            if([bodyStyle.paddingTop,bodyStyle.paddingBottom,bodyStyle.rowGap].some(value=>value!=='4px'))return false;
+            return i<columns||Math.abs(card.getBoundingClientRect().top-cards[i-columns].getBoundingClientRect().bottom-gap)<1;
+          });
+        }),'Directory cards have equal gaps and 4px vertical detail spacing');
         await page.screenshot({path:path.join(output,`directory-top-${language}-${width}.png`)});
       }
       if(screen==='home'&&count===15){

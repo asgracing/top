@@ -11,7 +11,7 @@ import {createDonationSupport} from './donations.js?v=20261119donations1';
 import {createHeader} from './header.js?v=20261118newyear1';
 import {liveRanking,liveBestlapTracks} from './live-stats.js';
 import {serverSessionLabel} from './server-session.js?v=20261025direct1';
-import {countReportedPlayers,orderedServers,replaceServerCards,serverDialogTrigger} from './server-cards.js?v=20261120partialonline1';
+import {countReportedPlayers,orderedServers,replaceServerCards,serverCardPilotCount,serverDialogTrigger} from './server-cards.js?v=20261120servercards';
 import {createGuide} from './guide.js?v=20261006v2k';
 import {createHomeMotion} from './motion.js?v=20261006v2k';
 import {v2Route,currentV2Path,v2EntityLinks} from './routes.js?v=20261008v2pages15';
@@ -184,12 +184,19 @@ function serverAdmission(server){
 function renderServers(){
   const rows=orderedServers(model.servers);$('servers-up').textContent=`${model.serversStale||rows.some(s=>s.stale)?'—':rows.filter(s=>s.online).length} / ${rows.length}`;
   $('total-online').textContent=number(countReportedPlayers(rows,model.serversStale))+' '+label('players');
-  const phase=s=>serverSessionLabel(s,label);
   replaceServerCards($('servers'),rows.map((s,i)=>{
-    const name=s.key==='hourly'?text('Часовые гонки / ASG Racing Race','Hourly / ASG Racing Race'):String(s.label).replace(/^ASG Racing\s+/i,''),session=s.stale?text('Данные устарели','Stale data'):phase(s),hint=serverAdmission(s);
-    const short=s.stale?text('Нет данных','No data'):serverSessionLabel(s,label,{compact:true});
-    const description=hint||`${s.label} · ${session} · ${number(s.players)} ${text('пилотов','drivers')}`;
-    return `<button type="button" class="server-card${s.online?'':' offline'}${hint?' is-sr-blocked':''}" data-server="${esc(s.key)}" aria-label="${esc(description)}" title="${esc(description)}"><span class="server-top"><span class="server-id">${String(i+1).padStart(2,'0')}</span><span class="server-name">${esc(name)}</span><span class="server-compact-live"><span data-live-session="${esc(s.key)}" data-compact="true">${esc(short)}</span> · ${number(s.players)}</span><span class="status-dot" aria-hidden="true"></span></span><span class="server-facts"><span class="server-track">${esc(s.track||'—')}</span><span class="server-admission">SA ${esc(s.sa)} · ${hint?'&#128274; ':''}SR ${esc(s.sr)}</span><span class="server-live">${number(s.players)} ${text('пилотов','drivers')} · <span data-live-session="${esc(s.key)}">${esc(session)}</span></span></span></button>`;
+    const name=s.key==='hourly'?text('Часовые гонки / ASG Racing Race','Hourly / ASG Racing Race'):String(s.label).replace(/^ASG Racing\s+/i,'');
+    const stale=model.serversStale||s.stale, state=stale?'stale':s.online?'online':'offline';
+    const session=stale?text('Данные устарели','Stale data'):s.online?serverSessionLabel(s,label):text('Не запущен','Offline');
+    const hint=serverAdmission(s), pilotLabel=text('пилотов','drivers');
+    const description=[s.label,session,hint].filter(Boolean).join(' · ');
+    return `<button type="button" class="server-card server-widget-card${hint?' is-sr-blocked':''}" data-server="${esc(s.key)}" data-state="${state}" aria-haspopup="dialog" aria-controls="v2-modal" title="${esc(description)}">
+      <span class="server-id">${String(i+1).padStart(2,'0')}</span><span class="server-name">${esc(name)}</span>
+      ${serverCardPilotCount(s,{stale,useReportedPlayers:true,pilotLabel})}
+      <span class="server-widget-session">${esc(s.track||'—')} · <span${state==='online'?` data-live-session="${esc(s.key)}"`:''}>${esc(session)}</span></span>
+      <span class="server-admission">SA ${esc(s.sa)} · ${hint?'&#128274; ':''}SR ${esc(s.sr)}</span>
+      ${hint?`<span class="server-card-sr-only">${esc(hint)}</span>`:''}
+    </button>`;
   }).join('')||`<p class="empty">${text('Статусы недоступны','Server status unavailable')}</p>`);
 }
 // Update only clock text; do not rebuild cards or refetch positions each second.
@@ -197,7 +204,7 @@ if(needsServerStatus)setInterval(()=>{
   if(document.hidden||!model)return;
   for(const node of document.querySelectorAll('[data-live-session]')){
     const server=model.servers.find(s=>s.key===node.dataset.liveSession);
-    if(server?.server?.source==='acc-local-telemetry')node.textContent=serverSessionLabel(server,label,{compact:node.dataset.compact==='true'});
+    if(server?.online&&!server.stale&&!model.serversStale&&server.server?.source==='acc-local-telemetry')node.textContent=serverSessionLabel(server,label,{compact:node.dataset.compact==='true'});
   }
 },1000);
 const cols={leaderboard:[['rank','#'],['driver','driver'],['elo','ELO'],['safety_rating','SR'],['points','points'],['wins','wins'],['podiums','podiums'],['races','racesCol'],['average_finish','finish'],['club','club'],['team','team']],safety:[['rank','№'],['driver','driver'],['safety_rating','SR'],['active_strikes',text('Страйки','Strikes')],['races_count','racesCol'],['total_laps',text('Всего кругов','Total laps')],['total_invalid_laps',text('Грязные круги','Invalid laps')],['total_counted_penalties',text('Автоштрафы','Auto penalties')],['total_incident_points',text('Инциденты','Incidents')]],bestlaps:[['rank','#'],['driver','driver'],['best_lap','lap'],['car_name','car'],['updated_at','date'],['session_type','session'],['elo','ELO'],['safety_rating','SR'],['club','club'],['team','team']],clubs:[['rank','#'],['display_name','teams'],['total_points','points'],['average_elo','ELO'],['average_sr','SR'],['race_count','racesCol']]};
@@ -394,7 +401,7 @@ if(!isSubpage){
   if('IntersectionObserver' in window){const observer=new IntersectionObserver(entries=>{if(entries.some(entry=>entry.isIntersecting)){observer.disconnect();loadTable();}},{rootMargin:'240px 0px'});observer.observe($('ranking'));}
   else loadTable();
 }
-try{await import('./runtime/home.js?v=20261120partialonline1');applyHash();if(isSubpage)startBackground();}catch(error){console.error('V2 runtime unavailable',error);$('event-track').textContent=text('Не удалось загрузить данные','Could not load data');$('day-driver').textContent=text('Данные недоступны','Data unavailable');tableError=true;tableBusy=false;renderTable()}
+try{await import('./runtime/home.js?v=20261120servercards');applyHash();if(isSubpage)startBackground();}catch(error){console.error('V2 runtime unavailable',error);$('event-track').textContent=text('Не удалось загрузить данные','Could not load data');$('day-driver').textContent=text('Данные недоступны','Data unavailable');tableError=true;tableBusy=false;renderTable()}
 if(document.documentElement.dataset.v2Page){
   const {startPage}=await import('./pages/controller.js?v=20261120siteperf2');
   await startPage({native,presentation,showDialog,esc,text,label,date,number,rating,car,language,subscribe,serverAdmission});

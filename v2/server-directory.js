@@ -1,7 +1,7 @@
-import {countReportedPlayers, orderedServers, replaceServerCards} from './server-cards.js?v=20261120partialonline1';
+import {countReportedPlayers, orderedServers, replaceServerCards, serverCardPilotCount} from './server-cards.js?v=20261120servercards';
 import {resolveTrackBackgroundFile} from '/src/features/server-status/track-background.js';
-import {serverPilotCount} from '/src/features/server-status/live-details.js?v=20261024pitmap1';
 import {serverSessionLabel} from './server-session.js?v=20261018telemetry1';
+import {serverCountryFlag, serverTrackCountry} from './server-track-flags.js';
 
 export function startServerDirectory({view, center, subscribe, esc, text, label, number, date, serverAdmission}) {
   document.querySelector('.dashboard').classList.add('page-wide');
@@ -32,6 +32,8 @@ export function startServerDirectory({view, center, subscribe, esc, text, label,
   const grid = view.querySelector('#server-directory-grid');
   const online = view.querySelector('#server-directory-online');
   const drivers = view.querySelector('#server-directory-drivers');
+  const countries = new Intl.DisplayNames(text('ru', 'en'), {type: 'region', style: 'short'});
+  const pilotLabel = text('пилотов', 'drivers');
   let signature = '';
   const unsubscribe = subscribe(model => {
     const rows = orderedServers(model.servers);
@@ -45,23 +47,35 @@ export function startServerDirectory({view, center, subscribe, esc, text, label,
     if (drivers.textContent !== driversCount) drivers.textContent = driversCount;
     replaceServerCards(grid, rows.map((row, index) => {
       const stale = model.serversStale || row.stale;
-      const file = resolveTrackBackgroundFile(row.server?.track_code || row.server?.track);
-      const background = file ? `url('/assets/v2-light/tracks/${file.replace(/\.jpg$/i, '.webp')}')` : 'none';
+      const code = row.server?.track_code || row.server?.track;
+      const file = resolveTrackBackgroundFile(code);
+      const country = serverTrackCountry(file || code) ?? serverTrackCountry(row.track);
       const warning = serverAdmission(row);
       const state = stale ? 'stale' : row.online ? 'online' : 'offline';
       const stateLabel = stale ? text('Данные устарели', 'Stale data') : row.online ? text('Работает', 'Running') : text('Не запущен', 'Offline');
-      const session = stale ? text('Нет свежих данных', 'No fresh data') : serverSessionLabel(row, label);
+      const session = state === 'online' ? serverSessionLabel(row, label) : stateLabel;
       const name = row.key === 'hourly' ? text('Часовые гонки / ASG Racing Race', 'Hourly / ASG Racing Race') : String(row.label).replace(/^ASG Racing\s+/i, '');
       return `<button type="button" class="server-directory-card is-${state}${warning ? ' is-sr-blocked' : ''}"
-        data-server="${esc(row.key)}" style="--server-track-image:${esc(background)}" aria-haspopup="dialog" aria-controls="v2-modal" aria-label="${esc(row.label)}${warning ? ' · '+esc(warning) : ''}">
-        <span class="server-directory-card-top"><span class="server-directory-index">${String(index + 1).padStart(2, '0')} / ${esc(row.track || '—')}</span>
-          <span class="server-directory-state"><i class="status-dot" aria-hidden="true"></i>${stateLabel}</span></span>
-        <strong class="server-directory-name">${esc(name)}</strong>
-        <span class="server-directory-session" data-live-session="${esc(row.key)}">${esc(session)}</span>
-        <span class="server-directory-card-bottom"><span><b>${esc(stale ? '—' : serverPilotCount(row.server))}</b> ${text('пилотов', 'drivers')}</span>
-          <span class="server-directory-access">SA ${esc(row.sa ?? '—')} · SR ${esc(row.sr ?? '—')}</span></span>
-        ${warning ? `<span class="server-directory-warning">${esc(warning)}</span>` : ''}
-        <span class="server-directory-details">${text('Пилоты и карта трассы', 'Drivers & track map')} <span aria-hidden="true">↗</span></span>
+        data-server="${esc(row.key)}" aria-haspopup="dialog" aria-controls="v2-modal">
+        <span class="server-directory-cover${file ? '' : ' is-without-photo'}">
+          ${file ? `<img src="/assets/v2-light/tracks/${file.replace(/\.jpg$/i, '.webp')}" alt=""${index < 4 ? '' : ' loading="lazy"'}>` : ''}
+          <span class="server-directory-track-label">
+            ${country ? `<span class="server-directory-country">${serverCountryFlag(country)}${esc(countries.of(country))}</span>` : ''}
+            <span class="server-directory-track-name">${esc(row.track || text('Трасса неизвестна', 'Unknown track'))}</span>
+          </span>
+        </span>
+        <span class="server-directory-card-body">
+          <strong class="server-directory-name">${esc(name)}</strong>
+          <span class="server-directory-session">
+            <i class="status-dot" aria-hidden="true"></i>
+            <span${state === 'online' ? ` data-live-session="${esc(row.key)}"` : ''}>${esc(session)}</span>
+          </span>
+          ${serverCardPilotCount(row, {stale, pilotLabel})}
+          <span class="server-directory-access">SA ${esc(row.sa ?? '—')} · SR ${esc(row.sr ?? '—')}</span>
+          <span class="server-directory-chevron" aria-hidden="true">›</span>
+          ${warning ? `<span class="server-directory-warning">${esc(warning)}</span>` : ''}
+          <span class="server-card-sr-only">${text('Пилоты и карта трассы', 'Drivers & track map')}</span>
+        </span>
       </button>`;
     }).join('') || `<p class="page-empty" role="status">${text('Данные серверов пока недоступны.', 'Server data is not available yet.')}</p>`, [center]);
     view.querySelector('#server-directory-updated').textContent = model.updatedAt

@@ -40,7 +40,7 @@ try{
   assert.match(await stale.textContent(),lang==='ru'?/Нет данных/:/No data/);
   const fresh=await page.locator('#v2-servers [data-server="main"]').textContent();
   assert.ok(!/Нет данных|No data/.test(fresh),'Fresh zero-player Main must remain available');
-  assert.match(await page.locator('#v2-servers [data-server="main"] .server-live').textContent(),/^0\s/);
+  assert.match(await page.locator('#v2-servers [data-server="main"] .server-card-count').textContent(),/^0\s/);
   if(await page.locator('.asg-legal-banner-btn-secondary').isVisible())await page.locator('.asg-legal-banner-btn-secondary').click();
   await stale.click();
   await page.waitForFunction(()=>document.querySelector('#v2-modal')?.open);

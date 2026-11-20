@@ -1,4 +1,12 @@
+import {serverPilotCount} from '../src/features/server-status/live-details.js?v=20261024pitmap1';
+
 // Shared presentation helpers; no server registry or rating policy lives here.
+export function serverCardPilotCount(row, {stale, useReportedPlayers = false, pilotLabel}) {
+  const [connected, capacity] = serverPilotCount(row.server).split(' / ');
+  const reported = useReportedPlayers && Number.isInteger(row.players) && row.players >= 0 ? row.players : '—';
+  const count = stale ? '—' : connected === '—' ? reported : connected;
+  return `<span class="server-card-count"><i class="server-card-person" aria-hidden="true"></i><b>${count} / ${capacity}</b><span class="server-card-sr-only"> ${pilotLabel}</span></span>`;
+}
 export function orderedServers(servers = []) {
   const priority = new Map([['hourly', 0], ['main', 1]]);
   // Stable sort retains the runtime's track and name order when player counts tie.
