@@ -101,6 +101,20 @@ try{
         return {font:getComputedStyle(number).fontSize,fits:value.right<=card.right+1&&number.scrollWidth<=number.clientWidth+1,icon:!!node.querySelector('svg')};
       }));
       assert.deepEqual(metrics,Array.from({length:2},()=>({font:'36px',fits:true,icon:true})));
+      const spacing=await summary.evaluate(element=>{
+        const directory=element.closest('.server-directory');
+        const head=directory.querySelector('.server-directory-head');
+        const faq=directory.querySelector('[data-faq-context]');
+        const grid=directory.querySelector('.server-directory-grid');
+        return {
+          beforeFaq:faq.getBoundingClientRect().top-head.getBoundingClientRect().bottom,
+          afterFaq:grid.getBoundingClientRect().top-faq.getBoundingClientRect().bottom,
+          faqHeight:faq.getBoundingClientRect().height,
+        };
+      });
+      assert.equal(spacing.beforeFaq,6);
+      assert.equal(spacing.afterFaq,6);
+      assert.ok(spacing.faqHeight>=(width<=600?44:32));
     }
     if(test.unavailable){
       await page.waitForFunction(()=>document.querySelector('#server-directory-grid .page-empty')?.textContent.includes('недоступны'));
@@ -144,6 +158,12 @@ try{
             return i<columns||Math.abs(card.getBoundingClientRect().top-cards[i-columns].getBoundingClientRect().bottom-gap)<1;
           });
         }),'Directory cards have equal gaps and 4px vertical detail spacing');
+        assert.ok(await cards.locator('.server-directory-name').evaluateAll(names=>names.every(name=>{
+          const style=getComputedStyle(name);
+          return parseFloat(style.fontSize)<=16&&style.whiteSpace==='nowrap'&&style.textOverflow==='ellipsis'&&
+            name.getBoundingClientRect().height<=parseFloat(style.lineHeight)+1;
+        })),'Every server name remains one compact line');
+        if(width>=1440||width===390)assert.ok(await cards.first().locator('.server-directory-name').evaluate(name=>name.scrollWidth<=name.clientWidth),'Hourly name fits at 390px and on wide desktop');
         await page.screenshot({path:path.join(output,`directory-top-${language}-${width}.png`)});
       }
       if(screen==='home'&&count===15){

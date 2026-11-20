@@ -62,10 +62,14 @@ html[data-v2-page="servers"] .dashboard {grid-template-columns:minmax(0,1fr)!imp
 html[data-v2-page="servers"] .dashboard>aside {display:none!important;}
 html[data-v2-page="servers"] .knowledge {display:none;}
 html[data-v2-page="servers"] .center-column {grid-column:1/-1;min-width:0;}
-.server-directory {display:flex;flex-direction:column;gap:17px;padding:5px 3px 18px;}
-.server-directory-head {display:flex;justify-content:space-between;align-items:center;gap:20px;padding:15px 4px 17px;border-bottom:1px solid #839cb538;}
-.server-directory-head h1 {margin:5px 0 7px;color:#f7f9ff;font-size:clamp(23px,2.3vw,34px);line-height:1.1;letter-spacing:-.6px;}
+.server-directory {display:flex;flex-direction:column;gap:6px;padding:0 3px 8px;}
+.server-directory-head {display:flex;justify-content:space-between;align-items:center;gap:12px;padding:4px 4px 5px;border-bottom:1px solid #839cb538;}
+.server-directory-head h1 {margin:0 0 3px;color:#f7f9ff;font-size:clamp(23px,2.3vw,34px);line-height:1.1;letter-spacing:-.6px;}
 .server-directory-head p {margin:0;font-size:13px;color:#afc0d3;}
+.server-directory > [data-faq-context] {margin:0;}
+.server-directory > [data-faq-context] .faq-context-link {
+  display:flex;align-items:center;gap:4px;min-height:32px;padding:4px 12px;
+}
 .server-directory-summary {
   display:grid;grid-template-columns:minmax(0,1.1fr) minmax(0,1fr);
   gap:8px;width:min(100%,402px);flex:none;
@@ -73,12 +77,12 @@ html[data-v2-page="servers"] .center-column {grid-column:1/-1;min-width:0;}
 .server-directory-metric {
   --metric-accent:#68efba;
   --metric-tint:#68efba19;
-  display:flex;align-items:center;gap:11px;min-width:0;padding:11px 12px;
+  display:flex;align-items:center;gap:11px;min-width:0;padding:5px 12px;
   border:1px solid #455b6c;border-radius:4px;
   background:linear-gradient(120deg,var(--metric-tint),transparent 78%),#121d27;
 }
 .server-directory-metric-drivers {--metric-accent:#b5d9fb;--metric-tint:#b5d9fb16;}
-.server-directory-metric>div {display:grid;gap:3px;min-width:0;}
+.server-directory-metric>div {display:grid;gap:2px;min-width:0;}
 .server-directory-metric b {
   color:#f3f8ff;font-size:36px;line-height:1.05;font-weight:800;
   font-variant-numeric:tabular-nums;white-space:nowrap;
@@ -94,12 +98,18 @@ html[data-v2-page="servers"] .center-column {grid-column:1/-1;min-width:0;}
   stroke-linecap:round;stroke-linejoin:round;
 }
 @media(max-width:800px) {
-  .server-directory-head {align-items:flex-start;flex-direction:column;gap:14px;}
+  .server-directory-head {align-items:flex-start;flex-direction:column;gap:6px;}
 }
 @media(max-width:420px) {
-  .server-directory-metric {align-items:flex-start;flex-direction:column;gap:7px;padding:9px 10px;}
-  .server-directory-metric-icon {width:29px;height:29px;}
-  .server-directory-metric-icon svg {width:17px;height:17px;}
+  .server-directory-metric {display:grid;grid-template-columns:minmax(0,1fr) auto;gap:2px 5px;padding:5px 8px;}
+  .server-directory-metric>div {display:contents;}
+  .server-directory-metric b {grid-area:1 / 1 / 2 / -1;}
+  .server-directory-metric>div>span {grid-area:2 / 1;}
+  .server-directory-metric-icon {grid-area:2 / 2;width:22px;height:22px;}
+  .server-directory-metric-icon svg {width:14px;height:14px;}
+}
+@media(max-width:600px), (pointer:coarse) {
+  .server-directory > [data-faq-context] .faq-context-link {min-height:44px;}
 }
 .server-directory-grid {display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:14px;min-width:0;}
 .server-directory-card {
@@ -135,7 +145,10 @@ html[data-v2-page="servers"] .center-column {grid-column:1/-1;min-width:0;}
   grid-template-areas:"name count arrow" "session access arrow";align-items:center;
   gap:4px 10px;padding:4px 14px;border-top:1px solid #394955;
 }
-.server-directory-name {grid-area:name;font-size:clamp(19px,1.8vw,25px);font-weight:850;line-height:1.15;overflow-wrap:anywhere;}
+.server-directory-name {
+  grid-area:name;min-width:0;font-size:clamp(14px,1.12vw,16px);font-weight:850;line-height:1.2;
+  overflow:hidden;text-overflow:ellipsis;white-space:nowrap;
+}
 .server-directory-session {grid-area:session;display:flex;align-items:center;gap:6px;color:#b8c7d2;font-size:12px;line-height:1.5;overflow-wrap:anywhere;}
 .server-directory-session .status-dot {position:static;flex:none;}
 .is-offline .server-directory-session .status-dot {background:#a5b3c3;box-shadow:none;}
@@ -148,10 +161,10 @@ html[data-v2-page="servers"] .center-column {grid-column:1/-1;min-width:0;}
 @media(min-width:1800px) {.server-directory-grid {grid-template-columns:repeat(4,minmax(0,1fr));}}
 @media(max-width:1100px) {.server-directory-grid {grid-template-columns:repeat(2,minmax(0,1fr));}}
 @media(max-width:750px) {.server-directory-track-name {font-size:clamp(27px,6vw,39px);}}
+@media(max-width:420px) {.server-directory-name {font-size:13px;}}
 @media(max-width:600px) {
-  .server-directory {padding:0 0 15px;gap:12px;}
-  .server-directory-head {align-items:flex-start;flex-direction:column;gap:14px;padding:10px 2px 14px;}
+  .server-directory {padding-inline:0;}
+  .server-directory-head {padding-inline:2px;}
   .server-directory-grid {grid-template-columns:minmax(0,1fr);gap:12px;}
-  .server-directory-name {font-size:23px;}
 }
 @media(prefers-reduced-motion:reduce) {.server-directory-card {transition:none;}}
