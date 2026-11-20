@@ -163,7 +163,7 @@ try{
           return parseFloat(style.fontSize)<=16&&style.whiteSpace==='nowrap'&&style.textOverflow==='ellipsis'&&
             name.getBoundingClientRect().height<=parseFloat(style.lineHeight)+1;
         })),'Every server name remains one compact line');
-        if(width>=1440)assert.ok(await cards.first().locator('.server-directory-name').evaluate(name=>name.scrollWidth<=name.clientWidth),'Hourly name fits on desktop');
+        if(width>=1440||width===390)assert.ok(await cards.first().locator('.server-directory-name').evaluate(name=>name.scrollWidth<=name.clientWidth),'Hourly name fits at 390px and on wide desktop');
         await page.screenshot({path:path.join(output,`directory-top-${language}-${width}.png`)});
       }
       if(screen==='home'&&count===15){

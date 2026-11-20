@@ -161,6 +161,7 @@ html[data-v2-page="servers"] .center-column {grid-column:1/-1;min-width:0;}
 @media(min-width:1800px) {.server-directory-grid {grid-template-columns:repeat(4,minmax(0,1fr));}}
 @media(max-width:1100px) {.server-directory-grid {grid-template-columns:repeat(2,minmax(0,1fr));}}
 @media(max-width:750px) {.server-directory-track-name {font-size:clamp(27px,6vw,39px);}}
+@media(max-width:420px) {.server-directory-name {font-size:13px;}}
 @media(max-width:600px) {
   .server-directory {padding-inline:0;}
   .server-directory-head {padding-inline:2px;}
