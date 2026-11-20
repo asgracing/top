@@ -7,6 +7,17 @@ export function orderedServers(servers = []) {
     (b.players ?? 0) - (a.players ?? 0));
 }
 
+export function countReportedPlayers(servers, snapshotStale) {
+  if (snapshotStale) return null;
+  let total = null;
+  for (const {players, stale} of servers) {
+    if (!stale && Number.isInteger(players) && players >= 0) {
+      total = (total ?? 0) + players;
+    }
+  }
+  return total;
+}
+
 export function replaceServerCards(container, html, scrollContainers = []) {
   const active = container.ownerDocument.activeElement?.closest('[data-server]');
   const focusedKey = active && container.contains(active) ? active.dataset.server : null;

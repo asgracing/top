@@ -1,4 +1,4 @@
-import {orderedServers, replaceServerCards} from './server-cards.js?v=20261120serverorder1';
+import {countReportedPlayers, orderedServers, replaceServerCards} from './server-cards.js?v=20261120partialonline1';
 import {resolveTrackBackgroundFile} from '/src/features/server-status/track-background.js';
 import {serverPilotCount} from '/src/features/server-status/live-details.js?v=20261024pitmap1';
 import {serverSessionLabel} from './server-session.js?v=20261018telemetry1';
@@ -26,7 +26,7 @@ export function startServerDirectory({view, center, subscribe, esc, text, label,
     const incomplete = model.serversStale || rows.some(row => row.stale);
     view.querySelector('#server-directory-summary').innerHTML = `<span><i class="status-dot" aria-hidden="true"></i>
       <b>${incomplete ? '—' : number(rows.filter(row => row.online).length)} / ${number(rows.length)}</b> ${text('работают', 'running')}</span>
-      <span><b>${incomplete ? '—' : number(rows.reduce((total, row) => total + (Number(row.players) || 0), 0))}</b> ${text('пилотов онлайн', 'drivers online')}</span>`;
+      <span><b>${number(countReportedPlayers(rows, model.serversStale))}</b> ${text('пилотов онлайн', 'drivers online')}</span>`;
     replaceServerCards(grid, rows.map((row, index) => {
       const stale = model.serversStale || row.stale;
       const file = resolveTrackBackgroundFile(row.server?.track_code || row.server?.track);
