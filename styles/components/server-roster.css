@@ -42,7 +42,7 @@
   .server-track-map[data-track-map=spa-gp] svg { height:auto; max-height:none; aspect-ratio:4/3; }
   [data-track-map=spa-gp] .track-outline-edge { stroke-width:6; }
   .has-fixed-map[data-track-map=spa-gp] .track-outline { stroke-width:3.8; }
-  [data-track-map=spa-gp] .track-car circle { r:27.2px; }
+  .has-fixed-map[data-track-map=spa-gp] .track-car circle { r:27.2px; }
   .has-fixed-map[data-track-map=spa-gp] .track-car text { font-size:28.8px; }
 }
 .server-roster-scroll .server-roster-table.server-driver-list { display:table; width:100%; min-width:960px; table-layout:fixed; border-collapse:separate; border-spacing:0; margin:0; color:#e8eef7; font-size:13px; }
