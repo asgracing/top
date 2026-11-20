@@ -6,8 +6,8 @@ import path from 'node:path';
 const profile=JSON.parse(await fs.readFile(path.join(root,'tests/fixtures/v2-pages/public.json'),'utf8')).driver;
 const id=profile.public_id;
 const saved={preset:'night',energy:115,paused:false,layers:{avatar:true,banner:true,cards:true,entry:true}};
-const auth={authenticated:true,linked:true,driver:{public_id:id,display_name:'Fixture Pilot',
-  profile_url:'/driver/?id='+id},steam:{persona_name:'Fixture Pilot'},csrf_token:'fixture-csrf'};
+const auth={authenticated:true,linked:true,driver:{public_id:id,display_name:profile.driver,
+  profile_url:'/driver/?id='+id},steam:{persona_name:profile.driver},csrf_token:'fixture-csrf',preferences:{race_number:765}};
 const json=(route,value,status=200)=>route.fulfill({status,contentType:'application/json',body:JSON.stringify(value)});
 const artifacts=process.env.ASG_QA_OUTPUT_DIR;
 if (artifacts) await fs.mkdir(artifacts,{recursive:true});
@@ -98,7 +98,7 @@ try{
       layers:{...saved.layers,cards:false}}}]);
     if (artifacts) {
       await editor.scrollIntoViewIfNeeded();
-      await editor.screenshot({path:path.join(artifacts,'account-'+tier+'.png')});
+      await editor.screenshot({path:path.join(artifacts,'editor-'+tier+'.png')});
     }
     assert.ok(await page.evaluate(()=>document.documentElement.scrollWidth<=innerWidth+1));
     await page.locator('#page-view .profile-heading .project-support-badge[data-tier="'+tier+'"]').waitFor();
@@ -116,7 +116,7 @@ try{
     const {page,editor,requests}=await open({tier,editable:false});
     await editor.locator('.profile-appearance-preview').waitFor();
     assert.equal(await editor.locator('form').count(),0);
-    if(tier)await editor.getByText('Supporter',{exact:true}).waitFor();
+    if(tier)await editor.locator('.project-support-badge[data-tier="supporter"]').waitFor();
     assert.deepEqual(requests,[]);
     await page.close();
   }

@@ -87,7 +87,9 @@ function mountAppearanceEditor(root,{auth,client,text,signal,onClose,onSave}) {
       <div class="panel profile-appearance-example"><div class="profile-stat-grid"><span></span></div></div>`;
     sample.querySelector('h3').textContent = auth.driver.displayName;
     const number = auth.preferences?.raceNumber;
-    sample.querySelector('.profile-portrait b').textContent = Number.isInteger(number) ? '#'+number : '';
+    const numberBadge = sample.querySelector('.profile-portrait b');
+    if (Number.isInteger(number)) numberBadge.textContent = '#'+number;
+    else numberBadge.remove();
     sample.querySelector('.profile-stat-grid span').textContent = text('Статистика пилота','Driver statistics');
     if (auth.steam?.avatarUrl) {
       const image = doc.createElement('img');
