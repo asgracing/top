@@ -1,5 +1,10 @@
 export function renderSafetyAbout(copy, escape) {
-  const paragraph = text => `<p>${escape(text)}</p>`;
+  const renderAmounts = text => text.split(/([+−-]\d+[.,]\d+)/).map((part, index) => {
+    if (index % 2 === 0) return escape(part);
+    const direction = part.startsWith('+') ? 'gain' : 'loss';
+    return `<span class="safety-rules-${direction}">${escape(part)}</span>`;
+  }).join('');
+  const paragraph = text => `<p>${renderAmounts(text)}</p>`;
   const sections = copy.sections.map(({title, paragraphs}) =>
     `<h4>${escape(title)}</h4>${paragraphs.map(paragraph).join('')}`
   ).join('');
@@ -7,9 +12,9 @@ export function renderSafetyAbout(copy, escape) {
     `<article class="safety-rules-example">
       <h4>${escape(title)}</h4>${paragraph(description)}
       <dl class="safety-rules-example-breakdown">
-        ${breakdown.map(({label, amount}) => `<dt>${escape(label)}</dt><dd>${escape(amount)}</dd>`).join('')}
+        ${breakdown.map(({label, amount}) => `<dt>${renderAmounts(label)}</dt><dd>${renderAmounts(amount)}</dd>`).join('')}
       </dl>
-      <p class="safety-rules-example-total"><span>${escape(copy.exampleTotalLabel)}</span><strong>${escape(result)}</strong></p>
+      <p class="safety-rules-example-total"><span>${escape(copy.exampleTotalLabel)}</span><strong>${renderAmounts(result)}</strong></p>
     </article>`
   ).join('');
   return `<div class="safety-rules">

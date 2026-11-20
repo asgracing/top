@@ -46,7 +46,7 @@
       "Nürburgring 24h uses its own scale and requires at least 30% of the leader’s physical laps. Between 30% and half distance, multiply positive lap and incident contributions by twice your share of the leader’s distance. One physical lap counts as 4.125 standard laps for the 10-lap reference."
     ],
     "examplesLabel": "Examples",
-    "examplesIntro": "Each line shows its contribution in SR. The total is rounded to two decimal places after adding the amounts.",
+    "examplesIntro": "Each amount is shown to two decimal places. The total uses the full amounts and may differ by 0.01 SR from the sum of the displayed lines.",
     "examples": [
       {
         "title": "8 valid out of 12 · no incidents",
@@ -54,11 +54,11 @@
         "breakdown": [
           {
             "label": "Valid laps · 8",
-            "amount": "+0.0667"
+            "amount": "+0.07"
           },
           {
             "label": "Red laps · 4",
-            "amount": "−0.0333"
+            "amount": "−0.03"
           },
           {
             "label": "Complete telemetry",
@@ -85,11 +85,11 @@
         "breakdown": [
           {
             "label": "Valid laps · 8",
-            "amount": "+0.0667"
+            "amount": "+0.07"
           },
           {
             "label": "Red laps · 4",
-            "amount": "−0.0333"
+            "amount": "−0.03"
           },
           {
             "label": "Complete telemetry",
@@ -116,11 +116,11 @@
         "breakdown": [
           {
             "label": "Valid laps · 2",
-            "amount": "+0.0167"
+            "amount": "+0.02"
           },
           {
             "label": "Red laps · 2",
-            "amount": "−0.0167"
+            "amount": "−0.02"
           },
           {
             "label": "Complete telemetry",
@@ -147,11 +147,11 @@
         "breakdown": [
           {
             "label": "Valid laps · 2",
-            "amount": "+0.0167"
+            "amount": "+0.02"
           },
           {
             "label": "Red laps · 2",
-            "amount": "−0.0167"
+            "amount": "−0.02"
           },
           {
             "label": "Complete telemetry",
@@ -232,7 +232,7 @@
       "На Nürburgring 24h своя шкала и минимум 30% физических кругов лидера. При дистанции от 30% до половины положительный вклад кругов и инцидентов умножается на удвоенную долю дистанции лидера. Для пересчёта к 10 кругам один физический круг равен 4,125 обычного."
     ],
     "examplesLabel": "Примеры",
-    "examplesIntro": "В строках показан вклад в SR. Итог округляется до сотых после сложения.",
+    "examplesIntro": "Все суммы показаны до сотых. Итог считается по точным значениям, поэтому может отличаться от суммы строк на 0,01 SR.",
     "examples": [
       {
         "title": "8 чистых из 12 · без инцидентов",
@@ -240,11 +240,11 @@
         "breakdown": [
           {
             "label": "Чистые круги · 8",
-            "amount": "+0,0667"
+            "amount": "+0,07"
           },
           {
             "label": "Красные круги · 4",
-            "amount": "−0,0333"
+            "amount": "−0,03"
           },
           {
             "label": "Полная телеметрия",
@@ -271,11 +271,11 @@
         "breakdown": [
           {
             "label": "Чистые круги · 8",
-            "amount": "+0,0667"
+            "amount": "+0,07"
           },
           {
             "label": "Красные круги · 4",
-            "amount": "−0,0333"
+            "amount": "−0,03"
           },
           {
             "label": "Полная телеметрия",
@@ -302,11 +302,11 @@
         "breakdown": [
           {
             "label": "Чистые круги · 2",
-            "amount": "+0,0167"
+            "amount": "+0,02"
           },
           {
             "label": "Красные круги · 2",
-            "amount": "−0,0167"
+            "amount": "−0,02"
           },
           {
             "label": "Полная телеметрия",
@@ -333,11 +333,11 @@
         "breakdown": [
           {
             "label": "Чистые круги · 2",
-            "amount": "+0,0167"
+            "amount": "+0,02"
           },
           {
             "label": "Красные круги · 2",
-            "amount": "−0,0167"
+            "amount": "−0,02"
           },
           {
             "label": "Полная телеметрия",

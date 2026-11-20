@@ -134,16 +134,21 @@ try {
         ['13','04','10','01'].map(cents=>language==='ru'?`+0,${cents} SR`:`+0.${cents} SR`));
       const localAmount=amount=>language==='ru'?amount.replace('.',','):amount;
       const expectedRows=[
-        ['+0.0667','−0.0333','+0.10','0.00','0.00','0.00'],
-        ['+0.0667','−0.0333','+0.10','−0.07','−0.02','0.00'],
-        ['+0.0167','−0.0167','+0.10','0.00','0.00','0.00'],
-        ['+0.0167','−0.0167','+0.10','−0.07','−0.02','0.00']
+        ['+0.07','−0.03','+0.10','0.00','0.00','0.00'],
+        ['+0.07','−0.03','+0.10','−0.07','−0.02','0.00'],
+        ['+0.02','−0.02','+0.10','0.00','0.00','0.00'],
+        ['+0.02','−0.02','+0.10','−0.07','−0.02','0.00']
       ];
       for(const [index,amounts] of expectedRows.entries()){
         const card=cards.nth(index);
         assert.deepEqual(await card.locator('dd').allTextContents(),amounts.map(localAmount));
+        assert.deepEqual(await card.locator('dd').evaluateAll(items=>items.map(item=>item.firstElementChild?.className??'')),
+          amounts.map(amount=>amount.startsWith('+')?'safety-rules-gain':amount.startsWith('−')?'safety-rules-loss':''));
+        assert.equal(await card.locator('strong .safety-rules-gain').count(),1);
         assert.match(await card.locator('p').first().innerText(),language==='ru'?/Лидер проехал 12 кругов/:/The leader completed 12 laps/);
       }
+      assert.equal(await cards.first().locator('dd .safety-rules-gain').first().evaluate(el=>getComputedStyle(el).color),'rgb(57, 221, 166)');
+      assert.equal(await cards.first().locator('dd .safety-rules-loss').first().evaluate(el=>getComputedStyle(el).color),'rgb(255, 101, 123)');
       assert.equal(await notes.evaluate(el=>el.open),false);
       await examples.locator('summary').click();
       assert.equal(await cards.first().isVisible(),false);

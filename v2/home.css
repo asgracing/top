@@ -111,6 +111,8 @@ body[data-v2] #v2-modal[data-kind="safety"] { width:min(780px,calc(100vw - 28px)
 .safety-rules-example-breakdown { display:grid; grid-template-columns:minmax(0,1fr) auto; gap:4px 12px; margin:10px 0; }
 .safety-rules-example-breakdown dd { margin:0; text-align:end; white-space:nowrap; font-variant-numeric:tabular-nums; }
 .safety-rules-example .safety-rules-example-total { display:flex; flex-wrap:wrap; justify-content:space-between; gap:4px 12px; margin:0; padding:8px 0 0; border-top:1px solid #78a9cb66; }
+.safety-rules .safety-rules-gain { color:#39dda6; }
+.safety-rules .safety-rules-loss { color:#ff657b; }
 .safety-rules-date { font-size:.92em; }
 .safety-rules-details > summary { padding-block:8px; cursor:pointer; font-weight:700; }
 body[data-v2] #v2-modal[data-kind="driver-day"] {width:min(760px,calc(100vw - 28px));}
