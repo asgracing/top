@@ -132,6 +132,18 @@ try {
       assert.equal(await cards.first().isVisible(),true);
       assert.deepEqual(await cards.locator('strong').allTextContents(),
         ['13','04','10','01'].map(cents=>language==='ru'?`+0,${cents} SR`:`+0.${cents} SR`));
+      const localAmount=amount=>language==='ru'?amount.replace('.',','):amount;
+      const expectedRows=[
+        ['+0.0667','−0.0333','+0.10','0.00','0.00','0.00'],
+        ['+0.0667','−0.0333','+0.10','−0.07','−0.02','0.00'],
+        ['+0.0167','−0.0167','+0.10','0.00','0.00','0.00'],
+        ['+0.0167','−0.0167','+0.10','−0.07','−0.02','0.00']
+      ];
+      for(const [index,amounts] of expectedRows.entries()){
+        const card=cards.nth(index);
+        assert.deepEqual(await card.locator('dd').allTextContents(),amounts.map(localAmount));
+        assert.match(await card.locator('p').first().innerText(),language==='ru'?/Лидер проехал 12 кругов/:/The leader completed 12 laps/);
+      }
       assert.equal(await notes.evaluate(el=>el.open),false);
       await examples.locator('summary').click();
       assert.equal(await cards.first().isVisible(),false);
@@ -139,6 +151,7 @@ try {
       assert.match(await notes.innerText(),/Nürburgring 24h.*30%/s);
       await examples.locator('summary').click();
       assert.ok(await modal.locator('.modal-body').evaluate(el=>el.scrollWidth<=el.clientWidth+1),'SR rules must fit the modal');
+      if(width===390&&language==='ru')await cards.first().screenshot({path:taskScratchPath('sr4-first-example-mobile.png')});
     }
     await page.close();
   }

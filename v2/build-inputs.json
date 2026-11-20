@@ -8,11 +8,11 @@
     },
     {
       "path": "app.js",
-      "sha256": "a116b1f605d831aac9f0d4c550591877745f1b4d64eb9ecf30a7b2b4565b624f"
+      "sha256": "89965069c8a87e4d4ebe0de95526ffed394a92ba14fe12886accf170b493d8ab"
     },
     {
       "path": "assets/content/safety-rating-v3.json",
-      "sha256": "5c6fcc8585d2e271d8b7be8422505f15d2eb8a62a0ca8c6a7c4a13b6b6d17b86"
+      "sha256": "8e73ca62ef6bd93fc9d8ef361c238a20383eab9693dc517453bafa3dff9443af"
     },
     {
       "path": "assets/track-maps/barcelona.js",
@@ -80,7 +80,7 @@
     },
     {
       "path": "scripts/build-v2.mjs",
-      "sha256": "05a81fae78caaa69ffec239442eff28e759b039cd5e0afc87b9084f65a75efb7"
+      "sha256": "1de5620fe8da2f2897a837836571d8348af3fe9b845122ca325f3d37b3f50dbd"
     },
     {
       "path": "scripts/faq-page.mjs",
@@ -896,7 +896,7 @@
     },
     {
       "path": "v2/safety-guide.js",
-      "sha256": "58c5b2530706c3fe57937ff1f4a198ad53f937db266604c9a10c5dfb8a8d84d5"
+      "sha256": "94295e8cd89bf7c717ec4ecbc9b93ee3d1d889ddd3f4e50e9d165c7b677f0732"
     },
     {
       "path": "v2/safety-history.js",

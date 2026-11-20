@@ -3,11 +3,14 @@ export function renderSafetyAbout(copy, escape) {
   const sections = copy.sections.map(({title, paragraphs}) =>
     `<h4>${escape(title)}</h4>${paragraphs.map(paragraph).join('')}`
   ).join('');
-  const examples = copy.examples.map(({title, description, calculation, result}) =>
-    `<div class="safety-rules-example">
+  const examples = copy.examples.map(({title, description, breakdown, result}) =>
+    `<article class="safety-rules-example">
       <h4>${escape(title)}</h4>${paragraph(description)}
-      ${paragraph(calculation)}<strong>${escape(result)}</strong>
-    </div>`
+      <dl class="safety-rules-example-breakdown">
+        ${breakdown.map(({label, amount}) => `<dt>${escape(label)}</dt><dd>${escape(amount)}</dd>`).join('')}
+      </dl>
+      <p class="safety-rules-example-total"><span>${escape(copy.exampleTotalLabel)}</span><strong>${escape(result)}</strong></p>
+    </article>`
   ).join('');
   return `<div class="safety-rules">
     <p class="safety-rules-lead"><strong>${escape(copy.safetyAboutP1)}</strong></p>
