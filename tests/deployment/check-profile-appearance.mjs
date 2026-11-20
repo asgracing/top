@@ -22,6 +22,9 @@ async function open({lang='ru',route='account',tier='vip',signed=true,reduced='r
   await page.route('**/*',async request=>{
     const req=request.request();
     const url=new URL(req.url());
+    if(url.hostname==='data.asgracing.ru'&&url.pathname==='/top-data/v2/drivers/'+id+'.json'){
+      return json(request,{...profile,race_number:765});
+    }
     if(url.hostname!=='auth.asgracing.ru')return fixture(request,[],{signed});
     if(url.pathname==='/v1/me')return json(request,signed?(owns?auth:{...auth,
       driver:{...auth.driver,public_id:'drv_other'}}):{authenticated:false});
@@ -59,7 +62,13 @@ async function open({lang='ru',route='account',tier='vip',signed=true,reduced='r
   if(route==='account'&&signed){
     await page.getByRole('link',{name:lang==='en'?/Profile appearance/:/Оформление профиля/}).click();
     await page.waitForURL(driverUrl+'&appearance=edit');
-    await editor.getByRole('heading',{name:lang==='en'?'Profile appearance':'Оформление профиля',exact:true}).waitFor();
+    try{
+      await editor.getByRole('heading',{name:lang==='en'?'Profile appearance':'Оформление профиля',exact:true}).waitFor({timeout:8000});
+    }catch(error){
+      if(artifacts) await page.screenshot({path:path.join(artifacts,'editor-error.png')});
+      throw new Error('Editor missing on '+page.url()+': '+JSON.stringify(errors)+' / '+
+        (await page.locator('#page-view').innerText()).slice(0,300),{cause:error});
+    }
   }
   return {page,editor,requests,errors,prefix,privateReads:()=>privateReads};
 }
