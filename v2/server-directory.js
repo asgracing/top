@@ -1,4 +1,4 @@
-import {orderedServers, replaceServerCards} from './server-cards.js?v=20261025servers1';
+import {orderedServers, replaceServerCards} from './server-cards.js?v=20261120serverorder1';
 import {resolveTrackBackgroundFile} from '/src/features/server-status/track-background.js';
 import {serverPilotCount} from '/src/features/server-status/live-details.js?v=20261024pitmap1';
 import {serverSessionLabel} from './server-session.js?v=20261018telemetry1';
