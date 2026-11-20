@@ -22,14 +22,14 @@ const outputRoot = resolve(process.env.ASG_V2_OUTPUT_DIR || (siteRelease.layout=
 if(outputRoot!==root)assertArchiveScratchPath(outputRoot);
 if (process.env.ASG_V2_PRESENTATION_ONLY === '1') throw Error('Presentation-only builds are retired: rebuild V2 with its canonical runtime.');
 const version = '20261006v2k';
-const runtimeVersion = '20261120siteperf2';
+const runtimeVersion = '20261120siteperf3';
 const presentationVersion = '20261118winter3';
 const homeStylesVersion = '20261120circuitatlas';
-const bootVersion = '20261120siteperf2';
-const hourlyBootVersion = '20261120siteperf2';
-const archiveBootVersion = '20261120siteperf2';
-const statsBootVersion = '20261120siteperf2';
-const raceModalBootVersion = '20261120siteperf2';
+const bootVersion = '20261120siteperf3';
+const hourlyBootVersion = '20261120siteperf3';
+const archiveBootVersion = '20261120siteperf3';
+const statsBootVersion = '20261120siteperf3';
+const raceModalBootVersion = '20261120siteperf3';
 const controlStylesVersion = '20261103clubs1';
 const profileStylesVersion = '20261119srvepisodes';
 const legalVersion = '20261030analytics1';
@@ -195,7 +195,7 @@ for (const language of ['ru','en']) {
   if(legacyEnabled)pageBody=pageBody.replace('<div class="header-actions top-nav-actions">',`<div class="header-actions top-nav-actions"><a class="version-switch" data-v1-home href="${language==='ru'?'/ru/':'/'}">${text}</a>`);
   const statsHead=value=>value.replace(`/v2/boot/home.js?v=${bootVersion}`,`/v2/boot/home.js?v=${statsBootVersion}`);
   const hourlyHead=value=>value.replace(`/v2/boot/home.js?v=${bootVersion}`,`/v2/boot/home.js?v=${hourlyBootVersion}`);
-  const initialHomeScript = '<script async type="module" data-home-initial src="/v2/home-initial-data-v1.js"></script>';
+  const initialHomeScript = '<script async type="module" data-home-initial src="/v2/home-initial-data-v2.js"></script>';
   const homeBody = localizedV2Links(addFaqToShell(pageBody, language, 'home', faqContent), language);
   await emit(`v2/${language}/index.html`,`<!doctype html>\n<html lang="${language}" data-page="home" data-page-language="${language}" data-v2="home"><head>${initialHomeScript}${hourlyHead(head)}${faqStyles}${faqScript}</head><body data-v2="home">${homeBody}<div id="v1-runtime-host" hidden inert aria-hidden="true">${oldBody}</div>${modals}</body></html>\n`);
   for (const config of pageRegistry.filter(page => page.route)) {

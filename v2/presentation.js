@@ -18,7 +18,8 @@ import {buildAuthReturnPath} from '../src/features/auth/header-auth.js';
 // create a second auth/voting state.
 export function createPresentation({$,native,getModel,esc,text,label,date,number,rating,car,driverHref,classic,affiliation,privacy,serverAdmission,showDialog}) {
   let request=0,profile=null,parent=null,historyView=null,eventEntry=null,driverDaySignature='',inspectionRequest=0,activeServerKey=null;
-  const onlineActivity=createOnlineActivity({getDays:()=>getModel()?.onlineDays||[],esc,text,number,track:value=>native().track(value)});
+  let loadedOnlineDays = null;
+  const onlineActivity=createOnlineActivity({getDays:()=>loadedOnlineDays??getModel()?.onlineDays??[],esc,text,number,track:value=>native().track(value)});
   function revealOnlineSelection(){
     const chart=$('modal-body').querySelector('.online-history-scroll'),selected=chart?.querySelector('[aria-pressed="true"]');
     if(!selected)return;
@@ -53,7 +54,7 @@ export function createPresentation({$,native,getModel,esc,text,label,date,number
   const name=p=>p.driver||p.name||p.summary?.driver||'—';
   const flatten=p=>({...p?.summary,...p});
   const kinds={team:text('Командная гонка','Team race'),hourly:text('Часовая гонка','Hourly race'),championship:text('Гонка чемпионата','Championship race'),endurance:text('Эндюранс','Endurance'),mono:text('Монокласс','Single model')};
-  function display(title,html,kind,trigger){stopServerStream();showDialog(title,html,trigger);$('modal').dataset.kind=kind;$('modal-eyebrow').textContent='ASG RACING / '+kind.toUpperCase();$('modal').style.removeProperty('--modal-track')}
+  function display(title,html,kind,trigger){stopServerStream();$('modal-body').removeAttribute('aria-busy');showDialog(title,html,trigger);$('modal').dataset.kind=kind;$('modal-eyebrow').textContent='ASG RACING / '+kind.toUpperCase();$('modal').style.removeProperty('--modal-track')}
   function lapsHtml(p){
     const laps=p.best_laps_by_track||[];
     return `<section class="lap-picker"><label for="v2-driver-track">${text('Лучший круг · выбери трассу','Best lap · choose track')}</label><select id="v2-driver-track">${laps.length?laps.map((l,i)=>`<option value="${i}">${esc(native().track(l.track_code||l.track))}</option>`).join(''):'<option>—</option>'}</select><div id="v2-driver-lap-value">${lapValue(laps[0])}</div></section>`;
@@ -128,7 +129,31 @@ export function createPresentation({$,native,getModel,esc,text,label,date,number
     const f=resolveTrackBackgroundFile(e.track_code);if(f)$('modal').style.setProperty('--modal-track',`url('/assets/${f}')`);
     $('modal-eyebrow').innerHTML=`<span class="event-kind kind-${kind==='mono'?'monoclass':kind}">${kinds[kind]}</span>`;
   }
-  function openOnline(trigger){++request;onlineActivity.open();display(text('Активность пилотов','Driver activity'),onlineActivity.render(),'online',trigger);$('modal-body').scrollTop=0;revealOnlineSelection()}
+  async function openOnline(trigger){
+    const ticket=++request;
+    loadedOnlineDays=null;
+    onlineActivity.open();
+    const title=text('Активность пилотов','Driver activity');
+    display(title,onlineActivity.render(),'online',trigger);
+    $('modal-body').scrollTop=0;
+    revealOnlineSelection();
+    if(!native().loadOnlineHistory || !getModel()?.onlineHistoryDeferred)return;
+    $('modal-body').setAttribute('aria-busy','true');
+    try{
+      const days=await native().loadOnlineHistory();
+      if(ticket!==request||!$('modal').open||$('modal').dataset.kind!=='online')return;
+      loadedOnlineDays=days;
+      refreshOnline();
+    }catch{
+      if(ticket!==request||!$('modal').open||$('modal').dataset.kind!=='online')return;
+      const message=document.createElement('p');
+      message.setAttribute('role','status');
+      message.textContent=text('История временно недоступна. Открой окно снова, чтобы повторить.','Activity history is temporarily unavailable. Reopen to retry.');
+      $('modal-body').prepend(message);
+    }finally{
+      if(ticket===request)$('modal-body').removeAttribute('aria-busy');
+    }
+  }
   function openServer(key,trigger,refresh=false){
     ++request;const m=getModel();if(!m)return;
     const draw=(title,html,kind)=>{
