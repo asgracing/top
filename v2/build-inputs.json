@@ -80,7 +80,7 @@
     },
     {
       "path": "scripts/build-v2.mjs",
-      "sha256": "03be0acb47e432530ca5cb45fbc8ae1083a7f33dad50e634828496953b0064cc"
+      "sha256": "a8f65f1b3c4e80c2d370eac06eff6f9323d779d0cdaed28a937f444eb2a4770b"
     },
     {
       "path": "scripts/faq-page.mjs",
@@ -760,7 +760,7 @@
     },
     {
       "path": "v2/home.js",
-      "sha256": "0be44a9ef3cc44ecbd1e86a228341aaf292f983de208df914a2ae50f35a109f7"
+      "sha256": "af007cbe80e900c6489296ce07f94ce24a0a91b3db9b8d12c5417f78302cb1c2"
     },
     {
       "path": "v2/live-stats.js",
@@ -820,7 +820,7 @@
     },
     {
       "path": "v2/pages/controller.js",
-      "sha256": "76a12dba7106ca0f740e8051adbfef63d376415b75c4bcf2ec2ff0973d07b48f"
+      "sha256": "c9989b1b9c4cde468dc55bd164225c39795526a834ea2e37cd0a0d7e0b599cfe"
     },
     {
       "path": "v2/pages/data.js",
@@ -832,7 +832,7 @@
     },
     {
       "path": "v2/pages/driver-support.js",
-      "sha256": "6cd05397480b74dbb5bc368758cec7d06c025fdb6f5a595bc3ac47f8edf36e9a"
+      "sha256": "5ba0e2c2995bd0e1f7e83efa52fdc5c01c477ca75e40398a1aa27e3cd9e55739"
     },
     {
       "path": "v2/pages/editorial-model.js",
@@ -860,11 +860,11 @@
     },
     {
       "path": "v2/pages/profile-paddock.js",
-      "sha256": "f4068f0f764533b3de277f6d55cf8b99d7efe8bbe0c90bf03c39c36f9d673a56"
+      "sha256": "21ea6ee33e2b42e3345e690a5aa1089d4f8995a9b104dc4f99fc3040043d6536"
     },
     {
       "path": "v2/pages/profile-racing-pass.js",
-      "sha256": "eb2b773c8f211587f041b2e04d10a0353753ec0c6d997db4531744c95137dd36"
+      "sha256": "21ab7c645a410f0b563d1a3868f13608a36ca613df6b5e3ae26692dd2d2b494e"
     },
     {
       "path": "v2/pages/profile-studio-layout.js",

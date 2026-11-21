@@ -1,8 +1,8 @@
 {
   "schemaVersion": 1,
-  "revision": "bfab80b2e802a07f36ecf66b37a9274606aa6783",
-  "files": 1451,
-  "bytes": 206263218,
+  "revision": "4231658c5514dbafca3dca1bf2493eacd24aa991",
+  "files": 1456,
+  "bytes": 206690875,
   "assets": [
     {
       "path": "404.html",
@@ -1406,8 +1406,8 @@
     },
     {
       "path": "driver/index.html",
-      "bytes": 85044,
-      "sha256": "a3f6086d4c281453dacbf7f2b9aaf2a16afd824b9dcb9264590d0aea93eed2d1"
+      "bytes": 85049,
+      "sha256": "b40a735afd6bd5f718a668d9b462ef15e6b984c495d2da09ec4d7164784dbcb5"
     },
     {
       "path": "en/404/index.html",
@@ -1471,8 +1471,8 @@
     },
     {
       "path": "en/driver/index.html",
-      "bytes": 80116,
-      "sha256": "d86ef4df587300d945525d07c153e7ac14815942df403f60af923e9cd55f209b"
+      "bytes": 80121,
+      "sha256": "30a5b6ceb7bf4684e86cb7c9b9c93a7213820dbc862ea1303d6a92d3f61cc7c6"
     },
     {
       "path": "en/events/index.html",
@@ -1507,7 +1507,7 @@
     {
       "path": "en/hourly/index.html",
       "bytes": 81006,
-      "sha256": "ccc1dc8f8884f18c606b8c4331264cbe1fd9c679974e474f332eb4758a46bf05"
+      "sha256": "c82321ac06dad79dad72a7a7c69feaffe74324d23a8eb1c9603c43ec30561d78"
     },
     {
       "path": "en/hourly/privacy/index.html",
@@ -1752,7 +1752,7 @@
     {
       "path": "hourly/index.html",
       "bytes": 86144,
-      "sha256": "02a5f08fb544a9dc9a360aa3e3e0c9a6c5721c81e00f12f6b92a817fa01ad4a3"
+      "sha256": "fd5189a4739f10238748b9eb64957abbde95b6416a20efa792571dda41caad88"
     },
     {
       "path": "hourly/index.ru.html",
@@ -3297,7 +3297,7 @@
     {
       "path": "v2/boot/build.json",
       "bytes": 6305,
-      "sha256": "15c02c22cc71ee881f0aa705172075f891b7aeaffac5392cfb6174d40eecb252"
+      "sha256": "18eaca87a4d911babc7e1e778655bf6a285c044b2bc17652741e14c98138b963"
     },
     {
       "path": "v2/boot/chunks/account-2NDTNJRL.js",
@@ -3683,6 +3683,11 @@
       "path": "v2/boot/chunks/chunk-3CYLCXXF.js",
       "bytes": 126011,
       "sha256": "af91aead5052e5adf6219aa558e8686f7817fa6c8498c1eb92fd76d146f35764"
+    },
+    {
+      "path": "v2/boot/chunks/chunk-3LQQT5BS.js",
+      "bytes": 22879,
+      "sha256": "c62ea46c2df959befabbac0a52510fe1b6e3ca226407438f017fd5d1614d2a06"
     },
     {
       "path": "v2/boot/chunks/chunk-4PJBP7VJ.js",
@@ -5050,6 +5055,11 @@
       "sha256": "da6026133d272c412e59eaec39da028d006c9582d67ab6fb681fd3a114895163"
     },
     {
+      "path": "v2/boot/chunks/controller-43TGVTHM.js",
+      "bytes": 343361,
+      "sha256": "e92eafa9de6f4c09a90f479ad8a137652a117384ebcfdef29f35b31940092a45"
+    },
+    {
       "path": "v2/boot/chunks/controller-4BLD6YVJ.js",
       "bytes": 329384,
       "sha256": "69df6f15a713a1865098cf1fc2554f6f6dd37d3397a4efea8b81312298410a45"
@@ -6150,6 +6160,11 @@
       "sha256": "34de3b792dc88a20e47ac9c46c3768b0b52ce47e8b5091d97e84aee50b7a87b3"
     },
     {
+      "path": "v2/boot/chunks/profile-appearance-editor-YW2KPBHZ.js",
+      "bytes": 11215,
+      "sha256": "5034dc87fc5e0d99c63f89bd35654af7ee55f73c4acc9b3bd333fc81ad207455"
+    },
+    {
       "path": "v2/boot/chunks/profile-effects-7WIGDMC2.js",
       "bytes": 270,
       "sha256": "078a14e5ffb615106e40e9105bbeffbe3fd0808e46df172efbd0c91ee1fb03af"
@@ -6163,6 +6178,11 @@
       "path": "v2/boot/chunks/profile-effects-KHSOGO67.js",
       "bytes": 270,
       "sha256": "718c3663fd4eeffe959db0722a73e5a2354df8da5f5eb3adde109af1800181eb"
+    },
+    {
+      "path": "v2/boot/chunks/profile-effects-KZIUO4G6.js",
+      "bytes": 298,
+      "sha256": "9ffa196f26e1f105dd6f082dcdac5a24ad324f3ea04885569083febabdd1adb2"
     },
     {
       "path": "v2/boot/chunks/profile-effects-MJQ67J5T.js",
@@ -6183,6 +6203,11 @@
       "path": "v2/boot/chunks/profile-paddock-3Y7LSCIV.js",
       "bytes": 51355,
       "sha256": "adb7d5ef200ef62bb07e72d5acc6c6e63b90310ab5d2f31d4d2ef7a3e4b5178f"
+    },
+    {
+      "path": "v2/boot/chunks/profile-paddock-4SYTM4B5.js",
+      "bytes": 48690,
+      "sha256": "732462c6bb80f76db2f2512f0fe42583823feb70b2c9056253175406d08e00bb"
     },
     {
       "path": "v2/boot/chunks/profile-paddock-HBLUH3SB.js",
@@ -6367,7 +6392,7 @@
     {
       "path": "v2/boot/home.js",
       "bytes": 176864,
-      "sha256": "434b594c60a7daec6e6c7730ddc26c779cf6c4547d9505b54343ea79a54c575f"
+      "sha256": "26408d7de870217133b9c3d552048ba41fe5d6be105ba95879180d572f0655cd"
     },
     {
       "path": "v2/bridge.js",
@@ -6377,7 +6402,7 @@
     {
       "path": "v2/build-inputs.json",
       "bytes": 35052,
-      "sha256": "91069327514d54b5ac37db84bd92dbd59cc36a41bcca05d0a9b0e37ec867b182"
+      "sha256": "4b768c16b483ccc5ac4a6489a9244ebc0a57939e746619da3110d488da471e77"
     },
     {
       "path": "v2/copy.js",
@@ -6406,8 +6431,8 @@
     },
     {
       "path": "v2/driver-support.css",
-      "bytes": 16407,
-      "sha256": "fb7dabf8ec488701c8df7afffc78c0a070b8c0aae4a916cbbde2de41c8fc5273"
+      "bytes": 16609,
+      "sha256": "fcdcba0c566c8d375147084a7159ba195c9de1323ae2a6018602308f7c9289a8"
     },
     {
       "path": "v2/en/404/index.html",
@@ -6601,8 +6626,8 @@
     },
     {
       "path": "v2/home.js",
-      "bytes": 52537,
-      "sha256": "0be44a9ef3cc44ecbd1e86a228341aaf292f983de208df914a2ae50f35a109f7"
+      "bytes": 52538,
+      "sha256": "af007cbe80e900c6489296ce07f94ce24a0a91b3db9b8d12c5417f78302cb1c2"
     },
     {
       "path": "v2/index.html",
@@ -6696,8 +6721,8 @@
     },
     {
       "path": "v2/pages/controller.js",
-      "bytes": 50778,
-      "sha256": "16c39795803640143afb2b37d4882330ef983c15f44a8982f34b9c2f3b7f6a8f"
+      "bytes": 50779,
+      "sha256": "95bc18f1e73a8c19dad6e832cdab603a3fb4dbbd9606e52cf10b5d8f908e2e80"
     },
     {
       "path": "v2/pages/data.js",
@@ -6711,8 +6736,8 @@
     },
     {
       "path": "v2/pages/driver-support.js",
-      "bytes": 32801,
-      "sha256": "6cd05397480b74dbb5bc368758cec7d06c025fdb6f5a595bc3ac47f8edf36e9a"
+      "bytes": 32932,
+      "sha256": "5ba0e2c2995bd0e1f7e83efa52fdc5c01c477ca75e40398a1aa27e3cd9e55739"
     },
     {
       "path": "v2/pages/editorial-model.js",
@@ -6741,8 +6766,8 @@
     },
     {
       "path": "v2/pages/profile-appearance.css",
-      "bytes": 21103,
-      "sha256": "512713f8b71314935f68a7b3d66445942063ade57257f5b9395eda52635690c7"
+      "bytes": 21364,
+      "sha256": "deb6f2595b7ad9b608bd0cf8059356b7dd38eb539dce1b87b8b159e2b28ea3da"
     },
     {
       "path": "v2/pages/profile-effects-art.css",
@@ -6761,13 +6786,13 @@
     },
     {
       "path": "v2/pages/profile-paddock.js",
-      "bytes": 2734,
-      "sha256": "f4068f0f764533b3de277f6d55cf8b99d7efe8bbe0c90bf03c39c36f9d673a56"
+      "bytes": 2736,
+      "sha256": "21ea6ee33e2b42e3345e690a5aa1089d4f8995a9b104dc4f99fc3040043d6536"
     },
     {
       "path": "v2/pages/profile-racing-pass.js",
-      "bytes": 11905,
-      "sha256": "eb2b773c8f211587f041b2e04d10a0353753ec0c6d997db4531744c95137dd36"
+      "bytes": 12511,
+      "sha256": "21ab7c645a410f0b563d1a3868f13608a36ca613df6b5e3ae26692dd2d2b494e"
     },
     {
       "path": "v2/pages/profile-studio-layout.js",
