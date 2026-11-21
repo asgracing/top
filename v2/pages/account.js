@@ -2,7 +2,7 @@ import {mountAccountWorkspace,loadApprovedEntityProfile} from '/src/pages/accoun
 import {normalizeAuthPayload} from '/src/features/auth/header-auth.js?v=20261120supportnumber1';
 import {createHttpClient} from '/src/shared/http-client.js';
 import {v2Route} from '../routes.js?v=20261007v2pages14';
-import {mountAccountSupport} from './account-support.js?v=20261120supportaccount1';
+import {mountAccountSupport} from './account-support.js?v=20261121support1';
 
 // Presentation only: normalized Steam identity and the existing account commands.
 export function startAccountPage({view,text,esc,rating,language,subscribe,showDialog}) {
@@ -63,7 +63,7 @@ export function startAccountPage({view,text,esc,rating,language,subscribe,showDi
     summary.append(support);
     supportView=new AbortController();
     const signal=supportView.signal;
-    mountAccountSupport(support,{client,text,language,linked:auth.linked,signal});
+    mountAccountSupport(support,{client,text,language,linked:auth.linked,csrfToken:auth.csrfToken,signal});
     if(auth.linked && auth.driver?.publicId){
       const appearance=document.createElement('a');
       appearance.className='text-link';

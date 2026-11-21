@@ -1,4 +1,4 @@
-import {mountSupportBudget} from "./support-budget.js?v=20261120grantpermission1";
+import {mountSupportBudget} from "./support-budget.js?v=20261121support1";
 import {canManageSupportGrants} from "./support-grants.js?v=20261120grantpermission1";
 import { mountClubsManagement } from './portal-clubs-workspace.js?v=20261111readers1';
 import { createAuthHeaderController, buildAuthReturnPath } from "../../features/auth/header-auth.js?v=20261120grantpermission1";
@@ -57,12 +57,13 @@ async function restore(){if(!selected?.has_override)return;if(!hourlyState?.revi
 function gate(auth){
   const prior=authState;
   authState=auth;
-  const canOpenSupport=canManageSupportGrants(auth);
+  const canOpenSupport=canManageSupportGrants(auth)||Boolean(auth?.authenticated&&auth.permissions?.portalManage&&auth.permissions.supportFinanceManage);
   const tab=document.querySelector('[data-panel="support"]');
   const supportWasOpen=!$("portal-panel-support").hidden;
   tab.hidden=!canOpenSupport;
   if(!canOpenSupport||prior?.driver?.publicId!==auth?.driver?.publicId||
      prior?.permissions?.supportManage!==auth?.permissions?.supportManage||
+     prior?.permissions?.supportFinanceManage!==auth?.permissions?.supportFinanceManage||
      prior?.permissions?.supportGrantsManage!==auth?.permissions?.supportGrantsManage){
     supportBudget.reset();
   }

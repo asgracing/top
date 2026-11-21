@@ -247,6 +247,7 @@ export function normalizeAuthPayload(payload) {
     moderationIssue: payload.permissions?.moderation_issue === true,
     portalManage: payload.permissions?.portal_manage === true,
     ...(payload.permissions?.support_manage === true ? {supportManage:true} : {}),
+    ...(payload.permissions?.support_finance_manage === true ? {supportFinanceManage:true} : {}),
     ...(payload.permissions?.support_grants_manage === true ? {supportGrantsManage:true} : {}),
     siteAppearanceManage: payload.permissions?.site_appearance_manage === true
   };

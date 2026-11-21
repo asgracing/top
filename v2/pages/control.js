@@ -1,5 +1,5 @@
 import markup from './control-content.js?v=20261007v2pages14';
-import {normalizeAuthPayload} from '/src/features/auth/header-auth.js?v=20261120grantpermission1';
+import {normalizeAuthPayload} from '/src/features/auth/header-auth.js?v=20261121support1';
 import {v2Route} from '../routes.js?v=20261007v2pages14';
 
 // Approved control-page composition over the existing authenticated controllers.
@@ -187,7 +187,7 @@ export async function startControlPage({view,screen,text,esc,language,subscribe,
         }).observe(list,{childList:true});
       }
       localizeOps();
-      const {mountPortalOpsWorkspace}=await import('/src/pages/portal-ops/portal-ops-page.js?v=20261120grantpermission1');
+      const {mountPortalOpsWorkspace}=await import('/src/pages/portal-ops/portal-ops-page.js?v=20261121support1');
       workspace=mountPortalOpsWorkspace({confirmAction});
       root.querySelector('[data-panel="hourly"]').click();
       const journal=makePanel(text('Журнал операций','Operation log'));journal.hidden=true;

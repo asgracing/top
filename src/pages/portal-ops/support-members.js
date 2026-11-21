@@ -12,6 +12,7 @@ export function mountSupportMembers({root,api,auth,text}) {
       <label class="control-field">${text('Действующий уровень','Effective tier')}<select name="tier">
         <option value="all">${text('Все тарифы','All tiers')}</option>
         ${Object.entries(LEVELS).map(([key,name])=>`<option value="${key}">${name}</option>`).join('')}
+        <option value="admin">ADMIN</option>
       </select></label>
       <label class="control-field">${text('Имя пилота','Driver name')}<input name="q" type="search" maxlength="100"></label>
       <button class="button" type="submit">${text('Найти','Search')}</button>
@@ -40,7 +41,7 @@ export function mountSupportMembers({root,api,auth,text}) {
     const info = document.createElement('div');
     const visibility = entry.suppressed ? text('Скрыт владельцем','Hidden by owner') :
       entry.consented ? text('Опубликован с согласия','Visible with consent') : text('Нет согласия пилота','Driver consent missing');
-    const parts = [entry.display_name, LEVELS[entry.tier]];
+    const parts = [entry.display_name, entry.tier==='admin' ? 'ADMIN' : LEVELS[entry.tier]];
     if (entry.paid_tier) parts.push(text('Оплата','Paid')+' '+LEVELS[entry.paid_tier],
       text('До ','Through ')+formatMoscowDateTime(entry.paid_until,ru?'ru-RU':'en-GB')+' MSK',visibility);
     if (entry.manual_tier) parts.push(text('Ручной доступ','Manual access')+' '+LEVELS[entry.manual_tier]+' '+
@@ -51,7 +52,8 @@ export function mountSupportMembers({root,api,auth,text}) {
     button.className = 'button';
     button.type = 'button';
     button.textContent = entry.suppressed ? text('Снять ограничение','Remove restriction') : text('Скрыть из списка','Hide from list');
-    button.disabled = !entry.suppressed && !entry.consented;
+    button.hidden = !auth()?.permissions?.supportManage;
+    button.disabled = button.hidden || (!entry.suppressed && !entry.consented);
     button.onclick = async () => {
       button.disabled = true;
       try {
@@ -78,7 +80,8 @@ export function mountSupportMembers({root,api,auth,text}) {
   }
 
   async function load(page) {
-    if (!auth()?.permissions?.supportManage) return;
+    const permissions = auth()?.permissions;
+    if (!permissions?.supportManage && !permissions?.supportFinanceManage) return;
     controller?.abort();
     controller = new AbortController();
     const ticket = ++generation;
