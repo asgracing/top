@@ -1,6 +1,6 @@
 import {TRACKS,raceKey,lapTime,finite,selectRaces,progressReport,parseTarget,chartPoints,bundleFromProfile} from '../driver-support-model.js?v=20261121paddock1';
 
-import {passMarkup,exportPass,passSettings} from './profile-racing-pass.js?v=20261121studio06team';
+import {passMarkup,exportPass,passSettings} from './profile-racing-pass.js?v=20261121studiopolish';
 
 let stylesPromise;
 export function loadDriverSupportStyles(){
@@ -69,10 +69,10 @@ export function mountDriverSupport({root,profile,language='ru',now,owner=false,a
     applyCover();
     if(!bundle.races.length && ['progress','card'].includes(section)){section='showcase';}
     if(!owner && !preferences.pins.length && !preferences.pass_visible){root.innerHTML=`<p class="page-empty">${text('Пока нет опубликованных зачтённых гонок для витрины.','There are no published counted races to showcase yet.')}</p>`;return;}
-    const entries=[['showcase',text('Витрина гонок','Race showcase')]];
-    if(owner&&bundle.races.length)entries.push(['progress',text('Мой прогресс','My progress')],['card',text('Карточка заезда','Race result card')]);
-    if(owner)entries.push(['style',text('Обложка','Cover')]);
-    if(owner || preferences.pass_visible)entries.push(['pass','Racing Pass']);
+    const entries=[['showcase',text('Витрина','Showcase')]];
+    if(owner&&bundle.races.length)entries.push(['progress',text('Прогресс','Progress')],['card',text('Карточка заезда','Race result card')]);
+    if(owner)entries.push(['style',text('Фон профиля','Profile background')]);
+    if(owner || preferences.pass_visible)entries.push(['pass',text('Карточка пилота','Driver card')]);
     root.innerHTML=`<div class="profile-pro-toolbar"><div class="pro-tabs" role="tablist" aria-label="${text('Возможности Pro','Pro features')}">${entries.map(([id,label])=>`<button type="button" class="button" role="tab" id="section-${id}" data-section="${id}" aria-selected="${section===id}" aria-controls="section-panel" tabindex="${section===id?0:-1}">${label}</button>`).join('')}</div></div><div id="section-panel" role="tabpanel" aria-labelledby="section-${section}">${({showcase:showcaseMarkup,progress:progressMarkup,card:cardMarkup,style:styleMarkup,pass:()=>passMarkup({profile:bundle.profile,settings:passDraft,side:passSide,owner,advanced,text})})[section]()}</div><p data-pro-notice class="page-help" role="status" aria-live="polite">${escape(notice)}</p>`;
     if(section==='card')void drawCard();
   }

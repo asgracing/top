@@ -1,7 +1,8 @@
 import {createHttpClient} from '/src/shared/http-client.js';
+import {profileHeaderImage} from './profile-studio-layout.js?v=20261121studiopolish';
 import {
   APPEARANCE_URL, LAYERS, PRESETS, appendBadge, createProfileEffect, normalizeEffect,
-} from './profile-effects.js?v=20261121studio06team';
+} from './profile-effects.js?v=20261121studiopolish';
 
 export function openAppearanceEditor({view,auth,text,signal,onClose,onSave}) {
   const root = view.ownerDocument.createElement('section');
@@ -164,7 +165,9 @@ function mountAppearanceEditor(root,{auth,client,text,signal,onClose,onSave}) {
 
     function refreshPreview(event) {
       const value = read();
-      sample.querySelector('.profile-hero').dataset.profileHeader = header.value;
+      const hero=sample.querySelector('.profile-hero');
+      hero.dataset.profileHeader=header.value;
+      if(header.value==='modern')hero.style.setProperty('--studio-hero-image',profileHeaderImage(doc));
       output.value = value.energy+'%';
       replay.disabled = value.preset === 'original' || value.paused || !value.layers.entry;
       void preview.update(value,{enter:event?.target === preset});

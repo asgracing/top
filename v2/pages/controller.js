@@ -9,7 +9,7 @@ import {createHistoryViews} from './views/history.js?v=20261007v2pages14';
 import {markNewsRead} from '/news-read-state.js';
 import {editorialImage} from './editorial-model.js?v=20261007v2pages14';
 import {getCommunityPostKey} from '/src/pages/community/feed-model.js';
-import {createPageViews} from './views/core.js?v=20261121studio06';
+import {createPageViews} from './views/core.js?v=20261121studiopolish';
 import {createArchiveViews} from './views/archive.js?v=20261015pagination1';
 import {createChampionshipViews} from './views/championships.js?v=20261015pagination1';
 import {createEntityViews} from './views/entities.js?v=20261015pagination1';
@@ -78,7 +78,7 @@ export async function startPage(api) {
     paddockSession=new AbortController();
     const signal=paddockSession.signal;
     paddockKey={root,auth:owns?auth.csrfToken:null,appearance:publicAppearance};
-    paddockModule ??= import('./profile-paddock.js?v=20261121studio06team').catch(error=>{
+    paddockModule ??= import('./profile-paddock.js?v=20261121studiopolish').catch(error=>{
       paddockModule=null;
       throw error;
     });
@@ -100,7 +100,7 @@ export async function startPage(api) {
     if(editorSession || !view.querySelector('.profile-hero')) return;
     const open=new AbortController();
     editorSession=open;
-    import('./profile-appearance-editor.js?v=20261121studio06team').then(({openAppearanceEditor})=>{
+    import('./profile-appearance-editor.js?v=20261121studiopolish').then(({openAppearanceEditor})=>{
       if(!open.signal.aborted)openAppearanceEditor({view,auth,text,signal:open.signal,
         onSave:()=>driverAppearance?.refresh(true),
         onClose:()=>{
@@ -115,7 +115,7 @@ export async function startPage(api) {
   }
   function syncDriverAppearance(){
     if(driverAppearance){driverAppearance.update(state.id,raw.profiles[state.id],model?.auth);return;}
-    appearanceLoading ??= import('./profile-effects.js?v=20261121studio06team').then(({mountPublicAppearance})=>{
+    appearanceLoading ??= import('./profile-effects.js?v=20261121studiopolish').then(({mountPublicAppearance})=>{
       driverAppearance=mountPublicAppearance({root:view,text,onAppearance:appearance=>{
         publicAppearance=appearance;
         syncPaddock();

@@ -1,7 +1,7 @@
 import {createHttpClient} from '/src/shared/http-client.js';
 
-import {setProfileLayout} from './profile-studio-layout.js?v=20261121studio06';
-import {mountSidebarPass,passProfile} from './profile-racing-pass.js?v=20261121studio06team';
+import {setProfileLayout} from './profile-studio-layout.js?v=20261121studiopolish';
+import {mountSidebarPass,passProfile} from './profile-racing-pass.js?v=20261121studiopolish';
 
 export const APPEARANCE_URL = 'https://auth.asgracing.ru/v1/me/profile-appearance';
 export const PRESETS = Object.freeze({
@@ -63,7 +63,6 @@ export function createProfileEffect(root) {
   let controller;
   let observer;
   let offscreen = false;
-  let viewerPaused = false;
   let entryTimer;
   let settings = normalizeEffect(null);
 
@@ -86,7 +85,7 @@ export function createProfileEffect(root) {
     delete root.dataset.vipTheme;
   }
 
-  const paused = ()=>settings.paused || viewerPaused || reduced.matches || doc.hidden || offscreen;
+  const paused = ()=>settings.paused || reduced.matches || doc.hidden || offscreen;
 
   function sync() {
     if (!mountedPreset) return;
@@ -145,7 +144,7 @@ export function createProfileEffect(root) {
     }
   }
 
-  return {update,replay,setPaused(value){viewerPaused=value;sync();},
+  return {update,replay,
     destroy(){epoch++;cleanup();}};
 }
 
@@ -157,8 +156,6 @@ export function mountPublicAppearance({root,text,onAppearance}) {
   let pending;
   let request;
   let animation;
-  let pause;
-  let guestPaused = false;
   let introduced = false;
   let lastCheck = 0;
   let profile, viewer;
@@ -180,32 +177,9 @@ export function mountPublicAppearance({root,text,onAppearance}) {
     else delete document.body.dataset.profileProCover;
     onAppearance?.(result);
     const enabled = settings.preset !== 'original';
-    if (enabled && !settings.paused && !pause) {
-      pause = root.ownerDocument.createElement('button');
-      pause.type = 'button';
-      pause.className = 'button profile-motion-toggle';
-      pause.addEventListener('click',()=>{
-        guestPaused = !guestPaused;
-        animation.setPaused(guestPaused);
-        syncPause();
-      });
-      hero.querySelector('.profile-heading')?.append(pause);
-    } else if ((!enabled || settings.paused) && pause) {
-      pause.remove();
-      pause = null;
-    }
-    syncPause();
-    animation.setPaused(guestPaused);
     const enter = enabled && !introduced;
     introduced ||= enabled;
     void animation.update(settings,{enter});
-  }
-
-  function syncPause() {
-    if (!pause) return;
-    pause.setAttribute('aria-pressed',String(guestPaused));
-    pause.textContent = guestPaused ? text('Включить движение','Resume animation')
-      : text('Остановить движение','Pause animation');
   }
 
   async function fetchAppearance(force = false) {
@@ -247,12 +221,9 @@ export function mountPublicAppearance({root,text,onAppearance}) {
         result = null;
         loadedId = null;
         introduced = false;
-        guestPaused = false;
       }
       if (hero !== current || loadedId !== id) {
         animation?.destroy();
-        pause?.remove();
-        pause = null;
         hero = current;
         animation = current ? createProfileEffect(root) : null;
         if (hero) render();
