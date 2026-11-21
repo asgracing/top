@@ -55,21 +55,27 @@ export function passCard({profile,settings,side,text,large=false}) {
     </div></div>`;
 }
 
-const sideButton=(face,side,text)=>`<button class="button" type="button" data-pass-side="${face}" aria-pressed="${side===face}">${face==='front'?text('Лицевая сторона','Front'):text('Обратная сторона','Back')}</button>`;
+const sideButton=(face,side,text,compact=false)=>`<button class="button" type="button" data-pass-side="${face}" aria-pressed="${side===face}">${compact
+  ? face==='front'?text('Лицевая','Front'):text('Оборотная','Back')
+  : face==='front'?text('Лицевая сторона','Front side'):text('Оборотная сторона','Back side')}${compact?'':' ↻'}</button>`;
 
 export function passMarkup({profile,settings,side,owner,advanced,text}) {
   const styles={carbon:text('Карбон','Carbon'),holographic:text('Голографический','Holographic'),classic:text('Гоночная классика','Racing classic')};
   if(!advanced)styles.hidden=text('Скрыть из профиля','Hide from profile');
-  return `<div class="profile-pass-toolbar">${sideButton('front',side,text)}${sideButton('back',side,text)}</div>
-    <div data-pass-preview>${passCard({profile,settings,side,text,large:true})}</div>
+  return `<header class="studio-pass-editor-head"><h3>${text('Карточка пилота','Driver card')}</h3>
+    ${owner?`<p>${text('Имя, номер и результаты берутся из профиля. Оформление выбираешь ты.','Your name, number and results come from your profile. You choose the design.')}</p>`:''}</header>
+    <div class="studio-card-layout">
+    <div class="studio-card-preview"><div data-pass-preview>${passCard({profile,settings,side,text,large:true})}</div>
+    <div class="studio-face-controls">${sideButton('front',side,text,true)}${sideButton('back',side,text,true)}
+    <a class="button" href="${escape(profileUrl(profile))}">${text('Профиль','Profile')} ↗</a></div></div>
     ${owner?`<div class="studio-card-controls"><label>${text('Материал','Material')}
     <select id="pass-style">${Object.entries(styles).map(([id,label])=>`<option value="${id}"${id===(advanced||settings.pass_visible?settings.pass_style:'hidden')?' selected':''}>${label}</option>`).join('')}</select></label>
     ${advanced?`<fieldset class="studio-colors"><legend>${text('Цвет акцента','Accent colour')}</legend>
     ${ACCENTS.map(color=>`<input type="radio" name="pass-accent" aria-label="${color}" value="${color}" style="--swatch:${color}"${color===settings.pass_accent?' checked':''}>`).join('')}</fieldset>
     <label>${text('Гоночная фраза','Racing motto')} <input id="pass-motto" type="text" maxLength="48" value="${escape(settings.pass_motto)}"></label>
-    <label><input id="pass-visible" type="checkbox"${settings.pass_visible?' checked':''}>${text('Показывать в профиле','Show on profile')}</label>`:''}
-    <div class="profile-pass-toolbar"><button class="button primary" type="button" data-save-pass>${text('Сохранить','Save')}</button>
-    <button class="button" type="button" data-export-pass>${text('Скачать PNG','Download PNG')}</button></div></div>`:''}`;
+    <label class="studio-checkbox"><input id="pass-visible" type="checkbox"${settings.pass_visible?' checked':''}>${text('Показывать в профиле','Show on profile')}</label>`:''}
+    <button class="button studio-export" type="button" data-export-pass>${side==='front'?text('Скачать лицевую сторону · PNG','Download front · PNG'):text('Скачать оборотную сторону · PNG','Download back · PNG')}</button>
+    <button class="button studio-save-pass" type="button" data-save-pass>${text('Сохранить настройки','Save settings')}</button></div>`:''}</div>`;
 }
 
 const mounted=new WeakMap();

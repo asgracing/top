@@ -1,4 +1,22 @@
+import {selectRandomTrackBackgroundFile} from '/src/features/server-status/track-background.js';
+
 const layouts = new WeakMap();
+const headerTracks = new WeakMap();
+const trackKey = 'asgProfileHeaderTrack';
+
+function headerTrack(document) {
+  if(headerTracks.has(document))return headerTracks.get(document);
+  let previous;
+  try{previous=document.defaultView.sessionStorage.getItem(trackKey);}catch{}
+  const track=selectRandomTrackBackgroundFile(Math.random,previous).replace(/\.jpg$/,'.webp');
+  try{document.defaultView.sessionStorage.setItem(trackKey,track.replace(/\.webp$/,'.jpg'));}catch{}
+  headerTracks.set(document,track);
+  return track;
+}
+
+export function profileHeaderImage(document) {
+  return `url("/assets/v2-light/tracks/${headerTrack(document)}")`;
+}
 
 export function setProfileLayout(root, hero, modern, text) {
   const workspace=root.querySelector('.profile-workspace');
@@ -33,6 +51,7 @@ export function setProfileLayout(root, hero, modern, text) {
   const photo=doc.createElement('div');
   photo.className='studio-hero-photo';
   photo.setAttribute('aria-hidden','true');
+  photo.style.setProperty('--studio-hero-image',profileHeaderImage(doc));
   hero.prepend(photo);
   workspace.before(hero,summary);
   summary.append(...highlights);

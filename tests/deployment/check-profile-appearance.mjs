@@ -131,10 +131,7 @@ try{
       assert.equal(await page.locator('.vip-fx').count(),0);
     }else{
       await page.locator('[data-vip-theme="night"]').waitFor();
-      const pause=page.getByRole('button',{name:'Остановить движение'});
-      await pause.click();
-      await page.locator('[data-vip-theme="night"].vip-paused').waitFor();
-      assert.equal(await page.getByRole('button',{name:'Включить движение'}).getAttribute('aria-pressed'),'true');
+      assert.equal(await page.getByRole('button',{name:'Остановить движение'}).count(),0);
       await page.getByRole('tab',{name:'Обзор и SR'}).click();
       assert.equal(await page.locator('.profile-analysis').count(),1);
       if (artifacts) {
@@ -176,7 +173,7 @@ try{
   await page.close();
   const publicData=process.env.ASG_PROFILE_QA_DATA
     ?JSON.parse(await fs.readFile(process.env.ASG_PROFILE_QA_DATA,'utf8')):profile;
-  const admin=await open({tier:'admin',route:'edit',paddock:true,driverData:publicData});
+  const admin=await open({tier:'admin',route:'edit',paddock:true,driverData:publicData,width:1600});
   await admin.editor.locator('select[name="header"]').selectOption('modern');
   await admin.editor.locator('.profile-hero[data-profile-header="modern"]').waitFor();
   await admin.editor.locator('[data-save]').click();
@@ -188,7 +185,7 @@ try{
   const padded=admin.page.locator('#profile-paddock-panel');
   await padded.locator('[data-add-pin]').click();
   await padded.locator('.race-highlight').waitFor();
-  await padded.getByRole('tab',{name:'Мой прогресс'}).click();
+  await padded.getByRole('tab',{name:'Прогресс',exact:true}).click();
   await padded.locator('#lap-target').fill('1:46.000');
   await padded.locator('[data-save-goal]').click();
   await padded.getByText('Настройки сохранены.').waitFor();
@@ -197,16 +194,23 @@ try{
   const resultDownload=admin.page.waitForEvent('download');
   await padded.locator('[data-export-png]').click();
   assert.match((await resultDownload).suggestedFilename(),/\.png$/);
-  await padded.getByRole('tab',{name:'Обложка'}).click();
+  await padded.getByRole('tab',{name:'Фон профиля'}).click();
   await padded.locator('[data-cover="night"]').click();
   await admin.page.locator('body[data-profile-pro-cover="night"]').waitFor();
-  await padded.getByRole('tab',{name:'Racing Pass'}).click();
+  await padded.getByRole('tab',{name:'Карточка пилота'}).click();
+  const preview=padded.locator('[data-pass-preview]');
+  const controls=padded.locator('.studio-card-controls');
+  assert.ok((await controls.boundingBox()).x>(await preview.boundingBox()).x);
+  await admin.page.setViewportSize({width:390,height:844});
+  assert.ok((await controls.boundingBox()).y>(await preview.boundingBox()).y+(await preview.boundingBox()).height);
+  await admin.page.setViewportSize({width:1600,height:900});
   await padded.locator('#pass-style').selectOption('holographic');
   await padded.locator('#pass-motto').fill('See you on track');
   assert.equal(await padded.locator('.pass-front .pass-bottom span').innerText(),'See you on track');
   await padded.locator('[data-save-pass]').click();
   await admin.page.locator('.studio-pass-panel .racing-pass[data-card-style="holographic"]').waitFor();
   await padded.locator('[data-pass-side="back"]').click();
+  assert.match(await padded.locator('[data-export-pass]').innerText(),/оборотную сторону/);
   const passDownload=admin.page.waitForEvent('download');
   await padded.locator('[data-export-pass]').click();
   assert.match((await passDownload).suggestedFilename(),/-back\.png$/);
@@ -216,6 +220,12 @@ try{
   const visitor=await open({tier:'admin',route:'driver',paddock:true,signed:false,driverData:publicData,width:1280,plain:true,
     settings:{...saved,header:'modern',pins:admin.requests.find(write=>write.effect.pins).effect.pins,pass_style:'holographic'}});
   await visitor.page.locator('#page-view > .profile-hero[data-profile-header="modern"]').waitFor();
+  const trackImage=visitor.page.locator('.studio-hero-photo');
+  const initialTrack=await trackImage.evaluate(el=>getComputedStyle(el).backgroundImage);
+  assert.match(initialTrack,/assets\/v2-light\/tracks\/[^"]+\.webp/);
+  await visitor.page.reload();
+  await trackImage.waitFor();
+  assert.notEqual(await trackImage.evaluate(el=>getComputedStyle(el).backgroundImage),initialTrack);
   await visitor.page.locator('.profile-sidebar > .studio-pass-panel + .profile-achievements').waitFor();
   assert.equal(await visitor.page.locator('.studio-pass-panel a.button').count(),0);
   await visitor.page.getByRole('tab',{name:'Мой паддок'}).click();

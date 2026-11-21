@@ -16,7 +16,6 @@
 .profile-appearance-preview .profile-identity { min-width:0; }
 .profile-appearance-example { padding:12px; }
 .profile-appearance-example .profile-stat-grid { grid-template-columns:1fr; }
-.profile-motion-toggle { min-height:28px; margin-top:7px; font-size:12px; }
 .profile-heading .project-support-badge { margin-inline-start:6px; }
 .project-support-badge[data-tier="admin"] { color:#ffd7d9; background:linear-gradient(120deg,#4b1220,#222b3d 65%); border-color:#e97685; box-shadow:inset 0 0 6px #cd425343; letter-spacing:.05em; }
 @media (max-width:700px) {
@@ -179,11 +178,11 @@ body.studio-refreshed #profile-history-content .page-table { min-width: 0; }
 body.studio-refreshed #profile-history-content .page-table :is(th, td) { padding-inline: 7px; }
 body.studio-refreshed #profile-history-content .page-table-scroll:focus-visible { outline: 2px solid #c8b5ff; outline-offset: -2px; }
 
-.studio-hero-photo { position:absolute; inset:0; z-index:0; pointer-events:none; background:linear-gradient(0deg,#07121af2 2%,#07121a99 50%,#07121a40),url('/assets/sunset.jpg') center/cover; }
+.studio-hero-photo { position:absolute; inset:0; z-index:0; pointer-events:none; background:linear-gradient(0deg,#07121af2 2%,#07121a99 50%,#07121a40),var(--studio-hero-image, none) center/cover; }
 body.studio-refreshed .profile-hero .profile-identity { position:relative; z-index:1; grid-area:identity; }
 body.studio-refreshed .profile-hero .profile-ratings { grid-area:ratings; }
 body.studio-refreshed .profile-hero[data-profile-header=modern] { background:#111b28; }
-.profile-appearance-preview .profile-hero[data-profile-header=modern] { position:relative; min-height:190px; background:linear-gradient(0deg,#07121af2,#07121a40),url('/assets/sunset.jpg') center/cover; }
+.profile-appearance-preview .profile-hero[data-profile-header=modern] { position:relative; min-height:190px; background:linear-gradient(0deg,#07121af2,#07121a40),var(--studio-hero-image, none) center/cover; }
 .profile-appearance-preview .profile-hero[data-profile-header=modern] .profile-identity { position:relative; align-self:end; }
 @media (max-width: 1000px) {
   body.studio-refreshed .profile-workspace { grid-template-columns: minmax(0,1fr); }
@@ -277,10 +276,31 @@ body.studio-refreshed .studio-pass-panel .panel-head h2 { font-size:13px; }
 .profile-sidebar:has(.studio-pass-panel) .profile-achievements { height:auto; }
 .racing-pass [hidden] { display:none; }
 .pass-avatar { display:grid; place-items:center; width:17%; aspect-ratio:1; background:#25364d; border:1px solid #819db577; border-radius:8px; font-size:5cqw; }
-.profile-pro-workspace .studio-card-controls { display:grid; gap:10px; margin-top:14px; }
-.studio-card-controls label { display:flex; gap:8px; align-items:center; flex-wrap:wrap; }
-.studio-card-controls fieldset { border:1px solid #64748b66; padding:8px; margin:0; }
-.studio-colors { display:flex; gap:8px; flex-wrap:wrap; }
-.studio-colors input { appearance:none; width:27px; height:27px; border:1px solid #8fa2b9; border-radius:50%; background:var(--swatch); cursor:pointer; }
-.studio-colors input:checked { outline:2px solid #fff; outline-offset:2px; }
+.studio-pass-editor-head { margin:14px 0 20px; }
+.studio-pro-chip { display:inline-block; margin-inline-start:4px; padding:2px 5px; border:1px solid #b291e66b; border-radius:3px; background:#7455ad29; color:#dfccfa; font-size:10px; line-height:1; }
+.profile-pro-workspace .studio-pass-editor-head h3 { font-size:clamp(17px,2vw,22px); }
+.profile-pro-workspace .studio-pass-editor-head p { margin-top:7px; color:#b3c0d0; }
+.studio-card-layout { display:grid; grid-template-columns:minmax(0,1.5fr) minmax(215px,.8fr); gap:22px; align-items:start; }
+.studio-card-preview { min-width:0; }
+.studio-face-controls { display:flex; flex-wrap:wrap; justify-content:center; gap:7px; margin:13px 0 0; max-width:700px; }
+.studio-face-controls>.button { min-height:35px; padding:6px 11px; font-size:11px; }
+.studio-face-controls>[aria-pressed=true] { border-color:#bda0de; color:#e6ceff; }
+.studio-card-controls { display:flex; flex-direction:column; gap:16px; min-width:0; }
+.studio-card-controls>label { display:flex; flex-direction:column; gap:7px; font-size:12px; color:#a1b6cd; }
+.studio-card-controls select,.studio-card-controls input[type=text] { min-height:38px; width:100%; background:#101d2a; border:1px solid #96b0cb45; border-radius:3px; color:#e2edf7; padding:7px 9px; font:inherit; }
+.studio-colors { border:0; padding:0; margin:0; min-width:0; display:flex; gap:9px; flex-wrap:wrap; }
+.studio-colors legend { font-size:12px; color:#a1b6cd; margin-bottom:10px; }
+.studio-colors input { appearance:none; width:29px; height:29px; margin:0; border:3px solid #12202c; border-radius:50%; background:var(--swatch); cursor:pointer; }
+.studio-colors input:checked,.studio-colors input:focus-visible { outline:1px solid var(--swatch); outline-offset:2px; }
+.studio-card-controls .studio-checkbox { flex-direction:row; align-items:center; }
+.studio-checkbox input { accent-color:#b89ae7; width:16px; height:16px; margin:0; }
+.studio-card-controls>.studio-export { background:linear-gradient(110deg,#b291e6,#b8a8e8); color:#171022; border:1px solid #dbc2ff; min-height:42px; font-weight:750; justify-content:center; }
+.studio-save-pass { align-self:flex-start; }
+.studio-pass-panel .studio-pass-actions .button { min-height:36px; font-size:10px; }
+.studio-pass-panel .pass-identity strong { overflow-wrap:anywhere; }
+@media(max-width:1200px){ .studio-card-layout { grid-template-columns:minmax(0,1fr); } }
+@media(max-width:650px){
+  .studio-card-controls input[type=text],.studio-card-controls select { min-height:44px; font-size:16px; }
+  .studio-face-controls>.button,.studio-card-controls>.button { min-height:44px; }
+}
 @media(prefers-reduced-motion:reduce){ .racing-pass::after { animation:none; } }
