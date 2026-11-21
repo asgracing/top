@@ -178,7 +178,7 @@ body.studio-refreshed #profile-history-content .page-table { min-width: 0; }
 body.studio-refreshed #profile-history-content .page-table :is(th, td) { padding-inline: 7px; }
 body.studio-refreshed #profile-history-content .page-table-scroll:focus-visible { outline: 2px solid #c8b5ff; outline-offset: -2px; }
 
-body.studio-refreshed .profile-hero > .studio-hero-photo { position:absolute; inset:0; z-index:0; pointer-events:none; background:linear-gradient(0deg,#07121af2 2%,#07121a99 50%,#07121a40),var(--studio-hero-image, none) center/cover; }
+body.studio-refreshed .profile-hero[data-profile-header=modern] > .studio-hero-photo { position:absolute; inset:0; z-index:0; pointer-events:none; background:linear-gradient(0deg,#07121af2 2%,#07121a99 50%,#07121a40),var(--studio-hero-image, none) center/cover; }
 body.studio-refreshed .profile-hero .profile-identity { position:relative; z-index:1; grid-area:identity; }
 body.studio-refreshed .profile-hero .profile-ratings { grid-area:ratings; }
 body.studio-refreshed .profile-hero[data-profile-header=modern] { position:relative; background:#111b28; }
