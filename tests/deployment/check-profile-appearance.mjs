@@ -32,7 +32,7 @@ async function open({lang='ru',route='account',tier='vip',signed=true,reduced='r
     if(url.pathname==='/v1/me/profile-appearance'){
       if(req.method()==='GET'){
         privateReads++;
-        return json(request,{tier,can_edit:editable,revision,effect:editable?current:null,...(paddock?{paddock_version:1}:{})});
+        return json(request,{tier,can_edit:editable,revision,effect:editable?current:null,...(paddock?{paddock_version:1,pass_editor_version:2}:{})});
       }
       const body=req.postDataJSON();
       assert.equal(req.headers()['x-csrf-token'],'fixture-csrf');
@@ -181,6 +181,9 @@ try{
   await admin.editor.locator('.profile-hero[data-profile-header="modern"]').waitFor();
   await admin.editor.locator('[data-save]').click();
   await admin.page.locator('#page-view .profile-hero[data-profile-header="modern"]').waitFor();
+  await admin.page.locator('#page-view > .profile-hero + .studio-key-metrics > .page-metric').first().waitFor();
+  assert.equal(await admin.page.locator('.studio-key-metrics > .page-metric').count(),4);
+  assert.equal(await admin.page.locator('.profile-sidebar > .studio-pass-panel + .profile-achievements').count(),1);
   await admin.page.getByRole('tab',{name:'Мой паддок'}).click();
   const padded=admin.page.locator('#profile-paddock-panel');
   await padded.locator('[data-add-pin]').click();
@@ -199,8 +202,10 @@ try{
   await admin.page.locator('body[data-profile-pro-cover="night"]').waitFor();
   await padded.getByRole('tab',{name:'Racing Pass'}).click();
   await padded.locator('#pass-style').selectOption('holographic');
+  await padded.locator('#pass-motto').fill('See you on track');
+  assert.equal(await padded.locator('.pass-front .pass-bottom span').innerText(),'See you on track');
   await padded.locator('[data-save-pass]').click();
-  await padded.locator('.profile-pass[data-material="holographic"]').waitFor();
+  await admin.page.locator('.studio-pass-panel .racing-pass[data-card-style="holographic"]').waitFor();
   await padded.locator('[data-pass-side="back"]').click();
   const passDownload=admin.page.waitForEvent('download');
   await padded.locator('[data-export-pass]').click();
@@ -208,8 +213,11 @@ try{
   assert.deepEqual(admin.errors,[]);
   await admin.page.close();
 
-  const visitor=await open({tier:'admin',route:'driver',paddock:true,signed:false,driverData:publicData,
-    settings:{...saved,pins:admin.requests.find(write=>write.effect.pins).effect.pins,pass_style:'holographic'}});
+  const visitor=await open({tier:'admin',route:'driver',paddock:true,signed:false,driverData:publicData,width:1280,plain:true,
+    settings:{...saved,header:'modern',pins:admin.requests.find(write=>write.effect.pins).effect.pins,pass_style:'holographic'}});
+  await visitor.page.locator('#page-view > .profile-hero[data-profile-header="modern"]').waitFor();
+  await visitor.page.locator('.profile-sidebar > .studio-pass-panel + .profile-achievements').waitFor();
+  assert.equal(await visitor.page.locator('.studio-pass-panel a.button').count(),0);
   await visitor.page.getByRole('tab',{name:'Мой паддок'}).click();
   await visitor.page.locator('.race-highlight').waitFor();
   assert.equal(await visitor.page.locator('[data-add-pin], #lap-target, [data-save-pass]').count(),0);

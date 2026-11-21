@@ -1,7 +1,7 @@
 import {createHttpClient} from '/src/shared/http-client.js';
 import {
   APPEARANCE_URL, LAYERS, PRESETS, appendBadge, createProfileEffect, normalizeEffect,
-} from './profile-effects.js?v=20261121paddock1';
+} from './profile-effects.js?v=20261121studio06';
 
 export function openAppearanceEditor({view,auth,text,signal,onClose,onSave}) {
   const root = view.ownerDocument.createElement('section');

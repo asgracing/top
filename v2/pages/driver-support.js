@@ -1,6 +1,6 @@
 import {TRACKS,raceKey,lapTime,finite,selectRaces,progressReport,parseTarget,chartPoints,bundleFromProfile} from '../driver-support-model.js?v=20261121paddock1';
 
-import {passMarkup,exportPass} from './profile-racing-pass.js?v=20261121paddock1';
+import {passMarkup,exportPass,passSettings} from './profile-racing-pass.js?v=20261121studio06';
 
 let stylesPromise;
 export function loadDriverSupportStyles(){
@@ -15,7 +15,7 @@ export function loadDriverSupportStyles(){
   });return stylesPromise;
 }
 
-export function mountDriverSupport({root,profile,language='ru',now,owner=false,settings,onSave}) {
+export function mountDriverSupport({root,profile,language='ru',now,owner=false,advanced=false,settings,onSave}) {
   if(!root || !profile) return null;
   const bundle=bundleFromProfile(profile,now);
   const text=(ru,en)=>language==='en'?en:ru;
@@ -32,11 +32,13 @@ export function mountDriverSupport({root,profile,language='ru',now,owner=false,s
     cover:Object.hasOwn(covers,settings?.cover) ? settings.cover : 'track',
     pins:Array.isArray(settings?.pins) ? [...new Set(settings.pins.filter(id=>raceIds.has(id)))].slice(0,3) : [],
     target:parseTarget(settings?.target) ? settings.target : '',
-    pass_style:['carbon','holographic','classic'].includes(settings?.pass_style) ? settings.pass_style : 'hidden',
+    ...passSettings(settings),
   };
   let saving=false;
-  let passSide='front';
-  let section='showcase', selectedRace=bundle.races[0]?raceKey(bundle.races[0]):'', format='wide',noticeTimer,alive=true,notice='';
+  const profileRoot=root.closest('#page-view');
+  let passSide=profileRoot?.dataset.passSide==='back' || new URLSearchParams(location.search).get('passSide')==='back'?'back':'front';
+  let passDraft=passSettings(settings);
+  let section=new URLSearchParams(location.search).get('paddock')==='pass'&&(owner||preferences.pass_visible)?'pass':'showcase', selectedRace=bundle.races[0]?raceKey(bundle.races[0]):'', format='wide',noticeTimer,alive=true,notice='';
   const first=bundle.races.find(race=>race.track==='monza')||bundle.races[0];
   let filters={track:first?.track||'monza',car:first?.car||'',days:90};
   function notify(message){notice=message;const box=root.querySelector('[data-pro-notice]');if(box)box.textContent=message;clearTimeout(noticeTimer);noticeTimer=setTimeout(()=>{notice='';const current=root.querySelector('[data-pro-notice]');if(alive&&current)current.textContent='';},5000);}
@@ -47,7 +49,7 @@ export function mountDriverSupport({root,profile,language='ru',now,owner=false,s
     try {
       await onSave(changes);
       if(!alive)return;
-      preferences={...preferences,...changes};
+      preferences={...preferences,...changes,...(Object.hasOwn(changes,'pass_style')?passSettings(changes):{})};
       render();
       notify(text('Настройки сохранены.','Settings saved.'));
     } catch(error) {
@@ -66,12 +68,12 @@ export function mountDriverSupport({root,profile,language='ru',now,owner=false,s
   function render(){
     applyCover();
     if(!bundle.races.length && ['progress','card'].includes(section)){section='showcase';}
-    if(!owner && !preferences.pins.length && preferences.pass_style==='hidden'){root.innerHTML=`<p class="page-empty">${text('Пока нет опубликованных зачтённых гонок для витрины.','There are no published counted races to showcase yet.')}</p>`;return;}
+    if(!owner && !preferences.pins.length && !preferences.pass_visible){root.innerHTML=`<p class="page-empty">${text('Пока нет опубликованных зачтённых гонок для витрины.','There are no published counted races to showcase yet.')}</p>`;return;}
     const entries=[['showcase',text('Витрина гонок','Race showcase')]];
     if(owner&&bundle.races.length)entries.push(['progress',text('Мой прогресс','My progress')],['card',text('Карточка заезда','Race result card')]);
     if(owner)entries.push(['style',text('Обложка','Cover')]);
-    if(owner || preferences.pass_style!=='hidden')entries.push(['pass','Racing Pass']);
-    root.innerHTML=`<div class="profile-pro-toolbar"><div class="pro-tabs" role="tablist" aria-label="${text('Возможности Pro','Pro features')}">${entries.map(([id,label])=>`<button type="button" class="button" role="tab" id="section-${id}" data-section="${id}" aria-selected="${section===id}" aria-controls="section-panel" tabindex="${section===id?0:-1}">${label}</button>`).join('')}</div></div><div id="section-panel" role="tabpanel" aria-labelledby="section-${section}">${({showcase:showcaseMarkup,progress:progressMarkup,card:cardMarkup,style:styleMarkup,pass:()=>passMarkup({profile:bundle.profile,style:preferences.pass_style,side:passSide,owner,text,escape})})[section]()}</div><p data-pro-notice class="page-help" role="status" aria-live="polite">${escape(notice)}</p>`;
+    if(owner || preferences.pass_visible)entries.push(['pass','Racing Pass']);
+    root.innerHTML=`<div class="profile-pro-toolbar"><div class="pro-tabs" role="tablist" aria-label="${text('Возможности Pro','Pro features')}">${entries.map(([id,label])=>`<button type="button" class="button" role="tab" id="section-${id}" data-section="${id}" aria-selected="${section===id}" aria-controls="section-panel" tabindex="${section===id?0:-1}">${label}</button>`).join('')}</div></div><div id="section-panel" role="tabpanel" aria-labelledby="section-${section}">${({showcase:showcaseMarkup,progress:progressMarkup,card:cardMarkup,style:styleMarkup,pass:()=>passMarkup({profile:bundle.profile,settings:passDraft,side:passSide,owner,advanced,text})})[section]()}</div><p data-pro-notice class="page-help" role="status" aria-live="polite">${escape(notice)}</p>`;
     if(section==='card')void drawCard();
   }
 function showcaseMarkup() {
@@ -162,7 +164,14 @@ async function onClick(event) {
   const button = event.target.closest('button'); if (!button || saving) return;
   if (button.dataset.section) { section=button.dataset.section; render();root.querySelector(`#section-${section}`).focus(); }
   else if (button.dataset.card) { selectedRace=button.dataset.card;section='card';render();root.querySelector('#section-card').focus(); }
-  else if (button.dataset.passSide) {passSide=button.dataset.passSide;render();root.querySelector(`[data-pass-side="${passSide}"]`)?.focus();}
+  else if (button.dataset.passSide) {
+    passSide=button.dataset.passSide;
+    if(profileRoot)profileRoot.dataset.passSide=passSide;
+    const sidebar=profileRoot?.querySelector('.studio-pass-panel [data-pass-side="'+passSide+'"]');
+    if(sidebar)sidebar.click();
+    else render();
+    root.querySelector(`[data-pass-side="${passSide}"]`)?.focus();
+  }
   else if (!owner) return;
   else if (button.dataset.remove) await save({pins:preferences.pins.filter(key=>key!==button.dataset.remove)});
   else if (Object.hasOwn(button.dataset,'addPin')) {
@@ -183,14 +192,36 @@ async function onClick(event) {
     if(!parseTarget(input.value)){input.setAttribute('aria-invalid','true');return notify(text('Формат цели: 1:46.000','Use the format 1:46.000'));}
     await save({target:input.value.trim()});
   }
-  else if (Object.hasOwn(button.dataset,'savePass')) await save({pass_style:root.querySelector('#pass-style').value});
+  else if (Object.hasOwn(button.dataset,'savePass')) {
+    const values=readPass();
+    await save(advanced?values:{pass_style:values.pass_visible?values.pass_style:'hidden'});
+  }
   else if (Object.hasOwn(button.dataset,'exportPass')) {
-    try {await exportPass({profile:bundle.profile,style:root.querySelector('#pass-style').value,side:passSide,text,download});}
+    try {await exportPass({profile:bundle.profile,settings:readPass(),side:passSide,text,download,preview:root.querySelector('[data-pass-preview]')});}
     catch {notify(text('Не удалось создать PNG.','Could not create PNG.'));}
   }
   else if (Object.hasOwn(button.dataset,'exportPng')) { const canvas=root.querySelector('#result-canvas');if(canvas.dataset.ready!=='true')return notify(text('Подожди, карточка ещё рисуется.','Please wait for the card to finish rendering.'));try{canvas.toBlob(blob=>{if(blob){download(blob,`ASG-${bundle.profile.public_id}-${selectedRace.split(':').at(-1)}-${format}.png`);notify(text('Карточка сохранена в PNG','PNG card downloaded'));}else notify(text('Не удалось создать изображение','Could not create image'));},'image/png');}catch{notify(text('Браузер не разрешил экспорт изображения','Image export was blocked by the browser'));} }
   else if (Object.hasOwn(button.dataset,'copyLink')) { try{await navigator.clipboard.writeText(profileUrl);notify(text('Ссылка профиля скопирована','Profile link copied'));}catch{notify(profileUrl);} }
   else if (Object.hasOwn(button.dataset,'report')) { download(new Blob([reportText()],{type:'text/plain;charset=utf-8'}),`ASG-progress-${filters.track}-${filters.days}d.txt`); }
+}
+function readPass() {
+  const style=root.querySelector('#pass-style')?.value;
+  return passSettings({pass_style:style,pass_accent:root.querySelector('[name="pass-accent"]:checked')?.value,
+    pass_motto:root.querySelector('#pass-motto')?.value,
+    pass_visible:root.querySelector('#pass-visible')?.checked ?? style!=='hidden'});
+}
+function onPassInput(event) {
+  if(!event.target.closest('.studio-card-controls'))return;
+  const preview=root.querySelector('[data-pass-preview]');
+  const values=passDraft=readPass();
+  const card=preview.firstElementChild;
+  card.dataset.cardStyle=values.pass_style;
+  card.style.setProperty('--pass-accent',values.pass_accent);
+  card.querySelector('.pass-front .pass-bottom span').textContent=values.pass_motto;
+}
+function onSidebarSide(event) {
+  passSide=event.detail;
+  if(section==='pass')render();
 }
 function onChange(event) {
   const {id,value}=event.target;
@@ -209,7 +240,8 @@ function onKeydown(event) {
   event.preventDefault();group[index].click();
 }
 
-  root.addEventListener('click',onClick);root.addEventListener('change',onChange);root.addEventListener('keydown',onKeydown);
+  root.addEventListener('click',onClick);root.addEventListener('change',onChange);root.addEventListener('input',onPassInput);root.addEventListener('keydown',onKeydown);
+  profileRoot?.addEventListener('profile-pass-side',onSidebarSide);
   render();
-  return {root,destroy(){alive=false;clearTimeout(noticeTimer);root.removeEventListener('click',onClick);root.removeEventListener('change',onChange);root.removeEventListener('keydown',onKeydown);}};
+  return {root,destroy(){alive=false;clearTimeout(noticeTimer);root.removeEventListener('click',onClick);root.removeEventListener('change',onChange);root.removeEventListener('input',onPassInput);root.removeEventListener('keydown',onKeydown);profileRoot?.removeEventListener('profile-pass-side',onSidebarSide);}};
 }
