@@ -1,6 +1,7 @@
 // Maintained screen registry. Target URLs describe the next release; live routes remain /v2/{ru,en}/.
 // Query-based details retain legacy indexing; sitemap excludes empty entity URLs.
 export const pageRegistry = [
+  {route:'support/',screen:'support',title:{ru:'Поддержка',en:'Support'},description:{ru:'Уровни поддержки ASG Racing, пилоты и прогресс сбора.',en:'ASG Racing support tiers, supporters and funding progress.'},access:'public',indexable:true,query:[],target:{ru:'/support/',en:'/en/support/'},legacy:{ru:null,en:null}},
   {route:'site-admin/',screen:'site-admin',title:{ru:'Управление сайтом',en:'Site management'},description:{ru:'Настройки оформления ASG Racing.',en:'ASG Racing appearance settings.'},access:'site_appearance_manage',indexable:false,query:[],target:{ru:'/site-admin/',en:'/en/site-admin/'},legacy:{ru:null,en:null}},
   {route:'reports/',screen:'reports',title:{ru:'Репорты',en:'Reports'},description:{ru:'Рассмотрение гоночных инцидентов и апелляций ASG Racing.',en:'ASG Racing incident reports and appeals.'},access:'public',indexable:false,sitemap:false,query:['id'],target:{ru:'/reports/',en:'/en/reports/'},legacy:{ru:null,en:null}},
   {"route":"","screen":"home","title":null,"description":null,"access":"public","indexable":true,"query":[],"target":{"ru":"/","en":"/en/"},"legacy":{"ru":"/ru/","en":"/"}},

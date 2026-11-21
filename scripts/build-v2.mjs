@@ -30,7 +30,7 @@ const hourlyBootVersion = '20261120portalgrants4';
 const archiveBootVersion = '20261120portalgrants4';
 const statsBootVersion = '20261120portalgrants4';
 const raceModalBootVersion = '20261120portalgrants4';
-const accountBootVersion = '20261120profile1';
+const accountBootVersion = '20261121support1';
 const controlStylesVersion = '20261103clubs1';
 const profileStylesVersion = '20261119srvepisodes';
 const legalVersion = '20261030analytics1';
@@ -205,6 +205,7 @@ for (const language of ['ru','en']) {
     const pageHead=head.replace(/<title>[\s\S]*?<\/title>/,`<title>${title} · ASG Racing</title>`).replace(/(<meta name="description" content=")[^"]+/,`$1${description}`).replace(/(<meta property="og:url" content=")[^"]+/,`$1https://asgracing.ru/v2/${language}/${page}/`) + `\n<link rel="stylesheet" href="/v2/pages/views/pages.css?v=${profileStylesVersion}">`+(['races','race','championships','hourly/championship','teams','clubs','teams/detail','cars','fun-stats','bans','hourly/championship/history','news','news/article','community','about','instructions','join','documents','documents/read','privacy','cookies','404'].includes(page)?`\n<link rel="stylesheet" href="/v2/pages/views/site-pages.css?v=${presentationVersion}">`:'')+`\n<link rel="stylesheet" href="/v2/pages/views/r24-pages.css?v=${presentationVersion}">`;
     const accountHead=['account','account/settings','moderation','portal-ops'].includes(page)?pageHead+`<link rel="stylesheet" href="/v2/pages/views/control-pages.css?v=${presentationVersion}"><link rel="stylesheet" href="/v2/pages/account.css?v=${controlStylesVersion}"><link rel="stylesheet" href="/v2/pages/control.css?v=${controlStylesVersion}">`:pageHead;
     let owningHead=page==='community'?pageHead+`<meta name="community-likes-api" content="${(await readClassic('community/index.html')).match(/<meta name="community-likes-api" content="([^"]+)"/)[1]}">`:accountHead;
+    if(['support','ops'].includes(screen))owningHead=owningHead.replace(`/v2/boot/home.js?v=${bootVersion}`,'/v2/boot/home.js?v=20261121support1');
     if(screen==='account'){
       owningHead=owningHead.replace(`/v2/boot/home.js?v=${bootVersion}`,`/v2/boot/home.js?v=${accountBootVersion}`);
       owningHead+='<link rel="stylesheet" href="/styles/components/project-support.css?v=20261120grantpermission1">';

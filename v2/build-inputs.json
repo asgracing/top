@@ -80,7 +80,7 @@
     },
     {
       "path": "scripts/build-v2.mjs",
-      "sha256": "596848019a503183dc0e37d8ac10e3082d598c2113b8363f95cafd2d6b9b4133"
+      "sha256": "fa9521e62312b293eb0c66564d8e4beab72902ee46be1c923abadd5bb5e01de9"
     },
     {
       "path": "scripts/faq-page.mjs",
@@ -120,7 +120,7 @@
     },
     {
       "path": "src/features/auth/header-auth.js",
-      "sha256": "4bccdb30438f155a032da871e02893bfe34f6d452d5174b12e3a322b2809ec64"
+      "sha256": "9b0844381d56c6e67ecebb54d7ba46c8caed40dce9f970a5624e04f6b450088c"
     },
     {
       "path": "src/features/auth/personal-notifications.js",
@@ -312,11 +312,11 @@
     },
     {
       "path": "src/pages/portal-ops/portal-ops-page.js",
-      "sha256": "30d70215b47d9db3bf0f75f304372f1e4734aa251c17763735dd69d65767df71"
+      "sha256": "daa7a48222df9264030328fc03c9508ded201c7eaac8ebc1698812509c3d4867"
     },
     {
       "path": "src/pages/portal-ops/support-budget.js",
-      "sha256": "e8f7bc08a2cf85b4d0f1fc971b5287d9ba3f03bd0d9c3de6a9d5e2e7e68aac9d"
+      "sha256": "74dc1fbdfcb2398b447504db4810ff9db015391e90795fe6398e137955dc98ea"
     },
     {
       "path": "src/pages/portal-ops/support-grants.js",
@@ -324,7 +324,7 @@
     },
     {
       "path": "src/pages/portal-ops/support-members.js",
-      "sha256": "025c07e5aff4eee0eebe443720e9e295613e50cbdb3ab4103b4d36a9e2418be8"
+      "sha256": "76bfba023c89c99a9205df6456c57767b773b2fb2c5dddb8c93570f2ade45785"
     },
     {
       "path": "src/pages/races/model.js",
@@ -672,7 +672,7 @@
     },
     {
       "path": "v2-source/home.html",
-      "sha256": "9dae2adcc2810660be9b519ecb69e51b5377ad23036959882d99a2f13eb3b1a1"
+      "sha256": "18253bbf712319100e37a8555c542615acb1bb2a081894d61827db5b29a89fe3"
     },
     {
       "path": "v2-source/pages/archive.js",
@@ -756,7 +756,7 @@
     },
     {
       "path": "v2/home.js",
-      "sha256": "1300dbd59c579d0ce95b0c8326c79697e5a8d9034db184a95133373993cc5ac9"
+      "sha256": "b7b0b65b791463e40ad5831db3cfa67c7212e8c84f4cee4384e915e40584ed45"
     },
     {
       "path": "v2/live-stats.js",
@@ -784,19 +784,19 @@
     },
     {
       "path": "v2/page-layout.js",
-      "sha256": "fc1a0790e7c6679a7d684e0d2503ee3e92e48ad36c53d505697514ae7d2a0e55"
+      "sha256": "8b490fa43dfd776276d40383a96bd8b69af180466873121ee7580a28bb85518b"
     },
     {
       "path": "v2/page-registry.js",
-      "sha256": "fce1401c0b66daca2588b4a2cbd883a3b0ade4d4da3fb31f1c007c4909e70c9a"
+      "sha256": "21baf6c22028b2009ec21a67db437b7486b7504e3c05c417c52f25b66bc636d3"
     },
     {
       "path": "v2/pages/account-support.js",
-      "sha256": "76b71ff9695fef8df701605d80898e1b641b674704a6eb58cbf975f7ab6db206"
+      "sha256": "c118af16cc06deb8c2bafcc09383b815ec4dac84380663b6d2d19a0cee437535"
     },
     {
       "path": "v2/pages/account.js",
-      "sha256": "b13f91b85f90c6a4246a0c30d584825a62da3a86533c867e167efbff496c3783"
+      "sha256": "f59e8df8b2d29e6f08d77ef31fab22afc215ea8409344c0fb790205ce5774b8f"
     },
     {
       "path": "v2/pages/bans-model.js",
@@ -812,11 +812,11 @@
     },
     {
       "path": "v2/pages/control.js",
-      "sha256": "fca280ea5a7361b35acffa0f429059a0611ec56576ed53633199fd6a2754e9cf"
+      "sha256": "b50ffaa30e9d4e1d84957bc8ee43ca69a65d8a047a0557b908a777787a0ff4e8"
     },
     {
       "path": "v2/pages/controller.js",
-      "sha256": "7db86f41ac7302f28b78292943bcadb06fa5fa1b8f3b262c1fb70dc26395e329"
+      "sha256": "8fcbd7a2c3c831b3af8833ca4187e69e308e62f4a9d19ff77d75b74801e878b2"
     },
     {
       "path": "v2/pages/data.js",
@@ -849,6 +849,10 @@
     {
       "path": "v2/pages/profile-effects.js",
       "sha256": "8e11eb532e7241eb4b47cd35ea0a9e9202c8f7295632cad57c1d8356dc7033a4"
+    },
+    {
+      "path": "v2/pages/project-support.js",
+      "sha256": "fe26cf237c73c915331f108ddd258a74af3da513f303878c76a207b1d31e5908"
     },
     {
       "path": "v2/pages/race-archive-api.js",

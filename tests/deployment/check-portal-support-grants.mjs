@@ -9,7 +9,7 @@ const auth={authenticated:true,linked:true,driver:{public_id:profile.public_id,d
   profile_url:'/driver/?id='+profile.public_id},steam:{persona_name:'Fixture Pilot'},csrf_token:'fixture-csrf'};
 const json=(route,body,status=200)=>route.fulfill({status,contentType:'application/json',body:JSON.stringify(body)});
 
-async function open(language,width,target,{signed=false,owner=false,operator=false,portal=true}={}){
+async function open(language,width,target,{signed=false,owner=false,operator=false,finance=false,portal=true}={}){
   const page=await browser.newPage({viewport:{width,height:940},reducedMotion:'reduce'});
   const errors=[];
   let budgetRevision=0,draft=null,published=false,suppressed=false;
@@ -26,15 +26,16 @@ async function open(language,width,target,{signed=false,owner=false,operator=fal
     const request=route.request(),url=new URL(request.url());
     if(url.hostname==='auth.asgracing.ru'){
       if(url.pathname==='/v1/me')return json(route,signed?{
-        ...auth,permissions:{portal_manage:portal,support_manage:owner,support_grants_manage:operator},
+        ...auth,permissions:{portal_manage:portal,support_manage:owner,support_finance_manage:finance,support_grants_manage:operator},
       }:{authenticated:false});
       if(url.pathname==='/v1/portal-ops/support-members'){
         financeRequests++;
-        assert.equal(owner,true);
+        assert.ok(owner || finance);
+        const staff = url.searchParams.get('tier')==='admin';
         const matching=(!url.searchParams.get('q') || url.searchParams.get('q').toLowerCase()==='fixture') &&
           ['all',manual?'pro':'vip'].includes(url.searchParams.get('tier'));
         return json(route,{totals:{supporter:0,vip:1,pro:0},monthly_equivalent:{supporter:0,vip:35000,pro:0},
-          sync:{status:'current',last_confirmed_at:paidUntil},entries:matching?[{
+          sync:{status:'current',last_confirmed_at:paidUntil},entries:staff?[{public_id:profile.public_id,display_name:'Staff Pilot',tier:'admin'}]:matching?[{
             public_id:profile.public_id,display_name:'Fixture Pilot',tier:manual?'pro':'vip',paid_tier:'vip',
             manual_tier:manual,manual_ends_at:null,paid_until:paidUntil,
             consented:true,suppressed,revision:suppressed?1:0,
@@ -73,7 +74,7 @@ async function open(language,width,target,{signed=false,owner=false,operator=fal
       }
       if(url.pathname.startsWith('/v1/portal-ops/support-budget/')){
         financeRequests++;
-        assert.equal(owner,true);
+        assert.ok(owner || finance);
         if(request.method()==='POST'){
           assert.equal(request.headers()['x-csrf-token'],'fixture-csrf');
           const data=request.postDataJSON();
@@ -150,6 +151,18 @@ try{
     assert.equal(await manual.locator('[data-grant-history] li').count(),0);
     await operator.page.close();
   }
+
+  const finance=await open('ru',390,'/portal-ops/?tab=support',{signed:true,finance:true});
+  const financePanel=finance.page.locator('#portal-panel-support');
+  await financePanel.getByText(/Fixture Pilot · VIP/).waitFor();
+  assert.equal(await financePanel.locator('[data-support-grants]').isVisible(),false);
+  assert.equal(await financePanel.getByRole('button',{name:'Скрыть из списка'}).count(),0);
+  await financePanel.getByLabel('Действующий уровень').selectOption('admin');
+  await financePanel.getByText('Staff Pilot · ADMIN').waitFor();
+  assert.match(await financePanel.locator('[data-member-totals]').textContent(),/350/);
+  await financePanel.getByLabel('Подтверждённые поступления, ₽').waitFor();
+  assert.deepEqual(finance.errors,[]);
+  await finance.page.close();
 
   const admin=await open('ru',390,'/portal-ops/?tab=support',{signed:true,owner:true});
   const panel=admin.page.locator('#portal-panel-support');

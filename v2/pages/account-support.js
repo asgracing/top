@@ -1,5 +1,7 @@
 import {formatMoscowDateTime,parseAsgTimestamp} from '/src/shared/time.js';
 
+import {v2Route} from '../routes.js';
+
 const TIERS = {supporter:'Supporter',vip:'VIP',pro:'PRO'};
 const STATUS_URL = 'https://auth.asgracing.ru/v1/me/support';
 
@@ -12,14 +14,19 @@ function currentSupport(raw, now) {
   return {tier:TIERS[status.tier],source:status.source,endsAt};
 }
 
-export function mountAccountSupport(card,{client,text,language,linked,signal}) {
+export function mountAccountSupport(card,{client,text,language,linked,csrfToken,signal}) {
   card.className = 'panel project-support-account';
   const heading = document.createElement('small');
   heading.textContent = text('Поддержка','Support');
   const status = document.createElement('b');
   status.setAttribute('role','status');
   const information = document.createElement('span');
-  card.append(heading,status,information);
+  const link = document.createElement('a');
+  link.className = 'text-link';
+  link.href = v2Route('support/',language);
+  link.textContent = text('Открыть раздел поддержки','Open support')+' ↗';
+  const preference = document.createElement('div');
+  card.append(heading,status,information,link,preference);
   if (!linked) {
     status.textContent = text('Профиль пилота не связан','Driver profile not linked');
     return;
@@ -28,10 +35,12 @@ export function mountAccountSupport(card,{client,text,language,linked,signal}) {
   async function refresh() {
     status.textContent = text('Проверяем статус…','Checking status…');
     information.replaceChildren();
+    preference.replaceChildren();
     try {
       const raw = await client.requestJson(STATUS_URL,{credentials:'include',cache:'no-store',signal,
         headers:{Accept:'application/json'}});
       if (signal.aborted) return;
+      if (csrfToken && Number.isSafeInteger(raw.visibility?.revision)) showPreference(raw.visibility);
       const active = currentSupport(raw,Date.now());
       if (!active) {
         status.textContent = raw.sync?.status === 'current'
@@ -68,6 +77,37 @@ export function mountAccountSupport(card,{client,text,language,linked,signal}) {
       retry.addEventListener('click',refresh,{once:true});
       information.append(retry);
     }
+  }
+
+  function showPreference(initial) {
+    const label = document.createElement('label');
+    label.className = 'project-support-consent';
+    const checkbox = document.createElement('input');
+    checkbox.type = 'checkbox';
+    checkbox.checked = initial.listed === true;
+    const message = document.createElement('small');
+    message.setAttribute('role','status');
+    label.append(checkbox, text('Показывать имя и аватар публично','Show my name and avatar publicly'));
+    preference.append(label,message);
+    let current = initial;
+    checkbox.addEventListener('change', async () => {
+      checkbox.disabled = true;
+      try {
+        current = await client.requestJson(STATUS_URL+'/preferences',{
+          method:'POST',credentials:'include',cache:'no-store',signal,
+          headers:{'Content-Type':'application/json','X-CSRF-Token':csrfToken},
+          body:JSON.stringify({listed:checkbox.checked,expected_revision:current.revision}),
+        });
+        if (!signal.aborted) message.textContent = text('Сохранено','Saved');
+      } catch (error) {
+        if (signal.aborted) return;
+        if (error.status === 409) return refresh();
+        message.textContent = text('Не удалось сохранить','Could not save');
+      } finally {
+        checkbox.checked = current.listed === true;
+        checkbox.disabled = false;
+      }
+    });
   }
 
   void refresh();

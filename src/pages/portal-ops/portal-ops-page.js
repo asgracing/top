@@ -1,4 +1,4 @@
-import {mountSupportBudget} from "./support-budget.js?v=20261120grantpermission1";
+import {mountSupportBudget} from "./support-budget.js?v=20261121support1";
 import {canManageSupportGrants} from "./support-grants.js?v=20261120grantpermission1";
 import { mountClubsManagement } from './portal-clubs-workspace.js?v=20261111readers1';
 import { createAuthHeaderController, buildAuthReturnPath } from "../../features/auth/header-auth.js?v=20261120grantpermission1";
@@ -31,8 +31,11 @@ function copy(){document.documentElement.lang=lang();document.title=lang()==="ru
 function hideReauth(){$("portal-ops-reauth").hidden=true}
 function message(value,kind=""){hideReauth();const node=$("portal-hourly-message");node.textContent=value;node.dataset.kind=kind}
 function portalError(error,node=$("portal-hourly-message")){const code=String(error?.message||error);if(code==="recent_auth_required"){node.textContent=t(code);node.dataset.kind="error";const link=$("portal-ops-reauth");link.href=`${AUTH}/v1/auth/steam/start?return_path=${$u(buildAuthReturnPath(window.location))}`;link.hidden=false;return}node.textContent=t(code);node.dataset.kind="error"}
+function canOpenSupportPanel(auth){
+  return canManageSupportGrants(auth)||Boolean(auth?.authenticated&&auth.permissions?.portalManage&&auth.permissions.supportFinanceManage);
+}
 function setPanel(name,{link=false}={}){
-  if(name==='support'&&!canManageSupportGrants(authState))return;
+  if(name==='support'&&!canOpenSupportPanel(authState))return;
   $a("[data-panel]").forEach(button=>button.setAttribute("aria-selected",String(button.dataset.panel===name)));
   for(const key of ['clubs','hourly','support'])$("portal-panel-"+key).hidden=name!==key;
   if(link){
@@ -57,12 +60,13 @@ async function restore(){if(!selected?.has_override)return;if(!hourlyState?.revi
 function gate(auth){
   const prior=authState;
   authState=auth;
-  const canOpenSupport=canManageSupportGrants(auth);
+  const canOpenSupport=canOpenSupportPanel(auth);
   const tab=document.querySelector('[data-panel="support"]');
   const supportWasOpen=!$("portal-panel-support").hidden;
   tab.hidden=!canOpenSupport;
   if(!canOpenSupport||prior?.driver?.publicId!==auth?.driver?.publicId||
      prior?.permissions?.supportManage!==auth?.permissions?.supportManage||
+     prior?.permissions?.supportFinanceManage!==auth?.permissions?.supportFinanceManage||
      prior?.permissions?.supportGrantsManage!==auth?.permissions?.supportGrantsManage){
     supportBudget.reset();
   }

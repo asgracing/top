@@ -4,6 +4,12 @@
   "status": "release-candidate-awaiting-approval",
   "pages": [
     {
+      "path": "/support/",
+      "version": "v2",
+      "language": "ru",
+      "screen": "support"
+    },
+    {
       "path": "/site-admin/",
       "version": "v2",
       "language": "ru",
@@ -200,6 +206,12 @@
       "version": "v2",
       "language": "ru",
       "screen": "ops"
+    },
+    {
+      "path": "/en/support/",
+      "version": "v2",
+      "language": "en",
+      "screen": "support"
     },
     {
       "path": "/en/site-admin/",

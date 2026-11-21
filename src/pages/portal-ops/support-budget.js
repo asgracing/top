@@ -1,5 +1,5 @@
 import {ensureProjectSupportStyle,renderSupportFunding,showSupportFunding} from '/v2/pages/support-funding.js?v=20261120funding1';
-import {mountSupportMembers} from './support-members.js?v=20261120grants1';
+import {mountSupportMembers} from './support-members.js?v=20261121support1';
 import {canManageSupportGrants,mountSupportGrants} from './support-grants.js?v=20261120grantpermission1';
 
 const GROUPS = {
@@ -24,12 +24,13 @@ export function mountSupportBudget({root,api,auth,text,confirmAction}) {
     <h3>${text('Бюджет месяца','Monthly budget')}</h3>
     <label class="control-field">${text('Месяц отчёта, МСК','Report month, MSK')} <input type="month" min="2000-01" max="2099-12" data-month></label>
     <p data-budget-status role="status"></p>
+    <p data-budget-total hidden></p>
     <form data-budget-form hidden>
       <fieldset class="portal-support-fieldset">
         <label class="control-field">${text('Подтверждённые поступления, ₽','Confirmed funding, RUB')}
           <input name="confirmed" type="text" inputmode="decimal" aria-describedby="portal-support-confirmed-help"></label>
-        <p class="page-help" id="portal-support-confirmed-help">${text('Введите подтверждённую сумму за месяц. Пустое поле означает, что сумма пока неизвестна.',
-          'Enter the confirmed amount for the month. Leave blank if it is unknown.')}</p>
+        <p class="page-help" id="portal-support-confirmed-help">${text('Если сумма неизвестна, оставьте поле пустым.',
+          'Leave blank if the amount is unknown.')}</p>
         <div data-budget-items></div>
         <button class="button" type="button" data-add-item>${text('Добавить статью','Add cost item')}</button>
         <div class="control-actions">
@@ -39,7 +40,7 @@ export function mountSupportBudget({root,api,auth,text,confirmAction}) {
       </fieldset>
     </form>
     <section data-budget-preview hidden>
-      <h3>${text('Предпросмотр шкалы из сохранённого черновика','Progress preview from the saved draft')}</h3>
+      <h3>${text('Предпросмотр шкалы','Progress preview')}</h3>
       ${renderSupportFunding(text)}
     </section>
     <details data-budget-audit hidden><summary>${text('История изменений','Change history')}</summary><ul></ul></details>
@@ -49,6 +50,7 @@ export function mountSupportBudget({root,api,auth,text,confirmAction}) {
   const fieldset = root.querySelector('fieldset');
   const finance = root.querySelector('[data-support-finance]');
   const status = finance.querySelector('[role="status"]');
+  const total = root.querySelector('[data-budget-total]');
   const items = root.querySelector('[data-budget-items]');
   const preview = root.querySelector('[data-budget-preview]');
   const audit = root.querySelector('[data-budget-audit]');
@@ -62,7 +64,7 @@ export function mountSupportBudget({root,api,auth,text,confirmAction}) {
   }).format(new Date());
   const moneyInput = amount => amount == null ? '' : (amount/100).toFixed(2);
   const endpoint = () => '/v1/portal-ops/support-budget/' + encodeURIComponent(month.value);
-  const allowed = () => auth()?.authenticated && auth()?.permissions?.portalManage && auth().permissions.supportManage;
+  const allowed = () => auth()?.authenticated && auth()?.permissions?.portalManage && (auth().permissions.supportManage || auth().permissions.supportFinanceManage);
   let state = null, generation = 0, activeRequest, sessionUrl = '';
 
   function addItem(item = {}) {
@@ -92,6 +94,10 @@ export function mountSupportBudget({root,api,auth,text,confirmAction}) {
       {name:text('Разработка','Development'),group:'development'},
     ];
     for (const item of data.draft?.items ?? defaults) addItem(item);
+    total.hidden = !data.draft;
+    const sum = (data.draft?.items ?? []).reduce((amount,item)=>amount+item.amount,0);
+    const currency = new Intl.NumberFormat(document.documentElement.lang,{style:'currency',currency:'RUB'});
+    total.textContent = text('Итого расходов','Total expenses')+' · '+currency.format(sum/100);
     form.hidden = false;
     preview.hidden = !data.draft;
     showSupportFunding(preview,data.preview,text,data.preview
@@ -115,7 +121,7 @@ export function mountSupportBudget({root,api,auth,text,confirmAction}) {
     sessionUrl = endpoint();
     state = null;
     const ticket = ++generation;
-    form.hidden = preview.hidden = audit.hidden = true;
+    form.hidden = preview.hidden = audit.hidden = total.hidden = true;
     status.textContent = text('Загружаем отчёт…','Loading report…');
     try {
       const result = await api(sessionUrl,{signal:activeRequest.signal});
@@ -161,10 +167,10 @@ export function mountSupportBudget({root,api,auth,text,confirmAction}) {
     } catch (error) {
       if (current!==generation) return;
       status.textContent = String(error.message)==='support_budget_conflict'
-        ? text('Версия изменилась. Откройте отчёт заново перед сохранением.','The report changed. Reopen it before saving.')
+        ? text('Версия изменилась. Обновите отчёт.','The report changed. Reload it.')
         : String(error.message)==='recent_auth_required'
-          ? text('Войдите через Steam заново, чтобы сохранить отчёт.','Sign in with Steam again to save the report.')
-          : text('Изменение не подтверждено. Проверьте отчёт перед повтором.','The change was not confirmed. Check the report before retrying.');
+          ? text('Войдите через Steam заново.','Sign in with Steam again.')
+          : text('Проверьте отчёт перед повтором.','Check the report before retrying.');
     } finally {
       fieldset.disabled = month.disabled = false;
     }
@@ -200,7 +206,7 @@ export function mountSupportBudget({root,api,auth,text,confirmAction}) {
       form.reset();
       items.replaceChildren();
       audit.querySelector('ul').replaceChildren();
-      form.hidden=preview.hidden=audit.hidden=true;
+      form.hidden=preview.hidden=audit.hidden=total.hidden=true;
       status.textContent='';
     },
   };

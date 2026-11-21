@@ -24,6 +24,7 @@ exclude:
   - "README.md"
   - "community-likes-worker"
   - "design-research"
+  - "dist"
   - "docs"
   - "donations-worker"
   - "node_modules"
