@@ -1,4 +1,5 @@
 export const ACCENTS=['#ff6349','#eec979','#4fd8e9','#b18aff','#ff78d3','#b5ef70'];
+const ACCENT_LABELS=[['Красный','Red'],['Золотой','Gold'],['Бирюзовый','Cyan'],['Фиолетовый','Purple'],['Розовый','Pink'],['Салатовый','Lime']];
 
 export function passSettings(settings) {
   return {
@@ -60,6 +61,10 @@ const sideButton=(face,side,text,compact=false)=>`<button class="button" type="b
   : face==='front'?text('Лицевая сторона','Front side'):text('Оборотная сторона','Back side')}${compact?'':' ↻'}</button>`;
 
 export function passMarkup({profile,settings,side,owner,advanced,text}) {
+  if(!owner){
+    if(!settings.pass_visible)return `<p class="page-empty">${text('Карточка пилота скрыта.','The driver card is hidden.')}</p>`;
+    return `<h3>${text('Карточка пилота','Driver card')}</h3><div class="studio-public-passes">${['front','back'].map(face=>passCard({profile,settings,side:face,text,large:true})).join('')}</div>`;
+  }
   const styles={carbon:text('Карбон','Carbon'),holographic:text('Голографический','Holographic'),classic:text('Гоночная классика','Racing classic')};
   if(!advanced)styles.hidden=text('Скрыть из профиля','Hide from profile');
   return `<header class="studio-pass-editor-head"><h3>${text('Карточка пилота','Driver card')}</h3>
@@ -71,7 +76,7 @@ export function passMarkup({profile,settings,side,owner,advanced,text}) {
     ${owner?`<div class="studio-card-controls"><label>${text('Материал','Material')}
     <select id="pass-style">${Object.entries(styles).map(([id,label])=>`<option value="${id}"${id===(advanced||settings.pass_visible?settings.pass_style:'hidden')?' selected':''}>${label}</option>`).join('')}</select></label>
     ${advanced?`<fieldset class="studio-colors"><legend>${text('Цвет акцента','Accent colour')}</legend>
-    ${ACCENTS.map(color=>`<input type="radio" name="pass-accent" aria-label="${color}" value="${color}" style="--swatch:${color}"${color===settings.pass_accent?' checked':''}>`).join('')}</fieldset>
+    ${ACCENTS.map((color,index)=>`<input type="radio" name="pass-accent" aria-label="${text(...ACCENT_LABELS[index])}" value="${color}" style="--swatch:${color}"${color===settings.pass_accent?' checked':''}>`).join('')}</fieldset>
     <label>${text('Гоночная фраза','Racing motto')} <input id="pass-motto" type="text" maxLength="48" value="${escape(settings.pass_motto)}"></label>
     <label class="studio-checkbox"><input id="pass-visible" type="checkbox"${settings.pass_visible?' checked':''}>${text('Показывать в профиле','Show on profile')}</label>`:''}
     <button class="button studio-export" type="button" data-export-pass>${side==='front'?text('Скачать лицевую сторону · PNG','Download front · PNG'):text('Скачать оборотную сторону · PNG','Download back · PNG')}</button>

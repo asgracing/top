@@ -1,7 +1,7 @@
 import {createHttpClient} from '/src/shared/http-client.js';
 import {APPEARANCE_URL,normalizeEffect} from './profile-effects.js?v=20261121studiopolish';
-import {loadDriverSupportStyles,mountDriverSupport} from './driver-support.js?v=20261121studiopolish';
-import {passProfile} from './profile-racing-pass.js?v=20261121studiopolish';
+import {loadDriverSupportStyles,mountDriverSupport} from './driver-support.js?v=20261121publicpaddock';
+import {passProfile} from './profile-racing-pass.js?v=20261121publicpaddock';
 
 const client = createHttpClient({defaultTimeoutMs:8000});
 const allowed = value => ['pro','admin'].includes(value?.tier);

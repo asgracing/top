@@ -78,7 +78,7 @@ export async function startPage(api) {
     paddockSession=new AbortController();
     const signal=paddockSession.signal;
     paddockKey={root,auth:owns?auth.csrfToken:null,appearance:publicAppearance};
-    paddockModule ??= import('./profile-paddock.js?v=20261121studiopolish').catch(error=>{
+    paddockModule ??= import('./profile-paddock.js?v=20261121publicpaddock').catch(error=>{
       paddockModule=null;
       throw error;
     });
