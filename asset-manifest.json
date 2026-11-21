@@ -1,8 +1,8 @@
 {
   "schemaVersion": 1,
-  "revision": "d5f568ff96fbaf049afb115a2a548de8ffdaabde",
-  "files": 1419,
-  "bytes": 203508708,
+  "revision": "611b299fb59e9e676621c75cd0c6b4bcda42e7eb",
+  "files": 1421,
+  "bytes": 203859179,
   "assets": [
     {
       "path": "404.html",
@@ -1507,7 +1507,7 @@
     {
       "path": "en/hourly/index.html",
       "bytes": 81006,
-      "sha256": "f4ad23f6cc2a14c84ee980ecca62bfa43817811f727da8ca9262bfedd6c06b1a"
+      "sha256": "e19273257e5f7d5a92aa4b9978f8d7c3c51f2d7517f0612cc4ef190e7ac9763e"
     },
     {
       "path": "en/hourly/privacy/index.html",
@@ -1752,7 +1752,7 @@
     {
       "path": "hourly/index.html",
       "bytes": 86144,
-      "sha256": "97c6af8340e4f546c7c694411fe51ce211b81ea1fa3c259c7f08f3afb3319fe2"
+      "sha256": "0dc350304a483e83b4aa94961dd2bcb52d4177fa68bc5147ac9dfd89643767a5"
     },
     {
       "path": "hourly/index.ru.html",
@@ -3297,7 +3297,7 @@
     {
       "path": "v2/boot/build.json",
       "bytes": 6209,
-      "sha256": "02b9ebdd7100ea3c1c23e669f1c6bf77ba68a2f5f320c0c6806a61fc87875444"
+      "sha256": "680b17f491a30d5672a064f9d9a86044bdc655b97071ed676468bc8860818d55"
     },
     {
       "path": "v2/boot/chunks/account-2NDTNJRL.js",
@@ -5130,6 +5130,11 @@
       "sha256": "eae68a3aca1aefe2043a77c9e18fa3038703082ddeaafe023e60bd460ad83dcf"
     },
     {
+      "path": "v2/boot/chunks/controller-GJNHC5A3.js",
+      "bytes": 341371,
+      "sha256": "72f1ee46c8edbfd6331d67c8e3421a3017e1a620803941d886ce1ce45aadd7e1"
+    },
+    {
       "path": "v2/boot/chunks/controller-GL6BP4W2.js",
       "bytes": 328997,
       "sha256": "42b787c3f9765c895db5a46598a674b9cec0b6780fbf2b5ce5261f6867076f1c"
@@ -6075,6 +6080,11 @@
       "sha256": "6993d75eeaf5f9838cdfd648ff2ed70a1587fc3cde5c2801abde2e78a53af050"
     },
     {
+      "path": "v2/boot/chunks/project-support-FNFDYGNX.js",
+      "bytes": 8869,
+      "sha256": "88c619afd90743ef0e74c20a6689d62cd018b18767acf5594d351c42c3812f44"
+    },
+    {
       "path": "v2/boot/chunks/project-support-NUAEBNET.js",
       "bytes": 8552,
       "sha256": "55a82ea7c516a02bf15060fbf696452ceab0747c178d7b7a05b2cdbc039403f5"
@@ -6237,7 +6247,7 @@
     {
       "path": "v2/boot/home.js",
       "bytes": 176864,
-      "sha256": "926ad8ac1d2cdf7ca3f1b2f2c73dc51fb1936a3209d92f53dff5ecbde3dcc1d3"
+      "sha256": "c76764beb044fe6087ebdc5edd9c51d8f8c7281bde94d1ad1da99135e3e0209e"
     },
     {
       "path": "v2/bridge.js",
@@ -6247,7 +6257,7 @@
     {
       "path": "v2/build-inputs.json",
       "bytes": 34339,
-      "sha256": "20623a6d7e20d485e37dd689a1ac73c6dbf36f51eaf0b1c98449efd0b56a6c6c"
+      "sha256": "10ed799720ce629ddee44cd488434da49867447dbd82b83b627d56817c1d69a5"
     },
     {
       "path": "v2/copy.js",
@@ -6556,8 +6566,8 @@
     },
     {
       "path": "v2/pages/controller.js",
-      "bytes": 48917,
-      "sha256": "d08790798c2936ea5bd8059b42ed5bcdae67176fee643a2780f694b8c7126f3d"
+      "bytes": 48924,
+      "sha256": "313d283eb8ce1b5d4dfc82177b88f28de74512a8daf6fd42d168224bcf8d168c"
     },
     {
       "path": "v2/pages/data.js",
@@ -6616,8 +6626,8 @@
     },
     {
       "path": "v2/pages/project-support.js",
-      "bytes": 6765,
-      "sha256": "abc0f0d0c50e7107609a87343c3d9bef3a56be162582ba76cab3e67d6c3e3368"
+      "bytes": 6989,
+      "sha256": "a031ddade5ecdf85e46dcb09fdf8d0e455cb2b02d54c66f2fbb99cae9948950d"
     },
     {
       "path": "v2/pages/race-archive-api.js",

@@ -816,7 +816,7 @@
     },
     {
       "path": "v2/pages/controller.js",
-      "sha256": "7990650a50046092b6bc476d5ae6fc94701781d415a6075192838b94bc13a069"
+      "sha256": "8fcbd7a2c3c831b3af8833ca4187e69e308e62f4a9d19ff77d75b74801e878b2"
     },
     {
       "path": "v2/pages/data.js",
@@ -852,7 +852,7 @@
     },
     {
       "path": "v2/pages/project-support.js",
-      "sha256": "8c49121910ad0599063a86f1b9c5fdc65123eb26e97fc6b3aa37ad8a21bd8d53"
+      "sha256": "fe26cf237c73c915331f108ddd258a74af3da513f303878c76a207b1d31e5908"
     },
     {
       "path": "v2/pages/race-archive-api.js",
