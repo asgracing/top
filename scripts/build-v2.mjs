@@ -213,7 +213,7 @@ for (const language of ['ru','en']) {
     }
     if (screen === 'driver') {
       owningHead=owningHead.replace('pages.css?v='+profileStylesVersion,'pages.css?v=20261120profile1');
-      owningHead=owningHead.replace(`/v2/boot/home.js?v=${bootVersion}`,`/v2/boot/home.js?v=20261121studio06`);
+      owningHead=owningHead.replace(`/v2/boot/home.js?v=${bootVersion}`,`/v2/boot/home.js?v=20261121studio06team`);
       owningHead+='<link rel="stylesheet" href="/styles/components/project-support.css?v=20261120grantpermission1">';
     }
     if (screen === 'driver') owningHead+='<link rel="stylesheet" href="/v2/pages/profile-appearance.css?v=20261121studio06">';

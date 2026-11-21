@@ -78,7 +78,7 @@ export async function startPage(api) {
     paddockSession=new AbortController();
     const signal=paddockSession.signal;
     paddockKey={root,auth:owns?auth.csrfToken:null,appearance:publicAppearance};
-    paddockModule ??= import('./profile-paddock.js?v=20261121studio06').catch(error=>{
+    paddockModule ??= import('./profile-paddock.js?v=20261121studio06team').catch(error=>{
       paddockModule=null;
       throw error;
     });
@@ -100,7 +100,7 @@ export async function startPage(api) {
     if(editorSession || !view.querySelector('.profile-hero')) return;
     const open=new AbortController();
     editorSession=open;
-    import('./profile-appearance-editor.js?v=20261121studio06').then(({openAppearanceEditor})=>{
+    import('./profile-appearance-editor.js?v=20261121studio06team').then(({openAppearanceEditor})=>{
       if(!open.signal.aborted)openAppearanceEditor({view,auth,text,signal:open.signal,
         onSave:()=>driverAppearance?.refresh(true),
         onClose:()=>{
@@ -115,7 +115,7 @@ export async function startPage(api) {
   }
   function syncDriverAppearance(){
     if(driverAppearance){driverAppearance.update(state.id,raw.profiles[state.id],model?.auth);return;}
-    appearanceLoading ??= import('./profile-effects.js?v=20261121studio06').then(({mountPublicAppearance})=>{
+    appearanceLoading ??= import('./profile-effects.js?v=20261121studio06team').then(({mountPublicAppearance})=>{
       driverAppearance=mountPublicAppearance({root:view,text,onAppearance:appearance=>{
         publicAppearance=appearance;
         syncPaddock();
