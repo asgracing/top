@@ -9,7 +9,7 @@ import {createHistoryViews} from './views/history.js?v=20261007v2pages14';
 import {markNewsRead} from '/news-read-state.js';
 import {editorialImage} from './editorial-model.js?v=20261007v2pages14';
 import {getCommunityPostKey} from '/src/pages/community/feed-model.js';
-import {createPageViews} from './views/core.js?v=20261121paddock1';
+import {createPageViews} from './views/core.js?v=20261121studio06';
 import {createArchiveViews} from './views/archive.js?v=20261015pagination1';
 import {createChampionshipViews} from './views/championships.js?v=20261015pagination1';
 import {createEntityViews} from './views/entities.js?v=20261015pagination1';
@@ -78,7 +78,7 @@ export async function startPage(api) {
     paddockSession=new AbortController();
     const signal=paddockSession.signal;
     paddockKey={root,auth:owns?auth.csrfToken:null,appearance:publicAppearance};
-    paddockModule ??= import('./profile-paddock.js?v=20261121paddock1').catch(error=>{
+    paddockModule ??= import('./profile-paddock.js?v=20261121studio06').catch(error=>{
       paddockModule=null;
       throw error;
     });
@@ -100,7 +100,7 @@ export async function startPage(api) {
     if(editorSession || !view.querySelector('.profile-hero')) return;
     const open=new AbortController();
     editorSession=open;
-    import('./profile-appearance-editor.js?v=20261121paddock1').then(({openAppearanceEditor})=>{
+    import('./profile-appearance-editor.js?v=20261121studio06').then(({openAppearanceEditor})=>{
       if(!open.signal.aborted)openAppearanceEditor({view,auth,text,signal:open.signal,
         onSave:()=>driverAppearance?.refresh(true),
         onClose:()=>{
@@ -114,13 +114,13 @@ export async function startPage(api) {
     }).catch(()=>{if(editorSession===open)editorSession=null;});
   }
   function syncDriverAppearance(){
-    if(driverAppearance){driverAppearance.update(state.id);return;}
-    appearanceLoading ??= import('./profile-effects.js?v=20261121paddock1').then(({mountPublicAppearance})=>{
+    if(driverAppearance){driverAppearance.update(state.id,raw.profiles[state.id],model?.auth);return;}
+    appearanceLoading ??= import('./profile-effects.js?v=20261121studio06').then(({mountPublicAppearance})=>{
       driverAppearance=mountPublicAppearance({root:view,text,onAppearance:appearance=>{
         publicAppearance=appearance;
         syncPaddock();
       }});
-      driverAppearance.update(state.id);
+      driverAppearance.update(state.id,raw.profiles[state.id],model?.auth);
     }).catch(()=>{appearanceLoading=null;});
   }
   const data=createPageData(native,{raceArchive:screen==='archive'||screen==='race',raceProtocol:['driver','club','team','hourly','championships','championship','seasons'].includes(screen)}),raw={profiles:{},car_models:{},schedule:{items:[]},club_rankings:{},seasons:{},entities:{},entity_details:{}},fixture={profiles:raw.profiles,achievements:{},results:{},recent:[],captured_at:null};
@@ -324,7 +324,11 @@ export async function startPage(api) {
     const carSort=target.closest('[data-r24-sort]');if(carSort&&carsViews.sortKeys.includes(carSort.dataset.r24Sort)){const key=carSort.dataset.r24Sort;state.carDirection=state.carSort===key?(state.carDirection==='asc'?'desc':'asc'):key==='car_name'||key==='best_lap'||key==='average_finish'?'asc':'desc';state.carSort=key;state.carPage=1;updateCars();return;}
     const carPage=target.closest('[data-r24-car-step]');if(carPage){state.carPage+=Number(carPage.dataset.r24CarStep);updateCars();return;}
     if(target.closest('[data-car-laps-retry]')){loadCarLaps();return;}
-    const ratingButton=target.closest('[data-rating-kind]');if(ratingButton){presentation.openRating({public_id:ratingButton.dataset.ratingDriver},ratingButton.dataset.ratingKind,ratingButton);return;}
+    const ratingButton=target.closest('[data-rating-kind]');if(ratingButton && ratingButton.closest('.profile-hero[data-profile-header="modern"]')){
+      const tab=view.querySelector('#profile-tab-sr');
+      tab?.click();tab?.focus();return;
+    }
+    if(ratingButton){presentation.openRating({public_id:ratingButton.dataset.ratingDriver},ratingButton.dataset.ratingKind,ratingButton);return;}
     const race=target.closest('[data-page-race]');if(race&&!target.closest('a,button[data-rating-kind]')){openRace(race.dataset.pageRace,race);return;}
     const detail=target.closest('[data-page-event]');if(detail){const e=views.eventData(detail.dataset.pageEvent);if(e)openEvent(e,detail);return;}
     const join=target.closest('[data-page-join]');if(join){const e=views.eventData(join.dataset.pageJoin);if(e)toggle(e);return;}
@@ -359,7 +363,7 @@ export async function startPage(api) {
   });
   view.addEventListener('input',event=>{if(event.target.id==='site-news-search'){state.newsQuery=event.target.value;state.newsPage=1;refreshEditorial();return;}if(event.target.id==='site-history-search'){state.historyQuery=event.target.value;refreshEditorial();return;}if(event.target.id==='site-bans-search'){state.bansQuery=event.target.value;state.bansPage=1;updateBans();return;}if(event.target.id==='r24-car-search'){state.carQuery=event.target.value;state.carPage=1;updateCars();return;}if(event.target.id==='site-catalog-search'){state.catalogQuery=event.target.value;document.getElementById('site-catalog-content').innerHTML=entityViews.catalogContent();syncCatalogUrl();return;}if(event.target.id==='site-roster-search'){state.rosterQuery=event.target.value;document.getElementById('site-roster-content').innerHTML=entityViews.rosterContent(currentEntity());highlightResults();entityThumbnails?.scan();return;}if(event.target.id==='r24-season-search'){state.seasonQuery=event.target.value;document.getElementById('r24-season-content').innerHTML=championshipViews.seasonCards();return;}if(event.target.id==='site-archive-search'){state.archiveQuery=event.target.value;state.archivePage=1;++archiveTicket;clearTimeout(searchTimer);searchTimer=setTimeout(()=>loadArchive(),300);return;}if(event.target.id!=='profile-race-search')return;state.query=event.target.value;state.racePage=1;const template=document.createElement('template');template.innerHTML=views.profileRaceTable(raw.profiles[state.id]);for(const selector of ['.page-table-scroll','.page-pagination'])document.getElementById('profile-history-content').querySelector(selector).replaceWith(template.content.querySelector(selector));});
   window.addEventListener('pagehide',event=>{if(!event.persisted)driverSafety?.destroy();},{once:true});
-  subscribe(next=>{model=next;highlightResults();syncDriverEditor(next.auth);if(screen==='driver')syncPaddock();});
+  subscribe(next=>{model=next;highlightResults();syncDriverEditor(next.auth);if(screen==='driver'){syncDriverAppearance();syncPaddock();}});
   const wide=!pageHasSidebarWidgets(screen);document.querySelector('.dashboard').classList.toggle('page-wide',wide);for(const side of document.querySelectorAll('.dashboard>aside'))side.hidden=wide;
   document.body.dataset.prototypePage=screen;
   new ResizeObserver(()=>views.sizeProfileRail()).observe(center);

@@ -1,5 +1,8 @@
 import {createHttpClient} from '/src/shared/http-client.js';
 
+import {setProfileLayout} from './profile-studio-layout.js?v=20261121studio06';
+import {mountSidebarPass,passProfile} from './profile-racing-pass.js?v=20261121studio06';
+
 export const APPEARANCE_URL = 'https://auth.asgracing.ru/v1/me/profile-appearance';
 export const PRESETS = Object.freeze({
   original:null, apex:'Nitro Apex', night:'Night Runner', victory:'Gold Rush',
@@ -158,6 +161,7 @@ export function mountPublicAppearance({root,text,onAppearance}) {
   let guestPaused = false;
   let introduced = false;
   let lastCheck = 0;
+  let profile, viewer;
   const plain = new URLSearchParams(root.ownerDocument.defaultView.location.search).get('style') === 'original';
 
   function render() {
@@ -166,11 +170,15 @@ export function mountPublicAppearance({root,text,onAppearance}) {
     appendBadge(hero.querySelector('.profile-heading h1'),result?.tier);
     const allowed = ['vip','pro','admin'].includes(result?.tier);
     const settings = normalizeEffect(allowed && !plain ? result.effect : null);
-    hero.dataset.profileHeader = allowed && !plain && result.effect?.header === 'modern' ? 'modern' : 'classic';
+    const modern=allowed && result.effect?.header === 'modern';
+    hero.dataset.profileHeader=modern?'modern':'classic';
+    setProfileLayout(root,hero,modern,text);
+    if(profile)mountSidebarPass({root,profile:passProfile(profile,root),appearance:result,
+      owner:viewer?.authenticated && viewer?.linked && viewer.driver?.publicId===driverId,text});
     const cover = ['pro','admin'].includes(result?.tier) && !plain ? result.effect?.cover : null;
     if (['carbon','night','gold'].includes(cover)) document.body.dataset.profileProCover = cover;
     else delete document.body.dataset.profileProCover;
-    onAppearance?.(plain && result ? {...result,effect:null} : result);
+    onAppearance?.(result);
     const enabled = settings.preset !== 'original';
     if (enabled && !settings.paused && !pause) {
       pause = root.ownerDocument.createElement('button');
@@ -228,7 +236,9 @@ export function mountPublicAppearance({root,text,onAppearance}) {
   }
 
   return {
-    update(id){
+    update(id,driver,auth){
+      const changed=profile!==driver || viewer?.driver?.publicId!==auth?.driver?.publicId || viewer?.authenticated!==auth?.authenticated;
+      profile=driver;viewer=auth;
       const current=root.querySelector('.profile-hero');
       if (driverId !== id) {
         request?.abort();
@@ -247,6 +257,7 @@ export function mountPublicAppearance({root,text,onAppearance}) {
         animation = current ? createProfileEffect(root) : null;
         if (hero) render();
       }
+      else if(changed && current)render();
       if (current && loadedId !== id) void fetchAppearance();
     },
     refresh(force = false){if (hero?.isConnected && (force || Date.now() - lastCheck >= 60000)) void fetchAppearance(force);},
