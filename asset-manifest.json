@@ -1,8 +1,8 @@
 {
   "schemaVersion": 1,
-  "revision": "02a08b1aa66f1862f35f29e9f79a3601ef0a5798",
+  "revision": "21898f18667d27d4a38c96bdc1afddb0363d9c7d",
   "files": 1433,
-  "bytes": 204562879,
+  "bytes": 204562899,
   "assets": [
     {
       "path": "404.html",
@@ -46,8 +46,8 @@
     },
     {
       "path": "account/index.html",
-      "bytes": 85087,
-      "sha256": "5d2f04b50efc0bc046b670ffa3fc1ad6e9e6687306d1e904fa0cba6ece6f6048"
+      "bytes": 85097,
+      "sha256": "1f154636e0495288dfe3fca9e24b4d6bff03f30ef88b85c85c99f5dcbc7a54bf"
     },
     {
       "path": "account/settings/index.html",
@@ -1421,8 +1421,8 @@
     },
     {
       "path": "en/account/index.html",
-      "bytes": 80165,
-      "sha256": "e2388aea8d734592d47c6ddf288ca31763e400cf43dea82c090179b40b31663d"
+      "bytes": 80175,
+      "sha256": "68aec6e7e3586faaeca876e00bc87f1e1f6de5db8e713f7eb3fa0917ab42cb2a"
     },
     {
       "path": "en/account/settings/index.html",
@@ -3111,8 +3111,8 @@
     },
     {
       "path": "styles/components/project-support.css",
-      "bytes": 3636,
-      "sha256": "426046b432f2b11d96a697b67932899f8326abaead80a68471d70993dc0779a6"
+      "bytes": 3055,
+      "sha256": "cb59448a165dae3b386fc13580cc360af18e58ee252602b02f5c886fc77e6d3c"
     },
     {
       "path": "styles/components/race-number-picker.css",
@@ -6292,7 +6292,7 @@
     {
       "path": "v2/build-inputs.json",
       "bytes": 34905,
-      "sha256": "cc688a95299d966815e0ee853f0fee96bf0833b5eb5b95f0908c4beed49e4551"
+      "sha256": "ed79d7e499b2ad787fd1c40fbdd0939587f2ce2f6647249b04a29d8b58ba69d8"
     },
     {
       "path": "v2/copy.js",
@@ -6571,8 +6571,8 @@
     },
     {
       "path": "v2/pages/account.css",
-      "bytes": 5442,
-      "sha256": "6c82b5bb61670f3a8c5b79a8179db6d02365cd297ea511ef6f334800142d243d"
+      "bytes": 6023,
+      "sha256": "fc8f88124011c7a02aa0bc55586eeb7d2860f7a437236c2140efe5df1004098a"
     },
     {
       "path": "v2/pages/account.js",

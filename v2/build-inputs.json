@@ -80,7 +80,7 @@
     },
     {
       "path": "scripts/build-v2.mjs",
-      "sha256": "3a1bd68bf12b173fc063128e64d3a93202cdaac6538c4e20174fbdd4180ed556"
+      "sha256": "cf3e5fa8ff83c32fda879d0b4348f6c3fff00c6183fbd93ec206f673656d2881"
     },
     {
       "path": "scripts/faq-page.mjs",
