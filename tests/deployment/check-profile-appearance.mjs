@@ -247,6 +247,7 @@ try{
   assert.equal(await visitor.page.locator('.studio-pass-panel a.button').count(),0);
   await visitor.page.getByRole('tab',{name:'Мой паддок'}).click();
   const publicPaddock=visitor.page.locator('#profile-paddock-panel');
+  await publicPaddock.getByRole('tab',{name:'Витрина'}).waitFor();
   assert.deepEqual(await publicPaddock.getByRole('tab').allTextContents(),['Витрина','Прогресс','Карточка заезда','Карточка пилота']);
   const featured=publicPaddock.locator('.race-highlight').first();
   await featured.waitFor();
