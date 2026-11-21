@@ -3,7 +3,7 @@
   "entry": "/v2/boot/home.js",
   "files": [
     {
-      "path": "/v2/boot/chunks/controller-3DKTJ3QA.js",
+      "path": "/v2/boot/chunks/controller-IEF33NIM.js",
       "bytes": 343361
     },
     {
@@ -27,20 +27,20 @@
       "bytes": 11820
     },
     {
-      "path": "/v2/boot/chunks/profile-effects-7WIGDMC2.js",
-      "bytes": 270
+      "path": "/v2/boot/chunks/profile-effects-VNFVMKOB.js",
+      "bytes": 298
     },
     {
-      "path": "/v2/boot/chunks/profile-paddock-RG4MRDEB.js",
-      "bytes": 49123
+      "path": "/v2/boot/chunks/profile-paddock-HBLUH3SB.js",
+      "bytes": 49219
     },
     {
-      "path": "/v2/boot/chunks/profile-appearance-editor-GVRQKUJ6.js",
-      "bytes": 11055
+      "path": "/v2/boot/chunks/profile-appearance-editor-6MDJDUNF.js",
+      "bytes": 11215
     },
     {
-      "path": "/v2/boot/chunks/chunk-MNWYR3D7.js",
-      "bytes": 20748
+      "path": "/v2/boot/chunks/chunk-SVGJ3MAT.js",
+      "bytes": 21963
     },
     {
       "path": "/v2/boot/chunks/table-engine-CVJLSIY2.js",
@@ -175,8 +175,8 @@
       "bytes": 176864
     },
     {
-      "path": "/v2/boot/chunks/chunk-UTRDRBPV.js",
-      "bytes": 197432
+      "path": "/v2/boot/chunks/chunk-IJCZDLXV.js",
+      "bytes": 197492
     },
     {
       "path": "/v2/boot/chunks/chunk-LGR4ZW6B.js",

@@ -80,7 +80,7 @@
     },
     {
       "path": "scripts/build-v2.mjs",
-      "sha256": "41c4ee8e33ec532e50776a6599db671b1cadd3bbfb553f0969794fa8a684abf6"
+      "sha256": "147a16a71227594bda682b5c8c649318911d5bf2f664ac1545fd5bf93aa73d11"
     },
     {
       "path": "scripts/faq-page.mjs",
@@ -696,7 +696,7 @@
     },
     {
       "path": "v2-source/pages/core.js",
-      "sha256": "c78408b27ee6218fb7055d11996cde6b7310109f597ba5ea05077686cf05688e"
+      "sha256": "cb22f4fcb891171b111b96019da17c9e474cbb4fae972a92fef792e468398121"
     },
     {
       "path": "v2-source/pages/editorial.js",
@@ -760,7 +760,7 @@
     },
     {
       "path": "v2/home.js",
-      "sha256": "8d314c6dbf5e09bb3b9240056fb1c6ce3215c36d9d5558b0684888bafe53c177"
+      "sha256": "0be44a9ef3cc44ecbd1e86a228341aaf292f983de208df914a2ae50f35a109f7"
     },
     {
       "path": "v2/live-stats.js",
@@ -820,7 +820,7 @@
     },
     {
       "path": "v2/pages/controller.js",
-      "sha256": "a384c61bcabf0b3f726cd3e8b38d7f56efce117d560f082066e2593844eba8eb"
+      "sha256": "76a12dba7106ca0f740e8051adbfef63d376415b75c4bcf2ec2ff0973d07b48f"
     },
     {
       "path": "v2/pages/data.js",
@@ -832,7 +832,7 @@
     },
     {
       "path": "v2/pages/driver-support.js",
-      "sha256": "7029e20f0518fc09a3d0a1b774670b38e7c5ee80228dec12171b7ca197979887"
+      "sha256": "6cd05397480b74dbb5bc368758cec7d06c025fdb6f5a595bc3ac47f8edf36e9a"
     },
     {
       "path": "v2/pages/editorial-model.js",
@@ -848,7 +848,7 @@
     },
     {
       "path": "v2/pages/profile-appearance-editor.js",
-      "sha256": "bfeff85c1780d97b3391bcff52a564780725461b0fe465d81a98f70423b8cb4a"
+      "sha256": "ae13e8a8cabf4222efca8e65d1a0262b1c35398db4dfc95677deda8038e7d0be"
     },
     {
       "path": "v2/pages/profile-effects-art.js",
@@ -856,19 +856,19 @@
     },
     {
       "path": "v2/pages/profile-effects.js",
-      "sha256": "bb3147031993a33a99db4e2719b39664b03b0e323e32f3afff826d03742c7f57"
+      "sha256": "cbb7e2a97dbae14c97b4762b23945e085063c025cf6e1a3870d0e32dce1079e1"
     },
     {
       "path": "v2/pages/profile-paddock.js",
-      "sha256": "dffc0a0ca4f80a6b49b3661fa5927001e82654634b7365789b897c682908990b"
+      "sha256": "f4068f0f764533b3de277f6d55cf8b99d7efe8bbe0c90bf03c39c36f9d673a56"
     },
     {
       "path": "v2/pages/profile-racing-pass.js",
-      "sha256": "c56322ca457d2636220e7a53f5b897f74d41750db0d7234b5aa1544c482d5f15"
+      "sha256": "eb2b773c8f211587f041b2e04d10a0353753ec0c6d997db4531744c95137dd36"
     },
     {
       "path": "v2/pages/profile-studio-layout.js",
-      "sha256": "66eaad96c2f61fac6b952de85a24398b25189b5a61db354bec15f87a01b89172"
+      "sha256": "fbba6209e094d53bcb2124c37a61f2f34cea2012d2970ff43d68477fcc9d8691"
     },
     {
       "path": "v2/pages/project-support.js",
