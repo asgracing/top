@@ -207,8 +207,9 @@ for (const language of ['ru','en']) {
     let owningHead=page==='community'?pageHead+`<meta name="community-likes-api" content="${(await readClassic('community/index.html')).match(/<meta name="community-likes-api" content="([^"]+)"/)[1]}">`:accountHead;
     if(['support','ops'].includes(screen))owningHead=owningHead.replace(`/v2/boot/home.js?v=${bootVersion}`,'/v2/boot/home.js?v=20261121support1');
     if(screen==='account'){
+      owningHead=owningHead.replace(`/v2/pages/account.css?v=${controlStylesVersion}`,'/v2/pages/account.css?v=20261121paddock1');
       owningHead=owningHead.replace(`/v2/boot/home.js?v=${bootVersion}`,`/v2/boot/home.js?v=${accountBootVersion}`);
-      owningHead+='<link rel="stylesheet" href="/styles/components/project-support.css?v=20261121paddock1">';
+      owningHead+='<link rel="stylesheet" href="/styles/components/project-support.css?v=20261120grantpermission1">';
     }
     if (screen === 'driver') {
       owningHead=owningHead.replace('pages.css?v='+profileStylesVersion,'pages.css?v=20261120profile1');
