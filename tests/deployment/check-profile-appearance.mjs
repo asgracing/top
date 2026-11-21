@@ -13,7 +13,7 @@ const artifacts=process.env.ASG_QA_OUTPUT_DIR;
 if (artifacts) await fs.mkdir(artifacts,{recursive:true});
 
 async function open({lang='ru',route='account',tier='vip',signed=true,reduced='reduce',width=390,
-  settings=saved,plain=false,editable=true,conflict=false,owns=true}={}) {
+  settings=saved,plain=false,editable=true,conflict=false,owns=true,paddock=false,driverData=profile}={}) {
   const page=await browser.newPage({viewport:{width,height:900},reducedMotion:reduced});
   const requests=[],errors=[];
   let privateReads=0,publicTier=tier;
@@ -23,7 +23,7 @@ async function open({lang='ru',route='account',tier='vip',signed=true,reduced='r
     const req=request.request();
     const url=new URL(req.url());
     if(url.hostname==='data.asgracing.ru'&&url.pathname==='/top-data/v2/drivers/'+id+'.json'){
-      return json(request,{...profile,race_number:765});
+      return json(request,{...driverData,race_number:765});
     }
     if(url.hostname!=='auth.asgracing.ru')return fixture(request,[],{signed});
     if(url.pathname==='/v1/me')return json(request,signed?(owns?auth:{...auth,
@@ -32,7 +32,7 @@ async function open({lang='ru',route='account',tier='vip',signed=true,reduced='r
     if(url.pathname==='/v1/me/profile-appearance'){
       if(req.method()==='GET'){
         privateReads++;
-        return json(request,{tier,can_edit:editable,revision,effect:editable?current:null});
+        return json(request,{tier,can_edit:editable,revision,effect:editable?current:null,...(paddock?{paddock_version:1}:{})});
       }
       const body=req.postDataJSON();
       assert.equal(req.headers()['x-csrf-token'],'fixture-csrf');
@@ -43,12 +43,13 @@ async function open({lang='ru',route='account',tier='vip',signed=true,reduced='r
         return json(request,{detail:'revision_conflict'},409);
       }
       assert.equal(body.expected_revision,revision);
-      current=body.effect;
+      current={...current,...body.effect};
       return json(request,{revision:++revision});
     }
     if(url.pathname==='/v1/drivers/'+id+'/appearance'){
       assert.ok(!req.headers().cookie,'Public appearance uses no session');
-      return json(request,{tier:publicTier,effect:current});
+      const {target,...publicEffect}=current;
+      return json(request,{tier:publicTier,effect:publicEffect,...(paddock?{paddock_version:1}:{})});
     }
     return fixture(request,[],{signed});
   });
@@ -60,7 +61,9 @@ async function open({lang='ru',route='account',tier='vip',signed=true,reduced='r
   if(await consent.isVisible())await consent.click();
   const editor=page.locator('.profile-appearance-editor');
   if(route==='account'&&signed){
-    await page.getByRole('link',{name:lang==='en'?/Profile appearance/:/Оформление профиля/}).click();
+    const appearanceCard=page.locator('.account-appearance-card');
+    await appearanceCard.getByRole('heading',{name:lang==='en'?'Profile appearance':'Оформление профиля'}).waitFor();
+    await appearanceCard.getByRole('link',{name:lang==='en'?/Edit appearance/:/Настроить оформление/}).click();
     await page.waitForURL(driverUrl+'&appearance=edit');
     try{
       await editor.getByRole('heading',{name:lang==='en'?'Profile appearance':'Оформление профиля',exact:true}).waitFor({timeout:8000});
@@ -171,6 +174,47 @@ try{
   await editor.getByRole('status').getByText('Оформление сохранено.').waitFor();
   assert.deepEqual(requests.map(write=>write.expected_revision),[3,4]);
   await page.close();
+  const publicData=process.env.ASG_PROFILE_QA_DATA
+    ?JSON.parse(await fs.readFile(process.env.ASG_PROFILE_QA_DATA,'utf8')):profile;
+  const admin=await open({tier:'admin',route:'edit',paddock:true,driverData:publicData});
+  await admin.editor.locator('select[name="header"]').selectOption('modern');
+  await admin.editor.locator('.profile-hero[data-profile-header="modern"]').waitFor();
+  await admin.editor.locator('[data-save]').click();
+  await admin.page.locator('#page-view .profile-hero[data-profile-header="modern"]').waitFor();
+  await admin.page.getByRole('tab',{name:'Мой паддок'}).click();
+  const padded=admin.page.locator('#profile-paddock-panel');
+  await padded.locator('[data-add-pin]').click();
+  await padded.locator('.race-highlight').waitFor();
+  await padded.getByRole('tab',{name:'Мой прогресс'}).click();
+  await padded.locator('#lap-target').fill('1:46.000');
+  await padded.locator('[data-save-goal]').click();
+  await padded.getByText('Настройки сохранены.').waitFor();
+  await padded.getByRole('tab',{name:'Карточка заезда'}).click();
+  await padded.locator('canvas[data-ready="true"]').waitFor();
+  const resultDownload=admin.page.waitForEvent('download');
+  await padded.locator('[data-export-png]').click();
+  assert.match((await resultDownload).suggestedFilename(),/\.png$/);
+  await padded.getByRole('tab',{name:'Обложка'}).click();
+  await padded.locator('[data-cover="night"]').click();
+  await admin.page.locator('body[data-profile-pro-cover="night"]').waitFor();
+  await padded.getByRole('tab',{name:'Racing Pass'}).click();
+  await padded.locator('#pass-style').selectOption('holographic');
+  await padded.locator('[data-save-pass]').click();
+  await padded.locator('.profile-pass[data-material="holographic"]').waitFor();
+  await padded.locator('[data-pass-side="back"]').click();
+  const passDownload=admin.page.waitForEvent('download');
+  await padded.locator('[data-export-pass]').click();
+  assert.match((await passDownload).suggestedFilename(),/-back\.png$/);
+  assert.deepEqual(admin.errors,[]);
+  await admin.page.close();
+
+  const visitor=await open({tier:'admin',route:'driver',paddock:true,signed:false,driverData:publicData,
+    settings:{...saved,pins:admin.requests.find(write=>write.effect.pins).effect.pins,pass_style:'holographic'}});
+  await visitor.page.getByRole('tab',{name:'Мой паддок'}).click();
+  await visitor.page.locator('.race-highlight').waitFor();
+  assert.equal(await visitor.page.locator('[data-add-pin], #lap-target, [data-save-pass]').count(),0);
+  assert.equal(visitor.privateReads(),0);
+  await visitor.page.close();
   console.log('Profile appearance: VIP/PRO/ADMIN, eight presets, private save, public replay, reduced motion, mobile, read-only tiers, tier downgrade/restoration and concurrent update passed.');
 }finally{
   await browser.close();

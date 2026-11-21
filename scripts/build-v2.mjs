@@ -30,7 +30,7 @@ const hourlyBootVersion = '20261120portalgrants4';
 const archiveBootVersion = '20261120portalgrants4';
 const statsBootVersion = '20261120portalgrants4';
 const raceModalBootVersion = '20261120portalgrants4';
-const accountBootVersion = '20261121support1';
+const accountBootVersion = '20261121paddock1';
 const controlStylesVersion = '20261103clubs1';
 const profileStylesVersion = '20261119srvepisodes';
 const legalVersion = '20261030analytics1';
@@ -207,15 +207,16 @@ for (const language of ['ru','en']) {
     let owningHead=page==='community'?pageHead+`<meta name="community-likes-api" content="${(await readClassic('community/index.html')).match(/<meta name="community-likes-api" content="([^"]+)"/)[1]}">`:accountHead;
     if(['support','ops'].includes(screen))owningHead=owningHead.replace(`/v2/boot/home.js?v=${bootVersion}`,'/v2/boot/home.js?v=20261121support1');
     if(screen==='account'){
+      owningHead=owningHead.replace(`/v2/pages/account.css?v=${controlStylesVersion}`,'/v2/pages/account.css?v=20261121paddock1');
       owningHead=owningHead.replace(`/v2/boot/home.js?v=${bootVersion}`,`/v2/boot/home.js?v=${accountBootVersion}`);
       owningHead+='<link rel="stylesheet" href="/styles/components/project-support.css?v=20261120grantpermission1">';
     }
     if (screen === 'driver') {
       owningHead=owningHead.replace('pages.css?v='+profileStylesVersion,'pages.css?v=20261120profile1');
-      owningHead=owningHead.replace(`/v2/boot/home.js?v=${bootVersion}`,`/v2/boot/home.js?v=20261120profile1`);
+      owningHead=owningHead.replace(`/v2/boot/home.js?v=${bootVersion}`,`/v2/boot/home.js?v=20261121paddock1`);
       owningHead+='<link rel="stylesheet" href="/styles/components/project-support.css?v=20261120grantpermission1">';
     }
-    if (screen === 'driver') owningHead+='<link rel="stylesheet" href="/v2/pages/profile-appearance.css?v=20261120profile1">';
+    if (screen === 'driver') owningHead+='<link rel="stylesheet" href="/v2/pages/profile-appearance.css?v=20261121paddock1">';
     if (screen === 'site-admin') owningHead += '<link rel="stylesheet" href="/v2/pages/site-appearance-admin.css?v=20261118newyear4">';
     if(screen==='archive'||screen==='race')owningHead=owningHead.replace(`/v2/boot/home.js?v=${bootVersion}`,`/v2/boot/home.js?v=${archiveBootVersion}`);
     if(screen==='cars')owningHead=statsHead(owningHead);

@@ -23,7 +23,9 @@ export function mountDriverSafety({root,profile,state,native,esc,text,date,track
   const deltaHtml=value=>`<span class="${color(value)}">${change(value)}</span>`;
 
   function setTab(tab,{focus=false,notify=true}={}) {
-    state.driverProfileTab=tab==='sr'?'sr':'races';
+    const panel=root.querySelector('#profile-paddock-panel');
+    state.driverProfileTab=tab==='paddock'&&panel?'paddock':tab==='sr'?'sr':'races';
+    if(panel)panel.hidden=state.driverProfileTab!=='paddock';
     root.querySelectorAll('[data-profile-analysis-tab]').forEach(button=>{
       const active=button.dataset.profileAnalysisTab===state.driverProfileTab;
       button.setAttribute('aria-selected',String(active));button.tabIndex=active?0:-1;
@@ -173,7 +175,15 @@ export function mountDriverSafety({root,profile,state,native,esc,text,date,track
   }
   function onKeydown(event) {
     const tab=event.target.closest('[data-profile-analysis-tab]');
-    if(tab&&['ArrowLeft','ArrowRight','Home','End'].includes(event.key)){event.preventDefault();setTab(event.key==='Home'?'races':event.key==='End'?'sr':tab.dataset.profileAnalysisTab==='sr'?'races':'sr',{focus:true});return;}
+    if(tab&&['ArrowLeft','ArrowRight','Home','End'].includes(event.key)){
+      event.preventDefault();
+      const tabs=[...root.querySelectorAll('[data-profile-analysis-tab]')];
+      const current=tabs.indexOf(tab);
+      const index=event.key==='Home'?0:event.key==='End'?tabs.length-1
+        :(current+(event.key==='ArrowRight'?1:-1)+tabs.length)%tabs.length;
+      setTab(tabs[index].dataset.profileAnalysisTab,{focus:true});
+      return;
+    }
     const point=event.target.closest('g[data-sr-race]');
     if(point&&['Enter',' '].includes(event.key)){event.preventDefault();choose(point.dataset.srRace);content.querySelector(`g[data-sr-race="${CSS.escape(point.dataset.srRace)}"]`)?.focus();}
   }

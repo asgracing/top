@@ -23,3 +23,33 @@
   .profile-appearance-editor > div { grid-template-columns:1fr; }
   .profile-appearance-preview { grid-column:1; grid-row:1; }
 }
+
+.profile-hero[data-profile-header="modern"] {
+  grid-template-columns:minmax(0, 1fr) minmax(0, 1.1fr);
+  gap:12px 20px;
+  padding:20px;
+  background:linear-gradient(105deg,#101923,#112c40c7),radial-gradient(ellipse at 80% 0,#276775,transparent 65%);
+}
+.profile-hero[data-profile-header="modern"] .profile-identity {
+  grid-column:1/-1;
+  min-height:120px;
+  padding:10px 0 19px;
+  border-bottom:1px solid #819db555;
+}
+.profile-hero[data-profile-header="modern"] .profile-portrait { width:96px; height:96px; border-radius:12px; }
+.profile-hero[data-profile-header="modern"] .profile-portrait>img { border-radius:inherit; }
+.profile-hero[data-profile-header="modern"] .profile-ratings,
+.profile-hero[data-profile-header="modern"] .profile-discipline { border-left:0; padding-left:0; }
+.profile-appearance-preview .profile-hero[data-profile-header="modern"] { display:grid; }
+body[data-profile-pro-cover="carbon"] { --asg-profile-cover:linear-gradient(135deg,#120b10,#44151b 42%,#101722 90%); }
+body[data-profile-pro-cover="night"] { --asg-profile-cover:linear-gradient(135deg,#12122b,#162745 46%,#102b35); }
+body[data-profile-pro-cover="gold"] { --asg-profile-cover:linear-gradient(135deg,#161421,#48331a 46%,#171a22); }
+body[data-profile-pro-cover]::after { content:""; position:fixed; inset:0; z-index:var(--layer-background); pointer-events:none; background:var(--asg-profile-cover); }
+body[data-profile-pro-cover] :is(.track-backdrop,.site-video-bg) { display:none; }
+body[data-profile-pro-cover] .profile-hero { background:var(--asg-profile-cover); }
+.profile-analysis-tabs { max-width:100%; overflow-x:auto; }
+@media (max-width:650px) {
+  .profile-hero[data-profile-header="modern"] { grid-template-columns:1fr; padding:14px; }
+  .profile-hero[data-profile-header="modern"] .profile-portrait { width:64px; height:64px; }
+  .profile-hero[data-profile-header="modern"] .profile-form { flex-wrap:wrap; }
+}

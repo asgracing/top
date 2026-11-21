@@ -146,7 +146,7 @@ export function createProfileEffect(root) {
     destroy(){epoch++;cleanup();}};
 }
 
-export function mountPublicAppearance({root,text}) {
+export function mountPublicAppearance({root,text,onAppearance}) {
   let hero;
   let driverId;
   let result;
@@ -166,6 +166,11 @@ export function mountPublicAppearance({root,text}) {
     appendBadge(hero.querySelector('.profile-heading h1'),result?.tier);
     const allowed = ['vip','pro','admin'].includes(result?.tier);
     const settings = normalizeEffect(allowed && !plain ? result.effect : null);
+    hero.dataset.profileHeader = allowed && !plain && result.effect?.header === 'modern' ? 'modern' : 'classic';
+    const cover = ['pro','admin'].includes(result?.tier) && !plain ? result.effect?.cover : null;
+    if (['carbon','night','gold'].includes(cover)) document.body.dataset.profileProCover = cover;
+    else delete document.body.dataset.profileProCover;
+    onAppearance?.(plain && result ? {...result,effect:null} : result);
     const enabled = settings.preset !== 'original';
     if (enabled && !settings.paused && !pause) {
       pause = root.ownerDocument.createElement('button');

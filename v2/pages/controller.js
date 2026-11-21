@@ -1,4 +1,4 @@
-import {mountDriverSafety} from './driver-safety.js?v=20261120sr4breakdown';
+import {mountDriverSafety} from './driver-safety.js?v=20261121paddock1';
 import {bindPagination} from './pagination.js?v=20261015pagination1';
 import {refreshTeamRaceLinks} from '/src/shared/team-racing-discovery.js?v=20261028team10';
 import {createEntityThumbnails} from './entity-thumbnails.js?v=20261008thumbs1';
@@ -9,7 +9,7 @@ import {createHistoryViews} from './views/history.js?v=20261007v2pages14';
 import {markNewsRead} from '/news-read-state.js';
 import {editorialImage} from './editorial-model.js?v=20261007v2pages14';
 import {getCommunityPostKey} from '/src/pages/community/feed-model.js';
-import {createPageViews} from './views/core.js?v=20261120siteperf2';
+import {createPageViews} from './views/core.js?v=20261121paddock1';
 import {createArchiveViews} from './views/archive.js?v=20261015pagination1';
 import {createChampionshipViews} from './views/championships.js?v=20261015pagination1';
 import {createEntityViews} from './views/entities.js?v=20261015pagination1';
@@ -55,12 +55,40 @@ export async function startPage(api) {
     return;
   }
   if(screen==='support'){const {startSupportPage}=await import('./project-support.js?v=20261121supportpending1');return startSupportPage({...api,view});}
-  if(screen==='account'){const {startAccountPage}=await import('./account.js?v=20261121support1');return startAccountPage({...api,view,center});}
+  if(screen==='account'){const {startAccountPage}=await import('./account.js?v=20261121paddock1');return startAccountPage({...api,view,center});}
   if(['settings','moderation','ops'].includes(screen)){const {startControlPage}=await import('./control.js?v=20261121support1');return startControlPage({...api,view,center,screen});}
   const state={screen,raceTab:params.get('tab')==='qualifying'?'qualifying':'race',id:params.get('id')||params.get('slug')||(screen==='document'?(location.pathname.endsWith('/privacy/')?'privacy':location.pathname.endsWith('/cookies/')?'cookies':null):null),month:'',racePage:1,showUncounted:false,query:'',track:'',paceTrack:'',raceSort:'date',recentPage:1,clubType:'teams',archivePage:Math.max(1,Number(params.get('page'))||1),archiveQuery:params.get('q')||'',archiveTrack:params.get('track')||'',archiveKind:params.get('kind')||'',archiveOrder:params.get('order')==='asc'?'asc':'desc',seasonQuery:'',seasonStatus:'',communityType:'clubs',standingPage:1,catalogType:(params.get('tab')||params.get('type'))==='teams'?'teams':'clubs',catalogContext:['hourly','championship'].includes(params.get('context'))?params.get('context'):'general',catalogQuery:params.get('q')||'',rosterQuery:'',entityRacePage:1};
-  state.driverProfileTab=params.get('profileTab')==='sr'?'sr':'races';
+  const requestedTab=params.get('profileTab');
+  state.driverProfileTab=['sr','paddock'].includes(requestedTab)?requestedTab:'races';
   let driverSafety=null;const driverSafetyCache=new Map();
-  let driverAppearance, appearanceLoading, editorSession;
+  let driverAppearance, appearanceLoading, editorSession, publicAppearance;
+  let paddockModule, paddockSession, paddockKey;
+
+  function syncPaddock() {
+    const root=view.querySelector('#profile-paddock-panel');
+    if(!root || state.driverProfileTab!=='paddock'){
+      paddockSession?.abort();paddockSession=null;paddockKey=null;
+      return;
+    }
+    const auth=model?.auth;
+    const owns=auth?.authenticated && auth.linked && auth.driver?.publicId===state.id;
+    if(paddockKey?.root===root && paddockKey.auth===(owns?auth.csrfToken:null)
+      && (owns || paddockKey.appearance===publicAppearance))return;
+    paddockSession?.abort();
+    paddockSession=new AbortController();
+    const signal=paddockSession.signal;
+    paddockKey={root,auth:owns?auth.csrfToken:null,appearance:publicAppearance};
+    paddockModule ??= import('./profile-paddock.js?v=20261121paddock1').catch(error=>{
+      paddockModule=null;
+      throw error;
+    });
+    paddockModule.then(({openPaddock})=>{
+      if(!signal.aborted)void openPaddock({root,profile:raw.profiles[state.id],language,text,signal,
+        publicAppearance,auth:owns?auth:null,onSave:()=>driverAppearance?.refresh(true)});
+    }).catch(()=>{
+      if(!signal.aborted)root.textContent=text('Паддок временно недоступен.','Paddock is temporarily unavailable.');
+    });
+  }
   function syncDriverEditor(auth){
     if(screen!=='driver' || params.get('appearance')!=='edit') return;
     const ownsProfile=auth?.authenticated && auth.linked && auth.driver?.publicId===state.id;
@@ -72,7 +100,7 @@ export async function startPage(api) {
     if(editorSession || !view.querySelector('.profile-hero')) return;
     const open=new AbortController();
     editorSession=open;
-    import('./profile-appearance-editor.js?v=20261120profile1').then(({openAppearanceEditor})=>{
+    import('./profile-appearance-editor.js?v=20261121paddock1').then(({openAppearanceEditor})=>{
       if(!open.signal.aborted)openAppearanceEditor({view,auth,text,signal:open.signal,
         onSave:()=>driverAppearance?.refresh(true),
         onClose:()=>{
@@ -87,8 +115,11 @@ export async function startPage(api) {
   }
   function syncDriverAppearance(){
     if(driverAppearance){driverAppearance.update(state.id);return;}
-    appearanceLoading ??= import('./profile-effects.js?v=20261120profile1').then(({mountPublicAppearance})=>{
-      driverAppearance=mountPublicAppearance({root:view,text});
+    appearanceLoading ??= import('./profile-effects.js?v=20261121paddock1').then(({mountPublicAppearance})=>{
+      driverAppearance=mountPublicAppearance({root:view,text,onAppearance:appearance=>{
+        publicAppearance=appearance;
+        syncPaddock();
+      }});
       driverAppearance.update(state.id);
     }).catch(()=>{appearanceLoading=null;});
   }
@@ -159,7 +190,7 @@ export async function startPage(api) {
     if(ticket===carLapsTicket){raw.carLapsLoading=false;updateCars();}
   }
   function highlightResults(){for(const row of document.querySelectorAll('.results-table tbody tr,#r24-season-standings tbody tr,#site-roster-content tbody tr')){const link=row.querySelector('.result-driver-identity a')||row.querySelector('a[href*="/driver/"]'),id=link?new URL(link.href).searchParams.get('id'):null,active=Boolean(id&&model?.auth?.authenticated&&model.auth.driver?.publicId===id);row.classList.toggle('current-user-row',active);active?row.setAttribute('aria-current','true'):row.removeAttribute('aria-current');}}
-  function paint(){view.innerHTML=screen==='about'?informationViews.aboutView():screen==='instructions'?informationViews.instructionView():screen==='guide'?informationViews.guideView(state.id||'join'):screen==='documents'?informationViews.documentsView():screen==='document'?informationViews.documentView(state.id):screen==='notfound'?informationViews.missing('page',params.get('path')||''):screen==='seasons'?historyViews.seasonsView():screen==='news'?editorialViews.newsView():screen==='article'?editorialViews.articleView(state.id):screen==='community'?editorialViews.communityView():screen==='fun'?funViews.funView():screen==='bans'?bansViews.bansView():screen==='cars'?carsViews.carsView():screen==='hourly'?views.hourlyView():screen==='driver'?views.driverView():screen==='archive'?archiveViews.archiveView():screen==='championships'?championshipViews.championships():screen==='championship'?championshipViews.seasonView(state.id):screen==='catalog'?entityViews.catalogView():['club','team'].includes(screen)?entityViews.entityView(screen,state.id):archiveViews.raceView(fixture.results[state.id]);if(screen==='driver'){views.layoutDriver();syncDriverAppearance();syncDriverEditor(model?.auth);driverSafety?.destroy();driverSafety=mountDriverSafety({root:view.querySelector('.profile-analysis'),profile:raw.profiles[state.id],state,native,esc,text,date,trackName:views.trackName,cache:driverSafetyCache,onTabChange:tab=>{const url=new URL(location.href);tab==='sr'?url.searchParams.set('profileTab','sr'):url.searchParams.delete('profileTab');history.replaceState(null,'',url);document.querySelectorAll('.v2-language a').forEach(a=>a.href=currentV2Path(a.dataset.language));}});} wireInformationLinks();highlightResults();entityThumbnails?.scan();view.querySelectorAll('img').forEach(img=>img.addEventListener('error',()=>img.hidden=true,{once:true}));}
+  function paint(){view.innerHTML=screen==='about'?informationViews.aboutView():screen==='instructions'?informationViews.instructionView():screen==='guide'?informationViews.guideView(state.id||'join'):screen==='documents'?informationViews.documentsView():screen==='document'?informationViews.documentView(state.id):screen==='notfound'?informationViews.missing('page',params.get('path')||''):screen==='seasons'?historyViews.seasonsView():screen==='news'?editorialViews.newsView():screen==='article'?editorialViews.articleView(state.id):screen==='community'?editorialViews.communityView():screen==='fun'?funViews.funView():screen==='bans'?bansViews.bansView():screen==='cars'?carsViews.carsView():screen==='hourly'?views.hourlyView():screen==='driver'?views.driverView():screen==='archive'?archiveViews.archiveView():screen==='championships'?championshipViews.championships():screen==='championship'?championshipViews.seasonView(state.id):screen==='catalog'?entityViews.catalogView():['club','team'].includes(screen)?entityViews.entityView(screen,state.id):archiveViews.raceView(fixture.results[state.id]);if(screen==='driver'){views.layoutDriver();syncDriverAppearance();syncDriverEditor(model?.auth);driverSafety?.destroy();driverSafety=mountDriverSafety({root:view.querySelector('.profile-analysis'),profile:raw.profiles[state.id],state,native,esc,text,date,trackName:views.trackName,cache:driverSafetyCache,onTabChange:tab=>{const url=new URL(location.href);tab==='races'?url.searchParams.delete('profileTab'):url.searchParams.set('profileTab',tab);syncPaddock();history.replaceState(null,'',url);document.querySelectorAll('.v2-language a').forEach(a=>a.href=currentV2Path(a.dataset.language));}});syncPaddock();} wireInformationLinks();highlightResults();entityThumbnails?.scan();view.querySelectorAll('img').forEach(img=>img.addEventListener('error',()=>img.hidden=true,{once:true}));}
   function installSeason(season){raw.seasons[season.slug]=season;for(const race of season.races)fixture.results[race.event_id]=race;const byId=new Map(raw.schedule.items.map(e=>[e.event_id,e]));for(const e of season.upcoming_races)byId.set(e.event_id,e);raw.schedule.items=[...byId.values()];raw.seasonsUpdated=season.updated_at||raw.seasonsUpdated;}
   async function loadArchive(initial=false) {
     const ticket=++archiveTicket,content=document.getElementById('site-archive-content'),status=document.getElementById('archive-status');
@@ -328,7 +359,7 @@ export async function startPage(api) {
   });
   view.addEventListener('input',event=>{if(event.target.id==='site-news-search'){state.newsQuery=event.target.value;state.newsPage=1;refreshEditorial();return;}if(event.target.id==='site-history-search'){state.historyQuery=event.target.value;refreshEditorial();return;}if(event.target.id==='site-bans-search'){state.bansQuery=event.target.value;state.bansPage=1;updateBans();return;}if(event.target.id==='r24-car-search'){state.carQuery=event.target.value;state.carPage=1;updateCars();return;}if(event.target.id==='site-catalog-search'){state.catalogQuery=event.target.value;document.getElementById('site-catalog-content').innerHTML=entityViews.catalogContent();syncCatalogUrl();return;}if(event.target.id==='site-roster-search'){state.rosterQuery=event.target.value;document.getElementById('site-roster-content').innerHTML=entityViews.rosterContent(currentEntity());highlightResults();entityThumbnails?.scan();return;}if(event.target.id==='r24-season-search'){state.seasonQuery=event.target.value;document.getElementById('r24-season-content').innerHTML=championshipViews.seasonCards();return;}if(event.target.id==='site-archive-search'){state.archiveQuery=event.target.value;state.archivePage=1;++archiveTicket;clearTimeout(searchTimer);searchTimer=setTimeout(()=>loadArchive(),300);return;}if(event.target.id!=='profile-race-search')return;state.query=event.target.value;state.racePage=1;const template=document.createElement('template');template.innerHTML=views.profileRaceTable(raw.profiles[state.id]);for(const selector of ['.page-table-scroll','.page-pagination'])document.getElementById('profile-history-content').querySelector(selector).replaceWith(template.content.querySelector(selector));});
   window.addEventListener('pagehide',event=>{if(!event.persisted)driverSafety?.destroy();},{once:true});
-  subscribe(next=>{model=next;highlightResults();syncDriverEditor(next.auth);});
+  subscribe(next=>{model=next;highlightResults();syncDriverEditor(next.auth);if(screen==='driver')syncPaddock();});
   const wide=!pageHasSidebarWidgets(screen);document.querySelector('.dashboard').classList.toggle('page-wide',wide);for(const side of document.querySelectorAll('.dashboard>aside'))side.hidden=wide;
   document.body.dataset.prototypePage=screen;
   new ResizeObserver(()=>views.sizeProfileRail()).observe(center);

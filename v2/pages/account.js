@@ -64,13 +64,22 @@ export function startAccountPage({view,text,esc,rating,language,subscribe,showDi
     supportView=new AbortController();
     const signal=supportView.signal;
     mountAccountSupport(support,{client,text,language,linked:auth.linked,csrfToken:auth.csrfToken,signal});
+    let appearanceCard;
     if(auth.linked && auth.driver?.publicId){
+      appearanceCard=document.createElement('section');
+      appearanceCard.className='panel account-appearance-card';
+      const copy=document.createElement('div');
+      const appearanceHeading=document.createElement('h2');
+      appearanceHeading.textContent=text('Оформление профиля','Profile appearance');
+      const description=document.createElement('p');
+      description.textContent=text('Настройте шапку и эффекты прямо в своём профиле.','Customize the header and effects right on your driver profile.');
+      copy.append(appearanceHeading,description);
       const appearance=document.createElement('a');
-      appearance.className='text-link';
+      appearance.className='button primary account-appearance-action';
       const params=new URLSearchParams({id:auth.driver.publicId,appearance:'edit'});
       appearance.href=v2Route('driver/',language)+'?'+params;
-      appearance.textContent=text('Оформление профиля','Profile appearance')+' ↗';
-      support.append(appearance);
+      appearance.textContent=text('Настроить оформление','Edit appearance')+' ↗';
+      appearanceCard.append(copy,appearance);
     }
     const columns=document.createElement('div');columns.className='control-columns';
     const left=document.createElement('div'),right=document.createElement('aside');columns.append(left,right);
@@ -105,7 +114,7 @@ export function startAccountPage({view,text,esc,rating,language,subscribe,showDi
     if(auth.permissions?.moderationIssue||auth.permissions?.portalManage)right.insertAdjacentHTML('beforeend',panel(text('Управление','Management'),`<div class="control-links">${auth.permissions.moderationIssue?'<a href="/moderation/">'+text('Модерация','Moderation')+' ↗</a>':''}${auth.permissions.portalManage?'<a href="/portal-ops/">Portal Operations ↗</a>':''}</div>`));
     const message=document.createElement('p');message.id='account-message';message.setAttribute('role','status');message.setAttribute('aria-live','polite');message.className='account-command-summary';
     // Moves preserve the native listeners for forms, memberships and overlay.
-    nativeRoot.replaceChildren(hero,summary,columns,message);
+    nativeRoot.replaceChildren(hero,...(appearanceCard?[appearanceCard]:[]),summary,columns,message);
     wireLinks();
     for(const entity of [auth.clubsTeams?.club,auth.clubsTeams?.team].filter(Boolean)){
       if(entity.status!=='approved')continue;

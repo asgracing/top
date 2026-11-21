@@ -53,3 +53,8 @@
 .v2-account .account-pilot-row input[type=checkbox] {width:auto;}
 @media(max-width:1000px){.v2-account .control-account-hero>.control-actions {justify-content:flex-start;}.v2-account .account-entity-form {grid-template-columns:1fr;}}
 @media(max-width:650px){.v2-account .account-title{font-size:24px;}.v2-account .account-memberships{grid-template-columns:1fr;}.v2-account .account-membership-action{flex-wrap:wrap;}.v2-account .account-membership-action>div:first-child{flex-basis:100%;}.v2-account .account-operation{flex-wrap:wrap;}.v2-account .control-number{font-size:12px;}.v2-account .control-actions .badge {max-width:100%;}}
+.v2-account .account-appearance-card { display:flex; align-items:center; justify-content:space-between; flex-wrap:wrap; gap:12px 24px; margin:0 0 12px; padding:clamp(13px,2vw,20px); border-left:3px solid #ed455b; background:linear-gradient(105deg,#2c1825,#152535 67%,#152033); }
+.account-appearance-card h2 { color:#f0f4f8; margin:0 0 4px; font-size:clamp(16px,2.4vw,21px); }
+.account-appearance-card p { color:#bdcbda; margin:0; }
+.account-appearance-action { min-height:42px; justify-content:center; }
+@media (max-width:540px) { .account-appearance-action { width:100%; } }

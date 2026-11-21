@@ -1,7 +1,7 @@
 import {createHttpClient} from '/src/shared/http-client.js';
 import {
   APPEARANCE_URL, LAYERS, PRESETS, appendBadge, createProfileEffect, normalizeEffect,
-} from './profile-effects.js?v=20261120profile1';
+} from './profile-effects.js?v=20261121paddock1';
 
 export function openAppearanceEditor({view,auth,text,signal,onClose,onSave}) {
   const root = view.ownerDocument.createElement('section');
@@ -113,13 +113,22 @@ function mountAppearanceEditor(root,{auth,client,text,signal,onClose,onSave}) {
     preview = createProfileEffect(sample);
     const form = doc.createElement('form');
     form.className = 'profile-appearance-form';
-    form.innerHTML = `<label class="control-field" data-effect-label><select name="preset"></select></label>
+    form.innerHTML = `<label class="control-field" data-header-label><select name="header"></select></label><label class="control-field" data-effect-label><select name="preset"></select></label>
       <label class="control-field"><span data-energy-label></span><input type="range" name="energy" min="80" max="140"><output></output></label>
       <fieldset><legend></legend><div data-effect-layers></div></fieldset>
       <label class="project-support-consent"><input name="paused" type="checkbox"><span data-static-label></span></label>
       <div class="control-actions"><button type="button" class="button" data-replay></button>
       <button type="submit" class="button primary" data-save></button></div>`;
-    const {preset,energy,paused} = form.elements;
+    const {header,preset,energy,paused} = form.elements;
+    form.querySelector('[data-header-label]').prepend(text('Шапка профиля','Profile header'));
+    header.add(new Option(text('Старая шапка','Classic header'),'classic'));
+    header.add(new Option(text('Новая шапка','New header'),'modern'));
+    header.value = current.effect?.header === 'modern' ? 'modern' : 'classic';
+    const editableHeader=current.paddock_version===1;
+    if(!editableHeader){
+      header.disabled=true;
+      header.closest('label').hidden=true;
+    }
     const output = form.querySelector('output');
     const save = form.querySelector('[data-save]');
     const replay = form.querySelector('[data-replay]');
@@ -155,6 +164,7 @@ function mountAppearanceEditor(root,{auth,client,text,signal,onClose,onSave}) {
 
     function refreshPreview(event) {
       const value = read();
+      sample.querySelector('.profile-hero').dataset.profileHeader = header.value;
       output.value = value.energy+'%';
       replay.disabled = value.preset === 'original' || value.paused || !value.layers.entry;
       void preview.update(value,{enter:event?.target === preset});
@@ -172,7 +182,7 @@ function mountAppearanceEditor(root,{auth,client,text,signal,onClose,onSave}) {
         const response = await client.requestJson(APPEARANCE_URL,{
           ...request,signal:writeSignal,method:'POST',
           headers:{...headers,'Content-Type':'application/json','X-CSRF-Token':auth.csrfToken},
-          body:JSON.stringify({expected_revision:revision,effect:read()}),
+          body:JSON.stringify({expected_revision:revision,effect:{...read(),...(editableHeader?{header:header.value}:{})}}),
         });
         if (writeSignal.aborted) return;
         if (!Number.isInteger(response.revision) || response.revision <= revision) throw Error('appearance_revision');
