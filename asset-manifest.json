@@ -1,8 +1,8 @@
 {
   "schemaVersion": 1,
-  "revision": "569510bd5245f87dade75c119e7caba14b7800ee",
-  "files": 1416,
-  "bytes": 203008531,
+  "revision": "d5f568ff96fbaf049afb115a2a548de8ffdaabde",
+  "files": 1419,
+  "bytes": 203508708,
   "assets": [
     {
       "path": "404.html",
@@ -1507,7 +1507,7 @@
     {
       "path": "en/hourly/index.html",
       "bytes": 81006,
-      "sha256": "da8a3682e423f7a3529223e4e105365f76f04f45dade72f9183619f0e814619b"
+      "sha256": "f4ad23f6cc2a14c84ee980ecca62bfa43817811f727da8ca9262bfedd6c06b1a"
     },
     {
       "path": "en/hourly/privacy/index.html",
@@ -1752,7 +1752,7 @@
     {
       "path": "hourly/index.html",
       "bytes": 86144,
-      "sha256": "b6112265216099f2bf7adb0303f1b4723d6e538a1e54d4a175438e11e6d32717"
+      "sha256": "97c6af8340e4f546c7c694411fe51ce211b81ea1fa3c259c7f08f3afb3319fe2"
     },
     {
       "path": "hourly/index.ru.html",
@@ -2776,13 +2776,13 @@
     },
     {
       "path": "src/pages/portal-ops/portal-ops-page.js",
-      "bytes": 19927,
-      "sha256": "d15ab5bfec5c4b0e95a421a7d65ad687e9efa732a4384a3792967fb2342638f2"
+      "bytes": 20001,
+      "sha256": "c8ca46412285a15116002a335a60d54e00210d0e19d219d90f3136b73fff57dc"
     },
     {
       "path": "src/pages/portal-ops/support-budget.js",
-      "bytes": 11997,
-      "sha256": "275abec3b265a86559e4c518023002749709886681d6d7d7b57c0451c9e2b078"
+      "bytes": 11561,
+      "sha256": "f8e782f85519f5c5ffa27487eb8adcc1f7920a1f47b8949ade2de92d65fc8ceb"
     },
     {
       "path": "src/pages/portal-ops/support-grants.js",
@@ -2791,8 +2791,8 @@
     },
     {
       "path": "src/pages/portal-ops/support-members.js",
-      "bytes": 7568,
-      "sha256": "7dd7c9641446f7374dad80b40e8fe70ed8bdb8ad349812663bb9eb26b3dbf2e8"
+      "bytes": 7415,
+      "sha256": "8ad195ac7eeb4650fe27e7b21d4abd600ab86e8e30596162f870a202f3377961"
     },
     {
       "path": "src/pages/races/index.js",
@@ -3297,7 +3297,7 @@
     {
       "path": "v2/boot/build.json",
       "bytes": 6209,
-      "sha256": "8cdaf7aa7a00d0965bd5577f27790364f276c89b3677b7f199ad58901d9be155"
+      "sha256": "02b9ebdd7100ea3c1c23e669f1c6bf77ba68a2f5f320c0c6806a61fc87875444"
     },
     {
       "path": "v2/boot/chunks/account-2NDTNJRL.js",
@@ -4930,6 +4930,11 @@
       "sha256": "d01bc5dcdad7d9f7c1511a34263eaa806eb329399985954b140bf177113c34bf"
     },
     {
+      "path": "v2/boot/chunks/control-LGNVIFR2.js",
+      "bytes": 45610,
+      "sha256": "f3a4b74171979807549037ecd1082d2dd6fa14a931f988481f52834fbc72a627"
+    },
+    {
       "path": "v2/boot/chunks/control-NHLRTS3X.js",
       "bytes": 45289,
       "sha256": "51718ee14464f2033e46098262b0470898ed2849543d3f7c997212b8227f9b71"
@@ -5158,6 +5163,11 @@
       "path": "v2/boot/chunks/controller-I7LH3MNH.js",
       "bytes": 330689,
       "sha256": "2b324c97da9547de599a693aa697b5eb5b78f8b8629384989b47aa7ff7b8b097"
+    },
+    {
+      "path": "v2/boot/chunks/controller-IX4PRMGM.js",
+      "bytes": 341371,
+      "sha256": "6ed5d33cd691d5b404d63c3749e7f3d15317d1d2d3039ce5553d5eef128c64c2"
     },
     {
       "path": "v2/boot/chunks/controller-J2KM5BMQ.js",
@@ -6010,6 +6020,11 @@
       "sha256": "6d16848034ea48fbf2fdf458106b1ed435f95530b14cb8cefa4ccdb133ea70a3"
     },
     {
+      "path": "v2/boot/chunks/portal-ops-page-S75SL5AQ.js",
+      "bytes": 113711,
+      "sha256": "db78535826a4e0cd3d2058346b9423fc4ffb4511145fbf76370ad4f082ae4a1b"
+    },
+    {
       "path": "v2/boot/chunks/portal-ops-page-UPN64D7P.js",
       "bytes": 82086,
       "sha256": "a24ff9d178a9f37dac7573f87d88e5249b07901776fe8cb00aa74980b2542ecc"
@@ -6222,7 +6237,7 @@
     {
       "path": "v2/boot/home.js",
       "bytes": 176864,
-      "sha256": "89c98ebc7e3da328615890d3d64c7cd600d431d61cc041d642389e5287bb9748"
+      "sha256": "926ad8ac1d2cdf7ca3f1b2f2c73dc51fb1936a3209d92f53dff5ecbde3dcc1d3"
     },
     {
       "path": "v2/bridge.js",
@@ -6232,7 +6247,7 @@
     {
       "path": "v2/build-inputs.json",
       "bytes": 34339,
-      "sha256": "7d2a05a57bd10c96bdf755abecc049829fdb1a9cd8e9666f53bac7bfeb96d213"
+      "sha256": "20623a6d7e20d485e37dd689a1ac73c6dbf36f51eaf0b1c98449efd0b56a6c6c"
     },
     {
       "path": "v2/copy.js",

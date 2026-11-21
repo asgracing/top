@@ -312,11 +312,11 @@
     },
     {
       "path": "src/pages/portal-ops/portal-ops-page.js",
-      "sha256": "9b105ab2fe0eccf7e75f3f0ae68a9953dcfba3e8af854f27aba87a3fecc63933"
+      "sha256": "daa7a48222df9264030328fc03c9508ded201c7eaac8ebc1698812509c3d4867"
     },
     {
       "path": "src/pages/portal-ops/support-budget.js",
-      "sha256": "bb4dc5e56269853b28a952b6bbbdd49c2a5a0e5b49ea62687021ed7a3cdf6dca"
+      "sha256": "74dc1fbdfcb2398b447504db4810ff9db015391e90795fe6398e137955dc98ea"
     },
     {
       "path": "src/pages/portal-ops/support-grants.js",
@@ -324,7 +324,7 @@
     },
     {
       "path": "src/pages/portal-ops/support-members.js",
-      "sha256": "18c09bf201a04b3bc66a52ba4e429ce5147e49295f0eaaee98c8c2b4b73fe2f3"
+      "sha256": "76bfba023c89c99a9205df6456c57767b773b2fb2c5dddb8c93570f2ade45785"
     },
     {
       "path": "src/pages/races/model.js",
