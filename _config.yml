@@ -25,6 +25,7 @@ exclude:
   - "community-likes-worker"
   - "design-research"
   - "dist"
+  - "dist.previous"
   - "docs"
   - "donations-worker"
   - "node_modules"

@@ -80,7 +80,7 @@
     },
     {
       "path": "scripts/build-v2.mjs",
-      "sha256": "fa9521e62312b293eb0c66564d8e4beab72902ee46be1c923abadd5bb5e01de9"
+      "sha256": "3a1bd68bf12b173fc063128e64d3a93202cdaac6538c4e20174fbdd4180ed556"
     },
     {
       "path": "scripts/faq-page.mjs",
@@ -696,7 +696,7 @@
     },
     {
       "path": "v2-source/pages/core.js",
-      "sha256": "ae8a53dc7f5d105ae2c41b5b512998af34fb6d75d7c5527204814931b29dfced"
+      "sha256": "96f21288725c9eb365b3e678aa85811df011d90f65f735728b53cd0bb6c2b09e"
     },
     {
       "path": "v2-source/pages/editorial.js",
@@ -747,6 +747,10 @@
       "sha256": "d92bb9cba0ffd1764572c4b30e17b80e3d48504fe5cf7f413104bb9114bb278b"
     },
     {
+      "path": "v2/driver-support-model.js",
+      "sha256": "96404ef35cc7862ae14243cf54061b7f7a091f08d534e0e3a95f5ecc962fd7f0"
+    },
+    {
       "path": "v2/guide.js",
       "sha256": "544744ce8e66b2f7c971e731c557e953879ec32164ca6ccb9f2a225f065546c2"
     },
@@ -756,7 +760,7 @@
     },
     {
       "path": "v2/home.js",
-      "sha256": "b7b0b65b791463e40ad5831db3cfa67c7212e8c84f4cee4384e915e40584ed45"
+      "sha256": "efc8d1381019b7c1508f8e3097f6e63fd37eb9abb59796a7d7bc68f9944d5dcc"
     },
     {
       "path": "v2/live-stats.js",
@@ -796,7 +800,7 @@
     },
     {
       "path": "v2/pages/account.js",
-      "sha256": "f59e8df8b2d29e6f08d77ef31fab22afc215ea8409344c0fb790205ce5774b8f"
+      "sha256": "c3bc44785226da422c4503f90b7742b8e0884a2286134ddafbe4f8d8aa0a9e39"
     },
     {
       "path": "v2/pages/bans-model.js",
@@ -816,7 +820,7 @@
     },
     {
       "path": "v2/pages/controller.js",
-      "sha256": "8fcbd7a2c3c831b3af8833ca4187e69e308e62f4a9d19ff77d75b74801e878b2"
+      "sha256": "d852dc82b6a94ca3a03ce673c50eaa455fe13a2d472ba551f2e33398cc379db1"
     },
     {
       "path": "v2/pages/data.js",
@@ -824,7 +828,11 @@
     },
     {
       "path": "v2/pages/driver-safety.js",
-      "sha256": "e5020a9c5daaf2ba5cdc39df3a1aa86a00ec101da453e67951ba4b64f9694c10"
+      "sha256": "f50f9856008180f6673898d4fe39deaad6934037c76ce9708c08aa23b8c7c455"
+    },
+    {
+      "path": "v2/pages/driver-support.js",
+      "sha256": "776790c2654b9c403e3fbc7c86577827f7e51eb9731b25825fec8ef15a121ba9"
     },
     {
       "path": "v2/pages/editorial-model.js",
@@ -840,7 +848,7 @@
     },
     {
       "path": "v2/pages/profile-appearance-editor.js",
-      "sha256": "09ccf47728f0af5714fa66d80220a624541ab06229c0d1870964243346a22bfe"
+      "sha256": "3c4a6f83dad33f5a5782ef22d03e355916b0e47718ae1167e0b7e26c9d7d3ef0"
     },
     {
       "path": "v2/pages/profile-effects-art.js",
@@ -848,7 +856,15 @@
     },
     {
       "path": "v2/pages/profile-effects.js",
-      "sha256": "8e11eb532e7241eb4b47cd35ea0a9e9202c8f7295632cad57c1d8356dc7033a4"
+      "sha256": "80f1e164886b67fb74d15cc62fed85c93e45ee3c3fefecc869b5c8ff28c8abd5"
+    },
+    {
+      "path": "v2/pages/profile-paddock.js",
+      "sha256": "53b41fb360dcf6c0e92440f185691d426bfde058ca1139e1189cfa39212c707a"
+    },
+    {
+      "path": "v2/pages/profile-racing-pass.js",
+      "sha256": "28d1de94e13c705797b954f66ca0be95510f462eaa7ef3f37eec69998056983e"
     },
     {
       "path": "v2/pages/project-support.js",
