@@ -1,7 +1,7 @@
 import {createHttpClient} from '/src/shared/http-client.js';
 
 import {setProfileLayout} from './profile-studio-layout.js?v=20261121studio06';
-import {mountSidebarPass,passProfile} from './profile-racing-pass.js?v=20261121studio06';
+import {mountSidebarPass,passProfile} from './profile-racing-pass.js?v=20261121studio06team';
 
 export const APPEARANCE_URL = 'https://auth.asgracing.ru/v1/me/profile-appearance';
 export const PRESETS = Object.freeze({

@@ -11,9 +11,10 @@ export function passSettings(settings) {
 
 export function passProfile(profile,root) {
   const team=profile.team;
+  const displayedTeam=root.querySelector('.profile-affiliations > span:last-child a')?.textContent.trim();
   return {...profile,
     avatar:root.querySelector('.profile-portrait img')?.src,
-    teamName:typeof team==='string'?team:team?.name ?? team?.display_name ?? '',
+    teamName:displayedTeam || (typeof team==='string'?team:team?.name ?? team?.display_name ?? ''),
   };
 }
 
@@ -78,7 +79,7 @@ export function mountSidebarPass({root,profile,appearance,owner,text}) {
   const settings=passSettings(appearance?.effect);
   let panel=sidebar.querySelector('.studio-pass-panel');
   if(!['pro','admin'].includes(appearance?.tier) || !settings.pass_visible){panel?.remove();return;}
-  const key=JSON.stringify([profile.public_id,profile.avatar,owner,settings]);
+  const key=JSON.stringify([profile.public_id,profile.avatar,profile.teamName,owner,settings]);
   if(panel && mounted.get(panel)===key)return;
   if(!panel){
     panel=root.ownerDocument.createElement('section');

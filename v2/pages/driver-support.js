@@ -1,6 +1,6 @@
 import {TRACKS,raceKey,lapTime,finite,selectRaces,progressReport,parseTarget,chartPoints,bundleFromProfile} from '../driver-support-model.js?v=20261121paddock1';
 
-import {passMarkup,exportPass,passSettings} from './profile-racing-pass.js?v=20261121studio06';
+import {passMarkup,exportPass,passSettings} from './profile-racing-pass.js?v=20261121studio06team';
 
 let stylesPromise;
 export function loadDriverSupportStyles(){
