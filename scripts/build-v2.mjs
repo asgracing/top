@@ -216,7 +216,7 @@ for (const language of ['ru','en']) {
       owningHead=owningHead.replace(`/v2/boot/home.js?v=${bootVersion}`,`/v2/boot/home.js?v=20261121publicpaddock`);
       owningHead+='<link rel="stylesheet" href="/styles/components/project-support.css?v=20261120grantpermission1">';
     }
-    if (screen === 'driver') owningHead+='<link rel="stylesheet" href="/v2/pages/profile-appearance.css?v=20261121publicpaddock">';
+    if (screen === 'driver') owningHead+='<link rel="stylesheet" href="/v2/pages/profile-appearance.css?v=20261121passaccent">';
     if (screen === 'site-admin') owningHead += '<link rel="stylesheet" href="/v2/pages/site-appearance-admin.css?v=20261118newyear4">';
     if(screen==='archive'||screen==='race')owningHead=owningHead.replace(`/v2/boot/home.js?v=${bootVersion}`,`/v2/boot/home.js?v=${archiveBootVersion}`);
     if(screen==='cars')owningHead=statsHead(owningHead);

@@ -214,14 +214,32 @@ try{
   const colors=await padded.getByRole('radio').evaluateAll(inputs=>inputs.map(input=>getComputedStyle(input).backgroundColor));
   assert.equal(new Set(colors).size,6);
   assert.ok(colors.every(color=>color!=='rgba(0, 0, 0, 0)'));
-  await padded.getByRole('radio',{name:'Салатовый'}).check();
-  assert.equal(await preview.locator('.racing-pass').evaluate(card=>card.style.getPropertyValue('--pass-accent')),'#b5ef70');
+  const passCard=preview.locator('.racing-pass');
+  const passColors=()=>passCard.evaluate(card=>({
+    stripe:getComputedStyle(card.querySelector('.pass-front .pass-top')).borderBottomColor,
+    rearTitle:getComputedStyle(card.querySelector('.pass-back .pass-top > span')).color,
+    frame:getComputedStyle(card).borderTopColor,
+    rating:getComputedStyle(card.querySelector('.pass-rating b')).color,
+  }));
+  for(const material of ['carbon','classic','holographic']){
+    await padded.locator('#pass-style').selectOption(material);
+    await padded.getByRole('radio',{name:'Красный'}).check();
+    const red=await passColors();
+    await padded.getByRole('radio',{name:'Салатовый'}).check();
+    const lime=await passColors();
+    assert.equal(red.stripe,'rgb(255, 99, 73)');
+    assert.equal(lime.stripe,'rgb(181, 239, 112)');
+    assert.equal(lime.rearTitle,lime.stripe);
+    assert.notEqual(red.frame,lime.frame);
+    assert.equal(red.rating,lime.rating);
+  }
   await admin.page.setViewportSize({width:1600,height:900});
   await padded.locator('#pass-style').selectOption('holographic');
   await padded.locator('#pass-motto').fill('See you on track');
   assert.equal(await padded.locator('.pass-front .pass-bottom span').innerText(),'See you on track');
   await padded.locator('[data-save-pass]').click();
   await admin.page.locator('.studio-pass-panel .racing-pass[data-card-style="holographic"]').waitFor();
+  assert.equal(await admin.page.locator('.studio-pass-panel .pass-front .pass-top').evaluate(el=>getComputedStyle(el).borderBottomColor),'rgb(181, 239, 112)');
   assert.ok(admin.requests.some(write=>write.effect.pass_accent==='#b5ef70'));
   await padded.locator('[data-pass-side="back"]').click();
   assert.match(await padded.locator('[data-export-pass]').innerText(),/оборотную сторону/);

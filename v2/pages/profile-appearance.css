@@ -235,20 +235,20 @@ body.studio-refreshed .profile-hero[data-profile-header=modern] { position:relat
 .pass-record{display:grid;grid-template-columns:1fr 1fr;gap:5% 11%;margin:5% 0 0;flex:1}
 .pass-record>div{border-bottom:1px solid #ffffff10;padding-bottom:4%}.pass-record dt{font-size:2.3cqw;color:#9bafc4}.pass-record dd{font-size:6cqw;font-weight:850;margin:0;line-height:1.2}
 .pass-link{margin-top:4%;font-size:2.3cqw;color:var(--pass-accent)}.pass-link small{display:block;font-size:2cqw;color:#a5bad0;overflow-wrap:anywhere;margin-top:1%}
-.racing-pass[data-card-style=holographic]{background:radial-gradient(ellipse at 85% 10%,#c965c322,transparent 60%),linear-gradient(120deg,#1d3047,#262137 50%,#102d33);border-color:#a9b9dc}
+.racing-pass[data-card-style=holographic]{background:radial-gradient(ellipse at 85% 10%,#c965c322,transparent 60%),linear-gradient(120deg,#1d3047,#262137 50%,#102d33)}
 .racing-pass[data-card-style=holographic]:after{background-image:linear-gradient(110deg,transparent 35%,#77cddc16 45%,#efa8de22 53%,transparent 65%)}
 .racing-pass[data-card-style=classic]{background:repeating-linear-gradient(120deg,#ffffff03 0 2px,transparent 2px 7px),linear-gradient(120deg,#2a2425,#16171e);border-radius:3px}
-.racing-pass[data-card-style=classic] .pass-top{border-bottom-color:var(--pass-accent)}.racing-pass {
+.racing-pass {
   aspect-ratio:1.58;
   border-radius:11px;
-  border-color:color-mix(in srgb,var(--pass-accent) 44%,#3d4d62);
+  border-color:color-mix(in srgb,var(--pass-accent) 72%,#3d4d62);
   background:repeating-linear-gradient(135deg,#b2c0d503 0 2px,transparent 2px 5px),linear-gradient(125deg,#28344a,#101a28 58%,#111522);
   box-shadow:0 9px 22px #03071080,inset 0 1px #ffffff1a;
 }
 .racing-pass:after { animation-duration:16s; box-shadow:inset 0 1px #f2e8ff33; }
 .pass-front,.pass-back { padding:5%; justify-content:space-between; }
-.pass-top { padding-bottom:2.5%; }
-.pass-top > span { color:#d8e0ea; font-size:2.65cqw; }
+.pass-top { padding-bottom:2.5%; border-bottom:2px solid var(--pass-accent); }
+.pass-top > span { font-size:2.65cqw; }
 .pass-identity { margin-top:2.5%; gap:3%; }
 .pass-identity > img { width:17%; border-radius:8px; }
 .pass-identity strong { font-size:4.8cqw; margin:0 0 1.2%; overflow-wrap:normal; }

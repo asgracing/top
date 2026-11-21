@@ -1,8 +1,8 @@
 {
   "schemaVersion": 1,
-  "revision": "4231658c5514dbafca3dca1bf2493eacd24aa991",
+  "revision": "66315a3f33f23701c994d29881efa81ce8fce576",
   "files": 1456,
-  "bytes": 206690875,
+  "bytes": 206690790,
   "assets": [
     {
       "path": "404.html",
@@ -1406,8 +1406,8 @@
     },
     {
       "path": "driver/index.html",
-      "bytes": 85049,
-      "sha256": "b40a735afd6bd5f718a668d9b462ef15e6b984c495d2da09ec4d7164784dbcb5"
+      "bytes": 85046,
+      "sha256": "f8d9dfa4bda76f2782640d15d127abf823bef57b2025f803b414d13ab9debb9f"
     },
     {
       "path": "en/404/index.html",
@@ -1471,8 +1471,8 @@
     },
     {
       "path": "en/driver/index.html",
-      "bytes": 80121,
-      "sha256": "30a5b6ceb7bf4684e86cb7c9b9c93a7213820dbc862ea1303d6a92d3f61cc7c6"
+      "bytes": 80118,
+      "sha256": "d96a7e214a32200bb80e6ecdc5827834b1340637dddc3d99132513be519e531a"
     },
     {
       "path": "en/events/index.html",
@@ -6402,7 +6402,7 @@
     {
       "path": "v2/build-inputs.json",
       "bytes": 35052,
-      "sha256": "4b768c16b483ccc5ac4a6489a9244ebc0a57939e746619da3110d488da471e77"
+      "sha256": "314df7383cb90633e761d68b8a2cf94be2ea33c115a06dcc0084e907fc6393ed"
     },
     {
       "path": "v2/copy.js",
@@ -6766,8 +6766,8 @@
     },
     {
       "path": "v2/pages/profile-appearance.css",
-      "bytes": 21364,
-      "sha256": "deb6f2595b7ad9b608bd0cf8059356b7dd38eb539dce1b87b8b159e2b28ea3da"
+      "bytes": 21285,
+      "sha256": "b722adb003d01cb4ccea580bd29b2880e8308c95dcc85aa5cde30aaf2a435ecd"
     },
     {
       "path": "v2/pages/profile-effects-art.css",
