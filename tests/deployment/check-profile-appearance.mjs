@@ -61,7 +61,9 @@ async function open({lang='ru',route='account',tier='vip',signed=true,reduced='r
   if(await consent.isVisible())await consent.click();
   const editor=page.locator('.profile-appearance-editor');
   if(route==='account'&&signed){
-    await page.getByRole('link',{name:lang==='en'?/Profile appearance/:/Оформление профиля/}).click();
+    const appearanceCard=page.locator('.account-appearance-card');
+    await appearanceCard.getByRole('heading',{name:lang==='en'?'Profile appearance':'Оформление профиля'}).waitFor();
+    await appearanceCard.getByRole('link',{name:lang==='en'?/Edit appearance/:/Настроить оформление/}).click();
     await page.waitForURL(driverUrl+'&appearance=edit');
     try{
       await editor.getByRole('heading',{name:lang==='en'?'Profile appearance':'Оформление профиля',exact:true}).waitFor({timeout:8000});

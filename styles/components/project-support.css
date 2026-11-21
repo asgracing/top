@@ -2,6 +2,11 @@
 .project-support-panel h1,.project-support-panel h2 { margin:0 0 10px; }
 .project-support-tiers { display:grid; grid-template-columns:repeat(3,minmax(0,1fr)); gap:12px; }
 .project-support-account p { margin:6px 0; }
+.v2-account .account-appearance-card { display:flex; align-items:center; justify-content:space-between; flex-wrap:wrap; gap:12px 24px; margin:0 0 12px; padding:clamp(13px,2vw,20px); border-left:3px solid #ed455b; background:linear-gradient(105deg,#2c1825,#152535 67%,#152033); }
+.account-appearance-card h2 { color:#f0f4f8; margin:0 0 4px; font-size:clamp(16px,2.4vw,21px); }
+.account-appearance-card p { color:#bdcbda; margin:0; }
+.account-appearance-action { min-height:42px; justify-content:center; }
+@media (max-width:540px) { .account-appearance-action { width:100%; } }
 @media (min-width:1001px) { .control-summary:has(>.project-support-account) { grid-template-columns:repeat(5,minmax(0,1fr)); } }
 @media (max-width:650px) { .control-summary>.project-support-account { grid-column:1/-1; } }
 .project-support-consent { display:flex; align-items:flex-start; gap:7px; margin:8px 0; overflow-wrap:anywhere; }
