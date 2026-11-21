@@ -80,7 +80,7 @@
     },
     {
       "path": "scripts/build-v2.mjs",
-      "sha256": "aaf261bd2856e0cacabad8de0fc52675719419351c5387fdb4fa982c3c97de83"
+      "sha256": "596848019a503183dc0e37d8ac10e3082d598c2113b8363f95cafd2d6b9b4133"
     },
     {
       "path": "scripts/faq-page.mjs",
@@ -724,7 +724,7 @@
     },
     {
       "path": "v2-source/pages/pages.css",
-      "sha256": "c0ab2ff826adbd8d968388891b9c300609e719c1d37a286b5e75e9054049b477"
+      "sha256": "00f01b08b6ad0db142b1692058cab865a8fae75ae91c049f29e76cd9c0722457"
     },
     {
       "path": "v2-source/pages/r24-pages.css",
@@ -756,7 +756,7 @@
     },
     {
       "path": "v2/home.js",
-      "sha256": "41c1ad16a0a16f998801dadaac491e9efae4e4d267f98c87753d58aa25d4feac"
+      "sha256": "1300dbd59c579d0ce95b0c8326c79697e5a8d9034db184a95133373993cc5ac9"
     },
     {
       "path": "v2/live-stats.js",
@@ -796,7 +796,7 @@
     },
     {
       "path": "v2/pages/account.js",
-      "sha256": "f4266aef07c72c02fdc40dc6cb2357a67a5eb0d32403a3127a2ac3a445a61792"
+      "sha256": "b13f91b85f90c6a4246a0c30d584825a62da3a86533c867e167efbff496c3783"
     },
     {
       "path": "v2/pages/bans-model.js",
@@ -816,7 +816,7 @@
     },
     {
       "path": "v2/pages/controller.js",
-      "sha256": "ab4c62b2b4805850b8b7d45a53aed2948dad100d4981c576465f49478b9ab735"
+      "sha256": "7db86f41ac7302f28b78292943bcadb06fa5fa1b8f3b262c1fb70dc26395e329"
     },
     {
       "path": "v2/pages/data.js",
@@ -837,6 +837,18 @@
     {
       "path": "v2/pages/pagination.js",
       "sha256": "adb6007974e845a39a5d0a6a253256365fe1814eb3dfae30c46c6545ae831408"
+    },
+    {
+      "path": "v2/pages/profile-appearance-editor.js",
+      "sha256": "09ccf47728f0af5714fa66d80220a624541ab06229c0d1870964243346a22bfe"
+    },
+    {
+      "path": "v2/pages/profile-effects-art.js",
+      "sha256": "3b5cc474dfd94c95dd64bb10521594120d888ab11a16ac4469f49a238df28881"
+    },
+    {
+      "path": "v2/pages/profile-effects.js",
+      "sha256": "8e11eb532e7241eb4b47cd35ea0a9e9202c8f7295632cad57c1d8356dc7033a4"
     },
     {
       "path": "v2/pages/race-archive-api.js",
