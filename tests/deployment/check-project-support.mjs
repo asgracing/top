@@ -11,7 +11,7 @@ const entry={public_id:profile.public_id,display_name:'<Fixture Pilot>',tier:'su
   avatar_url:'https://avatars.cloudflare.steamstatic.com/test.jpg'};
 const json=(route,body,status=200)=>route.fulfill({status,contentType:'application/json',body:JSON.stringify(body)});
 
-async function open(language,width,target,{signed=false,unavailable=false,showName=false,funding=null}={}){
+async function open(language,width,target,{signed=false,unavailable=false,showName=false,pending=false,funding=null}={}){
   const page=await browser.newPage({viewport:{width,height:940},reducedMotion:'reduce'});
   const errors=[];
   let listed=false,revision=0,privateReads=0,writes=0;
@@ -36,6 +36,7 @@ async function open(language,width,target,{signed=false,unavailable=false,showNa
         writes++;listed=data.listed;revision++;
         return json(route,{listed,revision});
       }
+      if(url.pathname==='/v1/support'&&pending)return json(route,{status:'pending',totals:null,entries:[],next_page:null});
       if(url.pathname==='/v1/support')return json(route,{totals:{supporter:2,vip:0,pro:0},
         entries:showName?[entry]:[],next_page:null},unavailable?503:200);
     }
@@ -103,7 +104,9 @@ try{
   assert.equal(guest.privateReads(),0);
   assert.deepEqual(guest.errors,[]);
   await guest.page.close();
-  const missingReport=await open('ru',320,'/support/');
+  const missingReport=await open('ru',320,'/support/',{pending:true});
+  await missingReport.page.getByText('Первая сверка подписок ещё не завершена.').waitFor();
+  assert.equal(await missingReport.page.locator('[data-support-group]:visible').count(),0);
   await missingReport.page.getByText('Отчёт за текущий месяц пока не опубликован').waitFor();
   assert.equal(await missingReport.page.getByRole('progressbar').count(),0);
   await missingReport.page.close();

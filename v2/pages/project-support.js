@@ -61,6 +61,10 @@ export function startSupportPage({view, text, esc, language}) {
     notice.textContent = text('Загружаем список…','Loading supporters…');
     try {
       const data = await client.requestJson(AUTH + '/v1/support?page=' + page, {...SUPPORT_REQUEST, credentials:'omit'});
+      if (data?.status === 'pending') {
+        notice.textContent = text('Первая сверка подписок ещё не завершена.','The first subscription check is pending.');
+        return;
+      }
       const counts = TIERS.map(tier=>data?.totals?.[tier.id]);
       if (counts.some(value=>!Number.isSafeInteger(value) || value < 0) || !Array.isArray(data?.entries)) {
         throw new Error('invalid_support_listing');
