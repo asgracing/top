@@ -1,0 +1,89 @@
+// Original vector artwork. Every surface is a decorative, non-interactive layer.
+const svg = (className, viewBox, content) => `<svg class="${className}" viewBox="${viewBox}"${className==='vip-chassis'?' preserveAspectRatio="none"':''} aria-hidden="true">${content}</svg>`;
+const circuit = 'M62 160 142 62q10-14 28-14h96q15 0 20 15l13 39q4 12 18 10l93-17q16-3 23-17l17-33q6-12 19-6l48 23q14 6 10 21l-24 91q-4 15-20 15H335q-15 0-22-14l-17-28q-6-12-19-11l-73 8q-13 1-22 12l-36 40q-11 12-27 4l-44-23q-15-8-3-22Z';
+
+function livery() {
+  return `<div class="vip-livery"><div class="vip-livery-shadow"></div><div class="vip-blade blade-one"></div><div class="vip-blade blade-two"></div><div class="vip-blade blade-three"></div><div class="vip-blade blade-four"></div><div class="vip-blade blade-white"></div><div class="vip-blade blade-carbon"></div><div class="vip-cutline"></div></div>`;
+}
+function tunnel() {
+  return `<div class="vip-tunnel"><div class="vip-tunnel-grid"></div>${[0,1,2,3].map(i=>`<div class="vip-portal" style="--i:${i}"></div>`).join('')}${svg('vip-neon-wheel','0 0 360 360','<circle class="neon-halo" cx="180" cy="180" r="144"/><g class="vip-spin"><circle class="neon-dashes" cx="180" cy="180" r="134"/><path class="neon-arc" d="M180 30A150 150 0 0 1 330 180M180 330A150 150 0 0 1 30 180"/></g><g class="vip-counterspin"><circle class="neon-inner" cx="180" cy="180" r="112"/><path class="neon-pink" d="M82 125A112 112 0 0 1 278 235"/></g><path class="neon-cross" d="M160 180h40m-20-20v40"/>')}</div>`;
+}
+function trophy() {
+  const facets=Array.from({length:16},(_,i)=>`<path d="M180 25 194 76 180 94 166 76Z" transform="rotate(${i*22.5} 180 180)" fill="url(#vip-gold)" opacity="${i%2?.8:.45}"/>`).join('');
+  return `<div class="vip-gold-art"><div class="vip-gold-beam"></div>${svg('vip-medallion','0 0 360 360',`<defs><linearGradient id="vip-gold" x1="0" y1="0" x2="1" y2="1"><stop stop-color="#fff5d0"/><stop offset=".35" stop-color="#ffe596"/><stop offset=".6" stop-color="#a16a20"/><stop offset="1" stop-color="#ffe9ae"/></linearGradient></defs><g class="vip-gold-facets">${facets}</g><circle class="gold-ring" cx="180" cy="180" r="139"/><circle class="gold-dashes" cx="180" cy="180" r="126"/><path class="gold-wings" d="m80 130 35 50-35 50m200-100-35 50 35 50M105 108l35 72-35 72m150-144-35 72 35 72"/><path class="gold-v" d="m145 144 35 72 35-72"/>`)}<div class="vip-gold-ribbon"></div></div>`;
+}
+function telemetry() {
+  return `<div class="vip-telemetry-art"><div class="vip-telemetry-floor"></div>${svg('vip-circuit-art','0 0 600 240',`<defs><linearGradient id="vip-circuit-gradient"><stop stop-color="#51e2ff"/><stop offset=".5" stop-color="#baff3d"/><stop offset="1" stop-color="#82ffb4"/></linearGradient></defs><path class="circuit-depth depth-two" d="${circuit}" transform="translate(0 19)"/><path class="circuit-depth" d="${circuit}" transform="translate(0 9)"/><path class="circuit-road" d="${circuit}"/><path class="circuit-edge" d="${circuit}"/><path class="circuit-runner runner-shadow" d="${circuit}"/><path class="circuit-runner" d="${circuit}"/><g class="circuit-gates"><path d="m140 56 20 18m128 31-14 22m158-52 25 12m-70 89v24m-195-32 18 18"/></g>`)}<div class="vip-scan-plane"></div></div>`;
+}
+function chequered() {
+  // The baked curved cells and independently animated columns form a cloth wave.
+  const columns=Array.from({length:15},(_,x)=>`<g style="--i:${x}">${Array.from({length:9},(_,y)=>{
+    const bend=Math.sin(x*.65)*12, bendNext=Math.sin((x+1)*.65)*12;
+    return `<path d="M${x*29} ${y*29+bend}l29 ${bendNext-bend}v29l-29 ${bend-bendNext}Z" fill="${(x+y)%2?'#071019':'#f1f5fa'}"/>`;
+  }).join('')}</g>`).join('');
+  return `<div class="vip-flag-art">${svg('vip-cloth','0 -20 435 310',columns)}<div class="vip-flag-folds"></div><div class="vip-flag-stitch"></div></div>`;
+}
+function rotor() {
+  return `<div class="vip-rotor-art">${svg('vip-rotor','0 0 380 380','<defs><radialGradient id="vip-rotor-glow"><stop offset=".52" stop-color="#ff350e" stop-opacity="0"/><stop offset=".68" stop-color="#f52b0c" stop-opacity=".5"/><stop offset=".82" stop-color="#ff7e16"/><stop offset=".9" stop-color="#ffe5a4"/><stop offset="1" stop-color="#ef3308" stop-opacity=".1"/></radialGradient></defs><circle class="rotor-aura" cx="190" cy="190" r="176"/><g class="vip-rotor-spin"><circle class="rotor-metal" cx="190" cy="190" r="133"/><circle class="rotor-vents" cx="190" cy="190" r="146"/><circle class="rotor-holes" cx="190" cy="190" r="120"/><circle class="rotor-holes rotor-holes-inner" cx="190" cy="190" r="100"/><path class="rotor-spokes" d="M190 126V48m55 111 68-39m-68 102 68 39m-123-7v78m-55-110-68 39m68-102-68-39"/><circle class="rotor-hub" cx="190" cy="190" r="63"/><circle class="rotor-hub-inner" cx="190" cy="190" r="40"/></g><path class="rotor-caliper" d="M304 113q37 24 38 77t-38 77l-32-20q20-27 20-57t-20-57Z"/>')}<div class="vip-heat-haze"></div></div>`;
+}
+function particles() {
+  return `<div class="vip-particles">${Array.from({length:20},(_,i)=>`<i style="--i:${i};--x:${35+(i*17)%64}%;--y:${8+(i*29)%88}%;--delay:${-(i*.47).toFixed(2)}s;--duration:${2.8+(i%5)*.6}s;--size:${i%4===0?3:2}px"></i>`).join('')}</div>`;
+}
+function pinkVelocity() {
+  const ribbon='M-40 290C80 48 260-30 341 125S545 385 750 23';
+  const upper='M-30 130C125 350 259 255 351 129S560-25 735 170';
+  const petals=Array.from({length:12},(_,i)=>`<i style="--i:${i};--x:${15+(i*19)%83}%;--y:${10+(i*23)%75}%;--delay:${-(i*.71).toFixed(2)}s"></i>`).join('');
+  const sparkles=Array.from({length:7},(_,i)=>`<g class="pink-glint" style="--i:${i}" transform="translate(${98+i*86} ${35+(i*47)%220})"><path d="M-8 0Q0-1 0-11Q1-1 8 0Q1 1 0 11Q-1 1-8 0Z"/></g>`).join('');
+  return `<div class="vip-pink-art"><div class="vip-pink-aura"></div>${svg('vip-pink-ribbons','0 0 700 320',`<defs><linearGradient id="vip-pink-chrome" x1="0" y1="0" x2=".8" y2="1"><stop stop-color="#ff39aa"/><stop offset=".3" stop-color="#ffbce9"/><stop offset=".48" stop-color="#fff2fb"/><stop offset=".54" stop-color="#ff62d5"/><stop offset="1" stop-color="#be23b7"/></linearGradient></defs><g class="pink-ribbon-group"><path class="pink-ribbon-shadow" d="${ribbon}"/><path class="pink-ribbon-body" d="${ribbon}"/><path class="pink-ribbon-edge" d="${ribbon}"/><path class="pink-ribbon-back" d="${upper}"/><path class="pink-ribbon-thin" d="${upper}"/><path class="pink-ribbon-runner" d="${ribbon}"/><path class="pink-ribbon-runner pink-runner-two" d="${upper}"/></g>${sparkles}`)}<div class="vip-cherry-petals">${petals}</div></div>`;
+}
+function violetEclipse() {
+  const rays=Array.from({length:28},(_,i)=>`<path d="M330 20v${i%4===0?10:4}" transform="rotate(${i*360/28} 330 160)"/>`).join('');
+  return `<div class="vip-violet-art"><div class="vip-violet-nebula"></div>${svg('vip-eclipse','0 0 660 320',`<defs><radialGradient id="vip-eclipse-planet" cx=".28" cy=".2" r=".85"><stop stop-color="#382466"/><stop offset=".4" stop-color="#1e1138"/><stop offset="1" stop-color="#080d1b"/></radialGradient><linearGradient id="vip-eclipse-ring" x1="0" y1="0" x2="1" y2="1"><stop stop-color="#c5a6ff"/><stop offset=".3" stop-color="#fff0ff"/><stop offset=".55" stop-color="#b35eff"/><stop offset="1" stop-color="#7133ec"/></linearGradient></defs><g class="eclipse-rear-orbit" transform="rotate(-23 330 160)"><ellipse cx="330" cy="160" rx="242" ry="72"/><ellipse class="eclipse-orbit-trace" cx="330" cy="160" rx="242" ry="72"/></g><circle class="eclipse-corona-halo" cx="330" cy="160" r="119"/><circle class="eclipse-corona" cx="330" cy="160" r="113"/><circle class="eclipse-planet" cx="323" cy="163" r="110"/><g class="eclipse-rays">${rays}</g><g class="eclipse-front-orbit" transform="rotate(-23 330 160)"><path d="M88 160a242 72 0 0 0 484 0"/><path class="eclipse-front-tracer" d="M88 160a242 72 0 0 0 484 0"/></g><path class="eclipse-surface-line" d="M247 106q65-39 129-7m-139 27q65-39 129-7m-139 27q65-39 129-7"/>`)}<div class="vip-violet-meteors"><i></i><i></i><i></i></div></div>`;
+}
+function avatarExtras() {
+  const blossom='<path d="M0-8C5-12 10-5 5-1C13 1 8 10 2 5C2 14-8 10-5 3C-14 3-12-7-4-5C-8-13-1-16 0-8Z"/><circle r="1.6"/>';
+  return svg('vip-avatar-blossoms','0 0 120 120',`<g transform="translate(10 11) scale(.65)">${blossom}</g><g transform="translate(110 13) scale(.8) rotate(25)">${blossom}</g><g transform="translate(109 108) scale(.65) rotate(-20)">${blossom}</g>`)+svg('vip-avatar-celestial','0 0 120 120','<path class="avatar-moon" d="M109 94a12 12 0 1 0 8 18a11 11 0 0 1-8-18Z"/><path class="avatar-star" d="m14 1 2 7 7 2-7 2-2 7-2-7-7-2 7-2Z"/><path class="avatar-star star-small" d="m107 5 1.4 5 5 1.4-5 1.4-1.4 5-1.4-5-5-1.4 5-1.4Z"/>');
+}
+function avatar() {
+  return `<div class="vip-avatar-shadow"></div><div class="vip-avatar-plate"></div><div class="vip-avatar-wing wing-left"></div><div class="vip-avatar-wing wing-right"></div><div class="vip-avatar-tick"></div>${svg('vip-avatar-rings','0 0 120 120','<circle class="avatar-orbit-one" cx="60" cy="60" r="55"/><circle class="avatar-orbit-two" cx="60" cy="60" r="49"/><path class="avatar-corners" d="M4 34V4h30m52 0h30v30m0 52v30H86m-52 0H4V86"/>')}${svg('vip-avatar-laurel','0 0 120 120','<path d="M18 106Q-9 60 19 14M102 106q27-46-1-92M13 91 3 79m8-4L2 62m10-4L5 45m10-4-3-13m95 63 10-12m-8-4 9-13m-10-4 7-13m-10-4 3-13M12 85l15-7M10 68l16-5m-14-11 16-4m80 37-15-7m17-10-16-5m14-11-16-4"/>')}<div class="vip-avatar-sheen"></div><div class="vip-avatar-sparks"><i></i><i></i><i></i></div>`;
+}
+
+const SCENES = {
+  apex:livery, night:tunnel, victory:trophy, telemetry,
+  finish:chequered, heat:rotor, pink:pinkVelocity, violet:violetEclipse,
+};
+
+let decorationId = 0;
+
+export function installDecoration(root, preset) {
+  const doc = root.ownerDocument;
+  const instance = ++decorationId;
+  const decor = (className, content) => {
+    const element = doc.createElement('div');
+    const gradients = [...content.matchAll(/id="(vip-[a-z-]+)"/g)];
+    for (const [,id] of gradients) {
+      const scopedId = id+'-'+instance;
+      content = content.replace('id="'+id+'"','id="'+scopedId+'"')
+        .replaceAll('url(#'+id+')','url(#'+scopedId+')');
+      element.style.setProperty('--'+id,'url(#'+scopedId+')');
+    }
+    element.className = 'vip-fx '+className;
+    element.setAttribute('aria-hidden','true');
+    element.innerHTML = content;
+    return element;
+  };
+  const hero=root.querySelector('.profile-hero');
+  if (!hero) return null;
+  const number=root.querySelector('.profile-portrait>b')?.textContent.match(/\d{1,3}/)?.[0]||'';
+  const chassis=svg('vip-chassis','0 0 1200 320','<path class="chassis-dark" d="M0 36V0h510l30 9h565l22 22h73v253h-52l-30 36H620l-26-9H29L0 282Z"/><path class="chassis-line" d="M0 35V0h510l30 9h565l22 22h73v253h-52l-30 36H620l-26-9H29L0 282Z"/><path class="chassis-runner" d="M0 35V0h510l30 9h565l22 22h73v253h-52l-30 36H620l-26-9H29L0 282Z"/><path class="chassis-corners" d="M0 66V0h100m1000 0h100v66m0 188v66h-100M100 320H0v-66"/>');
+  hero.append(decor('vip-hero-fx',`<div class="vip-ambient"></div><div class="vip-scene"><div class="vip-art">${SCENES[preset]()}<span class="vip-race-number">${number}</span></div>${particles()}<div class="vip-speed-trails">${Array.from({length:7},(_,i)=>`<i style="--i:${i}"></i>`).join('')}</div></div><div class="vip-readability"></div>${chassis}<div class="vip-side-rail"><span>RACE / LIVERY</span><i></i><i></i><i></i></div><div class="vip-corner-stamp">ASG <b>///</b></div>`));
+  root.querySelector('.profile-portrait')?.append(decor('vip-avatar-fx',avatar()+avatarExtras()));
+  const stat=root.querySelector('.profile-stat-grid')?.closest('.panel');
+  [stat,...root.querySelectorAll('.page-lap-card'),root.querySelector('.profile-achievements')].filter(Boolean).forEach((panel,i)=>{
+    panel.classList.add('vip-panel-target');
+    const layer=decor('vip-card-fx',`<div class="vip-card-corners"></div><div class="vip-card-runner"></div><div class="vip-card-streak"></div><span class="vip-panel-dashes">///</span>`);
+    layer.style.setProperty('--panel-index',i);panel.append(layer);
+  });
+  hero.append(decor('vip-entry','<div class="vip-entry-shutter shutter-one"></div><div class="vip-entry-shutter shutter-two"></div><div class="vip-entry-beam"></div><div class="vip-entry-grid"></div><div class="vip-entry-ring"></div>'));
+  return hero;
+}

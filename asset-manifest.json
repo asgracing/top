@@ -1,8 +1,8 @@
 {
   "schemaVersion": 1,
-  "revision": "138b9c6f3b0037143b05d4d44c64f4c6be3aeb65",
-  "files": 1380,
-  "bytes": 200839093,
+  "revision": "0c5cb8dbdcb952df22b30137ae438db1c3b926b1",
+  "files": 1391,
+  "bytes": 201304077,
   "assets": [
     {
       "path": "404.html",
@@ -46,8 +46,8 @@
     },
     {
       "path": "account/index.html",
-      "bytes": 85040,
-      "sha256": "6f618721e9f22e10109fb083b027325b009468f127df60cf8b05f830b5cfbc8a"
+      "bytes": 85033,
+      "sha256": "1c12a8fa9c424d4e396c1cd53100c08f55f962fb929621c71a4690bca530d52e"
     },
     {
       "path": "account/settings/index.html",
@@ -1406,8 +1406,8 @@
     },
     {
       "path": "driver/index.html",
-      "bytes": 84807,
-      "sha256": "a0ddf411fc821ac28d11b397ed8bd63d501d92da460c3082c43266cfd8555d50"
+      "bytes": 84977,
+      "sha256": "fd9285b3cb532b3552fd8a7bc3a26cec0eed50a06c0e52cc47250aeeb5824339"
     },
     {
       "path": "en/404/index.html",
@@ -1421,8 +1421,8 @@
     },
     {
       "path": "en/account/index.html",
-      "bytes": 80115,
-      "sha256": "eb7f56f1f1a1b35fce15a1e5a2c2b07da7c009258b8cca4e8b92848eec3722b1"
+      "bytes": 80108,
+      "sha256": "5a0524a5ae38fbf209b518fa65764990b04108b92ccecea7c63cf7d97659e7d3"
     },
     {
       "path": "en/account/settings/index.html",
@@ -1471,8 +1471,8 @@
     },
     {
       "path": "en/driver/index.html",
-      "bytes": 79876,
-      "sha256": "c303e9feaf45214a7e622bc35669fa3d77a97d2aff2483ff89fa6bf11de42bf5"
+      "bytes": 80046,
+      "sha256": "d99aa5eb61bf9c10fbf9552df1824ec6f6606db4555310bb524304b67f0d4ba1"
     },
     {
       "path": "en/events/index.html",
@@ -1507,7 +1507,7 @@
     {
       "path": "en/hourly/index.html",
       "bytes": 80941,
-      "sha256": "d3bc6e91fcd2130617c23fd8db3cc19fc6bec4082bb3d785f1d2e7175316db4b"
+      "sha256": "64d8ee8b681feda42aedfea70dc6ddb685cc62ed09178f8b25501310d85dbe42"
     },
     {
       "path": "en/hourly/privacy/index.html",
@@ -1747,7 +1747,7 @@
     {
       "path": "hourly/index.html",
       "bytes": 86082,
-      "sha256": "1a5006d3d5aa79f57232c5a5db7e0e445d151d9131a803377bc36d1735033b41"
+      "sha256": "9abea4578f8d49c8c1eefd61fdfd6376527380cf128473eb6fa39ab79e18be7e"
     },
     {
       "path": "hourly/index.ru.html",
@@ -3281,8 +3281,8 @@
     },
     {
       "path": "v2/boot/build.json",
-      "bytes": 5650,
-      "sha256": "c726d4035272c8b5813f4eca11d2a9af1b8213c4425e3dc1cfd9b546f2dedfca"
+      "bytes": 6031,
+      "sha256": "30977e98e335f7e3075cd5467ccd464f7adf71d05518c1c5b8b0fbf3eacfa0db"
     },
     {
       "path": "v2/boot/chunks/account-2NDTNJRL.js",
@@ -3403,6 +3403,11 @@
       "path": "v2/boot/chunks/account-HYCSUQ2R.js",
       "bytes": 17763,
       "sha256": "4a6eb9e4be1a03aa57cbb9c7894ebc0954a5d5146ae00d8e395583334b2e1a42"
+    },
+    {
+      "path": "v2/boot/chunks/account-JP337Q2I.js",
+      "bytes": 21903,
+      "sha256": "79f923aa1bc49b573d0e6198a497d1bc983a271ff7793e85e2eb27ba0b9270c1"
     },
     {
       "path": "v2/boot/chunks/account-KCRHZNKW.js",
@@ -4148,6 +4153,11 @@
       "path": "v2/boot/chunks/chunk-M2MQJKXX.js",
       "bytes": 2339,
       "sha256": "32ae6f58039fdbd25c76f2b9f67656b5988dfef70bd98f59ca2b1a0bc77a6d5f"
+    },
+    {
+      "path": "v2/boot/chunks/chunk-M4GOGEY7.js",
+      "bytes": 6964,
+      "sha256": "a07ccb3533e6794e4df98b93021b14462c5b39a5514497b4f564cfa634990a55"
     },
     {
       "path": "v2/boot/chunks/chunk-M5ALMYOY.js",
@@ -5013,6 +5023,11 @@
       "path": "v2/boot/chunks/controller-EHY66KVA.js",
       "bytes": 329052,
       "sha256": "00448ff6ebe2f3f5590816ac75e59b7c0d72d357774b574316a7cd276af4667d"
+    },
+    {
+      "path": "v2/boot/chunks/controller-F6QGCZGK.js",
+      "bytes": 341229,
+      "sha256": "0aaacfb4345e1de9ee8e95dcbe54d574bde31011d1d8a045bbe2fc996dba30c3"
     },
     {
       "path": "v2/boot/chunks/controller-FGFHILXI.js",
@@ -5930,6 +5945,21 @@
       "sha256": "58b0c03e2d4a12ed870bac74d6357d7e1d52f2b90ec1f75f3b6e183da0073362"
     },
     {
+      "path": "v2/boot/chunks/profile-appearance-editor-Q6F57SVX.js",
+      "bytes": 10256,
+      "sha256": "34de3b792dc88a20e47ac9c46c3768b0b52ce47e8b5091d97e84aee50b7a87b3"
+    },
+    {
+      "path": "v2/boot/chunks/profile-effects-KHSOGO67.js",
+      "bytes": 270,
+      "sha256": "718c3663fd4eeffe959db0722a73e5a2354df8da5f5eb3adde109af1800181eb"
+    },
+    {
+      "path": "v2/boot/chunks/profile-effects-art-TQ5L6QER.js",
+      "bytes": 11820,
+      "sha256": "6993d75eeaf5f9838cdfd648ff2ed70a1587fc3cde5c2801abde2e78a53af050"
+    },
+    {
       "path": "v2/boot/chunks/query-cache-RHACF5BL.js",
       "bytes": 1715,
       "sha256": "a15b4d537d9d9581ad57f89b1cc1512d4f383997d3e8a70dcf664ea0c28ce930"
@@ -6082,7 +6112,7 @@
     {
       "path": "v2/boot/home.js",
       "bytes": 176864,
-      "sha256": "89278926cb0415002e1f97981181a11efd2745d3106d73e676fbf2e8734ed798"
+      "sha256": "2805eea9475045ae34ea6bd5d4a96b972e7bf94d3d2044bb9102fdf7354f9d12"
     },
     {
       "path": "v2/bridge.js",
@@ -6091,8 +6121,8 @@
     },
     {
       "path": "v2/build-inputs.json",
-      "bytes": 33761,
-      "sha256": "a8017128a1b695f829cae4ce4c06893cdeeae7ad1457cd8b07dc2a796b876894"
+      "bytes": 34198,
+      "sha256": "4f780b7815267a1cbcf9df3f41326294c06863cc5de2296b70c43e75b99053a0"
     },
     {
       "path": "v2/copy.js",
@@ -6301,8 +6331,8 @@
     },
     {
       "path": "v2/home.js",
-      "bytes": 52540,
-      "sha256": "41c1ad16a0a16f998801dadaac491e9efae4e4d267f98c87753d58aa25d4feac"
+      "bytes": 52533,
+      "sha256": "1300dbd59c579d0ce95b0c8326c79697e5a8d9034db184a95133373993cc5ac9"
     },
     {
       "path": "v2/index.html",
@@ -6351,8 +6381,8 @@
     },
     {
       "path": "v2/pages/account-support.js",
-      "bytes": 3307,
-      "sha256": "aded64d06766763d8a6ef06f5f175e6e33888650ae1dd9ef98a3c61354fdc814"
+      "bytes": 3380,
+      "sha256": "9c0ed142f158a175f33c903b23a515be2fb72e5fe4c59876384a5a019add49ee"
     },
     {
       "path": "v2/pages/account.css",
@@ -6361,8 +6391,8 @@
     },
     {
       "path": "v2/pages/account.js",
-      "bytes": 15827,
-      "sha256": "763e7534e79ff7e2ebdbf90513e859d09722b7e140f60040b2863fc18ab1003f"
+      "bytes": 16281,
+      "sha256": "efdbb1d49a500f40c437212aa86c8fbbf69dcb013d8959e4af7b8befa92dbade"
     },
     {
       "path": "v2/pages/bans-model.js",
@@ -6396,8 +6426,8 @@
     },
     {
       "path": "v2/pages/controller.js",
-      "bytes": 47217,
-      "sha256": "87c76cbb11edb3546a84af2811179082926fc87c6cbcfbcb3c8ec1ecf3cc1b92"
+      "bytes": 48777,
+      "sha256": "0c93464a69a5b7272db6dbd0ce69071b5a139e9fadfc3845db2fc61e642d4c14"
     },
     {
       "path": "v2/pages/data.js",
@@ -6428,6 +6458,31 @@
       "path": "v2/pages/pagination.js",
       "bytes": 2677,
       "sha256": "adb6007974e845a39a5d0a6a253256365fe1814eb3dfae30c46c6545ae831408"
+    },
+    {
+      "path": "v2/pages/profile-appearance-editor.js",
+      "bytes": 9739,
+      "sha256": "09ccf47728f0af5714fa66d80220a624541ab06229c0d1870964243346a22bfe"
+    },
+    {
+      "path": "v2/pages/profile-appearance.css",
+      "bytes": 1933,
+      "sha256": "2d28058a8f15cc72e3c31ca529a71881e12f4cd3b1be04d376ecc77a11c62688"
+    },
+    {
+      "path": "v2/pages/profile-effects-art.css",
+      "bytes": 36940,
+      "sha256": "df048153add8fe7575b0a3056eea6434d51ba40594d2e8fdc72c9b23d861e8d4"
+    },
+    {
+      "path": "v2/pages/profile-effects-art.js",
+      "bytes": 12307,
+      "sha256": "3b5cc474dfd94c95dd64bb10521594120d888ab11a16ac4469f49a238df28881"
+    },
+    {
+      "path": "v2/pages/profile-effects.js",
+      "bytes": 8367,
+      "sha256": "8e11eb532e7241eb4b47cd35ea0a9e9202c8f7295632cad57c1d8356dc7033a4"
     },
     {
       "path": "v2/pages/race-archive-api.js",
@@ -6506,8 +6561,8 @@
     },
     {
       "path": "v2/pages/views/pages.css",
-      "bytes": 43663,
-      "sha256": "c0ab2ff826adbd8d968388891b9c300609e719c1d37a286b5e75e9054049b477"
+      "bytes": 43695,
+      "sha256": "00f01b08b6ad0db142b1692058cab865a8fae75ae91c049f29e76cd9c0722457"
     },
     {
       "path": "v2/pages/views/r24-pages.css",

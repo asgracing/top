@@ -62,7 +62,16 @@ export function startAccountPage({view,text,esc,rating,language,subscribe,showDi
     const support=document.createElement('article');
     summary.append(support);
     supportView=new AbortController();
-    mountAccountSupport(support,{client,text,language,linked:auth.linked,signal:supportView.signal});
+    const signal=supportView.signal;
+    mountAccountSupport(support,{client,text,language,linked:auth.linked,signal});
+    if(auth.linked && auth.driver?.publicId){
+      const appearance=document.createElement('a');
+      appearance.className='text-link';
+      const params=new URLSearchParams({id:auth.driver.publicId,appearance:'edit'});
+      appearance.href=v2Route('driver/',language)+'?'+params;
+      appearance.textContent=text('Оформление профиля','Profile appearance')+' ↗';
+      support.append(appearance);
+    }
     const columns=document.createElement('div');columns.className='control-columns';
     const left=document.createElement('div'),right=document.createElement('aside');columns.append(left,right);
     const clubs=body.querySelector('.account-clubs-teams');
