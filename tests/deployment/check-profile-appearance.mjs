@@ -217,7 +217,7 @@ try{
   assert.deepEqual(admin.errors,[]);
   await admin.page.close();
 
-  const visitor=await open({tier:'admin',route:'driver',paddock:true,signed:false,driverData:publicData,width:1280,plain:true,
+  const visitor=await open({tier:'admin',route:'driver',paddock:true,signed:false,driverData:publicData,width:1280,
     settings:{...saved,header:'modern',pins:admin.requests.find(write=>write.effect.pins).effect.pins,pass_style:'holographic'}});
   await visitor.page.locator('#page-view > .profile-hero[data-profile-header="modern"]').waitFor();
   const trackImage=visitor.page.locator('.studio-hero-photo');
@@ -225,6 +225,9 @@ try{
   assert.match(initialTrack,/assets\/v2-light\/tracks\/[^"]+\.webp/);
   await visitor.page.reload();
   await trackImage.waitFor();
+  await visitor.page.locator('.asg-profile-effects .vip-hero-fx').waitFor({state:'attached'});
+  assert.equal(await trackImage.evaluate(el=>getComputedStyle(el).position),'absolute');
+  assert.ok((await trackImage.boundingBox()).height>200);
   assert.notEqual(await trackImage.evaluate(el=>getComputedStyle(el).backgroundImage),initialTrack);
   await visitor.page.locator('.profile-sidebar > .studio-pass-panel + .profile-achievements').waitFor();
   assert.equal(await visitor.page.locator('.studio-pass-panel a.button').count(),0);
