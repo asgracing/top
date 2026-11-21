@@ -1,8 +1,8 @@
 {
   "schemaVersion": 1,
-  "revision": "c7300e3fc592fd6d330103fdbb5d8ed26784f29a",
-  "files": 1440,
-  "bytes": 205211883,
+  "revision": "5069327a479084c01431afe8f9335e8f4aae1833",
+  "files": 1445,
+  "bytes": 205636631,
   "assets": [
     {
       "path": "404.html",
@@ -1406,8 +1406,8 @@
     },
     {
       "path": "driver/index.html",
-      "bytes": 85039,
-      "sha256": "f6091f9338442349e27360f0e02cc547b26818e39ee208f8086366777a274ef9"
+      "bytes": 85043,
+      "sha256": "f7303b7f2d3561621d7cbf76ca5cf6c9ba2a26ac4ece29ea6b8d67c6a858d00f"
     },
     {
       "path": "en/404/index.html",
@@ -1471,8 +1471,8 @@
     },
     {
       "path": "en/driver/index.html",
-      "bytes": 80111,
-      "sha256": "5909c86b5b7fa88d04d5e523665df160231b41eb7677ce1b663edae2be5e8004"
+      "bytes": 80115,
+      "sha256": "0586a94cc6095f70287a11a7ffb3c2d844f2fab4c14230146268b90bede34c8a"
     },
     {
       "path": "en/events/index.html",
@@ -1507,7 +1507,7 @@
     {
       "path": "en/hourly/index.html",
       "bytes": 81006,
-      "sha256": "523d29862e14d3bac93e586bc69ed80d191e9ef671e605516c69632836ef9fca"
+      "sha256": "9fd32e4e8dd70490a43f03d7ebf1bad1b329b7b870773a4017367750727a7b9b"
     },
     {
       "path": "en/hourly/privacy/index.html",
@@ -1752,7 +1752,7 @@
     {
       "path": "hourly/index.html",
       "bytes": 86144,
-      "sha256": "a69b6b5d1899784a17c5a4124285e1cb1d0c1f22a9e1e180213bcbf73606e5c4"
+      "sha256": "b957ce26ca129b93245c5674280ad81b14ac66a165be0b21c1537067f7048295"
     },
     {
       "path": "hourly/index.ru.html",
@@ -3297,7 +3297,7 @@
     {
       "path": "v2/boot/build.json",
       "bytes": 6305,
-      "sha256": "d464761746571789126433713cc2f66d1009c76acfffb4207f9dfbe52a4601d5"
+      "sha256": "e4ea81d346669886ef9488dbf7ff4bce18127dfe4cd6b1b5fec0b8bfee1fc0fb"
     },
     {
       "path": "v2/boot/chunks/account-2NDTNJRL.js",
@@ -4260,6 +4260,11 @@
       "sha256": "91402534e14b5ad6b4c5be741b134a863a30b4777dc41b1a2e55f404a7886e6b"
     },
     {
+      "path": "v2/boot/chunks/chunk-MNWYR3D7.js",
+      "bytes": 20748,
+      "sha256": "3a6035f176d6aeaf4e713ad3fdc6d5f660d96fb82bf050716ed0cf3bd017efcc"
+    },
+    {
       "path": "v2/boot/chunks/chunk-MSMVLPHR.js",
       "bytes": 109531,
       "sha256": "64aca00d3e5e769d1d20e9e9d2bb1eeb59a78a3638353a4931975015ec471000"
@@ -5023,6 +5028,11 @@
       "path": "v2/boot/chunks/controller-26QE6WHQ.js",
       "bytes": 329080,
       "sha256": "2064f52dd96b63b2a68713e37ee4c3072376ef910d7429f62013d276abd3c3ff"
+    },
+    {
+      "path": "v2/boot/chunks/controller-3DKTJ3QA.js",
+      "bytes": 343361,
+      "sha256": "5a444cfd258c047914779c3055bbad9d388b0d4c5583b4219a44ab4985b96ba2"
     },
     {
       "path": "v2/boot/chunks/controller-3HQW5LXF.js",
@@ -6110,9 +6120,19 @@
       "sha256": "3a924523fabc4b2a3fc3de7a985685a09a6b6829aa600108861837fb1ee9b21b"
     },
     {
+      "path": "v2/boot/chunks/profile-appearance-editor-GVRQKUJ6.js",
+      "bytes": 11055,
+      "sha256": "cf6843a46375ca6a72bb976c258f4c376ca48bc67af9d44406dc923ddb1d0d95"
+    },
+    {
       "path": "v2/boot/chunks/profile-appearance-editor-Q6F57SVX.js",
       "bytes": 10256,
       "sha256": "34de3b792dc88a20e47ac9c46c3768b0b52ce47e8b5091d97e84aee50b7a87b3"
+    },
+    {
+      "path": "v2/boot/chunks/profile-effects-7WIGDMC2.js",
+      "bytes": 270,
+      "sha256": "078a14e5ffb615106e40e9105bbeffbe3fd0808e46df172efbd0c91ee1fb03af"
     },
     {
       "path": "v2/boot/chunks/profile-effects-G5IN4K43.js",
@@ -6143,6 +6163,11 @@
       "path": "v2/boot/chunks/profile-paddock-KF6MVXON.js",
       "bytes": 49123,
       "sha256": "3853cf7da92eeb0a307e3fd01636c49a9e47aa7889ede5ae9606c07cb6373994"
+    },
+    {
+      "path": "v2/boot/chunks/profile-paddock-RG4MRDEB.js",
+      "bytes": 49123,
+      "sha256": "d33c7745ddb6dab14d80dc70c468e4648728a6e6c001303f6664e669ea9fa41c"
     },
     {
       "path": "v2/boot/chunks/project-support-FNFDYGNX.js",
@@ -6312,7 +6337,7 @@
     {
       "path": "v2/boot/home.js",
       "bytes": 176864,
-      "sha256": "fad2136fde022b02c07e9d293403e2c16a15b278a027dce4aef475a5f424dc36"
+      "sha256": "975e9b37508d9d8059da9e47da50edd4897bee05c8d0d7665ce931441a8fd851"
     },
     {
       "path": "v2/bridge.js",
@@ -6322,7 +6347,7 @@
     {
       "path": "v2/build-inputs.json",
       "bytes": 35052,
-      "sha256": "62d37589434522675e2f2550d4691741ac2274c30b14c8f764e20e412944df44"
+      "sha256": "83bd2ee40492a1ba9cd3ad0ebda07b77ad26ec67c82874d58fc61cf587fb7b1e"
     },
     {
       "path": "v2/copy.js",
@@ -6546,8 +6571,8 @@
     },
     {
       "path": "v2/home.js",
-      "bytes": 52533,
-      "sha256": "8df63aeb7d60cb5b595df590dcbe7842255b01bf6ee16699853a889f790a5eee"
+      "bytes": 52537,
+      "sha256": "8d314c6dbf5e09bb3b9240056fb1c6ce3215c36d9d5558b0684888bafe53c177"
     },
     {
       "path": "v2/index.html",
@@ -6641,8 +6666,8 @@
     },
     {
       "path": "v2/pages/controller.js",
-      "bytes": 50762,
-      "sha256": "ac9f1f03e69df2a496139982eee5761614272930434f95056eba950fe1aa658d"
+      "bytes": 50774,
+      "sha256": "5b75d59c2616bb6df8020f492b0e282d42b2c7f5c0f9d7434cb3440029161d0a"
     },
     {
       "path": "v2/pages/data.js",
@@ -6656,8 +6681,8 @@
     },
     {
       "path": "v2/pages/driver-support.js",
-      "bytes": 32765,
-      "sha256": "a3b1709eddcf3ced821dbb4c42aa26cd20b553f7dd4fadc27d0fc23531ccc503"
+      "bytes": 32769,
+      "sha256": "7029e20f0518fc09a3d0a1b774670b38e7c5ee80228dec12171b7ca197979887"
     },
     {
       "path": "v2/pages/editorial-model.js",
@@ -6681,8 +6706,8 @@
     },
     {
       "path": "v2/pages/profile-appearance-editor.js",
-      "bytes": 10475,
-      "sha256": "fefe0c403f54ecc0ff94ad89a753f43d353daace98543ffa0d6ed144a919c199"
+      "bytes": 10479,
+      "sha256": "bfeff85c1780d97b3391bcff52a564780725461b0fe465d81a98f70423b8cb4a"
     },
     {
       "path": "v2/pages/profile-appearance.css",
@@ -6701,18 +6726,18 @@
     },
     {
       "path": "v2/pages/profile-effects.js",
-      "bytes": 9436,
-      "sha256": "fb5423ec7f3af7ffadfaf974b83efa8e426158e765b43fe4018fbfbac7fd1a86"
+      "bytes": 9440,
+      "sha256": "bb3147031993a33a99db4e2719b39664b03b0e323e32f3afff826d03742c7f57"
     },
     {
       "path": "v2/pages/profile-paddock.js",
-      "bytes": 2722,
-      "sha256": "bf27658cfc010729030b2d58d50d8acc70343cc2551d147118d70d83f7d79f10"
+      "bytes": 2734,
+      "sha256": "dffc0a0ca4f80a6b49b3661fa5927001e82654634b7365789b897c682908990b"
     },
     {
       "path": "v2/pages/profile-racing-pass.js",
-      "bytes": 10888,
-      "sha256": "83221ce54e9af17f695e3023bc9e62d38df7573fdb4898ad5b407e9414c5ce8b"
+      "bytes": 11031,
+      "sha256": "c56322ca457d2636220e7a53f5b897f74d41750db0d7234b5aa1544c482d5f15"
     },
     {
       "path": "v2/pages/profile-studio-layout.js",

@@ -80,7 +80,7 @@
     },
     {
       "path": "scripts/build-v2.mjs",
-      "sha256": "42d95ec76d9d8b6a1d6f0e8c538010892ac9706bff84ee0df2e504a9b2a66f0a"
+      "sha256": "41c4ee8e33ec532e50776a6599db671b1cadd3bbfb553f0969794fa8a684abf6"
     },
     {
       "path": "scripts/faq-page.mjs",
@@ -760,7 +760,7 @@
     },
     {
       "path": "v2/home.js",
-      "sha256": "8df63aeb7d60cb5b595df590dcbe7842255b01bf6ee16699853a889f790a5eee"
+      "sha256": "8d314c6dbf5e09bb3b9240056fb1c6ce3215c36d9d5558b0684888bafe53c177"
     },
     {
       "path": "v2/live-stats.js",
@@ -820,7 +820,7 @@
     },
     {
       "path": "v2/pages/controller.js",
-      "sha256": "1a301cfb016a68a35717db2baf16f8a9d5fbb85d5cc5d90a957012c6c0399db2"
+      "sha256": "a384c61bcabf0b3f726cd3e8b38d7f56efce117d560f082066e2593844eba8eb"
     },
     {
       "path": "v2/pages/data.js",
@@ -832,7 +832,7 @@
     },
     {
       "path": "v2/pages/driver-support.js",
-      "sha256": "a3b1709eddcf3ced821dbb4c42aa26cd20b553f7dd4fadc27d0fc23531ccc503"
+      "sha256": "7029e20f0518fc09a3d0a1b774670b38e7c5ee80228dec12171b7ca197979887"
     },
     {
       "path": "v2/pages/editorial-model.js",
@@ -848,7 +848,7 @@
     },
     {
       "path": "v2/pages/profile-appearance-editor.js",
-      "sha256": "fefe0c403f54ecc0ff94ad89a753f43d353daace98543ffa0d6ed144a919c199"
+      "sha256": "bfeff85c1780d97b3391bcff52a564780725461b0fe465d81a98f70423b8cb4a"
     },
     {
       "path": "v2/pages/profile-effects-art.js",
@@ -856,15 +856,15 @@
     },
     {
       "path": "v2/pages/profile-effects.js",
-      "sha256": "fb5423ec7f3af7ffadfaf974b83efa8e426158e765b43fe4018fbfbac7fd1a86"
+      "sha256": "bb3147031993a33a99db4e2719b39664b03b0e323e32f3afff826d03742c7f57"
     },
     {
       "path": "v2/pages/profile-paddock.js",
-      "sha256": "bf27658cfc010729030b2d58d50d8acc70343cc2551d147118d70d83f7d79f10"
+      "sha256": "dffc0a0ca4f80a6b49b3661fa5927001e82654634b7365789b897c682908990b"
     },
     {
       "path": "v2/pages/profile-racing-pass.js",
-      "sha256": "83221ce54e9af17f695e3023bc9e62d38df7573fdb4898ad5b407e9414c5ce8b"
+      "sha256": "c56322ca457d2636220e7a53f5b897f74d41750db0d7234b5aa1544c482d5f15"
     },
     {
       "path": "v2/pages/profile-studio-layout.js",
