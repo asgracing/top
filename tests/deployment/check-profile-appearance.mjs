@@ -191,6 +191,14 @@ try{
   await padded.getByText('Настройки сохранены.').waitFor();
   await padded.getByRole('tab',{name:'Карточка заезда'}).click();
   await padded.locator('canvas[data-ready="true"]').waitFor();
+  await padded.locator('#card-format').selectOption('square');
+  const square=await padded.locator('canvas[data-ready="true"]').evaluate(canvas=>({
+    pixels:[canvas.width,canvas.height],
+    aspect:canvas.clientWidth/canvas.clientHeight,
+    fills:canvas.clientWidth===canvas.parentElement.clientWidth,
+  }));
+  assert.deepEqual(square.pixels,[1080,1080]);
+  assert.ok(square.fills && Math.abs(square.aspect-1)<0.01);
   const resultDownload=admin.page.waitForEvent('download');
   await padded.locator('[data-export-png]').click();
   assert.match((await resultDownload).suggestedFilename(),/\.png$/);
@@ -203,12 +211,18 @@ try{
   assert.ok((await controls.boundingBox()).x>(await preview.boundingBox()).x);
   await admin.page.setViewportSize({width:390,height:844});
   assert.ok((await controls.boundingBox()).y>(await preview.boundingBox()).y+(await preview.boundingBox()).height);
+  const colors=await padded.getByRole('radio').evaluateAll(inputs=>inputs.map(input=>getComputedStyle(input).backgroundColor));
+  assert.equal(new Set(colors).size,6);
+  assert.ok(colors.every(color=>color!=='rgba(0, 0, 0, 0)'));
+  await padded.getByRole('radio',{name:'Салатовый'}).check();
+  assert.equal(await preview.locator('.racing-pass').evaluate(card=>card.style.getPropertyValue('--pass-accent')),'#b5ef70');
   await admin.page.setViewportSize({width:1600,height:900});
   await padded.locator('#pass-style').selectOption('holographic');
   await padded.locator('#pass-motto').fill('See you on track');
   assert.equal(await padded.locator('.pass-front .pass-bottom span').innerText(),'See you on track');
   await padded.locator('[data-save-pass]').click();
   await admin.page.locator('.studio-pass-panel .racing-pass[data-card-style="holographic"]').waitFor();
+  assert.ok(admin.requests.some(write=>write.effect.pass_accent==='#b5ef70'));
   await padded.locator('[data-pass-side="back"]').click();
   assert.match(await padded.locator('[data-export-pass]').innerText(),/оборотную сторону/);
   const passDownload=admin.page.waitForEvent('download');
@@ -232,10 +246,47 @@ try{
   await visitor.page.locator('.profile-sidebar > .studio-pass-panel + .profile-achievements').waitFor();
   assert.equal(await visitor.page.locator('.studio-pass-panel a.button').count(),0);
   await visitor.page.getByRole('tab',{name:'Мой паддок'}).click();
-  await visitor.page.locator('.race-highlight').waitFor();
-  assert.equal(await visitor.page.locator('[data-add-pin], #lap-target, [data-save-pass]').count(),0);
+  const publicPaddock=visitor.page.locator('#profile-paddock-panel');
+  assert.deepEqual(await publicPaddock.getByRole('tab').allTextContents(),['Витрина','Прогресс','Карточка заезда','Карточка пилота']);
+  const featured=publicPaddock.locator('.race-highlight').first();
+  await featured.waitFor();
+  assert.match(await featured.evaluate(el=>getComputedStyle(el,'::before').backgroundSize),/cover/);
+  await publicPaddock.getByRole('tab',{name:'Прогресс'}).click();
+  await publicPaddock.locator('#filter-days').selectOption('365');
+  assert.equal(await publicPaddock.locator('#filter-days').inputValue(),'365');
+  for(const selector of ['#filter-track','#filter-car']){
+    const input=publicPaddock.locator(selector);
+    const options=await input.locator('option').count();
+    assert.ok(options>0);
+    if(options>1)await input.selectOption({index:1});
+  }
+  assert.equal(await publicPaddock.locator('.goal-panel, [data-report]').count(),0);
+  await visitor.page.setViewportSize({width:390,height:844});
+  await publicPaddock.getByRole('tab',{name:'Карточка заезда'}).click();
+  await publicPaddock.locator('#card-race').selectOption({index:1});
+  await publicPaddock.locator('canvas[data-ready="true"]').waitFor();
+  const wide=await publicPaddock.locator('canvas').evaluate(canvas=>({
+    aspect:canvas.clientWidth/canvas.clientHeight,
+    fills:canvas.clientWidth===canvas.parentElement.clientWidth,
+  }));
+  assert.ok(wide.fills && Math.abs(wide.aspect-16/9)<0.02);
+  await publicPaddock.getByRole('tab',{name:'Карточка пилота'}).click();
+  assert.equal(await publicPaddock.locator('.studio-public-passes :is(.pass-front,.pass-back):visible').count(),2);
+  assert.equal(await publicPaddock.locator('[data-add-pin], #lap-target, #card-format, [data-export-png], [data-save-pass], [data-pass-side], .studio-card-controls').count(),0);
   assert.equal(visitor.privateReads(),0);
+  assert.deepEqual(visitor.requests,[]);
+  assert.deepEqual(visitor.errors,[]);
   await visitor.page.close();
+
+  const other=await open({tier:'pro',route:'driver',signed:true,owns:false,paddock:true,settings:{...saved,pins:[],pass_visible:false}});
+  await other.page.getByRole('tab',{name:'Мой паддок'}).click();
+  const otherPaddock=other.page.locator('#profile-paddock-panel');
+  await otherPaddock.getByText('Пилот пока не добавил заезды в витрину.').waitFor();
+  await otherPaddock.getByRole('tab',{name:'Карточка пилота'}).click();
+  await otherPaddock.getByText('Карточка пилота скрыта.').waitFor();
+  assert.equal(other.privateReads(),0);
+  assert.deepEqual(other.requests,[]);
+  await other.page.close();
   console.log('Profile appearance: VIP/PRO/ADMIN, eight presets, private save, public replay, reduced motion, mobile, read-only tiers, tier downgrade/restoration and concurrent update passed.');
 }finally{
   await browser.close();

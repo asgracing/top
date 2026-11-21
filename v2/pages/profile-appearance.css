@@ -292,6 +292,9 @@ body.studio-refreshed .studio-pass-panel .panel-head h2 { font-size:13px; }
 .studio-colors legend { font-size:12px; color:#a1b6cd; margin-bottom:10px; }
 .studio-colors input { appearance:none; width:29px; height:29px; margin:0; border:3px solid #12202c; border-radius:50%; background:var(--swatch); cursor:pointer; }
 .studio-colors input:checked,.studio-colors input:focus-visible { outline:1px solid var(--swatch); outline-offset:2px; }
+.studio-colors input:focus-visible { box-shadow:0 0 0 4px #f1e7ff; }
+.studio-public-passes { display:grid; grid-template-columns:repeat(2,minmax(0,1fr)); gap:14px; }
+@media (max-width:700px) { .studio-public-passes { grid-template-columns:minmax(0,1fr); } }
 .studio-card-controls .studio-checkbox { flex-direction:row; align-items:center; }
 .studio-checkbox input { accent-color:#b89ae7; width:16px; height:16px; margin:0; }
 .studio-card-controls>.studio-export { background:linear-gradient(110deg,#b291e6,#b8a8e8); color:#171022; border:1px solid #dbc2ff; min-height:42px; font-weight:750; justify-content:center; }

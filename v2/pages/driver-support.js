@@ -1,6 +1,7 @@
 import {TRACKS,raceKey,lapTime,finite,selectRaces,progressReport,parseTarget,chartPoints,bundleFromProfile} from '../driver-support-model.js?v=20261121paddock1';
+import {resolveTrackBackgroundFile} from '/src/features/server-status/track-background.js';
 
-import {passMarkup,exportPass,passSettings} from './profile-racing-pass.js?v=20261121studiopolish';
+import {passMarkup,exportPass,passSettings} from './profile-racing-pass.js?v=20261121publicpaddock';
 
 let stylesPromise;
 export function loadDriverSupportStyles(){
@@ -9,7 +10,7 @@ export function loadDriverSupportStyles(){
     const existing=document.getElementById('driver-support-style');
     if(existing?.sheet)return resolve();
     const link=existing||document.createElement('link');
-    link.id='driver-support-style';link.rel='stylesheet';link.href='/v2/driver-support.css?v=20261121paddock1';
+    link.id='driver-support-style';link.rel='stylesheet';link.href='/v2/driver-support.css?v=20261121publicpaddock';
     link.addEventListener('load',resolve,{once:true});link.addEventListener('error',()=>{stylesPromise=null;link.remove();reject(Error('Profile styles unavailable'));},{once:true});
     if(!existing)document.head.append(link);
   });return stylesPromise;
@@ -26,6 +27,10 @@ export function mountDriverSupport({root,profile,language='ru',now,owner=false,a
   const trackName=value=>Object.hasOwn(TRACKS,value)?TRACKS[value]:value;
   const profileUrl=`https://asgracing.ru/driver/?id=${encodeURIComponent(profile.public_id)}`;
   const assetUrl=path=>window.__ASG_PROFILE_ASSETS__?.[path]||path;
+  const trackPhoto=track=>{
+    const file=resolveTrackBackgroundFile(track);
+    return typeof file==='string'?assetUrl('/assets/v2-light/tracks/'+file.replace(/\.jpg$/,'.webp')):null;
+  };
   const covers={track:['Трассы ASG','ASG tracks'],carbon:['Carbon Red','Carbon Red'],night:['Night Grid','Night Grid'],gold:['Podium Gold','Podium Gold']};
   const raceIds = new Set(bundle.races.map(raceKey));
   let preferences = {
@@ -38,7 +43,10 @@ export function mountDriverSupport({root,profile,language='ru',now,owner=false,a
   const profileRoot=root.closest('#page-view');
   let passSide=profileRoot?.dataset.passSide==='back' || new URLSearchParams(location.search).get('passSide')==='back'?'back':'front';
   let passDraft=passSettings(settings);
-  let section=new URLSearchParams(location.search).get('paddock')==='pass'&&(owner||preferences.pass_visible)?'pass':'showcase', selectedRace=bundle.races[0]?raceKey(bundle.races[0]):'', format='wide',noticeTimer,alive=true,notice='';
+  const requestedSection=new URLSearchParams(location.search).get('paddock');
+  let section=['showcase','progress','card','pass'].includes(requestedSection)?requestedSection:'showcase';
+  let selectedRace=(!owner && preferences.pins[0])||(bundle.races[0]?raceKey(bundle.races[0]):'');
+  let format='wide',noticeTimer,alive=true,notice='';
   const first=bundle.races.find(race=>race.track==='monza')||bundle.races[0];
   let filters={track:first?.track||'monza',car:first?.car||'',days:90};
   function notify(message){notice=message;const box=root.querySelector('[data-pro-notice]');if(box)box.textContent=message;clearTimeout(noticeTimer);noticeTimer=setTimeout(()=>{notice='';const current=root.querySelector('[data-pro-notice]');if(alive&&current)current.textContent='';},5000);}
@@ -62,27 +70,29 @@ export function mountDriverSupport({root,profile,language='ru',now,owner=false,a
       controls.forEach(el=>{el.disabled=false;});
     }
   }
+  function emptyRaces(){return `<p class="page-empty">${text('У пилота пока нет зачтённых гонок.','The driver has no counted races yet.')}</p>`;}
   function applyCover(){root.dataset.cover=preferences.cover;}
   function metric(label,value,hint='',cls=''){return `<div class="metric ${cls}"><span>${label}</span><strong>${value}</strong>${hint?`<small>${hint}</small>`:''}</div>`;}
   function raceOptions(current){return bundle.races.map(race=>`<option value="${escape(raceKey(race))}"${raceKey(race)===current?' selected':''}>${escape(`${date(race.date)} · ${trackName(race.track)} · P${race.finish ?? '—'} · ${race.car}`)}</option>`).join('');}
   function render(){
     applyCover();
-    if(!bundle.races.length && ['progress','card'].includes(section)){section='showcase';}
-    if(!owner && !preferences.pins.length && !preferences.pass_visible){root.innerHTML=`<p class="page-empty">${text('Пока нет опубликованных зачтённых гонок для витрины.','There are no published counted races to showcase yet.')}</p>`;return;}
-    const entries=[['showcase',text('Витрина','Showcase')]];
-    if(owner&&bundle.races.length)entries.push(['progress',text('Прогресс','Progress')],['card',text('Карточка заезда','Race result card')]);
+    const entries=[['showcase',text('Витрина','Showcase')],['progress',text('Прогресс','Progress')],['card',text('Карточка заезда','Race result card')]];
     if(owner)entries.push(['style',text('Фон профиля','Profile background')]);
-    if(owner || preferences.pass_visible)entries.push(['pass',text('Карточка пилота','Driver card')]);
+    entries.push(['pass',text('Карточка пилота','Driver card')]);
     root.innerHTML=`<div class="profile-pro-toolbar"><div class="pro-tabs" role="tablist" aria-label="${text('Возможности Pro','Pro features')}">${entries.map(([id,label])=>`<button type="button" class="button" role="tab" id="section-${id}" data-section="${id}" aria-selected="${section===id}" aria-controls="section-panel" tabindex="${section===id?0:-1}">${label}</button>`).join('')}</div></div><div id="section-panel" role="tabpanel" aria-labelledby="section-${section}">${({showcase:showcaseMarkup,progress:progressMarkup,card:cardMarkup,style:styleMarkup,pass:()=>passMarkup({profile:bundle.profile,settings:passDraft,side:passSide,owner,advanced,text})})[section]()}</div><p data-pro-notice class="page-help" role="status" aria-live="polite">${escape(notice)}</p>`;
     if(section==='card')void drawCard();
   }
 function showcaseMarkup() {
   const pins = preferences.pins.map(key => bundle.races.find(race => raceKey(race) === key)).filter(Boolean);
-  const cards = pins.map((race, index) => `<article class="race-highlight" style="--race-image:url('${assetUrl('/assets/v2-light/tracks/' + (Object.hasOwn(TRACKS, race.track) ? race.track : 'monza') + '.webp')}')"><div class="highlight-top"><span class="highlight-label">${race.finish===1?text('Победа','Win'):race.finish<=3&&race.finish>0?text('Подиум','Podium'):race.positions>0?text('Прорыв','Positions gained'):text('Выбранный заезд','Featured race')}</span>${owner ? `<button class="icon-button" type="button" data-remove="${escape(raceKey(race))}" aria-label="${escape(text('Убрать из витрины', 'Remove from showcase') + ': ' + trackName(race.track))}">×</button>` : ''}</div><div class="track-heading"><small>${escape(date(race.date))} · MSK</small><h3>${escape(trackName(race.track))}</h3><span>${escape(race.car)}</span></div><div class="highlight-result"><strong>P${race.finish ?? '—'}</strong><div><span>${text('Старт', 'Grid')} P${race.start ?? '—'}</span><b class="${race.positions > 0 ? 'positive' : ''}">${signed(race.positions)} ${text('поз.', 'pos.')}</b></div></div><div class="highlight-facts"><div><span>${text('Лучший круг', 'Best lap')}</span><b>${lapTime(race.bestLapMs)}</b></div><div><span>ELO</span><b>${signed(race.eloDelta)}</b></div><div><span>${text('Очки', 'Points')}</span><b>${number(race.points)}</b></div></div>${owner ? `<button class="button secondary" type="button" data-card="${escape(raceKey(race))}">${text('Создать карточку', 'Create result card')} ↗</button>` : ''}</article>`).join('');
-  if(!owner)return `<div class="showcase-grid">${cards}</div>`;
+  const cards = pins.map(race => {
+    const photo=trackPhoto(race.track);
+    return `<article class="race-highlight"${photo?` style="--race-image:url('${escape(photo)}')"`:''}><div class="highlight-top"><span class="highlight-label">${race.finish===1?text('Победа','Win'):race.finish<=3&&race.finish>0?text('Подиум','Podium'):race.positions>0?text('Прорыв','Positions gained'):text('Выбранный заезд','Featured race')}</span>${owner ? `<button class="icon-button" type="button" data-remove="${escape(raceKey(race))}" aria-label="${escape(text('Убрать из витрины', 'Remove from showcase') + ': ' + trackName(race.track))}">×</button>` : ''}</div><div class="track-heading"><small>${escape(date(race.date))} · MSK</small><h3>${escape(trackName(race.track))}</h3><span>${escape(race.car)}</span></div><div class="highlight-result"><strong>P${race.finish ?? '—'}</strong><div><span>${text('Старт', 'Grid')} P${race.start ?? '—'}</span><b class="${race.positions > 0 ? 'positive' : ''}">${signed(race.positions)} ${text('поз.', 'pos.')}</b></div></div><div class="highlight-facts"><div><span>${text('Лучший круг', 'Best lap')}</span><b>${lapTime(race.bestLapMs)}</b></div><div><span>ELO</span><b>${signed(race.eloDelta)}</b></div><div><span>${text('Очки', 'Points')}</span><b>${number(race.points)}</b></div></div>${owner ? `<button class="button secondary" type="button" data-card="${escape(raceKey(race))}">${text('Создать карточку', 'Create result card')} ↗</button>` : ''}</article>`;
+  }).join('');
+  if(!owner)return cards?`<div class="showcase-grid">${cards}</div>`:`<p class="page-empty">${text('Пилот пока не добавил заезды в витрину.','The driver has not pinned any races yet.')}</p>`;
   return `<div class="showcase-heading"><div><h3>${text('Моя гоночная витрина', 'My race showcase')}</h3><p>${text('Три заезда, которые рассказывают твою историю.', 'Three races that tell your story.')}</p></div><span class="small-pill">${pins.length} / 3</span></div><div class="showcase-grid">${cards || `<div class="empty">${text('Витрина пока пуста. Выбери гонку ниже.', 'Your showcase is empty. Choose a race below.')}</div>`}</div><div class="showcase-editor"><div><h3>${text('Добавить памятный заезд', 'Add a memorable race')}</h3><p>${text('Победа, прорыв через пелотон или первый финиш — выбираешь ты.', 'A win, a recovery drive or your first finish — your choice.')}</p></div><label class="sr-only" for="pin-race">${text('Выбрать гонку', 'Choose a race')}</label><select id="pin-race">${raceOptions('')}</select><button class="button" type="button" data-add-pin>${text('В витрину', 'Pin race')} +</button></div><div class="muted-callout">${text('Порядок можно менять кнопками ниже. Сохранённую витрину увидят посетители профиля.', 'Use the buttons below to reorder. Your saved showcase is visible to profile visitors.')}</div><div class="reorder-list">${pins.map((race, index) => `<div><span>${index + 1}. ${escape(trackName(race.track))} · ${date(race.date)} · P${race.finish}</span><button type="button" class="text-button" data-up="${index}" ${index === 0 ? 'disabled' : ''}>↑ ${text('Выше', 'Move up')}</button></div>`).join('')}</div>`;
 }
 function progressMarkup() {
+  if(!bundle.races.length)return emptyRaces();
   const races = selectRaces(bundle, filters), report = progressReport(races);
   const cutoff=Date.parse(bundle.source.read_at)-filters.days*86400000;
   const form=progressReport(bundle.races.filter(race=>Date.parse(race.date)>=cutoff));
@@ -98,10 +108,31 @@ function progressMarkup() {
   const line = points.map(point => `${point.x},${point.y}`).join(' ');
   const target = parseTarget(preferences.target), targetGap = target && report.best ? report.best - target : null;
   const graph = points.length ? `<svg viewBox="0 0 760 160" class="pace-chart" role="img" aria-label="${text('Лучшие круги по гонкам, раньше слева, позже справа. Выше означает быстрее.', 'Race best laps, oldest to newest. Higher is faster.')}"><defs><linearGradient id="area" x1="0" y1="0" x2="0" y2="1"><stop stop-color="#ff4054" stop-opacity=".2"/><stop offset="1" stop-color="#ff4054" stop-opacity="0"/></linearGradient></defs>${[35,80,125].map(y => `<path d="M0 ${y}H760" class="grid-line"/>`).join('')}<polygon points="${points[0].x},160 ${line} ${points.at(-1).x},160" fill="url(#area)"/><polyline points="${line}" fill="none" stroke="#ff5366" stroke-width="2"/>${points.map(point => `<circle cx="${point.x}" cy="${point.y}" r="3.5" fill="#ffb7bf"><title>${date(point.date)} · ${lapTime(point.bestLapMs)}</title></circle>`).join('')}</svg>` : `<div class="empty">${text('За этот период подходящих гонок нет.', 'No matching races in this period.')}</div>`;
-  return `<div class="section-heading"><div><h3>${text('Мой прогресс', 'My progress')}</h3><p>${text('Одна трасса и одна машина. Только зачтённые гонки.', 'One track and one car. Counted races only.')}</p></div><button class="button secondary" type="button" data-report>${text('Скачать отчёт', 'Download report')} ↓</button></div>${formSummary}<div class="filters"><label>${text('Трасса', 'Track')}<select id="filter-track">${circuitOptions.map(id => `<option value="${escape(id)}"${id === filters.track ? ' selected' : ''}>${escape(trackName(id))}</option>`).join('')}</select></label><label>${text('Машина', 'Car')}<select id="filter-car">${options.map(car => `<option value="${escape(car)}"${car === filters.car ? ' selected' : ''}>${escape(car)}</option>`).join('')}</select></label><label>${text('Период', 'Period')}<select id="filter-days">${[30,90,180,365].map(days => `<option value="${days}"${days === filters.days ? ' selected' : ''}>${days} ${text('дней', 'days')}</option>`).join('')}</select></label><div class="sample-pill">${number(report.races)} ${text('гонок в выборке', 'races in sample')}</div></div><div class="progress-metrics">${metric(text('Лучший гоночный круг', 'Best race lap'), lapTime(report.best), text('В выбранном периоде', 'Within selected period'))}${metric(text('Медиана лучших кругов', 'Median race best lap'), lapTime(report.median), `${report.timed.length} ${text('гонок с временем', 'timed races')}`)}${metric(text('Прогресс лучших кругов', 'Race best-lap progress'), report.improvement === null ? '—' : `${report.improvement >= 0 ? '−' : '+'}${(Math.abs(report.improvement) / 1000).toFixed(3)} s`, text('Медианы первой и второй половин', 'First-half vs second-half medians'), report.improvement > 0 ? 'good' : '')}</div><div class="progress-layout"><section class="chart-panel"><div class="chart-head"><div><span class="eyebrow">${text('Лучший круг каждой гонки', 'Best lap in each race')}</span><h3>${escape(trackName(filters.track))} <span>/ ${escape(filters.car)}</span></h3></div><span class="tiny">${text('Выше — быстрее', 'Higher is faster')} ↑</span></div>${graph}<div class="chart-dates"><span>${races.length ? date(races[0].date) : '—'}</span><span>${races.length ? date(races.at(-1).date) : '—'}</span></div><p class="method-note">${text('Сравнение по порядку гонок; погода и состояние трассы могут различаться. Это лучшие круги между гонками, не анализ стабильности каждого круга.', 'Race-order comparison; weather and track conditions may differ. These are race best laps, not lap-by-lap consistency.')}</p></section><aside class="goal-panel"><span class="eyebrow">${text('Личная цель', 'Personal target')}</span><h3>${text('Следующий шаг', 'Next milestone')}</h3><label for="lap-target">${text('Целевой круг', 'Target lap')}</label><div class="goal-input"><input id="lap-target" value="${escape(preferences.target)}" placeholder="1:46.000" inputmode="decimal" maxlength="9"><button class="icon-button" type="button" data-save-goal aria-label="${text('Сохранить цель', 'Save target')}">✓</button></div><strong class="goal-gap">${targetGap === null ? '—' : targetGap <= 0 ? text('Цель достигнута', 'Target reached') : `${(targetGap / 1000).toFixed(3)} s`}</strong><p>${text('Цель видна только тебе. Время круга зависит от условий заезда.', 'Only you can see this target. Lap times depend on session conditions.')}</p></aside></div><div class="progress-secondary">${metric(text('Победы / подиумы', 'Wins / podiums'), `${report.wins} / ${report.podiums}`)}${metric(text('Сумма изменений ELO', 'Sum of ELO changes'), signed(report.eloDelta), `${report.eloCoverage} / ${report.races} ${text('гонок с данными', 'races covered')}`)}${metric(text('Доля валидных кругов', 'Valid lap share'), report.validShare === null ? '—' : `${report.validShare.toFixed(1)}%`, `${report.srCoverage} / ${report.races} ${text('гонок с данными SR', 'races with SR data')}`)}${metric(text('Разброс лучших кругов', 'Race best-lap spread'), report.spread === null ? '—' : `${(report.spread / 1000).toFixed(3)} s`, text('Межквартильный диапазон', 'Interquartile range'))}</div><details class="methodology"><summary>${text('Что именно посчитано', 'How these metrics are calculated')}</summary><p>${text('Полный опубликованный реестр прочитан с одной ревизией. Выбраны зачтённые гонки, трасса, машина и период относительно даты снимка. Прогресс — разница медиан лучших кругов хронологических половин; минимум 6 времён. Доля валидных кругов = (круги − невалидные) / круги по гонкам с данными SR. Валидность не означает отсутствие контактов. Неизвестные значения не заменяются нулём.', 'The complete published history was read at one revision. Counted races are filtered by track, car and period relative to the snapshot date. Progress compares medians of chronological halves, requiring at least 6 timed races. Valid lap share = (laps − invalid laps) / laps for races with SR data. Validity does not imply no contact. Unknown values are not replaced with zero.')}</p></details>`;
+  const goal=owner?`<aside class="goal-panel"><span class="eyebrow">${text('Личная цель', 'Personal target')}</span><h3>${text('Следующий шаг', 'Next milestone')}</h3><label for="lap-target">${text('Целевой круг', 'Target lap')}</label><div class="goal-input"><input id="lap-target" value="${escape(preferences.target)}" placeholder="1:46.000" inputmode="decimal" maxlength="9"><button class="icon-button" type="button" data-save-goal aria-label="${text('Сохранить цель', 'Save target')}">✓</button></div><strong class="goal-gap">${targetGap === null ? '—' : targetGap <= 0 ? text('Цель достигнута', 'Target reached') : `${(targetGap / 1000).toFixed(3)} s`}</strong><p>${text('Цель видна только тебе. Время круга зависит от условий заезда.', 'Only you can see this target. Lap times depend on session conditions.')}</p></aside>`:'';
+  return `<div class="section-heading"><div><h3>${owner?text('Мой прогресс', 'My progress'):text('Прогресс пилота','Driver progress')}</h3><p>${text('Одна трасса и одна машина. Только зачтённые гонки.', 'One track and one car. Counted races only.')}</p></div>${owner?`<button class="button secondary" type="button" data-report>${text('Скачать отчёт', 'Download report')} ↓</button>`:''}</div>${formSummary}<div class="filters"><label>${text('Трасса', 'Track')}<select id="filter-track">${circuitOptions.map(id => `<option value="${escape(id)}"${id === filters.track ? ' selected' : ''}>${escape(trackName(id))}</option>`).join('')}</select></label><label>${text('Машина', 'Car')}<select id="filter-car">${options.map(car => `<option value="${escape(car)}"${car === filters.car ? ' selected' : ''}>${escape(car)}</option>`).join('')}</select></label><label>${text('Период', 'Period')}<select id="filter-days">${[30,90,180,365].map(days => `<option value="${days}"${days === filters.days ? ' selected' : ''}>${days} ${text('дней', 'days')}</option>`).join('')}</select></label><div class="sample-pill">${number(report.races)} ${text('гонок в выборке', 'races in sample')}</div></div><div class="progress-metrics">${metric(text('Лучший гоночный круг', 'Best race lap'), lapTime(report.best), text('В выбранном периоде', 'Within selected period'))}${metric(text('Медиана лучших кругов', 'Median race best lap'), lapTime(report.median), `${report.timed.length} ${text('гонок с временем', 'timed races')}`)}${metric(text('Прогресс лучших кругов', 'Race best-lap progress'), report.improvement === null ? '—' : `${report.improvement >= 0 ? '−' : '+'}${(Math.abs(report.improvement) / 1000).toFixed(3)} s`, text('Медианы первой и второй половин', 'First-half vs second-half medians'), report.improvement > 0 ? 'good' : '')}</div><div class="progress-layout"><section class="chart-panel"><div class="chart-head"><div><span class="eyebrow">${text('Лучший круг каждой гонки', 'Best lap in each race')}</span><h3>${escape(trackName(filters.track))} <span>/ ${escape(filters.car)}</span></h3></div><span class="tiny">${text('Выше — быстрее', 'Higher is faster')} ↑</span></div>${graph}<div class="chart-dates"><span>${races.length ? date(races[0].date) : '—'}</span><span>${races.length ? date(races.at(-1).date) : '—'}</span></div><p class="method-note">${text('Сравнение по порядку гонок; погода и состояние трассы могут различаться. Это лучшие круги между гонками, не анализ стабильности каждого круга.', 'Race-order comparison; weather and track conditions may differ. These are race best laps, not lap-by-lap consistency.')}</p></section>${goal}</div><div class="progress-secondary">${metric(text('Победы / подиумы', 'Wins / podiums'), `${report.wins} / ${report.podiums}`)}${metric(text('Сумма изменений ELO', 'Sum of ELO changes'), signed(report.eloDelta), `${report.eloCoverage} / ${report.races} ${text('гонок с данными', 'races covered')}`)}${metric(text('Доля валидных кругов', 'Valid lap share'), report.validShare === null ? '—' : `${report.validShare.toFixed(1)}%`, `${report.srCoverage} / ${report.races} ${text('гонок с данными SR', 'races with SR data')}`)}${metric(text('Разброс лучших кругов', 'Race best-lap spread'), report.spread === null ? '—' : `${(report.spread / 1000).toFixed(3)} s`, text('Межквартильный диапазон', 'Interquartile range'))}</div><details class="methodology"><summary>${text('Что именно посчитано', 'How these metrics are calculated')}</summary><p>${text('Полный опубликованный реестр прочитан с одной ревизией. Выбраны зачтённые гонки, трасса, машина и период относительно даты снимка. Прогресс — разница медиан лучших кругов хронологических половин; минимум 6 времён. Доля валидных кругов = (круги − невалидные) / круги по гонкам с данными SR. Валидность не означает отсутствие контактов. Неизвестные значения не заменяются нулём.', 'The complete published history was read at one revision. Counted races are filtered by track, car and period relative to the snapshot date. Progress compares medians of chronological halves, requiring at least 6 timed races. Valid lap share = (laps − invalid laps) / laps for races with SR data. Validity does not imply no contact. Unknown values are not replaced with zero.')}</p></details>`;
 }
 function cardMarkup() {
-  return `<div class="section-heading"><div><h3>${text('Карточка результата', 'Your race result card')}</h3><p>${text('Один заезд. Главное о нём. Готово для публикации.', 'One race. The highlights. Ready to share.')}</p></div><span class="small-pill">PNG · ${format === 'wide' ? '1200 × 675' : '1080 × 1080'}</span></div><div class="card-layout"><div class="card-canvas-wrap"><canvas id="result-canvas" width="1200" height="675" role="img" aria-label="${text('Карточка выбранного результата. Те же показатели доступны в описании справа.', 'Selected race result card. The same data is listed alongside.')} "></canvas></div><aside class="card-controls"><label for="card-race">${text('Гонка', 'Race')}</label><select id="card-race">${raceOptions(selectedRace)}</select><label for="card-format">${text('Формат', 'Format')}</label><select id="card-format"><option value="wide"${format === 'wide' ? ' selected' : ''}>${text('Широкий', 'Landscape')} · 16:9</option><option value="square"${format === 'square' ? ' selected' : ''}>${text('Квадрат', 'Square')} · 1:1</option></select><div class="card-description">${cardDescription()}</div><button class="button" type="button" data-export-png>${text('Скачать PNG', 'Download PNG')} ↓</button><button class="button secondary" type="button" data-copy-link>${text('Скопировать ссылку профиля', 'Copy profile link')}</button><p class="method-note">${text('Данные из опубликованного результата. Поделиться изображением можно вручную; сообщения никуда не отправляются.', 'Based on a published result. Share the image yourself; no messages are sent automatically.')}</p></aside></div>`;
+  if(!selectedRace)return emptyRaces();
+  const square=format==='square';
+  const actions=owner?`
+    <label for="card-format">${text('Формат', 'Format')}</label>
+    <select id="card-format">
+      <option value="wide"${square?'':' selected'}>${text('Широкий', 'Landscape')} · 16:9</option>
+      <option value="square"${square?' selected':''}>${text('Квадрат', 'Square')} · 1:1</option>
+    </select>`:'';
+  const sharing=owner?`
+    <button class="button" type="button" data-export-png>${text('Скачать PNG', 'Download PNG')} ↓</button>
+    <button class="button secondary" type="button" data-copy-link>${text('Скопировать ссылку профиля', 'Copy profile link')}</button>`:'';
+  return `<div class="section-heading"><div><h3>${text('Карточка заезда', 'Race result card')}</h3></div>${owner?`<span class="small-pill">PNG · ${square?'1080 × 1080':'1200 × 675'}</span>`:''}</div>
+    <div class="card-layout">
+      <div class="card-canvas-wrap${square?' card-canvas-wrap--square':''}">
+        <canvas id="result-canvas" width="${square?1080:1200}" height="${square?1080:675}" role="img" aria-label="${text('Карточка выбранного результата', 'Selected race result card')}"></canvas>
+      </div>
+      <aside class="card-controls">
+        <label for="card-race">${text('Гонка', 'Race')}</label><select id="card-race">${raceOptions(selectedRace)}</select>
+        ${actions}<div class="card-description">${cardDescription()}</div>${sharing}
+      </aside>
+    </div>`;
 }
 function cardDescription() {
   const race = bundle.races.find(row => raceKey(row) === selectedRace);
@@ -119,14 +150,19 @@ async function drawCard() {
   const ctx = canvas.getContext('2d');
   const gradient = ctx.createLinearGradient(0, 0, width, height);
   gradient.addColorStop(0, '#16202e'); gradient.addColorStop(1, '#100f16'); ctx.fillStyle = gradient; ctx.fillRect(0,0,width,height);
-  try {
-    const image = new Image();
-    image.src = assetUrl(`/assets/v2-light/tracks/${Object.hasOwn(TRACKS,race.track) ? race.track : 'monza'}.webp`);
-    await image.decode();
-    if(!alive || !canvas.isConnected)return;
-    const scale = Math.max(width / image.width, height / image.height);
-    ctx.drawImage(image, (width - image.width * scale) / 2, (height - image.height * scale) / 2, image.width * scale, image.height * scale);
-  } catch { /* A gradient remains a complete downloadable design. */ }
+  const photo=trackPhoto(race.track);
+  if(photo){
+    try {
+      const image=new Image();
+      image.src=photo;
+      await image.decode();
+      if(!alive || !canvas.isConnected)return;
+      const scale=Math.max(width/image.naturalWidth,height/image.naturalHeight);
+      const scaledWidth=image.naturalWidth*scale, scaledHeight=image.naturalHeight*scale;
+      ctx.drawImage(image,(width-scaledWidth)/2,(height-scaledHeight)/2,scaledWidth,scaledHeight);
+    } catch { /* The gradient handles unavailable track photos. */ }
+  }
+  if(!alive || !canvas.isConnected)return;
   ctx.fillStyle = '#080d16b8'; ctx.fillRect(0,0,width,height);
   const square = format === 'square', margin = 65;
   const write = (value, x, y, size, color = '#edf3fa', weight = 600, max = width - margin * 2) => { ctx.fillStyle=color;ctx.font=`${weight} ${size}px "Segoe UI",Arial,sans-serif`;while(ctx.measureText(String(value)).width>max && size>12){size--;ctx.font=`${weight} ${size}px "Segoe UI",Arial,sans-serif`;}ctx.fillText(String(value),x,y); };
@@ -229,7 +265,7 @@ function onChange(event) {
   else if(id==='filter-car')filters.car=value;
   else if(id==='filter-days')filters.days=Number(value);
   else if(id==='card-race')selectedRace=value;
-  else if(id==='card-format')format=value;
+  else if(owner && id==='card-format')format=value;
   else return;
   render();root.querySelector(`#${id}`)?.focus();
 }
