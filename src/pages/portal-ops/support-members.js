@@ -5,8 +5,8 @@ const LEVELS = {supporter:'Supporter', vip:'VIP', pro:'PRO'};
 
 export function mountSupportMembers({root,api,auth,text}) {
   root.innerHTML = `<h3>${text('Доступ по уровням','Access by tier')}</h3>
-    <p class="page-help">${text('Месячный эквивалент — активные подписчики ASG × цена тарифа. Он не учитывает даты списаний, комиссии и возвраты.',
-      'Monthly equivalent is ASG-linked active subscribers × tier price. It excludes billing dates, fees and refunds.')}</p>
+    <p class="page-help">${text('Прогноз — активные подписки × цена тарифа, без комиссий и возвратов.',
+      'Estimate: active subscriptions × tier price, before fees and refunds.')}</p>
     <ul data-member-totals></ul>
     <form class="portal-support-member-controls">
       <label class="control-field">${text('Действующий уровень','Effective tier')}<select name="tier">
@@ -119,7 +119,7 @@ export function mountSupportMembers({root,api,auth,text}) {
     } catch {
       if (ticket!==generation) return;
       loaded = false;
-      status.textContent = text('Список временно недоступен. Повторите поиск.','The list is unavailable. Try searching again.');
+      status.textContent = text('Список недоступен. Повторите поиск.','List unavailable. Try again.');
     }
   }
 
