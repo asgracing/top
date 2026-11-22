@@ -831,8 +831,10 @@ table[data-view="bestlaps"],table[data-view="clubs"] { min-width:760px; }
 .online { min-width:0; }
 .chart { gap:8px; }
 .announcements { display:flex; flex-direction:column; gap:8px; border-left:1px solid var(--line); padding-left:14px; min-width:0; }
-.announcements button { border:1px solid #578ba46b; border-left:2px solid #8ed6ed; padding:10px 8px; font-size:12px; text-align:left; background:linear-gradient(110deg,#223f5455,#12213033); border-radius:3px; }
-.announcements button:hover { background:#34597870; }
+.announcements :is(a,button) { border:1px solid #578ba46b; border-left:2px solid #8ed6ed; padding:10px 8px; font-size:12px; text-align:left; background:linear-gradient(110deg,#223f5455,#12213033); border-radius:3px; }
+.announcements :is(a,button):hover { background:#34597870; }
+.announcements a { color:#fff1f2; border-color:#e35261; background:linear-gradient(110deg,#742334,#361b2b); }
+.announcements a:hover { background:#8b2a3b; }
 .nav-group>div>button { display:block; width:100%; padding:10px 14px; text-align:left; font:inherit; }
 .nav-group>div>button:hover { background:#284055; }
 .nav-group>div { min-width:220px; }
@@ -924,7 +926,7 @@ dialog[data-kind="driver-sr"] .elo-chart-dot { fill:#5cefc0; }
  .metric-strip .metric span { font-size:9px; }
  .day-ratings .rating-badge { font-size:10px; }
  .announcements { padding-left:9px; }
- .announcements button { font-size:11px; padding:8px 6px; }
+ .announcements :is(a,button) { font-size:11px; padding:8px 6px; }
  .chart { gap:5px; }
  .chart-col b,.chart-col small { font-size:9px; }
  .event-title-row { padding-right:70px; }
@@ -935,12 +937,12 @@ dialog[data-kind="driver-sr"] .elo-chart-dot { fill:#5cefc0; }
 @media(max-width:1240px) and (min-width:1001px) {
  .stats-body { grid-template-columns:1fr 1fr; }
  .announcements { grid-column:1/-1; flex-direction:row; align-items:center; padding:0; border:0; }
- .announcements button { flex:1; }
+ .announcements :is(a,button) { flex:1; }
 }
 @media(max-width:1000px) {
  .stats-body { grid-template-columns:minmax(0,1fr) minmax(0,1.4fr); }
  .announcements { grid-column:1/-1; flex-direction:row; border:0; padding:0; align-items:center; }
- .announcements button { flex:1; }
+ .announcements :is(a,button) { flex:1; }
  .search { margin-left:0; }
 }
 @media(max-width:600px) {
@@ -948,7 +950,7 @@ dialog[data-kind="driver-sr"] .elo-chart-dot { fill:#5cefc0; }
  .day-driver-name { font-size:22px; }
  .announcements { flex-wrap:wrap; gap:6px; }
  .announcements>.eyebrow { width:100%; }
- .announcements button { font-size:11px; }
+ .announcements :is(a,button) { font-size:11px; }
  .ranking-filters { flex-basis:100%; }
  .event-title-row { padding-right:75px; }
  .event-title-row h3 { font-size:27px; }

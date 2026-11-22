@@ -5,6 +5,7 @@ exclude:
   - ".gitattributes"
   - ".github"
   - ".gitignore"
+  - "AGENTS.md"
   - "ASG_LAB_FRONTEND_BACKLOG_2026-10-03.md"
   - "ASG_LAB_IMPLEMENTATION_PLAN_2026-10-03.md"
   - "BACKLOG_TOP_HOME_UX_UI_AUDIT_2026-07-12.md"

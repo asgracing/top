@@ -197,8 +197,11 @@ for (const language of ['ru','en']) {
   const statsHead=value=>value.replace(`/v2/boot/home.js?v=${bootVersion}`,`/v2/boot/home.js?v=${statsBootVersion}`);
   const hourlyHead=value=>value.replace(`/v2/boot/home.js?v=${bootVersion}`,`/v2/boot/home.js?v=${hourlyBootVersion}`);
   const initialHomeScript = '<script async type="module" data-home-initial src="/v2/home-initial-data-v1.js"></script>';
+  const homeHead = hourlyHead(head)
+    .replace(`/v2/styles/design.css?v=${presentationVersion}`,'/v2/styles/design.css?v=20261122supportlaunch')
+    .replace(`/v2/boot/home.js?v=${hourlyBootVersion}`,'/v2/boot/home.js?v=20261122supportlaunch');
   const homeBody = localizedV2Links(addFaqToShell(pageBody, language, 'home', faqContent), language);
-  await emit(`v2/${language}/index.html`,`<!doctype html>\n<html lang="${language}" data-page="home" data-page-language="${language}" data-v2="home"><head>${initialHomeScript}${hourlyHead(head)}${faqStyles}${faqScript}</head><body data-v2="home">${homeBody}<div id="v1-runtime-host" hidden inert aria-hidden="true">${oldBody}</div>${modals}</body></html>\n`);
+  await emit(`v2/${language}/index.html`,`<!doctype html>\n<html lang="${language}" data-page="home" data-page-language="${language}" data-v2="home"><head>${initialHomeScript}${homeHead}${faqStyles}${faqScript}</head><body data-v2="home">${homeBody}<div id="v1-runtime-host" hidden inert aria-hidden="true">${oldBody}</div>${modals}</body></html>\n`);
   for (const config of pageRegistry.filter(page => page.route)) {
     const page=config.route.slice(0,-1), screen=config.screen;
     const title=config.title[language], description=config.description[language];
