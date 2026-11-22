@@ -1,4 +1,4 @@
-import {mountSupportBudget} from "./support-budget.js?v=20261121support1";
+import {mountSupportBudget} from "./support-budget.js?v=20261123supportrefresh";
 import {canManageSupportGrants} from "./support-grants.js?v=20261120grantpermission1";
 import { mountClubsManagement } from './portal-clubs-workspace.js?v=20261111readers1';
 import { createAuthHeaderController, buildAuthReturnPath } from "../../features/auth/header-auth.js?v=20261120grantpermission1";
@@ -36,6 +36,7 @@ function canOpenSupportPanel(auth){
 }
 function setPanel(name,{link=false}={}){
   if(name==='support'&&!canOpenSupportPanel(authState))return;
+  const enteringSupport=name==='support'&&$("portal-panel-support").hidden;
   $a("[data-panel]").forEach(button=>button.setAttribute("aria-selected",String(button.dataset.panel===name)));
   for(const key of ['clubs','hourly','support'])$("portal-panel-"+key).hidden=name!==key;
   if(link){
@@ -44,7 +45,17 @@ function setPanel(name,{link=false}={}){
     else if(url.searchParams.get('tab')==='support')url.searchParams.delete('tab');
     if(url.href!==window.location.href)history.replaceState(null,'',url);
   }
-  if(name==='support')supportBudget.open();
+  if(name==='support'){
+    supportBudget.open();
+    if(enteringSupport)pollSupportMembers();
+  }
+}
+function pollSupportMembers(){
+  const permissions=authState?.permissions;
+  if(!document.hidden&&!$("portal-panel-support").hidden&&permissions?.portalManage&&
+     (permissions.supportManage||permissions.supportFinanceManage)){
+    supportBudget.poll();
+  }
 }
 function invalidatePreview(){previewResult=null;previewDraft=null;$("hourly-preview-card").hidden=true}
 function previewDisplay(value){return{operation:value?.operation,occurrence_id:value?.occurrence_id,before_revision:value?.before_revision,after_revision:value?.after_revision,expires_at:value?.expires_at,changes:value?.changes||[]}}
@@ -78,6 +89,8 @@ function loadClubs(){return clubsWorkspace?.load()}
 export function mountPortalOpsWorkspace({ confirmAction, standalone = false } = {}) {
 if(confirmAction)confirmPortalAction=confirmAction;
 supportBudget=mountSupportBudget({root:$("portal-panel-support"),api,auth:()=>authState,text:localText,confirmAction:message=>confirmPortalAction(message)});
+setInterval(pollSupportMembers,300_000);
+document.addEventListener('visibilitychange',pollSupportMembers);
 clubsWorkspace=mountClubsManagement({root:$("portal-panel-clubs"),api,auth:()=>authState,confirmAction:message=>confirmPortalAction(message),onError:portalError,language:lang});
 if(standalone)applyLocalizedNavigation(lang(),document,window);copy();$("portal-ops-gate").textContent=t("checking");$a("[data-panel]").forEach(button=>button.onclick=event=>setPanel(button.dataset.panel,{link:event.isTrusted}));$("portal-hourly-refresh").onclick=()=>void loadHourly();$("portal-hourly-form").onsubmit=event=>void previewChange(event);$("hourly-apply").onclick=()=>void applyChange();$("hourly-restore").onclick=()=>void restore();$a("#portal-hourly-form input,#portal-hourly-form select").forEach(node=>node.addEventListener("input",()=>{invalidatePreview();validate()}));if(standalone)createAuthHeaderController({onAuthChange:gate});
 

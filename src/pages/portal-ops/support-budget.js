@@ -1,5 +1,5 @@
 import {ensureProjectSupportStyle,renderSupportFunding,showSupportFunding} from '/v2/pages/support-funding.js?v=20261120funding1';
-import {mountSupportMembers} from './support-members.js?v=20261121support1';
+import {mountSupportMembers} from './support-members.js?v=20261123supportrefresh';
 import {canManageSupportGrants,mountSupportGrants} from './support-grants.js?v=20261120grantpermission1';
 
 const GROUPS = {
@@ -182,6 +182,7 @@ export function mountSupportBudget({root,api,auth,text,confirmAction}) {
   publish.onclick=()=>void write('publish');
   month.onchange=()=>void load();
   return {
+    poll: supportMembers.poll,
     open(){
       const financeAllowed = allowed();
       const grantsAllowed = canManageSupportGrants(auth());

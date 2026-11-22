@@ -11,7 +11,7 @@ const entry={public_id:profile.public_id,display_name:'<Fixture Pilot>',tier:'su
   avatar_url:'https://avatars.cloudflare.steamstatic.com/test.jpg'};
 const json=(route,body,status=200)=>route.fulfill({status,contentType:'application/json',body:JSON.stringify(body)});
 
-async function open(language,width,target,{signed=false,unavailable=false,showName=false,pending=false,funding=null,eligible}={}){
+async function open(language,width,target,{signed=false,unavailable=false,showName=false,pending=false,funding=null,eligible,pollFunding=false}={}){
   const page=await browser.newPage({viewport:{width,height:940},reducedMotion:'reduce'});
   const errors=[];
   let listed=false,revision=0,privateReads=0,writes=0,trialTier=null;
@@ -58,10 +58,12 @@ async function open(language,width,target,{signed=false,unavailable=false,showNa
     assert.equal(request.method(),'GET',url.origin+url.pathname);
     return fixture(route,[],{signed});
   });
+  if(pollFunding) await page.clock.install();
   await page.goto(base+(language==='en'?'/en':'')+target,{waitUntil:'networkidle'});
   const consent=page.locator('.asg-legal-banner-btn-secondary');
   if(await consent.isVisible())await consent.click();
-  return {page,errors,privateReads:()=>privateReads,writes:()=>writes,trialTier:()=>trialTier};
+  return {page,errors,privateReads:()=>privateReads,writes:()=>writes,trialTier:()=>trialTier,
+    setFunding:progress=>{funding=progress;}};
 }
 
 try{
@@ -137,8 +139,11 @@ try{
   assert.equal(await trial.page.locator('[data-support-trial]:disabled').count(),3);
   assert.deepEqual(trial.errors,[]);
   await trial.page.close();
-  const zero=await open('ru',390,'/support/',{funding:{operating_percent:0,development_percent:0}});
+  const zero=await open('ru',390,'/support/',{funding:{operating_percent:0,development_percent:0},pollFunding:true});
   assert.deepEqual(await zero.page.locator('[data-funding-value]').allTextContents(),['0%','0%']);
+  zero.setFunding({operating_percent:100,development_percent:20});
+  await zero.page.clock.fastForward(300_000);
+  await zero.page.getByRole('progressbar',{name:'Развитие проекта'}).locator('xpath=..').getByText('20%').waitFor();
   await zero.page.close();
   const missing=await open('ru',390,'/support/',{unavailable:true});
   await missing.page.getByText('Список поддержки временно недоступен').waitFor();
