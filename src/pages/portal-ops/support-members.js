@@ -28,7 +28,7 @@ export function mountSupportMembers({root,api,auth,text}) {
   const next = root.querySelector('[data-next]');
   const ru = document.documentElement.lang !== 'en';
   const money = new Intl.NumberFormat(ru?'ru-RU':'en-GB',{style:'currency',currency:'RUB'});
-  let generation = 0, controller, loaded = false;
+  let generation = 0, controller, writing = 0, query;
 
   function resetRows() {
     totals.replaceChildren();
@@ -56,6 +56,7 @@ export function mountSupportMembers({root,api,auth,text}) {
     button.disabled = button.hidden || (!entry.suppressed && !entry.consented);
     button.onclick = async () => {
       button.disabled = true;
+      writing++;
       try {
         await api(BASE+'/'+encodeURIComponent(entry.public_id)+'/visibility',{
           method:'POST',headers:{'Content-Type':'application/json','X-CSRF-Token':auth()?.csrfToken || ''},
@@ -72,6 +73,8 @@ export function mountSupportMembers({root,api,auth,text}) {
           ? text('Войдите через Steam заново.','Sign in with Steam again.')
           : text('Не удалось изменить публичный показ.','Could not change public visibility.');
         button.disabled = false;
+      } finally {
+        writing--;
       }
     };
     item.append(info);
@@ -79,19 +82,20 @@ export function mountSupportMembers({root,api,auth,text}) {
     return item;
   }
 
-  async function load(page) {
+  async function load(page, background = false) {
     const permissions = auth()?.permissions;
     if (!permissions?.supportManage && !permissions?.supportFinanceManage) return;
     controller?.abort();
     controller = new AbortController();
     const ticket = ++generation;
-    resetRows();
-    status.textContent = text('Загружаем список…','Loading subscribers…');
-    const query = new URLSearchParams({tier:form.elements.tier.value,q:form.elements.q.value.trim(),page});
+    if (!background) {
+      status.textContent = text('Загружаем…','Loading…');
+      query = new URLSearchParams({tier:form.elements.tier.value,q:form.elements.q.value.trim(),page});
+    }
     try {
       const data = await api(BASE+'?'+query,{signal:controller.signal});
       if (ticket!==generation) return;
-      loaded = true;
+      totals.replaceChildren();
       if (!data.totals) {
         status.textContent = text('Сверка Sponsr ещё не подтверждена.','The Sponsr check has not been confirmed yet.');
       } else {
@@ -118,16 +122,16 @@ export function mountSupportMembers({root,api,auth,text}) {
       next.onclick = ()=>void load(page+1);
     } catch {
       if (ticket!==generation) return;
-      loaded = false;
       status.textContent = text('Список недоступен. Повторите поиск.','List unavailable. Try again.');
-    }
+    } finally { if (ticket===generation) controller = null; }
   }
 
   form.onsubmit = event=>{event.preventDefault();void load(1);};
   form.elements.tier.onchange = ()=>void load(1);
   return {
-    open(){if(!loaded)void load(1);},
+    open(){if(!query)void load(1);},
     refresh(){void load(1);},
-    reset(){generation++;controller?.abort();loaded=false;form.reset();resetRows();status.textContent='';},
+    poll(){if(query&&!controller&&!writing)void load(Number(query.get('page')),true);},
+    reset(){generation++;controller?.abort();controller=query=null;form.reset();resetRows();status.textContent='';},
   };
 }

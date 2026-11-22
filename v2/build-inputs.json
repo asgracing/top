@@ -80,7 +80,7 @@
     },
     {
       "path": "scripts/build-v2.mjs",
-      "sha256": "bd84bad515f8b37857899fed3cf1c6229b590ad9027dd6a44eca0b1fb3eef8b9"
+      "sha256": "f207f4f13c8fcc55b1a5e0f407627cb1d9f31d1463ac14a61863b7cff1f85d1c"
     },
     {
       "path": "scripts/faq-page.mjs",
@@ -312,11 +312,11 @@
     },
     {
       "path": "src/pages/portal-ops/portal-ops-page.js",
-      "sha256": "daa7a48222df9264030328fc03c9508ded201c7eaac8ebc1698812509c3d4867"
+      "sha256": "e1696cee897af1002ac75778bafbb5bf5192fb1a6970a3e952661823305dde91"
     },
     {
       "path": "src/pages/portal-ops/support-budget.js",
-      "sha256": "74dc1fbdfcb2398b447504db4810ff9db015391e90795fe6398e137955dc98ea"
+      "sha256": "9ee07ae30985de544940bd9d85df9d5af26d22c3f5d7ebd5a1f5c5878df1a05e"
     },
     {
       "path": "src/pages/portal-ops/support-grants.js",
@@ -324,7 +324,7 @@
     },
     {
       "path": "src/pages/portal-ops/support-members.js",
-      "sha256": "76bfba023c89c99a9205df6456c57767b773b2fb2c5dddb8c93570f2ade45785"
+      "sha256": "2d9ab6b632338be82a23d147d51f589f93c62d3d445b4b72c8e129aee3411908"
     },
     {
       "path": "src/pages/races/model.js",
@@ -760,7 +760,7 @@
     },
     {
       "path": "v2/home.js",
-      "sha256": "766f1b884dd18e87bc7af556abc25d02058f6448ccda89abe074fac8e8d6a130"
+      "sha256": "7300d72235bdeef90db585b3d76ac84fd1af0febd851d9a7ca676b9416f23228"
     },
     {
       "path": "v2/live-stats.js",
@@ -816,11 +816,11 @@
     },
     {
       "path": "v2/pages/control.js",
-      "sha256": "b50ffaa30e9d4e1d84957bc8ee43ca69a65d8a047a0557b908a777787a0ff4e8"
+      "sha256": "7b72e0d2e578a867f6b297afc6ebf52b37942be8e2bcd071212a165f2566451d"
     },
     {
       "path": "v2/pages/controller.js",
-      "sha256": "404d5b5f19f29eb130819030e8110e49ac2138e815bb4fe7b43be862f0e725b2"
+      "sha256": "b25104a6e69b13e08f1a6d427af88191fd46238317ce9a6d3ecdefbe287423dc"
     },
     {
       "path": "v2/pages/data.js",
@@ -872,7 +872,7 @@
     },
     {
       "path": "v2/pages/project-support.js",
-      "sha256": "8ce50c63944539b9a3e688ce287988e6b2216c7b89ebad96a1661fbe22191355"
+      "sha256": "83954a327ea4af169e0300995be7f816bc5dcdec0c5869ab54bd9a0a053b3da0"
     },
     {
       "path": "v2/pages/race-archive-api.js",

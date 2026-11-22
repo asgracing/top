@@ -62,14 +62,24 @@ export function startSupportPage({view, text, esc, language}) {
   const more = view.querySelector('[data-support-more]');
   const shown = new Set();
   let page = 1;
+  let fundingLoading = false;
   wireTrial(view,text,v2Route('support/',language));
-  void client.requestJson(AUTH + '/v1/support/funding', {...SUPPORT_REQUEST, credentials:'omit'})
-    .then(response=>{
+  async function refreshFunding() {
+    if (document.hidden || fundingLoading) return;
+    fundingLoading = true;
+    try {
+      const response = await client.requestJson(AUTH + '/v1/support/funding', {...SUPPORT_REQUEST, credentials:'omit'});
       if (!response || !Object.hasOwn(response,'progress')) throw new Error('missing_funding_progress');
       showSupportFunding(funding,response.progress,text);
-    })
-    .catch(()=>showSupportFunding(funding,null,text,
-      text('Шкала временно недоступна','Funding progress is temporarily unavailable')));
+    } catch {
+      showSupportFunding(funding,null,text,text('Шкала временно недоступна','Funding progress is temporarily unavailable'));
+    } finally {
+      fundingLoading = false;
+    }
+  }
+  void refreshFunding();
+  setInterval(refreshFunding,300_000);
+  document.addEventListener('visibilitychange',refreshFunding);
   async function load() {
     more.hidden = true;
     notice.textContent = text('Загружаем список…','Loading supporters…');

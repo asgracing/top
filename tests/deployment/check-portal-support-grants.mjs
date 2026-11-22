@@ -14,6 +14,8 @@ async function open(language,width,target,{signed=false,owner=false,operator=fal
   const errors=[];
   let budgetRevision=0,draft=null,published=false,suppressed=false;
   let grantRevision=0,manual=null,manualEnd=null,financeRequests=0;
+  let vipCount=1;
+  const memberRequests=[];
   const grantHistory=[];
   const operatorActions=[
     {tier:'supporter',expires_on:paidUntil.slice(0,10),confirm_indefinite:false,reason:'QA Supporter',expected_revision:0},
@@ -30,11 +32,12 @@ async function open(language,width,target,{signed=false,owner=false,operator=fal
       }:{authenticated:false});
       if(url.pathname==='/v1/portal-ops/support-members'){
         financeRequests++;
+        memberRequests.push(Object.fromEntries(url.searchParams));
         assert.ok(owner || finance);
         const staff = url.searchParams.get('tier')==='admin';
         const matching=(!url.searchParams.get('q') || url.searchParams.get('q').toLowerCase()==='fixture') &&
           ['all',manual?'pro':'vip'].includes(url.searchParams.get('tier'));
-        return json(route,{totals:{supporter:0,vip:1,pro:0},monthly_equivalent:{supporter:0,vip:35000,pro:0},
+        return json(route,{totals:{supporter:0,vip:vipCount,pro:0},monthly_equivalent:{supporter:0,vip:vipCount*35000,pro:0},
           sync:{status:'current',last_confirmed_at:paidUntil},entries:staff?[{public_id:profile.public_id,display_name:'Staff Pilot',tier:'admin'}]:matching?[{
             public_id:profile.public_id,display_name:'Fixture Pilot',tier:manual?'pro':'vip',paid_tier:'vip',
             manual_tier:manual,manual_ends_at:null,paid_until:paidUntil,
@@ -96,10 +99,11 @@ async function open(language,width,target,{signed=false,owner=false,operator=fal
     assert.equal(request.method(),'GET');
     return fixture(route,[],{signed});
   });
+  if(finance) await page.clock.install();
   await page.goto(base+(language==='en'?'/en':'')+target,{waitUntil:'networkidle'});
   const consent=page.locator('.asg-legal-banner-btn-secondary');
   if(await consent.isVisible())await consent.click();
-  return {page,errors,financeRequests:()=>financeRequests};
+  return {page,errors,financeRequests:()=>financeRequests,memberRequests,setVipCount:count=>{vipCount=count;}};
 }
 
 try{
@@ -160,7 +164,23 @@ try{
   await financePanel.getByLabel('Действующий уровень').selectOption('admin');
   await financePanel.getByText('Staff Pilot · ADMIN').waitFor();
   assert.match(await financePanel.locator('[data-member-totals]').textContent(),/350/);
-  await financePanel.getByLabel('Подтверждённые поступления, ₽').waitFor();
+  const confirmed=financePanel.getByLabel('Подтверждённые поступления, ₽');
+  await confirmed.fill('123');
+  await financePanel.getByLabel('Имя пилота').fill('unsent');
+  finance.setVipCount(2);
+  await finance.page.clock.fastForward(300_000);
+  await financePanel.getByText(/VIP · 2 · 700/).waitFor();
+  assert.deepEqual(finance.memberRequests.at(-1),{tier:'admin',q:'',page:'1'});
+  assert.equal(await confirmed.inputValue(),'123');
+  assert.equal(await financePanel.getByLabel('Имя пилота').inputValue(),'unsent');
+  await finance.page.getByRole('tab',{name:'Часовые события'}).click();
+  finance.setVipCount(3);
+  const reads=finance.memberRequests.length;
+  await finance.page.clock.fastForward(300_000);
+  assert.equal(finance.memberRequests.length,reads);
+  await finance.page.getByRole('tab',{name:'Поддержка'}).click();
+  await financePanel.getByText(/VIP · 3 · 1[\s\u00a0]050/).waitFor();
+  assert.equal(await confirmed.inputValue(),'123');
   assert.deepEqual(finance.errors,[]);
   await finance.page.close();
 

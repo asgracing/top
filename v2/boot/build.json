@@ -3,7 +3,7 @@
   "entry": "/v2/boot/home.js",
   "files": [
     {
-      "path": "/v2/boot/chunks/controller-LOFQRWMN.js",
+      "path": "/v2/boot/chunks/controller-62AJJFP5.js",
       "bytes": 343361
     },
     {
@@ -15,11 +15,11 @@
       "bytes": 32156
     },
     {
-      "path": "/v2/boot/chunks/portal-ops-page-FEGIWR46.js",
-      "bytes": 113711
+      "path": "/v2/boot/chunks/portal-ops-page-MA7BR7ON.js",
+      "bytes": 114325
     },
     {
-      "path": "/v2/boot/chunks/control-CDJCG4TF.js",
+      "path": "/v2/boot/chunks/control-I4Z6MIF2.js",
       "bytes": 45610
     },
     {
@@ -75,8 +75,8 @@
       "bytes": 10618
     },
     {
-      "path": "/v2/boot/chunks/project-support-D4PHWYTL.js",
-      "bytes": 14222
+      "path": "/v2/boot/chunks/project-support-AEOLGUAK.js",
+      "bytes": 14483
     },
     {
       "path": "/v2/boot/chunks/chunk-4WCAUY4O.js",
