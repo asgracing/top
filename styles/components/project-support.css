@@ -1,6 +1,9 @@
 .project-support-panel { min-width:0; padding:clamp(14px, 2.5vw, 24px); margin-bottom:12px; }
 .project-support-panel h1,.project-support-panel h2 { margin:0 0 10px; }
 .project-support-tiers { display:grid; grid-template-columns:repeat(3,minmax(0,1fr)); gap:12px; }
+.project-support-tiers > article { display:flex; flex-direction:column; }
+.project-support-actions { display:flex; flex-wrap:wrap; align-items:center; gap:8px; margin-top:auto; }
+[data-trial-status]:not(:empty) { margin-top:8px; }
 .project-support-account p { margin:6px 0; }
 @media (min-width:1001px) { .control-summary:has(>.project-support-account) { grid-template-columns:repeat(5,minmax(0,1fr)); } }
 @media (max-width:650px) { .control-summary>.project-support-account { grid-column:1/-1; } }
@@ -17,6 +20,7 @@
 .project-funding-stages { display:grid; grid-template-columns:repeat(2,minmax(0,1fr)); gap:3px; }
 .project-funding-stage { display:grid; grid-template-rows:1fr auto; gap:7px; }
 .project-funding-stage h3 { margin:0; padding-inline-end:6px; font-size:clamp(.82rem, 2vw, 1rem); }
+[data-funding-value] { color:#c8d9e9; white-space:nowrap; font-variant-numeric:tabular-nums; }
 .project-funding-track { height:13px; background:#243345; overflow:hidden; }
 .project-funding-stage:first-child .project-funding-track { border-radius:6px 0 0 6px; }
 .project-funding-stage:last-child .project-funding-track { border-radius:0 6px 6px 0; }

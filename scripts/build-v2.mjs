@@ -197,15 +197,19 @@ for (const language of ['ru','en']) {
   const statsHead=value=>value.replace(`/v2/boot/home.js?v=${bootVersion}`,`/v2/boot/home.js?v=${statsBootVersion}`);
   const hourlyHead=value=>value.replace(`/v2/boot/home.js?v=${bootVersion}`,`/v2/boot/home.js?v=${hourlyBootVersion}`);
   const initialHomeScript = '<script async type="module" data-home-initial src="/v2/home-initial-data-v1.js"></script>';
+  const homeHead = hourlyHead(head)
+    .replace(`/v2/styles/design.css?v=${presentationVersion}`,'/v2/styles/design.css?v=20261122supportlaunch')
+    .replace(`/v2/boot/home.js?v=${hourlyBootVersion}`,'/v2/boot/home.js?v=20261122supportlaunch');
   const homeBody = localizedV2Links(addFaqToShell(pageBody, language, 'home', faqContent), language);
-  await emit(`v2/${language}/index.html`,`<!doctype html>\n<html lang="${language}" data-page="home" data-page-language="${language}" data-v2="home"><head>${initialHomeScript}${hourlyHead(head)}${faqStyles}${faqScript}</head><body data-v2="home">${homeBody}<div id="v1-runtime-host" hidden inert aria-hidden="true">${oldBody}</div>${modals}</body></html>\n`);
+  await emit(`v2/${language}/index.html`,`<!doctype html>\n<html lang="${language}" data-page="home" data-page-language="${language}" data-v2="home"><head>${initialHomeScript}${homeHead}${faqStyles}${faqScript}</head><body data-v2="home">${homeBody}<div id="v1-runtime-host" hidden inert aria-hidden="true">${oldBody}</div>${modals}</body></html>\n`);
   for (const config of pageRegistry.filter(page => page.route)) {
     const page=config.route.slice(0,-1), screen=config.screen;
     const title=config.title[language], description=config.description[language];
     const pageHead=head.replace(/<title>[\s\S]*?<\/title>/,`<title>${title} · ASG Racing</title>`).replace(/(<meta name="description" content=")[^"]+/,`$1${description}`).replace(/(<meta property="og:url" content=")[^"]+/,`$1https://asgracing.ru/v2/${language}/${page}/`) + `\n<link rel="stylesheet" href="/v2/pages/views/pages.css?v=${profileStylesVersion}">`+(['races','race','championships','hourly/championship','teams','clubs','teams/detail','cars','fun-stats','bans','hourly/championship/history','news','news/article','community','about','instructions','join','documents','documents/read','privacy','cookies','404'].includes(page)?`\n<link rel="stylesheet" href="/v2/pages/views/site-pages.css?v=${presentationVersion}">`:'')+`\n<link rel="stylesheet" href="/v2/pages/views/r24-pages.css?v=${presentationVersion}">`;
     const accountHead=['account','account/settings','moderation','portal-ops'].includes(page)?pageHead+`<link rel="stylesheet" href="/v2/pages/views/control-pages.css?v=${presentationVersion}"><link rel="stylesheet" href="/v2/pages/account.css?v=${controlStylesVersion}"><link rel="stylesheet" href="/v2/pages/control.css?v=${controlStylesVersion}">`:pageHead;
     let owningHead=page==='community'?pageHead+`<meta name="community-likes-api" content="${(await readClassic('community/index.html')).match(/<meta name="community-likes-api" content="([^"]+)"/)[1]}">`:accountHead;
-    if(['support','ops'].includes(screen))owningHead=owningHead.replace(`/v2/boot/home.js?v=${bootVersion}`,'/v2/boot/home.js?v=20261121support1');
+    if(screen==='support')owningHead=owningHead.replace(`/v2/boot/home.js?v=${bootVersion}`,'/v2/boot/home.js?v=20261122supportlaunch');
+    if(screen==='ops')owningHead=owningHead.replace(`/v2/boot/home.js?v=${bootVersion}`,'/v2/boot/home.js?v=20261121support1');
     if(screen==='account'){
       owningHead=owningHead.replace(`/v2/pages/account.css?v=${controlStylesVersion}`,'/v2/pages/account.css?v=20261121paddock1');
       owningHead=owningHead.replace(`/v2/boot/home.js?v=${bootVersion}`,`/v2/boot/home.js?v=${accountBootVersion}`);

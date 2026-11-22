@@ -1,15 +1,17 @@
 import {safeAvatarUrl} from '/src/features/auth/header-auth.js';
 import {createHttpClient} from '/src/shared/http-client.js';
 import {v2Route} from '../routes.js';
-import {ensureProjectSupportStyle,renderSupportFunding,showSupportFunding} from './support-funding.js?v=20261120funding1';
+import {ensureProjectSupportStyle,renderSupportFunding,showSupportFunding} from './support-funding.js?v=20261122supportlaunch';
 
 const AUTH = 'https://auth.asgracing.ru';
 const TIERS = [
-  {id:'supporter', name:'Supporter'},
-  {id:'vip', name:'VIP'},
-  {id:'pro', name:'PRO'},
+  {id:'supporter', name:'Supporter', sponsrLevel:50024},
+  {id:'vip', name:'VIP', sponsrLevel:50046},
+  {id:'pro', name:'PRO', sponsrLevel:50047},
 ];
 const SUPPORT_REQUEST = {cache:'no-store', headers:{Accept:'application/json'}};
+const PRIVATE_REQUEST = {...SUPPORT_REQUEST, credentials:'include'};
+const STATUS_URL = AUTH + '/v1/me/support';
 const client = createHttpClient({defaultTimeoutMs:8000});
 const findTier = id => TIERS.find(tier => tier.id === id);
 const validDriver = id => typeof id === 'string' && /^drv_[a-z0-9]{1,64}$/.test(id);
@@ -27,11 +29,18 @@ export function startSupportPage({view, text, esc, language}) {
     <section class="panel project-support-panel">
       <h1>${text('Поддержка ASG Racing','Support ASG Racing')}</h1>
       <p>${text('Подписка помогает оплачивать работу сайта, серверов и разработку.','Subscriptions help pay for the site, servers and development.')}</p>
-      <p class="page-help">${text('Для связи подписки с ASG используйте в Sponsr тот же Steam-аккаунт. Discord нужен для получения роли.',
-        'Use the same Steam account on Sponsr and ASG to link your subscription. Discord is required for the Discord role.')}</p>
+      <p class="page-help">${text('Discord нужен для получения роли. Пробный доступ на 7 дней можно активировать один раз на Steam-аккаунт для уровня выше текущего.',
+        'Discord is required for the Discord role. A 7-day trial is available once per Steam account for a tier above your current one.')}</p>
     </section>
     <div class="project-support-tiers">${TIERS.map(tier=>`<article class="panel project-support-panel">
       <h2>${tier.name}</h2><p>${perks[tier.id]}</p>
+      <p class="page-help">${text('Для получения бонусов привяжите в настройках Sponsr тот же Steam-аккаунт, с которым входите в ASG.',
+        'To receive benefits, link the same Steam account you use to sign in to ASG in your Sponsr settings.')}</p>
+      <div class="project-support-actions">
+        <a class="button primary" href="https://sponsr.ru/checkout/?project=asgracing&amp;lid=${tier.sponsrLevel}&amp;type=subscribe" target="_blank" rel="noopener noreferrer">${text('Оформить','Subscribe')}</a>
+        <button class="button" type="button" data-support-trial="${tier.id}">${text('Попробовать бесплатно','Try for free')}</button>
+      </div>
+      <div class="page-help" data-trial-status role="status"></div>
     </article>`).join('')}</div>
     <section class="panel project-support-panel">
       <h2>${text('Кто поддерживает проект','Project supporters')}</h2>
@@ -53,9 +62,14 @@ export function startSupportPage({view, text, esc, language}) {
   const more = view.querySelector('[data-support-more]');
   const shown = new Set();
   let page = 1;
+  wireTrial(view,text,v2Route('support/',language));
   void client.requestJson(AUTH + '/v1/support/funding', {...SUPPORT_REQUEST, credentials:'omit'})
-    .then(response=>showSupportFunding(funding,response?.progress,text))
-    .catch(()=>showSupportFunding(funding,null,text,text('Шкала временно недоступна','Funding progress is temporarily unavailable')));
+    .then(response=>{
+      if (!response || !Object.hasOwn(response,'progress')) throw new Error('missing_funding_progress');
+      showSupportFunding(funding,response.progress,text);
+    })
+    .catch(()=>showSupportFunding(funding,null,text,
+      text('Шкала временно недоступна','Funding progress is temporarily unavailable')));
   async function load() {
     more.hidden = true;
     notice.textContent = text('Загружаем список…','Loading supporters…');
@@ -97,4 +111,62 @@ export function startSupportPage({view, text, esc, language}) {
   }
   more.addEventListener('click',()=>void load());
   void load();
+}
+
+function wireTrial(view,text,returnPath) {
+  const buttons = [...view.querySelectorAll('[data-support-trial]')];
+  const unavailable = text('Пробный доступ сейчас недоступен.','Trial access is currently unavailable.');
+  const used = text('Пробный период для этого Steam-аккаунта уже использован.',
+    'This Steam account has already used its trial.');
+  for (const button of buttons) button.addEventListener('click',async () => {
+    const notice = button.parentElement.nextElementSibling;
+    const tier = findTier(button.dataset.supportTrial);
+    let started = false;
+    for (const other of buttons) {
+      other.disabled = true;
+      other.parentElement.nextElementSibling.replaceChildren();
+    }
+    notice.textContent = text('Проверяем доступ…','Checking eligibility…');
+    try {
+      const auth = await client.requestJson(AUTH + '/v1/me',PRIVATE_REQUEST);
+      if (!auth.authenticated) {
+        const login = document.createElement('a');
+        login.className = 'text-link';
+        login.href = AUTH + '/v1/auth/steam/start?return_path=' + encodeURIComponent(returnPath);
+        login.textContent = text('Войдите через Steam, чтобы попробовать','Sign in through Steam to start a trial');
+        notice.replaceChildren(login);
+        return;
+      }
+      const {trial} = await client.requestJson(STATUS_URL,PRIVATE_REQUEST);
+      if (!auth.csrf_token || !Array.isArray(trial?.eligible_tiers)) {
+        notice.textContent = unavailable;
+        return;
+      }
+      if (trial.used || !trial.eligible_tiers.includes(tier.id)) {
+        notice.textContent = trial.used ? used : text('Этот уровень недоступен для пробного периода.',
+          'This tier is not eligible for a trial.');
+        return;
+      }
+      const confirmed = window.confirm(text(
+        `Активировать ${tier.name} на 7 дней? Пробный период начнётся сейчас. Списаний не будет.`,
+        `Start a 7-day ${tier.name} trial now? You won't be charged.`));
+      if (!confirmed) {
+        notice.replaceChildren();
+        return;
+      }
+      await client.requestJson(STATUS_URL+'/trial',{
+        ...PRIVATE_REQUEST,method:'POST',
+        headers:{...PRIVATE_REQUEST.headers,'Content-Type':'application/json','X-CSRF-Token':auth.csrf_token},
+        body:JSON.stringify({tier:tier.id}),
+      });
+      started = true;
+      notice.textContent = text(`${tier.name} активирован на 7 дней.`,`${tier.name} is active for 7 days.`);
+    } catch (error) {
+      notice.textContent = error.status === 409
+        ? text('Доступ изменился. Нажмите ещё раз, чтобы проверить статус.','Eligibility changed. Try again to refresh your status.')
+        : unavailable;
+    } finally {
+      for (const other of buttons) other.disabled = started;
+    }
+  });
 }
