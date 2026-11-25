@@ -1,8 +1,8 @@
 {
   "schemaVersion": 1,
-  "revision": "33ad13479b2ce9ac3f0476354667c6aa6089c1d2",
-  "files": 1465,
-  "bytes": 207703322,
+  "revision": "9f0af68a0da45c1deaa72477f785a6142fc3387a",
+  "files": 1467,
+  "bytes": 208393827,
   "assets": [
     {
       "path": "404.html",
@@ -1507,7 +1507,7 @@
     {
       "path": "en/hourly/index.html",
       "bytes": 81015,
-      "sha256": "d0de4e241f9b660b23ae55b9845c60642d5f2aa8d00ddb5ea0fdecb64d6d3e05"
+      "sha256": "40ccba7e4b6f44a6448e5a8c26fd4858303f801a73b493b796fb89ddd9e318a3"
     },
     {
       "path": "en/hourly/privacy/index.html",
@@ -1752,7 +1752,7 @@
     {
       "path": "hourly/index.html",
       "bytes": 86150,
-      "sha256": "6f12a228ec1b975a906d9d34696f89ce900a3eac12e305a57e600ab32fbd5c53"
+      "sha256": "fa5414b06e2abf255916ffea4a7b60fc6ce685613ab20a0b274ab4875b4a498a"
     },
     {
       "path": "hourly/index.ru.html",
@@ -3297,7 +3297,7 @@
     {
       "path": "v2/boot/build.json",
       "bytes": 6306,
-      "sha256": "e360b79f56dc1bdb7618f51c6f7c77a15cc544162cdaa9d388f0216dc2bd8443"
+      "sha256": "172d2a3e9a9e81d748cddda4a5d5c4225a99af02b4888ab2254eadfe07071d4f"
     },
     {
       "path": "v2/boot/chunks/account-2NDTNJRL.js",
@@ -5185,6 +5185,11 @@
       "sha256": "5b1283011cc8987846c3535a27b33a42c29c43114b29134e0612ba03e9c3160c"
     },
     {
+      "path": "v2/boot/chunks/controller-ECEAD3NU.js",
+      "bytes": 344847,
+      "sha256": "af7ade54062591397f72f84e6b9cef4d4bb398ec8d12b9ee8360261e785854e9"
+    },
+    {
       "path": "v2/boot/chunks/controller-EHY66KVA.js",
       "bytes": 329052,
       "sha256": "00448ff6ebe2f3f5590816ac75e59b7c0d72d357774b574316a7cd276af4667d"
@@ -5373,6 +5378,11 @@
       "path": "v2/boot/chunks/controller-UA4XRVQI.js",
       "bytes": 303422,
       "sha256": "1a7a83db8d099e0920eb909a3f94cd18b8b2d30048a14caf87f98ce78898b9cd"
+    },
+    {
+      "path": "v2/boot/chunks/controller-UD5STCMP.js",
+      "bytes": 344712,
+      "sha256": "794fc2eae477204347a6f27f7b7114fa0a52e00446617e4945b118455b92672f"
     },
     {
       "path": "v2/boot/chunks/controller-UFHCYTXN.js",
@@ -6437,7 +6447,7 @@
     {
       "path": "v2/boot/home.js",
       "bytes": 176989,
-      "sha256": "0438935792cd436bebaf51693fbfd2b579d820aae6d55624aabb489c61e3364c"
+      "sha256": "5f7a6d614b7e86f55cb5eeaa5fbfcf9ea4a6fe1d099fb5823b3711263c026d74"
     },
     {
       "path": "v2/bridge.js",
@@ -6447,7 +6457,7 @@
     {
       "path": "v2/build-inputs.json",
       "bytes": 35052,
-      "sha256": "e51f811c83722506b256accce7d18450627a60b69c2fb5533273c36389271e38"
+      "sha256": "12237ec57c061b2d39f36d01fb9e19f11c31035ec89a79899f905a8b06894d22"
     },
     {
       "path": "v2/copy.js",
@@ -6461,8 +6471,8 @@
     },
     {
       "path": "v2/driver-safety-model.js",
-      "bytes": 7140,
-      "sha256": "d92bb9cba0ffd1764572c4b30e17b80e3d48504fe5cf7f413104bb9114bb278b"
+      "bytes": 7366,
+      "sha256": "49cc746c7b43f310300e48851c924a81b339e51e593a0493c7a2ddb2498fc038"
     },
     {
       "path": "v2/driver-safety.css",
@@ -6776,8 +6786,8 @@
     },
     {
       "path": "v2/pages/driver-safety.js",
-      "bytes": 26236,
-      "sha256": "f50f9856008180f6673898d4fe39deaad6934037c76ce9708c08aa23b8c7c455"
+      "bytes": 26956,
+      "sha256": "cb29e359b6b7c28da8c5676fd76f0d44ea6ef71379aa7f0d6bb377f86556817c"
     },
     {
       "path": "v2/pages/driver-support.js",

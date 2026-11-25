@@ -744,7 +744,7 @@
     },
     {
       "path": "v2/driver-safety-model.js",
-      "sha256": "d92bb9cba0ffd1764572c4b30e17b80e3d48504fe5cf7f413104bb9114bb278b"
+      "sha256": "49cc746c7b43f310300e48851c924a81b339e51e593a0493c7a2ddb2498fc038"
     },
     {
       "path": "v2/driver-support-model.js",
@@ -828,7 +828,7 @@
     },
     {
       "path": "v2/pages/driver-safety.js",
-      "sha256": "f50f9856008180f6673898d4fe39deaad6934037c76ce9708c08aa23b8c7c455"
+      "sha256": "cb29e359b6b7c28da8c5676fd76f0d44ea6ef71379aa7f0d6bb377f86556817c"
     },
     {
       "path": "v2/pages/driver-support.js",

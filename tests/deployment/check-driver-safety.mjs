@@ -7,6 +7,9 @@ import {browser,base,fixture,root} from './v2-browser-fixtures.mjs';
 const publicData=JSON.parse(await fs.readFile(path.join(root,'tests/fixtures/v2-pages/public.json'),'utf8'));
 const profile=structuredClone(publicData.driver),seed=profile.race_history[0];
 const history=Array.from({length:37},(_,i)=>({race_id:'sr-integration-'+i,finished_at:new Date(Date.now()-(38-i)*86400000).toISOString(),track:'monza',old_sr:4+i*.1,new_sr:4+(i+1)*.1,delta_sr:.1,completed_laps:12,invalid_laps:1,incident_points:1,incident_penalty_delta:.05,counted_penalties_count:0}));
+Object.assign(history[31],{old_sr:7.1,new_sr:7.3,delta_sr:.2,completed_laps:10,leader_laps:10,valid_laps:10,invalid_laps:0,
+  calculation_version:'sr_v4_incident_half_v2',incident_coverage:'verified',distance_bonus:.1,incident_deduction:.005,
+  incident_episodes:[{kind:'contact',damage_growth:null,deduction:.005}],incident_points:1,incident_penalty_delta:.10,base_delta:.10});
 Object.assign(history[32],{completed_laps:4,leader_laps:10,valid_laps:2,invalid_laps:2,base_delta:0,
   calculation_version:'sr_variant_a_v1',incident_coverage:'verified',distance_bonus:.1,incident_deduction:0,
   incident_episodes:[],incident_points:0,incident_penalty_delta:.1});
@@ -96,6 +99,11 @@ try {
     assert.equal(await incidentsCard.locator(':scope > strong').textContent(),'+0.10');
     assert.equal(await bonusCard.count(),0);
     assert.equal(await episodeDetails.count(),0);
+    await page.locator('.driver-sr-race[data-sr-race="sr-integration-31"]').click();
+    assert.match(await incidentsCard.innerText(),/− 0\.005/);
+    await episodeDetails.locator('summary').click();
+    assert.match(await episodeDetails.locator('li').innerText(),/−0\.005 SR/);
+    assert.match(await page.locator('.driver-sr-verdict').textContent(),/50%/);
     await page.locator('#profile-tab-races').click();
     assert.equal(await page.locator('#profile-history-content tbody tr').count(),10);
     const racePager=page.locator('[data-pagination="profile"]');

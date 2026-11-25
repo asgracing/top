@@ -8,8 +8,8 @@ export function mountDriverSafety({root,profile,state,native,esc,text,date,track
   const minimumChartWidth=getChartRange?220:280;
   const size=5;let alive=true,ticket=0,lastWidth=0,resizeTimer;
   state.srPeriod||='30';state.srFilter||='all';state.srPage||=1;
-  const f=value=>srNumber(value)===null?'—':Number(value).toFixed(2);
-  const change=value=>srNumber(value)===null?'—':(value>0?'+':value<0?'−':'')+Math.abs(value).toFixed(2);
+  const f=(value,digits=2)=>srNumber(value)===null?'—':Number(value).toFixed(digits);
+  const change=(value,digits=2)=>srNumber(value)===null?'—':(value>0?'+':value<0?'−':'')+Math.abs(value).toFixed(digits);
   const damageNumber=new Intl.NumberFormat(text('ru-RU','en-US'),{maximumSignificantDigits:17,useGrouping:false});
   const percent=new Intl.NumberFormat(text('ru-RU','en-US'),{style:'percent',maximumFractionDigits:1});
   const color=value=>value>0?'positive':value<0?'negative':'';
@@ -86,11 +86,13 @@ export function mountDriverSafety({root,profile,state,native,esc,text,date,track
     const r=selected(),box=content.querySelector('#profile-sr-breakdown');
     if(!r){box.innerHTML=`<p class="page-empty">${text('Выбери период с записями SR.','Choose a period with SR records.')}</p>`;return;}
     const b=driverSafetyBreakdown(r,cache.get(r.key));
+    const episodeDigits=b.version==='sr_v4_incident_half_v2'?3:2;
     const isN24=String(r.track).trim().toLowerCase().replaceAll('-','_').startsWith('nurburgring_24h');
     let verdict=r.delta>0?text('Рейтинг повышен','Rating increased'):r.delta<0?text('Рейтинг снижен','Rating decreased'):text('SR не изменился','SR unchanged');
     let reason=text('Ниже — опубликованные составляющие расчёта за эту гонку.','Published calculation components for this race are shown below.');
     if(b.enough===false){verdict=text('Недостаточно дистанции для изменения SR','Not enough distance to change SR');reason=text('Результат не достиг зачётной дистанции по условиям этой гонки.','The result fell short of the qualifying distance for this race.');}
     else if(b.cap){verdict=r.after===9.99?text('Начисление ограничено потолком 9.99','Gain limited by the 9.99 ceiling'):text('Списание ограничено нижней границей 1.00','Loss limited by the 1.00 floor');reason=text('Сумма компонентов отличается от фактического изменения: рейтинг ограничен границами шкалы.','Component totals differ from the actual change because the rating is limited by its scale.');}
+    else if(b.version==='sr_v4_incident_half_v2'){reason=text('Списания за инциденты уменьшены вдвое. Максимальный минус за гонку −0,50 SR. Main и Hourly учитывают подтверждённые нарушения с начала гонки, остальные серверы требуют 50% дистанции лидера.','Incident deductions are halved. The maximum race loss is 0.50 SR. Main and Hourly count verified violations from race start. Other servers require 50% of the leader’s distance.');}
     else if(b.variantA){reason=isN24
       ?text('Для Nürburgring 24h действует отдельная шкала.','Nürburgring 24h uses its own scale.')
       :text('SRv4 учитывает завершённые круги даже при сходе до 50% дистанции лидера.','SRv4 counts completed laps even if you retire before 50% of the leader’s distance.');}
@@ -115,8 +117,8 @@ export function mountDriverSafety({root,profile,state,native,esc,text,date,track
     if(splitIncidents&&!isN24){
       if(b.incidents===0)incidentEvidence=text('Подтверждённых эпизодов нет.','No verified episodes.');
       if(b.incidentDeduction>0)incidentEvidence+=text(
-        ` · База ${change(b.distanceBonus)} − ${f(b.incidentDeduction)} за эпизоды.`,
-        ` · Base ${change(b.distanceBonus)} − ${f(b.incidentDeduction)} for episodes.`);
+        ` · База ${change(b.distanceBonus)} − ${f(b.incidentDeduction,episodeDigits)} за эпизоды.`,
+        ` · Base ${change(b.distanceBonus)} − ${f(b.incidentDeduction,episodeDigits)} for episodes.`);
       if(b.coverage==='partial'||b.coverage==='unavailable')incidentEvidence+=' '+text(
         'База не начислена из-за неполных данных.','Incomplete data makes the base zero.');
     }
@@ -130,7 +132,7 @@ export function mountDriverSafety({root,profile,state,native,esc,text,date,track
         const growth=episode.damage_growth===null
           ?text('Рост повреждений не подтверждён','Damage increase unverified')
           :text('Прирост повреждений +','Damage increase +')+damageNumber.format(episode.damage_growth)+text(' ед.',' units');
-        return `<li><b>${event}</b><p>${esc(growth)}</p><b class="negative">${change(-episode.deduction)} SR</b></li>`;
+        return `<li><b>${event}</b><p>${esc(growth)}</p><b class="negative">${change(-episode.deduction,episodeDigits)} SR</b></li>`;
       }).join('');
       incidentDetails=`<details class="driver-sr-episodes" data-race="${esc(r.key)}"${incidentsOpen?' open':''}>
         <summary>${text('Детали инцидентов','Incident details')} (${b.incidentEpisodes.length})</summary>
