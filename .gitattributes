@@ -1,5 +1,8 @@
 # Sealed published assets retain exact bytes across Windows and Linux checkouts.
 # Source-only inputs retain the normal repository line-ending policy.
+/v2/membership/* -text
+/v2/home-version.js -text
+/v2/site-config.js -text
 /404.html -text
 /404/index.html -text
 /_config.yml -text
