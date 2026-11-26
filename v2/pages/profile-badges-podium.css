@@ -1,0 +1,97 @@
+.profile-heading .project-support-badge {
+  --rim: #e8ac85;
+  --glint: #ffebd4;
+  --shadow-metal: #825544;
+  --enamel: #462b27;
+  --cut: polygon(8px 0, 100% 0, calc(100% - 3px) 60%, calc(100% - 12px) 100%, 6px 100%, 0 calc(100% - 6px), 0 8px);
+  position: relative;
+  isolation: isolate;
+  flex: none;
+  box-sizing: border-box;
+  height: 34px;
+  gap: 8px;
+  padding: 2px 21px 3px 4px;
+  border: 0;
+  border-radius: 0;
+  clip-path: var(--cut);
+  background: linear-gradient(155deg, var(--glint), var(--rim) 22%, var(--shadow-metal) 44%, var(--rim) 76%, var(--glint));
+  color: var(--glint);
+  font: italic 800 13px/1 Barlow, "Segoe UI", sans-serif;
+  letter-spacing: .06em;
+  text-shadow: 0 1px 2px #000;
+  text-transform: uppercase;
+  font-size: 15px;
+}
+.profile-heading .project-support-badge[data-tier=supporter] {
+  --podium-emblem: url("data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20viewBox%3D%220%200%2024%2024%22%3E%3Cpath%20fill-rule%3D%22evenodd%22%20d%3D%22M2%206h7l3%204-3%201-3-2H3zm1%205h5l2%202-3%201zm8-2q2-3%205%200%203-3%205%200%202%203-5%209-7-6-5-9z%22%2F%3E%3C%2Fsvg%3E");
+}
+.profile-heading .project-support-badge[data-tier=vip] {
+  --rim: #deb971;
+  --glint: #fff0bd;
+  --shadow-metal: #79623a;
+  --enamel: #463821;
+  --podium-emblem: url("data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20viewBox%3D%220%200%2024%2024%22%3E%3Cpath%20fill-rule%3D%22evenodd%22%20d%3D%22M2%206l6%204%204-7%204%207%206-4-3%2010H5zm4%2012h12l-1%202H7z%22%2F%3E%3C%2Fsvg%3E");
+}
+.profile-heading .project-support-badge[data-tier=pro] {
+  --rim: #ada9ec;
+  --glint: #f0eeff;
+  --shadow-metal: #68678e;
+  --enamel: #2f304c;
+  --podium-emblem: url("data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20viewBox%3D%220%200%2024%2024%22%3E%3Cpath%20fill-rule%3D%22evenodd%22%20d%3D%22M1%2018%2011%204h6L7%2018zm9%200%208-11%205%2011h-5l-1-4-3%204z%22%2F%3E%3C%2Fsvg%3E");
+}
+.profile-heading .project-support-badge[data-tier=admin] {
+  --rim: #ff6779;
+  --glint: #ffe4df;
+  --shadow-metal: #86283d;
+  --enamel: #5b1729;
+  --podium-emblem: url("data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20viewBox%3D%220%200%2024%2024%22%3E%3Cpath%20fill-rule%3D%22evenodd%22%20d%3D%22M3%205l9-3%209%203-1%208c-1%204-4%207-8%209-4-2-7-5-8-9zm9%201-6%209h3l3-5%202%203h-2l-1%202h7z%22%2F%3E%3C%2Fsvg%3E");
+}
+.profile-heading .project-support-badge::before {
+  content: "";
+  position: absolute;
+  z-index: -1;
+  inset: 1.5px;
+  clip-path: var(--cut);
+  background: linear-gradient(95deg, transparent, var(--rim), transparent) center bottom 2px / 88% 1px no-repeat,
+    repeating-conic-gradient(var(--rim) 0 25%, transparent 0 50%) right 5px center / 6px 6px repeat-y,
+    linear-gradient(178deg, #ffffff34, transparent 42%, #0005 44%, transparent 90%),
+    linear-gradient(105deg, var(--enamel) 25%, #13161f 80%, var(--enamel));
+}
+.profile-heading .project-support-badge > span {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 31px;
+  height: 27px;
+  clip-path: polygon(5px 0,100% 0,calc(100% - 3px) 72%,50% 100%,0 74%,0 5px);
+  background: linear-gradient(135deg, var(--glint) 5%, var(--rim) 45%, var(--shadow-metal) 48%, var(--rim) 76%);
+  color: #211d23;
+  letter-spacing: 0;
+  font-size: 0;
+  line-height: 0;
+}
+.profile-heading .project-support-badge > span::before {
+  content: "";
+  display: block;
+  width: 22px;
+  height: 22px;
+  background: currentColor;
+  mask: var(--podium-emblem) center / contain no-repeat;
+}
+@media (prefers-reduced-motion: no-preference) {
+  .profile-heading .project-support-badge::after {
+    content: "";
+    pointer-events: none;
+    position: absolute;
+    inset: 0;
+    background: linear-gradient(112deg, transparent 18%, #fff2 34%, var(--rim) 43%, #ffffffe0 46%, #fff2 52%, transparent 57%, #fff7 64%, transparent 69%);
+    transform: translateX(110%);
+    animation: badge-podium-reflection 2.2s ease-in-out 2 both;
+    mix-blend-mode: screen;
+  }
+  @keyframes badge-podium-reflection {
+    0% { transform: translateX(-110%); opacity: 0; }
+    12%, 45% { opacity: .82; }
+    62%, 100% { transform: translateX(110%); opacity: 0; }
+  }
+}
