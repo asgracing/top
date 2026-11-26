@@ -120,6 +120,8 @@ export async function mountPollsPage({view, language = 'ru', subscribe, admin = 
   }
   function deliveryPanel(value) {
     const names = {pending:t('Ожидает отправки','Pending'),sending:t('Отправляется','Sending'),sent:t('Доставлено','Delivered'),retry:t('Повтор по расписанию','Retry scheduled'),ambiguous:t('Нужна проверка отправки','Delivery needs review'),failed:t('Ошибка доставки','Delivery failed')};
+    names.skipped = t('Пропущено: опрос уже закрыт','Skipped: poll already closed');
+    names.held_rollback = t('Приостановлено при возврате версии','Held after version rollback');
     const kinds = {opened:t('Начало','Opening'),closed:t('Итоги','Results'),pin_opened:t('Закрепление анонса','Opening pin'),pin_closed:t('Закрепление итогов','Results pin')};
     const rows = value?.delivery || [];
     return `<section class="panel poll-destinations"><h3>${t('Результаты отправляются всегда','Results are always sent')}</h3><p>${t('Автоматически после завершения — по сроку или вручную.','Automatically when the poll closes, on schedule or manually.')}</p><div><span>Telegram</span><a href="https://t.me/ASG_racing/44514" target="_blank" rel="noopener noreferrer">ASG Racing ↗</a></div><div><span>Discord</span><code>1529068060286128218</code></div>${rows.map(row => `<p class="poll-delivery" data-state="${escape(row.status)}">${escape(row.destination === 'telegram' ? 'Telegram' : 'Discord')} · ${escape(kinds[row.kind] || t('Доставка','Delivery'))}: <b>${escape(names[row.status] || t('Неизвестно','Unknown'))}</b></p>`).join('')}</section>`;
