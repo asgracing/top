@@ -1,6 +1,6 @@
 {
   "schemaVersion": 1,
-  "runtimeVersion": "20261126srv4half1",
+  "runtimeVersion": "20261126pollwidgets1",
   "inputs": [
     {
       "path": "account/driver-overlay.js",
@@ -80,7 +80,7 @@
     },
     {
       "path": "scripts/build-v2.mjs",
-      "sha256": "e565c2eac7886049a2cadf30c74c8b23d72cc9da7cf89d7022dfe7a7af35d763"
+      "sha256": "43866a8fede322cf184e6cc739f8d70e1fd743288bee959705536c3f297adae0"
     },
     {
       "path": "scripts/faq-page.mjs",
@@ -112,7 +112,7 @@
     },
     {
       "path": "scripts/v2-runtime-facade.txt",
-      "sha256": "912e51840db4971f39502dd77c8dec883517bf62543028376a98679747486f5b"
+      "sha256": "6b52dabab92cab4098316cc21c58dbfcfac97a9d33bf263f987f4b7ac95fcc20"
     },
     {
       "path": "src/features/auth/clubs-teams-auth-model.js",
@@ -772,7 +772,7 @@
     },
     {
       "path": "v2/home.js",
-      "sha256": "f355148a823d6244f23fb8141427100695da5977efd63eb818ad142cb8d2abea"
+      "sha256": "ef83f48b07bb0f5a45b7fddccd912547f3325a4ff15e4fa63ce8c7b2cd40781e"
     },
     {
       "path": "v2/live-stats.js",
@@ -844,7 +844,7 @@
     },
     {
       "path": "v2/page-layout.js",
-      "sha256": "9c201ec8f2b24ae7c9cd5e656cadbc12f35cad35b8605dac7b3a950a755174da"
+      "sha256": "3d2197135ee1f8fb95c8199f1e90969a746aef369a5ac8f435c9a8a29c8a534e"
     },
     {
       "path": "v2/page-registry.js",
@@ -876,7 +876,7 @@
     },
     {
       "path": "v2/pages/controller.js",
-      "sha256": "74a24f7bb54ca8cacae38848403f04c37f3544b914f2ce47a8039bb66b07010e"
+      "sha256": "42940f0e9fc7e2915b5980fccee7a4fc4d7e193c42c1b661941d5aa6f8b0e09e"
     },
     {
       "path": "v2/pages/data.js",
@@ -901,6 +901,10 @@
     {
       "path": "v2/pages/pagination.js",
       "sha256": "adb6007974e845a39a5d0a6a253256365fe1814eb3dfae30c46c6545ae831408"
+    },
+    {
+      "path": "v2/pages/poll-stats.js",
+      "sha256": "6a5de2883b950b10ffb1555c0f9d25799cbac0345902a871bfc0f3891e8caf60"
     },
     {
       "path": "v2/pages/polls-api.js",
@@ -1033,6 +1037,10 @@
     {
       "path": "v2/server-directory.js",
       "sha256": "136a549ba6eec3622f6999d3d0d3c8df724d6aa0fd613e99deaa83ab1308bdc4"
+    },
+    {
+      "path": "v2/server-poll.js",
+      "sha256": "c573d34b00524e6621114d193974a401e6d9ce607a9426a6a4418aa105262c66"
     },
     {
       "path": "v2/server-session.js",
