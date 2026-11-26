@@ -17,6 +17,9 @@ export function renderSafetyAbout(copy, escape) {
       <p class="safety-rules-example-total"><span>${escape(copy.exampleTotalLabel)}</span><strong>${renderAmounts(result)}</strong></p>
     </article>`
   ).join('');
+  const previous = copy.previous ? `<details class="safety-rules-details safety-rules-previous">
+      <summary>${escape(copy.previousLabel)}</summary>${renderSafetyAbout(copy.previous, escape)}
+    </details>` : '';
   return `<div class="safety-rules">
     <p class="safety-rules-lead"><strong>${escape(copy.safetyAboutP1)}</strong></p>
     ${paragraph(copy.overview)}
@@ -28,7 +31,7 @@ export function renderSafetyAbout(copy, escape) {
     <details class="safety-rules-details safety-rules-notes">
       <summary>${escape(copy.detailsLabel)}</summary>${copy.notes.map(paragraph).join('')}
     </details>
-    <p class="safety-rules-date">${escape(copy.safetyAboutP2)}</p>
+    <p class="safety-rules-date">${escape(copy.safetyAboutP2)}</p>${previous}
   </div>`;
 }
 

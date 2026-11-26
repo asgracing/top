@@ -1,6 +1,6 @@
 {
   "schemaVersion": 1,
-  "runtimeVersion": "20261120portalgrants4",
+  "runtimeVersion": "20261126srv4half1",
   "inputs": [
     {
       "path": "account/driver-overlay.js",
@@ -12,7 +12,7 @@
     },
     {
       "path": "assets/content/safety-rating-v3.json",
-      "sha256": "264fdebb559bb202904e87388f1e69fa755c5749697e11b991f4c011aeac5a73"
+      "sha256": "7e3474fa7eb98bd2f8b7af1ab1d087c4cf1fc2e75b9ab0090b90dfa256320464"
     },
     {
       "path": "assets/track-maps/barcelona.js",
@@ -80,7 +80,7 @@
     },
     {
       "path": "scripts/build-v2.mjs",
-      "sha256": "ccf6cc33e38c237a5f719a9076b284528380d830fa833faa715510f726971c27"
+      "sha256": "3723ffc012854cc0bcfd023d514c1a0047b149f89b02ef53b50c33b340f10ba1"
     },
     {
       "path": "scripts/faq-page.mjs",
@@ -744,7 +744,7 @@
     },
     {
       "path": "v2/driver-safety-model.js",
-      "sha256": "d92bb9cba0ffd1764572c4b30e17b80e3d48504fe5cf7f413104bb9114bb278b"
+      "sha256": "49cc746c7b43f310300e48851c924a81b339e51e593a0493c7a2ddb2498fc038"
     },
     {
       "path": "v2/driver-support-model.js",
@@ -759,56 +759,12 @@
       "sha256": "cb7c21e91c815ef77a38d02e51c1d8a8102bf14a36329d92577263fe7bf19d25"
     },
     {
-      "path": "v2/home-version.js",
-      "sha256": "7db1ac5dd7d6552d1a46a777bdd298c0fbaf74475bce8bd80d507dff7f446678"
-    },
-    {
       "path": "v2/home.js",
-      "sha256": "0161dc370c3dd02a5572c75959e88e62ac25ebaceaf9053b062d0961623fdecd"
+      "sha256": "d855ee8a2e335bb392909d971c8fdff9cc7a832d8bdd339ba14b45e9958837aa"
     },
     {
       "path": "v2/live-stats.js",
       "sha256": "267278aba5c85a0277ccd462b94f7c729153869645c67513c06d7ee60832d6e9"
-    },
-    {
-      "path": "v2/membership/demo-card.js",
-      "sha256": "6e020545751928106a71a0d34e0d10c614fa62496619a039030e3e4663d792a8"
-    },
-    {
-      "path": "v2/membership/home-template.js",
-      "sha256": "0e7e614a137178fdc7a3891468b1475e974f35fd75489d679d99e4ecf26f9522"
-    },
-    {
-      "path": "v2/membership/home.js",
-      "sha256": "753e63853ffded209d1558b0c5c2608882fc25b5a3be18c2d7146ca1ec0333fa"
-    },
-    {
-      "path": "v2/membership/locale.js",
-      "sha256": "c9f41591f378f640efc0eeda12fde47cfac8dfae828bc50d6c871ca78395606d"
-    },
-    {
-      "path": "v2/membership/offer.js",
-      "sha256": "100de60af535a4413530375246bdd209ef4ec0fbcc7010126245ac03867cddb3"
-    },
-    {
-      "path": "v2/membership/profile-demo.js",
-      "sha256": "6fad3e1c1efcfaab08be56241de9fb66a2676b81b1132a6484cd7cd4c288d432"
-    },
-    {
-      "path": "v2/membership/project-stats.js",
-      "sha256": "32d42c066657c2b2cb40b0c476c2ac11aa2df9dca35cfae15378e837f49ca882"
-    },
-    {
-      "path": "v2/membership/styles.js",
-      "sha256": "f8112d5d81f9940d208a840cfb9bc4a9dd127f982b344d67173a9b8bcb0f6416"
-    },
-    {
-      "path": "v2/membership/support-template.js",
-      "sha256": "19badd35c4683493e90ef03296a6adcaa3eb42a498649020d8a2e1c3639be29a"
-    },
-    {
-      "path": "v2/membership/support.js",
-      "sha256": "6b8c3d8b7be39638ad803d2c5eb5b7e66caf69fedae029851383bea886fcb453"
     },
     {
       "path": "v2/mobile-navigation.js",
@@ -864,7 +820,7 @@
     },
     {
       "path": "v2/pages/controller.js",
-      "sha256": "b25017f18bc4a9553dcfb047ee9ede69e55d03cad80768a596eee3545c21ebfd"
+      "sha256": "b25104a6e69b13e08f1a6d427af88191fd46238317ce9a6d3ecdefbe287423dc"
     },
     {
       "path": "v2/pages/data.js",
@@ -872,7 +828,7 @@
     },
     {
       "path": "v2/pages/driver-safety.js",
-      "sha256": "f50f9856008180f6673898d4fe39deaad6934037c76ce9708c08aa23b8c7c455"
+      "sha256": "cb29e359b6b7c28da8c5676fd76f0d44ea6ef71379aa7f0d6bb377f86556817c"
     },
     {
       "path": "v2/pages/driver-support.js",
@@ -916,7 +872,7 @@
     },
     {
       "path": "v2/pages/project-support.js",
-      "sha256": "56e301547057e16d18b91eb7162186e6a1e0673109bf21669880998b0c8fe0d6"
+      "sha256": "83954a327ea4af169e0300995be7f816bc5dcdec0c5869ab54bd9a0a053b3da0"
     },
     {
       "path": "v2/pages/race-archive-api.js",
@@ -924,7 +880,7 @@
     },
     {
       "path": "v2/pages/site-appearance-admin.js",
-      "sha256": "033d5f76ef6e9dc2565e420f703a40b47e4e5da06a7ed3abf51d37ef076fff12"
+      "sha256": "4cab6f5db2467b5efc4b8f214f4b187073a00e0384ab23c3e1df5a1c30e7aaec"
     },
     {
       "path": "v2/pages/support-funding.js",
@@ -996,7 +952,7 @@
     },
     {
       "path": "v2/safety-guide.js",
-      "sha256": "d6ab35444bd4d1d6a98ef3e683d723081f877c3eba30b0aaec387e87ff0c431e"
+      "sha256": "d69c9fa7b4288be145703ec4f3dac9a35146265f7f954b9c786494e305e2199a"
     },
     {
       "path": "v2/safety-history.js",
@@ -1019,16 +975,8 @@
       "sha256": "c89df4601aec22b5eaeddf52b1b2f8736c0d901f464eeb26f5d5e98d8e2eefea"
     },
     {
-      "path": "v2/site-config.js",
-      "sha256": "1cf29f07ec998abd31449804d1cce3f36b7b391df6ee3894cea43eb849c70b10"
-    },
-    {
       "path": "v2/site-routing.js",
       "sha256": "c0cfe46b2daf84156a054d5c9fa56e84ca6eb07015acd7c8cb22d5bf8a55dd8b"
-    },
-    {
-      "path": "v2/support-trial.js",
-      "sha256": "0d148f82afa4ad2c48f182c9711c5afb147083ce2c4843dda505cc8214a5ef4d"
     }
   ]
 }

@@ -7,6 +7,9 @@ import {browser,base,fixture,root} from './v2-browser-fixtures.mjs';
 const publicData=JSON.parse(await fs.readFile(path.join(root,'tests/fixtures/v2-pages/public.json'),'utf8'));
 const profile=structuredClone(publicData.driver),seed=profile.race_history[0];
 const history=Array.from({length:37},(_,i)=>({race_id:'sr-integration-'+i,finished_at:new Date(Date.now()-(38-i)*86400000).toISOString(),track:'monza',old_sr:4+i*.1,new_sr:4+(i+1)*.1,delta_sr:.1,completed_laps:12,invalid_laps:1,incident_points:1,incident_penalty_delta:.05,counted_penalties_count:0}));
+Object.assign(history[31],{old_sr:7.1,new_sr:7.3,delta_sr:.2,completed_laps:10,leader_laps:10,valid_laps:10,invalid_laps:0,
+  calculation_version:'sr_v4_incident_half_v2',incident_coverage:'verified',distance_bonus:.1,incident_deduction:.005,
+  incident_episodes:[{kind:'contact',damage_growth:null,deduction:.005}],incident_points:1,incident_penalty_delta:.10,base_delta:.10});
 Object.assign(history[32],{completed_laps:4,leader_laps:10,valid_laps:2,invalid_laps:2,base_delta:0,
   calculation_version:'sr_variant_a_v1',incident_coverage:'verified',distance_bonus:.1,incident_deduction:0,
   incident_episodes:[],incident_points:0,incident_penalty_delta:.1});
@@ -96,6 +99,11 @@ try {
     assert.equal(await incidentsCard.locator(':scope > strong').textContent(),'+0.10');
     assert.equal(await bonusCard.count(),0);
     assert.equal(await episodeDetails.count(),0);
+    await page.locator('.driver-sr-race[data-sr-race="sr-integration-31"]').click();
+    assert.match(await incidentsCard.innerText(),/− 0\.005/);
+    await episodeDetails.locator('summary').click();
+    assert.match(await episodeDetails.locator('li').innerText(),/−0\.005 SR/);
+    assert.match(await page.locator('.driver-sr-verdict').textContent(),/50%/);
     await page.locator('#profile-tab-races').click();
     assert.equal(await page.locator('#profile-history-content tbody tr').count(),10);
     const racePager=page.locator('[data-pagination="profile"]');
@@ -120,24 +128,23 @@ try {
       const rules=modal.locator('.safety-about-block');
       await rules.waitFor();
       assert.match(await modal.locator('h2').textContent(),/SRv4/);
-      assert.match(await rules.locator('.safety-rules-lead').innerText(),/50%/);
-      assert.match(await rules.locator('.safety-rules-date').innerText(),language==='ru'?/12:00 МСК/:/09:00 UTC/);
+      const current=rules.locator('.elo-about-copy > .safety-rules');
+      assert.match(await current.locator(':scope > .safety-rules-lead').innerText(),/−0[,.]50/);
+      assert.match(await current.locator(':scope > .safety-rules-date').innerText(),language==='ru'?/История предыдущих гонок сохраняется/:/Previous race history is preserved/);
+      assert.match(await current.innerText(),language==='ru'?/Main и Hourly[\s\S]*менее 50%[\s\S]*Ровно 50%/:/Main and Hourly[\s\S]*less than 50%[\s\S]*Exactly 50%/);
       assert.match(await rules.innerText(),language==='ru'?/Чистые и красные круги[\s\S]*Автоштрафы ACC[\s\S]*Пересчёт к 10 кругам/:/Valid and red laps[\s\S]*Automatic ACC penalties[\s\S]*10-lap reference/);
-      const examples=rules.locator('.safety-rules-examples');
+      const examples=current.locator(':scope > .safety-rules-examples');
       const cards=examples.locator('.safety-rules-example');
-      const notes=rules.locator('.safety-rules-notes');
+      const notes=current.locator(':scope > .safety-rules-notes');
       assert.equal(await cards.first().isVisible(),false);
       await examples.locator('summary').focus();
       await page.keyboard.press('Enter');
       assert.equal(await cards.first().isVisible(),true);
-      assert.deepEqual(await cards.locator('strong').allTextContents(),
-        ['13','04','10','01'].map(cents=>language==='ru'?`+0,${cents} SR`:`+0.${cents} SR`));
+      assert.deepEqual(await cards.locator('strong').allTextContents(),language==='ru'?['+0,13 SR','+0,10 SR','0,00 SR']:['+0.13 SR','+0.10 SR','0.00 SR']);
       const localAmount=amount=>language==='ru'?amount.replace('.',','):amount;
       const expectedRows=[
         ['+0.07','−0.03','+0.10','0.00','0.00','0.00'],
-        ['+0.07','−0.03','+0.10','−0.07','−0.02','0.00'],
-        ['+0.02','−0.02','+0.10','0.00','0.00','0.00'],
-        ['+0.02','−0.02','+0.10','−0.07','−0.02','0.00']
+        ['+0.02','−0.02','+0.10','0.00','0.00','0.00']
       ];
       for(const [index,amounts] of expectedRows.entries()){
         const card=cards.nth(index);
@@ -147,14 +154,24 @@ try {
         assert.equal(await card.locator('strong .safety-rules-gain').count(),1);
         assert.match(await card.locator('p').first().innerText(),language==='ru'?/Лидер проехал 12 кругов/:/The leader completed 12 laps/);
       }
+      assert.deepEqual(await cards.nth(2).locator('dd').allTextContents(),['4 / 10 = 40%']);
       assert.equal(await cards.first().locator('dd .safety-rules-gain').first().evaluate(el=>getComputedStyle(el).color),'rgb(57, 221, 166)');
       assert.equal(await cards.first().locator('dd .safety-rules-loss').first().evaluate(el=>getComputedStyle(el).color),'rgb(255, 101, 123)');
       assert.equal(await notes.evaluate(el=>el.open),false);
       await examples.locator('summary').click();
       assert.equal(await cards.first().isVisible(),false);
       await notes.locator('summary').click();
-      assert.match(await notes.innerText(),/Nürburgring 24h.*30%/s);
+      assert.match(await notes.innerText(),/Nürburgring 24h.*4[,.]125/s);
       await examples.locator('summary').click();
+      const previous=current.locator(':scope > .safety-rules-previous');
+      assert.equal(await previous.evaluate(el=>el.open),false);
+      await previous.locator(':scope > summary').click();
+      assert.match(await previous.locator('.safety-rules-lead').innerText(),/50%/);
+      assert.match(await previous.locator('.safety-rules-date').innerText(),language==='ru'?/12:00 МСК/:/09:00 UTC/);
+      const historicalExamples=previous.locator('.safety-rules-examples');
+      await historicalExamples.locator('summary').click();
+      assert.deepEqual(await historicalExamples.locator('article strong').allTextContents(),['13','04','10','01'].map(cents=>language==='ru'?`+0,${cents} SR`:`+0.${cents} SR`));
+      await previous.locator(':scope > summary').click();
       assert.ok(await modal.locator('.modal-body').evaluate(el=>el.scrollWidth<=el.clientWidth+1),'SR rules must fit the modal');
       if(width===390&&language==='ru')await cards.first().screenshot({path:taskScratchPath('sr4-first-example-mobile.png')});
     }
