@@ -14,7 +14,7 @@ test('legal readers preserve all original source text, headings, update date and
   const sections=nodes(html).filter(n=>n.name==='section'&&(n.attrs.class||'').split(' ').includes('legal-card'));
   assert.equal(d.sections.length,count);assert.equal(sections.length,count);
   sections.forEach((s,i)=>assert.equal(text((d.sections[i].title==='Введение'?'':d.sections[i].title+' ')+d.sections[i].html),text(html.slice(s.openEnd,s.close))));
-  assert.match(d.intro_html,/30\.04\.2026/);assert.equal(d.sections.at(-1).title,'English Note');
+  assert.match(d.intro_html,/27\.11\.2026/);assert.equal(d.sections.at(-1).title,'English Note');
   assert.ok(d.sections.at(-1).html.includes('Russian')||d.sections.at(-1).html.includes('Analytics'));
  }
 });

@@ -103,7 +103,9 @@
       "stable": "стабильно",
       "risk": "риск",
       "topDonors": "Топ-3 донатеров",
-      "allDonations": "Смотреть все"
+      "allDonations": "Смотреть все",
+      "contacts": "Контакты",
+      "offerDraft": "Оферта (PDF, проект)"
     },
     "editorial": {
       "subtitle": "Monza 24/7, ежедневные заезды, помощь новичкам",
@@ -271,7 +273,9 @@
       "stable": "steady",
       "risk": "risk",
       "topDonors": "Top 3 donors",
-      "allDonations": "View all"
+      "allDonations": "View all",
+      "contacts": "Contacts",
+      "offerDraft": "Offer (PDF, draft, RU)"
     },
     "editorial": {
       "subtitle": "Monza 24/7, daily events, beginner-friendly help",

@@ -608,7 +608,7 @@
     },
     {
       "path": "v1-source/html/cookies/index.html",
-      "sha256": "a5fe04fe51aaab58b4c33867536d240809e6655f19569c72ae55b6af3498fb87"
+      "sha256": "9de63b2d168fc43acfbfbae07515e397c515fdf88bf653388a7a90fc9800236b"
     },
     {
       "path": "v1-source/html/driver/index.html",
@@ -648,7 +648,7 @@
     },
     {
       "path": "v1-source/html/privacy/index.html",
-      "sha256": "71877ccba7f54624fe7e91d0b33c59510525d2410b947b568f38b8b65cd832bc"
+      "sha256": "4a49a13dcc58a98d8c9eda9c1d3c210daa4c22bbebaff3393cd7a68464885245"
     },
     {
       "path": "v1-source/html/races/index.html",
@@ -664,7 +664,7 @@
     },
     {
       "path": "v2-source/copy.json",
-      "sha256": "563d41958022e954b5daf2a4f8015574506b79bc9ecdbcc258e9ceb8c25fe74d"
+      "sha256": "0a5fd21d7659d626a438075bb60c65d7f6ac225f83abba3e4cfa5fed2d5cbfc8"
     },
     {
       "path": "v2-source/design.css",
@@ -672,7 +672,7 @@
     },
     {
       "path": "v2-source/home.html",
-      "sha256": "a9e7efc0628574041aa4f1cc6c9997de0b8fc9c3ad9879d8b64f2bd063a0a177"
+      "sha256": "921badf7156f97eeb6d14ac1d16e58a231c8fdf57028697fef761326b70754a4"
     },
     {
       "path": "v2-source/pages/archive.js",
@@ -708,7 +708,7 @@
     },
     {
       "path": "v2-source/pages/faq.json",
-      "sha256": "1a797e41291531fe873435e4a4fff986be6a35c3e6ad64492f8cd79b30e5c3a9"
+      "sha256": "e1c01578d99a80b669e624f301b19788757f3ed8d567b0b2c15f17042cd1a9fd"
     },
     {
       "path": "v2-source/pages/fun.js",
@@ -720,7 +720,7 @@
     },
     {
       "path": "v2-source/pages/information.js",
-      "sha256": "d07d42e4085e7238e5f492e2a1741ff97bdebe86c0a14ce922287e3ddcd7c7f6"
+      "sha256": "9b5a71a03966d5a19acebf5b43227064aeb90a10bb82ee7c25b701b85358e588"
     },
     {
       "path": "v2-source/pages/pages.css",
@@ -736,7 +736,7 @@
     },
     {
       "path": "v2-source/pages/site-pages.css",
-      "sha256": "9748c3c55f9f88bd964f457ed0d5778049d9a7a008e063e6a2df842541e327db"
+      "sha256": "e1af75e7a176155ea08640e4a2ee3ad87b003096876a7708e2301a7d8c865689"
     },
     {
       "path": "v2/donations.js",
@@ -820,7 +820,7 @@
     },
     {
       "path": "v2/membership/support.js",
-      "sha256": "88e009dca9b7327e46de13b0a2007c84a29bc2c1a966e5ecec3c26f7c2bbfbaa"
+      "sha256": "6d2e8f100cdfbab42488052e89844c471bfc7df2a297b2c1c74116c4aad930d2"
     },
     {
       "path": "v2/mobile-navigation.js",
@@ -944,7 +944,7 @@
     },
     {
       "path": "v2/pages/project-support.js",
-      "sha256": "36225b203dab1d79110e349a73ca2cc43ff775cc1baf0ceb81c0da6b7227b627"
+      "sha256": "16670a659af402f5ea5301596f2e995189fa9c28c7d0cf18f33b2a071c9b149f"
     },
     {
       "path": "v2/pages/race-archive-api.js",

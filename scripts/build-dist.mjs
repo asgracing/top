@@ -15,7 +15,7 @@ const allowedDirectories = [
 ];
 const allowedExtensions = new Set([
   ".css", ".gif", ".html", ".ico", ".jpeg", ".jpg", ".js", ".json", ".mp4", ".png",
-  ".svg", ".txt", ".webm", ".webp", ".xml",
+  ".pdf", ".svg", ".txt", ".webm", ".webp", ".xml",
 ]);
 const excludedNames = new Set(["background.original-20260630.mp4"]);
 

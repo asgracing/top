@@ -36,6 +36,11 @@ export function mountSupportMarketing(view,{language,text}) {
     const row=plan.querySelector('.plan-actions');row.prepend(button);row.after(status);
   }
   content.querySelector('.trial-link').remove();
+  const terms=document.createElement('p');terms.className='caption';
+  terms.innerHTML=`<a href="/assets/legal/asg-racing-offer-2026-11-27.pdf">${text('Оферта (PDF, проект)','Offer (PDF, draft, RU)')}</a> · ${text('Вопросы об оплате, отмене и возвратах:','Payments, cancellation and refunds:')} <a href="mailto:billing@asgracing.ru">billing@asgracing.ru</a><br>${text('Проект оферты размещён для ознакомления и пока не применяется к оплатам.','The draft offer is provided for review and does not yet apply to payments.')}`;
+  content.querySelector('#plans .section-intro').after(terms);
+  const help=document.createElement('p');help.innerHTML=`${text('Помощь пилотам:','Driver support:')} <a href="mailto:support@asgracing.ru">support@asgracing.ru</a>`;content.querySelector('#questions').append(help);
+
   const pass=content.querySelector('.support-pass');pass.innerHTML=demoCard;
   pass.addEventListener('click',()=>{const flipped=pass.getAttribute('aria-pressed')!=='true';pass.setAttribute('aria-pressed',String(flipped));pass.querySelector('.pass-front').hidden=flipped;pass.querySelector('.pass-back').hidden=!flipped;});
   const host=content.querySelector('#native-profile-demo');

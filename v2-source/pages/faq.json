@@ -53,14 +53,14 @@
     },
     {
       "id":"ask-for-help","group":"community-help","intents":["contacts"],
-      "ru":{"question":"Что делать, если ответа нет?","answer":"Спросите помощника здесь или используйте команду /ask в Discord. Если нужен человек, напишите в чат сообщества в Discord или Telegram.","action":"Открыть Discord"},
-      "en":{"question":"What if I still need help?","answer":"Ask the assistant here or use /ask in Discord. If you need a person, ask in the Discord or Telegram community chat.","action":"Open Discord"},
+      "ru":{"question":"Что делать, если ответа нет?","answer":"Спросите помощника здесь или используйте команду /ask в Discord. Если нужен человек, напишите в чат сообщества в Discord или Telegram. Для личного обращения напишите на support@asgracing.ru.","action":"Открыть Discord"},
+      "en":{"question":"What if I still need help?","answer":"Ask the assistant here or use /ask in Discord. If you need a person, ask in the Discord or Telegram community chat. For direct assistance, email support@asgracing.ru.","action":"Open Discord"},
       "link":"discord"
     },
     {
       "id":"partnership","group":"community-help","intents":[],
-      "ru":{"question":"Куда обратиться по рекламе и сотрудничеству?","answer":"Напишите Андрею из команды ASG Racing через Discord или Telegram. Укажите, кто вы и что предлагаете. В чате сообщества подскажут, как связаться с ним напрямую.","action":"Перейти в Discord"},
-      "en":{"question":"Who can I contact about sponsorship or partnerships?","answer":"Contact Andrei from ASG Racing via Discord or Telegram. Tell him who you are and what you have in mind. The community can point you to the right profile.","action":"Go to Discord"},
+      "ru":{"question":"Куда обратиться по рекламе и сотрудничеству?","answer":"Напишите на partners@asgracing.ru. Укажите, кого вы представляете, формат сотрудничества и как с вами связаться.","action":"Перейти в Discord"},
+      "en":{"question":"Who can I contact about sponsorship or partnerships?","answer":"Email partners@asgracing.ru. Tell us who you represent, what partnership you propose and how to contact you.","action":"Go to Discord"},
       "link":"discord"
     },
     {
