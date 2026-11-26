@@ -21,6 +21,7 @@ const server = http.createServer(async (req,res) => {
 });
 await new Promise(resolve=>server.listen(0,'127.0.0.1',resolve));
 const base = `http://127.0.0.1:${server.address().port}`;process.env.ASG_V2_PREVIEW=base;
+const entry = (language, route) => base + (process.env.ASG_POLL_BROWSER_ROOT === '1' ? (language === 'en' ? '/en/' : '/') : '/v2/' + language + '/') + route;
 const {browser,fixture} = await import('./v2-browser-fixtures.mjs');
 const now = Date.now();
 const sample = {id:'poll-fixture',title:'Какую трассу выбираем для следующей гонки?',description:'Выбираем вместе. Результаты помогут организаторам подготовить следующую гонку.',mode:'multiple',max_choices:2,status:'active',revision:4,participants:100,starts_at:new Date(now-3600000).toISOString(),ends_at:new Date(now+72*3600000).toISOString(),options:[{id:'spa',label:'Circuit de Spa-Francorchamps — длинное название трассы для проверки переноса',count:60,color:'#69b8f7'},{id:'nurburgring',label:'Nürburgring',count:75,color:'#a992f5'},{id:'brands',label:'Brands Hatch',count:20,color:'#62d5ba'}]};
@@ -71,12 +72,12 @@ async function fits(page) {
 try {
   for (const language of ['ru','en']) for (const width of [1440,390]) {
     const {page,context,state}=await setup({language,width});
-    await page.goto(`${base}/v2/${language}/polls/`);
+    await page.goto(entry(language,'polls/'));
     await page.waitForSelector('.poll-card'); await fits(page);
     assert.equal(await page.locator('.poll-card').count(),2);
     if (language==='ru' && width===1440) await page.screenshot({path:path.join(output,'directory-ru-1440.png'),fullPage:true,animations:'disabled'});
     await page.locator('[data-filter="archive"]').click();await page.waitForFunction(()=>document.querySelectorAll('.poll-card').length===1);
-    await page.goto(`${base}/v2/${language}/polls/view/?id=poll-fixture`);await page.waitForSelector('[data-vote]');await fits(page);
+    await page.goto(entry(language,'polls/view/?id=poll-fixture'));await page.waitForSelector('[data-vote]');await fits(page);
     assert.equal(await page.locator('[data-option-percent="nurburgring"]').textContent(),'75.0%');
     await page.locator('[name=choice]').nth(0).check();await page.locator('[name=choice]').nth(1).check();
     assert.equal(await page.locator('[name=choice]').nth(2).isDisabled(),true);
@@ -90,14 +91,14 @@ try {
   }
   {
     const {page,context}=await setup({signed:false,width:390});
-    await page.goto(`${base}/v2/ru/polls/view/?id=poll-fixture`);await page.waitForSelector('.poll-signin');
+    await page.goto(entry('ru','polls/view/?id=poll-fixture'));await page.waitForSelector('.poll-signin');
     assert.equal(await page.locator('[data-vote]').count(),0);assert.ok((await page.locator('.poll-signin a').getAttribute('href')).includes('return_path='));await fits(page);
-    await page.goto(`${base}/v2/ru/moderation/polls/`);await page.waitForSelector('.poll-empty h2');
+    await page.goto(entry('ru','moderation/polls/'));await page.waitForSelector('.poll-empty h2');
     assert.equal(await page.locator('[data-editor]').count(),0);results.push({screen:'guest-gates',passed:true});await context.close();
   }
   for (const language of ['ru','en']) for (const width of [1440,390]) {
     const {page,context,state}=await setup({admin:true,language,width});
-    await page.goto(`${base}/v2/${language}/moderation/polls/?new=1`);await page.waitForSelector('[data-editor]');await fits(page);
+    await page.goto(entry(language,'moderation/polls/?new=1'));await page.waitForSelector('[data-editor]');await fits(page);
     await page.locator('[name=title]').fill(language==='ru'?'Какая трасса следующая?':'Which track is next?');
     await page.locator('[name=option]').nth(0).fill('Spa-Francorchamps');await page.locator('[name=option]').nth(1).fill('Nürburgring');
     await page.locator('[data-poll-action=add]').click();await page.locator('[name=option]').nth(2).fill('Brands Hatch');
@@ -118,18 +119,18 @@ try {
     results.push({language,width,screen:'admin-create-publish-close',passed:true});await context.close();
   }
   {
-    const {page,context}=await setup({signed:true,admin:false});await page.goto(`${base}/v2/ru/moderation/polls/?new=1`);await page.waitForSelector('.poll-empty h2');assert.equal(await page.locator('[data-editor]').count(),0);results.push({screen:'non-admin-direct-entry',passed:true});await context.close();
+    const {page,context}=await setup({signed:true,admin:false});await page.goto(entry('ru','moderation/polls/?new=1'));await page.waitForSelector('.poll-empty h2');assert.equal(await page.locator('[data-editor]').count(),0);results.push({screen:'non-admin-direct-entry',passed:true});await context.close();
   }
   {
     const {page,context}=await setup({admin:true});
-    await page.goto(`${base}/v2/ru/moderation/`);await page.waitForSelector('.control-navigation a[href$="moderation/polls/"]');
+    await page.goto(entry('ru','moderation/'));await page.waitForSelector('.control-navigation a[href$="moderation/polls/"]');
     assert.equal(await page.locator('.control-navigation a[href$="reports/"]').count(),1);
     await page.locator('.control-navigation a[href$="moderation/polls/"]').click();await page.waitForSelector('.poll-card');
     results.push({screen:'moderation-entry-next-to-reports',passed:true});await context.close();
   }
   {
     const {page,context,state}=await setup();state.fail=true;
-    await page.goto(`${base}/v2/ru/polls/view/?id=poll-fixture`);await page.waitForSelector('.poll-empty h2');
+    await page.goto(entry('ru','polls/view/?id=poll-fixture'));await page.waitForSelector('.poll-empty h2');
     state.fail=false;await page.locator('[data-poll-action=retry]').click();await page.waitForSelector('[data-vote]');
     state.conflict=true;await page.locator('[name=choice]').nth(0).check();await page.locator('[data-vote]').click();
     await page.waitForFunction(()=>document.querySelector('[data-notice]')?.textContent.includes('изменился'));
@@ -139,12 +140,12 @@ try {
   {
     const {page,context,state}=await setup();await page.clock.install({time:new Date(now)});
     state.poll.ends_at=new Date(now+20000).toISOString();
-    await page.goto(`${base}/v2/ru/polls/view/?id=poll-fixture`);await page.waitForSelector('[data-vote]');
+    await page.goto(entry('ru','polls/view/?id=poll-fixture'));await page.waitForSelector('[data-vote]');
     await page.locator('[name=choice]').nth(0).check();await page.clock.fastForward(31000);
     await page.waitForSelector('.poll-ended');assert.equal(await page.locator('[data-vote]').count(),0);
     assert.equal(state.writes.length,0);results.push({screen:'deadline-during-selection',passed:true});await context.close();
   }
   assert.deepEqual(errors,[]);
-  await fs.writeFile(path.join(output,'acceptance.json'),JSON.stringify({results,errors,interceptedWrites:writes,productionRequests:0},null,2)+'\n');
+  await fs.writeFile(path.join(output,process.env.ASG_POLL_BROWSER_ROOT === '1' ? 'acceptance-root.json' : 'acceptance.json'),JSON.stringify({results,errors,interceptedWrites:writes,productionRequests:0},null,2)+'\n');
   console.log(`Polls browser: ${results.length} scenarios passed, ${writes} fixture writes, no production requests.`);
 } finally {await browser.close();server.closeAllConnections();await new Promise(resolve=>server.close(resolve));}

@@ -4,6 +4,24 @@
   "status": "release-candidate-awaiting-approval",
   "pages": [
     {
+      "path": "/polls/",
+      "version": "v2",
+      "language": "ru",
+      "screen": "polls"
+    },
+    {
+      "path": "/polls/view/",
+      "version": "v2",
+      "language": "ru",
+      "screen": "poll"
+    },
+    {
+      "path": "/moderation/polls/",
+      "version": "v2",
+      "language": "ru",
+      "screen": "polls-admin"
+    },
+    {
       "path": "/support/",
       "version": "v2",
       "language": "ru",
@@ -206,6 +224,24 @@
       "version": "v2",
       "language": "ru",
       "screen": "ops"
+    },
+    {
+      "path": "/en/polls/",
+      "version": "v2",
+      "language": "en",
+      "screen": "polls"
+    },
+    {
+      "path": "/en/polls/view/",
+      "version": "v2",
+      "language": "en",
+      "screen": "poll"
+    },
+    {
+      "path": "/en/moderation/polls/",
+      "version": "v2",
+      "language": "en",
+      "screen": "polls-admin"
     },
     {
       "path": "/en/support/",

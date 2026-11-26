@@ -80,7 +80,7 @@
     },
     {
       "path": "scripts/build-v2.mjs",
-      "sha256": "607d3d903ec37742459822efc4a664b4deb2a10045447f187e3b41eef6a47ccd"
+      "sha256": "74aa5d59ec61a51796e5060ad511c8bd6b76b0de64a34daa5da0af181afc7402"
     },
     {
       "path": "scripts/faq-page.mjs",
@@ -772,7 +772,7 @@
     },
     {
       "path": "v2/home.js",
-      "sha256": "07a158853e232d72e85fcff21594f01002b1179ca85fe7160713cdd5541775f3"
+      "sha256": "f355148a823d6244f23fb8141427100695da5977efd63eb818ad142cb8d2abea"
     },
     {
       "path": "v2/live-stats.js",
@@ -844,11 +844,11 @@
     },
     {
       "path": "v2/page-layout.js",
-      "sha256": "8b490fa43dfd776276d40383a96bd8b69af180466873121ee7580a28bb85518b"
+      "sha256": "9c201ec8f2b24ae7c9cd5e656cadbc12f35cad35b8605dac7b3a950a755174da"
     },
     {
       "path": "v2/page-registry.js",
-      "sha256": "21baf6c22028b2009ec21a67db437b7486b7504e3c05c417c52f25b66bc636d3"
+      "sha256": "9402e14d5cf71dfab175cf1f9ae51c063b9f06b7ed5c268ddc7d24c167b9c6bc"
     },
     {
       "path": "v2/pages/account-support.js",
@@ -872,11 +872,11 @@
     },
     {
       "path": "v2/pages/control.js",
-      "sha256": "7b72e0d2e578a867f6b297afc6ebf52b37942be8e2bcd071212a165f2566451d"
+      "sha256": "55d3ed1f6446794b6f535db0b6c8150854e7e94b60ad1c3812e6d895553a053a"
     },
     {
       "path": "v2/pages/controller.js",
-      "sha256": "b25017f18bc4a9553dcfb047ee9ede69e55d03cad80768a596eee3545c21ebfd"
+      "sha256": "c961218d5e5ea5890ade60f887b13f4c3faa64685cfa496cefce3a86c26d1d95"
     },
     {
       "path": "v2/pages/data.js",
@@ -901,6 +901,18 @@
     {
       "path": "v2/pages/pagination.js",
       "sha256": "adb6007974e845a39a5d0a6a253256365fe1814eb3dfae30c46c6545ae831408"
+    },
+    {
+      "path": "v2/pages/polls-api.js",
+      "sha256": "8b2c426bbe85333aafd4793c84a3daeb30f1fd43c040f6601879ac676d777b70"
+    },
+    {
+      "path": "v2/pages/polls-model.js",
+      "sha256": "d1760a0099818329443720db824b733fa5fb913995888bd6b52db4f6ae68b016"
+    },
+    {
+      "path": "v2/pages/polls.js",
+      "sha256": "44947af9ad67ed8d7b5b7eac051e2f62128cb7033f676460fe8a1da47276c7cc"
     },
     {
       "path": "v2/pages/profile-appearance-editor.js",
