@@ -107,3 +107,12 @@
 .poll-detail-meta{display:flex;justify-content:space-between;flex-wrap:wrap;gap:8px;font-size:12px;color:var(--poll-muted);font-variant-numeric:tabular-nums;margin:20px 0 0}
 .poll-confirm-preview{border:1px solid var(--poll-border);border-radius:5px;padding:15px;margin:16px 0 22px;font-size:13px;line-height:1.7;overflow-wrap:anywhere}
 .poll-confirm-preview strong{display:block;font-size:16px;line-height:1.5}.poll-confirm-preview ol{padding-left:20px;margin:12px 0}.poll-confirm-preview p{font-size:12px;margin:8px 0}
+
+.poll-editor label.poll-social-toggle{position:relative;display:grid;grid-template-columns:minmax(0,1fr) 48px;align-items:center;gap:18px;margin:24px 0 0;padding:20px;border:1px solid #70899f;border-radius:8px;background:#1d3245;cursor:pointer;transition:background .15s,border-color .15s}
+.poll-social-copy{display:grid;gap:8px;min-width:0}.poll-social-copy strong{font-size:16px;line-height:1.45;color:#f0f6fc}.poll-social-copy>span:last-child{font-size:12px;font-weight:400;line-height:1.65;color:#c0cedb}.poll-social-eyebrow{font-size:10px;letter-spacing:.1em;text-transform:uppercase;color:#a8c5de}
+.poll-editor .poll-social-toggle input{position:absolute;right:20px;top:50%;transform:translateY(-50%);width:48px;height:44px;opacity:0;margin:0;z-index:1;cursor:pointer}
+.poll-social-track{width:48px;height:28px;border:1px solid #94a7b8;border-radius:20px;background:#293c4d;position:relative;pointer-events:none}.poll-social-track:after{content:'';position:absolute;top:3px;left:3px;width:20px;height:20px;border-radius:50%;background:#c4d1dc;transition:transform .15s}
+.poll-social-toggle:has(input:checked){border-color:#75bafa;background:#203f58}.poll-social-toggle input:checked+.poll-social-track{background:#6ab8f8;border-color:#8fceff}.poll-social-toggle input:checked+.poll-social-track:after{transform:translateX(20px);background:#10283c}.poll-social-toggle:focus-within{outline:2px solid #a4d8ff;outline-offset:4px}.poll-social-toggle:has(input:disabled){cursor:default}.poll-social-toggle input:disabled{cursor:default}
+.poll-social-note{font-size:11px;line-height:1.7;color:var(--poll-muted);margin:10px 2px 0}.poll-confirm-preview [data-social-preview]{border-top:1px solid var(--poll-border);padding-top:12px;color:#c3dff5}
+@media(max-width:700px){.poll-editor label.poll-social-toggle{padding:16px;gap:12px}.poll-editor .poll-social-toggle input{right:16px}.poll-social-copy strong{font-size:15px}}
+@media(prefers-reduced-motion:reduce){.poll-social-track:after{transition:none}}

@@ -30,7 +30,13 @@ async function setup({width=1440,language='ru',signed=true,admin=false,denied=fa
   const context = await browser.newContext({viewport:{width,height:1000}}),page=await context.newPage();
   await context.addCookies([{name:'asg_privacy_consent',value:encodeURIComponent(JSON.stringify({version:'2026-04-30',analytics:false,savedAt:new Date().toISOString()})),url:base}]);
   await context.addInitScript(()=>sessionStorage.setItem('asgHomeIntroSeenR10','1'));
-  const state={poll:structuredClone(sample),choices:[],revision:0,fail:false,admin,deny:denied,writes:[],counts:0};
+  const state={poll:structuredClone(sample),choices:[],revision:0,fail:false,admin,deny:denied,writes:[],counts:0,legacy:false};
+  if (admin) state.poll.delivery = [
+    {kind:'opened',destination:'discord',status:'sent'},
+    {kind:'pin_opened',destination:'telegram',status:'retry'},
+    {kind:'closed',destination:'discord',status:'pending'},
+    {kind:'pin_closed',destination:'telegram',status:'ambiguous'}
+  ];
   page.on('pageerror',error=>errors.push(String(error)));
   await page.route('**/*',async route=>{
     const req=route.request(),url=new URL(req.url()),p=url.pathname;
@@ -57,9 +63,9 @@ async function setup({width=1440,language='ru',signed=true,admin=false,denied=fa
       if (p==='/v1/polls'||p==='/v1/admin/polls') {
         const selected=url.searchParams.get('filter');
         const items=selected==='archive'?[{...state.poll,status:'closed'}]:selected==='draft'?[{...state.poll,status:'draft'}]:[state.poll,{...state.poll,id:'second',title:'В какое время вам удобно участвовать в гонках?'}];
-        return send({polls:items,total:items.length,...(admin?{csrf_token:'test-poll-csrf'}:{})});
+        return send({polls:items,total:items.length,...(admin?{csrf_token:'test-poll-csrf',...(state.legacy?{}:{capabilities:{social_notifications:true}})}:{})});
       }
-      state.counts++;return send({poll:state.poll,...(admin?{csrf_token:'test-poll-csrf'}:{})});
+      state.counts++;return send({poll:state.poll,...(admin?{csrf_token:'test-poll-csrf',...(state.legacy?{}:{capabilities:{social_notifications:true}})}:{})});
     }
     return fixture(route,[],{signed,admin});
   });
@@ -99,6 +105,14 @@ try {
   for (const language of ['ru','en']) for (const width of [1440,390]) {
     const {page,context,state}=await setup({admin:true,language,width});
     await page.goto(entry(language,'moderation/polls/?new=1'));await page.waitForSelector('[data-editor]');await fits(page);
+    const social = page.getByRole('switch');
+    assert.equal(await social.isChecked(),false);
+    await social.focus(); await page.keyboard.press('Space');
+    assert.equal(await social.isChecked(),true);
+    await page.locator('.poll-social-copy strong').click();
+    assert.equal(await social.isChecked(),false);
+    const notify = !(language === 'en' && width === 1440);
+    if (notify) await page.locator('.poll-social-copy strong').click();
     await page.locator('[name=title]').fill(language==='ru'?'Какая трасса следующая?':'Which track is next?');
     await page.locator('[name=option]').nth(0).fill('Spa-Francorchamps');await page.locator('[name=option]').nth(1).fill('Nürburgring');
     await page.locator('[data-poll-action=add]').click();await page.locator('[name=option]').nth(2).fill('Brands Hatch');
@@ -107,16 +121,32 @@ try {
     assert.ok((await page.locator('[data-deadline-preview]').textContent()).includes('МСК')||(await page.locator('[data-deadline-preview]').textContent()).includes('MSK'));
     await page.locator('[data-poll-action=preview]').click();await page.waitForSelector('dialog[open] .poll-confirm-preview');
     assert.equal(state.writes.length,0);assert.ok((await page.locator('.poll-confirm-preview').textContent()).includes('Brands Hatch'));
+    assert.ok((await page.locator('[data-social-preview]').textContent()).includes(notify ? '@everyone' : 'without a mass mention'));
     await page.locator('dialog button[value=confirm]').click();
     await page.screenshot({path:path.join(output,`admin-${language}-${width}.png`),fullPage:true,animations:'disabled'});
     await page.locator('button[name=publish]').click();await page.waitForSelector('dialog[open]');await page.locator('dialog button[value=confirm]').click();
     await page.waitForURL(/id=poll-fixture/);await page.waitForSelector('[data-poll-action=close]');
     assert.equal(state.writes[0].data.duration_hours,36);assert.ok(state.writes[0].data.idempotency_key);assert.equal(state.writes[0].data.max_choices,2);
+    assert.equal(state.writes[0].data.notify_socials,notify);
+    assert.equal(await page.getByRole('switch').isChecked(),notify);
+    assert.equal(await page.getByRole('switch').isDisabled(),true);
+    assert.equal(await page.locator('.poll-delivery').count(),4);
+    assert.ok((await page.locator('.poll-delivery').nth(1).textContent()).includes(language === 'en' ? 'Opening pin' : 'Закрепление анонса'));
     assert.equal(await page.locator('[name=title]').isDisabled(),true);
     await page.locator('[data-poll-action=close]').click();await page.waitForSelector('dialog[open]');await page.locator('dialog button[value=confirm]').click();
     await page.waitForFunction(()=>document.querySelector('.poll-badge')?.dataset.status==='closed');
     assert.ok(state.writes.some(row=>row.p.endsWith('/close')));await fits(page);
     results.push({language,width,screen:'admin-create-publish-close',passed:true});await context.close();
+  }
+  {
+    const {page,context,state}=await setup({admin:true});state.legacy=true;
+    await page.goto(entry('ru','moderation/polls/?new=1'));await page.waitForSelector('[data-editor]');
+    assert.equal(await page.getByRole('switch').isDisabled(),true);
+    await page.locator('[name=title]').fill('Опрос без массового уведомления');
+    await page.locator('[name=option]').nth(0).fill('Spa');await page.locator('[name=option]').nth(1).fill('Monza');
+    await page.locator('[data-save]').click();await page.waitForURL(/id=poll-fixture/);
+    assert.equal('notify_socials' in state.writes[0].data,false);
+    results.push({screen:'legacy-api-compatible-save',passed:true});await context.close();
   }
   {
     const {page,context}=await setup({signed:true,admin:false});await page.goto(entry('ru','moderation/polls/?new=1'));await page.waitForSelector('.poll-empty h2');assert.equal(await page.locator('[data-editor]').count(),0);results.push({screen:'non-admin-direct-entry',passed:true});await context.close();

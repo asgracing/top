@@ -48,7 +48,7 @@ export async function startPage(api) {
     return;
   }
   if (['polls','poll','polls-admin'].includes(screen)) {
-    const {mountPollsPage} = await import('./polls.js?v=20261126polls1');
+    const {mountPollsPage} = await import('./polls.js?v=20261126polls2');
     await mountPollsPage({view,language,subscribe,admin:screen === 'polls-admin'});
     return;
   }
