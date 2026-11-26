@@ -1,6 +1,6 @@
 {
   "schemaVersion": 1,
-  "runtimeVersion": "20261120portalgrants4",
+  "runtimeVersion": "20261126srv4half1",
   "inputs": [
     {
       "path": "account/driver-overlay.js",
@@ -12,7 +12,7 @@
     },
     {
       "path": "assets/content/safety-rating-v3.json",
-      "sha256": "264fdebb559bb202904e87388f1e69fa755c5749697e11b991f4c011aeac5a73"
+      "sha256": "7e3474fa7eb98bd2f8b7af1ab1d087c4cf1fc2e75b9ab0090b90dfa256320464"
     },
     {
       "path": "assets/track-maps/barcelona.js",
@@ -80,7 +80,7 @@
     },
     {
       "path": "scripts/build-v2.mjs",
-      "sha256": "f207f4f13c8fcc55b1a5e0f407627cb1d9f31d1463ac14a61863b7cff1f85d1c"
+      "sha256": "3723ffc012854cc0bcfd023d514c1a0047b149f89b02ef53b50c33b340f10ba1"
     },
     {
       "path": "scripts/faq-page.mjs",
@@ -744,7 +744,7 @@
     },
     {
       "path": "v2/driver-safety-model.js",
-      "sha256": "d92bb9cba0ffd1764572c4b30e17b80e3d48504fe5cf7f413104bb9114bb278b"
+      "sha256": "49cc746c7b43f310300e48851c924a81b339e51e593a0493c7a2ddb2498fc038"
     },
     {
       "path": "v2/driver-support-model.js",
@@ -760,7 +760,7 @@
     },
     {
       "path": "v2/home.js",
-      "sha256": "7300d72235bdeef90db585b3d76ac84fd1af0febd851d9a7ca676b9416f23228"
+      "sha256": "d855ee8a2e335bb392909d971c8fdff9cc7a832d8bdd339ba14b45e9958837aa"
     },
     {
       "path": "v2/live-stats.js",
@@ -828,7 +828,7 @@
     },
     {
       "path": "v2/pages/driver-safety.js",
-      "sha256": "f50f9856008180f6673898d4fe39deaad6934037c76ce9708c08aa23b8c7c455"
+      "sha256": "cb29e359b6b7c28da8c5676fd76f0d44ea6ef71379aa7f0d6bb377f86556817c"
     },
     {
       "path": "v2/pages/driver-support.js",
@@ -952,7 +952,7 @@
     },
     {
       "path": "v2/safety-guide.js",
-      "sha256": "d6ab35444bd4d1d6a98ef3e683d723081f877c3eba30b0aaec387e87ff0c431e"
+      "sha256": "d69c9fa7b4288be145703ec4f3dac9a35146265f7f954b9c786494e305e2199a"
     },
     {
       "path": "v2/safety-history.js",

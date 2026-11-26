@@ -5,6 +5,18 @@ import {driverSafetyRaces,driverSafetyBreakdown,safetyPeriodRaces,safetyListRace
 function record(ledger={},race={}) {
   return driverSafetyRaces({safety_history:[{race_id:'r1',finished_at:'2026-10-19T20:00:00Z',old_sr:9.91,new_sr:9.99,delta_sr:.08,incident_penalty_delta:.1,...ledger}],race_history:[{race_id:'r1',safety_rating_before:9.91,safety_rating_after:9.99,safety_delta:.08,safety_base_delta:.05,safety_incident_penalty_delta:.1,safety_penalty_delta:0,safety_final_delta:.15,...race}]})[0];
 }
+
+test('new SR policy preserves half-cent episodes and requires their exact sum',()=>{
+  const episodes=[{kind:'contact',damage_growth:null,deduction:.005},{kind:'damage',damage_growth:8,deduction:.035}];
+  const ledger={calculation_version:'sr_v4_incident_half_v2',incident_points:2,incident_deduction:.04,
+    incident_episodes:episodes,distance_bonus:.1,unknown_laps:0};
+  const values=driverSafetyBreakdown(record(ledger));
+  assert.equal(values.variantA,true);
+  assert.equal(values.distanceBonus,.1);
+  assert.deepEqual(values.incidentEpisodes,episodes);
+  assert.equal(driverSafetyBreakdown(record({...ledger,incident_deduction:.044})).incidentEpisodes,null);
+  assert.equal(driverSafetyBreakdown(record({...ledger,calculation_version:'sr_variant_a_v1'})).incidentEpisodes,null);
+});
 test('published components remain visible when the ledger caps the gain at 9.99',()=>{
   const r=record(),b=driverSafetyBreakdown(r);
   assert.equal(r.delta,.08);assert.equal(b.clean,.05);assert.equal(b.incidentDelta,.1);assert.equal(b.penaltyDelta,0);

@@ -55,11 +55,15 @@ function boundedProtocol(record,protocol) {
 
 function publishedIncidentEpisodes(ledger) {
   const {incident_episodes: episodes, incident_points: count, incident_deduction: total}=ledger;
+  const half=ledger.calculation_version==='sr_v4_incident_half_v2';
+  const scale=half?200:100;
   if(!Array.isArray(episodes)||episodes.length!==count||!Number.isFinite(total))return null;
   if(!episodes.every(row=>row&&['contact','damage'].includes(row.kind)
-    &&Number.isFinite(row.deduction)&&row.deduction>=.01&&row.deduction<=.25&&rounded(row.deduction)===row.deduction
+    &&Number.isFinite(row.deduction)&&row.deduction>0&&row.deduction<=(half?.125:.25)
+    &&Math.abs(row.deduction*scale-Math.round(row.deduction*scale))<1e-9
     &&(row.damage_growth===null||(Number.isFinite(row.damage_growth)&&row.damage_growth>=0))))return null;
-  return rounded(episodes.reduce((sum,row)=>sum+row.deduction,0))===rounded(total)?episodes:null;
+  const sum=episodes.reduce((value,row)=>value+row.deduction,0);
+  return (half?Math.abs(sum-total)<1e-9:rounded(sum)===rounded(total))?episodes:null;
 }
 
 export function driverSafetyBreakdown(record,extra=null) {
@@ -78,7 +82,7 @@ export function driverSafetyBreakdown(record,extra=null) {
   const stale=versionConflict||localValues.stale||Boolean(remoteValues?.stale);
   const context=versionConflict||localValues.stale?{}:record.race;
   const version=ledger.calculation_version||context.safety_calculation_version||null;
-  const variantA=version==='sr_variant_a_v1';
+  const variantA=['sr_variant_a_v1','sr_v4_incident_half_v2'].includes(version);
   const completed=first(record.ledger.completed_laps,context.safety_completed_laps);
   const leader=first(context.safety_leader_laps,ledger.leader_laps);
   const invalid=first(record.ledger.invalid_laps,context.safety_invalid_laps);
