@@ -80,7 +80,7 @@
     },
     {
       "path": "scripts/build-v2.mjs",
-      "sha256": "6476c7135e1fdba474e8136e492ff733a3d6f66a2a18bad6622592b53940a453"
+      "sha256": "722b020231f0abc50c2f4c8107b2017c572c0aa21dbc1282b0e79647e8a1d088"
     },
     {
       "path": "scripts/faq-page.mjs",
@@ -779,6 +779,10 @@
       "sha256": "267278aba5c85a0277ccd462b94f7c729153869645c67513c06d7ee60832d6e9"
     },
     {
+      "path": "v2/membership/badges.js",
+      "sha256": "16ad43b5a8b6ba147fad331f8eafac5ad6a045d9b528d609221c605fe55fc502"
+    },
+    {
       "path": "v2/membership/demo-card.js",
       "sha256": "6e020545751928106a71a0d34e0d10c614fa62496619a039030e3e4663d792a8"
     },
@@ -788,7 +792,7 @@
     },
     {
       "path": "v2/membership/home.js",
-      "sha256": "f32a0d079ae00f8d42dcaf5da272e412b8fb9b4a66507bca14a97bfdda5aa41a"
+      "sha256": "ff6576cc343fbf785d5c46473ba6cfe97d33cf2d05be31f6672cba3e91929461"
     },
     {
       "path": "v2/membership/locale.js",
@@ -800,7 +804,7 @@
     },
     {
       "path": "v2/membership/profile-demo.js",
-      "sha256": "605ea221fc3da2c04863e19bb6902cc87317065dbc068131487a1102a9145a2b"
+      "sha256": "2c458980b52b62b76384bcf66d10884ebe98cce508fd97cd8fe651de1ac6cb39"
     },
     {
       "path": "v2/membership/project-stats.js",
@@ -816,7 +820,7 @@
     },
     {
       "path": "v2/membership/support.js",
-      "sha256": "6b8c3d8b7be39638ad803d2c5eb5b7e66caf69fedae029851383bea886fcb453"
+      "sha256": "b6e34fa95ef71b95c33e9bc55c75a2c1bb68b7626124bf73a438b659bb861789"
     },
     {
       "path": "v2/mobile-navigation.js",
@@ -924,7 +928,7 @@
     },
     {
       "path": "v2/pages/project-support.js",
-      "sha256": "56e301547057e16d18b91eb7162186e6a1e0673109bf21669880998b0c8fe0d6"
+      "sha256": "d57e0f69fff96d14907a752764f182bbb547b0e38a72ceb086cfd5ee006d2137"
     },
     {
       "path": "v2/pages/race-archive-api.js",
