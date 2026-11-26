@@ -776,7 +776,7 @@
     },
     {
       "path": "v2/membership/home-template.js",
-      "sha256": "0e7600e238dc184d2afcb7e61eb517dfbf99182b8f4f780c8677befb058ca43e"
+      "sha256": "0e7e614a137178fdc7a3891468b1475e974f35fd75489d679d99e4ecf26f9522"
     },
     {
       "path": "v2/membership/home.js",
@@ -784,15 +784,15 @@
     },
     {
       "path": "v2/membership/locale.js",
-      "sha256": "0b990e0678d33aa8ac6523247c3e75dfaab087aef4370664f44afdf5fd5d6c90"
+      "sha256": "c9f41591f378f640efc0eeda12fde47cfac8dfae828bc50d6c871ca78395606d"
     },
     {
       "path": "v2/membership/offer.js",
-      "sha256": "4e1acae61b1994c4cd9f87e27feaafb1d31fddc89d322907ec752eb0db791e3a"
+      "sha256": "100de60af535a4413530375246bdd209ef4ec0fbcc7010126245ac03867cddb3"
     },
     {
       "path": "v2/membership/profile-demo.js",
-      "sha256": "56a2e975f679f8023a47165f7adca2668a09e8583d880224b6251a68820d34ed"
+      "sha256": "6fad3e1c1efcfaab08be56241de9fb66a2676b81b1132a6484cd7cd4c288d432"
     },
     {
       "path": "v2/membership/project-stats.js",
@@ -804,11 +804,11 @@
     },
     {
       "path": "v2/membership/support-template.js",
-      "sha256": "644f0b41ef03a099858aacac2486f938c037826ac3518337a278ad8316f84a76"
+      "sha256": "19badd35c4683493e90ef03296a6adcaa3eb42a498649020d8a2e1c3639be29a"
     },
     {
       "path": "v2/membership/support.js",
-      "sha256": "00118fd4dc62b44dc19e2acb4388b2c6fab8a6ae31982c59ef79e785fa401a94"
+      "sha256": "6b8c3d8b7be39638ad803d2c5eb5b7e66caf69fedae029851383bea886fcb453"
     },
     {
       "path": "v2/mobile-navigation.js",
@@ -916,7 +916,7 @@
     },
     {
       "path": "v2/pages/project-support.js",
-      "sha256": "6e02013dc5fc277a7edc59707759e295f5d6282d7a7804f662f33f8edf439c51"
+      "sha256": "56e301547057e16d18b91eb7162186e6a1e0673109bf21669880998b0c8fe0d6"
     },
     {
       "path": "v2/pages/race-archive-api.js",
@@ -1025,6 +1025,10 @@
     {
       "path": "v2/site-routing.js",
       "sha256": "c0cfe46b2daf84156a054d5c9fa56e84ca6eb07015acd7c8cb22d5bf8a55dd8b"
+    },
+    {
+      "path": "v2/support-trial.js",
+      "sha256": "0d148f82afa4ad2c48f182c9711c5afb147083ce2c4843dda505cc8214a5ef4d"
     }
   ]
 }
