@@ -34,6 +34,10 @@
 }
 .membership-tier h3::before { display: none; }
 .membership-tier > b { grid-row: auto; grid-column: 1 / -1; }
+.membership-offer .membership-tier {
+  row-gap: 3px;
+  padding-block: 8px;
+}
 @media (max-width: 1100px) {
   #support-content .support-hero {
     flex-wrap: wrap;
