@@ -9,6 +9,7 @@
 .server-poll-cta{display:flex;justify-content:space-between;align-items:center;gap:9px;min-height:44px;padding:11px 12px;border:1px solid #ff778aa3;border-radius:4px;background:#d82d46;color:#fff;font-size:12px;font-weight:650;text-decoration:none}.server-poll-cta:hover{background:#ef3c55}.server-poll-cta:focus-visible{outline:2px solid #ffe3e8;outline-offset:4px}.server-poll-cta>span:first-child{animation:server-poll-blink 2.8s ease-in-out infinite}
 .server-poll-motion{border:0;background:transparent;color:#f1ccd2;padding:6px;min-width:32px;min-height:32px;font-size:10px;cursor:pointer}.server-poll-motion:focus-visible{outline:2px solid #ffe3e8;outline-offset:2px}
 .server-poll-callout:is(.is-motion-paused,.is-motion-stopped) .server-poll-cta>span:first-child,.server-poll-callout:focus-within .server-poll-cta>span:first-child{animation-play-state:paused}
+.right-column[data-dock-open="false"] .server-poll-cta>span:first-child{animation-play-state:paused}
 @keyframes server-poll-blink{0%,100%{opacity:1}50%{opacity:.5}}
 @media(max-width:1000px){.servers-panel .server-poll-callout{flex:0 0 auto;min-height:245px;max-height:none}.server-poll-callout h3{font-size:22px}}
 @media(prefers-reduced-motion:reduce){.server-poll-cta>span:first-child{animation:none!important}}

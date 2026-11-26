@@ -24,7 +24,7 @@ import {createDriverAchievementsController} from '/src/pages/driver/achievements
 import {v2Route,v2EntityLinks,currentV2Path,migratedPaths} from '../routes.js?v=20261007v2pages14';
 import {screenPath,scopeSiteHref,siteContext} from '../site-routing.js?v=20261007root1';
 import {eventKind as resolveKind} from '../models.js?v=20261006v2k';
-import {pageHasSidebarWidgets} from '../page-layout.js?v=20261118newyear1';
+import {pageHasSidebarWidgets} from '../page-layout.js?v=20261126pollwidgets1';
 
 export async function startPage(api) {
   if (document.documentElement.dataset.v2Page === 'faq') return;

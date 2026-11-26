@@ -30,7 +30,7 @@ async function setup({width=1440,language='ru',signed=true,admin=false,denied=fa
   const context = await browser.newContext({viewport:{width,height:1000}}),page=await context.newPage();
   await context.addCookies([{name:'asg_privacy_consent',value:encodeURIComponent(JSON.stringify({version:'2026-04-30',analytics:false,savedAt:new Date().toISOString()})),url:base}]);
   await context.addInitScript(()=>sessionStorage.setItem('asgHomeIntroSeenR10','1'));
-  const state={poll:structuredClone(sample),choices:[],revision:0,fail:false,admin,deny:denied,writes:[],counts:0,legacy:false};
+  const state={poll:structuredClone(sample),choices:[],revision:0,fail:false,admin,deny:denied,writes:[],counts:0,legacy:false,widgetReads:0};
   if (admin) state.poll.delivery = [
     {kind:'opened',destination:'discord',status:'sent'},
     {kind:'pin_opened',destination:'telegram',status:'retry'},
@@ -61,6 +61,7 @@ async function setup({width=1440,language='ru',signed=true,admin=false,denied=fa
       }
       if (p.endsWith('/ballot')) return send({authenticated:signed,choices:state.choices,revision:state.revision,csrf_token:signed?'test-poll-csrf':''});
       if (p==='/v1/polls'||p==='/v1/admin/polls') {
+        if(p==='/v1/polls'&&url.searchParams.get('limit')==='1')state.widgetReads++;
         const selected=url.searchParams.get('filter');
         const items=selected==='archive'?[{...state.poll,status:'closed'}]:selected==='draft'?[{...state.poll,status:'draft'}]:[state.poll,{...state.poll,id:'second',title:'В какое время вам удобно участвовать в гонках?'}];
         return send({polls:items,total:items.length,...(admin?{csrf_token:'test-poll-csrf',...(state.legacy?{}:{capabilities:{social_notifications:true}})}:{})});
@@ -76,6 +77,23 @@ async function fits(page) {
   assert.ok(width.scroll<=width.inner+1,JSON.stringify(width));
 }
 try {
+  {
+    const {page,context,state}=await setup();
+    await page.clock.install({time:new Date(now)});
+    await page.goto(entry('ru','polls/'));await page.waitForSelector('.server-poll-callout:not([hidden])');
+    assert.equal(state.widgetReads,1);
+    await page.setViewportSize({width:390,height:1000});await page.locator('.servers-panel').scrollIntoViewIfNeeded();
+    await page.setViewportSize({width:1440,height:1000});await page.locator('.server-poll-callout').waitFor();
+    assert.equal(state.widgetReads,1,'Scrolling/resizing must not bypass the one-minute fetch bound');
+    const refreshed=page.waitForResponse(r=>new URL(r.url()).searchParams.get('limit')==='1'&&r.url().includes('/v1/polls?'));
+    await page.clock.fastForward(61000);await refreshed;
+    assert.equal(state.widgetReads,2);
+    state.poll.ends_at=new Date(now+62000).toISOString();
+    await page.clock.fastForward(61000);await page.waitForSelector('.server-poll-callout[hidden]',{state:'attached'});
+    assert.equal(await page.locator('.server-poll-callout').isVisible(),false);
+    assert.equal(state.writes.length,0);
+    results.push({screen:'server-poll-fetch-bound-and-expiry',passed:true});await context.close();
+  }
   for (const language of ['ru','en']) for (const width of [1440,390]) {
     const {page,context,state}=await setup({language,width});
     await page.goto(entry(language,'polls/'));
