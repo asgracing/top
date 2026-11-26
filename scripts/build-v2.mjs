@@ -226,8 +226,8 @@ for (const language of ['ru','en']) {
     }
     if (screen === 'driver') owningHead+='<link rel="stylesheet" href="/v2/pages/profile-appearance.css?v=20261121passaccent"><link rel="stylesheet" href="/v2/pages/profile-badges-podium.css?v=20261126podium1">';
     if (screen === 'site-admin') owningHead += '<link rel="stylesheet" href="/v2/pages/site-appearance-admin.css?v=20261126home1">';
-    if (['polls','poll','polls-admin'].includes(screen)) owningHead += '<link rel="stylesheet" href="/v2/pages/polls.css?v=20261126polls1">';
-    if (['moderation','polls','poll','polls-admin'].includes(screen)) owningHead=owningHead.replace(`/v2/boot/home.js?v=${bootVersion}`,'/v2/boot/home.js?v=20261126polls1');
+    if (['polls','poll','polls-admin'].includes(screen)) owningHead += '<link rel="stylesheet" href="/v2/pages/polls.css?v=20261126polls2">';
+    if (['moderation','polls','poll','polls-admin'].includes(screen)) owningHead=owningHead.replace(`/v2/boot/home.js?v=${bootVersion}`,'/v2/boot/home.js?v=20261126polls2');
     if(screen==='archive'||screen==='race')owningHead=owningHead.replace(`/v2/boot/home.js?v=${bootVersion}`,`/v2/boot/home.js?v=${archiveBootVersion}`);
     if(screen==='cars')owningHead=statsHead(owningHead);
     if(screen==='hourly')owningHead=hourlyHead(owningHead);
