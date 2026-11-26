@@ -38,21 +38,18 @@ if (preview?.hasAttribute(previewAttribute)) {
 } else {
   let checkedAt = 0;
   let ticket = 0;
-  async function refresh(force = false, initialConfig) {
-    if ((!initialConfig && document.hidden) || (!force && Date.now() - checkedAt < refreshDelay)) return;
+  async function refresh(force = false, initial) {
+    if ((!initial && document.hidden) || (!force && Date.now() - checkedAt < refreshDelay)) return;
     checkedAt = Date.now();
     const request = ++ticket;
     let enabled = false;
     try {
-      if (initialConfig) enabled = (await initialConfig)?.new_year_enabled === true;
-      else {
-        const response = await fetch(`${authOrigin}/v1/public/site-appearance`, {
-          credentials: "omit",
-          cache: force ? "reload" : "default",
-          signal: AbortSignal.timeout(5000)
-        });
-        enabled = response.ok && (await response.json()).new_year_enabled === true;
-      }
+      const config = initial ? await initial : await fetch(`${authOrigin}/v1/public/site-appearance`, {
+        credentials: "omit",
+        cache: force ? "reload" : "default",
+        signal: AbortSignal.timeout(5000)
+      }).then(response => response.ok ? response.json() : null);
+      enabled = config?.new_year_enabled === true;
     } catch {
       // An unavailable or invalid configuration falls back to the base site.
     }
