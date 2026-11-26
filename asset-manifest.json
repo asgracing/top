@@ -1,8 +1,8 @@
 {
   "schemaVersion": 1,
-  "revision": "7d22ded57b9ffdf3974634d7cccea06eeb5b0d50",
+  "revision": "368799d8b35fc8a1572741a9ad66511c11d226e4",
   "files": 1536,
-  "bytes": 215385452,
+  "bytes": 215385370,
   "assets": [
     {
       "path": "404.html",
@@ -2456,8 +2456,8 @@
     },
     {
       "path": "src/features/site-appearance/site-appearance.js",
-      "bytes": 2364,
-      "sha256": "44a7ce99a439c5d2b8a6f3f22e2694f67820f3c9e4434ede11fc4be3e90b85d1"
+      "bytes": 2282,
+      "sha256": "d08328122a46606679936b601c8b1c9bc72aeab4f4083c94c2016f37955cf389"
     },
     {
       "path": "src/features/stats/table-engine.js",
