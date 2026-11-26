@@ -401,6 +401,13 @@ if(!isSubpage){
   if('IntersectionObserver' in window){const observer=new IntersectionObserver(entries=>{if(entries.some(entry=>entry.isIntersecting)){observer.disconnect();loadTable();}},{rootMargin:'240px 0px'});observer.observe($('ranking'));}
   else loadTable();
 }
+const homeLayoutReady=isSubpage?Promise.resolve():import('./home-version.js?v=20261126mobile2')
+  .then(({mountHomeVersion})=>mountHomeVersion({language}).ready)
+  .catch(error=>{
+    console.error('Homepage layout unavailable',error);
+    document.documentElement.dataset.homeVersion='current';
+    window.asgHomeStartup?.finish();
+  });
 try{await import('./runtime/home.js?v=20261126srv4half1');applyHash();if(isSubpage)startBackground();}catch(error){console.error('V2 runtime unavailable',error);$('event-track').textContent=text('Не удалось загрузить данные','Could not load data');$('day-driver').textContent=text('Данные недоступны','Data unavailable');tableError=true;tableBusy=false;renderTable()}
 if(document.documentElement.dataset.v2Page){
   const {startPage}=await import('./pages/controller.js?v=20261126home1');
@@ -409,4 +416,4 @@ if(document.documentElement.dataset.v2Page){
 import {installReports} from './reports/index.js?v=20261117reports1';
 if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',installReports,{once:true});else installReports();
 
-if(!isSubpage){const {mountHomeVersion}=await import("./home-version.js?v=20261126mobile2");const homeVersion=mountHomeVersion({language});await homeVersion.ready;}
+await homeLayoutReady;
