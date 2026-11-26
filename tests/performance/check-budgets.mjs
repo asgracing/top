@@ -81,7 +81,7 @@ const newYearJavaScriptBytes = await treeBytes('src/features/site-appearance', n
 const siteAppearanceAdminJavaScriptBytes = await textBytes('v2/pages/site-appearance-admin.js');
 const faqJavaScriptBytes = await treeBytes('src/pages/faq', new Set(['.js']));
 const metrics = {
-  membershipJavaScriptBytes: await treeBytes('v2/membership',new Set(['.js'])) + await treeBytes('v2-source/membership',new Set(['.js'])) + await textBytes('v2/home-version.js') + await textBytes('v2/site-config.js'),
+  membershipJavaScriptBytes: await treeBytes('v2/membership',new Set(['.js'])) + await treeBytes('v2-source/membership',new Set(['.js'])) + await textBytes('v2/home-version.js') + await textBytes('v2/site-config.js') + await textBytes('v2/support-trial.js'),
   membershipStylesheetBytes: await treeBytes('v2/membership',new Set(['.css'])),
   membershipArtworkBytes: (await Promise.all(['mustang-panorama.webp','mustang-panorama-mobile.webp','mustang-rear.webp'].map(name=>fileBytes('v2/membership/'+name)))).reduce((a,b)=>a+b,0),
   appJavaScriptBytes: await textBytes("app.js"),

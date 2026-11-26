@@ -16,7 +16,10 @@ export function mountSupportMarketing(view,{language,text}) {
   content.querySelector('#questions').before(live);
   for(const {button,status} of trials){
     const plan=content.querySelector('.plan.'+button.dataset.supportTrial);
-    const row=document.createElement('div');row.className='trial-actions';row.append(button);plan.append(row,status);
+    plan.setAttribute('data-support-trial-card','');
+    const preview=plan.querySelector('[data-demo]');preview.textContent=text('Посмотреть пример','View example');preview.className='plan-preview';plan.append(preview);
+    button.textContent=text('Попробовать · 7 дней','Try it · 7 days');button.className='button secondary';
+    const row=plan.querySelector('.plan-actions');row.prepend(button);row.after(status);
   }
   content.querySelector('.trial-link').remove();
   const pass=content.querySelector('.support-pass');pass.innerHTML=demoCard;

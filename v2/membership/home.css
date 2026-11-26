@@ -40,6 +40,12 @@
 .tier-actions>a:hover { background:#e12b44; }
 .tier-actions>button { background:#3a4651; color:#e4eaf0; }
 .tier-actions>button:hover { background:#53616e; }
+.membership-offer .membership-preview-button{display:none}
+.membership-preview-button{grid-column:1/-1;font-size:11px;color:#c7d6e5;text-decoration:underline;text-underline-offset:3px;justify-self:start}
+.membership-tier .membership-trial-status{grid-column:1/-1;font-size:11px;line-height:1.4;color:#cddde9;overflow-wrap:anywhere}
+.membership-trial-status:empty{display:none}
+.membership-trial-status a{color:#ffd1b2;text-decoration:underline}
+.tier-actions>button:disabled{opacity:.55;cursor:default}
 @media(min-width:1150px) and (max-height:900px) {
   .membership-intro { min-height:136px; grid-template-columns:minmax(0,1fr) clamp(155px,19cqw,201px); }
   .membership-tier { min-height:111px; padding-block:8px; }

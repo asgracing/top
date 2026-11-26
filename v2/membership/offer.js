@@ -1,3 +1,5 @@
+import {wireSupportTrials} from '../support-trial.js?v=20261126trial1';
+import {v2Route} from '../routes.js';
 import {localizeTree,tr} from './locale.js';
 export function mountOffer(stats, card, {language="ru"}={}) {
   const $ = selector => document.querySelector(selector);
@@ -60,11 +62,11 @@ export function mountOffer(stats, card, {language="ru"}={}) {
     <div class="membership-detail-body"><div class="trial-showcase"></div><div class="trial-options" aria-label="Варианты оформления"></div><p class="trial-description"></p><a class="trial-checkout" target="_blank" rel="noopener">Оформить подписку ↗</a></div>`;
   document.body.append(trial);
   trial.querySelector(".membership-detail-head button").onclick = () => trial.close();
-  for (const button of document.querySelectorAll("[data-membership-try]")) {
+  for (const button of document.querySelectorAll("[data-membership-preview]")) {
     button.onclick = () => {
       const tier = button.closest(".membership-tier");
       const name = tier.querySelector("h3").textContent;
-      trial.querySelector("h2").textContent = tr("Попробовать",language) + " " + name;
+      trial.querySelector("h2").textContent = tr("Посмотреть пример",language) + " · " + name;
       trial.querySelector(".trial-description").textContent = tier.querySelector("p").textContent;
       trial.querySelector(".trial-checkout").href = tier.querySelector("a").href;
       const preview = trial.querySelector(".trial-showcase");
@@ -100,5 +102,6 @@ export function mountOffer(stats, card, {language="ru"}={}) {
       trial.showModal();
     };
   }
-  return ()=>{if(trial.open)trial.close();trial.remove();};
+  const stopTrials=wireSupportTrials([stats,detail],{text:(ru,en)=>language==="en"?en:ru,returnPath:v2Route("",language)});
+  return ()=>{stopTrials();if(trial.open)trial.close();trial.remove();};
 }
