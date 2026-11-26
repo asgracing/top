@@ -1,6 +1,7 @@
 @import url("../styles/components/team-racing.css?v=20261028team10");
 @import url("../styles/components/server-roster.css?v=20261120circuitatlas");
 @import url("./server-cards.css?v=20261120serverspacing");
+@import url("./server-poll.css?v=20261126preview1");
 /* First announcement: responsive track guide with an inline video player. */
 body[data-v2] dialog[data-kind="track-guide"] { width:80vw; max-width:none; }
 body[data-v2] dialog[data-kind="track-guide"] #v2-modal-eyebrow { display:none; }

@@ -23,6 +23,7 @@
 .poll-search input,.poll-editor :is(input,select,textarea){width:100%;min-width:0;border:1px solid var(--poll-border);border-radius:5px;background:#091522;color:#e9f2fa;padding:12px;font-size:14px;line-height:1.4;min-height:44px}
 .poll-search input::placeholder,.poll-editor input::placeholder,.poll-editor textarea::placeholder{color:#8195a8;opacity:1}
 .poll-list-summary{font-size:12px;color:var(--poll-muted);margin-bottom:12px}
+.asg-polls{container-type:inline-size;container-name:poll-content}
 .poll-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:15px}
 .poll-card.panel{display:flex;flex-direction:column;padding:22px;border:1px solid var(--poll-border);border-radius:8px;background:linear-gradient(140deg,#1a2936b8,#111c28d9);min-width:0;position:relative;transition:border-color .15s}
 .poll-card:hover{border-color:#708b9f}
@@ -99,7 +100,9 @@
 .poll-confirm{color:#e9f2fa;border:1px solid #70879a;border-radius:9px;padding:26px;background:#142231;width:min(460px,calc(100% - 32px));box-shadow:0 20px 80px #0008}
 .poll-confirm::backdrop{background:#020911bb}.poll-confirm h2{font-size:22px;margin:0 0 14px}.poll-confirm p{font-size:14px;line-height:1.7;color:#b9c9d7;margin-bottom:24px}
 .poll-confirm .poll-actions{justify-content:flex-end}
-@media(min-width:1400px){.poll-grid{grid-template-columns:repeat(3,minmax(0,1fr))}}
+@container poll-content (min-width:1100px){.poll-grid{grid-template-columns:repeat(3,minmax(0,1fr))}}
+@container poll-content (max-width:640px){.poll-grid{grid-template-columns:1fr}}
+@container poll-content (max-width:760px){.poll-detail-layout{grid-template-columns:1fr}.poll-detail-aside{display:grid;grid-template-columns:1fr;gap:10px}}
 @media(max-width:900px){.poll-detail-layout,.poll-editor-layout{grid-template-columns:minmax(0,1fr) 230px;gap:14px}.poll-ballot.panel,.poll-editor.panel,.poll-facts.panel,.poll-destinations.panel{padding:20px}}
 @media(max-width:700px){.asg-polls{gap:17px}.poll-heading{align-items:flex-start;flex-direction:column}.poll-grid{grid-template-columns:1fr}.poll-detail-layout,.poll-editor-layout{grid-template-columns:minmax(0,1fr)}.poll-detail-aside{display:grid;grid-template-columns:1fr;gap:10px}.poll-participants{font-size:36px}.poll-facts.panel{grid-template-columns:1fr 1fr;gap:7px 16px}.poll-facts .poll-eyebrow,.poll-facts hr{grid-column:1/-1}.poll-facts>.poll-muted{align-self:center}.poll-facts>div{margin:5px 0}.poll-privacy{padding:14px 6px}.poll-privacy>svg{display:none}.poll-search{min-width:100%;max-width:none;order:3}.poll-toolbar{gap:12px}.poll-tabs{flex:1;justify-content:space-between}.poll-tabs button{padding:9px 12px}.poll-card.panel{padding:20px}.poll-ballot.panel,.poll-editor.panel{padding:20px 15px}.poll-option{padding:14px 12px;gap:10px}.poll-option-body{column-gap:8px}.poll-option-results{gap:7px;font-size:11px}.poll-option-label{font-size:14px}.poll-editor :is(input,select,textarea),.poll-search input{font-size:16px}.poll-editor-grid{column-gap:12px}.poll-ballot-actions{align-items:stretch}.poll-ballot-actions .primary{flex:1}.poll-ballot-actions>span{width:100%}.poll-editor-layout>aside{display:grid;gap:10px}.poll-editor-help{padding:12px 6px}.poll-destinations.panel{padding:20px}.poll-destinations>div{grid-template-columns:80px 1fr}}
 @media(prefers-reduced-motion:reduce){.asg-polls *{animation:none!important;transition:none!important}}

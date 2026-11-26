@@ -5,6 +5,7 @@ let v2AffiliationsRevision=0;
 let lastPublishedAffiliationsRef=null;
 let v2BestlapMetadataPromise=null;
 const v2ClubSnapshots=new Map();
+let v2CommunityStatsPromise=null;
 function v2LoadAffiliations() {
   return loadDriverAffiliations().then(({affiliations,entities})=>{
     driverAffiliations=affiliations;clubsTeamsEntityDetails=entities;
@@ -52,6 +53,10 @@ installRuntime({
   special:data=>getSpecialEventPresentation(data,currentLang),
   prepareAffiliations:v2LoadAffiliations,
   prepareBestlapMetadata:v2LoadBestlapMetadata,
+  prepareCommunityStats:()=>v2CommunityStatsPromise ||= loadSiteDataV2({deferTables:true}).then(data=>{
+    todayStatsData=data.globalStats;driverOfDayData=data.driverOfDay;onlineData=data.online;
+    v2SchedulePublish();
+  }).catch(error=>{v2CommunityStatsPromise=null;throw error;}),
   eventSr:()=>getServerSrRequirement('hourly',resolveNamedServerStatus(serverStatusData,'hourly')),
   winner:race=>getRaceWinnerResult(race),profile:loadDriverProfileCached,
   profileSummary:publicId=>loadDriverProfile(publicId,{withHistory:false}),

@@ -49,7 +49,15 @@ export async function startPage(api) {
   }
   if (['polls','poll','polls-admin'].includes(screen)) {
     const {mountPollsPage} = await import('./polls.js?v=20261126polls2');
-    await mountPollsPage({view,language,subscribe,admin:screen === 'polls-admin'});
+    let pollView=view;
+    if(screen!=='polls-admin'){
+      pollView=document.createElement('div');
+      const stats=home.querySelector('.stats-panel');
+      view.append(pollView);
+      if(stats)view.append(stats);
+      void native().prepareCommunityStats?.().catch(()=>{});
+    }
+    await mountPollsPage({view:pollView,language,subscribe,admin:screen === 'polls-admin'});
     return;
   }
   if(screen==='reports'){const {mountReportsPage}=await import('../reports/index.js?v=20261117reports1');view.className='panel report-section';await mountReportsPage(view);return;}
