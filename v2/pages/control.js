@@ -18,6 +18,7 @@ export async function startControlPage({view,screen,text,esc,language,subscribe,
   let currentAuth=null,authKey='',workspace,confirming=false,refreshPending=null;
   function navigate(auth){
     navigation.innerHTML=['account','settings',...(auth?.permissions?.moderationIssue?['moderation']:[]),...(auth?.permissions?.portalManage?['ops']:[])].map(key=>`<a class="button${key===screen?' active':''}" href="${v2Route(paths[key],language)}"${key===screen?' aria-current="page"':''}>${names[key]}</a>`).join('');
+    if (screen === 'moderation') navigation.insertAdjacentHTML('beforeend',`<a class="button" href="${v2Route('reports/',language)}">${text('Репорты','Reports')}</a><a class="button" href="${v2Route('moderation/polls/',language)}">${text('Опросы','Polls')}</a>`);
   }
   function wireLinks(){
     root.querySelectorAll('a[href]').forEach(a=>{
