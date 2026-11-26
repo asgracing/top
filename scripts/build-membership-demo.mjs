@@ -2,11 +2,18 @@ import {readFile,writeFile} from 'node:fs/promises';
 import {resolve,dirname,relative} from 'node:path';
 import {build,transform} from 'esbuild';
 const root=resolve(import.meta.dirname,'..'),here=resolve(root,'v2/membership');
-const files=['v2/styles/design.css','v2/home.css','v2/pages/views/pages.css','v2/pages/views/r24-pages.css','styles/components/project-support.css','v2/pages/profile-appearance.css','v2/pages/profile-effects-art.css','v2/driver-support.css'];
+const files=['v2-source/design.css','v2/home.css','v2-source/pages/pages.css','v2-source/pages/r24-pages.css','styles/components/project-support.css','v2/pages/profile-appearance.css','v2/pages/profile-effects-art.css','v2/driver-support.css'];
 let css='';
 for(const file of files){
   let value=await readFile(resolve(root,file),'utf8');
-  value=value.replace(/@import[^;]+;/g,'').replace(/url\((['"]?)([^)'"\s]+)\1\)/g,(all,q,url)=>/^(?:data:|#|https?:)/.test(url)?all:`url("${new URL(url,'https://asgracing.ru/'+file).pathname}")`);
+  if(file==='v2-source/design.css'){
+    const home=await readFile(resolve(root,'v2-source/home.html'),'utf8');
+    const ids=[...new Set([...home.matchAll(/\bid="([^"]+)"/g)].map(match=>match[1]))].sort((a,b)=>b.length-a.length);
+    for(const id of ids)value=value.replace(new RegExp(`#${id}(?![\\w-])`,'g'),'#v2-'+id);
+    value=value.replace(/url\((['"]?)assets\//g,'url($1/assets/').replaceAll('/assets/crown.png','/assets/v2-light/crown.webp').replaceAll('/assets/silverstone.jpg','/assets/v2-light/tracks/silverstone.webp').replaceAll('/assets/spa.jpg','/assets/v2-light/tracks/spa.webp');
+  }
+  const path=file==='v2-source/design.css'?'v2/styles/design.css':file.replace('v2-source/pages/','v2/pages/views/');
+  value=value.replace(/@import[^;]+;/g,'').replace(/url\((['"]?)([^)'"\s]+)\1\)/g,(all,q,url)=>/^(?:data:|#|https?:)/.test(url)?all:`url("${new URL(url,'https://asgracing.ru/'+path).pathname}")`);
   css+='\n'+value;
 }
 css=css.replace(/body((?:\[[^\]]+\]|\.[\w-]+)+)/g,':host($1)').replace(/\bbody\b(?![\w.-])/g,':host');
