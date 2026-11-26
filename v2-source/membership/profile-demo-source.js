@@ -1,10 +1,10 @@
-import {localizeTree} from './locale.js';
+import {localizeTree} from '/v2/membership/locale.js';
 import {openAppearanceEditor} from "/v2/pages/profile-appearance-editor.js";
 import {createProfileEffect,appendBadge} from "/v2/pages/profile-effects.js";
 import {setProfileLayout,profileHeaderImage} from "/v2/pages/profile-studio-layout.js";
 import {mountDriverSupport} from "/v2/pages/driver-support.js";
-import {demoDriver} from "./demo-card.js";
-import {state,saveDemo} from "./demo-state.js";
+import {demoDriver} from "/v2/membership/demo-card.js";
+import {state,saveDemo} from "/v2/membership/demo-state.js";
 import {nativeCss,nativeHero,trackAssets} from "native-demo-assets";
 
 
