@@ -1,8 +1,8 @@
 {
   "schemaVersion": 1,
   "component": "site",
-  "layout": "root",
+  "layout": "root-fallback",
   "delivery": "main-branch-pages",
-  "legacyEnabled": false,
+  "legacyEnabled": true,
   "version": "2026-11-26T07-45-53-252Z-8992ca054991"
 }
