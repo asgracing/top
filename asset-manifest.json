@@ -1,8 +1,8 @@
 {
   "schemaVersion": 1,
-  "revision": "81c2ac3a7f6c677b60e4646d1e8c0b686690a639",
+  "revision": "70c390faccd5fb4a3f327e9e35617e929e6565de",
   "files": 1523,
-  "bytes": 214382497,
+  "bytes": 214385890,
   "assets": [
     {
       "path": "404.html",
@@ -1891,8 +1891,8 @@
     },
     {
       "path": "news-content/news.json",
-      "bytes": 22985,
-      "sha256": "f2b9ed65a65200223e50417bb7d7207cef61fffbea6bc9997d9d1ab1bb5209fa"
+      "bytes": 26253,
+      "sha256": "19cdc85b022497c6974fb4d7eca8e9d3b4455154ca0ea630464f0b166f69a2cf"
     },
     {
       "path": "news-read-state.js",
@@ -7126,8 +7126,8 @@
     },
     {
       "path": "v2/pages/project-support.js",
-      "bytes": 8570,
-      "sha256": "56e301547057e16d18b91eb7162186e6a1e0673109bf21669880998b0c8fe0d6"
+      "bytes": 8695,
+      "sha256": "8204ea3b6e3a97f7c1574d75f534339f866ff3bc141b31fac3a3c92feb29cf3f"
     },
     {
       "path": "v2/pages/race-archive-api.js",
