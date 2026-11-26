@@ -395,7 +395,7 @@ async function nextBackground(){if(document.hidden||reduced.matches&&background>
 function startBackground(){if(backgroundStarted)return;backgroundStarted=true;const start=()=>{nextBackground();if(!navigator.connection?.saveData)setInterval(nextBackground,28000);};if(window.requestIdleCallback)requestIdleCallback(start,{timeout:2000});else setTimeout(start,0);}
 setInterval(()=>{if(!document.hidden)updateClock()},1000);
 const boot=$('site-shell'),loader=document.querySelector('.home-loader');
-document.documentElement.classList.remove('home-booting');loader.hidden=true;boot.inert=false;
+if(isSubpage||!window.asgHomeStartup){document.documentElement.classList.remove('home-booting');loader.hidden=true;boot.inert=false;}
 renderTable();$('race-vote').disabled=true;
 if(!isSubpage){
   if('IntersectionObserver' in window){const observer=new IntersectionObserver(entries=>{if(entries.some(entry=>entry.isIntersecting)){observer.disconnect();loadTable();}},{rootMargin:'240px 0px'});observer.observe($('ranking'));}
@@ -409,4 +409,4 @@ if(document.documentElement.dataset.v2Page){
 import {installReports} from './reports/index.js?v=20261117reports1';
 if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',installReports,{once:true});else installReports();
 
-if(!isSubpage){const {mountHomeVersion}=await import("./home-version.js?v=20261126home1");mountHomeVersion({language});}
+if(!isSubpage){const {mountHomeVersion}=await import("./home-version.js?v=20261126startup1");const homeVersion=mountHomeVersion({language});await homeVersion.ready;}
