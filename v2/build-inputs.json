@@ -664,7 +664,7 @@
     },
     {
       "path": "v2-source/copy.json",
-      "sha256": "0a5fd21d7659d626a438075bb60c65d7f6ac225f83abba3e4cfa5fed2d5cbfc8"
+      "sha256": "7d90c7279855ecec2a6f76a91d9e194b4edf618be2a1facac990b04d01dc54bc"
     },
     {
       "path": "v2-source/design.css",
@@ -672,7 +672,7 @@
     },
     {
       "path": "v2-source/home.html",
-      "sha256": "921badf7156f97eeb6d14ac1d16e58a231c8fdf57028697fef761326b70754a4"
+      "sha256": "9c68e9f3fd24962a0255de3ccd19f58534e86742611289ebad9ac8a190ef86ae"
     },
     {
       "path": "v2-source/pages/archive.js",
@@ -720,7 +720,7 @@
     },
     {
       "path": "v2-source/pages/information.js",
-      "sha256": "9b5a71a03966d5a19acebf5b43227064aeb90a10bb82ee7c25b701b85358e588"
+      "sha256": "21cec300ad5c3411128fee494ae1323872f2e9799bbb94ac1d042325f0d0ec67"
     },
     {
       "path": "v2-source/pages/pages.css",
@@ -820,7 +820,7 @@
     },
     {
       "path": "v2/membership/support.js",
-      "sha256": "6d2e8f100cdfbab42488052e89844c471bfc7df2a297b2c1c74116c4aad930d2"
+      "sha256": "76a9c043e5b7e16d87d553c1f036884e37162c5474a535888a14a7e24a7c43a4"
     },
     {
       "path": "v2/mobile-navigation.js",
@@ -944,7 +944,7 @@
     },
     {
       "path": "v2/pages/project-support.js",
-      "sha256": "16670a659af402f5ea5301596f2e995189fa9c28c7d0cf18f33b2a071c9b149f"
+      "sha256": "f90f35f27e1f7cc2d8d66fcd39a8692e79de42a212cf8af3efb801c33a6abd34"
     },
     {
       "path": "v2/pages/race-archive-api.js",

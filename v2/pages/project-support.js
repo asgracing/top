@@ -1,5 +1,5 @@
 import {wireSupportTrials} from '../support-trial.js?v=20261126trial1';
-import {mountSupportMarketing} from '../membership/support.js?v=20261127contacts';
+import {mountSupportMarketing} from '../membership/support.js?v=20261127offer1';
 import {safeAvatarUrl} from '/src/features/auth/header-auth.js';
 import {createHttpClient} from '/src/shared/http-client.js';
 import {v2Route} from '../routes.js';

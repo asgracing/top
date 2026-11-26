@@ -1,4 +1,4 @@
-"""Render the maintained Russian offer draft; requires ReportLab and a Cyrillic TTF."""
+"""Render the maintained Russian subscription offer; requires ReportLab and a Cyrillic TTF."""
 import argparse
 import json
 from pathlib import Path
@@ -22,17 +22,17 @@ def main():
     args = parser.parse_args()
     pdfmetrics.registerFont(TTFont('Offer', str(args.font)))
     pdfmetrics.registerFont(TTFont('OfferBold', str(args.bold_font)))
-    source = json.loads((ROOT / 'scripts/offer-draft.json').read_text(encoding='utf-8'))
+    source = json.loads((ROOT / 'scripts/offer.json').read_text(encoding='utf-8'))
     target = ROOT / 'assets/legal/asg-racing-offer-2026-11-27.pdf'
     target.parent.mkdir(parents=True, exist_ok=True)
     body = ParagraphStyle('Body', fontName='Offer', fontSize=10, leading=14,
-                          spaceAfter=6, alignment=TA_LEFT)
+                          spaceAfter=6, alignment=TA_LEFT, allowWidows=0)
     heading = ParagraphStyle('Heading', parent=body, fontName='OfferBold',
                              fontSize=13, leading=18, spaceBefore=15, keepWithNext=True)
     title = ParagraphStyle('Title', parent=heading, fontSize=23, leading=29)
     story = [Paragraph('ASG RACING', heading), Paragraph('Публичная оферта', title),
-             Paragraph('О предоставлении дополнительного цифрового доступа', body),
-             Paragraph('ПРОЕКТ РЕДАКЦИИ ОТ 27 НОЯБРЯ 2026 ГОДА', heading),
+             Paragraph(escape(source['title']), body),
+             Paragraph('РЕДАКЦИЯ ОТ 27 НОЯБРЯ 2026 ГОДА', heading),
              Paragraph(escape(source['notice']), body), Spacer(1, 8)]
     for block in source['blocks']:
         style = heading if block['kind'] == 'h2' else body
@@ -41,11 +41,11 @@ def main():
         story.append(Paragraph(escape(block['text']), style))
 
     def page(canvas, doc):
-        canvas.setTitle('ASG Racing - публичная оферта (проект от 27.11.2026)')
+        canvas.setTitle('ASG Racing - публичная оферта по подписке от 27.11.2026')
         canvas.setAuthor('Администрация сайта ASG Racing')
         canvas.setFont('Offer', 8)
         canvas.setFillColor(colors.HexColor('#596273'))
-        canvas.drawString(44, 27, 'ASG Racing | Проект от 27.11.2026 | Не применяется к оплатам')
+        canvas.drawString(44, 27, 'ASG Racing | Подписка на цифровые возможности и контент | 27.11.2026')
         canvas.drawRightString(A4[0]-44, 27, str(doc.page))
 
     SimpleDocTemplate(str(target), pagesize=A4, leftMargin=44, rightMargin=44,

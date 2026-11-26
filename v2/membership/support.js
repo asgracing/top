@@ -37,7 +37,7 @@ export function mountSupportMarketing(view,{language,text}) {
   }
   content.querySelector('.trial-link').remove();
   const terms=document.createElement('p');terms.className='caption';
-  terms.innerHTML=`<a href="/assets/legal/asg-racing-offer-2026-11-27.pdf">${text('Оферта (PDF, проект)','Offer (PDF, draft, RU)')}</a> · ${text('Вопросы об оплате, отмене и возвратах:','Payments, cancellation and refunds:')} <a href="mailto:billing@asgracing.ru">billing@asgracing.ru</a><br>${text('Проект оферты размещён для ознакомления и пока не применяется к оплатам.','The draft offer is provided for review and does not yet apply to payments.')}`;
+  terms.innerHTML=`<a href="/assets/legal/asg-racing-offer-2026-11-27.pdf">${text('Оферта (PDF)','Offer (PDF, RU)')}</a> · ${text('Вопросы об оплате, отмене и возвратах:','Payments, cancellation and refunds:')} <a href="mailto:billing@asgracing.ru">billing@asgracing.ru</a><br>${text('Перед оформлением ознакомьтесь с офертой и составом выбранного уровня. Оплата и управление подпиской - через Sponsr.','Before subscribing, read the offer and the features included in your tier. Payment and subscription management are handled through Sponsr.')}`;
   content.querySelector('#plans .section-intro').after(terms);
   const help=document.createElement('p');help.innerHTML=`${text('Помощь пилотам:','Driver support:')} <a href="mailto:support@asgracing.ru">support@asgracing.ru</a>`;content.querySelector('#questions').append(help);
 

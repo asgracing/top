@@ -105,7 +105,7 @@
       "topDonors": "Топ-3 донатеров",
       "allDonations": "Смотреть все",
       "contacts": "Контакты",
-      "offerDraft": "Оферта (PDF, проект)"
+      "offer": "Оферта (PDF)"
     },
     "editorial": {
       "subtitle": "Monza 24/7, ежедневные заезды, помощь новичкам",
@@ -275,7 +275,7 @@
       "topDonors": "Top 3 donors",
       "allDonations": "View all",
       "contacts": "Contacts",
-      "offerDraft": "Offer (PDF, draft, RU)"
+      "offer": "Offer (PDF, RU)"
     },
     "editorial": {
       "subtitle": "Monza 24/7, daily events, beginner-friendly help",
