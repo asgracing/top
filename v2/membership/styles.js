@@ -1,6 +1,14 @@
 export function useStyles(name) {
   const link=document.createElement('link');
   link.rel='stylesheet';link.href='/v2/membership/'+name+'?v=20261126home1';
+  let settle,finished=false;
+  const ready=new Promise(resolve=>{settle=resolve;});
+  const complete=value=>{if(finished)return;finished=true;clearTimeout(timer);link.removeEventListener('load',loaded);link.removeEventListener('error',failed);settle(value);};
+  const loaded=()=>complete(true),failed=()=>complete(false);
+  const timer=setTimeout(failed,4000);
+  link.addEventListener('load',loaded);link.addEventListener('error',failed);
   document.head.append(link);
-  return ()=>link.remove();
+  const remove=()=>{complete(false);link.remove();};
+  remove.ready=ready;
+  return remove;
 }

@@ -3,6 +3,8 @@
 /v2/membership/* -text
 /v2/home-version.js -text
 /v2/site-config.js -text
+/v2/home-startup.js -text
+/v2/home-startup.css -text
 /v2/support-trial.js -text
 /404.html -text
 /404/index.html -text

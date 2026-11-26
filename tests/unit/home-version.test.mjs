@@ -39,7 +39,7 @@ test('live config ignores stale responses, keeps confirmed layout on failure and
   assert.deepEqual(seen,['membership']);
   timer();pending[2].reject(Error('offline'));await flush();assert.deepEqual(seen,['membership']);
   doc.hidden=true;timer();assert.equal(pending.length,3);
-  doc.hidden=false;win.dispatchEvent(new Event('pageshow'));
+  doc.hidden=false;win.dispatchEvent(Object.assign(new Event('pageshow'),{persisted:true}));
   pending[3].resolve(response('current'));await flush();assert.deepEqual(seen,['membership','current']);
   timer();stop();pending[4].resolve(response('membership'));await flush();
   win.dispatchEvent(new Event('asg-appearance-refresh'));assert.equal(pending.length,5);assert.ok(cleared);assert.deepEqual(seen,['membership','current']);

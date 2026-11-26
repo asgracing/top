@@ -1,0 +1,8 @@
+/* Critical first-paint gate. No JS means the class is never added. */
+html.asg-home-layout-pending .site-shell{visibility:hidden!important;pointer-events:none!important}
+html.asg-home-layout-pending .home-loader{position:fixed;inset:0;z-index:120;display:grid!important;place-content:center;justify-items:center;gap:20px;margin:0;background:#080d15;color:#b7c7da;font:13px/1.5 Arial,sans-serif;visibility:visible!important}
+html.asg-home-layout-pending .home-loader img{width:min(280px,70vw);height:65px;object-fit:contain;animation:none!important}
+html.asg-home-layout-pending .home-loader::before{display:none}
+html.asg-home-layout-pending .home-loader-meter{width:150px;height:2px;background:#ef2440}
+html.asg-home-layout-pending .home-loader-meter::after{animation:none!important}
+html.asg-home-layout-pending .home-loader-label{font-size:12px;letter-spacing:.05em}

@@ -5,11 +5,13 @@ import {mountOffer} from './offer.js';
 import {mountProjectStats} from './project-stats.js';
 import {useStyles} from './styles.js';
 
-export function mountMembershipHome({language='ru'}={}) {
+export function prepareMembershipStyles(){return ['home.css','native-pass.css'].map(useStyles);}
+
+export function mountMembershipHome({language='ru',styles}={}) {
   const demoCard=renderDemoCard(language);
   const stats=document.querySelector('.stats-panel'),support=document.querySelector('.support-panel');
   const statsBody=stats.querySelector('.stats-body'),supportBody=support.querySelector('.support-body');
-  const links=['home.css','native-pass.css'].map(useStyles);
+  const links=styles||prepareMembershipStyles();
   const templates=document.createElement('div');templates.className='membership-dialogs';templates.innerHTML=markup;document.body.append(templates);
   const statsTitle=stats.querySelector('[data-copy="projectStats"]')||document.getElementById('v2-stats-title');
   const supportTitle=document.getElementById('v2-support-title');
