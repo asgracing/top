@@ -24,6 +24,9 @@
 .poll-search input::placeholder,.poll-editor input::placeholder,.poll-editor textarea::placeholder{color:#8195a8;opacity:1}
 .poll-list-summary{font-size:12px;color:var(--poll-muted);margin-bottom:12px}
 .asg-polls{container-type:inline-size;container-name:poll-content}
+.poll-stats-sidebar{position:relative}
+.poll-stats-sidebar>.support-body{visibility:hidden;pointer-events:none}
+.poll-stats-sidebar>.membership-side-body{position:absolute;inset:var(--poll-stats-head,41px) 0 0}
 .poll-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:15px}
 .poll-card.panel{display:flex;flex-direction:column;padding:22px;border:1px solid var(--poll-border);border-radius:8px;background:linear-gradient(140deg,#1a2936b8,#111c28d9);min-width:0;position:relative;transition:border-color .15s}
 .poll-card:hover{border-color:#708b9f}

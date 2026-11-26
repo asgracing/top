@@ -26,11 +26,11 @@ const {browser,fixture} = await import('./v2-browser-fixtures.mjs');
 const now = Date.now();
 const sample = {id:'poll-fixture',title:'Какую трассу выбираем для следующей гонки?',description:'Выбираем вместе. Результаты помогут организаторам подготовить следующую гонку.',mode:'multiple',max_choices:2,status:'active',revision:4,participants:100,starts_at:new Date(now-3600000).toISOString(),ends_at:new Date(now+72*3600000).toISOString(),options:[{id:'spa',label:'Circuit de Spa-Francorchamps — длинное название трассы для проверки переноса',count:60,color:'#69b8f7'},{id:'nurburgring',label:'Nürburgring',count:75,color:'#a992f5'},{id:'brands',label:'Brands Hatch',count:20,color:'#62d5ba'}]};
 const results=[],errors=[];let writes=0;
-async function setup({width=1440,language='ru',signed=true,admin=false,denied=false}={}) {
+async function setup({width=1440,language='ru',signed=true,admin=false,denied=false,homeVersion='current'}={}) {
   const context = await browser.newContext({viewport:{width,height:1000}}),page=await context.newPage();
   await context.addCookies([{name:'asg_privacy_consent',value:encodeURIComponent(JSON.stringify({version:'2026-04-30',analytics:false,savedAt:new Date().toISOString()})),url:base}]);
   await context.addInitScript(()=>sessionStorage.setItem('asgHomeIntroSeenR10','1'));
-  const state={poll:structuredClone(sample),choices:[],revision:0,fail:false,admin,deny:denied,writes:[],counts:0,legacy:false,widgetReads:0};
+  const state={poll:structuredClone(sample),choices:[],revision:0,fail:false,admin,deny:denied,writes:[],counts:0,legacy:false,widgetReads:0,homeVersion};
   if (admin) state.poll.delivery = [
     {kind:'opened',destination:'discord',status:'sent'},
     {kind:'pin_opened',destination:'telegram',status:'retry'},
@@ -41,6 +41,7 @@ async function setup({width=1440,language='ru',signed=true,admin=false,denied=fa
   await page.route('**/*',async route=>{
     const req=route.request(),url=new URL(req.url()),p=url.pathname;
     const send=(payload,status=200)=>route.fulfill({status,contentType:'application/json',body:JSON.stringify(payload)});
+    if(url.hostname==='auth.asgracing.ru'&&p==='/v1/public/site-appearance')return send({home_version:state.homeVersion,new_year_enabled:false});
     if (url.hostname==='auth.asgracing.ru' && (p.startsWith('/v1/polls')||p.startsWith('/v1/admin/polls'))) {
       if (state.fail) return send({detail:'unavailable'},503);
       const method=req.method();
@@ -77,6 +78,23 @@ async function fits(page) {
   assert.ok(width.scroll<=width.inner+1,JSON.stringify(width));
 }
 try {
+  for(const language of ['ru','en'])for(const width of [1440,390]){
+    const {page,context,state}=await setup({language,width,homeVersion:'membership'});
+    await page.goto(entry(language,width===1440?'polls/':'polls/view/?id=poll-fixture'));
+    await page.waitForSelector('.poll-stats-sidebar .project-summary');
+    await page.waitForFunction(()=>/33/.test(document.querySelector('.project-counts .metric b')?.textContent||''));
+    assert.equal(await page.locator('#v2-support-title').textContent(),language==='ru'?'Статистика проекта':'Project statistics');
+    assert.equal(await page.locator('#page-view>.stats-panel').count(),0);
+    assert.equal(await page.locator('.project-summary #v2-day-driver').count(),1);
+    await fits(page);
+    if(language==='ru'&&width===1440){
+      state.homeVersion='current';await page.evaluate(()=>window.dispatchEvent(new Event('asg-appearance-refresh')));
+      await page.waitForSelector('#page-view>.stats-panel');assert.equal(await page.locator('.project-summary').count(),0);
+      state.homeVersion='membership';await page.evaluate(()=>window.dispatchEvent(new Event('asg-appearance-refresh')));
+      await page.waitForSelector('.poll-stats-sidebar .project-summary');
+    }
+    assert.equal(state.writes.length,0);results.push({screen:'production-membership-statistics',language,width,passed:true});await context.close();
+  }
   {
     const {page,context,state}=await setup();
     await page.clock.install({time:new Date(now)});

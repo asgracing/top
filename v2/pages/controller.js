@@ -52,9 +52,9 @@ export async function startPage(api) {
     let pollView=view;
     if(screen!=='polls-admin'){
       pollView=document.createElement('div');
-      const stats=home.querySelector('.stats-panel');
       view.append(pollView);
-      if(stats)view.append(stats);
+      const {mountPollStats}=await import('./poll-stats.js');
+      mountPollStats({view,home,language});
       void native().prepareCommunityStats?.().catch(()=>{});
     }
     await mountPollsPage({view:pollView,language,subscribe,admin:screen === 'polls-admin'});
