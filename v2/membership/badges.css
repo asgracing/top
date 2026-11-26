@@ -35,8 +35,27 @@
 .membership-tier h3::before { display: none; }
 .membership-tier > b { grid-row: auto; grid-column: 1 / -1; }
 .membership-offer .membership-tier {
+  grid-template-columns: auto minmax(0, 1fr);
   row-gap: 3px;
   padding-block: 8px;
+}
+.membership-offer .membership-tier > b {
+  grid-column: 1;
+  grid-row: 3;
+  align-self: center;
+}
+.membership-offer .tier-actions {
+  min-width: 0;
+  grid-column: 2;
+  grid-row: 3;
+  align-items: center;
+  align-self: center;
+  gap: 5px;
+}
+.membership-offer .membership-tier .tier-actions > :is(a,button) {
+  min-width: 0;
+  padding-inline: 4px;
+  font-size: clamp(9px, .95cqw, 12px);
 }
 @media (max-width: 1100px) {
   #support-content .support-hero {

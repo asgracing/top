@@ -1,8 +1,8 @@
 {
   "schemaVersion": 1,
-  "revision": "6c7e1e1238576b486e0fb755c30c81aed1a8e3cc",
+  "revision": "75dd0f190869d5261ce270676941ddb606ec1c90",
   "files": 1545,
-  "bytes": 215946593,
+  "bytes": 215947026,
   "assets": [
     {
       "path": "404.html",
@@ -6966,8 +6966,8 @@
     },
     {
       "path": "v2/membership/badges.css",
-      "bytes": 1277,
-      "sha256": "7f3664096c9db45ea7fd27b0a853099df726b020ce9d18c434d2a16734d006e8"
+      "bytes": 1710,
+      "sha256": "e0b59bd25b7b9f3654874b10cc6e63246171f5411b392a99a2358bb1e9768ae4"
     },
     {
       "path": "v2/membership/badges.js",
