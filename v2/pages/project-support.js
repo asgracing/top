@@ -123,4 +123,3 @@ export function startSupportPage({view, text, esc, language}) {
   more.addEventListener('click',()=>void load());
   void load();
 }
-
