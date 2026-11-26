@@ -1,4 +1,4 @@
-@import url("/v2/pages/profile-badges-podium.css?v=20261126podium1");
+@import url("/v2/pages/profile-badges-podium.css?v=20261127palette");
 
 .hero-badges {
   position: absolute;
@@ -20,6 +20,8 @@
   text-transform: uppercase;
   color: #d2b18c;
 }
+#support-content #support-demo-content .project-support-badge,
+.trial-profile .project-support-badge,
 .hero-badges .project-support-badge,
 .membership-tier .project-support-badge {
   display: inline-flex;

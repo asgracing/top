@@ -277,7 +277,7 @@ body.studio-refreshed .studio-pass-panel .panel-head h2 { font-size:13px; }
 .racing-pass [hidden] { display:none; }
 .pass-avatar { display:grid; place-items:center; width:17%; aspect-ratio:1; background:#25364d; border:1px solid #819db577; border-radius:8px; font-size:5cqw; }
 .studio-pass-editor-head { margin:14px 0 20px; }
-.studio-pro-chip { display:inline-block; margin-inline-start:4px; padding:2px 5px; border:1px solid #b291e66b; border-radius:3px; background:#7455ad29; color:#dfccfa; font-size:10px; line-height:1; }
+.studio-pro-chip { display:inline-block; margin-inline-start:4px; padding:2px 5px; border:1px solid #ada9ec6b; border-radius:3px; background:#68678e40; color:#f0eeff; font-size:10px; line-height:1; }
 .profile-pro-workspace .studio-pass-editor-head h3 { font-size:clamp(17px,2vw,22px); }
 .profile-pro-workspace .studio-pass-editor-head p { margin-top:7px; color:#b3c0d0; }
 .studio-card-layout { display:grid; grid-template-columns:minmax(0,1.5fr) minmax(215px,.8fr); gap:22px; align-items:start; }

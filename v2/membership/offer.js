@@ -1,3 +1,4 @@
+import {subscriptionBadge} from './badges.js';
 import {wireSupportTrials} from '../support-trial.js?v=20261126trial1';
 import {v2Route} from '../routes.js';
 import {localizeTree,tr} from './locale.js';
@@ -62,14 +63,16 @@ export function mountOffer(stats, card, {language="ru"}={}) {
   for (const button of document.querySelectorAll("[data-membership-preview]")) {
     button.onclick = () => {
       const tier = button.closest(".membership-tier");
-      const name = tier.querySelector("h3").textContent;
+      const key = ["supporter","vip","pro"].find(id=>tier.classList.contains("tier-"+id));
+      const name = key === "supporter" ? "Supporter" : key.toUpperCase();
       trial.querySelector("h2").textContent = tr("Посмотреть пример",language) + " · " + name;
       trial.querySelector(".trial-description").textContent = tier.querySelector("p").textContent;
       trial.querySelector(".trial-checkout").href = tier.querySelector("a").href;
       const preview = trial.querySelector(".trial-showcase");
       preview.className = "trial-showcase trial-" + name.toLowerCase();
       preview.dataset.look = "0";
-      preview.innerHTML = name === "PRO" ? card : `<div class="trial-profile"><span class="trial-badge">${name}</span><h3>Apex Driver</h3><p>Demo Racing Team</p><b>#27</b><small>Гоночный номер закреплён</small></div>`;
+      preview.innerHTML = name === "PRO" ? card : `<div class="trial-profile"><div class="profile-heading"></div><h3>Apex Driver</h3><p>Demo Racing Team</p><b>#27</b><small>Гоночный номер закреплён</small></div>`;
+      preview.querySelector(".profile-heading")?.append(subscriptionBadge(key));
       const options = trial.querySelector(".trial-options");
       options.replaceChildren();
       const labels = name === "Supporter" ? ["Значок Supporter", "Гоночный номер"] : name === "VIP" ? ["Сияние", "Градиент", "Пульс"] : ["Паддок", "Ночная трасса", "Закат"];

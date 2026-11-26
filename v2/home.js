@@ -404,7 +404,7 @@ if(!isSubpage){
   if('IntersectionObserver' in window){const observer=new IntersectionObserver(entries=>{if(entries.some(entry=>entry.isIntersecting)){observer.disconnect();loadTable();}},{rootMargin:'240px 0px'});observer.observe($('ranking'));}
   else loadTable();
 }
-const homeLayoutReady=isSubpage?Promise.resolve():import('./home-version.js?v=20261126mobile2')
+const homeLayoutReady=isSubpage?Promise.resolve():import('./home-version.js?v=20261127palette')
   .then(({mountHomeVersion})=>mountHomeVersion({language}).ready)
   .catch(error=>{
     console.error('Homepage layout unavailable',error);

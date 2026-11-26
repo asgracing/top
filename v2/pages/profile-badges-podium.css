@@ -1,8 +1,22 @@
+:is([data-tier=pro].project-support-badge, .tier-pro, #support-content .plan.pro) {
+  --rim: #ada9ec;
+  --glint: #f0eeff;
+  --shadow-metal: #68678e;
+  --enamel: #2f304c;
+}
+:is([data-tier=vip].project-support-badge, .tier-vip, #support-content .plan.vip) {
+  --rim: #deb971;
+  --glint: #fff0bd;
+  --shadow-metal: #79623a;
+  --enamel: #463821;
+}
+:is([data-tier=supporter].project-support-badge, .tier-supporter, #support-content .plan.supporter) {
+  --rim: #c8d3df;
+  --glint: #f3f7fb;
+  --shadow-metal: #667587;
+  --enamel: #29323e;
+}
 .profile-heading .project-support-badge {
-  --rim: #e8ac85;
-  --glint: #ffebd4;
-  --shadow-metal: #825544;
-  --enamel: #462b27;
   --cut: polygon(8px 0, 100% 0, calc(100% - 3px) 60%, calc(100% - 12px) 100%, 6px 100%, 0 calc(100% - 6px), 0 8px);
   position: relative;
   isolation: isolate;
@@ -26,17 +40,9 @@
   --podium-emblem: url("data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20viewBox%3D%220%200%2024%2024%22%3E%3Cpath%20fill-rule%3D%22evenodd%22%20d%3D%22M2%206h7l3%204-3%201-3-2H3zm1%205h5l2%202-3%201zm8-2q2-3%205%200%203-3%205%200%202%203-5%209-7-6-5-9z%22%2F%3E%3C%2Fsvg%3E");
 }
 .profile-heading .project-support-badge[data-tier=vip] {
-  --rim: #deb971;
-  --glint: #fff0bd;
-  --shadow-metal: #79623a;
-  --enamel: #463821;
   --podium-emblem: url("data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20viewBox%3D%220%200%2024%2024%22%3E%3Cpath%20fill-rule%3D%22evenodd%22%20d%3D%22M2%206l6%204%204-7%204%207%206-4-3%2010H5zm4%2012h12l-1%202H7z%22%2F%3E%3C%2Fsvg%3E");
 }
 .profile-heading .project-support-badge[data-tier=pro] {
-  --rim: #ada9ec;
-  --glint: #f0eeff;
-  --shadow-metal: #68678e;
-  --enamel: #2f304c;
   --podium-emblem: url("data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20viewBox%3D%220%200%2024%2024%22%3E%3Cpath%20fill-rule%3D%22evenodd%22%20d%3D%22M1%2018%2011%204h6L7%2018zm9%200%208-11%205%2011h-5l-1-4-3%204z%22%2F%3E%3C%2Fsvg%3E");
 }
 .profile-heading .project-support-badge[data-tier=admin] {

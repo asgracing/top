@@ -23,12 +23,10 @@
 .pass-face .racing-pass { width:100%; height:100%; margin:0; }
 .membership-flip-hint { font-size:10px; color:#c4cbd8; }
 .membership-tiers { display:grid; grid-template-columns:repeat(3,minmax(0,1fr)); gap:8px; }
-.membership-tier { --accent:#aec2d3; --edge:#536676; --tint:#223343; position:relative; isolation:isolate; overflow:hidden; display:grid; grid-template-columns:1fr auto; grid-template-rows:auto 1fr auto; gap:6px; padding:10px 12px; min-height:125px; border:1px solid var(--edge); border-radius:5px; background:linear-gradient(118deg,var(--tint),#111922 82%); }
+.membership-tier { --accent:var(--rim,#c8d3df); --edge:var(--shadow-metal,#667587); --tint:var(--enamel,#29323e); position:relative; isolation:isolate; overflow:hidden; display:grid; grid-template-columns:1fr auto; grid-template-rows:auto 1fr auto; gap:6px; padding:10px 12px; min-height:125px; border:1px solid var(--edge); border-radius:5px; background:linear-gradient(118deg,var(--tint),#111922 82%); }
 .membership-tier::before { content:""; position:absolute; inset:0; z-index:-1; background:linear-gradient(113deg,transparent 37%,color-mix(in srgb,var(--accent) 15%,transparent),transparent 64%); transform:translateX(-110%); pointer-events:none; }
 .membership-tier:hover::before,.membership-tier:focus-within::before { animation:membership-sheen 1.1s ease-out both; }
 @keyframes membership-sheen { to { transform:translateX(110%); } }
-.membership-tier.tier-vip { --accent:#d7afff; --edge:#795495; --tint:#382547; }
-.membership-tier.tier-pro { --accent:#f8cd86; --edge:#8d724a; --tint:#3c3021; }
 .membership-tier h3 { grid-column:1; display:flex; align-items:center; gap:8px; margin:0; font-size:clamp(17px,1.8cqw,23px); line-height:1; color:#fff; }
 .membership-tier h3::before { content:""; width:4px; height:.85em; border-radius:2px; transform:skew(-13deg); background:var(--accent); }
 .membership-tier p { grid-column:1/-1; margin:0; color:#d5dde6; font-size:clamp(11px,1.12cqw,14px); line-height:1.35; }
@@ -101,12 +99,11 @@
 .trial-profile p { color:#abb7c8; font-size:12px; margin:3px 0 15px; }
 .trial-profile>b { display:block; font-size:38px; }
 .trial-profile small { color:#aabed0; }
-.trial-badge { padding:4px 8px; border:1px solid #9daec5; border-radius:4px; color:#dfe9f7; font-size:12px; font-weight:750; }
-.trial-supporter[data-look="1"] .trial-profile>b { color:#c1f497; }
-.trial-vip .trial-profile { border-color:#cf9af6; animation:trial-glow 2.4s ease-in-out infinite alternate; }
-.trial-vip[data-look="1"] .trial-badge { background:linear-gradient(90deg,#834dac,#3868b6); }
+.trial-supporter[data-look="1"] .trial-profile>b { color:#c8d3df; }
+.trial-vip .trial-profile { border-color:#deb971; animation:trial-glow 2.4s ease-in-out infinite alternate; }
+.trial-vip[data-look="1"] .trial-profile { background:linear-gradient(110deg,#463821,#0b1429); }
 .trial-vip[data-look="2"] .trial-profile { animation-duration:1s; }
-@keyframes trial-glow { to { box-shadow:0 0 28px #c280e14d; } }
+@keyframes trial-glow { to { box-shadow:0 0 28px #deb9714d; } }
 .trial-options { display:flex; gap:6px; flex-wrap:wrap; margin:12px 0; }
 .trial-options button { border:1px solid #627388; border-radius:4px; padding:6px 9px; font-size:12px; }
 .trial-options button[aria-pressed="true"] { background:#455971; border-color:#aec5de; }

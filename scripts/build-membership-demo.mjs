@@ -26,7 +26,7 @@ await build({entryPoints:[resolve(root,'v2-source/membership/profile-demo-source
   define:{'import.meta.url':JSON.stringify('https://asgracing.ru/src/features/server-status/track-background.js')},
   plugins:[{name:'isolated-profile-demo',setup(b){
     b.onResolve({filter:/^native-demo-assets$/},()=>({path:'assets',namespace:'demo'}));
-    b.onLoad({filter:/.*/,namespace:'demo'},()=>({contents:`export const nativeCss=await fetch('/v2/membership/profile-demo.css?v=20261126podium2').then(r=>{if(!r.ok)throw Error('demo_styles');return r.text()});export const nativeHero=${JSON.stringify(hero)},trackAssets={};`,loader:'js'}));
+    b.onLoad({filter:/.*/,namespace:'demo'},()=>({contents:`export const nativeCss=await fetch('/v2/membership/profile-demo.css?v=20261127palette').then(r=>{if(!r.ok)throw Error('demo_styles');return r.text()});export const nativeHero=${JSON.stringify(hero)},trackAssets={};`,loader:'js'}));
     b.onResolve({filter:/.*/},args=>({path:demoImportPath(args.path,{...args,root,here})}));
     b.onLoad({filter:/\.js$/},async args=>{
       let source=await readFile(args.path,'utf8');const path=relative(root,args.path).replaceAll('\\','/');

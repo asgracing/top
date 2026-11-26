@@ -201,7 +201,7 @@ for (const language of ['ru','en']) {
   const initialHomeScript = '<script async type="module" data-home-initial src="/v2/home-initial-data-v1.js"></script>';
   const homeStartup = '<style data-home-startup>'+await read('v2/home-startup.css')+'</style><script data-home-startup>'+await read('v2/home-startup.js')+'</script>';
   const homeHead = hourlyHead(head)
-    .replace(/(\/src\/features\/site-appearance\/site-appearance\.js)\?v=[\w-]+/,'$1?v=20261126mobile2')
+    .replace(/(\/src\/features\/site-appearance\/site-appearance\.js)\?v=[\w-]+/,'$1?v=20261127palette')
     .replace(`/v2/styles/design.css?v=${presentationVersion}`,'/v2/styles/design.css?v=20261122supportlaunch')
     .replace(`/v2/boot/home.js?v=${hourlyBootVersion}`,'/v2/boot/home.js?v=20261126pollwidgets1');
   const homeBody = localizedV2Links(addFaqToShell(pageBody, language, 'home', faqContent), language).replace('Готовимся к старту',language==='ru'?'Загружаем главную страницу…':'Loading homepage…');
@@ -216,15 +216,15 @@ for (const language of ['ru','en']) {
     if(screen==='account'){
       owningHead=owningHead.replace(`/v2/pages/account.css?v=${controlStylesVersion}`,'/v2/pages/account.css?v=20261121paddock1');
       owningHead=owningHead.replace(`/v2/boot/home.js?v=${bootVersion}`,`/v2/boot/home.js?v=${accountBootVersion}`);
-      owningHead+='<link rel="stylesheet" href="/styles/components/project-support.css?v=20261120grantpermission1">';
+      owningHead+='<link rel="stylesheet" href="/styles/components/project-support.css?v=20261127palette">';
     }
-    if (screen === 'support') owningHead=owningHead.replace('20261123supportrefresh','20261126podium2');
+    if (screen === 'support') owningHead=owningHead.replace('20261123supportrefresh','20261127palette');
     if (screen === 'driver') {
       owningHead=owningHead.replace('pages.css?v='+profileStylesVersion,'pages.css?v=20261120profile1');
       owningHead=owningHead.replace(`/v2/boot/home.js?v=${bootVersion}`,`/v2/boot/home.js?v=20261121publicpaddock`);
-      owningHead+='<link rel="stylesheet" href="/styles/components/project-support.css?v=20261120grantpermission1">';
+      owningHead+='<link rel="stylesheet" href="/styles/components/project-support.css?v=20261127palette">';
     }
-    if (screen === 'driver') owningHead+='<link rel="stylesheet" href="/v2/pages/profile-appearance.css?v=20261121passaccent"><link rel="stylesheet" href="/v2/pages/profile-badges-podium.css?v=20261126podium1">';
+    if (screen === 'driver') owningHead+='<link rel="stylesheet" href="/v2/pages/profile-appearance.css?v=20261127palette"><link rel="stylesheet" href="/v2/pages/profile-badges-podium.css?v=20261127palette">';
     if (screen === 'site-admin') owningHead += '<link rel="stylesheet" href="/v2/pages/site-appearance-admin.css?v=20261126home1">';
     if (['polls','poll','polls-admin'].includes(screen)) owningHead += '<link rel="stylesheet" href="/v2/pages/polls.css?v=20261126pollwidgets1">';
     if (['moderation','polls','poll','polls-admin'].includes(screen)) owningHead=owningHead.replace(`/v2/boot/home.js?v=${bootVersion}`,'/v2/boot/home.js?v=20261126pollwidgets1');

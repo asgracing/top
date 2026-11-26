@@ -42,7 +42,7 @@ export function mountSupportMarketing(view,{language,text}) {
   let loading,instance;
   async function loadDemo(){
     if(instance)return instance;
-    loading??=import('./profile-demo.js?v=20261126podium2').then(({mountProfileDemo})=>mountProfileDemo(host,{language})).then(value=>instance=value).catch(()=>{
+    loading??=import('./profile-demo.js?v=20261127palette').then(({mountProfileDemo})=>mountProfileDemo(host,{language})).then(value=>instance=value).catch(()=>{
       loading=null;host.replaceChildren();const message=document.createElement('p');message.className='native-demo-error';message.textContent=text('Не удалось загрузить пример. Нажми «Повторить».','Could not load the example. Choose Retry.');
       const retry=document.createElement('button');retry.className='button';retry.textContent=text('Повторить','Retry');retry.onclick=()=>{host.replaceChildren();void loadDemo();};host.append(message,retry);
     });return loading;
@@ -54,7 +54,7 @@ export function mountSupportMarketing(view,{language,text}) {
   content.addEventListener('click',async event=>{
     const button=event.target.closest('[data-demo]');if(!button)return;
     if(button.dataset.demo==='supporter'){
-      content.querySelector('#support-demo-content').innerHTML='<span class="demo-badge">Supporter</span><h2>Apex Driver · #27</h2><p>Demo Racing Team</p><p>'+text('Значок поддержки, защита номера и роль Discord. Вымышленный профиль.','Support badge, number protection and Discord role. Fictional profile.')+'</p>';dialog.showModal();return;
+      content.querySelector('#support-demo-content').innerHTML='<div class="profile-heading"></div><h2>Apex Driver · #27</h2><p>Demo Racing Team</p><p>'+text('Значок поддержки, защита номера и роль Discord. Вымышленный профиль.','Support badge, number protection and Discord role. Fictional profile.')+'</p>';content.querySelector('#support-demo-content .profile-heading').append(subscriptionBadge('supporter'));dialog.showModal();return;
     }
     host.scrollIntoView({block:'start',behavior:matchMedia('(prefers-reduced-motion: reduce)').matches?'instant':'smooth'});
     const demo=await loadDemo();demo?.open(button.dataset.demo);

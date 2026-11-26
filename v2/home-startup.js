@@ -12,7 +12,7 @@
         const preload = document.createElement('link');
         preload.rel = 'preload';
         preload.as = 'style';
-        preload.href = '/v2/membership/' + name + '?v=20261126home1';
+        preload.href = '/v2/membership/' + name + '?v=20261127palette';
         document.head.append(preload);
       }
     }
