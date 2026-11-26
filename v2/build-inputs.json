@@ -80,7 +80,7 @@
     },
     {
       "path": "scripts/build-v2.mjs",
-      "sha256": "722b020231f0abc50c2f4c8107b2017c572c0aa21dbc1282b0e79647e8a1d088"
+      "sha256": "607d3d903ec37742459822efc4a664b4deb2a10045447f187e3b41eef6a47ccd"
     },
     {
       "path": "scripts/faq-page.mjs",
@@ -764,15 +764,15 @@
     },
     {
       "path": "v2/home-startup.js",
-      "sha256": "d20e37b421abf1a017f987da8bd66a80f2985682d8f10d652f0b4432db458660"
+      "sha256": "2d365376312c23b7a3b1037dc9adb6e1f2e8503dd2edd614e4d4125b5e585d5f"
     },
     {
       "path": "v2/home-version.js",
-      "sha256": "962d1e2e5a9af9e1051b53010b47e7e789786928475141a8674ac7d947067958"
+      "sha256": "c99e611a1cf8536f0cb104dcfaf00205de534f852e3d559b834b75d661b7dc7a"
     },
     {
       "path": "v2/home.js",
-      "sha256": "8cd1726761d27cf19cac4e0e01e26d74108254e3df9125a6a97f695ad101d2eb"
+      "sha256": "07a158853e232d72e85fcff21594f01002b1179ca85fe7160713cdd5541775f3"
     },
     {
       "path": "v2/live-stats.js",
@@ -812,7 +812,7 @@
     },
     {
       "path": "v2/membership/styles.js",
-      "sha256": "2a37450600ceaee6893817df388f71331bc80da4731af449d91a71477e957f50"
+      "sha256": "7eae8e4b621c36151979e203ff9ab928dd8721cc2a7e2e55156566b199f5022f"
     },
     {
       "path": "v2/membership/support-template.js",

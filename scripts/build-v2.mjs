@@ -200,9 +200,9 @@ for (const language of ['ru','en']) {
   const initialHomeScript = '<script async type="module" data-home-initial src="/v2/home-initial-data-v1.js"></script>';
   const homeStartup = '<style data-home-startup>'+await read('v2/home-startup.css')+'</style><script data-home-startup>'+await read('v2/home-startup.js')+'</script>';
   const homeHead = hourlyHead(head)
-    .replace(/(\/src\/features\/site-appearance\/site-appearance\.js)\?v=[\w-]+/,'$1?v=20261126startup1')
+    .replace(/(\/src\/features\/site-appearance\/site-appearance\.js)\?v=[\w-]+/,'$1?v=20261126mobile2')
     .replace(`/v2/styles/design.css?v=${presentationVersion}`,'/v2/styles/design.css?v=20261122supportlaunch')
-    .replace(`/v2/boot/home.js?v=${hourlyBootVersion}`,'/v2/boot/home.js?v=20261126startup1');
+    .replace(`/v2/boot/home.js?v=${hourlyBootVersion}`,'/v2/boot/home.js?v=20261126mobile2');
   const homeBody = localizedV2Links(addFaqToShell(pageBody, language, 'home', faqContent), language).replace('Готовимся к старту',language==='ru'?'Загружаем главную страницу…':'Loading homepage…');
   await emit(`v2/${language}/index.html`,`<!doctype html>\n<html lang="${language}" data-page="home" data-page-language="${language}" data-v2="home"><head>${homeStartup}${initialHomeScript}${homeHead}${faqStyles}${faqScript}</head><body data-v2="home">${homeBody}<div id="v1-runtime-host" hidden inert aria-hidden="true">${oldBody}</div>${modals}</body></html>\n`);
   for (const config of pageRegistry.filter(page => page.route)) {

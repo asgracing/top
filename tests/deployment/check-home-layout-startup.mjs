@@ -12,13 +12,15 @@ try{
   {name:'current-en-mobile',version:'current',language:'en',width:390},
   {name:'membership-en-mobile',version:'membership',language:'en',width:390},
   {name:'config-error',version:'current',configError:true},
-  {name:'config-timeout',version:'current',configVersion:'membership',configDelay:3200},
+  {name:'mobile-slow-config',version:'membership',width:390,configDelay:3200},
+  {name:'mobile-slow-css',version:'membership',width:390,cssDelay:6500},
+  {name:'config-timeout',version:'current',configVersion:'membership',configDelay:9000},
   {name:'css-error',version:'current',configVersion:'membership',cssError:true},
-  {name:'css-timeout',version:'current',configVersion:'membership',cssDelay:4800},
+  {name:'css-timeout',version:'current',configVersion:'membership',cssDelay:9000},
   {name:'boot-unavailable',version:'current',bootError:true},
   {name:'javascript-disabled',version:'current',noJS:true}
  ]){
-  const page=await browser.newPage({viewport:{width:test.width||1440,height:900},reducedMotion:'reduce',javaScriptEnabled:!test.noJS}),errors=[];
+  const page=await browser.newPage({viewport:{width:test.width||1440,height:900},reducedMotion:'reduce',isMobile:!!test.width,hasTouch:!!test.width,javaScriptEnabled:!test.noJS}),errors=[];
   page.on('pageerror',error=>errors.push(error.message));
   await page.addInitScript(()=>{
    window.__homePaints=[];
@@ -54,8 +56,8 @@ try{
    assert.equal(await page.locator('.home-loader').isVisible(),false);
    assert.equal(configReads,0);reports.push({name:test.name,staticFallbackVisible:true});await page.close();continue;
   }
-  await page.waitForFunction(()=>['ready','fallback'].includes(document.documentElement.dataset.homeLayoutState),{},{timeout:12000});
-  await page.waitForTimeout(test.configDelay>2500||test.cssDelay>4000?1000:150);
+  await page.waitForFunction(()=>['ready','fallback'].includes(document.documentElement.dataset.homeLayoutState),{},{timeout:30000});
+  await page.waitForTimeout(test.configDelay>8000||test.cssDelay>8000?1000:150);
   const result=await page.evaluate(()=>({version:document.documentElement.dataset.homeVersion,state:document.documentElement.dataset.homeLayoutState,paints:window.__homePaints,loaderVisible:getComputedStyle(document.querySelector('.home-loader')).display!=='none'&&!document.querySelector('.home-loader').hidden,overflow:document.documentElement.scrollWidth>innerWidth}));
   assert.equal(result.version,test.version,test.name);
   assert.ok(result.paints.length,test.name+' must paint a usable page');

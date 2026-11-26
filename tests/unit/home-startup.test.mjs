@@ -11,7 +11,7 @@ function startup({preview,fetcher}={}){
   const names=new Set(),root={dataset:{},classList:{add:(...values)=>values.forEach(v=>names.add(v)),remove:(...values)=>values.forEach(v=>names.delete(v))}};
   const shell={inert:true},loader={hidden:false},timers=new Map();let id=0,calls=0;
   const window={frameElement:preview?{hasAttribute:()=>true,getAttribute:()=>preview}:null};
-  const document={documentElement:root,getElementById:()=>shell,querySelector:selector=>selector==='.home-loader'?loader:null};
+  const document={head:{append(){}},createElement:()=>({}),documentElement:root,getElementById:()=>shell,querySelector:selector=>selector==='.home-loader'?loader:null};
   vm.runInNewContext(source,{window,document,Promise,AbortController,fetch:(...args)=>{calls++;return fetcher(...args);},setTimeout:(fn,ms)=>{timers.set(++id,{fn,ms});return id;},clearTimeout:timer=>timers.delete(timer)});
   return {window,root,shell,loader,names,timers,calls:()=>calls,fire(ms){for(const [key,value]of timers)if(value.ms===ms){timers.delete(key);value.fn();break;}}};
 }
@@ -27,13 +27,24 @@ test('first paint stays neutral until renderer finishes; config starts before ma
   assert.equal(s.names.has('asg-home-layout-pending'),false);assert.equal(s.shell.inert,false);assert.equal(s.loader.hidden,true);
 });
 
+test('mobile config may take longer than 2.5 seconds without selecting the old layout',async()=>{
+  let resolve,signal;
+  const s=startup({fetcher:(_url,options)=>{signal=options.signal;return new Promise(r=>resolve=r);}});
+  s.fire(2500);
+  assert.equal(signal.aborted,false);
+  assert.ok(s.names.has('asg-home-layout-pending'));
+  resolve({ok:true,json:async()=>({home_version:'membership'})});
+  assert.equal((await s.window.asgHomeStartup.config).home_version,'membership');
+  s.window.asgHomeStartup.finish();
+});
+
 test('hung request settles once; a late successful response cannot change initial fallback',async()=>{
   let resolve,signal;
   const s=startup({fetcher:(_url,options)=>{signal=options.signal;return new Promise(r=>resolve=r);}});
-  s.fire(2500);assert.equal(signal.aborted,true);assert.equal(await s.window.asgHomeStartup.config,null);
+  s.fire(8000);assert.equal(signal.aborted,true);assert.equal(await s.window.asgHomeStartup.config,null);
   resolve({ok:true,json:async()=>({home_version:'membership'})});await flush();
   assert.equal(await s.window.asgHomeStartup.config,null);assert.ok(s.names.has('asg-home-layout-pending'));
-  s.fire(8000);assert.equal(s.root.dataset.homeVersion,'current');assert.equal(s.root.dataset.homeLayoutState,'fallback');assert.equal(s.window.asgHomeStartup.expired,true);
+  s.fire(20000);assert.equal(s.root.dataset.homeVersion,'current');assert.equal(s.root.dataset.homeLayoutState,'fallback');assert.equal(s.window.asgHomeStartup.expired,true);
   assert.equal(s.names.has('asg-home-layout-pending'),false);
 });
 
