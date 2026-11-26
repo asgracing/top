@@ -16,6 +16,7 @@ import {pageHasSidebarWidgets} from '../v2/page-layout.js';
 import {addFaqToShell} from './faq-page.mjs';
 import {renderSafetyAbout} from '../v2/safety-guide.js';
 const root = resolve(import.meta.dirname, '..');
+await import('./build-membership-demo.mjs');
 const siteRelease=await readSiteRelease();
 const legacyEnabled=process.env.ASG_ROOT_FALLBACK==='1'||siteRelease.legacyEnabled!==false;
 const outputRoot = resolve(process.env.ASG_V2_OUTPUT_DIR || (siteRelease.layout==='parallel'?root:taskScratchPath('site-v2-compilation')));
@@ -220,7 +221,7 @@ for (const language of ['ru','en']) {
       owningHead+='<link rel="stylesheet" href="/styles/components/project-support.css?v=20261120grantpermission1">';
     }
     if (screen === 'driver') owningHead+='<link rel="stylesheet" href="/v2/pages/profile-appearance.css?v=20261121passaccent">';
-    if (screen === 'site-admin') owningHead += '<link rel="stylesheet" href="/v2/pages/site-appearance-admin.css?v=20261118newyear4">';
+    if (screen === 'site-admin') owningHead += '<link rel="stylesheet" href="/v2/pages/site-appearance-admin.css?v=20261126home1">';
     if(screen==='archive'||screen==='race')owningHead=owningHead.replace(`/v2/boot/home.js?v=${bootVersion}`,`/v2/boot/home.js?v=${archiveBootVersion}`);
     if(screen==='cars')owningHead=statsHead(owningHead);
     if(screen==='hourly')owningHead=hourlyHead(owningHead);

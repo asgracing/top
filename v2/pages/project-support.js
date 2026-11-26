@@ -1,3 +1,5 @@
+import {wireSupportTrials} from '../support-trial.js?v=20261126trial1';
+import {mountSupportMarketing} from '../membership/support.js?v=20261126home1';
 import {safeAvatarUrl} from '/src/features/auth/header-auth.js';
 import {createHttpClient} from '/src/shared/http-client.js';
 import {v2Route} from '../routes.js';
@@ -10,8 +12,6 @@ const TIERS = [
   {id:'pro', name:'PRO', sponsrLevel:50047},
 ];
 const SUPPORT_REQUEST = {cache:'no-store', headers:{Accept:'application/json'}};
-const PRIVATE_REQUEST = {...SUPPORT_REQUEST, credentials:'include'};
-const STATUS_URL = AUTH + '/v1/me/support';
 const client = createHttpClient({defaultTimeoutMs:8000});
 const findTier = id => TIERS.find(tier => tier.id === id);
 const validDriver = id => typeof id === 'string' && /^drv_[a-z0-9]{1,64}$/.test(id);
@@ -56,6 +56,7 @@ export function startSupportPage({view, text, esc, language}) {
       <h2>${text('Как продвигается сбор','Funding progress')}</h2>
       ${renderSupportFunding(text)}
     </section>`;
+  mountSupportMarketing(view,{language,text});
   const notice = view.querySelector('[data-support-list-status]');
   const funding = view.querySelector('[data-support-funding]');
   const groups = Object.fromEntries(TIERS.map(tier=>[tier.id,view.querySelector(`[data-support-group="${tier.id}"]`)]));
@@ -63,7 +64,7 @@ export function startSupportPage({view, text, esc, language}) {
   const shown = new Set();
   let page = 1;
   let fundingLoading = false;
-  wireTrial(view,text,v2Route('support/',language));
+  wireSupportTrials(view,{text,returnPath:v2Route('support/',language)});
   async function refreshFunding() {
     if (document.hidden || fundingLoading) return;
     fundingLoading = true;
@@ -121,62 +122,4 @@ export function startSupportPage({view, text, esc, language}) {
   }
   more.addEventListener('click',()=>void load());
   void load();
-}
-
-function wireTrial(view,text,returnPath) {
-  const buttons = [...view.querySelectorAll('[data-support-trial]')];
-  const unavailable = text('Пробный доступ сейчас недоступен.','Trial access is currently unavailable.');
-  const used = text('Пробный период для этого Steam-аккаунта уже использован.',
-    'This Steam account has already used its trial.');
-  for (const button of buttons) button.addEventListener('click',async () => {
-    const notice = button.parentElement.nextElementSibling;
-    const tier = findTier(button.dataset.supportTrial);
-    let started = false;
-    for (const other of buttons) {
-      other.disabled = true;
-      other.parentElement.nextElementSibling.replaceChildren();
-    }
-    notice.textContent = text('Проверяем доступ…','Checking eligibility…');
-    try {
-      const auth = await client.requestJson(AUTH + '/v1/me',PRIVATE_REQUEST);
-      if (!auth.authenticated) {
-        const login = document.createElement('a');
-        login.className = 'text-link';
-        login.href = AUTH + '/v1/auth/steam/start?return_path=' + encodeURIComponent(returnPath);
-        login.textContent = text('Войдите через Steam, чтобы попробовать','Sign in through Steam to start a trial');
-        notice.replaceChildren(login);
-        return;
-      }
-      const {trial} = await client.requestJson(STATUS_URL,PRIVATE_REQUEST);
-      if (!auth.csrf_token || !Array.isArray(trial?.eligible_tiers)) {
-        notice.textContent = unavailable;
-        return;
-      }
-      if (trial.used || !trial.eligible_tiers.includes(tier.id)) {
-        notice.textContent = trial.used ? used : text('Этот уровень недоступен для пробного периода.',
-          'This tier is not eligible for a trial.');
-        return;
-      }
-      const confirmed = window.confirm(text(
-        `Активировать ${tier.name} на 7 дней? Пробный период начнётся сейчас. Списаний не будет.`,
-        `Start a 7-day ${tier.name} trial now? You won't be charged.`));
-      if (!confirmed) {
-        notice.replaceChildren();
-        return;
-      }
-      await client.requestJson(STATUS_URL+'/trial',{
-        ...PRIVATE_REQUEST,method:'POST',
-        headers:{...PRIVATE_REQUEST.headers,'Content-Type':'application/json','X-CSRF-Token':auth.csrf_token},
-        body:JSON.stringify({tier:tier.id}),
-      });
-      started = true;
-      notice.textContent = text(`${tier.name} активирован на 7 дней.`,`${tier.name} is active for 7 days.`);
-    } catch (error) {
-      notice.textContent = error.status === 409
-        ? text('Доступ изменился. Нажмите ещё раз, чтобы проверить статус.','Eligibility changed. Try again to refresh your status.')
-        : unavailable;
-    } finally {
-      for (const other of buttons) other.disabled = started;
-    }
-  });
 }

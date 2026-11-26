@@ -43,7 +43,7 @@ export async function startPage(api) {
   home.id='home-view';home.hidden=true;home.append(...center.childNodes);view.id='page-view';center.append(home,view);
 
   if (screen === 'site-admin') {
-    const { mountAppearanceAdmin } = await import('./site-appearance-admin.js?v=20261118newyear2');
+    const { mountAppearanceAdmin } = await import('./site-appearance-admin.js?v=20261126home1');
     mountAppearanceAdmin({ view, language, subscribe });
     return;
   }
@@ -54,7 +54,7 @@ export async function startPage(api) {
     if (faqContext) view.querySelector('.server-directory-head')?.after(faqContext);
     return;
   }
-  if(screen==='support'){const {startSupportPage}=await import('./project-support.js?v=20261123supportrefresh');return startSupportPage({...api,view});}
+  if(screen==='support'){const {startSupportPage}=await import('./project-support.js?v=20261126home1');return startSupportPage({...api,view});}
   if(screen==='account'){const {startAccountPage}=await import('./account.js?v=20261121paddock1');return startAccountPage({...api,view,center});}
   if(['settings','moderation','ops'].includes(screen)){const {startControlPage}=await import('./control.js?v=20261123supportrefresh');return startControlPage({...api,view,center,screen});}
   const state={screen,raceTab:params.get('tab')==='qualifying'?'qualifying':'race',id:params.get('id')||params.get('slug')||(screen==='document'?(location.pathname.endsWith('/privacy/')?'privacy':location.pathname.endsWith('/cookies/')?'cookies':null):null),month:'',racePage:1,showUncounted:false,query:'',track:'',paceTrack:'',raceSort:'date',recentPage:1,clubType:'teams',archivePage:Math.max(1,Number(params.get('page'))||1),archiveQuery:params.get('q')||'',archiveTrack:params.get('track')||'',archiveKind:params.get('kind')||'',archiveOrder:params.get('order')==='asc'?'asc':'desc',seasonQuery:'',seasonStatus:'',communityType:'clubs',standingPage:1,catalogType:(params.get('tab')||params.get('type'))==='teams'?'teams':'clubs',catalogContext:['hourly','championship'].includes(params.get('context'))?params.get('context'):'general',catalogQuery:params.get('q')||'',rosterQuery:'',entityRacePage:1};

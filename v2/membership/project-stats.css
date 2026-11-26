@@ -1,0 +1,98 @@
+.project-summary {
+  display:flex; flex-direction:column; gap:6px;
+  padding:6px 13px; overflow:auto; scrollbar-width:thin;
+  font-variant-numeric:tabular-nums;
+}
+.project-summary > * { flex:none; }
+.project-summary .project-counts {
+  display:grid; grid-template-columns:1.15fr 1.1fr .85fr; padding:2px 0 4px;
+}
+.project-counts .metric {
+  display:flex; flex-direction:column; gap:3px; margin:0; padding:0 8px;
+  min-width:0; border:0; border-inline-start:1px solid #b4cfe32b;
+}
+.project-counts .metric:first-child { border:0; padding-inline-start:0; }
+.project-counts .metric:last-child { padding-inline-end:0; }
+.project-counts .metric span { font-size:10px; color:#b5c3d1; text-transform:none; white-space:nowrap; }
+.project-counts .metric b { font-size:clamp(17px,1.25vw,23px); line-height:1.12; color:#f4f6fb; letter-spacing:-.045em; white-space:nowrap; }
+.project-counts .metric:last-child b { color:#69e7ab; }
+.project-pilot {
+  display:flex; align-items:center; gap:10px; padding:8px 10px;
+  border:1px solid #b99e6b4d; border-radius:5px;
+  background:linear-gradient(115deg,#a27a3a24,#1725305c 84%);
+}
+.project-pilot-mark {
+  display:grid; place-items:center; width:32px; height:32px; flex:none;
+  border:1px solid #ceb16d56; border-radius:50%; color:#edc57e; background:#bd8c3721;
+}
+.project-pilot-mark svg { width:17px; height:17px; }
+.project-pilot-copy { min-width:0; display:grid; justify-items:start; gap:3px; }
+.project-summary small,.project-summary .eyebrow {
+  font-size:10px; line-height:1.2; font-weight:650; letter-spacing:.07em; text-transform:uppercase;
+}
+.project-pilot-copy small { color:#e2c897; }
+.project-pilot-name { font-size:15px; font-weight:750; line-height:1.2; color:#f2f4f7; overflow-wrap:anywhere; }
+.project-summary .project-pilot-name { display:inline; padding:0; text-align:left; color:#fff; }
+.project-pilot-name::after { content:" ↗"; color:#c8af7c; font-size:.75em; }
+.project-pilot-name:hover,.membership-chart:hover .eyebrow { text-decoration:underline; }
+.membership-chart .eyebrow i { font-style:normal; color:#97afc4; }
+.project-donor { display:flex; align-items:baseline; gap:6px; min-width:0; margin-top:3px; font-size:11px; }
+.project-donations { margin-top:7px; }
+.project-donations>small { color:#b6c3cb; }
+.project-donations[hidden] { display:none; }
+.project-donor span { color:#b6c3cb; }
+.project-donor b { margin-right:auto; overflow:hidden; text-overflow:ellipsis; white-space:nowrap; }
+.project-donor strong { white-space:nowrap; color:#f0c3ae; }
+.project-ratings { display:flex; gap:4px; flex-wrap:wrap; }
+.project-ratings:empty { display:none; }
+.project-ratings .rating-badge { margin:0; min-height:0; padding:2px 4px; font-size:10px; line-height:1; }
+.project-summary .membership-chart { display:flex; flex-direction:column; align-items:stretch; flex:1 0 auto; margin:0; width:100%; padding:2px 0 0; text-align:left; }
+.project-summary .membership-chart .chart { flex:1; margin:6px 0 0; height:auto; min-height:72px; }
+.project-summary .chart-column { min-width:0; }
+.project-summary .bar-track span { border-radius:2px 2px 0 0; background:linear-gradient(#91b9d2,#46657d); }
+.project-summary .chart-column:last-child .bar-track span { background:#65d7a1; }
+.project-summary .chart-column:last-child small { color:#93e9bd; }
+.project-summary .chart-column b,.project-summary .chart-column small { white-space:nowrap; font-size:9px; letter-spacing:0; }
+body[data-v2] .project-summary .chart { position:relative; background:none; }
+.project-summary .chart::before { content:""; position:absolute; inset:18px 0 16px; pointer-events:none; background:repeating-linear-gradient(to top,transparent 0 23px,#9dabbc15 24px 25px); }
+body[data-v2] .project-summary .chart-column { position:relative; display:grid; grid-template-rows:13px minmax(0,1fr) 12px; justify-items:center; gap:3px; }
+body[data-v2] .project-summary .bar-track { height:100%; margin:0; }
+.project-goal { border-top:1px solid #a2bbd230; margin-top:0; padding:9px 0 0; }
+.project-goal-heading,.project-amount { display:flex; align-items:baseline; gap:5px; }
+.project-goal-heading { justify-content:space-between; color:#adbece; }
+.project-percent { color:#f3c8be; font-size:11px; }
+.project-goal-title { display:block; color:#eaf1f6; font-size:13px; line-height:1.25; margin:2px 0; overflow-wrap:anywhere; }
+.project-amount { font-size:11px; color:#afbfce; flex-wrap:wrap; }
+.project-amount b { font-size:15px; line-height:1.3; color:#fff; }
+.project-goal progress {
+  display:block; appearance:none; width:100%; height:4px; border:0; border-radius:8px;
+  margin-top:6px; background:#364452; color:#fa5965; overflow:hidden;
+}
+.project-goal progress::-webkit-progress-bar { background:#364452; border-radius:8px; }
+.project-goal progress::-webkit-progress-value { background:linear-gradient(90deg,#cd233a,#ff6971); border-radius:8px; }
+.project-goal progress::-moz-progress-bar { background:#ef5361; }
+.project-goal progress[hidden] { display:none; }
+.project-summary .support-cta,.project-summary .qr-section { width:100%; margin:0; }
+.project-summary .qr-section { padding:4px; gap:10px; }
+.project-summary .qr-section img { width:clamp(46px,7vh,64px); height:auto; aspect-ratio:1; }
+@media(max-height:830px) and (min-width:1001px) {
+  .project-summary { gap:4px; padding-block:5px; }
+  .project-pilot { padding-block:5px; }
+  .project-summary .membership-chart .chart { min-height:44px; }
+  .project-donor { margin-top:1px; line-height:1.2; }
+  .project-donations { margin-top:4px; }
+  .project-summary .qr-section { gap:6px; padding:2px; }
+  .project-summary .qr-section img { width:40px; }
+  .project-summary .qr-section strong { font-size:10px; }
+  .project-goal { padding-top:5px; }
+  .project-summary .project-pilot { padding:4px 8px; }
+  .project-summary .membership-chart { padding:0; }
+  .project-summary .membership-chart .chart { margin-top:3px; }
+  .project-summary .project-goal-title { font-size:12px; margin-block:1px; }
+}
+@media(max-width:760px) {
+  .project-summary { gap:15px; padding:15px; }
+  .project-pilot { padding:12px; }
+  .project-summary .membership-chart .chart { min-height:105px; }
+  .project-goal { margin-top:2px; }
+}

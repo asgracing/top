@@ -2,6 +2,18 @@
   padding: 12px 0 32px;
 }
 
+.asg-home-admin{grid-column:1/-1;padding:clamp(15px,2vw,23px)}
+.asg-home-admin>p{margin-top:9px;color:#b6c5d4;font-size:.875rem}
+.asg-home-options{display:grid;grid-template-columns:1fr 1fr;gap:14px;border:0;padding:0;margin:18px 0}
+.asg-home-options legend{font-size:12px;margin-bottom:10px;color:#b6c5d4}
+.asg-home-options label{display:grid;grid-template-columns:auto 1fr;gap:8px 11px;border:1px solid #5a7086;border-radius:6px;padding:17px;cursor:pointer;background:#152332}
+.asg-home-options label:has(:checked){border-color:#f44861;background:#322032}
+.asg-home-options input{accent-color:#e92643;margin:2px 0 0}
+.asg-home-options span{grid-column:2;font-size:12px;color:#a9bdd0}
+.asg-home-actions{display:flex;gap:12px;align-items:center;flex-wrap:wrap}
+.asg-home-actions span{font-size:12px;color:#87d7b4}
+@media(max-width:550px){.asg-home-options{grid-template-columns:1fr}}
+
 .asg-appearance-admin [hidden] { display: none; }
 
 .asg-appearance-heading { margin-block: 3px 18px; }
