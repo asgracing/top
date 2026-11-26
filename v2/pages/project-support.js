@@ -1,3 +1,4 @@
+import {mountSupportMarketing} from '../membership/support.js?v=20261126home1';
 import {safeAvatarUrl} from '/src/features/auth/header-auth.js';
 import {createHttpClient} from '/src/shared/http-client.js';
 import {v2Route} from '../routes.js';
@@ -56,6 +57,7 @@ export function startSupportPage({view, text, esc, language}) {
       <h2>${text('Как продвигается сбор','Funding progress')}</h2>
       ${renderSupportFunding(text)}
     </section>`;
+  mountSupportMarketing(view,{language,text});
   const notice = view.querySelector('[data-support-list-status]');
   const funding = view.querySelector('[data-support-funding]');
   const groups = Object.fromEntries(TIERS.map(tier=>[tier.id,view.querySelector(`[data-support-group="${tier.id}"]`)]));
