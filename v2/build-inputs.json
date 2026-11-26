@@ -80,7 +80,7 @@
     },
     {
       "path": "scripts/build-v2.mjs",
-      "sha256": "74aa5d59ec61a51796e5060ad511c8bd6b76b0de64a34daa5da0af181afc7402"
+      "sha256": "e565c2eac7886049a2cadf30c74c8b23d72cc9da7cf89d7022dfe7a7af35d763"
     },
     {
       "path": "scripts/faq-page.mjs",
@@ -876,7 +876,7 @@
     },
     {
       "path": "v2/pages/controller.js",
-      "sha256": "c961218d5e5ea5890ade60f887b13f4c3faa64685cfa496cefce3a86c26d1d95"
+      "sha256": "74a24f7bb54ca8cacae38848403f04c37f3544b914f2ce47a8039bb66b07010e"
     },
     {
       "path": "v2/pages/data.js",
@@ -912,7 +912,7 @@
     },
     {
       "path": "v2/pages/polls.js",
-      "sha256": "44947af9ad67ed8d7b5b7eac051e2f62128cb7033f676460fe8a1da47276c7cc"
+      "sha256": "43329dcaa69e92549ff5caa1f2ef3f8370c8e28d832ded6c3735390cd7861776"
     },
     {
       "path": "v2/pages/profile-appearance-editor.js",

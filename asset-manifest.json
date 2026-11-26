@@ -1,8 +1,8 @@
 {
   "schemaVersion": 1,
-  "revision": "e1f84ba233a52ab70fc63727d55afbc3e3dc3fa2",
-  "files": 1589,
-  "bytes": 219095737,
+  "revision": "c687560e0f97b4f33a431f2a89c0bf09f1f7b405",
+  "files": 1591,
+  "bytes": 219504292,
   "assets": [
     {
       "path": "404.html",
@@ -1507,7 +1507,7 @@
     {
       "path": "en/hourly/index.html",
       "bytes": 81041,
-      "sha256": "323ad19c66c7edbe7c0192df8f5c8d9506cc2778e770cddc2062167e614af6d3"
+      "sha256": "688006a0ecdd516ddb850a1e560ceda4ff8211f875d6d70e5d0e3e91c36f670e"
     },
     {
       "path": "en/hourly/privacy/index.html",
@@ -1532,12 +1532,12 @@
     {
       "path": "en/moderation/index.html",
       "bytes": 80171,
-      "sha256": "c0828c4a263c17524f7771999525039db97696eace834776505e0c08ac600d03"
+      "sha256": "b956b0fb96656a1d97fdf29f48b130c94ff4379e87858d973b3f09e5ada37048"
     },
     {
       "path": "en/moderation/polls/index.html",
       "bytes": 80130,
-      "sha256": "fe9cb62c64ca1923c6876d09031f9302b23025a37b2650966ca7caadb7abbaa3"
+      "sha256": "2861b413249a0619f530ea6df495c110c58fad55cde9865faa62c19eed6f83e0"
     },
     {
       "path": "en/news/article/index.html",
@@ -1552,12 +1552,12 @@
     {
       "path": "en/polls/index.html",
       "bytes": 80010,
-      "sha256": "d8a9304402e814063207aa57f03996dd6d2226963ba728d81b98be73bafe1823"
+      "sha256": "0d9ba8157715ca5caae43495824e65e4e966a56556c00eb4418aa2b4fea2fdb7"
     },
     {
       "path": "en/polls/view/index.html",
       "bytes": 80006,
-      "sha256": "8dd35f19b188021f6265d36069a4a5117f957fa51a102342db3a057848ca0e5e"
+      "sha256": "a2d89b3a032fc73a6c52bd0556ae22fa232700ed50168a42364b41b12296c29a"
     },
     {
       "path": "en/portal-ops/index.html",
@@ -1767,7 +1767,7 @@
     {
       "path": "hourly/index.html",
       "bytes": 86180,
-      "sha256": "43a8571e6b03c89f83c4e654857e867423bac926ed470c242194d7e4ddf25562"
+      "sha256": "ccbb53482beb41756c654c394bda32809bb90b9b1736c3f4bae0f6beab4af5b1"
     },
     {
       "path": "hourly/index.ru.html",
@@ -1877,12 +1877,12 @@
     {
       "path": "moderation/index.html",
       "bytes": 85127,
-      "sha256": "4b25444a77edd04ed186fff1d9937a55f605f82e0c31d6297855bb12b364ea3c"
+      "sha256": "1019bd6dc8bab856dddf46aac7a26817f6c9ef5e6b45ea2cdbc98dfd62126f02"
     },
     {
       "path": "moderation/polls/index.html",
       "bytes": 85155,
-      "sha256": "ce0671c7331a4d7e805587021ae675ced8f580fa41ce041a89f51540fe7e6dc0"
+      "sha256": "713129d1882f6818683a1833ccb8719eecfefc60c58ed4db15197143c52570ca"
     },
     {
       "path": "news-content/images/ASGRacing_July2026/ASGRacing_July2026_Finishedv2.png",
@@ -1992,12 +1992,12 @@
     {
       "path": "polls/index.html",
       "bytes": 84960,
-      "sha256": "d1e7ae6f0730ee387118e6431adadf693d782fd67d62af88ac6647a928088a22"
+      "sha256": "1d6b8d1b174210e567e21f874af0120f68c13ddfbeca8885ea6b144c0eb0b3f7"
     },
     {
       "path": "polls/view/index.html",
       "bytes": 84995,
-      "sha256": "012d69f17b6475bddd6fc93dd6a297ec2aa24704d84d82bfa4a90c31034c3ca6"
+      "sha256": "193cf6096d965be0714c15860e6c9aae03a468f18a448d545ad26f9922c3ea3a"
     },
     {
       "path": "portal-ops/asg-lab/index.html",
@@ -3342,7 +3342,7 @@
     {
       "path": "v2/boot/build.json",
       "bytes": 6829,
-      "sha256": "9e57ccc5a5af1318a035799ea1a04d0f5f6c652364722bc425a4523187f54a5a"
+      "sha256": "af8032b0846f2547df286bcf665eb4974a07eff3d0e18a0f9f7563fd9db8540a"
     },
     {
       "path": "v2/boot/chunks/account-2NDTNJRL.js",
@@ -5415,6 +5415,11 @@
       "sha256": "414ef3578da7dcd0f1157705620b9291df33b7ee289f7fac97882d3d8ac00b8c"
     },
     {
+      "path": "v2/boot/chunks/controller-HQYLGYOA.js",
+      "bytes": 345070,
+      "sha256": "44d28601f9426d2f144ef333fff05bd1949b2ee2f5b7ca361ad27fd856da4fd7"
+    },
+    {
       "path": "v2/boot/chunks/controller-HTSATIEU.js",
       "bytes": 339949,
       "sha256": "5ddc24b5d5ab256adf585b848088b80de3a1da15bb849937531ee79e37d9278b"
@@ -6355,6 +6360,11 @@
       "sha256": "97e15728a558bbb33540df4da92f3bdee9cf919c82c5cb40e46d96b080da41ac"
     },
     {
+      "path": "v2/boot/chunks/polls-2GFGLCE2.js",
+      "bytes": 58786,
+      "sha256": "2ef550bfb729a3dca850c958ad09b025374240233a6df162921876d55fdcca3a"
+    },
+    {
       "path": "v2/boot/chunks/polls-QU2IWNRI.js",
       "bytes": 54354,
       "sha256": "edb12a6ec4c78bedd4cd2e00a0f3ec7b4648570df149b6f131414c80e8ba95d3"
@@ -6872,7 +6882,7 @@
     {
       "path": "v2/boot/home.js",
       "bytes": 177358,
-      "sha256": "fc313ca7aa50cd5f1f7d19c48001639ff5c42861c3394e1635febbc3607bd0f5"
+      "sha256": "8cd04b613d574d7f0c387af2859981637cde73aa09ab0c173b978b8ecb64566f"
     },
     {
       "path": "v2/bridge.js",
@@ -6882,7 +6892,7 @@
     {
       "path": "v2/build-inputs.json",
       "bytes": 37650,
-      "sha256": "ed39eaa35cd2325058438d2e7879849e0bdc837d8acf7adb19088c806d6f0a50"
+      "sha256": "677186807f13d2458b42f77dcee4f848b9ed53dbd13de3ac7ba1bb9110775a5a"
     },
     {
       "path": "v2/copy.js",
@@ -7337,7 +7347,7 @@
     {
       "path": "v2/pages/controller.js",
       "bytes": 51000,
-      "sha256": "f1d7b10d73cc36c931cff458dc976a651957d50c6587a2904b2ef849a2b3dbe4"
+      "sha256": "c16596ee740e45841eb79f9ff3821347e38bbc7d584bf0f88f530b0eab056b6e"
     },
     {
       "path": "v2/pages/data.js",
@@ -7386,13 +7396,13 @@
     },
     {
       "path": "v2/pages/polls.css",
-      "bytes": 13765,
-      "sha256": "938c257496ea1436f79c0e27f05f7735b4196b3456f008a6abe25e4ace03a351"
+      "bytes": 15767,
+      "sha256": "793c5619a969209401f3d3376340d0e8e9a7f428b2d049e554f2b2bdc8633802"
     },
     {
       "path": "v2/pages/polls.js",
-      "bytes": 39856,
-      "sha256": "44947af9ad67ed8d7b5b7eac051e2f62128cb7033f676460fe8a1da47276c7cc"
+      "bytes": 42553,
+      "sha256": "43329dcaa69e92549ff5caa1f2ef3f8370c8e28d832ded6c3735390cd7861776"
     },
     {
       "path": "v2/pages/profile-appearance-editor.js",
