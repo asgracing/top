@@ -2,15 +2,29 @@ import {localizeTree} from './locale.js';
 import {markup} from './support-template.js';
 import {renderDemoCard} from './demo-card.js';
 import {useStyles} from './styles.js';
+import {subscriptionBadge} from './badges.js';
 
 export function mountSupportMarketing(view,{language,text}) {
   const demoCard=renderDemoCard(language);
   useStyles('support.css');useStyles('native-pass.css');
+  useStyles('badges.css');
   const crumb=view.querySelector('.page-breadcrumb');
   const listing=view.querySelector('[data-support-list-status]').closest('section.panel');
   const funding=view.querySelector('[data-support-funding]');
   const trials=[...view.querySelectorAll('[data-support-trial]')].map(button=>({button,status:button.parentElement.nextElementSibling}));
   const content=document.createElement('div');content.id='support-content';content.innerHTML=markup;localizeTree(content,language);
+  const badges=document.createElement('aside');
+  badges.className='hero-badges';
+  const badgeTitle=document.createElement('h3');
+  badgeTitle.textContent=text('Твой знак на трассе','Your mark on the grid');
+  badges.append(badgeTitle);
+  for(const tier of ['supporter','vip','pro']){
+    const row=document.createElement('div');
+    row.className='profile-heading';
+    row.append(subscriptionBadge(tier));
+    badges.append(row);
+  }
+  content.querySelector('.support-hero').append(badges);
   view.replaceChildren(crumb,content);
   const live=document.createElement('div');live.className='native-support-live section';live.append(listing,funding);
   content.querySelector('#questions').before(live);
@@ -28,7 +42,7 @@ export function mountSupportMarketing(view,{language,text}) {
   let loading,instance;
   async function loadDemo(){
     if(instance)return instance;
-    loading??=import('./profile-demo.js?v=20261126home1').then(({mountProfileDemo})=>mountProfileDemo(host,{language})).then(value=>instance=value).catch(()=>{
+    loading??=import('./profile-demo.js?v=20261126podium2').then(({mountProfileDemo})=>mountProfileDemo(host,{language})).then(value=>instance=value).catch(()=>{
       loading=null;host.replaceChildren();const message=document.createElement('p');message.className='native-demo-error';message.textContent=text('Не удалось загрузить пример. Нажми «Повторить».','Could not load the example. Choose Retry.');
       const retry=document.createElement('button');retry.className='button';retry.textContent=text('Повторить','Retry');retry.onclick=()=>{host.replaceChildren();void loadDemo();};host.append(message,retry);
     });return loading;

@@ -634,3 +634,6 @@
 /en/faq/index.html -text
 /v2/donations.js -text
 /v2/pages/profile-badges-podium.css -text
+
+/v2/membership/badges.css -text
+/v2/membership/badges.js -text
