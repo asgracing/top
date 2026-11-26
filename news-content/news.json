@@ -1,6 +1,49 @@
 {
   "items": [
     {
+      "id": "srv4-update-2026-11-26",
+      "slug": "srv4-update-2026-11-26",
+      "title": "Обновление SRv4: списания за инциденты снижены вдвое / SRv4 update: incident deductions halved",
+      "summary": "Списания за инциденты уменьшены вдвое, максимальная потеря за гонку — 0,50 SR. Все существующие рейтинги ниже 4,00 разово подняты до 4,00. / Incident deductions have been halved, with a maximum loss of 0.50 SR per race. All existing ratings below 4.00 have received a one-time increase to exactly 4.00.",
+      "body": [
+        "РУССКИЙ",
+        "────────",
+        "Мы обновили систему Safety Rating (SR) ASG Racing. Новые правила уже включены:",
+        {
+          "type": "list",
+          "items": [
+            "Списания SR за инциденты уменьшены в 2 раза. Тарифы автоштрафов остаются прежними.",
+            "Максимальная потеря по итогам одной гонки — 0,50 SR.",
+            "На Main и Hourly штрафы учитываются с начала гонки, даже при сходе до завершения первого круга.",
+            "На остальных серверах результат не влияет на SR, если пилот прошёл менее 50% кругов лидера."
+          ]
+        },
+        "Также мы разово подняли все существующие рейтинги ниже 4,00 ровно до 4,00. Корректировка затронула 29 433 пилота.",
+        "Это разовое повышение. В дальнейшем SR продолжает расти или снижаться по обновлённым правилам.",
+        "Откройте свой профиль на сайте и проверьте обновлённый SR. Увидимся на трассе!",
+        "ENGLISH",
+        "────────",
+        "We have updated ASG Racing’s Safety Rating (SR) system. The new rules are now enabled:",
+        {
+          "type": "list",
+          "items": [
+            "SR deductions for incidents have been halved. Automatic penalty rates remain unchanged.",
+            "The maximum SR loss from a single race is 0.50.",
+            "On Main and Hourly, penalties count from the start of the race, including a retirement before completing the first lap.",
+            "On other servers, a result does not affect SR if the driver completes less than 50% of the leader’s laps."
+          ]
+        },
+        "We have also given all existing ratings below 4.00 a one-time increase to exactly 4.00. This adjustment covered 29,433 drivers.",
+        "This is a one-time adjustment. SR will continue to increase or decrease under the updated rules.",
+        "Open your website profile to check your updated SR. See you on track!"
+      ],
+      "published_at": "2026-11-26T12:21:59Z",
+      "expires_at": "",
+      "kind": "announcement",
+      "priority": 900,
+      "is_pinned": true
+    },
+    {
       "id": "hourly-sr-3-3-2026-10-15",
       "slug": "hourly-sr-3-3-2026-10-15",
       "title": "Часовые гонки — допуск от SR 3.3 / Hourly races — SR 3.3 required",
