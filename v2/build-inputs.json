@@ -784,15 +784,15 @@
     },
     {
       "path": "v2/membership/locale.js",
-      "sha256": "c9f41591f378f640efc0eeda12fde47cfac8dfae828bc50d6c871ca78395606d"
+      "sha256": "c58a167caa71dcac6292c5f46fbcd910033c8d5652df4afe55a00762b6ec8663"
     },
     {
       "path": "v2/membership/offer.js",
-      "sha256": "100de60af535a4413530375246bdd209ef4ec0fbcc7010126245ac03867cddb3"
+      "sha256": "95829f75035b9dc040abaeb17d557542ccb2422429f848f899f222fb5da66c22"
     },
     {
       "path": "v2/membership/profile-demo.js",
-      "sha256": "ca4363637768f62999795d2a23aada22120e1f4a971635701a286042a3cff85d"
+      "sha256": "605ea221fc3da2c04863e19bb6902cc87317065dbc068131487a1102a9145a2b"
     },
     {
       "path": "v2/membership/project-stats.js",

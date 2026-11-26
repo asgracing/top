@@ -26,11 +26,11 @@ export function mountOffer(stats, card, {language="ru"}={}) {
   stats.append(offer);
   let info = stats.querySelector("[data-membership-details]");
   if (!info) {
-    info = document.createElement("button");
-    info.type = "button";
+    info = document.createElement("a");
+    info.href = "https://asgracing.ru/support";
     info.className = "text-link";
     info.dataset.membershipDetails = "";
-    info.textContent = tr("Сравнить подписки ↗",language);
+    info.textContent = tr("Раздел Поддержки",language);
     stats.querySelector(".panel-head").append(info);
   }
   stats.querySelector(".head-note").hidden = true;
@@ -45,9 +45,6 @@ export function mountOffer(stats, card, {language="ru"}={}) {
   detail.querySelector(".membership-detail-plans").append($(".membership-tiers").cloneNode(true));
   detail.querySelector(".tier-vip p").textContent = tr("Бонусы Supporter и анимированное оформление профиля. В разработке — резерв места на гоночных серверах и красный ник в игровом чате.",language);
   detail.querySelector(".tier-pro p").textContent = tr("Бонусы VIP, эксклюзивные фоны профиля и Racing Pass. В «Моём паддоке» можно закрепить лучшие заезды и показать свой прогресс.",language);
-  for (const button of document.querySelectorAll("[data-membership-details]")) {
-    button.addEventListener("click", () => detail.showModal());
-  }
   detail.querySelector("[data-membership-close]").addEventListener("click", () => detail.close());
   detail.querySelector("[data-membership-flip]").addEventListener("click", event => {
     const front = detail.querySelector(".pass-front");
