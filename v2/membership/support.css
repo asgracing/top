@@ -366,18 +366,10 @@
   flex-direction:column;
   min-height:470px;
   padding:27px;
-  border:1px solid var(--edge,#647d8b);
+  border:1px solid var(--shadow-metal,#667587);
   border-radius:10px;
-  background:linear-gradient(130deg,var(--tint,#283c4b),#101923 65%);
+  background:linear-gradient(130deg,var(--enamel,#29323e),#101923 65%);
   transition:transform .3s,box-shadow .3s;
-}
-#support-content .plan.vip{
-  --edge:#9873b9;
-  --tint:#433054;
-}
-#support-content .plan.pro{
-  --edge:#b79763;
-  --tint:#4f3e26;
 }
 #support-content .plan::before{
   content:"";
@@ -397,10 +389,7 @@
 }
 #support-content .plan-symbol{
   font-size:29px;
-  color:#d7b6ef;
-}
-#support-content .plan.pro .plan-symbol{
-  color:#ebcd98;
+  color:var(--rim,#c8d3df);
 }
 #support-content .plan h3{
   font-size:29px;
@@ -573,14 +562,6 @@
   right:12px;
   top:8px;
   font-size:28px;
-}
-#support-content .demo-badge{
-  display:inline-block;
-  background:#253f43;
-  border:1px solid #81cba4;
-  padding:4px 8px;
-  font-size:12px;
-  border-radius:4px;
 }
 #support-content dialog h2{
   font-size:30px;

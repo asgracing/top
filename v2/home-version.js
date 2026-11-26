@@ -1,4 +1,4 @@
-import {watchHomeVersion,homeVersions} from './site-config.js?v=20261126mobile2';
+import {watchHomeVersion,homeVersions} from './site-config.js?v=20261127palette';
 
 export function mountHomeVersion({language}) {
   const startup=window.asgHomeStartup;
@@ -14,7 +14,7 @@ export function mountHomeVersion({language}) {
     if(wanted==='current'){mounted?.();mounted=null;document.documentElement.dataset.homeVersion='current';reveal();return;}
     if(mounted)return;
     try {
-      const {mountMembershipHome,prepareMembershipStyles}=await import('./membership/home.js?v=20261126mobile2');
+      const {mountMembershipHome,prepareMembershipStyles}=await import('./membership/home.js?v=20261127palette');
       if(disposed||ticket!==generation||wanted!=='membership')return;
       const styles=prepareMembershipStyles();pending=styles;
       const loaded=await Promise.all(styles.map(remove=>remove.ready));

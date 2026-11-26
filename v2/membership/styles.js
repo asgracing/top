@@ -1,6 +1,6 @@
 export function useStyles(name) {
   const link=document.createElement('link');
-  link.rel='stylesheet';link.href='/v2/membership/'+name+'?v=20261126home1';
+  link.rel='stylesheet';link.href='/v2/membership/'+name+'?v=20261127palette';
   let settle,finished=false;
   const ready=new Promise(resolve=>{settle=resolve;});
   const complete=value=>{if(finished)return;finished=true;clearTimeout(timer);link.removeEventListener('load',loaded);link.removeEventListener('error',failed);settle(value);};
