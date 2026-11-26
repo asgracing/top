@@ -3,7 +3,7 @@
   "entry": "/v2/boot/home.js",
   "files": [
     {
-      "path": "/v2/boot/chunks/controller-ECEAD3NU.js",
+      "path": "/v2/boot/chunks/controller-6WCLVXYT.js",
       "bytes": 344847
     },
     {
@@ -51,15 +51,15 @@
       "bytes": 880
     },
     {
-      "path": "/v2/boot/chunks/safety-guide-F3LMDKJU.js",
+      "path": "/v2/boot/chunks/safety-guide-B5G7STVM.js",
       "bytes": 128
     },
     {
-      "path": "/v2/boot/chunks/chunk-M2MQJKXX.js",
-      "bytes": 2339
+      "path": "/v2/boot/chunks/chunk-WTDMSSHJ.js",
+      "bytes": 2557
     },
     {
-      "path": "/v2/boot/chunks/home-TIM7HM2Y.js",
+      "path": "/v2/boot/chunks/home-IER4HENH.js",
       "bytes": 498785
     },
     {
@@ -175,8 +175,8 @@
       "bytes": 176989
     },
     {
-      "path": "/v2/boot/chunks/chunk-IJCZDLXV.js",
-      "bytes": 197492
+      "path": "/v2/boot/chunks/chunk-AMHNX27H.js",
+      "bytes": 219437
     },
     {
       "path": "/v2/boot/chunks/chunk-LGR4ZW6B.js",
