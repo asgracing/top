@@ -1,6 +1,20 @@
 import test from 'node:test';
 import assert from 'node:assert/strict';
 import {homeVersion,watchHomeVersion} from '../../v2/site-config.js';
+import {createHttpClient,state} from '../../v2/membership/demo-state.js';
+
+test('profile demo saves in memory and refuses every other endpoint',async t=>{
+  const previous=globalThis.fetch;
+  globalThis.fetch=()=>{throw Error('The demo must not call the real API');};
+  t.after(()=>{globalThis.fetch=previous;});
+  const client=createHttpClient(),url='https://auth.asgracing.ru/v1/me/profile-appearance';
+  const before=await client.requestJson(url);
+  const saved=await client.requestJson(url,{method:'POST',body:JSON.stringify({expected_revision:before.revision,effect:{energy:130}})});
+  assert.equal(saved.effect.energy,130);assert.equal(saved.revision,before.revision+1);
+  await assert.rejects(client.requestJson(url,{method:'POST',body:JSON.stringify({expected_revision:before.revision,effect:{energy:90}})}),error=>error.status===409);
+  await assert.rejects(client.requestJson('https://auth.asgracing.ru/v1/me/support/trial',{method:'POST'}),/Unexpected demo request/);
+  Object.assign(state,before);
+});
 
 test('homepage config accepts only bundled layouts',()=>{
   assert.equal(homeVersion({home_version:'membership'}),'membership');
