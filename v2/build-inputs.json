@@ -80,7 +80,7 @@
     },
     {
       "path": "scripts/build-v2.mjs",
-      "sha256": "43866a8fede322cf184e6cc739f8d70e1fd743288bee959705536c3f297adae0"
+      "sha256": "1fb07deb51d0bad5cf3efca2be4a9ce0c5ced8a1e4566e973eb223c3740139b4"
     },
     {
       "path": "scripts/faq-page.mjs",
@@ -764,15 +764,15 @@
     },
     {
       "path": "v2/home-startup.js",
-      "sha256": "2d365376312c23b7a3b1037dc9adb6e1f2e8503dd2edd614e4d4125b5e585d5f"
+      "sha256": "69e1eed4b93c2983eafb8201badafddd246fc3d60696969f65271394fccd88dd"
     },
     {
       "path": "v2/home-version.js",
-      "sha256": "c99e611a1cf8536f0cb104dcfaf00205de534f852e3d559b834b75d661b7dc7a"
+      "sha256": "89165e0d37b32a715fdd792aa628eb7fee265c848d4751be86bb84290c49fba8"
     },
     {
       "path": "v2/home.js",
-      "sha256": "ef83f48b07bb0f5a45b7fddccd912547f3325a4ff15e4fa63ce8c7b2cd40781e"
+      "sha256": "abac6751e09dd1568bc6ea3a19d8be28a9b5b188a675b51f1dea70938c8dca8e"
     },
     {
       "path": "v2/live-stats.js",
@@ -800,11 +800,11 @@
     },
     {
       "path": "v2/membership/offer.js",
-      "sha256": "95829f75035b9dc040abaeb17d557542ccb2422429f848f899f222fb5da66c22"
+      "sha256": "c347d4a63e77786bf44e538ba01aed3ff055714df0b1b52204563da9fe83e258"
     },
     {
       "path": "v2/membership/profile-demo.js",
-      "sha256": "2c458980b52b62b76384bcf66d10884ebe98cce508fd97cd8fe651de1ac6cb39"
+      "sha256": "8c0bcf7d24b07de435c690ee7b43c4761b3ae6a7533b0713e701e7a46b1d76d0"
     },
     {
       "path": "v2/membership/project-stats.js",
@@ -812,7 +812,7 @@
     },
     {
       "path": "v2/membership/styles.js",
-      "sha256": "7eae8e4b621c36151979e203ff9ab928dd8721cc2a7e2e55156566b199f5022f"
+      "sha256": "fdeab122926e5d30b271f6d4a1e243db8a3d135447035f3021e5e893975cb7d0"
     },
     {
       "path": "v2/membership/support-template.js",
@@ -820,7 +820,7 @@
     },
     {
       "path": "v2/membership/support.js",
-      "sha256": "b6e34fa95ef71b95c33e9bc55c75a2c1bb68b7626124bf73a438b659bb861789"
+      "sha256": "88e009dca9b7327e46de13b0a2007c84a29bc2c1a966e5ecec3c26f7c2bbfbaa"
     },
     {
       "path": "v2/mobile-navigation.js",
@@ -944,7 +944,7 @@
     },
     {
       "path": "v2/pages/project-support.js",
-      "sha256": "d57e0f69fff96d14907a752764f182bbb547b0e38a72ceb086cfd5ee006d2137"
+      "sha256": "36225b203dab1d79110e349a73ca2cc43ff775cc1baf0ceb81c0da6b7227b627"
     },
     {
       "path": "v2/pages/race-archive-api.js",
