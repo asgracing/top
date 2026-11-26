@@ -792,7 +792,7 @@
     },
     {
       "path": "v2/membership/profile-demo.js",
-      "sha256": "6fad3e1c1efcfaab08be56241de9fb66a2676b81b1132a6484cd7cd4c288d432"
+      "sha256": "ca4363637768f62999795d2a23aada22120e1f4a971635701a286042a3cff85d"
     },
     {
       "path": "v2/membership/project-stats.js",
