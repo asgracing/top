@@ -80,7 +80,7 @@
     },
     {
       "path": "scripts/build-v2.mjs",
-      "sha256": "5966cc72f6c6d19052f5182b34a39fa108cebeed1ca192e262f6b3ade798d2b6"
+      "sha256": "b7d503b9a0383769a18080670ed5364c862152bab794184c28636a3ca06e5855"
     },
     {
       "path": "scripts/faq-page.mjs",
@@ -759,12 +759,20 @@
       "sha256": "cb7c21e91c815ef77a38d02e51c1d8a8102bf14a36329d92577263fe7bf19d25"
     },
     {
+      "path": "v2/home-startup.css",
+      "sha256": "ac50c90f267fb57c6e8acfb3f80000a0e8f4a2a1087bb8ff899514f8d0d3693b"
+    },
+    {
+      "path": "v2/home-startup.js",
+      "sha256": "d20e37b421abf1a017f987da8bd66a80f2985682d8f10d652f0b4432db458660"
+    },
+    {
       "path": "v2/home-version.js",
-      "sha256": "7db1ac5dd7d6552d1a46a777bdd298c0fbaf74475bce8bd80d507dff7f446678"
+      "sha256": "962d1e2e5a9af9e1051b53010b47e7e789786928475141a8674ac7d947067958"
     },
     {
       "path": "v2/home.js",
-      "sha256": "a4f73fb9001123d3681310b5206f04388a3c609c09b75e778e8636b7b7e614ea"
+      "sha256": "8cd1726761d27cf19cac4e0e01e26d74108254e3df9125a6a97f695ad101d2eb"
     },
     {
       "path": "v2/live-stats.js",
@@ -780,7 +788,7 @@
     },
     {
       "path": "v2/membership/home.js",
-      "sha256": "753e63853ffded209d1558b0c5c2608882fc25b5a3be18c2d7146ca1ec0333fa"
+      "sha256": "f32a0d079ae00f8d42dcaf5da272e412b8fb9b4a66507bca14a97bfdda5aa41a"
     },
     {
       "path": "v2/membership/locale.js",
@@ -800,7 +808,7 @@
     },
     {
       "path": "v2/membership/styles.js",
-      "sha256": "f8112d5d81f9940d208a840cfb9bc4a9dd127f982b344d67173a9b8bcb0f6416"
+      "sha256": "2a37450600ceaee6893817df388f71331bc80da4731af449d91a71477e957f50"
     },
     {
       "path": "v2/membership/support-template.js",
@@ -1020,7 +1028,7 @@
     },
     {
       "path": "v2/site-config.js",
-      "sha256": "1cf29f07ec998abd31449804d1cce3f36b7b391df6ee3894cea43eb849c70b10"
+      "sha256": "d5d7ee1c0287b72bde7e73f16decd3c2d2f64cce57af1b8492352059e933394b"
     },
     {
       "path": "v2/site-routing.js",
