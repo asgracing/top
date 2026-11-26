@@ -7,12 +7,21 @@
     if (settled) return;
     settled = true;
     clearTimeout(requestTimer);
+    if (value?.home_version === 'membership') {
+      for (const name of ['home.css','native-pass.css','badges.css']) {
+        const preload = document.createElement('link');
+        preload.rel = 'preload';
+        preload.as = 'style';
+        preload.href = '/v2/membership/' + name + '?v=20261126home1';
+        document.head.append(preload);
+      }
+    }
     resolveConfig(value);
   };
   const finish = () => {
     clearTimeout(safetyTimer);
     root.classList.remove('asg-home-layout-pending', 'home-booting');
-    root.dataset.homeLayoutState = expired ? 'fallback' : 'ready';
+    root.dataset.homeLayoutState = expired && root.dataset.homeVersion !== 'membership' ? 'fallback' : 'ready';
     const loader = document.querySelector('.home-loader');
     if (loader) loader.hidden = true;
     const shell = document.getElementById('v2-site-shell');
@@ -26,14 +35,14 @@
     settle(null);
     root.dataset.homeVersion = 'current';
     finish();
-  }, 8000);
+  }, 20000);
   const frame = window.frameElement;
   if (frame?.hasAttribute('data-asg-home-preview')) {
     settle({home_version: frame.getAttribute('data-asg-home-preview')});
     return;
   }
   const controller = new AbortController();
-  requestTimer = setTimeout(() => { controller.abort(); settle(null); }, 2500);
+  requestTimer = setTimeout(() => { controller.abort(); settle(null); }, 8000);
   try {
     Promise.resolve(fetch('https://auth.asgracing.ru/v1/public/site-appearance', {
       credentials: 'omit', cache: 'no-store', signal: controller.signal

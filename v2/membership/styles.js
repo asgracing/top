@@ -5,7 +5,7 @@ export function useStyles(name) {
   const ready=new Promise(resolve=>{settle=resolve;});
   const complete=value=>{if(finished)return;finished=true;clearTimeout(timer);link.removeEventListener('load',loaded);link.removeEventListener('error',failed);settle(value);};
   const loaded=()=>complete(true),failed=()=>complete(false);
-  const timer=setTimeout(failed,4000);
+  const timer=setTimeout(failed,8000);
   link.addEventListener('load',loaded);link.addEventListener('error',failed);
   document.head.append(link);
   const remove=()=>{complete(false);link.remove();};

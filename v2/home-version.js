@@ -1,4 +1,4 @@
-import {watchHomeVersion,homeVersions} from './site-config.js?v=20261126startup1';
+import {watchHomeVersion,homeVersions} from './site-config.js?v=20261126mobile2';
 
 export function mountHomeVersion({language}) {
   const startup=window.asgHomeStartup;
@@ -8,19 +8,17 @@ export function mountHomeVersion({language}) {
   const clearPending=()=>{pending.forEach(remove=>remove());pending=[];};
   const reveal=()=>{if(first){first=false;startup?.finish();resolveReady();}};
   async function apply(version) {
-    if(first&&startup?.expired)version='current';
     wanted=homeVersions.has(version)?version:'current';
     const ticket=++generation;
     clearPending();
     if(wanted==='current'){mounted?.();mounted=null;document.documentElement.dataset.homeVersion='current';reveal();return;}
     if(mounted)return;
     try {
-      const {mountMembershipHome,prepareMembershipStyles}=await import('./membership/home.js?v=20261126startup1');
+      const {mountMembershipHome,prepareMembershipStyles}=await import('./membership/home.js?v=20261126mobile2');
       if(disposed||ticket!==generation||wanted!=='membership')return;
       const styles=prepareMembershipStyles();pending=styles;
       const loaded=await Promise.all(styles.map(remove=>remove.ready));
       if(disposed||ticket!==generation)return;
-      if(first&&startup?.expired){clearPending();wanted='current';document.documentElement.dataset.homeVersion='current';reveal();return;}
       if(loaded.some(value=>!value))throw Error('Homepage styles unavailable');
       mounted=mountMembershipHome({language,styles});pending=[];
       document.documentElement.dataset.homeVersion='membership';

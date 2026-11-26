@@ -409,4 +409,4 @@ if(document.documentElement.dataset.v2Page){
 import {installReports} from './reports/index.js?v=20261117reports1';
 if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',installReports,{once:true});else installReports();
 
-if(!isSubpage){const {mountHomeVersion}=await import("./home-version.js?v=20261126startup1");const homeVersion=mountHomeVersion({language});await homeVersion.ready;}
+if(!isSubpage){const {mountHomeVersion}=await import("./home-version.js?v=20261126mobile2");const homeVersion=mountHomeVersion({language});await homeVersion.ready;}
