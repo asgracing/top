@@ -3,7 +3,7 @@ import {resolve,dirname,relative} from 'node:path';
 import {build,transform} from 'esbuild';
 import {demoImportPath} from './membership-demo-paths.mjs';
 const root=resolve(import.meta.dirname,'..'),here=resolve(root,'v2/membership');
-const files=['v2-source/design.css','v2/home.css','v2-source/pages/pages.css','v2-source/pages/r24-pages.css','styles/components/project-support.css','v2/pages/profile-appearance.css','v2/pages/profile-effects-art.css','v2/driver-support.css'];
+const files=['v2-source/design.css','v2/home.css','v2-source/pages/pages.css','v2-source/pages/r24-pages.css','styles/components/project-support.css','v2/pages/profile-appearance.css','v2/pages/profile-badges-podium.css','v2/pages/profile-effects-art.css','v2/driver-support.css'];
 let css='';
 for(const file of files){
   let value=await readFile(resolve(root,file),'utf8');
@@ -26,7 +26,7 @@ await build({entryPoints:[resolve(root,'v2-source/membership/profile-demo-source
   define:{'import.meta.url':JSON.stringify('https://asgracing.ru/src/features/server-status/track-background.js')},
   plugins:[{name:'isolated-profile-demo',setup(b){
     b.onResolve({filter:/^native-demo-assets$/},()=>({path:'assets',namespace:'demo'}));
-    b.onLoad({filter:/.*/,namespace:'demo'},()=>({contents:`export const nativeCss=await fetch('/v2/membership/profile-demo.css?v=20261126home1').then(r=>{if(!r.ok)throw Error('demo_styles');return r.text()});export const nativeHero=${JSON.stringify(hero)},trackAssets={};`,loader:'js'}));
+    b.onLoad({filter:/.*/,namespace:'demo'},()=>({contents:`export const nativeCss=await fetch('/v2/membership/profile-demo.css?v=20261126podium2').then(r=>{if(!r.ok)throw Error('demo_styles');return r.text()});export const nativeHero=${JSON.stringify(hero)},trackAssets={};`,loader:'js'}));
     b.onResolve({filter:/.*/},args=>({path:demoImportPath(args.path,{...args,root,here})}));
     b.onLoad({filter:/\.js$/},async args=>{
       let source=await readFile(args.path,'utf8');const path=relative(root,args.path).replaceAll('\\','/');

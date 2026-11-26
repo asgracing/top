@@ -4,8 +4,9 @@ import {renderDemoCard} from './demo-card.js';
 import {mountOffer} from './offer.js';
 import {mountProjectStats} from './project-stats.js';
 import {useStyles} from './styles.js';
+import {subscriptionBadge} from './badges.js';
 
-export function prepareMembershipStyles(){return ['home.css','native-pass.css'].map(useStyles);}
+export function prepareMembershipStyles(){return ['home.css','native-pass.css','badges.css'].map(useStyles);}
 
 export function mountMembershipHome({language='ru',styles}={}) {
   const demoCard=renderDemoCard(language);
@@ -27,6 +28,13 @@ export function mountMembershipHome({language='ru',styles}={}) {
   const resize=new ResizeObserver(()=>{for(const panel of [stats,support])panel.style.setProperty('--preview-head',panel.querySelector('.panel-head').offsetHeight+'px');});
   resize.observe(stats.querySelector('.panel-head'));resize.observe(support.querySelector('.panel-head'));
   const stopOffer=mountOffer(stats,demoCard,{language});
+  for(const tier of ['supporter','vip','pro']){
+    const heading=stats.querySelector('.tier-'+tier+' h3');
+    const holder=document.createElement('span');
+    holder.className='profile-heading';
+    holder.append(subscriptionBadge(tier));
+    heading.append(holder);
+  }
   localizeTree(templates,language);localizeTree(stats.querySelector(".membership-offer"),language);
   const stopStats=mountProjectStats(support,statsBody,supportBody,{language});
   const dock=support.closest('.left-column').querySelector('[data-widget-dock]');
