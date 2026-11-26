@@ -36,6 +36,7 @@ const en={
  'Пилот дня':'Driver of the day','Онлайн по датам':'Online by date','Цель сбора':'Funding goal','Последние донаты':'Recent donations','Сбор средств':'Funding','Прогресс сбора':'Funding progress','Закрыть':'Close',
  'Сравнить подписки ↗':'Compare subscriptions ↗','Все возможности ↗':'All features ↗','Оформить подписку ↗':'Subscribe ↗','Варианты оформления':'Appearance options','Перевернуть Racing Pass ↻':'Flip Racing Pass ↻','Демонстрационный профиль':'Fictional profile','Гоночный номер закреплён':'Race number protected','Значок Supporter':'Supporter badge','Гоночный номер':'Race number','Сияние':'Glow','Градиент':'Gradient','Пульс':'Pulse','Паддок':'Paddock','Ночная трасса':'Night circuit','Закат':'Sunset'
 };
+en['Раздел Поддержки']='Support section';
 export const tr=(value,language)=>language==='en'?(en[value]||value):value;
 export function localizeTree(root,language){
   if(language!=='en')return;
