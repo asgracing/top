@@ -12,6 +12,7 @@ import {createHeader} from './header.js?v=20261118newyear1';
 import {liveRanking,liveBestlapTracks} from './live-stats.js';
 import {serverSessionLabel} from './server-session.js?v=20261025direct1';
 import {countReportedPlayers,orderedServers,replaceServerCards,serverCardPilotCount,serverDialogTrigger} from './server-cards.js?v=20261120servercards';
+import {mountServerPoll} from './server-poll.js';
 import {createGuide} from './guide.js?v=20261006v2k';
 import {createHomeMotion} from './motion.js?v=20261006v2k';
 import {v2Route,currentV2Path,v2EntityLinks} from './routes.js?v=20261008v2pages15';
@@ -352,7 +353,8 @@ subscribe(next=>{
   presentation.refreshDriverDay();
   changed('header',[next.auth,next.news,next.invitations,next.unreadNews],()=>header.update(next));
   if(showSidebarWidgets)changed('support',[next.donations,next.donationsLoading,next.donationsError],renderSupport);
-   if(!isSubpage){changed('stats',[next.day,next.stats,next.online,countReportedPlayers(next.servers,next.serversStale)],renderStats);
+   if(!isSubpage||['polls','poll'].includes(document.documentElement.dataset.v2Page))changed('stats',[next.day,next.stats,next.online,countReportedPlayers(next.servers,next.serversStale)],renderStats);
+   if(!isSubpage){
   changed('winner',next.winner,renderWinner);
    changed('event',[next.announcement,next.votes,next.voteDisabled],renderEvent);}
   if(needsServerStatus)changed('servers',[next.servers,next.serversStale,next.auth?.authenticated,next.auth?.driver?.sr],()=>{if(showSidebarWidgets)renderServers();presentation.refreshServer();});
@@ -380,6 +382,7 @@ function initialiseDocks(){
   dashboard.classList.add('widgets-enhanced');
 }
 initialiseDocks();
+if(showSidebarWidgets)mountServerPoll({panel:document.querySelector('.servers-panel'),language});
 function applyHash(){
   const aliases={championship:'leaderboard',bestlaps:'bestlaps','worst-safety':'safety','clubs-teams-stats':'clubs'};
   const id=decodeURIComponent(location.hash.slice(1));
@@ -408,9 +411,9 @@ const homeLayoutReady=isSubpage?Promise.resolve():import('./home-version.js?v=20
     document.documentElement.dataset.homeVersion='current';
     window.asgHomeStartup?.finish();
   });
-try{await import('./runtime/home.js?v=20261126srv4half1');applyHash();if(isSubpage)startBackground();}catch(error){console.error('V2 runtime unavailable',error);$('event-track').textContent=text('Не удалось загрузить данные','Could not load data');$('day-driver').textContent=text('Данные недоступны','Data unavailable');tableError=true;tableBusy=false;renderTable()}
+try{await import('./runtime/home.js?v=20261126pollwidgets1');applyHash();if(isSubpage)startBackground();}catch(error){console.error('V2 runtime unavailable',error);$('event-track').textContent=text('Не удалось загрузить данные','Could not load data');$('day-driver').textContent=text('Данные недоступны','Data unavailable');tableError=true;tableBusy=false;renderTable()}
 if(document.documentElement.dataset.v2Page){
-  const {startPage}=await import('./pages/controller.js?v=20261126polls1');
+  const {startPage}=await import('./pages/controller.js?v=20261126pollwidgets1');
   await startPage({native,presentation,showDialog,esc,text,label,date,number,rating,car,language,subscribe,serverAdmission});
 }
 import {installReports} from './reports/index.js?v=20261117reports1';

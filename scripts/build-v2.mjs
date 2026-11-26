@@ -23,14 +23,14 @@ const outputRoot = resolve(process.env.ASG_V2_OUTPUT_DIR || (siteRelease.layout=
 if(outputRoot!==root)assertArchiveScratchPath(outputRoot);
 if (process.env.ASG_V2_PRESENTATION_ONLY === '1') throw Error('Presentation-only builds are retired: rebuild V2 with its canonical runtime.');
 const version = '20261006v2k';
-const runtimeVersion = '20261126srv4half1';
+const runtimeVersion = '20261126pollwidgets1';
 const presentationVersion = '20261118winter3';
-const homeStylesVersion = '20261120srv4signed';
-const bootVersion = '20261126srv4half1';
-const hourlyBootVersion = '20261126srv4half1';
-const archiveBootVersion = '20261126srv4half1';
-const statsBootVersion = '20261126srv4half1';
-const raceModalBootVersion = '20261126srv4half1';
+const homeStylesVersion = '20261126pollwidgets1';
+const bootVersion = '20261126pollwidgets1';
+const hourlyBootVersion = '20261126pollwidgets1';
+const archiveBootVersion = '20261126pollwidgets1';
+const statsBootVersion = '20261126pollwidgets1';
+const raceModalBootVersion = '20261126pollwidgets1';
 const accountBootVersion = '20261121paddock1';
 const controlStylesVersion = '20261103clubs1';
 const profileStylesVersion = '20261119srvepisodes';
@@ -203,7 +203,7 @@ for (const language of ['ru','en']) {
   const homeHead = hourlyHead(head)
     .replace(/(\/src\/features\/site-appearance\/site-appearance\.js)\?v=[\w-]+/,'$1?v=20261126mobile2')
     .replace(`/v2/styles/design.css?v=${presentationVersion}`,'/v2/styles/design.css?v=20261122supportlaunch')
-    .replace(`/v2/boot/home.js?v=${hourlyBootVersion}`,'/v2/boot/home.js?v=20261126mobile2');
+    .replace(`/v2/boot/home.js?v=${hourlyBootVersion}`,'/v2/boot/home.js?v=20261126pollwidgets1');
   const homeBody = localizedV2Links(addFaqToShell(pageBody, language, 'home', faqContent), language).replace('Готовимся к старту',language==='ru'?'Загружаем главную страницу…':'Loading homepage…');
   await emit(`v2/${language}/index.html`,`<!doctype html>\n<html lang="${language}" data-page="home" data-page-language="${language}" data-v2="home"><head>${homeStartup}${initialHomeScript}${homeHead}${faqStyles}${faqScript}</head><body data-v2="home">${homeBody}<div id="v1-runtime-host" hidden inert aria-hidden="true">${oldBody}</div>${modals}</body></html>\n`);
   for (const config of pageRegistry.filter(page => page.route)) {
@@ -226,8 +226,8 @@ for (const language of ['ru','en']) {
     }
     if (screen === 'driver') owningHead+='<link rel="stylesheet" href="/v2/pages/profile-appearance.css?v=20261121passaccent"><link rel="stylesheet" href="/v2/pages/profile-badges-podium.css?v=20261126podium1">';
     if (screen === 'site-admin') owningHead += '<link rel="stylesheet" href="/v2/pages/site-appearance-admin.css?v=20261126home1">';
-    if (['polls','poll','polls-admin'].includes(screen)) owningHead += '<link rel="stylesheet" href="/v2/pages/polls.css?v=20261126polls2">';
-    if (['moderation','polls','poll','polls-admin'].includes(screen)) owningHead=owningHead.replace(`/v2/boot/home.js?v=${bootVersion}`,'/v2/boot/home.js?v=20261126polls2');
+    if (['polls','poll','polls-admin'].includes(screen)) owningHead += '<link rel="stylesheet" href="/v2/pages/polls.css?v=20261126pollwidgets1">';
+    if (['moderation','polls','poll','polls-admin'].includes(screen)) owningHead=owningHead.replace(`/v2/boot/home.js?v=${bootVersion}`,'/v2/boot/home.js?v=20261126pollwidgets1');
     if(screen==='archive'||screen==='race')owningHead=owningHead.replace(`/v2/boot/home.js?v=${bootVersion}`,`/v2/boot/home.js?v=${archiveBootVersion}`);
     if(screen==='cars')owningHead=statsHead(owningHead);
     if(screen==='hourly')owningHead=hourlyHead(owningHead);

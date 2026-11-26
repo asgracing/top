@@ -24,7 +24,7 @@ import {createDriverAchievementsController} from '/src/pages/driver/achievements
 import {v2Route,v2EntityLinks,currentV2Path,migratedPaths} from '../routes.js?v=20261007v2pages14';
 import {screenPath,scopeSiteHref,siteContext} from '../site-routing.js?v=20261007root1';
 import {eventKind as resolveKind} from '../models.js?v=20261006v2k';
-import {pageHasSidebarWidgets} from '../page-layout.js?v=20261118newyear1';
+import {pageHasSidebarWidgets} from '../page-layout.js?v=20261126pollwidgets1';
 
 export async function startPage(api) {
   if (document.documentElement.dataset.v2Page === 'faq') return;
@@ -49,7 +49,15 @@ export async function startPage(api) {
   }
   if (['polls','poll','polls-admin'].includes(screen)) {
     const {mountPollsPage} = await import('./polls.js?v=20261126polls2');
-    await mountPollsPage({view,language,subscribe,admin:screen === 'polls-admin'});
+    let pollView=view;
+    if(screen!=='polls-admin'){
+      pollView=document.createElement('div');
+      view.append(pollView);
+      const {mountPollStats}=await import('./poll-stats.js');
+      mountPollStats({view,home,language});
+      void native().prepareCommunityStats?.().catch(()=>{});
+    }
+    await mountPollsPage({view:pollView,language,subscribe,admin:screen === 'polls-admin'});
     return;
   }
   if(screen==='reports'){const {mountReportsPage}=await import('../reports/index.js?v=20261117reports1');view.className='panel report-section';await mountReportsPage(view);return;}
