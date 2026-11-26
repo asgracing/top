@@ -47,6 +47,11 @@ export async function startPage(api) {
     mountAppearanceAdmin({ view, language, subscribe });
     return;
   }
+  if (['polls','poll','polls-admin'].includes(screen)) {
+    const {mountPollsPage} = await import('./polls.js?v=20261126polls1');
+    await mountPollsPage({view,language,subscribe,admin:screen === 'polls-admin'});
+    return;
+  }
   if(screen==='reports'){const {mountReportsPage}=await import('../reports/index.js?v=20261117reports1');view.className='panel report-section';await mountReportsPage(view);return;}
   if(screen==='servers'){
     const {startServerDirectory}=await import('../server-directory.js?v=20261120servercards');
@@ -56,7 +61,7 @@ export async function startPage(api) {
   }
   if(screen==='support'){const {startSupportPage}=await import('./project-support.js?v=20261126home1');return startSupportPage({...api,view});}
   if(screen==='account'){const {startAccountPage}=await import('./account.js?v=20261121paddock1');return startAccountPage({...api,view,center});}
-  if(['settings','moderation','ops'].includes(screen)){const {startControlPage}=await import('./control.js?v=20261123supportrefresh');return startControlPage({...api,view,center,screen});}
+  if(['settings','moderation','ops'].includes(screen)){const {startControlPage}=await import('./control.js?v=20261126polls1');return startControlPage({...api,view,center,screen});}
   const state={screen,raceTab:params.get('tab')==='qualifying'?'qualifying':'race',id:params.get('id')||params.get('slug')||(screen==='document'?(location.pathname.endsWith('/privacy/')?'privacy':location.pathname.endsWith('/cookies/')?'cookies':null):null),month:'',racePage:1,showUncounted:false,query:'',track:'',paceTrack:'',raceSort:'date',recentPage:1,clubType:'teams',archivePage:Math.max(1,Number(params.get('page'))||1),archiveQuery:params.get('q')||'',archiveTrack:params.get('track')||'',archiveKind:params.get('kind')||'',archiveOrder:params.get('order')==='asc'?'asc':'desc',seasonQuery:'',seasonStatus:'',communityType:'clubs',standingPage:1,catalogType:(params.get('tab')||params.get('type'))==='teams'?'teams':'clubs',catalogContext:['hourly','championship'].includes(params.get('context'))?params.get('context'):'general',catalogQuery:params.get('q')||'',rosterQuery:'',entityRacePage:1};
   const requestedTab=params.get('profileTab');
   state.driverProfileTab=['sr','paddock'].includes(requestedTab)?requestedTab:'races';
